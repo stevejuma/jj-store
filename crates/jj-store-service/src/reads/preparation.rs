@@ -6,6 +6,10 @@ pub(super) struct Access {
     pin: ReadPin,
     members: Mutex<BTreeSet<m::ObjectKey>>,
 }
+
+#[cfg(test)]
+mod tests;
+
 impl Access {
     pub(super) async fn capture(read: &CommittedRead) -> Result<Arc<Self>> {
         Ok(Arc::new(Self {
@@ -67,5 +71,21 @@ impl query::ReadAccess for Access {
     }
     async fn inventory(&self) -> query::Result<Arc<BTreeSet<m::ObjectKey>>> {
         Err(query::Error::IndexBudget)
+    }
+    async fn inventory_kind(
+        &self,
+        kind: query::InventoryKind,
+        limit: usize,
+        deadline: Instant,
+    ) -> query::Result<BTreeSet<m::ObjectKey>> {
+        self.session
+            .inventory_ids_at(
+                &self.pin.base,
+                matches!(kind, query::InventoryKind::Copies),
+                limit,
+                deadline,
+            )
+            .await
+            .map_err(kind_error)
     }
 }

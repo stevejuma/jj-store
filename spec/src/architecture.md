@@ -1,5 +1,15 @@
 # Architecture
 
+Browser and explicit preparation authorities pass their retained checked
+manifest and caller deadline into the source-scoped complete kind provider.
+Historical operation wrappers forward that exact capability; choosing another
+operation never recaptures a newer inventory. Upstream copy/operation adapters
+admit matching results and apply the query cancellation/deadline and fresh
+authorization again before returning. Ordinary complete-inventory providers
+retain bounded compatibility behavior. No mutation, authoritative format or wire
+contract changes; relevant copy-body/path indexing and resumable cold
+construction remain separate work.
+
 E-READ-068 advances clean main through the verified E-READ-063 to E-READ-067
 follow-up stack and records combined source verification there. Preserve the
 original slice evidence byte-for-byte and historical ledger entries

@@ -854,9 +854,24 @@ operation identities.
 Owned read access separates verified point membership from explicitly bounded
 inventory enumeration. Content and object guards use point membership; graph
 preparation and legacy complete enumeration request their own bounded inventory.
-A request-local membership cache is bounded and never retained in read cursors.
-Every path rechecks current authorization and preserves the captured catalog
-root and native operation. This changes no persisted JJ or WAL encoding.
+A kind-specific owned lookup admits only matching operation or copy identities
+against the read capability's original checked manifest, including explicit
+preparation pins. Unrelated descriptors consume scan work, not matching-result
+capacity. It shares source-scoped immutable kind projections while retaining the
+caller's result bound and original monotonic deadline. Ordinary reads keep their
+page result ceiling; explicit preparation uses its own caller and trusted
+session bounds, independently of the initiating page's capacity and expiry.
+Later publications must not replace a historical browser pin. Compatibility
+providers may filter their own bounded complete inventory; they reauthorize and
+reject exhaustion or elapsed time rather than return an incomplete result.
+Read-only upstream operation/copy authorities use this lookup and check their
+query budget again before delivering identities. Provider failures retain their
+typed resource or authorization cause through upstream JJ error wrappers. This
+does not qualify relevant copy-body/path indexing or resumable cold
+construction. A request-local membership cache is bounded and never retained in
+read cursors. Every path rechecks current authorization and preserves the
+captured catalog root and native operation. This changes no persisted JJ or WAL
+encoding.
 
 Local Git-backed metadata reads select the retained operation and view directly.
 They MUST NOT require upstream index construction or complete commit/tree
@@ -912,9 +927,10 @@ Request syntax work is charged from the query itself rather than total retained
 commit count multiplied by query length. Authorization, object/metadata/returned
 row work and deadlines remain charged at their existing boundaries. This does
 not qualify uninstrumented synchronous upstream CPU/memory work or remove the
-hard index-size limit. File-predicate preflight, copy lookup and
-operation-prefix lookup retain their separate complete-enumeration paths pending
-prepared lookup.
+hard index-size limit. File-predicate preflight, related copy-body/path lookup
+and uncached operation-prefix construction retain separately bounded complete
+admission pending prepared lookup. Operation/copy identity enumeration uses the
+pinned kind provider, independently of unrelated inventory result capacity.
 
 Explicit native commit-index preparation MUST keep retained operation IDs,
 commit graph fields, visited sets, ordering queues and sorted lookup tables in

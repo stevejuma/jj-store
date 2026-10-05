@@ -40,6 +40,14 @@ impl ReadAccess for SelectedOperation {
     async fn inventory(&self) -> Result<Arc<BTreeSet<m::ObjectKey>>> {
         self.outer.inventory().await
     }
+    async fn inventory_kind(
+        &self,
+        kind: InventoryKind,
+        limit: usize,
+        deadline: Instant,
+    ) -> Result<BTreeSet<m::ObjectKey>> {
+        self.outer.inventory_kind(kind, limit, deadline).await
+    }
     async fn authorize(&self) -> Result<()> {
         self.outer.authorize().await
     }

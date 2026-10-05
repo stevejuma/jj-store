@@ -65,6 +65,20 @@ pub enum Error {
     Range,
 }
 pub type Result<T> = std::result::Result<T, Error>;
+/// Exact identity projections; unrelated object kinds are never result rows.
+#[derive(Clone, Copy)]
+pub enum InventoryKind {
+    Operations,
+    Copies,
+}
+impl InventoryKind {
+    pub fn matches(self, key: m::ObjectKey) -> bool {
+        matches!(
+            (self, key),
+            (Self::Operations, m::ObjectKey::Operation(_)) | (Self::Copies, m::ObjectKey::Copy(_))
+        )
+    }
+}
 /// Implemented by a private service capability, not by request-deserialized data.
 #[async_trait::async_trait]
 pub trait ReadAccess: Send + Sync {
@@ -75,6 +89,42 @@ pub trait ReadAccess: Send + Sync {
     async fn contains(&self, key: m::ObjectKey) -> Result<bool>;
     /// Explicit complete enumeration under the capability's trusted bound.
     async fn inventory(&self) -> Result<Arc<BTreeSet<m::ObjectKey>>>;
+    /// Complete matching IDs at this capability's pin, within caller bounds.
+    /// Compatibility providers retain their own full-inventory admission.
+    async fn inventory_kind(
+        &self,
+        kind: InventoryKind,
+        limit: usize,
+        deadline: tokio::time::Instant,
+    ) -> Result<BTreeSet<m::ObjectKey>> {
+        if limit == 0 || tokio::time::Instant::now() >= deadline {
+            return Err(Error::Limit);
+        }
+        let ids = tokio::time::timeout_at(deadline, async {
+            self.authorize().await?;
+            let inventory = self.inventory().await?;
+            let mut ids = BTreeSet::new();
+            for key in inventory.iter().copied() {
+                if tokio::time::Instant::now() >= deadline {
+                    return Err(Error::Limit);
+                }
+                if kind.matches(key) {
+                    if ids.len() == limit {
+                        return Err(Error::Limit);
+                    }
+                    ids.insert(key);
+                }
+            }
+            self.authorize().await?;
+            Ok(ids)
+        })
+        .await
+        .map_err(|_| Error::Limit)??;
+        if tokio::time::Instant::now() >= deadline {
+            return Err(Error::Limit);
+        }
+        Ok(ids)
+    }
     async fn authorize(&self) -> Result<()>;
 }
 #[derive(Clone, Copy)]

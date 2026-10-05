@@ -32,16 +32,42 @@ impl NativeSession {
             .checked_add(self.limits.timeout)
             .ok_or(wal::Error::Limit("native inventory time"))?;
         check_time(deadline)?;
+        let selected = tokio::time::timeout_at(deadline, self.snapshot())
+            .await
+            .map_err(|_| wal::Error::Limit("native inventory time"))??;
+        self.inventory_ids_at(&selected, copies, limit, deadline)
+            .await
+    }
+    /// A historical read must supply its checked selection, never recapture it.
+    pub(crate) async fn inventory_ids_at(
+        &self,
+        selected: &ManifestSnapshot,
+        copies: bool,
+        limit: usize,
+        deadline: tokio::time::Instant,
+    ) -> wal::Result<BTreeSet<m::ObjectKey>> {
+        if selected.manifest().repository != self.repository {
+            return Err(wal::Error::Denied);
+        }
+        if limit == 0 {
+            return Err(wal::Error::Limit("native inventory result"));
+        }
+        let deadline = deadline.min(
+            tokio::time::Instant::now()
+                .checked_add(self.limits.timeout)
+                .ok_or(wal::Error::Limit("native inventory time"))?,
+        );
+        check_time(deadline)?;
         let result = tokio::time::timeout_at(deadline, async {
+            self.inventory_check(selected, deadline).await?;
             let cache = cache::shared();
             let _permit = cache
                 .permits
                 .acquire()
                 .await
                 .map_err(|_| wal::Error::Limit("native inventory concurrency"))?;
-            let selected = self.snapshot().await?;
             check_time(deadline)?;
-            let key = cache::Key::new(self.inventory_scope, &selected, copies);
+            let key = cache::Key::new(self.inventory_scope, selected, copies);
             let result_limit = limit.min(self.limits.inventory_nodes);
             let (exact, mut base) = cache.lookup(key, selected.manifest().revision);
             if let Some(exact) = exact {
@@ -49,7 +75,7 @@ impl NativeSession {
                     return Err(wal::Error::Limit("native inventory result"));
                 }
                 let ids = exact.ids.clone();
-                self.inventory_check(&selected, deadline).await?;
+                self.inventory_check(selected, deadline).await?;
                 return Ok(ids);
             }
             if base
@@ -67,7 +93,7 @@ impl NativeSession {
             let mut after = None;
             let mut scanned = 0usize;
             loop {
-                self.inventory_check(&selected, deadline).await?;
+                self.inventory_check(selected, deadline).await?;
                 let remaining = MAX_SCANNED
                     .checked_sub(scanned)
                     .filter(|count| *count != 0)
@@ -122,7 +148,7 @@ impl NativeSession {
                     }
                     build.insert(key);
                 }
-                self.inventory_check(&selected, deadline).await?;
+                self.inventory_check(selected, deadline).await?;
                 if let Some(next) = page.next {
                     if after.is_some_and(|after| next <= after) {
                         return Err(wal::Error::Corrupt("native inventory continuation"));
@@ -130,7 +156,7 @@ impl NativeSession {
                     after = Some(next);
                 } else {
                     let ids = cache.finish(key, selected.clone(), build);
-                    self.inventory_check(&selected, deadline).await?;
+                    self.inventory_check(selected, deadline).await?;
                     return Ok(ids);
                 }
             }

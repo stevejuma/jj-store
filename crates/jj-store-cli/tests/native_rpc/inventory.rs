@@ -13,6 +13,262 @@ struct CountedInventory {
     reads: AtomicUsize,
     descriptors: AtomicUsize,
 }
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn browser_operation_prefix_ignores_unrelated_inventory_pressure() {
+    use jj_store_jj::query as q;
+    use jj_store_service::reads::{OpenRead, ReadLimits};
+    let mut f = Harness::new().await;
+    retain_files(&f, 0, 96).await;
+    let session = Arc::new(f.local());
+    let OpenRead::Pinned(read) = session
+        .open_read(
+            None,
+            ReadLimits {
+                max_objects: 8,
+                ..ReadLimits::default()
+            },
+        )
+        .await
+        .unwrap()
+    else {
+        panic!("single head")
+    };
+    let cache = tempfile::tempdir().unwrap();
+    let executor = q::GraphExecutor::new(cache.path().to_owned(), q::Limits::default(), 2).unwrap();
+    let result = Arc::new(read)
+        .graph(
+            &executor,
+            q::Request::OperationsFiltered {
+                query: format!("from:{}", &roots::ROOT_OPERATION.to_string()[..12]),
+            },
+            q::Page {
+                limit: 1,
+                after: None,
+            },
+        )
+        .await
+        .expect("one operation prefix must not charge unrelated files");
+    let q::Nodes::Operations(nodes) = result.data else {
+        panic!("operations")
+    };
+    assert_eq!(nodes[0].id, roots::ROOT_OPERATION);
+    f.stop().await;
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn browser_kind_lookup_retains_historical_roots_and_fresh_bounds() {
+    use jj_store_jj::query::{self as q, InventoryKind as K, ReadAccess as _};
+    use jj_store_service::reads::{OpenRead, ReadLimits};
+    let mut f = Harness::new().await;
+    retain_files(&f, 0, 96).await;
+    let copy = selected_copy(&f).await;
+    let counted = CountedInventory::new(f.store.clone());
+    let session = Arc::new(
+        NativeSession::new(
+            counted.clone(),
+            f.objects.clone(),
+            f.reader.clone(),
+            Arc::new(SystemClock),
+            Protection::default(),
+            SessionLimits::default(),
+        )
+        .unwrap(),
+    );
+    let OpenRead::Pinned(old) = session
+        .open_read(
+            None,
+            ReadLimits {
+                max_objects: 1,
+                ..ReadLimits::default()
+            },
+        )
+        .await
+        .unwrap()
+    else {
+        panic!("single head")
+    };
+    let deadline = || tokio::time::Instant::now() + Duration::from_secs(10);
+    let ops = BTreeSet::from([m::ObjectKey::Operation(roots::ROOT_OPERATION)]);
+    let copies = BTreeSet::from([m::ObjectKey::Copy(copy)]);
+    assert_eq!(
+        old.inventory_kind(K::Operations, 8, deadline())
+            .await
+            .unwrap(),
+        ops
+    );
+    assert!(counted.descriptors.load(Ordering::Relaxed) > 96);
+    counted.reset();
+    assert_eq!(
+        old.inventory_kind(K::Operations, 8, deadline())
+            .await
+            .unwrap(),
+        ops
+    );
+    counted.warm("browser warm operations");
+    assert_eq!(
+        old.inventory_kind(K::Copies, 8, deadline()).await.unwrap(),
+        copies
+    );
+    counted.reset();
+    assert_eq!(
+        old.inventory_kind(K::Copies, 8, deadline()).await.unwrap(),
+        copies
+    );
+    counted.warm("browser warm copies");
+
+    // A real guarded operation publication followed by selected copy additions
+    // must not replace the catalog retained by the older browser capability.
+    let later = publish_operation(&f, "browser later operation").await;
+    let (m::ObjectKey::Copy(new_copy), _) = f
+        .objects
+        .put(&b::CopyHistory {
+            current_path: jj_lib::repo_path::RepoPathBuf::from_internal_string("later.txt")
+                .unwrap(),
+            parents: vec![b::CopyId::placeholder()],
+            salt: vec![43],
+        })
+        .await
+        .unwrap()
+    else {
+        panic!("copy")
+    };
+    select_keys(&f, vec![m::ObjectKey::Copy(new_copy)]).await;
+    f.objects
+        .put(&b::CopyHistory {
+            current_path: jj_lib::repo_path::RepoPathBuf::from_internal_string("staged.txt")
+                .unwrap(),
+            parents: vec![b::CopyId::placeholder()],
+            salt: vec![44],
+        })
+        .await
+        .unwrap();
+    let OpenRead::Pinned(current) = session
+        .open_read(
+            None,
+            ReadLimits {
+                max_objects: 2,
+                ..ReadLimits::default()
+            },
+        )
+        .await
+        .unwrap()
+    else {
+        panic!("single head")
+    };
+    assert_eq!(
+        current
+            .inventory_kind(K::Operations, 8, deadline())
+            .await
+            .unwrap(),
+        BTreeSet::from([
+            m::ObjectKey::Operation(roots::ROOT_OPERATION),
+            m::ObjectKey::Operation(later)
+        ])
+    );
+    assert_eq!(
+        current
+            .inventory_kind(K::Copies, 8, deadline())
+            .await
+            .unwrap(),
+        BTreeSet::from([m::ObjectKey::Copy(copy), m::ObjectKey::Copy(new_copy)])
+    );
+    assert_eq!(
+        current
+            .inventory_kind(K::Operations, 1, deadline())
+            .await
+            .unwrap_err(),
+        q::Error::Limit
+    );
+    assert_eq!(
+        current
+            .inventory_kind(K::Copies, 1, deadline())
+            .await
+            .unwrap_err(),
+        q::Error::Limit
+    );
+    let OpenRead::Pinned(tiny) = session
+        .open_read(
+            None,
+            ReadLimits {
+                max_objects: 1,
+                ..ReadLimits::default()
+            },
+        )
+        .await
+        .unwrap()
+    else {
+        panic!("single head")
+    };
+    assert_eq!(
+        tiny.inventory_kind(K::Operations, 8, deadline())
+            .await
+            .unwrap_err(),
+        q::Error::Limit
+    );
+    counted.reset();
+    assert_eq!(
+        old.inventory_kind(K::Operations, 1, deadline())
+            .await
+            .unwrap(),
+        ops
+    );
+    counted.warm("browser warm historical operation after publication");
+    counted.reset();
+    assert_eq!(
+        old.inventory_kind(K::Copies, 1, deadline()).await.unwrap(),
+        copies
+    );
+    counted.warm("browser warm historical copy after publication");
+    assert_eq!(
+        old.inventory_kind(K::Copies, 0, deadline())
+            .await
+            .unwrap_err(),
+        q::Error::Limit
+    );
+    assert_eq!(
+        old.inventory_kind(K::Copies, 8, tokio::time::Instant::now())
+            .await
+            .unwrap_err(),
+        q::Error::Limit
+    );
+    let OpenRead::Pinned(expiring) = session
+        .open_read(
+            None,
+            ReadLimits {
+                max_objects: 2,
+                timeout: Duration::from_millis(30),
+            },
+        )
+        .await
+        .unwrap()
+    else {
+        panic!("single head")
+    };
+    tokio::time::sleep(Duration::from_millis(40)).await;
+    assert_eq!(
+        expiring
+            .inventory_kind(K::Operations, 8, deadline())
+            .await
+            .unwrap_err(),
+        q::Error::Limit
+    );
+    f.revoke_reader().await;
+    assert_eq!(
+        old.inventory_kind(K::Operations, 1, deadline())
+            .await
+            .unwrap_err(),
+        q::Error::Denied
+    );
+    assert_eq!(
+        current
+            .inventory_kind(K::Copies, 8, deadline())
+            .await
+            .unwrap_err(),
+        q::Error::Denied
+    );
+    f.stop().await;
+}
 impl CountedInventory {
     fn new(inner: Arc<MemoryStore>) -> Arc<Self> {
         Arc::new(Self {

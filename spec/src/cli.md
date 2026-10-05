@@ -1,5 +1,16 @@
 # CLI and server commands
 
+Pinned browser-kind regressions enforce exact operation/copy identities under
+unrelated descriptor pressure, across later real code publication and selected
+copy additions. Warm historical roots read zero descriptors while preserving
+fresh authorization, epoch, tighter result limits and original page deadlines.
+Explicit preparation retains its checked root independently of page capacity and
+expiry, while retaining its own caller/session matching-result limits; the
+complete inventory remains unavailable on that task capability. Owned upstream
+adapters and historical-operation wrappers preserve kind lookup and query
+cancellation. These focused source checks do not qualify complete scale, related
+copy-body/path indexing or resumable cold preparation.
+
 Native/local prepared-evolution regressions compare complete rows with the
 independent upstream predecessor walker. Deep pages avoid preceding commit-body
 hydration; repeated continuations resume data-only state under independent small

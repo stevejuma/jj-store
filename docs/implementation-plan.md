@@ -27,6 +27,13 @@ formats and collaboration capacity limits. Do not enable deferred capabilities.
 
 ### Performance delivery first
 
+E-READ-069 routes pinned browser and explicit preparation operation/copy reads
+through the exact source-scoped kind provider. The retained checked manifest and
+original caller deadline stay explicit; unrelated descriptors charge scan work
+rather than matching results. Historical source wrappers retain this capability.
+Relevant copy/path indexing and resumable cold preparation remain the next
+delivery targets, with complete qualification separately deferred.
+
 E-READ-068 lands the follow-up E-READ-063 through E-READ-067 stack into clean
 main and verifies its combined native/local history, inventory and factory/RPC
 consumers there. Preserve all original evidence and keep the temporary workspace

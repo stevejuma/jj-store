@@ -28,6 +28,15 @@ discards that derived baseline and restarts a bounded cold scan; corruption or
 unknown reads do not certify a result. Retained data contains no source handles,
 principals, credentials, request guards or publication capability.
 
+Browser and explicit preparation kind reads use their retained checked manifest
+selection through the same bounded provider, never the current code selection.
+Current permission and epoch checks may observe later publication metadata but
+cannot admit newly selected operation/copy identities to an older read. Matching
+result capacity, total descriptor work and caller deadline remain independent;
+this extends no mutation or preparation publication authority. Explicit
+preparation applies its own admitted kind-result and session bounds; the
+initiating page's smaller membership capacity cannot become a task limit.
+
 Code-card head summaries are read-only projections of explicitly selected
 operation/view references. They do not reconcile ambiguous heads, snapshot dirty
 files, initialize metadata or publish code/collaboration state. Limited windows

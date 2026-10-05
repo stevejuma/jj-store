@@ -86313,6 +86313,328 @@ entries.
     ],
     "next": "Commit verified E-READ-068, advance the local landed bookmark and retain/rebase the temporary workspace for pinned browser kind/copy and cold-preparation delivery. Complete qualification remains deferred.",
     "result": "pending"
+  },
+  {
+    "id": "E-READ-069",
+    "tasks": ["M13.4"],
+    "date": "2026-10-05",
+    "revision": "zoxkwqvx",
+    "kind": "Pinned browser and explicit preparation kind identity lookup",
+    "versions": "Rust 1.98.1; jj-lib/jj-core and jj 0.45.1; macOS ARM64.",
+    "formats": "Owned ReadAccess InventoryKind enumeration is a source-only interface addition.No persisted,DTO,schema,cursor,RPC,receipt,authoritative or installed format changes.",
+    "scope": "Rust-only read authority/provider slice.Escalate to complete native_rpc and native_lifecycle binaries plus owning query library tests:the shared upstream read authority also serves graph/content/command consumers,and the refactored complete-kind provider serves both factory and RPC reads.Run exact preparation boundary and affected JJ/service/RPC/CLI all-target package checks.Local-profile implementation,UI,contracts generation,root aggregates,complete scale/RSS/latency/fault/cold-browser/RustFS/release and Help qualification remain out of scope.",
+    "requirements": ["JST-JJ-003", "JST-JJ-005", "JST-API-002", "JST-CLI-003"],
+    "files": [
+      "crates/jj-store-jj/src/query/mod.rs",
+      "crates/jj-store-jj/src/query/access.rs",
+      "crates/jj-store-jj/src/query/access/selection.rs",
+      "crates/jj-store-jj/src/query/access/kinds_tests.rs",
+      "crates/jj-store-service/src/native_inventory/complete.rs",
+      "crates/jj-store-service/src/reads.rs",
+      "crates/jj-store-service/src/reads/preparation.rs",
+      "crates/jj-store-service/src/reads/preparation/tests.rs",
+      "crates/jj-store-cli/tests/native_rpc/inventory.rs",
+      "spec/src/jj-integration.md",
+      "spec/src/mutations.md",
+      "spec/src/cli.md",
+      "spec/src/architecture.md",
+      "docs/implementation-plan.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/native_rpc/inventory.rs#browser_operation_prefix_ignores_unrelated_inventory_pressure",
+      "crates/jj-store-cli/tests/native_rpc/inventory.rs#browser_kind_lookup_retains_historical_roots_and_fresh_bounds",
+      "crates/jj-store-jj/src/query/access/kinds_tests.rs#compatibility_kind_lookup_filters_with_exact_result_bounds",
+      "crates/jj-store-jj/src/query/access/kinds_tests.rs#upstream_authorities_use_kind_lookup_and_recheck_query_budget",
+      "crates/jj-store-jj/src/query/access/kinds_tests.rs#historical_operation_wrapper_preserves_outer_kind_capability",
+      "crates/jj-store-jj/src/query/access/kinds_tests.rs#pending_kind_lookup_obeys_query_cancellation",
+      "crates/jj-store-service/src/reads/preparation/tests.rs#prepared_kind_lookup_outlives_page_deadline_without_full_inventory"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-cli --test native_rpc --locked browser_operation_prefix_ignores_unrelated_inventory_pressure -- --nocapture",
+        "result": "fail",
+        "failures": 1,
+        "note": "One exact regression fails with Limit after96 unrelated files; browser-kind-before-069.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_rpc --locked browser_operation_prefix_ignores_unrelated_inventory_pressure -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact original regression passes; browser-kind-after-069.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_rpc --locked browser_ -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Two browser-kind regressions pass;warm operations/copies and historical roots each10 reads/zero descriptors;browser-kinds-069.log."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked query::access::kinds_tests -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "First3 owned authority units pass;kind-authority-units-069.log."
+      },
+      {
+        "command": "cargo test -p jj-store-service --lib --locked reads::preparation::tests -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "One exact explicit preparation regression passes;prepared-kind-units-069.log."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked query::access::kinds_tests -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final4 authority units pass,including historical wrapper;kind-authority-final-069.log."
+      },
+      {
+        "command": "cargo test -p jj-store-service --lib --locked reads::preparation::tests -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final exact preparation regression passes,including epoch invalidation;prepared-kind-final-069.log."
+      },
+      {
+        "command": "cargo fmt --all",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatting after each implementation/test update;no unrelated tracked changes."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "1.38s; .local/bounded-reads/performance/boundaries-069.log"
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1.49s; .local/bounded-reads/performance/architecture-069.log"
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.51s; .local/bounded-reads/performance/spec-first-069.log"
+      },
+      {
+        "command": "cargo fmt --all -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "4.0s; .local/bounded-reads/performance/rust-format-069.log"
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "3.7s; .local/bounded-reads/performance/spec-validation-069.log"
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked query::",
+        "result": "pass",
+        "failures": 0,
+        "note": "5.55s; .local/bounded-reads/performance/query-consumers-069.log"
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/jj-integration.md spec/src/mutations.md spec/src/cli.md spec/src/architecture.md spec/src/milestones.md docs/implementation-plan.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "3.79s; .local/bounded-reads/performance/document-format-069.log"
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "4.29s; .local/bounded-reads/performance/progress-069.log"
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-rpc -p jj-store-cli --all-targets --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "128.59s; .local/bounded-reads/performance/packages-069.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_rpc --test native_lifecycle --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "138.64s; .local/bounded-reads/performance/native-consumers-069.log"
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked query::access::kinds_tests::upstream_authorities_use_kind_lookup_and_recheck_query_budget -- --exact",
+        "result": "fail",
+        "failures": 1,
+        "note": "Strengthened exact unit reproduces lost resource cause:budget.failure None instead of Some(Limit);kind-error-before-069.log."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked query::access::kinds_tests::upstream_authorities_use_kind_lookup_and_recheck_query_budget -- --exact",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact strengthened unit passes after recording provider causes in the owned query budget;Limit and Denied survive upstream wrappers.kind-error-after-069.log."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/jj-integration.md spec/src/mutations.md spec/src/cli.md spec/src/architecture.md spec/src/milestones.md docs/implementation-plan.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed canonical and implementation documents formatted;repeated after attaching actual results."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "1.61s; .local/bounded-reads/performance/boundaries-069-final.log"
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "1.73s; .local/bounded-reads/performance/architecture-069-final.log"
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.76s; .local/bounded-reads/performance/spec-first-069-final.log"
+      },
+      {
+        "command": "cargo fmt --all -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "5.54s; .local/bounded-reads/performance/rust-format-069-final.log"
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "4.42s; .local/bounded-reads/performance/spec-validation-069-final.log"
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked query::",
+        "result": "pass",
+        "failures": 0,
+        "note": "7.14s; .local/bounded-reads/performance/query-consumers-069-final.log"
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "5.95s; .local/bounded-reads/performance/progress-069-final.log"
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/jj-integration.md spec/src/mutations.md spec/src/cli.md spec/src/architecture.md spec/src/milestones.md docs/implementation-plan.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "5.61s; .local/bounded-reads/performance/document-format-069-final.log"
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-rpc -p jj-store-cli --all-targets --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "22.74s; .local/bounded-reads/performance/packages-069-final.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_rpc --test native_lifecycle --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "125.3s; .local/bounded-reads/performance/native-consumers-069-final.log"
+      },
+      {
+        "command": "cargo test -p jj-store-service --lib --locked reads::preparation::tests -- --nocapture",
+        "result": "fail",
+        "failures": 1,
+        "note": "Strengthened two-operation fixture reproduces inherited one-object initiating page capacity on explicit task;prepared-bound-before-069.log."
+      },
+      {
+        "command": "cargo test -p jj-store-service --lib --locked reads::preparation::tests -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact strengthened task passes with independent caller/session result admission;one-object page remains limited.Task caller limit1,expiry,epoch and forbidden full inventory remain enforced.prepared-bound-after-069.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked graph_acceptance::index_acceptance",
+        "result": "pass",
+        "failures": 0,
+        "note": "6 directly affected native preparation/cursor/policy tests pass;225 unrelated tests filtered.preparation-consumers-069.log."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.4s; .local/bounded-reads/performance/boundaries-069-delivery.log"
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.63s; .local/bounded-reads/performance/architecture-069-delivery.log"
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.87s; .local/bounded-reads/performance/spec-first-069-delivery.log"
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "5.32s; .local/bounded-reads/performance/spec-validation-069-delivery.log"
+      },
+      {
+        "command": "cargo fmt --all -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "6.26s; .local/bounded-reads/performance/rust-format-069-delivery.log"
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/jj-integration.md spec/src/mutations.md spec/src/cli.md spec/src/architecture.md spec/src/milestones.md docs/implementation-plan.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "5.76s; .local/bounded-reads/performance/document-format-069-delivery.log"
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "6.13s; .local/bounded-reads/performance/progress-069-delivery.log"
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-rpc -p jj-store-cli --all-targets --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "18.07s; .local/bounded-reads/performance/packages-069-delivery.log"
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final rerun after actual delivery results;progress ok139 tasks.evidence bookkeeping only.progress-069-commit.log."
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/jj-integration.md spec/src/mutations.md spec/src/cli.md spec/src/architecture.md spec/src/milestones.md docs/implementation-plan.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final changed-document check passes after actual results;document-format-069-commit.log."
+      }
+    ],
+    "notes": [
+      "Original one-operation prefix fails at8-object browser result admission after96 unrelated selected files;the exact graph request now succeeds without charging those files as matching results.",
+      "CommittedRead passes its original checked ManifestSnapshot,page result bound and page deadline;the explicit task retains its original pin and independent caller/trusted-session matching-result bound,without inheriting page capacity or expiry.Eight complete work slots,source/root/epoch/kind cache scope,32 roots,5minute fixed expiry,64MiB retained allocation and2million-descriptor cold scan limits remain unchanged.",
+      "Compatibility providers retain complete inventory admission and filter only matching IDs with fresh access and monotonic checks.Upstream authorities wrap kind work in query cancellation/deadline admission and reauthorize delivery.Historical operation wrappers forward the outer capability instead of falling back to full inventory.",
+      "Warm historical operation/copy roots retain exactly their old IDs after a real guarded code publication and test-only verified copy selection.Staged copy objects remain excluded.Tighter caller/page limits,expired page/caller deadlines,revocation and epoch changes fail closed.No source fixture,installed executable,service or main workspace changed.",
+      "Initial combined impact verification passes315 directly affected query/native lifecycle/RPC tests plus the one exact preparation unit:316 distinct Rust tests.Owning all-target package and boundaries/architecture/spec/progress/format checks pass.The subsequent typed error regression and final checks are recorded separately.",
+      "Final source review identified provider Limit/Denied losing their typed cause through upstream JJ wrappers.The strengthened exact unit fails before the repair and passes after it.Recording the error in the request-owned budget retains recovery semantics;rerun the same direct consumer impact surface because production authority changed.",
+      "Final shared authority/provider verification passes315 direct query/native lifecycle/RPC tests again after typed error repair.The preparation result-bound refinement changes only the private explicit task provider:rerun its strengthened exact service unit and directly affected native index/preparation acceptance module,then package and canonical checks.No unchanged query/RPC behavior warrants another complete consumer binary run.",
+      "All509 historical evidence objects remain JSON-identical and their original ledger text is preserved verbatim;only E-READ-069 is appended.No milestone promotion.macOS debug linker unwind-size warnings remain recorded;release qualification is deferred.",
+      "Final preparation boundary passes its strengthened one-object-page/two-operation task fixture;all6 directly affected native index/preparation acceptance tests pass.Task own-work policy,current publication/cursor pin,cancellation,shared permits and independent page capacity remain intact.Total distinct focused Rust tests remain316;the six repeated acceptance cases are already included in the complete native lifecycle result.",
+      "Final affected JJ/service/RPC/CLI all-target checks,Rust formatting,package boundaries,architecture,spec-first,spec validation,progress and changed-document formatting pass after the preparation-bound refinement.Main remains clean on E-READ-068;temporary workspace remains open.All three deliberately reproduced regressions are repaired with their exact passing targets;no unresolved focused product failure."
+    ],
+    "remaining": [
+      "Resumable cold native kind preparation beyond interactive scan allowance and relevant copy reverse/path lookup remain high-priority delivery work.",
+      "Exact general filtered log continuations,uncached/ambiguous evolution,indexed code/local application search,oversized comparison/change grouping/extreme filters remain.",
+      "Complete qualification and Help/generated reference/source-review refresh remain deferred;inherited installation-reference drift remains an open failing qualification gate."
+    ],
+    "next": "Commit verified E-READ-069 in the retained temporary workspace,then continue highest-priority resumable cold kind preparation and relevant copy/path lookup.Full qualification remains deferred.",
+    "result": "pending"
   }
 ]
 ```

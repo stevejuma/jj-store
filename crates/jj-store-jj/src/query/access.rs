@@ -26,6 +26,9 @@ use tokio::{
 
 use tokio_util::sync::{CancellationToken, WaitForCancellationFutureOwned};
 
+#[cfg(test)]
+mod kinds_tests;
+
 pub(crate) struct Budget {
     pub cancellation: CancellationToken,
     pub limits: Limits,
@@ -217,10 +220,15 @@ impl BackendAuthority for ReadOnlyAuthority {
     }
     async fn copy_ids(&self, limit: usize) -> AuthorityResult<BTreeSet<m::CopyId>> {
         self.budget.authorize(self.access.as_ref()).await?;
-        let ids: BTreeSet<_> = self
-            .access
-            .inventory()
+        let keys = self
+            .budget
+            .until(
+                self.access
+                    .inventory_kind(InventoryKind::Copies, limit, self.budget.deadline),
+            )
             .await?
+            .map_err(|error| self.budget.fail(error))?;
+        let ids: BTreeSet<_> = keys
             .iter()
             .filter_map(|key| {
                 if let m::ObjectKey::Copy(id) = key {
@@ -231,8 +239,9 @@ impl BackendAuthority for ReadOnlyAuthority {
             })
             .collect();
         if ids.len() > limit {
-            return Err(Error::Limit.into());
+            return Err(self.budget.fail(Error::Limit).into());
         }
+        self.budget.authorize(self.access.as_ref()).await?;
         Ok(ids)
     }
 }
@@ -250,10 +259,16 @@ impl OperationAuthority for ReadOnlyAuthority {
     }
     async fn operation_ids(&self, limit: usize) -> AuthorityResult<BTreeSet<m::OperationId>> {
         self.budget.authorize(self.access.as_ref()).await?;
-        let ids: BTreeSet<_> = self
-            .access
-            .inventory()
+        let keys = self
+            .budget
+            .until(self.access.inventory_kind(
+                InventoryKind::Operations,
+                limit,
+                self.budget.deadline,
+            ))
             .await?
+            .map_err(|error| self.budget.fail(error))?;
+        let ids: BTreeSet<_> = keys
             .iter()
             .filter_map(|key| {
                 if let m::ObjectKey::Operation(id) = key {
@@ -264,8 +279,9 @@ impl OperationAuthority for ReadOnlyAuthority {
             })
             .collect();
         if ids.len() > limit {
-            return Err(Error::Limit.into());
+            return Err(self.budget.fail(Error::Limit).into());
         }
+        self.budget.authorize(self.access.as_ref()).await?;
         Ok(ids)
     }
     async fn publish(&self, _: BTreeSet<m::OperationId>, _: m::OperationId) -> AuthorityResult<()> {

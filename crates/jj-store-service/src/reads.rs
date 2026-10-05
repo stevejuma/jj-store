@@ -370,8 +370,31 @@ impl jj_store_jj::query::ReadAccess for CommittedRead {
         self.authorize().await.map_err(query_error)?;
         Ok(keys)
     }
+    async fn inventory_kind(
+        &self,
+        kind: query::InventoryKind,
+        limit: usize,
+        deadline: Instant,
+    ) -> query::Result<BTreeSet<m::ObjectKey>> {
+        self.session
+            .inventory_ids_at(
+                &self.base,
+                matches!(kind, query::InventoryKind::Copies),
+                limit.min(self.max_objects),
+                deadline.min(self.deadline),
+            )
+            .await
+            .map_err(kind_error)
+    }
     async fn authorize(&self) -> jj_store_jj::query::Result<()> {
         self.authorize().await.map_err(query_error)
+    }
+}
+
+fn kind_error(error: wal::Error) -> query::Error {
+    match error {
+        wal::Error::Stale => query::Error::EpochChanged,
+        error => query_error(error.into()),
     }
 }
 
