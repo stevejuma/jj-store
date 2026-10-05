@@ -248,3 +248,9 @@ history without granting a production command capability.
 Document that a typed Published receipt uses acknowledgement-only recovery even
 before its checkout witness is saved. Losing current selected ancestry preserves
 the historical receipt and cannot reannounce the candidate.
+
+The local technical guide distinguishes the exact tree-plan provider from its
+installation-private durable input catalog and original command reference. It
+records explicit creation, separate capacity limits, journal-to-plan lock order,
+immutable replay and mandatory provider revalidation. No saved-input example may
+claim physical completion or advertise a writable production capability.

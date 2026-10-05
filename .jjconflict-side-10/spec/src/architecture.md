@@ -155,9 +155,13 @@ and guard validation. Full sparse coverage and resolved regular/executable files
 are the initial profile; unsupported modes, aliases, dirty affected files and
 ignored/untracked obstacles fail without writes. Canonical plan data can be
 reopened and compared to the original retained effects, but is not a provider
-proof. Durable plan storage/journal linkage, interrupted installation, native
-tree-state selection and verified after-state remain required before actual
-tree-changing checkout or command wiring.
+proof. A separate explicit installation-private catalog now saves bounded
+canonical plans before the original journal selects a digest/length reference.
+The journal-to-plan lock order, complete retention/effect linkage and immutable
+replay keep interruptions discoverable without growing the command journal's
+budget. Saved input does not prove code or checkout selection; interrupted
+installation, native tree-state selection and verified after-state remain
+required before actual tree-changing checkout or command wiring.
 
 The server now joins actual unpublished reword effects with exact private
 preview/journal selection, saved recovery witness and reserved retention. The

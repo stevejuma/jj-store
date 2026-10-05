@@ -90037,6 +90037,283 @@ entries.
   ],
   "next": "Persist exact checkout plans with bounded durable original-request linkage, then implement guarded interrupted physical installation and verified native tree-state completion. Join actual durable combination after-state before command transport/UI wiring; continue all seven approved stages.",
   "summary": "116 unique provider cases pass: 18 new exact tree-plan parents plus 98 existing foreground, publication, archive, retention, reword, source recovery, unchanged checkout and WC-reader cases. This is preparation evidence only; M21.2 and full production integration remain In progress. Strict owning/direct-consumer all-target checks and clippy, 50 governance cases, 17-package boundaries, source architecture, formatting, docs and owning spec/progress checks pass. All 509 previous raw evidence bodies remain unchanged."
+},
+{
+  "id": "E-M21-029",
+  "tasks": [
+    "M21",
+    "M21.2"
+  ],
+  "date": "2026-10-05",
+  "revision": "syqlmuxn",
+  "kind": "Durable original tree-checkout plan selection and journal references",
+  "versions": "Rust 1.98.1; JJ 0.45.1; Git 2.55.0; pinned Git SHA-1 profile; macOS ARM64 isolated real-native and metadata-only fixtures; CARGO_INCREMENTAL=0. Installed services/binaries unchanged.",
+  "formats": "Separate private canonical plan catalog version 1: 128 immutable records, 32 MiB per plan and 64 MiB aggregate. Private command catalogs use version 4 only when TreeCheckoutReferenceV1 digest/encoded-length links exist; versions 1/2/3 retain absent-field serialization. Existing 8 MiB journal and growth reservations, public transport, native/companion/WAL formats unchanged.",
+  "files": [
+    "crates/jj-store-cli/tests/stack_checkout_plans/candidate.rs",
+    "crates/jj-store-cli/tests/stack_checkout_plans/linkage.rs",
+    "crates/jj-store-cli/tests/stack_checkout_plans/process.rs",
+    "crates/jj-store-cli/tests/stack_checkout_plans/storage.rs",
+    "crates/jj-store-cli/tests/stack_checkout_plans.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/tree_checkout/plan.rs",
+    "crates/jj-store-server/src/lib.rs",
+    "crates/jj-store-server/src/stack_checkout_plans/catalog.rs",
+    "crates/jj-store-server/src/stack_checkout_plans/tests/fixture.rs",
+    "crates/jj-store-server/src/stack_checkout_plans/tests.rs",
+    "crates/jj-store-server/src/stack_checkout_plans.rs",
+    "crates/jj-store-server/src/stack_command_journal/catalog.rs",
+    "crates/jj-store-server/src/stack_command_journal/execution.rs",
+    "crates/jj-store-server/src/stack_command_journal/transition.rs",
+    "crates/jj-store-server/src/stack_command_journal/tree_checkout.rs",
+    "crates/jj-store-server/src/stack_command_journal.rs",
+    "docs/implementation-plan.md",
+    "docs/maintenance/coverage.json",
+    "docs/site/technical/local.md",
+    "spec/src/architecture.md",
+    "spec/src/cli.md",
+    "spec/src/documentation.md",
+    "spec/src/jj-integration.md",
+    "spec/src/local-jj.md",
+    "spec/src/verification.md",
+    "spec/src/milestones.md"
+  ],
+  "requirements": [
+    "JST-LOCAL-005",
+    "JST-JJ-002",
+    "JST-JJ-004",
+    "JST-GOV-003"
+  ],
+  "before": "The exact new target initially cannot compile because plan storage does not exist. One existing reword test later reports Journal(Unavailable) during fixture setup; the exact rerun and complete final family pass unchanged. No check was relaxed or assertion removed.",
+  "scope": "Private durable input only. Authenticate and bind original scope/request/intent/prepared key, recovery, retained commit/archive, candidate, physical selection, before/after trees and ordered affected paths before plan storage. Journal-then-plan locks select/sync canonical input before the digest/length reference. Immutable replay, terminal refusal, saved-body lookup, contention, capacity and unknown acknowledgements grant no publication/installation/completion proof or mutation transport.",
+  "tests": [
+    "crates/jj-store-cli/tests/stack_checkout_plans/linkage.rs#publication_requires_saved_original_plan_and_reopen_resolves_it",
+    "crates/jj-store-cli/tests/stack_checkout_plans/linkage.rs#original_auth_and_linkage_precede_any_store_access",
+    "crates/jj-store-cli/tests/stack_checkout_plans/linkage.rs#terminal_request_never_acquires_new_plan_and_legacy_bytes_stay_unchanged",
+    "crates/jj-store-cli/tests/stack_checkout_plans/linkage.rs#saved_input_is_provider_revalidated_under_original_lease",
+    "crates/jj-store-cli/tests/stack_checkout_plans/linkage.rs#malformed_reference_and_missing_body_never_repair_from_supplied_plan",
+    "crates/jj-store-cli/tests/stack_checkout_plans/linkage.rs#acknowledged_retention_replay_preserves_saved_plan_reference",
+    "crates/jj-store-cli/tests/stack_checkout_plans/linkage.rs#plan_contention_releases_journal_and_cannot_bypass_original_authentication",
+    "crates/jj-store-cli/tests/stack_checkout_plans/process.rs#process_loss_after_plan_before_reference_reuses_original_on_reopen",
+    "crates/jj-store-cli/tests/stack_checkout_plans/process.rs#exit_after_plan",
+    "crates/jj-store-cli/tests/stack_checkout_plans/process.rs#process_loss_after_reference_selection_preserves_original_receipt",
+    "crates/jj-store-cli/tests/stack_checkout_plans/process.rs#exit_after_reference",
+    "crates/jj-store-cli/tests/stack_checkout_plans/storage.rs#open_lookup_and_duplicate_are_immutable_and_never_touch_checkout",
+    "crates/jj-store-cli/tests/stack_checkout_plans/storage.rs#scope_actor_intent_and_conflicting_request_reuse_fail_without_selection",
+    "crates/jj-store-cli/tests/stack_checkout_plans/storage.rs#malformed_noncanonical_and_unsafe_store_state_is_not_repaired",
+    "crates/jj-store-cli/tests/stack_checkout_plans/storage.rs#bounded_record_capacity_preserves_all_original_plans",
+    "crates/jj-store-server/src/stack_checkout_plans/tests.rs#replaced_store_or_lock_is_unavailable_and_original_selection_is_unchanged",
+    "crates/jj-store-server/src/stack_checkout_plans/tests.rs#unknown_plan_acknowledgement_keeps_exact_input_and_replay_syncs_it",
+    "crates/jj-store-server/src/stack_checkout_plans/tests.rs#aggregate_capacity_fails_before_selection_without_evicting_original"
+  ],
+  "runs": [
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_checkout_plans",
+      "result": "fail",
+      "failures": 1,
+      "note": "checkout-plan-store-before.log: Missing private server module/export; exact new target cannot compile before implementation."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_checkout_plans",
+      "result": "pass",
+      "failures": 0,
+      "note": "checkout-plan-store-after-initial.log: Initial missing-store open case passes after adding the API."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_checkout_plans",
+      "result": "pass",
+      "failures": 0,
+      "note": "checkout-plan-store-after.log: Nine real-native/input cases pass; ignored subprocess helper is invoked by its passing parent."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --lib stack_checkout_plans",
+      "result": "pass",
+      "failures": 0,
+      "note": "checkout-plan-store-faults.log: Three metadata-only pressure/replacement/unknown-ack cases pass. Synthetic framing and pressure data are not engine evidence."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --test stack_command_journal --test stack_local_preparation --test stack_local_execution --test stack_combinations",
+      "result": "fail",
+      "failures": 1,
+      "note": "checkout-plan-journal-regressions.log: Initial existing reword retention-mismatch case fails inside fixture preparation with Journal(Unavailable); 4 combinations, 13 journal and eight execution cases pass, one execution fails, remaining family not run. No assertion or source change made to resolve this transient run."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --test stack_local_execution journal_retention_mismatch_is_rejected_before_publication -- --exact",
+      "result": "pass",
+      "failures": 0,
+      "note": "checkout-plan-retention-exact.log: Exact failed target passes unchanged. Later full focused family also passes."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_checkout_plans",
+      "result": "pass",
+      "failures": 0,
+      "note": "checkout-plan-store-final.log: Twelve new parents pass, two invoked subprocess helpers ignored in the main run."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo check --locked -p jj-store-jj -p jj-store-server -p jj-store-cli --all-targets",
+      "result": "pass",
+      "failures": 0,
+      "note": "checkout-plan-check.log: Owning provider/server and direct CLI all-target check passes."
+    },
+    {
+      "command": "pnpm test:governance",
+      "result": "pass",
+      "failures": 0,
+      "note": "checkout-plan-governance.log: 50 cases pass."
+    },
+    {
+      "command": "pnpm check:boundaries",
+      "result": "pass",
+      "failures": 0,
+      "note": "checkout-plan-boundaries.log: 17-package boundaries pass; no new upstream JJ dependency in server."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "checkout-plan-architecture.log: 1090 source modules pass."
+    },
+    {
+      "command": "cargo fmt --all",
+      "result": "pass",
+      "failures": 0,
+      "note": "source edits: Repeated after Rust implementation and test additions; all invocations succeed and unrelated tracked files remain unchanged."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo clippy --locked -p jj-store-jj -p jj-store-server -p jj-store-cli --all-targets --no-deps -- -D warnings",
+      "result": "pass",
+      "failures": 0,
+      "note": "checkout-plan-lint.log: Strict owning/direct-consumer all-target lint passes, including final test additions."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --test stack_command_journal --test stack_local_preparation --test stack_local_execution --test stack_combinations",
+      "result": "pass",
+      "failures": 0,
+      "note": "checkout-plan-journal-regressions-final.log: All 34 focused existing cases pass: combinations 4, journal 13, reword execution 9 and preparation 8. Process helpers invoked by passing parents."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_checkout_plans --test stack_registered_preparation",
+      "result": "pass",
+      "failures": 0,
+      "note": "checkout-plan-cli-regressions-final.log: 13 new real-native/input parents and 12 existing actual registered/observer reword parents pass; the two new isolated workers are invoked by passing parents."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_tree_checkout",
+      "result": "pass",
+      "failures": 0,
+      "note": "checkout-plan-provider-final.log: All 18 existing exact changed-tree provider parents pass, including killed worker and cancellation lifetime."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --lib stack_",
+      "result": "pass",
+      "failures": 0,
+      "note": "checkout-plan-unit-final.log: All 12 journal/combination/plan metadata unit parents pass; two isolated workers invoked by passing parents. Includes 3 new store tests."
+    },
+    {
+      "command": "pnpm format:rust:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "checkout-plan-rust-format.log: Rust formatting passes."
+    },
+    {
+      "command": "pnpm docs:review local 'Reviewed data-only retained/commit/tree/workspace accessors and the separately bounded durable original-input store; physical installation and native tree-state completion remain unqualified.'",
+      "result": "pass",
+      "failures": 0,
+      "note": "checkout-plan-docs-review-local.log: Owning source review acknowledged."
+    },
+    {
+      "command": "pnpm docs:review configuration 'Reviewed explicit scoped plan catalog creation, journal-then-plan locks, immutable canonical replay, original retention/effect linkage, version-4 digest/length references, legacy byte compatibility and tree-changing publication admission. No configuration field, installed service, transport, capability or physical completion is added.'",
+      "result": "pass",
+      "failures": 0,
+      "note": "checkout-plan-docs-review-server.log: Server source review acknowledged; no runtime configuration syntax changes."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/implementation-plan.md docs/site/technical/local.md docs/maintenance/coverage.json spec/src/local-jj.md spec/src/architecture.md spec/src/jj-integration.md spec/src/cli.md spec/src/documentation.md spec/src/verification.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "checkout-plan-docs-format.log: Only changed docs/review metadata formatted; milestones excluded."
+    },
+    {
+      "command": "pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "checkout-plan-docs-check.log: 139-file closure, valid links/anchors and nine offline diagrams in both themes pass."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "checkout-plan-progress.log: 142 task/evidence checks pass; completion unchanged."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "checkout-plan-spec-first.log: 19 protected files/six canonical chapters pass."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "checkout-plan-spec-validation.log: Five validators/23 chapters/173 requirements pass."
+    },
+    {
+      "command": "pnpm exec prettier --check docs/implementation-plan.md docs/site/technical/local.md docs/maintenance/coverage.json spec/src/local-jj.md spec/src/architecture.md spec/src/jj-integration.md spec/src/cli.md spec/src/documentation.md spec/src/verification.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "checkout-plan-format-final.log: Changed docs/review metadata format passes, ledger excluded."
+    },
+    {
+      "command": "rustc --version\n/opt/homebrew/bin/jj --version\ngit --version",
+      "result": "pass",
+      "failures": 0,
+      "note": "version observation: Rust 1.98.1, JJ 0.45.1 and Git 2.55.0 confirmed read-only."
+    },
+    {
+      "command": "python3 .local/stacks-backend-evidence/checkout-plan-ledger-audit.py",
+      "result": "pass",
+      "failures": 0,
+      "note": "checkout-plan-ledger-audit.log: 511 objects; all 510 previous raw evidence bodies byte-identical."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "checkout-plan-progress-final.log: final 142-task/evidence pass."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "checkout-plan-spec-validation-final.log: final five-validator/23-chapter/173-requirement pass."
+    },
+    {
+      "command": "python3 .local/stacks-backend-evidence/checkout-plan-ledger-audit.py",
+      "result": "pass",
+      "failures": 0,
+      "note": "checkout-plan-ledger-audit-final.log: final 511 objects and 510 preceding byte-identical bodies."
+    },
+    {
+      "command": "jj --no-pager diff --check",
+      "result": "fail",
+      "failures": 1,
+      "note": "Optional whitespace command is unsupported by JJ 0.45.1; no product or test failure. Replaced with inspection of jj diff --git added lines."
+    },
+    {
+      "command": "jj --no-pager diff --git plus Python added-line trailing-whitespace assertion",
+      "result": "pass",
+      "failures": 0,
+      "note": "checkout-plan-review.patch: added lines have no trailing whitespace; source review completed."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Actual guarded tree-changing per-path installation, interrupted physical recovery, native tree-state/checkout completion and verified after-state remain unimplemented. The plan cannot preserve dirty affected WIP without the separately qualified snapshot/merge engine; current full-sparse resolved-file preparation profile remains bounded.",
+    "Real candidate fixtures use typed test guards; synthetic capacity identities, catalog pressure and replacement injections qualify metadata only. Existing registered observer/reword acceptance is distinct from an actual changed-tree installed execution.",
+    "Actual durable combination after-state and execution coordination, explicit setup/merge-WIP membership/switching, command prepare/apply/status/discovery transport and production wiring, whole-file/issued-hunk staging, graph/deletion/scoped undo, linked-native real-storage and complete cold UI flows remain approved and incomplete.",
+    "Unrelated UI/Storybook/RustFS/root aggregate lanes, installed binary/service replacement, existing-repository reset/migration, publication, screenshot comparisons and baselines are out of scope. Existing debug linker __eh_frame warning remains unsuppressed. Production Stacks remains read-only."
+  ],
+  "next": "Implement original-plan guarded interrupted physical installation and native tree-state/checkout completion; join actual durable combination after-state before writable transport/UI wiring. Continue all seven approved stages.",
+  "summary": "89 unique focused Rust cases pass: 13 new CLI parents, 12 registered CLI, 34 server integration, 18 exact tree-plan provider and 12 journal/combination/plan unit parents. Strict owning/direct-consumer check/lint and governance/boundary/architecture/format/docs pass. This qualifies durable original input, not physical installation or feature completion; M21.2 remains In progress. All 510 preceding raw ledger bodies remain byte-identical."
 }
 ]
 ```

@@ -19,6 +19,8 @@ pub struct LocalExecutionV1 {
     pub history: Option<OperationArchiveV1>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub checkout: Option<super::checkout::SavedCheckoutV1>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub tree_checkout: Option<crate::stack_checkout_plans::TreeCheckoutReferenceV1>,
 }
 pub fn preparation_key(principal: m::PrincipalId, preview: &s::Preview) -> StackPreparationKey {
     let request = &preview.plan.request;
@@ -54,6 +56,7 @@ impl LocalExecutionV1 {
             archive: history.id().map_err(|_| Error::Invalid)?,
             history: Some(history),
             checkout: None,
+            tree_checkout: None,
         };
         value.validate(principal, preview)?;
         Ok(value)
@@ -82,11 +85,21 @@ impl LocalExecutionV1 {
             archive: history.id().map_err(|_| Error::Invalid)?,
             history: None,
             checkout: None,
+            tree_checkout: None,
         };
         value.validate(principal, preview)?;
         Ok(value)
     }
     pub(super) fn validate(&self, principal: m::PrincipalId, preview: &s::Preview) -> Result<()> {
+        if let Some(reference) = &self.tree_checkout {
+            reference.validate()?;
+            if self.checkout.is_some()
+                || self.retention.is_none()
+                || preview.plan.checkout.before == preview.plan.checkout.after
+            {
+                return Err(Error::Invalid);
+            }
+        }
         if let Some(checkout) = &self.checkout {
             checkout.validate(self, preview)?;
         }
@@ -149,7 +162,7 @@ impl StackCommandJournal {
             return Err(Error::IntentMismatch);
         }
         let pending = record.execution.as_ref().ok_or(Error::Invalid)?;
-        let completed = LocalExecutionV1::from_retention(
+        let mut completed = LocalExecutionV1::from_retention(
             principal,
             preview,
             pending.witness.clone(),
@@ -159,6 +172,8 @@ impl StackCommandJournal {
             return Err(Error::IntentMismatch);
         }
         if pending.retention.is_some() {
+            completed.checkout = pending.checkout.clone();
+            completed.tree_checkout = pending.tree_checkout.clone();
             if *pending != completed {
                 return Err(Error::IntentMismatch);
             }

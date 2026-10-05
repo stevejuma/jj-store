@@ -10,6 +10,7 @@ mod catalog;
 mod checkout;
 mod execution;
 mod transition;
+mod tree_checkout;
 use catalog::Catalog;
 pub use checkout::SavedCheckoutV1;
 pub use execution::{LocalExecutionV1, preparation_key};
@@ -251,6 +252,13 @@ impl StackCommandJournal {
             }
             self.root.sync_selected(&gate, stamp)?;
             return Ok(Selection::from_record(retained, true));
+        }
+        if record
+            .execution
+            .as_ref()
+            .is_some_and(|e| e.checkout.is_some() || e.tree_checkout.is_some())
+        {
+            return Err(Error::InvalidTransition);
         }
         if catalog.records.len() == MAX_RECORDS {
             return Err(Error::Capacity);

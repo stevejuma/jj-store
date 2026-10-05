@@ -350,10 +350,18 @@ targets are unavailable. Unrelated dirty and ignored files remain intact.
 Replacing a file or directory with identical content invalidates its saved plan.
 
 Canonical plan reopening, including after a killed worker, proves only the
-provider's original-input preflight. Durable private plan storage and journal
-linkage, interrupted per-path installation, native tree-state selection and
-verified after-state remain required. The existing command journal is not
-implicitly enlarged to store the plan. Production Stacks remains read-only.
+provider's original-input preflight. The private server now has an explicitly
+created, scoped plan catalog with 128 records, 32 MiB per canonical plan and 64
+MiB aggregate. It syncs the original input before the journal selects a
+version-4 digest/length reference, under journal-then-plan lock order. Legacy
+journals keep their existing bytes and limits. Exact replay cannot replace an
+input, reset a terminal receipt or initialize missing storage. Tree-changing
+publication admission requires its saved reference, and loading verifies all
+original retention/effect identities before future provider revalidation.
+
+Interrupted per-path installation, native tree-state selection and verified
+after-state remain required. Neither saved input nor a journal reference is a
+completion proof. Production Stacks remains read-only.
 
 ## Private unchanged-tree execution join
 

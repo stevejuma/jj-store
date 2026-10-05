@@ -1136,3 +1136,10 @@ work and cancellation retained through worker exit. It writes no code or source
 metadata. Informative publication status does not grant selection authority; an
 acknowledgement-only provider path refuses to create a candidate head when the
 original operation is no longer selected through current head ancestry.
+
+Tree-plan linkage accessors expose retained commit/archive, source/candidate
+commit and tree identities and decoded workspace name as owned data. They cannot
+create a publication or checkout proof. The server saves canonical plan data
+separately from its command journal and validates the original request before
+storage access. Provider revalidation remains mandatory before any future
+physical installation, even after successful plan/reference reopen.

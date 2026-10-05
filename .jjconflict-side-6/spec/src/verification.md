@@ -1355,3 +1355,14 @@ interrupted installation, native tree-state completion, preserved dirty affected
 WIP, wider file/sparse profiles and production command/UI flows remain required.
 No mutation capability or milestone completion follows from these preparation
 passes.
+
+[E-M21-029](milestones.md) covers separately bounded durable tree-plan input
+storage and original-request journal references. Real unpublished JJ candidate
+fixtures verify immutable reopen/replay, provider revalidation and interruption
+between plan and reference selection without publishing code or modifying
+physical/checkout state. Synthetic metadata pressure and replacement faults
+qualify capacity and unknown acknowledgement behavior separately from engine
+evidence. Legacy journal bytes remain unchanged and new references cannot be
+attached to terminal outcomes. Actual interrupted physical installation, native
+tree-state completion, combination after-state and production command/UI flows
+remain required; production capabilities stay read-only.

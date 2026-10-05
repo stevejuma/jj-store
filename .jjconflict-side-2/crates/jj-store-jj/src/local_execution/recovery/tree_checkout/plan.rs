@@ -42,6 +42,18 @@ impl TreeCheckoutPlanV1 {
     pub fn candidate(&self) -> (m::OperationId, m::ViewId) {
         (self.operation, self.view)
     }
+    pub fn retained(&self) -> (GitOid, m::RecordDigest) {
+        (self.retained, self.archive)
+    }
+    pub fn commits(&self) -> (m::GitSha1Id, m::GitSha1Id) {
+        (self.before_commit, self.after_commit)
+    }
+    pub fn trees(&self) -> (m::GitSha1Id, m::GitSha1Id) {
+        (self.before_tree, self.after_tree)
+    }
+    pub fn workspace(&self) -> Result<String> {
+        Ok(decode::checkout(&self.checkout, &self.tree_state)?.workspace)
+    }
     pub fn encode(&self) -> Result<Vec<u8>> {
         self.validate()?;
         let bytes = serde_json::to_vec(self).map_err(|_| Error::Invalid)?;

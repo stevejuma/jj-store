@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed exact retained tree-changing plan capture and revalidation, raw object identity/size bounds, pinned native metadata bytes, physical file/directory stamps, unsafe/dirty obstacle rejection and original foreground ownership through cancellation. The initial resolved-file/full-sparse preparation profile and killed-worker reopening do not qualify durable plan/journal storage, per-path installation, native tree-state completion or production commands.",
-      "fingerprint": "abc9973dee89fae23d9c82a895e584369a95d437d2ac41f152e745f26c79e3d6"
+      "reason": "Reviewed data-only retained/commit/tree/workspace accessors and the separately bounded durable original-input store; physical installation and native tree-state completion remain unqualified.",
+      "fingerprint": "fc65a8759df363d4d2fdd748e7818db2b9aa3e117fa7773858c03daba1458774"
     }
   },
   {
@@ -96,8 +96,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed unpublished original Prepared/Unknown current policy and acknowledgement-only original publication. Typed Published receipts require acknowledgement-only recovery even before witness persistence; loss of selected ancestry cannot recreate the candidate or reset the historical receipt. Real combination engines, general checkout and production mutation transport remain required.",
-      "fingerprint": "6bcd41907299b3367a3d15cd5617798f308ef55cd77e0353020bb23e920ee97f"
+      "reason": "Reviewed explicit scoped plan catalog creation, journal-then-plan locks, immutable canonical replay, original retention/effect linkage, version-4 digest/length references, legacy byte compatibility and tree-changing publication admission. No configuration field, installed service, transport, capability or physical completion is added.",
+      "fingerprint": "6a7032ba9dca90ec125d85eb2c01473ebd678c7fc9ae729c5e488be942734b49"
     }
   },
   {
