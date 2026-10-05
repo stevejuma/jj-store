@@ -631,6 +631,18 @@ these witnesses without granting authorization or reauditing an unrelated pin.
 
 ## Manifest-selected point membership
 
+Manifest-selected inventory scan pages seek an exclusive radix key without
+replaying earlier subtrees. Each page admits at most 256 descriptors, 1,024
+catalog and descriptor reads combined, and 8 MiB of encoded control records
+before decoding. Validate every loaded radix prefix, checksum, envelope and
+descriptor key. Decode descriptors sequentially and retain only object
+identities. This read is a bounded scan of a selected catalog, not a fresh
+complete-closure audit; publication, recovery and integrity retain their
+complete audits. Inventory keys hash both kind and identity, so sparse kind
+filters may produce empty windows with a continuation. Never represent such a
+window as the complete inventory. No selected root or authoritative format
+changes.
+
 Application readers may verify one object against a checked manifest's immutable
 inventory catalog root without materializing the whole repository. The radix
 path and inventory record identity are verified; each dependency followed by a

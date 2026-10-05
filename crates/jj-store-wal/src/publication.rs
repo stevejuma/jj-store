@@ -30,6 +30,7 @@ mod maintenance;
 mod native_copy;
 pub use maintenance::CheckpointCoverage;
 mod reader;
+pub use reader::InventoryPage;
 mod replication;
 mod replication_agent;
 mod replication_domains;
@@ -374,6 +375,23 @@ pub struct ManifestSnapshot {
     version: VersionToken,
 }
 impl ManifestSnapshot {
+    /// Bounded selected descriptor window. Callers must authorize before and
+    /// after traversal. No current selection or full closure is reconstructed.
+    pub async fn inventory_page(
+        &self,
+        store: Arc<dyn ObjectStore>,
+        after: Option<RecordDigest>,
+        limit: usize,
+    ) -> Result<InventoryPage> {
+        reader::inventory_page(
+            store,
+            self.manifest.repository,
+            self.manifest.inventory,
+            after,
+            limit,
+        )
+        .await
+    }
     /// Loads current authority. Historical read sessions must authenticate with
     /// this current policy even when their content snapshot is older.
     pub async fn load(store: Arc<dyn ObjectStore>, repository: RepositoryId) -> Result<Self> {

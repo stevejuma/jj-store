@@ -10,6 +10,7 @@ pub mod local_browser;
 pub mod local_repository;
 pub mod native;
 mod native_agent;
+pub mod native_inventory;
 pub mod registry;
 pub mod replication_control;
 

@@ -307,6 +307,21 @@ root reads cannot fail authorization.
 
 ## Native RPC V1
 
+The additive InventoryPage RPC pins a checked manifest inventory root, epoch,
+publication position, code-state version and exact head set. Signed
+continuations bind repository, object kind and scan size; they retain data only,
+never a credential or request. Each page rechecks current permission and epoch
+before and after its bounded scan. At most64 process-local pins live for five
+minutes without expiry renewal; expiry, restart and epoch change require
+reselection. The request scan size bounds inspected descriptors, not matching
+IDs. Empty filtered windows retain their continuation. Responses report
+inspected count and the original snapshot. Legacy Inventory framing remains
+supported with its existing complete-result bound. NativeClient's
+complete-result convenience uses the paged contract, rejects duplicate IDs or
+changed snapshots, sorts its bounded result, and never returns a truncated
+success. Its caller count limit, two-million-descriptor scan limit and
+whole-call deadline remain explicit.
+
 The native gRPC boundary accepts typed repository/object IDs, immutable object
 uploads, committed ID queries, and head transitions. It exposes no raw keys,
 manifest CAS, policy writes, or caller-selected principal. The service verifies

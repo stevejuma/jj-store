@@ -29,6 +29,9 @@ const REPO: m::RepositoryId = m::RepositoryId::new([1; 16]);
 const ACTOR: m::PrincipalId = m::PrincipalId::new([2; 16]);
 const MAX_BLOB: u64 = 8 * 1024 * 1024;
 
+#[path = "native_rpc/inventory.rs"]
+mod inventory;
+
 struct Harness {
     store: Arc<MemoryStore>,
     objects: Arc<NativeObjects>,
@@ -107,12 +110,22 @@ impl Harness {
         protection: Protection,
         limits: RpcLimits,
     ) {
+        self.start_with_session_limits(store, protection, limits, SessionLimits::default())
+            .await;
+    }
+    async fn start_with_session_limits(
+        &mut self,
+        store: Arc<dyn jj_store_object::ObjectStore>,
+        protection: Protection,
+        limits: RpcLimits,
+        session_limits: SessionLimits,
+    ) {
         let endpoint = NativeEndpoint::new(
             REPO,
             store,
             Arc::new(SystemClock),
             protection,
-            SessionLimits::default(),
+            session_limits,
             MAX_BLOB,
         )
         .unwrap();

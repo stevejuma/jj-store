@@ -4,6 +4,8 @@ use crate::{
     wire::{self, native_store_client::NativeStoreClient},
     wire_object, wire_record,
 };
+mod inventory;
+pub use inventory::MAX_INVENTORY_SCANNED;
 use jj_store_model as m;
 use jj_store_object::{
     self as storage, ByteRange, Condition, Download, Key, Metadata, ObjectStore, StagedUpload,
@@ -317,35 +319,6 @@ impl NativeClient {
             .await?
             .into_inner();
         admin::snapshot(Some(response)).map_err(admin::bad_response)
-    }
-    pub async fn inventory(&self, copies: bool, limit: usize) -> Result<Vec<[u8; 64]>, Status> {
-        if limit == 0 || limit > MAX_IDS {
-            return Err(Status::resource_exhausted("inventory limit"));
-        }
-        let response = self
-            .wire()
-            .inventory(self.request(wire::InventoryRequest {
-                repository: self.repository.as_bytes().to_vec(),
-                copies,
-                limit: limit as u32,
-            }))
-            .await?
-            .into_inner();
-        if response.ids.len() > limit {
-            return Err(Status::data_loss("inventory response limit"));
-        }
-        let ids: Vec<[u8; 64]> = response
-            .ids
-            .into_iter()
-            .map(|id| {
-                id.try_into()
-                    .map_err(|_| Status::data_loss("inventory ID length"))
-            })
-            .collect::<Result<_, _>>()?;
-        if ids.windows(2).any(|pair| pair[0] >= pair[1]) {
-            return Err(Status::data_loss("noncanonical inventory"));
-        }
-        Ok(ids)
     }
     pub async fn publish(
         &self,

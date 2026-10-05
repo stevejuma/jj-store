@@ -5,6 +5,42 @@ use super::*;
 #[path = "reader_tests.rs"]
 mod tests;
 
+/// A bounded catalog window, in digest order. It is not a complete inventory
+/// audit; publication/recovery certified the selected root's closure.
+pub struct InventoryPage {
+    pub keys: Vec<ObjectKey>,
+    pub next: Option<RecordDigest>,
+}
+pub(super) async fn inventory_page(
+    store: Arc<dyn ObjectStore>,
+    repository: RepositoryId,
+    root: Option<RecordRef>,
+    after: Option<RecordDigest>,
+    limit: usize,
+) -> Result<InventoryPage> {
+    if root.is_none() {
+        return Err(Error::Corrupt("missing committed inventory"));
+    }
+    let records = Records::new(store, repository);
+    let catalog = Catalog::new(records.clone());
+    let mut budget = crate::catalog::ScanBudget::new(1024, 8 * 1024 * 1024);
+    let page = catalog.page(root, after, limit, &mut budget).await?;
+    let mut keys = Vec::with_capacity(page.entries.len());
+    for (key, reference) in page.entries {
+        let node: VerifiedNode = budget
+            .get(&records, reference, RecordKind::Inventory)
+            .await?;
+        if object_key(node.key) != key {
+            return Err(Error::Corrupt("inventory catalog key"));
+        }
+        keys.push(node.key);
+    }
+    Ok(InventoryPage {
+        keys,
+        next: page.next,
+    })
+}
+
 /// Verify one descriptor against the selected immutable catalog root.
 /// Publication/recovery establish complete closure. Readers separately verify
 /// each dependency they follow: enumerating all dependencies here would turn a

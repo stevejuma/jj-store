@@ -1,5 +1,13 @@
 # CLI and server commands
 
+Native remote operation/copy enumeration uses bounded manifest-pinned RPC scan
+pages. Its complete-result adapter admits matching IDs before growth and rejects
+truncation, duplicate identities, snapshot replacement and total scan/deadline
+exhaustion. Exact loopback fixtures cover unrelated-object pressure, sparse
+continued windows, later real publication, replay, revocation and reset. These
+checks change no installed binary and do not qualify combined large-repository
+CLI/RustFS lifecycle behavior. The legacy wire request remains byte-identical.
+
 Prepared operation-history fixtures compare deep filtered, unfiltered and
 historical-start pages with ordinary pinned JJ results under independent small
 body-read limits. Compact DAG tests cover exact merge/equal/skewed-timestamp

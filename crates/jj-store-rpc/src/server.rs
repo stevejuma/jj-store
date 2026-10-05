@@ -1,6 +1,6 @@
 use crate::{
     CHUNK_BYTES, MAX_IDS, REQUEST_BYTES, RESPONSE_BYTES, administration as admin, agent,
-    application, collab, object, record, review, service_error,
+    application, collab, inventory, object, record, review, service_error,
     wire::{
         self,
         native_store_server::{NativeStore, NativeStoreServer},
@@ -134,6 +134,7 @@ pub struct NativeRpc {
     review_threads: Arc<ReviewThreadPager>,
     collab: Arc<jj_store_service::collab_pages::CollabPager>,
     work: Arc<jj_store_service::work::WorkPager>,
+    inventory: Arc<jj_store_service::native_inventory::Pager>,
     commands: CommandService,
     replication_controls: Option<Arc<dyn ReplicationControls>>,
 }
@@ -199,6 +200,17 @@ impl NativeRpc {
                 .map_err(collab::read_error)?,
             ),
             commands: CommandService::new(executor),
+            inventory: Arc::new(
+                jj_store_service::native_inventory::Pager::new(
+                    jj_store_service::native_inventory::Limits {
+                        concurrency: limits.concurrent.min(64),
+                        timeout: limits.timeout.min(Duration::from_secs(300)),
+                        ..Default::default()
+                    },
+                    Arc::new(SystemClock),
+                )
+                .map_err(inventory::error)?,
+            ),
             work: Arc::new(jj_store_service::work::WorkPager::new(Arc::new(
                 SystemClock,
             ))),
@@ -589,6 +601,37 @@ impl NativeStore for NativeRpc {
                     .inventory(r.copies, r.limit as usize)
                     .await
                     .map_err(service_error)?,
+            })
+        })
+        .await
+    }
+    async fn inventory_page(
+        &self,
+        request: Request<wire::InventoryPageRequest>,
+    ) -> Result<Response<wire::InventoryPageReply>, Status> {
+        let session = self
+            .bind(
+                &request.get_ref().repository,
+                self.request_access(&request)?,
+            )?
+            .into_session();
+        let r = request.into_inner();
+        self.bounded(async {
+            let page = self
+                .inventory
+                .page(
+                    session,
+                    r.copies,
+                    r.scan_limit as usize,
+                    (!r.cursor.is_empty()).then_some(r.cursor.as_str()),
+                )
+                .await
+                .map_err(inventory::error)?;
+            Ok(wire::InventoryPageReply {
+                snapshot: Some(admin::wire_snapshot(page.snapshot)),
+                ids: page.ids.into_iter().map(|id| id.to_vec()).collect(),
+                scanned: page.scanned as u32,
+                next_cursor: page.next_cursor.unwrap_or_default(),
             })
         })
         .await

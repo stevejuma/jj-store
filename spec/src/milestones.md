@@ -115,7 +115,7 @@ shared-package release qualification does not alter those original Git gates.
 | M13.1       | Done        | M12                     | JST-LOCAL-001,JST-LOCAL-002                                                                                                                                                                                       | Qualified metadata CAS/receipt/GC and stock JJ primitive compatibility                                                         | Retain CAS, receipt, retention and stock-JJ regression gates                                     | E-M13-001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M13.2       | Done        | M13.1                   | JST-LOCAL-003                                                                                                                                                                                                     | Shared WorkStore semantics and server-free CLI                                                                                 | Retain WorkStore/CLI parity while completing M13.3                                               | E-M13-002,E-UI-050                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | M13.3       | In progress | M13.2                   | JST-LOCAL-002,JST-LOCAL-003                                                                                                                                                                                       | Portable agent/review anchors and exact retained evidence                                                                      | Qualify portable review anchors/CLI, hook causality and native capsule carrier                   | E-M13-003,E-M13-004,E-M13-005,E-M13-006,E-M13-007,E-M13-008,E-M13-009,E-M13-010,E-M13-011,E-M13-012,E-M13-022,E-M13-024,E-M13-025,E-M17-034                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| M13.4       | In progress | M13.2                   | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                                                                       | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement indexed search and recoverable code commands; browsing/collaboration stage qualified   | E-M13-013,E-M13-014,E-M13-015,E-M13-016,E-M13-017,E-M13-018,E-M13-019,E-M13-020,E-M13-021,E-M13-022,E-M13-023,E-UI-063,E-UI-089,E-UI-090,E-UI-091,E-UI-092,E-UI-093,E-UI-095,E-READ-002,E-READ-003,E-READ-024,E-READ-025,E-READ-026,E-READ-028,E-READ-036,E-READ-037,E-READ-038,E-READ-040,E-READ-041,E-READ-008,E-READ-042,E-READ-043,E-READ-044,E-READ-045,E-READ-046,E-READ-047,E-READ-048,E-READ-049,E-READ-050,E-READ-051,E-READ-052,E-READ-053,E-READ-057,E-READ-058,E-READ-059                                                                                                                                                                                                                                                                                                                                                               |
+| M13.4       | In progress | M13.2                   | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                                                                       | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement indexed search and recoverable code commands; browsing/collaboration stage qualified   | E-M13-013,E-M13-014,E-M13-015,E-M13-016,E-M13-017,E-M13-018,E-M13-019,E-M13-020,E-M13-021,E-M13-022,E-M13-023,E-UI-063,E-UI-089,E-UI-090,E-UI-091,E-UI-092,E-UI-093,E-UI-095,E-READ-002,E-READ-003,E-READ-024,E-READ-025,E-READ-026,E-READ-028,E-READ-036,E-READ-037,E-READ-038,E-READ-040,E-READ-041,E-READ-008,E-READ-042,E-READ-043,E-READ-044,E-READ-045,E-READ-046,E-READ-047,E-READ-048,E-READ-049,E-READ-050,E-READ-051,E-READ-052,E-READ-053,E-READ-057,E-READ-058,E-READ-059,E-READ-060                                                                                                                                                                                                                                                                                                                                                    |
 | M13.5       | In progress | M13.4                   | JST-LOCAL-006                                                                                                                                                                                                     | Independent local/native conversion with complete collaboration history                                                        | Retain eligible conversions; qualify portable anchored profiles and remaining prerequisite gates | E-M13-026,E-M13-027,E-M13-028,E-M13-029                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | M13.6       | Planned     | M13.5                   | JST-LOCAL-001,JST-LOCAL-002,JST-LOCAL-003,JST-LOCAL-004,JST-LOCAL-005,JST-LOCAL-006                                                                                                                               | Cold end-to-end and retained native regression qualification                                                                   | Qualify completed local flow cold and retain native regressions                                  | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M14         | In progress | M4.18                   | JST-UI-012,JST-UI-016                                                                                                                                                                                             | Local settings, profile-aware device links and safe maintenance                                                                | Implement M14.3 agent setup and automatic recovery                                               | E-M14-001,E-M14-002,E-M14-003,E-M14-004,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012,E-UI-060,E-M14-013,E-M14-014,E-UI-095,E-UI-098,E-M14-016,E-M14-017,E-M13-028                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
@@ -27042,7 +27042,7 @@ entries.
         "command": "pnpm test:governance",
         "result": "pass",
         "failures": 0,
-        "note": "jsh-directory-governance1.log: ✔ rejects_unchanged_ledger_for_code (0.628042ms); ✔ allows_documentation_without_execution_ledger (0.079ms); ℹ pass 34"
+        "note": "jsh-directory-governance1.log: \u2714 rejects_unchanged_ledger_for_code (0.628042ms); \u2714 allows_documentation_without_execution_ledger (0.079ms); \u2139 pass 34"
       },
       {
         "command": "JJ_STORE_REAL_BASE_URL=http://127.0.0.1:7468 JJ_STORE_REAL_REPOSITORY=5ae8240e6d77fe8d0f6dd0b13f3d3874 JJ_STORE_REAL_RUNTIME=/tmp/jsh-cold-ijPU4c JJ_STORE_REAL_ROOT=/Users/stevejuma/code/lapismd/jj-store-projects-hub pnpm exec playwright test --config web/playwright.real.config.ts work-store.spec.ts",
@@ -38976,7 +38976,7 @@ entries.
         "command": "CUA createBrowserTab(iab, reported local Op Log URL, visible=false); preview.getAXState()",
         "result": "pass",
         "failures": 0,
-        "note": "Fresh served app on 7460 displays 87e1cd5d…8fb9 and 20d6c008…ef7c as separately labelled Copy full commit ID controls with the complete 40-character values; reported snapshot and all 5 operation rows retained."
+        "note": "Fresh served app on 7460 displays 87e1cd5d\u20268fb9 and 20d6c008\u2026ef7c as separately labelled Copy full commit ID controls with the complete 40-character values; reported snapshot and all 5 operation rows retained."
       },
       {
         "command": "pnpm check:progress",
@@ -48782,7 +48782,7 @@ entries.
         "command": "python3 /tmp/jj-land-resolve.py; jj resolve --list; pnpm exec prettier --write (11 resolved files)",
         "result": "pass",
         "failures": 0,
-        "note": "295 historical evidence IDs retained. Shared E-M15-031 uses main’s later verification extension; other parent evidence entries are unchanged.108 task rows preserve both evidence lists and statuses. No conflicts remain. jj resolve --list returns code2 when there are none; the formatter was run separately after that inspection."
+        "note": "295 historical evidence IDs retained. Shared E-M15-031 uses main\u2019s later verification extension; other parent evidence entries are unchanged.108 task rows preserve both evidence lists and statuses. No conflicts remain. jj resolve --list returns code2 when there are none; the formatter was run separately after that inspection."
       },
       {
         "command": "pnpm install --no-frozen-lockfile --lockfile=false; compare installed tooltip-content.svelte to landed Design Core source",
@@ -48920,7 +48920,7 @@ entries.
         "command": "python3 parent evidence and main dependency/runtime metadata audit",
         "result": "pass",
         "failures": 0,
-        "note": "All295 prior evidence identities retained; main262entries exact, Appearance differs only in shared E-M15-031 runs/remaining/next due main’s newer evidence. All unique Appearance entries remain exact. No temporary references in main node_modules .modules.yaml/.pnpm/lock.yaml or runtime.json. An initial over-strict equality assertion detected the expected shared update; this identity-aware audit verifies it."
+        "note": "All295 prior evidence identities retained; main262entries exact, Appearance differs only in shared E-M15-031 runs/remaining/next due main\u2019s newer evidence. All unique Appearance entries remain exact. No temporary references in main node_modules .modules.yaml/.pnpm/lock.yaml or runtime.json. An initial over-strict equality assertion detected the expected shared update; this identity-aware audit verifies it."
       },
       {
         "command": "pnpm test:storybook catalog/components/store-application/AgentComments.stories.svelte catalog/components/store-application/AgentLayout.stories.svelte catalog/components/store-application/AgentToolGroups.stories.svelte catalog/components/store-application/NativeAgentMenus.stories.svelte",
@@ -70154,7 +70154,7 @@ entries.
         "command": "pnpm dev:backend:build; explicit preview JJ_STORE_DEV_ROOT/JJ_STORE_DEV_PORT/JJ_STORE_DEV_BACKEND_PORT/JJ_STORE_DEV_SERVER/JJ_STORE_DEV_RUSTFS_RUNTIME pnpm dev:backend:restart; jj rebase/update-stale; CUA live editor save/restart/restore",
         "result": "pass",
         "failures": 0,
-        "note": "Main executable rebuilt; only isolated preview7470/7472 restarted. Real UI saved readers4→3, restart reports desired/effective3 and no pending configuration; restore4 and restart reports desired/effective4. Fixture/installation/control-policy SHA256 hashes stay identical. First restart used stale preview helper and reset the temporary edit; snapshot main and refresh preview, then repeat successfully with fixed helper. .local/capture-settings-live.json contains proof; screenshot .local/capture-settings-live.png; preview tab retained. Main running fixture and installed services untouched."
+        "note": "Main executable rebuilt; only isolated preview7470/7472 restarted. Real UI saved readers4\u21923, restart reports desired/effective3 and no pending configuration; restore4 and restart reports desired/effective4. Fixture/installation/control-policy SHA256 hashes stay identical. First restart used stale preview helper and reset the temporary edit; snapshot main and refresh preview, then repeat successfully with fixed helper. .local/capture-settings-live.json contains proof; screenshot .local/capture-settings-live.png; preview tab retained. Main running fixture and installed services untouched."
       },
       {
         "command": "pnpm check:architecture; pnpm check:boundaries; pnpm check:ui-ownership",
@@ -70196,7 +70196,7 @@ entries.
     "result": "pass",
     "remaining": [],
     "scope": "Narrow editing acceptance: typed current LocalTrusted Admin configuration, saved/effective/default roots, bounded crash-aware persistence, shared-column editor, stale/unknown drafts and real next-start selection. Runtime pause/rescan/import commands and all durable capture state remain independent. Supplemental strict Clippy warnings are inherited diagnostics outside the gate. The live preview still reports capture_management_unavailable for runtime observations; its worker recovery/availability is not qualified by a settings save. Full M18 multi-harness release, native desktop bundle/lifecycle, arbitrary server/credential editing, hot worker replacement and visual baseline approval remain outside this slice. No root aggregate or installed-service reset/publication.",
-    "next": "Use Settings → Agents → Configuration in preview7470. Save config and restart this selected backend; desktop applies saved config on Quit/reopen with a rebuilt app bundle. Keep the reader limit restored to4. Investigate the retained fixture worker-unavailable diagnostic separately; do not repair journals or infer runtime health from effective config. Continue deferred M18 scope only under its owning gates."
+    "next": "Use Settings \u2192 Agents \u2192 Configuration in preview7470. Save config and restart this selected backend; desktop applies saved config on Quit/reopen with a rebuilt app bundle. Keep the reader limit restored to4. Investigate the retained fixture worker-unavailable diagnostic separately; do not repair journals or infer runtime health from effective config. Continue deferred M18 scope only under its owning gates."
   },
   {
     "id": "E-M14-016",
@@ -70430,7 +70430,7 @@ entries.
         "note": "Read-only proof client omitted a complete Fetch Metadata tuple. Normal admission correctly denied it; add expected Origin plus same-origin site/mode and empty destination. Admission code unchanged."
       },
       {
-        "command": "Cua live Settings save8→3; pnpm exec tsx .local/server-settings-live.ts after-restart; Cua restore3→8; pnpm exec tsx .local/server-settings-live.ts after-restore-save; preview restart; pnpm exec tsx .local/server-settings-live.ts after-restore-restart; fixture/identity hash comparison",
+        "command": "Cua live Settings save8\u21923; pnpm exec tsx .local/server-settings-live.ts after-restart; Cua restore3\u21928; pnpm exec tsx .local/server-settings-live.ts after-restore-save; preview restart; pnpm exec tsx .local/server-settings-live.ts after-restore-restart; fixture/identity hash comparison",
         "result": "pass",
         "failures": 0,
         "note": "Actual UI shows saved3/running8; first restart desired/effective3 and no pending config. Restore saved8/running3; second restart desired/effective8 with no pending config. .local/server-settings-live.json records typed proof. Fixture/installation hashes unchanged; retained capture control matches its previous qualified reference. Screenshot .local/server-settings-live.png; preview tab retained."
@@ -73803,7 +73803,7 @@ entries.
         "command": "CUA Quit and reopen main jj-store.app; show terminal; open details; maximize; restore; native accessibility and appearance inspection",
         "result": "pass",
         "failures": 0,
-        "note": "Cold native WKWebView with existing installation at127.0.0.1:57653. Confirmed old shell idle/no jobs; Quit removed app50857/service50866/runtime50867/shell51586. Reopened same registered repository with updated bundled assets and fresh idle shell. Accessible terminal tablist and separate inline close button retained; duplicate path row absent. Details changed expanded→collapsed on maximize and stayed collapsed after restore. Thin top divider and leading close placement inspected; no visual baseline approval. App remains open with terminal for review."
+        "note": "Cold native WKWebView with existing installation at127.0.0.1:57653. Confirmed old shell idle/no jobs; Quit removed app50857/service50866/runtime50867/shell51586. Reopened same registered repository with updated bundled assets and fresh idle shell. Accessible terminal tablist and separate inline close button retained; duplicate path row absent. Details changed expanded\u2192collapsed on maximize and stayed collapsed after restore. Thin top divider and leading close placement inspected; no visual baseline approval. App remains open with terminal for review."
       },
       {
         "command": "jj new tknuwyuq in main; SHA-256 verified evidence copy; jj workspace forget terminal-polish; remove exact temporary workspace; jj edit tknuwyuq in main",
@@ -82567,7 +82567,7 @@ entries.
         "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/projects-repositories.test.ts web/tests/vite/projects-repository-visibility.test.ts web/tests/vite/projects-directories.test.ts web/tests/vite/projects-freshness.test.ts web/tests/vite/local-browser.test.ts web/tests/vite/read-query.test.ts web/tests/vite/http-query.test.ts web/tests/vite/repository-sources.test.ts web/tests/vite/production-store-data-source.test.ts web/tests/vite/application-freshness.test.ts",
         "result": "fail",
         "failures": 2,
-        "note": "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯; Test Files  1 failed | 9 passed (10); Tests  2 failed | 64 passed (66)"
+        "note": "\u23af\u23af\u23af\u23af\u23af\u23af\u23af Failed Tests 2 \u23af\u23af\u23af\u23af\u23af\u23af\u23af; Test Files  1 failed | 9 passed (10); Tests  2 failed | 64 passed (66)"
       },
       {
         "command": "cargo test -p jj-store-http --lib --locked -- --nocapture",
@@ -83686,7 +83686,7 @@ entries.
     ],
     "result": "pending",
     "remaining": [
-      "Focused119 distinct Rust tests passed:57 owning JJ,43 complete native graph/cache/preparation,8 native reference/admission and11 local prepared tests; exact3 native regressions rerun separately. Final exact3-test family, affected JJ/service/HTTP/RPC/CLI package checks and Rust formatting pass after private flag-shape cleanup. Native warm selectors hydrate4–6 objects and136–204 decoded nodes under512-node/eight-read bounds across40-operation history, with operation artifacts absent and all view/commit/inventory access denied. Five selectors include short and full prefixes; ambiguity, later/sibling exclusion, fresh authorization and native bytes/quota cleanup pass. Native head wrappers retain shared immutable bodies without copying predecessor maps; view identity hints reuse the verified ID without rehashing view contents. All494 parent records remain JSON-identical. No milestone promotion; UI/aggregate/scale/release lanes out of scope.",
+      "Focused119 distinct Rust tests passed:57 owning JJ,43 complete native graph/cache/preparation,8 native reference/admission and11 local prepared tests; exact3 native regressions rerun separately. Final exact3-test family, affected JJ/service/HTTP/RPC/CLI package checks and Rust formatting pass after private flag-shape cleanup. Native warm selectors hydrate4\u20136 objects and136\u2013204 decoded nodes under512-node/eight-read bounds across40-operation history, with operation artifacts absent and all view/commit/inventory access denied. Five selectors include short and full prefixes; ambiguity, later/sibling exclusion, fresh authorization and native bytes/quota cleanup pass. Native head wrappers retain shared immutable bodies without copying predecessor maps; view identity hints reuse the verified ID without rehashing view contents. All494 parent records remain JSON-identical. No milestone promotion; UI/aggregate/scale/release lanes out of scope.",
       "Deep operation/predecessor/copy/search continuations, retained oversized comparisons/change groups/extreme candidate continuation, paged native RPC and remaining local application search/index stay delivery work. Prepared local operation admission still reads its selected view for the existing authority seal; a metadata-only path needs its own regression.",
       "Full scale/RSS/latency/fault/cold-browser/RustFS/release and inherited generated-reference/Help/source-review refresh remain deferred."
     ]
@@ -83760,7 +83760,7 @@ entries.
         "command": "cargo test -p jj-store-cli --test local_browser --locked prepared_operation_admission::prepared_operation_pages_admit_fresh_metadata_without_any_view_or_git_reads -- --exact --nocapture",
         "result": "pass",
         "failures": 0,
-        "note": "1 passed,37 filtered. Four requests hydrate4/5 operation metadata nodes and4636–5795 accounted bytes over20-operation history while every source view, Git body and source/prepared commit-index segment is withheld. Denied access, generation mismatch, selected/historical metadata replacement and retry pass. Code detail fails on absent/replaced selected view and succeeds after exact restoration. No source index repair or Git object creation. local-admission-corrected-after-055.log."
+        "note": "1 passed,37 filtered. Four requests hydrate4/5 operation metadata nodes and4636\u20135795 accounted bytes over20-operation history while every source view, Git body and source/prepared commit-index segment is withheld. Denied access, generation mismatch, selected/historical metadata replacement and retry pass. Code detail fails on absent/replaced selected view and succeeds after exact restoration. No source index repair or Git object creation. local-admission-corrected-after-055.log."
       },
       {
         "command": "pnpm exec prettier --write docs/implementation-plan.md spec/src/api.md spec/src/architecture.md spec/src/cli.md spec/src/jj-integration.md spec/src/local-jj.md",
@@ -83843,7 +83843,7 @@ entries.
     ],
     "result": "pending",
     "remaining": [
-      "Focused93 distinct Rust tests pass:36 complete local browser (2 existing large-fixture tests intentionally ignored) and57 owning JJ units. The exact admission regression passes independently with4–5 metadata records over20 operations and withheld source views/Git bodies/index segments. Fresh selected and historical fingerprints, current denial, generation mismatch and code-view seal/retry remain qualified. Affected JJ/service/HTTP/RPC/CLI checks, Rust format, boundaries and canonical bookkeeping pass. All final canonical progress/spec-first/spec-validation/changed-document checks pass after ledger formatting; final logs local-admission-progress-final-055.log, local-admission-spec-first-final-055.log, local-admission-spec-validation-final-055.log and local-admission-docs-delivery-final-055.log. No milestone promotion; unrelated UI/native/aggregate/full-qualification lanes are out of scope.",
+      "Focused93 distinct Rust tests pass:36 complete local browser (2 existing large-fixture tests intentionally ignored) and57 owning JJ units. The exact admission regression passes independently with4\u20135 metadata records over20 operations and withheld source views/Git bodies/index segments. Fresh selected and historical fingerprints, current denial, generation mismatch and code-view seal/retry remain qualified. Affected JJ/service/HTTP/RPC/CLI checks, Rust format, boundaries and canonical bookkeeping pass. All final canonical progress/spec-first/spec-validation/changed-document checks pass after ledger formatting; final logs local-admission-progress-final-055.log, local-admission-spec-first-final-055.log, local-admission-spec-validation-final-055.log and local-admission-docs-delivery-final-055.log. No milestone promotion; unrelated UI/native/aggregate/full-qualification lanes are out of scope.",
       "Indexed deep operation/log/evolution continuations; predecessor/copy/code search lookups; retained oversized comparisons/change groups/extreme filter candidate continuations; paged native RPC and remaining local application search/index remain feature delivery."
     ]
   },
@@ -84068,13 +84068,13 @@ entries.
         "command": "cargo test -p jj-store-cli --test local_browser --locked prepared_operation_history::prepared_operation_history_skips_prior_bodies_for_filtered_and_historical_pages -- --exact --nocapture (initial implementation)",
         "result": "pass",
         "failures": 0,
-        "note": "Initial six-visit fixture passes with4–6 metadata records; final fixture tightened to five source visits. operation-history-local-after-057.log."
+        "note": "Initial six-visit fixture passes with4\u20136 metadata records; final fixture tightened to five source visits. operation-history-local-after-057.log."
       },
       {
         "command": "cargo test -p jj-store-cli --test native_lifecycle --locked graph_acceptance::operation_history_acceptance::prepared_native_operation_history_hydrates_only_deep_anchor_and_page_candidates -- --exact --nocapture (initial implementation)",
         "result": "pass",
         "failures": 0,
-        "note": "Native deep plain/filtered/historical pages pass with2–5 object reads and70–170 decoded metadata nodes,denied views/commits/inventory,removed prepared topology artifact and invalid anchors. operation-history-native-after-057.log."
+        "note": "Native deep plain/filtered/historical pages pass with2\u20135 object reads and70\u2013170 decoded metadata nodes,denied views/commits/inventory,removed prepared topology artifact and invalid anchors. operation-history-native-after-057.log."
       },
       {
         "command": "cargo test -p jj-store-jj --lib --locked query::prepared::operations::history -- --nocapture",
@@ -84175,7 +84175,7 @@ entries.
     ],
     "result": "pending",
     "remaining": [
-      "Focused148 distinct Rust tests pass:59 JJ units,37 local browser readers,44 native graph/cache/preparation and8 native reference/admission tests. Exact topology2/local1/native1 regressions repeat independently. Two existing local large-fixture tests intentionally ignored. Deep local pages hydrate4–6 metadata records; native pages hydrate2–5 objects under256 decoded-node cap. Affected JJ/service/HTTP/RPC/CLI checks,Rust formatting and package boundaries pass. Canonical spec-first/spec-validation/progress and changed-document formatting pass; no milestone promotion.",
+      "Focused148 distinct Rust tests pass:59 JJ units,37 local browser readers,44 native graph/cache/preparation and8 native reference/admission tests. Exact topology2/local1/native1 regressions repeat independently. Two existing local large-fixture tests intentionally ignored. Deep local pages hydrate4\u20136 metadata records; native pages hydrate2\u20135 objects under256 decoded-node cap. Affected JJ/service/HTTP/RPC/CLI checks,Rust formatting and package boundaries pass. Canonical spec-first/spec-validation/progress and changed-document formatting pass; no milestone promotion.",
       "Compact parent-edge traversal still replays earlier topology; retained selected order/checkpoints are next. Deep log/evolution,predecessor/copy/code-search lookup,retained oversized comparisons/change groups/extreme filter candidates,paged native RPC and remaining local application search/index remain feature delivery.",
       "Full scale/RSS/latency/fault/cold-browser/RustFS/release and inherited Help/generated-reference/source-review refresh remain deferred. Existing installation-reference drift stays a recorded failing qualification gate. Two existing large local fixture tests intentionally ignored. Unrelated UI/root aggregate/wider qualification lanes out of scope; main,existing services,installed executables,Linux source,fixtures and other workspaces preserved."
     ],
@@ -84243,13 +84243,13 @@ entries.
         "command": "python3 .local/bounded-reads/performance/verify-058.py (initial run)",
         "result": "fail",
         "failures": 1,
-        "note": "Strengthened3 exact topology units passed,then local endpoint failed the provisional700-unit complete-request fixture bound. Fresh canonical metadata admission consumes712 units for this page;selected traversal itself remains bounded independently at16 in the unit regression. Corrected complete local fixture allowance to800,below every unchanged-parent selected request at940–942;historical-start requests retain ordinary independent limits. Initial results and failure log retained as operation-seek-results-initial-058.json and operation-seek-local-exact-initial-058.log."
+        "note": "Strengthened3 exact topology units passed,then local endpoint failed the provisional700-unit complete-request fixture bound. Fresh canonical metadata admission consumes712 units for this page;selected traversal itself remains bounded independently at16 in the unit regression. Corrected complete local fixture allowance to800,below every unchanged-parent selected request at940\u2013942;historical-start requests retain ordinary independent limits. Initial results and failure log retained as operation-seek-results-initial-058.json and operation-seek-local-exact-initial-058.log."
       },
       {
         "command": "cargo test -p jj-store-cli --test local_browser --locked prepared_operation_history::prepared_operation_history_skips_prior_bodies_for_filtered_and_historical_pages -- --exact --nocapture (diagnostic complete-request bound900)",
         "result": "pass",
         "failures": 0,
-        "note": "Selected plain/filtered pages consume524–712 work units;historical-start pages remain992–1088. Final complete local bound tightened to800. operation-seek-local-corrected-058.log."
+        "note": "Selected plain/filtered pages consume524\u2013712 work units;historical-start pages remain992\u20131088. Final complete local bound tightened to800. operation-seek-local-corrected-058.log."
       },
       {
         "command": "cargo test -p jj-store-jj --lib --locked query::prepared::operations::history -- --nocapture",
@@ -84362,7 +84362,7 @@ entries.
     ],
     "result": "pending",
     "remaining": [
-      "Exact selected-order regression passes under16 work units. Complete native selected-start pages consume16–20 work units independent of anchor depth,instead of193–694 previously;complete local pages consume524–712 under800-unit request policy while preserving mandatory metadata fingerprint work. Exact plain/filtered/historical output,invalid/nonmatching anchors and32 DAG/every-subhead ordering remain checked. 149 distinct focused Rust tests pass:60 JJ units,37 local browser,44 native graphs and8 native reference/admission;exact regressions repeated independently.Two existing local large-fixture tests intentionally ignored.Affected JJ/service/HTTP/RPC/CLI package checks,Rust format,boundaries,architecture,spec-first/spec-validation/progress and changed-document formatting pass;no milestone promotion.",
+      "Exact selected-order regression passes under16 work units. Complete native selected-start pages consume16\u201320 work units independent of anchor depth,instead of193\u2013694 previously;complete local pages consume524\u2013712 under800-unit request policy while preserving mandatory metadata fingerprint work. Exact plain/filtered/historical output,invalid/nonmatching anchors and32 DAG/every-subhead ordering remain checked. 149 distinct focused Rust tests pass:60 JJ units,37 local browser,44 native graphs and8 native reference/admission;exact regressions repeated independently.Two existing local large-fixture tests intentionally ignored.Affected JJ/service/HTTP/RPC/CLI package checks,Rust format,boundaries,architecture,spec-first/spec-validation/progress and changed-document formatting pass;no milestone promotion.",
       "Historical-start retained checkpoints,deep log/evolution,predecessor/copy/code-search lookup,retained oversized comparisons/change groups/extreme filter candidates,paged native RPC and remaining local application search/index remain feature delivery.",
       "Full scale/RSS/latency/fault/cold-browser/RustFS/release and inherited Help/generated-reference/source-review refresh remain deferred. Existing installation-reference drift remains a recorded failing qualification gate. Main stays at verified E-READ-056;existing services,installed executables,Linux source,fixtures and unrelated workspaces are preserved."
     ],
@@ -84544,11 +84544,233 @@ entries.
     ],
     "result": "pending",
     "remaining": [
-      "Exact historical continuation resumes twice under unchanged96-unit work policy. Native endpoint continuations repeat with119–125 work units under160,instead of358–596 cold discovery;local repeated continuations use911–917 instead of1122–1241 cold discovery. Source object/metadata bounds and whole DTO equality remain unchanged. Selected-start reads retain16–20 work units (17 at end). 150 distinct focused Rust tests pass:61 JJ units,37 local browser,44 native graph/cache/preparation and8 native reference/admission.Exact4 topology/local1/native1 regressions repeat independently.Two existing local large-fixture tests intentionally ignored.Affected JJ/service/HTTP/RPC/CLI checks,Rust format,boundaries,architecture,spec-first/spec-validation/progress and changed-document formatting pass. No milestone promotion.",
+      "Exact historical continuation resumes twice under unchanged96-unit work policy. Native endpoint continuations repeat with119\u2013125 work units under160,instead of358\u2013596 cold discovery;local repeated continuations use911\u2013917 instead of1122\u20131241 cold discovery. Source object/metadata bounds and whole DTO equality remain unchanged. Selected-start reads retain16\u201320 work units (17 at end). 150 distinct focused Rust tests pass:61 JJ units,37 local browser,44 native graph/cache/preparation and8 native reference/admission.Exact4 topology/local1/native1 regressions repeat independently.Two existing local large-fixture tests intentionally ignored.Affected JJ/service/HTTP/RPC/CLI checks,Rust format,boundaries,architecture,spec-first/spec-validation/progress and changed-document formatting pass. No milestone promotion.",
       "Cold historical discovery now charges its explicit visited bitmap/chunk bookkeeping and still replays compact edges. Cache eviction/loss retains ordinary bounded fallback;complete cache/pressure/RSS/latency/cancellation/fault qualification remains deferred. Extreme candidate frontiers,deep log/evolution,predecessor/copy/code-search lookup,retained oversized comparisons/change groups,paged native RPC and remaining local application search/index remain feature delivery.",
       "Complete cold-browser/RustFS/release and inherited Help/generated-reference/source-review refresh remain deferred;existing installation-reference drift stays a recorded failing qualification gate. Main remains at verified E-READ-056;services,installed executables,Linux source,fixtures and unrelated workspaces preserved."
     ],
     "next": "Commit verified historical checkpoints in bounded-reads;prioritize retained deep log/evolution,then remaining indexed predecessor/copy/search,difference/candidate continuations,paged RPC and local application search before complete qualification."
+  },
+  {
+    "id": "E-READ-060",
+    "tasks": ["M13.4"],
+    "date": "2026-10-05",
+    "revision": "enclosing Jujutsu change mpumsyxr",
+    "kind": "Bounded manifest-pinned native RPC inventory scan pages and complete-result client adapter",
+    "versions": "Rust1.98.1;jj-lib0.45.1;macOS ARM64.",
+    "formats": "Additive native V1 InventoryPage RPC and request/reply protobuf messages;legacy Inventory request tags and bytes unchanged.No authoritative object,manifest,catalog,WAL,receipt or HTTP contract change.Catalog seek skips earlier radix subtrees;window admits at most256 descriptors,1024 control reads and8MiB encoded records before decode.Sequential descriptor checks retain only identities.Pins retain checked manifest data and query binding,no credentials or request;at most64 live pins with five-minute nonrenewing TTL,jni1 process-bound HMAC cursors.Fresh current authorization and epoch before/after every scan.NativeClient.inventory collects matching IDs through pages under100000 result IDs,two-million inspected descriptors and whole-call Options.timeout;no truncated success.",
+    "requirements": [
+      "JST-JJ-001",
+      "JST-JJ-005",
+      "JST-API-001",
+      "JST-API-002",
+      "JST-API-004",
+      "JST-PUB-002",
+      "JST-OBJ-004",
+      "JST-CLI-003"
+    ],
+    "scope": "Native inventory control-record reader,pinned service pager,generated protobuf boundary,NativeClient and direct remote CLI consumers.Escalate to complete WAL and RPC package suites because Records reads and tonic service/schema are shared infrastructure,and complete CLI native_rpc binary because its harness/public consumers changed.UI/HTTP generation,root aggregate,full service/CLI and complete scale/fault/cold-browser/RustFS/release lanes out of scope.",
+    "files": [
+      "crates/jj-store-cli/tests/native_rpc.rs",
+      "crates/jj-store-cli/tests/native_rpc/inventory.rs",
+      "crates/jj-store-rpc/proto/native.proto",
+      "crates/jj-store-rpc/src/client.rs",
+      "crates/jj-store-rpc/src/client/inventory.rs",
+      "crates/jj-store-rpc/src/inventory.rs",
+      "crates/jj-store-rpc/src/lib.rs",
+      "crates/jj-store-rpc/src/server.rs",
+      "crates/jj-store-service/src/lib.rs",
+      "crates/jj-store-service/src/native_inventory.rs",
+      "crates/jj-store-service/src/native_inventory/cursors.rs",
+      "crates/jj-store-wal/src/catalog.rs",
+      "crates/jj-store-wal/src/catalog/page.rs",
+      "crates/jj-store-wal/src/publication.rs",
+      "crates/jj-store-wal/src/publication/reader.rs",
+      "crates/jj-store-wal/src/publication/reader_tests.rs",
+      "crates/jj-store-wal/src/records.rs",
+      "docs/implementation-plan.md",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/jj-integration.md",
+      "spec/src/milestones.md",
+      "spec/src/mutations.md",
+      "spec/src/publication.md"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/native_rpc/inventory.rs#rpc_inventory_collects_only_requested_ids_when_other_objects_exceed_the_budget",
+      "crates/jj-store-cli/tests/native_rpc/inventory.rs#rpc_inventory_pages_pin_selection_and_reauthorize_sparse_windows",
+      "crates/jj-store-cli/tests/native_rpc/inventory.rs#rpc_inventory_returns_sorted_copy_ids_and_excludes_staged_objects",
+      "crates/jj-store-cli/tests/native_rpc/inventory.rs#inventory_pin_capacity_expiry_and_repository_binding_are_explicit",
+      "crates/jj-store-wal/src/publication/reader_tests.rs#inventory_pages_seek_deep_anchors_and_keep_old_roots",
+      "crates/jj-store-rpc/src/inventory.rs#validates_scan_progress_and_bounded_canonical_ids",
+      "crates/jj-store-rpc/src/inventory.rs#legacy_inventory_wire_fields_remain_byte_identical"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-cli --test native_rpc --locked inventory::rpc_inventory_collects_only_requested_ids_when_other_objects_exceed_the_budget -- --exact --nocapture (initial fixture)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Fixture compilation rejected private records::encode and nonexistent Condition::Any. Corrected fixture to serde_json canonical manifest encoding and expected-old-version CAS; production unchanged. rpc-inventory-before-060.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_rpc --locked inventory::rpc_inventory_collects_only_requested_ids_when_other_objects_exceed_the_budget -- --exact --nocapture (corrected before fixture)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Unchanged production fails ResourceExhausted when requesting the one operation ID after96 verified retained files under32-node server inventory admission. rpc-inventory-before-corrected-060.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_rpc --locked inventory::rpc_inventory_collects_only_requested_ids_when_other_objects_exceed_the_budget -- --exact --nocapture (after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "The same exact boundary passes through bounded pinned RPC scan pages. rpc-inventory-after-060.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_rpc --locked inventory:: -- --nocapture (first expanded fixture)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Two pass;publication fixture attempted to physically read the reserved virtual root and gets Store(NotFound). Replaced with the owning roots::operation constructor;production unchanged. rpc-inventory-exact-060.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_rpc --locked inventory:: -- --nocapture (corrected fixture)",
+        "result": "pass",
+        "failures": 0,
+        "note": "3 pass;actual later code publication,old catalog replay,sparse continued windows,current revocation,tamper/query rejection,expiry/capacity/restart/epoch boundaries. rpc-inventory-exact-corrected-060.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_rpc --locked inventory:: -- --nocapture (final fixtures)",
+        "result": "pass",
+        "failures": 0,
+        "note": "4 pass;added positive sorted copy IDs,result-limit rejection and exclusion of a staged eighth copy. rpc-inventory-exact-final-060.log."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --lib --locked publication::reader::tests::inventory_pages_seek_deep_anchors_and_keep_old_roots -- --exact --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "4096 selected descriptors;deep anchor4000 reads at most80 records for an eight-descriptor window;every127-row page reconstructs exact digest order;old root remains stable after growth;wrong descriptor identity,read budget and byte budget fail. rpc-inventory-wal-exact-060.log."
+      },
+      {
+        "command": "cargo test -p jj-store-rpc --lib --locked inventory::tests -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 44.50s; test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 4 filtered out; finished in 0.00s; 44.91s; .local/bounded-reads/performance/rpc-inventory-rpc-codecs-060.log"
+      },
+      {
+        "command": "cargo test -p jj-store-wal --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 18.57s; test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 3.80s; test result: ok. 26 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.35s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s; test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.34s; test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.31s; test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.20s; test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.16s; test result: ok. 32 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.37s; test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.46s; test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.25s; test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s; test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.34s; test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s; 39.32s; .local/bounded-reads/performance/rpc-inventory-wal-060.log"
+      },
+      {
+        "command": "cargo test -p jj-store-rpc --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 26.08s; test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s; test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.64s; test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.64s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s; test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.61s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s; test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s; 38.92s; .local/bounded-reads/performance/rpc-inventory-rpc-060.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_rpc --locked -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 14.75s; test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.60s; 17.81s; .local/bounded-reads/performance/rpc-inventory-native-cli-060.log"
+      },
+      {
+        "command": "cargo check -p jj-store-wal -p jj-store-service -p jj-store-rpc -p jj-store-cli --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `dev` profile [unoptimized] target(s) in 36.61s; 36.7s; .local/bounded-reads/performance/rpc-inventory-packages-060.log"
+      },
+      {
+        "command": "cargo fmt -p jj-store-wal -p jj-store-service -p jj-store-rpc -p jj-store-cli -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "; 1.17s; .local/bounded-reads/performance/rpc-inventory-rust-format-060.log"
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "package boundaries ok (17 packages); 1.29s; .local/bounded-reads/performance/rpc-inventory-boundaries-060.log"
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "web architecture ok (988 modules); 1.38s; .local/bounded-reads/performance/rpc-inventory-architecture-060.log"
+      },
+      {
+        "command": "cargo fmt -p jj-store-wal -p jj-store-service -p jj-store-rpc -p jj-store-cli",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed Rust modules formatted before verification."
+      },
+      {
+        "command": "pnpm exec prettier --write docs/implementation-plan.md spec/src/api.md spec/src/architecture.md spec/src/cli.md spec/src/jj-integration.md spec/src/mutations.md spec/src/publication.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed owning chapters and delivery plan formatted;rpc-inventory-docs-format-initial-060.log."
+      },
+      {
+        "command": "jj --no-pager diff --check",
+        "result": "fail",
+        "failures": 1,
+        "note": "Inspection command unsupported by the installed JJ;no repository mutation. Rust/doc formatting checks provide the applicable whitespace verification."
+      },
+      {
+        "command": "jj --no-pager st (main workspace)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main remains clean at lqvkpvpm5a127e2a,parent verified xkmpzpso debc3eaf. Prior requested landing fulfilled;temporary E-READ-057/058/059 and this follow-up retained."
+      },
+      {
+        "command": "pnpm exec prettier --write docs/implementation-plan.md spec/src/api.md spec/src/architecture.md spec/src/cli.md spec/src/jj-integration.md spec/src/mutations.md spec/src/publication.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "All changed canonical/plan/ledger documents formatted. .local/bounded-reads/performance/rpc-inventory-docs-format-060.log"
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "18 protected files,7 canonical chapters;rpc-inventory-spec-first-060.log."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "5 validators;23 chapters;172 requirements. .local/bounded-reads/performance/rpc-inventory-spec-validation-060.log"
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "fail",
+        "failures": 1,
+        "note": "Ledger test reference requires an exact #symbol;file-only reference rejected. Corrected to all four exact test names;no product change. rpc-inventory-progress-060.log."
+      },
+      {
+        "command": "python3 compare current ledger to parent-evidence-060.json",
+        "result": "pass",
+        "failures": 0,
+        "note": "All500 parent entries remain JSON-identical;E-READ-060 sole new entry,501 total."
+      },
+      {
+        "command": "pnpm check:progress (corrected exact test references)",
+        "result": "pass",
+        "failures": 0,
+        "note": "139 tasks;all exact test references accepted;rpc-inventory-progress-corrected-060.log."
+      },
+      {
+        "command": "pnpm exec prettier --check docs/implementation-plan.md spec/src/api.md spec/src/architecture.md spec/src/cli.md spec/src/jj-integration.md spec/src/mutations.md spec/src/publication.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final changed-document formatting verification;rpc-inventory-docs-check-060.log."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "151 distinct Rust tests pass:119 WAL,21 RPC and11 CLI native-RPC. Exact four inventory regressions and the deep catalog seek pass separately. Packages,generated protobuf compilation,format,boundaries and architecture pass.No milestone promotion.",
+      "Full enumeration still scans hashed descriptors under total admission;dedicated kind/predecessor/copy/search lookup remains delivery work.Legacy wire Inventory and in-process operation/copy authorities still use bounded complete inventory enumeration.New client requires the additive server page RPC.",
+      "Deep log/evolution,difference/change-group/extreme-filter continuations and remaining local application search/index remain delivery work.Complete RSS/latency/pressure/cancellation/fault,cold-browser/real-RustFS/release and inherited Help/generated-reference/source-review refresh remain deferred;installation-reference drift stays a recorded failing qualification gate.",
+      "macOS debug linking emits an unwind-size warning;source checks/tests pass.Release packaging remains unqualified.Services,installed executables,Linux source,fixtures,main and unrelated workspaces preserved."
+    ],
+    "next": "Commit E-READ-060 in bounded-reads;remove whole-inventory filtering from remaining native server/in-process operation/copy consumers,then continue deep log/evolution and remaining indexed delivery before complete qualification."
   }
 ]
 ```

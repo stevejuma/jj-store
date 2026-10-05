@@ -262,6 +262,16 @@ lookahead; current source admission and anchor/filter validation stay fresh.
 Missing/evicted checkpoints use bounded compact fallback. Deep log/evolution,
 lookup/difference/search/RPC delivery and full qualification remain open.
 
+E-READ-060 adds bounded manifest-pinned native RPC inventory scan pages and
+routes the existing NativeClient complete-result adapter through them. The
+hashed catalog requires scanning unrelated kinds, so sparse windows explicitly
+continue. Seek radix paths after each signed anchor; admit descriptor count,
+record reads and bytes before decoding. Reauthorize each request and preserve
+the original root across later publication. Whole enumeration has its own
+result, total-scan and deadline bounds. Deep log/evolution and kind-specific
+predecessor/copy/search lookup remain delivery work; complete qualification
+stays in the later slice.
+
 ### Deferred complete qualification
 
 After performance delivery, qualify the combined implementation separately:

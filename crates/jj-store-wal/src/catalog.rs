@@ -10,6 +10,8 @@ use std::collections::BTreeMap;
 use std::collections::BTreeSet;
 
 const LEAF_CAPACITY: usize = 32;
+mod page;
+pub use page::{Page, ScanBudget};
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(tag = "type", rename_all = "snake_case", deny_unknown_fields)]
 enum Node {
@@ -91,6 +93,10 @@ impl Catalog {
     }
     async fn load(&self, reference: RecordRef, prefix: &str) -> Result<Node> {
         let node: Node = self.records.get(reference, RecordKind::Catalog).await?;
+        Self::validate(&node, prefix)?;
+        Ok(node)
+    }
+    fn validate(node: &Node, prefix: &str) -> Result<()> {
         match &node {
             Node::Leaf { prefix: p, entries } => {
                 if p != prefix
@@ -119,7 +125,7 @@ impl Catalog {
                 }
             }
         }
-        Ok(node)
+        Ok(())
     }
     pub async fn get(
         &self,

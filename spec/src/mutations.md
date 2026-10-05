@@ -1,5 +1,11 @@
 # Typed mutations
 
+Native inventory paging retains only a checked immutable manifest snapshot and
+query binding. A new request supplies current credentials; page and resumed
+reads reauthorize before and after catalog access and reject epoch changes.
+These read pins expose no coordinator, upload, publication or reconciliation
+capability. Signed anchors and cached descriptors never authorize a mutation.
+
 Code-card head summaries are read-only projections of explicitly selected
 operation/view references. They do not reconcile ambiguous heads, snapshot dirty
 files, initialize metadata or publish code/collaboration state. Limited windows

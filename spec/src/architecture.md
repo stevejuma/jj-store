@@ -1,5 +1,15 @@
 # Architecture
 
+Native inventory pages scan one checked immutable catalog selection under
+descriptor, record-read, encoded-byte, concurrency and deadline bounds. Process
+retention holds at most 64 bounded manifest snapshots for five minutes, without
+credentials or request contexts. Signed keyset anchors bind the retained
+repository, operation/copy kind and scan size. Continuations seek radix paths;
+they neither rebuild an inventory nor replace a retained root after publication.
+Complete RPC enumeration retains only its bounded matching IDs. Authoritative
+catalog, WAL and object formats remain unchanged; full closure audits remain
+publication/recovery responsibilities.
+
 Native and local prepared operation-history readers retain the captured
 selection's exact JJ order and inverse ranks under the generation's shared
 allocation lease. Pinned upstream traversal uses admitted transient scratch

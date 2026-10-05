@@ -2082,8 +2082,12 @@ operation retain the outer read's current authorization and committed object
 membership while selecting the source operation's exact prepared generation.
 Cold source preparation remains explicit; existing browser pages select the same
 operation for their outer snapshot and embedded reference request. Small-cache
-profiles preserve their existing bounded filter reader. Paged native RPC remains
-separate delivery work.
+profiles preserve their existing bounded filter reader. Paged native RPC is
+governed by the additive manifest-pinned InventoryPage contract in
+jj-integration.md. Its scan windows admit work, control-record bytes and output
+independently of total repository size; sparse windows remain explicitly
+continued. Full kind enumeration still scans the hashed catalog under a total
+caller budget. Prepared kind-specific lookup remains separate delivery work.
 
 Local operation-prefix graph queries use ready exact-operation generations and
 existing rebuild-required recovery when cold. This delivery changes no request,

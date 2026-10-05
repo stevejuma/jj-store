@@ -139,3 +139,95 @@ async fn point_membership_checks_traversed_dependencies_and_descriptor_keys() {
         Err(Error::Corrupt("inventory catalog key"))
     ));
 }
+
+#[tokio::test]
+async fn inventory_pages_seek_deep_anchors_and_keep_old_roots() {
+    let store = Arc::new(CountedStore::default());
+    let records = Records::new(store.clone(), REPO);
+    let catalog = Catalog::new(records.clone());
+    let mut entries = BTreeMap::new();
+    for n in 0..4096 {
+        entries.insert(
+            object_key(key(n)),
+            put_node(&records, key(n), BTreeSet::new()).await,
+        );
+    }
+    let root = catalog.update(None, entries.clone()).await.unwrap();
+    let expected = entries.keys().copied().collect::<Vec<_>>();
+    let anchor = expected[4000];
+    store.reads.store(0, Ordering::Relaxed);
+    let page = inventory_page(store.clone(), REPO, root, Some(anchor), 8)
+        .await
+        .unwrap();
+    assert_eq!(page.next, Some(expected[4008]));
+    assert_eq!(
+        page.keys
+            .iter()
+            .copied()
+            .map(object_key)
+            .collect::<Vec<_>>(),
+        expected[4001..4009]
+    );
+    assert!(
+        store.reads.load(Ordering::Relaxed) <= 80,
+        "deep seek replayed earlier subtrees"
+    );
+    let updated = catalog
+        .update(
+            root,
+            BTreeMap::from([(
+                object_key(key(9000)),
+                put_node(&records, key(9000), BTreeSet::new()).await,
+            )]),
+        )
+        .await
+        .unwrap();
+    let mut after = None;
+    let mut seen = Vec::new();
+    loop {
+        let page = inventory_page(store.clone(), REPO, root, after, 127)
+            .await
+            .unwrap();
+        seen.extend(page.keys.into_iter().map(object_key));
+        after = page.next;
+        if after.is_none() {
+            break;
+        }
+    }
+    assert_eq!(seen, expected);
+    assert!(
+        catalog
+            .get(updated, object_key(key(9000)))
+            .await
+            .unwrap()
+            .is_some()
+    );
+    assert!(
+        catalog
+            .get(root, object_key(key(9000)))
+            .await
+            .unwrap()
+            .is_none()
+    );
+    let wrong = catalog
+        .update(
+            None,
+            BTreeMap::from([(
+                object_key(key(9001)),
+                put_node(&records, key(9002), BTreeSet::new()).await,
+            )]),
+        )
+        .await
+        .unwrap();
+    assert!(matches!(
+        inventory_page(store.clone(), REPO, wrong, None, 8).await,
+        Err(Error::Corrupt("inventory catalog key"))
+    ));
+    let mut reads = crate::catalog::ScanBudget::new(1, 8 * 1024 * 1024);
+    assert!(matches!(
+        catalog.page(root, Some(anchor), 8, &mut reads).await,
+        Err(Error::Limit(_))
+    ));
+    let mut bytes = crate::catalog::ScanBudget::new(1024, 1);
+    assert!(catalog.page(root, None, 8, &mut bytes).await.is_err());
+}

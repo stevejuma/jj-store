@@ -12,6 +12,7 @@ service NativeStore {
   rpc CurrentSnapshot(Repository) returns (Snapshot);
   rpc Heads(Repository) returns (Ids);
   rpc Inventory(InventoryRequest) returns (Ids);
+  rpc InventoryPage(InventoryPageRequest) returns (InventoryPageReply);
   rpc Publish(PublishRequest) returns (Empty);
   rpc ApplyMutation(MutationRequest) returns (JsonReply);
   rpc MutationStatus(MutationStatusRequest) returns (JsonReply);
@@ -84,6 +85,20 @@ message Empty {}
 message Repository { bytes repository = 1; }
 message AccessRequest { bytes repository = 1; bool write = 2; }
 message InventoryRequest { bytes repository = 1; bool copies = 2; uint32 limit = 3; }
+// scan_limit bounds inspected descriptors, including unrelated object kinds.
+// Empty filtered pages can have a continuation. Restart/expiry needs reselection.
+message InventoryPageRequest {
+  bytes repository = 1;
+  bool copies = 2;
+  uint32 scan_limit = 3;
+  string cursor = 4;
+}
+message InventoryPageReply {
+  Snapshot snapshot = 1;
+  repeated bytes ids = 2;
+  uint32 scanned = 3;
+  string next_cursor = 4;
+}
 message Ids { repeated bytes ids = 1; }
 message PublishRequest { bytes repository = 1; repeated bytes removed = 2; bytes added = 3; }
 // Application mutations use bounded canonical JSON owned by jj-store-service.

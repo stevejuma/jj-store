@@ -150,11 +150,14 @@ impl Records {
         Ok(reference)
     }
     pub(crate) async fn read_bytes(&self, reference: RecordRef) -> Result<Vec<u8>> {
+        self.read_bytes_bounded(reference, MAX_RECORD_BYTES).await
+    }
+    async fn read_bytes_bounded(&self, reference: RecordRef, limit: u64) -> Result<Vec<u8>> {
         let bytes = self
             .store
             .get(&reference.key(self.repository)?, None)
             .await?
-            .read_bounded(MAX_RECORD_BYTES)
+            .read_bounded(limit.min(MAX_RECORD_BYTES))
             .await?;
         if digest(&bytes) != reference.digest {
             return Err(Error::Corrupt("control record checksum"));
@@ -166,10 +169,21 @@ impl Records {
         reference: RecordRef,
         expected: RecordKind,
     ) -> Result<T> {
+        Ok(self
+            .get_bounded(reference, expected, MAX_RECORD_BYTES)
+            .await?
+            .0)
+    }
+    pub(crate) async fn get_bounded<T: Serialize + DeserializeOwned>(
+        &self,
+        reference: RecordRef,
+        expected: RecordKind,
+        limit: u64,
+    ) -> Result<(T, u64)> {
         if reference.kind != expected {
             return Err(Error::Corrupt("record kind"));
         }
-        let bytes = self.read_bytes(reference).await?;
+        let bytes = self.read_bytes_bounded(reference, limit).await?;
         let envelope: Envelope<T> = decode(&bytes)?;
         if envelope.format != 1
             || envelope.repository != self.repository
@@ -177,7 +191,7 @@ impl Records {
         {
             return Err(Error::Corrupt("record envelope"));
         }
-        Ok(envelope.payload)
+        Ok((envelope.payload, bytes.len() as u64))
     }
 
     pub(crate) async fn put_replication_bytes(
