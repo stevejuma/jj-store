@@ -1,5 +1,12 @@
 # Architecture
 
+E-READ-071 advances clean main through E-READ-069 and E-READ-070 and verifies
+the combined pinned native kind and selected inventory projection boundaries
+against main's actual sources. Keep both original slice evidence and all prior
+ledger entries intact. Retain the temporary workspace on this landing for
+reverse-copy and resumable cold preparation integration. Complete scale, fault,
+browser, RustFS, release and Help qualification remain deferred.
+
 Selected inventory projection pages retain operation identities and copy-parent
 sets at the first descriptor admission. They discard unrelated descriptors and
 load no native bodies. Whole-root and paired-root additions share bounded radix

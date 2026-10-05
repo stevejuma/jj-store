@@ -86787,6 +86787,178 @@ entries.
     ],
     "next": "Commit this verified primitive, then land E-READ-069 and E-READ-070 into main and verify the combined direct consumers at the user request. Keep the temporary workspace open and continue highest-priority reverse-copy and resumable cold preparation integration.",
     "result": "pending"
+  },
+  {
+    "id": "E-READ-071",
+    "tasks": ["M13.4"],
+    "date": "2026-10-05",
+    "revision": "xvyloluq",
+    "kind": "Main landing and focused combined verification through E-READ-070",
+    "versions": "Rust 1.98.1; JJ/jj-lib0.45.1; macOS ARM64.",
+    "formats": "No new format in landing. Preserve the E-READ-069 additive owned kind interface and E-READ-070 additive selected inventory projection interface.",
+    "scope": "User-requested main landing and verification. Escalate to directly affected native query library, explicit preparation, complete native RPC/lifecycle binaries and WAL library/publication tests, plus native inventory cache/wire tests and WAL/JJ/service/RPC/CLI all-target checks. Compile actual main sources while sharing the temporary generated target directory. Local-profile implementation, UI, contract generation, root aggregates and complete scale/RSS/latency/fault/cold-browser/RustFS/release qualification stay out of scope.",
+    "requirements": [
+      "JST-JJ-003",
+      "JST-JJ-005",
+      "JST-PUB-002",
+      "JST-PUB-006",
+      "JST-API-002",
+      "JST-CLI-003"
+    ],
+    "files": [
+      "spec/src/architecture.md",
+      "docs/implementation-plan.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/native_rpc/inventory.rs#browser_operation_prefix_ignores_unrelated_inventory_pressure",
+      "crates/jj-store-cli/tests/native_rpc/inventory.rs#browser_kind_lookup_retains_historical_roots_and_fresh_bounds",
+      "crates/jj-store-service/src/reads/preparation/tests.rs#prepared_kind_lookup_outlives_page_deadline_without_full_inventory",
+      "crates/jj-store-wal/tests/publication.rs#inventory_projections_preserve_pins_copy_edges_and_manifest_only_visibility"
+    ],
+    "runs": [
+      {
+        "command": "jj rebase -r @ -o zspxprxy",
+        "result": "pass",
+        "failures": 0,
+        "note": "Clean main working change advanced onto E-READ-070, retaining E-READ-069 ancestry. No conflicts or source replacements."
+      },
+      {
+        "command": "jj describe -m \"Land and verify pinned native kinds and bounded inventory projections\"",
+        "result": "pass",
+        "failures": 0,
+        "note": "Main integration evidence uses enclosing change xvyloluq."
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store-bounded-reads/target cargo test -p jj-store-cli --test native_rpc --locked browser_operation_prefix_ignores_unrelated_inventory_pressure",
+        "result": "pass",
+        "failures": 0,
+        "note": "90.13s; .local/bounded-reads/performance/landing-browser-exact-071.log"
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store-bounded-reads/target cargo test -p jj-store-wal --test publication --locked inventory_projections_preserve_pins_copy_edges_and_manifest_only_visibility",
+        "result": "pass",
+        "failures": 0,
+        "note": "13.16s; .local/bounded-reads/performance/landing-projection-exact-071.log"
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store-bounded-reads/target cargo test -p jj-store-jj --lib --locked query::",
+        "result": "pass",
+        "failures": 0,
+        "note": "24.22s; .local/bounded-reads/performance/landing-query-071.log"
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store-bounded-reads/target cargo test -p jj-store-wal --lib --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "22.39s; .local/bounded-reads/performance/landing-wal-library-071.log"
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store-bounded-reads/target cargo test -p jj-store-wal --test publication --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "1.62s; .local/bounded-reads/performance/landing-wal-publication-071.log"
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store-bounded-reads/target cargo test -p jj-store-service --lib --locked reads::preparation::tests",
+        "result": "pass",
+        "failures": 0,
+        "note": "33.25s; .local/bounded-reads/performance/landing-preparation-071.log"
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store-bounded-reads/target cargo test -p jj-store-service --lib --locked native_inventory::cache::tests",
+        "result": "pass",
+        "failures": 0,
+        "note": "0.73s; .local/bounded-reads/performance/landing-cache-071.log"
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store-bounded-reads/target cargo test -p jj-store-rpc --lib --locked inventory::tests",
+        "result": "pass",
+        "failures": 0,
+        "note": "34.90s; .local/bounded-reads/performance/landing-wire-071.log"
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store-bounded-reads/target cargo test -p jj-store-cli --test native_rpc --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "3.37s; .local/bounded-reads/performance/landing-rpc-071.log"
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store-bounded-reads/target cargo test -p jj-store-cli --test native_lifecycle --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "75.76s; .local/bounded-reads/performance/landing-native-071.log"
+      },
+      {
+        "command": "CARGO_TARGET_DIR=/Users/stevejuma/code/lapismd/jj-store-bounded-reads/target cargo check -p jj-store-wal -p jj-store-jj -p jj-store-service -p jj-store-rpc -p jj-store-cli --all-targets --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "51.47s; .local/bounded-reads/performance/landing-packages-071.log"
+      },
+      {
+        "command": "cargo fmt --all -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "3.16s; .local/bounded-reads/performance/landing-rust-format-071.log"
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "0.40s; .local/bounded-reads/performance/landing-boundaries-071.log"
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "0.61s; .local/bounded-reads/performance/landing-architecture-071.log"
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "0.92s; .local/bounded-reads/performance/landing-spec-first-071.log"
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "1.71s; .local/bounded-reads/performance/landing-spec-validation-071.log"
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "5.25s; .local/bounded-reads/performance/landing-progress-071.log"
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/architecture.md spec/src/milestones.md docs/implementation-plan.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.42s; .local/bounded-reads/performance/landing-document-format-071.log"
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/architecture.md docs/implementation-plan.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Landing documents formatted; landing-document-write-071.log."
+      }
+    ],
+    "notes": [
+      "Previous main remains retained at lzppsoto/E-READ-068. This is the requested next landing of zoxkwqvx/ab8861ad and zspxprxy/54c9fab9. Keep the bounded-reads workspace registered and open.",
+      "72 slice evidence files copied or verified byte-identically into main with per-file SHA256 and sizes in .local/bounded-reads/performance/landing-evidence-copy-071.json. All511 prior ledger evidence objects and original text remain intact.",
+      "Focused source checks are separate from complete deferred qualification. No installed executable, development service, fixture, Linux source, reset, migration or release changed.",
+      "Actual main sources pass370 distinct focused Rust tests:query64,WAL library14,publication34,preparation1,cache3,wire3,native RPC20,native lifecycle231. Two exact targets also pass separately before combined binaries. No focused test failure.",
+      "Affected WAL/JJ/service/RPC/CLI all-target checks and boundaries,architecture,spec-first,spec-validation,progress and changed-document formatting pass. Shared generated target avoids duplicate build storage; debug linker warnings remain inherited and release qualification is deferred.",
+      "All511 prior evidence entries remain verbatim and JSON-identical; only E-READ-071 is appended. The main and temporary implementation trees agree through E-READ-070. Preserve the temporary workspace for the next delivery."
+    ],
+    "remaining": [
+      "Reverse-copy family/path lookup and resumable cold native kind preparation remain next delivery work.",
+      "General filtered-log continuation, uncached/ambiguous evolution, indexed code/local search and oversized comparison/change grouping/extreme filters remain.",
+      "Complete scale/RSS/latency/fault/cold-browser/RustFS/release and Help/generated reference/source-review qualification remains deferred. Inherited installation-reference drift remains an open qualification gate."
+    ],
+    "next": "Commit verified main landing evidence, advance codex/bounded-reads-landed and rebase the empty temporary working change onto xvyloluq. Continue high-priority immutable copy-family lookup and resumable cold native preparation in that retained workspace. Full qualification remains deferred.",
+    "result": "pending"
   }
 ]
 ```

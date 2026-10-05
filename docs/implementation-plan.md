@@ -27,6 +27,13 @@ formats and collaboration capacity limits. Do not enable deferred capabilities.
 
 ### Performance delivery first
 
+E-READ-071 lands E-READ-069 and E-READ-070 into clean main at the user's
+request. Verify the combined native query/preparation, factory/RPC/lifecycle and
+WAL projection surface using main's sources, retaining byte-identical slice logs
+and all historical ledger entries. Keep the temporary workspace open on this
+landing and continue reverse-copy lookup and resumable cold preparation. Full
+qualification remains the separate later slice.
+
 E-READ-070 adds bounded selected-inventory projection pages retaining operation
 IDs and copy-parent edges at the first descriptor read. Whole-root and addition
 windows discard unrelated identities, report processed descriptors and charged
