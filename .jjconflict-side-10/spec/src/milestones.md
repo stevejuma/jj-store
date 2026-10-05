@@ -152,9 +152,9 @@ shared-package release qualification does not alter those original Git gates.
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                        | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work          | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013 |
+| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014 |
 | M21.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | UI reviewed for backend integration; registry/visual gates remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009 |
-| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Complete recoverable checkout and durable combinations | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013 |
+| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Complete recoverable checkout and durable combinations | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -86446,6 +86446,193 @@ entries.
   "next": "Compose real operation preparation and retained archival identity with the private journal, acquire foreground WC coordination, then qualify exact upstream publication and guarded checkout before enabling named combinations or writable UI.",
   "out_of_scope": "UI/Storybook/types/browser startup and generated HTTP contracts unchanged. No package publication, installed binary/service replacement, reset/migration of existing repos, automatic ref cleanup, real RustFS, native checkout execution, screenshot comparisons/baseline updates or fresh visual review. Source ancestry reconstruction and complete recoverable execution are not inferred from an archived operation/view.",
   "summary": "Qualified archival retention/replay of real unpublished code through GC/source-state loss; required JJ strict lint repaired and local/native reader consumers pass. M21.2 remains In progress."
+},
+{
+  "id": "E-M21-014",
+  "tasks": [
+    "M21",
+    "M21.2"
+  ],
+  "date": "2026-10-05",
+  "revision": "nzpmmsoo",
+  "kind": "Nonblocking foreground JJ working-copy coordination",
+  "versions": "Rust 1.98.1; pinned JJ 0.45.1 Git SHA-1 profile; real /opt/homebrew/bin/jj CLI contention and actual subprocess exit in disposable local fixtures; macOS ARM64.",
+  "formats": "No wire, native, capsule, companion, journal, WAL or manifest encoding changes. Uses the existing working_copy.lock Unix flock protocol with descriptor-relative no-follow open and single-link identity checks; retained empty lock file is compatible with upstream process-loss recovery. One shared preparation permit remains occupied for the lease lifetime.",
+  "files": [
+    "crates/jj-store-jj/src/lib.rs",
+    "crates/jj-store-jj/src/local_browser/working_tree/current/physical.rs",
+    "crates/jj-store-jj/src/local_browser/working_tree/current.rs",
+    "crates/jj-store-jj/src/local_browser/working_tree.rs",
+    "crates/jj-store-jj/src/local_execution/guard.rs",
+    "crates/jj-store-jj/src/local_execution/mod.rs",
+    "crates/jj-store-jj/tests/stack_foreground/fixture.rs",
+    "crates/jj-store-jj/tests/stack_foreground/lifecycle.rs",
+    "crates/jj-store-jj/tests/stack_foreground.rs",
+    "docs/implementation-plan.md",
+    "docs/maintenance/coverage.json",
+    "docs/site/technical/local.md",
+    "spec/src/architecture.md",
+    "spec/src/documentation.md",
+    "spec/src/jj-integration.md",
+    "spec/src/local-jj.md",
+    "spec/src/verification.md",
+    "spec/src/milestones.md"
+  ],
+  "before": "Exact foreground regression cannot import the absent local_execution coordinator. Stock JJ used as the actual foreground-lock consumer.",
+  "scope": "One owning JJ integration primitive. Exact lease acquisition/revalidation, busy admission, cancellation, real CLI contention/process loss and unsafe/replaced metadata or lock identity. Existing bounded read methods are reused unchanged; no operation preparation, publication or checkout method is exposed.",
+  "tests": [
+    "crates/jj-store-jj/tests/stack_foreground.rs#foreground_lease_matches_stock_jj_and_preserves_dirty_checkout",
+    "crates/jj-store-jj/tests/stack_foreground.rs#competing_foreground_lease_is_busy_and_release_restores_admission",
+    "crates/jj-store-jj/tests/stack_foreground.rs#stale_selection_and_replaced_lock_fail_without_writing_checkout",
+    "crates/jj-store-jj/tests/stack_foreground.rs#unsafe_lock_entries_are_rejected_without_touching_their_targets",
+    "crates/jj-store-jj/tests/stack_foreground.rs#missing_checkout_state_is_not_initialized_and_editor_bytes_are_separate",
+    "crates/jj-store-jj/tests/stack_foreground/lifecycle.rs#external_heads_and_replaced_working_copy_directory_invalidate_the_lease",
+    "crates/jj-store-jj/tests/stack_foreground/lifecycle.rs#cancellation_after_lock_releases_foreground_admission_and_preserves_state",
+    "crates/jj-store-jj/tests/stack_foreground/lifecycle.rs#foreground_process_loss_releases_lock_without_changing_checkout"
+  ],
+  "runs": [
+    {
+      "command": "cargo test --locked -p jj-store-jj --test stack_foreground",
+      "result": "fail",
+      "failures": 1,
+      "note": "stack-foreground-before.log: one absent local_execution export diagnostic reproduces the missing foreground coordinator boundary."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-jj --test stack_foreground",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-foreground-first.log: four exact foreground regressions pass against real stock JJ. Busy locks, unsafe symlink/hardlink entries and selected-lock replacement preserve checkout state."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-jj --test stack_foreground",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-foreground-lifecycle1.log: seven pass, one explicitly ignored subprocess helper is actually invoked by its passing process-loss parent. Cancellation, external heads, replaced WC directories and abrupt process exit preserve checkout bytes and release foreground admission."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-jj --test stack_foreground --test stack_preparation_retention --test local_metadata --test local_evidence",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-foreground-direct.log: 33 pass (7 foreground, 6 retention, 14 metadata, 6 evidence); the foreground subprocess helper remains explicitly ignored for ordinary invocation but runs through its parent."
+    },
+    {
+      "command": "cargo check --locked -p jj-store-jj --all-targets",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-foreground-check.log: owning integration all-target type/check lane passes."
+    },
+    {
+      "command": "cargo clippy --locked -p jj-store-jj --all-targets --no-deps -- -D warnings",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-foreground-lint.log: strict owning integration lint passes, without warnings suppressed or dependency/service lint qualification."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-jj --lib",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-foreground-unit.log: all 29 owning unit tests pass. Private descriptor helper visibility changes preserve original read implementations."
+    },
+    {
+      "command": "pnpm check:boundaries",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-foreground-boundaries.log: 17 packages pass; owned witnesses and access cross the coordinator boundary, no upstream working-copy type escapes."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-foreground-architecture.log: 1090 modules pass; no presentation/source-checkout dependency change."
+    },
+    {
+      "command": "cargo fmt --all",
+      "result": "pass",
+      "failures": 0,
+      "note": "Pinned Rust formatter applied to the affected source; unrelated files remain unchanged."
+    },
+    {
+      "command": "pnpm format:rust:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-foreground-rust-format.log and stack-foreground-rust-format-final.log: root and embedded-runtime formatting checks pass."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/local-jj.md spec/src/jj-integration.md spec/src/architecture.md spec/src/verification.md docs/implementation-plan.md docs/site/technical/local.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-foreground-docs-format.log: changed canonical/manual documents only; historical ledger excluded."
+    },
+    {
+      "command": "pnpm docs:review local \"Qualified nonblocking foreground JJ working-copy leases with exact authorized metadata/head validation, bounded admission and cancellation, real CLI contention/process loss, unsafe lock rejection and release that never unlinks. No snapshot/publication/checkout capability; physical editor bytes remain separately guarded.\"",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-foreground-docs-review.log: local source review acknowledges the exact primitive and its incomplete execution boundaries."
+    },
+    {
+      "command": "pnpm exec prettier --check spec/src/architecture.md spec/src/jj-integration.md spec/src/local-jj.md spec/src/verification.md docs/implementation-plan.md docs/site/technical/local.md docs/maintenance/coverage.json",
+      "result": "fail",
+      "failures": 1,
+      "note": "stack-foreground-docs-format-check.log: one generated review JSON formatting diagnostic; formatted coverage explicitly, without touching milestones.md."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/maintenance/coverage.json spec/src/documentation.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-foreground-coverage-format.log: formatted review JSON and owning documentation chapter."
+    },
+    {
+      "command": "pnpm exec prettier --check spec/src/architecture.md spec/src/jj-integration.md spec/src/local-jj.md spec/src/verification.md spec/src/documentation.md docs/implementation-plan.md docs/site/technical/local.md docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-foreground-format-final.log: all changed documents pass formatting; ledger never formatted."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-jj --test stack_foreground",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-foreground-final.log: final complete foreground binary has eight passing regressions and one ignored subprocess helper invoked by its passing parent. Includes noninitialization of missing checkout state and explicit separation of external editor bytes from metadata proof."
+    },
+    {
+      "command": "pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-foreground-docs-check.log: nine offline Mermaid diagrams, strict manual build and 139-file link/anchor closure pass."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-foreground-spec-first.log: 12 protected files and five owning canonical chapters pass."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-foreground-spec-validate.log: five validators, 23 chapters and 173 requirements pass."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-foreground-progress.log and stack-foreground-progress-final.log: 142 tasks pass bookkeeping after final evidence, with M21.2 In progress and result pending for remaining approved work."
+    },
+    {
+      "command": "cargo clippy --locked -p jj-store-jj --all-targets --no-deps -- -D warnings",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-foreground-lint-final.log: final strict owning all-target lint passes after the additional missing-state/editor-byte regression."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Stage 3 remains incomplete: real command preparation and retained source operation ancestry, exact guarded head publication, safe physical checkout and durable recovery, server journal/retainer/coordinator composition, runtime request/status/discovery and boundary fault acceptance. A foreground lease is metadata coordination, not proof against external editor bytes; no command capability enabled.",
+    "Stage 2 complete active-combination Unstaged and watcher/lifecycle acceptance remain dependent on durable combination state. Approved Stages 4-7 still require merge/WIP combinations, exact file then issued-hunk transfers, graph actions and guarded undo, linked-native real-storage and complete cold UI flows.",
+    "Two inherited service strict-lint diagnostics from E-M21-010 remain unresolved and unwaived; owning JJ no-deps lint is not aggregate lint qualification."
+  ],
+  "next": "Compose the foreground lease with actual unpublished command preparation, retained exact code and private journal transitions, then prove operation-head publication and guarded checkout recovery before enabling combinations or writable UI.",
+  "out_of_scope": "No UI, Storybook, startup, contract generation or installed service/binary changes. No package publication, real RustFS/native execution, existing repo reset/migration, screenshot comparison/baseline updates or fresh visual review. Root aggregates and unrelated packages/consumers are out of scope under targeted policy.",
+  "summary": "Qualified nonblocking foreground coordination with real stock JJ and process-loss/cancellation/identity evidence. Complete backend/UI integration remains In progress."
 }
 ]
 ```

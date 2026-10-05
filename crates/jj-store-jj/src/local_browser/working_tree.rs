@@ -1,5 +1,5 @@
 //! Private operation-pinned WC baseline; neither a disk snapshot nor a wire query.
-mod current;
+pub(crate) mod current;
 mod ignores;
 use super::*;
 pub use current::{Checkout, CurrentState, MAX_CHECKOUT_BYTES};

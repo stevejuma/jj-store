@@ -10,7 +10,7 @@ pub(super) struct Bytes {
     pub bytes: Vec<u8>,
     pub fingerprint: m::RecordDigest,
 }
-pub(super) fn directory(path: &Path) -> Result<File> {
+pub(crate) fn directory(path: &Path) -> Result<File> {
     if !path.is_absolute() {
         return Err(Error::Invalid);
     }
@@ -30,7 +30,7 @@ pub(super) fn directory(path: &Path) -> Result<File> {
     }
     Ok(dir)
 }
-pub(super) fn child(dir: &File, name: &str) -> Result<File> {
+pub(crate) fn child(dir: &File, name: &str) -> Result<File> {
     fs::openat(dir, name, DIR, Mode::empty())
         .map(File::from)
         .map_err(|_| Error::Unavailable)

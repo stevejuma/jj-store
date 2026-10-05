@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Documented immutable reserved-ref Stacks code retention, exact scope and retry, complete Git reachability, unknown ref selection and loose/packed replay. Archival retention does not qualify production command generation, source operation ancestry, head publication or guarded checkout. Four JJ read lint repairs preserve admission and preparation behavior.",
-      "fingerprint": "189a5b9631cff53c963ccbfc6475c18f6b6657e99d8bc05338cbfdecc7a23773"
+      "reason": "Qualified nonblocking foreground JJ working-copy leases with exact authorized metadata/head validation, bounded admission and cancellation, real CLI contention/process loss, unsafe lock rejection and release that never unlinks. No snapshot/publication/checkout capability; physical editor bytes remain separately guarded.",
+      "fingerprint": "79f5140f60e3bb1fc645ae83fe84897cf36f90fbdda2a88979a6af01015dec65"
     }
   },
   {

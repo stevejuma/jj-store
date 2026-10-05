@@ -96,6 +96,18 @@ ancestry, generate production commands, publish operation heads or coordinate
 checkout. Writable Stacks capabilities remain unavailable until those execution
 and recovery gates qualify.
 
+Private foreground coordination now takes the same working-copy lock used by the
+pinned stock JJ CLI. Acquisition is nonblocking: a held lock reports Busy. The
+lease rechecks the exact authorized checkout, operation heads, ignore/sparse
+inputs and directory/lock identity. Cancellation or process loss releases the
+kernel lock without altering checkout files or bookkeeping. Unsafe or replaced
+lock entries are rejected, and release never removes a replacement file.
+
+This is a metadata coordination primitive. External editors do not use this
+lock, so apply and checkout still need fresh physical-byte guards. No runtime
+write capability, operation publication or checkout recovery is enabled by the
+lease alone.
+
 Device paths, access grants, credentials and active execution journals are not
 portable repository records. Ordinary Git/JJ network commands do not transfer
 the owned companion ref. Do not assume a normal code push backs up

@@ -58,6 +58,14 @@ Archival operation/view data survives source operation/index loss without
 granting a head-publication or checkout capability. Runtime composition must
 still join exact preparation, journal, code publication and checkout boundaries.
 
+The JJ local execution coordinator owns a nonblocking foreground working-copy
+lease with the same kernel lock identity as the pinned CLI. It reuses bounded
+checkout witnesses through owned authorization interfaces, retains admission
+until release and rejects stale/replaced metadata or lock identities. The lease
+does not snapshot, publish or finish checkout state. Composition must separately
+revalidate physical bytes and join the retained exact operation with journal,
+publication and checkout recovery before enabling writes.
+
 Independent conversion remains inside the JJ integration, owned service and
 installation orchestration boundaries. Destination providers consume explicit
 versioned archives and typed translators. Test-only collaboration dependencies

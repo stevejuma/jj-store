@@ -105,6 +105,17 @@ Unknown selection is not rejection. This owns archival retention only, separate
 from unpublished command generation, operation-ancestry recovery, head
 publication and foreground checkout qualification.
 
+The local execution coordinator uses a bounded, nonblocking foreground lease
+compatible with pinned JJ's local working-copy lock. Descriptor-relative
+no-follow opens, regular single-link identity checks and replacement-safe
+release preserve the upstream Unix locking protocol without its indefinite
+blocking acquisition. Only owned checkout witnesses and authorization interfaces
+cross the boundary. Admission is retained while leased; post-lock and explicit
+later metadata checks repeat the exact witness, operation heads and
+directory/lock identities. There is no snapshot, reconciliation, code
+publication or working-copy bookkeeping update. External editor bytes are
+separately guarded by composition.
+
 Capsule retention derives every non-root physical commit and backend tree from
 the exact archive. Selected reads require those entries in the selected metadata
 retention inventory, even when a blob was retained for another domain. An anchor

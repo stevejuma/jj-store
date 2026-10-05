@@ -10,6 +10,7 @@ pub mod git_bridge;
 mod line_diff;
 pub mod local_browser;
 pub mod local_evidence;
+pub mod local_execution;
 pub mod local_metadata;
 pub mod local_repository;
 pub mod native_dto;

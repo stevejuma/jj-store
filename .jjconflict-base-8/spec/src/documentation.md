@@ -1,5 +1,12 @@
 # Application documentation
 
+The local technical manual distinguishes qualified foreground working-copy
+coordination from unfinished command publication and guarded checkout recovery.
+It documents Busy, exact metadata/policy checks and process-loss release without
+claiming editor-byte locking or an enabled Stacks write capability. Source
+review acknowledgements and historical progress evidence remain separately
+maintained.
+
 The application manual explains current behavior to users, operators and
 contributors. The specification continues to own normative requirements and
 qualification evidence; internal plans and evidence are not published as Help.

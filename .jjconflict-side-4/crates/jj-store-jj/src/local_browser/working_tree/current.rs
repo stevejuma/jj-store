@@ -1,7 +1,7 @@
 //! Existing checkout/ignore witnesses only; no WC loader, initialization or mutation.
 mod capture;
 mod decode;
-mod physical;
+pub(crate) mod physical;
 use super::*;
 use std::path::PathBuf;
 pub const MAX_CHECKOUT_BYTES: usize = 4 * 1024 * 1024;

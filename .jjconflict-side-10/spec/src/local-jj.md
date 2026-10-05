@@ -782,6 +782,23 @@ boundary alone does not recreate the full source operation ancestry, authorize
 head publication or establish guarded checkout; those execution gates remain
 required before a writable capability.
 
+Foreground Stacks coordination MUST acquire the existing JJ local working-copy
+lock before an execution boundary, without waiting indefinitely or snapshotting
+files. The lease retains worker admission until release. It MUST revalidate the
+authorized registration and complete current checkout witness after acquiring
+the lock, including physical workspace and metadata directory identity, exact
+operation/view, named workspace, tree terms/labels, sparse rules, ignore inputs
+and unchanged operation heads. Stale, busy, canceled or missing inputs cannot
+initialize state or repair a checkout. Ordinary CLI commands must contend on the
+same lock, and independent physical workspaces keep independent locks.
+
+The lock MUST use descriptor-relative, no-follow file access and reject
+symlinks, hardlinks and replaced/unlinked lock identities. Release MUST NOT
+unlink a replacement file. A metadata lease is not a lock against external
+editors and does not prove physical bytes: the bounded physical observation and
+fresh checkout guards remain required. This coordination primitive alone cannot
+publish code, modify checkout bookkeeping or enable a runtime write capability.
+
 Server-retained content selections bind source and parent tree identities,
 complete code/device/combination selection, safe repository path, exact
 file-state fingerprint and whole-file or verified hunk scope. Commands carry
