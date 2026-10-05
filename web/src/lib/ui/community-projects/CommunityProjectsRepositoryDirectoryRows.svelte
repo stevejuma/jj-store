@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { Skeleton } from "@lapismd/design-core/shadcn/skeleton";
   import { createVirtualizer } from "@tanstack/svelte-virtual";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as Table from "@lapismd/design-core/shadcn/table";
@@ -181,19 +182,25 @@
     </Button>
   </Table.Cell>
   <Table.Cell>
-    <span
-      class="community-projects__file-commit-message"
-      title={entryCommit?.message}
-    >
-      {row.kind === "parent"
-        ? "—"
-        : (entryCommit?.message ??
-          (canLoadPathCommit && !commitLoaded ? "Loading…" : "—"))}
-    </span>
+    {#if canLoadPathCommit && !commitLoaded}
+      <div
+        role="status"
+        aria-label={`Loading metadata for ${entry?.path}`}
+        aria-busy="true"
+      >
+        <Skeleton style="height: 1rem; width: 100%" />
+      </div>
+    {:else}<span
+        class="community-projects__file-commit-message"
+        title={entryCommit?.message}>{entryCommit?.message ?? "—"}</span
+      >{/if}
   </Table.Cell>
   <Table.Cell>
     {#if entryCommit?.createdAt}
       <CommunityRelativeTime timestamp={entryCommit.createdAt} {now} />
+    {:else if canLoadPathCommit && !commitLoaded}<Skeleton
+        style="height: 1rem; width: 4rem"
+      />
     {:else}
       <span aria-hidden="true">—</span>
     {/if}
@@ -204,9 +211,11 @@
   bind:ref={host}
   class="community-projects__virtual-directory-body"
   aria-busy={loading}
-  style={scrollElement ? `height: ${$virtualizer.getTotalSize()}px` : undefined}
+  style={scrollElement
+    ? `height: ${$virtualizer.getTotalSize() + (loading ? 38 : 0)}px`
+    : undefined}
 >
-  {#if rows.length === 0}
+  {#if rows.length === 0 && !loading}
     <Table.Row>
       <Table.Cell colspan={3}>
         <p class="community-projects__status">
@@ -237,6 +246,24 @@
         {@render directoryCells(row, index)}
       </Table.Row>
     {/each}
+  {/if}
+  {#if loading}
+    <tr
+      class:community-projects__virtual-directory-row={!!scrollElement}
+      style:transform={scrollElement
+        ? `translateY(${$virtualizer.getTotalSize()}px)`
+        : undefined}
+    >
+      <Table.Cell colspan={3}>
+        <div
+          role="status"
+          aria-label="Loading more repository files"
+          aria-busy="true"
+        >
+          <Skeleton style="height: 1rem; width: 100%" />
+        </div>
+      </Table.Cell>
+    </tr>
   {/if}
 </Table.Body>
 

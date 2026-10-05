@@ -1,6 +1,7 @@
 <script lang="ts">
   import { provideTerminalControls } from "../../terminal/controls.svelte.js";
   provideTerminalControls();
+  import StoreIndexPreparationNotice from "./StoreIndexPreparationNotice.svelte";
   import StoreApplicationMain from "./StoreApplicationMain.svelte";
   import StoreHelp from "../store-help/StoreHelp.svelte";
   import { ownApplicationNotifications } from "../../notifications/notification-context.svelte.js";
@@ -259,4 +260,5 @@
     bind:open={searchOpen}
   />{/if}
 
+<StoreIndexPreparationNotice {controller} />
 <StoreNotificationHost owner={notifications} />

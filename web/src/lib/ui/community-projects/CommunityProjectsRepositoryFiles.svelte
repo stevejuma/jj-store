@@ -8,7 +8,7 @@
   import { Button } from "@lapismd/design-core/shadcn/button";
   import type { StoreController } from "../../controller/contracts.js";
   import CommunityProjectsRepositoryFileTree from "./CommunityProjectsRepositoryFileTree.svelte";
-  import CommunityProjectsColumnAlert from "./CommunityProjectsColumnAlert.svelte";
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import CommunityProjectsRepositoryFilePanel from "./CommunityProjectsRepositoryFilePanel.svelte";
   import CommunityProjectsRepositoryBreadcrumb from "./CommunityProjectsRepositoryBreadcrumb.svelte";
   import CommunityProjectsRepositoryDirectory from "./CommunityProjectsRepositoryDirectory.svelte";
@@ -56,7 +56,8 @@
     !view.snapshot &&
       (view.status.connection === "connecting" ||
         view.status.navigation === "loading" ||
-        view.status.files === "loading"),
+        view.status.files === "loading" ||
+        view.settings.indexPreparation === "loading"),
   );
   const fileTreeStyle = $derived(
     `--ui-shell-body-sidebar-width: ${fileTreeWidth}px`,
@@ -234,16 +235,19 @@
         layout="directory"
         label="Loading repository files"
       />{:else}
-      {#if view.targets.length > 1}<CommunityProjectsColumnAlert
+      {#if view.targets.length > 1}<StoreNotice
+          noticeKey="bookmark-target-selection"
+          severity="warning"
           title="Choose a bookmark target"
-          description="This bookmark is conflicted. Select an explicit revision to browse its files."
-        >
+          message="This bookmark is conflicted. Select an explicit revision to browse its files."
+        />
+        <div role="group" aria-label="Choose a bookmark target">
           {#each view.targets as target}<Button
               variant="outline"
               onclick={() => controller.actions.selectRevision(target)}
               >Open target {target.slice(0, 8)}…{target.slice(-4)}</Button
-            >{/each}</CommunityProjectsColumnAlert
-        >{/if}
+            >{/each}
+        </div>{/if}
       {#if view.route.path}<CommunityProjectsRepositoryFilePanel
           {controller}
           bind:editing

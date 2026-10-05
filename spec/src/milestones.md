@@ -89674,6 +89674,226 @@ entries.
       "Visual review/baselines remain pending. Rust/backend, root aggregate, full repository/release/fault suites are out of scope for this UI slice."
     ],
     "next": "Retain the verified UI slice in bounded-reads and the refreshed 7470 preview; stop after committing. Keep advanced-query work deferred."
+  },
+  {
+    "id": "E-UI-102",
+    "tasks": ["M4.9", "M4.10"],
+    "requirements": ["JST-UI-005", "JST-UI-019"],
+    "date": "2026-10-05",
+    "kind": "Repository state toast and skeleton audit",
+    "revision": "enclosing Jujutsu change uklvrtou",
+    "before": "The graph-recovery producer still rendered preparation and cancellation paragraphs plus a body button. File summary/row metadata, paging and history search used loading text. Graph warnings, evolution feedback and index preparation progress/status used body callouts or rows.",
+    "scope": "Presentation-only audit of core browsing, operation/evolution views, history query and the index preparation controls delivered by the bounded-read work. Reuse StoreNotice, the existing session notification service and public Skeleton. One application-owned task toast survives Settings and page changes; isolated composites share one fallback host. Known target choices, validation and content empty states retain their controls. Current progress does not replay a dismissed running toast; final counters are shown in a separate persistent summary.",
+    "formats": "No backend query, task polling, API/schema, native/companion/storage/WAL/receipt, credential, fixture or installed executable changes. No foundational package changes in this slice. Existing local source dependency validation setup retained; no registry/release qualification claimed.",
+    "versions": "macOS ARM64; Node 26.9.0; pnpm 10.32.1; Svelte 5.57.1; Vitest 4.1.11; Storybook 10.5.7.",
+    "files": [
+      "catalog/components/community-projects/CommunityProjectsRepositoryDirectory.stories.svelte",
+      "catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte",
+      "catalog/components/community-projects/CommunityProjectsRevisionGraph.stories.svelte",
+      "catalog/components/store-application/StoreApplication.stories.svelte",
+      "catalog/components/store-application/StoreEvolutionColumn.stories.svelte",
+      "catalog/components/store-application/StoreKindPreparation.stories.svelte",
+      "catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+      "catalog/components/store-application/StoreRepositoryFeedback.stories.svelte",
+      "catalog/fixtures/RepositoryPreparationFixture.svelte",
+      "spec/src/api.md",
+      "spec/src/ui.md",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryDirectory.svelte",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryDirectoryRows.svelte",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryFiles.svelte",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryLog.svelte",
+      "web/src/lib/ui/store-application/StoreRepositoryLogNotices.svelte",
+      "web/src/lib/ui/community-projects/CommunityProjectsVirtualRows.svelte",
+      "web/src/lib/ui/store-application/StoreApplication.svelte",
+      "web/src/lib/ui/store-application/StoreEvolutionColumn.svelte",
+      "web/src/lib/ui/store-application/StoreIndexPreparationNotice.svelte",
+      "web/src/lib/ui/store-application/StoreRepositoryApplication.svelte",
+      "web/src/lib/ui/store-application/StoreRepositoryNotices.svelte",
+      "web/src/lib/ui/store-history-query/StoreHistoryQuery.svelte",
+      "web/src/lib/ui/store-settings/StoreGraphIndexSettings.svelte",
+      "spec/src/milestones.md"
+    ],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreRepositoryFeedback.stories.svelte (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "before.log: exact preparation regression finds the inline Preparing the graph index paragraph."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreRepositoryFeedback.stories.svelte (initial after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "after.log: preparation, skeleton and original-task cancellation/retry flow passes."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreRepositoryFeedback.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryDirectory.stories.svelte catalog/components/community-projects/CommunityProjectsRevisionGraph.stories.svelte catalog/components/store-application/StoreEvolutionColumn.stories.svelte catalog/components/store-application/StoreKindPreparation.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-history-query/StoreHistoryQuery.stories.svelte",
+        "result": "fail",
+        "failures": 3,
+        "note": "focused-stories.log: 47 pass, 3 fail. Two isolated composites owned separate toast hosts, causing duplicate notification landmarks; share one fallback owner. The screen-reader-only paging label requires clipping/class assertions rather than toBeVisible, which ignores clipping."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/store-application/StoreKindPreparation.stories.svelte catalog/components/community-projects/CommunityProjectsRevisionGraph.stories.svelte catalog/components/store-application/StoreRepositoryFeedback.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "corrected-stories.log: all 22 targeted stories pass, including the three corrected failures and dismissal across page changes."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreEvolutionColumn.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/StoreNotifications.stories.svelte catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte catalog/components/store-application/AgentLayout.stories.svelte catalog/components/store-application/AgentComments.stories.svelte catalog/components/store-application/NativeReviewDetail.stories.svelte catalog/components/store-work/NativeActivity.stories.svelte catalog/components/store-work/ProjectsAgents.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "direct-consumers.log: 44 pass. Shared VirtualRows loading presentation also affects bookmark, agent, review, activity and project-agent surfaces; these direct interaction/accessibility consumers justify this focused expansion."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreRepositoryFeedback.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryDirectory.stories.svelte catalog/components/store-history-query/StoreHistoryQuery.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "final-pages.log: 14 pass, including metadata/directory-page skeletons. Navigation with an already selected comparison now skeletonizes missing detail instead of flashing binary-unavailable content."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreRepositoryFeedback.stories.svelte catalog/components/store-application/StoreApplication.stories.svelte catalog/components/store-application/StoreKindPreparation.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "final-lifetime.log: 20 pass after application-level ownership. Preparation remains present and singular in Settings and Advanced; cancellation retry uses the original task. Completion is persistent until dismissal."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "op-count-final.log: 9 pass after suppressing an operation-head notice while no heads are loaded."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/notification-service.test.ts",
+        "result": "pass",
+        "failures": 0,
+        "note": "notification-units.log: 6 pass; existing notification service policy is unchanged."
+      },
+      {
+        "command": "pnpm web:check (initial and final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "web-check.log, web-check-final.log and web-final.log: each has 0 errors/warnings."
+      },
+      {
+        "command": "pnpm catalog:check (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "catalog-check.log: new fixture getter widened status literals; explicitly typed its StoreController state return."
+      },
+      {
+        "command": "pnpm catalog:check (intermediate)",
+        "result": "pass",
+        "failures": 0,
+        "note": "catalog-check-final.log and catalog-check-final2.log: 0 errors/warnings; 194 modules."
+      },
+      {
+        "command": "pnpm catalog:check (new Settings regression)",
+        "result": "fail",
+        "failures": 2,
+        "note": "catalog-final.log: two unsupported exact query options in the new story; removed redundant options without changing exact-name intent."
+      },
+      {
+        "command": "pnpm catalog:check (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "catalog-last.log: 0 errors/warnings, 194 modules."
+      },
+      {
+        "command": "pnpm check:architecture (initial)",
+        "result": "fail",
+        "failures": 2,
+        "note": "architecture.log: log component and one existing story exceeded their line ceilings. Grouped log notices in an owned leaf and kept the story within its existing ceiling; no policy/allowlist change."
+      },
+      {
+        "command": "pnpm check:architecture (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "architecture-final.log and architecture-last.log: 997 modules."
+      },
+      {
+        "command": "pnpm check:ui-ownership (initial and final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "ownership.log and ownership-final.log: no external Community imports or new copied sources."
+      },
+      {
+        "command": "pnpm exec prettier --write (changed source, stories and canonical files)",
+        "result": "pass",
+        "failures": 0,
+        "note": "format.log, format-final.log, last-format.log and global-format.log preserve focused formatting."
+      },
+      {
+        "command": "jj rebase -r uqwlnutu -d uklvrtou; jj workspace update-stale (preview)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Clean preview is advanced to this slice through snapshots; current HMR uses existing 7470/7472 binaries and fixture. No reset/build/restart required."
+      },
+      {
+        "command": "CUA cold Linux Commits, Overview, Op Log and Branches navigation",
+        "result": "pass",
+        "failures": 0,
+        "note": "Live Commits renders 12 virtual rows and no inline preparation. Overview and Op Log initially show their skeletons; settled Overview has no inline state text. Loaded Op Log has seven rows and operation-head information only in a toast. Branches initial load is a skeleton. Screenshots linux-commits.png and linux-oplog-toasts.png; original user tab retained."
+      },
+      {
+        "command": "pnpm spec:validate (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "spec.log: the application-specific notice leaf used a Community name/directory and triggered provenance policy. Moved it into Store application ownership; it is newly authored application policy, not copied Community presentation."
+      },
+      {
+        "command": "pnpm spec:first (initial)",
+        "result": "pass",
+        "failures": 0,
+        "note": "spec-first.log: 22 protected files, 3 canonical chapters."
+      },
+      {
+        "command": "pnpm check:progress (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "progress.log: pass cannot contain historical failing runs or explicit qualification gaps. Marked evidence pending while retaining all targeted passing outcomes and deferrals."
+      },
+      {
+        "command": "pnpm spec:validate (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "spec-final.log: 5 validators, 23 chapters, 172 requirements; final source ownership passes."
+      },
+      {
+        "command": "pnpm spec:first (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "spec-first-final.log: 22 protected files, 3 canonical chapters."
+      },
+      {
+        "command": "pnpm check:progress (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "progress-final.log: 139 tasks; evidence bookkeeping only."
+      },
+      {
+        "command": "pnpm check:architecture (last)",
+        "result": "pass",
+        "failures": 0,
+        "note": "architecture-final2.log: 997 modules."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte (final owner path)",
+        "result": "pass",
+        "failures": 0,
+        "note": "final-log.log: all 9 stories pass after the notice leaf moves to Store ownership."
+      },
+      {
+        "command": "pnpm exec prettier --write (all changed files; final source/ledger edits); pnpm exec prettier --check (all changed files)",
+        "result": "pass",
+        "failures": 0,
+        "note": "final-format.log, evidence-format-final.log and format-check.log: all changed files pass formatting; progress-last.log repeats the passing ledger check. Final settled live Branches has one option, no inline operational messages and no Vite overlay. Verification tab is closed."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Visual baselines remain unapproved. Rust, root aggregates, full repository/release/fault/RustFS and registry-only qualification are out of scope for this presentation-only slice. No milestone status is promoted. Advanced-query optimization stays deferred."
+    ],
+    "next": "Commit the verified slice in bounded-reads and retain the refreshed 7470 preview for review."
   }
 ]
 ```

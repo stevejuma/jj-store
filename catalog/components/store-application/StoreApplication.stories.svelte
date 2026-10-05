@@ -202,7 +202,9 @@
       canvas.getByRole("button", { name: "Prepare graph index" }),
     );
     await expect(
-      canvas.getByText("Graph index preparation completed."),
+      within(canvasElement.ownerDocument.body).getByText(
+        "Graph index preparation completed.",
+      ),
     ).toBeVisible();
     await userEvent.click(canvas.getByRole("button", { name: "Search" }));
     await userEvent.click(canvas.getByRole("tab", { name: "Health" }));
@@ -243,7 +245,9 @@
       canvas.getByRole("button", { name: "Prepare graph index" }),
     );
     await expect(
-      canvas.getByText("Graph index preparation completed."),
+      within(canvasElement.ownerDocument.body).getByText(
+        "Graph index preparation completed.",
+      ),
     ).toBeVisible();
   }}
 />

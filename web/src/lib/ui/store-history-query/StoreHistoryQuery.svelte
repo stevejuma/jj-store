@@ -4,6 +4,7 @@
   import SearchIcon from "@lucide/svelte/icons/search";
   import SettingsIcon from "@lucide/svelte/icons/settings-2";
   import * as Collapsible from "@lapismd/design-core/shadcn/collapsible";
+  import { Skeleton } from "@lapismd/design-core/shadcn/skeleton";
   import StoreHistoryQueryContext from "./StoreHistoryQueryContext.svelte";
   import type { StoreController } from "../../controller/contracts.js";
   import { historyExtensions } from "./history-language.js";
@@ -64,6 +65,12 @@
         ><StoreHistoryQueryContext {controller} /></Collapsible.Content
       >
     </Collapsible.Root>
-    {#if query.pending}<p role="status">Searching history…</p>{/if}
+    {#if query.pending}<div
+        role="status"
+        aria-label="Searching history"
+        aria-busy="true"
+      >
+        <Skeleton style="height: 1rem; width: 100%" />
+      </div>{/if}
   </div>
 {/if}

@@ -1,16 +1,11 @@
 <script lang="ts">
-  import { indexPreparationLabels } from "../../controller/index-preparation-labels.js";
   import type { StoreController } from "../../controller/contracts.js";
-  import { Button } from "@lapismd/design-core/shadcn/button";
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
   let { controller }: { controller: StoreController } = $props();
   const state = $derived(controller.state);
-  const label = $derived(
-    indexPreparationLabels[state.settings.indexPreparationKind ?? "graph"],
-  );
-  const preparing = $derived(state.settings.indexPreparation === "loading");
   const error = $derived(
-    state.route.workspace && state.status.navigation === "failed"
+    state.settings.indexPreparation === "loading" &&
+      state.status.error.includes("index rebuild required")
       ? ""
       : state.status.error,
   );
@@ -30,32 +25,3 @@
       }
     : undefined}
 />
-
-<StoreNotice
-  noticeKey="graph-index-recovery"
-  title={`${label} preparation`}
-  message={state.settings.indexCancellationUnconfirmed
-    ? ""
-    : state.settings.indexPreparationError}
-/>
-
-{#if preparing}
-  <div aria-label={`${label} preparation`}>
-    <p role="status">
-      {state.settings.indexTaskStatus === "canceling"
-        ? `Canceling ${label.toLowerCase()} preparation…`
-        : `Preparing the ${label.toLowerCase()}…`}
-    </p>
-    {#if state.settings.indexCancellationUnconfirmed}
-      <p role="status">
-        {state.settings.indexPreparationError} Retry cancellation.
-      </p>
-    {/if}
-    <Button
-      variant="outline"
-      disabled={state.settings.indexTaskStatus !== "running"}
-      onclick={() => void controller.actions.cancelIndex()}
-      >Cancel preparation</Button
-    >
-  </div>
-{/if}

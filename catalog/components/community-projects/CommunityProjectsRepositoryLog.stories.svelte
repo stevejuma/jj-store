@@ -65,24 +65,6 @@
       canvas.getByRole("button", { name: "Wrap text" }),
     ).toBeVisible();
   }
-  async function expectColumnBanner(
-    canvasElement: HTMLElement,
-    title: string,
-    tone: "warning" | "destructive",
-  ) {
-    const titleElement = within(canvasElement).getByText(title);
-    const alert = titleElement.closest<HTMLElement>('[data-ui-part="alert"]');
-    if (!alert) throw new Error(`Expected a column alert for ${title}`);
-    const style = getComputedStyle(alert);
-    await expect(alert).toHaveAttribute("data-tone", tone);
-    await expect(style.borderTopWidth).toBe("0px");
-    await expect(style.borderRightWidth).toBe("0px");
-    await expect(style.borderBottomWidth).toBe("1px");
-    await expect(style.borderLeftWidth).toBe("0px");
-    await expect(style.borderRadius).toBe("0px");
-    await expect(style.backgroundColor).not.toBe("rgba(0, 0, 0, 0)");
-    await expect(alert.querySelector(":scope > svg")).not.toBeNull();
-  }
 </script>
 
 <Story
@@ -139,8 +121,12 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(canvas.getByRole("option", { name: /conflicted/ }));
-    await expect(canvas.getByText("Conflicted bookmark")).toBeVisible();
-    await expectColumnBanner(canvasElement, "Conflicted bookmark", "warning");
+    await expect(
+      within(canvasElement.ownerDocument.body).getByText("Conflicted bookmark"),
+    ).toBeVisible();
+    await expect(
+      canvas.queryByText("Conflicted bookmark"),
+    ).not.toBeInTheDocument();
     await expect(
       await canvas.findByRole("button", {
         name: "Stream immutable native objects",
@@ -167,9 +153,12 @@
   name="Op Log"
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(canvas.getByRole("status")).toHaveTextContent(
-      "2 operation heads",
-    );
+    await expect(
+      within(canvasElement.ownerDocument.body).getByText(/2 operation heads/),
+    ).toBeVisible();
+    await expect(
+      canvas.queryByText(/2 operation heads/),
+    ).not.toBeInTheDocument();
     await userEvent.click(
       await canvas.findByRole("button", {
         name: "describe: native object history",
@@ -275,7 +264,9 @@
     await expect(
       canvas.getByRole("region", { name: "Selected operation" }),
     ).toHaveTextContent("Root operation");
-    await expect(canvas.getByText(/2 operation heads/)).toBeVisible();
+    await expect(
+      within(canvasElement.ownerDocument.body).getByText(/2 operation heads/),
+    ).toBeVisible();
   }}
   >{#snippet template()}<div class="repository-story">
       <RepositoryFixture page="oplog" />
@@ -284,14 +275,15 @@
 <Story
   name="Op Log comparison warning"
   play={async ({ canvasElement }) => {
-    await expectColumnBanner(
-      canvasElement,
-      "Comparison needs a target",
-      "warning",
-    );
-    await expect(within(canvasElement).getByRole("alert")).toHaveTextContent(
-      "One affected change has ambiguous lineage",
-    );
+    const canvas = within(canvasElement),
+      page = within(canvasElement.ownerDocument.body);
+    await expect(page.getByText("Comparison needs a target")).toBeVisible();
+    await expect(
+      canvas.queryByText("Comparison needs a target"),
+    ).not.toBeInTheDocument();
+    await expect(
+      page.getByText(/One affected change has ambiguous lineage/),
+    ).toBeVisible();
   }}
   >{#snippet template()}<div class="repository-story">
       <RepositoryFixture page="oplog" unavailableComparisonCount={1} />
@@ -310,11 +302,12 @@
 <Story
   name="Error"
   play={async ({ canvasElement }) => {
-    await expectColumnBanner(
-      canvasElement,
-      "History unavailable",
-      "destructive",
-    );
+    await expect(
+      within(canvasElement.ownerDocument.body).getByText("History unavailable"),
+    ).toBeVisible();
+    await expect(
+      within(canvasElement).queryByText("History unavailable"),
+    ).not.toBeInTheDocument();
   }}
   >{#snippet template()}<div class="repository-story">
       <RepositoryFixture page="log" state="error" />

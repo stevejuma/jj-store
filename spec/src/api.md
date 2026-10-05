@@ -26,6 +26,11 @@ retains its required target validation. Ordinary setup presents automatic
 history maintenance and hides advanced inventory controls when this capability
 is enabled.
 
+Repository preparation, cancellation and read-state feedback uses persistent
+application toasts with the existing request actions. Pending content uses
+skeletons without issuing replacement commands or changing selected operations.
+Dismissal never cancels a task; cancellation retains its original task identity.
+
 The native browser can explicitly prepare operation or copy inventories at its
 selected operation through the existing kind-task routes. One preparation flow
 owns one task and at most one status/cancel request at a time. Validate task ID,

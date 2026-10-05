@@ -258,7 +258,7 @@ unchanged.
 | JST-UI-016 | Local management MUST expose explicitly linked device workspaces, qualified capture setup and queue recovery, editable Search with isolated worker replacement, non-destructive storage verification/checkpoints and configured sync controls through typed capability-gated interfaces; unsupported profiles and deferred operations MUST remain explicit.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | JST-UI-017 | Threads MUST use the owned Community channel toolbar with a direct settings action, aligned pane headers, targeted Chat Message Metadata feedback, reaction count tooltips, bordered standard right pane, independently controlled outer details rail, settings, contributor and reply presentation, forum directory rows, repository-owned sidebar thread children, an accessible Repositories Browse threads action and contextual repository breadcrumbs, native composer entity pickers and message chips; workspace search MUST show recent activity, server-filtered section and entity scopes, native focus links and permission-gated bottom actions without inventing runner controls.                                                                                                                                                                                                    |
 | JST-UI-018 | The browser MUST expose the complete Buzz-derived device Appearance page, persist and restore app-wide preferences, apply resolved themes and typography to all owned conversations and overlays, retain native links and drafts, and offer working local link cards and responsive Focus/Split discussions and agent responses without altering repository authority.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| JST-UI-019 | Operational feedback MUST use scoped session-only Design Core toasts with explicit lifetimes, deduplication, recovery clearing, dismissal suppression and accessible severity; validation, unavailable content and exact contextual recovery MUST remain inline.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| JST-UI-019 | Operational feedback MUST use scoped session-only Design Core toasts with explicit lifetimes, deduplication, recovery clearing, dismissal suppression and accessible severity; validation, content empty states and exact mutation recovery MUST remain inline.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 
 ## Application notifications
 
@@ -270,12 +270,19 @@ Repeated observations update one stable scoped key. A dismissed unchanged
 condition cannot replay during polling or remount; resolution permits a new
 episode. Pointer and keyboard interaction pause timed dismissal.
 
-Field/query validation, unavailable-content explanations, pending command
-status, stale drafts and exact request recovery remain contextual. Reaction
-metadata retains its existing placement. General request failures and
-confirmations use toasts without duplicating inline announcements. Actions
-retain exact command identity and never change repository state merely because a
-toast is dismissed.
+Repository browsing state feedback, including graph/inventory preparation,
+cancellation, incomplete history, conflicted targets and metadata failures, uses
+persistent scoped toasts. Cancellation and retry actions live in those toasts;
+target-selection controls retain their explicit choices. Index progress does not
+add body status rows or replay a dismissed running notice as counts change.
+Pending graph, query, directory metadata and paged rows use accessible
+skeletons; loaded content remains available during background work.
+
+Field/query validation, content empty states, stale drafts and exact mutation
+request recovery remain contextual. Reaction metadata retains its existing
+placement. General request failures and confirmations use toasts without
+duplicating inline announcements. Actions retain exact command identity and
+never change repository state merely because a toast is dismissed.
 
 The application clears protected notification state on session changes and
 teardown. New notification records are independent of transport and DOM;

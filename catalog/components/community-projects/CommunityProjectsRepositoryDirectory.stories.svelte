@@ -49,6 +49,32 @@
 </script>
 
 <Story
+  name="Pending metadata uses skeletons"
+  args={{
+    latestCommit: undefined,
+    metadataStatus: "loading",
+    canLoadPathCommit: true,
+    loading: true,
+  }}
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await expect(
+      canvas.getByRole("status", { name: "Loading commit metadata" }),
+    ).toBeVisible();
+    await expect(
+      canvas.getByRole("status", { name: "Loading metadata for README.md" }),
+    ).toBeVisible();
+    await expect(
+      canvas.getByRole("status", { name: "Loading more repository files" }),
+    ).toBeVisible();
+    await expect(canvas.queryByText(/Loading/)).not.toBeInTheDocument();
+    await expect(
+      canvas.getByRole("button", { name: "Open file README.md" }),
+    ).toBeEnabled();
+  }}
+/>
+
+<Story
   name="Repository document tabs"
   play={async ({ canvasElement, args }) => {
     const canvas = within(canvasElement),

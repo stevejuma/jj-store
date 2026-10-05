@@ -1,4 +1,5 @@
 <script lang="ts" generics="Row">
+  import { Skeleton } from "@lapismd/design-core/shadcn/skeleton";
   import { createVirtualizer } from "@tanstack/svelte-virtual";
   import { get } from "svelte/store";
   import { onDestroy, untrack, type Snippet } from "svelte";
@@ -235,10 +236,13 @@
     <div
       class="community-projects-virtual-rows__edge"
       role={loadingAsListItem ? "listitem" : "status"}
+      aria-label={loadingLabel}
       aria-busy="true"
     >
-      {#if loadingAsListItem}<span role="status">{loadingLabel}</span
-        >{:else}{loadingLabel}{/if}
+      <span class="sr-only" role={loadingAsListItem ? "status" : undefined}
+        >{loadingLabel}</span
+      >
+      <Skeleton style="height: 1rem; width: 100%" />
     </div>
   {/if}
 </div>

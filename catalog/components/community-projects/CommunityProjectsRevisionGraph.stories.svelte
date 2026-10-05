@@ -52,6 +52,21 @@
 </script>
 
 <Story
+  name="Paged loading uses a skeleton"
+  args={{ loading: true }}
+  play={async ({ canvasElement }) => {
+    const edge = canvasElement.querySelector<HTMLElement>(
+      ".community-projects-virtual-rows__edge",
+    )!;
+    await expect(edge.querySelector('[data-slot="skeleton"]')).toBeVisible();
+    await expect(within(edge).getByText("Loading more history")).toHaveClass(
+      "sr-only",
+    );
+    await expect(edge).toHaveAttribute("aria-busy", "true");
+  }}
+/>
+
+<Story
   name="Fork merge and convergence"
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);

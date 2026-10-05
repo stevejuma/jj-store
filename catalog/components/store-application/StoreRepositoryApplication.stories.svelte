@@ -27,7 +27,8 @@
 <Story
   name="Persistent layout"
   play={async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement),
+      body = within(canvasElement.ownerDocument.body);
     const shellResize = canvas.getByRole("slider", {
       name: "Resize repository navigation sidebar",
     });
@@ -286,7 +287,7 @@
     await userEvent.click(
       await body.findByRole("option", { name: /conflicted/ }),
     );
-    await expect(canvas.getByText("Choose a bookmark target")).toBeVisible();
+    await expect(body.getByText("Choose a bookmark target")).toBeVisible();
     await expect(
       canvas.queryByRole("button", { name: "README.md" }),
     ).not.toBeInTheDocument();

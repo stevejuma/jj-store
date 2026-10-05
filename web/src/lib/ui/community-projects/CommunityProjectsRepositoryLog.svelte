@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { ownNotifications } from "../../notifications/notification-context.svelte.js";
+  import StoreNotificationHost from "../store-notifications/StoreNotificationHost.svelte";
+  const notifications = ownNotifications();
   import StoreHistoryQueryHeader from "../store-history-query/StoreHistoryQueryHeader.svelte";
   import StoreHistoryQuery from "../store-history-query/StoreHistoryQuery.svelte";
   import * as ColumnCanvas from "@lapismd/design-core/shadcn/column-canvas";
@@ -13,7 +16,7 @@
   import type { StoreController } from "../../controller/contracts.js";
   import { createRepositoryLogCanvas } from "../../projects/repository-log-canvas.js";
   import CommunityProjectsRevisionGraph from "./CommunityProjectsRevisionGraph.svelte";
-  import CommunityProjectsColumnAlert from "./CommunityProjectsColumnAlert.svelte";
+  import StoreRepositoryLogNotices from "../store-application/StoreRepositoryLogNotices.svelte";
   import CommunityProjectsRepositoryLogEmpty from "./CommunityProjectsRepositoryLogEmpty.svelte";
   import CommunityProjectsRepositoryLogDiff from "./CommunityProjectsRepositoryLogDiff.svelte";
   import CommunityProjectsRepositoryLogFiles from "./CommunityProjectsRepositoryLogFiles.svelte";
@@ -150,11 +153,13 @@
   aria-label="Repository log"
   aria-busy={loading || referencesLoading}
 >
-  {#if error}<CommunityProjectsColumnAlert
-      title="History unavailable"
-      description={error}
-      tone="destructive"
-    />{/if}
+  <StoreRepositoryLogNotices
+    {error}
+    {page}
+    targetCount={selectedBookmark?.targets.length ?? 0}
+    headCount={graph.devices.length}
+    {unavailableComparisonCount}
+  />
   <ColumnCanvas.Root controller={canvas}>
     {#if page === "branches"}<ColumnCanvas.Column
         id="branches"
@@ -199,56 +204,40 @@
               ? "Loading operation log"
               : "Loading JJ log"}
             showStatus={page === "oplog"}
-          />{:else}
-          {#if selectedBookmark && selectedBookmark.targets.length > 1}<CommunityProjectsColumnAlert
-              title="Conflicted bookmark"
-              description={`All ${selectedBookmark.targets.length} targets are shown. No target is implicitly selected.`}
-            />{/if}
-          {#if page === "oplog"}<p class="store-operation-heads" role="status">
-              {graph.devices.length} operation heads · selecting one does not reconcile
-              history
-            </p>{/if}
-          {#if unavailableComparisonCount > 0}<CommunityProjectsColumnAlert
-              title="Comparison needs a target"
-              description={`${unavailableComparisonCount === 1 ? "One affected change has" : `${unavailableComparisonCount} affected changes have`} ambiguous lineage and cannot be compared until an explicit target is selected.`}
-            />{/if}
-          {#if graph.revisions.length === 0}<CommunityProjectsRepositoryLogEmpty
-              pane={page === "oplog" ? "oplog" : "log"}
-              branch={selectedBranch}
-            />
-          {:else}<CommunityProjectsRevisionGraph
-              revisions={graph.revisions}
-              devices={graph.devices}
-              {selectedId}
-              {now}
-              graphLabel={page === "oplog"
-                ? "Operation graph"
-                : "Revision graph"}
-              commitLabel={page === "oplog" ? "operation ID" : "commit ID"}
-              onSelect={(revision) => selectRevision(revision.eventId)}
-              hasMore={hasMoreGraph && !controller?.historyQuery?.pending}
-              {loading}
-              onLoadMore={() => void onLoadMoreGraph()}
-              collaborationContext={controller?.state}
-            >
-              {#snippet selectedFiles()}
-                <CommunityProjectsRepositoryLogFiles
-                  compact
-                  title={changedFilesTitle}
-                  {files}
-                  {selectedPath}
-                  hasMore={hasMoreFiles}
-                  initialLoading={detailLoading}
-                  loading={filesLoading}
-                  loadingLabel={page === "oplog"
-                    ? "Loading changed files in operation"
-                    : "Loading changed files"}
-                  onSelectPath={selectFile}
-                  onLoadMore={() => void onLoadMoreFiles()}
-                />
-              {/snippet}
-            </CommunityProjectsRevisionGraph>{/if}
-        {/if}
+          />{:else if graph.revisions.length === 0}<CommunityProjectsRepositoryLogEmpty
+            pane={page === "oplog" ? "oplog" : "log"}
+            branch={selectedBranch}
+          />
+        {:else}<CommunityProjectsRevisionGraph
+            revisions={graph.revisions}
+            devices={graph.devices}
+            {selectedId}
+            {now}
+            graphLabel={page === "oplog" ? "Operation graph" : "Revision graph"}
+            commitLabel={page === "oplog" ? "operation ID" : "commit ID"}
+            onSelect={(revision) => selectRevision(revision.eventId)}
+            hasMore={hasMoreGraph && !controller?.historyQuery?.pending}
+            {loading}
+            onLoadMore={() => void onLoadMoreGraph()}
+            collaborationContext={controller?.state}
+          >
+            {#snippet selectedFiles()}
+              <CommunityProjectsRepositoryLogFiles
+                compact
+                title={changedFilesTitle}
+                {files}
+                {selectedPath}
+                hasMore={hasMoreFiles}
+                initialLoading={detailLoading}
+                loading={filesLoading}
+                loadingLabel={page === "oplog"
+                  ? "Loading changed files in operation"
+                  : "Loading changed files"}
+                onSelectPath={selectFile}
+                onLoadMore={() => void onLoadMoreFiles()}
+              />
+            {/snippet}
+          </CommunityProjectsRevisionGraph>{/if}
       </ColumnCanvas.Body>
     </ColumnCanvas.Column>
     {#if controller?.state.route.evolutionCommitId}
@@ -296,3 +285,5 @@
     {/if}
   </ColumnCanvas.Root>
 </section>
+
+<StoreNotificationHost owner={notifications} />

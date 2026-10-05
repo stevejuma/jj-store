@@ -1,15 +1,15 @@
 <script lang="ts">
-  import { indexPreparationLabels } from "../../controller/index-preparation-labels.js";
+  import { ownNotifications } from "../../notifications/notification-context.svelte.js";
+  import StoreNotificationHost from "../store-notifications/StoreNotificationHost.svelte";
+  const notifications = ownNotifications();
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
+  import StoreIndexPreparationNotice from "../store-application/StoreIndexPreparationNotice.svelte";
   import NetworkIcon from "@lucide/svelte/icons/network";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import type { StoreController } from "../../controller/contracts.js";
   let { controller }: { controller: StoreController } = $props();
   const settings = $derived(controller.state.settings);
   const supported = $derived(settings.capabilities?.index_tasks ?? false);
-  const label = $derived(
-    indexPreparationLabels[settings.indexPreparationKind ?? "graph"],
-  );
   const automatic = $derived(
     settings.capabilities?.automatic_code_index === true,
   );
@@ -48,71 +48,19 @@
               variant="outline"
               disabled={!settings.indexOperation || preparing}
               onclick={() => void controller.actions.prepareIndex()}
-              ><NetworkIcon
-                data-icon="inline-start"
-                aria-hidden="true"
-              />{preparing &&
-              (settings.indexPreparationKind ?? "graph") === "graph"
-                ? "Preparing graph index…"
-                : automatic
-                  ? "Retry history preparation"
-                  : "Prepare graph index"}</Button
+              ><NetworkIcon data-icon="inline-start" aria-hidden="true" />
+              {automatic
+                ? "Retry history preparation"
+                : "Prepare graph index"}</Button
             >
-            {#if preparing && (settings.indexPreparationKind ?? "graph") === "graph"}
-              <Button
-                variant="outline"
-                disabled={settings.indexTaskStatus !== "running"}
-                onclick={() => void controller.actions.cancelIndex()}
-                >{settings.indexTaskStatus === "canceling"
-                  ? "Canceling…"
-                  : "Cancel preparation"}</Button
-              >
-            {/if}
           </div>
-        {:else}<span>Graph preparation is not available.</span>{/if}
+        {/if}
       </dd>
     </div>
     <div>
       <dt>Text-search index</dt>
       <dd>Text search has a separate index, managed in Search settings.</dd>
     </div>
-    {#if supported && !settings.indexOperation}<div>
-        <dt>Selected operation</dt>
-        <dd>Choose one operation head before preparing the graph index.</dd>
-      </div>{/if}
-    {#if settings.indexProgress}<div>
-        <dt>Preparation progress</dt>
-        <dd aria-live="polite">
-          {settings.indexProgress.matching_ids.toLocaleString()} matching identities
-          in
-          {settings.indexProgress.stats.windows.toLocaleString()} windows;
-          {settings.indexProgress.stats.scanned.toLocaleString()} descriptors inspected.
-        </dd>
-      </div>{/if}
-    {#if settings.indexCancellationUnconfirmed}<div>
-        <dt>Cancellation</dt>
-        <dd role="status">
-          {settings.indexPreparationError} Retry cancellation below.
-        </dd>
-      </div>{/if}
-    {#if preparing}<div>
-        <dt>Status</dt>
-        <dd>
-          <span role="status"
-            >{settings.indexTaskStatus === "canceling"
-              ? `Canceling ${label.toLowerCase()} preparation…`
-              : `Preparing the ${label.toLowerCase()}…`}</span
-          >
-        </dd>
-      </div>
-    {:else if settings.indexTaskStatus === "canceled"}<div>
-        <dt>Status</dt>
-        <dd><span role="status">{label} preparation canceled.</span></dd>
-      </div>
-    {:else if settings.indexPreparation === "ready"}<div>
-        <dt>Status</dt>
-        <dd><span role="status">{label} preparation completed.</span></dd>
-      </div>{/if}
   </dl>
   {#if kindSupported}
     {#each ["operations", "copies"] as kind}
@@ -137,34 +85,27 @@
               void controller.actions.prepareKindIndex?.(
                 kind as "operations" | "copies",
               )}
-            >{preparing && settings.indexPreparationKind === kind
-              ? "Preparing"
-              : "Prepare"}
-            {kind === "operations" ? "operation" : "copy"} inventory{preparing &&
-            settings.indexPreparationKind === kind
-              ? "…"
-              : ""}</Button
+            >Prepare {kind === "operations" ? "operation" : "copy"} inventory</Button
           >
-          {#if preparing && settings.indexPreparationKind === kind}
-            <Button
-              variant="outline"
-              disabled={settings.indexTaskStatus !== "running"}
-              onclick={() => void controller.actions.cancelIndex()}
-              >{settings.indexTaskStatus === "canceling"
-                ? "Canceling…"
-                : "Cancel preparation"}</Button
-            >
-          {/if}
         </div>
       </div>
     {/each}
   {/if}
+  {#if notifications.owned}<StoreIndexPreparationNotice {controller} />{/if}
   <StoreNotice
-    noticeKey="graph-index"
-    title={`${label} preparation failed`}
-    message={settings.indexCancellationUnconfirmed
-      ? ""
-      : settings.indexPreparationError}
-    pending={false}
+    noticeKey="index-operation-selection"
+    title="Selected operation"
+    severity="warning"
+    message={supported && !settings.indexOperation
+      ? "Choose one operation head before preparing the graph index."
+      : ""}
+  />
+  <StoreNotice
+    noticeKey="index-capability"
+    title="Graph preparation unavailable"
+    severity="info"
+    message={!supported ? "Graph preparation is not available." : ""}
   />
 </section>
+
+<StoreNotificationHost owner={notifications} />

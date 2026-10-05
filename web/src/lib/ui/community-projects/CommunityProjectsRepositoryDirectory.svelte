@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { Skeleton } from "@lapismd/design-core/shadcn/skeleton";
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as Table from "@lapismd/design-core/shadcn/table";
   import EllipsisIcon from "@lucide/svelte/icons/ellipsis";
@@ -77,6 +79,15 @@
   );
 </script>
 
+<StoreNotice
+  noticeKey="directory-commit-metadata"
+  severity="warning"
+  title="Commit metadata unavailable"
+  message={metadataStatus === "failed" || metadataStatus === "unavailable"
+    ? "Last-change metadata is unavailable for this directory."
+    : ""}
+/>
+
 <section class="community-projects__file-browser">
   <div class="community-projects__file-browser-card">
     <div class="community-projects__file-browser-summary">
@@ -128,14 +139,14 @@
           >
             <EllipsisIcon aria-hidden="true" />
           </Button>
-        {:else}
-          <span class="community-projects__file-browser-summary-message">
-            {metadataStatus === "loading"
-              ? "Loading commit metadata…"
-              : metadataStatus === "failed" || metadataStatus === "unavailable"
-                ? "Commit metadata unavailable"
-                : "Select a repository snapshot"}
-          </span>
+        {:else if metadataStatus === "loading"}
+          <div
+            role="status"
+            aria-label="Loading commit metadata"
+            aria-busy="true"
+          >
+            <Skeleton style="width: 12rem; height: 1rem" />
+          </div>
         {/if}
       </div>
       <div class="community-projects__file-browser-summary-actions">

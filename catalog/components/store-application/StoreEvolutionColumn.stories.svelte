@@ -26,7 +26,9 @@
   args={{ state: "empty" }}
   play={async ({ canvasElement }) => {
     await expect(
-      within(canvasElement).getByText("No evolution history"),
+      within(canvasElement.ownerDocument.body).getByText(
+        "No evolution history",
+      ),
     ).toBeVisible();
   }}
 />
@@ -35,7 +37,9 @@
   args={{ state: "failed" }}
   play={async ({ canvasElement }) => {
     await expect(
-      within(canvasElement).getByText("Evolution unavailable"),
+      within(canvasElement.ownerDocument.body).getByText(
+        "Evolution unavailable",
+      ),
     ).toBeVisible();
     await expect(
       within(canvasElement).getByRole("button", {
@@ -48,9 +52,10 @@
   name="Incomplete native history"
   args={{ state: "incomplete" }}
   play={async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+    const canvas = within(canvasElement),
+      page = within(canvasElement.ownerDocument.body);
     await expect(
-      canvas.getByText("Incomplete predecessor history"),
+      page.getByText("Incomplete predecessor history"),
     ).toBeVisible();
     await expect(
       within(canvas.getByRole("list", { name: "Evolution log" })).getAllByRole(

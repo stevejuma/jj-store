@@ -11,7 +11,7 @@
   import CommunityProjectsRepositoryFiles from "../community-projects/CommunityProjectsRepositoryFiles.svelte";
   import StoreAgentSessions from "../store-collaboration/StoreAgentSessions.svelte";
   import StoreReviewThreads from "../store-collaboration/StoreReviewThreads.svelte";
-  import * as Alert from "@lapismd/design-core/shadcn/alert";
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   let {
     controller,
@@ -27,7 +27,9 @@
   const state = $derived(controller.state);
   const preparing = $derived(
     state.status.connection === "connecting" ||
-      state.status.navigation === "loading",
+      state.status.navigation === "loading" ||
+      state.settings.indexPreparation === "loading" ||
+      !!controller.historyQuery?.pending,
   );
   const selectedId = $derived(
     state.route.page === "oplog"
@@ -67,32 +69,31 @@
     {:else if needsOperation}<section
         class="store-repository-application__state"
       >
-        <Alert.Root>
-          <Alert.Title>Multiple operation heads</Alert.Title>
-          <Alert.Description
-            >Choose the operation snapshot to browse. Opening this view never
-            reconciles history.</Alert.Description
-          >
-          <div class="store-repository-application__choices">
-            {#each state.operationHeads as operation}<Button
-                variant="outline"
-                onclick={() => controller.actions.selectOperation(operation)}
-                >{operation.slice(0, 12)}</Button
-              >{/each}
-          </div>
-        </Alert.Root>
+        <StoreNotice
+          noticeKey="operation-head-selection"
+          severity="warning"
+          title="Multiple operation heads"
+          message="Choose the operation snapshot to browse. Opening this view never reconciles history."
+        />
+        <div
+          class="store-repository-application__choices"
+          role="group"
+          aria-label="Choose operation snapshot"
+        >
+          {#each state.operationHeads as operation}<Button
+              variant="outline"
+              onclick={() => controller.actions.selectOperation(operation)}
+              >{operation.slice(0, 12)}</Button
+            >{/each}
+        </div>
       </section>
     {:else if state.route.workspace && state.status.navigation === "failed"}
       <section class="store-repository-application__state">
-        <Alert.Root variant="destructive">
-          <Alert.Title>Repository view unavailable</Alert.Title>
-          <Alert.Description>{state.status.error}</Alert.Description>
-          <Button
-            variant="outline"
-            onclick={() => controller.actions.selectWorkspace(null)}
-            >Browse repository</Button
-          >
-        </Alert.Root>
+        <Button
+          variant="outline"
+          onclick={() => controller.actions.selectWorkspace(null)}
+          >Browse repository</Button
+        >
       </section>
     {:else if page === "agents"}<StoreAgentSessions {controller} />
     {:else if page === "reviews"}<StoreReviewThreads
@@ -131,7 +132,8 @@
         referencesLoading={state.status.bookmarks === "loading" ||
           state.status.bookmarks === "refreshing" ||
           preparing}
-        detailLoading={state.status.detail === "loading"}
+        detailLoading={state.status.detail === "loading" ||
+          (preparing && !!selectedId && !state.detail)}
         filesLoading={state.status.detail === "refreshing"}
         now={state.now}
         {layoutStorage}

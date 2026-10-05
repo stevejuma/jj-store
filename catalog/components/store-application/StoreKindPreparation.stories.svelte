@@ -13,14 +13,15 @@
   name="Complete selected inventory"
   play={async ({ canvasElement }) => {
     const c = within(canvasElement),
+      page = within(canvasElement.ownerDocument.body),
       button = c.getByRole("button", { name: "Prepare operation inventory" });
     await expect(button.closest(".store-settings__action-row")).not.toBeNull();
     button.focus();
     await userEvent.keyboard("{Enter}");
     await expect(
-      await c.findByText("Operation inventory preparation completed."),
+      await page.findByText("Operation inventory preparation completed."),
     ).toBeVisible();
-    await expect(c.getByText(/2 matching identities/)).toBeVisible();
+    await expect(c.queryByText(/matching identities/)).not.toBeInTheDocument();
     await expect(
       c.getByRole("button", { name: "Prepare graph index" }),
     ).toBeEnabled();
@@ -30,7 +31,8 @@
   name="Cancel running copy inventory"
   args={{ phase: "running" }}
   play={async ({ canvasElement }) => {
-    const c = within(canvasElement);
+    const c = within(canvasElement),
+      page = within(canvasElement.ownerDocument.body);
     await userEvent.click(
       c.getByRole("button", { name: "Prepare copy inventory" }),
     );
@@ -40,12 +42,12 @@
     await expect(
       c.getByRole("button", { name: "Prepare graph index" }),
     ).toBeDisabled();
-    await expect(c.getByText(/2 matching identities/)).toBeVisible();
+    await expect(c.queryByText(/matching identities/)).not.toBeInTheDocument();
     await userEvent.click(
-      c.getByRole("button", { name: "Cancel preparation" }),
+      page.getByRole("button", { name: "Cancel preparation" }),
     );
     await expect(
-      c.getByText("Copy inventory preparation canceled."),
+      page.getByText("Copy inventory preparation canceled."),
     ).toBeVisible();
   }}
 />
@@ -53,22 +55,23 @@
   name="Retry unconfirmed cancellation"
   args={{ phase: "unknown_cancel" }}
   play={async ({ canvasElement }) => {
-    const c = within(canvasElement);
+    const c = within(canvasElement),
+      page = within(canvasElement.ownerDocument.body);
     await userEvent.click(
       c.getByRole("button", { name: "Prepare operation inventory" }),
     );
     await userEvent.click(
-      c.getByRole("button", { name: "Cancel preparation" }),
+      page.getByRole("button", { name: "Cancel preparation" }),
     );
-    await expect(c.getByText(/Cancellation is unconfirmed/)).toBeVisible();
+    await expect(page.getByText(/Cancellation is unconfirmed/)).toBeVisible();
     await expect(
-      c.getByRole("button", { name: "Cancel preparation" }),
+      page.getByRole("button", { name: "Retry cancellation" }),
     ).toBeEnabled();
     await userEvent.click(
-      c.getByRole("button", { name: "Cancel preparation" }),
+      page.getByRole("button", { name: "Retry cancellation" }),
     );
     await expect(
-      c.getByText("Operation inventory preparation canceled."),
+      page.getByText("Operation inventory preparation canceled."),
     ).toBeVisible();
   }}
 />
@@ -76,7 +79,8 @@
   name="Local profile retains graph preparation only"
   args={{ local: true }}
   play={async ({ canvasElement }) => {
-    const c = within(canvasElement);
+    const c = within(canvasElement),
+      page = within(canvasElement.ownerDocument.body);
     await expect(
       c.getByRole("button", { name: "Prepare graph index" }),
     ).toBeVisible();
@@ -93,7 +97,8 @@
   name="Automatic history maintenance"
   args={{ automatic: true }}
   play={async ({ canvasElement }) => {
-    const c = within(canvasElement);
+    const c = within(canvasElement),
+      page = within(canvasElement.ownerDocument.body);
     await expect(c.getByText("Automatic")).toBeVisible();
     await expect(
       c.queryByRole("button", { name: "Prepare graph index" }),
