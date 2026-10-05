@@ -160,6 +160,12 @@ M21.2. It does not fabricate combinations, expose a command executor, scan or
 snapshot physical edits, or replace the ordinary repository Log/Branches views.
 The seven-stage order below remains the approved implementation plan.
 
+E-M21-007 adds the private physical fingerprint foundation: bounded regular-file
+and symlink observations, complete checkout obstacles and two-pass stale
+detection. It does not yet perform provider baseline/ignore projection, expose a
+scan endpoint, populate Unstaged or grant a command capability. Stage 2 remains
+incomplete until those provider reads and cold real-folder integration qualify.
+
 ### Recommended scope and model
 
 First qualify explicitly registered Git-backed JJ folders under the current

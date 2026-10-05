@@ -747,6 +747,23 @@ validation is not authorization or proof of durability.
 
 ## Bounded stack history browsing
 
+The physical scan foundation is a private provider input under JST-LOCAL-004 and
+JST-LOCAL-005, separate from operation-pinned history and from a displayed
+Unstaged assignment. It MUST read only the registered physical workspace, retain
+a workspace identity and exact bytes/modes/path fingerprint, and enforce entry,
+byte, individual-file, depth, deadline and caller-cancellation limits. The
+fingerprint includes untracked and ignored checkout obstacles; ignoring a file
+for JJ assignment does not authorize overwriting it. JJ ignore/baseline
+projection remains a separate provider step. Metadata components are excluded,
+symlinks are fingerprinted as link targets without traversal, and hardlinks or
+special/unsafe entries fail explicitly without returning a partial selection.
+Two bounded passes MUST agree before returning; concurrent changes fail stale.
+This is a revalidated observation, not a filesystem CAS or lock against
+arbitrary external writers. Apply/checkout still require foreground JJ
+coordination and fresh physical preconditions. No scan writes files, metadata or
+operation heads, and a scan alone grants no command or content-selection
+capability.
+
 The approved M21.2 read slice adds a strict typed stack-history query under
 JST-LOCAL-004. It binds an exact head and optional base to the existing
 authorized operation and binding generation. With a base, the query returns head

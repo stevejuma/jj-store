@@ -18,6 +18,13 @@ read ownership. Failed candidate refreshes cannot replace the current complete
 scope. Physical scan, private combinations and recoverable execution remain
 subsequent implementation boundaries.
 
+The service owns the private physical scan and typed fingerprint independently
+of upstream JJ imports. It reads descriptor-relative paths without following
+symlinks and observes ignored/untracked obstacles as well as candidate files.
+The integration provider must separately qualify exact code baseline and ignore
+semantics before projecting Unstaged; scan data does not establish stack
+membership or publication authority.
+
 Independent conversion remains inside the JJ integration, owned service and
 installation orchestration boundaries. Destination providers consume explicit
 versioned archives and typed translators. Test-only collaboration dependencies

@@ -1,5 +1,13 @@
 # Typed mutations
 
+Local Stacks checkout preparation consumes a bounded read-only physical scan
+independently of the code operation selection. The scan fingerprints exact file
+bytes, modes, relative names, symlink targets and physical workspace identity,
+including ignored/untracked obstacles. Limits, cancellation, unsafe shapes and
+changes between validation passes produce no partial authorization. This
+foundation neither publishes nor grants an executor capability; durable intent,
+foreground JJ locking and guarded checkout remain required by JST-LOCAL-005.
+
 Independent conversion stages typed historical domain snapshots without altering
 the source. Translation maps immutable repository-bound references explicitly;
 only the destination provider may select these audited roots. Original source

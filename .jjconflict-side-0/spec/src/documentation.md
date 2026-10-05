@@ -15,6 +15,11 @@ qualification evidence; internal plans and evidence are not published as Help.
 
 ## Delivery and validation
 
+Private physical scan documentation MUST distinguish a bounded revalidated
+inventory from a JJ snapshot, an Unstaged assignment and a filesystem CAS. It
+records limits and unsupported shapes without presenting provider projection,
+checkout coordination or a command endpoint as delivered.
+
 The stack read foundation is documented separately from production controller
 injection and executable commands. Lazy projection of pinned graph, exact tree
 diffs and unavailable file metadata MUST NOT be described as durable checkout or

@@ -93,6 +93,17 @@ contracts, with no executable stack commands or HTTP mutation capability.
 Recoverable checkout and named-combination execution remain qualification work;
 opening a view does not create or snapshot a combination.
 
+A private physical scanner supplies bounded, revalidated observations for future
+checkout preparation. It fingerprints exact bytes, modes, paths and workspace
+identity, including ignored and untracked obstacles. It reads symlink targets
+without following them and returns no partial observation for unsafe entries,
+limits, cancellation or disagreement between its two passes. Current limits are
+8,192 cumulative entries, 16 MiB cumulative content across both passes, 2 MiB
+per file, 64 directory levels and two seconds. This inventory is not a JJ
+snapshot, displayed Unstaged assignment or filesystem CAS. Provider baseline and
+ignore projection, foreground JJ coordination and fresh apply/checkout checks
+remain required before commands become available.
+
 The operation-pinned stack read owner projects real parents and graph
 annotations without loading file details with history. Net file summaries and
 selected patches compare explicit tree boundaries. It retains unloaded and

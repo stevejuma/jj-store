@@ -65,8 +65,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed owned stacks version-1 validated intent and receipt records; manual distinguishes contracts from unimplemented executor, journal and checkout capability.",
-      "fingerprint": "8eeb114b344d71247da7b2a484bd0629d0c66a4112ee19888e0ee6e1124312fb"
+      "reason": "Private physical scan fingerprints bounded descriptor-relative regular files and symlink targets, includes checkout obstacles and verifies two passes. It adds no wire route, JJ snapshot, executor or Unstaged provider projection.",
+      "fingerprint": "b019dd14c065ab1450623bdc38a47ec58dfc5397029278e468aff4b0aadc359d"
     }
   },
   {
