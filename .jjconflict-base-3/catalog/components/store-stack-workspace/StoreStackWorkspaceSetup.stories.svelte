@@ -8,6 +8,27 @@
     tags: ["visual-pending"],
     parameters: { layout: "fullscreen", jjStoreShell: true },
   });
+  function assertSetupMargins(canvasElement: HTMLElement) {
+    const picker = within(canvasElement).getByRole("combobox", {
+      name: "Workspace target branch",
+    });
+    const form = picker.closest<HTMLElement>(
+      ".community-settings__option-group",
+    )!;
+    const style = getComputedStyle(form);
+    for (const margin of [
+      style.marginTop,
+      style.marginRight,
+      style.marginBottom,
+      style.marginLeft,
+    ])
+      expect(Number.parseFloat(margin)).toBe(12);
+    const parent = form.parentElement!.getBoundingClientRect();
+    const bounds = form.getBoundingClientRect();
+    expect(Math.abs(bounds.left - parent.left - 12)).toBeLessThanOrEqual(1);
+    expect(Math.abs(parent.right - bounds.right - 12)).toBeLessThanOrEqual(1);
+    expect(Math.abs(bounds.top - parent.top - 12)).toBeLessThanOrEqual(1);
+  }
   async function choose(canvasElement: HTMLElement) {
     const canvas = within(canvasElement);
     await userEvent.click(
@@ -33,6 +54,7 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByRole("combobox", { name: "Workspace target branch" });
+    assertSetupMargins(canvasElement);
     expect(
       canvas.getByText("No stack workspace", {
         selector: '[data-ui-part="empty-title"]',
@@ -58,6 +80,10 @@
   name="Explicit target enables browsing without setup"
   args={{ page: "branches" }}
   play={async ({ canvasElement }) => {
+    await within(canvasElement).findByRole("combobox", {
+      name: "Workspace target branch",
+    });
+    assertSetupMargins(canvasElement);
     const canvas = await choose(canvasElement);
     await userEvent.click(
       await canvas.findByRole("option", { name: "feature/api" }),

@@ -15,6 +15,79 @@
 </script>
 
 <Story
+  name="Branches remain fixed beside a stack and diff"
+  args={{ page: "branches" }}
+  play={async ({ canvasElement }) => {
+    const canvas = workspaceCanvas(canvasElement);
+    const branches = await canvas.findByRole("region", { name: "Branches" });
+    expect(branches).toHaveAttribute("data-fixed", "true");
+    await userEvent.click(canvas.getByRole("option", { name: "feature/api" }));
+    const stack = await canvas.findByRole("region", {
+      name: "Stack feature/api",
+    });
+    await userEvent.click(
+      within(stack).getByRole("button", {
+        name: "Show all changes in stack feature/api",
+      }),
+    );
+    const files = await within(stack).findByRole("region", {
+      name: "Changed files in branch feature/api",
+    });
+    await userEvent.click(
+      within(files).getByRole("button", { name: "src/api.ts" }),
+    );
+    await canvas.findByRole("region", { name: /Selected changes from stack-/ });
+    const viewport = canvasElement.querySelector<HTMLElement>(
+      '.stack-workspace__canvas-scroll > [data-ui-part="scroll-area-viewport"]',
+    )!;
+    const width = branches.getBoundingClientRect().width;
+    async function assertPinned(column: HTMLElement) {
+      viewport.scrollTo({ left: viewport.scrollWidth, behavior: "auto" });
+      await waitFor(() =>
+        expect(column).toHaveAttribute("data-fixed-state", "stuck"),
+      );
+      expect(
+        Math.abs(
+          column.getBoundingClientRect().left -
+            viewport.parentElement!.getBoundingClientRect().left -
+            12,
+        ),
+      ).toBeLessThanOrEqual(1);
+      const area = viewport.parentElement!;
+      const bounds = area.getBoundingClientRect();
+      const hits = area.ownerDocument.elementsFromPoint(
+        bounds.left + 6,
+        bounds.top + 80,
+      );
+      expect(
+        hits.some((hit) =>
+          hit.closest(
+            '[data-ui-part="column"], [data-ui-part="collapsed-column"]',
+          ),
+        ),
+      ).toBe(false);
+    }
+    await assertPinned(branches);
+    expect(branches.getBoundingClientRect().width).toBe(width);
+    await userEvent.click(
+      within(branches).getByRole("button", { name: /Collapse Branches/ }),
+    );
+    const expand = await canvas.findByRole("button", {
+      name: "Expand Branches column",
+    });
+    const rail = expand.closest<HTMLElement>(
+      '[data-ui-part="collapsed-column"]',
+    )!;
+    await assertPinned(rail);
+    expect(rail.getBoundingClientRect().width).toBeLessThan(width);
+    await userEvent.click(expand);
+    const expanded = await canvas.findByRole("region", { name: "Branches" });
+    await assertPinned(expanded);
+    expect(expanded.getBoundingClientRect().width).toBe(width);
+  }}
+/>
+
+<Story
   name="Unstaged header and styled canvas"
   play={async ({ canvasElement }) => {
     const canvas = workspaceCanvas(canvasElement);
@@ -93,9 +166,23 @@
       expect(
         Math.abs(
           element.getBoundingClientRect().left -
-            viewport.getBoundingClientRect().left,
+            viewport.parentElement!.getBoundingClientRect().left -
+            12,
         ),
       ).toBeLessThanOrEqual(1);
+      const area = viewport.parentElement!;
+      const bounds = area.getBoundingClientRect();
+      const hits = area.ownerDocument.elementsFromPoint(
+        bounds.left + 6,
+        bounds.top + 80,
+      );
+      expect(
+        hits.some((hit) =>
+          hit.closest(
+            '[data-ui-part="column"], [data-ui-part="collapsed-column"]',
+          ),
+        ),
+      ).toBe(false);
     };
     viewport.scrollTo({ left: viewport.scrollWidth, behavior: "auto" });
     await assertPinned(column);

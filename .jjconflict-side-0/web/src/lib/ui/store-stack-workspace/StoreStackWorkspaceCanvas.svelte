@@ -155,6 +155,7 @@
     {#if controller.page === "branches"}
       <ColumnCanvas.Column
         resizable
+        fixed
         id="branches"
         aria-label="Branches"
         title="Branches"

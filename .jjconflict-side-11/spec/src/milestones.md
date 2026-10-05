@@ -152,8 +152,8 @@ shared-package release qualification does not alter those original Git gates.
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                        | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work          | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Review local core before commit/file/hunk and graph actions | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040 |
-| M21.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | UI reviewed for backend integration; registry/visual gates remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009 |
+| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Review local core before commit/file/hunk and graph actions | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-041 |
+| M21.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | UI reviewed for backend integration; registry/visual gates remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M21-041 |
 | M21.2 | In progress | M21.1 | JST-UI-020 | Local jj-lib megamerges, TOML settings and independent named unfinished work | Review local core before commit/file/hunk and graph actions | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040 |
 
 The user reopened production browsing integration on 27 September 2026 after
@@ -93274,6 +93274,161 @@ entries.
   "removed_tests": [
     "web/tests/real/stacks-browser.spec.ts#cold_registered_stacks_browse_real_ancestors_files_and_diffs_without_writes"
   ]
+},
+{
+  "id": "E-M21-041",
+  "tasks": [
+    "M21",
+    "M21.1"
+  ],
+  "date": "2026-10-05",
+  "revision": "ynzpksxxuzsx",
+  "kind": "Scoped Stacks setup margins, retained opaque canvas gutter and fixed Branches picker",
+  "versions": "Existing JJ 0.45.1, Design Core foundation and Storybook 10.5.7; no dependency change.",
+  "formats": "Presentation only; no public API, persisted layout, TOML or native JJ format changes.",
+  "files": [
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceSetup.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceCanvas.svelte",
+    "web/src/lib/ui/store-stack-workspace/stack-workspace-layout.css",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceSetup.stories.svelte",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceApplication.stories.svelte",
+    "catalog/components/store-stack-workspace/StoreStackWorkspacePinning.stories.svelte",
+    "spec/src/ui.md",
+    "spec/src/milestones.md",
+    "spec/src/api.md"
+  ],
+  "requirements": [
+    "JST-UI-020"
+  ],
+  "before": "Two setup stories measured zero margins; two app-shell stories measured 12px canvas padding instead of parent content padding. The new Branches pinning story first failed because fixed was absent. Live browser confirmed canvas 12px and parent 0px.",
+  "scope": "Only Stacks setup and horizontal canvas presentation on both tabs. A 12px leading gutter outside the viewport stays beside fixed columns and excludes scrolling content; canvas and content have zero leading padding. Nested scrollbars unchanged. Branches uses public fixed. Focused UI policy excludes Rust, aggregate suites, package publication and visual comparisons/baselines.",
+  "runs": [
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceSetup.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceApplication.stories.svelte -t 'Unconfigured workspace|Workspace in app shell|Branches in app shell'",
+      "result": "pass",
+      "failures": 0,
+      "note": "before-stories.log: no tests selected because Storybook uses exported PascalCase test names; all ten skipped. This is not acceptance."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceSetup.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceApplication.stories.svelte",
+      "result": "fail",
+      "failures": 4,
+      "note": "before-stories-full.log: 4 expected spacing failures and 6 passes."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceSetup.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceApplication.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspacePinning.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "after-stories.log: 11/11 interaction/accessibility stories before adding Branches fixed coverage."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspacePinning.stories.svelte",
+      "result": "fail",
+      "failures": 1,
+      "note": "before-branches-fixed.log: new story rejects the missing fixed property; existing Unstaged passes."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceSetup.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceApplication.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspacePinning.stories.svelte",
+      "result": "fail",
+      "failures": 1,
+      "note": "final-stories.log: 11 pass; new test incorrectly requested README.md from branch files. Corrected to the actual src/api.ts fixture."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceSetup.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceApplication.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspacePinning.stories.svelte",
+      "result": "fail",
+      "failures": 1,
+      "note": "final-stories-corrected.log: 11 pass; new test retained the DOM element removed by collapse. Corrected to measure the re-expanded element."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceSetup.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceApplication.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspacePinning.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "verified-stories.log: 12/12. Setup margins and canvas inset geometry; Branches and Unstaged expanded/collapsed positions and widths within one CSS pixel, adjacent diffs and drag behavior."
+    },
+    {
+      "command": "pnpm web:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "web-check.log and web-check-final.log: zero errors/warnings."
+    },
+    {
+      "command": "pnpm catalog:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "catalog-check.log and catalog-check-final.log: zero errors/warnings; 227 module boundaries pass."
+    },
+    {
+      "command": "pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": "ownership.log: owning presentation boundary passes."
+    },
+    {
+      "command": "CUA read-only live browser computed-style inspection at http://127.0.0.1:7476/",
+      "result": "pass",
+      "failures": 0,
+      "note": "Existing Workspace view reports canvas padding-inline-start 0px, immediate data-scroll-area-content parent 12px; user repository selection was preserved."
+    },
+    {
+      "command": "pnpm exec prettier --write (changed supported source and spec paths only)",
+      "result": "pass",
+      "failures": 0,
+      "note": "Only six changed supported files formatted, then Pinning/Canvas/ui chapter formatted. Historical ledger entries are not reformatted."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "fail",
+      "failures": 3,
+      "note": "Initial ledger used story/helper references in tests, which accepts only native named fn/def/test definitions. Story acceptance remains in runs and files; invalid references removed."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "fail",
+      "failures": 1,
+      "note": "Initial UI slice lacked api.md required by the existing web change map; added explicit client-presentation boundary note."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspacePinning.stories.svelte",
+      "result": "fail",
+      "failures": 2,
+      "note": "before-persistent-gutter.log: both tabs pin flush to viewport edge, 12px short of required outer gutter."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceSetup.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceApplication.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspacePinning.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "gutter-stories.log: 12/12. Both fixed columns measure 12px from outer Scroll Area edge while expanded, collapsed and restored; gutter hit tests exclude column content. Setup four-sided margins and initial non-doubled inset pass."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check; pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": "gutter-*-check and gutter-ownership logs: zero diagnostics, 227 catalog boundaries and ownership pass."
+    },
+    {
+      "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "Mapped spec-first, 23 chapters / 173 requirements and 142-task progress bookkeeping pass."
+    },
+    {
+      "command": "pnpm exec prettier --check (eight changed supported source/spec files; historical ledger excluded)",
+      "result": "pass",
+      "failures": 0,
+      "note": "gutter-format-check.log passes."
+    },
+    {
+      "command": "CUA read-only live HMR geometry at http://127.0.0.1:7476/",
+      "result": "pass",
+      "failures": 0,
+      "note": "Isolated demo tab: Scroll Area left289, viewport/Unstaged left301, persistent root gutter12px, canvas0px. User navigation untouched. Target-history query reported existing index-rebuild requirement; Storybook supplies overflow pinning coverage."
+    }
+  ],
+  "result": "pass",
+  "remaining": [],
+  "next": "Commit this UI slice, then continue the separately requested named workspace Settings and Delete actions.",
+  "summary": "12 focused stories, type/ownership/spec/progress and live gutter geometry pass. M21 stays In progress.",
+  "tests": []
 }
 ]
 ```

@@ -8,7 +8,7 @@
   const targets = $derived(controller.snapshot?.targetOptions ?? []);
 </script>
 
-<Field.Group class="community-settings__option-group">
+<Field.Group class="community-settings__option-group stack-workspace__setup">
   <StoreWorkField
     label="Workspace target branch"
     description="Choose a branch to browse stacks. Creating a workspace is a separate action."

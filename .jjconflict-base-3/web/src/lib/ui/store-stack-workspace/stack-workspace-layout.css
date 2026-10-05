@@ -40,6 +40,14 @@
   min-width: 0;
   flex: 1;
   min-height: 0;
+  /* Outside the viewport: retained beside fixed columns, with no content behind. */
+  box-sizing: border-box;
+  padding-inline-start: var(--ui-column-canvas-padding, 0.75rem);
+  background: var(--ui-column-canvas-background, var(--background));
+}
+.stack-workspace .stack-workspace__setup {
+  width: auto;
+  margin: 12px;
 }
 .stack-workspace
   [data-ui-part="column"]:not([data-column-id="branches"])
@@ -67,6 +75,7 @@
 }
 .stack-workspace .stack-workspace__canvas {
   padding-top: 0;
+  padding-inline-start: 0;
 }
 .stack-workspace[data-page="workspace"] .stack-workspace__unstaged-body {
   padding-inline-start: 0.5rem;
