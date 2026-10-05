@@ -158,6 +158,7 @@ fn near_full_admission_reserves_space_for_blocked_checkout_and_retirement() {
     let request = &another.plan.request;
     let record = Record {
         principal: actor(),
+        execution: None,
         preview: another.clone(),
         receipt: s::Receipt {
             version: 1,

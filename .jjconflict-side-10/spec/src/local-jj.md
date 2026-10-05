@@ -878,6 +878,39 @@ physical working files. Head publication, extra/index recovery, journal/status
 composition and guarded checkout still require separate qualification before
 runtime writable capabilities.
 
+The server's private local preparation composition MUST authorize the original
+principal and typed request, validate physical journal scope and look up the
+original request before obtaining live context or preparing a candidate. Exact
+historical replay returns the original preview and receipt without re-preparing
+against current heads. Legacy metadata-only records cannot be upgraded to local
+execution evidence. Production registration, command policy and combination
+authority remain separate prerequisites; fixture-supplied context is not their
+qualification.
+
+Before reserved-ref selection, the server MUST durably select the complete exact
+preview, bounded recovery witness, original retention key and candidate archive
+as pending retention. This archive counts toward the journal's existing
+128-record/8-MiB limits, including reserved receipt-growth allowance. Capacity
+exhaustion cannot select a partial record or evict original requests. Once
+selected, retry MUST resume this archive through the saved witness and never
+prepare a replacement operation, even after operation/index loss. Reserved-ref
+acknowledgement selects only the identical archive/key and removes the temporary
+archive body from the journal. Acknowledged evidence retains its original
+witness, archive digest and exact selected retention commit.
+
+Catalog version 2 distinguishes records containing version-1 local execution
+evidence; legacy version-1 records retain their byte-compatible encoding and
+historical semantics. Malformed witness/key/archive linkage, conflicting intent
+or principal, and unsafe private state fail without repair. Pending retention
+cannot transition to publication-unknown; explicit rejection remains terminal.
+Cancellation or authority loss after pending selection leaves discoverable
+original recovery input and releases admission only when the worker exits.
+Saving a preview and retaining code are separate durable boundaries, not an
+atomic transaction. This preparation composition publishes no head and changes
+no source checkout, companion state or physical file. It cannot enable writable
+capabilities before real authority, source-extra/index recovery, publication and
+guarded checkout are qualified.
+
 Server-retained content selections bind source and parent tree identities,
 complete code/device/combination selection, safe repository path, exact
 file-state fingerprint and whole-file or verified hunk scope. Commands carry

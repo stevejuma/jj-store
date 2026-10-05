@@ -157,6 +157,16 @@ records. No heads, index, extras, companion or checkout files are selected or
 repaired. Source restoration remains separate from runtime journal policy,
 publication and guarded checkout composition.
 
+Saved-history retention MAY resume the exact server-selected candidate archive
+through the original recovery witness without opening a latest operation or
+source index. The coordinator acquires the same nonblocking foreground lock,
+revalidates saved binding/checkout/policy/heads and links real code before
+reserved selection. The existing lease supports the same retention boundary
+without releasing coordination. Both retain admission and lock until canceled
+work exits. No source metadata restoration, head selection or physical checkout
+occurs. Server journal selection precedes retention and acknowledgement follows
+it; command authority and publication/checkout remain composition gates.
+
 Capsule retention derives every non-root physical commit and backend tree from
 the exact archive. Selected reads require those entries in the selected metadata
 retention inventory, even when a blob was retained for another domain. An anchor

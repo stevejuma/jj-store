@@ -21,6 +21,17 @@ This primitive adds no route, installed CLI command, provider object retention,
 upstream head publication or physical checkout capability. Those remain the next
 recoverable execution gates under JST-LOCAL-005.
 
+The server's private preparation composition now joins real unpublished reword
+effects with the original principal/request/intent, exact preview, saved
+recovery witness and reserved retention. Complete pending archives are durably
+selected before retention and count toward the bounded journal. Exact retry
+resumes saved evidence after cancellation, process loss or source metadata loss;
+legacy records are never reinterpreted. Acknowledgement records only the
+matching retention commit/archive digest, and pending retention blocks
+publication. This data-only composition adds no route or installed CLI command.
+Real registration and combination authority, publication and guarded checkout
+remain required under JST-LOCAL-005 before writable controls.
+
 LocalTrusted installations with native storage own an independent conversion
 journal beside device registration. Preview captures a committed source
 operation, start retains the exact bounded archive before staging, and status

@@ -48,6 +48,14 @@ impl StackCommandJournal {
         apply
             .validate(&record.preview.plan.request, record.preview.prepared)
             .map_err(|_| Error::IntentMismatch)?;
+        if record
+            .execution
+            .as_ref()
+            .is_some_and(|e| e.retention.is_none())
+            && !matches!(next, s::ReceiptState::Rejected { .. })
+        {
+            return Err(Error::InvalidTransition);
+        }
         let mut selected = record.clone();
         selected.receipt.state = next.clone();
         selected.validate(&self.scope)?;

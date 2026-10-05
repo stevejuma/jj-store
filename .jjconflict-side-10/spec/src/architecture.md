@@ -101,6 +101,18 @@ records. It neither publishes heads nor repairs extras/index/checkout state. The
 server must still join original authenticated journal lookup, publication and
 checkout recovery before exposing commands.
 
+The server now joins actual unpublished reword effects with exact private
+preview/journal selection, saved recovery witness and reserved retention. The
+full candidate archive is durable before retention; acknowledgement replaces
+only that pending body with the exact retained commit and archive digest. Retry
+looks up original principal/request/intent before live context and resumes saved
+evidence without a new transaction. Catalog version 2 preserves legacy bytes and
+rejects reinterpretation. JJ integration retains saved archives under its actual
+foreground lock without loading or restoring lost source operation/index state.
+Owned data crosses this composition; no upstream JJ imports do. Real
+installation authority, combinations, publication and guarded checkout remain
+required before transport or writable capabilities.
+
 Independent conversion remains inside the JJ integration, owned service and
 installation orchestration boundaries. Destination providers consume explicit
 versioned archives and typed translators. Test-only collaboration dependencies

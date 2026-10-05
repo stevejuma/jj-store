@@ -7,8 +7,10 @@ use jj_store_service::stack_workspace as s;
 use serde::{Deserialize, Serialize};
 use std::path::Path;
 mod catalog;
+mod execution;
 mod transition;
 use catalog::Catalog;
+pub use execution::{LocalExecutionV1, preparation_key};
 
 pub const MAX_RECORDS: usize = 128;
 pub const MAX_BYTES: usize = 8 * 1024 * 1024;
@@ -96,6 +98,8 @@ pub struct Record {
     pub principal: m::PrincipalId,
     pub preview: s::Preview,
     pub receipt: s::Receipt,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub execution: Option<LocalExecutionV1>,
 }
 impl Record {
     fn validate(&self, scope: &Scope) -> Result<()> {
@@ -104,6 +108,9 @@ impl Record {
             || !scope.matches(&self.preview.plan.request.selection)
         {
             return Err(Error::Invalid);
+        }
+        if let Some(execution) = &self.execution {
+            execution.validate(self.principal, &self.preview)?;
         }
         self.receipt
             .validate_prepared(&self.preview)
@@ -133,6 +140,13 @@ pub struct StackCommandJournal {
     scope: Scope,
 }
 impl StackCommandJournal {
+    pub fn check_scope(&self, selection: &s::Selection) -> Result<()> {
+        if self.scope.matches(selection) {
+            Ok(())
+        } else {
+            Err(Error::ScopeMismatch)
+        }
+    }
     pub fn create(path: &Path, scope: Scope) -> Result<Self> {
         scope.validate()?;
         let root = files::Root::create(path, LAYOUT)?;
@@ -163,6 +177,22 @@ impl StackCommandJournal {
         principal: m::PrincipalId,
         preview: &s::Preview,
     ) -> Result<Selection> {
+        self.record(principal, preview, None)
+    }
+    pub fn record_local_prepared(
+        &self,
+        principal: m::PrincipalId,
+        preview: &s::Preview,
+        execution: &LocalExecutionV1,
+    ) -> Result<Selection> {
+        self.record(principal, preview, Some(execution.clone()))
+    }
+    fn record(
+        &self,
+        principal: m::PrincipalId,
+        preview: &s::Preview,
+        execution: Option<LocalExecutionV1>,
+    ) -> Result<Selection> {
         preview.validate().map_err(|_| Error::Invalid)?;
         if !self.scope.matches(&preview.plan.request.selection) {
             return Err(Error::ScopeMismatch);
@@ -171,6 +201,7 @@ impl StackCommandJournal {
         let record = Record {
             principal,
             preview: preview.clone(),
+            execution,
             receipt: s::Receipt {
                 version: 1,
                 request_id: request.request_id,
@@ -188,7 +219,10 @@ impl StackCommandJournal {
             .iter()
             .find(|r| r.receipt.request_id == request.request_id)
         {
-            if retained.principal != principal || retained.preview != *preview {
+            if retained.principal != principal
+                || retained.preview != *preview
+                || retained.execution != record.execution
+            {
                 return Err(Error::IntentMismatch);
             }
             self.root.sync_selected(&gate, stamp)?;
@@ -198,6 +232,7 @@ impl StackCommandJournal {
             return Err(Error::Capacity);
         }
         catalog.records.push(record.clone());
+        catalog.include_execution();
         self.root
             .persist(&gate, &catalog.encode_for_admission()?, Some(stamp))?;
         Ok(Selection::from_record(&record, false))

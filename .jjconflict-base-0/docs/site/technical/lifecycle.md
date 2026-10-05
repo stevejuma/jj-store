@@ -51,6 +51,18 @@ publication-unknown or incomplete-checkout receipt prevents another publication
 in that physical scope. Verified checkout, rejection and retirement cannot
 return to executable preparation.
 
+Actual local reword preparation now composes this journal with the owning JJ
+provider. It selects the exact preview, recovery witness and full candidate
+archive as pending before reserved-ref retention. Acknowledgement records the
+identical retained commit/digest and removes only the pending archive body. The
+128-record/8-MiB capacity includes pending archives and receipt-growth
+allowance. Interrupted preparation resumes the original archive rather than
+creating a replacement operation. Legacy metadata-only records retain their
+encoding and cannot be upgraded to execution evidence. This composition
+currently uses a trusted authority seam; installed command/combination
+authority, publication and guarded checkout still need qualification before
+production writable controls.
+
 This primitive does not retain JJ objects, publish operation heads or coordinate
 physical checkout. The production Stacks page continues to expose qualified
 reads while those provider execution and recovery gates are implemented.

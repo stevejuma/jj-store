@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Documented exact source operation/view restoration after operation/index loss, using the foreground lease, bounded saved witness, original reserved retention key, conflict/link preflight and synced no-replace records. Real cancellation and subprocess loss retry retain the original identity and leave heads, index, extras, companion and physical checkout unchanged. Runtime authenticated journal composition, extra/index repair, publication and guarded checkout remain required.",
-      "fingerprint": "1e4e95aeb43cf318adee86570c8875d2ff145e99131ed6431f9460629fc486d8"
+      "reason": "Documented saved candidate archive retention through the foreground lease and recovery witness, with exact original-key replay after source loss and no source restoration or publication. Server pending journal selection precedes retention and acknowledged commit/digest replaces only the pending archive body; runtime authority, extras/index repair, publication and checkout remain required.",
+      "fingerprint": "c4cc2f0dc29e507b1e846eddc66f2df7bc9eb9f4a6d5e46f27d9bc995203ec47"
     }
   },
   {
@@ -96,8 +96,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Documented bounded private stack command journal scope, exact retry and restart recovery, capacity reservation and monotonic receipts. Provider object retention, operation publication and physical checkout remain unimplemented; no runtime or installed command capability changes.",
-      "fingerprint": "b68ac19e2c5c547c9be7e8df8ea778e7214e708d439d0f329359542abbf31159"
+      "reason": "Reviewed exact local reword preparation composition, principal/request/intent lookup before live context, trusted combination selection, pending archive selection before retention, exact commit/archive acknowledgement, 128-record/8-MiB capacity and immutable legacy encoding. Cancellation, process loss and source loss resume original previews without reprepare. Installed authority, command transport, publication and guarded checkout remain unfinished.",
+      "fingerprint": "39a5b6be63db3939a9e5683ddad796cf4681a79a9780c9b013b79d211fc0cf00"
     }
   },
   {

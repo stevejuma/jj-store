@@ -25,7 +25,8 @@ impl Catalog {
     }
     fn validate(&self) -> Result<()> {
         self.scope.validate()?;
-        if self.version != 1 || self.records.len() > MAX_RECORDS {
+        let has_execution = self.records.iter().any(|r| r.execution.is_some());
+        if self.version != if has_execution { 2 } else { 1 } || self.records.len() > MAX_RECORDS {
             return Err(Error::Invalid);
         }
         let mut requests = BTreeSet::new();
@@ -43,6 +44,11 @@ impl Catalog {
             return Err(Error::Invalid);
         }
         Ok(())
+    }
+    pub fn include_execution(&mut self) {
+        if self.records.iter().any(|r| r.execution.is_some()) {
+            self.version = 2;
+        }
     }
     pub fn encode(&self) -> Result<Vec<u8>> {
         self.validate()?;

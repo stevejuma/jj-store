@@ -27,7 +27,29 @@ pub struct RecoveryWitnessV1 {
     source_binding: m::RecordDigest,
     heads: Vec<m::OperationId>,
 }
+/// Data-only source selection for installation-private request composition.
+#[derive(Clone, Debug, PartialEq, Eq)]
+pub struct RecoveryBinding {
+    pub repository: m::RepositoryId,
+    pub generation: u64,
+    pub physical_workspace: m::RecordDigest,
+    pub operation: m::OperationId,
+    pub view: m::ViewId,
+    pub commit: m::GitSha1Id,
+    pub workspace: String,
+}
 impl RecoveryWitnessV1 {
+    pub fn binding(&self) -> RecoveryBinding {
+        RecoveryBinding {
+            repository: self.repository,
+            generation: self.generation,
+            physical_workspace: self.physical_workspace,
+            operation: self.operation,
+            view: self.view,
+            commit: self.commit,
+            workspace: self.checkout.workspace.clone(),
+        }
+    }
     pub fn encode(&self) -> Result<Vec<u8>> {
         if self.version != 1
             || self.profile != local_browser::PROFILE

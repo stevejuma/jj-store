@@ -1,5 +1,6 @@
 //! Explicit exact immutable source recovery; no heads, index or checkout repair.
 mod records;
+mod retention;
 mod witness;
 use super::*;
 use crate::{
@@ -9,7 +10,7 @@ use crate::{
 };
 use jj_store_model as m;
 use std::time::Duration;
-pub use witness::RecoveryWitnessV1;
+pub use witness::{RecoveryBinding, RecoveryWitnessV1};
 
 pub struct RecoveredHistory {
     guard: guard::Guard,

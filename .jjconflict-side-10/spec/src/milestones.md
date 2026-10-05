@@ -154,7 +154,7 @@ shared-package release qualification does not alter those original Git gates.
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017 |
 | M21.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | UI reviewed for backend integration; registry/visual gates remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009 |
-| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Complete recoverable checkout and durable combinations | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017 |
+| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Complete recoverable checkout and durable combinations | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -87238,6 +87238,262 @@ entries.
   "next": "Compose original authenticated preparation/journal/retention and saved recovery witness, then qualify extras/index recovery, exact head publication and guarded checkout; continue all seven approved stages before enabling writable controls.",
   "out_of_scope": "No public transport/client generation, production UI/Storybook/startup changes, fresh visual review, screenshot comparison or visual baselines. No package publication, installed binary/service replacement, existing-repository reset/migration, native/real-RustFS execution, retained-ref cleanup or unrelated root aggregate lanes.",
   "summary": "114 unique direct tests pass (29 owning units, 57 local-JJ integrations, 28 CLI consumers), including nine explicit source recovery cases and real partial process-loss retry. Exact immutable op/view restoration leaves heads, index, extras, companion and physical checkout unchanged. Original journal/policy composition, publication and guarded checkout remain required; M21.2 stays In progress."
+},
+{
+  "id": "E-M21-018",
+  "tasks": [
+    "M21",
+    "M21.2"
+  ],
+  "date": "2026-10-05",
+  "revision": "vkkmyrqn",
+  "kind": "Exact real local preparation preview/journal/witness/retention composition",
+  "versions": "Rust 1.98.1; JJ 0.45.1; Git 2.55.0; macOS ARM64 isolated stock-JJ fixtures; installed executables/services unchanged.",
+  "formats": "Private catalog version 2 with version-1 LocalExecutionV1. Legacy catalog version 1 remains byte-compatible and immutable. Pending full OperationArchiveV1 is selected with the exact server preview, recovery witness/digest and actual principal/request/intent/prepared retention key before reserved ref selection; acknowledgement keeps identical commit/archive digest and removes only the pending body. Existing 128-record/8-MiB limits include pending archives and receipt-growth reservation. Reserved ref V1/V2, companion/native/WAL/manifest and public transport formats unchanged.",
+  "files": [
+    "crates/jj-store-jj/src/local_execution/mod.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/retention.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/witness.rs",
+    "crates/jj-store-jj/src/local_execution/recovery.rs",
+    "crates/jj-store-server/src/lib.rs",
+    "crates/jj-store-server/src/stack_command_journal/catalog.rs",
+    "crates/jj-store-server/src/stack_command_journal/execution.rs",
+    "crates/jj-store-server/src/stack_command_journal/transition.rs",
+    "crates/jj-store-server/src/stack_command_journal.rs",
+    "crates/jj-store-server/src/stack_preparation/report.rs",
+    "crates/jj-store-server/src/stack_preparation.rs",
+    "crates/jj-store-server/tests/stack_command_journal/admission.rs",
+    "crates/jj-store-server/tests/stack_local_preparation/admission.rs",
+    "crates/jj-store-server/tests/stack_local_preparation/lifecycle.rs",
+    "crates/jj-store-server/tests/stack_local_preparation/persisted.rs",
+    "crates/jj-store-server/tests/stack_local_preparation.rs",
+    "docs/implementation-plan.md",
+    "docs/maintenance/coverage.json",
+    "docs/site/technical/lifecycle.md",
+    "docs/site/technical/local.md",
+    "spec/src/architecture.md",
+    "spec/src/documentation.md",
+    "spec/src/jj-integration.md",
+    "spec/src/local-jj.md",
+    "spec/src/verification.md",
+    "spec/src/milestones.md",
+    "spec/src/cli.md"
+  ],
+  "before": "stack-local-preparation-before.log records one missing stack_preparation import. Initial two-case implementation passes; expansion found one admission assertion failure without a captured error. Strengthened diagnostic assertion and later combination precondition retain the same stale contract; exact and full targets pass. Bounded repetitions recorded separately to investigate that initial intermittent failure.",
+  "scope": "One private local preparation boundary across the existing server journal and JJ foreground retainer. Actual unpublished candidates and exact previews, private pending archives, original-request lookup before live context, immutable legacy slots, saved-archive retention/replay without source restoration, cancellation and real subprocess loss. No transport or writable production capability.",
+  "tests": [
+    "crates/jj-store-server/tests/stack_local_preparation.rs#real_preparation_joins_exact_preview_retention_and_private_recovery_witness",
+    "crates/jj-store-server/tests/stack_local_preparation.rs#exact_preparation_replay_survives_source_loss_without_live_validation_or_reprepare",
+    "crates/jj-store-server/tests/stack_local_preparation/admission.rs#authorization_stale_physical_selection_and_conflicting_identity_do_not_prepare",
+    "crates/jj-store-server/tests/stack_local_preparation/admission.rs#local_execution_is_immutable_legacy_cannot_be_upgraded_and_terminal_replay_stays_terminal",
+    "crates/jj-store-server/tests/stack_local_preparation/lifecycle.rs#cancel_after_pending_selection_releases_lease_and_resumes_exact_archive",
+    "crates/jj-store-server/tests/stack_local_preparation/lifecycle.rs#process_loss_before_retention_replays_saved_candidate_after_source_loss_and_gc",
+    "crates/jj-store-server/tests/stack_local_preparation/lifecycle.rs#process_loss_after_retention_replays_original_acknowledgement_after_source_loss_and_gc",
+    "crates/jj-store-server/tests/stack_local_preparation/persisted.rs#malformed_saved_execution_is_rejected_without_repair_or_source_writes",
+    "crates/jj-store-server/src/stack_command_journal/tests.rs#lost_coordination_after_atomic_replacement_is_unknown_and_replay_syncs_original",
+    "crates/jj-store-server/tests/stack_command_journal.rs#retained_preparation_survives_reopen_and_conflicting_request_reuse",
+    "crates/jj-store-jj/tests/stack_source_recovery.rs#restart_restores_exact_retained_history_without_heads_checkout_or_index_changes",
+    "crates/jj-store-jj/tests/stack_preparation_retention.rs#retained_unpublished_stack_operation_survives_gc_and_source_state_loss",
+    "crates/jj-store-jj/tests/stack_reword_preparation.rs#exact_reword_preparation_retains_change_tree_and_dirty_checkout_without_publication"
+  ],
+  "runs": [
+    {
+      "command": "cargo test --locked -p jj-store-server --test stack_local_preparation",
+      "result": "fail",
+      "failures": 1,
+      "note": "stack-local-preparation-before.log: missing composition import establishes the absent boundary."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-server --test stack_local_preparation",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-preparation-after.log: original two-case preparation/replay target passes."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-server --test stack_local_preparation",
+      "result": "fail",
+      "failures": 1,
+      "note": "stack-local-preparation-full.log: expanded target has five passes, one admission assertion failure and one subprocess helper. No error captured by initial matches assertion; later diagnostic assertion preserves the contract."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-server --test stack_local_preparation admission::authorization_stale_physical_selection_and_conflicting_identity_do_not_prepare -- --exact",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-preparation-admission.log: exact diagnostic rerun passes, before trusted-combination validation was added."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-server --test stack_local_preparation",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-preparation-full1.log: all six original/expanded cases pass; ignored helper executes through its subprocess parents."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-server --test stack_local_preparation",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-preparation-full2.log: eight cases pass with cancellation and persisted-evidence rejection."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-server --test stack_local_preparation",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-preparation-final.log: all eight cases pass after adding trusted combination precondition and stale-combination rejection; helper executes through subprocess parents."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-server --test stack_local_preparation --test stack_command_journal --lib stack",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-preparation-server-direct.log: filter selects four journal units but zero integrations; not integration qualification. Correct unfiltered integration command follows."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-server --test stack_local_preparation --test stack_command_journal",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-preparation-server-integrations.log: all 13 existing journal integrations and eight preparation integrations pass."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-server --lib stack_command_journal",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-preparation-journal-unit.log: four journal units pass, including real atomic-selection subprocess loss; ignored helper executes through its parent."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-jj --lib --test stack_source_recovery --test stack_operation_archive --test stack_reword_preparation --test stack_foreground --test stack_preparation_retention --test local_metadata --test local_evidence",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-preparation-jj-direct.log: 86 unique direct JJ cases pass (29 units/57 integrations), with subprocess helpers invoked by their passing parents."
+    },
+    {
+      "command": "cargo check --locked -p jj-store-server -p jj-store-jj --all-targets",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-preparation-check.log: owning source and tests compile; not runtime authority qualification."
+    },
+    {
+      "command": "cargo clippy --locked -p jj-store-server -p jj-store-jj --all-targets --no-deps -- -D warnings",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-preparation-lint.log: owning strict lint passes without suppression. Inherited service/dependency aggregate lint remains unqualified."
+    },
+    {
+      "command": "cargo fmt --all",
+      "result": "pass",
+      "failures": 0,
+      "note": "Pinned formatting during implementation; no unrelated source changes."
+    },
+    {
+      "command": "pnpm check:boundaries",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-preparation-boundaries.log: 17 owning packages pass; upstream imports remain in JJ integration."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-preparation-architecture.log: 1090 presentation modules pass; no UI ownership/lifecycle change."
+    },
+    {
+      "command": "pnpm format:rust:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-preparation-rust-format.log: Root/runtime Rust formatting passes."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/architecture.md spec/src/documentation.md spec/src/jj-integration.md spec/src/local-jj.md spec/src/verification.md docs/implementation-plan.md docs/site/technical/local.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-preparation-docs-format.log: Changed canonical/manual documents only; historical ledger excluded."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/site/technical/lifecycle.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-preparation-lifecycle-format.log: Owning server lifecycle manual formatting."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-preparation-coverage-format.log: Local/server source review acknowledgements formatted."
+    },
+    {
+      "command": "pnpm exec prettier --check spec/src/architecture.md spec/src/documentation.md spec/src/jj-integration.md spec/src/local-jj.md spec/src/verification.md docs/implementation-plan.md docs/site/technical/local.md docs/site/technical/lifecycle.md docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-preparation-docs-format-check.log: Changed document formatting passes; ledger excluded."
+    },
+    {
+      "command": "pnpm docs:review local 'Documented saved candidate archive retention through the foreground lease and recovery witness, with exact original-key replay after source loss and no source restoration or publication. Server pending journal selection precedes retention and acknowledged commit/digest replaces only the pending archive body; runtime authority, extras/index repair, publication and checkout remain required.'",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-preparation-docs-review-local.log: owning source acknowledgement records the exact pending-retention join and remaining runtime gates."
+    },
+    {
+      "command": "pnpm docs:review configuration 'Reviewed exact local reword preparation composition, principal/request/intent lookup before live context, trusted combination selection, pending archive selection before retention, exact commit/archive acknowledgement, 128-record/8-MiB capacity and immutable legacy encoding. Cancellation, process loss and source loss resume original previews without reprepare. Installed authority, command transport, publication and guarded checkout remain unfinished.'",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-preparation-docs-review-server.log: owning source acknowledgement records the exact pending-retention join and remaining runtime gates."
+    },
+    {
+      "command": "Five repetitions of cargo test --locked -p jj-store-server --test stack_local_preparation admission::authorization_stale_physical_selection_and_conflicting_identity_do_not_prepare -- --exact",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-preparation-admission-repeat.log: five independent exact reruns pass with diagnostics, investigating the initial uncaptured admission failure; no assertion weakened."
+    },
+    {
+      "command": "pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-preparation-docs-check.log: owning source review, nine offline diagrams, strict manual build and 139-file link/anchor closure pass."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "fail",
+      "failures": 1,
+      "note": "stack-local-preparation-spec-first.log: missing cli.md mapping for changed server code; owning server command semantics added before final rerun."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-preparation-spec-validate.log: five validators, 23 chapters and 173 requirements pass."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "fail",
+      "failures": 5,
+      "note": "stack-local-preparation-progress.log: five evidence references lacked required symbol anchors; corrected to existing exact tests without altering product or historic entries."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/cli.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-preparation-cli-spec-format.log: owning server-command chapter formatted; historical ledger excluded."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-preparation-spec-first-final.log: 20 protected files and six canonical chapters pass after owning CLI/server chapter update."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-local-preparation-progress-final.log: 142 tasks pass bookkeeping; M21.2 remains In progress, result pending and historical evidence unchanged."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Stage 3 still requires real registered-device command/combination authority, lost extras/index recovery, exact operation-head publication preserving concurrent siblings, guarded checkout and durable recovery, and prepare/apply/status/discovery transport. Current preparation is a trusted composition seam, not installed authorization.",
+    "Real candidates, previews and original retention keys are qualified through fixture authority. Physical fingerprints and combination selection remain synthetic fixtures; no real installed ACL/scanner/durable combination acceptance inferred.",
+    "Stages 4-7 remain approved and required: durable merge/WIP combinations and apply/unapply/switching, whole-file then server-issued hunk transfers, graph actions/deletion policy/guarded undo, linked-native real-storage execution and complete cold production UI wiring.",
+    "Two inherited service strict-lint diagnostics remain unresolved/unwaived from E-M21-010. Owning server/JJ no-deps lint does not qualify aggregate service/dependency lint."
+  ],
+  "next": "Complete runtime registered-device authority, source-extra/index recovery, exact publication and guarded checkout; continue all seven approved stages before enabling writable controls.",
+  "out_of_scope": "No HTTP/schema/client/startup/production UI or Storybook changes, fresh visual review, screenshot comparisons/baselines, publication, installed binaries/services, existing-repository reset/migration, native/real-RustFS execution, retained-ref cleanup or unrelated root aggregate lanes.",
+  "summary": "111 unique direct tests pass (86 JJ source cases; 13 journal integrations; four journal units; eight real preparation integrations). Actual previews survive source loss/GC, process loss before/after retention, cancellation and malformed-evidence rejection. Five exact admission repetitions pass; the initial uncaptured failure is retained in evidence. Runtime authority, publication, guarded checkout and all later approved stages remain incomplete."
 }
 ]
 ```

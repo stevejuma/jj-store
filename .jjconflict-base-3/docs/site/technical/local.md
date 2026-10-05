@@ -175,6 +175,26 @@ files. External editors still need separate physical-byte guards. Original
 journal/policy composition, extra/index recovery, head publication and guarded
 checkout remain required before enabling Stacks mutations.
 
+Private server preparation now saves the exact real reword preview, original
+request identity, recovery witness and full candidate archive before reserved
+retention. A retry resumes that saved archive instead of preparing a replacement
+operation. This also works after process loss before retention or before its
+acknowledgement, source operation/index loss and Git GC. Retention
+acknowledgement keeps the selected commit and archive digest while removing the
+pending archive body from private journal state. Pending records cannot proceed
+to publication.
+
+The journal admits at most 128 records and 8 MiB, including pending archives and
+reserved receipt-growth capacity. It never evicts original requests to admit
+another command. Legacy metadata-only records keep their original bytes and
+cannot be upgraded to execution evidence. Cancellation and authority loss after
+selection preserve the original recovery input. These tests use real local JJ
+candidates with fixture-supplied authority and combination/physical selection;
+installed registration policy and durable combination authority are unfinished.
+No command transport, operation publication or checkout change is enabled by
+this composition. Source-extra/index recovery, publication and guarded checkout
+still precede writable controls.
+
 Device paths, access grants, credentials and active execution journals are not
 portable repository records. Ordinary Git/JJ network commands do not transfer
 the owned companion ref. Do not assume a normal code push backs up

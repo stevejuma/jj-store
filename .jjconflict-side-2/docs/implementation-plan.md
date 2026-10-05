@@ -267,6 +267,20 @@ slice. Runtime original-request policy/journal composition, extra/index
 recovery, publication and guarded checkout are still required before writable
 capability. The seven approved stages remain unchanged.
 
+E-M21-018 joins actual unpublished reword preparation with its exact preview,
+original principal/request/intent, private recovery witness and reserved
+retention. Pending journal selection saves the full candidate archive before
+retaining code, closing the interruption window without re-preparing on retry.
+Acknowledgement retains the exact commit/digest and releases only the pending
+archive body. Real process loss before/after retention, cancellation, source
+operation/index loss and Git GC retain the same preview and receipt. Legacy
+records are immutable; pending archives count toward 128 records/8 MiB and
+cannot proceed to publication. This is a trusted composition seam with fixture
+authorization/combination/physical context, not installed command authority.
+Runtime policy, extra/index recovery, publication, guarded checkout and
+prepare/apply/status/discovery remain Stage 3 work. Stages 4-7 remain approved
+and required; production capabilities are still read-only.
+
 ### Recommended scope and model
 
 First qualify explicitly registered Git-backed JJ folders under the current

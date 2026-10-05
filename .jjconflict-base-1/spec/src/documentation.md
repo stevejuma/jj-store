@@ -41,6 +41,15 @@ qualification evidence; internal plans and evidence are not published as Help.
 
 ## Delivery and validation
 
+Local preparation documentation MUST distinguish the qualified exact
+preview/journal/witness/retention join from unqualified installed authorization,
+combination authority and runtime command execution. It describes pending
+archive selection before retention, original-request replay after process loss,
+cancellation and authority loss, immutable legacy records and the journal's
+128-record/8-MiB bound including pending archives. Source reviews cover both the
+owning JJ retainer and server composition; no transport or writable control is
+implied.
+
 Stack journal documentation MUST distinguish private exact-preparation and
 historical receipt metadata from actual provider object retention, code
 publication and foreground checkout. It records bounded capacity, durable
