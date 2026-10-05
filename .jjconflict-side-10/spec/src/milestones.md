@@ -154,7 +154,7 @@ shared-package release qualification does not alter those original Git gates.
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017 |
 | M21.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | UI reviewed for backend integration; registry/visual gates remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009 |
-| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Complete recoverable checkout and durable combinations | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022 |
+| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Complete recoverable checkout and durable combinations | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -88456,6 +88456,243 @@ entries.
   "next": "Implement safe original operation publication, then guarded checkout and runtime command composition; continue every remaining approved stage.",
   "out_of_scope": "No production UI/startup/generated transport changes or new browser/visual review, screenshot/baseline updates, publication, installed executable/service replacement, existing repository reset/migration, reserved-ref cleanup, linked-native/real-RustFS commands or unrelated root aggregate lanes.",
   "summary": "41 unique direct cases pass: 26 source recovery (eight new index cases), eight foreground and seven archive. Four ignored process helpers run through passing parents. Missing indexes restore without source extras/import; native change/parent graphs preserve original versus future visibility and valid CLI index bytes. Owning package check/strict no-deps lint, boundaries/architecture, formatting, documentation and mapped specification/progress checks pass. All 503 parent evidence bodies remain byte-identical after the documented same-slice E021 aggregate-status correction. Safe publication, guarded checkout, runtime commands and Stages 4-7 remain incomplete; no writable capability is advertised."
+},
+{
+  "id": "E-M21-023",
+  "tasks": [
+    "M21",
+    "M21.2"
+  ],
+  "date": "2026-10-05",
+  "revision": "sokxvsru",
+  "kind": "Exact retained head publication with concurrent CLI ancestry and interrupted retry",
+  "versions": "Rust 1.98.1; JJ 0.45.1; Git SHA-1/JJ 0.45.1 profile; macOS ARM64 real disposable stock-JJ folders. CARGO_INCREMENTAL=0; installed services/executables unchanged.",
+  "formats": "Pinned SimpleOpStore/native head markers and upstream Unix flock; witness V1, operation archive V1, reserved retention V2, journal/combination/companion/native manifest/WAL formats unchanged. No transport/schema/client change.",
+  "files": [
+    "crates/jj-store-jj/src/local_execution/mod.rs",
+    "crates/jj-store-jj/src/local_execution/recovery.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/extras.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/indexes.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/publication.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/publication/ancestry.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/records.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/records/destination.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/records/synced.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/witness.rs",
+    "crates/jj-store-jj/tests/stack_head_publication.rs",
+    "crates/jj-store-jj/tests/stack_head_publication/adversarial.rs",
+    "crates/jj-store-jj/tests/stack_head_publication/lifecycle.rs",
+    "docs/implementation-plan.md",
+    "docs/site/technical/local.md",
+    "docs/maintenance/coverage.json",
+    "spec/src/architecture.md",
+    "spec/src/documentation.md",
+    "spec/src/jj-integration.md",
+    "spec/src/local-jj.md",
+    "spec/src/verification.md",
+    "spec/src/milestones.md"
+  ],
+  "before": "Initial two-case target failed at three missing resume_publication calls. Ordinary saved recovery required unchanged original heads and offered no publication API. See runs for every intermediate failure and fixture correction.",
+  "scope": "One private original-request code-publication primitive. Preserve strict ordinary restoration; separately prove bounded exact current ancestry, validate unchanged saved checkout/policy/binding and complete source/extra/index dependencies. Hold foreground and actual native head-store locks, sync create-only candidate before removing only original, preserve CLI siblings and acknowledge later-descendant retry without reannouncement. Provider-only proof binds retained key/witness, operation and view.",
+  "tests": [
+    "crates/jj-store-jj/tests/stack_head_publication.rs#exact_publication_replaces_only_original_head_without_checkout_and_retries_after_reopen",
+    "crates/jj-store-jj/tests/stack_head_publication.rs#actual_cli_sibling_head_is_preserved_when_the_original_head_was_already_consumed",
+    "crates/jj-store-jj/tests/stack_head_publication.rs#retry_after_real_cli_descendant_does_not_reannounce_or_rewind_candidate",
+    "crates/jj-store-jj/tests/stack_head_publication.rs#multiple_real_cli_siblings_survive_exact_candidate_selection",
+    "crates/jj-store-jj/tests/stack_head_publication.rs#ordinary_history_restoration_remains_strict_after_publication",
+    "crates/jj-store-jj/tests/stack_head_publication/adversarial.rs#missing_extras_and_indexes_require_explicit_repair_before_head_selection",
+    "crates/jj-store-jj/tests/stack_head_publication/adversarial.rs#missing_or_corrupt_archived_operation_and_view_fail_preflight_without_selection",
+    "crates/jj-store-jj/tests/stack_head_publication/adversarial.rs#unrelated_missing_and_hash_substituted_current_heads_are_rejected",
+    "crates/jj-store-jj/tests/stack_head_publication/adversarial.rs#native_head_lock_contention_is_nonblocking_and_retry_preserves_original",
+    "crates/jj-store-jj/tests/stack_head_publication/adversarial.rs#unsafe_head_markers_coordination_files_and_arbitrary_staging_names_fail_closed",
+    "crates/jj-store-jj/tests/stack_head_publication/adversarial.rs#safe_interrupted_head_staging_is_ignored_and_never_selected_as_a_head",
+    "crates/jj-store-jj/tests/stack_head_publication/adversarial.rs#candidate_with_another_operation_parent_cannot_publish_under_saved_witness",
+    "crates/jj-store-jj/tests/stack_head_publication/adversarial.rs#oversized_ancestry_and_excessive_head_enumeration_fail_before_selection",
+    "crates/jj-store-jj/tests/stack_head_publication/adversarial.rs#actual_native_ancestry_count_and_parent_fanout_are_bounded",
+    "crates/jj-store-jj/tests/stack_head_publication/lifecycle.rs#cancellation_after_selection_retains_admission_and_exact_retry_finishes_old_head_removal",
+    "crates/jj-store-jj/tests/stack_head_publication/lifecycle.rs#revocation_and_replaced_head_lock_after_candidate_selection_preserve_exact_retry",
+    "crates/jj-store-jj/tests/stack_head_publication/lifecycle.rs#changed_policy_checkout_and_replaced_head_directory_never_acknowledge_publication",
+    "crates/jj-store-jj/tests/stack_head_publication/lifecycle.rs#subprocess_loss_after_candidate_selection_reopens_same_witness_without_checkout",
+    "crates/jj-store-jj/tests/stack_head_publication/lifecycle.rs#cancellation_after_original_removal_retries_same_proof_without_reannouncing_heads"
+  ],
+  "runs": [
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_head_publication",
+      "result": "fail",
+      "failures": 3,
+      "note": "stack-head-publication-before.log: Missing resume_publication API diagnostics at the two initial exact regressions."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_head_publication",
+      "result": "fail",
+      "failures": 2,
+      "note": "stack-head-publication-first.log: Private constant/record-destination visibility diagnostics; repaired without changing dependencies."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_head_publication",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-head-publication-second.log: Both initial exact real-CLI publication/sibling cases pass."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_head_publication",
+      "result": "fail",
+      "failures": 3,
+      "note": "stack-head-publication-expanded.log: 13 pass/three new fixture failures. Two snapshots did not account for allowed empty native lock creation; fixture now starts with that coordination file. Policy fixture initially changed physical .gitignore rather than saved Git exclude metadata; corrected to .git/info/exclude. Contracts and assertions preserved."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_head_publication",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-head-publication-expanded-after.log: 16 pass; isolated subprocess helper runs through parent."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_head_publication",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-head-publication-full.log: 18 pass after adding interrupted acknowledgement and bounded marker/record cases."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_head_publication --test stack_source_recovery --test stack_foreground --test stack_operation_archive --test stack_reword_preparation",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-head-publication-direct.log: 68 unique direct cases pass: 19 publication, 26 source recovery, eight foreground, seven archive and eight reword. Five process-loss helpers execute through passing parents. Includes real 4096-descendant operation-limit/fanout cases."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_head_publication",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-head-publication-proof.log: All 19 publication cases pass after binding the provider-only proof to original retained key and witness digest. Same-proof/reopen assertions retain that scope."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo check --locked -p jj-store-jj --all-targets",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-head-publication-check.log: All owning targets pass before the final private proof-binding fields; final strict all-target lint also type-checks the final source."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo clippy --locked -p jj-store-jj --all-targets --no-deps -- -D warnings",
+      "result": "fail",
+      "failures": 1,
+      "note": "stack-head-publication-lint.log: One unique manual_non_exhaustive diagnostic (lib and lib-test). Replaced unit guard with semantically required private preparation key/witness fields; no allowance or suppression."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo clippy --locked -p jj-store-jj --all-targets --no-deps -- -D warnings",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-head-publication-lint-after.log: Final owning all-target strict lint passes; no aggregate service qualification claimed."
+    },
+    {
+      "command": "cargo fmt --all",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-head-publication-rust-format.log, stack-head-publication-rust-format-final.log, stack-head-publication-proof-format.log: Formatted owning Rust source and regression modules."
+    },
+    {
+      "command": "pnpm format:rust:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-head-publication-rust-format-check.log: Owning/runtime Rust formatting passes; final Rust field addition also formatted with cargo fmt."
+    },
+    {
+      "command": "pnpm check:boundaries",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-head-publication-boundaries.log: Package boundary audit passes."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-head-publication-architecture.log: Presentation architecture passes; no UI source change."
+    },
+    {
+      "command": "pnpm exec prettier --write spec/src/architecture.md spec/src/documentation.md spec/src/local-jj.md spec/src/jj-integration.md spec/src/verification.md docs/implementation-plan.md docs/site/technical/local.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-head-publication-doc-format.log: Changed documents formatted; historical ledger excluded."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/maintenance/coverage.json spec/src/local-jj.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-head-publication-coverage-format.log: Source-review acknowledgement and final canonical proof contract formatted."
+    },
+    {
+      "command": "pnpm exec prettier --check spec/src/architecture.md spec/src/documentation.md spec/src/local-jj.md spec/src/jj-integration.md spec/src/verification.md docs/implementation-plan.md docs/site/technical/local.md docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-head-publication-doc-format-check.log: Changed canonical/manual documents pass."
+    },
+    {
+      "command": "pnpm docs:review local 'Reviewed exact retained head publication with unchanged saved checkout/policy, bounded native ancestry and source identities, actual upstream lock coordination, complete dependency preflight, preserved CLI siblings and later-descendant retry without reannouncement. Private proof binds original retained preparation and witness; physical checkout, runtime receipts and writable controls remain unqualified.'",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-head-publication-docs-review.log: Owning local manual reviewed and source fingerprint refreshed."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-head-publication-docs-check.log: 139-file manual closure, links/anchors and nine offline diagrams in both themes pass. Required CLI-reference example is a direct source consumer."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-head-publication-spec-first.log: Mapped 16 protected files/four canonical chapters pass before evidence append."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-head-publication-spec-validation.log: Five validators/23 chapters/173 requirements pass."
+    },
+    {
+      "command": "node --test scripts/governance.test.mjs scripts/progress-mapping.test.mjs",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-head-publication-governance.log: 33 mapped governance/historical evidence regressions pass."
+    },
+    {
+      "command": "python3 raw JSON evidence-body hash audit",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-head-publication-ledger-before.json: 504 prior bodies captured and checked byte-for-byte before append. Initial local audit treated the array as one object; corrected to decode each array member without touching the ledger."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-head-publication-progress.log: All 142 task/evidence bookkeeping checks pass."
+    },
+    {
+      "command": "pnpm format:rust:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-head-publication-rust-format-final-check.log: Final provider-only proof fields and complete Rust regression source pass owning/runtime formatting."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-head-publication-spec-first-final.log: Final mapped protected/canonical change passes after evidence append."
+    },
+    {
+      "command": "python3 raw JSON evidence-body hash audit",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-head-publication-ledger-audit.log: Exactly 505 bodies; all 504 original body hashes preserved after E023 append/final run records. Aggregate remains pending."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Stage 3 still requires guarded physical checkout and durable runtime command/journal/status/discovery composition; head-only proof is not a completed checkout receipt and no production write capability is enabled.",
+    "Stages 4-7 remain approved and incomplete: first-use setup, named merge/WIP generation, membership/switching, whole-file/hunk staging and commits, graph actions/deletion/undo, linked-native real-storage and complete cold production flows.",
+    "Unrelated Rust workspace/service/RustFS and UI lanes are out of scope under the targeted policy. Two inherited strict service diagnostics remain unresolved/unwaived; owning no-deps lint does not qualify them. Existing large-server linker __eh_frame warning remains unsuppressed; no installed binary replacement, package publication, screenshot comparisons or baseline update."
+  ],
+  "next": "Qualify original-request guarded checkout with fresh physical editor/ignored/untracked guards, durable interruption recovery and scoped proof; join runtime prepare/apply/status/discovery, then continue all remaining approved stages.",
+  "summary": "68 direct provider cases and mapped checks qualify exact retained code-head publication. M21.2 remains In progress and production Stacks writes remain unavailable."
 }
 ]
 ```

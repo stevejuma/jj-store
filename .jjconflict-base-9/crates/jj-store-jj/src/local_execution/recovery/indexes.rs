@@ -8,6 +8,35 @@ use super::*;
 use crate::local_browser::working_tree::current::physical;
 const MAX_SEGMENT: usize = 4 * 1024 * 1024;
 const MAX_BYTES: usize = 16 * 1024 * 1024;
+pub(super) struct Validation {
+    destination: destination::Destination,
+    snapshot: destination::Snapshot,
+}
+impl Validation {
+    pub(super) fn check(&self, budget: &Budget) -> Result<()> {
+        if self.destination.capture(budget)? != self.snapshot {
+            return Err(Error::EpochChanged);
+        }
+        Ok(())
+    }
+}
+pub(super) async fn validate(recovery: &RecoveredHistory, budget: &Budget) -> Result<Validation> {
+    let destination = destination::Destination::open(recovery.access.metadata_path())?;
+    let snapshot = destination.capture(budget)?;
+    if snapshot.kind.is_none()
+        || !materialize::missing(recovery, &snapshot, budget)
+            .await?
+            .is_empty()
+    {
+        return Err(Error::Incomplete);
+    }
+    let validation = Validation {
+        destination,
+        snapshot,
+    };
+    validation.check(budget)?;
+    Ok(validation)
+}
 pub(super) async fn restore(recovery: &RecoveredHistory, budget: &Budget) -> Result<()> {
     recovery.check(budget).await?;
     let mut destination = destination::Destination::open(recovery.access.metadata_path())?;

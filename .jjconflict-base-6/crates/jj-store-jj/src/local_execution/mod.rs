@@ -1,4 +1,5 @@
-//! Foreground local-JJ coordination. No publication or checkout capability.
+//! Foreground local-JJ coordination and explicit retained head publication.
+//! Physical checkout and runtime command enablement remain separate gates.
 mod guard;
 mod recovery;
 mod reword;
@@ -6,7 +7,7 @@ use crate::{
     local_browser::{self, Access, Error, Result, working_tree::CurrentState},
     query::{content::Limits, workers::Workers},
 };
-pub use recovery::{RecoveredHistory, RecoveryBinding, RecoveryWitnessV1};
+pub use recovery::{PublishedHead, RecoveredHistory, RecoveryBinding, RecoveryWitnessV1};
 pub use reword::{BookmarkEffect, PreparedCode, Reword, Rewrite};
 use std::{path::PathBuf, sync::Arc};
 use tokio::sync::OwnedSemaphorePermit;

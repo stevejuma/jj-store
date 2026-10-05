@@ -5,6 +5,22 @@ use std::{
     sync::atomic::{AtomicU64, Ordering},
 };
 static NEXT: AtomicU64 = AtomicU64::new(0);
+pub(in crate::local_execution::recovery) fn staging_name(name: &str) -> bool {
+    let Some(suffix) = name.strip_prefix(".lapis-stack-recovery-") else {
+        return false;
+    };
+    if name.len() > 128 {
+        return false;
+    }
+    let fields: Vec<_> = suffix.split('-').collect();
+    fields.len() == 3
+        && fields
+            .iter()
+            .all(|s| !s.is_empty() && s.bytes().all(|b| b.is_ascii_digit()))
+        && fields[0].parse::<u32>().is_ok_and(|v| v > 0)
+        && fields[1].parse::<u128>().is_ok()
+        && fields[2].parse::<u64>().is_ok()
+}
 /// Synced no-replace rename. An interrupted staging write cannot select a partial record.
 pub(in crate::local_execution::recovery) fn select(
     dir: &File,

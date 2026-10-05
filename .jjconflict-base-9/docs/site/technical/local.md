@@ -212,6 +212,31 @@ replacement stop selection. The bound is 128 commit segments, 4096 associations,
 30-second worker deadline. This does not publish an operation head or write
 companion/checkout state; application mutations remain unavailable.
 
+An explicit retained-head publication step now uses the original request's saved
+witness and acknowledged candidate. It keeps ordinary history restoration
+strict, but separately proves current operation ancestry for publication. Source
+operation/view, extra metadata and original/candidate indexes must be complete
+before any head is selected; publication does not silently repair them. The
+original foreground lease and actual upstream head-store lock stay held through
+selection. Native decoding verifies operation identities without loading a
+latest repository, reconciling heads or importing extras.
+
+The candidate marker is durable before only the saved original marker is
+removed. Concurrent CLI sibling heads survive, including when a sibling has
+already consumed the original. If later heads already include the candidate,
+retry acknowledges it without announcing the old candidate again or rewinding
+current state. Cancellation or process loss after candidate selection can leave
+both markers; the same saved request completes the transition after reopen.
+Changed checkout/policy or a replaced source directory cannot be acknowledged.
+
+The ancestry bound is 4096 operations, 64 parents each, 4 MiB per source record
+and 16 MiB aggregate within the existing 30-second worker deadline. Head scans
+admit 64 markers and 128 total entries; only safe empty native locks and exact
+recovery staging names are ignored. Original physical files, checkout
+bookkeeping and companion state remain unchanged. The returned proof attests
+code publication only. Guarded checkout, durable runtime receipts and command
+transport remain required before application writes are available.
+
 Private server preparation now saves the exact real reword preview, original
 request identity, recovery witness and full candidate archive before reserved
 retention. A retry resumes that saved archive instead of preparing a replacement

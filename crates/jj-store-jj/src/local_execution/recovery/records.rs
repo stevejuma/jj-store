@@ -10,6 +10,12 @@ use std::{fs::File, path::Path};
 const MAX_RECORD: usize = 4 * 1024 * 1024;
 const MAX_RAW: usize = crate::local_evidence::MAX_ARCHIVE_BYTES;
 pub(super) async fn restore(recovery: &RecoveredHistory, budget: &Budget) -> Result<()> {
+    inspect(recovery, budget, true).await
+}
+pub(super) async fn validate(recovery: &RecoveredHistory, budget: &Budget) -> Result<()> {
+    inspect(recovery, budget, false).await
+}
+async fn inspect(recovery: &RecoveredHistory, budget: &Budget, repair: bool) -> Result<()> {
     let archive = &recovery.archive;
     let materialized = budget
         .until(archive.materialize())
@@ -82,6 +88,41 @@ pub(super) async fn restore(recovery: &RecoveredHistory, budget: &Budget) -> Res
     }
     // No source directories or records are created before complete conflict preflight.
     recovery.check(budget).await?;
+    if !repair {
+        destination.check()?;
+        if records.iter().any(|(_, _, _, missing)| *missing) {
+            return Err(Error::Incomplete);
+        }
+        let store = destination.store.as_ref().ok_or(Error::Incomplete)?;
+        if physical::read(store, "type", 64, false, budget)?
+            .ok_or(Error::Incomplete)?
+            .bytes
+            != SimpleOpStore::name().as_bytes()
+        {
+            return Err(Error::Invalid);
+        }
+        for (group, name, bytes, _) in records {
+            let dir = match group {
+                "views" => &destination.views,
+                _ => &destination.operations,
+            };
+            if physical::read(
+                dir.as_ref().ok_or(Error::Incomplete)?,
+                &name,
+                MAX_RECORD,
+                false,
+                budget,
+            )?
+            .ok_or(Error::Incomplete)?
+            .bytes
+                != bytes
+            {
+                return Err(Error::EpochChanged);
+            }
+        }
+        destination.check()?;
+        return Ok(());
+    }
     destination.ensure()?;
     destination.check()?;
     let store = destination.store.as_ref().ok_or(Error::Unavailable)?;

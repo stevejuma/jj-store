@@ -1,6 +1,6 @@
 use super::*;
 use rustix::fs::{self, AtFlags, FileType, Mode};
-pub(super) struct Destination {
+pub(in crate::local_execution::recovery) struct Destination {
     path: PathBuf,
     root: File,
     pub store: Option<File>,

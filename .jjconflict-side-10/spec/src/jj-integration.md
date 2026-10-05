@@ -1081,3 +1081,11 @@ or synthetic identity participates in construction. Private format/framing
 admission precedes upstream decoding under denied fallback operation/view
 access. Exact create-only source commit segments and operation associations are
 independent of extra restoration, operation-head publication and checkout.
+
+Retained head publication consumes only the original private witness and exact
+reserved preparation. Descriptor-relative native operation reads and private
+upstream decoding verify bounded current ancestry without graph-index loading,
+reconciliation or extra import. The original working-copy lock and pinned
+upstream head-store lock remain owned throughout synced candidate-before-old
+marker selection. Head-only publication proof does not qualify physical checkout
+or installation combination updates.

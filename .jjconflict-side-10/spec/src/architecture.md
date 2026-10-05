@@ -120,6 +120,17 @@ cannot gain future candidate visibility. Synced create-only segments precede
 associations, with exact retry after process loss. Head publication and guarded
 checkout remain separate Stage 3 boundaries.
 
+Exact retained operation-head publication uses a separate original-request
+recovery path with the saved checkout/policy witness unchanged. Bounded private
+native decoding proves current operation ancestry; it never loads a latest
+repository or reconciles heads. The original foreground lease and actual
+upstream head-store flock enclose complete source/extra/index preflight and
+synced candidate-before-original marker selection. Concurrent sibling heads
+remain intact, and a retry after later CLI work acknowledges the candidate
+without reannouncing or rewinding it. The owned proof attests code publication
+only; guarded checkout, runtime journal composition and writable capabilities
+remain separate gates.
+
 The server now joins actual unpublished reword effects with exact private
 preview/journal selection, saved recovery witness and reserved retention. The
 full candidate archive is durable before retention; acknowledgement replaces

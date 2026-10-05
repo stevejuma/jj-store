@@ -6,6 +6,40 @@ use super::*;
 use crate::local_browser::working_tree::current::physical;
 const MAX_SEGMENT: usize = 4 * 1024 * 1024;
 const MAX_EXTRA_BYTES: usize = 16 * 1024 * 1024;
+pub(super) struct Validation {
+    destination: destination::Destination,
+    snapshot: destination::Snapshot,
+    lock: guard::Guard,
+}
+impl Validation {
+    pub(super) fn check(&self, budget: &Budget) -> Result<()> {
+        self.destination.check()?;
+        self.lock
+            .check_directory(self.destination.extra.as_ref().ok_or(Error::Incomplete)?)?;
+        if self.destination.capture(budget)? != self.snapshot {
+            return Err(Error::EpochChanged);
+        }
+        Ok(())
+    }
+}
+pub(super) fn validate(recovery: &RecoveredHistory, budget: &Budget) -> Result<Validation> {
+    let destination = destination::Destination::open(recovery.access.metadata_path())?;
+    let extra = destination.extra.as_ref().ok_or(Error::Incomplete)?;
+    let lock =
+        guard::Guard::acquire_in(extra.try_clone().map_err(|_| Error::Unavailable)?, "lock")?;
+    let snapshot = destination.capture(budget)?;
+    let output = materialize::missing(recovery, &snapshot, budget)?;
+    if !output.segments.is_empty() || !output.heads.is_empty() {
+        return Err(Error::Incomplete);
+    }
+    let validation = Validation {
+        destination,
+        snapshot,
+        lock,
+    };
+    validation.check(budget)?;
+    Ok(validation)
+}
 pub(super) async fn restore(recovery: &RecoveredHistory, budget: &Budget) -> Result<()> {
     recovery.check(budget).await?;
     let mut destination = destination::Destination::open(recovery.access.metadata_path())?;

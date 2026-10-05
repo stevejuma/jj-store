@@ -41,6 +41,15 @@ qualification evidence; internal plans and evidence are not published as Help.
 
 ## Delivery and validation
 
+The local manual MUST distinguish exact retained head publication from completed
+physical checkout and command receipts. Document original-request recovery,
+unchanged saved checkout/policy, bounded verified ancestry, preserved concurrent
+siblings and later-descendant retry without reannouncement. Cancellation or
+process loss between candidate selection and old-head removal is retryable;
+changed policy, checkout or source binding requires explicit recovery. Current
+runtime writable capabilities remain unavailable, and source-review evidence
+must cover the owning publication and witness providers.
+
 Local preparation documentation MUST distinguish the qualified exact
 preview/journal/witness/retention join from unqualified installed authorization,
 combination authority and runtime command execution. It describes pending

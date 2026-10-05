@@ -1,6 +1,7 @@
-//! Explicit exact source recovery; no head publication or checkout writes.
+//! Explicit exact source recovery/publication; no checkout writes.
 mod extras;
 mod indexes;
+mod publication;
 mod records;
 mod retention;
 mod witness;
@@ -11,6 +12,7 @@ use crate::{
     local_metadata::{MetadataStore, StackPreparationKey},
 };
 use jj_store_model as m;
+pub use publication::PublishedHead;
 use std::time::Duration;
 pub use witness::{RecoveryBinding, RecoveryWitnessV1};
 
@@ -21,6 +23,7 @@ pub struct RecoveredHistory {
     witness: RecoveryWitnessV1,
     key: StackPreparationKey,
     archive: OperationArchiveV1,
+    publication: bool,
     _permit: OwnedSemaphorePermit,
 }
 impl Foreground {
@@ -56,6 +59,27 @@ impl Coordinator {
         witness: RecoveryWitnessV1,
         key: StackPreparationKey,
     ) -> Result<RecoveredHistory> {
+        self.recover(access, root, witness, key, false).await
+    }
+    /// Trusted original-request composition only, including interrupted head
+    /// selection. Proves current ancestry; never prepares a replacement command.
+    pub async fn resume_publication(
+        &self,
+        access: Arc<dyn Access>,
+        root: PathBuf,
+        witness: RecoveryWitnessV1,
+        key: StackPreparationKey,
+    ) -> Result<RecoveredHistory> {
+        self.recover(access, root, witness, key, true).await
+    }
+    async fn recover(
+        &self,
+        access: Arc<dyn Access>,
+        root: PathBuf,
+        witness: RecoveryWitnessV1,
+        key: StackPreparationKey,
+        publication: bool,
+    ) -> Result<RecoveredHistory> {
         let permit = self.workers.acquire_preparation()?;
         let cancellation = tokio_util::sync::CancellationToken::new();
         let cancel = cancellation.clone().drop_guard();
@@ -66,10 +90,13 @@ impl Coordinator {
                 let mut budget = recovery_budget();
                 budget.cancellation = cancellation;
                 witness.check_key(&key)?;
-                witness.check(&access, &root, &budget).await?;
+                if !publication {
+                    witness.check(&access, &root, &budget).await?;
+                } else {
+                    budget.until(access.authorize()).await??;
+                }
                 let guard = guard::Guard::acquire(&root)?;
                 guard.check(&root)?;
-                witness.check(&access, &root, &budget).await?;
                 let store = witness.store()?;
                 let retained = store
                     .read_stack_prepared(&key)
@@ -84,8 +111,10 @@ impl Coordinator {
                     witness,
                     key,
                     archive,
+                    publication,
                     _permit,
                 };
+                recovery.check(&budget).await?;
                 records::restore(&recovery, &budget).await?;
                 recovery.check(&budget).await?;
                 if store
@@ -148,7 +177,11 @@ impl RecoveredHistory {
     }
     async fn check(&self, budget: &Budget) -> Result<()> {
         self.guard.check(&self.root)?;
-        self.witness.check(&self.access, &self.root, budget).await?;
+        if self.publication {
+            publication::check(self, budget).await?;
+        } else {
+            self.witness.check(&self.access, &self.root, budget).await?;
+        }
         self.guard.check(&self.root)
     }
 }

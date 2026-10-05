@@ -153,6 +153,9 @@ impl RecoveryWitnessV1 {
     pub(super) fn git_path(&self) -> &std::path::Path {
         &self.git_path
     }
+    pub(super) fn original_heads(&self) -> &[m::OperationId] {
+        &self.heads
+    }
     pub(super) fn store(&self) -> Result<MetadataStore> {
         MetadataStore::open(&self.git_path, Default::default()).map_err(evidence_error)
     }
@@ -160,6 +163,18 @@ impl RecoveryWitnessV1 {
         &self,
         access: &Arc<dyn Access>,
         root: &std::path::Path,
+        budget: &Budget,
+    ) -> Result<()> {
+        self.check_heads(access, root, &self.heads, budget).await
+    }
+    /// Publication separately proves the current heads' exact ancestry. Hash
+    /// checkout/policy against the saved heads so this intended transition
+    /// cannot hide an unrelated checkout or policy change.
+    pub(super) async fn check_heads(
+        &self,
+        access: &Arc<dyn Access>,
+        root: &std::path::Path,
+        expected_heads: &[m::OperationId],
         budget: &Budget,
     ) -> Result<()> {
         budget.until(access.authorize()).await??;
@@ -172,8 +187,8 @@ impl RecoveryWitnessV1 {
             let policy = capture::policy_at_git(root, &git, &self.git_path, budget)?;
             let heads = heads(access.metadata_path(), budget)?;
             if files.workspace != self.physical_workspace
-                || heads != self.heads
-                || current::fingerprint(access, &files, &policy, &heads) != self.fingerprint
+                || heads != expected_heads
+                || current::fingerprint(access, &files, &policy, &self.heads) != self.fingerprint
                 || binding(access.metadata_path(), &self.git_path, budget)? != self.source_binding
             {
                 return Err(Error::EpochChanged);
@@ -221,14 +236,24 @@ fn binding(
     }
     Ok(m::RecordDigest::new(hash.finalize().into()))
 }
-fn heads(metadata: &std::path::Path, budget: &Budget) -> Result<Vec<m::OperationId>> {
+pub(super) fn heads(metadata: &std::path::Path, budget: &Budget) -> Result<Vec<m::OperationId>> {
     let repo = physical::directory(metadata)?;
     let dir = physical::child(&physical::child(&repo, "op_heads")?, "heads")?;
     let mut heads = Vec::new();
+    let mut entries = 0;
     for entry in rustix::fs::Dir::read_from(&dir).map_err(|_| Error::Unavailable)? {
+        budget.work(1)?;
         let entry = entry.map_err(|_| Error::Unavailable)?;
         let name = entry.file_name().to_str().map_err(|_| Error::Invalid)?;
         if matches!(name, "." | "..") {
+            continue;
+        }
+        entries += 1;
+        if entries > 128 {
+            return Err(Error::Limit);
+        }
+        if name == "lock" || super::records::synced::staging_name(name) {
+            physical::read(&dir, name, 0, false, budget)?.ok_or(Error::Unavailable)?;
             continue;
         }
         if name.len() != 128
@@ -245,5 +270,8 @@ fn heads(metadata: &std::path::Path, budget: &Budget) -> Result<Vec<m::Operation
         }
     }
     heads.sort();
+    if heads.is_empty() {
+        return Err(Error::Incomplete);
+    }
     Ok(heads)
 }
