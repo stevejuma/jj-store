@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed explicit retained initial merge/WIP generation, exact source and known bookmark resolution, preservation of original refs/workspaces, and registered bound completion. The WIP retains the prior baseline tree while unsnapshotted edits remain guarded in place; setup does not qualify dirty capture, membership/switching, command transport or writable UI.",
-      "fingerprint": "5517b752ef54fe6032eb515e9489745042365f5e589526dd58704198bd8f1073"
+      "reason": "Reviewed the provider-owned stable physical identity read for historical stack admission: unchanged observer digest, bounded no-follow directory checks across authorization, refusal on races/revocation, and independence from current code/checkout/policy/editor reads. Runtime registration, original journal validation and production wiring remain separate gates.",
+      "fingerprint": "b867b2aef08f415d31fb1618569855249c2224c9912087d75754e08bd4ab0fd8"
     }
   },
   {

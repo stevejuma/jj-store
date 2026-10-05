@@ -293,6 +293,12 @@ manual cannot present private coordination as an enabled production workflow.
 
 ## Initial stack setup documentation boundary
 
+The local technical guide MUST distinguish stable physical recovery admission
+from live observation: the owning provider reuses the existing root/`.jj`
+identity digest without reading current code, checkout metadata, ignore policy
+or editor files. Document replacement/revocation refusal, read-only behavior and
+the remaining original journal, registration and runtime gates.
+
 Current-workspace documentation MUST distinguish selected public combination
 catalogs from original command receipts and proposed private state. It explains
 absent, ready, stale and pending readiness, profile/scope/resource bounds, and

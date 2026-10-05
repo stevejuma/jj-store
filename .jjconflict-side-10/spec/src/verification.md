@@ -24,6 +24,17 @@ release claim follows from controlled loopback API tests.
 
 # Verification
 
+Stable physical stack-recovery admission is recorded by
+[E-M21-039](milestones.md). Four new provider test parents prove agreement with
+the existing observer, unchanged reads, independence from missing
+operation/head/ index stores and damaged checkout/policy/editor state, distinct
+identity after root or `.jj` replacement, unsafe/missing/oversized path refusal,
+replacement during authorization and revoked access at each boundary. The
+complete existing current-reader binary retains its five prior regressions. This
+qualifies the provider primitive only; registered runtime composition, private
+production paths, HTTP and writable UI remain incomplete. Work pauses after this
+slice for the requested implementation discussion.
+
 Bounded directory-aware OpenCode discovery is qualified by
 [E-M17-076](milestones.md). The exact before target missed both linked native
 workspaces when the default API instance status map was empty. Controlled

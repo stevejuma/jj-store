@@ -1,5 +1,13 @@
 # Native JJ integration
 
+The local stacks recovery boundary uses the owning provider's stable physical
+workspace identity independently of current code. Identity admission reuses the
+current working-tree observer's digest and bounded worker lifetime, checks
+registered root/`.jj` directory identity across authorization, and never loads
+operation stores, checkout/tree-state, ignore policy or working files. It cannot
+initialize or repair state, establish original request ownership or enable a
+command. The registered runtime must still enforce those separate authorities.
+
 The private local working-tree baseline reader selects the named workspace's
 commit from an exact authorized operation/view through the existing scoped Git
 reader. It never loads latest state, repairs the source index, snapshots the

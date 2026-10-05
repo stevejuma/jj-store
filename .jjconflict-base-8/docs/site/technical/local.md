@@ -78,6 +78,19 @@ contents and private policy bytes/paths. Active-combination assignment and
 production UI integration remain separate steps before these physical reads
 populate Unstaged.
 
+Historical stack recovery has a separate provider identity read. It returns the
+same digest of the canonical root path and root/`.jj` device/inode identities
+used by current observation, checking it twice across authorization. Directory
+opens refuse links; paths are limited to 4096 bytes and use the existing bounded
+reader worker. This read does not load heads, operation/index stores,
+checkout/tree-state, ignore policy or working files. Missing or damaged current
+code therefore does not hide the stable physical identity, and reads perform no
+repair. Replacing either directory changes the identity or fails the read;
+replacement during the read and revoked access are rejected. The server must
+still resolve the registered folder and validate original actor, scope, request
+ID and intent before journal access. Runtime, transport and writable UI remain
+unwired.
+
 ## Portability and limits
 
 Stack preparation retention uses a separate reserved

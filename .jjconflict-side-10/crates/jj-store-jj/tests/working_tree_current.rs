@@ -4,6 +4,8 @@ use jj_lib::{
 use jj_store_jj::local_browser::{self as code, working_tree::*};
 use jj_store_model as m;
 use prost::Message as _;
+#[path = "working_tree_current/identity.rs"]
+mod identity;
 use std::{
     fs,
     path::{Path, PathBuf},

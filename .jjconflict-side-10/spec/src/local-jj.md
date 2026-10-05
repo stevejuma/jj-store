@@ -773,6 +773,19 @@ active combination's code to match observed current code; stale and pending
 results grant no command authority. The registered runtime must join current
 observation, catalog and original journal discovery before transport/UI use.
 
+Historical runtime admission MUST compare the requested stable physical
+workspace against a provider-owned identity read from the registered canonical
+root. Reuse the current observer's path/root/`.jj` device-and-inode digest;
+server code MUST NOT duplicate that identity algorithm. This bounded read opens
+directories without following links and rechecks identity across authorization.
+It reads no operation, head, checkout/tree-state, ignore policy or working file,
+and performs no initialization or repair. Current code loss or changed editor
+bytes cannot prevent this identity read. Root or `.jj` replacement, unsafe paths
+and revoked access fail or yield a distinct identity for the runtime to reject.
+This proves physical admission only: original actor/scope/ID/digest,
+registration and journal validation remain mandatory and runtime composition is
+still a separate gate.
+
 The installation-private stack command journal MUST explicitly create its
 bounded state outside repository checkouts. Open, status and pending discovery
 MUST NOT initialize missing state. Its scope binds installation, repository,

@@ -152,9 +152,9 @@ shared-package release qualification does not alter those original Git gates.
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                        | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work          | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038 |
+| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Await implementation discussion; resume registered runtime and production lifecycle afterward | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039 |
 | M21.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | UI reviewed for backend integration; registry/visual gates remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009 |
-| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Wire original setup, command discovery/status and production lifecycle | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038 |
+| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Await implementation discussion; resume registered runtime and production lifecycle afterward | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -92725,6 +92725,185 @@ entries.
   "next": "Compose the owned registered discovery/status/pending runtime with explicit first-use private-state creation during authorized setup, then implement local HTTP and original production command lifecycle. Continue all approved stages.",
   "summary": "55 unique focused Rust parents pass across discovery/recovery/protocol contracts, catalog integration/library and actual registered execution. Strict all-target no-deps checks for service/server/CLI, 50 governance tests, source boundaries, architecture, UI ownership, documentation, formatting, mapped specification and progress checks pass. All 519 historical raw ledger bodies are preserved. Bounded selected-catalog projection is qualified; registered runtime, HTTP and complete backend/UI wiring remain unfinished.",
   "tests": []
+},
+{
+  "id": "E-M21-039",
+  "tasks": [
+    "M21",
+    "M21.2"
+  ],
+  "date": "2026-10-05",
+  "revision": "zmrponqr",
+  "kind": "Provider-owned stable physical identity read for historical stack recovery admission",
+  "versions": "Pinned JJ 0.45.1 Git SHA-1 provider profile. Existing physical-workspace digest version 1 is reused unchanged.",
+  "formats": "No wire, journal, combination, native checkout, code, companion, WAL or manifest format changes. New provider method returns the existing owned digest.",
+  "files": [
+    "crates/jj-store-jj/src/local_browser/working_tree/current.rs",
+    "crates/jj-store-jj/tests/working_tree_current.rs",
+    "crates/jj-store-jj/tests/working_tree_current/identity.rs",
+    "docs/implementation-plan.md",
+    "docs/maintenance/coverage.json",
+    "docs/site/technical/local.md",
+    "spec/src/architecture.md",
+    "spec/src/documentation.md",
+    "spec/src/jj-integration.md",
+    "spec/src/local-jj.md",
+    "spec/src/milestones.md",
+    "spec/src/verification.md"
+  ],
+  "requirements": [
+    "JST-LOCAL-005",
+    "JST-JJ-003",
+    "JST-JJ-004",
+    "JST-UI-020",
+    "JST-DOC-002",
+    "JST-GOV-002",
+    "JST-GOV-003"
+  ],
+  "before": "Five existing current-reader parents pass. The new exact four-parent identity target initially fails compilation with nine missing-method diagnostics. No initial implementation test failed.",
+  "scope": "Reuse the observer-owned path/root/.jj device-and-inode digest through the existing bounded authenticated provider worker. Recheck no-follow directory identity across authorization, bound path bytes and charge directory work. No current code, head, checkout/tree-state, policy or working-file read, initialization or repair. Exact tests cover matching observer identity, damaged/missing current state, unchanged reads, replacement before/during admission, unsafe/missing/oversized paths and access loss at all three authorization boundaries. Registered runtime, store location and command composition are deliberately outside this narrow provider slice. The user requested a pause after the next slice; pause follows verification and commit. Initial patch context misses applied no changes and are not product regression failures. Root aggregate, unrelated Rust/UI/Storybook, transport generation, RustFS, publication and visual lanes are out of scope under the targeted policy.",
+  "runs": [
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test working_tree_current",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-identity-before.log: All five existing current-reader parents pass before the change."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test working_tree_current identity::",
+      "result": "fail",
+      "failures": 9,
+      "note": "physical-identity-red.log: New four-parent identity target fails compilation with nine E0599 missing-method diagnostics."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test working_tree_current identity::",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-identity-green.log: Four exact identity parents pass; five existing parents are filtered."
+    },
+    {
+      "command": "cargo fmt --all",
+      "result": "pass",
+      "failures": 0,
+      "note": "tool output: Owning Rust source and test formatting applied; no unrelated Rust file changed."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test working_tree_current",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-identity-regression.log: Complete directly affected current-reader binary: nine parents pass, including all five prior regressions."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo clippy --locked -p jj-store-jj --all-targets --no-deps -- -D warnings",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-identity-clippy.log: Owning package all-target check and strict lint pass without suppression."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/site/technical/local.md docs/implementation-plan.md spec/src/local-jj.md spec/src/jj-integration.md spec/src/architecture.md spec/src/documentation.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-identity-document-format.log: Changed documentation formatted; historical milestone ledger excluded."
+    },
+    {
+      "command": "pnpm docs:review local 'Reviewed the provider-owned stable physical identity read for historical stack admission: unchanged observer digest, bounded no-follow directory checks across authorization, refusal on races/revocation, and independence from current code/checkout/policy/editor reads. Runtime registration, original journal validation and production wiring remain separate gates.'",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-identity-docs-review.log: Owning local source fingerprint reviewed against the updated technical guide."
+    },
+    {
+      "command": "pnpm test:governance",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-identity-governance.log: All 50 governance tests pass."
+    },
+    {
+      "command": "pnpm check:boundaries",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-identity-boundaries.log: All 17 package boundaries pass."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-identity-architecture.log: 1090-module source architecture passes."
+    },
+    {
+      "command": "pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-identity-docs-check.log: Parser-reference generation, source review and strict documentation build pass; nine diagrams rendered locally and 139-file closure has valid links/anchors. This actual invocation used the inherited Cargo incremental setting; all direct Rust regression and lint commands explicitly disable incremental compilation."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-identity-spec-first.log: Initial mapped gate passes six protected files and four canonical chapters."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-identity-spec-validation.log: Five validators, 23 chapters and 173 requirements pass."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/maintenance/coverage.json spec/src/verification.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-identity-coverage-format.log: Coverage and verification formatting restored; only the local source review changes in coverage."
+    },
+    {
+      "command": "cargo fmt --all -- --check",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-identity-rust-format.log: All owning-workspace Rust formatting passes."
+    },
+    {
+      "command": "pnpm exec prettier --check docs/site/technical/local.md docs/implementation-plan.md docs/maintenance/coverage.json spec/src/local-jj.md spec/src/jj-integration.md spec/src/architecture.md spec/src/documentation.md spec/src/verification.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-identity-format-check.log: All eight changed non-ledger documents pass formatting."
+    },
+    {
+      "command": "pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-identity-ui-ownership.log: Ownership validator passes; no presentation or dependency ownership changes."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-identity-progress.log: All 142 tasks pass evidence validation."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-identity-spec-first-final.log: Final mapped gate passes six protected files and five canonical chapters."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "physical-identity-spec-validation-final.log: Final validation passes five validators, 23 chapters and 173 requirements."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "The provider primitive is qualified; server runtime must still resolve trusted registration, compare the original physical scope and authenticate original actor/ID/digest before journal access. Production private-state placement and initialization are not implemented.",
+    "Owned registered discovery/status/pending interface/composition, coordinated cancellation, local HTTP/generated contracts, production setup/recovery lifecycle and all later approved dirty capture, membership/switching, transfer, graph/undo and native/cold qualification remain unfinished.",
+    "No existing executable, installation, service, repository or browser is changed. Storybook 6057 is untouched; screenshot comparisons and baseline updates remain excluded."
+  ],
+  "next": "Paused at the user request after the verified provider identity slice. Discuss implementation before resuming registered runtime/private-state composition and API/UI wiring.",
+  "summary": "Nine complete current-reader parents, strict owning-package all-target lint/check, 50 governance tests and focused source, documentation, formatting, ownership and canonical gates pass. Historical recovery can obtain stable physical identity independently of current code. Registered runtime and production persistence remain unwired; the approved goal is incomplete and work pauses for discussion. All 520 preceding raw ledger bodies remain byte-identical; no milestone is marked Done.",
+  "tests": [
+    "crates/jj-store-jj/tests/working_tree_current/identity.rs#stable_identity_matches_observer_and_survives_current_code_loss_without_writes",
+    "crates/jj-store-jj/tests/working_tree_current/identity.rs#stable_identity_distinguishes_root_and_jj_replacement",
+    "crates/jj-store-jj/tests/working_tree_current/identity.rs#stable_identity_rejects_unsafe_missing_and_unbounded_roots",
+    "crates/jj-store-jj/tests/working_tree_current/identity.rs#stable_identity_rechecks_replacement_and_authorization"
+  ]
 }
 ]
 ```

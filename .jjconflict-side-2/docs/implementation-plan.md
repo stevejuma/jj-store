@@ -487,6 +487,16 @@ runtime must still join physical observation, selected catalog and original
 journal recovery. Runtime composition, transport and production lifecycle remain
 required. Cancellation execution is still absent.
 
+E-M21-039 supplies the owning provider's stable physical identity read for
+historical admission. It matches the current observer's identity, rejects unsafe
+paths, replacement during the read and revoked access, and does not require
+current operation/index, checkout/tree-state, policy or editor-file reads. The
+registered runtime must still resolve trusted registration and compare the
+original scope before journal access. Runtime storage placement, initialization,
+command composition, transport and production lifecycle remain unimplemented.
+Work pauses after this verified provider slice at the user's request; the seven
+approved stages remain incomplete.
+
 The seven stages below remain the approved scope. Continue Stage 3 and the
 initial-setup portion of Stage 4 as a small production vertical slice before
 implementing further command families. Reuse the existing Stacks presentation;

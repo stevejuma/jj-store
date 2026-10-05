@@ -1062,6 +1062,13 @@ Runtime composition must join original journal recovery and current physical
 observation before reporting readiness. Bounded catalog projection and contract
 validation alone do not qualify this runtime or enable production controls.
 
+Stable physical recovery admission belongs to the JJ provider. It reuses the
+observer's directory identity digest through a bounded read that checks root and
+`.jj` across authorization without loading current operation/checkout state or
+scanning editor files. Server runtime composition must separately resolve the
+registered canonical root and compare the original physical identity before
+journal access. The provider primitive alone does not wire that runtime.
+
 The follow-up UI/backend review retains the seven-stage delivery scope. The next
 production checkpoint composes this qualified initial setup through
 service-owned bounded workspace discovery and public command-result interfaces,

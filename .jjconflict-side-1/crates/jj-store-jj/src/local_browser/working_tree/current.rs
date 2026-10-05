@@ -24,6 +24,36 @@ pub struct CurrentState {
     pub heads: Vec<m::OperationId>,
 }
 impl Executor {
+    /// Stable directory identity for historical recovery admission. The caller
+    /// supplies the registered canonical root; current code and file state do
+    /// not participate. This grants no journal access or command authority.
+    pub async fn physical_workspace_identity(
+        &self,
+        access: Arc<dyn Access>,
+        root: PathBuf,
+    ) -> Result<m::RecordDigest> {
+        self.worker(access, move |access, budget| {
+            Box::pin(async move {
+                if root.as_os_str().as_encoded_bytes().len() > 4096 {
+                    return Err(Error::Limit);
+                }
+                let sample = || {
+                    budget.work(root.components().count())?;
+                    let dir = physical::directory(&root)?;
+                    let jj = physical::child(&dir, ".jj")?;
+                    physical::workspace(&root, &dir, &jj)
+                };
+                let before = sample()?;
+                budget.until(access.authorize()).await??;
+                if before != sample()? {
+                    return Err(Error::EpochChanged);
+                }
+                Ok(before)
+            })
+        })
+        .await
+    }
+
     /// Root comes from verified device registration, never a client folder argument.
     pub async fn working_tree_current(
         &self,
