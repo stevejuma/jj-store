@@ -1,5 +1,11 @@
 # CLI and server commands
 
+The installation combination owner exposes a bounded public selected-catalog
+projection with stable scope/principal admission and pending-coordination state.
+It returns no proposed after-state or private retention evidence. Current
+workspace discovery DTOs require registered operation/binding input; actual
+registered runtime composition, HTTP commands and writable UI remain separate.
+
 The private stack journal exposes validated service-owned command status and
 pending projections. Exact lookup authenticates the original actor, stable
 physical/profile scope, request and intent before projection; it does not accept

@@ -293,6 +293,12 @@ manual cannot present private coordination as an enabled production workflow.
 
 ## Initial stack setup documentation boundary
 
+Current-workspace documentation MUST distinguish selected public combination
+catalogs from original command receipts and proposed private state. It explains
+absent, ready, stale and pending readiness, profile/scope/resource bounds, and
+the unimplemented registered runtime join. Existing-state projection and owned
+DTOs cannot be described as a wired workspace picker or writable command flow.
+
 Recovery documentation MUST distinguish owned public command projections from
 runtime and HTTP composition. It explains exact stable scope/ID/digest lookup,
 original preview/receipt validation, bounded actor-scoped pending discovery and

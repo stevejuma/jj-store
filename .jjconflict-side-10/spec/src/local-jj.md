@@ -752,6 +752,27 @@ initialize missing state, revalidate against a newer code snapshot, execute a
 command or authorize HTTP/UI capabilities. Cancellation contract validation does
 not yet qualify its coordinated runtime implementation.
 
+Public current-workspace discovery MUST remain separate from historical command
+status. Its versioned input binds repository, current registration generation
+and exact operation without client paths. Its result retains the full observed
+selection and distinguishes absent configuration, ready, stale selected code and
+pending recovery. An unreadable store is an error, never absence. A missing
+store or an initialized empty catalog can represent absent configuration;
+neither read initializes setup. Pending command coordination may exist before
+any combination catalog is selected.
+
+The public combination catalog MUST bind stable physical/profile scope and
+contain only selected combination identities/generations, names, targets,
+merge/code identities and applied-stack membership. It excludes staged proposed
+after-state, retention evidence, private principal and installation paths. Its
+explicit pending flag reports unresolved combination coordination independently
+of the selected state. Bound discovery to 64 combinations, 4096 stack records
+per combination and eight MiB. Validate unique IDs/names, active selection,
+profile agreement and complete response linkage. A ready result requires the
+active combination's code to match observed current code; stale and pending
+results grant no command authority. The registered runtime must join current
+observation, catalog and original journal discovery before transport/UI use.
+
 The installation-private stack command journal MUST explicitly create its
 bounded state outside repository checkouts. Open, status and pending discovery
 MUST NOT initialize missing state. Its scope binds installation, repository,

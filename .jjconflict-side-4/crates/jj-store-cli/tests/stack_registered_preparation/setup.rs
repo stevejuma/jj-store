@@ -268,6 +268,45 @@ async fn registered_setup_creates_real_merge_wip_and_selects_combination_only_af
         .await
         .unwrap();
     assert_eq!(actual.combination, combination.selection);
+    let before_public_read = f.f.folder.state();
+    let public_catalog = f
+        .store
+        .public_catalog(f.f.actor, &status_request.scope)
+        .unwrap();
+    let public_state = s::WorkspaceState {
+        version: 1,
+        state: s::WorkspaceReadiness::Ready,
+        selection: s::Selection {
+            code: s::CodeSelection::GitSha1Jj045 {
+                operation: actual.current.baseline.operation,
+                view: actual.current.baseline.view,
+                working_copy: actual.current.baseline.commit,
+            },
+            working_tree: actual.working_tree,
+            combination: Some(actual.combination.clone()),
+            ..f.request.selection.clone()
+        },
+        catalog: Some(public_catalog),
+    };
+    public_state
+        .validate_request(&s::WorkspaceRequest {
+            version: 1,
+            repository: f.request.selection.repository,
+            binding_generation: f.request.selection.binding_generation,
+            operation: actual.current.baseline.operation,
+        })
+        .unwrap();
+    assert_eq!(
+        public_state
+            .catalog
+            .as_ref()
+            .unwrap()
+            .active()
+            .unwrap()
+            .target,
+        combination.target
+    );
+    assert_eq!(f.f.folder.state(), before_public_read);
     std::fs::write(
         f.f.folder.root().join("file.txt"),
         "later unsnapshotted bytes\n",

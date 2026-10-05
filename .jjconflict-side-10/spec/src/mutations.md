@@ -1111,3 +1111,11 @@ exclude private server execution records. Pending discovery rejects terminal
 receipts, duplicate IDs, scope mismatch and resource-limit violations. These
 contracts grant no execution or cancellation authority; executable admission,
 durable cancellation coordination and HTTP composition remain separate gates.
+
+Owned current-workspace discovery retains exact registration/operation input and
+observed selection separately from historical receipts. It distinguishes absent,
+ready, stale and pending state, and validates scoped selected catalog
+membership, code profiles and response bounds. Public catalog projection strips
+private retained objects and proposed after-state. Neither catalog readiness nor
+the existence of these DTOs authorizes a command; registered runtime joins and
+transport/executor acceptance remain required.

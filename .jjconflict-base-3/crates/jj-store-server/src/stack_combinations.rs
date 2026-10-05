@@ -8,6 +8,7 @@ use std::{collections::BTreeSet, path::Path};
 mod authority;
 mod catalog;
 mod linkage;
+mod public;
 pub use linkage::CombinationBindingV1;
 mod validation;
 use catalog::Catalog;

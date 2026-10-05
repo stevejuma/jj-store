@@ -1,6 +1,8 @@
 #![cfg(unix)]
 #[path = "../../jj-store-jj/tests/stack_foreground/fixture.rs"]
 mod fixture;
+#[path = "stack_combinations/public.rs"]
+mod public;
 #[path = "stack_combinations/support.rs"]
 mod support;
 use fixture::*;

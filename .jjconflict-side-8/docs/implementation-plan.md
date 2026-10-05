@@ -480,8 +480,12 @@ The first public recovery boundary now defines validated original command
 results, exact status, actor-scoped pending discovery and cancellation identity
 inputs. Existing journal projections exclude private execution state and do not
 initialize missing state. This closes the result-contract portion of checkpoint
-1 only; bounded current workspace discovery, runtime composition, transport and
-production lifecycle remain required. Cancellation execution is still absent.
+1 only. Owned bounded current-workspace records and the authenticated selected
+combination-catalog projection are also now defined, including absent/ready/
+stale/pending state and private-data exclusion. The actual registered discovery
+runtime must still join physical observation, selected catalog and original
+journal recovery. Runtime composition, transport and production lifecycle remain
+required. Cancellation execution is still absent.
 
 The seven stages below remain the approved scope. Continue Stage 3 and the
 initial-setup portion of Stage 4 as a small production vertical slice before

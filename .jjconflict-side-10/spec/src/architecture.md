@@ -1054,6 +1054,14 @@ retention keys, principals and installation paths. These contracts and
 projections do not create state or enable transport, runtime cancellation or
 production mutations; current workspace discovery remains separate work.
 
+Owned workspace-discovery records separate the complete observed selection from
+the installation's selected combination catalog. The server projects that
+catalog only from an existing authenticated scope, preserving selected state
+during pending coordination without exposing proposed state or retention.
+Runtime composition must join original journal recovery and current physical
+observation before reporting readiness. Bounded catalog projection and contract
+validation alone do not qualify this runtime or enable production controls.
+
 The follow-up UI/backend review retains the seven-stage delivery scope. The next
 production checkpoint composes this qualified initial setup through
 service-owned bounded workspace discovery and public command-result interfaces,

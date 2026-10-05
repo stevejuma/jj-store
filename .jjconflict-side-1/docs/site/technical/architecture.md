@@ -118,6 +118,16 @@ outcomes and admits at most 128 records within an eight-MiB response. The server
 journal projects these records from existing private state; runtime admission,
 HTTP routes and durable cancellation coordination remain separate work.
 
+Current workspace-discovery contracts retain exact repository/registration/
+operation input and a complete observed selection separately from those
+historical outcomes. Readiness distinguishes absent configuration, ready, stale
+selected code and pending recovery. The bounded public catalog includes selected
+named combinations, their targets and code, and applied-stack membership. It
+excludes proposed after-state and private retention. Catalog projection alone
+cannot determine current readiness: the registered runtime must join current
+observation and original journal recovery before transport or controller use.
+Unreadable state cannot be presented as an empty workspace.
+
 A private physical scanner supplies bounded, revalidated observations for future
 checkout preparation. It fingerprints exact bytes, modes, paths and workspace
 identity, including ignored and untracked obstacles. It reads symlink targets

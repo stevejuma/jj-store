@@ -65,8 +65,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed stable original command recovery scope, validated preview and historical receipt linkage, bounded actor-scoped pending discovery and cancellation identity inputs. The transport reference distinguishes these service contracts from unimplemented routes and coordinated cancellation.",
-      "fingerprint": "0317284f42eb2cb09408be60619488a006440221dd60fcf4c7d41599f1caf011"
+      "reason": "Reviewed bounded current-workspace discovery inputs and selected catalog contracts, profile and readiness linkage, terminal-history separation and strict public response limits. The manual distinguishes these records from the unimplemented registered runtime join and production transport.",
+      "fingerprint": "b069b1aab37472acfccc4fcfc30c9246684741635b9bae1d4469227fbe066d28"
     }
   },
   {
@@ -96,8 +96,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed existing-state journal projections for original command status and pending requests, actor/scope checks, terminal history and private execution exclusion. Lifecycle documentation keeps registration admission, coordinated cancellation and HTTP composition outside this primitive.",
-      "fingerprint": "9a750649c1418fb655984a37d41f0e66d5e15a9a0f99bcb14e5e2f64bd67dabb"
+      "reason": "Reviewed existing-state selected combination projection, authenticated stable scope, pending coordination without proposed-state disclosure, corruption refusal and unchanged disk/code reads. Lifecycle documentation distinguishes real setup projection checks from unimplemented registered discovery and production picker wiring.",
+      "fingerprint": "7e530bfe4526c8f70a30f24fa64c28464002bedea76b724beef67881dc07e12b"
     }
   },
   {

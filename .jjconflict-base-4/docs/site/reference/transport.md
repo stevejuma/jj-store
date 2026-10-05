@@ -42,6 +42,15 @@ assign changes to a combination or enable checkout commands.
 
 ## Mutations
 
+Owned workspace-discovery input binds a repository, current registration
+generation and exact operation. Its response distinguishes absent, ready, stale
+and pending state and retains a scoped complete selected-combination catalog.
+Catalogs are limited to 64 combinations, 4096 stack members per combination and
+eight MiB. These records and existing-state projections have no HTTP route yet;
+runtime must join the observed checkout and original pending requests before
+reporting usable state. Missing configuration is distinct from an unreadable
+store, and reading either never initializes setup.
+
 The service defines versioned stack command status, pending and cancellation
 inputs for future local transport. Status requires the original stable scope,
 request ID and intent digest; cancellation also names the original preparation.

@@ -54,6 +54,15 @@ private state or changes code, disk or combination selection. The registered
 runtime must separately admit folder access before exposing these projections;
 HTTP composition and coordinated unpublished cancellation remain unimplemented.
 
+The combination owner now exposes a validated public selected catalog from
+existing authenticated private state. It preserves selected combinations while
+an update is pending, reports that coordination flag and strips proposed
+after-state and retention keys. Scope/actor mismatch and corrupted state fail;
+reads do not create missing state. The versioned workspace response contract
+separates absent, ready, stale and pending readiness. Real initial-setup
+evidence checks the public selected code against the observed native checkout,
+but the registered discovery runtime and production picker remain unwired.
+
 Atomic replacement and sync select journal state. Loss after replacement leaves
 an unknown outcome; reopen and exact replay recover the selected receipt. A
 publication-unknown or incomplete-checkout receipt prevents another publication

@@ -1,6 +1,7 @@
 //! Owned local stacks protocol. These contracts grant no execution authority.
 mod command;
 mod content;
+mod discovery;
 mod prepared;
 mod receipt;
 mod recovery;
@@ -8,6 +9,7 @@ mod request;
 mod selection;
 pub use command::*;
 pub use content::*;
+pub use discovery::*;
 use jj_store_model as m;
 pub use prepared::*;
 pub use receipt::*;
