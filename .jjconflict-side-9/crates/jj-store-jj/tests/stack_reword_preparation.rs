@@ -217,12 +217,20 @@ async fn actual_prepared_reword_is_compatible_with_reserved_ref_retention() {
         prepared: m::RecordDigest::new([88; 32]),
     };
     let StackRetentionOutcome::Retained(retained) = store
-        .retain_stack_prepared(&key, &prepared.capsule)
+        .retain_stack_execution(&key, &prepared.history)
         .unwrap()
     else {
         panic!("fixture retention must be acknowledged")
     };
     assert_eq!(retained.capsule, prepared.capsule);
+    assert_eq!(retained.history.as_ref(), Some(&prepared.history));
+    assert_eq!(prepared.history.capsule().unwrap(), prepared.capsule);
+    assert!(
+        prepared
+            .history
+            .operations
+            .contains_key(&prepared.source.operation_id)
+    );
     assert_eq!(store.read_stack_prepared(&key).unwrap().unwrap(), *retained);
     assert!(store.read().unwrap().is_none());
     lease.validate_metadata().await.unwrap();

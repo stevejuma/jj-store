@@ -6,7 +6,7 @@ pub(super) const DIR: OFlags = OFlags::RDONLY
     .union(OFlags::NOFOLLOW)
     .union(OFlags::DIRECTORY);
 #[derive(Clone, Debug, PartialEq, Eq)]
-pub(super) struct Bytes {
+pub(crate) struct Bytes {
     pub bytes: Vec<u8>,
     pub fingerprint: m::RecordDigest,
 }
@@ -51,7 +51,7 @@ fn stamp(info: &fs::Stat) -> Vec<u8> {
     .flat_map(u64::to_be_bytes)
     .collect()
 }
-pub(super) fn read(
+pub(crate) fn read(
     dir: &File,
     name: &str,
     max: usize,

@@ -815,6 +815,36 @@ The caller's command policy, exact intent/retention/journal composition and
 publication/checkout recovery remain separate required gates. An unpublished
 reword primitive MUST NOT enable a runtime mutation capability.
 
+Recoverable Stacks preparation MUST additionally retain the complete bounded
+source operation ancestry, every exact referenced view and their complete code
+and evolution closures, including historical views no longer selected by current
+heads. Version-1 operation archives preserve ordered parents, metadata, optional
+predecessor maps and profile identities. Missing ancestry, unrelated records,
+identity mismatch, unsupported formats or resource exhaustion fail without a
+partial archive. Capture MUST use bounded no-follow source reads, never a latest
+load, index repair, snapshot or reconciliation. Historical code reads MUST
+require the original extra record for each physical commit; missing records
+cannot trigger implicit import or substitute synthetic change identities.
+
+The reserved preparation slot supports an explicit version-2 retention record
+with the operation archive alongside the unchanged selected capsule. Legacy
+version-1 records remain readable and immutable; adding history to an existing
+legacy slot is conflicting reuse. Complete historical code closure uses real Git
+reachability before ref selection. Lookup and exact replay verify the entire
+archive after source operation/index loss and Git GC. Private upstream operation
+store materialization MUST reproduce every archived operation/view identity and
+field, without implicitly restoring source metadata or publishing any head.
+Runtime source restoration, command policy, journal coordination, publication
+and checkout recovery remain separately required.
+
+Real reword preparation MUST use this complete strict source archive before any
+upstream candidate work and return the complete candidate archive with its
+effects. Every previously captured operation, view and code record MUST remain
+identical in the candidate ancestry. Lost original extras or missing operation
+history fail before implicit import or candidate writes; cancellation still
+retains the foreground lease until the worker exits. Returning recovery input
+does not select a ref or journal, restore source state or enable execution.
+
 Server-retained content selections bind source and parent tree identities,
 complete code/device/combination selection, safe repository path, exact
 file-state fingerprint and whole-file or verified hunk scope. Commands carry

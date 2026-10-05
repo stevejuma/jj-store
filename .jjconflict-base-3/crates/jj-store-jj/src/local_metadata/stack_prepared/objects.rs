@@ -13,28 +13,32 @@ impl MetadataStore {
         }
         let record_blob = git::blob(repo, &bytes)?;
         let retained_tree = git::tree(repo, git::retained_links(&record.retained))?;
-        let tree = git::tree(
-            repo,
-            BTreeMap::from([
-                (
-                    "record".into(),
-                    (record_blob, gix::objs::tree::EntryKind::Blob),
-                ),
-                (
-                    "capsule".into(),
-                    (record.blob, gix::objs::tree::EntryKind::Blob),
-                ),
-                (
-                    "retained".into(),
-                    (retained_tree, gix::objs::tree::EntryKind::Tree),
-                ),
-            ]),
-        )?;
+        let mut links = BTreeMap::from([
+            (
+                "record".into(),
+                (record_blob, gix::objs::tree::EntryKind::Blob),
+            ),
+            (
+                "capsule".into(),
+                (record.blob, gix::objs::tree::EntryKind::Blob),
+            ),
+            (
+                "retained".into(),
+                (retained_tree, gix::objs::tree::EntryKind::Tree),
+            ),
+        ]);
+        if let Some(history) = &record.history {
+            links.insert(
+                "history".into(),
+                (history.blob, gix::objs::tree::EntryKind::Blob),
+            );
+        }
+        let tree = git::tree(repo, links)?;
         let mut bytes = format!("tree {tree}\n");
         for parent in git::parents(None, &record.retained) {
             bytes.push_str(&format!("parent {parent}\n"));
         }
-        bytes.push_str("author jj-store <retention@local.invalid> 0 +0000\ncommitter jj-store <retention@local.invalid> 0 +0000\n\nLocal stack prepared retention v1\n");
+        bytes.push_str(&format!("author jj-store <retention@local.invalid> 0 +0000\ncommitter jj-store <retention@local.invalid> 0 +0000\n\nLocal stack prepared retention v{}\n", record.version));
         if bytes.len() > self.limits.object_bytes {
             return Err(Error::Limit);
         }
@@ -66,9 +70,6 @@ impl MetadataStore {
             GitOid::from_git(decoded.tree())?,
             self.limits.root_bytes,
         )?;
-        if links.len() != 3 {
-            return Err(Error::Invalid("stack retention root"));
-        }
         let (record_blob, gix::objs::tree::EntryKind::Blob) = links
             .get("record")
             .copied()
@@ -83,8 +84,16 @@ impl MetadataStore {
             self.limits.root_bytes,
         )?;
         let record: Record = serde_json::from_slice(&bytes).map_err(Error::other)?;
-        if serde_json::to_vec(&record).map_err(Error::other)? != bytes || record.version != 1 {
+        if serde_json::to_vec(&record).map_err(Error::other)? != bytes
+            || !matches!(
+                (record.version, record.history.is_some()),
+                (1, false) | (2, true)
+            )
+        {
             return Err(Error::Invalid("stack retention format"));
+        }
+        if links.len() != if record.history.is_some() { 4 } else { 3 } {
+            return Err(Error::Invalid("stack retention root"));
         }
         record.key.validate()?;
         if record.key != *key {
@@ -110,6 +119,29 @@ impl MetadataStore {
             return Err(Error::Invalid("stack retention capsule binding"));
         }
         let mut expected = capsule.retention(record.blob)?;
+        let history = record
+            .history
+            .as_ref()
+            .map(|history| -> Result<OperationArchiveV1> {
+                if links.get("history") != Some(&(history.blob, gix::objs::tree::EntryKind::Blob)) {
+                    return Err(Error::Invalid("stack retention history link"));
+                }
+                let archive = OperationArchiveV1::decode(
+                    history.id,
+                    &git::object(
+                        repo,
+                        history.blob,
+                        gix::objs::Kind::Blob,
+                        self.limits.object_bytes,
+                    )?,
+                )?;
+                if archive.capsule()? != capsule {
+                    return Err(Error::Invalid("stack retention history binding"));
+                }
+                expected.extend(archive.retention(history.blob)?);
+                Ok(archive)
+            })
+            .transpose()?;
         expected.extend(git::audit(repo, &expected, self.limits, sync)?);
         if record.retained != expected {
             return Err(Error::Invalid("stack retention incomplete closure"));
@@ -143,6 +175,7 @@ impl MetadataStore {
             commit,
             key: key.clone(),
             capsule,
+            history,
         })
     }
 }

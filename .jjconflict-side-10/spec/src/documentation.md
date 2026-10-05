@@ -1,5 +1,11 @@
 # Application documentation
 
+The local manual records complete bounded operation-ancestry archives and
+version-2 reserved retention separately from legacy selected capsules. It
+explains read-only capture, exact private reconstruction and immutable legacy
+slots without presenting source repair, publication or runtime execution as
+qualified. The owning JJ source review must cover the archive and retainer.
+
 The local manual records qualified unpublished reword generation and its exact
 source, bounds and rewrite effects separately from runtime execution. Candidate
 retention compatibility and cancellation evidence do not qualify server command

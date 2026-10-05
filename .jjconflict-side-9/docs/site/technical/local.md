@@ -125,6 +125,33 @@ journal record, head or checkout metadata. Server intent and policy composition,
 operation-ancestry recovery, publication and checkout gates are still
 unfinished; the application continues to advertise no Stacks write capability.
 
+Recoverable preparations now have a complete bounded operation-ancestry archive,
+including every historical view and its code/evolution dependencies. Capture
+uses no-follow operation/view reads and the owned read-only Git decoder, so it
+neither creates an index nor imports missing extras or no-GC refs. Admission
+permits at most 4096 operations, 100,000 code records and 16 MiB of archive
+data, with a 30-second deadline and support for stricter limits. Missing
+ancestry or unsupported/malformed records fail without partial selection. Lost
+original extra records also fail; recovery never substitutes a synthetic change
+identity or imports replacement extras.
+
+A version-2 record in the same reserved preparation namespace retains this
+history alongside the unchanged selected capsule. Existing capsule-only
+version-1 slots remain readable and cannot be upgraded or overwritten. Real
+historical code has Git reachability even when it no longer belongs to the
+selected view. Lookup and exact loose/packed-ref replay verify the whole archive
+after source metadata loss and Git GC. Upstream operation/view writes and reads
+in a private disposable cache prove exact reconstruction; source metadata is not
+implicitly recreated. Server policy/journal composition, source restoration,
+publication and guarded checkout remain unfinished.
+
+Real reword preparation uses strict source-history capture before candidate work
+and returns the full candidate archive with its effect report. It checks that
+every original operation, view and code record remains unchanged. Missing
+original extras now fail before any upstream import or candidate write. The
+result can feed version-2 retention directly; source repair and runtime
+execution are still separate gates.
+
 Device paths, access grants, credentials and active execution journals are not
 portable repository records. Ordinary Git/JJ network commands do not transfer
 the owned companion ref. Do not assume a normal code push backs up

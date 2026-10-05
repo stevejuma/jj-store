@@ -123,3 +123,45 @@ async fn authorization_loss_after_candidate_write_exposes_no_preparation_or_publ
     ));
     assert_eq!(fixture.state(), before);
 }
+
+#[tokio::test]
+async fn missing_original_extras_fail_before_reword_import_or_candidate_write() {
+    fn files(path: &Path) -> std::collections::BTreeMap<PathBuf, Vec<u8>> {
+        let mut result = std::collections::BTreeMap::new();
+        for entry in fs::read_dir(path).unwrap() {
+            let entry = entry.unwrap();
+            if entry.file_type().unwrap().is_dir() {
+                result.extend(files(&entry.path()));
+            } else {
+                result.insert(entry.path(), fs::read(entry.path()).unwrap());
+            }
+        }
+        result
+    }
+    let fixture = Fixture::new().await;
+    let expected = fixture.witness().await;
+    let lease = Coordinator::new(1)
+        .unwrap()
+        .acquire(fixture.access(), fixture.root(), expected.clone())
+        .await
+        .unwrap();
+    for entry in fs::read_dir(fixture.root().join(".jj/repo/store/extra/heads")).unwrap() {
+        fs::remove_file(entry.unwrap().path()).unwrap();
+    }
+    let before = fixture.state();
+    let metadata = files(&fixture.root().join(".jj/repo"));
+    let refs = files(&fixture.root().join(".git/refs"));
+    assert!(matches!(
+        lease
+            .prepare_reword(Reword {
+                principal: m::PrincipalId::new([85; 16]),
+                commit: expected.baseline.commit,
+                message: "Must not import missing extras".into(),
+            })
+            .await,
+        Err(Error::Incomplete)
+    ));
+    assert_eq!(files(&fixture.root().join(".jj/repo")), metadata);
+    assert_eq!(files(&fixture.root().join(".git/refs")), refs);
+    assert_eq!(fixture.state(), before);
+}

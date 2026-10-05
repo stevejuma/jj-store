@@ -1,6 +1,6 @@
 //! Reserved local code retention, separate from portable companion selection.
 use super::*;
-use crate::local_evidence::GitEvidenceCapsuleV1;
+use crate::local_evidence::{GitEvidenceCapsuleV1, OperationArchiveV1};
 use jj_store_model as m;
 use serde::{Deserialize, Serialize};
 mod objects;
@@ -42,6 +42,7 @@ pub struct StackRetention {
     pub commit: GitOid,
     pub key: StackPreparationKey,
     pub capsule: GitEvidenceCapsuleV1,
+    pub history: Option<OperationArchiveV1>,
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum StackRetentionOutcome {
@@ -60,7 +61,15 @@ struct Record {
     view: m::ViewId,
     capsule: m::CodeCapsuleId,
     blob: GitOid,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    history: Option<History>,
     retained: BTreeMap<GitOid, RetainedKind>,
+}
+#[derive(Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct History {
+    id: m::RecordDigest,
+    blob: GitOid,
 }
 impl MetadataStore {
     /// No source loader, initialization, recovery or code publication.
@@ -84,6 +93,23 @@ impl MetadataStore {
         key: &StackPreparationKey,
         capsule: &GitEvidenceCapsuleV1,
     ) -> Result<StackRetentionOutcome> {
+        self.retain_stack(key, capsule, None)
+    }
+    /// Retain the complete source operation ancestry for exact recovery. A
+    /// legacy capsule-only slot cannot be upgraded or overwritten.
+    pub fn retain_stack_execution(
+        &self,
+        key: &StackPreparationKey,
+        archive: &OperationArchiveV1,
+    ) -> Result<StackRetentionOutcome> {
+        self.retain_stack(key, &archive.capsule()?, Some(archive))
+    }
+    fn retain_stack(
+        &self,
+        key: &StackPreparationKey,
+        capsule: &GitEvidenceCapsuleV1,
+        history: Option<&OperationArchiveV1>,
+    ) -> Result<StackRetentionOutcome> {
         key.validate()?;
         capsule.validate()?;
         if capsule.repository != key.repository
@@ -96,7 +122,7 @@ impl MetadataStore {
         let repo = gix::open(&self.git_dir).map_err(Error::other)?;
         if let Some(commit) = self.stack_selected(&repo, key)? {
             let selected = self.stack_archive(&repo, commit, key, true)?;
-            if selected.capsule != *capsule {
+            if selected.capsule != *capsule || selected.history.as_ref() != history {
                 return Err(Error::IntentConflict);
             }
             return self.stack_acknowledge(&repo, selected);
@@ -107,14 +133,29 @@ impl MetadataStore {
         }
         let blob = super::objects::blob(&repo, &bytes)?;
         let mut retained = capsule.retention(blob)?;
+        let history = history
+            .map(|archive| -> Result<History> {
+                let bytes = archive.encode()?;
+                if bytes.len() > self.limits.object_bytes {
+                    return Err(Error::Limit);
+                }
+                let blob = super::objects::blob(&repo, &bytes)?;
+                retained.extend(archive.retention(blob)?);
+                Ok(History {
+                    id: archive.id()?,
+                    blob,
+                })
+            })
+            .transpose()?;
         retained.extend(super::objects::audit(&repo, &retained, self.limits, true)?);
         let record = Record {
-            version: 1,
+            version: if history.is_some() { 2 } else { 1 },
             key: key.clone(),
             operation: capsule.operation_id,
             view: capsule.view_id,
             capsule: capsule.id()?,
             blob,
+            history,
             retained,
         };
         let commit = self.stack_candidate(&repo, &record)?;

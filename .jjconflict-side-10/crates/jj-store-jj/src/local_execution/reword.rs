@@ -1,7 +1,7 @@
 //! Real unpublished reword candidates, separate from selection/publication.
 mod report;
 use super::*;
-use crate::local_evidence::{self, GitEvidenceCapsuleV1, GitRefTargetV1};
+use crate::local_evidence::{self, GitEvidenceCapsuleV1, GitRefTargetV1, OperationArchiveV1};
 use jj_lib::{
     backend::CommitId,
     config::{ConfigLayer, ConfigSource, StackedConfig},
@@ -40,6 +40,7 @@ pub struct BookmarkEffect {
 pub struct PreparedCode {
     pub source: GitEvidenceCapsuleV1,
     pub capsule: GitEvidenceCapsuleV1,
+    pub history: OperationArchiveV1,
     pub rewrites: Vec<Rewrite>,
     pub bookmarks: Vec<BookmarkEffect>,
     pub checkout_before: Vec<m::GitSha1Id>,
@@ -100,14 +101,16 @@ fn settings(principal: m::PrincipalId) -> Result<UserSettings> {
 async fn prepare(lease: &Foreground, request: Reword) -> Result<PreparedCode> {
     let settings = settings(request.principal)?;
     let path = lease.access.metadata_path();
-    let source = local_evidence::inspect(
+    let source_history = local_evidence::capture_operation_archive(
         &settings,
         path,
         lease.access.repository(),
         lease.expected.baseline.operation,
+        Default::default(),
     )
     .await
     .map_err(archive_error)?;
+    let source = source_history.capsule().map_err(archive_error)?;
     if source.commits.len() > MAX_COMMITS || source.view.local_bookmarks.len() > MAX_BOOKMARKS {
         return Err(Error::Limit);
     }
@@ -174,10 +177,39 @@ async fn prepare(lease: &Foreground, request: Reword) -> Result<PreparedCode> {
         .leave_unpublished();
     let id = m::OperationId::from_slice(candidate.operation().id().as_bytes())
         .map_err(|_| Error::Corrupt)?;
-    let capsule = local_evidence::inspect(&settings, path, lease.access.repository(), id)
-        .await
-        .map_err(archive_error)?;
-    report::build(source, capsule, &lease.expected, &request, &affected)
+    let history = local_evidence::capture_operation_archive(
+        &settings,
+        path,
+        lease.access.repository(),
+        id,
+        Default::default(),
+    )
+    .await
+    .map_err(archive_error)?;
+    if source_history
+        .operations
+        .iter()
+        .any(|(id, data)| history.operations.get(id) != Some(data))
+        || source_history
+            .views
+            .iter()
+            .any(|(id, data)| history.views.get(id) != Some(data))
+        || source_history
+            .commits
+            .iter()
+            .any(|(id, data)| history.commits.get(id) != Some(data))
+    {
+        return Err(Error::Corrupt);
+    }
+    let capsule = history.capsule().map_err(archive_error)?;
+    report::build(
+        source,
+        capsule,
+        history,
+        &lease.expected,
+        &request,
+        &affected,
+    )
 }
 fn archive_error(error: crate::local_metadata::Error) -> Error {
     match error {

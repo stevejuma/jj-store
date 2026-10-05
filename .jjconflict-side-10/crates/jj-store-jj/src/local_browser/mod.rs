@@ -1,12 +1,12 @@
 //! Operation-pinned ordinary GitBackend reads. No checkout or publication methods.
-mod budget;
+pub(crate) mod budget;
 pub mod conflicts;
 pub mod diff;
 mod diff_copies;
 pub mod diff_summary;
 mod dispatch;
 pub mod dto;
-mod git_read;
+pub(crate) mod git_read;
 mod graph_types;
 mod graphs;
 mod history;

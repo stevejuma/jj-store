@@ -194,6 +194,13 @@ impl Extras {
         Ok(self.record(id, budget)?.change)
     }
     pub fn record(&self, id: &[u8], budget: &Budget) -> Result<Record> {
+        self.find_record(id, budget).map(Option::unwrap_or_default)
+    }
+    pub(in super::super) fn require(&self, id: &[u8], budget: &Budget) -> Result<()> {
+        self.find_record(id, budget)?.ok_or(Error::Incomplete)?;
+        Ok(())
+    }
+    fn find_record(&self, id: &[u8], budget: &Budget) -> Result<Option<Record>> {
         let mut result: Option<Vec<u8>> = None;
         for head in &self.heads {
             let mut next = Some(head);
@@ -215,10 +222,7 @@ impl Extras {
                 next = segment.parent.as_ref();
             }
         }
-        result
-            .map(|value| decode(&value))
-            .transpose()
-            .map(Option::unwrap_or_default)
+        result.map(|value| decode(&value)).transpose()
     }
 }
 impl Segment {

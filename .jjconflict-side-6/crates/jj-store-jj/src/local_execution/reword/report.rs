@@ -3,6 +3,7 @@ use std::collections::BTreeMap;
 pub(super) fn build(
     source: GitEvidenceCapsuleV1,
     capsule: GitEvidenceCapsuleV1,
+    history: OperationArchiveV1,
     expected: &CurrentState,
     request: &Reword,
     affected: &BTreeSet<m::GitSha1Id>,
@@ -103,6 +104,7 @@ pub(super) fn build(
     Ok(PreparedCode {
         source,
         capsule,
+        history,
         rewrites: rewrites.into_values().collect(),
         bookmarks,
         checkout_before,

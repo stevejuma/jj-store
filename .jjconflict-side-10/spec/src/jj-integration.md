@@ -126,6 +126,25 @@ local bookmark terms and unchanged checkout tree. Candidate writes remain
 unpublished. Cancellation retains admission and the lock until the worker exits;
 no upstream transaction or repository object crosses the owned result boundary.
 
+The bounded Stacks operation archive walks the explicit candidate's full source
+operation DAG and all referenced views through descriptor-relative no-follow
+reads. Bounded raw operation/view files are decoded by the pinned upstream
+SimpleOpStore in an owned temporary cache, avoiding source index creation and
+unbounded source protobuf reads. Owned records verify all native identities and
+complete ancestry/code closure. The owned bounded Git reader avoids upstream
+extra import, reconciliation and no-GC ref writes during historical code reads.
+Private materialization uses upstream writes and reads to prove exact IDs and
+fields. Version-2 reserved retention links complete historical code closure
+while legacy version-1 slots retain their original immutable format. This is
+retained recovery input, not source repair or head publication; provider/runtime
+orchestration remains required.
+
+The real reword provider now captures this strict source history before loading
+the mutation transaction and returns complete candidate history. It verifies
+that all original operations, views and code records remain unchanged in that
+history. Missing original extras cannot reach upstream implicit import, and the
+returned archive can feed version-2 retention directly under the same lease.
+
 Capsule retention derives every non-root physical commit and backend tree from
 the exact archive. Selected reads require those entries in the selected metadata
 retention inventory, even when a blob was retained for another domain. An anchor

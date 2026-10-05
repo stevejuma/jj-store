@@ -75,6 +75,21 @@ or publication ability escapes. Server command policy and exact historical
 journal lookup still precede any runtime use. Other commands, source ancestry
 recovery, head publication and guarded checkout remain separate execution gates.
 
+Recoverable preparation additionally captures the complete bounded source
+operation DAG and historical views in an owned archive. Descriptor-relative
+operation/view reads and the existing bounded read-only Git decoder avoid source
+index repair, implicit extra import and no-GC ref writes. The reserved
+retainer's version-2 record binds this history to its unchanged selected capsule
+and links every historical code/tree dependency. Legacy version-1 slots remain
+immutable. Private upstream materialization verifies exact operation/view IDs
+and fields after source loss and GC; it does not restore source metadata or
+publish heads. Server request/journal composition, restoration, publication and
+checkout are still required Stage 3 boundaries. Real reword preparation performs
+strict source-history capture before candidate writes and returns complete
+candidate ancestry, checking that every original record remains unchanged. No
+implicit original-extra import or synthetic change identity reaches the mutation
+transaction.
+
 Independent conversion remains inside the JJ integration, owned service and
 installation orchestration boundaries. Destination providers consume explicit
 versioned archives and typed translators. Test-only collaboration dependencies
