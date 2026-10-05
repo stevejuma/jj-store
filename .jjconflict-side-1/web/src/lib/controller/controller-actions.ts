@@ -89,6 +89,10 @@ export type StoreControllerActions = {
   openReview?(repository: string, thread: string): Promise<void>;
   openRepository(id: string): void | Promise<void>;
   selectPage(page: StorePage): void | Promise<void>;
+  selectStacksView(
+    view: import("./store-stacks-navigation.js").StoreStacksView,
+  ): void | Promise<void>;
+  leaveStacks(): void | Promise<void>;
   navigate(delta: -1 | 1): void | Promise<void>;
   selectBookmark(name: string): void | Promise<void>;
   selectWorkingCopy(commit: string, workspace?: string): void | Promise<void>;

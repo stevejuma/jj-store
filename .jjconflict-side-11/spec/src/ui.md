@@ -214,7 +214,7 @@ unchanged.
 | JST-UI-011 | Authenticated connection MUST request one manual token, keep it only in memory, discover all currently authorized repositories, restore an ID-based deep link or show the Projects hub, and cancel requests, SSE and protected caches when the token is replaced, revoked or disconnected.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | JST-UI-012 | The profile menu MUST open a transient Settings destination with Local service, Repository and Search sections; replace repository navigation/content/actions/details while open; retain the repository route and selections on return and resume queued updates; keep its destination and selected section out of URL, browser history and storage; render accessible icon-only settings navigation when the desktop sidebar is collapsed; refresh advertised search health automatically while open; and expose native graph preparation in Repository independently from text-search health, using only a graph-reported or explicitly selected operation.                                                                                                                                                                                                                                      |
 | JST-UI-013 | Repository pages MUST expose a Community-style section header after the body tabs with a searchable workspace Command View; workspace context MUST use the exact native name, survive URL/history restoration at a pinned operation, preserve shared commit identities and keep operation/collaboration history repository-wide.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| JST-UI-014 | Repository view navigation MUST live in the Community-styled right rail beneath its page heading and create action, with selection-aware, capability-gated commands beneath Details and no duplicate metadata panels; body tabs MUST present Overview first, followed by Branches, Commits, Op Log, Agents and Reviews, retain their pill styling, and move trailing tabs into an accessible dropdown when width is limited without changing route or workspace context.                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| JST-UI-014 | Repository view navigation MUST live in the Community-styled right rail beneath its page heading and create action, with selection-aware, capability-gated commands beneath Details and no duplicate metadata panels; body tabs MUST present Overview first, followed by capability-gated Stacks, Branches, Commits, Op Log, Agents and Reviews, retain their pill styling, and move trailing tabs into an accessible dropdown when width is limited without changing route or workspace context.                                                                                                                                                                                                                                                                                                                                                                                                  |
 | JST-UI-015 | The installation Projects hub MUST expose authorized homes, repository and task directories, a shared native commit and agent Activity timeline with Activity-first tabs and recorded-agent filters, project-scoped and installation-wide Agents directories, a repository-linked Projects list, shared safe Markdown previews, searchable project/task views, native identity routes, permission-gated dialogs and threaded Markdown discussion; use Community card/list layout controls and Mine/Other groups, searchable repository Command View selectors, Settings-style form rows, tab-row search and trailing icon-only filters, a centered top-header breadcrumb, and an original-message preview above the edit composer; keep independent bounded snapshot continuations and retained navigation state; and refresh displayed metadata automatically after committed saves and new data. |
 | JST-UI-016 | Local management MUST expose explicitly linked device workspaces, qualified capture setup and queue recovery, editable Search with isolated worker replacement, non-destructive storage verification/checkpoints and configured sync controls through typed capability-gated interfaces; unsupported profiles and deferred operations MUST remain explicit.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | JST-UI-017 | Threads MUST use the owned Community channel toolbar with a direct settings action, aligned pane headers, targeted Chat Message Metadata feedback, reaction count tooltips, bordered standard right pane, independently controlled outer details rail, settings, contributor and reply presentation, forum directory rows, repository-owned sidebar thread children, an accessible Repositories Browse threads action and contextual repository breadcrumbs, native composer entity pickers and message chips; workspace search MUST show recent activity, server-filtered section and entity scopes, native focus links and permission-gated bottom actions without inventing runner controls.                                                                                                                                                                                                    |
@@ -226,8 +226,36 @@ unchanged.
 
 JST-UI-020 requires an interactive local stack workspace catalog with a
 transport-independent production controller and an injected stateful fixture
-adapter. A separate Stacks sidebar entry opens a dedicated page with Branches
-and Workspace tabs; the existing repository Branches page stays separate. The
+adapter. A capability-gated Stacks repository tab appears immediately before
+Branches; there is no separate Stacks sidebar item. The repository stays
+highlighted in left navigation while focused. Stacks replaces ordinary
+repository tabs and trailing repository/refresh/Terminal actions with Back,
+Branches, Workspace, Commits and Op Log using the shared body-tab styling and
+accessible overflow. The Details toggle, centered workspace picker and existing
+Stacks actions remain available across all four views. Commits and Op Log reuse
+repository-wide history and its exact operation/selection reads. The existing
+repository Branches page stays separate. The right sidebar retains selection
+details and workspace Settings but suppresses ordinary repository navigation and
+actions. Its far-right details rail shows the active workspace name/ID, target
+branch, applied-stack count and local folder, then the selected stack/branch,
+commit or file. Focused history shows selected repository-wide commit/operation
+metadata instead of stale canvas selections. Read-only rows follow existing
+Settings presentation; copy is available only for IDs/hashes. Back uses a ghost
+public Button with circular hover treatment, an icon and tooltip and restores
+the exact entry repository route and selections; a direct or reloaded focused
+link without that session route falls back to Overview. Frontend-only
+`context=stacks` on Log/Op Log and `stack_tab=branches|workspace` on Stacks
+round-trip through reload and browser history, rejecting duplicate or
+incompatible fields. Legacy Stacks links default to Workspace. The canvas and
+its controller remain mounted through focused history navigation to preserve
+forms, drafts, columns, diffs and pending commands; repository, binding and
+authorization changes retain owned teardown. Binding revalidation must not
+replace or repin an in-flight canvas selection/read or command for the same
+owner. Switching canvas tabs revalidates that owner without rereading an already
+loaded workspace. Explicit and automatic refresh retain their normal data reads.
+History is read only when its tab is selected, and a direct focused history link
+initializes workspace context without eagerly loading stack histories. This
+presentation does not change local JJ commands or TOML configuration. The
 application shell accepts an injected stack controller only for its matching
 local repository. Branch selection opens a stack column with an explicit Apply
 to workspace action. Workspace places Unstaged first, followed only by applied
@@ -253,14 +281,16 @@ body tabs. Icon actions occupy the body navigation beside those tabs without a
 second toolbar or profile chip. The workspace picker occupies the centered top
 body header, using the same ghost repository picker as Settings and the same
 header slot as the Projects breadcrumb; branch filters remain in their body
-column. The column canvas fills the available page width and retains trailing
-space and its public settings. The canvas uses Design Core compact rectangular
-Panel Toggle defaults in column headers and collapsed rails, with controlled
-state and reversible hover/focus bar previews. Consumer icons and controller
-actions remain supported. The canvas starts directly below the body tabs without
-an extra layout gap or top canvas padding. The twelve-pixel leading inset
-belongs to the horizontal Scroll Area outside its viewport, on both tabs, with
-zero leading padding on the canvas and content wrapper. The gutter remains
+column. A picker already open when a pending read disables it must also disable
+its choices and continuation, retaining the popover so selection resumes when
+the read settles. The column canvas fills the available page width and retains
+trailing space and its public settings. The canvas uses Design Core compact
+rectangular Panel Toggle defaults in column headers and collapsed rails, with
+controlled state and reversible hover/focus bar previews. Consumer icons and
+controller actions remain supported. The canvas starts directly below the body
+tabs without an extra layout gap or top canvas padding. The twelve-pixel leading
+inset belongs to the horizontal Scroll Area outside its viewport, on both tabs,
+with zero leading padding on the canvas and content wrapper. The gutter remains
 visible beside expanded or collapsed fixed columns through horizontal scrolling
 and clips scrolling content so none shows behind it. The unconfigured workspace
 target-branch Settings form has twelve-pixel outer margins on all sides and fits
@@ -1771,6 +1801,9 @@ banners and premature empty or unavailable states do not replace those
 skeletons. Once a snapshot is displayed, background refresh retains its content
 and drafts; settled failures and unsupported features retain their explicit
 notices.
+
+Repository directory loading also reflects its visible-row metadata reads,
+retaining their viewport observation leases and any already loaded rows.
 
 ### Native collaboration action placement
 

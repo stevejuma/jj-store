@@ -21,7 +21,7 @@
   );
 </script>
 
-{#if controller.projects!.loading && !controller.projects!.repositories.entries.some((entry) => entry.summary)}<div
+{#if (controller.projects!.loading || controller.projects!.repositories.entries.some((entry) => entry.loading)) && !controller.projects!.repositories.entries.some((entry) => entry.summary)}<div
     class="store-projects__loading"
   >
     <CommunitySkeleton layout="timeline" label="Loading repositories" />

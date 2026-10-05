@@ -6,20 +6,27 @@
   import { MockStackWorkspaceAdapter } from "./stack-workspace/adapter.js";
   import { workspaceStoryFixture } from "./stack-workspace/data.js";
   import { createMemoryStoryStorage } from "./memory-storage.js";
+  import type { StorePage } from "../../web/src/lib/ui/community-navigation/model.js";
   let {
     page = "workspace",
     linked = true,
     continuousStack = false,
     targetBranch = "main",
     writable = true,
+    initialPage = "stacks",
   }: {
     page?: "branches" | "workspace";
     linked?: boolean;
     continuousStack?: boolean;
     targetBranch?: string;
     writable?: boolean;
+    initialPage?: StorePage;
   } = $props();
-  const controller = untrack(() => createInMemoryStoreController("stacks"));
+  const controller = untrack(() => {
+    const value = createInMemoryStoreController(initialPage);
+    if (initialPage === "stacks") value.actions.selectStacksView(page);
+    return value;
+  });
   const layoutStorage = untrack(createMemoryStoryStorage);
   const stackWorkspace = untrack(() => {
     const snapshot = workspaceStoryFixture();

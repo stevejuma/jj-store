@@ -92,7 +92,7 @@
   args={{ page: "branches" }}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByRole("button", { name: "Stacks" });
+    await canvas.findByRole("button", { name: "Back to repository" });
     await expect(
       canvas.queryByRole("tablist", { name: "Repository sections" }),
     ).toBeNull();
@@ -139,7 +139,7 @@
   name="Existing branches stays separate"
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByRole("button", { name: "Stacks" });
+    await canvas.findByRole("button", { name: "Back to repository" });
     await userEvent.click(canvas.getByRole("button", { name: "jj-store" }));
     await expect(
       await canvas.findByRole("tablist", { name: "Repository sections" }),
@@ -148,7 +148,7 @@
       canvas.queryByRole("region", { name: "Local stack workspace" }),
     ).toBeNull();
     await expect(canvas.getByRole("tab", { name: "Branches" })).toBeVisible();
-    await userEvent.click(canvas.getByRole("button", { name: "Stacks" }));
+    await userEvent.click(canvas.getByRole("tab", { name: "Stacks" }));
     await expect(
       await canvas.findByRole("region", { name: "Local stack workspace" }),
     ).toBeVisible();
@@ -163,7 +163,7 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByText("Local checkout unavailable");
-    await expect(canvas.queryByRole("button", { name: "Stacks" })).toBeNull();
+    await expect(canvas.queryByRole("tab", { name: "Stacks" })).toBeNull();
     await expect(
       canvas.queryByRole("region", { name: "Stack feature/api" }),
     ).toBeNull();

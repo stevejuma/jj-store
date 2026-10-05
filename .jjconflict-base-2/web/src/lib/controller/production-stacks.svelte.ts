@@ -22,6 +22,7 @@ export function createProductionStacks(options: {
   let owner: StoreDataSource | null = null;
   let pending: AbortController | null = null;
   let epoch = 0;
+  let loaded = false;
   function clear() {
     epoch++;
     pending?.abort();
@@ -30,6 +31,7 @@ export function createProductionStacks(options: {
     controller = undefined;
     adapter = undefined;
     owner = null;
+    loaded = false;
   }
   async function restore(load = true) {
     const source = options.source(),
@@ -131,11 +133,15 @@ export function createProductionStacks(options: {
           },
         });
         owner = source;
+        loaded = false;
       }
+      // Revalidate ownership above, but do not replace a pending selection/read or command.
+      if (controller!.locked) return;
       adapter.setOperation(operation);
       if (load) {
         await controller!.refresh();
         if (!current()) return;
+        loaded = true;
         if (controller!.selectedStack)
           await controller!.histories.load(controller!.selectedStack);
         if (controller!.targetHistory.active)
@@ -160,5 +166,9 @@ export function createProductionStacks(options: {
     },
     clear,
     restore,
+    async ensure() {
+      await restore(false);
+      if (controller && !loaded) await restore();
+    },
   };
 }

@@ -65,6 +65,7 @@
     if (next) query = "";
   }
   function choose(next: string) {
+    if (disabled) return;
     if (!controlled) value = next;
     open = false;
     onChange?.(next);
@@ -136,6 +137,7 @@
         <CommandView.Group heading={groupLabel}>
           {#if allowEmpty && !query}<CommandView.Item
               value="__no_repository__"
+              {disabled}
               onSelect={() => choose("")}
             >
               <CommandView.ItemIcon
@@ -148,6 +150,7 @@
           {#each visible as repo (repo.id)}
             <CommandView.Item
               value={repo.id}
+              {disabled}
               keywords={[repo.name, repo.id]}
               onSelect={() => choose(repo.id)}
             >
@@ -169,7 +172,7 @@
         {#if hasMore}<CommandView.Group heading="More branches"
             ><CommandView.Item
               value="__load_more__"
-              disabled={loading}
+              disabled={disabled || loading}
               onSelect={() => onLoadMore?.()}
               ><CommandView.ItemLabel
                 >{loading

@@ -3,6 +3,8 @@
 Select a repository from the left sidebar before interpreting code views. The
 profile and selected workspace determine which operations are available. A
 project's linked repository may require separate access from its metadata home.
+Repository directories load details for visible rows. Initial reads show
+skeletons; refreshing loaded rows preserves their content.
 
 ## Choose a snapshot
 
@@ -101,13 +103,24 @@ old pages and describe the result as one coherent history.
 
 ## Local stack workspaces
 
-For a registered local JJ repository, open Stacks and choose its target branch.
-Create a named workspace, then use Branches to apply or unapply branch stacks.
-Workspace shows the applied stacks and Unstaged changes; file diffs open beside
-their originating column. Each named workspace retains its unfinished work when
-you switch. Active refresh snapshots files with normal JJ rules and follows
-external branch-tip changes. Names, target and membership are local settings in
-`.jj/jj-store/stacks.toml`; they are not tracked repository files.
+For a registered local JJ repository, select **Stacks** in its repository tabs,
+before Branches, and choose the target branch. This opens focused navigation:
+Back, Branches, Workspace, Commits and Op Log. Commits and Op Log show the
+repository-wide histories while retaining your workspace drafts and open diffs.
+The workspace picker and workspace actions stay available. If a read starts
+while the picker is open, its choices pause until the read settles. Toggle
+Details to see the workspace name and ID, target branch, applied-stack count and
+local folder. Selecting a stack, commit or file updates that rail; Commits and
+Op Log show the selected repository history metadata. Back has a circular hover
+treatment and restores the repository view and selections you came from; after a
+direct link or reload it returns to Overview. Stacks does not have a separate
+left-sidebar entry. Create a named workspace, then use Branches to apply or
+unapply branch stacks. Workspace shows the applied stacks and Unstaged changes;
+file diffs open beside their originating column. Each named workspace retains
+its unfinished work when you switch. Active refresh snapshots files with normal
+JJ rules and follows external branch-tip changes. Names, target and membership
+are local settings in `.jj/jj-store/stacks.toml`; they are not tracked
+repository files.
 
 Workspace commands complete independently of the graph index. If history at the
 new operation needs preparation, use the existing Prepare graph index action.

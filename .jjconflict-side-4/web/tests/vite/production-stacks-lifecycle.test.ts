@@ -136,3 +136,26 @@ test("missing graph index uses the existing preparation notice rather than a dup
   expect(data.status.error).toContain("index rebuild required");
   stacks.clear();
 });
+
+test("binding revalidation preserves an in-flight canvas selection read", async () => {
+  const { stacks, source } = fixture();
+  await stacks.restore();
+  const controller = stacks.controller!;
+  let finish!: () => void;
+  const held = new Promise<void>((resolve) => {
+    finish = resolve;
+  });
+  const selection = controller.reads.run(async () => {
+    await held;
+    return { ...controller.snapshot!, base: "chosen-target" };
+  });
+  expect(controller.locked).toBe(true);
+  const reads = vi.mocked(source.references).mock.calls.length;
+  await stacks.restore();
+  expect(source.references).toHaveBeenCalledTimes(reads);
+  expect(stacks.controller).toBe(controller);
+  finish();
+  await selection;
+  expect(controller.snapshot?.base).toBe("chosen-target");
+  stacks.clear();
+});

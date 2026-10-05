@@ -1089,3 +1089,13 @@ retained historical selections/diffs and unchanged code/companion/checkout
 metadata and files. No Rust execution changes occur in this client slice;
 durable command/recovery gates remain separate. Historical ledger objects are
 appended to without formatting.
+
+Focused Stacks navigation reuses the existing repository history readers and
+body tabs. Its acceptance covers route round-trips, retained controller/draft/
+diff state, capability-gated entry, focused details and native hover/overflow.
+The disposable Stacks browser runner accepts Playwright filters so navigation
+and mutating megamerge acceptance can each start with a fresh folder, server and
+graph index. Preparing history in one scenario must not substitute for a cold
+command scenario. Existing live development services stay running. This frontend
+slice changes no local JJ command or TOML contract and requires no Rust rebuild,
+package publication or screenshot baseline update.

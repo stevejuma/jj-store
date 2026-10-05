@@ -7,10 +7,12 @@
   import type { StoreController } from "../../controller/contracts.js";
   import { useAppearance } from "../../appearance/store.svelte.js";
   import StoreStackWorkspaceSettings from "../store-stack-workspace/StoreStackWorkspaceSettings.svelte";
+  import StoreStackWorkspaceDetails from "../store-stack-workspace/StoreStackWorkspaceDetails.svelte";
   import type { StackWorkspaceController } from "../../controller/stack-workspace/controller.svelte.js";
   import { tick, untrack } from "svelte";
   import { repositoryDetailsPanelId } from "../layout-storage.js";
   import { isRepositoryProjects } from "../../controller/projects-view-cache.js";
+  import { isStacksRoute } from "../../controller/store-stacks-navigation.js";
   import StoreProjectsRail from "../store-work/StoreProjectsRail.svelte";
   import StoreAgentSidebar from "../store-collaboration/StoreAgentSidebar.svelte";
   import StoreThreadSidebar from "../store-threads/StoreThreadSidebar.svelte";
@@ -85,7 +87,7 @@
     });
   });
   const stackSettingsKey = $derived(
-    current.page === "stacks" &&
+    isStacksRoute(current) &&
       stackWorkspace?.settingsOpen &&
       stackWorkspace.snapshot?.repository === current.repository
       ? stackWorkspace.snapshot.active
@@ -207,10 +209,15 @@
   <AppShell.Sidebar.Body>
     {#if current.page === "projects" && controller.projects && !isRepositoryProjects(current)}
       <StoreProjectsRail {controller} />
+    {:else if isStacksRoute(current) && stackWorkspace?.snapshot?.repository === current.repository}
+      <StoreStackWorkspaceDetails {controller} workspace={stackWorkspace} />
     {:else}
       <StoreRepositoryDetails {controller} />
-      <StoreRepositoryNavigation page={current.page} onSelect={onSelectPage} />
-      <StoreRepositoryContextActions {controller} />
+      {#if !isStacksRoute(current)}<StoreRepositoryNavigation
+          page={current.page}
+          onSelect={onSelectPage}
+        />
+        <StoreRepositoryContextActions {controller} />{/if}
     {/if}
   </AppShell.Sidebar.Body>
 </AppShell.Sidebar>

@@ -290,12 +290,64 @@ test("Stacks round-trips as a separate application route", () => {
   const history = createStoreRouteHistory(navigation.browser);
   history.page("stacks");
   expect(history.route.page).toBe("stacks");
-  expect(navigation.pushed).toEqual([`#/repos/${repository}/stacks`]);
+  expect(navigation.pushed).toEqual([
+    `#/repos/${repository}/stacks?stack_tab=workspace`,
+  ]);
   expect(storeRouteFromHash(navigation.pushed[0]!)).toMatchObject({
     kind: "route",
     route: { repository, page: "stacks" },
   });
   navigation.visit(`#/repos/${repository}/branches`);
   expect(history.route.page).toBe("branches");
+  history.destroy();
+});
+
+test("focused history survives browser Back, Forward and reload with exact selections", () => {
+  const navigation = fakeBrowser(
+    `#/repos/${repository}/files?at_op=${operation}&bookmark=main`,
+  );
+  const history = createStoreRouteHistory(navigation.browser);
+  const before = history.route;
+  history.page("stacks");
+  history.stacks.select("branches");
+  const branches = storeRouteToHash(history.route)!;
+  history.stacks.select("log");
+  history.push({
+    ...history.route,
+    commitId: "34".repeat(20),
+    path: "README.md",
+  });
+  const commits = storeRouteToHash(history.route)!;
+  history.stacks.select("oplog");
+  history.push({ ...history.route, inspectedOperationId: operation });
+  const operations = storeRouteToHash(history.route)!;
+  navigation.visit(branches);
+  expect(history.route.stackTab).toBe("branches");
+  navigation.visit(commits);
+  expect(history.route).toMatchObject({
+    page: "log",
+    context: "stacks",
+    commitId: "34".repeat(20),
+    path: "README.md",
+  });
+  navigation.visit(operations);
+  const reloaded = createStoreRouteHistory(navigation.browser);
+  expect(storeRouteToHash(reloaded.route)).toBe(
+    storeRouteToHash(history.route),
+  );
+  expect(reloaded.route).toMatchObject({
+    page: "oplog",
+    context: "stacks",
+    inspectedOperationId: operation,
+    snapshotOperationId: operation,
+  });
+  reloaded.stacks.leave();
+  expect(reloaded.route).toMatchObject({
+    page: "files",
+    snapshotOperationId: operation,
+  });
+  history.stacks.leave();
+  expect(history.route).toEqual(before);
+  reloaded.destroy();
   history.destroy();
 });

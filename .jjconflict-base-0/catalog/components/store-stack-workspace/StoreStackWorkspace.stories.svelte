@@ -308,9 +308,9 @@
   parameters={{ viewport: { defaultViewport: "mobile1" } }}
   play={async ({ canvasElement }) => {
     const canvas = workspaceCanvas(canvasElement);
-    await expect(
-      await canvas.findByRole("tab", { name: "Workspace" }),
-    ).toBeVisible();
+    await waitFor(() =>
+      expect(canvas.getByRole("tab", { name: "Workspace" })).toBeVisible(),
+    );
     await expect(
       canvasElement.querySelector(".stack-workspace")!.scrollWidth,
     ).toBeLessThanOrEqual(390);

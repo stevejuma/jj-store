@@ -2209,3 +2209,12 @@ Stacks canvas spacing and fixed columns are client presentation governed by
 JST-UI-020; they do not alter local Stacks transport or configuration. Workspace
 Settings row ordering, borders and Save/Cancel presentation also remain
 client-only; Update/Delete request contracts are unchanged.
+
+Focused Stacks repository navigation adds only browser presentation fields:
+`context=stacks` is valid on existing Log/Op Log routes, and
+`stack_tab=branches|workspace` is valid on Stacks routes. Duplicate or
+incompatible fields are invalid; legacy Stacks routes default to Workspace.
+Exact operation and commit/operation selections keep their existing read
+contracts. Focused history reuses repository-wide reads, while the local Stacks
+owner survives tab changes and is disposed on repository/binding/access changes.
+No HTTP endpoint, generated DTO, local command or TOML format changes.

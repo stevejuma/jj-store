@@ -2,6 +2,7 @@ import { expect, test, vi } from "vitest";
 import {
   productionStacksHttp,
   stackOperation,
+  stackRepository,
 } from "../../../catalog/fixtures/stack-workspace/production-http.js";
 import { createProductionStoreController } from "../../src/lib/controller/production-store-controller.svelte.js";
 
@@ -48,6 +49,89 @@ test("real bootstrap injects a verified Stacks controller and its route never re
     controller.actions.disconnect();
     expect(controller.stackWorkspace).toBeUndefined();
     expect(stacks.physical.observation).toBeNull();
+  } finally {
+    controller.actions.destroy();
+  }
+});
+
+test("a direct focused history link initializes workspace context without loading stack history", async () => {
+  const fixture = productionStacksHttp();
+  fixture.browser.push(
+    `#/repos/${stackRepository}/log?context=stacks&at_op=${stackOperation}`,
+  );
+  const controller = createProductionStoreController(fixture);
+  try {
+    await vi.waitFor(() =>
+      expect(controller.state.status.navigation).toBe("ready"),
+    );
+    expect(controller.state.status.error).toBe("");
+    expect(controller.stackWorkspace?.snapshot?.targetOptions).toHaveLength(2);
+    expect(
+      fixture.requests.some(
+        (request) => request.body?.request?.kind === "graph",
+      ),
+    ).toBe(true);
+    expect(
+      fixture.requests.some(
+        (request) => request.body?.request?.kind === "stack_history",
+      ),
+    ).toBe(false);
+  } finally {
+    controller.actions.destroy();
+  }
+});
+
+test("focused histories read the ordinary repository graph and retain the Stacks owner", async () => {
+  const fixture = productionStacksHttp();
+  const controller = createProductionStoreController(fixture);
+  try {
+    await vi.waitFor(() =>
+      expect(controller.stackWorkspace?.snapshot?.targetOptions).toHaveLength(
+        2,
+      ),
+    );
+    const stacks = controller.stackWorkspace!;
+    const refreshes = fixture.requests.filter((request) =>
+      request.path.endsWith("/stacks"),
+    ).length;
+    await controller.actions.selectStacksView("log");
+    expect(controller.state.route).toMatchObject({
+      page: "log",
+      context: "stacks",
+      workspace: null,
+    });
+    expect(controller.state.status.error).toBe("");
+    expect(controller.stackWorkspace).toBe(stacks);
+    const graph = fixture.requests.find(
+      (request) => request.body?.request?.kind === "graph",
+    )!;
+    expect(graph.body.request.query[0]).toMatchObject({
+      graph: "log",
+      revset: "all()",
+      workspace: null,
+    });
+    expect(
+      fixture.requests.filter((request) => request.path.endsWith("/stacks")),
+    ).toHaveLength(refreshes);
+    await controller.actions.selectStacksView("oplog");
+    expect(controller.state.status.error).toBe("");
+    expect(controller.stackWorkspace).toBe(stacks);
+    expect(
+      fixture.requests.some(
+        (request) => request.body?.request?.query?.[0]?.graph === "operations",
+      ),
+    ).toBe(true);
+    controller.state.status.error = "index rebuild required";
+    await controller.actions.selectStacksView("workspace");
+    expect(controller.state.status.error).toBe("");
+    expect(controller.state.status.navigation).toBe("ready");
+    await controller.actions.selectStacksView("branches");
+    expect(controller.stackWorkspace).toBe(stacks);
+    expect(
+      fixture.requests.filter((request) => request.path.endsWith("/stacks")),
+    ).toHaveLength(refreshes);
+    controller.actions.disconnect();
+    expect(controller.stackWorkspace).toBeUndefined();
   } finally {
     controller.actions.destroy();
   }

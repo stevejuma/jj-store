@@ -11,7 +11,11 @@
   import { workspaceStoryFixture } from "./stack-workspace/data.js";
   import { createMemoryStoryStorage } from "./memory-storage.js";
   let { page = "workspace" }: { page?: "branches" | "workspace" } = $props();
-  const controller = untrack(() => createInMemoryStoreController("stacks"));
+  const controller = untrack(() => {
+    const value = createInMemoryStoreController("stacks");
+    value.actions.selectStacksView(page);
+    return value;
+  });
   const layoutStorage = untrack(createMemoryStoryStorage);
   const stackWorkspace = untrack(() => {
     const original = workspaceStoryFixture();

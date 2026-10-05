@@ -4,7 +4,8 @@
     type AppShellController,
   } from "@lapismd/design-core/shell";
   import StoreStackWorkspacePicker from "../store-stack-workspace/StoreStackWorkspacePicker.svelte";
-  import StoreStackWorkspace from "../store-stack-workspace/StoreStackWorkspace.svelte";
+  import StoreStacksApplicationView from "../store-stack-workspace/StoreStacksApplicationView.svelte";
+  import { isStacksRoute } from "../../controller/store-stacks-navigation.js";
   import CommunityProjectsColumnAlert from "../community-projects/CommunityProjectsColumnAlert.svelte";
   import type { StackWorkspaceController } from "../../controller/stack-workspace/controller.svelte.js";
   import type { Snippet } from "svelte";
@@ -61,13 +62,20 @@
     selectPage(page: StorePage): void;
     children?: Snippet<[StorePage, string]>;
   } = $props();
+  const focusedStacks = $derived(isStacksRoute(current));
+  const stacksAvailable = $derived(
+    Boolean(
+      stackWorkspace?.snapshot?.folder &&
+      stackWorkspace.snapshot.repository === current.repository,
+    ),
+  );
 </script>
 
 <AppShell.Main>
   <StoreTerminalWorkspace
     repository={current.repository}
     profile={controller.state.repository.profile ?? "native"}
-    enabled={current.page !== "stacks" &&
+    enabled={!focusedStacks &&
       !settingsOpen &&
       !conflictOpen &&
       !(
@@ -101,7 +109,7 @@
           <CommunityApplicationMobileNavigation
             model={{ canNavigateBack, canNavigateForward, navigate }}
           />
-          {#if current.page === "stacks" && stackWorkspace?.snapshot?.repository === current.repository}<StoreStackWorkspacePicker
+          {#if focusedStacks && stackWorkspace?.snapshot?.repository === current.repository}<StoreStackWorkspacePicker
               controller={stackWorkspace}
             />{:else if current.page === "projects" && controller.projects && !isRepositoryProjects(current)}<StoreProjectsBreadcrumb
               {controller}
@@ -127,10 +135,11 @@
           : undefined}
       >
         <div class="store-application__body-frame">
-          {#if !(current.page === "projects" && controller.projects && !isRepositoryProjects(current)) && current.page !== "threads" && current.page !== "stacks"}
+          {#if !(current.page === "projects" && controller.projects && !isRepositoryProjects(current)) && current.page !== "threads" && !focusedStacks}
             {#if !(current.page === "reviews" && current.reviewThreadId)}<StoreRepositoryTabs
                 page={current.page}
                 local={controller.state.repository.profile === "git_sha1_jj045"}
+                stacks={stacksAvailable}
                 onSelect={selectPage}
               />{/if}
             {#if current.page !== "reviews"}<StoreWorkspaceSectionHeader
@@ -138,18 +147,25 @@
                 disabled={workspaceBlocked}
               />{/if}
             <StoreRepositoryNotices {controller} />{/if}
-          {#if current.page === "stacks"}<StoreRepositoryNotices
-              {controller}
-            />{/if}
+          {#if focusedStacks}<StoreRepositoryNotices {controller} />{/if}
           <div class="store-application__body-regions" data-page={current.page}>
-            {#key current.repository + current.page}
-              {#if current.page === "stacks"}
+            {#key current.repository + (focusedStacks ? "stacks" : current.page)}
+              {#if focusedStacks}
                 {#if stackWorkspace?.snapshot?.repository === current.repository}
-                  <StoreStackWorkspace
-                    controller={stackWorkspace}
-                    showPicker={false}
-                    onSettings={() => (stackWorkspace!.settingsOpen = true)}
-                  />
+                  <StoreStacksApplicationView
+                    {controller}
+                    workspace={stackWorkspace}
+                  >
+                    {#snippet history()}
+                      {#if children}{@render children(
+                          current.page,
+                          current.repository,
+                        )}{:else}<StoreApplicationPlaceholder
+                          repository={current.repository}
+                          page={current.page}
+                        />{/if}
+                    {/snippet}
+                  </StoreStacksApplicationView>
                 {:else}
                   <CommunityProjectsColumnAlert
                     title="Local stack workspace unavailable"

@@ -1,3 +1,4 @@
+import { isStacksRoute } from "./store-stacks-navigation.js";
 import { workspaceSelectedRoute } from "./store-workspaces.js";
 import type { StoreController } from "./contracts.js";
 import type { createProductionBranchActions } from "./production-branch-actions.js";
@@ -33,6 +34,7 @@ export function createProductionStoreActions(options: {
   refresh: () => Promise<void>;
   selectOperation: (id: string) => Promise<void>;
   restoreRoute: () => Promise<void>;
+  ensureStacks: () => Promise<void>;
   activeRepository: () => string | undefined;
   invalidate: () => void;
 }): StoreController["actions"] {
@@ -196,6 +198,26 @@ export function createProductionStoreActions(options: {
     },
     async selectPage(page) {
       options.history.page(page);
+      await options.restoreRoute();
+    },
+    async selectStacksView(view) {
+      const retainedCanvas =
+        isStacksRoute(options.history.route) &&
+        (view === "branches" || view === "workspace");
+      options.history.stacks.select(view);
+      if (retainedCanvas) {
+        const desired = options.history.route;
+        options.data.status.error = "";
+        options.data.status.navigation = "loading";
+        await options.ensureStacks();
+        if (options.history.route === desired)
+          options.data.status.navigation = options.data.status.error
+            ? "failed"
+            : "ready";
+      } else await options.restoreRoute();
+    },
+    async leaveStacks() {
+      options.history.stacks.leave();
       await options.restoreRoute();
     },
     async navigate(delta) {

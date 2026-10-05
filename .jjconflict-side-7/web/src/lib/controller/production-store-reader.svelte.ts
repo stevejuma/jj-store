@@ -30,7 +30,7 @@ export interface ReaderContext {
   signal?(): AbortSignal;
   current(ticket: number, source: StoreDataSource): boolean;
   report(cause: unknown): void;
-  restoreStacks?(): Promise<void>;
+  restoreStacks?(contextOnly?: boolean): Promise<void>;
 }
 
 export function createProductionStoreReaders(

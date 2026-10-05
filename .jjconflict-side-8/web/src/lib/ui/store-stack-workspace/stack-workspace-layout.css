@@ -28,6 +28,7 @@
   padding: 0.75rem;
 }
 .stack-workspace__views,
+.stack-workspace__canvas-view:not([hidden]),
 .stack-workspace__content {
   display: flex;
   flex: 1;

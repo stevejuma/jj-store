@@ -5,6 +5,7 @@
   import type { StoreController } from "../../controller/contracts.js";
   import CommunitySidebarToggleIcon from "../community-app-shell/CommunitySidebarToggleIcon.svelte";
   import StoreRepositoryActions from "../store-mutations/StoreRepositoryActions.svelte";
+  import { isStacksRoute } from "../../controller/store-stacks-navigation.js";
 
   let {
     controller,
@@ -19,20 +20,22 @@
   } = $props();
 </script>
 
-{#if controller.state.route.page !== "threads"}<StoreRepositoryActions
-    {controller}
-    {disabled}
-  />
-  <Button
-    variant="ghost"
-    size="icon-sm"
-    aria-label="Refresh snapshot"
-    title="Refresh snapshot"
-    disabled={disabled || controller.state.status.connection !== "connected"}
-    onclick={() => controller.actions.refresh()}
-    ><RefreshCwIcon aria-hidden="true" /></Button
-  >{/if}
-<StoreTerminalToggle {disabled} />
+{#if !isStacksRoute(controller.state.route)}
+  {#if controller.state.route.page !== "threads"}<StoreRepositoryActions
+      {controller}
+      {disabled}
+    />
+    <Button
+      variant="ghost"
+      size="icon-sm"
+      aria-label="Refresh snapshot"
+      title="Refresh snapshot"
+      disabled={disabled || controller.state.status.connection !== "connected"}
+      onclick={() => controller.actions.refresh()}
+      ><RefreshCwIcon aria-hidden="true" /></Button
+    >{/if}
+  <StoreTerminalToggle {disabled} />
+{/if}
 <span class="community-app-shell__sidebar-action">
   <Button
     variant="default"

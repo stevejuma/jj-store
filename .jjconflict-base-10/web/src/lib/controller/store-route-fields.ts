@@ -1,3 +1,5 @@
+import type { StorePage } from "../ui/community-navigation/model.js";
+
 export function safeLabel(value: string, maximum: number): boolean {
   return (
     value.length > 0 &&
@@ -28,3 +30,40 @@ export function validOptional(
 ): value is string | null {
   return value !== undefined && (value === null || pattern.test(value));
 }
+
+export const repositoryPages = new Set<StorePage>([
+  "stacks",
+  "branches",
+  "log",
+  "oplog",
+  "files",
+  "agents",
+  "reviews",
+  "projects",
+  "threads",
+]);
+export const repositoryQueryKeys = new Set([
+  "context",
+  "stack_tab",
+  "at_op",
+  "history_query",
+  "history_time",
+  "bookmark",
+  "workspace",
+  "commit",
+  "evolution",
+  "change",
+  "operation",
+  "parent",
+  "group",
+  "file",
+  "directory",
+  "session",
+  "thread",
+  "review_view",
+  "project",
+  "task",
+  "channel",
+  "reply",
+  "comment",
+]);

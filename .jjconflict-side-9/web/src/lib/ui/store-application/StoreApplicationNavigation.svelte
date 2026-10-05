@@ -1,5 +1,4 @@
 <script lang="ts">
-  import type { StackWorkspaceController } from "../../controller/stack-workspace/controller.svelte.js";
   import type { Snippet } from "svelte";
   import type { StoreController } from "../../controller/contracts.js";
   import CommunityNavigation from "../community-navigation/CommunityNavigation.svelte";
@@ -12,7 +11,6 @@
   import { projectsBusy } from "../store-work/projects-initial-loading.js";
   let {
     controller,
-    stackWorkspace,
     activeItemId,
     compact = false,
     sectionOpen = $bindable<Record<string, boolean>>({}),
@@ -22,7 +20,6 @@
     footer,
   }: {
     controller: StoreController;
-    stackWorkspace?: StackWorkspaceController;
     activeItemId?: string;
     compact?: boolean;
     sectionOpen?: Record<string, boolean>;
@@ -60,13 +57,6 @@
   <CommunityNavigation
     model={{
       ...model,
-      primaryItems: [
-        ...model.primaryItems,
-        ...(stackWorkspace?.snapshot?.folder &&
-        stackWorkspace.snapshot.repository === controller.state.route.repository
-          ? [{ id: "stacks", kind: "stacks" as const, label: "Stacks" }]
-          : []),
-      ],
       sections: model.sections.map((section) => ({
         ...section,
         actions: [

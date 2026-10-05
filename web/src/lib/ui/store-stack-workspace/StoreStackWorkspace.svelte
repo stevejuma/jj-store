@@ -1,6 +1,8 @@
 <script lang="ts">
   import * as Empty from "@lapismd/design-core/shadcn/empty";
-  import * as Tabs from "@lapismd/design-core/shadcn/tabs";
+  import type { Snippet } from "svelte";
+  import type { StoreStacksView } from "../../controller/store-stacks-navigation.js";
+  import StoreStacksNavigation from "./StoreStacksNavigation.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import Folder from "@lucide/svelte/icons/folder";
   import FolderKanban from "@lucide/svelte/icons/folder-kanban";
@@ -34,16 +36,27 @@
     showStackActions = true,
     showPicker = true,
     onSettings,
+    focusedView,
+    onSelectView,
+    onBack,
+    history,
   }: {
     controller: StackWorkspaceController;
     showStackActions?: boolean;
     showPicker?: boolean;
     onSettings?: () => void;
+    focusedView?: StoreStacksView;
+    onSelectView?: (view: StoreStacksView) => void;
+    onBack?: () => void;
+    history?: Snippet;
   } = $props();
   let formOpen = $state(false),
     conflictOpen = $state(false),
     formCommand = $state<WorkspaceCommand | null>(null);
   const notifications = ownNotifications();
+  const showCanvas = $derived(
+    !focusedView || focusedView === "branches" || focusedView === "workspace",
+  );
   const snapshot = $derived(controller.snapshot);
   const workspace = $derived(
     snapshot ? selectedWorkspace(snapshot) : undefined,
@@ -118,15 +131,24 @@
     message={snapshot?.workspaceWarning ?? ""}
     lifetime="condition"
   />
+  <StoreStacksNavigation
+    {controller}
+    view={focusedView}
+    {onSelectView}
+    {onBack}
+  >
+    {#snippet actions()}<StoreStackWorkspaceActions
+        {controller}
+        {command}
+        {onSettings}
+      />{/snippet}
+  </StoreStacksNavigation>
   {#if !snapshot || (controller.loading && !snapshot)}<CommunityProjectsRepositorySkeleton
       layout="graph"
       label="Loading stack workspace"
       count={5}
     />
-  {:else if !eligible}<StoreStackWorkspaceActions
-      {controller}
-      {command}
-    /><CommunityProjectsColumnAlert
+  {:else if !eligible}<CommunityProjectsColumnAlert
       title="Local checkout unavailable"
       description={snapshot.availability === "unlinked"
         ? "Link a local JJ checkout to use stack workspaces."
@@ -148,110 +170,104 @@
       >
         {controller.validation}
       </p>{/if}
-    <Tabs.Root
-      value={controller.page}
-      onValueChange={(value) => {
-        if (!controller.locked)
-          controller.page = value as "branches" | "workspace";
-      }}
-      class="stack-workspace__views"
-    >
-      <nav
-        class="community-projects__tabs stack-workspace__nav"
-        aria-label="Stack workspace navigation"
+    <div class="stack-workspace__views">
+      <div
+        class="stack-workspace__canvas-view"
+        hidden={!showCanvas}
+        inert={!showCanvas}
       >
-        <Tabs.List
-          class="community-projects__tab-list"
-          aria-label="Local repository views"
-          ><Tabs.Trigger
-            class="community-projects__tab-trigger"
-            value="branches"
-            disabled={controller.locked}>Branches</Tabs.Trigger
-          ><Tabs.Trigger
-            class="community-projects__tab-trigger"
-            value="workspace"
-            disabled={controller.locked}>Workspace</Tabs.Trigger
-          ></Tabs.List
+        <div
+          class="stack-workspace__content"
+          role="tabpanel"
+          aria-label={controller.page === "workspace"
+            ? "Workspace"
+            : "Branches"}
         >
-        <StoreStackWorkspaceActions {controller} {command} {onSettings} />
-      </nav>
-      <Tabs.Content value={controller.page} class="stack-workspace__content">
-        {#if !snapshot.target}<StoreStackWorkspaceSetup {controller} />{/if}
-        {#if controller.page === "workspace" && !workspace}
-          <Empty.Root class="flex-1">
-            <Empty.Header>
-              <Empty.Media variant="icon"
-                ><FolderKanban aria-hidden="true" /></Empty.Media
+          {#if !snapshot.target}<StoreStackWorkspaceSetup {controller} />{/if}
+          {#if controller.page === "workspace" && !workspace}
+            <Empty.Root class="flex-1">
+              <Empty.Header>
+                <Empty.Media variant="icon"
+                  ><FolderKanban aria-hidden="true" /></Empty.Media
+                >
+                <Empty.Title>No stack workspace</Empty.Title>
+                <Empty.Description
+                  >Choose a target branch, then set up a named workspace to
+                  combine stacks and retain unfinished work.</Empty.Description
+                >
+              </Empty.Header>
+              <Empty.Content
+                ><Button
+                  disabled={!controller.can("create_workspace")}
+                  onclick={() =>
+                    command({ kind: "create_workspace", name: "" })}
+                  >Create workspace</Button
+                ></Empty.Content
               >
-              <Empty.Title>No stack workspace</Empty.Title>
-              <Empty.Description
-                >Choose a target branch, then set up a named workspace to
-                combine stacks and retain unfinished work.</Empty.Description
-              >
-            </Empty.Header>
-            <Empty.Content
-              ><Button
-                disabled={!controller.can("create_workspace")}
-                onclick={() => command({ kind: "create_workspace", name: "" })}
-                >Create workspace</Button
-              ></Empty.Content
+            </Empty.Root>
+          {:else if snapshot.target}<StoreStackWorkspaceCanvas
+              {controller}
+              {showStackActions}
+              onCommand={command}
+            />{/if}
+        </div>
+        <footer class="stack-workspace__footer">
+          <div class="stack-workspace__footer-items">
+            <CommunityChip
+              variant="muted"
+              shape="square"
+              class="stack-workspace__folder"
             >
-          </Empty.Root>
-        {:else if snapshot.target}<StoreStackWorkspaceCanvas
-            {controller}
-            {showStackActions}
-            onCommand={command}
-          />{/if}</Tabs.Content
-      >
-    </Tabs.Root>
-    <footer class="stack-workspace__footer">
-      <div class="stack-workspace__footer-items">
-        <CommunityChip
-          variant="muted"
-          shape="square"
-          class="stack-workspace__folder"
-        >
-          {#snippet leading()}<Folder size={14} aria-hidden="true" />{/snippet}
-          {snapshot.folder}
-        </CommunityChip>
-        <CommunityChip variant="muted" shape="square">
-          {#snippet leading()}<FolderKanban
-              size={14}
-              aria-hidden="true"
-            />{/snippet}
-          {workspace?.name ?? "No stack workspace"}
-        </CommunityChip>
-        <CommunityChip variant="muted" shape="square">
-          {#snippet leading()}<GitBranch
-              size={14}
-              aria-hidden="true"
-            />{/snippet}
-          {snapshot.base ?? "Choose target branch"}
-        </CommunityChip>
-        <CommunityChip variant="muted" shape="square">
-          {#snippet leading()}<GitBranchPlus
-              size={14}
-              aria-hidden="true"
-            />{/snippet}
-          {workspace?.applied.length ?? 0} applied stacks
-        </CommunityChip>
-        <CommunityChip variant="muted" shape="square">
-          {#snippet leading()}<File size={14} aria-hidden="true" />{/snippet}
-          {controller.filesFor("unassigned")
-            .length}{controller.details.fileState("unassigned").nextCursor
-            ? "+"
-            : ""} unstaged files
-        </CommunityChip>
+              {#snippet leading()}<Folder
+                  size={14}
+                  aria-hidden="true"
+                />{/snippet}
+              {snapshot.folder}
+            </CommunityChip>
+            <CommunityChip variant="muted" shape="square">
+              {#snippet leading()}<FolderKanban
+                  size={14}
+                  aria-hidden="true"
+                />{/snippet}
+              {workspace?.name ?? "No stack workspace"}
+            </CommunityChip>
+            <CommunityChip variant="muted" shape="square">
+              {#snippet leading()}<GitBranch
+                  size={14}
+                  aria-hidden="true"
+                />{/snippet}
+              {snapshot.base ?? "Choose target branch"}
+            </CommunityChip>
+            <CommunityChip variant="muted" shape="square">
+              {#snippet leading()}<GitBranchPlus
+                  size={14}
+                  aria-hidden="true"
+                />{/snippet}
+              {workspace?.applied.length ?? 0} applied stacks
+            </CommunityChip>
+            <CommunityChip variant="muted" shape="square">
+              {#snippet leading()}<File
+                  size={14}
+                  aria-hidden="true"
+                />{/snippet}
+              {controller.filesFor("unassigned")
+                .length}{controller.details.fileState("unassigned").nextCursor
+                ? "+"
+                : ""} unstaged files
+            </CommunityChip>
+          </div>
+          <span role="status">{controller.outcome}</span
+          >{#if formCommand && !controller.locked}<CommunityChip
+              variant="muted"
+              shape="square"
+              onclick={() => (formOpen = true)}
+              >{#snippet leading()}<Pencil aria-hidden="true" />{/snippet}Edit
+              retained draft</CommunityChip
+            >{/if}
+        </footer>
       </div>
-      <span role="status">{controller.outcome}</span
-      >{#if formCommand && !controller.locked}<CommunityChip
-          variant="muted"
-          shape="square"
-          onclick={() => (formOpen = true)}
-          >{#snippet leading()}<Pencil aria-hidden="true" />{/snippet}Edit
-          retained draft</CommunityChip
-        >{/if}
-    </footer>
+      {#if !showCanvas}{@render history?.()}{/if}
+    </div>
   {/if}
   <StoreStackWorkspaceForm
     {controller}

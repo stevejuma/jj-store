@@ -3,6 +3,7 @@ import type { StorePage } from "../community-navigation/model.js";
 export const repositorySections: readonly { page: StorePage; label: string }[] =
   [
     { page: "files", label: "Overview" },
+    { page: "stacks", label: "Stacks" },
     { page: "branches", label: "Branches" },
     { page: "log", label: "Commits" },
     { page: "oplog", label: "Op Log" },
@@ -12,7 +13,7 @@ export const repositorySections: readonly { page: StorePage; label: string }[] =
   ];
 
 export const repositoryRailSections = repositorySections
-  .filter((section) => section.page !== "files")
+  .filter((section) => section.page !== "files" && section.page !== "stacks")
   .map((section) => ({
     ...section,
     label: section.page === "log" ? "JJ Log" : section.label,

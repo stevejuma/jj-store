@@ -49,7 +49,6 @@ export function selectStoreNavigation(
 }
 
 export function activeStoreNavigation(route: StoreRoute) {
-  if (route.page === "stacks") return "stacks";
   if (route.page === "threads")
     return route.threadId
       ? `thread:${route.repository}:${route.threadId}`

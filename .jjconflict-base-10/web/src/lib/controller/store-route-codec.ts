@@ -3,6 +3,8 @@ import {
   safePath,
   one,
   validOptional,
+  repositoryPages,
+  repositoryQueryKeys,
 } from "./store-route-fields.js";
 import {
   historyQueryFromParams,
@@ -14,46 +16,16 @@ import {
 } from "./projects-route-codec.js";
 import type { StorePage } from "../ui/community-navigation/model.js";
 import type { StoreRoute } from "./contracts.js";
+import {
+  writeStacksRouteFields,
+  readStacksRouteFields,
+} from "./store-stacks-route-codec.js";
 
 const repositoryId = /^[0-9a-f]{32}$/u;
 const commitObjectId = /^(?:[0-9a-f]{40}|[0-9a-f]{128})$/u;
 const objectId = /^[0-9a-f]{128}$/u;
 const changeId = /^[0-9a-f]{32}$/u;
 const stableId = /^[0-9a-f]{32}$/u;
-const pages = new Set<StorePage>([
-  "stacks",
-  "branches",
-  "log",
-  "oplog",
-  "files",
-  "agents",
-  "reviews",
-  "projects",
-  "threads",
-]);
-const queryKeys = new Set([
-  "at_op",
-  "history_query",
-  "history_time",
-  "bookmark",
-  "workspace",
-  "commit",
-  "evolution",
-  "change",
-  "operation",
-  "parent",
-  "group",
-  "file",
-  "directory",
-  "session",
-  "thread",
-  "review_view",
-  "project",
-  "task",
-  "channel",
-  "reply",
-  "comment",
-]);
 
 export type StoreRouteHashResult =
   | { kind: "none" }
@@ -63,9 +35,10 @@ export type StoreRouteHashResult =
 export function storeRouteToHash(route: StoreRoute): string | null {
   if (route.projectsHub && route.page === "projects")
     return projectsRouteToHash(route);
-  if (!repositoryId.test(route.repository) || !pages.has(route.page))
+  if (!repositoryId.test(route.repository) || !repositoryPages.has(route.page))
     return null;
   const query = new URLSearchParams();
+  if (!writeStacksRouteFields(route, query)) return null;
   historyQueryToParams(query, route);
   if (route.snapshotOperationId) query.set("at_op", route.snapshotOperationId);
   if (route.workspace) query.set("workspace", route.workspace);
@@ -109,13 +82,17 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
     return { kind: "invalid", message: "Invalid repository route encoding." };
   }
   const page = match[2] as StorePage;
-  if (!repositoryId.test(repository) || !pages.has(page))
+  if (!repositoryId.test(repository) || !repositoryPages.has(page))
     return { kind: "invalid", message: "Invalid repository or page." };
   const query = new URLSearchParams(
     separator === -1 ? "" : hash.slice(separator + 1),
   );
-  if ([...query.keys()].some((key) => !queryKeys.has(key)))
+  if ([...query.keys()].some((key) => !repositoryQueryKeys.has(key)))
     return { kind: "invalid", message: "Unknown repository route field." };
+
+  const stacksFields = readStacksRouteFields(query, page);
+  if (!stacksFields)
+    return { kind: "invalid", message: "Invalid Stacks navigation context." };
 
   const historyFields = historyQueryFromParams(query, page);
   if (!historyFields)
@@ -273,6 +250,7 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
   return {
     kind: "route",
     route: {
+      ...stacksFields,
       ...(historyQuery ? { historyQuery } : {}),
       ...(historyTime !== null ? { historyTime: Number(historyTime) } : {}),
       page,

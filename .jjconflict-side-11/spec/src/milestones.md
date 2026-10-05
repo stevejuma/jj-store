@@ -152,8 +152,8 @@ shared-package release qualification does not alter those original Git gates.
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                        | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work          | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Review local core before commit/file/hunk and graph actions | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-041,E-M21-042,E-M21-043 |
-| M21.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | UI reviewed for backend integration; registry/visual gates remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M21-041,E-M21-042,E-M21-043 |
+| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Review local core before commit/file/hunk and graph actions | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-041,E-M21-042,E-M21-043,E-M21-044 |
+| M21.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | UI reviewed for backend integration; registry/visual gates remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M21-041,E-M21-042,E-M21-043,E-M21-044 |
 | M21.2 | In progress | M21.1 | JST-UI-020 | Local jj-lib megamerges, TOML settings and independent named unfinished work | Review local core before commit/file/hunk and graph actions | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-042 |
 
 The user reopened production browsing integration on 27 September 2026 after
@@ -93806,6 +93806,346 @@ entries.
   "next": "Commit this verified UI refinement and preserve live Vite 7476/backend 7478.",
   "summary": "Seven directly affected Settings/Threads interaction/accessibility stories pass, with first-row, one-frame, equal four-sided padding, contained actions, separator, icons and aligned button geometry assertions. Type/ownership/architecture/docs checks and live HMR measurements pass. No milestone promotion.",
   "out_of_scope": "UI-only targeted policy: Rust builds/tests, root aggregates, unrelated stories and full suites, new cold built-bundle acceptance, package publication and screenshot comparisons/baselines. No startup/lifecycle/generated runtime asset behavior changed; existing real-folder test only follows the renamed button."
+},
+{
+  "id": "E-M21-044",
+  "tasks": [
+    "M21",
+    "M21.1"
+  ],
+  "date": "2026-10-05",
+  "revision": "mvqnsormqpwutlrmqvxnzuqpwtkttmsx",
+  "kind": "Focused repository Stacks navigation and contextual right rail",
+  "versions": "JJ/jj-lib 0.45.1 and foundational package ranges unchanged; Node 26.9.0, pnpm 10.32.1, Vitest 4.1.11, Playwright 1.63.0.",
+  "formats": "Frontend-only context=stacks and stack_tab=branches|workspace route fields; session return/history selection state. No local TOML v1, JJ command, OpenAPI/generated type or persisted column-layout format change.",
+  "files": [
+    "catalog/components/store-application/StoreRepositoryPickerPending.stories.svelte",
+    "catalog/components/store-stack-workspace/StoreStackWorkspace.stories.svelte",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceApplication.stories.svelte",
+    "catalog/components/store-stack-workspace/StoreStacksNavigation.stories.svelte",
+    "catalog/controller/in-memory-store-navigation.ts",
+    "catalog/fixtures/RepositoryPickerPendingFixture.svelte",
+    "catalog/fixtures/StackWorkspaceApplicationFixture.svelte",
+    "catalog/fixtures/StackWorkspaceSetupApplicationFixture.svelte",
+    "catalog/fixtures/stack-workspace/production-http.ts",
+    "docs/maintenance/coverage.json",
+    "docs/site/guides/browsing.md",
+    "scripts/stacks-browser-acceptance.mjs",
+    "spec/src/api.md",
+    "spec/src/documentation.md",
+    "spec/src/milestones.md",
+    "spec/src/spec-governance.md",
+    "spec/src/ui.md",
+    "web/src/lib/controller/controller-actions.ts",
+    "web/src/lib/controller/production-route-restorer.ts",
+    "web/src/lib/controller/production-stacks.svelte.ts",
+    "web/src/lib/controller/production-store-actions.ts",
+    "web/src/lib/controller/production-store-controller.svelte.ts",
+    "web/src/lib/controller/production-store-reader.svelte.ts",
+    "web/src/lib/controller/store-route-codec.ts",
+    "web/src/lib/controller/store-route-fields.ts",
+    "web/src/lib/controller/store-route-history.svelte.ts",
+    "web/src/lib/controller/store-route-types.ts",
+    "web/src/lib/controller/store-stacks-navigation.ts",
+    "web/src/lib/controller/store-stacks-route-codec.ts",
+    "web/src/lib/ui/store-application/StoreApplication.svelte",
+    "web/src/lib/ui/store-application/StoreApplicationHeaderActions.svelte",
+    "web/src/lib/ui/store-application/StoreApplicationMain.svelte",
+    "web/src/lib/ui/store-application/StoreApplicationNavigation.svelte",
+    "web/src/lib/ui/store-application/StoreApplicationRightPanels.svelte",
+    "web/src/lib/ui/store-application/StoreRepositoryPicker.svelte",
+    "web/src/lib/ui/store-application/StoreRepositoryTabs.svelte",
+    "web/src/lib/ui/store-application/StoreViewTabs.svelte",
+    "web/src/lib/ui/store-application/repository-sections.ts",
+    "web/src/lib/ui/store-application/store-navigation.ts",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspace.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceDetails.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStacksApplicationView.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStacksNavigation.svelte",
+    "web/src/lib/ui/store-stack-workspace/stack-workspace-layout.css",
+    "web/src/lib/ui/store-work/StoreProjectsRepositories.svelte",
+    "web/tests/real/stacks-browser.spec.ts",
+    "web/tests/vite/production-stacks-application.test.ts",
+    "web/tests/vite/production-stacks-lifecycle.test.ts",
+    "web/tests/vite/store-route-history.test.ts",
+    "web/tests/vite/store-stacks-navigation.test.ts"
+  ],
+  "requirements": [
+    "JST-API-005",
+    "JST-DOC-002",
+    "JST-GOV-002",
+    "JST-GOV-003",
+    "JST-UI-005",
+    "JST-UI-014",
+    "JST-UI-020"
+  ],
+  "before": "Stacks used a separate sidebar item and canvas-only tabs, ordinary repository chrome on history, and the generic right rail. Back request refined to transparent at rest with a circular hover surface. Fresh route reads could replace a pending target choice or make a branch click unavailable during canvas-tab switching.",
+  "scope": "Reuse owned repository body-tab overflow, Button/Tooltip, Settings read-only rows and existing repository-wide history renderers/readers. Stacks tab precedes Branches, current repository stays highlighted, focused Back/Branches/Workspace/Commits/Op Log hides ordinary repository/Terminal actions but retains Details, workspace picker and actions. Session-only return route, validated route fields, mounted canvas/controller, exact pending state and bounded owner revalidation. Far-right rail follows workspace, stack/dependent branch, file, commit and operation selections. Full refresh retains its data reads while canvas switching avoids redundant workspace reads. Cold verification also corrects the shared owned picker to keep open choices disabled during pending reads rather than silently discarding their clicks; direct picker, connection, Settings, WorkStore and Stacks consumers are rechecked. The direct Projects consumer check also exposed an initial directory skeleton predicate missing viewport-owned metadata loading. Extended that predicate only; observation leases, bounded reads and loaded-content retention remain unchanged.",
+  "runs": [
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/store-stacks-navigation.test.ts web/tests/vite/store-route-history.test.ts web/tests/vite/production-stacks-application.test.ts web/tests/vite/production-stacks-lifecycle.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "Initial focused runs culminated in 37 passing tests; new pending-read regression below extends the final count."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/production-stacks-lifecycle.test.ts -t \"binding revalidation preserves\"",
+      "result": "fail",
+      "failures": 1,
+      "note": "pending-selection-before.log reproduces a second workspace read replacing an in-flight selection."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/store-stacks-navigation.test.ts web/tests/vite/store-route-history.test.ts web/tests/vite/production-stacks-application.test.ts web/tests/vite/production-stacks-lifecycle.test.ts web/tests/vite/projects-code-navigation.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "units-final-complete.log: 45 tests in five files. Includes exact entry restoration, four views and route fields, independent history selections, browser history/reload, repository-wide graph scope, cold context startup, bounded canvas switches, cleared obsolete history feedback, pending selection preservation and binding/auth disposal. Intermediate four-file runs passed 38; direct navigation consumer seven pass."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceApplication.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "app-first.log: eight adapted application stories pass."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/*.stories.svelte catalog/components/store-application/StoreRepositoryNavigation.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte catalog/components/store-application/StoreWorkspaces.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte",
+      "result": "fail",
+      "failures": 2,
+      "note": "stories.log: 123 pass, two fail. NarrowLayout captured a replaced tab while responsive measurement ran; operation selection locator matched both graph and detail. Fixed waiting/scoping, preserving the visibility and selection assertions."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStacksNavigation.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspace.stories.svelte",
+      "result": "fail",
+      "failures": 2,
+      "note": "rail-stories.log: 16 pass, two fail. Synthetic hover does not activate CSS :hover; feature/api occurs in both Stack and Branch rows. Further focused run rejects missing spaces in text assertion. Changed to native pointer, scoped/multiple values and whitespace-aware content checks."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/*.stories.svelte catalog/components/store-application/StoreRepositoryNavigation.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte catalog/components/store-application/StoreWorkspaces.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "stories-verified.log: 125 pass in 27 directly affected story files. Shared tab composition justifies repository/navigation/history consumers. No unrelated whole-catalog lane."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStacksNavigation.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceProduction.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "rail-production-last.log: seven pass, including the added dependent-branch/target-history rail story. Circular transparent-rest/native-hover Back, tab order/local eligibility/sidebar/chrome, narrow overflow/keyboard, retained actual canvas/diff nodes/title draft/history selection, workspace and selected file/branch/commit/operation metadata. These seven include six repeats plus one new story beyond the 125-story run."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check; pnpm check:architecture; pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": "Last logs: zero web/catalog errors or warnings, 230 catalog boundaries, 1103 architecture modules and ownership pass. Repeated focused checks after presentation and lifecycle corrections."
+    },
+    {
+      "command": "pnpm web:build; node scripts/stacks-browser-acceptance.mjs",
+      "result": "fail",
+      "failures": 2,
+      "note": "First cold runs rejected late/obsolete graph preparation assumptions and shared index state. Second also caught unrelated Overview table keyboard accessibility because the new Stacks test scanned its final ordinary route; moved the unchanged Axe check to the focused canvas under test. Separate cold attempts exposed cancelled target/branch selection reads. Fixed product owner refresh and canvas navigation without weakening history/core assertions. One simultaneous filtered run also collided in the shared Playwright trace output; subsequent runs are sequential."
+    },
+    {
+      "command": "node scripts/stacks-browser-acceptance.mjs --grep cold_local_megamerges",
+      "result": "pass",
+      "failures": 0,
+      "note": "cold-core-final.log: one cold real-folder test passes (18.1 seconds). Create/switch/apply/unapply, independent WIP, external branch updates, retained checkout files, reload, workspace Settings/update/delete, TOML locality, companion stability and accessibility verified using existing explicitly built development binaries; temporary server/folder cleaned."
+    },
+    {
+      "command": "JJ_STORE_STACKS_BROWSER_PORT=7490 node scripts/stacks-browser-acceptance.mjs --grep cold_focused_stacks",
+      "result": "pass",
+      "failures": 0,
+      "note": "cold-navigation-verified.log: one cold test passes (5.2 seconds). Capability-gated Stacks entry, focused repository-wide histories, selection/canvas identity, exact Back, direct/reload fallback, browser Back/Forward, focused accessibility and no page errors. Separate disposable folder/index; no installed service changes."
+    },
+    {
+      "command": "pnpm docs:review application (specific focused navigation/details/lifetime explanation); pnpm web:build",
+      "result": "pass",
+      "failures": 0,
+      "note": "Build includes documentation closure. An intermediate build failed the expected stale application review fingerprint after rail changes; updated Browsing guidance and refreshed the specific review. Final preceding successful build closure: nine light/dark Mermaid diagrams, 139 files, 13,953,873 bytes, valid links/anchors. Vite large-chunk warning remains unchanged."
+    },
+    {
+      "command": "pnpm spec:first; pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "Initial spec-first rejected the new filtered runner without mapped spec-governance.md. Added the precise cold-isolation requirement. Follow-up first passed; five validators/23 chapters/173 requirements validated."
+    },
+    {
+      "command": "CUA read-only live HMR verification at http://127.0.0.1:7476/",
+      "result": "pass",
+      "failures": 0,
+      "note": "Temporary verification tab confirms focused four-tab navigation, workspace picker/actions, unchanged Unstaged controls and relevant Workspace details (mains workspace, ID, main target, applied count, physical folder). Commits rail asks for a commit before selection. Returning from unprepared history exposed obsolete graph feedback; added tested canvas-return cleanup. User tabs preserved, temporary tab closed after verification."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "fail",
+      "failures": 1,
+      "note": "progress-complete.log rejects path-only named-test references in this new entry. Corrected only E-M21-044 references to path#test-name and its API requirement to JST-API-005; historical evidence unchanged."
+    },
+    {
+      "command": "node scripts/stacks-browser-acceptance.mjs",
+      "result": "fail",
+      "failures": 1,
+      "note": "cold-complete.log: focused navigation passes; post-apply physical file diff reports index rebuild required at the newly advanced operation. Corrected the browser scenario to explicitly prepare that pin and reselect the physical file, retaining command independence and the real diff/hunk assertions."
+    },
+    {
+      "command": "node scripts/stacks-browser-acceptance.mjs --grep cold_local_megamerges",
+      "result": "pass",
+      "failures": 0,
+      "note": "cold-core-recovered.log: exact cold core regression passes in 13.2 seconds with real adjacent diff, command-independent preparation, Settings/deletion and retained named WIP."
+    },
+    {
+      "command": "pnpm exec prettier --check changed supported files (excluding the historical progress ledger); pnpm exec prettier --write docs/maintenance/coverage.json",
+      "result": "fail",
+      "failures": 1,
+      "note": "An initial format command used numbered search output as paths (format.log) and failed; format-corrected.log formats supported paths. A later changed-files check found only coverage.json needed formatting after review refresh. Corrected it without reformatting historical ledger entries."
+    },
+    {
+      "command": "pnpm exec prettier --check changed supported files (excluding spec/src/milestones.md)",
+      "result": "pass",
+      "failures": 0,
+      "note": "format-recovered.log: all 45 supported changed files pass formatting."
+    },
+    {
+      "command": "node scripts/stacks-browser-acceptance.mjs",
+      "result": "fail",
+      "failures": 1,
+      "note": "cold-combined-recovered.log: focused history navigation and the post-apply physical diff pass. The core test later times out waiting for a switch preview immediately after active workspace deletion. Trace shows an open picker option click during a background read, silently rejected by the locked controller."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreRepositoryPickerPending.stories.svelte",
+      "result": "fail",
+      "failures": 1,
+      "note": "picker-pending-before.log: precise source regression proves open option aria-disabled remains false after the picker becomes disabled."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreRepositoryPickerPending.stories.svelte catalog/components/store-application/StoreRepositoryPicker.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "picker-pending-after.log: four stories pass. All open choices/empty choice/continuation are disabled with the trigger, callbacks are guarded, the popover remains open and selection resumes when the read settles."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "web-check-picker.log and catalog-check-picker.log: zero errors/warnings; 232 catalog modules. Rechecked after the shared picker correction."
+    },
+    {
+      "command": "pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "docs-check-recovered.log: nine Mermaid diagrams and closure of 139 files/13,953,873 bytes; links/anchors valid before the subsequent picker documentation update."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "spec-first-recovered.log: 41 protected files, five canonical chapters before subsequent picker correction."
+    },
+    {
+      "command": "pnpm exec prettier --write catalog/fixtures/RepositoryPickerPendingFixture.svelte catalog/components/store-application/StoreRepositoryPickerPending.stories.svelte web/src/lib/ui/store-application/StoreRepositoryPicker.svelte spec/src/ui.md docs/site/guides/browsing.md docs/maintenance/coverage.json; pnpm docs:review application \"Browsing documents focused Stacks navigation, contextual workspace and selection details, retained canvas and history lifetimes, and open picker choices pausing during pending reads.\"",
+      "result": "pass",
+      "failures": 0,
+      "note": "Focused picker fixture/styles and Browsing guidance formatted, application documentation fingerprint refreshed with the exact presentation/lifetime explanation. No historical ledger formatting."
+    },
+    {
+      "command": "pnpm web:build",
+      "result": "pass",
+      "failures": 0,
+      "note": "web-build-picker.log: fresh bundle with the picker correction, nine Mermaid diagrams, documentation closure 139 files/13,954,043 bytes and valid links/anchors. Existing Vite large-chunk warning retained."
+    },
+    {
+      "command": "node scripts/stacks-browser-acceptance.mjs",
+      "result": "pass",
+      "failures": 0,
+      "note": "cold-combined-picker.log: both real-folder cold scenarios pass together, navigation 6.6 seconds and local core 15.4 seconds (51.9-second runner including setup/teardown). Explicit new-operation index preparation and restored picker choices preserve real adjacent diff/hunks, create/switch/apply/unapply, Settings/delete, named WIP/TOML locality and accessibility assertions."
+    },
+    {
+      "command": "pnpm check:architecture; pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": "architecture-picker.log: 1105 modules. ownership-picker.log: dedicated UI source-ownership validator passes."
+    },
+    {
+      "command": "pnpm spec:first; pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "spec-first-picker.log: 44 protected files/five canonical chapters; spec-validate-picker.log: five validators, 23 chapters, 173 requirements pass."
+    },
+    {
+      "command": "pnpm exec prettier --check changed supported files (excluding spec/src/milestones.md)",
+      "result": "pass",
+      "failures": 0,
+      "note": "format-final-picker.log: all 48 supported changed files pass formatting."
+    },
+    {
+      "command": "Python comparison of current milestones JSON/raw prefix with jj file show -r @- spec/src/milestones.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "All 525 historical evidence objects and their raw JSON prefix remain identical; only the new entry and milestone links were added."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/*.stories.svelte catalog/components/store-application/StoreRepositoryPicker*.stories.svelte catalog/components/store-application/StoreConnection.stories.svelte catalog/components/store-application/StoreWorkspaceSettings.stories.svelte catalog/components/store-application/StoreWorkspaces.stories.svelte catalog/components/store-work/*.stories.svelte",
+      "result": "fail",
+      "failures": 1,
+      "note": "picker-consumers.log: 181 pass, one fails across 42 files/182 tests. InsetSkeletonsAcrossAllMainTabs expects the repository directory loading skeleton after tab navigation; the predicate only considered hub selection loading, which settles before viewport-owned metadata reads."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsActivity.stories.svelte -t InsetSkeletonsAcrossAllMainTabs",
+      "result": "fail",
+      "failures": 1,
+      "note": "projects-loading-exact.log reproduces the original assertion. Diagnostic/labeled runs also fail and show Projects, Tasks and Reviews skeletons while Repositories shows unloaded rows. Temporary diagnostic edits removed; assertion unchanged."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/ProjectsActivity.stories.svelte -t InsetSkeletonsAcrossAllMainTabs",
+      "result": "pass",
+      "failures": 0,
+      "note": "projects-loading-after.log: exact regression passes (one pass/six unselected) after including visible-row loading in the existing skeleton predicate. No weakened assertions or read-controller changes."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "fail",
+      "failures": 1,
+      "note": "progress-picker.log rejects temporary result=incomplete while wider checks were running. Corrected to the supported fail/pass result vocabulary; no historical ledger changes."
+    },
+    {
+      "command": "pnpm exec prettier --write web/src/lib/ui/store-work/StoreProjectsRepositories.svelte spec/src/ui.md docs/site/guides/browsing.md docs/maintenance/coverage.json; pnpm docs:review application \"Browsing covers focused Stacks navigation and contextual details, retained canvas and history state, disabled open picker choices during reads, and visible repository-row skeletons preserving loaded content.\"",
+      "result": "pass",
+      "failures": 0,
+      "note": "Formatted the corrected busy predicate and focused requirement/guide explanation; refreshed only the application documentation fingerprint."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-work/*.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "projects-loading-consumers.log: 61 pass across all 14 directly affected Projects/WorkStore story files, including the unchanged original loading regression. Closes the one failure from the 182-story direct-picker consumer run; other 181 stories passed in that run."
+    },
+    {
+      "command": "pnpm web:check; pnpm web:build",
+      "result": "pass",
+      "failures": 0,
+      "note": "web-check-last-complete.log: zero errors/warnings after directory loading correction. web-build-last-complete.log: fresh final bundle, nine Mermaid diagrams, documentation closure 139 files/13,954,307 bytes, valid links/anchors; unchanged large-chunk warning."
+    },
+    {
+      "command": "pnpm spec:first; pnpm spec:validate; pnpm exec prettier --check changed supported files (excluding spec/src/milestones.md)",
+      "result": "pass",
+      "failures": 0,
+      "note": "spec-first-last-complete.log: 45 protected files/five canonical chapters. spec-validate-last-complete.log: five validators, 23 chapters, 173 requirements. format-last-complete.log: all supported changed files formatted; no historical ledger reformat."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "progress-final-check.log: 142 task mappings and evidence bookkeeping pass after using the supported result vocabulary. Historical statuses remain unchanged."
+    }
+  ],
+  "result": "pass",
+  "remaining": [],
+  "tests": [
+    "web/tests/vite/production-stacks-lifecycle.test.ts#binding revalidation preserves an in-flight canvas selection read",
+    "web/tests/vite/production-stacks-application.test.ts#focused histories read the ordinary repository graph and retain the Stacks owner",
+    "web/tests/real/stacks-browser.spec.ts#cold_focused_stacks_navigation_history_reload_and_return",
+    "web/tests/real/stacks-browser.spec.ts#cold_local_megamerges_apply_unapply_and_named_wip_survive_reload"
+  ],
+  "next": "Commit the verified frontend slice with Jujutsu; keep live Vite 7476/backend 7478 and Storybook 6057 running for review. Disabled local file/hunk/graph commands, publication and release qualification remain separate work.",
+  "summary": "Focused repository Stacks navigation, contextual workspace/selection rail and hover-only circular Back qualify with 45 focused source tests, affected interaction/accessibility stories, both combined cold real-folder scenarios, web/catalog checks, UI ownership/architecture and live HMR verification. Open picker choices now pause/resume through reads; the widened Projects check has all 61 direct stories passing after correcting its viewport-read busy indicator. No milestone status promotion.",
+  "out_of_scope": "Rust builds/tests, root aggregates, unrelated catalog suites, package publication, backend/transport changes, screenshot comparisons/baselines. Existing development binaries reused; no fixture reset, installed executable replacement or unrelated service restart."
 }
 ]
 ```

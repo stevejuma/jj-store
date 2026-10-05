@@ -10,6 +10,122 @@ const fixture = process.env.JJ_STORE_STACKS_BROWSER_FIXTURE
   : null;
 test.skip(!fixture, "Owned isolated Stacks browser fixture required");
 
+test("cold_focused_stacks_navigation_history_reload_and_return", async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto(
+    `/#/repos/${fixture.repository}/files?at_op=${fixture.operation}&bookmark=main`,
+  );
+  const prepare = page.getByRole("button", {
+    name: "Prepare graph index",
+    exact: true,
+  });
+  await expect(
+    page.getByRole("tab", { name: "Overview", exact: true }),
+  ).toBeVisible();
+  const reference = page.getByRole("combobox", {
+    name: "Repository bookmark or change",
+    exact: true,
+  });
+  await expect(reference).toContainText("main");
+  const entry = page.url();
+  await page.getByRole("tab", { name: "Stacks", exact: true }).click();
+  const tabs = page.getByRole("tablist", {
+    name: "Local repository views",
+    exact: true,
+  });
+  await expect(tabs.getByRole("tab")).toHaveText([
+    "Branches",
+    "Workspace",
+    "Commits",
+    "Op Log",
+  ]);
+  await expect(
+    page.getByRole("tablist", { name: "Repository sections" }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "Repository actions", exact: true }),
+  ).toHaveCount(0);
+  await expect(
+    page.getByRole("button", { name: "Show terminal", exact: true }),
+  ).toHaveCount(0);
+  const back = page.getByRole("button", {
+    name: "Back to repository",
+    exact: true,
+  });
+  const geometry = await back.evaluate((element) => ({
+    width: element.getBoundingClientRect().width,
+    height: element.getBoundingClientRect().height,
+    radius: parseFloat(getComputedStyle(element).borderRadius),
+  }));
+  expect(Math.abs(geometry.width - geometry.height)).toBeLessThanOrEqual(1);
+  expect(geometry.radius).toBeGreaterThanOrEqual(geometry.width / 2);
+  const canvas = page.locator(".stack-workspace__canvas-view");
+  await expect(canvas).toBeVisible();
+  await canvas.evaluate((element) =>
+    element.setAttribute("data-retained-test", "same-canvas"),
+  );
+  await tabs.getByRole("tab", { name: "Commits", exact: true }).click();
+  await expect(page).toHaveURL(/\/log\?context=stacks/);
+  const graph = page.getByRole("list", { name: "Revision graph", exact: true });
+  await expect(graph.or(prepare)).toBeVisible();
+  if (await prepare.isVisible()) await prepare.click();
+  await expect(graph).toBeVisible();
+  const target = graph.getByRole("button", {
+    name: "Workspace target",
+    exact: true,
+  });
+  await target.click();
+  await expect(
+    target.locator('xpath=ancestor::*[@role="listitem"]'),
+  ).toHaveAttribute("aria-current", "true");
+  const selected = page.url();
+  await tabs.getByRole("tab", { name: "Op Log", exact: true }).click();
+  await expect(page).toHaveURL(/\/oplog\?context=stacks/);
+  await expect(
+    page.getByRole("list", { name: "Operation graph", exact: true }),
+  ).toBeVisible();
+  await tabs.getByRole("tab", { name: "Workspace", exact: true }).click();
+  await expect(canvas).toHaveAttribute("data-retained-test", "same-canvas");
+  expect(
+    (
+      await new AxeBuilder({ page })
+        .withTags(["wcag2a", "wcag2aa", "wcag21aa"])
+        .analyze()
+    ).violations,
+  ).toEqual([]);
+  await tabs.getByRole("tab", { name: "Commits", exact: true }).click();
+  await expect(page).toHaveURL(selected);
+  await back.click();
+  await expect(page).toHaveURL(entry);
+  await page.getByRole("tab", { name: "Stacks", exact: true }).click();
+  await tabs.getByRole("tab", { name: "Op Log", exact: true }).click();
+  const history = page.url();
+  await page.reload();
+  await expect(page).toHaveURL(history);
+  await expect(
+    tabs.getByRole("tab", { name: "Op Log", exact: true }),
+  ).toHaveAttribute("data-state", "active");
+  await expect(
+    page.getByRole("combobox", { name: "Active stack workspace", exact: true }),
+  ).toBeVisible();
+  await back.click();
+  await expect(
+    page.getByRole("tab", { name: "Overview", exact: true }),
+  ).toHaveAttribute("data-state", "active");
+  await page.goBack();
+  await expect(
+    tabs.getByRole("tab", { name: "Op Log", exact: true }),
+  ).toBeVisible();
+  await page.goForward();
+  await expect(
+    page.getByRole("tab", { name: "Overview", exact: true }),
+  ).toBeVisible();
+  expect(errors).toEqual([]);
+});
+
 test("cold_local_megamerges_apply_unapply_and_named_wip_survive_reload", async ({
   page,
 }) => {
@@ -85,10 +201,17 @@ test("cold_local_megamerges_apply_unapply_and_named_wip_survive_reload", async (
     page.getByText("2 unstaged files", { exact: true }),
   ).toBeVisible();
   await page.getByRole("option", { name: /topic/ }).click();
-  await page
-    .getByRole("button", { name: "Prepare graph index", exact: true })
-    .click();
   const topic = page.getByRole("region", { name: "Stack topic", exact: true });
+  const prepare = page.getByRole("button", {
+    name: "Prepare graph index",
+    exact: true,
+  });
+  const ancestor = topic.getByRole("button", {
+    name: "Topic ancestor",
+    exact: true,
+  });
+  await expect(ancestor.or(prepare)).toBeVisible();
+  if (await prepare.isVisible()) await prepare.click();
   await expect(
     topic.getByRole("button", { name: "Topic ancestor", exact: true }),
   ).toBeVisible();
@@ -103,6 +226,16 @@ test("cold_local_megamerges_apply_unapply_and_named_wip_survive_reload", async (
     .getByRole("button", { name: "unsnapshotted.txt", exact: true })
     .click();
   const diff = page.getByRole("region", { name: /Selected changes from/ });
+  // Applying a stack advances the operation independently of graph preparation.
+  // Prepare that new pin explicitly if the adjacent diff needs its graph index.
+  await expect(diff.or(prepare)).toBeVisible();
+  if (await prepare.isVisible()) {
+    await prepare.click();
+    await expect(ancestor).toBeVisible();
+    await unstaged
+      .getByRole("button", { name: "unsnapshotted.txt", exact: true })
+      .click();
+  }
   await expect(diff).toContainText("new physical file");
   expect(
     await diff

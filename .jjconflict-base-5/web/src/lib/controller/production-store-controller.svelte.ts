@@ -60,7 +60,8 @@ export function createProductionStoreController(
     begin: invalidate,
     signal,
     current,
-    restoreStacks: () => stacks.restore(),
+    restoreStacks: (contextOnly) =>
+      contextOnly ? stacks.ensure() : stacks.restore(),
   });
 
   const stacks = createProductionStacks({
@@ -256,6 +257,7 @@ export function createProductionStoreController(
     refresh,
     selectOperation,
     restoreRoute,
+    ensureStacks: () => stacks.ensure(),
     activeRepository: () =>
       data.status.connection === "connected" ? source?.repository : undefined,
     invalidate,

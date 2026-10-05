@@ -3,6 +3,7 @@
   provideTerminalControls();
   import StoreIndexPreparationNotice from "./StoreIndexPreparationNotice.svelte";
   import StoreApplicationMain from "./StoreApplicationMain.svelte";
+  import { isStacksRoute } from "../../controller/store-stacks-navigation.js";
   import StoreHelp from "../store-help/StoreHelp.svelte";
   import { ownApplicationNotifications } from "../../notifications/notification-context.svelte.js";
   import StoreNotificationHost from "../store-notifications/StoreNotificationHost.svelte";
@@ -168,7 +169,7 @@
   onNavigateBack={() => navigate(-1)}
   onNavigateForward={() => navigate(1)}
 >
-  {#snippet headerCenter()}{#if settingsOpen}{@render settingsRepository()}{:else if current.page === "stacks" && stackWorkspace?.snapshot?.repository === current.repository}<StoreStackWorkspacePicker
+  {#snippet headerCenter()}{#if settingsOpen}{@render settingsRepository()}{:else if isStacksRoute(current) && stackWorkspace?.snapshot?.repository === current.repository}<StoreStackWorkspacePicker
         controller={stackWorkspace}
       />{:else if current.page === "projects" && controller.projects && !isRepositoryProjects(current)}<StoreProjectsBreadcrumb
         {controller}
@@ -199,7 +200,6 @@
         onClose={closeSettings}
       />{:else}<StoreApplicationNavigation
         {controller}
-        {stackWorkspace}
         bind:sectionOpen={layout.sections}
         bind:itemOpen={layout.items}
         activeItemId={activeNavigationItem}

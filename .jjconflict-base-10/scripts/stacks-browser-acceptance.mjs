@@ -168,6 +168,7 @@ ${output}`);
       "stacks-browser.spec.ts",
       "--output",
       ".scratch/test-results-stacks-browser",
+      ...process.argv.slice(2),
     ],
     {
       cwd: repositoryRoot,

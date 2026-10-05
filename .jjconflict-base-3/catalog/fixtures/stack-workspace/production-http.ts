@@ -204,6 +204,33 @@ export function productionStacksHttp(cold = false) {
           next: null,
           previous: null,
         };
+      else if (query.kind === "graph")
+        data = {
+          version: 1,
+          operation: stackOperation,
+          next: null,
+          data:
+            query.query[0].graph === "operations"
+              ? { graph: "operations", nodes: [] }
+              : {
+                  graph: "log",
+                  nodes: nodes.map((commit) => ({
+                    commit,
+                    edges: commit.parents.map((target) => ({
+                      target,
+                      kind: "direct",
+                    })),
+                  })),
+                },
+          stats: {
+            commits: 0,
+            edges: 0,
+            predicate_lines: 0,
+            object_reads: 0,
+            object_bytes: 0,
+            work: 0,
+          },
+        };
       else if (query.kind === "stack_history")
         data = {
           version: 1,

@@ -335,3 +335,10 @@ Update/Delete variants. Source review keeps the ordinary jj-lib/TOML profile
 separate from historical retained-executor qualification. The Settings guide
 identifies the first copyable Workspace ID row and the Save/Cancel controls
 without implying any change to command semantics.
+
+The Browsing guide under JST-DOC-002 describes capability-gated Stacks
+repository tabs, focused Back/Branches/Workspace/Commits/Op Log navigation,
+retained drafts and diffs, repository-wide history, and the direct-link Overview
+fallback, hover-only circular Back styling and the workspace/selection details
+rail. These are client presentation changes; local commands and workspace TOML
+are unchanged.

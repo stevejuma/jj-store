@@ -1,4 +1,8 @@
 import { workspaceSelectedRoute } from "../../web/src/lib/controller/store-workspaces.js";
+import {
+  createStoreStacksNavigation,
+  storePageRoute,
+} from "../../web/src/lib/controller/store-stacks-navigation.js";
 import type { StoreRoute } from "../../web/src/lib/controller/contracts.js";
 import type { RepositoryWorkingCopy } from "../../web/src/lib/projects/repository-log.js";
 import type { StorePage } from "../../web/src/lib/ui/community-navigation/model.js";
@@ -9,7 +13,10 @@ export function createInMemoryStoreNavigation(context: {
   push(route: StoreRoute): void;
   workingCopies: readonly RepositoryWorkingCopy[];
 }) {
+  const stacks = createStoreStacksNavigation(context);
   return {
+    selectStacksView: stacks.select,
+    leaveStacks: stacks.leave,
     selectWorkspace(workspace: string | null) {
       if (
         workspace &&
@@ -40,9 +47,12 @@ export function createInMemoryStoreNavigation(context: {
       });
     },
     selectPage(page: StorePage) {
+      if (page === "stacks") {
+        stacks.enter();
+        return;
+      }
       context.push({
-        ...context.route(),
-        page,
+        ...storePageRoute(context.route(), page),
         bookmark: page === "files" && !context.route().workspace ? "main" : "",
         inspectedOperationId: null,
         commitId: null,

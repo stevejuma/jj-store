@@ -1,6 +1,10 @@
 import type { StorePage } from "../ui/community-navigation/model.js";
 import type { StoreRoute } from "./contracts.js";
 import {
+  createStoreStacksNavigation,
+  storePageRoute,
+} from "./store-stacks-navigation.js";
+import {
   storeRouteFromHash,
   storeRouteToHash,
   type StoreRouteHashResult,
@@ -81,6 +85,7 @@ export function createStoreRouteHistory(
     error = "";
     sync(next, "push");
   }
+  const stacks = createStoreStacksNavigation({ route: () => route, push });
   const stop = browser?.listen(() => {
     const result = storeRouteFromHash(browser.hash());
     if (result.kind === "none") return;
@@ -113,6 +118,7 @@ export function createStoreRouteHistory(
       return error;
     },
     push,
+    stacks,
     replace(next: StoreRoute) {
       entries[index] = next;
       error = "";
@@ -176,34 +182,8 @@ export function createStoreRouteHistory(
       });
     },
     page(page: StorePage) {
-      push({
-        ...route,
-        page,
-        historyQuery: undefined,
-        historyTime: undefined,
-        projectsHub: false,
-        workTab: undefined,
-        workQuery: undefined,
-        workState: undefined,
-        workRepository: undefined,
-        workHome: undefined,
-        workActivity: undefined,
-        bookmark: "",
-        inspectedOperationId: null,
-        commitId: null,
-        evolutionCommitId: null,
-        changeId: null,
-        comparisonParentId: null,
-        comparisonGroupId: null,
-        path: null,
-        directory: "",
-        agentSessionId: null,
-        reviewThreadId: null,
-        projectId: null,
-        taskId: null,
-        threadId: null,
-        replyId: null,
-      });
+      if (page === "stacks") stacks.enter();
+      else push(storePageRoute(route, page));
     },
     navigate(delta: -1 | 1) {
       const next = Math.max(0, Math.min(entries.length - 1, index + delta));

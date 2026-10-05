@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed final workspace Details frame containing ID/name/target, matching row padding, and separated inline icon Cancel/Save actions; native command semantics and Threads default framing stay unchanged.",
-      "fingerprint": "ab22899684a15695f36d4c565a631752dbd95625e2ed7bce1cdedb647e934f4c"
+      "reason": "Browsing covers focused Stacks navigation and contextual details, retained canvas and history state, disabled open picker choices during reads, and visible repository-row skeletons preserving loaded content.",
+      "fingerprint": "9b1e2d422deb6547d81372323cd5aadda2c68b6ae1e64c44d9daf195e9455fa6"
     }
   },
   {
