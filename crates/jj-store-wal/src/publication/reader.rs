@@ -23,17 +23,29 @@ pub(super) async fn inventory_page(
     }
     let records = Records::new(store, repository);
     let catalog = Catalog::new(records.clone());
-    let mut budget = crate::catalog::ScanBudget::new(1024, 8 * 1024 * 1024);
-    let page = catalog.page(root, after, limit, &mut budget).await?;
+    // Reserve descriptor work independently so a catalog frontier cannot spend
+    // the reads needed to hydrate its admitted rows. Valid16MiB descriptors fit
+    // a fresh window. The combined encoded-byte ceiling remains32MiB.
+    let mut paths = crate::catalog::ScanBudget::new(768, 8 * 1024 * 1024);
+    let page = catalog.page(root, after, limit, &mut paths).await?;
+    let used = 8 * 1024 * 1024 - paths.remaining_bytes();
+    let mut budget = crate::catalog::ScanBudget::new(256, 32 * 1024 * 1024 - used);
     let mut keys = Vec::with_capacity(page.entries.len());
+    let mut last = None;
     for (key, reference) in page.entries {
-        let node: VerifiedNode = budget
-            .get(&records, reference, RecordKind::Inventory)
-            .await?;
+        let node: VerifiedNode = match budget.get(&records, reference, RecordKind::Inventory).await
+        {
+            Ok(node) => node,
+            Err(error) if crate::catalog::ScanBudget::admission(&error) && !keys.is_empty() => {
+                return Ok(InventoryPage { keys, next: last });
+            }
+            Err(error) => return Err(error),
+        };
         if object_key(node.key) != key {
             return Err(Error::Corrupt("inventory catalog key"));
         }
         keys.push(node.key);
+        last = Some(key);
     }
     Ok(InventoryPage {
         keys,

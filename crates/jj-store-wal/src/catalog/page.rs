@@ -16,6 +16,15 @@ impl ScanBudget {
     pub fn new(reads: usize, bytes: u64) -> Self {
         Self { reads, bytes }
     }
+    pub(crate) fn remaining_bytes(&self) -> u64 {
+        self.bytes
+    }
+    pub(crate) fn admission(error: &Error) -> bool {
+        matches!(
+            error,
+            Error::Limit(_) | Error::Storage(jj_store_object::Error::Limit)
+        )
+    }
     pub(crate) async fn get<T: Serialize + DeserializeOwned>(
         &mut self,
         records: &Records,
@@ -60,9 +69,17 @@ impl Catalog {
             {
                 continue;
             }
-            let node = budget
+            let node = match budget
                 .get(&self.records, reference, RecordKind::Catalog)
-                .await?;
+                .await
+            {
+                Ok(node) => node,
+                Err(error) if ScanBudget::admission(&error) && !entries.is_empty() => {
+                    let next = entries.last_key_value().map(|(key, _)| *key);
+                    return Ok(Page { entries, next });
+                }
+                Err(error) => return Err(error),
+            };
             Self::validate(&node, &prefix)?;
             match node {
                 Node::Leaf { entries: leaf, .. } => {

@@ -3,7 +3,7 @@ use crate::inventory::{self, MAX_SCAN, Page};
 
 /// Full enumeration remains an explicit bounded caller operation. Individual
 /// pages are independent of the selected repository's total object count.
-pub const MAX_INVENTORY_SCANNED: usize = 2_000_000;
+pub use jj_store_service::native_inventory::MAX_SCANNED as MAX_INVENTORY_SCANNED;
 impl NativeClient {
     pub async fn inventory_page(
         &self,

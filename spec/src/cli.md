@@ -8,6 +8,12 @@ continued windows, later real publication, replay, revocation and reset. These
 checks change no installed binary and do not qualify combined large-repository
 CLI/RustFS lifecycle behavior. The legacy wire request remains byte-identical.
 
+Legacy RPC and in-process operation/copy regressions enforce small matching-ID
+admission over a larger unrelated-object inventory. Exact identities, result
+exhaustion and revocation remain mandatory; ordinary prefix and copy consumers
+receive complete sorted results. Kind-specific prepared lookup remains separate
+delivery work.
+
 Prepared operation-history fixtures compare deep filtered, unfiltered and
 historical-start pages with ordinary pinned JJ results under independent small
 body-read limits. Compact DAG tests cover exact merge/equal/skewed-timestamp

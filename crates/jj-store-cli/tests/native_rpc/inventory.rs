@@ -237,6 +237,141 @@ impl Clock for CursorClock {
         Ok(self.0.load(std::sync::atomic::Ordering::SeqCst))
     }
 }
+
+async fn selected_copy(f: &Harness) -> m::CopyId {
+    let (m::ObjectKey::Copy(id), _) = f
+        .objects
+        .put(&b::CopyHistory {
+            current_path: jj_lib::repo_path::RepoPathBuf::from_internal_string("selected.txt")
+                .unwrap(),
+            parents: vec![b::CopyId::placeholder()],
+            salt: vec![42],
+        })
+        .await
+        .unwrap()
+    else {
+        panic!("copy kind")
+    };
+    select_keys(f, vec![m::ObjectKey::Copy(id)]).await;
+    id
+}
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn rpc_legacy_inventory_ignores_unrelated_objects() {
+    let mut f = Harness::new().await;
+    retain_files(&f, 0, 96).await;
+    let copy = selected_copy(&f).await;
+    f.stop().await;
+    f.start_with_session_limits(
+        f.store.clone(),
+        Protection::default(),
+        RpcLimits::default(),
+        SessionLimits {
+            inventory_nodes: 32,
+            ..SessionLimits::default()
+        },
+    )
+    .await;
+    let mut raw = f.raw().await;
+    for (copies, expected) in [
+        (false, roots::ROOT_OPERATION.as_bytes()),
+        (true, copy.as_bytes()),
+    ] {
+        let ids = raw
+            .inventory(req(
+                &f.reader,
+                wire::InventoryRequest {
+                    repository: REPO.as_bytes().to_vec(),
+                    copies,
+                    limit: 16,
+                },
+            ))
+            .await
+            .unwrap()
+            .into_inner()
+            .ids;
+        assert_eq!(ids, vec![expected.to_vec()]);
+    }
+    f.stop().await;
+}
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn native_kind_inventory_ignores_unrelated_objects() {
+    use jj_store_jj::{backend::BackendAuthority as _, operation_stores::OperationAuthority as _};
+    let mut f = Harness::new().await;
+    retain_files(&f, 0, 96).await;
+    let copy = selected_copy(&f).await;
+    let session = NativeSession::new(
+        f.store.clone(),
+        f.objects.clone(),
+        f.reader.clone(),
+        Arc::new(SystemClock),
+        Protection::default(),
+        SessionLimits {
+            inventory_nodes: 32,
+            ..SessionLimits::default()
+        },
+    )
+    .unwrap();
+    assert_eq!(
+        session.operation_ids(16).await.unwrap(),
+        BTreeSet::from([roots::ROOT_OPERATION])
+    );
+    assert_eq!(session.copy_ids(16).await.unwrap(), BTreeSet::from([copy]));
+    assert!(session.operation_ids(0).await.is_err());
+    assert!(session.copy_ids(0).await.is_err());
+    let later = publish_operation(&f, "in-process result admission").await;
+    assert!(session.operation_ids(1).await.is_err());
+    assert_eq!(
+        session.operation_ids(16).await.unwrap(),
+        BTreeSet::from([roots::ROOT_OPERATION, later])
+    );
+    f.revoke_reader().await;
+    assert!(session.operation_ids(16).await.is_err());
+    assert!(session.copy_ids(16).await.is_err());
+    f.stop().await;
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn inventory_deadlines_reject_ready_page_io_after_the_budget() {
+    use jj_store_service::native_inventory::{Error, Limits as InventoryLimits, Pager};
+    let mut f = Harness::new().await;
+    let pager = Pager::new(
+        InventoryLimits {
+            timeout: Duration::from_nanos(1),
+            ..InventoryLimits::default()
+        },
+        Arc::new(SystemClock),
+    )
+    .unwrap();
+    assert!(matches!(
+        pager.page(Arc::new(f.local()), false, 8, None).await,
+        Err(Error::Limit)
+    ));
+    f.stop().await;
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn inventory_deadlines_reject_ready_complete_io_after_the_budget() {
+    use jj_store_jj::operation_stores::OperationAuthority as _;
+    let mut f = Harness::new().await;
+    let session = NativeSession::new(
+        f.store.clone(),
+        f.objects.clone(),
+        f.reader.clone(),
+        Arc::new(SystemClock),
+        Protection::default(),
+        SessionLimits {
+            timeout: Duration::from_nanos(1),
+            ..SessionLimits::default()
+        },
+    )
+    .unwrap();
+    let error = session.operation_ids(16).await.unwrap_err();
+    assert!(matches!(
+        error.downcast_ref::<jj_store_wal::Error>(),
+        Some(jj_store_wal::Error::Limit(_))
+    ));
+    f.stop().await;
+}
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
 async fn inventory_pin_capacity_expiry_and_repository_binding_are_explicit() {
     use jj_store_service::native_inventory::{Error, Limits as InventoryLimits, Pager};

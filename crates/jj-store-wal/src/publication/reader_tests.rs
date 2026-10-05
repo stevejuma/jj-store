@@ -231,3 +231,73 @@ async fn inventory_pages_seek_deep_anchors_and_keep_old_roots() {
     let mut bytes = crate::catalog::ScanBudget::new(1024, 1);
     assert!(catalog.page(root, None, 8, &mut bytes).await.is_err());
 }
+
+#[tokio::test]
+async fn inventory_pages_continue_before_byte_admission_without_losing_descriptors() {
+    let store = Arc::new(CountedStore::default());
+    let records = Records::new(store.clone(), REPO);
+    let catalog = Catalog::new(records.clone());
+    // Structurally valid selected descriptors can approach the existing16MiB
+    // record ceiling. This fixture isolates scan admission, not closure audit.
+    let dependencies = (0..90_000).map(key).collect::<BTreeSet<_>>();
+    let mut entries = BTreeMap::new();
+    for n in 90_000..90_003 {
+        entries.insert(
+            object_key(key(n)),
+            put_node(&records, key(n), dependencies.clone()).await,
+        );
+    }
+    let root = catalog.update(None, entries.clone()).await.unwrap();
+    let page = inventory_page(store.clone(), REPO, root, None, 256)
+        .await
+        .unwrap();
+    assert!(!page.keys.is_empty() && page.keys.len() < 3);
+    let mut actual = page.keys.into_iter().map(object_key).collect::<Vec<_>>();
+    let next = page
+        .next
+        .expect("byte-limited window must retain a continuation");
+    assert_eq!(actual.last(), Some(&next));
+    let rest = inventory_page(store.clone(), REPO, root, Some(next), 256)
+        .await
+        .unwrap();
+    actual.extend(rest.keys.into_iter().map(object_key));
+    assert!(rest.next.is_none());
+    assert_eq!(actual, entries.into_keys().collect::<Vec<_>>());
+}
+
+#[tokio::test]
+async fn catalog_work_admission_continues_after_a_verified_nonempty_prefix() {
+    let store = Arc::new(CountedStore::default());
+    let records = Records::new(store.clone(), REPO);
+    let catalog = Catalog::new(records.clone());
+    let mut entries = BTreeMap::new();
+    for n in 0..33 {
+        let mut digest = [0; 32];
+        digest[0] = if n == 32 { 0x10 } else { 0x00 };
+        digest[31] = n;
+        entries.insert(
+            RecordDigest::new(digest),
+            put_node(&records, key(n as u64), BTreeSet::new()).await,
+        );
+    }
+    let root = catalog.update(None, entries.clone()).await.unwrap();
+    store.reads.store(0, Ordering::Relaxed);
+    let mut budget = crate::catalog::ScanBudget::new(2, 1024 * 1024);
+    let first = catalog.page(root, None, 256, &mut budget).await.unwrap();
+    assert_eq!(first.entries.len(), 32);
+    assert_eq!(store.reads.load(Ordering::Relaxed), 2);
+    assert_eq!(
+        first.next.as_ref(),
+        first.entries.last_key_value().map(|(key, _)| key)
+    );
+    let mut budget = crate::catalog::ScanBudget::new(64, 1024 * 1024);
+    let rest = catalog
+        .page(root, first.next, 256, &mut budget)
+        .await
+        .unwrap();
+    assert_eq!(rest.entries.len(), 1);
+    assert!(rest.next.is_none());
+    let mut actual = first.entries;
+    actual.extend(rest.entries);
+    assert_eq!(actual, entries);
+}

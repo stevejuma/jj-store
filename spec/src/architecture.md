@@ -10,6 +10,13 @@ Complete RPC enumeration retains only its bounded matching IDs. Authoritative
 catalog, WAL and object formats remain unchanged; full closure audits remain
 publication/recovery responsibilities.
 
+The in-process native factories and legacy Inventory RPC now share a bounded
+complete-kind scan adapter. It pins a manifest only for that invocation, admits
+matching identities before insertion, and discards each unrelated descriptor
+after verification. It retains no whole-repository object set. Total scan work
+and time remain independently bounded; semantic publication continues to use the
+existing full certified inventory reader.
+
 Native and local prepared operation-history readers retain the captured
 selection's exact JJ order and inverse ranks under the generation's shared
 allocation lease. Pinned upstream traversal uses admitted transient scratch

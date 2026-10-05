@@ -322,6 +322,19 @@ changed snapshots, sorts its bounded result, and never returns a truncated
 success. Its caller count limit, two-million-descriptor scan limit and
 whole-call deadline remain explicit.
 
+Legacy RPC Inventory and in-process native operation/copy enumeration use the
+same selected descriptor windows, retaining only matching identities before
+growth. Their caller and trusted session bounds limit the complete matching
+result; an independent two-million-descriptor scan ceiling and session deadline
+limit total work. Each window rechecks permission and epoch while retaining the
+original manifest root. Return an error on exhaustion, never a truncated prefix
+or copy match. These ordinary reads rely on publication/recovery closure
+certification; semantic publication still performs its complete inventory audit.
+Both paged and complete inventory paths enforce a monotonic deadline before
+work, between scan windows and before returning data, as well as canceling
+pending I/O at that deadline. Ready I/O or synchronous decoding cannot produce a
+successful result after the admitted time budget.
+
 The native gRPC boundary accepts typed repository/object IDs, immutable object
 uploads, committed ID queries, and head transitions. It exposes no raw keys,
 manifest CAS, policy writes, or caller-selected principal. The service verifies

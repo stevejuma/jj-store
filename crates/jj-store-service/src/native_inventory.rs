@@ -1,4 +1,5 @@
 //! Bounded scans of one immutable manifest selection, without request retention.
+mod complete;
 mod cursors;
 use crate::{auth::Clock, native::NativeSession};
 use jj_store_model as m;
@@ -9,6 +10,8 @@ use jj_store_wal::{
 use std::{sync::Arc, time::Duration};
 
 pub const MAX_SCAN: usize = 256;
+/// Independent ceiling for a complete enumeration, including unrelated kinds.
+pub const MAX_SCANNED: usize = 2_000_000;
 #[derive(Debug, Clone, PartialEq, Eq, thiserror::Error)]
 pub enum Error {
     #[error("inventory access denied")]
@@ -95,9 +98,21 @@ impl Pager {
             return Err(Error::Limit);
         }
         let _permit = self.permits.try_acquire().map_err(|_| Error::Busy)?;
-        tokio::time::timeout(self.limits.timeout.min(session.limits.timeout), async {
+        let deadline = tokio::time::Instant::now()
+            .checked_add(self.limits.timeout.min(session.limits.timeout))
+            .ok_or(Error::Limit)?;
+        let check_time = || {
+            if tokio::time::Instant::now() >= deadline {
+                Err(Error::Limit)
+            } else {
+                Ok(())
+            }
+        };
+        check_time()?;
+        let result = tokio::time::timeout_at(deadline, async {
             // Authenticate before cursor lookup or any selected catalog read.
             let current = session.snapshot().await?;
+            check_time()?;
             let (entry, claims) = match cursor {
                 Some(cursor) => {
                     let (entry, claims) =
@@ -119,6 +134,7 @@ impl Pager {
                     scan_limit.min(session.limits.inventory_nodes),
                 )
                 .await?;
+            check_time()?;
             let scanned = page.keys.len();
             let mut ids = page
                 .keys
@@ -137,6 +153,7 @@ impl Pager {
             }
             // Do not expose data after revocation or a changed authority epoch.
             Self::epoch(&session.snapshot().await?, &entry.base)?;
+            check_time()?;
             let snapshot = entry.base.manifest().snapshot();
             let next_cursor = self.cursors.finish(entry, claims.as_ref(), page.next)?;
             Ok(Page {
@@ -147,7 +164,10 @@ impl Pager {
             })
         })
         .await
-        .map_err(|_| Error::Limit)?
+        .map_err(|_| Error::Limit)?;
+        // Ready I/O and synchronous decoding can finish without polling the timer.
+        check_time()?;
+        result
     }
     fn epoch(current: &ManifestSnapshot, selected: &ManifestSnapshot) -> Result<()> {
         if current.manifest().epoch != selected.manifest().epoch {

@@ -425,19 +425,6 @@ impl NativeSession {
             kind: SemanticKind::OperationPublished,
         })
     }
-    pub(crate) async fn inventory(&self) -> wal::Result<BTreeSet<m::ObjectKey>> {
-        tokio::time::timeout(self.limits.timeout, async {
-            let base = self.snapshot().await?;
-            let inventory = self
-                .coordinator
-                .inventory(&base, self.limits.inventory_nodes)
-                .await?;
-            self.principal(Permission::Read).await?;
-            Ok(inventory.into_iter().map(|node| node.key).collect())
-        })
-        .await
-        .map_err(|_| wal::Error::Limit("native inventory time"))?
-    }
 }
 #[async_trait::async_trait]
 impl BackendAuthority for NativeSession {
@@ -451,7 +438,7 @@ impl BackendAuthority for NativeSession {
     }
     async fn copy_ids(&self, limit: usize) -> AuthorityResult<BTreeSet<m::CopyId>> {
         let ids: BTreeSet<_> = self
-            .inventory()
+            .inventory_ids(true, limit)
             .await?
             .into_iter()
             .filter_map(|key| {
@@ -481,7 +468,7 @@ impl OperationAuthority for NativeSession {
     }
     async fn operation_ids(&self, limit: usize) -> AuthorityResult<BTreeSet<m::OperationId>> {
         let ids: BTreeSet<_> = self
-            .inventory()
+            .inventory_ids(false, limit)
             .await?
             .into_iter()
             .filter_map(|key| {

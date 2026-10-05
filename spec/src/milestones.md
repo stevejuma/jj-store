@@ -115,7 +115,7 @@ shared-package release qualification does not alter those original Git gates.
 | M13.1       | Done        | M12                     | JST-LOCAL-001,JST-LOCAL-002                                                                                                                                                                                       | Qualified metadata CAS/receipt/GC and stock JJ primitive compatibility                                                         | Retain CAS, receipt, retention and stock-JJ regression gates                                     | E-M13-001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M13.2       | Done        | M13.1                   | JST-LOCAL-003                                                                                                                                                                                                     | Shared WorkStore semantics and server-free CLI                                                                                 | Retain WorkStore/CLI parity while completing M13.3                                               | E-M13-002,E-UI-050                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | M13.3       | In progress | M13.2                   | JST-LOCAL-002,JST-LOCAL-003                                                                                                                                                                                       | Portable agent/review anchors and exact retained evidence                                                                      | Qualify portable review anchors/CLI, hook causality and native capsule carrier                   | E-M13-003,E-M13-004,E-M13-005,E-M13-006,E-M13-007,E-M13-008,E-M13-009,E-M13-010,E-M13-011,E-M13-012,E-M13-022,E-M13-024,E-M13-025,E-M17-034                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| M13.4       | In progress | M13.2                   | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                                                                       | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement indexed search and recoverable code commands; browsing/collaboration stage qualified   | E-M13-013,E-M13-014,E-M13-015,E-M13-016,E-M13-017,E-M13-018,E-M13-019,E-M13-020,E-M13-021,E-M13-022,E-M13-023,E-UI-063,E-UI-089,E-UI-090,E-UI-091,E-UI-092,E-UI-093,E-UI-095,E-READ-002,E-READ-003,E-READ-024,E-READ-025,E-READ-026,E-READ-028,E-READ-036,E-READ-037,E-READ-038,E-READ-040,E-READ-041,E-READ-008,E-READ-042,E-READ-043,E-READ-044,E-READ-045,E-READ-046,E-READ-047,E-READ-048,E-READ-049,E-READ-050,E-READ-051,E-READ-052,E-READ-053,E-READ-057,E-READ-058,E-READ-059,E-READ-060                                                                                                                                                                                                                                                                                                                                                    |
+| M13.4       | In progress | M13.2                   | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                                                                       | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement indexed search and recoverable code commands; browsing/collaboration stage qualified   | E-M13-013,E-M13-014,E-M13-015,E-M13-016,E-M13-017,E-M13-018,E-M13-019,E-M13-020,E-M13-021,E-M13-022,E-M13-023,E-UI-063,E-UI-089,E-UI-090,E-UI-091,E-UI-092,E-UI-093,E-UI-095,E-READ-002,E-READ-003,E-READ-024,E-READ-025,E-READ-026,E-READ-028,E-READ-036,E-READ-037,E-READ-038,E-READ-040,E-READ-041,E-READ-008,E-READ-042,E-READ-043,E-READ-044,E-READ-045,E-READ-046,E-READ-047,E-READ-048,E-READ-049,E-READ-050,E-READ-051,E-READ-052,E-READ-053,E-READ-057,E-READ-058,E-READ-059,E-READ-060,E-READ-061                                                                                                                                                                                                                                                                                                                                         |
 | M13.5       | In progress | M13.4                   | JST-LOCAL-006                                                                                                                                                                                                     | Independent local/native conversion with complete collaboration history                                                        | Retain eligible conversions; qualify portable anchored profiles and remaining prerequisite gates | E-M13-026,E-M13-027,E-M13-028,E-M13-029                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | M13.6       | Planned     | M13.5                   | JST-LOCAL-001,JST-LOCAL-002,JST-LOCAL-003,JST-LOCAL-004,JST-LOCAL-005,JST-LOCAL-006                                                                                                                               | Cold end-to-end and retained native regression qualification                                                                   | Qualify completed local flow cold and retain native regressions                                  | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M14         | In progress | M4.18                   | JST-UI-012,JST-UI-016                                                                                                                                                                                             | Local settings, profile-aware device links and safe maintenance                                                                | Implement M14.3 agent setup and automatic recovery                                               | E-M14-001,E-M14-002,E-M14-003,E-M14-004,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012,E-UI-060,E-M14-013,E-M14-014,E-UI-095,E-UI-098,E-M14-016,E-M14-017,E-M13-028                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
@@ -84771,6 +84771,253 @@ entries.
       "macOS debug linking emits an unwind-size warning;source checks/tests pass.Release packaging remains unqualified.Services,installed executables,Linux source,fixtures,main and unrelated workspaces preserved."
     ],
     "next": "Commit E-READ-060 in bounded-reads;remove whole-inventory filtering from remaining native server/in-process operation/copy consumers,then continue deep log/evolution and remaining indexed delivery before complete qualification."
+  },
+  {
+    "id": "E-READ-061",
+    "tasks": ["M13.4"],
+    "date": "2026-10-05",
+    "revision": "nksqwmtt",
+    "kind": "bounded-native-kind-inventory-and-adaptive-descriptor-windows",
+    "versions": "Rust1.98.1;jj-lib0.45.1;macOS ARM64.",
+    "formats": "No authoritative catalog,record,WAL,native identity or RPC wire format changes;additive jni1 page cursor from E-READ-060 unchanged.",
+    "scope": "Escalate to complete WAL/RPC suites and CLI native_rpc/native_lifecycle binaries:adaptive catalog reads affect paged RPC and shared NativeSession authority feeds legacy transport and in-process factories. Rerun RPC/CLI consumers after deadline fix;unchanged WAL passing suite retained. Root aggregate/UI/HTTP generation and complete scale/fault/cold-browser/RustFS/release lanes out of scope.",
+    "requirements": [
+      "JST-JJ-001",
+      "JST-JJ-005",
+      "JST-API-002",
+      "JST-API-004",
+      "JST-PUB-002",
+      "JST-OBJ-004",
+      "JST-CLI-003"
+    ],
+    "files": [
+      "crates/jj-store-cli/tests/native_rpc/inventory.rs",
+      "crates/jj-store-rpc/src/client/inventory.rs",
+      "crates/jj-store-service/src/native.rs",
+      "crates/jj-store-service/src/native_inventory.rs",
+      "crates/jj-store-service/src/native_inventory/complete.rs",
+      "crates/jj-store-service/src/transport.rs",
+      "crates/jj-store-wal/src/catalog/page.rs",
+      "crates/jj-store-wal/src/publication/reader.rs",
+      "crates/jj-store-wal/src/publication/reader_tests.rs",
+      "docs/implementation-plan.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/jj-integration.md",
+      "spec/src/milestones.md",
+      "spec/src/mutations.md",
+      "spec/src/publication.md"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/native_rpc/inventory.rs#rpc_legacy_inventory_ignores_unrelated_objects",
+      "crates/jj-store-cli/tests/native_rpc/inventory.rs#native_kind_inventory_ignores_unrelated_objects",
+      "crates/jj-store-cli/tests/native_rpc/inventory.rs#inventory_deadlines_reject_ready_page_io_after_the_budget",
+      "crates/jj-store-cli/tests/native_rpc/inventory.rs#inventory_deadlines_reject_ready_complete_io_after_the_budget",
+      "crates/jj-store-wal/src/publication/reader_tests.rs#inventory_pages_continue_before_byte_admission_without_losing_descriptors",
+      "crates/jj-store-wal/src/publication/reader_tests.rs#catalog_work_admission_continues_after_a_verified_nonempty_prefix"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-cli --test native_rpc --locked inventory:: -- --nocapture (before matching-ID routing)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Legacy RPC and native authority fail under32-node admission with96 unrelated retained files;native-inventory-before-061.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_rpc --locked inventory:: -- --nocapture (after matching-ID routing)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Six inventory cases pass;native-inventory-after-061.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_rpc --locked inventory:: -- --nocapture (strengthened native result fixture)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Six cases pass;real second operation and exact result exhaustion;native-inventory-native-exact-061.log."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --lib --locked publication::reader::tests::inventory_pages_continue_before_byte_admission_without_losing_descriptors -- --exact --nocapture (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Three valid near-ceiling descriptors fail Storage(Limit);native-inventory-byte-before-061.log."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --lib --locked publication::reader::tests::inventory_pages_continue_before_byte_admission_without_losing_descriptors -- --exact --nocapture (after)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Early continuation reconstructs exact descriptor order;native-inventory-byte-after-061.log."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --lib --locked publication::reader::tests -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Five reader cases pass including byte/work early boundaries,deep seek and retained roots;native-inventory-wal-exact-061.log."
+      },
+      {
+        "command": "cargo test -p jj-store-wal --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 9.95s; test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 8.62s; test result: ok. 26 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.85s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s; test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.30s; test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.35s; test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.18s; test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.16s; test result: ok. 32 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.33s; test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.45s; test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.26s; test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s; test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.07s; test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s; 34.45s; .local/bounded-reads/performance/native-inventory-wal-061.log"
+      },
+      {
+        "command": "cargo test -p jj-store-rpc --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 34.96s; test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s; test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.58s; test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.43s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.14s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s; test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.73s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.11s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s; test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s; 48.73s; .local/bounded-reads/performance/native-inventory-rpc-061.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_rpc --locked -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 22.67s; test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.69s; 25.66s; .local/bounded-reads/performance/native-inventory-native-rpc-061.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 24.10s; test result: ok. 228 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 70.23s; 96.39s; .local/bounded-reads/performance/native-inventory-native-lifecycle-061.log"
+      },
+      {
+        "command": "cargo check -p jj-store-wal -p jj-store-service -p jj-store-rpc -p jj-store-cli --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `dev` profile [unoptimized] target(s) in 16.78s; 16.89s; .local/bounded-reads/performance/native-inventory-packages-061.log"
+      },
+      {
+        "command": "cargo fmt -p jj-store-wal -p jj-store-service -p jj-store-rpc -p jj-store-cli -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "; 1.18s; .local/bounded-reads/performance/native-inventory-rust-format-061.log"
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "package boundaries ok (17 packages); 1.54s; .local/bounded-reads/performance/native-inventory-boundaries-061.log"
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "web architecture ok (988 modules); 1.39s; .local/bounded-reads/performance/native-inventory-architecture-061.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_rpc --locked inventory::inventory_deadlines_reject_ready_io_that_finishes_after_the_budget -- --exact --nocapture (before split)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Ready page I/O escapes1ns admitted timeout;native-inventory-deadline-before-061.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_rpc --locked inventory::inventory_deadlines_ -- --nocapture (before)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Independent page and complete-result paths both escape ready-I/O deadline;native-inventory-deadlines-before-061.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_rpc --locked inventory:: -- --nocapture (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Eight exact inventory cases pass including both deadlines;native-inventory-final-exact-061.log."
+      },
+      {
+        "command": "cargo test -p jj-store-rpc --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 27.73s; test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.17s; test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.54s; test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.43s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.25s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s; test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.62s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s; test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s; 41.62s; .local/bounded-reads/performance/native-inventory-rpc-final-061.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_rpc --locked -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 17.04s; test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.41s; 20.75s; .local/bounded-reads/performance/native-inventory-native-rpc-final-061.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 19.66s; test result: ok. 228 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 67.12s; 88.76s; .local/bounded-reads/performance/native-inventory-native-lifecycle-final-061.log"
+      },
+      {
+        "command": "cargo check -p jj-store-wal -p jj-store-service -p jj-store-rpc -p jj-store-cli --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `dev` profile [unoptimized] target(s) in 12.71s; 12.8s; .local/bounded-reads/performance/native-inventory-packages-final-061.log"
+      },
+      {
+        "command": "cargo fmt -p jj-store-wal -p jj-store-service -p jj-store-rpc -p jj-store-cli -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "; 1.17s; .local/bounded-reads/performance/native-inventory-rust-format-final-061.log"
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "package boundaries ok (17 packages); 1.28s; .local/bounded-reads/performance/native-inventory-boundaries-final-061.log"
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "web architecture ok (988 modules); 1.4s; .local/bounded-reads/performance/native-inventory-architecture-final-061.log"
+      },
+      {
+        "command": "cargo fmt -p jj-store-wal -p jj-store-service -p jj-store-rpc -p jj-store-cli",
+        "result": "pass",
+        "failures": 0,
+        "note": "Changed Rust modules formatted."
+      },
+      {
+        "command": "pnpm exec prettier --write docs/implementation-plan.md spec/src/architecture.md spec/src/cli.md spec/src/jj-integration.md spec/src/mutations.md spec/src/publication.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial changed-document format;native-inventory-docs-format-061.log."
+      },
+      {
+        "command": "pnpm exec prettier --write docs/implementation-plan.md spec/src/architecture.md spec/src/cli.md spec/src/jj-integration.md spec/src/mutations.md spec/src/publication.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "docs/implementation-plan.md 108ms (unchanged)\nspec/src/architecture.md 79ms (unchanged)\nspec/src/cli.md 134ms (unchanged)\nspec/src/jj-integration.md 74ms (unchanged)\nspec/src/mutations.md 62ms (unchanged)\nspec/src/publication.md 41ms (unchanged)\nspec/src/milestones.md 1329ms; .local/bounded-reads/performance/native-inventory-format-final-061.log"
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "> @lapismd/jj-store@0.1.0 spec:first /Users/stevejuma/code/lapismd/jj-store-bounded-reads\n> spec-validator first\n\nSpec-first gate passed: 10 protected file(s), 6 canonical chapter(s).; .local/bounded-reads/performance/native-inventory-spec-first-final-061.log"
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "> @lapismd/jj-store@0.1.0 spec:validate /Users/stevejuma/code/lapismd/jj-store-bounded-reads\n> spec-validator validate\n\nSpecification validated: 5 validators, 23 chapters, 172 requirements.; .local/bounded-reads/performance/native-inventory-spec-validation-final-061.log"
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "> @lapismd/jj-store@0.1.0 check:progress /Users/stevejuma/code/lapismd/jj-store-bounded-reads\n> node scripts/check-progress.mjs\n\nprogress ok (139 tasks; evidence bookkeeping only); .local/bounded-reads/performance/native-inventory-progress-final-061.log"
+      },
+      {
+        "command": "pnpm exec prettier --check docs/implementation-plan.md spec/src/architecture.md spec/src/cli.md spec/src/jj-integration.md spec/src/mutations.md spec/src/publication.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Checking formatting...\nAll matched files use Prettier code style!; .local/bounded-reads/performance/native-inventory-docs-check-final-061.log"
+      },
+      {
+        "command": "python3 compare ledger to parent-evidence-061.json",
+        "result": "pass",
+        "failures": 0,
+        "note": "All501 historical evidence entries retained JSON-identically;E-READ-061 sole new entry."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Matching-ID retention is bounded independently of unrelated descriptors;scan ceiling2million and explicit monotonic deadlines enforced. Adaptive pages reserve768 catalog reads/8MiB and256 descriptor reads within32MiB total;16MiB record maximum unchanged. Full publication semantic audit preserved. No milestone promotion.",
+      "Complete enumeration still scans unrelated hashed keys;dedicated kind/predecessor/copy/search lookup remains delivery work.Deep log/evolution,retained difference/change-group/extreme-filter continuations and remaining local application search/index remain open.",
+      "Complete scale/RSS/latency/pressure/cancellation/fault,cold-browser/real-RustFS/release and inherited Help/generated-reference/source-review qualification remain deferred.Installation-reference drift remains a recorded failing qualification gate.macOS debug linking retains unwind-size warning.",
+      "Main,services,installed executables,Linux source,fixtures and unrelated workspaces preserved in this slice.Next requested landing follows focused verification."
+    ],
+    "next": "Commit verified E-READ-061;land E-READ-057 through061 into clean main and verify combined direct consumers;retain temporary workspace and continue highest-priority deep log/evolution delivery."
   }
 ]
 ```

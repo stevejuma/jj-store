@@ -377,9 +377,10 @@ before advancing a controlled test clock. A pre-staging deadline must not be
 misreported as evidence for a post-CAS lost acknowledgement.
 
 Checked manifest snapshots expose the same bounded committed-inventory reader
-used by the coordinator. Native semantic validation and authenticated
-prefix/copy enumeration use this selected inventory; the reader does not publish
-state or introduce a second commitment test.
+used by the coordinator for native semantic validation. Authenticated
+prefix/copy enumeration collects matching identities through bounded descriptor
+windows of the same selected root. These readers do not publish state or
+introduce a second commitment test.
 
 Historical settings lookup binds epoch, publication position and exact heads to
 manifest-selected history. Position zero selects the immutable initial policy;
@@ -633,15 +634,20 @@ these witnesses without granting authorization or reauditing an unrelated pin.
 
 Manifest-selected inventory scan pages seek an exclusive radix key without
 replaying earlier subtrees. Each page admits at most 256 descriptors, 1,024
-catalog and descriptor reads combined, and 8 MiB of encoded control records
-before decoding. Validate every loaded radix prefix, checksum, envelope and
-descriptor key. Decode descriptors sequentially and retain only object
-identities. This read is a bounded scan of a selected catalog, not a fresh
-complete-closure audit; publication, recovery and integrity retain their
-complete audits. Inventory keys hash both kind and identity, so sparse kind
-filters may produce empty windows with a continuation. Never represent such a
-window as the complete inventory. No selected root or authoritative format
-changes.
+catalog and descriptor reads combined, and 32 MiB of encoded control records
+before decoding. Reserve at most 768 reads and 8 MiB for catalog paths and keep
+descriptor admission independent, using the remaining total byte allowance. This
+permits the existing 16 MiB record ceiling without changing stored formats. If
+work/byte admission fills after a verified nonempty prefix, return its last
+verified key as a continuation. A zero-progress admission failure remains an
+error; a short window never claims complete enumeration. Validate every loaded
+radix prefix, checksum, envelope and descriptor key. Decode descriptors
+sequentially and retain only object identities. This read is a bounded scan of a
+selected catalog, not a fresh complete-closure audit; publication, recovery and
+integrity retain their complete audits. Inventory keys hash both kind and
+identity, so sparse kind filters may produce empty windows with a continuation.
+Never represent such a window as the complete inventory. No selected root or
+authoritative format changes.
 
 Application readers may verify one object against a checked manifest's immutable
 inventory catalog root without materializing the whole repository. The radix

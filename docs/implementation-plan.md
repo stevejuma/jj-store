@@ -272,6 +272,15 @@ result, total-scan and deadline bounds. Deep log/evolution and kind-specific
 predecessor/copy/search lookup remain delivery work; complete qualification
 stays in the later slice.
 
+E-READ-061 routes legacy RPC and in-process native operation/copy enumeration
+through the bounded selected descriptor windows. Retain only matching IDs under
+result admission and enforce total scan/time limits independently. Fresh access
+and epoch checks accompany each window; semantic publication keeps its complete
+closure audit. Windows now end early with a continuation when record work or
+cumulative bytes fill their admission. Independent descriptor allowance admits
+the existing 16 MiB record format under a 32 MiB cumulative ceiling. Dedicated
+kind lookup and the remaining deep/indexed read features still require delivery.
+
 ### Deferred complete qualification
 
 After performance delivery, qualify the combined implementation separately:

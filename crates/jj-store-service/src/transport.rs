@@ -303,15 +303,9 @@ impl NativeRequest {
         if limit == 0 || limit > self.endpoint.limits.inventory_nodes {
             return Err(Error::Limit);
         }
-        let keys = self.session.inventory().await?;
+        let keys = self.session.inventory_ids(copies, limit).await?;
         let ids: Vec<_> = keys
             .into_iter()
-            .filter(|key| {
-                matches!(
-                    (copies, key),
-                    (true, m::ObjectKey::Copy(_)) | (false, m::ObjectKey::Operation(_))
-                )
-            })
             .map(|key| key.as_bytes().to_vec())
             .collect();
         if ids.len() > limit {

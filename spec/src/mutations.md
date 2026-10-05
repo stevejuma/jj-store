@@ -6,6 +6,14 @@ reads reauthorize before and after catalog access and reject epoch changes.
 These read pins expose no coordinator, upload, publication or reconciliation
 capability. Signed anchors and cached descriptors never authorize a mutation.
 
+In-process and legacy-RPC complete kind enumeration likewise retain one checked
+manifest root and reauthorize each bounded scan. Matching-ID retention is
+separately admitted from total inspected descriptors. This read optimization
+does not replace NativeSemantic's complete inventory and dependency validation
+before a guarded publication. Inventory deadlines include explicit monotonic
+checks at admission, between windows and before response delivery; an async
+timer alone cannot admit a late result from immediately ready I/O.
+
 Code-card head summaries are read-only projections of explicitly selected
 operation/view references. They do not reconcile ambiguous heads, snapshot dirty
 files, initialize metadata or publish code/collaboration state. Limited windows
