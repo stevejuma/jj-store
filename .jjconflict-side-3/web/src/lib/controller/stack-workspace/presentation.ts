@@ -10,16 +10,17 @@ import type {
 export function normalizeAppliedStacks(values: readonly string[]) {
   return [...new Set(values.map((value) => value.trim()).filter(Boolean))];
 }
+export function selectedWorkspace(snapshot: WorkspaceSnapshot) {
+  return snapshot.workspaces.find((item) => item.id === snapshot.active);
+}
 export function activeWorkspace(snapshot: WorkspaceSnapshot) {
-  const workspace = snapshot.workspaces.find(
-    (item) => item.id === snapshot.active,
-  );
+  const workspace = selectedWorkspace(snapshot);
   if (!workspace) throw new Error("The selected workspace is unavailable.");
   return workspace;
 }
 export function appliedStacks(snapshot: WorkspaceSnapshot) {
   const byId = new Map(snapshot.stacks.map((stack) => [stack.id, stack]));
-  return normalizeAppliedStacks(activeWorkspace(snapshot).applied)
+  return normalizeAppliedStacks(selectedWorkspace(snapshot)?.applied ?? [])
     .map((id) => byId.get(id))
     .filter((stack): stack is WorkspaceStack => Boolean(stack));
 }
@@ -53,7 +54,8 @@ export function stackBookmarks(snapshot: WorkspaceSnapshot): Bookmark[] {
       return {
         name: head.name,
         targets: [head.commit],
-        workspace: activeWorkspace(snapshot).applied.includes(stack.id),
+        workspace:
+          selectedWorkspace(snapshot)?.applied.includes(stack.id) ?? false,
         description: tip?.message,
         author: tip?.author,
         authorEmail: tip?.email,
@@ -137,7 +139,7 @@ export function retainedWorkspaceSelection(
     (stack) => stack.id === selection.selectedStack,
   )
     ? selection.selectedStack
-    : (activeWorkspace(snapshot).applied[0] ?? null);
+    : (selectedWorkspace(snapshot)?.applied[0] ?? null);
   const stack = snapshot.stacks.find((stack) => stack.id === selectedStack);
   const selectedBranch = stack?.heads.some(
     (head) => head.name === selection.selectedBranch,

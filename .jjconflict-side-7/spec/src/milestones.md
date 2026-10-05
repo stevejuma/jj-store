@@ -152,9 +152,9 @@ shared-package release qualification does not alter those original Git gates.
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                        | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work          | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004 |
+| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005 |
 | M21.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | UI reviewed for backend integration; registry/visual gates remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009 |
-| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Deliver qualified local reads, commands and physical checkout | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004 |
+| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Deliver qualified local reads, commands and physical checkout | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -84292,6 +84292,202 @@ entries.
   ],
   "next": "Represent an absent workspace target and named combination honestly, then build the repository/binding-scoped production read adapter and inject it through App lifecycle. Qualify real-folder browsing before enabling any durable write.",
   "out_of_scope": "Root aggregate suites, Rust builds/tests, package publication, installed-service changes, screenshot comparisons and visual baseline updates."
+},
+{
+  "id": "E-M21-005",
+  "tasks": [
+    "M21",
+    "M21.2"
+  ],
+  "date": "2026-10-05",
+  "revision": "enclosing Jujutsu change mrkpwllo",
+  "kind": "explicit-unconfigured-stack-workspace-and-read-target",
+  "versions": "JJ 0.45.1; pnpm 10.32.1; Vitest 4.1.11; parent 213faf0f",
+  "formats": "Nullable target/base/active state and exact targetOptions are presentation contracts. Stateful catalog execution uses ConfiguredWorkspaceSnapshot. No wire/storage/checkout format changes.",
+  "files": [
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceSetup.stories.svelte",
+    "catalog/fixtures/StackWorkspaceSetupApplicationFixture.svelte",
+    "catalog/fixtures/stack-workspace/adapter.ts",
+    "catalog/fixtures/stack-workspace/changes.ts",
+    "catalog/fixtures/stack-workspace/data.ts",
+    "catalog/fixtures/stack-workspace/menu-reducer.ts",
+    "catalog/fixtures/stack-workspace/menu-validation.ts",
+    "catalog/fixtures/stack-workspace/preview.ts",
+    "catalog/fixtures/stack-workspace/reducer.ts",
+    "catalog/fixtures/stack-workspace/validation.ts",
+    "docs/maintenance/coverage.json",
+    "docs/site/technical/architecture.md",
+    "spec/src/api.md",
+    "spec/src/documentation.md",
+    "spec/src/ui.md",
+    "web/src/lib/controller/stack-workspace/commit-drafts.svelte.ts",
+    "web/src/lib/controller/stack-workspace/controller.svelte.ts",
+    "web/src/lib/controller/stack-workspace/eligibility.ts",
+    "web/src/lib/controller/stack-workspace/files.ts",
+    "web/src/lib/controller/stack-workspace/presentation.ts",
+    "web/src/lib/controller/stack-workspace/read-session.ts",
+    "web/src/lib/controller/stack-workspace/retained-diffs.ts",
+    "web/src/lib/controller/stack-workspace/target-history.svelte.ts",
+    "web/src/lib/controller/stack-workspace/types.ts",
+    "web/src/lib/ui/store-stack-workspace/StoreStackCommitComposer.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackTargetHistory.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspace.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceCanvas.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspacePicker.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceSetup.svelte",
+    "web/tests/vite/stack-workspace-setup.test.ts",
+    "spec/src/milestones.md"
+  ],
+  "before": "Three exact setup regressions fail before nullable production state is supported. First migrated web type check finds 29 nullable call-site errors. Initial story tests have selector failures; the ordinary mutation controller exceeds its source budget until read ownership is extracted.",
+  "scope": "Represent no target/combination without fabricating main, applied membership or Unstaged files. Reuse Settings Field.Group/StoreWorkField and repository Command View picker for exact operation-scoped target choices. Workspace remains empty until a real named combination exists. Missing active IDs fail closed. Shared read epoch rejects late target choices after refresh/close. Preserve strict configured catalog mutation fixtures. Keep body tabs and existing application styling.",
+  "tests": [
+    "web/tests/vite/stack-workspace-setup.test.ts#an unconfigured checkout loads without inventing a target or combination",
+    "web/tests/vite/stack-workspace-setup.test.ts#advertised mutations cannot bypass missing target and combination setup",
+    "web/tests/vite/stack-workspace-setup.test.ts#target selection uses the current read context and never calls the executor",
+    "web/tests/vite/stack-workspace-setup.test.ts#an unknown active combination ID cannot imply applied membership or enable mutations"
+  ],
+  "runs": [
+    {
+      "command": "pnpm catalog:test web/tests/vite/stack-workspace-setup.test.ts",
+      "result": "fail",
+      "failures": 3,
+      "note": "Before: stack-setup-before.log. After initial nullable support: three pass in stack-setup-after.log."
+    },
+    {
+      "command": "pnpm catalog:test web/tests/vite/stack-workspace-setup.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "Expanded six regressions pass in stack-setup-unit-final.log; refresh/close races, absent setup, explicit target and missing active ID included."
+    },
+    {
+      "command": "pnpm catalog:test stack-workspace",
+      "result": "pass",
+      "failures": 0,
+      "note": "89 tests/10 files pass in stack-setup-units-final.log."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceSetup.stories.svelte",
+      "result": "fail",
+      "failures": 1,
+      "note": "First/second run used an incorrect button selector for a Command View option; stack-setup-story-first.log and stack-setup-story-second.log. The corrected option revealed ambiguous Workspace tabs in stack-setup-story-exact.log (one failure). Scoped the tab to its owning navigation."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace/StoreStackWorkspaceSetup.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "Two fresh interaction/accessibility stories pass; stack-setup-story-final.log."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLogDiff.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLogFiles.stories.svelte catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte",
+      "result": "fail",
+      "failures": 1,
+      "note": "107 passed and one known setup selector failed in stack-setup-stories.log; run began before the selector correction."
+    },
+    {
+      "command": "pnpm test:storybook catalog/components/store-stack-workspace catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLogDiff.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLogFiles.stories.svelte catalog/components/community-repository-branch-command/CommunityRepositoryBranchCommand.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "108 stories/24 files pass in fresh Vitest/Vite Chromium processes; stack-setup-stories-final.log. This is source interaction/axe evidence, not production provider or durable checkout qualification."
+    },
+    {
+      "command": "pnpm web:check",
+      "result": "fail",
+      "failures": 29,
+      "note": "Nullable call sites in stack-setup-web-first.log; fixed explicit guards rather than fabricated setup or weakened types."
+    },
+    {
+      "command": "pnpm web:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "Zero errors/warnings in stack-setup-web-second.log and stack-setup-web-final.log."
+    },
+    {
+      "command": "pnpm catalog:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "Zero errors/warnings; 224 catalog modules; stack-setup-catalog.log."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "fail",
+      "failures": 1,
+      "note": "314 counted controller lines exceeded the 300-line budget; extracted WorkspaceReadSession."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "Source budget and production dependency boundaries pass; stack-setup-architecture.log."
+    },
+    {
+      "command": "pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": "One validator passes; stack-setup-ownership.log."
+    },
+    {
+      "command": "node --test scripts/progress-mapping.test.mjs scripts/ui-ownership.test.mjs scripts/web-architecture.test.mjs",
+      "result": "pass",
+      "failures": 0,
+      "note": "16 tests pass; stack-setup-governance.log."
+    },
+    {
+      "command": "pnpm docs:review application \"Reviewed nullable workspace setup, Settings-style exact target choice, empty workspace, membership eligibility, guarded drafts and shared read-session invalidation. Target-history reset clears bounded continuation state. Production binding adapter and durable execution remain incomplete.\"",
+      "result": "pass",
+      "failures": 0,
+      "note": "Source coverage updated after final source edits; stack-setup-docs-review-final.log."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "stack-setup-coverage-final.log. All source-specific prettier commands omit milestones.md."
+    },
+    {
+      "command": "pnpm exec prettier --check <current jj diff file list excluding spec/src/milestones.md>",
+      "result": "pass",
+      "failures": 0,
+      "note": "Exact changed-file formatter invocation via Python subprocess; stack-setup-format-final.log. Historical ledger never formatted."
+    },
+    {
+      "command": "pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "139 files, nine diagrams in light/dark, valid links and anchors; stack-setup-docs.log and stack-setup-docs-final.log."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "Protected source requirements included; stack-setup-spec-first.log and final ledger-inclusive stack-setup-spec-first-final.log."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "Five validators, 23 chapters, 173 requirements; stack-setup-spec.log and final stack-setup-spec-final.log."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "fail",
+      "failures": 2,
+      "note": "New evidence listed file-only test references. Added exact test anchors without changing prior payloads; stack-setup-progress.log."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "Final anchored evidence passes; 486 historical evidence objects preserved byte-identically; stack-setup-ledger.log and stack-setup-progress-final.log."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Production read adapter and App lifecycle injection, bounded stack discovery/segment histories, physical working-tree scan, durable execution/checkout, combinations, exact file/hunk commands, graph actions and linked-native complete lifecycle qualification remain. M21.2 is incomplete.",
+    "No fresh CUA visual review is claimed; source Storybook HMR remains on 6057, with fresh headless interaction/accessibility runs recorded separately.",
+    "Package publication, screenshots/baselines and inherited Rust diagnostics remain outside this UI-only change."
+  ],
+  "next": "Build the production adapter on the existing LocalTrusted registry binding and operation-pinned read provider, inject it through application-owned lifecycle, reuse index preparation and qualify real-folder browsing cold. Continue the approved seven stages through durable writes and linked-native qualification.",
+  "out_of_scope": "Root aggregate lanes, Rust builds/tests, package publication, installed-service changes, backend mutations, screenshot comparisons and baseline updates."
 }
 ]
 ```

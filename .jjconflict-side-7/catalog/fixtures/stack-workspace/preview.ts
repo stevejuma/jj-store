@@ -4,7 +4,7 @@ import {
 } from "../../../web/src/lib/controller/stack-workspace/presentation.js";
 import type {
   WorkspaceCommand,
-  WorkspaceSnapshot,
+  ConfiguredWorkspaceSnapshot as WorkspaceSnapshot,
 } from "../../../web/src/lib/controller/stack-workspace/types.js";
 import { findCommit } from "./changes.js";
 

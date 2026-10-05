@@ -6,7 +6,7 @@ import {
 import {
   WorkspaceCommandError,
   type WorkspaceCommand,
-  type WorkspaceSnapshot,
+  type ConfiguredWorkspaceSnapshot as WorkspaceSnapshot,
 } from "../../../web/src/lib/controller/stack-workspace/types.js";
 import { validateMenuFixture } from "./menu-validation.js";
 import { findCommit, selectedChanges } from "./changes.js";

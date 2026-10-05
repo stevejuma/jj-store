@@ -5,7 +5,7 @@ import {
   type StackWorkspaceAdapter,
   type WorkspaceOutcome,
   type WorkspaceRequest,
-  type WorkspaceSnapshot,
+  type ConfiguredWorkspaceSnapshot as WorkspaceSnapshot,
   type WorkspaceHistoryRequest,
   type StackCommit,
 } from "../../../web/src/lib/controller/stack-workspace/types.js";

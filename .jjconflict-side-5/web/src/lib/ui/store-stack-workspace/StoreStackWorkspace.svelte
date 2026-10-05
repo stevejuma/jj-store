@@ -1,4 +1,5 @@
 <script lang="ts">
+  import * as Empty from "@lapismd/design-core/shadcn/empty";
   import * as Tabs from "@lapismd/design-core/shadcn/tabs";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import Folder from "@lucide/svelte/icons/folder";
@@ -13,11 +14,12 @@
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import StoreNotificationHost from "../store-notifications/StoreNotificationHost.svelte";
   import { ownNotifications } from "../../notifications/notification-context.svelte.js";
+  import StoreStackWorkspaceSetup from "./StoreStackWorkspaceSetup.svelte";
   import StoreStackWorkspaceCanvas from "./StoreStackWorkspaceCanvas.svelte";
   import StoreStackWorkspaceForm from "./StoreStackWorkspaceForm.svelte";
   import StoreStackWorkspacePreview from "./StoreStackWorkspacePreview.svelte";
   import StoreStackWorkspaceConflict from "./StoreStackWorkspaceConflict.svelte";
-  import { activeWorkspace } from "../../controller/stack-workspace/presentation.js";
+  import { selectedWorkspace } from "../../controller/stack-workspace/presentation.js";
   import type { StackWorkspaceController } from "../../controller/stack-workspace/controller.svelte.js";
   import type { WorkspaceCommand } from "../../controller/stack-workspace/types.js";
   import "../store-work/community-work-layout.css";
@@ -41,6 +43,9 @@
     formCommand = $state<WorkspaceCommand | null>(null);
   const notifications = ownNotifications();
   const snapshot = $derived(controller.snapshot);
+  const workspace = $derived(
+    snapshot ? selectedWorkspace(snapshot) : undefined,
+  );
   const eligible = $derived(
     snapshot?.availability === "ready" && Boolean(snapshot.folder),
   );
@@ -66,7 +71,7 @@
       value.kind === "create_commit" &&
       controller.page === "workspace" &&
       controller.snapshot &&
-      activeWorkspace(controller.snapshot).applied.includes(value.stack)
+      selectedWorkspace(controller.snapshot)?.applied.includes(value.stack)
     ) {
       for (const selection of value.selections ?? [value.selection])
         controller.commitDrafts.open(
@@ -162,12 +167,33 @@
         >
         <StoreStackWorkspaceActions {controller} {command} />
       </nav>
-      <Tabs.Content value={controller.page} class="stack-workspace__content"
-        ><StoreStackWorkspaceCanvas
-          {controller}
-          {showStackActions}
-          onCommand={command}
-        /></Tabs.Content
+      <Tabs.Content value={controller.page} class="stack-workspace__content">
+        {#if !snapshot.target}<StoreStackWorkspaceSetup {controller} />{/if}
+        {#if controller.page === "workspace" && !workspace}
+          <Empty.Root class="flex-1">
+            <Empty.Header>
+              <Empty.Media variant="icon"
+                ><FolderKanban aria-hidden="true" /></Empty.Media
+              >
+              <Empty.Title>No stack workspace</Empty.Title>
+              <Empty.Description
+                >Choose a target branch, then set up a named workspace to
+                combine stacks and retain unfinished work.</Empty.Description
+              >
+            </Empty.Header>
+            <Empty.Content
+              ><Button
+                disabled={!controller.can("create_workspace")}
+                onclick={() => command({ kind: "create_workspace", name: "" })}
+                >Create workspace</Button
+              ></Empty.Content
+            >
+          </Empty.Root>
+        {:else if snapshot.target}<StoreStackWorkspaceCanvas
+            {controller}
+            {showStackActions}
+            onCommand={command}
+          />{/if}</Tabs.Content
       >
     </Tabs.Root>
     <footer class="stack-workspace__footer">
@@ -185,25 +211,25 @@
               size={14}
               aria-hidden="true"
             />{/snippet}
-          {activeWorkspace(snapshot).name}
+          {workspace?.name ?? "No stack workspace"}
         </CommunityChip>
         <CommunityChip variant="muted" shape="square">
           {#snippet leading()}<GitBranch
               size={14}
               aria-hidden="true"
             />{/snippet}
-          {snapshot.base}
+          {snapshot.base ?? "Choose target branch"}
         </CommunityChip>
         <CommunityChip variant="muted" shape="square">
           {#snippet leading()}<GitBranchPlus
               size={14}
               aria-hidden="true"
             />{/snippet}
-          {activeWorkspace(snapshot).applied.length} applied stacks
+          {workspace?.applied.length ?? 0} applied stacks
         </CommunityChip>
         <CommunityChip variant="muted" shape="square">
           {#snippet leading()}<File size={14} aria-hidden="true" />{/snippet}
-          {activeWorkspace(snapshot).unassigned.length} unstaged files
+          {workspace?.unassigned.length ?? 0} unstaged files
         </CommunityChip>
       </div>
       <span role="status">{controller.outcome}</span

@@ -1,7 +1,7 @@
 import type {
   StackCommit,
   WorkspaceFile,
-  WorkspaceSnapshot,
+  ConfiguredWorkspaceSnapshot as WorkspaceSnapshot,
 } from "../../../web/src/lib/controller/stack-workspace/types.js";
 
 export function fixtureFile(path: string, labels: string[]): WorkspaceFile {

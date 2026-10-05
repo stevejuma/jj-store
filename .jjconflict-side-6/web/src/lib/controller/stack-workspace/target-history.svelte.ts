@@ -40,6 +40,22 @@ export class WorkspaceTargetHistory {
   ) {}
 
   sync(snapshot: WorkspaceSnapshot) {
+    if (!snapshot.target) {
+      this.#epoch++;
+      this.#abort.abort();
+      this.#abort = new AbortController();
+      this.#request = null;
+      this.#readKey = undefined;
+      this.#cursor = undefined;
+      this.#cursors.clear();
+      this.total = undefined;
+      this.branch = null;
+      this.commits = [];
+      this.active = this.loading = this.hasMore = false;
+      this.selectedId = this.diff = null;
+      this.error = "";
+      return;
+    }
     const next: WorkspaceHistoryRequest = {
       repository: snapshot.repository,
       revision: snapshot.revision,

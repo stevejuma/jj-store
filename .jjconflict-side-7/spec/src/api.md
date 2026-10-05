@@ -2142,3 +2142,10 @@ responses after owner invalidation. The adapter must not fall back to fixture
 files when a provider has not loaded that source. Capability reasons explain
 unavailable actions before preview; backend authorization and preparation remain
 independent mandatory checks.
+
+An optional presentation target-selection adapter names the current repository,
+opaque read key and UI revision plus an exact bookmark name/head from the
+displayed read scope. It is a read-context change, not workspace initialization
+or command preparation. Absent target and active combination are nullable
+presentation state; provider authorization and operation/binding validation
+remain mandatory.

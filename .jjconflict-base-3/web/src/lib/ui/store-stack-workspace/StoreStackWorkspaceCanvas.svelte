@@ -9,7 +9,7 @@
   import StoreStackTargetHistory from "./StoreStackTargetHistory.svelte";
   import StoreStackWorkspaceDiff from "./StoreStackWorkspaceDiff.svelte";
   import {
-    activeWorkspace,
+    selectedWorkspace,
     appliedStacks,
     stackBookmarks,
   } from "../../controller/stack-workspace/presentation.js";
@@ -29,7 +29,7 @@
   let registeredStacks = $state<string[]>([]);
   let registeredDiffs = $state<string[]>([]);
   const snapshot = $derived(controller.snapshot!);
-  const workspace = $derived(activeWorkspace(snapshot));
+  const workspace = $derived(selectedWorkspace(snapshot));
   const stacks = $derived(
     controller.page === "workspace"
       ? appliedStacks(snapshot)
@@ -164,20 +164,22 @@
           <CommunityRepositoryBranchCommand
             groupWorkspaceBookmarks
             scrollStrategy="styled"
-            targetBookmark={{
-              name: snapshot.target.name,
-              targets: [snapshot.target.commit],
-              description: snapshot.target.message,
-              author: snapshot.target.author,
-              authorEmail: snapshot.target.email,
-              updatedAt: snapshot.target.createdAt,
-            }}
+            targetBookmark={snapshot.target
+              ? {
+                  name: snapshot.target.name,
+                  targets: [snapshot.target.commit],
+                  description: snapshot.target.message,
+                  author: snapshot.target.author,
+                  authorEmail: snapshot.target.email,
+                  updatedAt: snapshot.target.createdAt,
+                }
+              : undefined}
             bookmarks={stackBookmarks(snapshot)}
             selected={controller.targetHistory.active
-              ? snapshot.target.name
+              ? (snapshot.target?.name ?? "")
               : (controller.selectedBranch ?? "")}
             onSelect={(name) => {
-              if (name === snapshot.target.name) {
+              if (name === snapshot.target?.name) {
                 void controller.selectTargetBranch();
                 return;
               }
@@ -200,7 +202,7 @@
         {controller}
         {stack}
         {showStackActions}
-        applied={workspace.applied.includes(stack.id)}
+        applied={workspace?.applied.includes(stack.id) ?? false}
         {onCommand}
         onDrop={drop}
       />

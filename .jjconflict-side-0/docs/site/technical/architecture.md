@@ -109,3 +109,10 @@ capabilities, while browsing and Copy remain available without an executor.
 These paths are covered by controller regressions and isolated app-shell
 stories. Production adapter injection, real-folder lifecycle acceptance and the
 recoverable command executor remain separate integration work.
+
+A checkout without explicit setup retains an absent target and combination. The
+Settings-style target picker selects only an exact advertised bookmark/head in
+the current read scope. Refresh and disposal reject late choices. Choosing a
+read target enables branch browsing but leaves Workspace empty and does not
+initialize, snapshot or publish code. Missing combinations cannot imply applied
+membership or expose an Unstaged file list.

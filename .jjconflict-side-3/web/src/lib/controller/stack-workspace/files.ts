@@ -1,4 +1,8 @@
-import { activeWorkspace, appliedStacks, stackGroups } from "./presentation.js";
+import {
+  selectedWorkspace,
+  appliedStacks,
+  stackGroups,
+} from "./presentation.js";
 import {
   cloneWorkspace,
   type WorkspaceFile,
@@ -55,7 +59,7 @@ export function combinedWorkspaceFiles(snapshot: WorkspaceSnapshot) {
     ...appliedStacks(snapshot).flatMap((stack) =>
       stack.commits.flatMap((commit) => commit.files),
     ),
-    ...activeWorkspace(snapshot).unassigned,
+    ...(selectedWorkspace(snapshot)?.unassigned ?? []),
   ]);
 }
 function unionFiles(source: WorkspaceFile[]) {
@@ -79,7 +83,8 @@ export function workspaceSourceFiles(
       sourceCommits(snapshot, source).flatMap((commit) => commit.files),
     );
   if (source === "combined") return combinedWorkspaceFiles(snapshot);
-  if (source === "unassigned") return activeWorkspace(snapshot).unassigned;
+  if (source === "unassigned")
+    return selectedWorkspace(snapshot)?.unassigned ?? [];
   return (
     snapshot.stacks
       .flatMap((stack) => stack.commits)
@@ -106,7 +111,7 @@ export function workspaceHunkSelection(
   const owners = commits.filter((commit) => owns(commit.files));
   const unassigned =
     (source === "combined" || source === "unassigned") &&
-    owns(activeWorkspace(snapshot).unassigned);
+    owns(selectedWorkspace(snapshot)?.unassigned ?? []);
   if (owners.length + Number(unassigned) !== 1 || owners[0]?.immutable)
     return null;
   return {

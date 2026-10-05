@@ -83,15 +83,23 @@ export type WorkspaceSnapshot = {
   revision: number;
   /** Opaque read scope; numeric revision remains a UI counter. */
   readKey?: string;
-  base: string;
-  active: string;
-  target: WorkspaceTargetBranch;
+  base: string | null;
+  active: string | null;
+  target: WorkspaceTargetBranch | null;
+  /** Exact, unambiguous heads available within this read scope. */
+  targetOptions?: WorkspaceTargetBranch[];
   workspaces: NamedWorkspace[];
   stacks: WorkspaceStack[];
   conflicts: WorkspaceConflict[];
   capabilities: WorkspaceCommand["kind"][];
   capabilityReasons?: Partial<Record<WorkspaceCommand["kind"], string>>;
   canUndo: boolean;
+};
+/** Stateful catalog execution fixtures always begin with explicit setup. */
+export type ConfiguredWorkspaceSnapshot = WorkspaceSnapshot & {
+  base: string;
+  active: string;
+  target: WorkspaceTargetBranch;
 };
 export type WorkspaceSelection = {
   /** A commit identity, or the active combination's unassigned edits. */
@@ -197,6 +205,12 @@ export type WorkspaceSourceRequest = {
 export type WorkspaceFilePage = { files: WorkspaceFile[]; nextCursor?: string };
 export interface StackWorkspaceAdapter {
   read(): Promise<WorkspaceSnapshot>;
+  chooseTarget?(request: {
+    repository: string;
+    revision: number;
+    readKey?: string;
+    target: StackHead;
+  }): Promise<WorkspaceSnapshot>;
   readTargetHistory(
     request: WorkspaceHistoryRequest,
     signal?: AbortSignal,

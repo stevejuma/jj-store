@@ -30,6 +30,7 @@ export class WorkspaceCommitDrafts {
     selection?: WorkspaceSelection,
   ) {
     if (
+      !snapshot.active ||
       snapshot.availability !== "ready" ||
       !snapshot.folder ||
       !snapshot.workspaces
@@ -86,6 +87,7 @@ export class WorkspaceCommitDrafts {
     );
     const commit = stack?.commits.find((commit) => commit.id === id);
     if (
+      !snapshot.active ||
       !stack ||
       !commit ||
       commit.immutable ||
@@ -122,7 +124,7 @@ export class WorkspaceCommitDrafts {
               stack.commits.some((commit) => commit.id === command.commit),
             )?.id
           : null;
-    if (stack) this.clear(snapshot.active, stack);
+    if (stack && snapshot.active) this.clear(snapshot.active, stack);
   }
   clear(workspace: string, stack: string) {
     const key = this.key(workspace, stack);

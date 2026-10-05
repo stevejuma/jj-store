@@ -3,7 +3,7 @@ import {
   cloneWorkspace,
   type WorkspaceFile,
   type WorkspaceSelection,
-  type WorkspaceSnapshot,
+  type ConfiguredWorkspaceSnapshot as WorkspaceSnapshot,
 } from "../../../web/src/lib/controller/stack-workspace/types.js";
 import { activeWorkspace } from "../../../web/src/lib/controller/stack-workspace/presentation.js";
 

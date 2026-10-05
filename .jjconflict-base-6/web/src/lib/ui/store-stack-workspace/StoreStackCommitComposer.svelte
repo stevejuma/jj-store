@@ -23,7 +23,9 @@
   } = $props();
   const id = $props.id();
   const workspace = $derived(controller.snapshot!.active);
-  const draft = $derived(controller.commitDrafts.get(workspace, stack.id));
+  const draft = $derived(
+    workspace ? controller.commitDrafts.get(workspace, stack.id) : undefined,
+  );
   function open(selection?: WorkspaceSelection) {
     if (!controller.can("create_commit") || !controller.snapshot) return;
     if (!controller.commitDrafts.open(controller.snapshot, stack.id, selection))
@@ -128,7 +130,8 @@
             type="button"
             variant="outline"
             disabled={controller.locked}
-            onclick={() => controller.commitDrafts.clear(workspace, stack.id)}
+            onclick={() =>
+              workspace && controller.commitDrafts.clear(workspace, stack.id)}
             >Cancel</Button
           >
           <Button

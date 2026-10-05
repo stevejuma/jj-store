@@ -6,7 +6,7 @@ import type {
 } from "./types.js";
 export function retainedWorkspaceDiffs(
   snapshot: WorkspaceSnapshot,
-  previousActive: string | undefined,
+  previousActive: string | null | undefined,
   diffs: WorkspaceOpenDiff[],
   filesFor?: (source: string) => WorkspaceFile[],
 ) {

@@ -13,8 +13,9 @@
   >
     <StoreRepositoryPicker
       label="Active stack workspace"
+      emptyLabel="No stack workspace"
       variant="ghost"
-      value={snapshot.active}
+      value={snapshot.active ?? ""}
       repositories={snapshot.workspaces.map((item) => ({
         id: item.id,
         name: item.name,

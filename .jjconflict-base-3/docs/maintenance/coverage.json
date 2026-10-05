@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed lazy controller/source-file and patch integration, independent cancellation and retry, exact read scopes, capability reasons, disabled commit/file/hunk drags and read-only app-shell stories. Production injection, absent-combination setup, real-folder lifecycle and durable execution remain incomplete.",
-      "fingerprint": "f819c191a94dd07b5aa3b98d49f59b46840a67a5ff8a55f2d5552527e6c20e8d"
+      "reason": "Reviewed nullable workspace setup, Settings-style exact target choice, empty workspace, membership eligibility, guarded drafts and shared read-session invalidation. Target-history reset clears bounded continuation state. Production binding adapter and durable execution remain incomplete.",
+      "fingerprint": "e8017bb34d2da7e75681b2505b706faee8dd35619ff196028f4db8b6bf04f947"
     }
   },
   {

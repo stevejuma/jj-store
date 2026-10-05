@@ -20,7 +20,8 @@ injection and executable commands. Lazy projection of pinned graph, exact tree
 diffs and unavailable file metadata MUST NOT be described as durable checkout or
 named-combination execution. Controller lazy-file/patch integration and
 capability-gated catalog evidence remain distinct from real production adapter
-injection and checkout lifecycle qualification.
+injection and checkout lifecycle qualification. An unconfigured checkout and its
+ephemeral read target MUST remain distinct from durable workspace setup.
 
 The documentation source lives under `docs/site`, shared CLI long help under
 `docs/cli`, and maintenance metadata outside the published tree. MkDocs Material

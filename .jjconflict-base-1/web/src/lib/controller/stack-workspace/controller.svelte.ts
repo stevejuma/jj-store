@@ -4,6 +4,7 @@ import {
   activateWorkspaceDiff,
 } from "./diff-selection.js";
 import { WorkspaceDragSession } from "./drag-session.svelte.js";
+import { WorkspaceReadSession } from "./read-session.js";
 import { WorkspaceTargetHistory } from "./target-history.svelte.js";
 import { WorkspaceCommitDrafts } from "./commit-drafts.svelte.js";
 import { WorkspaceLazyDetails } from "./lazy-details.svelte.js";
@@ -18,7 +19,7 @@ import {
   workspaceAggregateSource,
   retainedStackSelections,
 } from "./files.js";
-import { activeWorkspace, retainedWorkspaceSelection } from "./presentation.js";
+import { retainedWorkspaceSelection } from "./presentation.js";
 import {
   cloneWorkspace,
   WorkspaceCommandError,
@@ -29,6 +30,7 @@ import {
   type WorkspaceSelection,
   type WorkspaceOpenDiff,
   type WorkspaceSnapshot,
+  type WorkspaceTargetBranch,
 } from "./types.js";
 /** Transport-independent state owner. Catalog supplies the mock adapter. */
 export class StackWorkspaceController {
@@ -54,12 +56,15 @@ export class StackWorkspaceController {
   readonly locked = $derived(
     this.busy || this.loading || this.pending !== null || this.preview !== null,
   );
-  #read = 0;
+  readonly reads: WorkspaceReadSession;
   #closed = false;
   #command = 0;
   readonly targetHistory: WorkspaceTargetHistory;
   readonly details: WorkspaceLazyDetails;
   constructor(readonly adapter: StackWorkspaceAdapter) {
+    this.reads = new WorkspaceReadSession(this, (snapshot) =>
+      this.updateSnapshot(snapshot),
+    );
     this.details = new WorkspaceLazyDetails(
       adapter,
       (source, files, complete) => {
@@ -104,25 +109,29 @@ export class StackWorkspaceController {
     );
   }
   async selectTargetBranch() {
-    if (this.locked || !this.snapshot || this.#closed) return;
+    if (this.locked || !this.snapshot?.target || this.#closed) return;
     this.selectedStack = this.selectedBranch = null;
     this.selectedCommit = this.selectedPath = this.selection = null;
     await this.targetHistory.select();
   }
+  async chooseTarget(target: WorkspaceTargetBranch) {
+    const snapshot = this.snapshot;
+    if (!snapshot || this.locked || !this.adapter.chooseTarget || this.#closed)
+      return;
+    await this.reads.run(() =>
+      this.adapter.chooseTarget!({
+        repository: snapshot.repository,
+        revision: snapshot.revision,
+        ...(snapshot.readKey ? { readKey: snapshot.readKey } : {}),
+        target: { name: target.name, commit: target.commit },
+      }),
+    );
+  }
   async refresh() {
     if (this.#closed || this.pending || this.preview || this.busy) return;
-    const ticket = ++this.#read;
-    this.loading = true;
-    this.error = "";
-    try {
-      const snapshot = await this.adapter.read();
-      if (!this.#closed && ticket === this.#read) this.updateSnapshot(snapshot);
-    } catch (error) {
-      if (!this.#closed && ticket === this.#read) this.error = String(error);
-    } finally {
-      if (!this.#closed && ticket === this.#read) this.loading = false;
-    }
+    await this.reads.run(() => this.adapter.read());
   }
+
   selectStack(id: string, branch?: string) {
     if (this.locked) return;
     this.targetHistory.active = false;
@@ -287,7 +296,7 @@ export class StackWorkspaceController {
     this.targetHistory.close();
     this.details.close();
     this.#closed = true;
-    this.#read++;
+    this.reads.close();
     this.#command++;
   }
 }

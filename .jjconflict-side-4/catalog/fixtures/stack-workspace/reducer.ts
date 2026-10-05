@@ -5,7 +5,7 @@ import {
 import type {
   WorkspaceCommand,
   WorkspaceFile,
-  WorkspaceSnapshot,
+  ConfiguredWorkspaceSnapshot as WorkspaceSnapshot,
 } from "../../../web/src/lib/controller/stack-workspace/types.js";
 import { reduceMenuFixture } from "./menu-reducer.js";
 import { fixtureCommit } from "./data.js";

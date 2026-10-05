@@ -475,6 +475,16 @@ when mutation capabilities are absent; each mutation control uses its own
 advertised capability and unavailable reason. A disabled executor is never
 called to discover whether a command is eligible.
 
+Unconfigured local checkouts MUST represent an absent workspace target and named
+combination explicitly. Opening Stacks does not invent a base bookmark, applied
+membership or unfinished files. Branch browsing offers an existing command-view
+target picker through the Settings form composition. Choosing that target is an
+operation-scoped read selection; it initializes no combination, publishes no JJ
+operation and writes no checkout or private configuration. Missing or ambiguous
+targets require an explicit choice. Workspace shows an existing empty state
+until a qualified named combination exists, and command eligibility requires the
+necessary target/combination state in addition to advertised capability.
+
 The 5 October alignment review and proposed backend delivery order are recorded
 in
 [the implementation plan](../../docs/implementation-plan.md#local-stacks-backend-proposal).
