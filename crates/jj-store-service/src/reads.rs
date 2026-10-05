@@ -388,6 +388,18 @@ impl CommittedRead {
         self.authorize().await.map_err(query_error)?;
         Ok(value)
     }
+    pub async fn code_summary(
+        self: &Arc<Self>,
+        reader: &jj_store_jj::query::content::ContentReader,
+        limit: usize,
+    ) -> jj_store_jj::query::Result<jj_store_jj::query::content::code_summary::Summary> {
+        self.authorize().await.map_err(query_error)?;
+        let value = reader
+            .code_summary(self.session.object_store.clone(), self.clone(), limit)
+            .await?;
+        self.authorize().await.map_err(query_error)?;
+        Ok(value)
+    }
     pub async fn file(
         self: &Arc<Self>,
         reader: &jj_store_jj::query::content::ContentReader,

@@ -8,8 +8,8 @@ export function repositoryActivity(
   project?: { home: string; id: string },
 ) {
   const own = entries.find((entry) => entry.repository.id === id)?.summary;
-  const tasks = entries.flatMap((entry) =>
-    (entry.summary?.tasks ?? []).filter(
+  const groups = entries.flatMap((entry) =>
+    (entry.summary?.taskGroups ?? []).filter(
       (task) =>
         (task.repository ?? entry.repository.id) === id &&
         (!project ||
@@ -21,12 +21,12 @@ export function repositoryActivity(
     ...(own?.updatedAtMillis !== null && own?.updatedAtMillis !== undefined
       ? [own.updatedAtMillis]
       : []),
-    ...tasks.map((task) => task.actor.updated_at_millis),
+    ...groups.map((group) => group.updated_at_millis),
   ];
   return {
     commits: own?.commits ?? 0,
-    reviews: own?.threads.length ?? 0,
-    tasks: tasks.length,
+    reviews: own?.reviews ?? 0,
+    tasks: groups.reduce((total, group) => total + Number(group.tasks), 0),
     partial: Boolean(
       own?.commitsPartial ||
       own?.reviewsPartial ||

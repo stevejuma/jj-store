@@ -1,4 +1,6 @@
 use super::*;
+#[path = "filter_cache.rs"]
+mod filter_cache;
 
 struct HeldCommitRead {
     inner: Arc<dyn jj_store_object::ObjectStore>,
@@ -24,6 +26,45 @@ impl jj_store_object::ObjectStore for HeldCommitRead {
             self.release.notified().await;
         }
         self.inner.get(key, range).await
+    }
+    async fn put(
+        &self,
+        _: &jj_store_object::Key,
+        _: jj_store_object::Condition,
+        _: &jj_store_object::StagedUpload,
+    ) -> jj_store_object::Result<jj_store_object::WriteOutcome> {
+        panic!("query wrote native state")
+    }
+}
+
+// Historical construction deliberately bypasses commit-body memoization. Gate
+// its first download only; later hydration of the same commit must proceed.
+struct OneShotCommitRead {
+    gate: HeldCommitRead,
+    entered_once: std::sync::atomic::AtomicBool,
+}
+#[async_trait::async_trait]
+impl jj_store_object::ObjectStore for OneShotCommitRead {
+    async fn head(
+        &self,
+        key: &jj_store_object::Key,
+    ) -> jj_store_object::Result<jj_store_object::Metadata> {
+        self.gate.inner.head(key).await
+    }
+    async fn get(
+        &self,
+        key: &jj_store_object::Key,
+        range: Option<jj_store_object::ByteRange>,
+    ) -> jj_store_object::Result<jj_store_object::Download> {
+        if key.as_str() == self.gate.target
+            && !self
+                .entered_once
+                .swap(true, std::sync::atomic::Ordering::AcqRel)
+        {
+            self.gate.entered.notify_one();
+            self.gate.release.notified().await;
+        }
+        self.gate.inner.get(key, range).await
     }
     async fn put(
         &self,
@@ -426,6 +467,545 @@ fn cache_bytes(path: &std::path::Path) -> u64 {
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn native_preparation_fits_small_cache_and_preserves_historical_scopes() {
+    tokio::task::LocalSet::new()
+        .run_until(async {
+            let f = Fixture::new().await;
+            let local = tempfile::tempdir().unwrap();
+            let work = tempfile::tempdir().unwrap();
+            let root = tempfile::tempdir().unwrap();
+            let oracle = tempfile::tempdir().unwrap();
+            let (repo, a) = initial(&f, local.path(), work.path()).await;
+            let (repo, b) = child(&repo, &a, "B").await;
+            let (repo, _) = child(&repo, &b, "C").await;
+            let read = pin(&f, oid(repo.op_id())).await;
+            let mut query = log("at_operation(@-, all()) | at_operation(@--, all())");
+            if let q::Request::Log { workspace, .. } = &mut query {
+                *workspace = Some("fixture".into());
+            }
+            let expected = read
+                .graph(
+                    &executor(oracle.path(), q::Limits::default()),
+                    query.clone(),
+                    page(100),
+                )
+                .await
+                .unwrap();
+            let policy = q::cache::Policy {
+                max_entry_bytes: 64 * 1024,
+                max_repository_bytes: 128 * 1024,
+                max_total_bytes: 128 * 1024,
+                ..Default::default()
+            };
+            let exec = q::GraphExecutor::with_cache_policy(
+                root.path().to_owned(),
+                q::Limits::default(),
+                2,
+                policy,
+            )
+            .unwrap();
+            let before = f.session.snapshot().await.unwrap().manifest().clone();
+            let prepared = read
+                .prepare_index(&exec, q::Cancellation::default())
+                .await
+                .expect("small native preparation must not require a disk database");
+            assert!(prepared.cache.retained_bytes <= policy.max_entry_bytes);
+            let actual = read.graph(&exec, query.clone(), page(100)).await.unwrap();
+            assert_eq!(actual.data, expected.data);
+            assert!(actual.cache.retained_bytes <= policy.max_entry_bytes);
+            assert_eq!(
+                read.graph(&exec, query, page(100)).await.unwrap().data,
+                expected.data
+            );
+            assert_eq!(*f.session.snapshot().await.unwrap().manifest(), before);
+        })
+        .await;
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn historical_predicates_reuse_separately_prepared_residents_without_slot_growth() {
+    use jj_store_service::administration::{TokenChange, TokenRequest};
+    tokio::task::LocalSet::new()
+        .run_until(async {
+            let f = Fixture::new().await;
+            let local = tempfile::tempdir().unwrap();
+            let work = tempfile::tempdir().unwrap();
+            let root = tempfile::tempdir().unwrap();
+            let oracle = tempfile::tempdir().unwrap();
+            let (first, a) = initial(&f, local.path(), work.path()).await;
+            let (second, b) = child(&first, &a, "B").await;
+            let (third, _) = child(&second, &b, "C").await;
+            let read = pin(&f, oid(third.op_id())).await;
+            let mut query = log("at_operation(@-, all()) | at_operation(@--, all())");
+            if let q::Request::Log { workspace, .. } = &mut query {
+                *workspace = Some("fixture".into());
+            }
+            let expected = read
+                .graph(
+                    &executor(oracle.path(), q::Limits::default()),
+                    query.clone(),
+                    page(100),
+                )
+                .await
+                .unwrap();
+            let exec = executor(
+                root.path(),
+                q::Limits {
+                    max_inline_rebuild_commits: 1,
+                    ..Default::default()
+                },
+            );
+            for repo in [&first, &second, &third] {
+                pin(&f, oid(repo.op_id()))
+                    .await
+                    .prepare_index(&exec, q::Cancellation::default())
+                    .await
+                    .unwrap();
+            }
+            let path = cache_slot(root.path(), oid(third.op_id()));
+            let files = || {
+                serde_json::from_slice::<serde_json::Value>(
+                    &fs::read(path.join("query-cache.json")).unwrap(),
+                )
+                .unwrap()["files"]
+                    .clone()
+            };
+            let before_files = files();
+            let before = f.session.snapshot().await.unwrap().manifest().clone();
+            let session = f.session(f.reader.clone(), Protection::default());
+            let OpenRead::Pinned(reader) = session
+                .open_read(Some(oid(third.op_id())), ReadLimits::default())
+                .await
+                .unwrap()
+            else {
+                panic!("pinned reader")
+            };
+            let reader = Arc::new(reader);
+            let actual = reader
+                .graph(&exec, query.clone(), page(100))
+                .await
+                .expect("prepared historical operations must not use interactive reconstruction");
+            assert_eq!(actual.data, expected.data);
+            assert_eq!(
+                files(),
+                before_files,
+                "historical residents must not be copied into the selected slot"
+            );
+            for repo in [&first, &second] {
+                fs::remove_dir_all(
+                    cache_slot(root.path(), oid(repo.op_id())).join("index/segments"),
+                )
+                .unwrap();
+            }
+            assert_eq!(
+                reader
+                    .graph(&exec, query.clone(), page(100))
+                    .await
+                    .unwrap()
+                    .data,
+                expected.data
+            );
+            assert_eq!(*f.session.snapshot().await.unwrap().manifest(), before);
+            f.session
+                .change_token(&TokenRequest {
+                    request_id: m::RequestId::new([218; 16]),
+                    expected: f.session.snapshot().await.unwrap().manifest().snapshot(),
+                    change: TokenChange::Revoke {
+                        token: f.reader.id(),
+                    },
+                })
+                .await
+                .unwrap();
+            assert_eq!(
+                reader.graph(&exec, query, page(100)).await.unwrap_err(),
+                q::Error::Denied
+            );
+        })
+        .await;
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn cold_historical_indexes_leave_the_primary_generation_immutable() {
+    tokio::task::LocalSet::new()
+        .run_until(async {
+            let f = Fixture::new().await;
+            let local = tempfile::tempdir().unwrap();
+            let work = tempfile::tempdir().unwrap();
+            let root = tempfile::tempdir().unwrap();
+            let (repo, a) = initial(&f, local.path(), work.path()).await;
+            let (repo, b) = child(&repo, &a, "B").await;
+            let (repo, _) = child(&repo, &b, "C").await;
+            let read = pin(&f, oid(repo.op_id())).await;
+            let exec = executor(root.path(), q::Limits::default());
+            read.prepare_index(&exec, q::Cancellation::default())
+                .await
+                .unwrap();
+            let path = cache_slot(root.path(), oid(repo.op_id()));
+            let files = || {
+                serde_json::from_slice::<serde_json::Value>(
+                    &fs::read(path.join("query-cache.json")).unwrap(),
+                )
+                .unwrap()["files"]
+                    .clone()
+            };
+            let before = files();
+            let mut request = log("at_operation(@-, all()) | at_operation(@--, all())");
+            if let q::Request::Log { workspace, .. } = &mut request {
+                *workspace = Some("fixture".into());
+            }
+            let first = read.graph(&exec, request.clone(), page(100)).await.unwrap();
+            assert_eq!(
+                files(),
+                before,
+                "cold historical construction changed the retained primary index"
+            );
+            let warm = read.graph(&exec, request, page(100)).await.unwrap();
+            assert_eq!(warm.data, first.data);
+            assert!(
+                warm.stats.object_reads < first.stats.object_reads,
+                "historical indexes should be reused across requests: first={:?}, warm={:?}",
+                first.stats,
+                warm.stats
+            );
+            assert!(fs::read_dir(cache_root(root.path())).unwrap().all(|e| {
+                !e.unwrap()
+                    .file_name()
+                    .to_string_lossy()
+                    .starts_with(".reserved-")
+            }));
+        })
+        .await;
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn private_historical_construction_reserves_quota_without_blocking_warm_graphs() {
+    tokio::task::LocalSet::new()
+        .run_until(async {
+            // One entry forces disk eviction; two retain the primary slot while
+            // construction is charged. Both must leave warm memory usable.
+            for max_entries in [2, 1] {
+                let f = Fixture::new().await;
+                let local = tempfile::tempdir().unwrap();
+                let work = tempfile::tempdir().unwrap();
+                let root = tempfile::tempdir().unwrap();
+                let (old, a) = initial(&f, local.path(), work.path()).await;
+                let (repo, _) = child(&old, &a, "later").await;
+                let read = pin(&f, oid(repo.op_id())).await;
+                let policy = q::cache::Policy {
+                    max_entries,
+                    ..Default::default()
+                };
+                let exec = q::GraphExecutor::with_cache_policy(
+                    root.path().to_owned(),
+                    q::Limits::default(),
+                    2,
+                    policy,
+                )
+                .unwrap();
+                let current = log("all() ~ root()");
+                let expected = read.graph(&exec, current.clone(), page(100)).await.unwrap();
+                let path = cache_slot(root.path(), oid(repo.op_id()));
+                let before = serde_json::from_slice::<serde_json::Value>(
+                    &fs::read(path.join("query-cache.json")).unwrap(),
+                )
+                .unwrap()["files"]
+                    .clone();
+                let gate = Arc::new(OneShotCommitRead {
+                    gate: HeldCommitRead {
+                        inner: f.store.clone(),
+                        target: m::ObjectKey::Commit(cid(a.id())).storage_path(REPO),
+                        entered: Default::default(),
+                        release: Default::default(),
+                    },
+                    entered_once: Default::default(),
+                });
+                let mut historical = log("at_operation(@-, all())");
+                if let q::Request::Log { workspace, .. } = &mut historical {
+                    *workspace = Some("fixture".into());
+                }
+                let pending = {
+                    let exec = exec.clone();
+                    let read = read.clone();
+                    let gate = gate.clone();
+                    tokio::spawn(
+                        async move { exec.execute(gate, read, historical, page(100)).await },
+                    )
+                };
+                let entered =
+                    tokio::time::timeout(Duration::from_secs(2), gate.gate.entered.notified())
+                        .await;
+                let reservations: Vec<_> = fs::read_dir(cache_root(root.path()))
+                    .unwrap()
+                    .map(|e| e.unwrap().path())
+                    .filter(|p| {
+                        p.file_name()
+                            .unwrap()
+                            .to_string_lossy()
+                            .starts_with(".reserved-")
+                    })
+                    .collect();
+                let warm = read.graph(&exec, current, page(100)).await;
+                // Always release the blocked worker before reporting assertions.
+                gate.gate.release.notify_one();
+                let built = pending.await.unwrap();
+                entered.expect("historical construction did not reach its gated commit");
+                built.unwrap();
+                assert_eq!(reservations.len(), 1);
+                assert!(
+                    !reservations[0].exists(),
+                    "private scratch survived construction"
+                );
+                let warm = warm.expect("historical construction blocked an immutable warm graph");
+                assert_eq!(warm.data, expected.data);
+                if max_entries == 2 {
+                    assert_eq!(warm.cache.retained_entries, 2);
+                    assert!(warm.cache.retained_bytes >= policy.max_entry_bytes);
+                    assert_eq!(
+                        serde_json::from_slice::<serde_json::Value>(
+                            &fs::read(path.join("query-cache.json")).unwrap(),
+                        )
+                        .unwrap()["files"],
+                        before
+                    );
+                } else {
+                    assert!(
+                        !path.exists(),
+                        "private construction did not honor the one-entry quota"
+                    );
+                }
+            }
+        })
+        .await;
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn cold_primary_construction_releases_namespace_and_preserves_other_generations() {
+    tokio::task::LocalSet::new()
+        .run_until(async {
+            for same_operation in [false, true] {
+                let f = Fixture::new().await;
+                let local = tempfile::tempdir().unwrap();
+                let work = tempfile::tempdir().unwrap();
+                let root = tempfile::tempdir().unwrap();
+                let (old, a) = initial(&f, local.path(), work.path()).await;
+                let (repo, b) = child(&old, &a, "later").await;
+                let selected = if same_operation {
+                    oid(repo.op_id())
+                } else {
+                    oid(old.op_id())
+                };
+                let older = pin(&f, selected).await;
+                let newer = pin(&f, oid(repo.op_id())).await;
+                let before = f.session.snapshot().await.unwrap().manifest().clone();
+                let exec = executor(root.path(), q::Limits::default());
+                let separate = executor(root.path(), q::Limits::default());
+                let gate = Arc::new(OneShotCommitRead {
+                    gate: HeldCommitRead {
+                        inner: f.store.clone(),
+                        target: m::ObjectKey::Commit(cid(b.id())).storage_path(REPO),
+                        entered: Default::default(),
+                        release: Default::default(),
+                    },
+                    entered_once: Default::default(),
+                });
+                let pending = {
+                    let exec = exec.clone();
+                    let gate = gate.clone();
+                    let newer = newer.clone();
+                    tokio::spawn(async move {
+                        exec.prepare_index(gate, newer, q::Cancellation::default())
+                            .await
+                    })
+                };
+                let entered =
+                    tokio::time::timeout(Duration::from_secs(2), gate.gate.entered.notified())
+                        .await;
+                let cold = older
+                    .graph(&separate, log("all() ~ root()"), page(100))
+                    .await;
+                gate.gate.release.notify_one();
+                let prepared = pending.await.unwrap();
+                entered.unwrap();
+                let prepared = prepared.unwrap();
+                assert_eq!(
+                    prepared.cache.retained_entries,
+                    if same_operation { 1 } else { 2 }
+                );
+                let cold = cold.expect("cold primary construction held the shared namespace");
+                assert_eq!(cold.operation, selected);
+                assert!(cold.cache.retained_bytes >= q::cache::Policy::default().max_entry_bytes);
+                let old_path = cache_slot(root.path(), selected);
+                let new_path = cache_slot(root.path(), oid(repo.op_id()));
+                if same_operation {
+                    assert_eq!(old_path, new_path);
+                } else {
+                    assert_ne!(
+                        old_path, new_path,
+                        "completion overwrote another generation"
+                    );
+                }
+                assert_eq!(
+                    older
+                        .graph(&separate, log("all() ~ root()"), page(100))
+                        .await
+                        .unwrap()
+                        .data,
+                    cold.data
+                );
+                assert_eq!(
+                    newer
+                        .graph(&exec, log("all()"), page(100))
+                        .await
+                        .unwrap()
+                        .operation,
+                    oid(repo.op_id())
+                );
+                assert_eq!(*f.session.snapshot().await.unwrap().manifest(), before);
+                assert!(fs::read_dir(cache_root(root.path())).unwrap().all(|e| {
+                    !e.unwrap()
+                        .file_name()
+                        .to_string_lossy()
+                        .starts_with(".reserved-")
+                }));
+            }
+        })
+        .await;
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn canceled_primary_installation_releases_its_reservation_while_namespace_is_busy() {
+    tokio::task::LocalSet::new()
+        .run_until(async {
+            let f = Fixture::new().await;
+            let local = tempfile::tempdir().unwrap();
+            let work = tempfile::tempdir().unwrap();
+            let root = tempfile::tempdir().unwrap();
+            let (repo, a) = initial(&f, local.path(), work.path()).await;
+            let read = pin(&f, oid(repo.op_id())).await;
+            let exec = executor(root.path(), q::Limits::default());
+            let cancellation = q::Cancellation::default();
+            let gate = Arc::new(OneShotCommitRead {
+                gate: HeldCommitRead {
+                    inner: f.store.clone(),
+                    target: m::ObjectKey::Commit(cid(a.id())).storage_path(REPO),
+                    entered: Default::default(),
+                    release: Default::default(),
+                },
+                entered_once: Default::default(),
+            });
+            let mut pending = {
+                let exec = exec.clone();
+                let gate = gate.clone();
+                let read = read.clone();
+                let cancellation = cancellation.clone();
+                tokio::spawn(async move { exec.prepare_index(gate, read, cancellation).await })
+            };
+            let entered =
+                tokio::time::timeout(Duration::from_secs(2), gate.gate.entered.notified()).await;
+            let lock = fs::OpenOptions::new()
+                .read(true)
+                .write(true)
+                .open(cache_root(root.path()).join("lock"))
+                .unwrap();
+            let acquired = lock.try_lock();
+            gate.gate.release.notify_one();
+            let constructed = tokio::time::timeout(Duration::from_secs(2), async {
+                loop {
+                    let found = fs::read_dir(cache_root(root.path())).unwrap().any(|e| {
+                        e.unwrap()
+                            .path()
+                            .join("generation/index/op_links")
+                            .join(repo.op_id().hex())
+                            .is_file()
+                    });
+                    if found {
+                        break;
+                    }
+                    if pending.is_finished() {
+                        break;
+                    }
+                    tokio::time::sleep(Duration::from_millis(2)).await;
+                }
+            })
+            .await;
+            let held_until_canceled = !pending.is_finished();
+            cancellation.cancel();
+            let canceled = tokio::time::timeout(Duration::from_secs(2), &mut pending).await;
+            let prompt = canceled.is_ok();
+            // Release the foreign lock before any assertion, including timeout.
+            drop(lock);
+            let result = match canceled {
+                Ok(result) => result.unwrap(),
+                Err(_) => pending.await.unwrap(),
+            };
+            entered.unwrap();
+            acquired.unwrap();
+            constructed.unwrap();
+            assert!(prompt, "cancellation waited for the foreign namespace lock");
+            assert!(
+                held_until_canceled,
+                "construction completed while installation was locked"
+            );
+            assert_eq!(result.unwrap_err(), q::Error::Canceled);
+            assert!(fs::read_dir(cache_root(root.path())).unwrap().all(|e| {
+                !e.unwrap()
+                    .file_name()
+                    .to_string_lossy()
+                    .starts_with(".reserved-")
+            }));
+            read.prepare_index(&exec, q::Cancellation::default())
+                .await
+                .unwrap();
+        })
+        .await;
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn warm_filtered_graph_starts_while_another_operation_is_preparing() {
+    tokio::task::LocalSet::new()
+        .run_until(async {
+            let f = Fixture::new().await;
+            let local = tempfile::tempdir().unwrap();
+            let work = tempfile::tempdir().unwrap();
+            let root = tempfile::tempdir().unwrap();
+            let (repo, a) = initial(&f, local.path(), work.path()).await;
+            let old = pin(&f, oid(repo.op_id())).await;
+            let (later, b) = child(&repo, &a, "later").await;
+            let newer = pin(&f, oid(later.op_id())).await;
+            let exec = executor(root.path(), q::Limits::default());
+            let request = log("all() ~ root()");
+            let expected = old.graph(&exec, request.clone(), page(100)).await.unwrap();
+            let gate = Arc::new(HeldCommitRead {
+                inner: f.store.clone(),
+                target: m::ObjectKey::Commit(cid(b.id())).storage_path(REPO),
+                entered: Default::default(),
+                release: Default::default(),
+            });
+            let pending = {
+                let exec = exec.clone();
+                let gate = gate.clone();
+                tokio::spawn(async move {
+                    exec.prepare_index(gate, newer, q::Cancellation::default())
+                        .await
+                })
+            };
+            tokio::time::timeout(Duration::from_secs(2), gate.entered.notified())
+                .await
+                .unwrap();
+            let result = old.graph(&exec, request, page(100)).await;
+            gate.release.notify_one();
+            pending.await.unwrap().unwrap();
+            assert_eq!(
+                result
+                    .expect("a filtered warm graph must not need the namespace lock")
+                    .data,
+                expected.data
+            );
+        })
+        .await;
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
 async fn resident_indexes_preserve_multiple_historical_operation_scopes() {
     tokio::task::LocalSet::new()
         .run_until(async {
@@ -533,7 +1113,17 @@ async fn graph_cache_recovery_rechecks_permission_and_serializes_independent_exe
                 .unwrap();
             assert_eq!(recovered.data, healed.data);
             assert!(!abandoned.exists());
-            // A failed native query cannot leave partially updated derived files.
+            // Evaluation starts only after primary installation. A failed
+            // revset retains that complete immutable generation, without
+            // extending its verified file set or leaving partial construction.
+            let files = || {
+                serde_json::from_slice::<serde_json::Value>(
+                    &fs::read(path.join("query-cache.json")).unwrap(),
+                )
+                .unwrap()["files"]
+                    .clone()
+            };
+            let complete = files();
             assert!(matches!(
                 admin
                     .graph(&separate, log("@"), page(100))
@@ -541,7 +1131,16 @@ async fn graph_cache_recovery_rechecks_permission_and_serializes_independent_exe
                     .unwrap_err(),
                 q::Error::InvalidQuery(diagnostic) if diagnostic.kind == "missing_context"
             ));
-            assert_eq!(fs::read_dir(cache_root(root.path())).unwrap().count(), 1);
+            assert_eq!(files(), complete);
+            assert_eq!(fs::read_dir(cache_root(root.path())).unwrap().count(), 2);
+            assert_eq!(
+                admin
+                    .graph(&separate, log("all()"), page(100))
+                    .await
+                    .unwrap()
+                    .data,
+                recovered.data
+            );
             assert_eq!(*f.session.snapshot().await.unwrap().manifest(), before);
         })
         .await;

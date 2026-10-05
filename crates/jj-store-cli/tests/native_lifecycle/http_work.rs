@@ -142,6 +142,71 @@ async fn http_workstore_pages_commands_permissions_and_contract_capture() {
         json(&router, "work/browse?kind=tasks&state=active&q=body", None).await;
     assert_eq!(status, StatusCode::OK);
     assert_eq!(browse_tasks["tasks"][0]["comment_count"], 1);
+    let second_task = command(
+        129,
+        WorkCommandV1::CreateTask {
+            id: TaskId::new([129; 16]),
+            project: ProjectId::new([122; 16]),
+            expected_project_version: 1,
+            title: "Second task".into(),
+            body: "".into(),
+            repository: None,
+            parent: None,
+        },
+    );
+    assert_eq!(
+        json(&router, "work/commands", Some(&second_task)).await.0,
+        StatusCode::OK
+    );
+    let (status, task_activity) = json(&router, "work/activity?limit=1", None).await;
+    assert_eq!(status, StatusCode::OK, "{task_activity}");
+    assert_eq!(task_activity["groups"][0]["project"], value!(project));
+    assert!(task_activity["groups"][0]["repository"].is_null());
+    assert_eq!(task_activity["groups"][0]["tasks"], 1);
+    assert!(!task_activity.to_string().contains("Task body"));
+    assert!(!task_activity.to_string().contains("Native task"));
+    assert_eq!(task_activity["total_groups"], 2);
+    let activity_cursor = task_activity["next_cursor"].as_str().unwrap();
+    let third_task = command(
+        130,
+        WorkCommandV1::CreateTask {
+            id: TaskId::new([130; 16]),
+            project: ProjectId::new([123; 16]),
+            expected_project_version: 1,
+            title: "Later task".into(),
+            body: "".into(),
+            repository: None,
+            parent: None,
+        },
+    );
+    assert_eq!(
+        json(&router, "work/commands", Some(&third_task)).await.0,
+        StatusCode::OK
+    );
+    let (status, activity_resumed) = json(
+        &router,
+        &format!("work/activity?limit=1&cursor={activity_cursor}"),
+        None,
+    )
+    .await;
+    assert_eq!(status, StatusCode::OK, "{activity_resumed}");
+    assert_eq!(activity_resumed["snapshot"], task_activity["snapshot"]);
+    assert_eq!(activity_resumed["total_groups"], 2);
+    assert_eq!(
+        activity_resumed["groups"][0]["project"],
+        value!(ProjectId::new([122; 16]))
+    );
+    assert!(activity_resumed["next_cursor"].is_null());
+    for path in [
+        format!("work/activity?limit=2&cursor={activity_cursor}"),
+        format!("work/browse?limit=1&cursor={activity_cursor}"),
+    ] {
+        assert_eq!(json(&router, &path, None).await.0, StatusCode::BAD_REQUEST);
+    }
+    assert_eq!(
+        json(&router, "work/activity?limit=0", None).await.0,
+        StatusCode::BAD_REQUEST
+    );
     assert_eq!(
         json(&router, "work/browse?limit=0", None).await.0,
         StatusCode::BAD_REQUEST
@@ -181,6 +246,8 @@ async fn http_workstore_pages_commands_permissions_and_contract_capture() {
     assert_eq!(fixture.session.snapshot().await.unwrap().digest(), before);
     if let Some(path) = std::env::var_os("JJ_STORE_WORK_CONTRACT_CAPTURE") {
         let samples = [
+            ("/v1/repos/{repo}/work/activity", "get", task_activity),
+            ("/v1/repos/{repo}/work/activity", "get", activity_resumed),
             ("/v1/repos/{repo}/work/browse", "get", browse_projects),
             ("/v1/repos/{repo}/work/browse", "get", browse_tasks),
             ("/v1/repos/{repo}/work", "get", first_page),

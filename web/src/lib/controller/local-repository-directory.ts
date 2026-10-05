@@ -11,41 +11,25 @@ export async function readLocalRepositoryDirectory(
   const head = await source.snapshot();
   signal?.throwIfAborted();
   const [tasks, reviews] = await Promise.all([
-    work.browse({ kind: "tasks", limit: 256 }, signal),
-    source.reviewThreads(undefined, signal),
+    work.taskActivity!({ limit: 256 }, signal),
+    source.reviewActivity!(signal),
   ]);
   signal?.throwIfAborted();
-  const graph =
+  const summary =
     head.heads.length === 1
-      ? await source.graph("log", {
-          operation: head.heads[0]!,
-          limit: 50,
-          signal,
-        })
+      ? await source.codeSummary!(head.heads[0]!, signal)
       : null;
-  if (graph) assertPinned(graph.snapshot, source, head.heads[0]!);
+  if (summary) assertPinned(summary.snapshot, source, head.heads[0]!);
   signal?.throwIfAborted();
-  const commits =
-    graph?.data.data.graph === "log"
-      ? graph.data.data.nodes
-          .map((n) => n.commit)
-          .filter((c) => !/^0+$/.test(c.id))
-      : [];
-  const latest = commits
-    .slice()
-    .sort(
-      (a, b) =>
-        Number(b.committer.timestamp.millis) -
-        Number(a.committer.timestamp.millis),
-    )[0];
+  const latest = summary?.data.latest;
   const dates = [
     ...(latest ? [latest.committer.timestamp.millis] : []),
-    ...tasks.tasks
+    ...tasks.groups
       .filter((t) => (t.repository ?? source.repository) === source.repository)
-      .map((t) => t.actor.updated_at_millis),
+      .map((group) => group.updated_at_millis),
   ];
   return {
-    code: graph?.snapshot ?? null,
+    code: summary?.snapshot ?? null,
     work: tasks.snapshot,
     review: reviews.snapshot,
     description:
@@ -57,11 +41,11 @@ export async function readLocalRepositoryDirectory(
     updatedAtMillis: dates.length
       ? dates.reduce((max, v) => (v > max ? v : max))
       : null,
-    commits: commits.length,
-    commitsPartial: Boolean(graph?.next_cursor),
-    threads: reviews.threads,
-    reviewsPartial: Boolean(reviews.next_cursor),
-    tasks: tasks.tasks,
+    commits: Number(summary?.data.commits ?? 0),
+    commitsPartial: summary?.data.commits_partial ?? head.heads.length > 1,
+    reviews: Number(reviews.activity.threads),
+    reviewsPartial: reviews.activity.threads_partial,
+    taskGroups: tasks.groups,
     tasksPartial: Boolean(tasks.next_cursor),
   };
 }

@@ -1,5 +1,40 @@
 # CLI and server commands
 
+Focused native reference regressions compare exact, forward/backward and deep
+visible windows with the ordinary reader, while retaining divergence, conflict
+terms, virtual roots, hidden-predecessor exclusion and workspace labels. The
+actual HTTP path preserves pinned cold preparation recovery and signed cursors
+across later publication. These delivery checks add no installed executable or
+CLI command and do not qualify combined Linux/RSS/browser/release scale.
+
+Prepared local comparison regressions retain exact ordinary operation
+differences and forward/backward change pages, short differing tails over deep
+shared history, missing Git objects, historical source replacement/retry and
+explicit visit limits. These isolated fixtures do not qualify Linux or release
+scale.
+
+Native lifecycle and filesystem-browser regressions cover finite code-summary
+head windows, damaged/missing local derived data, timestamp sample ordering,
+historical operation selection and source preservation. Actual native/local HTTP
+summary responses retain strict query bodies, fresh access and operation pins.
+These reads add no CLI command or installed executable change; complete
+Linux/native scale, production-browser and release qualification remain
+deferred.
+
+The native lifecycle and filesystem browser HTTP fixtures cover compact review
+activity windows, partial counts, accepted-event timestamps and explicit local
+historical companion selections. These focused transport proofs retain read
+admission and command receipts; they do not change the CLI or qualify combined
+scale, lifecycle or release gates.
+
+Native lifecycle and filesystem browser HTTP fixtures cover body-free WorkStore
+task activity groups, exact first/resumed pins and unchanged command receipts.
+Local fixture task links consume the actual CLI project receipt identity;
+request identities are never substituted for generated entity identities. These
+directory read routes add no CLI command, source mutation, installed executable
+change or real-RustFS qualification. Complete performance qualification remains
+the separate deferred slice.
+
 LocalTrusted installations with native storage own an independent conversion
 journal beside device registration. Preview captures a committed source
 operation, start retains the exact bounded archive before staging, and status
@@ -449,6 +484,23 @@ Native index-preparation fixtures cover cold-read admission, exact-operation
 preparation during later publications, cache loss/rebuild and shared-worker
 cancellation. These are native library tests, independent of browser task
 status.
+
+Native graph-cache fixtures require immutable primary receipts after cold
+historical predicates, reuse of their separate data-only residents, and filtered
+warm reads during primary preparation. A gated historical constructor proves its
+private allowance remains charged while the namespace is free, with cleanup
+after exit and warm reads surviving one-entry disk eviction. Private output
+verification rejects wrong operation links, checksums and unexpected files
+before the allocating JJ decoder. These focused regressions do not qualify
+scale, production memory or combined HTTP/browser behavior.
+
+Cold primary preparation fixtures pause a native commit read and require an
+independent unprepared graph to complete in the same namespace. Completion
+preserves that other generation and installs into a currently available slot;
+active reservations stay charged until cleanup. Final installation contention
+must retain request deadlines and cancellation, and must never replace another
+live reservation or publish native state. Failed admission after a staging
+rename must also remove the unretained slot and release its reservation.
 
 HTTP acceptance compares owned DTOs at exact operations, including binary media
 and error boundaries. Existing authenticated native-service fixtures retain the
@@ -1780,6 +1832,83 @@ nonblocking admission while a cache slot is busy, and retained
 charges/readability for an executing reader. Exact native cache and local
 preparation-task tests remain the direct delivery consumers; full pressure/RSS
 qualification is deferred.
+
+Native construction delivery regression MUST prepare a small repository within
+a64KiB cache policy, compare multiple historical operation scopes with ordinary
+pinned results, resume warm reads and leave the native manifest unchanged.
+Scratch tests MUST reject oversized ordered-table growth before retaining data
+and preserve forward/reverse/keyed ordering. Focused native graph and local
+prepared-read consumers remain required because they share the owned format
+writer. Complete scale/RSS and combined lifecycle qualification remain deferred.
+
+Historical native resident reuse regression MUST prepare the selected and
+ancestor operations independently, then evaluate multiple historical scopes with
+an inline threshold below each closure. Compare ordinary pinned semantics,
+assert that the selected slot's file receipt does not grow, and repeat the warm
+read. Direct corruption, binding, revocation and resident lifetime consumers
+remain part of focused delivery evidence; full scale qualification stays
+deferred.
+
+Native graph fixture coverage MUST distinguish missing-primary construction,
+warm resident reuse and existing-disk projection recovery after executor loss.
+Private recovery retains current native operation/view admission, hard/inline
+limits, selected visibility and cancellation cleanup while unrelated cache
+preparation proceeds. Focused fixture evidence does not qualify Linux/native
+scale, production browser or release behavior.
+
+Filesystem-browser preparation regressions cover retained operation-prefix
+selection, ambiguity, suffixes and small read budgets without source index
+repair. This adds no installed CLI command; complete scale/lifecycle and release
+qualification remains deferred.
+
+Local prepared-filter regression MUST compare Unicode whole-string substring
+matching, short and sparse filters, hidden rewrites, divergence, removed
+bookmark terms and forward/backward/deep windows with the ordinary reader under
+a smaller history-visit budget. Prove selected-only source hydration with an
+unrelated Git body unavailable and source/prepared index files unavailable after
+admission. Owned projection regressions additionally cover compressed block
+seeks, checksums, operation selection, growth admission and canceled/budgeted
+queries. Actual local HTTP evidence MUST retain cold exact-operation recovery,
+prepared retry and query-bound signed forward/backward cursors. Complete
+large-repository and production browser qualification remains deferred.
+
+Native prepared-filter regression MUST compare 108 bookmark/change/all windows
+against complete ordinary pinned results across Unicode, sparse/missing text,
+hidden predecessors, divergent visible targets, removed bookmark terms and both
+directions with arbitrary anchors. An ordinary history budget below the fixture
+closure must still serve the prepared page while reading only its selected
+target bodies. Preserve unfiltered and small-cache bounded behavior.
+
+Native filtered-cache acceptance MUST upgrade an index-only generation through
+explicit preparation and verify pinned cold recovery, executor loss and restart.
+When another readonly reader owns its disk generation, failed inline recovery
+must leave the files and byte charge intact. Successful recovery replaces the
+same slot without duplicate accounting. Pressure tests must hold an executing
+reader while a third operation needs a two-slot cache, reclaim an idle filtered
+resident and preserve the executing reader's exact rows, files and charge. Unit
+evidence must refuse deleting or uncharging active pinned slots and skip them
+when another generation is removable. Complete process/fault/RSS and
+large-repository qualification stays deferred.
+
+Focused native HTTP evidence must cover filtered cold recovery through the
+explicit index task, compare unfiltered first-page identities, and preserve
+query-bound signed forward/backward cursors across later publication. The
+original snapshot remains selected; complete contract/browser qualification is
+still separate.
+
+Native admission arithmetic must distinguish bounded reader memory from complete
+filter-file disk quota for a two-million-row index, without raising the process
+pool. This private regression proves retention arithmetic, not measured RSS or
+large-repository serving.
+
+Cold native cache regressions MUST prove namespace admission does not charge
+complete file hashing and that another reader can open the namespace during the
+digest phase while the full actual-size reservation or pinned slot remains
+charged. Prove checksum failure before native reads, automatic private rebuild,
+shared corruption preservation, cancellation/work failure cleanup and the
+coarse-metadata final proof before installation. Existing cold recovery,
+preparation, filter upgrade and pinned-query consumers remain focused gates;
+complete scale/browser/fault qualification stays deferred.
 
 ## Freshness producer ownership
 

@@ -1,5 +1,10 @@
 # Typed mutations
 
+Code-card head summaries are read-only projections of explicitly selected
+operation/view references. They do not reconcile ambiguous heads, snapshot dirty
+files, initialize metadata or publish code/collaboration state. Limited windows
+and unloaded ancestors never authorize an inferred complete history count.
+
 Independent conversion stages typed historical domain snapshots without altering
 the source. Translation maps immutable repository-bound references explicitly;
 only the destination provider may select these audited roots. Original source
@@ -51,13 +56,20 @@ change task versions or grant access to linked code; old edited and tombstoned
 targets fail closed.
 
 Collaboration read optimization does not change publication or receipt behavior.
-Shared data caches retain only validated immutable domain selections and graphs.
-Request authorization and complete captured manifest envelopes remain fresh;
-scoped reads still validate all retained dependencies of their selected domain.
-Saturated retention may validate an extra root request-locally under existing
-per-pin and concurrency budgets; a small cache cannot disable a valid query.
-Neither warm reads nor derived directory/reaction indexes stage or publish
-state.
+Review activity reuse stores numeric facts only after successful derivation from
+an admitted immutable selection. Fresh provider closure admission, request
+authorization and current snapshot capture precede lookup; cache retention never
+becomes a command base or hides missing evidence or tighter source limits.
+Compact review activity derives only count and accepted-event time facts from
+admitted thread selections. It retains provider closure audits and fresh access
+checks, stages no objects and creates neither an actor nor a repository
+identity. Shared data caches retain only validated immutable domain selections
+and graphs. Request authorization and complete captured manifest envelopes
+remain fresh; scoped reads still validate all retained dependencies of their
+selected domain. Saturated retention may validate an extra root request-locally
+under existing per-pin and concurrency budgets; a small cache cannot disable a
+valid query. Neither warm reads nor derived directory/reaction indexes stage or
+publish state.
 
 WorkStore browse and detail pins share immutable root data and derived ordered
 keys, counts and searchable fields. Query continuations retain keys rather than
@@ -65,6 +77,19 @@ prehydrated rows; fresh request authorization, inventory admission and epoch
 checks still apply. These read-only projections never retain request principals,
 guards, credentials or accepted command state, and do not change publication,
 durable receipts or domain capacities.
+
+Repository-directory task activity shares these data-only root projections and
+retains complete counts/timestamps for returned repository/project groups.
+Native pages recheck current permission, epoch and inventory admission; local
+pages retain committed companion membership and current folder binding checks.
+Neither aggregate pages nor card refreshes initialize an actor, publish a root,
+replay a command or authorize linked-code access.
+
+Local WorkStore browse/activity/detail reuse retains parsed immutable state and
+derived query keys only. Complete companion membership, the admitted domain blob
+and current folder identity remain fresh. Commands, reaction admission,
+conversion and receipt recovery keep their existing reconstruction paths; this
+read cache does not become a mutation base or retain a provider/actor handle.
 
 Application content search caches only validated immutable Thread/Work fields
 and ordered document keys. Returned snippets, viewer authorization and captured
@@ -340,6 +365,14 @@ cannot create a mutation session or select an uncommitted inventory.
 Committed reads can request owned object DTOs, directory pages and verified file
 streams. These operations share the same captured membership and current policy
 checks as graph reads and expose no publication or staging method.
+
+Native prepared reference windows share graph/content worker admission with
+typed mutation previews. Their cached keys and visibility grant no command or
+publication capability. Selected-target hydration and resumed signed windows
+retain fresh committed membership, current policy and epoch checks. Cold
+reference recovery prepares only a disposable exact-operation generation;
+cancellation drains its read worker and cannot replay or discard accepted
+command receipts.
 
 Directory continuation pins share the graph cursor authority boundary. A fresh
 currently authenticated session is required on every page, and no cursor can

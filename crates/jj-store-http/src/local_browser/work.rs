@@ -16,10 +16,18 @@ struct BrowseQuery {
     metadata_commit: repo::MetadataCommit,
     query: service::WorkBrowseQuery,
 }
+#[derive(Deserialize, Serialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+#[schemars(rename = "LocalWorkActivityQuery")]
+struct ActivityQuery {
+    metadata_commit: repo::MetadataCommit,
+    query: service::WorkActivityQuery,
+}
 macro_rules! endpoints {
     ($register:ident) => { $register! {
         (post, "/local/repos/{repo}/work/page", page, "local_work_page", PageQuery, repo::LocalWorkPage),
         (post, "/local/repos/{repo}/work/browse", browse, "local_work_browse", BrowseQuery, repo::LocalWorkBrowsePage),
+        (post, "/local/repos/{repo}/work/activity", activity, "local_work_activity", ActivityQuery, repo::LocalWorkActivityPage),
         (post, "/local/repos/{repo}/work/commands", apply, "local_work_apply", service::Request, repo::LocalWorkOutcome),
         (get, "/local/repos/{repo}/work/commands/{request_id}", status, "local_work_status", routes::Empty, repo::LocalWorkOutcome)
     } };
@@ -198,6 +206,31 @@ async fn apply(
     Ok(state
         .json(&outcome)
         .unwrap_or_else(|_| pending.response().unwrap()))
+}
+async fn activity(
+    ExtractState(state): ExtractState<Arc<State>>,
+    Path(repository): Path<m::RepositoryId>,
+    args: routes::Input<routes::Empty>,
+    body: Body<ActivityQuery>,
+) -> Result<Response> {
+    routes::input(args)?;
+    let mut request = decode_body(body)?;
+    let generation = binding(&state, repository).await?.generation();
+    let raw = request.query.cursor.take();
+    let digest = digest("local-work-activity", &request)?;
+    request.query.cursor = resume(&state, raw, repository, generation, &digest)?;
+    let manager = manager(&state)?;
+    let mut page = blocking(&state, move || {
+        manager
+            .open(repository)
+            .map_err(map)?
+            .work_activity_at(request.metadata_commit, &request.query)
+            .map_err(Error::from)
+    })
+    .await?;
+    check(&state, repository, generation).await?;
+    page.next_cursor = continuation(&state, page.next_cursor, repository, generation, digest)?;
+    state.json(&page)
 }
 async fn status(
     ExtractState(state): ExtractState<Arc<State>>,

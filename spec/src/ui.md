@@ -24,6 +24,24 @@ metadata reloads only when shown after invalidation. Metadata loading and
 failures stay row-local, without blocking repository navigation or replaying
 dismissed error episodes.
 
+Repository activity counts consume bounded body-free task groups across metadata
+homes, preserving repository/project filters, maximum timestamps and partial
+state for missing homes or unloaded groups. A visible card does not request
+individual task summaries for its task count. Presentation and navigation remain
+unchanged. Review counts now consume a compact first-window activity summary,
+without review-thread presentation hydration. Native cards preserve sampled
+review dates, local cards retain their code/task date policy, and incomplete
+review counts keep the existing partial-activity indication. Lightweight code
+summaries and root-bound review activity reuse remain separate delivery work.
+
+Repository cards MUST consume bounded code-head summaries instead of requesting
+history graphs. Description/contributor/time follow the newest committer in the
+returned selected-view head window; code counts are lower bounds whenever
+unvisited ancestry or heads remain. The existing partial-activity indication
+must retain this uncertainty, including ambiguous operation-head selections.
+Task/review pins and their date policies remain independent. Full history is
+still available through the explicit repository history view.
+
 Repository General settings expose Admin-only format conversion when this
 installation has native storage. Preflight explains an independent destination,
 committed code and supported collaboration history; local export requires a new

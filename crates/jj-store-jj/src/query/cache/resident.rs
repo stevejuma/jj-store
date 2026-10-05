@@ -1,5 +1,7 @@
 //! Reuse verified immutable in-memory indexes, never unchecked on-disk bytes.
+mod additional;
 use super::*;
+pub(in crate::query) use additional::Data;
 use std::sync::{
     Mutex,
     atomic::{AtomicU64, Ordering},
@@ -79,7 +81,7 @@ pub(in super::super) struct Saved {
     pub operation: m::OperationId,
     pub(super) verification: Verification,
     weight: u64,
-    policy: Policy,
+    pub(super) index_bytes: u64,
     retained: Arc<AtomicU64>,
     report: Mutex<Report>,
     pub(super) memory: Arc<super::super::memory::Indexes>,
@@ -90,6 +92,15 @@ impl Drop for Saved {
     }
 }
 impl Saved {
+    pub fn data(&self) -> Data {
+        Data {
+            index: self.index.clone(),
+            memory: self.memory.clone(),
+        }
+    }
+    pub fn reader(&self, budget: Arc<Budget>) -> Result<Box<dyn jj_lib::index::ReadonlyIndex>> {
+        self.data().reader(budget)
+    }
     pub fn report(&self) -> Report {
         Report {
             state: State::Reused,
@@ -100,29 +111,53 @@ impl Saved {
     pub(super) fn update_report(&self, report: Report) {
         *self.report.lock().unwrap() = report;
     }
-    /// Additional native operation loaders read disk, so they must reverify it.
-    pub fn verify_disk(&self, budget: &Budget) -> Result<()> {
-        let (files, _) = inventory(&self.path, self.policy, budget, true)?;
-        if files != self.verification.files {
-            return Err(Error::Unavailable);
-        }
-        Ok(())
-    }
 }
 #[derive(Default)]
 pub(in super::super) struct Residents {
     entries: Mutex<Vec<Arc<super::super::memory::Retained<Saved>>>>,
     retained: Arc<AtomicU64>,
+    additional: additional::AdditionalResidents,
 }
 impl Residents {
+    pub(in crate::query) fn reclaim_filtered(&self) -> bool {
+        let entries = self.entries.lock().unwrap().clone();
+        let mut reclaimed = false;
+        for entry in entries {
+            reclaimed |= entry.evict_idle_if(|saved| saved.index.has_reference_filter());
+        }
+        reclaimed | self.additional.reclaim_filtered()
+    }
+    pub(in crate::query) fn get_additional(
+        &self,
+        access: &dyn ReadAccess,
+        operation: m::OperationId,
+    ) -> Option<Data> {
+        self.additional.get(access, operation)
+    }
+    pub(in crate::query) fn remember_additional(
+        &self,
+        access: &dyn ReadAccess,
+        operation: m::OperationId,
+        data: Data,
+        policy: Policy,
+    ) {
+        self.additional.remember(access, operation, data, policy);
+    }
     pub(in super::super) fn get_memory(&self, access: &dyn ReadAccess) -> Option<Arc<Saved>> {
+        self.get_memory_at(access, access.operation())
+    }
+    pub(in super::super) fn get_memory_at(
+        &self,
+        access: &dyn ReadAccess,
+        operation: m::OperationId,
+    ) -> Option<Arc<Saved>> {
         let mut entries = self.entries.lock().unwrap();
         entries.retain(|entry| entry.present());
         let (index, saved) = entries.iter().enumerate().find_map(|(index, slot)| {
             slot.get_if(|e| {
                 e.repository == access.repository()
                     && e.epoch == access.epoch()
-                    && e.operation == access.operation()
+                    && e.operation == operation
             })
             .map(|saved| (index, saved))
         })?;
@@ -168,17 +203,13 @@ impl Residents {
         path: PathBuf,
         access: &dyn ReadAccess,
         files: BTreeMap<String, File>,
-        bytes: u64,
+        index_bytes: u64,
         policy: Policy,
         budget: &Budget,
         report: Report,
     ) -> Result<()> {
         // Account Vec capacity slack, per-file/index metadata, names and hashes.
-        let weight = bytes
-            .saturating_mul(2)
-            .saturating_add(index.weight())
-            .saturating_add(files.len() as u64 * 1024)
-            .saturating_add(files.keys().map(|name| name.len() as u64 * 2).sum::<u64>());
+        let weight = resident_weight(index_bytes, index.weight(), &files);
         let ceiling = policy.max_total_bytes.min(super::super::memory::LIMIT);
         if weight > ceiling {
             return Ok(());
@@ -211,11 +242,58 @@ impl Residents {
             operation: access.operation(),
             verification,
             weight,
-            policy,
+            index_bytes,
             retained: self.retained.clone(),
             report: Mutex::new(report),
             memory: budget.index_memory.clone(),
         })));
         Ok(())
+    }
+}
+
+fn resident_weight(index_bytes: u64, projection: u64, files: &BTreeMap<String, File>) -> u64 {
+    // Framed JJ allocations and the bounded database cache have their own
+    // leases. The complete filter file belongs to disk quota, not resident RAM.
+    index_bytes
+        .saturating_add(projection)
+        .saturating_add(files.len() as u64 * 1024)
+        .saturating_add(files.keys().map(|name| name.len() as u64 * 2).sum::<u64>())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn native_resident_admission_counts_index_allocations_and_bounded_filter_cache() {
+        let commits = 2_000_000u64;
+        let index_bytes = commits * 104 * 2 + 1024 * 1024;
+        let projection = commits * 192 + 1024 * 1024 + 16 * 1024 * 1024 + 65536;
+        let mut files = BTreeMap::from([
+            (
+                "index/segments/native".into(),
+                File {
+                    bytes: commits * 104,
+                    digest: "a".repeat(128),
+                },
+            ),
+            (
+                "index/local-reference-filter".into(),
+                File {
+                    bytes: 1024 * 1024 * 1024,
+                    digest: "b".repeat(128),
+                },
+            ),
+        ]);
+        let weight = resident_weight(index_bytes, projection, &files);
+        assert!(
+            weight + 128 * 1024 * 1024 < super::super::super::memory::LIMIT,
+            "disk-only filter bytes prevented a bounded resident: {weight}"
+        );
+        files.get_mut("index/local-reference-filter").unwrap().bytes += 512 * 1024 * 1024;
+        assert_eq!(
+            resident_weight(index_bytes, projection, &files),
+            weight,
+            "disk growth is covered by slot quota, not additional resident RAM"
+        );
     }
 }

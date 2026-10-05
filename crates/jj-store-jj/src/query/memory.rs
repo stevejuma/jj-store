@@ -97,8 +97,24 @@ struct Held {
 #[derive(Default)]
 pub(crate) struct Indexes(Mutex<Held>);
 impl Indexes {
+    pub(crate) fn directory_bytes(&self) -> u64 {
+        self.0
+            .lock()
+            .expect("index memory")
+            .directories
+            .values()
+            .map(|(bytes, _)| *bytes)
+            .sum()
+    }
     pub(crate) fn include(&self, prior: Arc<Self>) {
-        self.0.lock().expect("index memory").parents.push(prior);
+        let mut held = self.0.lock().expect("index memory");
+        if !held
+            .parents
+            .iter()
+            .any(|parent| Arc::ptr_eq(parent, &prior))
+        {
+            held.parents.push(prior);
+        }
     }
     pub(crate) fn reserve(
         &self,

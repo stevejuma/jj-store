@@ -42,6 +42,9 @@ fn selection(pin: &Pin, operation: m::OperationId, budget: &Budget) -> Result<[u
     Ok(hash.digest.finalize().into())
 }
 pub(super) struct Resident {
+    operations: prepared::operations::Lookup,
+    filter: prepared::filters::Reader,
+    commits: super::comparison::Graph,
     index: DefaultReadonlyIndex,
     visibility: Arc<super::visibility::Visibility>,
     selection: [u8; 32],
@@ -78,6 +81,8 @@ pub(super) async fn load(
         &mut || source.budget.work(1),
     )?;
     let memory = Lease::reserve(weight.saturating_add(source.shallow.len() as u64 * 128))?;
+    let graph_memory = Lease::reserve(size.checked_add(8192).ok_or(Error::Limit)?)?;
+    let mut graph_bytes = Vec::with_capacity(usize::try_from(size).map_err(|_| Error::Limit)?);
     let mut input = fs::File::open(segment.path()).map_err(|_| Error::Incomplete)?;
     let mut digest = Blake2b512::new();
     let mut buffer = vec![0; 64 * 1024];
@@ -94,6 +99,7 @@ pub(super) async fn load(
         }
         source.budget.read_bytes(n)?;
         digest.update(&buffer[..n]);
+        graph_bytes.extend_from_slice(&buffer[..n]);
     }
     let hash = digest.finalize();
     if read != size || segment.file_name().to_str() != Some(&format!("{hash:x}")) {
@@ -144,6 +150,33 @@ pub(super) async fn load(
         return Err(Error::IndexBudget);
     }
     Ok(Resident {
+        filter: prepared::filters::Reader::load(
+            directory.path(),
+            operation,
+            source
+                .limits
+                .max_commits
+                .checked_add(
+                    usize::try_from(source.limits.max_metadata_records)
+                        .map_err(|_| Error::Limit)?,
+                )
+                .ok_or(Error::Limit)?,
+            |amount| source.budget.work(amount),
+            |bytes| source.budget.read_bytes(bytes),
+        )?,
+        commits: super::comparison::Graph::load(
+            graph_bytes,
+            graph_memory,
+            source.limits.max_commits,
+            |amount| source.budget.work(amount),
+        )?,
+        operations: prepared::operations::Lookup::load(
+            directory.path(),
+            operation,
+            source.limits.max_metadata_records,
+            |amount| source.budget.work(amount),
+            |bytes| source.budget.read_bytes(bytes),
+        )?,
         visibility: super::visibility::Visibility::build(&index, source).await?,
         selection: selection(&source.pin, operation, &source.budget)?,
         index,
@@ -155,6 +188,54 @@ pub(super) async fn load(
 }
 
 impl Prepared {
+    pub(in super::super) fn reference_filter(&self) -> &prepared::filters::Reader {
+        &self.resident.filter
+    }
+    pub(in super::super) fn operation_view_fingerprint(
+        &self,
+        id: m::OperationId,
+        budget: &Budget,
+    ) -> Result<Option<[u8; 32]>> {
+        self.resident
+            .operations
+            .view_fingerprint(id, |amount| budget.work(amount))
+    }
+    pub(in super::super) fn difference(
+        &self,
+        before: &BTreeSet<m::GitSha1Id>,
+        after: &BTreeSet<m::GitSha1Id>,
+        budget: &Budget,
+        maximum: usize,
+    ) -> Result<operations::SetDelta<m::GitSha1Id>> {
+        self.resident
+            .commits
+            .difference(before, after, budget, maximum)
+    }
+    pub(in super::super) fn change_identity(
+        &self,
+        id: m::GitSha1Id,
+        budget: &Budget,
+    ) -> Result<m::ChangeId> {
+        self.resident.commits.change(id, budget)
+    }
+    pub(in super::super) fn operation_fingerprint(
+        &self,
+        id: m::OperationId,
+        budget: &Budget,
+    ) -> Result<Option<[u8; 32]>> {
+        self.resident
+            .operations
+            .fingerprint(id, |amount| budget.work(amount))
+    }
+    pub(in super::super) fn resolve_operation(
+        &self,
+        prefix: &jj_lib::object_id::HexPrefix,
+        budget: &Budget,
+    ) -> Result<jj_lib::object_id::PrefixResolution<o::OperationId>> {
+        self.resident
+            .operations
+            .resolve(prefix, |amount| budget.work(amount))
+    }
     pub(in super::super) fn reference_changes(
         &self,
     ) -> &BTreeMap<String, super::visibility::VisibleChange> {
@@ -321,6 +402,14 @@ impl Executor {
                     budget.clone(),
                     limits,
                 );
+                if matches!(
+                    &request,
+                    Request::Graph(GraphRequest::OperationsFiltered { .. }, _)
+                ) {
+                    // Prefix membership comes from the prepared operation-ID
+                    // projection. Operation pages need no commit repository.
+                    return context.dispatch(operation, request, true).await;
+                }
                 if !matches!(&request, Request::Commit { .. } | Request::Graph(_, _)) {
                     // Indexed point membership admits only selected commits;
                     // their tree/file grants still cross the scoped backend.

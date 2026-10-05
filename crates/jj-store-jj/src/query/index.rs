@@ -1,4 +1,5 @@
 //! Admission on actual native index reads, without catalog enumeration.
+mod secondary;
 use super::*;
 use jj_lib::{
     default_backend_factories::default_backend_factories,
@@ -9,11 +10,7 @@ use jj_lib::{
     repo::RepoLoader,
     store::Store,
 };
-use std::{
-    fmt,
-    path::Path,
-    sync::atomic::{AtomicBool, Ordering},
-};
+use std::{fmt, path::Path, sync::Mutex};
 
 pub(super) struct Admission {
     commits: BTreeSet<m::CommitId>,
@@ -48,11 +45,14 @@ struct GuardedIndexStore {
     inner: DefaultIndexStore,
     budget: Arc<Budget>,
     path: PathBuf,
-    preparation_bytes: Option<u64>,
+    generation: PathBuf,
+    cache_policy: cache::Policy,
     resident: Option<Arc<cache::resident::Saved>>,
-    disk_verified: AtomicBool,
+    secondary: Arc<secondary::Secondary>,
+    primary: Mutex<Option<cache::resident::Data>>,
     access: Arc<dyn ReadAccess>,
     preparing: bool,
+    required_filter: bool,
 }
 impl fmt::Debug for GuardedIndexStore {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -72,34 +72,78 @@ impl IndexStore for GuardedIndexStore {
         self.budget
             .check()
             .map_err(|e| IndexStoreError::Read(Box::new(e)))?;
-        if let Some(bytes) = self.preparation_bytes
-            && !self
+        let selected = m::OperationId::from_slice(operation.id().as_bytes())
+            .map_err(|_| IndexStoreError::Read(Box::new(self.budget.fail(Error::Corrupt))))?;
+        if selected != self.access.operation() {
+            return self
+                .secondary
+                .read(operation, store)
+                .await
+                .map_err(|e| IndexStoreError::Read(Box::new(self.budget.fail(e))));
+        }
+        if let Some(data) = self.primary.lock().unwrap().clone() {
+            return data
+                .reader(self.budget.clone())
+                .map_err(|e| IndexStoreError::Read(Box::new(e)));
+        }
+        if let Some(saved) = &self.resident {
+            if self.required_filter && !saved.index.has_reference_filter() {
+                return Err(IndexStoreError::Read(Box::new(
+                    self.budget.fail(Error::IndexRebuildRequired),
+                )));
+            }
+            let data = saved.data();
+            *self.primary.lock().unwrap() = Some(data.clone());
+            return data
+                .reader(self.budget.clone())
+                .map_err(|e| IndexStoreError::Read(Box::new(e)));
+        }
+        let missing_filter = !self
+            .path
+            .join(super::prepared::filters::NAME)
+            .try_exists()
+            .map_err(|e| IndexStoreError::Read(Box::new(e)))?;
+        if self.required_filter && missing_filter && !self.preparing {
+            return Err(IndexStoreError::Read(Box::new(
+                self.budget.fail(Error::IndexRebuildRequired),
+            )));
+        }
+        if (self.preparing && self.cache_policy.reference_filters() && missing_filter)
+            || !self
                 .path
                 .join("op_links")
                 .join(operation.id().hex())
                 .try_exists()
                 .map_err(|e| IndexStoreError::Read(Box::new(e)))?
         {
-            super::prepared::build(&self.path, operation, store, &self.budget, bytes)
-                .await
-                .map_err(|e| IndexStoreError::Read(Box::new(self.budget.fail(e))))?;
+            let bytes = cache::construction_bytes(
+                self.path
+                    .parent()
+                    .ok_or_else(|| IndexStoreError::Read(Box::new(Error::Unavailable)))?,
+                self.cache_policy,
+                &self.budget,
+            )
+            .map_err(|e| IndexStoreError::Read(Box::new(self.budget.fail(e))))?;
+            super::prepared::build(
+                &self.path,
+                operation,
+                store,
+                &self.budget,
+                bytes,
+                !self.preparing,
+                self.preparing && self.cache_policy.reference_filters(),
+            )
+            .await
+            .map_err(|e| IndexStoreError::Read(Box::new(self.budget.fail(e))))?;
+            cache::constructed::verify_primary(
+                &self.path,
+                selected,
+                self.cache_policy,
+                &self.budget,
+            )
+            .map_err(|e| IndexStoreError::Read(Box::new(self.budget.fail(e))))?;
         }
-        let index = if let Some(resident) = &self.resident
-            && operation.id().as_bytes() == resident.operation.as_bytes()
-        {
-            resident.index.clone()
-        } else {
-            if let Some(resident) = &self.resident
-                && !self.disk_verified.load(Ordering::Acquire)
-            {
-                resident
-                    .verify_disk(&self.budget)
-                    .map_err(|e| IndexStoreError::Read(Box::new(self.budget.fail(e))))?;
-                // The namespace lock remains held. This job may now build more
-                // operation indexes; subsequent loads must not compare its own
-                // new files against the entry's original receipt.
-                self.disk_verified.store(true, Ordering::Release);
-            }
+        let data = {
             self.budget
                 .index_memory
                 .reserve(
@@ -111,18 +155,6 @@ impl IndexStore for GuardedIndexStore {
                 )
                 .map_err(|e| IndexStoreError::Read(Box::new(self.budget.fail(e))))?;
             let index = self.inner.get_index_at_op(operation, store).await?;
-            // Inline construction can add segments; retain their final weight
-            // before any result is cached beyond the request's own admission.
-            self.budget
-                .index_memory
-                .reserve(
-                    &self.path,
-                    store.commit_id_length(),
-                    store.change_id_length(),
-                    self.budget.limits.max_index_commits,
-                    || self.budget.work(1),
-                )
-                .map_err(|e| IndexStoreError::Read(Box::new(self.budget.fail(e))))?;
             let raw = index
                 .downcast_ref::<DefaultReadonlyIndex>()
                 .ok_or_else(|| {
@@ -146,28 +178,26 @@ impl IndexStore for GuardedIndexStore {
                 .view()
                 .await
                 .map_err(|e| IndexStoreError::Read(Box::new(e)))?;
-            projection::Prepared::build(
+            let index = projection::Prepared::build(
                 raw.clone(),
                 &view,
                 store,
                 self.access.as_ref(),
                 &self.budget,
+                &self.generation,
+                &self.path,
+                selected,
             )
             .await
-            .map_err(|e| IndexStoreError::Read(Box::new(self.budget.fail(e))))?
+            .map_err(|e| IndexStoreError::Read(Box::new(self.budget.fail(e))))?;
+            cache::resident::Data {
+                index,
+                memory: self.budget.index_memory.clone(),
+            }
         };
-        // Warm indexes need the same hard bound, even when no commits are read.
-        // Also applies to additional operations loaded by native predicates.
-        let count = index.num_commits() as usize;
-        if count > self.budget.limits.max_index_commits {
-            return Err(IndexStoreError::Read(Box::new(
-                self.budget.fail(Error::IndexBudget),
-            )));
-        }
-        self.budget
-            .check()
-            .map_err(|e| IndexStoreError::Read(Box::new(e)))?;
-        Ok(index.reader(self.budget.clone()))
+        *self.primary.lock().unwrap() = Some(data.clone());
+        data.reader(self.budget.clone())
+            .map_err(|e| IndexStoreError::Read(Box::new(e)))
     }
     fn write_index(
         &self,
@@ -183,16 +213,27 @@ pub(super) fn loader(
     stores: &NativeStores,
     settings: &UserSettings,
     path: &Path,
+    root: PathBuf,
     budget: Arc<Budget>,
-    preparation_bytes: Option<u64>,
+    cache_policy: cache::Policy,
     resident: Option<Arc<cache::resident::Saved>>,
+    residents: Arc<cache::resident::Residents>,
     access: Arc<dyn ReadAccess>,
     preparing: bool,
+    required_filter: bool,
 ) -> Result<RepoLoader> {
     stores
         .verify_cache_binding(path)
         .map_err(|_| Error::Unavailable)?;
+    let secondary = Arc::new(secondary::Secondary {
+        root,
+        policy: cache_policy,
+        residents,
+        access: access.clone(),
+        budget: budget.clone(),
+    });
     let mut factories = default_backend_factories();
+    let generation = path.to_owned();
     factories.merge(stores.factories());
     factories.add_index_store(
         "default",
@@ -201,11 +242,14 @@ pub(super) fn loader(
                 inner: DefaultIndexStore::load(path),
                 budget: budget.clone(),
                 path: path.to_owned(),
-                preparation_bytes,
+                generation: generation.clone(),
+                cache_policy,
                 resident: resident.clone(),
-                disk_verified: AtomicBool::new(false),
+                secondary: secondary.clone(),
+                primary: Mutex::default(),
                 access: access.clone(),
                 preparing,
+                required_filter,
             }))
         }),
     );
@@ -214,6 +258,7 @@ pub(super) fn loader(
 
 struct ResidentIndexStore {
     saved: Arc<cache::resident::Saved>,
+    secondary: Arc<secondary::Secondary>,
     budget: Arc<Budget>,
 }
 impl fmt::Debug for ResidentIndexStore {
@@ -229,22 +274,21 @@ impl IndexStore for ResidentIndexStore {
     async fn get_index_at_op(
         &self,
         operation: &Operation,
-        _: &Arc<Store>,
+        store: &Arc<Store>,
     ) -> IndexStoreResult<Box<dyn ReadonlyIndex>> {
         self.budget
             .check()
             .map_err(|e| IndexStoreError::Read(Box::new(e)))?;
-        let failure = if operation.id().as_bytes() != self.saved.operation.as_bytes() {
-            Some(Error::NotCommitted)
-        } else if self.saved.index.num_commits() as usize > self.budget.limits.max_index_commits {
-            Some(Error::IndexBudget)
-        } else {
-            None
-        };
-        if let Some(error) = failure {
-            return Err(IndexStoreError::Read(Box::new(self.budget.fail(error))));
+        if operation.id().as_bytes() != self.saved.operation.as_bytes() {
+            return self
+                .secondary
+                .read(operation, store)
+                .await
+                .map_err(|e| IndexStoreError::Read(Box::new(self.budget.fail(e))));
         }
-        Ok(self.saved.index.reader(self.budget.clone()))
+        self.saved
+            .reader(self.budget.clone())
+            .map_err(|e| IndexStoreError::Read(Box::new(e)))
     }
     fn write_index(
         &self,
@@ -261,8 +305,26 @@ pub(super) fn resident_loader(
     settings: &UserSettings,
     saved: Arc<cache::resident::Saved>,
     budget: Arc<Budget>,
+    root: PathBuf,
+    cache_policy: cache::Policy,
+    residents: Arc<cache::resident::Residents>,
+    access: Arc<dyn ReadAccess>,
 ) -> Result<RepoLoader> {
+    let secondary = Arc::new(secondary::Secondary {
+        root,
+        policy: cache_policy,
+        residents,
+        access,
+        budget: budget.clone(),
+    });
     stores
-        .resident_loader(settings, Arc::new(ResidentIndexStore { saved, budget }))
+        .resident_loader(
+            settings,
+            Arc::new(ResidentIndexStore {
+                saved,
+                secondary,
+                budget,
+            }),
+        )
         .map_err(|_| Error::Unavailable)
 }

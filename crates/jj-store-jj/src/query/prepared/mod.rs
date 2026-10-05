@@ -4,12 +4,16 @@
 //! Ordering and format follow jj-lib's Apache-2.0 default_index builder (format
 //! 6), with Kahn's queue ordered by committer timestamp then commit ID.
 mod disk;
+pub(crate) mod filters;
+pub(crate) mod operations;
 mod segment;
+mod tables;
 use super::{Error, Result, access::Budget};
 use disk::{Disk, Space, Table, io_error};
 use jj_lib::{backend, object_id::ObjectId as _, operation::Operation, store::Store};
 use redb::TableDefinition;
 use std::{path::Path, sync::Arc};
+use tables::Tables;
 
 const OPS: Table = TableDefinition::new("pending_ops");
 const SEEN_OPS: Table = TableDefinition::new("seen_ops");
@@ -24,6 +28,8 @@ const CHANGES: Table = TableDefinition::new("changes");
 const CHANGE_LOOKUP: Table = TableDefinition::new("change_lookup");
 const PARENT_OVERFLOW: Table = TableDefinition::new("parent_overflow");
 const CHANGE_OVERFLOW: Table = TableDefinition::new("change_overflow");
+const FILTER_CHANGES: Table = TableDefinition::new("filter_changes");
+const FILTER_BOOKMARKS: Table = TableDefinition::new("filter_bookmarks");
 
 fn number(bytes: &[u8]) -> Result<u32> {
     bytes
@@ -31,10 +37,10 @@ fn number(bytes: &[u8]) -> Result<u32> {
         .map(u32::from_be_bytes)
         .map_err(|_| Error::Corrupt)
 }
-fn required(disk: &Disk, table: Table, key: &[u8]) -> Result<Vec<u8>> {
+fn required(disk: &Tables, table: Table, key: &[u8]) -> Result<Vec<u8>> {
     disk.get(table, key)?.ok_or(Error::Incomplete)
 }
-fn count(disk: &Disk, table: Table, key: &[u8]) -> Result<u32> {
+fn count(disk: &Tables, table: Table, key: &[u8]) -> Result<u32> {
     disk.get(table, key)?.map_or(Ok(0), |n| number(&n))
 }
 
@@ -81,13 +87,24 @@ pub(super) async fn build(
     store: &Arc<Store>,
     budget: &Budget,
     max_bytes: u64,
+    inline: bool,
+    filtering: bool,
 ) -> Result<()> {
     let source = NativeSource {
         operation,
         store,
         budget,
+        inline,
+        filtering,
     };
-    build_from(path, operation.id(), &source, max_bytes).await
+    build_with_tables(
+        path,
+        operation.id(),
+        &source,
+        max_bytes,
+        inline || max_bytes < 32 * 1024 * 1024,
+    )
+    .await
 }
 
 /// Only the traversal calls these readers, with IDs reached from the admitted
@@ -96,15 +113,52 @@ pub(crate) struct CommitFields {
     pub parents: Vec<backend::CommitId>,
     pub change: backend::ChangeId,
     pub timestamp: i64,
+    pub description: Option<Description>,
+}
+pub(crate) struct Description {
+    pub text: String,
+    _memory: super::memory::Lease,
+}
+impl Description {
+    fn from_string(text: String) -> Result<Self> {
+        let memory = super::memory::Lease::reserve(4096 + text.len() as u64 * 2)?;
+        Ok(Self {
+            text,
+            _memory: memory,
+        })
+    }
+    pub fn from_bytes(bytes: &[u8]) -> Result<Self> {
+        // Lossy UTF-8 can expand each input byte to a three-byte replacement.
+        let memory = super::memory::Lease::reserve(4096 + bytes.len() as u64 * 6)?;
+        Ok(Self {
+            text: String::from_utf8_lossy(bytes).into_owned(),
+            _memory: memory,
+        })
+    }
 }
 
 pub(crate) trait Source {
     fn check(&self) -> Result<()>;
     fn work(&self, amount: usize) -> Result<()>;
     fn max_commits(&self) -> usize;
+    fn index_limit_error(&self) -> Error {
+        Error::IndexBudget
+    }
     fn max_parents(&self) -> usize;
     fn commit_len(&self) -> usize;
     fn change_len(&self) -> usize;
+    fn operation_lookup(&self) -> bool {
+        false
+    }
+    fn reference_filter(&self) -> bool {
+        false
+    }
+    fn operation_digest(&self, _: &Operation) -> Result<[u8; 32]> {
+        Err(Error::Invalid)
+    }
+    fn view_digest(&self, _: &jj_lib::view::View) -> Result<[u8; 32]> {
+        Err(Error::Invalid)
+    }
     async fn operation(&self, id: &jj_lib::op_store::OperationId) -> Result<Operation>;
     async fn view(&self, operation: &Operation) -> Result<jj_lib::view::View>;
     async fn commit(&self, id: &backend::CommitId) -> Result<CommitFields>;
@@ -113,6 +167,8 @@ struct NativeSource<'a> {
     operation: &'a Operation,
     store: &'a Arc<Store>,
     budget: &'a Budget,
+    inline: bool,
+    filtering: bool,
 }
 impl Source for NativeSource<'_> {
     fn check(&self) -> Result<()> {
@@ -122,7 +178,23 @@ impl Source for NativeSource<'_> {
         self.budget.work(amount)
     }
     fn max_commits(&self) -> usize {
-        self.budget.limits.max_index_commits
+        if self.inline {
+            self.budget
+                .limits
+                .max_index_commits
+                .min(self.budget.limits.max_inline_rebuild_commits)
+        } else {
+            self.budget.limits.max_index_commits
+        }
+    }
+    fn index_limit_error(&self) -> Error {
+        if self.inline
+            && self.budget.limits.max_inline_rebuild_commits < self.budget.limits.max_index_commits
+        {
+            Error::IndexRebuildRequired
+        } else {
+            Error::IndexBudget
+        }
     }
     fn max_parents(&self) -> usize {
         self.budget.limits.metadata.max_parent_edges
@@ -132,6 +204,9 @@ impl Source for NativeSource<'_> {
     }
     fn change_len(&self) -> usize {
         self.store.change_id_length()
+    }
+    fn reference_filter(&self) -> bool {
+        self.filtering
     }
     async fn operation(&self, id: &jj_lib::op_store::OperationId) -> Result<Operation> {
         let data = self
@@ -162,6 +237,11 @@ impl Source for NativeSource<'_> {
             parents: commit.parents,
             change: commit.change_id,
             timestamp: commit.committer.timestamp.timestamp.0,
+            description: if self.filtering {
+                Some(Description::from_string(commit.description)?)
+            } else {
+                None
+            },
         })
     }
 }
@@ -172,13 +252,27 @@ pub(crate) async fn build_from(
     budget: &impl Source,
     max_bytes: u64,
 ) -> Result<()> {
+    build_with_tables(path, operation, budget, max_bytes, false).await
+}
+async fn build_with_tables(
+    path: &Path,
+    operation: &jj_lib::op_store::OperationId,
+    budget: &impl Source,
+    max_bytes: u64,
+    small: bool,
+) -> Result<()> {
     budget.check()?;
     let scratch = tempfile::Builder::new()
         .prefix(".prepare-")
         .tempdir_in(path)
         .map_err(io_error)?;
     let space = Space::new(max_bytes);
-    let mut disk = Disk::new(&scratch.path().join("graph.redb"), space.clone())?;
+    let mut disk = Tables::new(&scratch.path().join("graph.redb"), space.clone(), small)?;
+    let mut filter = if budget.reference_filter() {
+        Some(filters::Builder::new(path, space.clone())?)
+    } else {
+        None
+    };
     disk.put(OPS, operation.as_bytes(), &[])?;
     // Unlike upstream's operation walk, no frontier or retained view set grows
     // in memory with history. Order is irrelevant to the set of historical roots.
@@ -194,6 +288,21 @@ pub(crate) async fn build_from(
             disk.put(OPS, parent.as_bytes(), &[])?;
         }
         let view = budget.view(&op).await?;
+        if filter.is_some() && op.id() == operation {
+            for (name, target) in &view.store_view().local_bookmarks {
+                budget.work(1)?;
+                let mut ids = Vec::new();
+                for id in target.as_merge().iter().flatten() {
+                    budget.work(1)?;
+                    ids.extend_from_slice(id.as_bytes());
+                }
+                disk.put(
+                    FILTER_BOOKMARKS,
+                    format!("bookmark:{}", name.as_str()).as_bytes(),
+                    &ids,
+                )?;
+            }
+        }
         for commit in op
             .all_referenced_commit_ids()
             .chain(view.all_referenced_commit_ids())
@@ -201,7 +310,13 @@ pub(crate) async fn build_from(
             budget.work(1)?;
             disk.put(PENDING, commit.as_bytes(), &[])?;
         }
-        disk.put(SEEN_OPS, id.as_bytes(), &[])?;
+        if budget.operation_lookup() {
+            let mut fingerprints = budget.operation_digest(&op)?.to_vec();
+            fingerprints.extend(budget.view_digest(&view)?);
+            disk.put(SEEN_OPS, id.as_bytes(), &fingerprints)?;
+        } else {
+            disk.put(SEEN_OPS, id.as_bytes(), &[])?;
+        }
     }
     let mut total = 0u32;
     let commit_len = budget.commit_len();
@@ -213,7 +328,7 @@ pub(crate) async fn build_from(
             continue;
         }
         if total as usize >= budget.max_commits() || total >= 0x7fff_ffff {
-            return Err(Error::IndexBudget);
+            return Err(budget.index_limit_error());
         }
         let data = budget.commit(&backend::CommitId::from_bytes(&id)).await?;
         if data.parents.len() > budget.max_parents() {
@@ -224,6 +339,16 @@ pub(crate) async fn build_from(
             change: data.change.as_bytes().to_vec(),
             parents: data.parents,
         };
+        if let Some(filter) = &mut filter {
+            filter.commit(
+                &id,
+                &data.description.as_ref().ok_or(Error::Incomplete)?.text,
+                budget,
+            )?;
+            let mut key = node.change.clone();
+            key.extend_from_slice(&id);
+            disk.put(FILTER_CHANGES, &key, &[])?;
+        }
         for parent in &node.parents {
             budget.work(1)?;
             disk.put(PENDING, parent.as_bytes(), &[])?;
@@ -271,9 +396,57 @@ pub(crate) async fn build_from(
     if emitted != total {
         return Err(Error::Corrupt);
     }
+    if budget.operation_lookup() {
+        operations::write(path, operation, &disk, budget, space.clone())?;
+    }
     segment::write(
-        path, operation, &mut disk, total, commit_len, change_len, budget, space,
+        path,
+        operation,
+        &mut disk,
+        total,
+        commit_len,
+        change_len,
+        budget,
+        space.clone(),
     )?;
+    if let Some(mut filter) = filter {
+        let mut row = disk.first(FILTER_BOOKMARKS)?;
+        while let Some((key, ids)) = row {
+            budget.work(1)?;
+            if !ids.len().is_multiple_of(commit_len) {
+                return Err(Error::Corrupt);
+            }
+            let rank = filter.reference(
+                std::str::from_utf8(&key).map_err(|_| Error::Corrupt)?,
+                budget,
+            )?;
+            for id in ids.chunks_exact(commit_len) {
+                filter.target(rank, id, budget)?;
+            }
+            row = disk.after(FILTER_BOOKMARKS, &key)?;
+        }
+        let mut row = disk.first(FILTER_CHANGES)?;
+        while let Some((key, _)) = row {
+            budget.work(1)?;
+            if key.len() != change_len + commit_len {
+                return Err(Error::Corrupt);
+            }
+            let change = &key[..change_len];
+            let key_name = format!("change:{}", backend::ChangeId::from_bytes(change).hex());
+            let rank = filter.reference(&key_name, budget)?;
+            filter.target(rank, &key[change_len..], budget)?;
+            row = disk.after(FILTER_CHANGES, &key)?;
+            while let Some((key, _)) = row.as_ref().filter(|(key, _)| key.starts_with(change)) {
+                budget.work(1)?;
+                if key.len() != change_len + commit_len {
+                    return Err(Error::Corrupt);
+                }
+                filter.target(rank, &key[change_len..], budget)?;
+                row = disk.after(FILTER_CHANGES, key)?;
+            }
+        }
+        filter.finish(path, operation, budget, space)?;
+    }
     drop(disk);
     drop(scratch);
     Ok(())

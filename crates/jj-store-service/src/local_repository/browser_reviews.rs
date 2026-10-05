@@ -27,6 +27,13 @@ pub struct LocalReviewThreadDetail {
     pub comment_conflicts: Vec<c::ReviewCommentConflict>,
     pub events: Vec<c::ReviewEvent>,
 }
+
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+pub struct LocalReviewActivitySummary {
+    pub version: u32,
+    pub snapshot: LocalReviewSnapshot,
+    pub activity: c::ReviewActivity,
+}
 impl LocalRepository {
     async fn selected_review_store(
         &self,
@@ -79,6 +86,37 @@ impl LocalRepository {
         };
         bounded(&page)?;
         Ok(page)
+    }
+
+    pub async fn review_activity_at(
+        &self,
+        commit: Option<MetadataCommit>,
+        limit: usize,
+    ) -> LocalResult<LocalReviewActivitySummary> {
+        if !(1..=256).contains(&limit) {
+            return Err(LocalError::Limit);
+        }
+        let store = self.selected_review_store(commit).await?;
+        let page = store.reads().list_threads(None, limit).await?;
+        let activity = c::review_activity::cache::shared()
+            .read(
+                &ReviewSelection {
+                    repository: store.repository(),
+                    store: &store,
+                },
+                c::review_activity::cache::Authority::Local,
+                store.snapshot.review_root,
+                limit,
+                page.selections,
+                page.next_after.is_some(),
+            )
+            .await
+            .map_err(map)?;
+        Ok(LocalReviewActivitySummary {
+            version: 1,
+            snapshot: store.snapshot,
+            activity,
+        })
     }
     pub async fn review_thread_at(
         &self,

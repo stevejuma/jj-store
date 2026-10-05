@@ -1,4 +1,5 @@
 //! Complete native metadata and verified binary reads through committed pins.
+pub mod code_summary;
 pub mod conflicts;
 pub mod diff;
 mod diff_copies;
@@ -174,13 +175,14 @@ impl VerifiedFile {
 pub struct ContentReader {
     limits: Limits,
     workers: Workers,
+    graph: Option<super::GraphExecutor>,
 }
-struct Context {
-    limits: Limits,
-    budget: Arc<Budget>,
-    access: Arc<dyn ReadAccess>,
-    objects: Arc<NativeObjects>,
-    permit: Option<OwnedSemaphorePermit>,
+pub(super) struct Context {
+    pub(super) limits: Limits,
+    pub(super) budget: Arc<Budget>,
+    pub(super) access: Arc<dyn ReadAccess>,
+    pub(super) objects: Arc<NativeObjects>,
+    pub(super) permit: Option<OwnedSemaphorePermit>,
 }
 impl ContentReader {
     pub fn new(limits: Limits, concurrency: usize) -> Result<Self> {
@@ -203,7 +205,15 @@ impl ContentReader {
         {
             return Err(Error::Limit);
         }
-        Ok(Self { limits, workers })
+        Ok(Self {
+            limits,
+            workers,
+            graph: None,
+        })
+    }
+    pub(super) fn with_graph(mut self, graph: super::GraphExecutor) -> Self {
+        self.graph = Some(graph);
+        self
     }
     async fn execute<T: Send + 'static>(
         &self,
@@ -275,6 +285,17 @@ impl ContentReader {
         })
         .await
     }
+    pub async fn code_summary(
+        &self,
+        store: Arc<dyn ObjectStore>,
+        access: Arc<dyn ReadAccess>,
+        limit: usize,
+    ) -> Result<code_summary::Summary> {
+        self.execute(store, access, move |context| {
+            Box::pin(async move { code_summary::read(context, limit).await })
+        })
+        .await
+    }
     pub async fn file(
         &self,
         store: Arc<dyn ObjectStore>,
@@ -326,6 +347,19 @@ impl ContentReader {
         access: Arc<dyn ReadAccess>,
         request: references::Request,
     ) -> Result<references::Page> {
+        if request.operation == access.operation()
+            && let Some(graph) = &self.graph
+            && ((request.query.is_empty()
+                && matches!(
+                    request.kind,
+                    references::Kind::All | references::Kind::Changes
+                ))
+                || (!request.query.is_empty()
+                    && request.kind != references::Kind::Workspaces
+                    && graph.reference_filters()))
+        {
+            return graph.references(store, access, request, self.limits).await;
+        }
         self.execute(store, access, move |context| {
             Box::pin(async move { references::read(context, request).await })
         })

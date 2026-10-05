@@ -8,6 +8,9 @@ impl Context {
     ) -> Result<Response> {
         let context = self;
         let value = match request {
+            Request::CodeSummary { limit } => {
+                Response::CodeSummary(code_summary::read(context, operation, limit).await?)
+            }
             Request::QueryInfo => {
                 let mut info = crate::query::language::info(true);
                 let git = context
@@ -101,7 +104,7 @@ impl Context {
             }
             Request::Operation { operation } => {
                 let data = context.operation(operation).await?;
-                let view = context.view(data.view_id).await?;
+                let view = context.operation_view(operation, &data).await?;
                 let result = OperationDetail {
                     view: context.object(ObjectKey::View(data.view_id), ObjectData::View(view)),
                     operation: context

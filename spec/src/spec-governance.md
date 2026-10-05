@@ -1002,3 +1002,14 @@ admission is qualified separately from ordinary response timeouts, including an
 unpolled held stream. Shared producer/lifecycle changes run the complete direct
 HTTP library and focused state-owner and native/local task/event suites before
 cold browser acceptance.
+
+The user-requested bounded-read landing through E-READ-048 preserves both
+parents' requirements and evidence alongside current application freshness and
+Help behavior. Shared directory query leases retain the main cache while the
+bounded activity endpoint remains available. Merged route inventories and
+generated contracts require direct transport and client checks; native/local
+bounded reads and affected repository UI consumers require combined source
+verification. Record that landing evidence separately without promoting the
+performance milestone. Large-scale, RSS/latency, complete fault/browser/RustFS,
+registry and visual qualification stay in the later slice. Keep the temporary
+workspace open for remaining delivery work.

@@ -74,6 +74,7 @@ pub(crate) struct BrowseRows {
     #[cfg(test)]
     pub hydrated: usize,
 }
+#[cfg(test)]
 pub(crate) fn browse_rows(
     state: &jj_store_wal::publication::WorkStateV1,
     query: &WorkBrowseQuery,
@@ -83,7 +84,7 @@ pub(crate) fn browse_rows(
     let selection = projection.select(state, query)?;
     browse_selected(state, &projection, &selection, query.limit, offset)
 }
-pub(super) fn browse_selected(
+pub(crate) fn browse_selected(
     state: &jj_store_wal::publication::WorkStateV1,
     projection: &super::projection::Projection,
     selection: &super::projection::Selection,

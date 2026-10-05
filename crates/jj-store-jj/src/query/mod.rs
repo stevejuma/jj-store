@@ -269,6 +269,7 @@ pub struct IndexReport {
 }
 enum Work {
     Graph(Request, Page),
+    References(content::references::Request, content::Limits),
     Prepare,
 }
 #[derive(Serialize)]
@@ -276,6 +277,57 @@ enum Work {
 enum Output {
     Graph(GraphPage),
     Index(IndexReport),
+    References(content::references::Page),
+}
+impl Work {
+    fn is_query(&self) -> bool {
+        matches!(self, Self::Graph(..) | Self::References(..))
+    }
+    async fn run(
+        self,
+        repo: &jj_lib::repo::ReadonlyRepo,
+        access: &Arc<dyn ReadAccess>,
+        budget: &Arc<Budget>,
+        objects: Arc<NativeObjects>,
+        cache: cache::Report,
+    ) -> Result<Output> {
+        match self {
+            Self::Graph(request, page) => {
+                let (data, next) = graphs::run(repo, request, page, access, budget).await?;
+                Ok(Output::Graph(GraphPage {
+                    version: 1,
+                    cache,
+                    operation: access.operation(),
+                    data,
+                    next,
+                    stats: budget.stats(),
+                }))
+            }
+            Self::References(request, limits) => {
+                let reader = repo
+                    .readonly_index()
+                    .downcast_ref::<projection::Reader>()
+                    .ok_or(Error::Unavailable)?;
+                let context = content::Context {
+                    limits,
+                    budget: budget.clone(),
+                    access: access.clone(),
+                    objects,
+                    permit: None,
+                };
+                Ok(Output::References(
+                    content::references::read_prepared(
+                        context,
+                        request,
+                        reader,
+                        repo.view().store_view(),
+                    )
+                    .await?,
+                ))
+            }
+            Self::Prepare => Err(Error::Unavailable),
+        }
+    }
 }
 /// Bounded jobs and operation-specific local caches; no physical working copy.
 #[derive(Clone)]
@@ -288,6 +340,9 @@ pub struct GraphExecutor {
     residents: Arc<cache::resident::Residents>,
 }
 impl GraphExecutor {
+    pub(super) fn reference_filters(&self) -> bool {
+        self.cache_policy.reference_filters()
+    }
     pub fn new(root: PathBuf, limits: Limits, concurrency: usize) -> Result<Self> {
         Self::with_cache_policy(root, limits, concurrency, cache::Policy::default())
     }
@@ -336,7 +391,7 @@ impl GraphExecutor {
             .await?
         {
             Output::Graph(page) => Ok(page),
-            Output::Index(_) => Err(Error::Unavailable),
+            _ => Err(Error::Unavailable),
         }
     }
     pub fn with_preparation_limits(mut self, limits: preparation::Limits) -> Result<Self> {
@@ -355,7 +410,28 @@ impl GraphExecutor {
             .await?
         {
             Output::Index(report) => Ok(report),
-            Output::Graph(_) => Err(Error::Unavailable),
+            _ => Err(Error::Unavailable),
+        }
+    }
+    pub(crate) async fn references(
+        &self,
+        store: Arc<dyn ObjectStore>,
+        access: Arc<dyn ReadAccess>,
+        request: content::references::Request,
+        limits: content::Limits,
+    ) -> Result<content::references::Page> {
+        content::references::validate(&request, &limits)?;
+        match self
+            .execute_work(
+                store,
+                access,
+                Work::References(request, limits),
+                Cancellation::default(),
+            )
+            .await?
+        {
+            Output::References(page) => Ok(page),
+            _ => Err(Error::Unavailable),
         }
     }
     async fn execute_work(
@@ -368,13 +444,22 @@ impl GraphExecutor {
         let limits = match &work {
             Work::Prepare => self.preparation.budget(self.limits),
             Work::Graph(..) => self.limits,
+            Work::References(_, content) => Limits {
+                metadata: content.metadata,
+                max_page: content.max_page,
+                max_work: content.max_work,
+                max_object_bytes: content.max_read_bytes,
+                max_output_bytes: content.max_output_bytes,
+                timeout: content.timeout,
+                ..self.limits
+            },
         };
         let mut budget = Budget::new(limits)?;
         budget.cancellation = cancellation.0;
         let budget = Arc::new(budget);
         let permit = match &work {
             Work::Prepare => self.workers.acquire_preparation()?,
-            Work::Graph(..) => self.workers.acquire()?,
+            Work::Graph(..) | Work::References(..) => self.workers.acquire()?,
         };
         budget.authorize(access.as_ref()).await?;
         if let Work::Graph(_, page) = &work
@@ -475,7 +560,10 @@ impl GraphExecutor {
             NativeObjects::new(
                 Arc::new(ReadStore::new(store, access.clone(), budget.clone(), true)),
                 access.repository(),
-                self.limits.max_object_bytes,
+                match &work {
+                    Work::References(_, limits) => limits.max_blob_bytes,
+                    _ => self.limits.max_object_bytes,
+                },
             )
             .map_err(|_| Error::Limit)?,
         );
@@ -484,7 +572,7 @@ impl GraphExecutor {
             budget: budget.clone(),
         });
         let stores = NativeStores::new(
-            objects,
+            objects.clone(),
             authority,
             BackendLimits::default(),
             OperationLimits::default(),
@@ -492,44 +580,109 @@ impl GraphExecutor {
         .map_err(|_| Error::Unavailable)?;
         let settings = UserSettings::from_config(StackedConfig::with_defaults())
             .map_err(|_| Error::Unavailable)?;
-        let mut cache = match cache::Cache::open(&self.root, self.cache_policy, &budget) {
-            Ok(cache) => cache,
-            Err(Error::Busy) if matches!(&work, Work::Graph(Request::Log { revset, .. }, _) if revset.trim() == "all()") =>
-            {
-                let saved = self
-                    .residents
-                    .get_memory(access.as_ref())
-                    .ok_or(Error::Busy)?;
-                budget.start_index(false)?;
-                // Construct fresh request-scoped native capabilities. The saved
-                // index carries no previous caller's authorization or backend.
-                let loader =
-                    index::resident_loader(&stores, &settings, saved.clone(), budget.clone())?;
-                let repo = stores
-                    .load_at(&loader, access.operation())
-                    .await
-                    .map_err(|_| Error::Unavailable)?;
-                budget.finish_initial_index();
-                let Work::Graph(request, page) = work else {
-                    unreachable!()
-                };
-                let (data, next) = graphs::run(&repo, request, page, &access, &budget).await?;
-                budget.authorize(access.as_ref()).await?;
-                let result = Output::Graph(GraphPage {
-                    version: 1,
-                    cache: saved.report(),
-                    operation: access.operation(),
-                    data,
-                    next,
-                    stats: budget.stats(),
-                });
-                budget.complete_output(&result)?;
-                return Ok(result);
-            }
-            Err(error) => return Err(error),
+        let required_filter =
+            matches!(&work, Work::References(request, _) if !request.query.is_empty());
+        let want_filters = matches!(work, Work::Prepare) && self.reference_filters();
+        let mut reclaimed = false;
+        let (cache, entry) = loop {
+            let mut cache = match cache::Cache::open(&self.root, self.cache_policy, &budget) {
+                Ok(cache) => Some(cache),
+                Err(Error::Busy) if work.is_query() => None,
+                Err(Error::Limit) if !reclaimed => {
+                    reclaimed = true;
+                    if self.residents.reclaim_filtered() {
+                        continue;
+                    }
+                    return Err(Error::Limit);
+                }
+                Err(error) => return Err(error),
+            };
+            let result = match &mut cache {
+                Some(cache) => cache
+                    .prepare(
+                        access.as_ref(),
+                        &stores,
+                        &budget,
+                        &self.residents,
+                        want_filters,
+                    )
+                    .map(Some),
+                None => Ok(None),
+            };
+            let entry = match result {
+                Ok(entry) => entry,
+                Err(Error::Limit)
+                    if work.is_query()
+                        && cache
+                            .as_ref()
+                            .is_some_and(|c| c.can_use_reserved_fallback()) =>
+                {
+                    None
+                }
+                Err(error @ (Error::Limit | Error::Busy)) if !reclaimed => {
+                    drop(cache);
+                    reclaimed = true;
+                    if self.residents.reclaim_filtered() {
+                        continue;
+                    }
+                    return Err(error);
+                }
+                Err(error) => return Err(error),
+            };
+            break (cache, entry);
         };
-        let entry = cache.prepare(access.as_ref(), &stores, &budget, &self.residents)?;
-        if matches!(work, Work::Graph(..)) {
+        let mut cache = cache;
+        if entry.is_none() {
+            let blocked = if cache.is_some() {
+                Error::Limit
+            } else {
+                Error::Busy
+            };
+            drop(cache);
+            let saved = self.residents.get_memory(access.as_ref()).ok_or(blocked)?;
+            if required_filter && !saved.index.has_reference_filter() {
+                return Err(Error::IndexRebuildRequired);
+            }
+            budget.start_index(false)?;
+            // Construct fresh request-scoped native capabilities. The saved
+            // index carries no previous caller's authorization or backend.
+            let loader = index::resident_loader(
+                &stores,
+                &settings,
+                saved.clone(),
+                budget.clone(),
+                self.root.clone(),
+                self.cache_policy,
+                self.residents.clone(),
+                access.clone(),
+            )?;
+            let repo = stores
+                .load_at(&loader, access.operation())
+                .await
+                .map_err(|_| Error::Unavailable)?;
+            budget.finish_initial_index();
+            let result = work
+                .run(&repo, &access, &budget, objects, saved.report())
+                .await?;
+            budget.authorize(access.as_ref()).await?;
+            budget.complete_output(&result)?;
+            return Ok(result);
+        }
+        let mut entry = entry.ok_or(Error::Unavailable)?;
+        if entry.private() {
+            // Construction and recovered disk data have independent ownership.
+            drop(cache.take());
+        }
+        if !entry.verify(self.cache_policy, &budget)? {
+            // Damaged private files are disposable. Release their actual-size
+            // reservation before admitting a fresh bounded construction.
+            drop(entry);
+            let mut admission =
+                cache::Cache::reopen(&self.root, self.cache_policy, &budget).await?;
+            entry = admission.rebuild(access.as_ref())?;
+            drop(admission);
+        }
+        if work.is_query() {
             budget.start_index(entry.initialize)?;
         }
         if entry.initialize {
@@ -538,20 +691,18 @@ impl GraphExecutor {
                 .await
                 .map_err(|_| Error::Unavailable)?;
         }
-        let preparation_bytes = if matches!(work, Work::Prepare) && entry.initialize {
-            Some(cache.remaining_bytes(&entry, &budget)?)
-        } else {
-            None
-        };
         let loader = index::loader(
             &stores,
             &settings,
             &entry.path,
+            self.root.clone(),
             budget.clone(),
-            preparation_bytes,
+            self.cache_policy,
             entry.resident.clone(),
+            self.residents.clone(),
             access.clone(),
             matches!(work, Work::Prepare),
+            required_filter,
         )?;
         let repo = stores
             .load_at(&loader, access.operation())
@@ -559,12 +710,16 @@ impl GraphExecutor {
             .map_err(|_| Error::Unavailable)?;
         budget.check()?;
         budget.finish_initial_index();
-        if entry.resident.is_some()
-            && matches!(&work, Work::Graph(Request::Log { revset, .. }, _) if revset.trim() == "all()")
-        {
-            // This exact expression only consults the already-loaded index and
-            // view. Finish cache bookkeeping before releasing the namespace;
-            // the loader retains the immutable resident until the query exits.
+        budget.authorize(access.as_ref()).await?;
+        entry.seal(self.cache_policy, &budget)?;
+        let mut cache = match cache {
+            Some(cache) => cache,
+            None => cache::Cache::reopen(&self.root, self.cache_policy, &budget).await?,
+        };
+        if work.is_query() {
+            // Publish only the complete primary generation, then release the
+            // namespace. Additional operations use private reserved construction
+            // and immutable residents; this loader never extends this slot.
             let index = repo
                 .readonly_index()
                 .downcast_ref::<projection::Reader>()
@@ -573,28 +728,15 @@ impl GraphExecutor {
                 .clone();
             let report = cache.finish(entry, access.as_ref(), &budget, index, &self.residents)?;
             drop(cache);
-            let Work::Graph(request, page) = work else {
-                unreachable!()
-            };
-            let (data, next) = graphs::run(&repo, request, page, &access, &budget).await?;
+            let result = work.run(&repo, &access, &budget, objects, report).await?;
             budget.authorize(access.as_ref()).await?;
-            let result = Output::Graph(GraphPage {
-                version: 1,
-                cache: report,
-                operation: access.operation(),
-                data,
-                next,
-                stats: budget.stats(),
-            });
             budget.complete_output(&result)?;
             return Ok(result);
         }
-        let data = match work {
-            Work::Graph(request, page) => {
-                Some(graphs::run(&repo, request, page, &access, &budget).await?)
-            }
-            Work::Prepare => None,
-        };
+        // All interactive work returned above; only explicit preparation remains.
+        if !matches!(work, Work::Prepare) {
+            return Err(Error::Unavailable);
+        }
         budget.check()?;
         budget.authorize(access.as_ref()).await?;
         // Drop native loaders before replacing/removing their derived files.
@@ -613,22 +755,12 @@ impl GraphExecutor {
             resident_index,
             &self.residents,
         )?;
-        let result = match data {
-            Some((data, next)) => Output::Graph(GraphPage {
-                version: 1,
-                cache,
-                operation: access.operation(),
-                data,
-                next,
-                stats: budget.stats(),
-            }),
-            None => Output::Index(IndexReport {
-                version: 1,
-                cache,
-                operation: access.operation(),
-                stats: budget.stats(),
-            }),
-        };
+        let result = Output::Index(IndexReport {
+            version: 1,
+            cache,
+            operation: access.operation(),
+            stats: budget.stats(),
+        });
         budget.complete_output(&result)?;
         Ok(result)
     }

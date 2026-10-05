@@ -26,6 +26,118 @@ const json = (value: unknown) =>
   new Response(pretty(value), {
     headers: { "content-type": "application/json" },
   });
+
+test("local_code_summary_uses_a_finite_pin_and_forwards_cancellation", async () => {
+  const calls: { body: any; signal?: AbortSignal | null }[] = [];
+  let foreign = "";
+  const source = new HttpLocalStoreDataSource(repository, async (url, init) => {
+    if (String(url).endsWith("snapshot")) return json(head);
+    const body = JSON.parse(String(init?.body));
+    calls.push({ body, signal: init?.signal });
+    assert.deepEqual(body, {
+      operation,
+      request: { kind: "code_summary", query: { limit: 50 } },
+      cursor: null,
+    });
+    return json({
+      snapshot: {
+        version: 1,
+        profile: foreign === "profile" ? "native" : head.profile,
+        repository: foreign === "repository" ? "aa".repeat(16) : repository,
+        generation: foreign === "generation" ? 2 : 1,
+        operation: foreign === "operation" ? "bb".repeat(64) : operation,
+      },
+      data: {
+        kind: "code_summary",
+        data: { version: 1, commits: 1, commits_partial: true, latest: null },
+      },
+      next_cursor: null,
+      previous_cursor: null,
+    });
+  });
+  const controller = new AbortController();
+  assert.equal(
+    (await source.codeSummary(operation, controller.signal)).data.commits,
+    1,
+  );
+  for (foreign of ["profile", "repository", "generation", "operation"]) {
+    await assert.rejects(source.codeSummary(operation), {
+      code: "snapshot_mismatch",
+    });
+  }
+  const before = calls.length;
+  controller.abort();
+  assert.equal(calls[0]?.signal?.aborted, false);
+  await assert.rejects(source.codeSummary(operation, controller.signal), {
+    name: "AbortError",
+  });
+  assert.equal(calls.length, before);
+  source.close();
+});
+async function proveActiveLocalCancellation(
+  kind: "code_summary" | "review_activity",
+) {
+  let started!: (signal: AbortSignal) => void;
+  const transport = new Promise<AbortSignal>((resolve) => {
+    started = resolve;
+  });
+  let calls = 0;
+  const source = new HttpLocalStoreDataSource(repository, async (url, init) => {
+    if (String(url).endsWith("snapshot")) return json(head);
+    calls++;
+    assert.equal(init?.signal?.aborted, false);
+    const body = JSON.parse(String(init?.body));
+    if (kind === "code_summary") {
+      assert.ok(String(url).endsWith("query"));
+      assert.deepEqual(body, {
+        operation,
+        request: { kind: "code_summary", query: { limit: 50 } },
+        cursor: null,
+      });
+    } else {
+      assert.ok(String(url).endsWith("reviews/activity"));
+      assert.deepEqual(body, { metadata_commit: metadata, limit: 50 });
+    }
+    started(init!.signal!);
+    return new Promise<Response>((_resolve, reject) => {
+      init!.signal!.addEventListener(
+        "abort",
+        () => reject(init!.signal!.reason),
+        {
+          once: true,
+        },
+      );
+    });
+  });
+  await source.snapshot();
+  const read = (signal: AbortSignal) =>
+    kind === "code_summary"
+      ? source.codeSummary(operation, signal)
+      : source.reviewActivity(signal);
+  const first = new AbortController(),
+    second = new AbortController();
+  const a = read(first.signal),
+    b = read(second.signal);
+  const shared = await transport;
+  first.abort();
+  await assert.rejects(a, { name: "AbortError" });
+  assert.equal(shared.aborted, false);
+  second.abort();
+  await assert.rejects(b, { name: "AbortError" });
+  assert.equal(shared.aborted, true);
+  assert.equal(calls, 1);
+  await assert.rejects(read(first.signal), { name: "AbortError" });
+  assert.equal(calls, 1);
+  source.close();
+}
+
+test("local_code_summary_cancellation_releases_only_the_callers_active_query_lease", async () => {
+  await proveActiveLocalCancellation("code_summary");
+});
+test("local_review_activity_cancellation_releases_only_the_callers_active_query_lease", async () => {
+  await proveActiveLocalCancellation("review_activity");
+});
+
 function storage() {
   const values = new Map<string, string>();
   return {
@@ -488,6 +600,46 @@ test("local_review_reads_reject_foreign_companion_snapshots", async () => {
         }),
   );
   await assert.rejects(source.reviewThreads(), /snapshot mismatch/);
+  source.close();
+});
+
+test("local_review_activity_uses_explicit_pin_and_rejects_foreign_results", async () => {
+  const calls: { url: string; body: any; signal?: AbortSignal | null }[] = [];
+  let foreign = "";
+  const source = new HttpLocalStoreDataSource(repository, async (url, init) => {
+    const body = init?.body ? JSON.parse(String(init.body)) : null;
+    calls.push({ url: String(url), body, signal: init?.signal });
+    if (String(url).endsWith("snapshot")) return json(head);
+    assert.ok(String(url).endsWith("reviews/activity"));
+    return json({
+      version: 1,
+      snapshot: {
+        profile: foreign === "profile" ? "native" : "local_jj_git",
+        repo_id: foreign === "repository" ? "aa".repeat(16) : repository,
+        metadata_commit: foreign === "pin" ? "bb".repeat(20) : metadata,
+        review_root: "cc".repeat(32),
+        review_state_version: 1,
+      },
+      activity: { threads: 50, threads_partial: true, updated_at_millis: 123 },
+    });
+  });
+  const controller = new AbortController();
+  const summary = await source.reviewActivity(controller.signal);
+  assert.equal(summary.activity.threads, 50);
+  assert.deepEqual(calls[1]?.body, { metadata_commit: metadata, limit: 50 });
+  assert.equal(calls[1]?.signal?.aborted, false);
+  for (foreign of ["repository", "pin", "profile"]) {
+    await assert.rejects(source.reviewActivity(), {
+      code: "snapshot_mismatch",
+    });
+  }
+  const before = calls.length;
+  controller.abort();
+  assert.equal(calls[1]?.signal?.aborted, false);
+  await assert.rejects(source.reviewActivity(controller.signal), {
+    name: "AbortError",
+  });
+  assert.equal(calls.length, before);
   source.close();
 });
 

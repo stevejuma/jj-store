@@ -276,23 +276,25 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
         "/v1/repos/{repo}/reactions/query",
         "/v1/repos/{repo}/reaction-emojis/{emoji_id}",
         "/v1/repos/{repo}/reaction-assets/{asset}",
+        "/v1/repos/{repo}/work/activity",
+        "/v1/local/repos/{repo}/work/activity",
     ] {
         assert!(paths.contains_key(path), "missing integrated route: {path}");
     }
-    assert_eq!(paths.len(), 114);
+    assert_eq!(paths.len(), 119);
     assert_eq!(
         paths
             .keys()
             .filter(|name| name.starts_with("/v1/local/"))
             .count(),
-        40
+        42
     );
     assert_eq!(
         paths
             .keys()
             .filter(|name| !name.starts_with("/v1/local/"))
             .count(),
-        74
+        77
     );
     let mut ids = std::collections::BTreeSet::new();
     for (name, path) in paths {
@@ -665,5 +667,39 @@ fn local_contracts_preserve_separate_profiles_and_strict_pinned_queries() {
         schemas["Capabilities"]["properties"]
             .get("native_profile")
             .is_some()
+    );
+}
+
+#[test]
+fn work_activity_contracts_are_body_free_and_pin_independent_profiles() {
+    let doc = openapi();
+    let native = &doc["paths"]["/v1/repos/{repo}/work/activity"]["get"];
+    let local = &doc["paths"]["/v1/local/repos/{repo}/work/activity"]["post"];
+    assert_eq!(native["operationId"], "work_activity");
+    assert_eq!(local["operationId"], "local_work_activity");
+    let input = &local["requestBody"]["content"]["application/json"]["schema"];
+    assert_eq!(input["additionalProperties"], false);
+    assert!(
+        input["required"]
+            .as_array()
+            .unwrap()
+            .contains(&json!("metadata_commit"))
+    );
+    assert_eq!(input["properties"]["query"]["additionalProperties"], false);
+    let schemas = &doc["components"]["schemas"];
+    let group = schemas["WorkActivityGroup"]["properties"]
+        .as_object()
+        .unwrap();
+    assert_eq!(group.len(), 4);
+    for name in ["repository", "project", "tasks", "updated_at_millis"] {
+        assert!(group.contains_key(name));
+    }
+    assert_eq!(
+        schemas["WorkActivityPage"]["properties"]["snapshot"]["$ref"],
+        "#/components/schemas/WorkReadSnapshot"
+    );
+    assert_eq!(
+        schemas["LocalWorkActivityPage"]["properties"]["snapshot"]["$ref"],
+        "#/components/schemas/LocalWorkSnapshot"
     );
 }

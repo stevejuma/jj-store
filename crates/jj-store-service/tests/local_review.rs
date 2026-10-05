@@ -59,6 +59,117 @@ fn receipt(outcome: LocalReviewOutcome) -> LocalReviewReceipt {
 }
 
 #[tokio::test]
+async fn local_review_activity_retains_historical_selection_and_partial_counts() {
+    let (root, repo) = fixture();
+    let empty = repo.review_activity_at(None, 50).await.unwrap();
+    assert_eq!(empty.activity.threads, 0);
+    assert_eq!(empty.activity.updated_at_millis, None);
+    assert!(empty.snapshot.repo_id.is_none());
+    assert!(repo.metadata_store().read().unwrap().is_none());
+    assert!(!root.path().join("repo/.jj/repo/lapis").exists());
+    repo.apply_review_command(&create(20)).await.unwrap();
+    let first = repo.review_activity_at(None, 50).await.unwrap();
+    let pin = first.snapshot.metadata_commit;
+    repo.apply_review_command(&create(21)).await.unwrap();
+    let before = repo.metadata_store().read().unwrap().unwrap();
+    let historical = reopen(&root.path().join("repo"))
+        .review_activity_at(pin, 50)
+        .await
+        .unwrap();
+    assert_eq!(historical, first);
+    for limit in [1, 2, 50, 256] {
+        let summary = repo.review_activity_at(None, limit).await.unwrap();
+        let page = repo.review_threads_at(None, limit, None).await.unwrap();
+        assert_eq!(summary.snapshot, page.snapshot);
+        assert_eq!(summary.activity.threads, page.threads.len());
+        assert_eq!(summary.activity.threads_partial, page.next_after.is_some());
+        assert_eq!(
+            summary.activity.updated_at_millis,
+            page.threads
+                .iter()
+                .map(|thread| thread.presentation.as_ref().unwrap().updated_at_millis)
+                .max()
+        );
+    }
+    for limit in [0, 257] {
+        assert_eq!(
+            repo.review_activity_at(None, limit).await.unwrap_err(),
+            LocalError::Limit
+        );
+    }
+    assert_eq!(
+        repo.metadata_store().read().unwrap().unwrap().commit(),
+        before.commit()
+    );
+}
+
+#[tokio::test]
+async fn warm_local_review_activity_returns_fresh_companion_and_keeps_identity_and_limits() {
+    let (root, repo) = fixture();
+    repo.apply_review_command(&create(30)).await.unwrap();
+    let first = repo.review_activity_at(None, 50).await.unwrap();
+    assert_eq!(
+        reopen(&root.path().join("repo"))
+            .review_activity_at(None, 50)
+            .await
+            .unwrap(),
+        first
+    );
+    repo.apply_work_command(&Request {
+        version: 1,
+        request_id: m::RequestId::new([31; 16]),
+        command: WorkCommandV1::CreateProject {
+            id: ProjectId::new([31; 16]),
+            title: "Unrelated metadata".into(),
+            body: String::new(),
+        },
+    })
+    .unwrap();
+    let fresh = reopen(&root.path().join("repo"))
+        .review_activity_at(None, 50)
+        .await
+        .unwrap();
+    assert_eq!(fresh.activity, first.activity);
+    assert_eq!(fresh.snapshot.review_root, first.snapshot.review_root);
+    assert_ne!(
+        fresh.snapshot.metadata_commit,
+        first.snapshot.metadata_commit
+    );
+    assert_eq!(
+        repo.review_activity_at(first.snapshot.metadata_commit, 50)
+            .await
+            .unwrap(),
+        first
+    );
+    let before = repo.metadata_store().read().unwrap().unwrap().commit();
+    let foreign = reopen(&root.path().join("repo")).bound_to(m::RepositoryId::new([99; 16]));
+    assert_eq!(
+        foreign.review_activity_at(None, 50).await.unwrap_err(),
+        LocalError::Stale
+    );
+    let path = root.path().join("repo");
+    let limited = LocalRepository::new(
+        &path.join(".jj/repo"),
+        MetadataStore::open(
+            &path.join(".git"),
+            Limits {
+                object_bytes: 1,
+                ..Limits::default()
+            },
+        )
+        .unwrap(),
+    );
+    assert_eq!(
+        limited.review_activity_at(None, 50).await.unwrap_err(),
+        LocalError::Limit
+    );
+    assert_eq!(
+        repo.metadata_store().read().unwrap().unwrap().commit(),
+        before
+    );
+}
+
+#[tokio::test]
 async fn local_review_reads_leave_metadata_and_actor_absent() {
     let (root, repo) = fixture();
     let store = repo.review_store().await.unwrap();
@@ -338,6 +449,7 @@ async fn local_review_selected_inventory_must_contain_the_complete_root_closure(
     }
     let (_root, repo) = fixture();
     repo.apply_review_command(&create(1)).await.unwrap();
+    let warm = repo.review_activity_at(None, 50).await.unwrap();
     let selected = repo.metadata_store().read().unwrap().unwrap();
     let bytes = repo
         .metadata_store()
@@ -382,6 +494,18 @@ async fn local_review_selected_inventory_must_contain_the_complete_root_closure(
         repo.review_store().await,
         Err(LocalError::Corrupt)
     ));
+    // The root/window stayed the same, but the newly selected companion no
+    // longer admits its closure. Cached facts cannot hide the missing record.
+    assert_eq!(
+        repo.review_activity_at(None, 50).await.unwrap_err(),
+        LocalError::Corrupt
+    );
+    assert_eq!(
+        repo.review_activity_at(warm.snapshot.metadata_commit, 50)
+            .await
+            .unwrap(),
+        warm
+    );
 }
 
 #[tokio::test]

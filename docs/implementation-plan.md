@@ -61,11 +61,135 @@ visible-reference reads, native retained visibility/reverse labels, shared idle
 resident eviction, viewport-owned repository metadata reads, and native
 root-bound WorkStore projections with selected-window summary hydration, and
 native application content indexes with retained query keys. Visible card
-loading still uses the existing bounded metadata pages; lightweight server
-summaries and cross-request local WorkStore root reuse remain delivery work.
-Native immutable additional-operation construction and local operation/deep
-lookup are also still pending. These focused deliveries do not complete the
-later combined qualification gate.
+loading now uses finite selected-view code-head summaries and compact review
+activity. E-READ-041 reuses only numeric review activity facts for the exact
+admitted root/window behind fresh native/local provider validation, with fixed
+expiry, bounded idle retention and duplicate-load coalescing. E-READ-037 adds
+cross-request local WorkStore root/projection and exact-query reuse behind fresh
+companion/domain admission. Native missing-operation construction now uses the
+owned bounded format writer with compact, admitted scratch for interactive and
+small-cache reads. Immutable resident lookup also reuses separately prepared
+historical operations without copying another slot. Cold historical operations
+now build under separate full reservations and retain verified data only. Graph
+evaluation releases the namespace after completing the immutable primary
+generation, including filtered queries. Missing primary generations now use
+private reserved staging and reacquire the namespace only for
+complete-generation installation. Existing-disk projection recovery now moves
+verified files into an actual-size private reservation and releases the
+namespace before decoding and deriving visibility. It preserves hard/inline
+limits, exact source files and cancellation cleanup; it copies no index and
+reserves no unrelated construction maximum. Local operation/deep lookup and
+local application search projections remain delivery work. These focused
+deliveries do not complete the later combined qualification gate.
+
+E-READ-042 adds sorted retained local operation-prefix lookup with historical
+metadata fingerprints, charged lookup work and existing cold HTTP recovery.
+Ready prefix pages need no commit/tree/index preflight; plain metadata pages
+retain their cold reader. Prepared operation comparison, indexed child neighbors
+and deep continuations remain separate delivery work.
+
+E-READ-043 adds prepared historical operation/view admission and bounded
+visibility comparison through the verified commit index. It stops at shared
+ancestry and groups change IDs before selecting a page, hydrating only the
+selected added targets. Complete scale/lifecycle qualification and deeper
+operation/reference/copy/search/RPC continuations remain separate work.
+Changed-frontier discovery still completes under one ordinary visit budget per
+request; retained continuation for oversized differences and repeated group
+discovery remains delivery work.
+
+E-READ-044 adds composed native unfiltered Changes/All reference windows through
+retained ordered visible change groups. Indexed identities determine lexical
+pages before selected-target hydration; reverse workspace names avoid scanning
+bookmarks. The shared native executor retains ordinary content limits, cold
+exact-snapshot preparation recovery, signed cursors and namespace release before
+hydration. Description-filter indexes and differently embedded operations remain
+separate delivery work, together with deep/difference/search/RPC continuations.
+
+E-READ-045 adds local JJ description/reference substring filtering through an
+operation-bound disk projection. It captures normalized descriptions during the
+existing preparation read, intersects compact lexical postings and checks only
+candidates against pinned visible targets. Source hydration follows selection;
+Unicode matching, divergence, removed bookmark terms and signed forward/backward
+windows remain exact. Native filtering, extreme candidate continuations and
+differently embedded operation lookup remain delivery work. Full construction
+scale, disk footprint, RSS and latency qualification remains deferred.
+
+E-READ-046 compacts native prepared visibility/reference identities from
+tree-based membership, formatted keys and per-group target vectors to sorted
+flat arrays and compact group boundaries. Construction sorting is in place,
+work-charged and cancellable. The conservative identity reservation drops from
+512 to192 bytes per indexed commit; the two-million-row admission regression
+leaves headroom with unchanged JJ decode accounting and the unchanged1GiB pool.
+Exact lexical windows, arbitrary anchors, divergence, hidden prefix offsets and
+selected-only hydration remain governed by focused differential/native tests.
+This is a prerequisite for native filtered delivery; filter-file lifetime/quota
+ownership and the remaining deep/search/comparison/RPC continuations are still
+open. Full large-fixture resource and lifecycle qualification stays deferred.
+
+E-READ-047 adds native prepared description/reference filtering and explicit
+upgrade of index-only generations. Selected candidate keys cross exact current
+visibility and description checks before native target hydration, preserving
+Unicode, divergence, removed bookmark terms and both cursor directions. A shared
+generation pin keeps readonly filter files and their complete slot charged
+through active readers. Pressure may reclaim idle filtered residents; pinned
+recovery remains in place without deleting another reader's files or duplicating
+quota. Small-cache memory-only policies keep their ordinary bounded fallback.
+Different embedded operations, cold full receipt hashing outside the namespace,
+and deep/difference/search/candidate/RPC continuations remain delivery work.
+Full scale, fault/lifecycle, memory and production browser qualification stays
+in the deferred slice.
+
+Resident retention charges actual framed index allocations and the bounded
+database cache; complete filter files remain in disk quota. The large-file
+admission regression is arithmetic evidence, not measured RSS or scale serving.
+
+E-READ-048 moves cold native receipt hashing after independent quota ownership
+and namespace release, before loading and allocating decode. Admission scans
+bounded names and sizes; healthy immutable recovery keeps its actual-size
+reservation. Checksum damage in privately owned files rebuilds through fresh
+admission; shared damage fails while preserving readers and quota. Work,
+cancellation and deadline failures remain failures. Coarse metadata performs
+full proofs before loading and before namespace reacquisition, with no warm
+resident retention. Explicit filter upgrades reserve writable construction
+capacity before growth, and failed admission before transfer preserves existing
+files. Different embedded operations and deep/difference/search/candidate/RPC
+continuations remain delivery work. Focused regressions do not complete the
+deferred large-fixture, RSS, latency, fault and browser qualification.
+
+E-READ-049 integrates delivery through E-READ-048 with current main freshness,
+Help and directory-query ownership. Combined source verification covers native
+and local query consumers, merged public routes and response captures, and
+repository UI/type/boundary checks. Both parent ledgers remain intact. This
+landing retains the temporary workspace for the remaining features and does not
+complete large-scale, RSS/latency, fault/browser/RustFS or release
+qualification.
+
+Repository directory task counts now consume one body-free repository/project
+aggregate page from each visible metadata home. Returned groups count their
+complete selected root and preserve maximum task timestamps, cross-home/project
+filters and unloaded-group partial state. Native requests reuse the admitted
+root projection; local transport independently admits its explicit companion
+selection. Card reads no longer hydrate up to 256 task summaries. Local reads
+now reuse immutable roots, projections and eight exact-query key sets across
+independently reopened facades. Browse/activity/detail retain fresh companion
+and Work-blob admission, source limits and folder identity checks. Root
+retention, cold derivation and live readers have separate bounded lifetime
+accounting; selected detail windows follow precomputed task/comment keys.
+Compact review activity now returns a bounded catalog-window count and maximum
+accepted event time without hydrating anchors, comment conflicts or bodies.
+Snapshot-page activity streams times without constructing presentation events;
+merged activity needs no causal ordering. Native/local directory cards retain
+their existing partial-count and date policies. Fresh access, complete provider
+closure admission and independent root/companion pins still apply. Repeated
+review activity windows reuse counts and times without retaining providers,
+envelopes or evidence objects. Fixed expiry, idle-only eviction and
+request-local saturation fallback preserve source admission and domain capacity.
+Code summaries read only the first lexical nonvirtual head window and return its
+newest sampled committer metadata; unvisited ancestry or additional heads keep
+counts explicitly incomplete. Cards request 50 heads without invoking history
+preparation. Native/local request admission and historical pins retain their
+existing authority; no trees, ancestors or graph indexes are read for these
+summaries.
 
 ### Deferred complete qualification
 

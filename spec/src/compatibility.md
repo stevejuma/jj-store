@@ -1,5 +1,40 @@
 # Compatibility and release
 
+Native unfiltered reference windows reuse ordered prepared visibility while
+preserving version-1 DTOs, lexical anchors, divergence, explicit bookmark terms
+and signed cursor claims. Cold large reads reuse exact-snapshot index
+preparation recovery. Native index bytes, storage/WAL/receipts and public
+schemas are unchanged; complete scale and release qualification remains
+separately deferred.
+
+Prepared comparison extends the disposable local lookup to version2 records
+containing both operation and view fingerprints. Generations are process-owned
+and rebuilt; this artifact grants no source authority and needs no persisted
+repository migration. A compact read-only decoder of the unchanged pinned
+format-6 segment supplies commit/change identities and parent edges. Public
+operation difference and change-page schemas and cursor profiles are unchanged.
+
+Local prepared operation lookup uses a disposable fixed-width identity and
+canonical-fingerprint artifact bound to one operation, with a whole-file
+checksum and bounded loading. It is not a native, Git, companion, WAL or public
+API format. Native commit-index output remains unchanged; source normalization
+and pinned JJ selector semantics remain authoritative. Complete scale, cold
+lifecycle and release qualification is deferred.
+
+The additive native/local WorkStore activity routes use body-free version-1
+native and version-2 local pages with independent snapshot profiles. Finite
+1..256-group pages and strict local companion/query bodies accompany generated
+OpenAPI/TypeScript and actual first/resumed response evidence. Native
+manifest/WAL, local companion, signed cursor and domain capacities are
+unchanged. Compact review activity adds two further routes with version-1
+native/local summaries, strict finite windows, independent snapshot profiles and
+explicit sampled-count status. Finite code-head summaries add a native route and
+an operation-pinned local query variant with version-1 summaries and exact
+native/Git identity widths. The generated inventory now contains 118 paths (42
+local and 76 other paths). Summary DTOs carry no persisted-format change.
+Focused delivery evidence does not qualify the complete combined route/browser
+inventory or promote a release milestone.
+
 The independent conversion profile is bounded to eligible JJ 0.45.1 Git SHA-1
 and current native repositories on macOS ARM64. Admin HTTP preview/start/status
 contracts and their generated browser client share registered response captures.
@@ -818,6 +853,14 @@ only after exact-operation preparation; they never reinterpret it as a native
 epoch. Start/status/cancel responses use the local task DTO, and cancellation is
 bodyless. Generated contracts and actual HTTP responses qualify these additions;
 native routes, persisted identities and companion formats remain unchanged.
+
+Local prepared generations add the disposable `local-reference-filter` redb4.3.0
+file and its SHA-256 sidecar. Its `JSTLRF1` metadata binds the selected 64-byte
+operation and lexical row count. Text lengths, lowercase text and sparse/dense
+4096-row substring postings are derived only; they change no native, companion,
+WAL, receipt, cursor or public DTO format. Upstream JJ format6 index files
+remain byte-identical and independently verified. Cache loss uses existing
+preparation; this local artifact is never imported into source JJ metadata.
 
 ## Application freshness compatibility
 

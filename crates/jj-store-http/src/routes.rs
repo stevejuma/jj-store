@@ -23,7 +23,8 @@ use crate::sync_management::{
     local_sync_barrier, local_sync_control, local_sync_status, local_sync_wait,
 };
 use crate::work::{
-    apply as work_apply, browse as work_browse, page as work_page, status as work_status,
+    activity as work_activity, apply as work_apply, browse as work_browse, page as work_page,
+    status as work_status,
 };
 use crate::{
     contract::{Document, Reply},
@@ -59,6 +60,13 @@ pub(super) struct Empty {}
 #[serde(deny_unknown_fields)]
 struct Selection {
     at_op: Option<m::OperationId>,
+}
+#[derive(Deserialize, schemars::JsonSchema)]
+#[serde(deny_unknown_fields)]
+struct CodeSummary {
+    at_op: Option<m::OperationId>,
+    #[serde(default = "limit")]
+    limit: usize,
 }
 #[derive(Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
@@ -224,6 +232,12 @@ struct ReviewThreads {
 }
 #[derive(Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
+struct ReviewActivity {
+    #[serde(default = "limit")]
+    limit: usize,
+}
+#[derive(Deserialize, schemars::JsonSchema)]
+#[serde(deny_unknown_fields)]
 struct AgentTranscript {
     source: jj_store_service::collaboration::AgentSourceInstanceIdentity,
     generation: u64,
@@ -303,6 +317,7 @@ macro_rules! endpoints {
             (get, "/repos/{repo}/agent/checkpoints/{checkpoint}", agent_checkpoint, Empty, crate::collaboration::CheckpointDetail, Reply::Json(200)),
             (get, "/repos/{repo}/agent/checkpoints/{checkpoint}/versions/{version}", agent_checkpoint_version, Empty, crate::collaboration::CheckpointDetail, Reply::Json(200)),
             (get, "/repos/{repo}/reviews/threads", review_threads, ReviewThreads, crate::collaboration::ReviewPage, Reply::Json(200)),
+            (get, "/repos/{repo}/reviews/activity", review_activity, ReviewActivity, crate::collaboration::ReviewActivitySummary, Reply::Json(200)),
             (get, "/repos/{repo}/reviews/threads/{thread}", review_thread, Empty, crate::collaboration::ReviewDetail, Reply::Json(200)),
             (post, "/repos/{repo}/reviews/commands", review_command_apply, Empty, jj_store_service::review_mutations::Outcome, Reply::Json(200)),
             (get, "/repos/{repo}/reviews/commands/{request_id}", review_command_status, Empty, jj_store_service::review_mutations::Status, Reply::Json(200)),
@@ -322,6 +337,7 @@ macro_rules! endpoints {
             (get, "/repos/{repo}/reaction-assets/{asset}", collab_image, Empty, String, Reply::Raster),
             (get, "/repos/{repo}/content/search", content_search, jj_store_service::content_search::ContentQuery, jj_store_service::content_search::ContentPage, Reply::Json(200)),
             (get, "/repos/{repo}/work/browse", work_browse, jj_store_service::work::WorkBrowseQuery, jj_store_service::work::WorkBrowsePage, Reply::Json(200)),
+            (get, "/repos/{repo}/work/activity", work_activity, jj_store_service::work::WorkActivityQuery, jj_store_service::work::WorkActivityPage, Reply::Json(200)),
             (get, "/repos/{repo}/work", work_page, jj_store_service::work::WorkQuery, jj_store_service::work::WorkPage, Reply::Json(200)),
             (post, "/repos/{repo}/work/commands", work_apply, Empty, jj_store_service::work::Outcome, Reply::Json(200)),
             (get, "/repos/{repo}/work/commands/{request_id}", work_status, Empty, jj_store_service::work::Status, Reply::Json(200)),
@@ -329,6 +345,7 @@ macro_rules! endpoints {
             (get, "/repos/{repo}/events", events, Events, events::Event, Reply::Events),
             (get, "/repos/{repo}/objects/{kind}/{id}", object, Selection, Envelope<c::Object>, Reply::Json(200)),
             (get, "/repos/{repo}/log", log, Log, Envelope<q::GraphPage>, Reply::Json(200)),
+            (get, "/repos/{repo}/code/summary", code_summary, CodeSummary, Envelope<c::code_summary::Summary>, Reply::Json(200)),
             (get, "/repos/{repo}/references", references, References, browsing::Window<c::references::Page>, Reply::Json(200)),
             (get, "/repos/{repo}/operations", operations, Operations, Envelope<q::GraphPage>, Reply::Json(200)),
             (get, "/repos/{repo}/operations/{operation}", operation, Empty, Envelope<OperationDetail>, Reply::Json(200)),
@@ -576,6 +593,20 @@ async fn review_threads(
     let args = input(args)?;
     crate::collaboration::review_threads(&state, context.session, args.cursor, args.limit).await
 }
+
+async fn review_activity(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: Input<ReviewActivity>,
+) -> Result<Response> {
+    let args = input(args)?;
+    state.json(
+        &state
+            .review_threads
+            .activity(context.session, args.limit)
+            .await?,
+    )
+}
 async fn review_thread(
     ExtractState(state): ExtractState<Arc<State>>,
     context: Context,
@@ -603,6 +634,18 @@ async fn object(
     };
     let read = pinned(&context, &state, args.at_op).await?;
     let data = read.object(state.queries.content(), key).await?;
+    envelope(&state, &read, data).await
+}
+async fn code_summary(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: Input<CodeSummary>,
+) -> Result<Response> {
+    let args = input(args)?;
+    let read = pinned(&context, &state, args.at_op).await?;
+    let data = read
+        .code_summary(state.queries.content(), args.limit)
+        .await?;
     envelope(&state, &read, data).await
 }
 async fn graph(

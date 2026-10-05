@@ -49,6 +49,7 @@ impl PublicationGuard for Permit {
 }
 
 struct Fixture {
+    store: Arc<MemoryStore>,
     session: Arc<NativeSession>,
     coordinator: Coordinator,
     request: u8,
@@ -78,7 +79,7 @@ impl Fixture {
         .unwrap();
         let session = Arc::new(
             NativeSession::new_local_trusted(
-                store,
+                store.clone(),
                 objects,
                 PRINCIPAL,
                 Permission::Admin,
@@ -89,6 +90,7 @@ impl Fixture {
             .unwrap(),
         );
         Self {
+            store,
             session,
             coordinator,
             request: 100,
@@ -134,6 +136,103 @@ impl Fixture {
     }
 }
 
+#[tokio::test]
+async fn warm_review_activity_keeps_source_limits_access_and_complete_closure_admission() {
+    use jj_store_object::{Condition, ObjectStore, StagedUpload, WriteOutcome};
+    use jj_store_service::auth::BearerToken;
+    use jj_store_wal::records::{RecordKind, RecordRef};
+    let mut fixture = Fixture::new().await;
+    let created = fixture.create("Retained comment evidence").await;
+    let pager =
+        ReviewThreadPager::new(pagination::Limits::default(), Arc::new(SystemClock)).unwrap();
+    let first = pager.activity(fixture.session.clone(), 50).await.unwrap();
+    assert_eq!(
+        pager.activity(fixture.session.clone(), 50).await.unwrap(),
+        first
+    );
+    let before = fixture.session.snapshot().await.unwrap().manifest().clone();
+    let mut tighter = pagination::Limits::default();
+    tighter.read.max_objects = 1;
+    let limited = ReviewThreadPager::new(tighter, Arc::new(SystemClock)).unwrap();
+    assert_eq!(
+        limited
+            .activity(fixture.session.clone(), 50)
+            .await
+            .unwrap_err(),
+        Error::Limit
+    );
+    let unauthorized = Arc::new(
+        NativeSession::new(
+            fixture.store.clone(),
+            Arc::new(
+                NativeObjects::new(fixture.store.clone(), REPOSITORY, 2 * 1024 * 1024).unwrap(),
+            ),
+            BearerToken::generate().unwrap(),
+            Arc::new(SystemClock),
+            Protection::default(),
+            SessionLimits::default(),
+        )
+        .unwrap(),
+    );
+    assert_eq!(
+        pager.activity(unauthorized, 50).await.unwrap_err(),
+        Error::Denied
+    );
+    // Numeric activity does not read comment revisions, but the provider's
+    // complete source admission must still reject corruption there on a hit.
+    let key = RecordRef {
+        kind: RecordKind::ReviewObject,
+        digest: m::RecordDigest::new(*created.comment_revision.unwrap().id.as_bytes()),
+        attempt: None,
+    }
+    .key(REPOSITORY)
+    .unwrap();
+    let bytes = fixture
+        .store
+        .get(&key, None)
+        .await
+        .unwrap()
+        .read_bounded(2 * 1024 * 1024)
+        .await
+        .unwrap();
+    let bad = StagedUpload::from_bytes(b"corrupt comment revision", 100)
+        .await
+        .unwrap();
+    let version = fixture.store.head(&key).await.unwrap().version;
+    assert!(matches!(
+        fixture
+            .store
+            .put(&key, Condition::Matches(version), &bad)
+            .await
+            .unwrap(),
+        WriteOutcome::Applied(_)
+    ));
+    assert_eq!(
+        pager
+            .activity(fixture.session.clone(), 50)
+            .await
+            .unwrap_err(),
+        Error::Corrupt
+    );
+    let restored = StagedUpload::from_bytes(&bytes, 2 * 1024 * 1024)
+        .await
+        .unwrap();
+    let version = fixture.store.head(&key).await.unwrap().version;
+    fixture
+        .store
+        .put(&key, Condition::Matches(version), &restored)
+        .await
+        .unwrap();
+    assert_eq!(
+        pager.activity(fixture.session.clone(), 50).await.unwrap(),
+        first
+    );
+    assert_eq!(
+        fixture.session.snapshot().await.unwrap().manifest(),
+        &before
+    );
+}
+
 fn body(text: &str) -> ReviewCommentBodyV1 {
     ReviewCommentBodyV1 {
         schema_version: 1,
@@ -141,6 +240,54 @@ fn body(text: &str) -> ReviewCommentBodyV1 {
         text: text.into(),
         sanitizer_version: "review-markdown-v1".into(),
     }
+}
+
+#[tokio::test]
+async fn review_activity_matches_the_pinned_catalog_window_without_publishing() {
+    let mut fixture = Fixture::new().await;
+    let pager =
+        ReviewThreadPager::new(pagination::Limits::default(), Arc::new(SystemClock)).unwrap();
+    let empty = pager.activity(fixture.session.clone(), 50).await.unwrap();
+    assert_eq!(empty.activity.threads, 0);
+    assert_eq!(empty.activity.updated_at_millis, None);
+    assert!(!empty.activity.threads_partial);
+    fixture.create("First review").await;
+    fixture.create("Second review").await;
+    let before = fixture.session.snapshot().await.unwrap().manifest().clone();
+    for limit in [1, 2, 50, 256] {
+        let page = pager.begin(fixture.session.clone(), limit).await.unwrap();
+        let summary = pager
+            .activity(fixture.session.clone(), limit)
+            .await
+            .unwrap();
+        assert_eq!(summary.snapshot, page.snapshot);
+        assert_eq!(summary.activity.threads, page.threads.len());
+        assert_eq!(summary.activity.threads_partial, page.next_cursor.is_some());
+        assert_eq!(
+            summary.activity.updated_at_millis,
+            page.threads
+                .iter()
+                .map(|thread| thread.presentation.as_ref().unwrap().updated_at_millis)
+                .max()
+        );
+        let wire = serde_json::to_string(&summary).unwrap();
+        assert!(!wire.contains("First review"));
+        assert!(!wire.contains("anchor"));
+        assert!(!wire.contains("excerpt"));
+    }
+    for limit in [0, 257] {
+        assert_eq!(
+            pager
+                .activity(fixture.session.clone(), limit)
+                .await
+                .unwrap_err(),
+            Error::Limit
+        );
+    }
+    assert_eq!(
+        fixture.session.snapshot().await.unwrap().manifest(),
+        &before
+    );
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]

@@ -39,6 +39,16 @@ export class HttpWorkDataSource implements WorkTransport {
           signal,
         )
       : readRepositoryDirectory(this.client, this, signal);
+  taskActivity(
+    query: { limit?: number; cursor?: string },
+    signal?: AbortSignal,
+  ) {
+    return this.client.request<Model<"WorkActivityPage">>(
+      "work/activity",
+      { ...query },
+      { signal },
+    );
+  }
   page(query: WorkQuery, signal?: AbortSignal) {
     const args = {
       ...query,
@@ -79,6 +89,13 @@ export class HttpWorkDataSource implements WorkTransport {
     return this.client.request<Model<"WorkBrowsePage">>(
       "work/browse",
       { ...query },
+      { signal },
+    );
+  }
+  reviewActivity(signal?: AbortSignal) {
+    return this.client.request<Model<"ReviewActivitySummary">>(
+      "reviews/activity",
+      { limit: 50 },
       { signal },
     );
   }

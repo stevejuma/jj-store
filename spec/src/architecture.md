@@ -1,5 +1,68 @@
 # Architecture
 
+Composed native unfiltered Changes/All reference reads share the graph
+executor's immutable selected-view generation and worker admission. Its ordered
+change groups come from indexed identities; content hydration begins after
+keyset selection and namespace release. Native DTO integrity and request
+authorization remain at the existing object boundary. This adds only derived
+resident data, without a persistence authority or source index mutation.
+
+Native reference selection borrows the immutable view just verified by its
+request-scoped repository loader. Only selected bookmark terms cross into owned
+DTOs; operation/view objects and unselected reference maps are not read or
+copied again. Current access and committed membership stay with the loader and
+selected target reader.
+
+Local prepared comparisons share checksum-verified immutable commit-index bytes
+through a compact bounded decoder. Separate resident admission covers that
+decoder; request queues and result identities remain bounded by ordinary visit,
+work and output limits. Canonical operation/view fingerprints bind historical
+source rereads to the generation. No graph repository, source index repair,
+commit/tree preflight or repository publication is needed for view comparison.
+
+Native and local code summaries use the owned metadata read boundary and a
+finite selected-view head window. They hydrate selected commit records without
+creating a graph/index or visiting ancestors, trees or reference presentations.
+Latest metadata describes the newest sampled committer time, and count
+uncertainty remains explicit. Browser cards request these summaries through
+their existing independent operation pins; read workers retain current access,
+cancellation and admission. No storage authority or persisted format changes.
+
+Local explicit preparation exports selected-ancestor operation identities and
+canonical fingerprints through the owned bounded scratch writer. A verified
+fixed-width disposable projection shares disk reservations and resident memory
+admission with the prepared generation. Prefix reads use this owned lookup and
+the read-only operation store, with current source fingerprints, access and
+ordinary bounds; they need no commit repository. Native index output and source
+authority stay unchanged.
+
+Compact native/local ReviewStore activity is a read-only service projection of
+the admitted first catalog window. It returns counts and maximum accepted times,
+without anchor/comment presentation or causal event ordering. Provider closure
+admission, current request access and independent native/companion pins remain
+mandatory; sampled counts and times retain explicit incomplete status. The
+service shares data-only activity facts across native and local facades in an
+independent 128-entry cache with five-minute fixed expiry. Keys bind the
+repository, authority epoch/profile, root digest and exact finite window; values
+retain only count, incomplete flag and maximum time. Fresh provider admission
+precedes reuse and snapshot envelopes stay request-owned. Cold loads coalesce
+outside the map lock, canceled or failed loads admit no value, and active-slot
+pressure falls back to request-local derivation.
+
+Body-free WorkStore task activity groups belong to the owned service projection,
+shared by native HTTP and explicit-companion local HTTP. Native root-cache and
+cursor admission charge aggregate data alongside existing keys; transport keeps
+authorization and snapshot envelopes request-bound. Browser repository cards
+consume only returned groups across metadata homes. No upstream JJ, UI, search
+or transport dependency enters the WorkStore model or publication boundary.
+
+Local WorkStore root/projection reuse belongs to the service facade and shares
+the native provider-independent projection. It retains no MetadataStore,
+companion Snapshot, source path, principal or folder binding. Root and query
+windows hold data-only lifetime charges; current companion admission is still
+performed by JJ integration before reuse. Warm lookups do not hold the cache map
+lock through cold decoding or normalization.
+
 Independent conversion remains inside the JJ integration, owned service and
 installation orchestration boundaries. Destination providers consume explicit
 versioned archives and typed translators. Test-only collaboration dependencies
@@ -741,9 +804,11 @@ bounded collaboration materialization cache. Ordered keys, normalized searchable
 fields and one-pass aggregate counts remain derived service projections. Fresh
 captured manifest envelopes and request limits stay outside the cache; native
 continuations retain query-matching keys and share the underlying root charge.
-Local browse hydrates only its selected window with the same projector; shared
-local reconstruction and application search indexes remain separate delivery
-work. No domain format, storage authority or upstream JJ import moves into the
+Local browse, activity and detail share parsed immutable roots across reopened
+facades, reuse bounded exact-query key sets and hydrate their selected windows.
+They independently admit the committed companion and read the selected Work blob
+before lookup. Local application search indexes remain separate delivery work.
+No domain format, storage authority or upstream JJ import moves into the
 service.
 
 Native application content search retains service-owned immutable field indexes
@@ -753,8 +818,83 @@ for continuation. Snippets are generated only for returned hits. The cache holds
 data only, with separate bounded root and cursor retention; each request
 captures its manifest envelope and rechecks viewer, inventory limits and
 authorization. No search cache or field index becomes domain authority or a
-persisted format. The server uses a maintained platform filesystem-notification
-adapter for hint-only local repository monitoring. Native storage, manifest
-publication, captured JJ reads and authorization retain their owned boundaries.
-A notification never selects authority; missed notifications fall back to shared
+persisted format.
+
+The server uses a maintained platform filesystem-notification adapter for
+hint-only local repository monitoring. Native storage, manifest publication,
+captured JJ reads and authorization retain their owned boundaries. A
+notification never selects authority; missed notifications fall back to shared
 bounded witness checks rather than per-browser history scans.
+
+Native query construction shares the owned pinned-format writer with local
+preparation. Interactive and small-cache native builds use compact ordered
+scratch with pre-growth shared-pool admission; large explicit builds retain
+bounded disk scratch. This performance delivery does not qualify full scale or
+complete immutable-generation lifecycle behavior.
+
+Separately prepared native operation residents remain immutable data under
+repository/epoch/operation keys. Historical predicates attach those indexes and
+their allocation leases to fresh request readers while native operation/view
+capabilities and current authorization stay request-owned. Reuse does not copy
+another slot or broaden repository membership.
+
+The native query boundary completes primary generation bookkeeping before graph
+evaluation. Missing historical indexes build in separately reserved scratch and
+retain verified data only, with fresh operation/view capabilities and shared
+process allocation leases. Cache namespace locks protect admission and receipt
+installation; historical construction and graph evaluation run outside them.
+Construction of missing primary generations owns a private full reservation and
+builds without the namespace lease. Completion reacquires admission, converts
+only its own reservation to final bytes and chooses a free slot from current
+namespace state. This derived-cache transition adds no publication or repository
+authority.
+
+Existing verified disk-index recovery without a retained projection transfers
+its selected files into private quota-charged ownership while holding the
+namespace only for admission and rename. Recovery reserves actual data plus
+bounded receipt/descriptor overhead, removes the old receipt and decodes/derives
+outside the namespace. Verification stamps reuse the admitted file identities;
+completion uses the same current-slot installation path as private construction.
+Neither disk recovery nor warm resident reads retain an earlier caller's access
+capability. Complete scale/lifecycle qualification remains deferred.
+
+Prepared local reference filtering retains a disposable operation-bound disk
+projection and bounded database cache. Construction shares existing admitted
+commit reads and the generation's pre-growth disk reservation; request work
+seeks compressed lexical candidate blocks, validates exact pinned descriptions
+and hydrates only selected rows. No complete matching set or source history is
+retained by a query. Eligible native preparation shares that operation-bound
+projection. Its readonly reader and allocation lease own a shared pin on the
+complete disk generation; active pins block cache unlink and retain quota
+accounting. Idle filtered residents can be reclaimed outside namespace/cache
+locks before admission is retried. Recovery moves an unpinned generation into an
+actual-size private reservation, or independently pins an already owned slot in
+place. Native candidate validation uses retained visible change groups and
+freshly admitted bookmark terms, then hydrates only the selected page. Extreme
+candidate continuation remains separate delivery work; full memory, construction
+and latency qualification is deferred.
+
+Cold native receipt proofs run after bounded size admission transfers or pins
+the complete generation and releases the namespace. No decoder sees files before
+the proof. Unpinned checksum damage rebuilds through fresh admission; shared
+damage preserves other readers and fails closed. Precise stamps can reuse the
+proof; coarse metadata requires full checks before loading and before namespace
+reacquisition, without retaining warm residents. Final installation does only
+bounded file metadata checks. Writable explicit upgrades reserve construction
+capacity before growth. No persisted format or repository authority changes.
+
+Native resident visibility and ordered reference groups use flat full-ID arrays
+and compact group boundaries. Their conservative per-indexed-commit admission is
+192 bytes, including bounded traversal/prefix scratch, instead of 512 bytes for
+trees, formatted keys and per-group allocations. Native format-6 decoding
+retains its separate reservation. In-place construction sorting charges work and
+checks cancellation in finite batches; lexical pages allocate only selected keys
+and targets. The two-million-row admission regression checks room for further
+admitted state within the unchanged 1GiB process pool. It does not prove RSS,
+elapsed time, complex-frontier peak usage or complete large-scale serving.
+
+Native resident retention charges framed index allocations, the selected-view
+projection and the bounded database cache. Complete filter files remain charged
+to disk quota. This distinction prevents a disk-only projection from defeating
+valid warm reader admission; existing allocation leases and disk limits remain
+independent and unchanged.

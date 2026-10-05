@@ -144,4 +144,5 @@ pub(super) type RelationPage = AgentRelationPage;
 pub(super) type CheckpointPage = AgentCheckpointPage;
 pub(super) type CheckpointDetail = AgentCheckpointDetail;
 pub(super) type ReviewPage = ReviewThreadPage;
+pub(super) type ReviewActivitySummary = jj_store_service::collaboration::ReviewActivitySummary;
 pub(super) type ReviewDetail = ReviewThreadDetail;

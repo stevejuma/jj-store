@@ -1,11 +1,17 @@
 #[path = "local_browser/bounded_reads.rs"]
 mod bounded_reads;
+#[path = "local_browser/code_summary.rs"]
+mod code_summary;
 #[path = "local_browser/index_tasks.rs"]
 mod index_tasks_acceptance;
 #[path = "local_browser/preparation.rs"]
 mod preparation_acceptance;
+#[path = "local_browser/prepared_comparisons.rs"]
+mod prepared_comparisons;
 #[path = "local_browser/prepared_details.rs"]
 mod prepared_details;
+#[path = "local_browser/prepared_operations.rs"]
+mod prepared_operations;
 #[path = "local_browser/prepared_points.rs"]
 mod prepared_points;
 #[path = "local_browser/prepared_points_http.rs"]
@@ -1204,7 +1210,7 @@ async fn filesystem_runtime_registers_and_reads_without_native_storage() {
     .unwrap();
     assert_eq!(cli_receipt, work_outcome);
     // A second CLI publication must not advance a previously selected browser root.
-    let _: Value = serde_json::from_str(&jj(
+    let cli_project: Value = serde_json::from_str(&jj(
         &folder,
         &[
             "project",
@@ -1218,6 +1224,20 @@ async fn filesystem_runtime_registers_and_reads_without_native_storage() {
         ],
     ))
     .unwrap();
+    let cli_project_id = cli_project["receipt"]["result"]["project"]["id"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    let mut activity_projects = vec!["14".repeat(16), cli_project_id.clone()];
+    activity_projects.sort();
+    for (request, project) in [("18", "14".repeat(16)), ("19", cli_project_id)] {
+        let result: Value = post(&work_url, json!({"version":1,"request_id":request.repeat(16),
+            "command":{"command":"create_task","id":request.repeat(16),
+            "project":project,"expected_project_version":1,
+            "title":"Task activity fixture","body":"private task body","repository":null,"parent":null}}))
+            .send().await.unwrap().error_for_status().unwrap().json().await.unwrap();
+        assert_eq!(result["status"], "committed");
+    }
     let work_snapshot: Value = read(&format!("/local/repos/{id}/snapshot"))
         .send()
         .await
@@ -1260,6 +1280,29 @@ async fn filesystem_runtime_registers_and_reads_without_native_storage() {
     .await
     .unwrap();
     assert_eq!(work_browse["total_matches"], 2);
+    let activity_query = json!({"metadata_commit":metadata,"query":{"limit":1}});
+    let task_activity: Value = post(
+        &format!("/local/repos/{id}/work/activity"),
+        activity_query.clone(),
+    )
+    .send()
+    .await
+    .unwrap()
+    .error_for_status()
+    .unwrap()
+    .json()
+    .await
+    .unwrap();
+    assert_eq!(task_activity["total_groups"], 2);
+    assert_eq!(task_activity["groups"][0]["tasks"], 1);
+    assert!(!task_activity.to_string().contains("private task body"));
+    assert!(!task_activity.to_string().contains("Task activity fixture"));
+    assert!(
+        task_activity["next_cursor"]
+            .as_str()
+            .unwrap()
+            .starts_with("jlw1_")
+    );
     let _: Value = serde_json::from_str(&jj(
         &folder,
         &[
@@ -1291,6 +1334,56 @@ async fn filesystem_runtime_registers_and_reads_without_native_storage() {
     assert_eq!(resumed["snapshot"], work_browse["snapshot"]);
     assert_eq!(resumed["total_matches"], 2);
     assert_eq!(resumed["projects"][0]["title"], "CLI home");
+    let mut activity_resume = activity_query.clone();
+    activity_resume["query"]["cursor"] = task_activity["next_cursor"].clone();
+    let task_activity_resumed: Value = post(
+        &format!("/local/repos/{id}/work/activity"),
+        activity_resume.clone(),
+    )
+    .send()
+    .await
+    .unwrap()
+    .error_for_status()
+    .unwrap()
+    .json()
+    .await
+    .unwrap();
+    assert_eq!(task_activity_resumed["snapshot"], task_activity["snapshot"]);
+    assert_eq!(task_activity_resumed["total_groups"], 2);
+    assert_eq!(
+        task_activity_resumed["groups"][0]["project"],
+        activity_projects[1]
+    );
+    assert!(task_activity_resumed["next_cursor"].is_null());
+    activity_resume["query"]["limit"] = json!(2);
+    assert_eq!(
+        post(&format!("/local/repos/{id}/work/activity"), activity_resume)
+            .send()
+            .await
+            .unwrap()
+            .status(),
+        400
+    );
+    assert_eq!(
+        post(
+            &format!("/local/repos/{id}/work/activity"),
+            json!({"metadata_commit":metadata,"query":{"limit":0}})
+        )
+        .send()
+        .await
+        .unwrap()
+        .status(),
+        400
+    );
+    assert_eq!(
+        post(&format!("/local/repos/{id}/work/activity"), activity_query)
+            .header("Origin", "https://untrusted.invalid")
+            .send()
+            .await
+            .unwrap()
+            .status(),
+        403
+    );
     resume_query["query"]["q"] = json!("different");
     assert_eq!(
         post(&format!("/local/repos/{id}/work/browse"), resume_query)
@@ -1576,6 +1669,8 @@ async fn filesystem_runtime_registers_and_reads_without_native_storage() {
                 json!({"path":"/v1/local/repos/{repo}/events","method":"get","status":200,"media":"text/event-stream","data":changed}),
                 sample("/v1/local/repos/{repo}/work/page", "post", work_page),
                 sample("/v1/local/repos/{repo}/work/browse", "post", work_browse),
+                sample("/v1/local/repos/{repo}/work/activity", "post", task_activity),
+                sample("/v1/local/repos/{repo}/work/activity", "post", task_activity_resumed),
                 sample("/v1/local/repos/{repo}/work/commands", "post", work_outcome),
                 sample(
                     "/v1/local/repos/{repo}/work/commands/{request_id}",

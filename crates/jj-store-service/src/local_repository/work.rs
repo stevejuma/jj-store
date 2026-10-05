@@ -114,16 +114,7 @@ impl LocalRepository {
         else {
             return Ok(WorkStateV1::default());
         };
-        let root: LocalWorkRootV1 = serde_json::from_slice(&bytes).map_err(|_| Error::Corrupt)?;
-        if root.version != 1
-            || root.repository != snapshot.repository()
-            || serde_json::to_vec(&root).map_err(|_| Error::Corrupt)? != bytes
-        {
-            return Err(Error::Corrupt);
-        }
-        let state = root.state();
-        state.validate().map_err(model)?;
-        Ok(state)
+        decode_work(&bytes, snapshot.repository())
     }
     pub fn apply_work_command(&self, request: &Request) -> Result<LocalWorkOutcome> {
         if request.version != 1 {
@@ -216,4 +207,17 @@ impl LocalRepository {
                 .map_or(0, |s| s.version),
         }
     }
+}
+
+pub(super) fn decode_work(bytes: &[u8], repository: m::RepositoryId) -> Result<WorkStateV1> {
+    let root: LocalWorkRootV1 = serde_json::from_slice(bytes).map_err(|_| Error::Corrupt)?;
+    if root.version != 1
+        || root.repository != repository
+        || serde_json::to_vec(&root).map_err(|_| Error::Corrupt)? != bytes
+    {
+        return Err(Error::Corrupt);
+    }
+    let state = root.state();
+    state.validate().map_err(model)?;
+    Ok(state)
 }

@@ -45,8 +45,29 @@ fn bookmarks<'a>(
 
 pub(super) async fn read(context: &Context, view: &dto::View, request: &Request) -> Result<Page> {
     let prepared = context.access.prepared.as_ref().ok_or(Error::Unavailable)?;
+    let _memory = crate::query::memory::Lease::reserve(16384 + request.limit as u64 * 16384)?;
     let changes = prepared.reference_changes();
-    let mut selected = if let Some(exact) = &request.exact {
+    let filtered = if request.query.is_empty() {
+        None
+    } else {
+        Some(filter_window(context, view, request)?)
+    };
+    let mut selected = if let Some((keys, _, _)) = &filtered {
+        keys.iter()
+            .map(|key| {
+                if let Some(name) = key.strip_prefix("bookmark:") {
+                    let (name, target) = view
+                        .local_bookmarks
+                        .get_key_value(name)
+                        .ok_or(Error::Corrupt)?;
+                    Ok(Selection::Bookmark(name, target))
+                } else {
+                    let (key, targets) = changes.get_key_value(key).ok_or(Error::Corrupt)?;
+                    Ok(Selection::Change(key, targets.change, &targets.commits))
+                }
+            })
+            .collect::<Result<Vec<_>>>()?
+    } else if let Some(exact) = &request.exact {
         changes
             .get_key_value(&format!("change:{exact}"))
             .map(|(key, targets)| Selection::Change(key, targets.change, &targets.commits))
@@ -73,7 +94,7 @@ pub(super) async fn read(context: &Context, view: &dto::View, request: &Request)
             Direction::Backward => rows.rev().take(request.limit).collect(),
         }
     };
-    if request.direction == Direction::Backward {
+    if filtered.is_none() && request.direction == Direction::Backward {
         selected.reverse();
     }
     let first = if request.kind == Kind::All {
@@ -106,6 +127,8 @@ pub(super) async fn read(context: &Context, view: &dto::View, request: &Request)
         .filter(|_| request.exact.is_none())
         .map(Selection::key)
         .filter(|key| last.as_ref().is_some_and(|last| last > key));
+    let (previous, next) =
+        filtered.map_or((previous, next), |(_, previous, next)| (previous, next));
     let mut references = Vec::with_capacity(selected.len());
     let mut hydrated = BTreeMap::new();
     for row in selected {
@@ -173,4 +196,92 @@ pub(super) async fn read(context: &Context, view: &dto::View, request: &Request)
     };
     context.budget.complete_output(&page)?;
     Ok(page)
+}
+
+type Window = (Vec<String>, Option<String>, Option<String>);
+fn filter_window(context: &Context, view: &dto::View, request: &Request) -> Result<Window> {
+    let prepared = context.access.prepared.as_ref().ok_or(Error::Unavailable)?;
+    let filter = prepared.reference_filter();
+    let needle = request.query.to_lowercase();
+    let matches = |key: &str| -> Result<bool> {
+        let bookmark = key.strip_prefix("bookmark:");
+        if (bookmark.is_some() && request.kind == Kind::Changes)
+            || (bookmark.is_none() && request.kind == Kind::Bookmarks)
+        {
+            return Ok(false);
+        }
+        let (bookmark_target, change_target) = if let Some(name) = bookmark {
+            let Some(target) = view.local_bookmarks.get(name) else {
+                return Ok(false);
+            };
+            (Some(target), None)
+        } else {
+            let Some(targets) = prepared.reference_changes().get(key) else {
+                return Ok(false);
+            };
+            (None, Some(targets))
+        };
+        context.budget.work(1 + key.len().div_ceil(64))?;
+        if key.to_lowercase().contains(&needle) {
+            return Ok(true);
+        }
+        for id in bookmark_target
+            .into_iter()
+            .flat_map(|target| target.0.iter().flatten())
+            .chain(
+                change_target
+                    .into_iter()
+                    .flat_map(|target| target.commits.iter()),
+            )
+        {
+            if filter.contains(
+                id.as_bytes(),
+                &needle,
+                |amount| context.budget.work(amount),
+                |bytes| context.budget.read_bytes(bytes),
+            )? {
+                return Ok(true);
+            }
+        }
+        Ok(false)
+    };
+    let search = |anchor: Option<&str>, backward, limit| {
+        filter.search(
+            &needle,
+            anchor,
+            backward,
+            limit,
+            matches,
+            |amount| context.budget.work(amount),
+            |bytes| context.budget.read_bytes(bytes),
+        )
+    };
+    let backward = request.direction == Direction::Backward;
+    let mut keys = search(request.anchor.as_deref(), backward, request.limit + 1)?;
+    let more = keys.len() > request.limit;
+    keys.truncate(request.limit);
+    if backward {
+        keys.reverse();
+    }
+    let previous = keys.first().filter(|_| backward && more).cloned();
+    let next = keys.last().filter(|_| !backward && more).cloned();
+    let previous = if !backward {
+        if let Some(first) = keys.first() {
+            (!search(Some(first), true, 1)?.is_empty()).then(|| first.clone())
+        } else {
+            None
+        }
+    } else {
+        previous
+    };
+    let next = if backward {
+        if let Some(last) = keys.last() {
+            (!search(Some(last), false, 1)?.is_empty()).then(|| last.clone())
+        } else {
+            None
+        }
+    } else {
+        next
+    };
+    Ok((keys, previous, next))
 }

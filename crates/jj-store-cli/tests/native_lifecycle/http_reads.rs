@@ -100,6 +100,10 @@ async fn http_contract_capture_matches_registered_routes() {
     for (template, path) in [
         ("capabilities", "capabilities".into()),
         ("snapshot", "snapshot".into()),
+        (
+            "code/summary",
+            format!("code/summary?at_op={operation}&limit=1"),
+        ),
         ("query-info", format!("query-info?at_op={operation}")),
         (
             "log",
@@ -236,6 +240,50 @@ async fn http_contract_capture_matches_registered_routes() {
     );
     assert_eq!(*f.f.session.snapshot().await.unwrap().manifest(), before);
     if let Some(path) = std::env::var_os("JJ_STORE_CONTRACT_CAPTURE") {
+        std::fs::write(path, serde_json::to_vec(&samples).unwrap()).unwrap();
+    }
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn native_code_summary_http_is_pinned_strict_and_avoids_preparing_a_graph() {
+    let f = ContentFixture::new().await;
+    let cache = tempfile::tempdir().unwrap();
+    let router = api(&f, cache.path(), Config::default());
+    let before = f.f.session.snapshot().await.unwrap().manifest().clone();
+    let operation = f.read.snapshot().await.unwrap().operation_id;
+    let mut samples = vec![];
+    for path in [
+        "code/summary".into(),
+        format!("code/summary?at_op={operation}&limit=1"),
+    ] {
+        let (status, body) = json(&router, &f.f.reader, &path).await;
+        assert_eq!(status, StatusCode::OK, "{body}");
+        assert_eq!(body["snapshot"]["operation_id"], operation.to_string());
+        assert_eq!(body["data"]["commits"], 1);
+        assert_eq!(body["data"]["commits_partial"], false);
+        assert_eq!(body["data"]["latest"]["description"], f.commit.description);
+        assert!(body["next_cursor"].is_null());
+        samples.push(serde_json::json!({"path":"/v1/repos/{repo}/code/summary","method":"get","status":200,"media":"application/json","data":body}));
+    }
+    for args in ["limit=0", "limit=257"] {
+        assert_eq!(
+            json(&router, &f.f.reader, &format!("code/summary?{args}"))
+                .await
+                .0,
+            StatusCode::PAYLOAD_TOO_LARGE
+        );
+    }
+    for args in ["cursor=unavailable", "unknown=1", "at_op=bad"] {
+        assert_eq!(
+            json(&router, &f.f.reader, &format!("code/summary?{args}"))
+                .await
+                .0,
+            StatusCode::BAD_REQUEST
+        );
+    }
+    assert_eq!(f.f.session.snapshot().await.unwrap().manifest(), &before);
+    assert_eq!(std::fs::read_dir(cache.path()).unwrap().count(), 0);
+    if let Some(path) = std::env::var_os("JJ_STORE_CODE_SUMMARY_NATIVE_CAPTURE") {
         std::fs::write(path, serde_json::to_vec(&samples).unwrap()).unwrap();
     }
 }
@@ -859,6 +907,37 @@ async fn http_reads_index_task_and_signed_cursor_preserve_snapshot_across_public
         },
     );
     let path = "log?at_time_millis=1790000000000&revset=all()&limit=1";
+    // Native reference windows participate in the same exact-snapshot recovery.
+    let reference_path = "references?kind=changes&q=change%3A&limit=1";
+    let unfiltered_path = "references?kind=changes&limit=1";
+    let (status, reference_rebuild) = json(&router, &f.f.reader, reference_path).await;
+    assert_eq!(status, StatusCode::CONFLICT);
+    assert_eq!(reference_rebuild["code"], "index_rebuild_required");
+    assert!(
+        reference_rebuild["snapshot"]["operation_id"]
+            .as_str()
+            .is_some()
+    );
+    let (status, unfiltered_rebuild) = json(&router, &f.f.reader, unfiltered_path).await;
+    assert_eq!(status, StatusCode::CONFLICT);
+    assert_eq!(unfiltered_rebuild["code"], "index_rebuild_required");
+    assert_eq!(
+        unfiltered_rebuild["snapshot"],
+        reference_rebuild["snapshot"]
+    );
+    // Metadata-only bookmark/workspace reads remain available without an index.
+    for kind in ["bookmarks", "workspaces"] {
+        assert_eq!(
+            json(
+                &router,
+                &f.f.reader,
+                &format!("references?kind={kind}&limit=1")
+            )
+            .await
+            .0,
+            StatusCode::OK
+        );
+    }
     let before = f.f.session.snapshot().await.unwrap().manifest().clone();
     let (status, rebuild) = json(&router, &f.f.reader, path).await;
     assert_eq!(status, StatusCode::CONFLICT);
@@ -890,6 +969,17 @@ async fn http_reads_index_task_and_signed_cursor_preserve_snapshot_across_public
     let (status, first) = json(&router, &f.f.reader, path).await;
     assert_eq!(status, StatusCode::OK);
     let cursor = first["next_cursor"].as_str().unwrap();
+    assert_eq!(reference_rebuild["snapshot"], rebuild["snapshot"]);
+    let (status, reference_first) = json(&router, &f.f.reader, reference_path).await;
+    assert_eq!(status, StatusCode::OK);
+    assert_eq!(reference_first["snapshot"], first["snapshot"]);
+    let (status, unfiltered_first) = json(&router, &f.f.reader, unfiltered_path).await;
+    assert_eq!(status, StatusCode::OK);
+    assert_eq!(
+        unfiltered_first["data"]["references"],
+        reference_first["data"]["references"]
+    );
+    let reference_cursor = reference_first["next_cursor"].as_str().unwrap();
     let original: m::OperationId = operation.parse().unwrap();
     let mut later = f.operation.clone();
     later.parents = vec![o::OperationId::from_bytes(original.as_bytes())];
@@ -910,6 +1000,40 @@ async fn http_reads_index_task_and_signed_cursor_preserve_snapshot_across_public
             &router,
             &f.f.reader,
             &format!("{}&cursor={cursor}", path.replace("limit=1", "limit=2"))
+        )
+        .await
+        .0,
+        StatusCode::BAD_REQUEST
+    );
+    let (status, reference_second) = json(
+        &router,
+        &f.f.reader,
+        &format!("{reference_path}&cursor={reference_cursor}"),
+    )
+    .await;
+    assert_eq!(status, StatusCode::OK);
+    assert_eq!(reference_second["snapshot"], reference_first["snapshot"]);
+    assert_ne!(
+        reference_second["data"]["references"],
+        reference_first["data"]["references"]
+    );
+    let previous = reference_second["previous_cursor"].as_str().unwrap();
+    let (status, reference_back) = json(
+        &router,
+        &f.f.reader,
+        &format!("{reference_path}&cursor={previous}"),
+    )
+    .await;
+    assert_eq!(status, StatusCode::OK);
+    assert_eq!(
+        reference_back["data"]["references"],
+        reference_first["data"]["references"]
+    );
+    assert_eq!(
+        json(
+            &router,
+            &f.f.reader,
+            &format!("references?kind=all&limit=1&cursor={reference_cursor}")
         )
         .await
         .0,

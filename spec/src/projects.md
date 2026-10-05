@@ -165,9 +165,30 @@ summaries nor repeat sorting, body normalization or count scans. Multiple pins
 of one root share its charge; query-key storage is charged separately. Every
 request retains fresh authorization, inventory limits and epoch checks. Cache
 loss, expiry and new selected roots cannot broaden a query or hide failed
-reconstruction. Local browse uses the same selected-window projection;
-cross-request local root reuse and comprehensive capacity/pressure qualification
-remain separate slices.
+reconstruction. Local browse uses the same selected-window projection; local
+reads MUST reuse validated immutable root data and bounded exact-query matching
+keys across independently reopened facades. They still admit the full committed
+companion selection and reread its Work blob on every request. Cache keys bind
+repository, selected Work object and SHA-256 of those admitted bytes; cached
+data grants no selection or access capability. Browse, task activity and detail
+pages share ordering/counts and hydrate only their returned window. Expiry,
+eviction or process loss may rebuild the same exact projection, never broaden a
+query or hide failed companion admission. Comprehensive capacity/pressure
+qualification remains a separate slice.
+
+Repository directory task activity MUST use body-free counts and latest task
+update times grouped by optional target repository and project from the complete
+selected WorkStore root. An absent target means the metadata home. Groups sort
+by target identity then project identity and page at 1..256 groups; a returned
+group counts all its tasks regardless of the task browse page size. Native
+groups are retained in the admitted immutable projection and resumed pages slice
+that order without task-summary hydration or rescanning. Local groups retain
+independent committed companion admission. Both transports bind exact pins and
+query limits to their continuations, retain current access checks and report
+unloaded groups explicitly. Cross-home/project card counts MUST sum these groups
+without fetching or draining task browse pages; unloaded homes or groups keep
+activity partial. Code and review summary optimization remains separate delivery
+work.
 
 The installation directory includes Projects, Tasks, Reviews, Agents and
 Repositories. The sidebar reads unfiltered projects independently from main-view

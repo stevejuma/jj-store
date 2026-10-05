@@ -33,6 +33,9 @@ export class HttpLocalWorkDataSource implements WorkBrowseTransport {
   };
   directory = (signal?: AbortSignal) =>
     readLocalRepositoryDirectory(this.source, this, signal);
+  reviewActivity(signal?: AbortSignal) {
+    return this.source.reviewActivity!(signal);
+  }
   async reviews(cursor?: string, signal?: AbortSignal) {
     signal?.throwIfAborted();
     const page = await this.source.reviewThreads(cursor, signal);
@@ -53,6 +56,19 @@ export class HttpLocalWorkDataSource implements WorkBrowseTransport {
     const pin = await this.pin();
     const page = await this.read<Model<"LocalWorkBrowsePage">>(
       "work/browse",
+      { metadata_commit: pin, query },
+      signal,
+    );
+    this.validate(page.snapshot, pin);
+    return page;
+  }
+  async taskActivity(
+    query: { limit?: number; cursor?: string },
+    signal?: AbortSignal,
+  ) {
+    const pin = await this.pin();
+    const page = await this.read<Model<"LocalWorkActivityPage">>(
+      "work/activity",
       { metadata_commit: pin, query },
       signal,
     );

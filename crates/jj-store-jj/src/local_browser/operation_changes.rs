@@ -63,55 +63,31 @@ pub(super) async fn read(context: Context, request: Request) -> Result<Page> {
         return Err(Error::Invalid);
     }
     let difference = context
-        .difference(request.operation, operation, request.parent)
+        .visibility_delta(request.operation, &operation, request.parent)
         .await?;
     let mut groups: BTreeMap<m::ChangeId, Pending> = BTreeMap::new();
-    for id in &difference.visible_commits.removed {
-        let commit = context.commit_dto(*id).await?;
-        groups
-            .entry(commit.change_id)
-            .or_default()
-            .before
-            .insert(*id);
+    // Admit grouping nodes and target IDs before growth. Complete differences
+    // are still visit-bounded; only the returned window hydrates added commits.
+    let _memory = crate::query::memory::Lease::reserve(
+        (difference.removed.len() as u64 + difference.added.len() as u64)
+            .checked_mul(512)
+            .ok_or(Error::Limit)?
+            .checked_add(8192)
+            .ok_or(Error::Limit)?,
+    )?;
+    for id in &difference.removed {
+        let change = change_identity(&context, *id).await?;
+        groups.entry(change).or_default().before.insert(*id);
     }
-    for id in &difference.visible_commits.added {
-        let commit = context.commit_dto(*id).await?;
-        let group = groups.entry(commit.change_id).or_default();
+    for id in &difference.added {
+        let change = change_identity(&context, *id).await?;
+        let group = groups.entry(change).or_default();
         group.after.insert(*id);
-        if let Some(predecessors) = difference
-            .commit_predecessors
-            .as_ref()
-            .and_then(|map| map.get(id))
-        {
-            group.before.extend(predecessors.iter().copied());
-        } else if group.before.is_empty() {
-            group.before.extend(commit.parents);
-        }
     }
     let mut entries = vec![];
     for (change, pending) in groups {
-        let before: Vec<_> = pending.before.into_iter().collect();
-        let after: Vec<_> = pending.after.into_iter().collect();
-        let comparison = match (before.as_slice(), after.as_slice()) {
-            ([from], [to]) => Comparison::Exact {
-                from: *from,
-                to: *to,
-            },
-            ([], _) | (_, []) => Comparison::Unavailable,
-            _ => Comparison::Select {
-                before: before.clone(),
-                after: after.clone(),
-            },
-        };
-        entries.push((
-            change.to_string(),
-            Group {
-                change,
-                before,
-                after,
-                comparison,
-            },
-        ));
+        context.budget.work(1)?;
+        entries.push((change.to_string(), change, pending));
     }
     let boundary = request.anchor.as_deref();
     let (start, end) = match request.direction {
@@ -130,12 +106,58 @@ pub(super) async fn read(context: Context, request: Request) -> Result<Page> {
     };
     let previous = (start > 0 && start < end).then(|| entries[start].0.clone());
     let next = (end < entries.len() && start < end).then(|| entries[end - 1].0.clone());
-    let groups = entries
-        .into_iter()
-        .skip(start)
-        .take(end - start)
-        .map(|(_, group)| group)
-        .collect();
+    let mut groups = vec![];
+    let mut association_memory = vec![];
+    for (_, change, mut pending) in entries.into_iter().skip(start).take(end - start) {
+        for id in &pending.after {
+            if let Some(predecessors) = operation
+                .commit_predecessors
+                .as_ref()
+                .and_then(|map| map.get(id))
+            {
+                context.budget.work(predecessors.len())?;
+                association_memory.push(crate::query::memory::Lease::reserve(
+                    (predecessors.len() as u64)
+                        .checked_mul(256)
+                        .ok_or(Error::Limit)?,
+                )?);
+                pending.before.extend(predecessors.iter().copied());
+            } else if pending.before.is_empty() {
+                let commit = context.commit_dto(*id).await?;
+                if commit.change_id != change {
+                    return Err(Error::Corrupt);
+                }
+                context.budget.work(commit.parents.len())?;
+                association_memory.push(crate::query::memory::Lease::reserve(
+                    (commit.parents.len() as u64)
+                        .checked_mul(256)
+                        .ok_or(Error::Limit)?,
+                )?);
+                pending.before.extend(commit.parents);
+            }
+        }
+        let before: Vec<_> = pending.before.into_iter().collect();
+        let after: Vec<_> = pending.after.into_iter().collect();
+        let comparison = match (before.as_slice(), after.as_slice()) {
+            ([from], [to]) => Comparison::Exact {
+                from: *from,
+                to: *to,
+            },
+            ([], _) | (_, []) => Comparison::Unavailable,
+            _ => Comparison::Select {
+                before: before.clone(),
+                after: after.clone(),
+            },
+        };
+        let group = Group {
+            change,
+            before,
+            after,
+            comparison,
+        };
+        context.budget.output(&group)?;
+        groups.push(group);
+    }
     let result = Page {
         version: 1,
         operation: request.operation,
@@ -147,4 +169,11 @@ pub(super) async fn read(context: Context, request: Request) -> Result<Page> {
     };
     context.budget.complete_output(&result)?;
     Ok(result)
+}
+async fn change_identity(context: &Context, id: m::GitSha1Id) -> Result<m::ChangeId> {
+    if let Some(prepared) = &context.access.prepared {
+        prepared.change_identity(id, &context.budget)
+    } else {
+        Ok(context.commit_dto(id).await?.change_id)
+    }
 }

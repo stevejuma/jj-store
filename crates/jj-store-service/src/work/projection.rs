@@ -11,6 +11,7 @@ pub(crate) struct Projection {
     pub counts: BTreeMap<ProjectId, WorkTaskCounts>,
     pub comments: BTreeMap<TaskId, usize>,
     pub subtasks: BTreeMap<TaskId, usize>,
+    pub activity: Vec<WorkActivityGroup>,
     project_text: BTreeMap<ProjectId, (String, String)>,
     task_text: BTreeMap<TaskId, (String, String)>,
     pub bytes: usize,
@@ -41,6 +42,7 @@ impl Projection {
             counts: BTreeMap::new(),
             comments: BTreeMap::new(),
             subtasks: BTreeMap::new(),
+            activity: Vec::new(),
             project_text: BTreeMap::new(),
             task_text: BTreeMap::new(),
             bytes: 0,
@@ -50,11 +52,22 @@ impl Projection {
                 .project_text
                 .insert(p.id, (p.title.to_lowercase(), p.body.to_lowercase()));
         }
+        let mut activity = BTreeMap::<_, WorkActivityGroup>::new();
         for t in state.tasks.values() {
             if !state.projects.contains_key(&t.project) {
                 return Err(Error::Corrupt);
             }
             let counts = result.counts.entry(t.project).or_default();
+            let group = activity
+                .entry((t.repository, t.project))
+                .or_insert(WorkActivityGroup {
+                    repository: t.repository,
+                    project: t.project,
+                    tasks: 0,
+                    updated_at_millis: t.actor.updated_at_millis,
+                });
+            group.tasks += 1;
+            group.updated_at_millis = group.updated_at_millis.max(t.actor.updated_at_millis);
             counts.total += 1;
             if t.state == TaskStateV1::Done {
                 counts.done += 1;
@@ -92,13 +105,15 @@ impl Projection {
                 .cmp(&state.tasks[a].actor.updated_at_millis)
                 .then(a.cmp(b))
         });
+        result.activity = activity.into_values().collect();
         result.bytes = result
             .project_text
             .values()
             .chain(result.task_text.values())
             .map(|(title, body)| title.len() + body.len())
             .sum::<usize>()
-            + (state.projects.len() + state.tasks.len() + state.comments.len()) * 512;
+            + (state.projects.len() + state.tasks.len() + state.comments.len()) * 512
+            + result.activity.len() * 128;
         Ok(result)
     }
     pub fn select(&self, state: &WorkStateV1, query: &WorkBrowseQuery) -> Result<Selection> {
@@ -183,7 +198,7 @@ impl Projection {
         })
     }
 }
-fn validate(state: &WorkStateV1, query: &WorkBrowseQuery) -> Result<()> {
+pub(crate) fn validate_shape(query: &WorkBrowseQuery) -> Result<()> {
     if !(1..=256).contains(&query.limit)
         || query.q.len() > 512
         || (query.kind == WorkBrowseKind::Projects
@@ -191,6 +206,10 @@ fn validate(state: &WorkStateV1, query: &WorkBrowseQuery) -> Result<()> {
     {
         return Err(Error::Invalid);
     }
+    Ok(())
+}
+fn validate(state: &WorkStateV1, query: &WorkBrowseQuery) -> Result<()> {
+    validate_shape(query)?;
     if query
         .project
         .is_some_and(|id| !state.projects.contains_key(&id))

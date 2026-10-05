@@ -14,6 +14,10 @@ export type WorkBrowseQuery = {
   limit?: number;
 };
 export interface WorkBrowseTransport extends WorkTransport {
+  taskActivity?(
+    query: { limit?: number; cursor?: string },
+    signal?: AbortSignal,
+  ): Promise<import("./work-types.js").WorkActivityPage>;
   agents?(
     cursor?: string,
     signal?: AbortSignal,
@@ -27,6 +31,9 @@ export interface WorkBrowseTransport extends WorkTransport {
   ): Promise<
     import("./projects-repository-types.js").RepositoryDirectorySummary
   >;
+  reviewActivity?(
+    signal?: AbortSignal,
+  ): Promise<import("./repository-read-types.js").ReviewActivitySummary>;
   reviews?(
     cursor?: string,
     signal?: AbortSignal,

@@ -38,18 +38,21 @@ impl CursorQuery for WorkQuery {
 pub(super) enum WorkCursorQuery {
     Page(WorkQuery),
     Browse(WorkBrowseQuery),
+    Activity(WorkActivityQuery),
 }
 impl CursorQuery for WorkCursorQuery {
     fn cursor(&self) -> Option<&String> {
         match self {
             Self::Page(q) => q.cursor(),
             Self::Browse(q) => q.cursor(),
+            Self::Activity(q) => q.cursor(),
         }
     }
     fn clear_cursor(&mut self) {
         match self {
             Self::Page(q) => q.clear_cursor(),
             Self::Browse(q) => q.clear_cursor(),
+            Self::Activity(q) => q.clear_cursor(),
         }
     }
 }

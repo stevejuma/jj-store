@@ -119,6 +119,9 @@ impl Budget {
     pub fn work(&self, amount: usize) -> Result<()> {
         self.charge(&self.work, amount as u64, self.limits.max_work as u64)
     }
+    pub fn read_bytes(&self, amount: usize) -> Result<()> {
+        self.charge(&self.bytes, amount as u64, self.limits.max_object_bytes)
+    }
     pub fn start_index(&self, inline: bool) -> Result<()> {
         *self.index.lock().expect("index admission") = Some(super::index::Admission::new(inline));
         // The virtual root is indexed without a physical object-store read.

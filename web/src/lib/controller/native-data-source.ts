@@ -77,6 +77,10 @@ export interface StoreDataSource {
   ): Promise<import("./history-query-types.js").HistoryQueryInfo>;
   capabilities(): Promise<RepositoryCapabilities>;
   snapshot(fresh?: boolean): Promise<RepositoryHead>;
+  codeSummary?(
+    operation: string,
+    signal?: AbortSignal,
+  ): Promise<Browse.CodeEnvelope<Browse.CodeSummary>>;
   references(
     operation: string,
     cursor?: string,
@@ -161,6 +165,7 @@ export interface StoreDataSource {
     transcript: Model<"AgentTranscriptDescriptor">,
     cursor?: string,
   ): Promise<Browse.AgentTranscript>;
+  reviewActivity?(signal?: AbortSignal): Promise<Browse.ReviewActivitySummary>;
   reviewThreads(
     cursor?: string,
     signal?: AbortSignal,

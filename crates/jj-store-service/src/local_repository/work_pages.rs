@@ -71,7 +71,8 @@ impl LocalRepository {
         } else {
             (current, 0)
         };
-        let state = self.work_state(snapshot.as_ref())?;
+        let data = self.work_data(snapshot.as_ref())?;
+        let state = &data.state;
         let mut page = LocalWorkPage {
             version: 2,
             snapshot: Self::work_snapshot(snapshot.as_ref()),
@@ -94,7 +95,12 @@ impl LocalRepository {
             );
             page.tasks.push(task.clone());
             take_page(
-                state.comments.values().filter(|c| c.task == id),
+                data.projection
+                    .task_comments
+                    .get(&id)
+                    .into_iter()
+                    .flatten()
+                    .filter_map(|id| state.comments.get(id)),
                 offset,
                 query.limit,
                 &mut page.comments,
@@ -104,7 +110,12 @@ impl LocalRepository {
             page.projects
                 .push(state.projects.get(&id).ok_or(Error::NotFound)?.clone());
             take_page(
-                state.tasks.values().filter(|t| t.project == id),
+                data.projection
+                    .project_tasks
+                    .get(&id)
+                    .into_iter()
+                    .flatten()
+                    .filter_map(|id| state.tasks.get(id)),
                 offset,
                 query.limit,
                 &mut page.tasks,

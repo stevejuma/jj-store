@@ -16,6 +16,19 @@ durable read index is added.
 Retention eviction selects only completed materializations; an initializing
 entry remains owned by its original read.
 
+Review activity MAY reuse only its count, partial flag and maximum accepted time
+for an exact admitted root/window. Bind repository, native epoch or local
+profile, root digest, finite limit and the ordered selected reference window.
+Every request MUST first capture and validate its complete current provider
+selection; reuse retains neither that provider nor its snapshot envelope.
+Unrelated metadata publication may reuse facts while returning a fresh pin.
+Coalesce duplicate active derivations; failures and cancellation admit no
+result. Keep at most 128 fixed-size entries with a five-minute fixed expiry and
+bounded retained memory. Evict idle entries only; when all slots are active,
+derive request-locally under existing read admission instead of disabling the
+query. Changed roots/windows/profiles/epochs, expired entries and restart derive
+anew.
+
 Collaboration reads share validated immutable materializations keyed by
 repository, authority epoch and exact domain root references. Each request
 independently captures its complete manifest envelope and rechecks current
@@ -2755,6 +2768,20 @@ event thread/sequence mismatches, missing creation identity and any
 reconstructed state that disagrees with the snapshot.
 
 ## Root-pinned review store
+
+Repository-card review activity reads MUST enumerate only the first requested
+radix-ordered window (1..256 threads) of the admitted selected root and return
+its thread count, explicit incomplete-count flag and maximum accepted event
+timestamp. A partial window MUST NOT claim a complete repository count or latest
+timestamp. The timestamp includes every selected event in each returned thread,
+including merged event graphs; event sequence/order alone is not a time maximum.
+Activity reads MUST NOT resolve anchors, comment revisions, conflicts or bodies
+for presentation. Provider admission still audits complete selected
+dependencies; this optimization does not weaken closure validation or domain
+capacities. Native requests retain ordinary concurrency, timeout and fresh epoch
+admission; local requests require the explicit committed companion and current
+folder identity. Empty reads create no state. No durable activity aggregate is
+added.
 
 The WAL coordinator stages each validated review object in the existing
 repository-bound envelope and traverses every typed ReviewStore, native code and

@@ -96,6 +96,36 @@ pub(super) async fn read(context: Context, request: Request) -> Result<Response>
     Ok(result)
 }
 impl Context {
+    pub(super) async fn visibility_delta(
+        &self,
+        id: m::OperationId,
+        operation: &dto::Operation,
+        parent: m::OperationId,
+    ) -> Result<SetDelta<m::GitSha1Id>> {
+        let previous = self.operation(parent).await?;
+        let before = self.operation_view(parent, &previous).await?;
+        let after = self.operation_view(id, operation).await?;
+        let before_heads = before.head_ids.into_iter().collect();
+        let after_heads = after.head_ids.into_iter().collect();
+        if let Some(prepared) = &self.access.prepared {
+            prepared.difference(
+                &before_heads,
+                &after_heads,
+                &self.budget,
+                self.limits.max_history_visits,
+            )
+        } else if before_heads == after_heads {
+            Ok(SetDelta {
+                added: vec![],
+                removed: vec![],
+            })
+        } else {
+            let mut visits = 0;
+            let before = self.ancestors(before_heads, &mut visits).await?;
+            let after = self.ancestors(after_heads, &mut visits).await?;
+            self.set_delta(&before, &after)
+        }
+    }
     pub(super) async fn difference(
         &self,
         id: m::OperationId,
@@ -103,8 +133,8 @@ impl Context {
         parent: m::OperationId,
     ) -> Result<Difference> {
         let previous = self.operation(parent).await?;
-        let before = self.view(previous.view_id).await?;
-        let after = self.view(operation.view_id).await?;
+        let before = self.operation_view(parent, &previous).await?;
+        let after = self.operation_view(id, &operation).await?;
         let before_heads = before.head_ids.into_iter().collect();
         let after_heads = after.head_ids.into_iter().collect();
         let view = ViewDelta {
@@ -116,7 +146,18 @@ impl Context {
             git_heads: self.map_delta(&before.git_heads, &after.git_heads)?,
             workspaces: self.map_delta(&before.wc_commit_ids, &after.wc_commit_ids)?,
         };
-        let visible_commits = if before_heads == after_heads {
+        let visible_commits = if let Some(prepared) = &self.access.prepared {
+            let delta = prepared.difference(
+                &before_heads,
+                &after_heads,
+                &self.budget,
+                self.limits.max_history_visits,
+            )?;
+            for id in delta.added.iter().chain(&delta.removed) {
+                self.budget.output(id)?;
+            }
+            delta
+        } else if before_heads == after_heads {
             SetDelta {
                 added: vec![],
                 removed: vec![],

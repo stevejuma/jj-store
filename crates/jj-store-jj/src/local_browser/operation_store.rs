@@ -11,6 +11,7 @@ struct Guard {
     access: Arc<Pin>,
     budget: Arc<Budget>,
     allowed: Mutex<BTreeSet<o::OperationId>>,
+    visited: Mutex<BTreeSet<o::OperationId>>,
     max_operations: usize,
     view: Option<o::ViewId>,
     evolution: bool,
@@ -23,6 +24,46 @@ impl fmt::Debug for Guard {
 fn error(value: Error) -> OpStoreError {
     OpStoreError::Other(Box::new(value))
 }
+pub(super) fn fingerprint(operation: &dto::Operation, budget: &Budget) -> Result<[u8; 32]> {
+    canonical_fingerprint(operation, budget, b"jj-store/local-operation/v1\0")
+}
+pub(super) fn view_fingerprint(view: &dto::View, budget: &Budget) -> Result<[u8; 32]> {
+    canonical_fingerprint(view, budget, b"jj-store/local-view/v1\0")
+}
+fn canonical_fingerprint(
+    value: &impl Serialize,
+    budget: &Budget,
+    domain: &[u8],
+) -> Result<[u8; 32]> {
+    use sha2::{Digest as _, Sha256};
+    struct Hash<'a> {
+        digest: Sha256,
+        budget: &'a Budget,
+        failed: Option<Error>,
+    }
+    impl std::io::Write for Hash<'_> {
+        fn write(&mut self, bytes: &[u8]) -> std::io::Result<usize> {
+            if let Err(error) = self.budget.work(1) {
+                self.failed = Some(error.clone());
+                return Err(std::io::Error::other(error));
+            }
+            self.digest.update(bytes);
+            Ok(bytes.len())
+        }
+        fn flush(&mut self) -> std::io::Result<()> {
+            Ok(())
+        }
+    }
+    let mut hash = Hash {
+        digest: Sha256::new(),
+        budget,
+        failed: None,
+    };
+    hash.digest.update(domain);
+    serde_json::to_writer(&mut hash, value)
+        .map_err(|_| hash.failed.take().unwrap_or(Error::Corrupt))?;
+    Ok(hash.digest.finalize().into())
+}
 #[async_trait::async_trait]
 impl OpStore for Guard {
     fn name(&self) -> &str {
@@ -33,8 +74,24 @@ impl OpStore for Guard {
     }
     async fn read_operation(&self, id: &o::OperationId) -> OpStoreResult<o::Operation> {
         self.budget.authorize(&self.access).await.map_err(error)?;
-        if !self.allowed.lock().unwrap().contains(id) {
+        let prepared = self.access.prepared.as_ref().filter(|_| !self.evolution);
+        let wire_id = operation_id(id).map_err(error)?;
+        let expected = prepared
+            .map(|p| {
+                p.operation_fingerprint(wire_id, &self.budget)
+                    .map_err(error)
+            })
+            .transpose()?
+            .flatten();
+        if !self.allowed.lock().unwrap().contains(id) && expected.is_none() {
             return Err(error(Error::NotCommitted));
+        }
+        if prepared.is_some() {
+            let mut visited = self.visited.lock().unwrap();
+            if !visited.contains(id) && visited.len() >= self.max_operations {
+                return Err(error(Error::Limit));
+            }
+            visited.insert(id.clone());
         }
         bounded_op_file(
             self.access.binding.metadata_path(),
@@ -46,6 +103,11 @@ impl OpStore for Guard {
         let value = self.source.read_operation(id).await?;
         let metadata = dto::Operation::try_from(&value).map_err(|_| error(Error::Corrupt))?;
         self.budget.metadata(&metadata).map_err(error)?;
+        if let Some(expected) = expected {
+            if fingerprint(&metadata, &self.budget).map_err(error)? != expected {
+                return Err(error(Error::Corrupt));
+            }
+        }
         if self
             .access
             .operations
@@ -79,6 +141,9 @@ impl OpStore for Guard {
                         .ok_or_else(|| error(Error::Limit))?,
                 )
                 .map_err(error)?;
+        }
+        if prepared.is_some() {
+            return Ok(value);
         }
         let mut allowed = self.allowed.lock().unwrap();
         for parent in &value.parents {
@@ -124,10 +189,15 @@ impl OpStore for Guard {
     }
     async fn resolve_operation_id_prefix(
         &self,
-        _: &HexPrefix,
+        prefix: &HexPrefix,
     ) -> OpStoreResult<PrefixResolution<o::OperationId>> {
-        // Prefix requests use the existing complete-admission path, not this capability.
-        Err(error(Error::Invalid))
+        self.budget.authorize(&self.access).await.map_err(error)?;
+        self.access
+            .prepared
+            .as_ref()
+            .ok_or_else(|| error(Error::Invalid))?
+            .resolve_operation(prefix, &self.budget)
+            .map_err(error)
     }
     async fn gc(&self, _: &[o::OperationId], _: SystemTime) -> OpStoreResult<()> {
         Err(error(Error::Denied))
@@ -155,6 +225,7 @@ pub(super) async fn selected_for(
         access: context.access.clone(),
         budget: context.budget.clone(),
         allowed: Mutex::new(BTreeSet::from([id.clone()])),
+        visited: Mutex::default(),
         max_operations: context.limits.max_history_visits,
         evolution,
         view: context.access.prepared.as_ref().map(|_| {

@@ -1,6 +1,7 @@
 import { agentSessions } from "./collaboration.js";
 import { reviewThreads } from "./collaboration-review.js";
 import { activityCommit } from "./native-activity.js";
+import type { WorkActivityPage } from "../../web/src/lib/controller/work-types.js";
 import type { WorkBrowseTransport } from "../../web/src/lib/controller/projects-hub-types.js";
 export const homeA = "41".repeat(16),
   homeB = "42".repeat(16),
@@ -92,7 +93,7 @@ export function fixtureTransport(
     },
     async directory() {
       const transport = fixtureTransport(home, fail, sharedRepository);
-      const tasks = await transport.browse({ kind: "tasks" });
+      const tasks = await transport.taskActivity!({ limit: 256 });
       const reviews = await transport.reviews!();
       return {
         code: {
@@ -119,10 +120,47 @@ export function fixtureTransport(
         updatedAtMillis: Date.UTC(2026, 8, 30),
         commits: home === homeA ? 24 : 12,
         commitsPartial: false,
-        threads: reviews.threads,
+        reviews: reviews.threads.length,
         reviewsPartial: false,
-        tasks: tasks.tasks,
+        taskGroups: tasks.groups,
         tasksPartial: false,
+      };
+    },
+    async taskActivity(query) {
+      const tasks = await fixtureTransport(home, fail, sharedRepository).browse(
+        { kind: "tasks" },
+      );
+      if (!("epoch" in tasks.snapshot))
+        throw new Error("Expected native fixture snapshot");
+      const groups = new Map<string, WorkActivityPage["groups"][number]>();
+      for (const task of tasks.tasks) {
+        const key = `${task.repository ?? ""}:${task.project}`;
+        const group = groups.get(key) ?? {
+          repository: task.repository,
+          project: task.project,
+          tasks: 0,
+          updated_at_millis: task.actor.updated_at_millis,
+        };
+        group.tasks++;
+        group.updated_at_millis = Math.max(
+          Number(group.updated_at_millis),
+          Number(task.actor.updated_at_millis),
+        );
+        groups.set(key, group);
+      }
+      const all = [...groups.values()].sort(
+        (a, b) =>
+          (a.repository ?? "").localeCompare(b.repository ?? "") ||
+          a.project.localeCompare(b.project),
+      );
+      const offset = Number(query.cursor ?? 0),
+        end = offset + (query.limit ?? 50);
+      return {
+        version: 1,
+        snapshot: tasks.snapshot,
+        groups: all.slice(offset, end),
+        total_groups: all.length,
+        next_cursor: end < all.length ? String(end) : null,
       };
     },
     async browse(query) {
@@ -163,6 +201,26 @@ export function fixtureTransport(
         tasks: query.kind === "tasks" ? tasks : [],
         total_matches: query.kind === "tasks" ? tasks.length : projects.length,
         next_cursor: null,
+      };
+    },
+    async reviewActivity() {
+      const page = await fixtureTransport(home, fail, sharedRepository)
+        .reviews!();
+      return {
+        version: 1,
+        snapshot: page.snapshot,
+        activity: {
+          threads: page.threads.length,
+          threads_partial: Boolean(page.next_cursor),
+          updated_at_millis: page.threads.reduce<number | null>(
+            (latest, thread) =>
+              Math.max(
+                latest ?? -Infinity,
+                Number(thread.presentation?.updated_at_millis ?? 0),
+              ),
+            null,
+          ),
+        },
       };
     },
     async reviews() {

@@ -73,3 +73,16 @@ pub(super) async fn browse(
             .await?,
     )
 }
+
+pub(super) async fn activity(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: routes::Input<service::WorkActivityQuery>,
+) -> Result<Response> {
+    state.json(
+        &state
+            .work
+            .activity(context.session, routes::input(args)?)
+            .await?,
+    )
+}

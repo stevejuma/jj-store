@@ -1,5 +1,6 @@
 //! Operation-pinned ordinary GitBackend reads. No checkout or publication methods.
 mod budget;
+pub mod code_summary;
 pub mod conflicts;
 pub mod diff;
 mod diff_copies;
@@ -136,6 +137,9 @@ pub enum Request {
     CommitSummary {
         commit: m::GitSha1Id,
     },
+    CodeSummary {
+        limit: usize,
+    },
     File {
         file: m::GitSha1Id,
     },
@@ -162,9 +166,14 @@ impl Request {
         matches!(
             self,
             Self::Commit { .. }
+                | Self::OperationDiff(_)
+                | Self::OperationChanges(_)
                 | Self::Graph(GraphRequest::Log { .. } | GraphRequest::Evolution { .. }, _)
-        ) || matches!(self, Self::References(r) if r.query.is_empty()
-            && matches!(r.kind, references::Kind::Changes | references::Kind::All))
+        ) || matches!(self, Self::Graph(GraphRequest::OperationsFiltered { query }, _)
+            if crate::query::language::operations::Filter::parse(query).is_ok_and(|filter| filter.needs_prefix_lookup()))
+            || matches!(self, Self::References(r) if
+            matches!(r.kind, references::Kind::Changes | references::Kind::All)
+            || (r.kind == references::Kind::Bookmarks && !r.query.is_empty()))
     }
     /// Ordinary scoped reads can reuse ready point membership while retaining
     /// their bounded cold reader. Bare file IDs have no selected tree proof.
@@ -178,6 +187,7 @@ impl Request {
                     | Self::Diff(_)
                     | Self::DiffPaths(_)
                     | Self::Conflicts(_)
+                    | Self::Operation { .. }
             )
     }
 }
@@ -189,6 +199,7 @@ pub enum Response {
     QueryInfo(crate::query::language::QueryInfo),
     Commit(Box<CommitDetail>),
     CommitSummary(Object),
+    CodeSummary(code_summary::Summary),
     File(FileContent),
     FileAt(FileContent),
     Paths(paths::Page),
@@ -257,7 +268,7 @@ impl Executor {
                     Request::Graph(GraphRequest::OperationsFiltered {query}, _) => !crate::query::language::operations::Filter::parse(query)?.needs_prefix_lookup(),
                     _ => false,
                 };
-                let metadata_only = operation_only || matches!(&request, Request::QueryInfo)
+                let metadata_only = operation_only || matches!(&request, Request::QueryInfo | Request::CodeSummary { .. })
                     || matches!(&request, Request::References(r) if matches!(r.kind, references::Kind::Bookmarks | references::Kind::Workspaces) && r.operation == operation)
                     || matches!(&request, Request::Operation { operation: selected } if *selected == operation);
                 let scoped_commits = match &request {
@@ -644,12 +655,78 @@ impl Context {
         Ok(data)
     }
     async fn operation(&self, id: m::OperationId) -> Result<dto::Operation> {
-        self.member(ObjectKey::Operation(id)).await?;
-        self.access
-            .operations
-            .get(&id)
-            .cloned()
-            .ok_or(Error::NotCommitted)
+        self.budget.authorize(&self.access).await?;
+        if let Some(operation) = self.access.operations.get(&id) {
+            if let Some(prepared) = &self.access.prepared {
+                let expected = prepared
+                    .operation_fingerprint(id, &self.budget)?
+                    .ok_or(Error::NotCommitted)?;
+                if operation_store::fingerprint(operation, &self.budget)? != expected {
+                    return Err(Error::Corrupt);
+                }
+            }
+            return Ok(operation.clone());
+        }
+        let prepared = self.access.prepared.as_ref().ok_or(Error::NotCommitted)?;
+        let expected = prepared
+            .operation_fingerprint(id, &self.budget)?
+            .ok_or(Error::NotCommitted)?;
+        bounded_op_file(
+            self.access.binding.metadata_path(),
+            "operations",
+            &id.to_string(),
+            &self.budget,
+        )?;
+        let operation = loader(self.access.binding.metadata_path())?
+            .op_store()
+            .read_operation(&o::OperationId::from_bytes(id.as_bytes()))
+            .await
+            .map_err(|_| Error::Incomplete)?;
+        let operation = dto::Operation::try_from(&operation).map_err(|_| Error::Corrupt)?;
+        self.budget.metadata(&operation)?;
+        if operation_store::fingerprint(&operation, &self.budget)? != expected {
+            return Err(Error::Corrupt);
+        }
+        Ok(operation)
+    }
+    async fn operation_view(
+        &self,
+        id: m::OperationId,
+        operation: &dto::Operation,
+    ) -> Result<dto::View> {
+        self.budget.authorize(&self.access).await?;
+        if let Some(view) = self.access.views.get(&operation.view_id) {
+            if let Some(prepared) = &self.access.prepared {
+                let expected = prepared
+                    .operation_view_fingerprint(id, &self.budget)?
+                    .ok_or(Error::NotCommitted)?;
+                if operation_store::view_fingerprint(view, &self.budget)? != expected {
+                    return Err(Error::Corrupt);
+                }
+            }
+            return Ok(view.clone());
+        }
+        let prepared = self.access.prepared.as_ref().ok_or(Error::NotCommitted)?;
+        let expected = prepared
+            .operation_view_fingerprint(id, &self.budget)?
+            .ok_or(Error::NotCommitted)?;
+        bounded_op_file(
+            self.access.binding.metadata_path(),
+            "views",
+            &operation.view_id.to_string(),
+            &self.budget,
+        )?;
+        let view = loader(self.access.binding.metadata_path())?
+            .op_store()
+            .read_view(&o::ViewId::from_bytes(operation.view_id.as_bytes()))
+            .await
+            .map_err(|_| Error::Incomplete)?;
+        let view = dto::View::try_from(&view).map_err(|_| Error::Corrupt)?;
+        self.budget.metadata(&view)?;
+        if operation_store::view_fingerprint(&view, &self.budget)? != expected {
+            return Err(Error::Corrupt);
+        }
+        Ok(view)
     }
     async fn view(&self, id: m::ViewId) -> Result<dto::View> {
         self.member(ObjectKey::View(id)).await?;

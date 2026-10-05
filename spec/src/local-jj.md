@@ -1,5 +1,19 @@
 # Local Git-backed JJ collaboration
 
+Prepared local operation comparisons MUST admit each requested operation from
+the retained identity lookup and verify fresh operation and view metadata
+against captured canonical fingerprints. They use the already verified immutable
+commit-index bytes for parent edges and change identities, without rereading Git
+commits or trees for visibility. Walk differing frontiers in topological order,
+stop when only shared ancestry remains, and charge visits, queue growth, memory
+and lookup work before use. Oversized differences fail under ordinary limits;
+never return a partial difference as complete. Change pages group indexed IDs
+before selecting their lexical window, then hydrate only selected added targets
+needed for predecessor/parent comparisons. Preserve exact conflict terms,
+explicit parent selection, ordering and forward/backward cursors. Missing ready
+generations use the existing exact-operation rebuild recovery. This disposable
+projection changes no public or authoritative persistence format.
+
 Local task comment reactions resolve only visible exact comment versions in the
 same committed companion selection as ReactionStore, with matching task
 membership. Reaction writes retain other domain selections and task versions;
@@ -338,6 +352,13 @@ qualified. File text is bounded; binary/oversized content reports its status.
 
 ### Pinned local WorkStore transport
 
+Local repository-card ReviewStore activity uses an explicit committed companion
+pin and current folder admission, then reads only selected thread/event facts
+for a bounded first catalog window. Full descriptor/retained-object closure
+admission remains mandatory before deriving the count and maximum timestamp.
+Activity responses do not hydrate comment or anchor presentation and mark the
+count incomplete whenever the selected window has more catalog entries.
+
 Local browser WorkStore pages require an explicit committed companion metadata
 selection, independently from the code operation. Initial pages and resumed
 queries validate that selection against bounded current committed history and
@@ -345,6 +366,33 @@ reject staged or unrelated commits. Filtered summaries use the same complete
 root projection, ordering, counts and bounds as native WorkStore. Browser
 continuations bind repository, binding generation, metadata selection and exact
 query; changed filters or another repository fail closed.
+
+Local task activity pages use the same complete-root body-free
+repository/project groups as native WorkStore. Their explicit companion commit
+is admitted through current committed history, with the existing folder binding
+checks and signed query-specific continuations. Page work copies only selected
+aggregate rows. Work browse/activity/detail facades share a process-local,
+data-only root projection after full companion admission and a fresh admitted
+Work-blob read. The key includes repository, Work object and SHA-256 of its
+bytes; metadata commits, versions and binding checks remain request-bound.
+Missing objects, tighter source limits, unrelated/staged selections or replaced
+identities MUST fail before cached data is returned. No identity-only
+observation can substitute for a domain Snapshot.
+
+Local Work projection retention is bounded to 32 roots, 256 MiB and five minutes
+of idle time, with eight exact-query key sets per root. Construction is
+serialized outside the root-cache map lock and reserves conservative
+decoding/projection space before allocation. A 512-MiB process derivation
+allowance accounts both construction and resident lifetimes; eviction releases a
+resident charge only after its last reader exits. Each query-key set has its own
+live charge, reserved before filtering/allocation and retained until its last
+reader exits. Root retention includes the allowance for eight query slots;
+evicted key sets still held by readers remain under the process live allowance.
+Oversized retention may return the validated result request-locally under the
+same live allowance; pressure may return Busy while active readers occupy it.
+Ordinary WorkStore capacities, companion admission, formats and publication
+semantics remain unchanged. Domain/retained-closure admission itself is still
+required on every request and is separate from this projection reuse.
 
 Local browser edits and status use the existing CLI device actor and original
 typed WorkStore request. Receipt replay precedes stale entity checks. Transport
@@ -570,14 +618,34 @@ retained commit ancestry. Names are compared exactly, including case and
 slashes; missing selections remain absent and must never fall back to another
 target.
 
+Local code-summary queries MUST use the metadata-only selected operation/view
+facade and prove returned commit heads directly through those references. Read
+only the requested first head window and return newest sampled committer
+metadata with explicit incomplete-count status for unvisited ancestry or heads.
+They MUST NOT open a graph repository, rebuild/import an index, traverse older
+commits, read trees or reconcile operation heads. Current folder admission,
+byte/work/cancellation bounds and exact operation pins remain mandatory.
+
+Local review activity MAY reuse numeric facts at the exact selected Review root
+and first reference window across reopened facades and unrelated companion
+publications. Complete companion membership, retained blobs, canonical domain
+closure and current folder identity remain fresh before reuse. Retain no
+MetadataStore, companion Snapshot, source path or actor, and keep an independent
+bounded cache lifetime. Empty reads must still leave identity and actor absent.
+
 Operation log windows without an ID-prefix selector MUST walk bounded operation
 metadata directly, without loading commits, trees, views or a commit index.
 Native responses report `not_used` for the graph cache. Operation ordering,
 parent/child selectors relative to `@`, filtering, pinned membership,
 authorization and cancellation retain pinned JJ semantics. ID-prefix selectors
-retain their existing complete admission until the prepared operation lookup is
-qualified. Local reads must not repair or rewrite a damaged commit index as a
-side effect of reading operation metadata.
+use a sorted retained-operation identity/fingerprint projection from explicit
+preparation. Bind it to the exact selected operation and generation; resolve
+prefixes by binary search while preserving missing/ambiguous and parent/child
+selector semantics. Fresh operation metadata, current access and ordinary read
+limits remain mandatory. Prefix membership MUST NOT rescan all ancestors, load
+commits/trees or repair source indexes. Cold HTTP prefix queries return
+exact-operation rebuild-required recovery. Local reads must not repair or
+rewrite a damaged commit index as a side effect of reading operation metadata.
 
 Selected historical commit summaries, directories and scoped file reads MUST
 prove only the requested commit's retained membership. Follow exact commit
@@ -673,6 +741,19 @@ fail explicitly rather than combining old visibility/annotations with another
 view. This check retains supported upstream normalization and adds no
 authoritative source format or metadata write.
 
+Local preparation MAY export a checksum-verified fixed-width operation-identity
+projection from the already bounded ordered scratch tables. Charge its bytes
+before writing and resident memory before allocation. The projection contains
+only the selected operation, its retained ancestors and canonical operation
+fingerprints, is disposable, and grants no source mutation or publication
+capability.
+
+Prepared operation prefix reads compare historical source metadata against
+captured canonical fingerprints because SimpleOpStore does not hash operation
+filenames. Fingerprint mismatch fails explicitly. Prefix resolution and
+membership charge logarithmic lookup work; child suffixes retain the pinned
+upstream bounded operation walk until indexed neighbor lookup is delivered.
+
 Ready local generations MUST also supply point membership to selected historical
 commit summaries, directory windows, scoped files, diffs, changed-path pages and
 conflict descriptors. These reads reuse the exact operation/generation seal and
@@ -696,10 +777,27 @@ including backward/deep anchors and exact change lookup. Preserve lexical keys,
 divergence, sorted target identities, explicit conflict terms, workspace labels
 and complete-result semantics; hydrate only the selected page's targets. Hidden
 rewrites and later commits cannot become visible changes. These queries require
-preparation when cold. Nonempty description search and an embedded reference
-operation different from the outer selection retain their existing separately
-bounded reader pending indexed filtering/operation lookup. No source or wire
-format changes; comprehensive large-scale qualification stays deferred.
+preparation when cold. A differently embedded reference operation remains
+separate indexed-delivery work. No source or wire format changes; comprehensive
+large-scale qualification stays deferred.
+
+Prepared local reference filters MUST preserve whole-string Unicode lowercase
+substring matching on the full reference key or any pinned target description.
+Capture descriptions with the existing bounded commit read during preparation,
+using the scoped decoder's lossy UTF-8 normalization. Store text and ordered
+candidate postings on disk, with byte/work/cancellation and pre-growth disk and
+resident admission. Intersect compact postings in lexical rank order, seek from
+the requested anchor and verify exact text only for candidates' selected-view
+targets. Historical hidden targets may narrow candidate lookup but MUST NOT
+produce visible changes or satisfy a visible change's filter. Preserve removed
+bookmark terms, divergence and forward/backward probes. Hydrate source metadata
+only for returned rows. Empty bookmark/workspace pages remain independently
+usable without preparation; filtered Bookmarks and Changes/All use existing
+exact-operation preparation recovery. No complete matching set or source history
+traversal is permitted on the prepared request path. Candidate work still
+observes ordinary limits and MUST fail explicitly rather than returning a
+partial result; retained continuation for extreme candidate frontiers remains
+separate delivery work.
 
 ## Freshness producer ownership
 

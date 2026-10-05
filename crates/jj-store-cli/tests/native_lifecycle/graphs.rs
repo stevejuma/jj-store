@@ -155,6 +155,15 @@ async fn disk_preparation_matches_pinned_upstream_index_bytes() {
                 std::fs::read(segment).unwrap(),
                 std::fs::read(expected_segment).unwrap()
             );
+            // Derived text files have their own identity proof; they do not
+            // change the upstream segment or operation-link comparison.
+            use sha2::{Digest as _, Sha256};
+            let filter = find(cache.path(), "local-reference-filter").unwrap();
+            let sum = find(cache.path(), "local-reference-filter.sha256").unwrap();
+            assert_eq!(
+                std::fs::read(sum).unwrap(),
+                Sha256::digest(std::fs::read(filter).unwrap()).as_slice()
+            );
             let result = read.graph(&exec, log("all()"), page(100)).await.unwrap();
             assert_eq!(result.cache.state, q::cache::State::Reused);
             assert_eq!(commits(&result)[0].commit.id, cid(merge.id()));
@@ -182,7 +191,9 @@ async fn disk_preparation_quota_failure_discards_stage_and_allows_retry() {
                 q::Limits::default(),
                 1,
                 q::cache::Policy {
-                    max_entry_bytes: 1024 * 1024 + 4096,
+                    // Small scratch has no database minimum. Refuse an
+                    // allowance below the complete index/receipt framing.
+                    max_entry_bytes: 1024,
                     max_total_bytes: 2 * 1024 * 1024,
                     ..Default::default()
                 },
@@ -724,37 +735,38 @@ async fn graph_query_cancellation_retains_worker_permit_until_exit_and_deadlines
         .unwrap();
     task.abort();
     assert!(task.await.unwrap_err().is_cancelled());
+    let graph_busy = exec
+        .execute(f.store.clone(), paused.clone(), log("all()"), page(100))
+        .await;
+    let content_busy = shared
+        .content()
+        .object(
+            f.store.clone(),
+            paused.clone(),
+            m::ObjectKey::Commit(roots::ROOT_COMMIT),
+        )
+        .await;
+    let held_workers = shared.workers().status().in_use;
+    let independent =
+        q::GraphExecutor::new(graphs.path().to_owned(), q::Limits::default(), 1).unwrap();
+    let independent_page = independent
+        .execute(f.store.clone(), paused.clone(), log("all()"), page(100))
+        .await;
+    paused.release();
+    assert_eq!(graph_busy.unwrap_err(), q::Error::Busy);
     assert_eq!(
-        exec.execute(f.store.clone(), paused.clone(), log("all()"), page(100))
-            .await
-            .unwrap_err(),
-        q::Error::Busy
-    );
-    assert_eq!(
-        shared
-            .content()
-            .object(
-                f.store.clone(),
-                paused.clone(),
-                m::ObjectKey::Commit(roots::ROOT_COMMIT)
-            )
-            .await
-            .unwrap_err(),
+        content_busy.unwrap_err(),
         q::Error::Busy,
         "synchronous canceled worker must retain shared content capacity until exit"
     );
-    assert_eq!(shared.workers().status().in_use, 1);
-    let independent =
-        q::GraphExecutor::new(graphs.path().to_owned(), q::Limits::default(), 1).unwrap();
-    assert_eq!(
-        independent
-            .execute(f.store.clone(), paused.clone(), log("all()"), page(100))
-            .await
-            .unwrap_err(),
-        q::Error::Busy,
-        "canceled worker must retain namespace lock until exit"
+    assert_eq!(held_workers, 1);
+    let independent_page =
+        independent_page.expect("canceled construction must release the namespace");
+    assert_eq!(independent_page.cache.retained_entries, 2);
+    assert!(
+        independent_page.cache.retained_bytes >= q::cache::Policy::default().max_entry_bytes,
+        "canceled worker must retain its full reservation until actual exit"
     );
-    paused.release();
     let deadline = tokio::time::Instant::now() + Duration::from_secs(3);
     loop {
         match exec
@@ -883,3 +895,6 @@ mod history_query_acceptance;
 
 #[path = "graph_projection.rs"]
 mod projection_acceptance;
+
+#[path = "graph_disk_recovery.rs"]
+mod disk_recovery_acceptance;

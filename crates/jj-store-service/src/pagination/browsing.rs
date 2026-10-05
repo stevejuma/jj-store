@@ -84,7 +84,7 @@ impl BrowserPager {
                 snapshot: retained.unwrap(),
             });
         };
-        let data = read
+        let data = match read
             .references(
                 &self.reader,
                 references::Request {
@@ -97,7 +97,16 @@ impl BrowserPager {
                     direction: position.map_or(direction, |p| p.1),
                 },
             )
-            .await?;
+            .await
+        {
+            Ok(page) => page,
+            Err(query::Error::IndexRebuildRequired) => {
+                return Err(Error::IndexRebuildRequired {
+                    snapshot: Box::new(read.snapshot().await?.clone()),
+                });
+            }
+            Err(error) => return Err(error.into()),
+        };
         Ok(Start::Window(Box::new(
             self.finish(read, fingerprint, request.limit, data, true)
                 .await?,
