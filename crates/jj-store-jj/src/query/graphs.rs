@@ -205,7 +205,7 @@ pub(super) async fn run(
     request: Request,
     page: Page,
     access: &Arc<dyn ReadAccess>,
-    budget: &Budget,
+    budget: &Arc<Budget>,
 ) -> Result<(Nodes, Option<m::ObjectKey>)> {
     let mut position = Position::new(page.clone());
     let nodes = match request {
@@ -301,7 +301,11 @@ pub(super) async fn run(
             Nodes::Log(nodes)
         }
         Request::Operations | Request::OperationsFiltered { .. } => {
-            return run_operations(repo.operation(), request, page, access, budget).await;
+            let lookup = repo
+                .readonly_index()
+                .downcast_ref::<projection::Reader>()
+                .and_then(|reader| reader.prepared.operations.clone());
+            return run_operations(repo.operation(), request, page, access, budget, lookup).await;
         }
         Request::Evolution { commit } => {
             if !budget
@@ -356,14 +360,19 @@ pub(super) async fn run_operations(
     request: Request,
     page: Page,
     access: &Arc<dyn ReadAccess>,
-    budget: &Budget,
+    budget: &Arc<Budget>,
+    lookup: Option<Arc<prepared::operations::Lookup>>,
 ) -> Result<(Nodes, Option<m::ObjectKey>)> {
     let mut position = Position::new(page.clone());
     let filter = crate::query::language::operations::Filter::parse(match &request {
         Request::OperationsFiltered { query } => query,
         _ => "",
     })?;
-    let heads = [filter.start_at(head, || budget.work(1)).await?];
+    let heads = [if let Some(lookup) = lookup {
+        operation_neighbors::start(head, &filter, lookup, access.clone(), budget.clone()).await?
+    } else {
+        filter.start_at(head, || budget.work(1)).await?
+    }];
     let stream = jj_lib::op_walk::walk_ancestors(&heads);
     let mut stream = std::pin::pin!(stream);
     let mut nodes = vec![];

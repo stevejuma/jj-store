@@ -7,6 +7,9 @@ use jj_store_model::OperationId;
 use sha2::{Digest as _, Sha256};
 use std::io::{BufReader, BufWriter, Read as _, Write as _};
 
+pub(crate) const NAME: &str = "local-operations";
+pub(crate) const CHILDREN_NAME: &str = "local-operation-children";
+
 const MAGIC: &[u8; 8] = b"JSTLOP2\0";
 const FRAMING: u64 = 8 + 64 + 32;
 const RECORD: u64 = 128;
@@ -34,7 +37,7 @@ pub(super) fn write(
     let file = std::fs::File::options()
         .write(true)
         .create_new(true)
-        .open(path.join("local-operations"))
+        .open(path.join(NAME))
         .map_err(io_error)?;
     let mut file = BufWriter::new(file);
     let mut digest = Sha256::new();
@@ -64,6 +67,12 @@ pub(super) fn write(
     Ok(())
 }
 impl Lookup {
+    pub(crate) fn weight(&self) -> u64 {
+        self.ids.capacity() as u64 * 256
+            + 64 * 1024
+            + self.children.as_ref().map_or(0, |lookup| lookup.weight())
+    }
+
     pub(crate) fn load(
         path: &Path,
         selected: OperationId,
@@ -71,7 +80,7 @@ impl Lookup {
         mut work: impl FnMut(usize) -> Result<()>,
         mut read_bytes: impl FnMut(usize) -> Result<()>,
     ) -> Result<Self> {
-        let path = path.join("local-operations");
+        let path = path.join(NAME);
         let metadata = std::fs::symlink_metadata(&path).map_err(|_| Error::Incomplete)?;
         if !metadata.is_file()
             || metadata.file_type().is_symlink()

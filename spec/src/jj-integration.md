@@ -41,8 +41,9 @@ Prepared operation prefix reads compare historical source metadata against
 captured canonical fingerprints because SimpleOpStore does not hash operation
 filenames. Fingerprint mismatch fails explicitly. Prefix resolution and
 membership charge logarithmic lookup work. Prepared local child suffixes seek
-retained reverse edges and hydrate selected metadata; native child suffixes
-retain the pinned upstream bounded walk pending their indexed delivery.
+retained reverse edges and hydrate selected metadata. Native explicit prepared
+generations now use the same identity/edge framing; cold and small-cache native
+reads retain their bounded upstream fallback.
 
 WorkStore comment reactions use the existing native RPC collaboration command
 and read envelopes with an additive typed target. Exact WorkStore selection is
@@ -1179,3 +1180,14 @@ selected by the same exact operation and checked fingerprints, never authority
 for new objects. Seek at most two candidate identities to distinguish a unique
 child from ambiguity; hydrate only a selected child and verify its parent edge.
 No native JJ index, authoritative object or public schema format changes.
+
+Native prepared operation selectors may reuse an exact-operation retained
+identity and reverse-edge projection captured by the existing source preparation
+pass. Native envelopes and full identities retain authority; native fingerprint
+slots hold SHA256 of the verified native operation/view IDs. Fresh request
+stores MUST authorize and prove selected-object membership on every metadata
+read. Indexed prefix/child selection MUST avoid complete inventory enumeration,
+view or commit reads, preserve ambiguity and exclude later and sibling
+operations outside the prepared ancestor closure. Shared resident admission
+covers retained lookup allocations; ordinary cold and small-cache paths remain
+bounded.

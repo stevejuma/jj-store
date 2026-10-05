@@ -42,8 +42,16 @@ impl Secondary {
         std::fs::create_dir(&path).map_err(|_| Error::Unavailable)?;
         let bytes = cache::construction_bytes(reservation.path(), self.policy, &self.budget)?
             .min(reservation.bytes());
-        super::super::prepared::build(&path, operation, store, &self.budget, bytes, true, false)
-            .await?;
+        super::super::prepared::build(
+            &path,
+            operation,
+            store,
+            &self.budget,
+            bytes,
+            true,
+            super::super::prepared::Features::default(),
+        )
+        .await?;
         cache::constructed::verify(&path, selected, self.policy, &self.budget)?;
         let memory = Arc::new(memory::Indexes::default());
         memory.reserve(

@@ -221,6 +221,12 @@ preparation. Native/local request admission and historical pins retain their
 existing authority; no trees, ancestors or graph indexes are read for these
 summaries.
 
+E-READ-054 continues native indexed child-operation selection in bounded-reads.
+Reuse the existing preparation operation pass and retain admitted identity and
+reverse-edge lookup for metadata-only warm pages. Preserve point membership,
+upstream ambiguity, exact outer pins and selected-only hydration. Main remains
+at E-READ-052; deep graph continuations and complete qualification remain open.
+
 ### Deferred complete qualification
 
 After performance delivery, qualify the combined implementation separately:

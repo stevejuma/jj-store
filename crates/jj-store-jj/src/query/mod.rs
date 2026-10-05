@@ -7,6 +7,7 @@ mod graphs;
 mod index;
 pub mod language;
 pub(crate) mod memory;
+mod operation_neighbors;
 pub mod predicates;
 pub mod preparation;
 pub(crate) mod prepared;
@@ -508,9 +509,19 @@ impl GraphExecutor {
                 Request::OperationsFiltered { query } => Some(query.as_str()),
                 _ => None,
             };
-            if let Some(query) = query
-                && !language::operations::Filter::parse(query)?.needs_prefix_lookup()
+            let filter = query.map(language::operations::Filter::parse).transpose()?;
+            let saved = filter
+                .as_ref()
+                .filter(|filter| filter.needs_index_lookup())
+                .and_then(|_| self.residents.get_memory(access.as_ref()))
+                .filter(|saved| saved.index.operations.is_some());
+            if filter
+                .as_ref()
+                .is_some_and(|filter| !filter.needs_prefix_lookup() || saved.is_some())
             {
+                let lookup = saved
+                    .as_ref()
+                    .and_then(|saved| saved.index.operations.clone());
                 graphs::validate(request, page, &budget)?;
                 let objects = Arc::new(
                     NativeObjects::new(
@@ -538,20 +549,29 @@ impl GraphExecutor {
                     .await
                     .map_err(|_| Error::Unavailable)?;
                 let head = jj_lib::operation::Operation::new(operations, id, data);
-                let (data, next) =
-                    graphs::run_operations(&head, request.clone(), page.clone(), &access, &budget)
-                        .await?;
+                let (data, next) = graphs::run_operations(
+                    &head,
+                    request.clone(),
+                    page.clone(),
+                    &access,
+                    &budget,
+                    lookup,
+                )
+                .await?;
                 let result = Output::Graph(GraphPage {
                     version: 1,
                     operation: access.operation(),
                     data,
                     next,
-                    cache: cache::Report {
-                        state: cache::State::NotUsed,
-                        evicted: 0,
-                        retained_entries: 0,
-                        retained_bytes: 0,
-                    },
+                    cache: saved
+                        .as_ref()
+                        .map(|saved| saved.report())
+                        .unwrap_or(cache::Report {
+                            state: cache::State::NotUsed,
+                            evicted: 0,
+                            retained_entries: 0,
+                            retained_bytes: 0,
+                        }),
                     stats: budget.stats(),
                 });
                 budget.complete_output(&result)?;

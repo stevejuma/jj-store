@@ -1,7 +1,7 @@
 //! Flat reverse edges for the same complete retained operation closure.
 use super::*;
 const MAGIC: &[u8; 8] = b"JSTLCH1\0";
-const FILE: &str = "local-operation-children";
+const FILE: &str = super::CHILDREN_NAME;
 const FRAMING: u64 = 8 + 64 + 32;
 const RECORD: u64 = 128;
 
@@ -48,6 +48,10 @@ pub(super) struct Lookup {
     _memory: Lease,
 }
 impl Lookup {
+    pub(super) fn weight(&self) -> u64 {
+        self.edges.capacity() as u64 * 256 + 64 * 1024
+    }
+
     pub(super) fn load(
         path: &Path,
         selected: OperationId,

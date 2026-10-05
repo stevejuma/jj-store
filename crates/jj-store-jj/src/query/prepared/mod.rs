@@ -80,6 +80,12 @@ impl Node {
     }
 }
 
+#[derive(Default)]
+pub(super) struct Features {
+    pub filtering: bool,
+    pub operations: bool,
+}
+
 /// The containing cache owns cleanup and reserves `max_bytes` before entry.
 /// No operation link is installed until a complete segment has been synced.
 pub(super) async fn build(
@@ -89,14 +95,16 @@ pub(super) async fn build(
     budget: &Budget,
     max_bytes: u64,
     inline: bool,
-    filtering: bool,
+    features: Features,
 ) -> Result<()> {
     let source = NativeSource {
         operation,
         store,
         budget,
         inline,
-        filtering,
+        filtering: features.filtering,
+        lookup: features.operations,
+        view_identity: std::cell::Cell::new(None),
     };
     build_with_tables(
         path,
@@ -170,6 +178,8 @@ struct NativeSource<'a> {
     budget: &'a Budget,
     inline: bool,
     filtering: bool,
+    lookup: bool,
+    view_identity: std::cell::Cell<Option<[u8; 32]>>,
 }
 impl Source for NativeSource<'_> {
     fn check(&self) -> Result<()> {
@@ -206,6 +216,20 @@ impl Source for NativeSource<'_> {
     fn change_len(&self) -> usize {
         self.store.change_id_length()
     }
+    fn operation_lookup(&self) -> bool {
+        self.lookup
+    }
+    fn operation_digest(&self, operation: &Operation) -> Result<[u8; 32]> {
+        use sha2::{Digest as _, Sha256};
+        self.budget.work(1)?;
+        Ok(Sha256::digest(operation.id().as_bytes()).into())
+    }
+    fn view_digest(&self, _: &jj_lib::view::View) -> Result<[u8; 32]> {
+        self.budget.work(1)?;
+        // Captured by the immediately preceding verified view read. Avoid
+        // serializing/hashing the complete view again for a disposable hint.
+        self.view_identity.get().ok_or(Error::Corrupt)
+    }
     fn reference_filter(&self) -> bool {
         self.filtering
     }
@@ -222,10 +246,18 @@ impl Source for NativeSource<'_> {
         ))
     }
     async fn view(&self, operation: &Operation) -> Result<jj_lib::view::View> {
-        self.budget
+        use sha2::{Digest as _, Sha256};
+        let view = self
+            .budget
             .until(operation.view())
             .await?
-            .map_err(|_| Error::Incomplete)
+            .map_err(|_| Error::Incomplete)?;
+        if self.lookup {
+            self.view_identity.set(Some(
+                Sha256::digest(operation.store_operation().view_id.as_bytes()).into(),
+            ));
+        }
+        Ok(view)
     }
     async fn commit(&self, id: &backend::CommitId) -> Result<CommitFields> {
         // Bypass the bounded commit-body cache; native capability checks remain.

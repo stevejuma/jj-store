@@ -25,6 +25,7 @@ use changes::Changes;
 #[derive(Clone)]
 pub(super) struct Prepared {
     raw: DefaultReadonlyIndex,
+    pub operations: Option<Arc<prepared::operations::Lookup>>,
     decorations: Arc<Decorations>,
     filter: Option<Arc<filter::Filter>>,
 }
@@ -47,8 +48,24 @@ impl Prepared {
             raw.num_commits() as usize + view.store_view().local_bookmarks.len(),
             budget,
         )?;
+        let operations = if path
+            .join(prepared::operations::NAME)
+            .try_exists()
+            .map_err(|_| Error::Unavailable)?
+        {
+            Some(Arc::new(prepared::operations::Lookup::load(
+                path,
+                selected,
+                budget.limits.max_index_commits as u64,
+                |amount| budget.work(amount),
+                |amount| budget.read_bytes(amount),
+            )?))
+        } else {
+            None
+        };
         Ok(Self {
             raw,
+            operations,
             decorations: Arc::new(decorations),
             filter,
         })
@@ -57,7 +74,8 @@ impl Prepared {
         self.raw.num_commits()
     }
     pub fn weight(&self) -> u64 {
-        self.decorations.weight
+        self.operations.as_ref().map_or(0, |lookup| lookup.weight())
+            + self.decorations.weight
             + if self.filter.is_some() {
                 16 * 1024 * 1024 + 65536
             } else {

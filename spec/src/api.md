@@ -2133,3 +2133,10 @@ operation neighbors. Historical ID-prefix selectors retain explicit cold
 exact-operation rebuild recovery; selectors rooted at `@` remain usable through
 the bounded metadata-only cold reader. Signed cursors bind the complete query.
 Missing, ambiguous or outside-snapshot children remain explicit selector errors.
+
+Native prepared operation-filter pages MUST hydrate selected operation metadata
+through fresh scoped stores, resolve prefixes and child suffixes from the exact
+retained ancestor projection and keep the outer operation/query cursor binding.
+A warm lookup never grants access or establishes committed membership. Missing
+artifacts retain bounded fallback or explicit preparation; no GET publishes or
+reconstructs an unbounded graph.

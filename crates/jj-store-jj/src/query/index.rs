@@ -92,11 +92,16 @@ impl IndexStore for GuardedIndexStore {
                     self.budget.fail(Error::IndexRebuildRequired),
                 )));
             }
-            let data = saved.data();
-            *self.primary.lock().unwrap() = Some(data.clone());
-            return data
-                .reader(self.budget.clone())
-                .map_err(|e| IndexStoreError::Read(Box::new(e)));
+            if !(self.preparing
+                && self.cache_policy.reference_filters()
+                && saved.index.operations.is_none())
+            {
+                let data = saved.data();
+                *self.primary.lock().unwrap() = Some(data.clone());
+                return data
+                    .reader(self.budget.clone())
+                    .map_err(|e| IndexStoreError::Read(Box::new(e)));
+            }
         }
         let missing_filter = !self
             .path
@@ -108,7 +113,24 @@ impl IndexStore for GuardedIndexStore {
                 self.budget.fail(Error::IndexRebuildRequired),
             )));
         }
-        if (self.preparing && self.cache_policy.reference_filters() && missing_filter)
+        let missing_operations = [
+            super::prepared::operations::NAME,
+            super::prepared::operations::CHILDREN_NAME,
+        ]
+        .iter()
+        .try_fold(false, |missing, name| {
+            Ok::<_, IndexStoreError>(
+                missing
+                    || !self
+                        .path
+                        .join(name)
+                        .try_exists()
+                        .map_err(|e| IndexStoreError::Read(Box::new(e)))?,
+            )
+        })?;
+        if (self.preparing
+            && self.cache_policy.reference_filters()
+            && (missing_filter || missing_operations))
             || !self
                 .path
                 .join("op_links")
@@ -124,6 +146,26 @@ impl IndexStore for GuardedIndexStore {
                 &self.budget,
             )
             .map_err(|e| IndexStoreError::Read(Box::new(self.budget.fail(e))))?;
+            let prepare_operations =
+                self.preparing && self.cache_policy.reference_filters() && missing_operations;
+            if prepare_operations {
+                // Explicit upgrade owns writable private staging and full quota.
+                // Preserve existing native index/filter bytes; replace only an
+                // incomplete operation projection before its create-new writer.
+                for name in [
+                    super::prepared::operations::NAME,
+                    super::prepared::operations::CHILDREN_NAME,
+                ] {
+                    self.budget
+                        .work(1)
+                        .map_err(|e| IndexStoreError::Read(Box::new(e)))?;
+                    match std::fs::remove_file(self.path.join(name)) {
+                        Ok(()) => {}
+                        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {}
+                        Err(error) => return Err(IndexStoreError::Read(Box::new(error))),
+                    }
+                }
+            }
             super::prepared::build(
                 &self.path,
                 operation,
@@ -131,7 +173,12 @@ impl IndexStore for GuardedIndexStore {
                 &self.budget,
                 bytes,
                 !self.preparing,
-                self.preparing && self.cache_policy.reference_filters(),
+                super::prepared::Features {
+                    filtering: self.preparing
+                        && self.cache_policy.reference_filters()
+                        && missing_filter,
+                    operations: prepare_operations,
+                },
             )
             .await
             .map_err(|e| IndexStoreError::Read(Box::new(self.budget.fail(e))))?;

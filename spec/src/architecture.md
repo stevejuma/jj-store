@@ -927,3 +927,8 @@ Local operation child lookup is a rebuildable projection, owned by explicit
 preparation and shared resident admission. Main remains at verified E-READ-052;
 new delivery continues in the retained bounded-reads workspace. No read rebuilds
 the projection, changes operation heads or publishes repository state.
+
+Native operation-neighbor projections share the existing immutable prepared
+generation and resident memory pool. Retained lookup contains identities and
+edges, never request capabilities or native metadata bodies. Metadata-only warm
+operation reads construct fresh authorized stores and reuse no source loader.

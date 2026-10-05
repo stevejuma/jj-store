@@ -898,3 +898,342 @@ mod projection_acceptance;
 
 #[path = "graph_disk_recovery.rs"]
 mod disk_recovery_acceptance;
+
+struct OperationReadsOnly(Arc<CommittedRead>);
+#[async_trait::async_trait]
+impl q::ReadAccess for OperationReadsOnly {
+    fn repository(&self) -> m::RepositoryId {
+        q::ReadAccess::repository(self.0.as_ref())
+    }
+    fn epoch(&self) -> m::EpochId {
+        q::ReadAccess::epoch(self.0.as_ref())
+    }
+    fn operation(&self) -> m::OperationId {
+        q::ReadAccess::operation(self.0.as_ref())
+    }
+    async fn contains(&self, key: m::ObjectKey) -> q::Result<bool> {
+        if !matches!(key, m::ObjectKey::Operation(_)) {
+            return Err(q::Error::Denied);
+        }
+        q::ReadAccess::contains(self.0.as_ref(), key).await
+    }
+    async fn inventory(&self) -> q::Result<Arc<BTreeSet<m::ObjectKey>>> {
+        Err(q::Error::IndexBudget)
+    }
+    async fn authorize(&self) -> q::Result<()> {
+        q::ReadAccess::authorize(self.0.as_ref()).await
+    }
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn prepared_native_child_selectors_hydrate_only_selected_operation_metadata() {
+    tokio::task::LocalSet::new()
+        .run_until(async {
+            let f = Fixture::new().await;
+            let local = tempfile::tempdir().unwrap();
+            let work = tempfile::tempdir().unwrap();
+            let cache = tempfile::tempdir().unwrap();
+            let (mut repo, _) = initial(&f, local.path(), work.path()).await;
+            let mut history = vec![repo.clone()];
+            for n in 0..40 {
+                repo = repo
+                    .start_transaction()
+                    .commit(format!("metadata operation {n}"))
+                    .await
+                    .unwrap();
+                history.push(repo.clone());
+            }
+            let selected = oid(repo.op_id());
+            let read = pin(&f, selected).await;
+            let access: Arc<dyn q::ReadAccess> = Arc::new(PointReadsOnly(read.clone()));
+            let exec = executor(
+                cache.path(),
+                q::Limits {
+                    metadata: q::admission::Limits {
+                        max_nodes: 512,
+                        ..Default::default()
+                    },
+                    ..Default::default()
+                },
+            );
+            let cold_access: Arc<dyn q::ReadAccess> = Arc::new(OperationReadsOnly(read.clone()));
+            let cold = exec
+                .execute(
+                    f.store.clone(),
+                    cold_access,
+                    q::Request::OperationsFiltered {
+                        query: "from:@-+".into(),
+                    },
+                    page(1),
+                )
+                .await
+                .unwrap();
+            assert!(cold.stats.object_reads <= 8);
+            exec.prepare_index(f.store.clone(), access.clone(), q::Cancellation::default())
+                .await
+                .unwrap();
+            let access: Arc<dyn q::ReadAccess> = Arc::new(OperationReadsOnly(read.clone()));
+            // Retained arrays survive disposable-file loss without rereading
+            // views, commits or the source operation closure.
+            let index_path = cache_slot(cache.path(), selected).join("index");
+            fs::remove_file(index_path.join("local-operations")).unwrap();
+            fs::remove_file(index_path.join("local-operation-children")).unwrap();
+            for (selector, expected) in [
+                (
+                    format!("{}+", &history[2].op_id().hex()[..12]),
+                    oid(history[3].op_id()),
+                ),
+                (
+                    format!("{}+", history[2].op_id().hex()),
+                    oid(history[3].op_id()),
+                ),
+                (
+                    format!("{}++-", history[2].op_id().hex()),
+                    oid(history[3].op_id()),
+                ),
+                (
+                    format!("{}-+", history[3].op_id().hex()),
+                    oid(history[3].op_id()),
+                ),
+                ("@-+".into(), selected),
+            ] {
+                let result = exec
+                    .execute(
+                        f.store.clone(),
+                        access.clone(),
+                        q::Request::OperationsFiltered {
+                            query: format!("from:{selector}"),
+                        },
+                        page(1),
+                    )
+                    .await
+                    .expect(
+                        "prepared native selector must use point membership and selected metadata",
+                    );
+                assert!(
+                    result.stats.object_reads <= 8,
+                    "{selector}: {:?}",
+                    result.stats
+                );
+                println!("{selector}: {:?}", result.stats);
+                let q::Nodes::Operations(nodes) = result.data else {
+                    panic!("operations")
+                };
+                assert_eq!(nodes[0].id, expected, "{selector}");
+                assert_eq!(result.operation, selected);
+                assert!(
+                    result.stats.metadata_nodes <= 512,
+                    "{selector}: {:?}",
+                    result.stats
+                );
+            }
+            let later = repo
+                .start_transaction()
+                .commit("later outside pin")
+                .await
+                .unwrap();
+            let error = exec
+                .execute(
+                    f.store.clone(),
+                    access.clone(),
+                    q::Request::OperationsFiltered {
+                        query: format!("from:{}+", selected),
+                    },
+                    page(1),
+                )
+                .await
+                .unwrap_err();
+            assert!(matches!(error, q::Error::InvalidQuery(_)), "{error:?}");
+            let error = exec
+                .execute(
+                    f.store.clone(),
+                    access,
+                    q::Request::OperationsFiltered {
+                        query: format!("from:{}", later.op_id().hex()),
+                    },
+                    page(1),
+                )
+                .await
+                .unwrap_err();
+            assert!(
+                matches!(error, q::Error::InvalidQuery(_) | q::Error::NotCommitted),
+                "{error:?}"
+            );
+        })
+        .await;
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn prepared_native_child_selectors_preserve_branch_ambiguity_and_current_authorization() {
+    use jj_store_service::administration::{TokenChange, TokenRequest};
+    tokio::task::LocalSet::new()
+        .run_until(async {
+            let f = Fixture::new().await;
+            let local = tempfile::tempdir().unwrap();
+            let work = tempfile::tempdir().unwrap();
+            let cache = tempfile::tempdir().unwrap();
+            let (base, _) = initial(&f, local.path(), work.path()).await;
+            let left = base
+                .start_transaction()
+                .commit("left neighbor")
+                .await
+                .unwrap();
+            let right = base
+                .start_transaction()
+                .commit("right neighbor")
+                .await
+                .unwrap();
+            let loader = f.stores.load_cache(&settings(), local.path()).unwrap();
+            let merged = f.stores.load_for_mutation(&loader).await.unwrap();
+            assert_eq!(merged.operation().parent_ids().len(), 2);
+            let exec = executor(cache.path(), q::Limits::default());
+            for repo in [&left, &merged] {
+                let read = pin(&f, oid(repo.op_id())).await;
+                exec.prepare_index(f.store.clone(), read.clone(), q::Cancellation::default())
+                    .await
+                    .unwrap();
+            }
+            let old: Arc<dyn q::ReadAccess> =
+                Arc::new(OperationReadsOnly(pin(&f, oid(left.op_id())).await));
+            let result = exec
+                .execute(
+                    f.store.clone(),
+                    old.clone(),
+                    q::Request::OperationsFiltered {
+                        query: format!("from:{}+", base.op_id().hex()),
+                    },
+                    page(1),
+                )
+                .await
+                .unwrap();
+            let q::Nodes::Operations(nodes) = result.data else {
+                panic!("operations")
+            };
+            assert_eq!(nodes[0].id, oid(left.op_id()));
+            assert!(matches!(
+                exec.execute(
+                    f.store.clone(),
+                    old,
+                    q::Request::OperationsFiltered {
+                        query: format!("from:{}", right.op_id().hex())
+                    },
+                    page(1)
+                )
+                .await
+                .unwrap_err(),
+                q::Error::InvalidQuery(_) | q::Error::NotCommitted
+            ));
+            let reader_session = f.session(f.reader.clone(), Protection::default());
+            let OpenRead::Pinned(reader) = reader_session
+                .open_read(Some(oid(merged.op_id())), ReadLimits::default())
+                .await
+                .unwrap()
+            else {
+                panic!("reader pin")
+            };
+            let access: Arc<dyn q::ReadAccess> = Arc::new(OperationReadsOnly(Arc::new(reader)));
+            for selector in [
+                format!("{}+", base.op_id().hex()),
+                format!("{}-", merged.op_id().hex()),
+            ] {
+                assert!(matches!(
+                    exec.execute(
+                        f.store.clone(),
+                        access.clone(),
+                        q::Request::OperationsFiltered {
+                            query: format!("from:{selector}")
+                        },
+                        page(1)
+                    )
+                    .await
+                    .unwrap_err(),
+                    q::Error::InvalidQuery(_)
+                ));
+            }
+            f.session
+                .change_token(&TokenRequest {
+                    request_id: m::RequestId::new([87; 16]),
+                    expected: f.session.snapshot().await.unwrap().manifest().snapshot(),
+                    change: TokenChange::Revoke {
+                        token: f.reader.id(),
+                    },
+                })
+                .await
+                .unwrap();
+            assert_eq!(
+                exec.execute(
+                    f.store.clone(),
+                    access,
+                    q::Request::OperationsFiltered {
+                        query: format!("from:{}+", base.op_id().hex())
+                    },
+                    page(1)
+                )
+                .await
+                .unwrap_err(),
+                q::Error::Denied
+            );
+        })
+        .await;
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
+async fn prepared_native_operation_lookup_upgrades_old_generations_without_replacing_filter() {
+    tokio::task::LocalSet::new()
+        .run_until(async {
+            let f = Fixture::new().await;
+            let local = tempfile::tempdir().unwrap();
+            let work = tempfile::tempdir().unwrap();
+            let cache = tempfile::tempdir().unwrap();
+            let (repo, _) = initial(&f, local.path(), work.path()).await;
+            let read = pin(&f, oid(repo.op_id())).await;
+            let exec = executor(cache.path(), q::Limits::default());
+            exec.prepare_index(f.store.clone(), read.clone(), q::Cancellation::default())
+                .await
+                .unwrap();
+            let slot = cache_slot(cache.path(), oid(repo.op_id()));
+            let filter = fs::read(slot.join("index/local-reference-filter")).unwrap();
+            let before = f.session.snapshot().await.unwrap().manifest().clone();
+            drop(exec);
+            let receipt = slot.join("query-cache.json");
+            let mut value: serde_json::Value =
+                serde_json::from_slice(&fs::read(&receipt).unwrap()).unwrap();
+            for name in ["local-operations", "local-operation-children"] {
+                fs::remove_file(slot.join("index").join(name)).unwrap();
+                value["files"]
+                    .as_object_mut()
+                    .unwrap()
+                    .remove(&format!("index/{name}"));
+            }
+            fs::write(&receipt, serde_json::to_vec(&value).unwrap()).unwrap();
+            let exec = executor(cache.path(), q::Limits::default());
+            let access: Arc<dyn q::ReadAccess> = Arc::new(PointReadsOnly(read.clone()));
+            exec.prepare_index(f.store.clone(), access, q::Cancellation::default())
+                .await
+                .unwrap();
+            let upgraded = cache_slot(cache.path(), oid(repo.op_id()));
+            assert_eq!(
+                fs::read(upgraded.join("index/local-reference-filter")).unwrap(),
+                filter
+            );
+            assert!(upgraded.join("index/local-operation-children").is_file());
+            let access: Arc<dyn q::ReadAccess> = Arc::new(OperationReadsOnly(read));
+            let result = exec
+                .execute(
+                    f.store.clone(),
+                    access,
+                    q::Request::OperationsFiltered {
+                        query: "from:@-+".into(),
+                    },
+                    page(1),
+                )
+                .await
+                .unwrap();
+            let q::Nodes::Operations(nodes) = result.data else {
+                panic!("operations")
+            };
+            assert_eq!(nodes[0].id, oid(repo.op_id()));
+            assert_eq!(f.session.snapshot().await.unwrap().manifest(), &before);
+        })
+        .await;
+}

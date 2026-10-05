@@ -470,8 +470,18 @@ impl Cache {
             budget.check()?;
             if valid {
                 let upgrade_filters = want_filters
-                    && !slot.receipt.files.keys().any(|name| {
-                        name.ends_with(&format!("/{}", super::prepared::filters::NAME))
+                    && [
+                        super::prepared::filters::NAME,
+                        super::prepared::operations::NAME,
+                        super::prepared::operations::CHILDREN_NAME,
+                    ]
+                    .iter()
+                    .any(|required| {
+                        !slot
+                            .receipt
+                            .files
+                            .keys()
+                            .any(|name| name.ends_with(&format!("/{required}")))
                     });
                 let entry = Entry {
                     path,

@@ -1943,3 +1943,8 @@ ambiguous branches and later-head exclusion. Selected operation metadata stays
 readable without Git bodies or source commit indexes; the retained edge lookup
 survives removal of its disposable file. Independently corrupted projections
 fail framing/checksum/membership checks before serving.
+
+Native prepared child-selector regressions MUST work under a small metadata
+budget with complete inventory enumeration disabled. Cover mixed suffixes,
+branch ambiguity, later-head exclusion, selected-only operation reads, cold
+bounded behavior and current revocation; native index bytes remain unchanged.

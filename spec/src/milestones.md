@@ -83483,6 +83483,213 @@ entries.
       "Native indexed child neighbors and deeper operation/predecessor/copy/search continuations; retained oversized comparisons/change groups/extreme candidates; paged native RPC; remaining local application search/index stay delivery work. Prepared operation graph admission still reads the selected view for its existing selection seal; metadata-only prepared operation admission needs its own authority regression.",
       "Complete large-scale/RSS/latency/fault/cold browser/RustFS/release qualification and inherited Help/generated-reference/source-review refresh remain deferred. Main stays at verified E-READ-052; existing services, Linux source, installed CLI and unrelated workspaces remain untouched."
     ]
+  },
+  {
+    "id": "E-READ-054",
+    "tasks": ["M13.4"],
+    "date": "2026-10-05",
+    "revision": "enclosing Jujutsu change yxvuorom",
+    "kind": "Native prepared operation prefixes and child selectors reuse admitted ancestor lookup",
+    "versions": "Rust1.98.1;jj-lib/jj-cli0.45.1;native format2 and index format6 unchanged;macOS ARM64.",
+    "formats": "Disposable JSTLOP2/JSTLCH1 lookup files extend native prepared generations using the existing framing. Native fingerprint slots hash verified native identities; local canonical fingerprints retain their existing interpretation. No authoritative/public DTO/schema/cursor/RPC/WAL/manifest format change. Full-policy explicit preparation captures the projection; small-cache/inline generations retain bounded fallback. Upgrade owns private full-quota staging, preserves existing filter bytes, and replaces only incomplete owned operation artifacts. Lookup weight includes admitted fixed-width arrays and buffers in both the shared lease pool and resident retention.",
+    "files": [
+      "crates/jj-store-cli/tests/native_lifecycle/graphs.rs",
+      "crates/jj-store-jj/src/query/cache/constructed.rs",
+      "crates/jj-store-jj/src/query/cache.rs",
+      "crates/jj-store-jj/src/query/graphs.rs",
+      "crates/jj-store-jj/src/query/index/secondary.rs",
+      "crates/jj-store-jj/src/query/index.rs",
+      "crates/jj-store-jj/src/query/mod.rs",
+      "crates/jj-store-jj/src/query/operation_neighbors.rs",
+      "crates/jj-store-jj/src/query/prepared/mod.rs",
+      "crates/jj-store-jj/src/query/prepared/operations/children.rs",
+      "crates/jj-store-jj/src/query/prepared/operations.rs",
+      "crates/jj-store-jj/src/query/projection.rs",
+      "docs/implementation-plan.md",
+      "spec/src/api.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/jj-integration.md",
+      "spec/src/milestones.md"
+    ],
+    "requirements": ["JST-JJ-003", "JST-JJ-005", "JST-API-002", "JST-API-004"],
+    "next": "Commit the verified native child selection slice in bounded-reads; main remains at the verified E-READ-052 landing. Continue indexed deep continuations and retained difference/candidate pages next. Full qualification stays deferred.",
+    "commands": [],
+    "tests": [
+      "crates/jj-store-cli/tests/native_lifecycle/graphs.rs#prepared_native_child_selectors_hydrate_only_selected_operation_metadata",
+      "crates/jj-store-cli/tests/native_lifecycle/graphs.rs#prepared_native_child_selectors_preserve_branch_ambiguity_and_current_authorization",
+      "crates/jj-store-cli/tests/native_lifecycle/graphs.rs#prepared_native_operation_lookup_upgrades_old_generations_without_replacing_filter"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked graph_acceptance::prepared_native_child_selectors_hydrate_only_selected_operation_metadata -- --exact --nocapture (initial test and first implementation)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Both initial runs failed Limit because max_nodes8 counts decoded fields, not operation bodies. Corrected the new regression to512 decoded nodes plus an independent8 object-read bound, then rechecked unchanged parent implementation. native-child-before-054.log/native-child-after-054.log. These initial failures do not establish the intended history-scan baseline."
+      },
+      {
+        "command": "python3 .local/bounded-reads/performance/native-before-054.py (unchanged parent production plus corrected exact regression)",
+        "result": "fail",
+        "failures": 1,
+        "note": "0 passed,1 failed IndexBudget: old native operation-prefix selection required complete inventory enumeration, deliberately disabled by the point-only capability. New regression allows512 decoded metadata nodes and caps object reads at8. Script restored every in-progress production file in finally. native-child-baseline-corrected-054.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked graph_acceptance::prepared_native_child_selectors_hydrate_only_selected_operation_metadata -- --exact --nocapture (corrected test)",
+        "result": "pass",
+        "failures": 0,
+        "note": "1 passed,224 filtered; four selectors read4/5/5/6 objects and136/170/170/204 decoded metadata nodes over40-operation history. Later-child and later-operation exclusion pass. native-child-corrected-054.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked graph_acceptance::prepared_native_child_selectors -- --nocapture (first extended test)",
+        "result": "fail",
+        "failures": 3,
+        "note": "New revocation fixture used the wrong TokenRequest fields and missed the borrowed argument: E0559/E0063/E0308. Corrected to expected manifest snapshot plus token ID and borrowed request; switched queried capability to independent reader token. native-child-extended-054.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked prepared_native_ -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "3 passed,224 filtered: cold current-relative path, warm mixed selectors without operation files, no views/commits/inventory; retained branch ambiguity, sibling/later exclusion, fresh reader-token revocation and older-generation upgrade preserving exact filter bytes and manifest. native-child-complete-054.log."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked prepared_native_ -- --nocapture (no-copy resolver first compile)",
+        "result": "fail",
+        "failures": 1,
+        "note": "E0599: pinned HexPrefix constructor is try_from_hex, not new. Corrected constructor; full final exact native family and graph consumers rerun. native-child-selector-final-compile-054.log; first no-copy compile failure preserved."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked prepared_native_ -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 224 filtered out; finished in 7.31s .local/bounded-reads/performance/native-child-final-054.log; wall time 55.68s. Results also retained in native-child-results-initial-054.json."
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 57 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 7.38s .local/bounded-reads/performance/native-child-owning-jj-054.log; wall time 22.87s. Results also retained in native-child-results-initial-054.json."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked graph_acceptance -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 43 passed; 0 failed; 0 ignored; 0 measured; 184 filtered out; finished in 15.74s .local/bounded-reads/performance/native-child-graph-consumers-054.log; wall time 40.59s. Results also retained in native-child-results-initial-054.json."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked reference -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 219 filtered out; finished in 62.25s .local/bounded-reads/performance/native-child-reference-consumers-054.log; wall time 81.34s. Results also retained in native-child-results-initial-054.json."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked prepared -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 11 passed; 0 failed; 0 ignored; 0 measured; 26 filtered out; finished in 25.63s .local/bounded-reads/performance/native-child-local-consumers-054.log; wall time 45.78s. Results also retained in native-child-results-initial-054.json."
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-http -p jj-store-rpc -p jj-store-cli --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `dev` profile [unoptimized] target(s) in 24.01s .local/bounded-reads/performance/native-child-packages-054.log; wall time 24.14s. Results also retained in native-child-results-initial-054.json."
+      },
+      {
+        "command": "cargo fmt -p jj-store-jj -p jj-store-cli -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exit0. .local/bounded-reads/performance/native-child-rust-format-054.log; wall time 1.35s. Results also retained in native-child-results-initial-054.json."
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "package boundaries ok (17 packages) .local/bounded-reads/performance/native-child-boundaries-054.log; wall time 1.57s. Results also retained in native-child-results-initial-054.json."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "Spec-first gate passed: 13 protected file(s), 5 canonical chapter(s). .local/bounded-reads/performance/native-child-spec-first-054.log; wall time 1.9s. Results also retained in native-child-results-initial-054.json."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked prepared_native_ -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 224 filtered out; finished in 3.42s .local/bounded-reads/performance/native-child-selector-final-054.log; wall time 40.43s. Results also retained in native-child-results-resolver-054.json."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked graph_acceptance -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 43 passed; 0 failed; 0 ignored; 0 measured; 184 filtered out; finished in 16.29s .local/bounded-reads/performance/native-child-graphs-final-054.log; wall time 31.19s. Results also retained in native-child-results-resolver-054.json."
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-http -p jj-store-rpc -p jj-store-cli --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `dev` profile [unoptimized] target(s) in 14.47s .local/bounded-reads/performance/native-child-packages-final-054.log; wall time 14.61s. Results also retained in native-child-results-resolver-054.json."
+      },
+      {
+        "command": "cargo fmt -p jj-store-jj -p jj-store-cli -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exit0. .local/bounded-reads/performance/native-child-rust-format-final-054.log; wall time 1.55s. Results also retained in native-child-results-resolver-054.json."
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked prepared_native_ -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 224 filtered out; finished in 3.38s .local/bounded-reads/performance/native-child-delivery-final-054.log; wall time 52.67s. Final private preparation Features replaces separate booleans with identical values; no further behavior change."
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-http -p jj-store-rpc -p jj-store-cli --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `dev` profile [unoptimized] target(s) in 16.86s .local/bounded-reads/performance/native-child-package-delivery-final-054.log; wall time 16.98s. Final private preparation Features replaces separate booleans with identical values; no further behavior change."
+      },
+      {
+        "command": "cargo fmt -p jj-store-jj -p jj-store-cli -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exit0. .local/bounded-reads/performance/native-child-format-delivery-final-054.log; wall time 1.09s. Final private preparation Features replaces separate booleans with identical values; no further behavior change."
+      },
+      {
+        "command": "python3 compare jj file show -r @- spec/src/milestones.md with current evidence JSON",
+        "result": "pass",
+        "failures": 0,
+        "note": "All494 parent evidence records remain JSON-identical; E-READ-054 is the sole new record,495 total. No historical evidence rewritten."
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "progress ok (139 tasks; evidence bookkeeping only) .local/bounded-reads/performance/native-child-progress-final-054.log."
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Specification validated: 5 validators, 23 chapters, 172 requirements. .local/bounded-reads/performance/native-child-spec-validation-final-054.log."
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "Spec-first gate passed: 13 protected file(s), 5 canonical chapter(s). .local/bounded-reads/performance/native-child-spec-first-ledger-final-054.log."
+      },
+      {
+        "command": "pnpm exec prettier --check docs/implementation-plan.md spec/src/api.md spec/src/architecture.md spec/src/cli.md spec/src/jj-integration.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "All matched files use Prettier code style! .local/bounded-reads/performance/native-child-docs-format-final-054.log."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Focused119 distinct Rust tests passed:57 owning JJ,43 complete native graph/cache/preparation,8 native reference/admission and11 local prepared tests; exact3 native regressions rerun separately. Final exact3-test family, affected JJ/service/HTTP/RPC/CLI package checks and Rust formatting pass after private flag-shape cleanup. Native warm selectors hydrate4–6 objects and136–204 decoded nodes under512-node/eight-read bounds across40-operation history, with operation artifacts absent and all view/commit/inventory access denied. Five selectors include short and full prefixes; ambiguity, later/sibling exclusion, fresh authorization and native bytes/quota cleanup pass. Native head wrappers retain shared immutable bodies without copying predecessor maps; view identity hints reuse the verified ID without rehashing view contents. All494 parent records remain JSON-identical. No milestone promotion; UI/aggregate/scale/release lanes out of scope.",
+      "Deep operation/predecessor/copy/search continuations, retained oversized comparisons/change groups/extreme candidate continuation, paged native RPC and remaining local application search/index stay delivery work. Prepared local operation admission still reads its selected view for the existing authority seal; a metadata-only path needs its own regression.",
+      "Full scale/RSS/latency/fault/cold-browser/RustFS/release and inherited generated-reference/Help/source-review refresh remain deferred."
+    ]
   }
 ]
 ```
