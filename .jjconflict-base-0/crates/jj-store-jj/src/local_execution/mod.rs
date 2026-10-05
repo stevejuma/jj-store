@@ -9,7 +9,7 @@ use crate::{
 };
 pub use recovery::{
     CheckoutWitnessV1, PhysicalGuard, PublishedHead, RecoveredHistory, RecoveryBinding,
-    RecoveryWitnessV1, RetainedIdentity, VerifiedUnchangedCheckout,
+    RecoveryWitnessV1, RetainedIdentity, TreeCheckoutPlanV1, VerifiedUnchangedCheckout,
 };
 pub use reword::{BookmarkEffect, PreparedCode, Reword, Rewrite};
 use std::{path::PathBuf, sync::Arc};

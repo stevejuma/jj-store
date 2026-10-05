@@ -43,7 +43,7 @@ pub fn content_digest(bytes: &[u8]) -> m::RecordDigest {
     hash.update(bytes);
     m::RecordDigest::new(hash.finalize().into())
 }
-pub(super) fn safe_path(value: &str) -> Result<jj_lib::repo_path::RepoPathBuf> {
+pub(crate) fn safe_path(value: &str) -> Result<jj_lib::repo_path::RepoPathBuf> {
     if value.is_empty()
         || value.contains('\\')
         || value.chars().any(char::is_control)

@@ -1,5 +1,13 @@
 # Application documentation
 
+The local manual MUST distinguish exact tree-changing checkout preparation from
+durable installation and completion. It documents the initial resolved-file,
+full-sparse profile, rejected obstacles/aliases and unchanged physical state.
+Canonical plan reopening and killed-worker evidence cannot be described as a
+completed server journal or checkout protocol. Source review covers retained
+object identity/size checks, per-path/directory fingerprints and foreground
+ownership; production mutation capabilities remain unavailable.
+
 The local manual explains explicit immutable source-history restoration after
 operation-store/index loss, with a saved bounded private witness and original
 reserved retention key. Exact synced create-only recovery is separate from

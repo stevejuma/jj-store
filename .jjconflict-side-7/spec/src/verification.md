@@ -1339,3 +1339,19 @@ adaptive pair allocation, logical direction, lifecycle and original-DOM pinning;
 the consumer uses its existing temporary source-validation dependency with
 portable manifests. Registry release qualification and backend integration
 remain separate gates.
+
+[E-M21-028](milestones.md) qualifies only exact tree-changing checkout
+preparation. Its real unpublished native-operation fixtures bind retained
+source/candidate trees, binary/executable/addition/deletion effects and native
+checkout inputs. Adversarial cases reject dirty/missing/wrong-mode source files,
+matching-content untracked/ignored targets, unsafe files/parents, aliases,
+file/directory transitions, unsupported symlink candidates, oversized payloads,
+replaced identities and tampered canonical plans. Cancellation retains the
+actual foreground lock until worker exit; killed-worker reopening revalidates
+the original saved plan without checkout/publication. Provider tests use typed
+test guards; complete real scanner ownership remains separately qualified by the
+existing service and registered-folder evidence. Durable plan/journal selection,
+interrupted installation, native tree-state completion, preserved dirty affected
+WIP, wider file/sparse profiles and production command/UI flows remain required.
+No mutation capability or milestone completion follows from these preparation
+passes.

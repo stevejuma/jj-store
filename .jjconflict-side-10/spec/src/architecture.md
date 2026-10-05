@@ -146,6 +146,19 @@ directory identity remain preconditions. These provider proofs do not qualify
 general tree-changing checkout, durable runtime receipt composition or writable
 capabilities.
 
+Tree-changing checkout now has a separate exact private preparation path. It
+reads the retained archive's named source/candidate workspace trees through
+identity-checked bounded Git objects and captures native checkout/tree-state
+bytes, affected file stamps and no-follow ancestor-directory identities. The
+original foreground lease and worker admission remain owned through cancellation
+and guard validation. Full sparse coverage and resolved regular/executable files
+are the initial profile; unsupported modes, aliases, dirty affected files and
+ignored/untracked obstacles fail without writes. Canonical plan data can be
+reopened and compared to the original retained effects, but is not a provider
+proof. Durable plan storage/journal linkage, interrupted installation, native
+tree-state selection and verified after-state remain required before actual
+tree-changing checkout or command wiring.
+
 The server now joins actual unpublished reword effects with exact private
 preview/journal selection, saved recovery witness and reserved retention. The
 full candidate archive is durable before retention; acknowledgement replaces

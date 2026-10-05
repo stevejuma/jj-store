@@ -1101,6 +1101,21 @@ existing complete physical scanner through data-only provider interfaces.
 Provider proof does not select the runtime journal, combination state or a
 tree-changing checkout.
 
+The separate tree-changing plan provider reads only the original retained
+archive and its real reachable Git objects. It verifies bounded raw object
+identities before deriving the exact named-workspace tree effects; it neither
+loads latest history nor writes a transaction or checkout. Descriptor-relative
+physical reads capture per-path fingerprints and parent directory identities,
+including planned missing parents, between complete trusted physical guards and
+original metadata/policy validation. Resolved regular/executable files and full
+sparse coverage are the initial qualified preparation profile; unsupported
+shapes, aliases and obstacles fail closed. Canonical plan decoding remains data
+validation. Matching bytes do not normalize a replaced file/directory identity.
+The original worker/foreground lease remains alive until cancellation exits.
+Per-path durable installation and native tree-state completion remain separate
+execution qualification; no completion proof or writable capability follows from
+capturing/reopening a plan.
+
 Checkout witness linkage accessors expose only owned original key, recovery
 digest, candidate operation/view and physical selection. They MUST preserve
 canonical validation and cannot construct a provider proof. Runtime composition

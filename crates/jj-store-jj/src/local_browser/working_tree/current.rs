@@ -1,6 +1,6 @@
 //! Existing checkout/ignore witnesses only; no WC loader, initialization or mutation.
 pub(crate) mod capture;
-mod decode;
+pub(crate) mod decode;
 pub(crate) mod physical;
 use super::*;
 use std::path::PathBuf;

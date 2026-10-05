@@ -152,9 +152,9 @@ shared-package release qualification does not alter those original Git gates.
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                        | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work          | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027 |
+| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028 |
 | M21.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | UI reviewed for backend integration; registry/visual gates remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009 |
-| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Complete recoverable checkout and durable combinations | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027 |
+| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Complete recoverable checkout and durable combinations | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -89751,6 +89751,292 @@ entries.
   ],
   "next": "Continue general guarded physical checkout and durable execution/combination coordination, then real setup/merge-WIP selected state and command transport/UI wiring. Complete all seven approved stages; do not enable mutations from this private reword proof.",
   "summary": "138 unique direct cases pass: 83 JJ provider, 34 server integration, nine journal/combination unit and 12 actual registered CLI cases. Current immutable ancestry, unpublished Unknown retry, acknowledgement-only historical publication, typed Published before-witness no-reannouncement, exact source-loss recovery, cancellation/authorization and killed-process original retry are qualified privately. Fixture combination state/retirement and raw-head fault injection do not qualify real engines. All 508 original raw ledger bodies remain unchanged. Production Stacks stays read-only; M21.2 and full integration remain In progress."
+},
+{
+  "id": "E-M21-028",
+  "tasks": [
+    "M21",
+    "M21.2"
+  ],
+  "date": "2026-10-05",
+  "revision": "olqwlryy",
+  "kind": "Exact retained tree-changing checkout plan and physical preflight",
+  "versions": "Rust 1.98.1; JJ 0.45.1; Git 2.55.0; pinned Git SHA-1 profile; macOS ARM64 disposable stock-JJ fixtures; CARGO_INCREMENTAL=0. Installed services and binaries unchanged.",
+  "formats": "New bounded canonical installation-private TreeCheckoutPlanV1 data only. Maximum 32 MiB encoding; native checkout 64 KiB and tree-state 4 MiB; tree scans 4096 entries, 2 MiB per blob and 8 MiB file payload per source/candidate tree. Existing journal, receipts, native/companion/WAL and public transport formats unchanged; no writable capability.",
+  "files": [
+    "crates/jj-store-jj/src/local_browser/working_tree/current/decode.rs",
+    "crates/jj-store-jj/src/local_browser/working_tree/current.rs",
+    "crates/jj-store-jj/src/local_browser/working_tree.rs",
+    "crates/jj-store-jj/src/local_execution/mod.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/tree_checkout/effects.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/tree_checkout/observation.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/tree_checkout/plan.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/tree_checkout.rs",
+    "crates/jj-store-jj/src/local_execution/recovery.rs",
+    "crates/jj-store-jj/tests/stack_tree_checkout/adversarial.rs",
+    "crates/jj-store-jj/tests/stack_tree_checkout/lifecycle.rs",
+    "crates/jj-store-jj/tests/stack_tree_checkout/process.rs",
+    "crates/jj-store-jj/tests/stack_tree_checkout.rs",
+    "docs/implementation-plan.md",
+    "docs/maintenance/coverage.json",
+    "docs/site/technical/local.md",
+    "spec/src/architecture.md",
+    "spec/src/documentation.md",
+    "spec/src/jj-integration.md",
+    "spec/src/local-jj.md",
+    "spec/src/verification.md"
+  ],
+  "requirements": [
+    "JST-LOCAL-005",
+    "JST-JJ-004",
+    "JST-JJ-002",
+    "JST-GOV-003"
+  ],
+  "before": "Existing unchanged-tree baseline passes 10 cases. New target initially fails compilation because there is no changed-tree checkout-plan API. Initial implementation had three compile errors, a fixture missing native descendant rebase and an incorrect resolved-label expectation; cancellation fixture then had one Debug-bound compile error. All corrected before final 18-parent pass. Strict lint then found one comparison-to-empty diagnostic and the final review acknowledgement needed coverage.json formatting; both corrected with no suppressed checks.",
+  "scope": "Private provider preparation/revalidation only. Exact retained archive and verified raw reachable Git objects determine the named workspace before/after trees and file effects. Original foreground ownership, complete trusted guard bracketing, canonical native metadata, per-file stamps and ancestor-directory identities remain pinned. Dirty affected sources, untracked/ignored addition targets, unsafe links/modes, sparse scope, ASCII case aliases, unsupported Unicode and file/directory transitions fail without writes. No physical installer, journal plan storage, transport or runtime command is enabled.",
+  "tests": [
+    "crates/jj-store-jj/tests/stack_tree_checkout/adversarial.rs#dirty_missing_and_wrong_mode_source_files_are_preserved_and_rejected",
+    "crates/jj-store-jj/tests/stack_tree_checkout/adversarial.rs#untracked_and_ignored_addition_targets_are_not_adopted_even_with_matching_bytes",
+    "crates/jj-store-jj/tests/stack_tree_checkout/adversarial.rs#safe_deletion_keeps_unrelated_dirty_and_ignored_files_untouched",
+    "crates/jj-store-jj/tests/stack_tree_checkout/adversarial.rs#unsafe_files_and_parent_links_cannot_redirect_checkout_preflight",
+    "crates/jj-store-jj/tests/stack_tree_checkout/adversarial.rs#replaced_files_and_directories_invalidate_saved_plan_even_when_bytes_match",
+    "crates/jj-store-jj/tests/stack_tree_checkout/adversarial.rs#aliases_and_file_directory_transitions_are_rejected_without_changes",
+    "crates/jj-store-jj/tests/stack_tree_checkout/adversarial.rs#oversized_blobs_are_rejected_before_physical_capture",
+    "crates/jj-store-jj/tests/stack_tree_checkout/adversarial.rs#plan_decode_rejects_wrong_digest_noncanonical_and_unsupported_fields",
+    "crates/jj-store-jj/tests/stack_tree_checkout/adversarial.rs#symlink_candidate_is_readable_but_cannot_gain_checkout_plan_support",
+    "crates/jj-store-jj/tests/stack_tree_checkout/adversarial.rs#recomputed_plan_digest_cannot_reauthorize_a_tampered_retained_request",
+    "crates/jj-store-jj/tests/stack_tree_checkout/adversarial.rs#creating_a_previously_missing_parent_invalidates_saved_absence",
+    "crates/jj-store-jj/tests/stack_tree_checkout/adversarial.rs#native_sparse_checkout_is_unsupported_without_expanding_its_disk_scope",
+    "crates/jj-store-jj/tests/stack_tree_checkout/lifecycle.rs#saved_original_plan_revalidates_after_reopen_without_new_preparation",
+    "crates/jj-store-jj/tests/stack_tree_checkout/lifecycle.rs#changing_physical_guard_cannot_return_a_plan_or_touch_checkout_metadata",
+    "crates/jj-store-jj/tests/stack_tree_checkout/lifecycle.rs#cancellation_retains_actual_foreground_lock_until_blocked_worker_exits",
+    "crates/jj-store-jj/tests/stack_tree_checkout/lifecycle.rs#denied_complete_guard_leaves_source_and_physical_state_intact",
+    "crates/jj-store-jj/tests/stack_tree_checkout/process.rs#worker",
+    "crates/jj-store-jj/tests/stack_tree_checkout/process.rs#killed_worker_saved_plan_reopens_against_original_retained_tree_and_files",
+    "crates/jj-store-jj/tests/stack_tree_checkout.rs#retained",
+    "crates/jj-store-jj/tests/stack_tree_checkout.rs#retained_changed_tree_can_be_planned_without_checkout_or_publication"
+  ],
+  "runs": [
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test -p jj-store-jj --test stack_unchanged_checkout --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "tree-checkout-before.log: unchanged-tree baseline 10 passing parents and one ignored subprocess helper."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test -p jj-store-jj --test stack_tree_checkout --locked",
+      "result": "fail",
+      "failures": 1,
+      "note": "tree-checkout-unavailable.log: The new exact target cannot compile before implementation: missing prepare_tree_checkout API; no existing physical checkout plan is available."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test -p jj-store-jj --test stack_tree_checkout --locked",
+      "result": "fail",
+      "failures": 3,
+      "note": "tree-checkout-first.log: Initial implementation compile errors: duplicate existing git_path accessor, &&str descriptor argument and moving gix Object data. Fixed without dependency/API workarounds."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test -p jj-store-jj --test stack_tree_checkout --locked",
+      "result": "fail",
+      "failures": 1,
+      "note": "tree-checkout-second.log: Native candidate fixture transaction rejected pending rewrites; fixture now rebases descendants before leaving unpublished."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test -p jj-store-jj --test stack_tree_checkout --locked",
+      "result": "fail",
+      "failures": 1,
+      "note": "tree-checkout-third.log: Provider incorrectly expected empty archived conflict labels for a resolved commit. Pinned native profile represents the resolved label as one empty string; corrected that exact check."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test -p jj-store-jj --test stack_tree_checkout --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "tree-checkout-fourth.log: One original exact positive passes without changing physical or checkout state."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test -p jj-store-jj --test stack_tree_checkout --locked",
+      "result": "fail",
+      "failures": 1,
+      "note": "tree-checkout-complete-first.log: Cancellation fixture assertion accidentally required RecoveredHistory Debug; replaced unwrap_err with pattern matching."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test -p jj-store-jj --test stack_tree_checkout --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "tree-checkout-complete-second.log: 13 provider cases pass."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test -p jj-store-jj --test stack_tree_checkout --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "tree-checkout-complete-third.log: 15 provider cases pass, including symlink candidate rejection and a recomputed tampered request digest."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test -p jj-store-jj --test stack_tree_checkout --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "tree-checkout-complete-final.log: 18 final provider parents pass; one isolated worker is invoked and killed by its passing parent. Includes real stock-JJ sparse checkout rejection, missing-parent invalidation and exact saved-plan reopening. This log also supersedes an earlier 16-parent pass before the two final cases were added."
+    },
+    {
+      "command": "cargo fmt --all",
+      "result": "pass",
+      "failures": 0,
+      "note": "Changed Rust source/test formatting."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test -p jj-store-jj --test stack_foreground --test stack_head_publication --test stack_operation_archive --test stack_preparation_retention --test stack_reword_preparation --test stack_source_recovery --test stack_unchanged_checkout --test working_tree_baseline --test working_tree_current --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "tree-checkout-provider-regressions.log: 98 passing direct provider cases across nine binaries. Six ignored worker helpers are invoked through their passing parents; no ordinary reader behavior is changed."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo check --locked -p jj-store-jj -p jj-store-server -p jj-store-cli --all-targets",
+      "result": "pass",
+      "failures": 0,
+      "note": "tree-checkout-check.log: owning provider and direct consumer type/target checks; no public transport or runtime capability changed."
+    },
+    {
+      "command": "pnpm check:boundaries",
+      "result": "pass",
+      "failures": 0,
+      "note": "tree-checkout-boundaries.log: 17 packages."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "tree-checkout-architecture.log: 1090 modules."
+    },
+    {
+      "command": "pnpm test:governance",
+      "result": "pass",
+      "failures": 0,
+      "note": "tree-checkout-governance.log: 50 source-governance cases."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/implementation-plan.md docs/site/technical/local.md spec/src/local-jj.md spec/src/architecture.md spec/src/jj-integration.md spec/src/documentation.md spec/src/verification.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "tree-checkout-format-docs.log: changed-document formatting; milestones.md excluded."
+    },
+    {
+      "command": "pnpm docs:review local 'Reviewed exact retained tree-changing plan capture and revalidation, raw object identity/size bounds, pinned native metadata bytes, physical file/directory stamps, unsafe/dirty obstacle rejection and original foreground ownership through cancellation. The initial resolved-file/full-sparse preparation profile and killed-worker reopening do not qualify durable plan/journal storage, per-path installation, native tree-state completion or production commands.'",
+      "result": "pass",
+      "failures": 0,
+      "note": "tree-checkout-docs-review.log: owning JJ source/manual review acknowledgement."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "tree-checkout-spec-validation.log: five validators, 23 chapters, 173 requirements. Final ledger-aware validation follows."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo clippy --locked -p jj-store-jj -p jj-store-server -p jj-store-cli --all-targets --no-deps -- -D warnings",
+      "result": "fail",
+      "failures": 1,
+      "note": "tree-checkout-lint.log: one comparison-to-empty lint in the root-directory witness check; replaced with is_empty without weakening diagnostics."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo clippy --locked -p jj-store-jj -p jj-store-server -p jj-store-cli --all-targets --no-deps -- -D warnings",
+      "result": "pass",
+      "failures": 0,
+      "note": "tree-checkout-lint-final.log: owning provider and direct server/CLI consumers pass strict all-target no-deps clippy."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test -p jj-store-jj --test stack_tree_checkout --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "tree-checkout-after-lint.log: all 18 new provider parents pass after the final source lint fix; one worker is intentionally isolated and killed by its passing parent."
+    },
+    {
+      "command": "pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "tree-checkout-docs-check.log: 139-file documentation closure, valid links/anchors and nine offline Mermaid diagrams in both themes."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "tree-checkout-progress.log: 142 tasks; milestone completion unchanged."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "tree-checkout-spec-first.log: 16 protected files/five canonical chapters."
+    },
+    {
+      "command": "pnpm format:rust:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "tree-checkout-rust-format.log: Rust formatting passes."
+    },
+    {
+      "command": "pnpm docs:review local 'Reviewed exact retained tree-changing plan capture and revalidation, raw object identity/size bounds, pinned native metadata bytes, physical file/directory stamps, unsafe/dirty obstacle rejection and original foreground ownership through cancellation. The initial resolved-file/full-sparse preparation profile and killed-worker reopening do not qualify durable plan/journal storage, per-path installation, native tree-state completion or production commands.'",
+      "result": "pass",
+      "failures": 0,
+      "note": "tree-checkout-docs-review-final.log: final owning source fingerprint acknowledgement after the source lint fix."
+    },
+    {
+      "command": "pnpm exec prettier --check docs/implementation-plan.md docs/site/technical/local.md docs/maintenance/coverage.json spec/src/local-jj.md spec/src/architecture.md spec/src/jj-integration.md spec/src/documentation.md spec/src/verification.md",
+      "result": "fail",
+      "failures": 1,
+      "note": "tree-checkout-format-docs-final.log: docs:review rewrites coverage.json with JSON indentation differing from repository Prettier layout; one formatting failure."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/maintenance/coverage.json",
+      "result": "pass",
+      "failures": 0,
+      "note": "tree-checkout-coverage-format.log: format only the changed review acknowledgement; ledger excluded."
+    },
+    {
+      "command": "pnpm exec prettier --check docs/implementation-plan.md docs/site/technical/local.md docs/maintenance/coverage.json spec/src/local-jj.md spec/src/architecture.md spec/src/jj-integration.md spec/src/documentation.md spec/src/verification.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "tree-checkout-format-docs-pass.log: all changed docs/review acknowledgement pass; ledger remains excluded."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "tree-checkout-progress-final.log: final 142-task progress/evidence pass."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "tree-checkout-spec-first-final.log: final 16 protected files/five canonical chapters pass."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "tree-checkout-spec-validation-final.log: final five validators/23 chapters/173 requirements pass."
+    },
+    {
+      "command": "pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "tree-checkout-docs-check-final.log: final 139-file closure, links/anchors and nine offline diagrams in both themes pass."
+    },
+    {
+      "command": "python3 .local/stacks-backend-evidence/tree-checkout-ledger-audit.py",
+      "result": "pass",
+      "failures": 0,
+      "note": "tree-checkout-ledger-audit.log: 510 objects; every one of the 509 original raw evidence bodies is byte-identical to the enclosing parent."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Tree-changing physical installation is not implemented by this plan. Durable bounded private plan storage and original journal linkage, interrupted per-path application/recovery, native tree-state/checkout selection and verified physical after-state remain required. Dirty affected WIP must be preserved by a qualified snapshot/merge engine; unsupported file/sparse/alias shapes remain unavailable.",
+    "Fixture PhysicalGuard implementations and directly retained native candidate transactions do not qualify actual combination authority or production command composition. Killed-worker reopening uses a private synced test artifact outside the repository, not a durable server journal.",
+    "Actual combination/execution selected state, setup/merge-WIP membership and switching, prepare/apply/status/discovery transport and UI wiring, whole-file/server-issued hunk transfers, graph/deletion/scoped undo, linked-native manifest/real-storage and cold full UI workflows remain approved and incomplete.",
+    "Unrelated Rust/RustFS/UI/Storybook/root aggregate suites, installed binary/service replacement, existing-repository reset/migration, package publication, screenshot comparisons and baselines are out of scope. Production Stacks remains read-only."
+  ],
+  "next": "Persist exact checkout plans with bounded durable original-request linkage, then implement guarded interrupted physical installation and verified native tree-state completion. Join actual durable combination after-state before command transport/UI wiring; continue all seven approved stages.",
+  "summary": "116 unique provider cases pass: 18 new exact tree-plan parents plus 98 existing foreground, publication, archive, retention, reword, source recovery, unchanged checkout and WC-reader cases. This is preparation evidence only; M21.2 and full production integration remain In progress. Strict owning/direct-consumer all-target checks and clippy, 50 governance cases, 17-package boundaries, source architecture, formatting, docs and owning spec/progress checks pass. All 509 previous raw evidence bodies remain unchanged."
 }
 ]
 ```

@@ -332,6 +332,29 @@ separate prerequisites. External code operations that no longer match the stored
 combination selection require explicit recovery or repair rather than silently
 adopting the new physical state.
 
+## Private tree-changing checkout plan
+
+The provider can capture and revalidate an exact checkout plan for an original
+retained tree-changing operation. It records the source/candidate workspace
+commits and trees, native checkout/tree-state bytes and fingerprints, affected
+file content/mode identities and no-follow parent-directory identities. Real
+retained Git objects supply the proposed effects; client patches and current
+latest history are not execution input. Preparation writes no physical files or
+checkout metadata and does not publish code.
+
+This initial preparation profile supports full sparse coverage and resolved
+regular/executable files, including binary bytes, additions and deletions.
+Symlinks/submodules, conflicts, Unicode/case aliases, file/directory
+transitions, dirty affected files and existing untracked/ignored addition
+targets are unavailable. Unrelated dirty and ignored files remain intact.
+Replacing a file or directory with identical content invalidates its saved plan.
+
+Canonical plan reopening, including after a killed worker, proves only the
+provider's original-input preflight. Durable private plan storage and journal
+linkage, interrupted per-path installation, native tree-state selection and
+verified after-state remain required. The existing command journal is not
+implicitly enlarged to store the plan. Production Stacks remains read-only.
+
 ## Private unchanged-tree execution join
 
 The server can now execute an original retained reword through the private

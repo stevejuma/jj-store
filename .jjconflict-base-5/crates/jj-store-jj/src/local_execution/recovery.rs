@@ -1,4 +1,4 @@
-//! Exact source recovery/publication and guarded unchanged-tree pointer completion.
+//! Exact source recovery/publication, unchanged completion and changed-tree preflight.
 mod checkout;
 mod extras;
 mod indexes;
@@ -6,6 +6,7 @@ mod policy;
 mod publication;
 mod records;
 mod retention;
+mod tree_checkout;
 mod witness;
 use super::*;
 use crate::{
@@ -17,6 +18,7 @@ pub use checkout::{CheckoutWitnessV1, PhysicalGuard, VerifiedUnchangedCheckout};
 use jj_store_model as m;
 pub use publication::PublishedHead;
 use std::time::Duration;
+pub use tree_checkout::TreeCheckoutPlanV1;
 pub use witness::{RecoveryBinding, RecoveryWitnessV1};
 
 pub struct RecoveredHistory {

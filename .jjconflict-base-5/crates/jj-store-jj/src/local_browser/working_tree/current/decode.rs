@@ -33,7 +33,7 @@ fn fields(
     }
     Ok(())
 }
-pub(super) fn checkout(checkout: &[u8], tree: &[u8]) -> Result<Checkout> {
+pub(crate) fn checkout(checkout: &[u8], tree: &[u8]) -> Result<Checkout> {
     fields(checkout, &[2, 3], |_, _| Ok(()))?;
     let mut counts = [0usize; 8];
     let mut sparse_count = 0usize;
