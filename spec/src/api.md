@@ -2506,3 +2506,10 @@ Stacks context presentation retains matching text already returned by its
 bounded selected-path diff. It adds no transport read, endpoint, schema or
 command shape; issued hunk tokens and the existing per-path conflict command
 remain authoritative.
+
+The Stacks conflict comparison picker is frontend-only presentation over the
+existing bounded ordered text terms. Native order, absent terms and exact
+operation/configuration guards remain authoritative. Line/byte counts and a
+bounded content preview are derived locally; no commit origin is inferred and no
+additional transport read or command shape is introduced. Nested picker
+dismissal and the full-body conflict surface remain session-only UI state.

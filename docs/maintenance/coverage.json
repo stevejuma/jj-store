@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed expandable hunk context and the shared Merge Editor for three-term and multi-sided workspace conflicts. Every native version can be compared with the reviewed result; explicit whole-file staging preserves the complete resolution boundary and native commands.",
-      "fingerprint": "7baf909b815b1b5df567771905f3a6721dc2e9ea6ace2f76071790475748fc3a"
+      "reason": "Reviewed the workspace conflict Command View comparison picker, bounded native text summaries, deleted-version guards and nested Escape/focus retention. The shared conflict surface consumes the public zero trailing inset to cover the whole measured body.",
+      "fingerprint": "f0113ef794a8ed53a1fa26d61fbef6555f6b04af08a5798a560d20e061e6c7ab"
     }
   },
   {

@@ -11,6 +11,7 @@
     label,
     returnFocus,
     busy,
+    dismissOnEscape = true,
     locked,
     browserOpen = $bindable(true),
     compact,
@@ -25,6 +26,7 @@
     label: string;
     returnFocus?: HTMLElement | null;
     busy: boolean;
+    dismissOnEscape?: boolean;
     locked: boolean;
     browserOpen?: boolean;
     compact: boolean;
@@ -43,7 +45,7 @@
   {label}
   coverPanelIds={["right"]}
   mobilePlacement="root"
-  dismissOnEscape={!busy}
+  dismissOnEscape={!busy && dismissOnEscape}
   onDismiss={onClose}
   class="store-conflict-editor"
 >

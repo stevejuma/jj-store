@@ -17,7 +17,8 @@
     open = $bindable(false),
   }: { controller: StackWorkspaceController; open?: boolean } = $props();
   let activePath = $state(""),
-    browserOpen = $state(true);
+    browserOpen = $state(true),
+    versionPickerOpen = $state(false);
   const compact = new MediaQuery("(max-width: 700px)");
   const selected = $derived(
     controller.snapshot?.conflicts.find((item) => item.path === activePath) ??
@@ -122,6 +123,7 @@
   {open}
   label="Resolve workspace conflicts"
   busy={locked}
+  dismissOnEscape={!versionPickerOpen}
   {locked}
   bind:browserOpen
   compact={compact.current}
@@ -188,6 +190,13 @@
           <StoreStackConflictVersions
             {value}
             {locked}
+            onPickerOpen={(next) => {
+              if (next) versionPickerOpen = true;
+              else
+                queueMicrotask(() => {
+                  versionPickerOpen = false;
+                });
+            }}
             onDraft={(content, resolved) => {
               drafts[item.path] = content;
               completed[item.path] = resolved;

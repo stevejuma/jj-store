@@ -152,9 +152,9 @@ shared-package release qualification does not alter those original Git gates.
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                        | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work          | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| M21         | In progress | -                       | JST-UI-020                                                                                                                                                                                                        | Local stack workspaces: UI first, then separately approved local backend integration                                           | Ordinary-local accepted; broader provider/release gates remain separate                          | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-041,E-M21-042,E-M21-043,E-M21-044,E-M21-045,E-M21-046,E-M21-047,E-M21-048,E-M21-049,E-M21-050,E-M21-051,E-M21-052,E-M21-053,E-M21-054,E-M21-055                                                                                                                                                                                                                                       |
-| M21.1       | Partial     | -                       | JST-UI-020,JST-GOV-008                                                                                                                                                                                            | Reused Storybook workspace views, stateful mock controller, interactions and accessibility                                     | UI reviewed for backend integration; registry/visual gates remain separate                       | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M21-041,E-M21-042,E-M21-043,E-M21-044,E-M21-054,E-M21-055                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
-| M21.2       | In progress | M21.1                   | JST-UI-020                                                                                                                                                                                                        | Local jj-lib megamerges, TOML settings and independent named unfinished work                                                   | Ordinary-local accepted; broader provider/release gates remain separate                          | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-042,E-M21-045,E-M21-046,E-M21-047,E-M21-048,E-M21-049,E-M21-050,E-M21-051,E-M21-052,E-M21-053,E-M21-054,E-M21-055                                                                                                                                                                                                         |
+| M21         | In progress | -                       | JST-UI-020                                                                                                                                                                                                        | Local stack workspaces: UI first, then separately approved local backend integration                                           | Ordinary-local accepted; broader provider/release gates remain separate                          | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-041,E-M21-042,E-M21-043,E-M21-044,E-M21-045,E-M21-046,E-M21-047,E-M21-048,E-M21-049,E-M21-050,E-M21-051,E-M21-052,E-M21-053,E-M21-054,E-M21-055,E-M21-056                                                                                                                                                                                                                             |
+| M21.1       | Partial     | -                       | JST-UI-020,JST-GOV-008                                                                                                                                                                                            | Reused Storybook workspace views, stateful mock controller, interactions and accessibility                                     | UI reviewed for backend integration; registry/visual gates remain separate                       | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M21-041,E-M21-042,E-M21-043,E-M21-044,E-M21-054,E-M21-055,E-M21-056                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| M21.2       | In progress | M21.1                   | JST-UI-020                                                                                                                                                                                                        | Local jj-lib megamerges, TOML settings and independent named unfinished work                                                   | Ordinary-local accepted; broader provider/release gates remain separate                          | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-042,E-M21-045,E-M21-046,E-M21-047,E-M21-048,E-M21-049,E-M21-050,E-M21-051,E-M21-052,E-M21-053,E-M21-054,E-M21-055,E-M21-056                                                                                                                                                                                               |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -107854,6 +107854,131 @@ entries.
   "scope_limits": [
     "Structural, mode-conflicted, binary and bounded-size/version-limit native values retain explicit unsupported reasons. Complete native release/pressure, registry foundational package acceptance and screenshot/baseline qualification remain separate."
   ]
+},
+{
+  "id": "E-M21-056",
+  "tasks": [
+    "M21",
+    "M21.1",
+    "M21.2"
+  ],
+  "date": "2026-10-05",
+  "kind": "ui",
+  "change": "Enclosing Jujutsu change: Use a Command View picker for workspace conflict versions",
+  "scope": "Replace introductory text and version-button row with a searchable Command View popover using native-order text summaries. Remove the second trailing inset from the shared workspace/native conflict surface through the public Shell token.",
+  "files": [
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceConflictVersions.stories.svelte",
+    "docs/maintenance/coverage.json",
+    "docs/site/guides/editing.md",
+    "spec/src/api.md",
+    "spec/src/documentation.md",
+    "spec/src/milestones.md",
+    "spec/src/ui.md",
+    "web/src/lib/ui/store-conflicts/StoreConflictSurface.svelte",
+    "web/src/lib/ui/store-conflicts/store-conflicts.css",
+    "web/src/lib/ui/store-stack-workspace/StoreStackConflictVersionPicker.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackConflictVersions.svelte",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceConflict.svelte"
+  ],
+  "versions": "JJ 0.45.1; pnpm 10.32.1; Svelte 5.57.1; existing Design Core validation dependency unchanged.",
+  "formats": "No HTTP/RPC, native command, TOML, layout, manifest, WAL or durable-state changes. Version details derive only from bounded native text; no commit provenance is fabricated.",
+  "runs": [
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceConflictVersions.stories.svelte",
+      "result": "fail",
+      "failures": 2,
+      "detail": "Before picker: 2 failed/1 passed; buttons/intro remained and no command picker existed. before.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceConflictVersions.stories.svelte",
+      "result": "fail",
+      "failures": 2,
+      "detail": "Initial picker: 2 failed/1 passed; Escape reached the shell surface and Command Root supplied a different accessible input name. Added owned nested-open dismissal coordination and aligned the public root label; after.log."
+    },
+    {
+      "command": "CUA live body/surface geometry before trailing-inset configuration",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Observed outer surface right 1272px and inner surface right 1264px: a second 8px inset. The existing public --ui-shell-surface-layer-inline-end-inset token owns this presentation setting."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceConflictVersions.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspaceConflicts.stories.svelte catalog/components/store-mutations/StoreConflictEditor.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Fresh browser process: 14 passed. Covers search and keyboard selection, summaries, disabled absent versions, Escape preserving editor/trigger focus, full measured body coverage within 1px, retained drafts and complete-file preview/apply. final-stories.log."
+    },
+    {
+      "command": "pnpm web:check",
+      "result": "pass",
+      "failures": 0,
+      "detail": "0 errors/0 warnings; web.log."
+    },
+    {
+      "command": "pnpm catalog:check",
+      "result": "pass",
+      "failures": 0,
+      "detail": "0 errors/0 warnings, 242 catalog modules; catalog.log."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "detail": "1134 modules pass source ownership/size boundaries; architecture.log."
+    },
+    {
+      "command": "pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "detail": "1 validator/23 chapters/173 requirements; ownership.log. Uses public Command View, Popover and Shell token; no dependency patches or upstream edits."
+    },
+    {
+      "command": "CUA live reload, version picker, geometry and Escape check",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Live 7476: descriptive paragraph absent, versions show exact line/byte counts and a bounded first differing-line preview; trailing surface gap is 0px and Escape retains Edit Resolved. Proof live-picker.png. No resolution applied."
+    },
+    {
+      "command": "pnpm exec prettier --write <changed implementation/story/canonical/manual files>; pnpm docs:review application",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Focused formatting and reviewed application source/manual fingerprint; no backend or persisted formats changed."
+    },
+    {
+      "command": "pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "detail": "139-file/14,823,332-byte closure, links and anchors pass; docs.log."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "fail",
+      "failures": 1,
+      "detail": "Mapped API chapter was required for the workspace conflict composition; added explicit frontend-only consumption/no transport-change requirement. spec-first.log."
+    },
+    {
+      "command": "pnpm spec:first; pnpm spec:validate; pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Mapped chapter coverage, 5 validators/23 chapters/173 requirements and 142-task progress bookkeeping pass; spec-first-final.log/spec.log/progress.log. Historical 594 evidence entries retained."
+    },
+    {
+      "command": "pnpm exec prettier --check <12 changed files>",
+      "result": "fail",
+      "failures": 1,
+      "detail": "Review CLI output needed formatting in docs/maintenance/coverage.json; corrected without changing its source fingerprint. format.log."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/maintenance/coverage.json spec/src/milestones.md; pnpm exec prettier --check <12 changed files>",
+      "result": "pass",
+      "failures": 0,
+      "detail": "Final focused evidence/source formatting; format-final.log. No product source changed."
+    }
+  ],
+  "result": "pass",
+  "remaining": [],
+  "next": "Keep the existing local preview available; native conflict execution and separately deferred unsupported shapes/release/visual qualification remain unchanged.",
+  "summary": "The picker retains reviewed merge text when switching versions and keeps deletion choices visibly disabled. Command labels/search include exact line and UTF-8 byte counts plus at most 100 characters of content preview. Owned nested-open state suppresses shell Escape dismissal while the picker is active. Both native and workspace editors cover the measured body boundary without the inherited second 8px inset.",
+  "verification_scope": "UI-only: exact picker regressions, shared native/workspace conflict stories, web/catalog types, ownership/architecture, live geometry and keyboard confirmation, focused formatting and document/specification/progress checks. Rust builds/tests, root aggregates, screenshot comparisons, baseline changes and publication are out of scope."
 }
 ]
 ```

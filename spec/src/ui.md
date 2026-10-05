@@ -320,7 +320,14 @@ dialog. Local resolution previews/applies the selected complete file through its
 existing guarded JJ command, retaining other conflicts, WIP and workspace
 membership. Warning copy offers in-app resolution; genuinely unsupported native
 shapes retain their explicit reason and do not fabricate an editor or enable a
-command.
+command. Multi-sided text comparison uses one compact Command View popover
+picker instead of a row of version buttons or an introductory paragraph. Options
+preserve native order and show a version label, exact text line/byte counts and
+a bounded first differing-line preview. Search includes this detail; keyboard
+selection, Escape and trigger focus restoration reuse the shared Command
+View/Popover behavior. Deleted versions stay visible but disabled. Changing the
+comparison retains the reviewed resolution and still requires explicit
+whole-file staging.
 
 Unstaged uses the shared virtual FileListing in all three modes. Current
 conflict paths and unresolved target-side native terms show an accessible

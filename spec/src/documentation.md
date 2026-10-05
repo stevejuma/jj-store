@@ -3,7 +3,10 @@
 Stacks manuals explain expandable unchanged diff context and the shared Op Log
 conflict surface. Multi-sided native text versions use explicit pairwise Merge
 Editor review and whole-file staging; pair completion cannot prove the complete
-conflict resolved. Unsupported native shapes retain their reasons.
+conflict resolved. Unsupported native shapes retain their reasons. The
+comparison version picker is a compact searchable Command View with text counts
+and a bounded preview; its Escape action retains the full-width conflict
+surface.
 
 The browsing manual describes conflict indicators, workspace rail actions and
 the shared editor entry from the attention toast, including its resting button

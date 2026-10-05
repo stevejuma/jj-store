@@ -1,16 +1,18 @@
 <script lang="ts">
   import { untrack } from "svelte";
-  import StoreConflictTerms from "../store-conflicts/StoreConflictTerms.svelte";
+  import StoreStackConflictVersionPicker from "./StoreStackConflictVersionPicker.svelte";
   import StoreConflictText from "../store-conflicts/StoreConflictText.svelte";
   import type { WorkspaceConflict } from "../../controller/stack-workspace/types.js";
   let {
     value,
     locked,
     onDraft,
+    onPickerOpen,
   }: {
     value: WorkspaceConflict;
     locked: boolean;
     onDraft: (content: string, resolved: boolean) => void;
+    onPickerOpen?: (open: boolean) => void;
   } = $props();
   let version = $state(2);
   let reviewed = $state<string | undefined>();
@@ -19,25 +21,11 @@
   const base = $derived(value.terms?.[Math.max(1, version - 1)] ?? value.base);
 </script>
 
-<p>
-  Compare each native version with your current resolution. Review all versions
-  before staging the complete file.
-</p>
-<StoreConflictTerms
-  actionLabel="Compare"
-  terms={(value.terms ?? []).flatMap((text, index) =>
-    index % 2 === 0
-      ? [
-          {
-            id: index,
-            label: `version ${index / 2 + 1}`,
-            disabled: text === null,
-          },
-        ]
-      : [],
-  )}
+<StoreStackConflictVersionPicker
+  terms={value.terms ?? []}
   selected={version}
   disabled={locked}
+  onOpenChange={onPickerOpen}
   onSelect={(index) => {
     if (locked || value.terms?.[index] === null || index === version) return;
     left = reviewed ?? left;
