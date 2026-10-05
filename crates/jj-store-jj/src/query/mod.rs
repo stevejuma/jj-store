@@ -90,6 +90,17 @@ pub trait ReadAccess: Send + Sync {
     async fn contains(&self, key: m::ObjectKey) -> Result<bool>;
     /// Explicit complete enumeration under the capability's trusted bound.
     async fn inventory(&self) -> Result<Arc<BTreeSet<m::ObjectKey>>>;
+    /// Optional selected copy-family projection. Required seeds must be selected;
+    /// optional seeds can be acknowledged staged ancestors in the caller.
+    async fn copy_family(
+        &self,
+        _seeds: &BTreeSet<m::CopyId>,
+        _required: &BTreeSet<m::CopyId>,
+        _limits: copy_index::LookupLimits,
+        _deadline: tokio::time::Instant,
+    ) -> Result<Option<copy_index::Family>> {
+        Ok(None)
+    }
     /// Complete matching IDs at this capability's pin, within caller bounds.
     /// Compatibility providers retain their own full-inventory admission.
     async fn inventory_kind(

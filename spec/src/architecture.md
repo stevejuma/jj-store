@@ -1,5 +1,16 @@
 # Architecture
 
+Native selected copy queries use the source-scoped descriptor relation cache.
+The original checked root, fresh authorization and request deadline stay
+explicit; construction coalesces per root and shares admitted memory and work
+permits with kind projections. Complete addition proof shares unchanged graphs
+or extends copy adjacency before sealing. Backend delivery combines the selected
+family with a captured sequence of bounded acknowledged parent/child
+relationships, then reads only matching bodies in deterministic reverse
+topological order. No source or credential enters retained data.
+Compatibility/RPC delivery and resumable cold construction remain following
+slices; authoritative formats and publication admission do not change.
+
 The JJ integration owns a disposable copy relation index over owned identities.
 It seals complete parent/child adjacency under construction bounds and selects
 ancestors plus their descendants under separate request bounds. The index

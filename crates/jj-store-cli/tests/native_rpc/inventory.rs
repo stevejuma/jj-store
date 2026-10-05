@@ -12,6 +12,7 @@ struct CountedInventory {
     inner: Arc<MemoryStore>,
     reads: AtomicUsize,
     descriptors: AtomicUsize,
+    copy_bodies: AtomicUsize,
 }
 
 #[tokio::test(flavor = "multi_thread", worker_threads = 2)]
@@ -269,17 +270,277 @@ async fn browser_kind_lookup_retains_historical_roots_and_fresh_bounds() {
     );
     f.stop().await;
 }
+async fn copy_node(f: &Harness, name: &str, parents: &[m::CopyId]) -> m::CopyId {
+    let (m::ObjectKey::Copy(id), _) = f
+        .objects
+        .put(&b::CopyHistory {
+            current_path: jj_lib::repo_path::RepoPathBuf::from_internal_string(name).unwrap(),
+            parents: parents
+                .iter()
+                .map(|id| b::CopyId::from_bytes(id.as_bytes()))
+                .collect(),
+            salt: vec![],
+        })
+        .await
+        .unwrap()
+    else {
+        panic!("copy kind")
+    };
+    id
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn native_copy_family_ignores_unrelated_inventory_and_body_pressure() {
+    use b::Backend as _;
+    use jj_store_jj::backend::NativeBackend;
+    let mut f = Harness::new().await;
+    retain_files(&f, 0, 96).await;
+    let a = copy_node(&f, "a", &[]).await;
+    let requested = copy_node(&f, "b", &[a]).await;
+    let sibling = copy_node(&f, "c", &[a]).await;
+    let unrelated = copy_node(&f, "unrelated", &[]).await;
+    let merge = copy_node(&f, "merge", &[a, unrelated]).await;
+    let leaf = copy_node(&f, "leaf", &[merge]).await;
+    let other = copy_node(&f, "other", &[unrelated]).await;
+    let mut keys = vec![a, requested, sibling, unrelated, merge, leaf, other];
+    for n in 0..96 {
+        keys.push(copy_node(&f, &format!("unrelated-{n}"), &[]).await);
+    }
+    select_keys(&f, keys.into_iter().map(m::ObjectKey::Copy).collect()).await;
+    let counted = CountedInventory::new(f.store.clone());
+    let objects = Arc::new(NativeObjects::new(counted.clone(), REPO, MAX_BLOB).unwrap());
+    let session = Arc::new(
+        NativeSession::new(
+            counted.clone(),
+            objects.clone(),
+            f.reader.clone(),
+            Arc::new(SystemClock),
+            Protection::default(),
+            SessionLimits::default(),
+        )
+        .unwrap(),
+    );
+    let backend = NativeBackend::new(
+        objects,
+        session,
+        BackendLimits {
+            max_nodes: 5,
+            max_work: 64,
+            max_bytes: 64 * 1024,
+            ..BackendLimits::default()
+        },
+    )
+    .unwrap();
+    let expected: BTreeSet<_> = [a, requested, sibling, merge, leaf].into_iter().collect();
+    let request = b::CopyId::from_bytes(requested.as_bytes());
+    let related = backend
+        .get_related_copies(&request)
+        .await
+        .expect("small copy family must not charge unrelated selected copies");
+    let actual = related
+        .iter()
+        .map(|copy| m::CopyId::from_slice(copy.id.as_bytes()).unwrap())
+        .collect();
+    assert_eq!(expected, actual);
+    assert_eq!(counted.copy_bodies.load(Ordering::Relaxed), 5);
+    let position = |id: m::CopyId| {
+        related
+            .iter()
+            .position(|copy| copy.id.as_bytes() == id.as_bytes())
+            .unwrap()
+    };
+    assert!(position(leaf) < position(merge) && position(merge) < position(a));
+    assert!(position(requested) < position(a) && position(sibling) < position(a));
+    counted.reset();
+    assert_eq!(backend.get_related_copies(&request).await.unwrap(), related);
+    assert_eq!(counted.descriptors.load(Ordering::Relaxed), 0);
+    assert_eq!(counted.copy_bodies.load(Ordering::Relaxed), 5);
+    f.revoke_reader().await;
+    assert!(backend.get_related_copies(&request).await.is_err());
+    f.stop().await;
+}
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+async fn pinned_copy_families_reuse_additions_without_loading_bodies() {
+    use jj_store_jj::query::{self as q, ReadAccess as _, copy_index::LookupLimits};
+    use jj_store_service::reads::{OpenRead, ReadLimits};
+    let mut f = Harness::new().await;
+    retain_files(&f, 0, 96).await;
+    let root = copy_node(&f, "root", &[]).await;
+    let child = copy_node(&f, "child", &[root]).await;
+    select_keys(
+        &f,
+        vec![m::ObjectKey::Copy(root), m::ObjectKey::Copy(child)],
+    )
+    .await;
+    let counted = CountedInventory::new(f.store.clone());
+    let session = Arc::new(
+        NativeSession::new(
+            counted.clone(),
+            f.objects.clone(),
+            f.reader.clone(),
+            Arc::new(SystemClock),
+            Protection::default(),
+            SessionLimits::default(),
+        )
+        .unwrap(),
+    );
+    let OpenRead::Pinned(first) = session
+        .clone()
+        .open_read(None, ReadLimits::default())
+        .await
+        .unwrap()
+    else {
+        panic!("single head")
+    };
+    let deadline = || tokio::time::Instant::now() + Duration::from_secs(10);
+    let seeds = BTreeSet::from([child]);
+    let limits = LookupLimits {
+        max_nodes: 3,
+        max_work: 64,
+        max_bytes: 64 * 1024,
+    };
+    let expected = BTreeSet::from([root, child]);
+    assert_eq!(
+        first
+            .copy_family(&seeds, &seeds, limits, deadline())
+            .await
+            .unwrap()
+            .unwrap()
+            .ids,
+        expected
+    );
+    assert_eq!(counted.copy_bodies.load(Ordering::Relaxed), 0);
+    assert!(counted.descriptors.load(Ordering::Relaxed) > 96);
+    publish_operation(&f, "copy family operation-only addition").await;
+    let OpenRead::Pinned(second) = session
+        .clone()
+        .open_read(None, ReadLimits::default())
+        .await
+        .unwrap()
+    else {
+        panic!("single head")
+    };
+    counted.reset();
+    assert_eq!(
+        second
+            .copy_family(&seeds, &seeds, limits, deadline())
+            .await
+            .unwrap()
+            .unwrap()
+            .ids,
+        expected
+    );
+    assert!(
+        counted.descriptors.load(Ordering::Relaxed) <= 3,
+        "operation-only increment scanned unchanged descriptors"
+    );
+    assert_eq!(counted.copy_bodies.load(Ordering::Relaxed), 0);
+    let leaf = copy_node(&f, "leaf", &[child]).await;
+    select_keys(&f, vec![m::ObjectKey::Copy(leaf)]).await;
+    let OpenRead::Pinned(third) = session
+        .clone()
+        .open_read(None, ReadLimits::default())
+        .await
+        .unwrap()
+    else {
+        panic!("single head")
+    };
+    counted.reset();
+    let extended = BTreeSet::from([root, child, leaf]);
+    assert_eq!(
+        third
+            .copy_family(&seeds, &seeds, limits, deadline())
+            .await
+            .unwrap()
+            .unwrap()
+            .ids,
+        extended
+    );
+    assert!(
+        counted.descriptors.load(Ordering::Relaxed) <= 3,
+        "copy increment scanned unchanged descriptors"
+    );
+    assert_eq!(counted.copy_bodies.load(Ordering::Relaxed), 0);
+    counted.reset();
+    assert_eq!(
+        first
+            .copy_family(&seeds, &seeds, limits, deadline())
+            .await
+            .unwrap()
+            .unwrap()
+            .ids,
+        expected
+    );
+    counted.warm("historical warm copy family");
+    counted.reset();
+    assert_eq!(
+        second
+            .copy_family(&seeds, &seeds, limits, deadline())
+            .await
+            .unwrap()
+            .unwrap()
+            .ids,
+        expected
+    );
+    counted.warm("operation-only warm copy family");
+    counted.reset();
+    assert_eq!(
+        third
+            .copy_family(&seeds, &seeds, limits, deadline())
+            .await
+            .unwrap()
+            .unwrap()
+            .ids,
+        extended
+    );
+    counted.warm("current warm copy family");
+    for bounds in [
+        LookupLimits {
+            max_nodes: 2,
+            ..limits
+        },
+        LookupLimits {
+            max_work: 1,
+            ..limits
+        },
+        LookupLimits {
+            max_bytes: 1,
+            ..limits
+        },
+    ] {
+        assert!(matches!(
+            third.copy_family(&seeds, &seeds, bounds, deadline()).await,
+            Err(q::Error::Limit)
+        ));
+    }
+    assert!(matches!(
+        third
+            .copy_family(&seeds, &seeds, limits, tokio::time::Instant::now())
+            .await,
+        Err(q::Error::Limit)
+    ));
+    f.revoke_reader().await;
+    assert!(matches!(
+        first.copy_family(&seeds, &seeds, limits, deadline()).await,
+        Err(q::Error::Denied)
+    ));
+    f.stop().await;
+}
+
 impl CountedInventory {
     fn new(inner: Arc<MemoryStore>) -> Arc<Self> {
         Arc::new(Self {
             inner,
             reads: AtomicUsize::new(0),
             descriptors: AtomicUsize::new(0),
+            copy_bodies: AtomicUsize::new(0),
         })
     }
     fn reset(&self) {
         self.reads.store(0, Ordering::Relaxed);
         self.descriptors.store(0, Ordering::Relaxed);
+        self.copy_bodies.store(0, Ordering::Relaxed);
     }
     fn warm(&self, label: &str) {
         let reads = self.reads.load(Ordering::Relaxed);
@@ -316,6 +577,9 @@ impl jj_store_object::ObjectStore for CountedInventory {
         self.reads.fetch_add(1, Ordering::Relaxed);
         if key.as_str().contains("/inventories/") {
             self.descriptors.fetch_add(1, Ordering::Relaxed);
+        }
+        if key.as_str().contains("/objects/v1/5/") {
+            self.copy_bodies.fetch_add(1, Ordering::Relaxed);
         }
         self.inner.get(key, range).await
     }

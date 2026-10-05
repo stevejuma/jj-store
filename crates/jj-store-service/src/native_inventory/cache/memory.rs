@@ -4,7 +4,7 @@ use std::sync::{
     atomic::{AtomicUsize, Ordering},
 };
 
-pub(super) struct Budget {
+pub(in crate::native_inventory) struct Budget {
     pub limit: usize,
     used: AtomicUsize,
 }
@@ -35,7 +35,7 @@ impl Budget {
         self.used.load(Ordering::Acquire)
     }
 }
-pub(super) struct Lease {
+pub(in crate::native_inventory) struct Lease {
     budget: Arc<Budget>,
     bytes: usize,
 }

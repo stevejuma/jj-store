@@ -332,6 +332,27 @@ fn query_error(error: Error) -> jj_store_jj::query::Error {
 }
 #[async_trait::async_trait]
 impl jj_store_jj::query::ReadAccess for CommittedRead {
+    async fn copy_family(
+        &self,
+        seeds: &BTreeSet<m::CopyId>,
+        required: &BTreeSet<m::CopyId>,
+        limits: query::copy_index::LookupLimits,
+        deadline: Instant,
+    ) -> query::Result<Option<query::copy_index::Family>> {
+        self.session
+            .copy_family_at(
+                &self.base,
+                seeds,
+                required,
+                query::copy_index::LookupLimits {
+                    max_nodes: limits.max_nodes.min(self.max_objects),
+                    ..limits
+                },
+                deadline.min(self.deadline),
+            )
+            .await
+            .map(Some)
+    }
     fn repository(&self) -> m::RepositoryId {
         self.snapshot.authority.repo_id
     }
@@ -391,7 +412,7 @@ impl jj_store_jj::query::ReadAccess for CommittedRead {
     }
 }
 
-fn kind_error(error: wal::Error) -> query::Error {
+pub(crate) fn kind_error(error: wal::Error) -> query::Error {
     match error {
         wal::Error::Stale => query::Error::EpochChanged,
         error => query_error(error.into()),

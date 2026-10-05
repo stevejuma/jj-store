@@ -27,6 +27,17 @@ formats and collaboration capacity limits. Do not enable deferred capabilities.
 
 ### Performance delivery first
 
+E-READ-073 wires pinned native copy-family capabilities through the
+source-scoped selected relation cache and upstream backend. Cold construction
+reads descriptors only; warm lookup reads no descriptors, and ordered delivery
+loads matching copy bodies only. Complete addition proof reuses unchanged graphs
+or extends copy relations under the shared memory allowance. A captured
+acknowledged staging sequence retains exact parents and descendants while
+excluding unknown, foreign and later writes. Historical pins, fresh
+bounds/authorization and cancellation remain explicit. RPC capability delivery,
+indexed copy-record path/range lookup and resumable cold construction remain
+next work. Full qualification stays deferred.
+
 E-READ-072 adds an immutable bounded copy relation index and exact family
 selection over retained parent/child adjacency. Construction rejects incomplete
 or cyclic graphs; lookup follows ancestors and their descendants while excluding

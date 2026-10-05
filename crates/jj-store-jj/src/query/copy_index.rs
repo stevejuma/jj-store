@@ -56,6 +56,10 @@ pub struct Builder {
     limits: Limits,
     work: usize,
 }
+pub struct Family {
+    pub ids: BTreeSet<CopyId>,
+    pub work: usize,
+}
 fn allocation(nodes: usize, edges: usize) -> Option<usize> {
     nodes
         .checked_mul(NODE)?
@@ -80,6 +84,15 @@ impl Builder {
     /// Takes an already bounded descriptor relation; admits growth before any
     /// reverse-map insertion. Exact repeated descriptors are idempotent.
     pub fn insert(&mut self, id: CopyId, parents: BTreeSet<CopyId>) -> Result<()> {
+        self.insert_admitted(id, parents, |_| Ok(()))
+    }
+    /// A provider can reserve its global lease before any adjacency growth.
+    pub fn insert_admitted(
+        &mut self,
+        id: CopyId,
+        parents: BTreeSet<CopyId>,
+        admit: impl FnOnce(usize) -> Result<()>,
+    ) -> Result<()> {
         let work = self
             .work
             .checked_add(parents.len())
@@ -104,12 +117,14 @@ impl Builder {
             .edges
             .checked_add(parents.len())
             .ok_or(Error::IndexBudget)?;
+        let bytes = allocation(nodes, edges).ok_or(Error::IndexBudget)?;
         if nodes > self.limits.max_nodes
             || edges > self.limits.max_edges
-            || allocation(nodes, edges).is_none_or(|bytes| bytes > self.limits.max_bytes)
+            || bytes > self.limits.max_bytes
         {
             return Err(Error::IndexBudget);
         }
+        admit(bytes)?;
         for parent in &parents {
             self.index.children.entry(*parent).or_default().insert(id);
         }
@@ -120,6 +135,39 @@ impl Builder {
     }
     pub fn allocated_bytes(&self) -> usize {
         self.index.allocated_bytes()
+    }
+    /// Copy only matching relations after full admission. Source root retention
+    /// must be proved independently before extending this immutable baseline.
+    pub fn from_index(
+        index: &Index,
+        limits: Limits,
+        admit: impl FnOnce(usize) -> Result<()>,
+    ) -> Result<Self> {
+        // Empty baselines still need valid construction bounds, just like new
+        // builders. Validate before the provider admits or clones allocation.
+        Self::new(limits)?;
+        let work = index
+            .edge_count()
+            .checked_mul(2)
+            .and_then(|n| n.checked_add(index.node_count()))
+            .ok_or(Error::IndexBudget)?;
+        if index.node_count() > limits.max_nodes
+            || index.edge_count() > limits.max_edges
+            || index.allocated_bytes() > limits.max_bytes
+            || work > limits.max_work
+        {
+            return Err(Error::IndexBudget);
+        }
+        admit(index.allocated_bytes())?;
+        Ok(Self {
+            index: Index {
+                parents: index.parents.clone(),
+                children: index.children.clone(),
+                edges: index.edges,
+            },
+            limits,
+            work,
+        })
     }
     /// Only complete, acyclic relations become queryable. The provider retains
     /// its separately admitted global allocation charge through this transfer.
@@ -188,6 +236,18 @@ impl Index {
         deadline: Instant,
         cancel: &CancellationToken,
     ) -> Result<BTreeSet<CopyId>> {
+        Ok(self
+            .family_with_work(seeds, limits, deadline, cancel)
+            .await?
+            .ids)
+    }
+    pub async fn family_with_work(
+        &self,
+        seeds: &BTreeSet<CopyId>,
+        limits: LookupLimits,
+        deadline: Instant,
+        cancel: &CancellationToken,
+    ) -> Result<Family> {
         let mut step = Step::new(limits.max_work, 0, deadline, cancel);
         step.check()?;
         let admit = |count: usize| {
@@ -240,7 +300,10 @@ impl Index {
             }
         }
         step.check()?;
-        Ok(family)
+        Ok(Family {
+            ids: family,
+            work: step.work,
+        })
     }
 }
 struct Step<'a> {

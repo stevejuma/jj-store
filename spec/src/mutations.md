@@ -1,5 +1,17 @@
 # Typed mutations
 
+Copy relation reuse is read-only. Pinned browser and preparation capabilities
+forward their original checked inventory selection and caller deadline; cached
+source/root graphs never recapture current copy membership. Current permission
+and epoch checks remain fresh through construction, incremental proof and warm
+family delivery. Shared allocation leases admit graph and checked-root growth
+before cloning or insertion and follow active owners beyond eviction. A
+same-root construction gate retains no source or credential. Acknowledged staged
+copy relationships belong only to that backend session and its captured
+sequence; unknown uploads, foreign-session staging and later writes are
+excluded. These projections grant no publication or mutation capability and do
+not replace full closure audit or semantic publication admission.
+
 Native inventory paging retains only a checked immutable manifest snapshot and
 query binding. A new request supplies current credentials; page and resumed
 reads reauthorize before and after catalog access and reject epoch changes.

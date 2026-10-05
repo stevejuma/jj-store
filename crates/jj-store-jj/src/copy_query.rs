@@ -30,7 +30,7 @@ impl Budget {
             bytes: 0,
         }
     }
-    async fn spend(&mut self, nodes: usize, work: usize, bytes: usize) -> BackendResult<()> {
+    fn charge(&mut self, nodes: usize, work: usize, bytes: usize) -> BackendResult<()> {
         self.nodes = self.nodes.saturating_add(nodes);
         self.work = self.work.saturating_add(work);
         self.bytes = self.bytes.saturating_add(bytes);
@@ -40,6 +40,10 @@ impl Budget {
         {
             return Err(other("copy query resource budget exceeded"));
         }
+        Ok(())
+    }
+    async fn spend(&mut self, nodes: usize, work: usize, bytes: usize) -> BackendResult<()> {
+        self.charge(nodes, work, bytes)?;
         // CPU-only traversal must yield so deadlines and cancellation remain effective.
         tokio::task::yield_now().await;
         Ok(())
@@ -90,25 +94,41 @@ async fn reverse_topo<I: Ord + Clone>(
 pub(crate) async fn related(
     backend: &NativeBackend,
     id: &CopyId,
+    deadline: tokio::time::Instant,
 ) -> BackendResult<Vec<RelatedCopy>> {
     backend.authority.authorize_read().await.map_err(other)?;
     let requested = m::CopyId::new(id_bytes(id, "copy")?);
-    let mut ids = backend
-        .authority
-        .copy_ids(backend.limits.max_nodes)
-        .await
-        .map_err(other)?;
-    if ids.len() > backend.limits.max_nodes {
-        return Err(other("copy inventory limit"));
-    }
-    ids.extend(
-        backend
-            .staged_copies
-            .lock()
-            .map_err(|_| other("copy lock poisoned"))?
-            .iter()
-            .copied(),
-    );
+    let cutoff = backend
+        .staged_copies
+        .lock()
+        .map_err(|_| other("copy lock poisoned"))?
+        .sequence;
+    let mut budget = Budget::new(backend.limits);
+    let projected = projected_family(backend, requested, cutoff, &mut budget, deadline).await?;
+    let optimized = projected.is_some();
+    let mut ids = match projected {
+        Some(ids) => ids,
+        None => {
+            let mut ids = backend
+                .authority
+                .copy_ids(backend.limits.max_nodes)
+                .await
+                .map_err(other)?;
+            let staged = backend
+                .staged_copies
+                .lock()
+                .map_err(|_| other("copy lock poisoned"))?;
+            for (id, entry) in &staged.entries {
+                if entry.sequence <= cutoff {
+                    ids.insert(*id);
+                }
+                if ids.len() > backend.limits.max_nodes {
+                    return Err(other("copy inventory limit"));
+                }
+            }
+            ids
+        }
+    };
     ids.insert(requested);
     if ids.len() > backend.limits.max_nodes {
         return Err(other("copy inventory limit"));
@@ -118,14 +138,13 @@ pub(crate) async fn related(
         .map(|id| CopyId::from_bytes(id.as_bytes()))
         .collect();
     let mut copies = BTreeMap::new();
-    let mut budget = Budget::new(backend.limits);
     while let Some(id) = pending.pop_first() {
         if copies.contains_key(&id) {
             continue;
         }
         let copy = backend.read_copy(&id).await?;
         budget.object(&copy).await?;
-        for parent in &copy.parents {
+        for parent in copy.parents.iter().filter(|_| !optimized) {
             budget.spend(0, 1, 64).await?;
             if !parent.as_bytes().is_empty() && !copies.contains_key(parent) {
                 pending.insert(parent.clone());
@@ -139,6 +158,9 @@ pub(crate) async fn related(
         .collect();
     let order = reverse_topo(&graph, &mut budget).await?;
     backend.authority.authorize_read().await.map_err(other)?;
+    if tokio::time::Instant::now() >= deadline {
+        return Err(other("copy query deadline exceeded"));
+    }
     Ok(order
         .into_iter()
         .map(|id| RelatedCopy {
@@ -146,6 +168,124 @@ pub(crate) async fn related(
             id,
         })
         .collect())
+}
+
+async fn projected_family(
+    backend: &NativeBackend,
+    requested: m::CopyId,
+    cutoff: u64,
+    budget: &mut Budget,
+    deadline: tokio::time::Instant,
+) -> BackendResult<Option<BTreeSet<m::CopyId>>> {
+    let mut seeds = BTreeSet::new();
+    let mut required = BTreeSet::new();
+    let mut staged_ancestors = BTreeSet::new();
+    let mut pending = BTreeSet::from([requested]);
+    while let Some(id) = pending.pop_first() {
+        budget.spend(0, 1, 0).await?;
+        if !seeds.insert(id) {
+            continue;
+        }
+        if seeds.len() > backend.limits.max_nodes {
+            return Err(other("copy family limit"));
+        }
+        budget.charge(0, 0, 192)?;
+        let parents = {
+            let staged = backend
+                .staged_copies
+                .lock()
+                .map_err(|_| other("copy lock poisoned"))?;
+            if let Some(entry) = staged
+                .entries
+                .get(&id)
+                .filter(|entry| entry.sequence <= cutoff)
+            {
+                for parent in &entry.parents {
+                    budget.charge(0, 1, 0)?;
+                    if !seeds.contains(parent) && !pending.contains(parent) {
+                        if seeds.len() + pending.len() >= backend.limits.max_nodes {
+                            return Err(other("copy family limit"));
+                        }
+                        budget.charge(0, 0, 192)?;
+                        pending.insert(*parent);
+                    }
+                }
+                true
+            } else {
+                false
+            }
+        };
+        if parents {
+            staged_ancestors.insert(id);
+        } else {
+            required.insert(id);
+        }
+    }
+    let limits = crate::query::copy_index::LookupLimits {
+        max_nodes: backend.limits.max_nodes,
+        max_work: backend.limits.max_work.saturating_sub(budget.work),
+        max_bytes: backend.limits.max_bytes.saturating_sub(budget.bytes),
+    };
+    let Some(family) = backend
+        .authority
+        .copy_family(&seeds, &required, limits, deadline)
+        .await
+        .map_err(other)?
+    else {
+        return Ok(None);
+    };
+    if family.ids.len() > limits.max_nodes
+        || family.work > limits.max_work
+        || !required.is_subset(&family.ids)
+    {
+        return Err(other("invalid copy family projection"));
+    }
+    budget
+        .spend(0, family.work, family.ids.len().saturating_mul(192))
+        .await?;
+    let mut ids = family.ids;
+    ids.extend(staged_ancestors);
+    if ids.len() > backend.limits.max_nodes {
+        return Err(other("copy family limit"));
+    }
+    if cutoff == 0 {
+        return Ok(Some(ids));
+    }
+    budget.charge(0, 0, ids.len().saturating_mul(192))?;
+    let mut pending = ids.clone();
+    while let Some(id) = pending.pop_first() {
+        budget.spend(0, 1, 0).await?;
+        let children = {
+            let staged = backend
+                .staged_copies
+                .lock()
+                .map_err(|_| other("copy lock poisoned"))?;
+            let mut children = Vec::new();
+            if let Some(entries) = staged.children.get(&id) {
+                for (_, child) in entries.range(..=cutoff) {
+                    budget.charge(0, 1, 128)?;
+                    if children.len() == backend.limits.max_nodes {
+                        return Err(other("copy family limit"));
+                    }
+                    children.push(*child);
+                }
+            }
+            children
+        };
+        for child in children {
+            if !ids.contains(&child) {
+                if ids.len() == backend.limits.max_nodes {
+                    return Err(other("copy family limit"));
+                }
+                ids.insert(child);
+                pending.insert(child);
+            }
+        }
+    }
+    if tokio::time::Instant::now() >= deadline {
+        return Err(other("copy query deadline exceeded"));
+    }
+    Ok(Some(ids))
 }
 
 #[derive(Clone, PartialEq, Eq, PartialOrd, Ord)]

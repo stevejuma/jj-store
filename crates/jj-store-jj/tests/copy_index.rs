@@ -93,6 +93,92 @@ async fn small_index() -> jj_store_jj::query::copy_index::Index {
 }
 
 #[tokio::test]
+async fn copy_provider_admits_before_growth_and_baseline_clone() {
+    use std::cell::Cell;
+    let cancel = CancellationToken::new();
+    let empty = Builder::new(Limits::default())
+        .unwrap()
+        .finish(deadline(), &cancel)
+        .await
+        .unwrap();
+    for limits in [
+        Limits {
+            max_nodes: 0,
+            ..Limits::default()
+        },
+        Limits {
+            max_work: 0,
+            ..Limits::default()
+        },
+        Limits {
+            max_bytes: 0,
+            ..Limits::default()
+        },
+    ] {
+        assert!(matches!(
+            Builder::from_index(&empty, limits, |_| panic!("invalid bounds admitted")),
+            Err(Error::IndexBudget)
+        ));
+    }
+    let mut builder = Builder::new(Limits::default()).unwrap();
+    builder.insert(id(1), BTreeSet::new()).unwrap();
+    let before = builder.allocated_bytes();
+    let requested = Cell::new(0);
+    assert!(matches!(
+        builder.insert_admitted(id(2), BTreeSet::from([id(1)]), |bytes| {
+            requested.set(bytes);
+            Err(Error::IndexBudget)
+        }),
+        Err(Error::IndexBudget)
+    ));
+    assert!(requested.get() > before);
+    assert_eq!(builder.allocated_bytes(), before);
+    let index = builder.finish(deadline(), &cancel).await.unwrap();
+    assert_eq!(index.node_count(), 1);
+    assert!(matches!(
+        Builder::from_index(&index, Limits::default(), |bytes| {
+            assert_eq!(bytes, before);
+            Err(Error::IndexBudget)
+        }),
+        Err(Error::IndexBudget)
+    ));
+    let cloned = Builder::from_index(&index, Limits::default(), |_| Ok(()))
+        .unwrap()
+        .finish(deadline(), &cancel)
+        .await
+        .unwrap();
+    assert_eq!(cloned.parents(id(1)), index.parents(id(1)));
+    let result = cloned
+        .family_with_work(
+            &BTreeSet::from([id(1)]),
+            LookupLimits::default(),
+            deadline(),
+            &cancel,
+        )
+        .await
+        .unwrap();
+    assert_eq!(result.ids, BTreeSet::from([id(1)]));
+    assert_eq!(
+        result.work, 3,
+        "seed, ancestor and descendant visits are charged"
+    );
+    assert!(matches!(
+        cloned
+            .family_with_work(
+                &result.ids,
+                LookupLimits {
+                    max_work: result.work - 1,
+                    ..LookupLimits::default()
+                },
+                deadline(),
+                &cancel
+            )
+            .await,
+        Err(Error::Limit)
+    ));
+}
+
+#[tokio::test]
 async fn copy_family_handles_reverse_leaf_and_multiple_seed_requests() {
     let index = small_index().await;
     let cancel = CancellationToken::new();

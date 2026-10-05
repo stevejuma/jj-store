@@ -431,6 +431,21 @@ impl NativeSession {
 }
 #[async_trait::async_trait]
 impl BackendAuthority for NativeSession {
+    async fn copy_family(
+        &self,
+        seeds: &BTreeSet<m::CopyId>,
+        required: &BTreeSet<m::CopyId>,
+        limits: jj_store_jj::query::copy_index::LookupLimits,
+        deadline: tokio::time::Instant,
+    ) -> AuthorityResult<Option<jj_store_jj::query::copy_index::Family>> {
+        let selected = tokio::time::timeout_at(deadline, self.snapshot())
+            .await
+            .map_err(|_| jj_store_jj::query::Error::Limit)??;
+        Ok(Some(
+            self.copy_family_at(&selected, seeds, required, limits, deadline)
+                .await?,
+        ))
+    }
     async fn authorize_read(&self) -> AuthorityResult<()> {
         self.principal(Permission::Read).await?;
         Ok(())

@@ -1,5 +1,13 @@
 # CLI and server commands
 
+Native copy-family regressions require exact selected bodies under unrelated
+inventory pressure, stable historical roots after real publication, bounded
+addition reuse and fresh authorization. Staged family delivery includes only
+acknowledged relationships captured before the provider await, including
+selected identities staged again. Unknown/foreign/later uploads remain excluded.
+These focused memory-store checks do not qualify RPC family delivery, indexed
+copy-record queries or complete large-repository/RustFS behavior.
+
 Pinned browser-kind regressions enforce exact operation/copy identities under
 unrelated descriptor pressure, across later real code publication and selected
 copy additions. Warm historical roots read zero descriptors while preserving

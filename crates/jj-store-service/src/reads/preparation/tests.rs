@@ -96,6 +96,27 @@ async fn prepared_kind_lookup_outlives_page_deadline_without_full_inventory() {
     };
     let task = Access::capture(&read).await.unwrap();
     let deadline = || Instant::now() + Duration::from_secs(10);
+    // Optional acknowledged staged seeds need no committed descriptor. The
+    // preparation capability uses its caller's admission rather than the page's
+    // one-object bound; neither capability can claim these as selected copies.
+    let staged = BTreeSet::from([m::CopyId::new([7; 64]), m::CopyId::new([8; 64])]);
+    let family_limits = query::copy_index::LookupLimits {
+        max_nodes: 8,
+        ..Default::default()
+    };
+    assert!(matches!(
+        read.copy_family(&staged, &BTreeSet::new(), family_limits, deadline())
+            .await,
+        Err(query::Error::Limit)
+    ));
+    assert!(
+        task.copy_family(&staged, &BTreeSet::new(), family_limits, deadline())
+            .await
+            .unwrap()
+            .unwrap()
+            .ids
+            .is_empty()
+    );
     let expected = BTreeSet::from([m::ObjectKey::Operation(roots::ROOT_OPERATION), key]);
     assert_eq!(
         read.inventory_kind(K::Operations, 8, deadline())
@@ -110,6 +131,19 @@ async fn prepared_kind_lookup_outlives_page_deadline_without_full_inventory() {
         expected
     );
     read.deadline = Instant::now();
+    assert!(matches!(
+        read.copy_family(&staged, &BTreeSet::new(), family_limits, deadline())
+            .await,
+        Err(query::Error::Limit)
+    ));
+    assert!(
+        task.copy_family(&staged, &BTreeSet::new(), family_limits, deadline())
+            .await
+            .unwrap()
+            .unwrap()
+            .ids
+            .is_empty()
+    );
     assert_eq!(
         read.inventory_kind(K::Operations, 8, deadline())
             .await
@@ -168,6 +202,11 @@ async fn prepared_kind_lookup_outlives_page_deadline_without_full_inventory() {
         WriteOutcome::Applied(_)
     ));
     read.deadline = deadline();
+    assert!(matches!(
+        task.copy_family(&staged, &BTreeSet::new(), family_limits, deadline())
+            .await,
+        Err(query::Error::EpochChanged)
+    ));
     assert_eq!(
         read.inventory_kind(K::Operations, 1, deadline())
             .await

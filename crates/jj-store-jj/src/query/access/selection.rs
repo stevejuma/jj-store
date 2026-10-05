@@ -25,6 +25,17 @@ struct SelectedOperation {
 }
 #[async_trait::async_trait]
 impl ReadAccess for SelectedOperation {
+    async fn copy_family(
+        &self,
+        seeds: &BTreeSet<m::CopyId>,
+        required: &BTreeSet<m::CopyId>,
+        limits: copy_index::LookupLimits,
+        deadline: Instant,
+    ) -> Result<Option<copy_index::Family>> {
+        self.outer
+            .copy_family(seeds, required, limits, deadline)
+            .await
+    }
     fn repository(&self) -> m::RepositoryId {
         self.outer.repository()
     }

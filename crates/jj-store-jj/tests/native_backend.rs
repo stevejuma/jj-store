@@ -14,6 +14,8 @@ use jj_store_jj::{
 };
 use jj_store_model as m;
 use jj_store_object::memory::{Fault, MemoryStore};
+#[path = "native_backend/families.rs"]
+mod families;
 use std::{
     collections::BTreeSet,
     sync::{

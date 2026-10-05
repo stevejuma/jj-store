@@ -87100,6 +87100,274 @@ entries.
     ],
     "next": "Commit the verified copy relation primitive in the retained temporary workspace, then integrate native selected projection retention and backend family lookup. Keep main on the verified E-READ-071 landing; full qualification remains the separate later slice.",
     "result": "pending"
+  },
+  {
+    "id": "E-READ-073",
+    "tasks": ["M13.4"],
+    "date": "2026-10-05",
+    "revision": "kxupxzzm",
+    "kind": "Pinned selected native copy-family projection, matching body delivery and acknowledged staged relation snapshots",
+    "versions": "Rust1.98.1; JJ/jj-lib0.45.1; macOS ARM64.",
+    "formats": "Additive source-only owned Rust capability and immutable data-only relation projection. No DTO, schema, native object, RPC, signed cursor, persisted index, manifest, WAL or receipt format change.",
+    "scope": "Rust-only native source/query/backend/preparation behavior with direct service/RPC/CLI consumers. Start with the exact five-node family regression, then focused graph/cache/authority/preparation targets and complete query, native_backend, native_rpc and native_lifecycle consumer surfaces because the source capability, staged helper and shared inventory fixture affect them. Affected JJ/service/RPC/CLI all-target checks and canonical checks are required. UI, root aggregates, contract generation and unchanged WAL/storage suites are out of scope. Full scale/RSS/latency/fault/cold-browser/RustFS/release/Help qualification remains explicitly deferred.",
+    "requirements": ["JST-JJ-003", "JST-JJ-005", "JST-MUT-001"],
+    "files": [
+      "crates/jj-store-cli/tests/native_rpc/inventory.rs",
+      "crates/jj-store-jj/src/backend/staged_copies.rs",
+      "crates/jj-store-jj/src/backend.rs",
+      "crates/jj-store-jj/src/commands/access.rs",
+      "crates/jj-store-jj/src/copy_query.rs",
+      "crates/jj-store-jj/src/query/access/kinds_tests.rs",
+      "crates/jj-store-jj/src/query/access/selection.rs",
+      "crates/jj-store-jj/src/query/access.rs",
+      "crates/jj-store-jj/src/query/copy_index.rs",
+      "crates/jj-store-jj/src/query/mod.rs",
+      "crates/jj-store-jj/tests/copy_index.rs",
+      "crates/jj-store-jj/tests/native_backend/families.rs",
+      "crates/jj-store-jj/tests/native_backend.rs",
+      "crates/jj-store-service/src/native.rs",
+      "crates/jj-store-service/src/native_inventory/cache/memory.rs",
+      "crates/jj-store-service/src/native_inventory/cache.rs",
+      "crates/jj-store-service/src/native_inventory/complete.rs",
+      "crates/jj-store-service/src/native_inventory/families/cache/tests.rs",
+      "crates/jj-store-service/src/native_inventory/families/cache.rs",
+      "crates/jj-store-service/src/native_inventory/families.rs",
+      "crates/jj-store-service/src/native_inventory.rs",
+      "crates/jj-store-service/src/reads/preparation/tests.rs",
+      "crates/jj-store-service/src/reads/preparation.rs",
+      "crates/jj-store-service/src/reads.rs",
+      "docs/implementation-plan.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/jj-integration.md",
+      "spec/src/mutations.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/native_rpc/inventory.rs#native_copy_family_ignores_unrelated_inventory_and_body_pressure",
+      "crates/jj-store-cli/tests/native_rpc/inventory.rs#pinned_copy_families_reuse_additions_without_loading_bodies",
+      "crates/jj-store-jj/tests/copy_index.rs#copy_provider_admits_before_growth_and_baseline_clone",
+      "crates/jj-store-jj/tests/native_backend/families.rs#projected_family_merges_committed_and_acknowledged_relations_only",
+      "crates/jj-store-jj/tests/native_backend/families.rs#projected_family_captures_staging_before_provider_await",
+      "crates/jj-store-jj/tests/native_backend/families.rs#staged_copy_edges_and_bytes_are_admitted_before_upload",
+      "crates/jj-store-jj/src/query/access/kinds_tests.rs#copy_family_authority_preserves_pins_typed_failures_and_fresh_bounds",
+      "crates/jj-store-jj/src/query/access/kinds_tests.rs#pending_copy_family_obeys_cancellation_and_whole_query_deadline",
+      "crates/jj-store-service/src/native_inventory/families/cache/tests.rs#copy_slots_coalesce_by_source_epoch_and_keep_busy_gates",
+      "crates/jj-store-service/src/native_inventory/families/cache/tests.rs#copy_growth_and_eviction_keep_live_allocation_charged",
+      "crates/jj-store-service/src/native_inventory/families/cache/tests.rs#copy_slot_expiry_is_fixed_and_does_not_replace_a_busy_gate",
+      "crates/jj-store-service/src/reads/preparation/tests.rs#prepared_kind_lookup_outlives_page_deadline_without_full_inventory"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-cli --test native_rpc --locked native_copy_family_ignores_unrelated_inventory_and_body_pressure -- --nocapture",
+        "result": "fail",
+        "failures": 1,
+        "note": "Original regression; one functional resource-limit failure. .local/bounded-reads/performance/copy-family-before-073.log"
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-service --all-targets --locked",
+        "result": "fail",
+        "failures": 2,
+        "note": "Two distinct compiler failures; no functional tests ran. .local/bounded-reads/performance/copy-family-compile-073.log"
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-service --all-targets --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Both compilation repairs passed. .local/bounded-reads/performance/copy-family-compile-repair-073.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_rpc --locked native_copy_family_ignores_unrelated_inventory_and_body_pressure -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Original exact target repaired. .local/bounded-reads/performance/copy-family-after-073.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_rpc --locked native_copy_family_ignores_unrelated_inventory_and_body_pressure -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Exact five body reads on cold and warm backend calls. .local/bounded-reads/performance/copy-family-bodies-073.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_rpc --locked pinned_copy_families_reuse_additions_without_loading_bodies -- --nocapture",
+        "result": "fail",
+        "failures": 1,
+        "note": "One fixture accounting failure: three requests applied to the existing single-request read allowance. .local/bounded-reads/performance/copy-family-pins-073.log"
+      },
+      {
+        "command": "cargo fmt --all",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatting passed; two earlier same-command formatting runs also passed. .local/bounded-reads/performance/copy-family-format-073.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_rpc --locked pinned_copy_families_reuse_additions_without_loading_bodies -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "26.72s; 1 tests passed. .local/bounded-reads/performance/copy-family-pins-repair-073.log"
+      },
+      {
+        "command": "cargo test -p jj-store-jj --test native_backend --locked families:: -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "12.52s; 3 tests passed. .local/bounded-reads/performance/copy-family-stage-exact-073.log"
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked copy_family -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "14.15s; 2 tests passed. .local/bounded-reads/performance/copy-family-authority-exact-073.log"
+      },
+      {
+        "command": "cargo test -p jj-store-jj --test copy_index --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "1.79s; 7 tests passed. .local/bounded-reads/performance/copy-family-index-073.log"
+      },
+      {
+        "command": "cargo test -p jj-store-service --lib --locked native_inventory::families::cache::tests",
+        "result": "pass",
+        "failures": 0,
+        "note": "29.34s; 3 tests passed. .local/bounded-reads/performance/copy-family-cache-073.log"
+      },
+      {
+        "command": "cargo test -p jj-store-service --lib --locked reads::preparation::tests",
+        "result": "pass",
+        "failures": 0,
+        "note": "0.6s; 1 tests passed. .local/bounded-reads/performance/copy-family-preparation-073.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_rpc --locked native_copy_family_ignores_unrelated_inventory_and_body_pressure -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "37.19s; 1 tests passed. .local/bounded-reads/performance/copy-family-final-exact-073.log"
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked copy_family -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "5.7s; 2 tests passed. .local/bounded-reads/performance/copy-family-final-authority-073.log"
+      },
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked query::",
+        "result": "pass",
+        "failures": 0,
+        "note": "3.91s; 66 tests passed. .local/bounded-reads/performance/copy-family-final-query-073.log"
+      },
+      {
+        "command": "cargo test -p jj-store-jj --test native_backend --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "6.61s; 15 tests passed. .local/bounded-reads/performance/copy-family-final-backend-073.log"
+      },
+      {
+        "command": "cargo test -p jj-store-service --lib --locked native_inventory::",
+        "result": "pass",
+        "failures": 0,
+        "note": "9.83s; 6 tests passed. .local/bounded-reads/performance/copy-family-final-cache-073.log"
+      },
+      {
+        "command": "cargo test -p jj-store-service --lib --locked reads::preparation::tests",
+        "result": "pass",
+        "failures": 0,
+        "note": "0.4s; 1 tests passed. .local/bounded-reads/performance/copy-family-final-preparation-073.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_rpc --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "15.26s; 22 tests passed. .local/bounded-reads/performance/copy-family-final-rpc-073.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "93.36s; 231 tests passed. .local/bounded-reads/performance/copy-family-final-lifecycle-073.log"
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-service -p jj-store-rpc -p jj-store-cli --all-targets --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "56.24s; 0 tests passed. .local/bounded-reads/performance/copy-family-final-packages-073.log"
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "Completed; 0 tests passed. .local/bounded-reads/performance/copy-family-boundaries-073.log"
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Completed; 0 tests passed. .local/bounded-reads/performance/copy-family-architecture-073.log"
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "Completed; 0 tests passed. .local/bounded-reads/performance/copy-family-spec-first-073.log"
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "Completed; 0 tests passed. .local/bounded-reads/performance/copy-family-spec-validation-073.log"
+      },
+      {
+        "command": "pnpm format:rust:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "Completed; 0 tests passed. .local/bounded-reads/performance/copy-family-rust-format-073.log"
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "Completed; 0 tests passed. .local/bounded-reads/performance/copy-family-progress-073.log"
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/jj-integration.md spec/src/mutations.md spec/src/cli.md spec/src/architecture.md docs/implementation-plan.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Completed; 0 tests passed. .local/bounded-reads/performance/copy-family-document-check-073.log"
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "5.76s; 0 tests passed. .local/bounded-reads/performance/copy-family-ledger-progress-073.log"
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/jj-integration.md spec/src/mutations.md spec/src/cli.md spec/src/architecture.md docs/implementation-plan.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "3.58s; 0 tests passed. .local/bounded-reads/performance/copy-family-ledger-format-073.log"
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/jj-integration.md spec/src/mutations.md spec/src/cli.md spec/src/architecture.md docs/implementation-plan.md",
+        "result": "pass",
+        "failures": 0,
+        "note": ".local/bounded-reads/performance/copy-family-document-format-073.log"
+      }
+    ],
+    "notes": [
+      "Exact before target fails once with Other(Limit(\"native inventory result\")): five related copies amid96 unrelated copy roots and96 files exceeded the original full-inventory matching bound. After delivery selects exact ancestors and their descendants, excluding an unrelated parent branch of a merge descendant. Cold and warm backend delivery read exactly five native copy bodies; warm requests read zero inventory descriptors.",
+      "The original checked manifest stays explicit for browser, historical-operation and independent preparation providers. Cache keys include process-local source/repository scope, epoch and inventory root. Shared64MiB allocation leases follow graph/checked-root owners beyond eviction; eight shared permits and32 fixed five-minute root slots constrain concurrency and retention. Same-root construction gates hold no credentials or source handles.",
+      "Complete additions share an unchanged graph or admit and clone only prior copy adjacency before extension/sealing. Nonretained baselines restart cold with spent descriptors and original deadline retained. Cold construction remains the ordinary two-million-descriptor bound; body hydration is absent from projection construction. Matching family nodes/work/scratch have separate fresh admission.",
+      "Acknowledged staged copy parents and reverse children are append-only, admitted before upload and insertion. Captured sequence excludes later writes without whole-stage cloning. Exact repeated writes are idempotent; unknown uploads and foreign sessions do not enter family selection. An overlapping committed/staged identity still discovers committed descendants. Ordered body terms and placeholder boundaries retain upstream semantics.",
+      "Compatibility providers still use their bounded complete-inventory path. Native MutationAccess implementations that do not provide the new source capability and remote RPC clients remain on compatibility delivery; this slice does not claim all command or RPC copy endpoints are optimized.",
+      "The new pin test initially counted three warm requests against the one-request sixteen-read helper allowance. Reset counters between each request without weakening the existing bound; the same target passes. Two initial compiler issues (nonexistent direct service tokio_util import and wrong test Budget module path) were repaired. Inherited macOS linker unwind-size warning is not a functional failure.",
+      "Preserve all513 prior ledger evidence objects and their original text verbatim. Main stays on the already verified E-READ-071 landing; current follow-up is only in the retained temporary workspace. No installed executable, dev service, fixture, Linux source, credentials, publication or migration changed."
+    ],
+    "remaining": [
+      "Resumable cold native kind preparation beyond two million descriptors remains the highest-priority delivery target. Selected relation construction beyond conservative shared64MiB admission may need chunk/disk support.",
+      "Deliver selected copy-family RPC/client and applicable native mutation capabilities; index get_copy_records DAG range/path selection instead of broad ancestor/tree hydration.",
+      "General filtered-log continuation preserving indirect/missing edges, uncached/ambiguous evolution, indexed code/local application search and oversized comparison/change grouping/extreme-filter candidates remain.",
+      "Complete scale/RSS/latency/fault/cold-browser/RustFS/release qualification and Help/generated-reference/source-review refresh remain deferred. Inherited installation-reference drift stays open. No milestone promotion."
+    ],
+    "next": "Commit the verified E-READ-073 source/backend family slice with Jujutsu and continue resumable cold native kind preparation in the retained workspace. Do not repeat the completed E-READ-071 main landing. Full qualification stays separate.",
+    "result": "pending"
   }
 ]
 ```

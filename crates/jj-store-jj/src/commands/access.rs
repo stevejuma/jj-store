@@ -19,6 +19,16 @@ use std::{
 pub(super) struct Access(pub Arc<dyn MutationAccess>);
 #[async_trait::async_trait]
 impl ReadAccess for Access {
+    async fn copy_family(
+        &self,
+        seeds: &BTreeSet<m::CopyId>,
+        required: &BTreeSet<m::CopyId>,
+        limits: query::copy_index::LookupLimits,
+        deadline: tokio::time::Instant,
+    ) -> query::Result<Option<query::copy_index::Family>> {
+        self.0.authorize_write().await?;
+        self.0.copy_family(seeds, required, limits, deadline).await
+    }
     fn repository(&self) -> m::RepositoryId {
         self.0.repository()
     }
@@ -43,6 +53,15 @@ impl ReadAccess for Access {
 pub(super) struct Authority(pub ReadOnlyAuthority);
 #[async_trait::async_trait]
 impl BackendAuthority for Authority {
+    async fn copy_family(
+        &self,
+        seeds: &BTreeSet<m::CopyId>,
+        required: &BTreeSet<m::CopyId>,
+        limits: query::copy_index::LookupLimits,
+        deadline: tokio::time::Instant,
+    ) -> AuthorityResult<Option<query::copy_index::Family>> {
+        self.0.copy_family(seeds, required, limits, deadline).await
+    }
     async fn authorize_read(&self) -> AuthorityResult<()> {
         BackendAuthority::authorize_read(&self.0).await
     }

@@ -10,7 +10,7 @@ fn check_time(deadline: tokio::time::Instant) -> wal::Result<()> {
     }
 }
 impl NativeSession {
-    async fn inventory_check(
+    pub(super) async fn inventory_check(
         &self,
         selected: &ManifestSnapshot,
         deadline: tokio::time::Instant,

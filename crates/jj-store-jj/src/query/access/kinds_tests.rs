@@ -111,6 +111,224 @@ struct KindsOnly {
     base: Compatibility,
     pause: bool,
 }
+
+struct FamilyOnly {
+    base: Compatibility,
+    failure: Option<Error>,
+    pause: bool,
+    missing: bool,
+    work: usize,
+}
+#[async_trait::async_trait]
+impl ReadAccess for FamilyOnly {
+    fn repository(&self) -> m::RepositoryId {
+        self.base.repository()
+    }
+    fn epoch(&self) -> m::EpochId {
+        self.base.epoch()
+    }
+    fn operation(&self) -> m::OperationId {
+        self.base.operation()
+    }
+    async fn contains(&self, key: m::ObjectKey) -> Result<bool> {
+        self.base.contains(key).await
+    }
+    async fn inventory(&self) -> Result<Arc<BTreeSet<m::ObjectKey>>> {
+        panic!("family must not enumerate inventory")
+    }
+    async fn authorize(&self) -> Result<()> {
+        self.base.authorize().await
+    }
+    async fn copy_family(
+        &self,
+        seeds: &BTreeSet<m::CopyId>,
+        _: &BTreeSet<m::CopyId>,
+        _: copy_index::LookupLimits,
+        _: Instant,
+    ) -> Result<Option<copy_index::Family>> {
+        if self.pause {
+            std::future::pending::<()>().await;
+        }
+        if let Some(error) = &self.failure {
+            return Err(error.clone());
+        }
+        if self.base.deny_after {
+            self.base.allowed.store(false, Ordering::Relaxed);
+        }
+        Ok(Some(copy_index::Family {
+            ids: if self.missing {
+                BTreeSet::new()
+            } else {
+                seeds.clone()
+            },
+            work: self.work,
+        }))
+    }
+}
+fn family_authority(
+    failure: Option<Error>,
+    pause: bool,
+    revoke: bool,
+    missing: bool,
+    work: usize,
+) -> ReadOnlyAuthority {
+    ReadOnlyAuthority {
+        access: Arc::new(FamilyOnly {
+            base: Compatibility::new(revoke),
+            failure,
+            pause,
+            missing,
+            work,
+        }),
+        budget: Arc::new(Budget::new(Limits::default()).unwrap()),
+    }
+}
+#[tokio::test]
+async fn copy_family_authority_preserves_pins_typed_failures_and_fresh_bounds() {
+    let seeds = BTreeSet::from([m::CopyId::new([3; 64])]);
+    let limits = copy_index::LookupLimits {
+        max_nodes: 1,
+        max_work: 10,
+        max_bytes: 1024,
+    };
+    let deadline = || Instant::now() + Duration::from_secs(1);
+    let read = family_authority(None, false, false, false, 3);
+    let access = select_operation(read.access, m::OperationId::new([2; 64]), &read.budget)
+        .await
+        .unwrap();
+    let historical = ReadOnlyAuthority {
+        access,
+        budget: read.budget,
+    };
+    assert_eq!(
+        historical
+            .copy_family(&seeds, &seeds, limits, deadline())
+            .await
+            .unwrap()
+            .unwrap()
+            .ids,
+        seeds
+    );
+    assert!(historical.budget.stats().work >= 3);
+    for (read, error) in [
+        (
+            family_authority(Some(Error::IndexBudget), false, false, false, 0),
+            Error::IndexBudget,
+        ),
+        (
+            family_authority(Some(Error::EpochChanged), false, false, false, 0),
+            Error::EpochChanged,
+        ),
+        (
+            family_authority(None, false, false, true, 0),
+            Error::NotCommitted,
+        ),
+        (
+            family_authority(None, false, false, false, 11),
+            Error::Limit,
+        ),
+        (family_authority(None, false, true, false, 3), Error::Denied),
+    ] {
+        assert!(
+            read.copy_family(&seeds, &seeds, limits, deadline())
+                .await
+                .is_err()
+        );
+        assert_eq!(read.budget.failure(), Some(error));
+    }
+    let count = family_authority(None, false, false, false, 3);
+    assert!(
+        count
+            .copy_family(
+                &seeds,
+                &seeds,
+                copy_index::LookupLimits {
+                    max_nodes: 0,
+                    ..limits
+                },
+                deadline()
+            )
+            .await
+            .is_err()
+    );
+    assert_eq!(count.budget.failure(), Some(Error::Limit));
+    let bytes = family_authority(None, false, false, false, 3);
+    assert!(
+        bytes
+            .copy_family(
+                &seeds,
+                &seeds,
+                copy_index::LookupLimits {
+                    max_bytes: 511,
+                    ..limits
+                },
+                deadline()
+            )
+            .await
+            .is_err()
+    );
+    assert_eq!(bytes.budget.failure(), Some(Error::Limit));
+}
+#[tokio::test]
+async fn pending_copy_family_obeys_cancellation_and_whole_query_deadline() {
+    let seeds = BTreeSet::from([m::CopyId::new([3; 64])]);
+    for canceled in [true, false] {
+        let mut read = family_authority(None, true, false, false, 0);
+        read.budget = Arc::new(
+            Budget::new(Limits {
+                timeout: Duration::from_millis(30),
+                ..Limits::default()
+            })
+            .unwrap(),
+        );
+        let cancellation = read.budget.cancellation.clone();
+        let task = tokio::spawn(async move {
+            if canceled {
+                tokio::time::sleep(Duration::from_millis(1)).await;
+                cancellation.cancel();
+            }
+        });
+        assert!(
+            tokio::time::timeout(
+                Duration::from_secs(1),
+                read.copy_family(
+                    &seeds,
+                    &seeds,
+                    copy_index::LookupLimits::default(),
+                    Instant::now() + Duration::from_secs(10)
+                )
+            )
+            .await
+            .unwrap()
+            .is_err()
+        );
+        assert_eq!(
+            read.budget.failure(),
+            Some(if canceled {
+                Error::Canceled
+            } else {
+                Error::Limit
+            })
+        );
+        task.await.unwrap();
+    }
+    let read = family_authority(None, true, false, false, 0);
+    assert!(
+        tokio::time::timeout(
+            Duration::from_secs(1),
+            read.copy_family(
+                &seeds,
+                &seeds,
+                copy_index::LookupLimits::default(),
+                Instant::now() + Duration::from_millis(10)
+            )
+        )
+        .await
+        .unwrap()
+        .is_err()
+    );
+    assert_eq!(read.budget.failure(), Some(Error::Limit));
+}
 #[async_trait::async_trait]
 impl ReadAccess for KindsOnly {
     fn repository(&self) -> m::RepositoryId {

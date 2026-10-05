@@ -24,6 +24,8 @@ use std::{
 };
 use tokio::sync::Semaphore;
 use tokio_util::compat::{FuturesAsyncReadCompatExt as _, TokioAsyncReadCompatExt as _};
+mod staged_copies;
+use staged_copies::StagedCopies;
 
 /// Bound to one authenticated repository session; no implicit permissive mode.
 #[async_trait::async_trait]
@@ -37,6 +39,15 @@ pub trait BackendAuthority: Send + Sync {
     async fn authorize_write(&self) -> AuthorityResult<()>;
     /// Complete retained, manifest-selected copy inventory, or an explicit error.
     async fn copy_ids(&self, limit: usize) -> AuthorityResult<BTreeSet<m::CopyId>>;
+    async fn copy_family(
+        &self,
+        _seeds: &BTreeSet<m::CopyId>,
+        _required: &BTreeSet<m::CopyId>,
+        _limits: crate::query::copy_index::LookupLimits,
+        _deadline: tokio::time::Instant,
+    ) -> AuthorityResult<Option<crate::query::copy_index::Family>> {
+        Ok(None)
+    }
 }
 #[derive(Clone, Copy, Debug)]
 pub struct BackendLimits {
@@ -63,7 +74,7 @@ pub struct NativeBackend {
     pub(crate) authority: Arc<dyn BackendAuthority>,
     pub(crate) limits: BackendLimits,
     permits: Semaphore,
-    pub(crate) staged_copies: Mutex<BTreeSet<m::CopyId>>,
+    pub(crate) staged_copies: Mutex<StagedCopies>,
     root: CommitId,
     root_change: ChangeId,
     empty: TreeId,
@@ -94,7 +105,7 @@ impl NativeBackend {
             authority,
             limits,
             permits: Semaphore::new(limits.concurrency),
-            staged_copies: Mutex::new(BTreeSet::new()),
+            staged_copies: Mutex::new(StagedCopies::default()),
             root: CommitId::from_bytes(roots::ROOT_COMMIT.as_bytes()),
             root_change: ChangeId::from_bytes(roots::ROOT_CHANGE.as_bytes()),
             empty: roots::empty_tree_id(),
@@ -285,24 +296,25 @@ impl Backend for NativeBackend {
                 let _permit = self.permits.acquire().await.map_err(other)?;
                 self.authority.authorize_write().await.map_err(other)?;
                 let id = m::CopyId::from_slice(copy.key().as_bytes()).map_err(other)?;
+                let parents = copy
+                    .parents
+                    .iter()
+                    .filter(|id| !id.as_bytes().is_empty())
+                    .map(|id| id_bytes(id, "copy").map(m::CopyId::new))
+                    .collect::<BackendResult<BTreeSet<_>>>()?;
                 {
                     let staged = self
                         .staged_copies
                         .lock()
                         .map_err(|_| other("copy lock poisoned"))?;
-                    if staged.len() >= self.limits.max_nodes && !staged.contains(&id) {
-                        return Err(other("staged copy limit"));
-                    }
+                    staged.admit(id, &parents, self.limits)?;
                 }
                 let key = self.write(copy).await?;
                 let mut staged = self
                     .staged_copies
                     .lock()
                     .map_err(|_| other("copy lock poisoned"))?;
-                if staged.len() >= self.limits.max_nodes && !staged.contains(&id) {
-                    return Err(other("staged copy limit"));
-                }
-                staged.insert(id);
+                staged.insert(id, parents, self.limits)?;
                 Ok(CopyId::from_bytes(key.as_bytes()))
             })
             .await
@@ -310,7 +322,8 @@ impl Backend for NativeBackend {
     async fn get_related_copies(&self, id: &CopyId) -> BackendResult<Vec<RelatedCopy>> {
         self.runtime
             .run(async {
-                tokio::time::timeout(self.limits.timeout, crate::copy_query::related(self, id))
+                let deadline = tokio::time::Instant::now() + self.limits.timeout;
+                tokio::time::timeout_at(deadline, crate::copy_query::related(self, id, deadline))
                     .await
                     .map_err(|_| other("copy query deadline exceeded"))?
             })

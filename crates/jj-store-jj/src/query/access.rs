@@ -205,6 +205,52 @@ pub(crate) struct ReadOnlyAuthority {
 }
 #[async_trait::async_trait]
 impl BackendAuthority for ReadOnlyAuthority {
+    async fn copy_family(
+        &self,
+        seeds: &BTreeSet<m::CopyId>,
+        required: &BTreeSet<m::CopyId>,
+        limits: copy_index::LookupLimits,
+        deadline: Instant,
+    ) -> AuthorityResult<Option<copy_index::Family>> {
+        let deadline = deadline.min(self.budget.deadline);
+        if Instant::now() >= deadline {
+            return Err(self.budget.fail(Error::Limit).into());
+        }
+        self.budget.authorize(self.access.as_ref()).await?;
+        let family = self
+            .budget
+            .until(async {
+                tokio::time::timeout_at(
+                    deadline,
+                    self.access.copy_family(seeds, required, limits, deadline),
+                )
+                .await
+                .map_err(|_| Error::Limit)?
+            })
+            .await?
+            .map_err(|error| self.budget.fail(error))?;
+        if let Some(family) = &family {
+            if family.ids.len() > limits.max_nodes
+                || family.work > limits.max_work
+                || family
+                    .ids
+                    .len()
+                    .checked_mul(512)
+                    .is_none_or(|bytes| bytes > limits.max_bytes)
+            {
+                return Err(self.budget.fail(Error::Limit).into());
+            }
+            if !required.is_subset(&family.ids) {
+                return Err(self.budget.fail(Error::NotCommitted).into());
+            }
+            self.budget.work(family.work)?;
+        }
+        self.budget.authorize(self.access.as_ref()).await?;
+        if Instant::now() >= deadline {
+            return Err(self.budget.fail(Error::Limit).into());
+        }
+        Ok(family)
+    }
     async fn authorize_tree_read(&self, path: &str) -> AuthorityResult<()> {
         self.budget.authorize(self.access.as_ref()).await?;
         if path.len() > 4096 || path.split('/').filter(|name| !name.is_empty()).count() > 64 {

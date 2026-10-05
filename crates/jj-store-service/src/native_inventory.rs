@@ -2,6 +2,7 @@
 mod cache;
 mod complete;
 mod cursors;
+mod families;
 use crate::{auth::Clock, native::NativeSession};
 use jj_store_model as m;
 use jj_store_wal::{

@@ -288,6 +288,30 @@ checked-root selection, current authorization, acknowledged staged copies and
 deterministic ordered-body delivery remain the integrating provider's
 responsibilities.
 
+Native selected copy-family providers retain only descriptor relations, scoped
+to the process-local source, repository, epoch and checked inventory root. Share
+the existing 64 MiB allocation pool and eight work permits with complete kind
+projections. At most 32 fixed five-minute root entries retain checked selection
+metadata; active owners keep their charges after eviction. Coalesce construction
+for the same root without retaining authentication. Scan selected descriptors
+under the existing window and two-million-descriptor cold-work limits. Complete
+addition traversal can reuse an unchanged graph, or extend only copy relations;
+removed or replaced baselines restart within the original remaining work/time.
+Matching-family result/work/scratch bounds stay independent of construction.
+Fresh permission, epoch and deadline checks precede all returned data.
+
+The upstream backend combines that committed family with an append-only snapshot
+of this session's acknowledged copy-parent relations. Retain bounded parent and
+reverse-child identities after a successful upload only, admitting node, edge
+and byte growth before upload and again before insertion. A captured sequence
+excludes later writes without cloning the whole staged graph. Traverse staged
+ancestors, resolve their selected seeds and follow staged descendants; do not
+hydrate unrelated committed or staged bodies. Required unstaged seeds must be
+selected. Duplicate acknowledged writes remain idempotent, unknown writes add no
+staged relation, and complete ordered-body delivery retains deterministic
+children-before-parents order. Compatibility providers keep their existing
+bounded complete-inventory path. No native, RPC or persisted format changes.
+
 Native factories, authenticated transport wiring and full CLI/workspace
 lifecycle acceptance remain separate M3 gates.
 

@@ -1,7 +1,7 @@
 //! Complete exact kind data only; source/authorization stays request-owned.
 mod memory;
 use super::*;
-use memory::{Budget, Lease};
+pub(super) use memory::{Budget, Lease};
 use std::{
     collections::BTreeSet,
     sync::{Mutex, OnceLock},
@@ -47,7 +47,7 @@ struct Entry {
 }
 pub(super) struct Cache {
     entries: Mutex<Vec<Entry>>,
-    budget: Arc<Budget>,
+    pub(super) budget: Arc<Budget>,
     roots: usize,
     ttl: Duration,
     pub permits: tokio::sync::Semaphore,
@@ -68,6 +68,9 @@ pub(super) fn shared() -> &'static Cache {
     CACHE.get_or_init(Cache::default)
 }
 impl Cache {
+    pub(super) fn clear(&self) {
+        self.entries.lock().unwrap().clear();
+    }
     pub fn lookup(&self, key: Key, revision: u64) -> (Option<Arc<Data>>, Option<Arc<Data>>) {
         self.lookup_at(key, revision, tokio::time::Instant::now())
     }

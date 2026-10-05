@@ -21,6 +21,18 @@ impl Access {
 }
 #[async_trait::async_trait]
 impl query::ReadAccess for Access {
+    async fn copy_family(
+        &self,
+        seeds: &BTreeSet<m::CopyId>,
+        required: &BTreeSet<m::CopyId>,
+        limits: query::copy_index::LookupLimits,
+        deadline: Instant,
+    ) -> query::Result<Option<query::copy_index::Family>> {
+        self.session
+            .copy_family_at(&self.pin.base, seeds, required, limits, deadline)
+            .await
+            .map(Some)
+    }
     fn repository(&self) -> m::RepositoryId {
         self.pin.snapshot.authority.repo_id
     }
