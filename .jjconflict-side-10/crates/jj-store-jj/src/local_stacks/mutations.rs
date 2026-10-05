@@ -25,25 +25,29 @@ pub(super) async fn selected(
     let mut paths = std::collections::BTreeSet::new();
     for selection in selections {
         let path = &selection.path;
-        if selection.source != wc.id().hex()
-            || path.is_empty()
-            || path.len() > 4096
-            || path.starts_with('/')
-            || path.contains('\\')
-            || path
-                .split('/')
-                .any(|p| p.is_empty() || p == "." || p == ".." || p == ".jj" || p == ".git")
-            || !paths.insert(path)
-        {
+        if selection.source != wc.id().hex() || !paths.insert(path) {
             return Err(Error::Invalid);
         }
-        let path = RepoPathBuf::from_internal_string(path).map_err(jj)?;
+        let path = self::path(path)?;
         let before = parent_tree.path_value(&path).await.map_err(jj)?;
         let after = wc.tree().path_value(&path).await.map_err(jj)?;
         if before == after || !before.is_resolved() || !after.is_resolved() {
             return Err(Error::Invalid);
         }
-        builder.set_or_remove(path, after);
+        let value = if let Some(hunks) = &selection.hunks {
+            if hunks.len()
+                != hunks
+                    .iter()
+                    .collect::<std::collections::BTreeSet<_>>()
+                    .len()
+            {
+                return Err(Error::Invalid);
+            }
+            hunks::selected_value(repo, wc, &path, &before, &after, hunks).await?
+        } else {
+            after
+        };
+        builder.set_or_remove(path, value);
     }
     Ok(rewrite::CommitWithSelection {
         commit: wc.clone(),
@@ -158,4 +162,18 @@ pub(super) async fn commit(
     let new = content::squash(mut_repo, &sources, &new, text).await?;
     mut_repo.set_local_bookmark_target(branch.as_ref(), RefTarget::normal(new.id().clone()));
     Ok(())
+}
+
+pub(super) fn path(value: &str) -> Result<RepoPathBuf> {
+    if value.is_empty()
+        || value.len() > 4096
+        || value.starts_with('/')
+        || value.contains('\\')
+        || value
+            .split('/')
+            .any(|p| p.is_empty() || p == "." || p == ".." || p == ".jj" || p == ".git")
+    {
+        return Err(Error::Invalid);
+    }
+    RepoPathBuf::from_internal_string(value).map_err(jj)
 }

@@ -946,3 +946,95 @@ test("local basic mutations use server previews and inspect only displayed commi
   ).rejects.toThrow("outside the displayed");
   adapter.close();
 });
+
+test("lazy local diff reads replace display hunks with native byte-bound selections", async () => {
+  const { source, binding, pin } = fixture();
+  const calls: unknown[] = [];
+  source.stacks = {
+    execute: async () => ({
+      version: 1,
+      operation,
+      revision: 1,
+      active: "work",
+      warning: null,
+      workspaces: [
+        {
+          id: "work",
+          name: "Work",
+          target: "main",
+          target_commit: base,
+          applied: ["topic"],
+          merge_commit: parent,
+          wip_commit: tip,
+          conflicted: false,
+        },
+      ],
+    }),
+    hunks: async (request) => {
+      calls.push(request);
+      return {
+        source: request.source,
+        path: request.path,
+        reason: null,
+        hunks: [
+          {
+            id: "native:" + "a".repeat(64),
+            label: "@@ -1 +1 @@",
+            patch: "-old\n+new\n",
+          },
+        ],
+      };
+    },
+  };
+  source.diff = async (_op, from, to, path) =>
+    ({
+      snapshot: pin,
+      next_cursor: null,
+      data: {
+        version: 1,
+        from,
+        to,
+        path,
+        changes: [
+          {
+            path,
+            before: { kind: "absent" },
+            after: { kind: "absent" },
+            sources: [],
+            content: { status: "unavailable", reason: "not_requested" },
+          },
+        ],
+      },
+    }) as never;
+  const adapter = new ProductionStackWorkspaceAdapter(
+    source,
+    binding,
+    operation,
+  );
+  const snapshot = await adapter.read();
+  const request = {
+    repository,
+    revision: snapshot.revision,
+    readKey: snapshot.readKey,
+    source: "unassigned",
+    path: "draft.txt",
+  };
+  const diff = await adapter.readFileDiff(request);
+  expect(diff.hunks[0]?.id).toBe("native:" + "a".repeat(64));
+  expect(calls).toEqual([
+    {
+      version: 1,
+      binding_generation: 2,
+      operation,
+      revision: 1,
+      source: tip,
+      path: "draft.txt",
+    },
+  ]);
+  await adapter.readFileDiff({
+    ...request,
+    source: workspaceBranchSource(snapshot.stacks[0]!.id, "topic"),
+  });
+  expect(calls).toHaveLength(1);
+  adapter.close();
+});

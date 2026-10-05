@@ -276,7 +276,7 @@ export class ProductionStackWorkspaceAdapter implements StackWorkspaceAdapter {
       request.signal,
     );
     this.#context(request);
-    return file;
+    return this.#local.hunks(request.source, file);
   }
   preview(request: WorkspaceRequest) {
     return this.#local.preview(request);

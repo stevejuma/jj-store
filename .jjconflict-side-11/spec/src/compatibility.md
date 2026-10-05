@@ -872,3 +872,12 @@ Empty; LocalStacksInspection v1 is an additive bounded advisory read. Native JJ
 Additive version-1 Transfer/Split/Edit local command variants preserve TOML v1
 and native JJ 0.45.1 formats. Selected tree deltas retain file type/executable
 metadata through native tree values; no generic patch persistence is introduced.
+
+Native local Stacks hunk selections are issued by the guarded read-only POST
+`/v1/local/repos/{repo}/stacks/hunks`. Tokens bind native source change
+identity, canonical path and complete before/after bytes; apply rederives them
+at the exact operation/configuration pin. Client patches and display-only IDs
+are rejected. Partial text deltas use native squash with emptied sources
+retained, without reconstructing the megamerge. Binary, conflict, mode/type and
+bounded-diff limits remain whole-file-only. Net branch comparisons remain
+presentation-only.

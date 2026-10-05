@@ -1,5 +1,7 @@
 import { inspectLocalCommits } from "./local-inspection.js";
 import { localMutationKinds } from "./local-mutations.js";
+import { localCommitSource } from "./local-selections.js";
+import type { WorkspaceFile } from "./types.js";
 import type { StackCommit } from "./types.js";
 import { ApiError, fullId, type Model } from "../../api/client.js";
 import type { StoreDataSource } from "../native-data-source.js";
@@ -64,6 +66,31 @@ export class LocalStacksSession {
           target.name === selected?.name && target.commit === selected.commit,
       ) ?? null
     );
+  }
+  async hunks(source: string, file: WorkspaceFile) {
+    if (
+      !this.source.stacks?.hunks ||
+      !this.state ||
+      source.startsWith("branch:")
+    )
+      return file;
+    const snapshot = this.current();
+    if (!snapshot) return file;
+    const result = await this.source.stacks.hunks({
+      version: 1,
+      binding_generation: this.binding.generation,
+      operation: this.pin().operation,
+      revision: this.state.revision,
+      source: localCommitSource(snapshot, source),
+      path: file.path,
+    });
+    this.signal.throwIfAborted();
+    if (
+      result.source !== localCommitSource(snapshot, source) ||
+      result.path !== file.path
+    )
+      throw new ApiError("snapshot_mismatch");
+    return { ...file, hunks: result.hunks };
   }
   async inspect(commits: StackCommit[]) {
     await inspectLocalCommits(

@@ -1594,3 +1594,12 @@ and may squash additional selected files. Sources bind exact
 operation/commit/path identities, and merge/root/immutable shapes remain
 rejected. New commit selections may come from WIP or displayed mutable commits.
 No staging state or additional merge reconstruction is persisted.
+
+Native local Stacks hunk selections are issued by the guarded read-only POST
+`/v1/local/repos/{repo}/stacks/hunks`. Tokens bind native source change
+identity, canonical path and complete before/after bytes; apply rederives them
+at the exact operation/configuration pin. Client patches and display-only IDs
+are rejected. Partial text deltas use native squash with emptied sources
+retained, without reconstructing the megamerge. Binary, conflict, mode/type and
+bounded-diff limits remain whole-file-only. Net branch comparisons remain
+presentation-only.

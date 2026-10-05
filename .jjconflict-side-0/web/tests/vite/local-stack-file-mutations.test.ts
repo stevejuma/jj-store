@@ -75,4 +75,17 @@ test("local file mutations map displayed sources to exact native commit selectio
       },
     }),
   ).toThrow("whole files");
+  expect(
+    localStacksCommand(snapshot, {
+      kind: "transfer",
+      target: target.id,
+      selection: {
+        source: "unassigned",
+        path: "draft.txt",
+        hunks: ["native:" + "a".repeat(64)],
+      },
+    }),
+  ).toMatchObject({
+    selections: [{ source: "wip", hunks: ["native:" + "a".repeat(64)] }],
+  });
 });

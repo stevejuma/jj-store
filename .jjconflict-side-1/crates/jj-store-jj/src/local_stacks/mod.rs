@@ -2,6 +2,7 @@
 mod basic;
 mod config;
 mod content;
+mod hunks;
 mod inspection;
 mod mutations;
 mod policy;
@@ -9,6 +10,7 @@ mod preview;
 mod settings;
 use self::config::{Config, SavedWorkspace};
 use crate::local_browser::Access;
+pub use hunks::{Hunk, HunkRequest, HunkResponse, hunks};
 pub use inspection::{CommitEligibility, Inspection, InspectionRequest, inspect};
 use jj_lib::{
     commit::Commit,
@@ -131,6 +133,8 @@ pub enum Placement {
 pub struct Selection {
     pub source: String,
     pub path: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub hunks: Option<Vec<String>>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]

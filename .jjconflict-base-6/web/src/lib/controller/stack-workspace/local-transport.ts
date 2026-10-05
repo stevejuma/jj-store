@@ -12,7 +12,15 @@ export type LocalStacksInspectionRequest = Exact<
     operations["local_stacks_inspect"]["requestBody"]
   >["content"]["application/json"]
 >;
+export type LocalStacksHunkRequest = Exact<
+  NonNullable<
+    operations["local_stacks_hunks"]["requestBody"]
+  >["content"]["application/json"]
+>;
 export interface LocalStacksTransport {
+  hunks?(
+    request: LocalStacksHunkRequest,
+  ): Promise<Model<"LocalStacksHunkResponse">>;
   execute(request: LocalStacksRequest): Promise<Model<"LocalStacksState">>;
   preview?(request: LocalStacksRequest): Promise<Model<"LocalStacksPreview">>;
   inspect?(
@@ -22,6 +30,12 @@ export interface LocalStacksTransport {
 
 export class HttpLocalStacksTransport implements LocalStacksTransport {
   constructor(readonly client: LocalClient) {}
+  hunks(request: LocalStacksHunkRequest) {
+    return this.client.request<Model<"LocalStacksHunkResponse">>(
+      "stacks/hunks",
+      request,
+    );
+  }
   inspect(request: LocalStacksInspectionRequest) {
     return this.client.request<Model<"LocalStacksInspection">>(
       "stacks/inspect",

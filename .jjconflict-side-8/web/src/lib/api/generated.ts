@@ -2057,6 +2057,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/v1/local/repos/{repo}/stacks/hunks": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    post: operations["local_stacks_hunks"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/v1/local/repos/{repo}/stacks/inspect": {
     parameters: {
       query?: never;
@@ -6393,6 +6410,17 @@ export interface components {
           /** @constant */
           type: "symlink";
         };
+    LocalStacksHunkResponse: {
+      source: string;
+      path: string;
+      hunks: components["schemas"]["LocalStacksHunk"][];
+      reason: string | null;
+    };
+    LocalStacksHunk: {
+      id: string;
+      label: string;
+      patch: string;
+    };
     LocalStacksInspection: {
       commits: components["schemas"]["LocalStacksCommitEligibility"][];
     };
@@ -33478,6 +33506,150 @@ export interface operations {
       };
     };
   };
+  local_stacks_hunks: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        repo: components["schemas"]["RepositoryId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          /** Format: uint32 */
+          version: number;
+          /** Format: uint64 */
+          binding_generation: number;
+          operation: string;
+          /** Format: uint64 */
+          revision: number;
+          source: string;
+          path: string;
+        };
+      };
+    };
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LocalStacksHunkResponse"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
   local_stacks_inspect: {
     parameters: {
       query?: never;
@@ -33693,6 +33865,7 @@ export interface operations {
                 selections: {
                   source: string;
                   path: string;
+                  hunks?: string[] | null;
                 }[];
                 /** @constant */
                 kind: "transfer";
@@ -33703,6 +33876,7 @@ export interface operations {
                 selections: {
                   source: string;
                   path: string;
+                  hunks?: string[] | null;
                 }[];
                 /** @constant */
                 kind: "split";
@@ -33713,6 +33887,7 @@ export interface operations {
                 selections: {
                   source: string;
                   path: string;
+                  hunks?: string[] | null;
                 }[];
                 /** @constant */
                 kind: "edit";
@@ -33757,6 +33932,7 @@ export interface operations {
                 selections: {
                   source: string;
                   path: string;
+                  hunks?: string[] | null;
                 }[];
                 /** @constant */
                 kind: "commit";
@@ -33956,6 +34132,7 @@ export interface operations {
                 selections: {
                   source: string;
                   path: string;
+                  hunks?: string[] | null;
                 }[];
                 /** @constant */
                 kind: "transfer";
@@ -33966,6 +34143,7 @@ export interface operations {
                 selections: {
                   source: string;
                   path: string;
+                  hunks?: string[] | null;
                 }[];
                 /** @constant */
                 kind: "split";
@@ -33976,6 +34154,7 @@ export interface operations {
                 selections: {
                   source: string;
                   path: string;
+                  hunks?: string[] | null;
                 }[];
                 /** @constant */
                 kind: "edit";
@@ -34020,6 +34199,7 @@ export interface operations {
                 selections: {
                   source: string;
                   path: string;
+                  hunks?: string[] | null;
                 }[];
                 /** @constant */
                 kind: "commit";

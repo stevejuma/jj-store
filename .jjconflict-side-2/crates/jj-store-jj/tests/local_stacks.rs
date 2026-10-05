@@ -753,6 +753,7 @@ async fn selected_file_commit_uses_native_propagation_and_retains_wip() {
             selections: vec![local_stacks::Selection {
                 source: w.wip_commit.clone(),
                 path: "selected.txt".into(),
+                hunks: None,
             }],
         },
     };
@@ -821,6 +822,7 @@ async fn selected_file_commit_uses_native_propagation_and_retains_wip() {
             selections: vec![local_stacks::Selection {
                 source: next.workspaces[0].wip_commit.clone(),
                 path: "remaining.txt".into(),
+                hunks: None,
             }],
         },
     )
@@ -881,6 +883,7 @@ async fn selected_file_commands_reject_invalid_stale_and_immutable_sources() {
             selections: vec![local_stacks::Selection {
                 source: state.workspaces[0].wip_commit.clone(),
                 path: "selected.txt".into(),
+                hunks: None,
             }],
         },
     };
@@ -1175,6 +1178,7 @@ async fn first_commit_on_empty_stack_forks_target_without_rewriting_other_branch
             selections: vec![local_stacks::Selection {
                 source: state.workspaces[0].wip_commit.clone(),
                 path: "first.txt".into(),
+                hunks: None,
             }],
         },
     )
@@ -1273,6 +1277,7 @@ async fn selected_file_transfer_split_and_inline_edit_propagate_natively() {
             selections: vec![local_stacks::Selection {
                 source: one,
                 path: "one.txt".into(),
+                hunks: None,
             }],
         },
     )
@@ -1299,6 +1304,7 @@ async fn selected_file_transfer_split_and_inline_edit_propagate_natively() {
             selections: vec![local_stacks::Selection {
                 source: two,
                 path: "one.txt".into(),
+                hunks: None,
             }],
         },
     )
@@ -1320,6 +1326,7 @@ async fn selected_file_transfer_split_and_inline_edit_propagate_natively() {
             selections: vec![local_stacks::Selection {
                 source: state.workspaces[0].wip_commit.clone(),
                 path: "draft.txt".into(),
+                hunks: None,
             }],
         },
     )
@@ -1339,6 +1346,124 @@ async fn selected_file_transfer_split_and_inline_edit_propagate_natively() {
     assert_eq!(
         stock(root, &["log", "--no-graph", "-r", "@", "-T", "change_id"]),
         wip
+    );
+    assert_eq!(refresh(root).await.operation, state.operation);
+}
+
+#[tokio::test]
+async fn native_hunk_tokens_move_only_selected_content_and_reject_stale_display_ids() {
+    let temp = fixture();
+    let root = temp.path();
+    let state = refresh(root).await;
+    let state = run(
+        root,
+        Some(&state),
+        Command::Setup {
+            name: "Work".into(),
+            target: "main".into(),
+        },
+    )
+    .await;
+    let _ = run(
+        root,
+        Some(&state),
+        Command::Apply {
+            branch: "topic-one".into(),
+        },
+    )
+    .await;
+    let original = (0..24).map(|i| format!("line {i}\n")).collect::<String>();
+    fs::write(root.join("long.txt"), &original).unwrap();
+    let state = refresh(root).await;
+    let _ = run(
+        root,
+        Some(&state),
+        Command::Commit {
+            branch: "topic-one".into(),
+            message: "Long file".into(),
+            selections: vec![local_stacks::Selection {
+                source: state.workspaces[0].wip_commit.clone(),
+                path: "long.txt".into(),
+                hunks: None,
+            }],
+        },
+    )
+    .await;
+    fs::write(
+        root.join("long.txt"),
+        original
+            .replace("line 1\n", "first edit\n")
+            .replace("line 21\n", "second edit\n"),
+    )
+    .unwrap();
+    let state = refresh(root).await;
+    let response = local_stacks::hunks(
+        Arc::new(Access(root.join(".jj/repo"))),
+        root.canonicalize().unwrap(),
+        local_stacks::HunkRequest {
+            version: 1,
+            binding_generation: 1,
+            operation: state.operation,
+            revision: state.revision,
+            source: state.workspaces[0].wip_commit.clone(),
+            path: "long.txt".into(),
+        },
+    )
+    .await
+    .unwrap();
+    assert_eq!(response.hunks.len(), 2);
+    assert!(response.hunks[0].patch.contains("+first edit"));
+    let mut request = Request {
+        version: 1,
+        binding_generation: 1,
+        operation: Some(state.operation),
+        revision: Some(state.revision),
+        command: Command::Commit {
+            branch: "topic-one".into(),
+            message: "First hunk".into(),
+            selections: vec![local_stacks::Selection {
+                source: state.workspaces[0].wip_commit.clone(),
+                path: "long.txt".into(),
+                hunks: Some(vec![response.hunks[0].id.clone()]),
+            }],
+        },
+    };
+    let state = local_stacks::execute(
+        Arc::new(Access(root.join(".jj/repo"))),
+        root.canonicalize().unwrap(),
+        request.clone(),
+    )
+    .await
+    .unwrap();
+    let committed = stock(root, &["file", "show", "-r", "topic-one", "long.txt"]);
+    assert!(committed.contains("first edit"));
+    assert!(!committed.contains("second edit"));
+    request.operation = Some(state.operation);
+    request.revision = Some(state.revision);
+    if let Command::Commit { selections, .. } = &mut request.command {
+        selections[0].source = state.workspaces[0].wip_commit.clone();
+        selections[0].hunks = Some(vec![response.hunks[1].id.clone()]);
+    }
+    assert!(
+        local_stacks::execute(
+            Arc::new(Access(root.join(".jj/repo"))),
+            root.canonicalize().unwrap(),
+            request.clone()
+        )
+        .await
+        .is_err()
+    );
+    if let Command::Commit { selections, .. } = &mut request.command {
+        selections[0].hunks = Some(vec!["presentation:untrusted".into()]);
+    }
+    assert!(
+        local_stacks::preview(
+            Arc::new(Access(root.join(".jj/repo"))),
+            root.canonicalize().unwrap(),
+            request
+        )
+        .await
+        .is_err()
     );
     assert_eq!(refresh(root).await.operation, state.operation);
 }

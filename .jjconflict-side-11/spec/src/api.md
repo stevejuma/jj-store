@@ -2235,3 +2235,12 @@ LocalStacksCommand adds Transfer (exact target and source files), Split and
 Edit. Advisory preview validates the same source/target policy as execution; all
 source operations/configuration revisions remain exact. Whole-file inputs do not
 grant display-only hunk authority.
+
+Native local Stacks hunk selections are issued by the guarded read-only POST
+`/v1/local/repos/{repo}/stacks/hunks`. Tokens bind native source change
+identity, canonical path and complete before/after bytes; apply rederives them
+at the exact operation/configuration pin. Client patches and display-only IDs
+are rejected. Partial text deltas use native squash with emptied sources
+retained, without reconstructing the megamerge. Binary, conflict, mode/type and
+bounded-diff limits remain whole-file-only. Net branch comparisons remain
+presentation-only.

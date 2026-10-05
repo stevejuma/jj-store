@@ -26,14 +26,19 @@ export function localFileSelections(
   selections: WorkspaceSelection[],
 ): NativeSelection[] {
   return selections.map((selection) => {
-    if (selection.hunks)
+    if (
+      selection.hunks &&
+      (!selection.hunks.length ||
+        selection.hunks.some((id) => !/^native:[0-9a-f]{64}$/u.test(id)))
+    )
       throw new WorkspaceCommandError(
         "invalid",
-        "Choose whole files until native hunk selection is available.",
+        "Choose whole files or freshly loaded native hunks.",
       );
     return {
       source: localCommitSource(snapshot, selection.source),
       path: selection.path,
+      ...(selection.hunks ? { hunks: selection.hunks } : {}),
     };
   });
 }
