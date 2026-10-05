@@ -281,6 +281,17 @@ Runtime policy, extra/index recovery, publication, guarded checkout and
 prepare/apply/status/discovery remain Stage 3 work. Stages 4-7 remain approved
 and required; production capabilities are still read-only.
 
+E-M21-019 adds the registered preparation authority adapter: only the configured
+LocalTrusted Admin principal is eligible, paths/generations come from device
+registration, and physical selection comes from the existing bounded observer.
+Trusted combination ownership supplies active selection and protected heads at
+the actually observed workspace. Reword checks exact immutable ancestry before
+candidate writes. Real CLI-folder/registry acceptance covers external edits,
+registration removal and pending replay after operation/index loss and GC;
+combination ownership is still supplied by an isolated fixture. This adapter
+does not create setup or wire command transport. Durable combination ownership,
+extra/index recovery, publication, checkout and remaining stages stay required.
+
 ### Recommended scope and model
 
 First qualify explicitly registered Git-backed JJ folders under the current

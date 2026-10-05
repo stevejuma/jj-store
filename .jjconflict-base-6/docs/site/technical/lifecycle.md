@@ -63,6 +63,13 @@ currently uses a trusted authority seam; installed command/combination
 authority, publication and guarded checkout still need qualification before
 production writable controls.
 
+Registered preparation is limited to the configured LocalTrusted Admin principal
+and currently verified device folders. It reuses bounded physical observation
+and resolves active combination/immutable policy through a separate trusted
+owner. Exact retained replay requires current authorization but does not
+revalidate live combination/physical selection. Production combination ownership
+and command transport/publication/checkout still require qualification.
+
 This primitive does not retain JJ objects, publish operation heads or coordinate
 physical checkout. The production Stacks page continues to expose qualified
 reads while those provider execution and recovery gates are implemented.

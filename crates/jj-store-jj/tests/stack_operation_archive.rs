@@ -26,6 +26,7 @@ async fn retained_operation_ancestry_reconstructs_exactly_after_source_loss_and_
         .unwrap();
     let (lease, prepared) = lease
         .prepare_reword(Reword {
+            immutable_heads: vec![],
             principal: m::PrincipalId::new([85; 16]),
             commit: expected.baseline.commit,
             message: "Exact archived operation".into(),

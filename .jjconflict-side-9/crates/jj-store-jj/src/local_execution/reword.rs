@@ -1,4 +1,5 @@
 //! Real unpublished reword candidates, separate from selection/publication.
+mod policy;
 mod report;
 use super::*;
 use crate::local_evidence::{self, GitEvidenceCapsuleV1, GitRefTargetV1, OperationArchiveV1};
@@ -23,6 +24,8 @@ pub struct Reword {
     pub principal: m::PrincipalId,
     pub commit: m::GitSha1Id,
     pub message: String,
+    /// Trusted composition supplies immutable target/boundary heads, not the client.
+    pub immutable_heads: Vec<m::GitSha1Id>,
 }
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub struct Rewrite {
@@ -51,7 +54,7 @@ impl Foreground {
     /// foreground lock while a background candidate writer is still running.
     /// A historical request must be looked up by composition before calling this.
     pub async fn prepare_reword(self, request: Reword) -> Result<(Self, PreparedCode)> {
-        if request.message.len() > 65536 {
+        if request.message.len() > 65536 || request.immutable_heads.len() > 64 {
             return Err(Error::Limit);
         }
         if request.message.contains('\0') || request.commit == m::GitSha1Id::new([0; 20]) {
@@ -127,6 +130,7 @@ async fn prepare(lease: &Foreground, request: Reword) -> Result<PreparedCode> {
     if !visible.contains(&request.commit) {
         return Err(Error::NotCommitted);
     }
+    policy::check(&source, &visible, &request)?;
     let affected = affected(&source, &visible, request.commit)?;
     // Every affected descendant is checked before candidate writes.
     // Keeping this first profile unsigned and resolved makes tree invariance

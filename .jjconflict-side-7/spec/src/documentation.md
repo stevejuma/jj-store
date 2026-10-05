@@ -50,6 +50,14 @@ cancellation and authority loss, immutable legacy records and the journal's
 owning JJ retainer and server composition; no transport or writable control is
 implied.
 
+Registered preparation documentation MUST explain configured LocalTrusted Admin
+and current device-registration checks, real physical observation and protected
+commit ancestry. Missing combination state never fabricates setup. Real
+registration/scanner acceptance remains distinct from fixture combination
+ownership and unfinished command transport/publication/checkout. Exact retained
+replay does not require live combination validation; authorization is always
+current.
+
 Stack journal documentation MUST distinguish private exact-preparation and
 historical receipt metadata from actual provider object retention, code
 publication and foreground checkout. It records bounded capacity, durable

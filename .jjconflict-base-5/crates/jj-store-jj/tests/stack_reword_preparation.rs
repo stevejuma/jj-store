@@ -2,6 +2,8 @@
 mod fixture;
 #[path = "stack_reword_preparation/lifecycle.rs"]
 mod lifecycle;
+#[path = "stack_reword_preparation/policy.rs"]
+mod policy;
 use fixture::*;
 use jj_store_jj::{
     local_browser::Error,
@@ -21,6 +23,7 @@ async fn exact_reword_preparation_retains_change_tree_and_dirty_checkout_without
         .unwrap();
     let (lease, prepared) = lease
         .prepare_reword(Reword {
+            immutable_heads: vec![],
             principal: m::PrincipalId::new([85; 16]),
             commit: expected.baseline.commit,
             message: "Prepared title\n\nPrepared description".into(),
@@ -66,6 +69,7 @@ async fn invalid_reword_root_and_hidden_targets_create_no_published_state() {
             .unwrap();
         let result = lease
             .prepare_reword(Reword {
+                immutable_heads: vec![],
                 principal: m::PrincipalId::new([85; 16]),
                 commit,
                 message,
@@ -136,6 +140,7 @@ async fn ancestor_reword_reports_all_descendants_and_exact_bookmark_terms() {
         .unwrap();
     let (lease, prepared) = lease
         .prepare_reword(Reword {
+            immutable_heads: vec![],
             principal: m::PrincipalId::new([85; 16]),
             commit: first,
             message: "Reword ancestor".into(),
@@ -201,6 +206,7 @@ async fn actual_prepared_reword_is_compatible_with_reserved_ref_retention() {
         .unwrap();
     let (lease, prepared) = lease
         .prepare_reword(Reword {
+            immutable_heads: vec![],
             principal: m::PrincipalId::new([85; 16]),
             commit: expected.baseline.commit,
             message: "Retain exact candidate".into(),

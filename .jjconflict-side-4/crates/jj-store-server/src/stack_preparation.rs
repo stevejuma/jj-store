@@ -1,4 +1,5 @@
 //! Exact unpublished local preparation composition; no publication/checkout route.
+mod registered;
 mod report;
 use crate::stack_command_journal::{self as j, LocalExecutionV1, StackCommandJournal};
 use jj_store_jj::{
@@ -8,6 +9,7 @@ use jj_store_jj::{
 };
 use jj_store_model as m;
 use jj_store_service::stack_workspace as s;
+pub use registered::{ActiveCombination, CombinationAuthority, RegisteredAuthority};
 use std::{path::PathBuf, sync::Arc};
 
 #[derive(Debug, thiserror::Error)]
@@ -34,6 +36,7 @@ pub struct Context {
     pub current: CurrentState,
     pub working_tree: m::RecordDigest,
     pub combination: s::CombinationSelection,
+    pub immutable_heads: Vec<m::GitSha1Id>,
 }
 pub struct RecoveryContext {
     pub access: Arc<dyn Access>,
@@ -117,6 +120,7 @@ pub async fn prepare_reword(
             principal,
             commit: *commit,
             message: message.clone(),
+            immutable_heads: context.immutable_heads,
         })
         .await?;
     let preview = report::preview(request.clone(), &candidate)?;

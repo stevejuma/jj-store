@@ -32,6 +32,17 @@ publication. This data-only composition adds no route or installed CLI command.
 Real registration and combination authority, publication and guarded checkout
 remain required under JST-LOCAL-005 before writable controls.
 
+Registered command-context acceptance uses the real device registry and CLI
+folder provider, configured LocalTrusted Admin principal and bounded physical
+observation. Removed bindings, unauthorized caller modes, stale physical
+selections and missing active combinations cannot prepare new commands. Exact
+historical replay remains separate from live validation. Saved pending archives
+can resume after source operation/index loss and GC through current
+registration, without scanning or restoring that source. Combination ownership
+is still fixture-supplied for this adapter acceptance; no production command
+route or installed executable capability is added. Publication and guarded
+checkout remain unfinished.
+
 LocalTrusted installations with native storage own an independent conversion
 journal beside device registration. Preview captures a committed source
 operation, start retains the exact bounded archive before staging, and status

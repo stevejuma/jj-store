@@ -113,6 +113,17 @@ Owned data crosses this composition; no upstream JJ imports do. Real
 installation authority, combinations, publication and guarded checkout remain
 required before transport or writable capabilities.
 
+Registered local preparation context now derives the configured LocalTrusted
+Admin principal, canonical folder and generation through the existing device
+registry and CLI folder provider. Every access rechecks that registration. The
+existing bounded physical observer supplies current metadata and exact physical
+fingerprints. Trusted combination ownership supplies active identity/generation
+and immutable heads for the actually observed workspace; absence never creates
+setup. The JJ provider checks protected ancestry before candidate writes. Saved
+request replay still precedes live context; recovery resolves registration
+without scanning lost operation/index state. Durable combination ownership and
+runtime transport/publication/checkout remain separately required.
+
 Independent conversion remains inside the JJ integration, owned service and
 installation orchestration boundaries. Destination providers consume explicit
 versioned archives and typed translators. Test-only collaboration dependencies

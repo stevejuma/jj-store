@@ -126,6 +126,13 @@ local bookmark terms and unchanged checkout tree. Candidate writes remain
 unpublished. Cancellation retains admission and the lock until the worker exits;
 no upstream transaction or repository object crosses the owned result boundary.
 
+Reword input additionally accepts trusted immutable heads from composition. The
+bounded exact source-parent closure excludes each protected head and every
+ancestor before any candidate writes. Heads require visible membership;
+duplicate or excessive policy input fails without a transaction. Request patch
+or commit claims do not establish the immutable policy. This strengthens
+preparation only, without enabling publication or checkout.
+
 The bounded Stacks operation archive walks the explicit candidate's full source
 operation DAG and all referenced views through descriptor-relative no-follow
 reads. Bounded raw operation/view files are decoded by the pinned upstream

@@ -911,6 +911,30 @@ no source checkout, companion state or physical file. It cannot enable writable
 capabilities before real authority, source-extra/index recovery, publication and
 guarded checkout are qualified.
 
+The local registered preparation authority MUST accept only the configured
+LocalTrusted Admin principal. It resolves the current folder exclusively through
+device registration, rechecking exact canonical folder and generation throughout
+provider work. A request cannot grant access through a folder path, physical
+identity, combination claim or code profile. Missing/replaced/unregistered
+bindings and unsupported caller modes fail before preparing or selecting a
+journal record. Current physical selection MUST come from the existing bounded
+observer, including ignored/untracked obstacles, rather than client
+fingerprints.
+
+Active combination and immutable heads MUST come from the trusted combination
+owner at the actual observed physical workspace and JJ workspace, never the
+request. Missing durable state remains unavailable, without fabricated setup.
+Reword preparation MUST reject rewriting any configured immutable head or its
+ancestors at the exact captured source, before candidate writes. Protected heads
+require visible source membership, bounded distinct inputs and complete parent
+closure. Runtime combination-state ownership, publication and checkout remain
+separate gates; a tested registration/scanner adapter does not establish them.
+Historical request replay precedes live combination/physical validation while
+still requiring current principal and registration authorization. Resuming
+pending retention uses the registered root and saved witness without reading a
+missing operation store or re-preparing; saved generation/binding changes fail
+at the provider boundary.
+
 Server-retained content selections bind source and parent tree identities,
 complete code/device/combination selection, safe repository path, exact
 file-state fingerprint and whole-file or verified hunk scope. Commands carry

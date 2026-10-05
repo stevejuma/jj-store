@@ -195,6 +195,22 @@ No command transport, operation publication or checkout change is enabled by
 this composition. Source-extra/index recovery, publication and guarded checkout
 still precede writable controls.
 
+Registered preparation context now checks the configured LocalTrusted Admin
+principal and resolves the folder and generation through current device
+registration. It observes real physical changes with the same bounded observer
+as the read API. Active combination and immutable heads come from an independent
+trusted owner at the observed physical/JJ workspace; a missing combination never
+creates one. Reword protects each immutable head and its ancestors before
+candidate writes.
+
+The real CLI folder provider and private device registry qualify this adapter's
+registration, physical-read and revocation checks. Original retained replay
+still precedes live context, and pending archive retention can resume without a
+physical scan after source operation/index loss. The combination owner in these
+tests is an isolated fixture; production durable combination ownership, command
+transport, source-extra/index repair, publication and guarded checkout remain
+unfinished. This adapter enables no writable control by itself.
+
 Device paths, access grants, credentials and active execution journals are not
 portable repository records. Ordinary Git/JJ network commands do not transfer
 the owned companion ref. Do not assume a normal code push backs up

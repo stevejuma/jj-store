@@ -158,6 +158,7 @@ impl Authority for Stop {
             current,
             working_tree: request.selection.working_tree,
             combination,
+            immutable_heads: vec![],
         })
     }
 }

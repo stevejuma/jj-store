@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Documented saved candidate archive retention through the foreground lease and recovery witness, with exact original-key replay after source loss and no source restoration or publication. Server pending journal selection precedes retention and acknowledged commit/digest replaces only the pending archive body; runtime authority, extras/index repair, publication and checkout remain required.",
-      "fingerprint": "c4cc2f0dc29e507b1e846eddc66f2df7bc9eb9f4a6d5e46f27d9bc995203ec47"
+      "reason": "Reviewed immutable reword policy from trusted configured heads, requiring visible membership and complete bounded parent ancestry before candidate writes. Exact source and cancellation behavior remain intact. Registered command context uses actual device registration and physical observation; source recovery, publication and checkout still require remaining gates.",
+      "fingerprint": "bc4a5a21a7c1ca404660c3290ff696c1caa1ad9b82e99fafc127f3de7aa84b06"
     }
   },
   {
@@ -96,8 +96,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed exact local reword preparation composition, principal/request/intent lookup before live context, trusted combination selection, pending archive selection before retention, exact commit/archive acknowledgement, 128-record/8-MiB capacity and immutable legacy encoding. Cancellation, process loss and source loss resume original previews without reprepare. Installed authority, command transport, publication and guarded checkout remain unfinished.",
-      "fingerprint": "39a5b6be63db3939a9e5683ddad796cf4681a79a9780c9b013b79d211fc0cf00"
+      "reason": "Documented configured LocalTrusted Admin and current device-registration authority, canonical server-resolved folders/generations, actual bounded physical observation and independently owned active combination/immutable heads. Original replay precedes live context and pending recovery works after source operation/index loss without scanning or creating setup. Durable combination ownership, command transport, publication and guarded checkout remain unfinished.",
+      "fingerprint": "810f7d0f344e1b900f32ed3c08a8bcb3270259050c15861a0b6565b76efddff2"
     }
   },
   {

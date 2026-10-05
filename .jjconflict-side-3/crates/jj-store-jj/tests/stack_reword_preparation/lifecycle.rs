@@ -64,6 +64,7 @@ async fn cancellation_after_candidate_write_releases_lease_only_when_worker_exit
     let task = tokio::spawn(async move {
         lease
             .prepare_reword(Reword {
+                immutable_heads: vec![],
                 principal: m::PrincipalId::new([85; 16]),
                 commit: expected.baseline.commit,
                 message: "Unacknowledged candidate".into(),
@@ -114,6 +115,7 @@ async fn authorization_loss_after_candidate_write_exposes_no_preparation_or_publ
     assert!(matches!(
         lease
             .prepare_reword(Reword {
+                immutable_heads: vec![],
                 principal: m::PrincipalId::new([85; 16]),
                 commit: expected.baseline.commit,
                 message: "Denied candidate".into()
@@ -154,6 +156,7 @@ async fn missing_original_extras_fail_before_reword_import_or_candidate_write() 
     assert!(matches!(
         lease
             .prepare_reword(Reword {
+                immutable_heads: vec![],
                 principal: m::PrincipalId::new([85; 16]),
                 commit: expected.baseline.commit,
                 message: "Must not import missing extras".into(),

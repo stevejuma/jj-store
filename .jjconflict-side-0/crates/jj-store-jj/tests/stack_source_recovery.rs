@@ -23,6 +23,7 @@ async fn prepare(f: &Fixture) -> (RecoveryWitnessV1, StackPreparationKey) {
     let (lease, witness) = lease.recovery_witness().await.unwrap();
     let (lease, candidate) = lease
         .prepare_reword(Reword {
+            immutable_heads: vec![],
             principal: m::PrincipalId::new([85; 16]),
             commit: expected.baseline.commit,
             message: "Retained source recovery".into(),

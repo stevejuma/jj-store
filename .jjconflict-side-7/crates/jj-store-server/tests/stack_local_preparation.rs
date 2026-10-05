@@ -45,6 +45,7 @@ impl Authority for Allowed {
             current: self.state.clone(),
             working_tree: m::RecordDigest::new([71; 32]),
             combination: request(&self.state).selection.combination.unwrap(),
+            immutable_heads: vec![],
         })
     }
 }
