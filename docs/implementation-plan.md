@@ -283,6 +283,12 @@ kind lookup and the remaining deep/indexed read features still require delivery.
 
 ### Deferred complete qualification
 
+E-READ-062 lands delivery through E-READ-061 into the clean main workspace and
+verifies the combined prepared-operation and inventory surface there. Preserve
+all original evidence and existing fixtures/services. Keep bounded-reads open
+and resume performance delivery from the verified landing, beginning with deep
+history continuations. Complete qualification remains a separate later slice.
+
 After performance delivery, qualify the combined implementation separately:
 
 - Cold/warm Linux construction, current visibility policy, isolated server RSS

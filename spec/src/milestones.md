@@ -115,7 +115,7 @@ shared-package release qualification does not alter those original Git gates.
 | M13.1       | Done        | M12                     | JST-LOCAL-001,JST-LOCAL-002                                                                                                                                                                                       | Qualified metadata CAS/receipt/GC and stock JJ primitive compatibility                                                         | Retain CAS, receipt, retention and stock-JJ regression gates                                     | E-M13-001                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M13.2       | Done        | M13.1                   | JST-LOCAL-003                                                                                                                                                                                                     | Shared WorkStore semantics and server-free CLI                                                                                 | Retain WorkStore/CLI parity while completing M13.3                                               | E-M13-002,E-UI-050                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
 | M13.3       | In progress | M13.2                   | JST-LOCAL-002,JST-LOCAL-003                                                                                                                                                                                       | Portable agent/review anchors and exact retained evidence                                                                      | Qualify portable review anchors/CLI, hook causality and native capsule carrier                   | E-M13-003,E-M13-004,E-M13-005,E-M13-006,E-M13-007,E-M13-008,E-M13-009,E-M13-010,E-M13-011,E-M13-012,E-M13-022,E-M13-024,E-M13-025,E-M17-034                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
-| M13.4       | In progress | M13.2                   | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                                                                       | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement indexed search and recoverable code commands; browsing/collaboration stage qualified   | E-M13-013,E-M13-014,E-M13-015,E-M13-016,E-M13-017,E-M13-018,E-M13-019,E-M13-020,E-M13-021,E-M13-022,E-M13-023,E-UI-063,E-UI-089,E-UI-090,E-UI-091,E-UI-092,E-UI-093,E-UI-095,E-READ-002,E-READ-003,E-READ-024,E-READ-025,E-READ-026,E-READ-028,E-READ-036,E-READ-037,E-READ-038,E-READ-040,E-READ-041,E-READ-008,E-READ-042,E-READ-043,E-READ-044,E-READ-045,E-READ-046,E-READ-047,E-READ-048,E-READ-049,E-READ-050,E-READ-051,E-READ-052,E-READ-053,E-READ-057,E-READ-058,E-READ-059,E-READ-060,E-READ-061                                                                                                                                                                                                                                                                                                                                         |
+| M13.4       | In progress | M13.2                   | JST-LOCAL-004,JST-LOCAL-005                                                                                                                                                                                       | Filesystem-only server, local UI and recoverable code commands                                                                 | Implement indexed search and recoverable code commands; browsing/collaboration stage qualified   | E-M13-013,E-M13-014,E-M13-015,E-M13-016,E-M13-017,E-M13-018,E-M13-019,E-M13-020,E-M13-021,E-M13-022,E-M13-023,E-UI-063,E-UI-089,E-UI-090,E-UI-091,E-UI-092,E-UI-093,E-UI-095,E-READ-002,E-READ-003,E-READ-024,E-READ-025,E-READ-026,E-READ-028,E-READ-036,E-READ-037,E-READ-038,E-READ-040,E-READ-041,E-READ-008,E-READ-042,E-READ-043,E-READ-044,E-READ-045,E-READ-046,E-READ-047,E-READ-048,E-READ-049,E-READ-050,E-READ-051,E-READ-052,E-READ-053,E-READ-057,E-READ-058,E-READ-059,E-READ-060,E-READ-061,E-READ-062                                                                                                                                                                                                                                                                                                                              |
 | M13.5       | In progress | M13.4                   | JST-LOCAL-006                                                                                                                                                                                                     | Independent local/native conversion with complete collaboration history                                                        | Retain eligible conversions; qualify portable anchored profiles and remaining prerequisite gates | E-M13-026,E-M13-027,E-M13-028,E-M13-029                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
 | M13.6       | Planned     | M13.5                   | JST-LOCAL-001,JST-LOCAL-002,JST-LOCAL-003,JST-LOCAL-004,JST-LOCAL-005,JST-LOCAL-006                                                                                                                               | Cold end-to-end and retained native regression qualification                                                                   | Qualify completed local flow cold and retain native regressions                                  | -                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M14         | In progress | M4.18                   | JST-UI-012,JST-UI-016                                                                                                                                                                                             | Local settings, profile-aware device links and safe maintenance                                                                | Implement M14.3 agent setup and automatic recovery                                               | E-M14-001,E-M14-002,E-M14-003,E-M14-004,E-M14-005,E-M14-006,E-M14-007,E-M14-010,E-M14-011,E-M14-012,E-UI-060,E-M14-013,E-M14-014,E-UI-095,E-UI-098,E-M14-016,E-M14-017,E-M13-028                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
@@ -85018,6 +85018,184 @@ entries.
       "Main,services,installed executables,Linux source,fixtures and unrelated workspaces preserved in this slice.Next requested landing follows focused verification."
     ],
     "next": "Commit verified E-READ-061;land E-READ-057 through061 into clean main and verify combined direct consumers;retain temporary workspace and continue highest-priority deep log/evolution delivery."
+  },
+  {
+    "id": "E-READ-062",
+    "tasks": ["M13.4"],
+    "date": "2026-10-05",
+    "revision": "lqvkpvpm",
+    "kind": "main-landing-prepared-operation-and-native-inventory-delivery",
+    "versions": "Rust1.98.1;jj-lib0.45.1;macOS ARM64.",
+    "formats": "Original implementation,authority and cursor formats/evidence from E-READ-057 through061 retained unchanged;no format migration.",
+    "scope": "User explicitly requests landing and verification before further delivery.Complete relevant query library,WAL,RPC,service library and CLI native_rpc/native_lifecycle/local_browser consumers combine native/local operation-history and native inventory slices.Root aggregate/UI/full contracts/cold-browser/real-RustFS/scale/RSS/fault/release qualification remains out of scope.",
+    "requirements": [
+      "JST-JJ-003",
+      "JST-JJ-005",
+      "JST-LOCAL-004",
+      "JST-API-002",
+      "JST-API-004"
+    ],
+    "files": [
+      "docs/implementation-plan.md",
+      "spec/src/architecture.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/local_browser/prepared_operation_history.rs#prepared_operation_history_skips_prior_bodies_for_filtered_and_historical_pages",
+      "crates/jj-store-cli/tests/native_lifecycle/operation_history_pages.rs#prepared_native_operation_history_hydrates_only_deep_anchor_and_page_candidates",
+      "crates/jj-store-jj/src/query/prepared/operations/history/tests.rs#historical_operation_continuations_resume_without_replaying_prior_edges",
+      "crates/jj-store-cli/tests/native_rpc/inventory.rs#rpc_legacy_inventory_ignores_unrelated_objects",
+      "crates/jj-store-cli/tests/native_rpc/inventory.rs#native_kind_inventory_ignores_unrelated_objects",
+      "crates/jj-store-cli/tests/native_rpc/inventory.rs#inventory_deadlines_reject_ready_complete_io_after_the_budget"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-jj --lib --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 21.42s; test result: ok. 61 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 5.09s; 27.02s; .local/bounded-reads/performance/landing-jj-lib-062.log"
+      },
+      {
+        "command": "cargo test -p jj-store-wal --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 37.07s; test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 9.22s; test result: ok. 26 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 6.29s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.03s; test result: ok. 7 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.35s; test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.53s; test result: ok. 13 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.20s; test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.25s; test result: ok. 32 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 2.45s; test result: ok. 5 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.72s; test result: ok. 8 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.33s; test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.18s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.05s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s; test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.38s; test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s; 70.2s; .local/bounded-reads/performance/landing-wal-062.log"
+      },
+      {
+        "command": "cargo test -p jj-store-rpc --locked",
+        "result": "fail",
+        "failures": 7,
+        "note": "RPC tests did not start;seven test binaries fail to link on disk exhaustion (errno28). Environment issue retained;landing-rpc-062.log."
+      },
+      {
+        "command": "jj rebase -r @ -o nksqwmtt (main)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Clean main lqvkpvpm advanced onto verified nksqwmtt11042048;14 added/35 modified files;no conflicts or parallel main work."
+      },
+      {
+        "command": "python3 copy and byte-compare E-READ-057 through061 local evidence",
+        "result": "pass",
+        "failures": 0,
+        "note": "139 evidence log/result files copied into main ignored .local/bounded-reads/performance;temporary originals retained."
+      },
+      {
+        "command": "python3 remove main target/debug/incremental compiler cache",
+        "result": "pass",
+        "failures": 0,
+        "note": "Only disposable generated incremental cache removed after linker disk exhaustion;executables,deps,test evidence,services,fixtures and repositories retained.Disk available9.4GiB afterward."
+      },
+      {
+        "command": "cargo test -p jj-store-rpc --locked (first retry)",
+        "result": "fail",
+        "failures": 1,
+        "note": "18 RPC tests passed;replication_control could not execute truncated3472-byte artifact left by disk-full build.Permission denied(os13);deleted only that generated executable for relinking."
+      },
+      {
+        "command": "python3 remove truncated replication_control-637c8b5923dbd0d9 generated executable",
+        "result": "pass",
+        "failures": 0,
+        "note": "3472-byte nonexecutable artifact removed;normal Cargo relinking required.No source or service binary changes."
+      },
+      {
+        "command": "cargo test -p jj-store-rpc --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 4.44s; test result: ok. 6 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s; test result: ok. 2 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.48s; test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.44s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.09s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s; test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.60s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.04s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.10s; test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.07s; test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s; 10.88s; .local/bounded-reads/performance/landing-rpc-retry-062.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_rpc --locked -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 1m 33s; test result: ok. 15 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.62s; 96.94s; .local/bounded-reads/performance/landing-native-rpc-retry-062.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 15.42s; test result: ok. 228 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 61.98s; 79.37s; .local/bounded-reads/performance/landing-native-lifecycle-retry-062.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test local_browser --locked -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 10.73s; test result: ok. 37 passed; 0 failed; 2 ignored; 0 measured; 0 filtered out; finished in 46.23s; 59.72s; .local/bounded-reads/performance/landing-local-browser-retry-062.log"
+      },
+      {
+        "command": "cargo test -p jj-store-service --lib --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `test` profile [unoptimized] target(s) in 36.59s; test result: ok. 35 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 1.76s; 38.84s; .local/bounded-reads/performance/landing-service-lib-retry-062.log"
+      },
+      {
+        "command": "cargo check -p jj-store-jj -p jj-store-wal -p jj-store-service -p jj-store-rpc -p jj-store-cli --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "Finished `dev` profile [unoptimized] target(s) in 43.32s; 43.42s; .local/bounded-reads/performance/landing-packages-retry-062.log"
+      },
+      {
+        "command": "cargo fmt -p jj-store-jj -p jj-store-wal -p jj-store-service -p jj-store-rpc -p jj-store-cli -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "; 1.51s; .local/bounded-reads/performance/landing-rust-format-retry-062.log"
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "package boundaries ok (17 packages); 0.31s; .local/bounded-reads/performance/landing-boundaries-retry-062.log"
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "web architecture ok (988 modules); 0.46s; .local/bounded-reads/performance/landing-architecture-retry-062.log"
+      },
+      {
+        "command": "pnpm exec prettier --write docs/implementation-plan.md spec/src/architecture.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "docs/implementation-plan.md 124ms (unchanged)\nspec/src/architecture.md 94ms (unchanged)\nspec/src/milestones.md 1445ms; .local/bounded-reads/performance/landing-format-062.log"
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "> @lapismd/jj-store@0.1.0 spec:first /Users/stevejuma/code/lapismd/jj-store\n> spec-validator first\n\nSpec-first gate passed: 1 protected file(s), 2 canonical chapter(s).; .local/bounded-reads/performance/landing-spec-first-062.log"
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "> @lapismd/jj-store@0.1.0 spec:validate /Users/stevejuma/code/lapismd/jj-store\n> spec-validator validate\n\nSpecification validated: 5 validators, 23 chapters, 172 requirements.; .local/bounded-reads/performance/landing-spec-validation-062.log"
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "> @lapismd/jj-store@0.1.0 check:progress /Users/stevejuma/code/lapismd/jj-store\n> node scripts/check-progress.mjs\n\nprogress ok (139 tasks; evidence bookkeeping only); .local/bounded-reads/performance/landing-progress-062.log"
+      },
+      {
+        "command": "pnpm exec prettier --check docs/implementation-plan.md spec/src/architecture.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "Checking formatting...\nAll matched files use Prettier code style!; .local/bounded-reads/performance/landing-docs-check-062.log"
+      },
+      {
+        "command": "python3 compare main ledger to parent-evidence-062.json",
+        "result": "pass",
+        "failures": 0,
+        "note": "502 historical evidence entries JSON-identical;E-READ-062 sole new entry."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "518 distinct Rust tests passed:61 query library,121 WAL,21 RPC,15 native RPC,228 native lifecycle,37 local browser and35 service library;two explicit scale tests ignored.Verified delivery through E-READ-061 lands in main;all502 parent evidence entries retained JSON-identically.Temporary workspace remains open.No milestone promotion.",
+      "Deep log/evolution,dedicated kind/predecessor/copy/code-search lookup,retained oversized comparisons/change groups/extreme-filter candidates and remaining local application search/index remain delivery work.",
+      "Complete scale/RSS/latency/pressure/cancellation/fault,cold-browser/real-RustFS/release and inherited Help/generated-reference/source-review qualification remain deferred.Installation-reference drift remains a recorded failing qualification gate;macOS debug link warnings remain unqualified for release.",
+      "Existing source fixtures,Linux checkout,installed binaries,services and unrelated workspaces retained;generated main incremental cache alone removed to recover disk admission."
+    ],
+    "next": "Commit verified E-READ-062 in main,set landed bookmark,rebase clean bounded-reads continuation onto it,and continue default deep-log paging first before general filtered/evolution continuation work."
   }
 ]
 ```

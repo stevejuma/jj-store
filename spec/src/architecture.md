@@ -1,5 +1,12 @@
 # Architecture
 
+The E-READ-057 through E-READ-061 delivery stack lands into the clean main
+workspace without rewriting its implementation evidence. Combined verification
+covers prepared native/local operation history and bounded native inventory
+through their direct query, factory and RPC consumers. Retain the temporary
+workspace for further performance delivery. This integration does not complete
+the separately deferred scale, fault, browser, RustFS or release qualification.
+
 Native inventory pages scan one checked immutable catalog selection under
 descriptor, record-read, encoded-byte, concurrency and deadline bounds. Process
 retention holds at most 64 bounded manifest snapshots for five minutes, without
