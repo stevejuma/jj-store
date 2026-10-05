@@ -17,6 +17,7 @@
     REPOSITORY_LOG_ROW_HEIGHT,
     REPOSITORY_LOG_STROKE_WIDTH,
     buildRepositoryLogGraph,
+    repositoryLogContentLeft,
     repositoryLogConvergePath,
     repositoryLogLaneStem,
     repositoryLogLaneX,
@@ -93,7 +94,12 @@
   }
 </script>
 
-<div class="community-revision-graph" role="list" aria-label={graphLabel}>
+<div
+  class="community-revision-graph"
+  style:--community-revision-graph-lane-width="{svgWidth}px"
+  role="list"
+  aria-label={graphLabel}
+>
   {#snippet revisionRow(row: RepositoryLogGraphRow)}
     {@const rowHeight =
       rowHeights[row.revision.eventId] ?? REPOSITORY_LOG_ROW_HEIGHT}
@@ -111,7 +117,7 @@
       <div
         class="community-revision-graph__row"
         class:community-revision-graph__row--tip={row.isTip}
-        style:padding-left="{svgWidth}px"
+        style:padding-left="{repositoryLogContentLeft(row)}px"
         style:min-height="{REPOSITORY_LOG_ROW_HEIGHT}px"
         style:--community-revision-graph-row-height="{rowHeight}px"
         data-revision-id={row.revision.eventId}
@@ -222,7 +228,7 @@
 <style>
   .community-revision-graph {
     container-type: inline-size;
-    min-width: 0;
+    min-width: calc(var(--community-revision-graph-lane-width) + 20rem);
     list-style: none;
     margin: 0;
     padding: 0;

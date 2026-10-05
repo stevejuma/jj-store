@@ -726,35 +726,38 @@ width; bookmark headings remain sticky during list scrolling. Column Canvas
 headers use the theme-derived neutral grey background and bottom border;
 operation-head status rows use a neighboring neutral grey so the information bar
 reads separately from the header. Shell bodies retain padded content insets, and
-collapsed columns span the usable padded body area. Graph content reserves the
-full graph lane width so author avatars align across forks and merges. JJ Log
-and Op Log rows are square-edged and retain bottom dividers through the final
-visible row. Column warnings and failures use the shared Design Core shadcn
-Alert composition with a semantic icon and theme-derived tinted background; they
-are square, full width and separated from content only by a bottom border.
-Revision rows with both a commit ID and JJ change ID use a shared split copy
-control with neutral GIT and accent JJ chips and no copy icons. Each semantic
-button copies its complete underlying native identifier and exposes it in a
-shadcn tooltip. At rest the display contains only a configurable leading prefix
-(default four), with no dots or suffix. Hover or keyboard focus redistributes
-space inside a constant outer width, revealing a longer active prefix (default
-five), two dots and the final two characters; short IDs remain whole. The
-inactive side keeps only its identifying chip. Both sides remain tappable
-without hover; reduced motion disables the transition. Success or failure
-feedback belongs only to the clicked side and resets after 1.5 seconds. The
-expanded half retains its chip beside a tick and 8px `Copied` text (or a warning
-and `Retry`), with a live announcement. Feedback keeps the tapped half expanded
-on touch devices. When another half expands, the previous half keeps its chip
-and independent feedback tint. CSS animates the grid redistribution; pointer,
-keyboard focus and copy feedback select the active side. Either identifier may
-be absent; no empty button is rendered. A single identifier shows the expanded
-prefix, two dots and final two characters immediately, without requiring hover
-or focus. The default control uses 11px resting identifiers, 10px expanded
-identifiers, 9px chips and a roughly 121px total width at the standard 16px root
-scale. Each half retains 5px inline padding, including at the trailing edge
-during hover and feedback. Graph rows wrap the ID control below metadata before
-bookmark chips can overlap it. Clipboard live announcements remain scoped to the
-split control; operation IDs retain their separately labelled legacy control.
+collapsed columns span the usable padded body area. Each graph row places its
+author and metadata after that row's occupied lanes, without aligning avatars
+across rows. Wide graphs preserve readable row content and scroll horizontally
+inside the existing column viewport while retaining vertical virtualization,
+selection and paging. JJ Log and Op Log rows are square-edged and retain bottom
+dividers through the final visible row. Column warnings and failures use the
+shared Design Core shadcn Alert composition with a semantic icon and
+theme-derived tinted background; they are square, full width and separated from
+content only by a bottom border. Revision rows with both a commit ID and JJ
+change ID use a shared split copy control with neutral GIT and accent JJ chips
+and no copy icons. Each semantic button copies its complete underlying native
+identifier and exposes it in a shadcn tooltip. At rest the display contains only
+a configurable leading prefix (default four), with no dots or suffix. Hover or
+keyboard focus redistributes space inside a constant outer width, revealing a
+longer active prefix (default five), two dots and the final two characters;
+short IDs remain whole. The inactive side keeps only its identifying chip. Both
+sides remain tappable without hover; reduced motion disables the transition.
+Success or failure feedback belongs only to the clicked side and resets after
+1.5 seconds. The expanded half retains its chip beside a tick and 8px `Copied`
+text (or a warning and `Retry`), with a live announcement. Feedback keeps the
+tapped half expanded on touch devices. When another half expands, the previous
+half keeps its chip and independent feedback tint. CSS animates the grid
+redistribution; pointer, keyboard focus and copy feedback select the active
+side. Either identifier may be absent; no empty button is rendered. A single
+identifier shows the expanded prefix, two dots and final two characters
+immediately, without requiring hover or focus. The default control uses 11px
+resting identifiers, 10px expanded identifiers, 9px chips and a roughly 121px
+total width at the standard 16px root scale. Each half retains 5px inline
+padding, including at the trailing edge during hover and feedback. Graph rows
+wrap the ID control below metadata before bookmark chips can overlap it.
+Clipboard live announcements remain scoped to the split control; operation IDs
+retain their separately labelled legacy control.
 
 Operation-message text recognizes complete Git SHA-1 commit IDs (40 hexadecimal
 characters), native commit IDs (128) and change IDs (32), rendering them through

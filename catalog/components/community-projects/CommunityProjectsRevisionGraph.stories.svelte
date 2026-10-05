@@ -25,6 +25,17 @@
     message: `Native revision ${index + 1}`,
     createdAt: NOW - index,
   })).reverse();
+  const wideBase = { ...linear.at(-1)!, message: "Shared base" };
+  const wide = [
+    ...Array.from({ length: 32 }, (_, index) => ({
+      ...wideBase,
+      eventId: (index + 500).toString(16).padStart(128, "0"),
+      changeId: (index + 500).toString(16).padStart(32, "0"),
+      parents: [wideBase.eventId],
+      message: `Independent branch ${index + 1}`,
+    })),
+    wideBase,
+  ];
   const { Story } = defineMeta({
     title: "JJ Store/Components/Revision graph",
     component: CommunityProjectsRevisionGraph,
@@ -115,6 +126,47 @@
 </Story>
 
 <Story
+  name="Wide graph keeps row content readable"
+  args={{ revisions: wide, devices: [], onSelect: fn() }}
+  play={async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const viewport =
+      canvasElement.querySelector<HTMLElement>(".wide-graph-scroll")!;
+    await waitFor(() => {
+      const avatars = [
+        ...canvasElement.querySelectorAll('[data-ui-part="git-author"]'),
+      ];
+      expect(avatars.length).toBeGreaterThan(2);
+      const xs = avatars.map((avatar) => avatar.getBoundingClientRect().left);
+      expect(Math.max(...xs) - Math.min(...xs)).toBeGreaterThan(10);
+    });
+    await expect(viewport.scrollWidth).toBeGreaterThan(viewport.clientWidth);
+    const first = canvas.getByRole("button", {
+      name: "Independent branch 1",
+    });
+    await expect(
+      first.closest(".community-revision-graph-message")!.clientWidth,
+    ).toBeGreaterThan(200);
+    await expect(first.scrollWidth).toBeLessThanOrEqual(first.clientWidth);
+    first.focus();
+    await userEvent.keyboard("{Enter}");
+    await expect(args.onSelect).toHaveBeenLastCalledWith(wide[0]);
+    viewport.scrollLeft = 120;
+    await waitFor(() => expect(viewport.scrollLeft).toBeGreaterThan(0));
+    await expect(viewport.scrollTop).toBe(0);
+    viewport.scrollTop = 600;
+    await waitFor(() => expect(viewport.scrollTop).toBeGreaterThan(0));
+    await expect(
+      canvasElement.querySelectorAll('[data-ui-part="virtual-row"]').length,
+    ).toBeLessThan(wide.length);
+  }}
+>
+  {#snippet template(args)}<div class="graph-scroll wide-graph-scroll">
+      <CommunityProjectsRevisionGraph {...args} />
+    </div>{/snippet}
+</Story>
+
+<Story
   name="Git-backed operation message copies"
   args={{
     ...gitOperations,
@@ -171,5 +223,10 @@
   .graph-scroll {
     height: 24rem;
     overflow: auto;
+  }
+
+  .wide-graph-scroll {
+    width: 24rem;
+    max-width: 100%;
   }
 </style>

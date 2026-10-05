@@ -89452,6 +89452,228 @@ entries.
     ],
     "next": "Narrow core-browsing plan accepted and landed; keep the clean temporary workspace available for separately scoped follow-up.",
     "result": "pending"
+  },
+  {
+    "id": "E-UI-101",
+    "tasks": ["M4.9", "M4.10"],
+    "requirements": ["JST-UI-003", "JST-UI-005"],
+    "date": "2026-10-05",
+    "kind": "Row-local revision graph layout and horizontal scrolling",
+    "revision": "enclosing Jujutsu change zpvqmolk",
+    "before": "One focused wide-graph story observes identical avatar positions (0px spread). Two corrected upstream native/styled Body stories observe forced vertical orientation. The original Linux page uses 320px padding for every visible row and approximately 30px of text width.",
+    "versions": "macOS ARM64; Node 26.9.0; pnpm 10.32.1; Svelte 5.57.1; Vitest 4.1.11; Storybook 10.5.7. Existing ignored Design Core 0.1.2 local source substitution; optional Body API implemented and committed separately in source change wsqpzxvk. Manifest ranges remain unchanged.",
+    "formats": "UI layout and additive Design Core Body orientation only. No API/schema, native/companion/storage/WAL/receipt, route, credential or installed executable changes. Existing preview fixture and source repositories retained.",
+    "scope": "Reuse per-row occupied-lane padding. Reserve graph width plus 20rem of readable content; enable both scroll axes on JJ/Op/Evo column bodies through the public upstream API. Retain existing SVG lanes, measured heights, selected files, virtualization and paging. Source-first API extension is a separate Design Core change, not a consumer override. No advanced-query work.",
+    "files": [
+      "web/src/lib/ui/community-projects/CommunityProjectsRevisionGraph.svelte",
+      "web/src/lib/ui/community-projects/CommunityProjectsRepositoryLog.svelte",
+      "web/src/lib/ui/store-application/StoreEvolutionColumn.svelte",
+      "catalog/components/community-projects/CommunityProjectsRevisionGraph.stories.svelte",
+      "catalog/components/store-application/RepositoryReview.stories.svelte",
+      "spec/src/ui.md",
+      "spec/src/api.md",
+      "spec/src/milestones.md"
+    ],
+    "runs": [
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRevisionGraph.stories.svelte -t \"Wide graph keeps row content readable\"",
+        "result": "pass",
+        "failures": 0,
+        "note": "Initial display-name filter skipped 5 tests; corrected to export-name regex. graph-before.log; not regression evidence."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRevisionGraph.stories.svelte -t \"Wide|wide\" (before)",
+        "result": "fail",
+        "failures": 1,
+        "note": "graph-before 2.log: avatar spread 0, expected >10."
+      },
+      {
+        "command": "pnpm exec vitest run --project storybook src/shared/shadcn/column-canvas/ColumnCanvasScroll.stories.svelte (Design Core before/initial attempts)",
+        "result": "fail",
+        "failures": 1,
+        "note": "Initial CSF namespace metadata parser failure; corrected direct Root import. Second fixture lacked template snippet and produced 2 failures/2 errors; corrected fixture before acceptance."
+      },
+      {
+        "command": "pnpm exec vitest run --project storybook src/shared/shadcn/column-canvas/ColumnCanvasScroll.stories.svelte (Design Core corrected before)",
+        "result": "fail",
+        "failures": 2,
+        "note": "/tmp/design-core-column-body-before 3.log: both strategies force vertical orientation."
+      },
+      {
+        "command": "pnpm exec vitest run --project storybook src/shared/shadcn/column-canvas/ColumnCanvasScroll.stories.svelte (Design Core initial after)",
+        "result": "fail",
+        "failures": 2,
+        "note": "Synthetic Storybook ArrowRight does not perform native scrolling; corrected new harness to assert viewport focus and programmatic movement. Real wheel gestures verified separately."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRevisionGraph.stories.svelte -t \"Wide|wide\" (initial after)",
+        "result": "fail",
+        "failures": 1,
+        "note": "graph-after.log: test measured intrinsic 145px button width; corrected to measure available message width and assert title is untruncated."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRevisionGraph.stories.svelte catalog/components/community-projects/CommunityProjectsRepositoryLog.stories.svelte catalog/components/store-application/RepositoryReview.stories.svelte catalog/components/store-application/StoreEvolutionColumn.stories.svelte",
+        "result": "pass",
+        "failures": 0,
+        "note": "final-stories.log:21 focused cold production-component stories pass, including accessibility/runtime guards. Direct component consumers only."
+      },
+      {
+        "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/community-projects/CommunityProjectsRevisionGraph.stories.svelte -t \"Wide|wide\" (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "graph-final.log:1 passes/4 deliberately skipped after typed query-option correction."
+      },
+      {
+        "command": "pnpm web:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "web-check.log:0 errors/0 warnings."
+      },
+      {
+        "command": "pnpm catalog:check (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "catalog-check.log: unsupported exact option in Storybook typed getByRole; removed redundant option, preserving default exact name matching."
+      },
+      {
+        "command": "pnpm catalog:check (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "catalog-check-final.log:0 errors/0 warnings;192 catalog modules."
+      },
+      {
+        "command": "pnpm exec vitest run --project storybook src/shared/shadcn/column-canvas/ColumnCanvasScroll.stories.svelte src/shared/shadcn/column-canvas/ColumnCanvas.stories.svelte (Design Core)",
+        "result": "pass",
+        "failures": 0,
+        "note": "/tmp/design-core-column-body-final-stories.log:16 passes; final same-family metadata rerun 2 passes in final-exact.log."
+      },
+      {
+        "command": "pnpm exec vitest run --project unit src/shared/shadcn/column-canvas/column-canvas-docs.spec.ts (Design Core)",
+        "result": "pass",
+        "failures": 0,
+        "note": "/tmp/design-core-column-body-units.log:4 passes."
+      },
+      {
+        "command": "pnpm check:types (Design Core)",
+        "result": "pass",
+        "failures": 0,
+        "note": "/tmp/design-core-column-body-types.log:source/shell/filter/source-consumer checks each have 0 errors/warnings."
+      },
+      {
+        "command": "pnpm spec:validate (Design Core initial)",
+        "result": "fail",
+        "failures": 2,
+        "note": "New story title lacked mapping and appended acceptance exceeded word/sentence limits; kept existing family title and condensed same requirement without widening scope."
+      },
+      {
+        "command": "pnpm spec:validate; pnpm spec:first (Design Core final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Final source-spec logs:8 validators/30 chapters/258 requirements;4 protected files/2 canonical chapters. Preserve prior verification table bytes outside one row."
+      },
+      {
+        "command": "pnpm exec prettier --write (changed Svelte/UI/canonical source files); pnpm exec prettier --check (Design Core changed code/docs/layout chapter)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Formatting completed. Source verification retains one changed row rather than whole-table alignment churn."
+      },
+      {
+        "command": "pnpm check:ui-ownership",
+        "result": "pass",
+        "failures": 0,
+        "note": "ownership.log:1 validator; no new Community dependency or copied component."
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "architecture.log:993 production modules."
+      },
+      {
+        "command": "jj rebase -r uqwlnutu -d zpvqmolk; jj workspace update-stale (preview)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Original clean preview reused. Initial parent snapshot was stale; refreshed source workspace then updated preview before final live evidence."
+      },
+      {
+        "command": "JJ_STORE_DEV_ROOT=/Users/stevejuma/code/lapismd/jj-store-codex-preview/.local/codex-preview JJ_STORE_DEV_PORT=7470 JJ_STORE_DEV_BACKEND_PORT=7472 JJ_STORE_DEV_SERVER=/Users/stevejuma/code/lapismd/jj-store/target/debug/jj-store pnpm dev:ui",
+        "result": "pass",
+        "failures": 0,
+        "note": "Two explicit preview restarts reuse existing binaries/fixture. Initial live page retained old compiled Body orientation; final restart follows forced Vite dependency regeneration. No build/reset or unrelated main 7460 restart."
+      },
+      {
+        "command": "pnpm exec vite optimize --config web/vite.config.ts --force (preview)",
+        "result": "pass",
+        "failures": 0,
+        "note": "Public Vite cache regeneration; deprecated-command notice recorded. Clears stale compiled dependency, not a source patch or package install."
+      },
+      {
+        "command": "CUA actual Linux split view at 1005x 988: horizontal/vertical wheel input and screenshot",
+        "result": "pass",
+        "failures": 0,
+        "note": "linux-wheel-proof.json and linux-after.png:371px viewport/640px content;horizontal 0→149px with vertical 0;vertical→170.5px with horizontal 149 retained;restored 0/0. First row padding 44/56/68/80px; message widths 418/406/394/382px.23 rendered rows retain virtualization. Original legacy-tab focus and transient loading lookup failures recovered through fresh validation tab."
+      },
+      {
+        "command": "pnpm spec:validate (initial)",
+        "result": "pass",
+        "failures": 0,
+        "note": "spec.log: 5 validators, 23 chapters, 172 requirements."
+      },
+      {
+        "command": "pnpm spec:first (initial)",
+        "result": "fail",
+        "failures": 1,
+        "note": "spec-first.log: mapped web changes require api.md as well as ui.md. Added browser scroll/paging boundary documentation to the owning API chapter."
+      },
+      {
+        "command": "pnpm check:progress (initial)",
+        "result": "pass",
+        "failures": 0,
+        "note": "progress.log: 139 tasks; evidence bookkeeping only."
+      },
+      {
+        "command": "pnpm spec:validate (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "spec-final.log: 5 validators, 23 chapters, 172 requirements."
+      },
+      {
+        "command": "pnpm spec:first (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "spec-first-final.log: 5 protected files, 3 canonical chapters."
+      },
+      {
+        "command": "pnpm check:progress (bookkeeping attempt)",
+        "result": "fail",
+        "failures": 2,
+        "note": "New-entry prose spacing accidentally changed its two task identifiers; restored exact M4.9 and M4.10 references before final validation."
+      },
+      {
+        "command": "pnpm exec prettier --write spec/src/api.md spec/src/milestones.md; pnpm exec prettier --write spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "ledger-final-format.log and ledger-final-format2.log: canonical/evidence formatting."
+      },
+      {
+        "command": "pnpm check:progress (final)",
+        "result": "pass",
+        "failures": 0,
+        "note": "progress-final2.log: 139 tasks; evidence bookkeeping only."
+      },
+      {
+        "command": "pnpm exec prettier --check catalog/components/community-projects/CommunityProjectsRevisionGraph.stories.svelte catalog/components/store-application/RepositoryReview.stories.svelte web/src/lib/ui/community-projects/CommunityProjectsRepositoryLog.svelte web/src/lib/ui/community-projects/CommunityProjectsRevisionGraph.svelte web/src/lib/ui/store-application/StoreEvolutionColumn.svelte spec/src/ui.md spec/src/api.md spec/src/milestones.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "final-format-check.log: all eight changed files use Prettier style."
+      }
+    ],
+    "result": "pending",
+    "remaining": [
+      "Design Core package publication and registry-resolved consumer acceptance remain separate; current dev uses the existing local source validation setup.",
+      "Visual review/baselines remain pending. Rust/backend, root aggregate, full repository/release/fault suites are out of scope for this UI slice."
+    ],
+    "next": "Retain the verified UI slice in bounded-reads and the refreshed 7470 preview; stop after committing. Keep advanced-query work deferred."
   }
 ]
 ```

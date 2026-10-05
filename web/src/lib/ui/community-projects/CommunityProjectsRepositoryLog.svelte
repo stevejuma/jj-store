@@ -189,7 +189,7 @@
         controls={searchId}
         bind:expanded={searchShown}
       />
-      <ColumnCanvas.Body>
+      <ColumnCanvas.Body orientation="both">
         {#if hasSearch && controller}<div id={searchId} hidden={!searchShown}>
             {#if searchShown}<StoreHistoryQuery {controller} />{/if}
           </div>{/if}

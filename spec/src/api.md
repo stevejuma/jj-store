@@ -16,11 +16,15 @@ once readiness is confirmed. Failed or canceled episodes remain explicit; do not
 spin retry loops. Navigation aborts obsolete observation. Files-first loading,
 independent last-change metadata and bounded bookmark windows remain intact.
 Ordinary Commits recovery includes exact-operation core task observation.
-Commit/diff navigation in Commits and Branches uses the pinned commit directly
-without resolving an unused change-reference inventory. Files reference
-selection retains its required target validation. Ordinary setup presents
-automatic history maintenance and hides advanced inventory controls when this
-capability is enabled.
+Revision, operation and evolution graph columns scroll both axes in their
+existing viewport. Row content follows each row's occupied lanes while vertical
+virtualization retains the same bounded page and selection. Horizontal movement
+does not request additional history or change operation pins. Commit/diff
+navigation in Commits and Branches uses the pinned commit directly without
+resolving an unused change-reference inventory. Files reference selection
+retains its required target validation. Ordinary setup presents automatic
+history maintenance and hides advanced inventory controls when this capability
+is enabled.
 
 The native browser can explicitly prepare operation or copy inventories at its
 selected operation through the existing kind-task routes. One preparation flow

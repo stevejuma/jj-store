@@ -13,7 +13,7 @@
 </script>
 
 <Story
-  name="Shell and graph alignment"
+  name="Shell and row-local graph spacing"
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const navigationHeader = canvasElement.querySelector<HTMLElement>(
@@ -98,7 +98,7 @@
       );
       expect(avatars.length).toBeGreaterThan(2);
       const xs = avatars.map((node) => node.getBoundingClientRect().left);
-      expect(Math.max(...xs) - Math.min(...xs)).toBeLessThan(1);
+      expect(Math.max(...xs) - Math.min(...xs)).toBeGreaterThan(1);
     });
     await userEvent.click(
       canvas.getByRole("button", {

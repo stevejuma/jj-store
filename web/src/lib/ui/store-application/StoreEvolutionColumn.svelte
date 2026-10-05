@@ -19,7 +19,7 @@
       onclick={() => void controller.actions.selectEvolution(null)}
     />
   </ColumnCanvas.Header>
-  <ColumnCanvas.Body>
+  <ColumnCanvas.Body orientation="both">
     {#if evolution.error}
       <CommunityProjectsColumnAlert
         title="Evolution unavailable"
