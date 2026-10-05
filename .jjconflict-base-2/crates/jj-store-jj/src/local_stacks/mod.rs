@@ -2,6 +2,7 @@
 mod basic;
 mod config;
 mod content;
+mod graph;
 mod hunks;
 mod inspection;
 mod mutations;
@@ -51,6 +52,24 @@ fn jj(error: impl std::fmt::Display) -> Error {
 #[schemars(rename = "LocalStacksCommand")]
 pub enum Command {
     Refresh,
+    Move {
+        commit: String,
+        target: String,
+        placement: Placement,
+    },
+    Squash {
+        commit: String,
+        target: String,
+    },
+    Uncommit {
+        commit: String,
+    },
+    Rebase {
+        branch: String,
+    },
+    SquashBranch {
+        branch: String,
+    },
     Setup {
         name: String,
         target: String,
@@ -423,6 +442,21 @@ pub async fn execute(access: Arc<dyn Access>, root: PathBuf, request: Request) -
                 }
                 Command::Transfer { .. } | Command::Split { .. } | Command::Edit { .. } => {
                     content::execute(
+                        tx.repo_mut(),
+                        &repo,
+                        &name,
+                        &settings,
+                        &config,
+                        &request.command,
+                    )
+                    .await?;
+                }
+                Command::Move { .. }
+                | Command::Squash { .. }
+                | Command::Uncommit { .. }
+                | Command::Rebase { .. }
+                | Command::SquashBranch { .. } => {
+                    graph::execute(
                         tx.repo_mut(),
                         &repo,
                         &name,

@@ -33331,6 +33331,57 @@
                       {
                         "type": "object",
                         "properties": {
+                          "commit": { "type": "string" },
+                          "target": { "type": "string" },
+                          "placement": {
+                            "type": "string",
+                            "enum": ["above", "below"]
+                          },
+                          "kind": { "type": "string", "const": "move" }
+                        },
+                        "additionalProperties": false,
+                        "required": ["kind", "commit", "target", "placement"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "commit": { "type": "string" },
+                          "target": { "type": "string" },
+                          "kind": { "type": "string", "const": "squash" }
+                        },
+                        "additionalProperties": false,
+                        "required": ["kind", "commit", "target"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "commit": { "type": "string" },
+                          "kind": { "type": "string", "const": "uncommit" }
+                        },
+                        "additionalProperties": false,
+                        "required": ["kind", "commit"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "branch": { "type": "string" },
+                          "kind": { "type": "string", "const": "rebase" }
+                        },
+                        "additionalProperties": false,
+                        "required": ["kind", "branch"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "branch": { "type": "string" },
+                          "kind": { "type": "string", "const": "squash_branch" }
+                        },
+                        "additionalProperties": false,
+                        "required": ["kind", "branch"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
                           "name": { "type": "string" },
                           "target": { "type": "string" },
                           "kind": { "type": "string", "const": "setup" }
@@ -33736,6 +33787,57 @@
                         },
                         "required": ["kind"],
                         "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "commit": { "type": "string" },
+                          "target": { "type": "string" },
+                          "placement": {
+                            "type": "string",
+                            "enum": ["above", "below"]
+                          },
+                          "kind": { "type": "string", "const": "move" }
+                        },
+                        "additionalProperties": false,
+                        "required": ["kind", "commit", "target", "placement"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "commit": { "type": "string" },
+                          "target": { "type": "string" },
+                          "kind": { "type": "string", "const": "squash" }
+                        },
+                        "additionalProperties": false,
+                        "required": ["kind", "commit", "target"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "commit": { "type": "string" },
+                          "kind": { "type": "string", "const": "uncommit" }
+                        },
+                        "additionalProperties": false,
+                        "required": ["kind", "commit"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "branch": { "type": "string" },
+                          "kind": { "type": "string", "const": "rebase" }
+                        },
+                        "additionalProperties": false,
+                        "required": ["kind", "branch"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "branch": { "type": "string" },
+                          "kind": { "type": "string", "const": "squash_branch" }
+                        },
+                        "additionalProperties": false,
+                        "required": ["kind", "branch"]
                       },
                       {
                         "type": "object",

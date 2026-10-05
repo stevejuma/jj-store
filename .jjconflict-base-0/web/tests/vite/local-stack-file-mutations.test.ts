@@ -89,3 +89,50 @@ test("local file mutations map displayed sources to exact native commit selectio
     selections: [{ source: "wip", hunks: ["native:" + "a".repeat(64)] }],
   });
 });
+test("local graph actions use exact displayed commits and branch boundaries", () => {
+  const snapshot = workspaceFixture();
+  const stack = snapshot.stacks[0]!,
+    first = stack.commits[0]!,
+    second = stack.commits[1]!;
+  expect(
+    localStacksCommand(snapshot, {
+      kind: "reorder_commit",
+      commit: first.id,
+      direction: "up",
+    }),
+  ).toMatchObject({ target: second.id, placement: "above" });
+  expect(
+    localStacksCommand(snapshot, {
+      kind: "reorder_commit",
+      commit: first.id,
+      target: second.id,
+      placement: "below",
+    }),
+  ).toEqual({
+    kind: "move",
+    commit: first.id,
+    target: second.id,
+    placement: "below",
+  });
+  expect(
+    localStacksCommand(snapshot, {
+      kind: "squash",
+      commit: first.id,
+      target: second.id,
+    }),
+  ).toEqual({ kind: "squash", commit: first.id, target: second.id });
+  expect(
+    localStacksCommand(snapshot, { kind: "uncommit", commit: first.id }),
+  ).toEqual({ kind: "uncommit", commit: first.id });
+  expect(
+    localStacksCommand(snapshot, { kind: "rebase", stack: stack.id }),
+  ).toEqual({ kind: "rebase", branch: stack.name });
+  expect(() =>
+    localStacksCommand(snapshot, {
+      kind: "reorder_commit",
+      commit: first.id,
+      target: "hidden",
+      placement: "above",
+    }),
+  ).toThrow("displayed");
+});

@@ -33818,6 +33818,35 @@ export interface operations {
                 kind: "refresh";
               }
             | {
+                commit: string;
+                target: string;
+                /** @enum {string} */
+                placement: "above" | "below";
+                /** @constant */
+                kind: "move";
+              }
+            | {
+                commit: string;
+                target: string;
+                /** @constant */
+                kind: "squash";
+              }
+            | {
+                commit: string;
+                /** @constant */
+                kind: "uncommit";
+              }
+            | {
+                branch: string;
+                /** @constant */
+                kind: "rebase";
+              }
+            | {
+                branch: string;
+                /** @constant */
+                kind: "squash_branch";
+              }
+            | {
                 name: string;
                 target: string;
                 /** @constant */
@@ -34083,6 +34112,35 @@ export interface operations {
             | {
                 /** @constant */
                 kind: "refresh";
+              }
+            | {
+                commit: string;
+                target: string;
+                /** @enum {string} */
+                placement: "above" | "below";
+                /** @constant */
+                kind: "move";
+              }
+            | {
+                commit: string;
+                target: string;
+                /** @constant */
+                kind: "squash";
+              }
+            | {
+                commit: string;
+                /** @constant */
+                kind: "uncommit";
+              }
+            | {
+                branch: string;
+                /** @constant */
+                kind: "rebase";
+              }
+            | {
+                branch: string;
+                /** @constant */
+                kind: "squash_branch";
               }
             | {
                 name: string;

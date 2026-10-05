@@ -2494,3 +2494,10 @@ are rejected. Partial text deltas use native squash with emptied sources
 retained, without reconstructing the megamerge. Binary, conflict, mode/type and
 bounded-diff limits remain whole-file-only. Net branch comparisons remain
 presentation-only.
+
+Local graph commands use native `move_commits` insertion/reordering and full
+`squash_commits` for squash/uncommit. WIP is retained as a native child; graph
+rewrites do not reconstruct the merge. Branch squash/rebase discovers at most
+500 commits in its segment and stops at the next user bookmark boundary. Visible
+source identity, configured immutability and workspace-target protection are
+validated at preview and apply; retention commits are not graph sources.

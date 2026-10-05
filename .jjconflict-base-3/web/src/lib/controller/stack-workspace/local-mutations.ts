@@ -17,6 +17,12 @@ export const localMutationKinds = [
   "transfer",
   "split",
   "edit_commit",
+  "move_commit",
+  "reorder_commit",
+  "squash",
+  "squash_branch",
+  "uncommit",
+  "rebase",
 ] as const;
 export function localMutationCommand(
   snapshot: WorkspaceSnapshot,
@@ -113,6 +119,67 @@ export function localMutationCommand(
         message: command.message,
         selections: localFileSelections(snapshot, command.selections ?? []),
       };
+    case "move_commit": {
+      const selected = stack(command.stack);
+      const head = selected.heads.find(
+        (h) => h.name === (command.branch ?? selected.name),
+      );
+      if (!head)
+        throw new WorkspaceCommandError(
+          "invalid",
+          "Choose a branch in the destination stack.",
+        );
+      return {
+        kind: "move",
+        commit: commit(command.commit),
+        target: head.commit,
+        placement: "above",
+      };
+    }
+    case "reorder_commit": {
+      if ("target" in command)
+        return {
+          kind: "move",
+          commit: commit(command.commit),
+          target: commit(command.target),
+          placement: command.placement,
+        };
+      const owner = snapshot.stacks.find((s) =>
+        s.commits.some((c) => c.id === command.commit),
+      );
+      const index =
+        owner?.commits.findIndex((c) => c.id === command.commit) ?? -1;
+      const target =
+        owner?.commits[index + (command.direction === "up" ? 1 : -1)];
+      if (!target)
+        throw new WorkspaceCommandError(
+          "invalid",
+          "This commit is already at the branch boundary.",
+        );
+      return {
+        kind: "move",
+        commit: commit(command.commit),
+        target: commit(target.id),
+        placement: command.direction === "up" ? "above" : "below",
+      };
+    }
+    case "squash":
+      return {
+        kind: "squash",
+        commit: commit(command.commit),
+        target: commit(command.target),
+      };
+    case "uncommit":
+      return { kind: "uncommit", commit: commit(command.commit) };
+    case "rebase":
+      return { kind: "rebase", branch: stack(command.stack).name };
+    case "squash_branch":
+      if (!stack(command.stack).heads.some((h) => h.name === command.name))
+        throw new WorkspaceCommandError(
+          "invalid",
+          "Choose an available branch.",
+        );
+      return { kind: "squash_branch", branch: command.name };
     default:
       return null;
   }

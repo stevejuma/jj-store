@@ -1467,3 +1467,277 @@ async fn native_hunk_tokens_move_only_selected_content_and_reject_stale_display_
     );
     assert_eq!(refresh(root).await.operation, state.operation);
 }
+#[tokio::test]
+async fn graph_mutations_move_reorder_squash_uncommit_without_rebuilding_merge() {
+    let temp = fixture();
+    let root = temp.path();
+    let mut state = refresh(root).await;
+    state = run(
+        root,
+        Some(&state),
+        Command::Setup {
+            name: "Graph".into(),
+            target: "main".into(),
+        },
+    )
+    .await;
+    for branch in ["topic-one", "topic-two"] {
+        state = run(
+            root,
+            Some(&state),
+            Command::Apply {
+                branch: branch.into(),
+            },
+        )
+        .await;
+    }
+    let merge_change = stock(root, &["log", "-r", "@-", "--no-graph", "-T", "change_id"]);
+    let one = stock(
+        root,
+        &["log", "-r", "topic-one", "--no-graph", "-T", "commit_id"],
+    );
+    let two = stock(
+        root,
+        &["log", "-r", "topic-two", "--no-graph", "-T", "commit_id"],
+    );
+    state = run(
+        root,
+        Some(&state),
+        Command::Move {
+            commit: one,
+            target: two,
+            placement: local_stacks::Placement::Above,
+        },
+    )
+    .await;
+    assert_eq!(
+        stock(
+            root,
+            &["log", "-r", "topic-one-", "--no-graph", "-T", "commit_id"]
+        ),
+        stock(
+            root,
+            &["log", "-r", "topic-two", "--no-graph", "-T", "commit_id"]
+        )
+    );
+    let moved = stock(
+        root,
+        &["log", "-r", "topic-one", "--no-graph", "-T", "commit_id"],
+    );
+    let two = stock(
+        root,
+        &["log", "-r", "topic-two", "--no-graph", "-T", "commit_id"],
+    );
+    state = run(
+        root,
+        Some(&state),
+        Command::Move {
+            commit: moved,
+            target: two,
+            placement: local_stacks::Placement::Below,
+        },
+    )
+    .await;
+    assert_eq!(
+        stock(
+            root,
+            &["log", "-r", "topic-two-", "--no-graph", "-T", "commit_id"]
+        ),
+        stock(
+            root,
+            &["log", "-r", "topic-one", "--no-graph", "-T", "commit_id"]
+        )
+    );
+    let one = stock(
+        root,
+        &["log", "-r", "topic-one", "--no-graph", "-T", "commit_id"],
+    );
+    let two = stock(
+        root,
+        &["log", "-r", "topic-two", "--no-graph", "-T", "commit_id"],
+    );
+    state = run(
+        root,
+        Some(&state),
+        Command::Squash {
+            commit: two,
+            target: one,
+        },
+    )
+    .await;
+    assert!(stock(root, &["file", "list", "-r", "topic-one"]).contains("two.txt"));
+    let one = stock(
+        root,
+        &["log", "-r", "topic-one", "--no-graph", "-T", "commit_id"],
+    );
+    state = run(root, Some(&state), Command::Uncommit { commit: one }).await;
+    assert!(stock(root, &["diff", "--summary"]).contains("one.txt"));
+    assert_eq!(
+        stock(root, &["log", "-r", "@-", "--no-graph", "-T", "change_id"]),
+        merge_change
+    );
+    assert_eq!(
+        refresh(root).await.workspaces[0].merge_commit,
+        state.workspaces[0].merge_commit
+    );
+}
+#[tokio::test]
+async fn branch_graph_actions_stop_at_lower_bookmark_and_preserve_it() {
+    let temp = fixture();
+    let root = temp.path();
+    stock(root, &["new", "topic-one", "-m", "upper one"]);
+    fs::write(root.join("upper-one.txt"), "upper one\n").unwrap();
+    stock(root, &["new", "-m", "upper two"]);
+    fs::write(root.join("upper-two.txt"), "upper two\n").unwrap();
+    stock(root, &["bookmark", "create", "upper"]);
+    stock(root, &["new", "main"]);
+    let lower = stock(
+        root,
+        &["log", "-r", "topic-one", "--no-graph", "-T", "commit_id"],
+    );
+    let mut state = refresh(root).await;
+    state = run(
+        root,
+        Some(&state),
+        Command::Setup {
+            name: "Branch graph".into(),
+            target: "main".into(),
+        },
+    )
+    .await;
+    state = run(
+        root,
+        Some(&state),
+        Command::Apply {
+            branch: "upper".into(),
+        },
+    )
+    .await;
+    state = run(
+        root,
+        Some(&state),
+        Command::SquashBranch {
+            branch: "upper".into(),
+        },
+    )
+    .await;
+    assert_eq!(
+        stock(
+            root,
+            &["log", "-r", "topic-one", "--no-graph", "-T", "commit_id"]
+        ),
+        lower
+    );
+    assert_eq!(
+        stock(
+            root,
+            &["log", "-r", "upper-", "--no-graph", "-T", "commit_id"]
+        ),
+        lower
+    );
+    state = run(
+        root,
+        Some(&state),
+        Command::Rebase {
+            branch: "upper".into(),
+        },
+    )
+    .await;
+    assert_eq!(
+        stock(
+            root,
+            &["log", "-r", "upper-", "--no-graph", "-T", "commit_id"]
+        ),
+        stock(
+            root,
+            &["log", "-r", "main", "--no-graph", "-T", "commit_id"]
+        )
+    );
+    assert!(root.join("upper-one.txt").exists() && root.join("upper-two.txt").exists());
+    assert_eq!(
+        refresh(root).await.workspaces[0].merge_commit,
+        state.workspaces[0].merge_commit
+    );
+}
+#[tokio::test]
+async fn moving_a_tip_retains_applied_edges_in_inactive_workspaces() {
+    let temp = fixture();
+    let root = temp.path();
+    let mut state = refresh(root).await;
+    state = run(
+        root,
+        Some(&state),
+        Command::Setup {
+            name: "First".into(),
+            target: "main".into(),
+        },
+    )
+    .await;
+    state = run(
+        root,
+        Some(&state),
+        Command::Apply {
+            branch: "topic-one".into(),
+        },
+    )
+    .await;
+    let first = state.active.clone().unwrap();
+    state = run(
+        root,
+        Some(&state),
+        Command::Create {
+            name: "Second".into(),
+        },
+    )
+    .await;
+    state = run(
+        root,
+        Some(&state),
+        Command::Apply {
+            branch: "topic-two".into(),
+        },
+    )
+    .await;
+    let source = stock(
+        root,
+        &["log", "-r", "topic-one", "--no-graph", "-T", "commit_id"],
+    );
+    let target = stock(
+        root,
+        &["log", "-r", "topic-two", "--no-graph", "-T", "commit_id"],
+    );
+    state = run(
+        root,
+        Some(&state),
+        Command::Move {
+            commit: source,
+            target,
+            placement: local_stacks::Placement::Above,
+        },
+    )
+    .await;
+    let retained = state.workspaces.iter().find(|w| w.id == first).unwrap();
+    assert_eq!(
+        stock(
+            root,
+            &[
+                "log",
+                "-r",
+                &format!("{}-", retained.merge_commit),
+                "--no-graph",
+                "-T",
+                "commit_id"
+            ]
+        ),
+        stock(
+            root,
+            &["log", "-r", "topic-one", "--no-graph", "-T", "commit_id"]
+        )
+    );
+    state = run(root, Some(&state), Command::Switch { workspace: first }).await;
+    assert!(root.join("one.txt").exists() && root.join("two.txt").exists());
+    assert_eq!(
+        refresh(root).await.workspaces[0].merge_commit,
+        state.workspaces[0].merge_commit
+    );
+}
