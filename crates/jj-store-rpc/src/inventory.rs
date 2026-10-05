@@ -42,6 +42,21 @@ pub(crate) fn decode(reply: wire::InventoryPageReply, limit: usize) -> Result<Pa
         next_cursor: (!reply.next_cursor.is_empty()).then_some(reply.next_cursor),
     })
 }
+pub(crate) fn complete(reply: wire::Ids, limit: usize) -> Result<Vec<[u8; 64]>, Status> {
+    let invalid = || Status::data_loss("invalid complete inventory");
+    if reply.ids.len() > limit {
+        return Err(invalid());
+    }
+    let ids = reply
+        .ids
+        .into_iter()
+        .map(|id| id.try_into().map_err(|_| invalid()))
+        .collect::<Result<Vec<[u8; 64]>, _>>()?;
+    if ids.windows(2).any(|pair| pair[0] >= pair[1]) {
+        return Err(invalid());
+    }
+    Ok(ids)
+}
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -82,6 +97,24 @@ mod tests {
         let mut value = reply();
         value.snapshot = None;
         assert!(decode(value, 2).is_err());
+    }
+    #[test]
+    fn complete_inventory_rejects_oversized_malformed_duplicate_and_unordered_results() {
+        let ids = || wire::Ids {
+            ids: vec![vec![1; 64], vec![2; 64]],
+        };
+        assert_eq!(complete(ids(), 2).unwrap(), vec![[1; 64], [2; 64]]);
+        assert!(complete(ids(), 1).is_err());
+        let mut malformed = ids();
+        malformed.ids[0].pop();
+        assert!(complete(malformed, 2).is_err());
+        let mut repeated = ids();
+        repeated.ids[1] = repeated.ids[0].clone();
+        assert!(complete(repeated, 2).is_err());
+        let mut unordered = ids();
+        unordered.ids.reverse();
+        assert!(complete(unordered, 2).is_err());
+        assert!(complete(wire::Ids { ids: vec![] }, 1).unwrap().is_empty());
     }
     #[test]
     fn legacy_inventory_wire_fields_remain_byte_identical() {

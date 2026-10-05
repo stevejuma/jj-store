@@ -14,6 +14,20 @@ before a guarded publication. Inventory deadlines include explicit monotonic
 checks at admission, between windows and before response delivery; an async
 timer alone cannot admit a late result from immediately ready I/O.
 
+Complete operation/copy lookups may retain exact matching identities and a
+checked manifest selection, scoped to the process-local native source,
+repository, epoch, inventory root and kind. Retain at most 32 roots for a fixed
+five-minute lifetime under a shared 64 MiB allocation allowance. Charges follow
+active data owners after eviction; reserve before cloning or growing shared
+data. Eight admitted complete calls bound concurrent work. Cache saturation
+falls back to the ordinary bounded request-local scan. Fresh current permission,
+epoch, caller/session result limits and the whole monotonic deadline still guard
+every response, including warm results. Advance a complete baseline only after
+consuming all exact addition pages from the start. A changed baseline selection
+discards that derived baseline and restarts a bounded cold scan; corruption or
+unknown reads do not certify a result. Retained data contains no source handles,
+principals, credentials, request guards or publication capability.
+
 Code-card head summaries are read-only projections of explicitly selected
 operation/view references. They do not reconcile ambiguous heads, snapshot dirty
 files, initialize metadata or publish code/collaboration state. Limited windows

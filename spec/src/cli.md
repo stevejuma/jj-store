@@ -20,19 +20,24 @@ prepared generation retains visible identity order and compact ranks; returned
 rows, ordered edges, annotations, invalid anchors and final empty pages remain
 exact. Full scale and general filtered/evolution paging qualification stay open.
 
-Native remote operation/copy enumeration uses bounded manifest-pinned RPC scan
-pages. Its complete-result adapter admits matching IDs before growth and rejects
-truncation, duplicate identities, snapshot replacement and total scan/deadline
-exhaustion. Exact loopback fixtures cover unrelated-object pressure, sparse
-continued windows, later real publication, replay, revocation and reset. These
-checks change no installed binary and do not qualify combined large-repository
-CLI/RustFS lifecycle behavior. The legacy wire request remains byte-identical.
+Native remote complete operation/copy enumeration uses one bounded
+manifest-selected RPC lookup with exact source-scoped projection reuse. Its
+complete-result adapter admits matching IDs before growth and rejects
+truncation, malformed/duplicate/unordered identities and total scan/deadline
+exhaustion. Progressive RPC scan pages retain explicit pinned snapshots and
+inspected counts. Exact loopback fixtures cover unrelated-object pressure,
+sparse continued windows, later real publication, replay, revocation and reset.
+These checks change no installed binary and do not qualify combined
+large-repository CLI/RustFS lifecycle behavior. The legacy wire request remains
+byte-identical.
 
 Legacy RPC and in-process operation/copy regressions enforce small matching-ID
 admission over a larger unrelated-object inventory. Exact identities, result
 exhaustion and revocation remain mandatory; ordinary prefix and copy consumers
-receive complete sorted results. Kind-specific prepared lookup remains separate
-delivery work.
+receive complete sorted results. Warm exact-root and incremental publication
+regressions count descriptor reads, enforce fresh revocation/tighter limits and
+isolate source capabilities. These checks do not qualify complete large-repo
+preparation, scale, latency or deployment behavior.
 
 Prepared operation-history fixtures compare deep filtered, unfiltered and
 historical-start pages with ordinary pinned JJ results under independent small

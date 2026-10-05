@@ -35,53 +35,26 @@ impl NativeClient {
         if limit == 0 || limit > MAX_IDS {
             return Err(Status::resource_exhausted("inventory limit"));
         }
-        tokio::time::timeout(self.options.timeout, async {
-            let mut result = BTreeSet::new();
-            let mut snapshot = None;
-            let mut cursor: Option<String> = None;
-            let mut scanned = 0usize;
-            loop {
-                let remaining = MAX_INVENTORY_SCANNED
-                    .checked_sub(scanned)
-                    .filter(|remaining| *remaining != 0)
-                    .ok_or_else(|| Status::resource_exhausted("inventory total scan limit"))?;
-                // Fixed request size keeps every continuation bound to one query.
-                // Reserve a full next window; never exceed the whole-call bound.
-                if remaining < MAX_SCAN {
-                    return Err(Status::resource_exhausted("inventory total scan limit"));
-                }
-                let page = self
-                    .inventory_page(copies, MAX_SCAN, cursor.as_deref())
-                    .await?;
-                if snapshot
-                    .as_ref()
-                    .is_some_and(|selected| selected != &page.snapshot)
-                {
-                    return Err(Status::data_loss("inventory snapshot changed"));
-                }
-                snapshot = Some(page.snapshot);
-                scanned = scanned
-                    .checked_add(page.scanned)
-                    .ok_or_else(|| Status::resource_exhausted("inventory total scan limit"))?;
-                for id in page.ids {
-                    if result.contains(&id) {
-                        return Err(Status::data_loss("duplicate inventory ID"));
-                    }
-                    if result.len() == limit {
-                        return Err(Status::resource_exhausted("inventory result limit"));
-                    }
-                    result.insert(id);
-                }
-                if page.next_cursor.is_some() && page.next_cursor == cursor {
-                    return Err(Status::data_loss("inventory continuation did not advance"));
-                }
-                cursor = page.next_cursor;
-                if cursor.is_none() {
-                    return Ok(result.into_iter().collect());
-                }
-            }
+        let deadline = tokio::time::Instant::now()
+            .checked_add(self.options.timeout)
+            .ok_or_else(|| Status::deadline_exceeded("inventory total deadline"))?;
+        let ids = tokio::time::timeout_at(deadline, async {
+            let response = self
+                .wire()
+                .inventory(self.request(wire::InventoryRequest {
+                    repository: self.repository.as_bytes().to_vec(),
+                    copies,
+                    limit: limit as u32,
+                }))
+                .await?
+                .into_inner();
+            inventory::complete(response, limit)
         })
         .await
-        .map_err(|_| Status::deadline_exceeded("inventory total deadline"))?
+        .map_err(|_| Status::deadline_exceeded("inventory total deadline"))??;
+        if tokio::time::Instant::now() >= deadline {
+            return Err(Status::deadline_exceeded("inventory total deadline"));
+        }
+        Ok(ids)
     }
 }

@@ -85975,6 +85975,196 @@ entries.
     ],
     "next": "Commit E-READ-066, then integrate exact bounded kind projections with fresh authorization, epoch, deadline and complete-result checks.",
     "result": "pending"
+  },
+  {
+    "id": "E-READ-067",
+    "tasks": ["M13.4"],
+    "date": "2026-10-05",
+    "revision": "zpyxqsmp",
+    "kind": "complete-source-scoped-native-kind-projections",
+    "versions": "Rust 1.98.1; jj-lib/jj-core 0.45.1; macOS ARM64.",
+    "formats": "Authoritative object, catalog, manifest, WAL, DTO, cursor, durable receipt and legacy RPC wire fields unchanged. Retention is disposable process-local source/epoch/root/kind data. No migration, installed executable update or service restart.",
+    "scope": "Exact native and complete-RPC regressions first; dedicated copy/baseline-loss/corrupt-addition targets; focused cache and wire units. Full native_rpc (18) and native_lifecycle (231) binaries because shared native factory authorization/complete kind enumeration and RPC client/server behavior affect two independent consumers. Focused service/RPC/CLI all-target package and document/contract checks. Root aggregates, UI/browser/local-browser and full Rust workspace/release/scale/fault/RSS/latency/RustFS qualification out of scope.",
+    "requirements": [
+      "JST-JJ-003",
+      "JST-JJ-005",
+      "JST-API-002",
+      "JST-API-004",
+      "JST-CLI-003",
+      "JST-MUT-005",
+      "JST-PUB-002"
+    ],
+    "files": [
+      "crates/jj-store-cli/tests/native_rpc/inventory.rs",
+      "crates/jj-store-rpc/src/client/inventory.rs",
+      "crates/jj-store-rpc/src/inventory.rs",
+      "crates/jj-store-service/src/native.rs",
+      "crates/jj-store-service/src/native_inventory/cache/memory.rs",
+      "crates/jj-store-service/src/native_inventory/cache/tests.rs",
+      "crates/jj-store-service/src/native_inventory/cache.rs",
+      "crates/jj-store-service/src/native_inventory/complete.rs",
+      "crates/jj-store-service/src/native_inventory.rs",
+      "docs/implementation-plan.md",
+      "spec/src/architecture.md",
+      "spec/src/cli.md",
+      "spec/src/jj-integration.md",
+      "spec/src/mutations.md",
+      "spec/src/milestones.md"
+    ],
+    "tests": [
+      "crates/jj-store-cli/tests/native_rpc/inventory.rs#in_process_kind_inventory_reuses_exact_roots_and_advances_only_additions",
+      "crates/jj-store-cli/tests/native_rpc/inventory.rs#rpc_complete_kind_inventory_reuses_exact_roots_and_advances_only_additions",
+      "crates/jj-store-cli/tests/native_rpc/inventory.rs#rpc_inventory_returns_sorted_copy_ids_and_excludes_staged_objects",
+      "crates/jj-store-cli/tests/native_rpc/inventory.rs#complete_kind_inventory_discards_nonretained_baselines_and_rejects_corrupt_additions",
+      "crates/jj-store-cli/tests/native_rpc/inventory.rs#inventory_deadlines_reject_ready_complete_io_after_the_budget",
+      "crates/jj-store-cli/tests/native_rpc/inventory.rs#rpc_inventory_pages_pin_selection_and_reauthorize_sparse_windows",
+      "crates/jj-store-service/src/native_inventory/cache/tests.rs#expiry_eviction_and_active_owners_preserve_allocation_charges",
+      "crates/jj-store-service/src/native_inventory/cache/tests.rs#exact_kind_data_is_isolated_by_source_epoch_and_kind",
+      "crates/jj-store-service/src/native_inventory/cache/tests.rs#growth_exhaustion_falls_back_without_retaining_incomplete_data",
+      "crates/jj-store-rpc/src/inventory.rs#complete_inventory_rejects_oversized_malformed_duplicate_and_unordered_results",
+      "crates/jj-store-rpc/src/inventory.rs#legacy_inventory_wire_fields_remain_byte_identical"
+    ],
+    "runs": [
+      {
+        "command": "cargo test -p jj-store-cli --test native_rpc --locked inventory::in_process_kind_inventory_reuses_exact_roots_and_advances_only_additions -- --exact --nocapture",
+        "result": "fail",
+        "failures": 1,
+        "note": "63.55s; .local/bounded-reads/performance/kind-in_process_kind_inventory_reuses_exact_roots_and_advances_only_additions-before-067.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_rpc --locked inventory::rpc_complete_kind_inventory_reuses_exact_roots_and_advances_only_additions -- --exact --nocapture",
+        "result": "fail",
+        "failures": 1,
+        "note": "43.64s; .local/bounded-reads/performance/kind-rpc_complete_kind_inventory_reuses_exact_roots_and_advances_only_additions-before-067.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_rpc --locked inventory::in_process_kind_inventory_reuses_exact_roots_and_advances_only_additions -- --exact --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "71.86s; .local/bounded-reads/performance/kind-in_process_kind_inventory_reuses_exact_roots_and_advances_only_additions-after-067.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_rpc --locked inventory::rpc_complete_kind_inventory_reuses_exact_roots_and_advances_only_additions -- --exact --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "15.25s; .local/bounded-reads/performance/kind-rpc_complete_kind_inventory_reuses_exact_roots_and_advances_only_additions-after-067.log"
+      },
+      {
+        "command": "cargo test -p jj-store-service --lib --locked native_inventory::cache::tests -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "38.08s; .local/bounded-reads/performance/kind-cache-067.log"
+      },
+      {
+        "command": "cargo test -p jj-store-rpc --lib --locked inventory::tests -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "43.93s; .local/bounded-reads/performance/kind-wire-067.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_rpc --locked inventory::complete_kind_inventory_discards_nonretained_baselines_and_rejects_corrupt_additions -- --exact --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "29.03s; .local/bounded-reads/performance/kind-fallback-verification-067.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_rpc --locked inventory::rpc_inventory_returns_sorted_copy_ids_and_excludes_staged_objects -- --exact --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "13.56s; .local/bounded-reads/performance/kind-copy-verification-067.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_rpc --locked -- --nocapture",
+        "result": "pass",
+        "failures": 0,
+        "note": "15.53s; .local/bounded-reads/performance/kind-rpc-consumers-verification-067.log"
+      },
+      {
+        "command": "cargo test -p jj-store-cli --test native_lifecycle --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "87.74s; .local/bounded-reads/performance/kind-native-consumers-verification-067.log"
+      },
+      {
+        "command": "cargo test -p jj-store-service --lib --locked native_inventory::cache::tests",
+        "result": "pass",
+        "failures": 0,
+        "note": "6.86s; .local/bounded-reads/performance/kind-units-final-verification-067.log"
+      },
+      {
+        "command": "cargo check -p jj-store-service -p jj-store-rpc -p jj-store-cli --all-targets --locked",
+        "result": "pass",
+        "failures": 0,
+        "note": "37.87s; .local/bounded-reads/performance/kind-packages-verification-067.log"
+      },
+      {
+        "command": "cargo fmt --all -- --check",
+        "result": "pass",
+        "failures": 0,
+        "note": "4.42s; .local/bounded-reads/performance/kind-rust-format-067.log"
+      },
+      {
+        "command": "pnpm check:boundaries",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.02s; .local/bounded-reads/performance/kind-boundaries-067.log"
+      },
+      {
+        "command": "pnpm check:architecture",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.18s; .local/bounded-reads/performance/kind-architecture-067.log"
+      },
+      {
+        "command": "pnpm spec:first",
+        "result": "pass",
+        "failures": 0,
+        "note": "2.59s; .local/bounded-reads/performance/kind-spec-first-067.log"
+      },
+      {
+        "command": "pnpm spec:validate",
+        "result": "pass",
+        "failures": 0,
+        "note": "3.13s; .local/bounded-reads/performance/kind-spec-validation-067.log"
+      },
+      {
+        "command": "pnpm check:progress",
+        "result": "pass",
+        "failures": 0,
+        "note": "4.83s; .local/bounded-reads/performance/kind-progress-067.log"
+      },
+      {
+        "command": "pnpm contracts:check",
+        "result": "pass",
+        "failures": 0,
+        "note": "705.23s; .local/bounded-reads/performance/kind-contracts-067.log"
+      },
+      {
+        "command": "pnpm exec prettier --check spec/src/mutations.md spec/src/jj-integration.md spec/src/cli.md spec/src/architecture.md spec/src/milestones.md docs/implementation-plan.md",
+        "result": "pass",
+        "failures": 0,
+        "note": "3.69s; .local/bounded-reads/performance/kind-document-format-067.log"
+      }
+    ],
+    "notes": [
+      "Before warm native lookup: 304 reads/260 descriptors; before complete RPC:299 reads/260 descriptors. Both exact regressions fail the fixed zero-descriptor/<=16-read warm bound. After:10 fresh authorization reads/zero descriptors for native/RPC operation and empty/positive copy results.",
+      "Increment after real operation publication plus four newly selected files: native37/RPC35 reads and exactlyfive descriptors, fixed<=80-read bound unchanged. Copy addition reads25/exactlyone descriptor; staged eighth copy excluded before selection and included only after the test-selected manifest root advances.",
+      "Cache retains only matching IDs plus checked manifest data under source capability, repository, epoch, inventory root and kind; max32 roots, fixedfive-minute expiry, conservative192-byte ID and1MiB manifest allowance under64MiB total. Charges remain owned beyond eviction. Cache saturation falls back to ordinary bounded request-local work.",
+      "Eight work slots queue within the original whole-call deadline; fresh authorization/epoch checks and caller/session result bounds guard all results. Complete baseline advancement consumes additions from None; exact retention loss discards that baseline and restarts cold without renewing total scan allowance or deadline. Other corruption/unknown reads fail closed.",
+      "Client complete convenience uses existing single selected Inventory RPC, validating bounded canonical sorted IDs and explicit monotonic whole-call deadline. InventoryPage wire, signed pins, sparse/empty continued windows, inspected counts, replay and expiry remain unchanged; legacy request bytes are identical.",
+      "255 distinct Rust tests pass:18 native RPC,231 native lifecycle,three cache andthree inventory wire units. No milestone promoted. Cold exact-kind preparation still scans unrelated descriptors under explicit total bounds; this evidence does not claim cold large-root lookup solved.",
+      "macOS debug linker unwind-size warnings remain recorded; release qualification remains deferred. Verified main E-READ-062 landing, temporary workspace, Linux source, fixtures, services, installed CLIs and unrelated workspaces preserved.",
+      "All 507 prior evidence entries remain JSON-identical; Rust format, boundaries, architecture, contracts, changed-document format, spec-first, spec validation and progress pass. Contract validation includes actual HTTP/SSE fixtures and remains distinct from complete release qualification.",
+      "A premature bookkeeping read attempted the result JSON before contract validation finished and failed without modifying the ledger; waited for completion and then recorded all passing results. No functional verification lane failed after implementation."
+    ],
+    "remaining": [
+      "Browser query ReadOnlyAuthority copy/operation enumeration still uses ReadAccess::inventory; preparation Access refuses that full inventory. Add pinned kind/provider lookup and relevant copy reverse/path index; do not use current NativeSession selection for a historical browser pin.",
+      "Cold native kind construction for very large roots remains explicit bounded preparation work. Current disposable warm reuse cannot alone make a root beyond the cold total-scan allowance loadable.",
+      "General filtered log continuation with exact upstream indirect/missing edge semantics, uncached/ambiguous evolution, indexed code/local application search, retained oversized comparisons/change grouping/extreme filters remain delivery work.",
+      "Complete qualification and Help/generated reference/source-review refresh remain separately deferred; inherited installation-reference drift remains a failing qualification gate."
+    ],
+    "next": "Commit E-READ-067. Continue highest-priority pinned browser kind/copy and cold preparation delivery, then exact filtered-history continuations; retain temporary workspace and defer complete qualification.",
+    "result": "pending"
   }
 ]
 ```

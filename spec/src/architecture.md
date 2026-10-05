@@ -7,6 +7,15 @@ entries. Complete consumption from the start can advance a rebuildable kind
 projection; partial pages grant no complete-root certification. Authorization,
 source scope and result admission remain the consumer's responsibilities.
 
+The service retains complete operation/copy projections under process-local
+native source scope and immutable root/epoch/kind keys. Global byte leases
+follow data owners beyond cache eviction; fixed lifetime and root limits
+constrain retention. Complete native factories and RPC share the same admitted
+lookup. The client's complete convenience delegates its selected traversal to
+that RPC; progressive pages retain their original signed scan-window contract.
+Cold scans remain bounded preparation and fresh request checks precede every
+response.
+
 Prepared evolution continuations share the selected compact operation graph and
 its bounded lifetime. Checkpoints retain commit/operation identifiers and walk
 positions with pre-admitted allocation leases; live readers own independent
@@ -38,10 +47,12 @@ Complete RPC enumeration retains only its bounded matching IDs. Authoritative
 catalog, WAL and object formats remain unchanged; full closure audits remain
 publication/recovery responsibilities.
 
-The in-process native factories and legacy Inventory RPC now share a bounded
-complete-kind scan adapter. It pins a manifest only for that invocation, admits
-matching identities before insertion, and discards each unrelated descriptor
-after verification. It retains no whole-repository object set. Total scan work
+The in-process native factories and legacy Inventory RPC share bounded complete
+kind projections. Cold lookup scans one checked selection, admits matching
+identities before insertion and discards each unrelated descriptor after
+verification. Warm and incremental reuse retains only exact matching identities
+and immutable selection data under source scope, fixed expiry and shared
+allocation limits. It retains no whole-repository object set. Total request work
 and time remain independently bounded; semantic publication continues to use the
 existing full certified inventory reader.
 

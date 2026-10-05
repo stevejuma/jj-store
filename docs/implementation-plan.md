@@ -29,9 +29,11 @@ formats and collaboration capacity limits. Do not enable deferred capabilities.
 
 E-READ-066 adds bounded inventory addition pages over selected immutable roots.
 Changed-path traversal and exact baseline retention replace unrelated descriptor
-reads at this primitive. Integration into source-scoped complete operation/copy
-projections is the next delivery slice; cold preparation and paged RPC semantics
-remain separate from this optimization and from complete qualification.
+reads at this primitive. E-READ-067 integrates source-scoped complete
+operation/copy projections and advances them through exact additions, with fresh
+request checks and independently bounded retention. Complete RPC convenience
+shares this lookup. Cold preparation, progressive paged RPC semantics and
+complete qualification retain their separate contracts.
 
 E-READ-065 adds exact prepared predecessor occurrence lookup for native/local
 evolution, skipping unrelated bookmark-operation bodies while preserving the

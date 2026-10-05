@@ -75,6 +75,7 @@ impl SemanticPolicy for NativeSemantic {
 pub struct NativeSession {
     pub(crate) events: crate::events::Hints,
     pub(crate) repository: m::RepositoryId,
+    pub(crate) inventory_scope: wal::inventory::SourceScope,
     pub(crate) object_store: Arc<dyn ObjectStore>,
     access: Arc<RepositoryAccess>,
     pub(crate) clock: Arc<dyn Clock>,
@@ -130,6 +131,7 @@ impl NativeSession {
         limits: SessionLimits,
     ) -> wal::Result<Self> {
         let repository = objects.scope().repository();
+        let inventory_scope = objects.scope();
         let semantic = Arc::new(NativeSemantic {
             store: store.clone(),
             native: NativePolicy::new(objects.clone(), protection, limits.policy)?,
@@ -148,6 +150,7 @@ impl NativeSession {
         Ok(Self {
             events: crate::events::Hints::default(),
             repository,
+            inventory_scope,
             object_store: store,
             access,
             clock,

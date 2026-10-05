@@ -1,4 +1,5 @@
 //! Bounded scans of one immutable manifest selection, without request retention.
+mod cache;
 mod complete;
 mod cursors;
 use crate::{auth::Clock, native::NativeSession};
