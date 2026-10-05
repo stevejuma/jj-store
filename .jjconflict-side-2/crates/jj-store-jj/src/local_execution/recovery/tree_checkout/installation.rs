@@ -1,8 +1,8 @@
 //! Recoverable physical file moves; native working-copy metadata stays original.
-mod files;
-mod progress;
-mod storage;
-mod validation;
+pub(super) mod files;
+pub(super) mod progress;
+pub(super) mod storage;
+pub(super) mod validation;
 use super::*;
 use crate::local_browser::working_tree::current::physical;
 use files::{Snapshot, directory_stamp, parent};
@@ -38,7 +38,8 @@ impl RecoveredHistory {
         inventory: PhysicalInventoryV1,
         physical: Arc<dyn PhysicalGuard>,
     ) -> Result<(Self, InstalledTreeFiles)> {
-        if !self.publication
+        if self.tree_checkout.is_some()
+            || !self.publication
             || self.checkout.is_some()
             || published.preparation() != &self.key
             || published.witness() != self.witness.id()?
@@ -78,6 +79,7 @@ async fn install(
     budget: &Budget,
 ) -> Result<InstalledTreeFiles> {
     recovery.check(budget).await?;
+    plan.check_metadata(recovery, budget)?;
     validation::effects(recovery, plan, budget)?;
     let head_lock = publication::Destination::open(recovery, budget)?;
     let heads = witness::heads(recovery.access.metadata_path(), budget)?;

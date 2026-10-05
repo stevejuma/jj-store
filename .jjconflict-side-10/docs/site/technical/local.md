@@ -391,8 +391,8 @@ the journal still stores only bounded references. New changed-tree publication
 admission requires both plan and inventory references. Terminal records cannot
 gain new input. These saved references prove durable preparation. The separate
 physical-file installer returns its own sealed result; native
-tree-state/checkout completion still remains unqualified and production Stacks
-stays read-only.
+tree-state/checkout completion uses the separate provider described below.
+Production Stacks stays read-only until complete durable execution is qualified.
 
 ## Private retained tree-file installation
 
@@ -420,10 +420,36 @@ inodes. The existing 30-second/64-MiB worker budget can stop an invocation with
 saved progress; retry uses that progress without preparing another candidate.
 
 `InstalledTreeFiles` proves physical effects only and retains the original
-native checkout/tree-state bytes. Native metadata completion, durable
-combination after-state and journal/transport composition remain separate
-required gates. No production writable capability or installed command is
-introduced.
+native checkout/tree-state bytes. The next provider boundary completes native
+metadata. Durable combination after-state and journal/transport composition
+remain separate required gates. No production writable capability or installed
+command is introduced.
+
+## Private native tree-checkout completion
+
+After sealed file installation, native completion stages exact `tree_state` and
+`checkout` protobufs and selects a canonical version-1 completion frame in a
+separate plan-named private directory. Its 64-KiB bound contains only saved
+plan/inventory identities, installed physical fingerprint, private-directory
+identity and prepared metadata inode stamps. Original bytes remain retained in
+the immutable plan. Partial staging and initial frames accept only exact byte
+prefixes; completed staged files retain their timestamps and inode identities.
+
+File-state updates cover only the saved affected paths. Unaffected records and
+sparse patterns stay intact, records use native component ordering and signed
+millisecond mtimes, and the stale Watchman clock is cleared. The provider does
+not load or initialize an upstream working copy or reacquire its foreground
+lock. It replaces tree-state before checkout and syncs each selection.
+
+Original-request recovery loads the saved frame and admits only original native
+fingerprints or exact prepared replacement bytes/inodes. A selected checkout
+with original tree-state is rejected. Fresh full namespace and retained-backup
+checks surround both writes and acknowledgement; new editor bytes, policy
+changes, replaced metadata, access loss and corruption retain unresolved
+evidence. Cancellation keeps admission and foreground coordination until worker
+exit. `VerifiedTreeCheckout` proves native and physical completion, without
+selecting an application combination or acknowledging its original journal
+request. Those execution joins and writable transport remain required.
 
 ## Private unchanged-tree execution join
 

@@ -1,11 +1,10 @@
 use super::*;
 use std::{collections::BTreeSet, fs::File};
-pub(super) fn effects(
+pub(in crate::local_execution::recovery::tree_checkout) fn effects(
     recovery: &RecoveredHistory,
     plan: &TreeCheckoutPlanV1,
     budget: &Budget,
 ) -> Result<()> {
-    plan.check_metadata(recovery, budget)?;
     let effects = effects::capture(recovery, budget)?;
     let mut changes = plan.changes.clone();
     for change in &mut changes {
@@ -32,7 +31,7 @@ fn is_file(actual: &Option<Snapshot>, expected: &Snapshot, moved: bool) -> bool 
 }
 /// True means exact saved intent moved; false means exact unchanged operands.
 /// Every other combination is a changed/unsafe state, never a guessed success.
-pub(super) fn pending(
+pub(in crate::local_execution::recovery::tree_checkout) fn pending(
     recovery: &RecoveredHistory,
     plan: &TreeCheckoutPlanV1,
     state: &Progress,
@@ -103,7 +102,7 @@ pub(super) fn pending(
 fn parent_path(path: &str) -> &str {
     path.rsplit_once('/').map_or("", |(dir, _)| dir)
 }
-pub(super) fn namespace(
+pub(in crate::local_execution::recovery::tree_checkout) fn namespace(
     recovery: &RecoveredHistory,
     plan: &TreeCheckoutPlanV1,
     inventory: &PhysicalInventoryV1,

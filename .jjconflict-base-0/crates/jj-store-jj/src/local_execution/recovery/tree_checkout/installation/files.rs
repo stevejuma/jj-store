@@ -3,7 +3,7 @@ use rustix::fs::{AtFlags, FileType, Mode, OFlags};
 use std::{fs::File, io::Write as _};
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub(super) struct Snapshot {
+pub(in crate::local_execution::recovery::tree_checkout) struct Snapshot {
     pub stamp: [u64; 9],
     pub content: m::RecordDigest,
 }
@@ -20,7 +20,9 @@ fn stamp(stat: &fs::Stat) -> [u64; 9] {
         stat.st_ctime_nsec as u64,
     ]
 }
-pub(super) fn directory_stamp(dir: &File) -> Result<[u64; 8]> {
+pub(in crate::local_execution::recovery::tree_checkout) fn directory_stamp(
+    dir: &File,
+) -> Result<[u64; 8]> {
     let s = fs::fstat(dir).map_err(|_| Error::Unavailable)?;
     Ok([
         s.st_dev as u64,
@@ -33,7 +35,10 @@ pub(super) fn directory_stamp(dir: &File) -> Result<[u64; 8]> {
         s.st_ctime_nsec as u64,
     ])
 }
-pub(super) fn entries(dir: &File, maximum: usize) -> Result<Vec<String>> {
+pub(in crate::local_execution::recovery::tree_checkout) fn entries(
+    dir: &File,
+    maximum: usize,
+) -> Result<Vec<String>> {
     let mut entries = Vec::new();
     let read = fs::Dir::read_from(dir).map_err(|_| Error::Unavailable)?;
     for entry in read {
@@ -50,7 +55,10 @@ pub(super) fn entries(dir: &File, maximum: usize) -> Result<Vec<String>> {
     entries.sort();
     Ok(entries)
 }
-pub(super) fn parent(root: &File, path: &str) -> Result<Option<(File, String)>> {
+pub(in crate::local_execution::recovery::tree_checkout) fn parent(
+    root: &File,
+    path: &str,
+) -> Result<Option<(File, String)>> {
     safe_path(path)?;
     let parts: Vec<_> = path.split('/').collect();
     let mut dir = root.try_clone().map_err(|_| Error::Unavailable)?;
@@ -71,7 +79,7 @@ pub(super) fn parent(root: &File, path: &str) -> Result<Option<(File, String)>> 
     Ok(Some((dir, parts[parts.len() - 1].into())))
 }
 /// Reopened ancestors must still be exact original or prepared directories.
-pub(super) fn checked_parent(
+pub(in crate::local_execution::recovery::tree_checkout) fn checked_parent(
     root: &File,
     path: &str,
     plan: &TreeCheckoutPlanV1,
@@ -120,7 +128,7 @@ pub(super) fn checked_parent(
     }
     Ok(Some((dir, parts[parts.len() - 1].into())))
 }
-pub(super) fn read(
+pub(in crate::local_execution::recovery::tree_checkout) fn read(
     dir: &File,
     name: &str,
     budget: &Budget,
@@ -175,7 +183,11 @@ impl Snapshot {
         Ok(())
     }
 }
-pub(super) fn sync_file(dir: &File, name: &str, expected: &Snapshot) -> Result<File> {
+pub(in crate::local_execution::recovery::tree_checkout) fn sync_file(
+    dir: &File,
+    name: &str,
+    expected: &Snapshot,
+) -> Result<File> {
     let file: File = fs::openat(
         dir,
         name,
@@ -194,11 +206,26 @@ pub(super) fn sync_file(dir: &File, name: &str, expected: &Snapshot) -> Result<F
     file.sync_all().map_err(|_| Error::Unavailable)?;
     Ok(file)
 }
-pub(super) fn prepare_file(
+pub(in crate::local_execution::recovery::tree_checkout) fn prepare_file(
     dir: &File,
     name: &str,
     bytes: &[u8],
     executable: bool,
+    budget: &Budget,
+) -> Result<Snapshot> {
+    prepare_mode(
+        dir,
+        name,
+        bytes,
+        if executable { 0o755 } else { 0o644 },
+        budget,
+    )
+}
+pub(in crate::local_execution::recovery::tree_checkout) fn prepare_mode(
+    dir: &File,
+    name: &str,
+    bytes: &[u8],
+    mode: u32,
     budget: &Budget,
 ) -> Result<Snapshot> {
     let saved = read(dir, name, budget)?;
@@ -208,13 +235,12 @@ pub(super) fn prepare_file(
     {
         return Err(Error::Corrupt);
     }
-    let mode = if executable { 0o755 } else { 0o644 };
     // A completed staged inode must not be chmod'd or rewritten on retry:
     // even chmod to the same mode changes ctime and invalidates a partially
     // written initial progress frame that already names this exact identity.
     if let Some((snapshot, data)) = &saved
         && data.bytes == bytes
-        && snapshot.stamp[2] & 0o7777 == mode
+        && snapshot.stamp[2] & 0o7777 == u64::from(mode)
     {
         sync_file(dir, name, snapshot)?;
         return Ok(snapshot.clone());

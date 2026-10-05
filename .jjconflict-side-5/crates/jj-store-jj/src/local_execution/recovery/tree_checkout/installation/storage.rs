@@ -1,7 +1,7 @@
 use super::*;
 use rustix::fs::{AtFlags, Mode, OFlags};
 use std::{fs::File, io::Write as _};
-pub(super) struct Destination {
+pub(in crate::local_execution::recovery::tree_checkout) struct Destination {
     path: PathBuf,
     working_copy: File,
     name: String,
@@ -27,6 +27,33 @@ impl Destination {
         }
         let selected =
             physical::read(&directory, "progress", progress::MAX_PROGRESS, true, budget)?;
+        let value = Self {
+            path,
+            working_copy,
+            name,
+            directory,
+            selected,
+        };
+        value.check(recovery)?;
+        Ok(value)
+    }
+    /// Reopening completed installation must never recreate lost evidence.
+    pub fn existing(
+        recovery: &RecoveredHistory,
+        plan: &TreeCheckoutPlanV1,
+        budget: &Budget,
+    ) -> Result<Self> {
+        let path = recovery.root.join(".jj/working_copy");
+        let working_copy = physical::directory(&path)?;
+        let name = format!(".lapis-stack-tree-{}", plan.id()?);
+        let directory = physical::child(&working_copy, &name)?;
+        let selected = physical::read(
+            &directory,
+            "progress",
+            progress::MAX_PROGRESS,
+            false,
+            budget,
+        )?;
         let value = Self {
             path,
             working_copy,

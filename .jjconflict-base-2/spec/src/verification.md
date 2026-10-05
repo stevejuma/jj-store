@@ -1400,3 +1400,13 @@ Provider/service and private runtime regressions remain separate from this
 engine evidence. Native tree-state/checkout completion, actual combination
 after-state, writable transport and complete cold UI/linked-native real-storage
 flows remain required.
+
+[E-M21-033](milestones.md) records native tree-checkout completion after sealed
+physical installation. The exact CLI family verifies native decoding, stock-JJ
+consumption without spurious rewrites, unaffected records, component ordering,
+resolved binary/executable/add/delete effects, replay and four abrupt process
+loss boundaries. Metadata replacement, policy changes, altered original backups,
+physical editor changes, corrupt/private evidence, access loss and cancellation
+remain focused recovery gates. Native completion is distinct from original
+journal acknowledgement, actual combination selection, writable transport and
+complete cold UI/linked-native real-storage acceptance.

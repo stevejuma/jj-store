@@ -68,7 +68,7 @@ pub(super) async fn check(
             &recovery.access,
             &recovery.root,
             &heads,
-            Some(checkout),
+            Some(super::witness::Normalization::Unchanged(checkout)),
             budget,
         )
         .await

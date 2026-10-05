@@ -1,6 +1,8 @@
 #![cfg(unix)]
 #[path = "stack_checkout_plans/candidate.rs"]
 mod candidate;
+#[path = "stack_checkout_plans/completion.rs"]
+mod completion;
 #[path = "../../jj-store-jj/tests/stack_foreground/fixture.rs"]
 mod fixture;
 #[path = "stack_checkout_plans/installation.rs"]

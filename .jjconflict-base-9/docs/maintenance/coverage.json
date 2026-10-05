@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed provider-owned version-1 tree-file progress, exact retained plan/inventory binding, identity-preserving partial staging and progress prefixes, synced intent before no-replace moves, retained backups and complete namespace verification with restricted normalization. Sealed physical-only proof preserves original native checkout/tree-state; command completion remains gated.",
-      "fingerprint": "6a023e3c64ef669bab1b9fbfad8a0c7aa636171cd0da0954b001a143782079e4"
+      "reason": "Reviewed provider-owned version-1 native completion frames linked to retained plan/inventory, staged native inode identities, exact prefix recovery, tree-state-before-checkout replacement with prior frame acknowledgement, native path ordering and signed mtime, unchanged file states, cleared Watchman clock, complete physical/backup guards and cancellation admission. Sealed native completion remains separate from command receipts, combination selection and writable transport.",
+      "fingerprint": "20fcfac0f3b33acd99faa5488e571dc5b4a8f0ab896449bce745369c80d09814"
     }
   },
   {

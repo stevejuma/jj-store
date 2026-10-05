@@ -1,14 +1,14 @@
 use super::*;
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
-pub(super) enum Intent {
+pub(in crate::local_execution::recovery::tree_checkout) enum Intent {
     Directory(usize),
     Backup(usize),
     Install(usize),
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
-pub(super) struct Progress {
+pub(in crate::local_execution::recovery::tree_checkout) struct Progress {
     pub version: u32,
     pub plan: m::RecordDigest,
     pub inventory: m::RecordDigest,
@@ -21,7 +21,8 @@ pub(super) struct Progress {
     pub phases: Vec<u8>,
     pub intent: Option<Intent>,
 }
-pub(super) const MAX_PROGRESS: usize = 32 * 1024 * 1024;
+pub(in crate::local_execution::recovery::tree_checkout) const MAX_PROGRESS: usize =
+    32 * 1024 * 1024;
 impl Progress {
     pub fn encode(&self) -> Result<Vec<u8>> {
         let bytes = serde_json::to_vec(self).map_err(|_| Error::Invalid)?;

@@ -277,3 +277,9 @@ native checkout and command completion. Document original backups, exact
 no-replace transitions, restricted timestamp normalization, bounded canonical
 progress and partial staging recovery. Native metadata completion and durable
 combination after-state remain required before writable transport.
+
+Private native tree-checkout documentation distinguishes sealed physical and
+native provider proofs from original command acknowledgement, actual combination
+selection and production writable capability. It records the bounded frame,
+ordering, original retained evidence and exact interrupted recovery, without
+presenting a private library qualification as an enabled user workflow.

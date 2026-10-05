@@ -13,7 +13,7 @@ use crate::{
 };
 pub use recovery::{
     CheckoutWitnessV1, InstalledTreeFiles, PhysicalGuard, PublishedHead, RecoveredHistory,
-    RecoveryBinding, RecoveryWitnessV1, RetainedIdentity, TreeCheckoutPlanV1,
+    RecoveryBinding, RecoveryWitnessV1, RetainedIdentity, TreeCheckoutPlanV1, VerifiedTreeCheckout,
     VerifiedUnchangedCheckout,
 };
 pub use reword::{BookmarkEffect, PreparedCode, Reword, Rewrite};

@@ -18,7 +18,7 @@ pub use checkout::{CheckoutWitnessV1, PhysicalGuard, VerifiedUnchangedCheckout};
 use jj_store_model as m;
 pub use publication::PublishedHead;
 use std::time::Duration;
-pub use tree_checkout::{InstalledTreeFiles, TreeCheckoutPlanV1};
+pub use tree_checkout::{InstalledTreeFiles, TreeCheckoutPlanV1, VerifiedTreeCheckout};
 pub use witness::{RecoveryBinding, RecoveryWitnessV1};
 
 pub struct RecoveredHistory {
@@ -31,6 +31,7 @@ pub struct RecoveredHistory {
     retained: RetainedIdentity,
     publication: bool,
     checkout: Option<CheckoutWitnessV1>,
+    tree_checkout: Option<tree_checkout::completion::Completion>,
     _permit: OwnedSemaphorePermit,
 }
 /// Checked retained selection information, not a publication capability.
@@ -62,6 +63,10 @@ impl Foreground {
         cancel.disarm();
         result
     }
+}
+enum RecoveryCheckout {
+    Unchanged(Box<CheckoutWitnessV1>),
+    Tree(Box<(TreeCheckoutPlanV1, PhysicalInventoryV1)>),
 }
 impl Coordinator {
     /// Trusted composition first matches the original principal/request journal.
@@ -97,8 +102,36 @@ impl Coordinator {
         key: StackPreparationKey,
         checkout: CheckoutWitnessV1,
     ) -> Result<RecoveredHistory> {
-        self.recover(access, root, witness, key, true, Some(checkout))
-            .await
+        self.recover(
+            access,
+            root,
+            witness,
+            key,
+            true,
+            Some(RecoveryCheckout::Unchanged(Box::new(checkout))),
+        )
+        .await
+    }
+    /// Original journal inputs only; loads the provider-owned completion frame.
+    /// Missing frames do not authorize inferred native metadata transitions.
+    pub async fn resume_tree_checkout(
+        &self,
+        access: Arc<dyn Access>,
+        root: PathBuf,
+        witness: RecoveryWitnessV1,
+        key: StackPreparationKey,
+        plan: TreeCheckoutPlanV1,
+        inventory: PhysicalInventoryV1,
+    ) -> Result<RecoveredHistory> {
+        self.recover(
+            access,
+            root,
+            witness,
+            key,
+            true,
+            Some(RecoveryCheckout::Tree(Box::new((plan, inventory)))),
+        )
+        .await
     }
     async fn recover(
         &self,
@@ -107,7 +140,7 @@ impl Coordinator {
         witness: RecoveryWitnessV1,
         key: StackPreparationKey,
         publication: bool,
-        checkout: Option<CheckoutWitnessV1>,
+        checkout: Option<RecoveryCheckout>,
     ) -> Result<RecoveredHistory> {
         let permit = self.workers.acquire_preparation()?;
         let cancellation = tokio_util::sync::CancellationToken::new();
@@ -140,7 +173,12 @@ impl Coordinator {
                     view: archive.operations[&archive.operation].view_id,
                 };
                 budget.check()?;
-                let recovery = RecoveredHistory {
+                let (checkout, tree) = match checkout {
+                    Some(RecoveryCheckout::Unchanged(value)) => (Some(*value), None),
+                    Some(RecoveryCheckout::Tree(inputs)) => (None, Some(*inputs)),
+                    None => (None, None),
+                };
+                let mut recovery = RecoveredHistory {
                     guard,
                     access,
                     root,
@@ -150,8 +188,14 @@ impl Coordinator {
                     retained: identity,
                     publication,
                     checkout,
+                    tree_checkout: None,
                     _permit,
                 };
+                if let Some((plan, inventory)) = tree {
+                    recovery.tree_checkout = Some(tree_checkout::completion::Completion::load(
+                        &recovery, plan, inventory, &budget,
+                    )?);
+                }
                 recovery.check(&budget).await?;
                 records::restore(&recovery, &budget).await?;
                 recovery.check(&budget).await?;
@@ -218,7 +262,9 @@ impl RecoveredHistory {
     }
     async fn check(&self, budget: &Budget) -> Result<()> {
         self.guard.check(&self.root)?;
-        if let Some(checkout) = &self.checkout {
+        if let Some(tree) = &self.tree_checkout {
+            tree.check(self, budget).await?;
+        } else if let Some(checkout) = &self.checkout {
             checkout::check(self, checkout, budget).await?;
         } else if self.publication {
             publication::check(self, budget).await?;

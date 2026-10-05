@@ -6,6 +6,11 @@ use crate::local_browser::working_tree::{
 use serde::{Deserialize, Serialize};
 use sha2::{Digest as _, Sha256};
 use std::fs::File;
+#[derive(Clone, Copy)]
+pub(super) enum Normalization<'a> {
+    Unchanged(&'a super::checkout::CheckoutWitnessV1),
+    Tree(&'a super::tree_checkout::completion::Completion),
+}
 const MAX_WITNESS_BYTES: usize = 65536;
 
 /// Installation-private recovery input, never a client command or authorization.
@@ -204,7 +209,7 @@ impl RecoveryWitnessV1 {
         access: &Arc<dyn Access>,
         root: &std::path::Path,
         expected_heads: &[m::OperationId],
-        checkout: Option<&super::checkout::CheckoutWitnessV1>,
+        checkout: Option<Normalization<'_>>,
         budget: &Budget,
     ) -> Result<()> {
         budget.until(access.authorize()).await??;
@@ -214,7 +219,12 @@ impl RecoveryWitnessV1 {
         for _ in 0..2 {
             let mut files = capture::CheckoutFiles::read(root, access.metadata_path(), budget)?;
             if let Some(checkout) = checkout {
-                checkout.normalize(&mut files)?;
+                match checkout {
+                    Normalization::Unchanged(checkout) => checkout.normalize(&mut files)?,
+                    Normalization::Tree(completion) => {
+                        completion.normalize(root, &mut files, budget)?
+                    }
+                }
             }
             let git = gix::open(&self.git_path).map_err(|_| Error::Unavailable)?;
             let policy = capture::policy_at_git(root, &git, &self.git_path, budget)?;

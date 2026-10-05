@@ -152,9 +152,9 @@ shared-package release qualification does not alter those original Git gates.
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                        | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work          | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032 |
+| M21 | In progress | - | JST-UI-020 | Local stack workspaces: UI first, then separately approved local backend integration | Implement approved backend and production UI integration | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033 |
 | M21.1 | Partial | - | JST-UI-020,JST-GOV-008 | Reused Storybook workspace views, stateful mock controller, interactions and accessibility | UI reviewed for backend integration; registry/visual gates remain separate | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009 |
-| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Complete recoverable checkout and durable combinations | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032 |
+| M21.2 | In progress | M21.1 | JST-UI-020 | Local-only repository execution, physical checkout and durable named combinations | Compose durable execution and combination engines | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -91209,6 +91209,271 @@ entries.
   ],
   "next": "Implement exact retained native tree-state/checkout completion with interrupted recovery and fresh installed-file guards, then compose actual durable combination after-state and command transport/UI wiring. Continue all seven approved stages.",
   "summary": "115 unique focused Rust parents pass: 34 CLI plan/installation family, 47 provider, 13 service, 12 registered CLI and 9 private server execution. Strict type/lint, format, source ownership/governance, docs and spec checks pass. Physical effects are qualified; full feature gates remain pending. All 513 preceding raw evidence bodies remain unchanged."
+},
+{
+  "id": "E-M21-033",
+  "tasks": [
+    "M21",
+    "M21.2"
+  ],
+  "date": "2026-10-05",
+  "revision": "nzzlvwkw",
+  "kind": "Actual native tree-state and checkout completion with exact provider-owned recovery",
+  "versions": "Rust 1.98.1; pinned JJ 0.45.1/Git SHA-1 profile; macOS ARM64 and Rustix 1.1.5. Real disposable native/scanner and stock-JJ fixtures, CARGO_INCREMENTAL=0.",
+  "formats": "New provider-owned canonical native completion frame version 1, 64-KiB bound, saved plan/inventory/installed fingerprint and private/prepared inode stamps. Native metadata remains the pinned upstream protobufs. Existing physical progress version 1, plan catalog version 2, journal version 5, combination snapshot version 1 and public wire/companion/WAL formats unchanged.",
+  "files": [
+    "crates/jj-store-cli/tests/stack_checkout_plans/completion.rs",
+    "crates/jj-store-cli/tests/stack_checkout_plans.rs",
+    "crates/jj-store-jj/src/local_execution/mod.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/checkout.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/tree_checkout/completion/native.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/tree_checkout/completion/storage.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/tree_checkout/completion.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/tree_checkout/installation/files.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/tree_checkout/installation/progress.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/tree_checkout/installation/storage.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/tree_checkout/installation/validation.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/tree_checkout/installation.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/tree_checkout/plan.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/tree_checkout.rs",
+    "crates/jj-store-jj/src/local_execution/recovery/witness.rs",
+    "crates/jj-store-jj/src/local_execution/recovery.rs",
+    "docs/implementation-plan.md",
+    "docs/maintenance/coverage.json",
+    "docs/site/technical/local.md",
+    "spec/src/architecture.md",
+    "spec/src/cli.md",
+    "spec/src/documentation.md",
+    "spec/src/jj-integration.md",
+    "spec/src/local-jj.md",
+    "spec/src/verification.md",
+    "spec/src/milestones.md"
+  ],
+  "requirements": [
+    "JST-LOCAL-005",
+    "JST-JJ-002",
+    "JST-JJ-004",
+    "JST-GOV-002",
+    "JST-GOV-003"
+  ],
+  "before": "Physical-only baseline passes with original native metadata. Newly added completion initially encountered internal visibility/mode, private upstream test-field, enum-size and parser diagnostics; all repaired. Exact completion, final affected families and strict lint pass with no product test failures.",
+  "scope": "Complete exact native metadata from sealed installed files under original foreground admission. Preserve unaffected file states/sparse input, native path ordering and signed mtime; clear stale Watchman clock. Stage both native files and durably acknowledge the exact frame before ordered replacements. Resume only existing original plan/inventory/frame inputs; admit only original fingerprints or exact intended prepared inodes/bytes. Full fresh physical namespace, original backups, source policy/access and held identities guard selections and final proof. Canceled workers retain lease/admission until exit. No application command acknowledgement, selected combination after-state or writable transport is inferred.",
+  "tests": [
+    "crates/jj-store-cli/tests/stack_checkout_plans/completion.rs#native_tree_completion_and_exact_replay_preserve_installed_inodes",
+    "crates/jj-store-cli/tests/stack_checkout_plans/completion.rs#native_file_states_use_component_order_and_preserve_unaffected_records",
+    "crates/jj-store-cli/tests/stack_checkout_plans/completion.rs#changed_physical_file_blocks_before_native_frame_or_selection",
+    "crates/jj-store-cli/tests/stack_checkout_plans/completion.rs#checkout_selected_before_tree_and_missing_completion_evidence_are_rejected",
+    "crates/jj-store-cli/tests/stack_checkout_plans/completion.rs#process_loss_before_frame_and_after_each_native_selection_resumes_exact_input",
+    "crates/jj-store-cli/tests/stack_checkout_plans/completion.rs#partial_initial_frame_accepts_only_exact_retained_prefix",
+    "crates/jj-store-cli/tests/stack_checkout_plans/completion.rs#native_replacement_policy_and_backup_changes_block_remaining_checkout",
+    "crates/jj-store-cli/tests/stack_checkout_plans/completion.rs#exit_at_native_boundary",
+    "crates/jj-store-cli/tests/stack_checkout_plans/completion.rs#authorization_loss_after_tree_selection_retains_original_checkout_and_resumes",
+    "crates/jj-store-cli/tests/stack_checkout_plans/completion.rs#canceled_native_worker_retains_admission_and_foreground_until_exit",
+    "crates/jj-store-jj/src/local_execution/recovery/tree_checkout/completion/native.rs#signed_native_milliseconds_match_upstream_duration_truncation"
+  ],
+  "runs": [
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_checkout_plans installation::retained_tree_files_install_with_durable_progress_and_unchanged_native_metadata -- --exact",
+      "result": "pass",
+      "failures": 0,
+      "note": "native-completion-before.log: Existing physical-only baseline passes; it leaves original native metadata and has no completion method."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo check --locked -p jj-store-jj",
+      "result": "fail",
+      "failures": 22,
+      "note": "native-completion-first-check.log: 22 compilation diagnostics: sibling-module privacy and u64/u32 mode comparison. Repaired without weakening guards. No tests ran."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo check --locked -p jj-store-jj",
+      "result": "pass",
+      "failures": 0,
+      "note": "native-completion-check-repair.log: Owning package check passes after controlled internal visibility and mode conversion repairs."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_checkout_plans completion::native_tree_completion_and_exact_replay_preserve_installed_inodes -- --exact",
+      "result": "fail",
+      "failures": 1,
+      "note": "native-completion-first-test.log: Test fixture referenced a non-public upstream executable-bit type. Replaced with public decoded FileType, actual filesystem mode and stock-JJ consumption assertions. No tests ran."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_checkout_plans completion::",
+      "result": "fail",
+      "failures": 1,
+      "note": "native-completion-expanded.log: Test fixture accessed a private ExecBit field. Repaired using the same public/native checks, without production API changes. No tests ran."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_checkout_plans completion::native_tree_completion_and_exact_replay_preserve_installed_inodes -- --exact",
+      "result": "pass",
+      "failures": 0,
+      "note": "native-completion-exact-repaired.log: Exact real-native/scanner completion and replay pass; stock JJ consumes the resulting checkout without a spurious commit rewrite."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo clippy --locked -p jj-store-jj -p jj-store-service -p jj-store-server -p jj-store-cli --all-targets --no-deps -- -D warnings",
+      "result": "fail",
+      "failures": 1,
+      "note": "native-completion-first-lint.log: One large-enum diagnostic. Private recovery variants now own boxed payloads."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_checkout_plans completion::",
+      "result": "fail",
+      "failures": 1,
+      "note": "native-completion-functional.log: One missing-comma parser diagnostic during the enum repair, also reported by cargo fmt; fixed immediately. No tests ran."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_checkout_plans completion::",
+      "result": "pass",
+      "failures": 0,
+      "note": "native-completion-functional-repaired.log: Eight completion parents pass. Subsequent frame re-acknowledgement hardening and the ninth missing-evidence/order parent are included in the final family below."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_checkout_plans",
+      "result": "pass",
+      "failures": 0,
+      "note": "native-completion-final-plans.log: 43 plan/inventory/installation/native-completion parents pass; all five isolated helpers are invoked by passing parents. Includes nine new native completion parents and four abrupt native boundaries."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --test stack_tree_checkout --test stack_unchanged_checkout --test stack_head_publication --test stack_source_recovery --test stack_foreground --test stack_reword_preparation",
+      "result": "pass",
+      "failures": 0,
+      "note": "native-completion-provider-regressions.log: 94 direct provider parents pass: original foreground/reword, head publication, source/extra/index recovery, tree planning and unchanged completion."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-jj --lib signed_native_milliseconds_match_upstream_duration_truncation",
+      "result": "pass",
+      "failures": 0,
+      "note": "native-completion-unit.log: One exact native timestamp regression passes, including sub-millisecond negative timestamps, negative seconds/nanos and overflow/invalid nanosecond bounds."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-service --test working_tree_inventory --test working_tree_checkout",
+      "result": "pass",
+      "failures": 0,
+      "note": "native-completion-service-regressions.log: 13 service inventory and registered guard parents pass."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-cli --test stack_registered_preparation",
+      "result": "pass",
+      "failures": 0,
+      "note": "native-completion-registered-regressions.log: 12 registered preparation/private execution parents pass."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo test --locked -p jj-store-server --test stack_local_execution",
+      "result": "pass",
+      "failures": 0,
+      "note": "native-completion-runtime-regressions.log: Nine existing unchanged-tree private runtime parents pass."
+    },
+    {
+      "command": "CARGO_INCREMENTAL=0 cargo clippy --locked -p jj-store-jj -p jj-store-service -p jj-store-server -p jj-store-cli --all-targets --no-deps -- -D warnings",
+      "result": "pass",
+      "failures": 0,
+      "note": "native-completion-lint-final.log: Owning/direct-consumer all-target strict type/lint passes."
+    },
+    {
+      "command": "cargo fmt --all",
+      "result": "pass",
+      "failures": 0,
+      "note": "source formatting: Repeated after source/test edits; final pinned format lane below passes. No unrelated source was changed."
+    },
+    {
+      "command": "pnpm format:rust:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "native-completion-rust-format.log: Pinned Rust formatting passes."
+    },
+    {
+      "command": "pnpm check:boundaries",
+      "result": "pass",
+      "failures": 0,
+      "note": "native-completion-boundaries.log: 17-package source boundaries pass."
+    },
+    {
+      "command": "pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "native-completion-architecture.log: 1090 application source modules pass."
+    },
+    {
+      "command": "pnpm test:governance",
+      "result": "pass",
+      "failures": 0,
+      "note": "native-completion-governance.log: 50 governance cases pass."
+    },
+    {
+      "command": "pnpm docs:review local 'Reviewed provider-owned version-1 native completion frames linked to retained plan/inventory, staged native inode identities, exact prefix recovery, tree-state-before-checkout replacement with prior frame acknowledgement, native path ordering and signed mtime, unchanged file states, cleared Watchman clock, complete physical/backup guards and cancellation admission. Sealed native completion remains separate from command receipts, combination selection and writable transport.'",
+      "result": "pass",
+      "failures": 0,
+      "note": "native-completion-docs-review.log: Owning source fingerprint reviewed against the final provider."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/implementation-plan.md docs/site/technical/local.md spec/src/local-jj.md spec/src/jj-integration.md spec/src/cli.md spec/src/architecture.md spec/src/verification.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "native-completion-docs-format.log: Changed documents formatted; milestones excluded."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/maintenance/coverage.json spec/src/local-jj.md spec/src/documentation.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "native-completion-docs-format-final.log: Final coverage/canonical documents formatted; milestones excluded."
+    },
+    {
+      "command": "pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "native-completion-docs-check.log: 139-file offline documentation closure, links/anchors and nine diagrams in both themes pass."
+    },
+    {
+      "command": "python3 .local/stacks-backend-evidence/native-completion-ledger.py",
+      "result": "pass",
+      "failures": 0,
+      "note": "native-completion-ledger.log: Appends E-M21-033 and current table links, preserving historical bodies."
+    },
+    {
+      "command": "pnpm exec prettier --check docs/implementation-plan.md docs/site/technical/local.md docs/maintenance/coverage.json spec/src/local-jj.md spec/src/jj-integration.md spec/src/cli.md spec/src/architecture.md spec/src/verification.md spec/src/documentation.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "native-completion-format-final.log: Final changed document formatting passes, ledger excluded."
+    },
+    {
+      "command": "python3 .local/stacks-backend-evidence/native-completion-ledger-audit.py",
+      "result": "pass",
+      "failures": 0,
+      "note": "native-completion-ledger-audit.log: 515 objects; all 514 preceding raw bodies remain byte-identical."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "native-completion-progress.log: 142 task/evidence checks pass; current milestone remains In progress."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "native-completion-spec-first.log: 19 protected files/six canonical chapters pass."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "native-completion-spec-validation.log: Five validators, 23 chapters and 173 requirements pass."
+    },
+    {
+      "command": "python3 .local/stacks-backend-evidence/native-completion-ledger-final.py",
+      "result": "pass",
+      "failures": 0,
+      "note": "native-completion-ledger-final.log: Records actual successful specification checks only in the new body. Historical-byte audit, progress and specification validation were repeated afterwards and pass (native-completion-ledger-audit-final.log, native-completion-progress-final.log and native-completion-spec-validation-final.log)."
+    }
+  ],
+  "result": "pending",
+  "remaining": [
+    "Native completion is qualified for the existing bounded resolved regular/executable, full-sparse tree-plan profile. Dirty affected physical WIP remains rejected; full merge/WIP retention belongs to the combination engine. Original backups and plan native bytes remain retained; no cleanup or rollback deletion is enabled.",
+    "Actual durable combination after-state and original journal/runtime coordination, explicit setup, merge/WIP membership and switching, prepare/apply/status/pending transport and writable production controller wiring remain incomplete. Whole-file/issued-hunk staging, graph/deletion/scoped undo, linked-native real-storage and complete cold UI acceptance remain required across all seven approved stages.",
+    "Synthetic combination selections in these real-native/scanner fixtures do not qualify the combination engine or real RustFS/linked-native execution. Production Stacks remains read-only.",
+    "Unrelated UI/Storybook/RustFS/root aggregate lanes, package publication, installed binary/service replacement, existing repository reset/migration, screenshots and baseline updates are out of scope. Storybook port 6057 untouched. The existing debug linker __eh_frame warning remains unsuppressed; all final selected tests pass under normal concurrency."
+  ],
+  "next": "Compose native completion with the authenticated original journal, durable combination after-state and exact runtime recovery; then continue setup/membership/WIP engines, transport and writable UI through all seven approved stages.",
+  "summary": "172 unique focused Rust parents pass: 43 CLI plan/installation/completion, 94 provider, one native timestamp, 13 service, 12 registered CLI and nine private runtime. Strict all-target type/lint, source/governance/format, documentation and specification checks pass. Native provider completion is verified; full feature remains incomplete. All 514 preceding raw ledger bodies remain unchanged."
 }
 ]
 ```
