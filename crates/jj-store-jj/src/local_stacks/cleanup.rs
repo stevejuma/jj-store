@@ -18,6 +18,7 @@ pub(super) async fn candidates(repo: &ReadonlyRepo, saved: &SavedWorkspace) -> R
             "Stacks: Unapply ",
             "Stacks: UnapplyBranches ",
             "Stacks: SetTarget ",
+            "Stacks: Set target branch to ",
             "Stacks: Update ",
             "Stacks: Reconcile",
         ]

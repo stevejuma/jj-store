@@ -223,7 +223,7 @@ async fn membership_retains_target_merge_identity_and_only_one_live_merge() {
 
 /// Reproduce the old composer exactly: new merge change, retained WIP rewrite,
 /// and the recorded internal reference transition in a native operation.
-async fn legacy_replace(root: &Path) -> String {
+async fn legacy_replace(root: &Path, description: &str) -> String {
     use jj_lib::{
         config::StackedConfig,
         default_backend_factories::{default_backend_factories, default_working_copy_factories},
@@ -293,10 +293,7 @@ async fn legacy_replace(root: &Path) -> String {
         .set_wc_commit(name, new_wip.id().clone())
         .unwrap();
     tx.repo_mut().rebase_descendants().await.unwrap();
-    let after = tx
-        .commit("Stacks: Apply { branch: \"topic-one\" }")
-        .await
-        .unwrap();
+    let after = tx.commit(description).await.unwrap();
     locked.locked_wc().check_out(&new_wip).await.unwrap();
     locked.finish(after.op_id().clone()).await.unwrap();
     old.id().hex()
@@ -324,12 +321,12 @@ async fn reconciliation_only_retires_proven_unreferenced_legacy_heads() {
         },
     )
     .await;
-    let protected = legacy_replace(root).await;
+    let protected = legacy_replace(root, r#"Stacks: Apply { branch: "topic-one" }"#).await;
     stock(
         root,
         &["bookmark", "create", "keep-this-merge", "-r", &protected],
     );
-    let descendant = legacy_replace(root).await;
+    let descendant = legacy_replace(root, r#"Stacks: SetTarget { branch: "topic-one" }"#).await;
     stock(
         root,
         &["new", &descendant, "-m", "User child of legacy merge"],
@@ -341,7 +338,7 @@ async fn reconciliation_only_retires_proven_unreferenced_legacy_heads() {
             .unwrap();
     let wip_ref = config["workspaces"][0]["wip_ref"].as_str().unwrap();
     stock(root, &["edit", wip_ref]);
-    let eligible = legacy_replace(root).await;
+    let eligible = legacy_replace(root, "Stacks: Set target branch to topic-one").await;
     stock(root, &["describe", "-m", "Unfinished work"]);
     let before = refresh(root).await;
     assert!(before.workspaces[0].membership_changed);

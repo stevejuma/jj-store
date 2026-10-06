@@ -11,6 +11,7 @@ pub use conflicts::{Conflict, conflict};
 mod hunks;
 mod inspection;
 mod mutations;
+mod operation_description;
 mod policy;
 mod preview;
 mod settings;
@@ -340,7 +341,7 @@ pub async fn execute(access: Arc<dyn Access>, root: PathBuf, request: Request) -
     }
     if !refresh {
         let mut tx = repo.start_transaction();
-        let mut description = format!("Stacks: {:?}", request.command);
+        let mut description = operation_description::describe(&request.command, &config);
         match request.command {
             Command::Setup {
                 ref name,

@@ -984,6 +984,14 @@ inherit the target and start empty. Refresh and commands snapshot with normal
 ignore/auto-track/file-size rules through explicit POST transport; historical
 GETs and operation-pinned code queries remain read-only.
 
+New Stacks operations MUST store normalized, single-line action descriptions in
+native JJ metadata, for example `Stacks: Apply feature/cloud-observability`. Use
+readable workspace names and branch/path/commit labels, never Rust Debug or
+serialized command payloads, resolution contents, hunk tokens or message bodies.
+Native Undo/Redo description conventions remain intact. Historical operation
+metadata remains unchanged; legacy cleanup continues to recognize old and new
+membership descriptions alongside its required reference and ancestry proof.
+
 Commands validate operation/configuration revisions before execution. Previews
 are advisory, not retained unpublished operations. Unknown transport outcomes
 require current-state/op-log inspection before another attempt, never automatic
