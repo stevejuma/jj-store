@@ -4,13 +4,24 @@
   import { navigationItemIcon } from "../community-navigation/icons.js";
   import type { StorePage } from "../community-navigation/model.js";
   import { repositoryRailSections } from "./repository-sections.js";
-  let { page, onSelect }: { page: StorePage; onSelect(page: StorePage): void } =
-    $props();
+  let {
+    page,
+    onSelect,
+    sections = repositoryRailSections,
+    label = "Repository views",
+    disabled = false,
+  }: {
+    page: StorePage;
+    onSelect(page: StorePage): void;
+    sections?: readonly { page: StorePage; label: string }[];
+    label?: string;
+    disabled?: boolean;
+  } = $props();
 </script>
 
-<nav class="store-repository-navigation" aria-label="Repository views">
+<nav class="store-repository-navigation" aria-label={label}>
   <p>Details</p>
-  {#each repositoryRailSections as item (item.page)}
+  {#each sections as item (item.page)}
     {@const Icon = navigationItemIcon({
       id: item.page,
       kind: item.page,
@@ -19,6 +30,7 @@
     <Button
       variant="ghost"
       class="store-repository-navigation__item"
+      {disabled}
       aria-current={page === item.page ? "page" : undefined}
       data-active={page === item.page ? "" : undefined}
       onclick={() => onSelect(item.page)}

@@ -22,6 +22,8 @@
   {{#include E-M21-065/SUMMARY.nav.md}}
 - [E-M21-066](E-M21-066/index.md)
   {{#include E-M21-066/SUMMARY.nav.md}}
+- [E-M21-067](E-M21-067/index.md)
+  {{#include E-M21-067/SUMMARY.nav.md}}
 - [E-READ-089](E-READ-089/index.md)
   {{#include E-READ-089/SUMMARY.nav.md}}
 - [E-READ-090](E-READ-090/index.md)

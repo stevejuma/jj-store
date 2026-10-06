@@ -23,24 +23,24 @@ Branches, Workspace, Commits and Op Log using the shared body-tab styling and
 accessible overflow. The Details toggle, centered workspace picker and existing
 Stacks actions remain available across all four views. Commits and Op Log reuse
 repository-wide history and its exact operation/selection reads. The existing
-repository Branches page stays separate. The right sidebar retains selection
-details and workspace Settings but suppresses ordinary repository navigation and
-actions. Its far-right details rail shows the active workspace name/ID, target
-branch, applied-stack count and local folder, then the selected stack/branch,
-commit or file. Focused history shows selected repository-wide commit/operation
-metadata instead of stale canvas selections. Read-only rows follow existing
-Settings presentation; copy is available only for IDs/hashes. Workspace ID copy
-hover and keyboard focus use the rounded, seven-percent foreground tint of left
-sidebar buttons. A separate Actions section reuses the sidebar's icon buttons
-for workspace settings, branch browsing, refresh, and explicit saved-membership
-reconciliation when needed. Resolve conflicts opens the same capability-gated
+repository Branches page stays separate. The right sidebar retains workspace
+Settings but suppresses ordinary repository navigation and actions. Its
+far-right rail uses the repository page-heading and compact Details navigation
+composition with Branches, Workspace, Commits and Op Log links, retaining
+focused Stacks routes and marking the current view. It omits the introductory
+workspace, target, count, folder and selected-item metadata list; selections
+remain in the body and workspace identity/configuration remain in the picker,
+footer and Settings. A separate Actions section reuses compact sidebar icon
+buttons for workspace settings, refresh and explicit saved-membership
+reconciliation when needed. Actions appear only while applicable under existing
+capability, active-workspace, conflict, membership and pending-command guards;
+an empty section is omitted. Resolve conflicts opens the same capability-gated
 workspace editor from this rail and the local-workspace notification across all
 four focused tabs, retaining the selected view and diffs. Unavailable or pending
 commands cannot execute through either entry point. Resolved conflicts clear
-their condition notice and disable resolution actions. The notification's
-Resolve conflicts action uses the public secondary variant with a themed
-background at rest, retaining a visibly distinct hover surface and visible
-keyboard focus.
+their condition notice and remove resolution actions. The notification's Resolve
+conflicts action uses the public secondary variant with a themed background at
+rest, retaining a visibly distinct hover surface and visible keyboard focus.
 
 Stacks retains the full bounded, operation-pinned text comparison alongside
 native hunk descriptors. Draggable cards use the shared FileDiff

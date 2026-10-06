@@ -24,7 +24,9 @@ receipt or automatic replay contract.
 Stacks canvas spacing and fixed columns are client presentation governed by
 JST-UI-020; they do not alter local Stacks transport or configuration. Workspace
 Settings row ordering, borders and Save/Cancel presentation also remain
-client-only; Update/Delete request contracts are unchanged.
+client-only; Update/Delete request contracts are unchanged. The compact Stacks
+Details rail and conditional action visibility use existing navigation and
+eligibility state without changing transport, local commands or TOML settings.
 
 Focused Stacks repository navigation adds only browser presentation fields:
 `context=stacks` is valid on existing Log/Op Log routes, and

@@ -65,6 +65,24 @@
     ).toBeDisabled();
     expect(canvas.queryByRole("region", { name: "Unstaged files" })).toBeNull();
     expect(canvas.getByRole("tab", { name: "Branches" })).toBeEnabled();
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Toggle details" }),
+    );
+    const rail = within(
+      canvas.getByRole("complementary", { name: "Repository details" }),
+    );
+    expect(
+      rail.getByRole("navigation", { name: "Stack workspace views" }),
+    ).toBeVisible();
+    for (const name of [
+      "Workspace settings",
+      "Resolve conflicts",
+      "Reapply saved branches",
+    ])
+      expect(rail.queryByRole("button", { name })).toBeNull();
+    expect(
+      rail.getByRole("button", { name: "Refresh workspace" }),
+    ).toBeEnabled();
     await choose(canvasElement);
     expect(
       canvas.getByText("No stack workspace", {

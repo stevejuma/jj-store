@@ -15,6 +15,82 @@
 </script>
 
 <Story
+  name="Workspace rail uses repository Details navigation"
+  args={{ initialPage: "files" }}
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Toggle details" }),
+    );
+    const sidebar = canvas.getByRole("complementary", {
+      name: "Repository details",
+    });
+    const rail = within(sidebar);
+    const repositoryLink = rail.getByRole("button", { name: "Branches" });
+    const style = getComputedStyle(repositoryLink);
+    const expectedStyle = [
+      style.height,
+      style.paddingInline,
+      style.fontSize,
+      style.fontWeight,
+      style.gap,
+    ];
+    await userEvent.click(canvas.getByRole("tab", { name: "Stacks" }));
+    await canvas.findByRole("region", { name: "Unstaged files" });
+    const navigation = await rail.findByRole("navigation", {
+      name: "Stack workspace views",
+    });
+    expect(
+      within(navigation).getByText("Details", { exact: true }),
+    ).toBeVisible();
+    expect(
+      within(navigation)
+        .getAllByRole("button")
+        .map((button) => button.textContent?.trim()),
+    ).toEqual(["Branches", "Workspace", "Commits", "Op Log"]);
+    expect(
+      rail.queryByRole("navigation", { name: "Repository views" }),
+    ).toBeNull();
+    expect(sidebar.querySelector("dl")).toBeNull();
+    for (const name of [
+      "Workspace ID",
+      "Target branch",
+      "Applied stacks",
+      "Local folder",
+    ])
+      expect(rail.queryByText(name, { exact: true })).toBeNull();
+    const actions = rail.getByRole("region", { name: "Workspace actions" });
+    expect(
+      within(actions).queryByRole("button", { name: "Resolve conflicts" }),
+    ).toBeNull();
+    expect(
+      within(actions).queryByRole("button", { name: "Reapply saved branches" }),
+    ).toBeNull();
+    for (const name of ["Branches", "Workspace", "Commits", "Op Log"]) {
+      const button = within(navigation).getByRole("button", { name });
+      const computed = getComputedStyle(button);
+      expect([
+        computed.height,
+        computed.paddingInline,
+        computed.fontSize,
+        computed.fontWeight,
+        computed.gap,
+      ]).toEqual(expectedStyle);
+      expect(button.querySelector("svg")).not.toBeNull();
+      await userEvent.click(button);
+      await waitFor(() =>
+        expect(button).toHaveAttribute("aria-current", "page"),
+      );
+      expect(canvas.getByRole("tab", { name })).toHaveAttribute(
+        "data-state",
+        "active",
+      );
+      expect(sidebar.querySelector("button:disabled")).toBeNull();
+    }
+  }}
+/>
+
+<Story
   name="Enter from repository and return to exact selection"
   args={{ initialPage: "files" }}
   play={async ({ canvasElement }) => {
@@ -98,10 +174,13 @@
     const workspaceDetails = details.getByRole("region", {
       name: "Stack workspace details",
     });
-    expect(workspaceDetails).toHaveTextContent("Workspace details");
-    expect(workspaceDetails).toHaveTextContent("Daily work");
-    expect(workspaceDetails).toHaveTextContent(/Target branch\s+main/);
-    expect(workspaceDetails).toHaveTextContent(/Applied stacks\s+2/);
+    expect(workspaceDetails).toHaveTextContent("Workspace/Stacks");
+    expect(
+      within(workspaceDetails).getByRole("navigation", {
+        name: "Stack workspace views",
+      }),
+    ).toBeVisible();
+    expect(workspaceDetails.querySelector("dl")).toBeNull();
     expect(details.queryByText("Reviews/Threads")).toBeNull();
     await userEvent.click(
       canvas.getByRole("button", { name: "Back to repository" }),
@@ -134,9 +213,11 @@
     const rail = within(
       canvas.getByRole("region", { name: "Stack workspace details" }),
     );
-    expect(rail.getByText("Expose repository API")).toBeVisible();
-    expect(rail.getByText("src/api.ts")).toBeVisible();
-    expect(rail.getAllByText("feature/api")).toHaveLength(2);
+    expect(rail.getByRole("button", { name: "Workspace" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+    expect(rail.queryByText("Expose repository API")).toBeNull();
     const diff = await canvas.findByRole("region", {
       name: "Selected changes from stack-api",
     });
@@ -164,7 +245,11 @@
         },
       ),
     );
-    expect(rail.getByText("Commit details")).toBeVisible();
+    expect(rail.getByText("JJ Log/Changes")).toBeVisible();
+    expect(rail.getByRole("button", { name: "Commits" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
     await userEvent.click(
       views(canvasElement).getByRole("tab", { name: "Op Log" }),
     );
@@ -184,7 +269,10 @@
       canvas.getByRole("region", { name: "Selected changes from stack-api" }),
     ).toBe(diff);
     expect(title).toHaveValue("Retained while reading history");
-    expect(rail.getByText("Expose repository API")).toBeVisible();
+    expect(rail.getByRole("button", { name: "Workspace" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
     await userEvent.click(
       views(canvasElement).getByRole("tab", { name: "Commits" }),
     );
@@ -261,7 +349,7 @@
 />
 
 <Story
-  name="Details follow dependent branch and target history selections"
+  name="Details navigation retains dependent branch and target selections in the body"
   args={{ page: "branches" }}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -283,17 +371,29 @@
       name: "Stack workspace details",
     });
     const rail = within(details);
-    expect(rail.getByText("Stack details")).toBeVisible();
+    expect(rail.getByText("Branches/Stacks")).toBeVisible();
+    expect(rail.getByRole("button", { name: "Branches" })).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
     expect(
-      rail.getByText("Branch", { exact: true }).closest(".store-readonly-row"),
-    ).toHaveTextContent("feature/model");
-    expect(rail.queryByText("Description", { exact: true })).toBeNull();
+      within(stack).getByRole("region", {
+        name: "Changed files in branch feature/model",
+      }),
+    ).toBeVisible();
+    expect(details.querySelector("dl")).toBeNull();
     await userEvent.click(canvas.getByRole("option", { name: "main" }));
     const target = await canvas.findByRole("region", { name: "Stack main" });
     await userEvent.click(
       await within(target).findByRole("button", { name: "Main history 240" }),
     );
-    await waitFor(() => expect(details).toHaveTextContent("Main history 240"));
+    await waitFor(() =>
+      expect(
+        within(target)
+          .getByRole("button", { name: "Main history 240" })
+          .closest('[role="listitem"]'),
+      ).toHaveAttribute("aria-current", "true"),
+    );
     expect(rail.queryByText("feature/model", { exact: true })).toBeNull();
   }}
 />

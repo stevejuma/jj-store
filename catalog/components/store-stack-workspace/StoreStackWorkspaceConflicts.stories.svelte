@@ -212,8 +212,8 @@
       actions.getByRole("button", { name: "Workspace settings" }),
     ).toBeEnabled();
     expect(
-      actions.getByRole("button", { name: "Browse branches" }),
-    ).toBeEnabled();
+      details.getByRole("navigation", { name: "Stack workspace views" }),
+    ).toBeVisible();
     expect(
       actions.getByRole("button", { name: "Refresh workspace" }),
     ).toBeEnabled();
@@ -276,8 +276,8 @@
     );
     await waitFor(() =>
       expect(
-        actions.getByRole("button", { name: "Resolve conflicts" }),
-      ).toBeDisabled(),
+        details.queryByRole("button", { name: "Resolve conflicts" }),
+      ).toBeNull(),
     );
     await waitFor(() =>
       expect(portal.queryByText("Local workspace needs attention")).toBeNull(),
@@ -286,16 +286,68 @@
 />
 
 <Story
+  name="Pending reconciliation hides rail actions until cancellation"
+  args={{ membershipChanged: true }}
+  play={async ({ canvasElement }) => {
+    const details = await rail(canvasElement);
+    await userEvent.click(
+      within(canvasElement).getByRole("button", {
+        name: "Simulate conflict recovery",
+      }),
+    );
+    await waitFor(() =>
+      expect(
+        details.queryByRole("button", { name: "Resolve conflicts" }),
+      ).toBeNull(),
+    );
+    await userEvent.click(
+      details.getByRole("button", { name: "Reapply saved branches" }),
+    );
+    const portal = within(canvasElement.ownerDocument.body);
+    const dialog = await portal.findByRole("dialog");
+    expect(
+      details.queryByRole("region", { name: "Workspace actions" }),
+    ).toBeNull();
+    const navigation = details.getByRole("navigation", {
+      name: "Stack workspace views",
+    });
+    for (const button of within(navigation).getAllByRole("button"))
+      expect(button).toBeDisabled();
+    await userEvent.click(
+      within(dialog).getByRole("button", { name: "Cancel preview" }),
+    );
+    await waitFor(() =>
+      expect(
+        details.getByRole("button", { name: "Reapply saved branches" }),
+      ).toBeEnabled(),
+    );
+    expect(
+      details.getByRole("button", { name: "Workspace settings" }),
+    ).toBeEnabled();
+    expect(details.getByRole("button", { name: "Workspace" })).toBeEnabled();
+  }}
+/>
+
+<Story
   name="Unavailable resolution has no executable notification action"
-  args={{ writable: false }}
+  args={{ writable: false, membershipChanged: true }}
   play={async ({ canvasElement }) => {
     const details = await rail(canvasElement),
       portal = within(canvasElement.ownerDocument.body);
     expect(
       within(
         details.getByRole("region", { name: "Workspace actions" }),
-      ).getByRole("button", { name: "Resolve conflicts" }),
-    ).toBeDisabled();
+      ).queryByRole("button", { name: "Resolve conflicts" }),
+    ).toBeNull();
+    expect(
+      details.queryByRole("button", { name: "Reapply saved branches" }),
+    ).toBeNull();
+    expect(
+      details.getByRole("button", { name: "Workspace settings" }),
+    ).toBeEnabled();
+    expect(
+      details.getByRole("button", { name: "Refresh workspace" }),
+    ).toBeEnabled();
     const toast = portal
       .getByText("Local workspace needs attention")
       .closest("section")!;
@@ -306,38 +358,38 @@
 />
 
 <Story
-  name="Workspace ID hover uses the sidebar surface"
+  name="Details links use repository navigation hover and keyboard focus"
   play={async ({ canvasElement }) => {
     const details = await rail(canvasElement);
-    const copy = details.getByRole("button", {
-      name: /^Copy full Workspace ID:/,
+    const navigation = details.getByRole("navigation", {
+      name: "Stack workspace views",
     });
-    const row = copy.closest(".store-readonly-row")!;
-    const sidebar = canvasElement.querySelector<HTMLElement>(
-      '.lc-community-navigation__item[data-ui-component="button"]:not([data-active])',
-    )!;
-    expect(sidebar).not.toBeNull();
+    const branch = within(navigation).getByRole("button", { name: "Branches" });
+    expect(branch).not.toHaveAttribute("aria-current");
     if (import.meta.env.MODE === "test") {
       const { userEvent: pointer } = await import("vitest/browser");
       const swatch = canvasElement.ownerDocument.createElement("span");
       swatch.style.backgroundColor =
-        "color-mix(in srgb, var(--foreground) 7%, transparent)";
+        "color-mix(in oklab, var(--muted-foreground) 10%, transparent)";
       canvasElement.append(swatch);
       const color = getComputedStyle(swatch).backgroundColor;
       swatch.remove();
-      await pointer.hover(sidebar);
+      await pointer.hover(branch);
       await waitFor(() =>
-        expect(getComputedStyle(sidebar).backgroundColor).toBe(color),
+        expect(getComputedStyle(branch).backgroundColor).toBe(color),
       );
-      await pointer.hover(copy);
-      await waitFor(() =>
-        expect(getComputedStyle(row).backgroundColor).toBe(color),
+      expect(parseFloat(getComputedStyle(branch).borderRadius)).toBeGreaterThan(
+        0,
       );
-      expect(parseFloat(getComputedStyle(row).borderRadius)).toBeGreaterThan(0);
       await userEvent.keyboard("{Tab}");
-      copy.focus();
+      branch.focus();
+      expect(branch).toHaveFocus();
       await waitFor(() =>
-        expect(getComputedStyle(row).backgroundColor).toBe(color),
+        expect(getComputedStyle(branch).backgroundColor).toBe(color),
+      );
+      await userEvent.keyboard("{Enter}");
+      await waitFor(() =>
+        expect(branch).toHaveAttribute("aria-current", "page"),
       );
     }
   }}
