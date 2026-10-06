@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import FolderKanbanIcon from "@lucide/svelte/icons/folder-kanban";
   import ListTodoIcon from "@lucide/svelte/icons/list-todo";
@@ -86,13 +87,20 @@
       aria-label={`Home ${home.repository.name}`}
       aria-busy={home.loading}
     >
-      {#if home.error}<p role="alert">{home.repository.name}: {home.error}</p>
-        {#if home.snapshot}<p>
-            Previous results retained; they may use earlier filters.
-          </p>{/if}
-        <Button variant="outline" onclick={() => hub.refresh()}
-          >Retry home</Button
-        >{/if}
+      <StoreNotice
+        scope="projects-reads"
+        noticeKey={`project-home:${home.repository.id}`}
+        title={`Could not load ${kind} in ${home.repository.name}`}
+        message={home.error
+          ? `${home.error}${home.snapshot ? " Previous results retained; they may use earlier filters." : ""} Results cover available homes only.`
+          : ""}
+        pending={home.loading}
+        action={{
+          id: "retry-home",
+          label: "Retry home",
+          run: () => hub.refresh(),
+        }}
+      />
       {#if home.loading && !home.snapshot}<div class="store-projects__loading">
           <CommunitySkeleton
             layout="timeline"
@@ -116,7 +124,4 @@
         : `No ${kind} yet`}
       description="Create an item or change the filters to see work across your repositories."
     />{/if}
-  {#if hub.homes.some((home) => home.error)}<p>
-      Some homes are unavailable. Results cover the homes shown above.
-    </p>{/if}
 {/if}

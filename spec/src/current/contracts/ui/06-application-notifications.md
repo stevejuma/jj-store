@@ -16,6 +16,13 @@ add body status rows or replay a dismissed running notice as counts change.
 Pending graph, query, directory metadata and paged rows use accessible
 skeletons; loaded content remains available during background work.
 
+Projects hub home, review, agent and activity read failures use scoped condition
+toasts with repository context and explicit retry actions. A failed home never
+hides successful homes or reports their retained rows as an empty directory.
+Hidden-tab successful reads resolve dismissed episodes; loading or retrying
+alone never resolves them. Unsupported capabilities keep their contextual Empty
+explanation, independently from recoverable read errors.
+
 Field/query validation, content empty states, stale drafts and exact mutation
 request recovery remain contextual. Reaction metadata retains its existing
 placement. General request failures and confirmations use toasts without

@@ -71,10 +71,17 @@ review heading at the top of the body.
 
 Unavailable review transport capability uses the public shadcn Empty composition
 with a review icon and an explanation, without an error alert or retry action.
-Recoverable review read failures retain their error and explicit Retry reviews
-action. Mixed directories preserve supported native and qualified local
-repositories and their pinned reviews alongside the unsupported state. A local
-profile alone does not reject its qualified review transport.
+Recoverable review read failures use application-owned condition toasts with the
+repository name, original error and explicit Retry reviews action. Activity,
+Projects, Tasks and Agents use the same presentation for failed home or scope
+reads; retry actions remain in their toasts. Successful homes and previously
+loaded rows stay visible without duplicate inline error blocks. Repository
+metadata failures retain their existing toasts. Dismissed unchanged failures
+stay suppressed through retries and tab changes; successful reads, including
+while a tab is hidden, clear the episode so a later failure can notify again.
+Mixed directories preserve supported native and qualified local repositories and
+their pinned reviews alongside the unsupported state. A local profile alone does
+not reject its qualified review transport.
 
 Reviews use the same full-width Community review rows as the Projects directory,
 with measured virtual rows and cursor-edge continuation. Selecting a row opens a

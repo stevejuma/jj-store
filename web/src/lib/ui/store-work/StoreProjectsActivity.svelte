@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import CommunitySkeleton from "../community-skeleton/CommunitySkeleton.svelte";
   import { filterNativeActivity } from "../../controller/native-activity-filter.js";
@@ -53,10 +54,20 @@
         label="Checking recorded agent associations"
       />
     </div>{/if}
-  {#if unavailable}<p role="alert">
-      Agent context unavailable for {unavailable} commits. Filtered results are incomplete.
-      Refresh activity to retry.
-    </p>{/if}
+  <StoreNotice
+    noticeKey="activity-agent-context"
+    title="Activity is incomplete"
+    severity="warning"
+    message={unavailable
+      ? `Agent context unavailable for ${unavailable} commits. Filtered results are incomplete.`
+      : ""}
+    pending={filtering || hub.loading}
+    action={{
+      id: "retry-activity-context",
+      label: "Retry activity",
+      run: () => hub.refresh(),
+    }}
+  />
   {#if rows.length && !filtering}<StoreRepositoryActivity
       commits={filtered}
       {controller}
@@ -77,12 +88,18 @@
           label={`Loading ${home.repository.name} activity`}
         />
       </div>{/if}
-    {#if home.error}<div class="store-projects__activity-notice">
-        <p role="alert">{home.repository.name}: {home.error}</p>
-        <Button variant="outline" onclick={() => hub.refresh()}
-          >Retry activity</Button
-        >
-      </div>{/if}
+    <StoreNotice
+      scope="projects-reads"
+      noticeKey={`project-activity:${home.repository.id}`}
+      title={`Could not load activity in ${home.repository.name}`}
+      message={home.error}
+      pending={home.loading}
+      action={{
+        id: "retry-activity",
+        label: "Retry activity",
+        run: () => hub.refresh(),
+      }}
+    />
     {#if home.page?.cursor}<Button
         variant="outline"
         disabled={home.loading}

@@ -19,6 +19,11 @@ entity IDs. Status and retry share that identity, even after refresh. Linked
 repository navigation uses the normal target session and token checks, never the
 home metadata grant.
 
+Recoverable Projects collection reads keep their independent snapshots and
+available rows while the browser reports the original failure through a scoped
+application toast. Retry reuses the existing refresh/read owner; moving error
+presentation introduces no endpoint, pagination, permission or command changes.
+
 Project list rows reserve aligned title, description, count, creator-avatar and
 date columns. Card/list selection always retains one layout. Agent row metric
 placement and tool toolbar bounds change presentation only; native records,

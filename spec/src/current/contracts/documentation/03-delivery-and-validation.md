@@ -1,5 +1,11 @@
 # Delivery and validation
 
+Projects feedback source reviews MUST cover repository-scoped retry toasts,
+retained successful rows and hidden-tab recovery. Unsupported capability
+explanations and exact mutation recovery remain contextual. Moving recoverable
+read errors changes presentation only; the review must not imply new transport
+or writable capabilities.
+
 The local manual MUST distinguish exact retained head publication from completed
 physical checkout and command receipts. Document original-request recovery,
 unchanged saved checkout/policy, bounded verified ancestry, preserved concurrent

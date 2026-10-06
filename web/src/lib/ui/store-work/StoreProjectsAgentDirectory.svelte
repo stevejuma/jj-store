@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import type { StoreController } from "../../controller/contracts.js";
   import { agentMember } from "../../collaboration/presentation.js";
   import { Button } from "@lapismd/design-core/shadcn/button";
@@ -50,9 +51,18 @@
       are unavailable.
     </p>{/if}
   {#each scopeHomes.filter((home) => home.error || home.cursor) as home (home.repository.id)}
-    {#if home.error}<p role="alert">
-        Project scope in {home.repository.name}: {home.error}
-      </p>{/if}
+    <StoreNotice
+      scope="projects-reads"
+      noticeKey={`project-navigation:${home.repository.id}`}
+      title={`Could not load project scope in ${home.repository.name}`}
+      message={home.error}
+      pending={home.loading}
+      action={{
+        id: "retry-project-scope",
+        label: "Retry project scope",
+        run: () => hub.refresh(),
+      }}
+    />
     {#if home.cursor}<p role="status">
         Sessions cover loaded projects in {home.repository.name}. More project
         links remain.
@@ -93,10 +103,19 @@
               ></Empty.Header
             ></Empty.Root
           >
-        {:else if home.error}<p role="alert">{home.error}</p>
-          <Button variant="outline" onclick={() => hub.refresh()}
-            >Retry agent sessions</Button
-          >{/if}
+        {/if}
+        <StoreNotice
+          scope="projects-reads"
+          noticeKey={`project-agents:${home.repository.id}`}
+          title={`Could not load agent sessions in ${home.repository.name}`}
+          message={home.unsupported ? "" : home.error}
+          pending={home.loading}
+          action={{
+            id: "retry-agents",
+            label: "Retry agent sessions",
+            run: () => hub.refresh(),
+          }}
+        />
         {#if home.loading && !home.snapshot}<StoreCollaborationSkeleton
             label="Loading agent sessions"
             agents

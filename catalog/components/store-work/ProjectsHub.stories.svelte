@@ -56,15 +56,18 @@
     const home = await c.findByRole("region", {
       name: "Reviews in Parser repository",
     });
-    await expect(within(home).getByRole("alert")).toHaveTextContent(
+    const body = within(document.body);
+    await expect(within(home).queryByRole("alert")).toBeNull();
+    const alerts = await body.findAllByRole("alert");
+    await expect(alerts).toHaveLength(2);
+    await expect(alerts[0]).toHaveTextContent(
       "Reviews temporarily unavailable",
     );
     await userEvent.click(
-      within(home).getByRole("button", { name: "Retry reviews" }),
+      within(alerts[0]!).getByRole("button", { name: "Retry reviews" }),
     );
-    await expect(await within(home).findByRole("alert")).toHaveTextContent(
-      "Reviews temporarily unavailable",
-    );
+    await waitFor(() => expect(body.getAllByRole("alert")).toHaveLength(2));
+    await expect(within(home).queryByRole("alert")).toBeNull();
   }}
 />
 
@@ -163,7 +166,10 @@
         c.getByRole("button", { name: "Open project Native release" }),
       ).toBeVisible(),
     );
-    await expect(c.getByRole("alert")).toHaveTextContent("Home unavailable");
+    await expect(c.queryByRole("alert")).toBeNull();
+    await expect(
+      await within(document.body).findByRole("alert"),
+    ).toHaveTextContent("Home unavailable");
   }}
 />
 <Story

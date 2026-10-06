@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed Help's themed loading skeleton at desktop, tablet and mobile sizes, sidebar/close styling, Retry toasts and retained portable navigation; user-facing manual prose remains accurate.",
-      "fingerprint": "bd88e8fa610265b029fe897e3bc8664772e7911534d74391b7f503cdb4e1a5f0"
+      "reason": "Reviewed Projects home, reviews, agents and activity read feedback: recoverable errors use retry toasts, unsupported capabilities and validation remain contextual, and existing browsing guidance remains accurate.",
+      "fingerprint": "aba4d0492d08d7624f6aed4a106858c3b38d2e9d79bfe691311a2ca0db05445a"
     }
   },
   {

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import StoreWorkCollection from "./StoreWorkCollection.svelte";
   import GitBranchIcon from "@lucide/svelte/icons/git-branch";
   import { Button } from "@lapismd/design-core/shadcn/button";
@@ -42,10 +43,19 @@
             title="Reviews unavailable"
             description="Reviews are not supported for local JJ repositories."
           />
-        {:else if home.error}<p role="alert">{home.error}</p>
-          <Button variant="outline" onclick={() => hub.refresh()}
-            >Retry reviews</Button
-          >{/if}
+        {/if}
+        <StoreNotice
+          scope="projects-reads"
+          noticeKey={`project-reviews:${home.repository.id}`}
+          title={`Could not load reviews in ${home.repository.name}`}
+          message={home.unsupported ? "" : home.error}
+          pending={home.loading}
+          action={{
+            id: "retry-reviews",
+            label: "Retry reviews",
+            run: () => hub.refresh(),
+          }}
+        />
         {#if home.loading && !home.snapshot}<div
             class="store-projects__loading"
           >

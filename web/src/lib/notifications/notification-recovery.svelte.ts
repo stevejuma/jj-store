@@ -1,12 +1,14 @@
 import { untrack } from "svelte";
 import type { StoreController } from "../controller/contracts.js";
 import type { NotificationContext } from "./notification-context.svelte.js";
+import { observeProjectNotificationRecovery } from "./project-notification-recovery.svelte.js";
 
 /** Recovery follows controller state even while its presentation is unmounted. */
 export function observeNotificationRecovery(
   context: NotificationContext,
   controller: () => StoreController,
 ) {
+  observeProjectNotificationRecovery(context, controller);
   const directoryKeys = new Set<string>();
   $effect(() => {
     const entries = (controller().projects?.repositories.entries ?? []).map(

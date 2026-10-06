@@ -254,7 +254,18 @@
                   title="No matching tasks in this project"
                   description="Change the filters or create a task to begin."
                 />{/if}
-              {#if home.error}<p role="alert">{home.error}</p>{/if}
+              <StoreNotice
+                scope="projects-reads"
+                noticeKey={`project-home:${home.repository.id}`}
+                title={`Could not load tasks in ${home.repository.name}`}
+                message={home.error}
+                pending={home.loading}
+                action={{
+                  id: "retry-home",
+                  label: "Retry home",
+                  run: () => hub.refresh(),
+                }}
+              />
               {#if home.cursor}<Button
                   variant="outline"
                   disabled={home.loading}
