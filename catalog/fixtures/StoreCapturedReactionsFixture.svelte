@@ -70,6 +70,7 @@
     {agent}
     member={principalMember(THREAD_IDS.actor)}
     sessionId={agentDetail.session.session_id}
+    integration={agentDetail.session.integration}
   />{:else}<StoreReviewConversation
     {controller}
     showComposer={false}

@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Inbox and recorded agent chats now share CommunityMessageMeta and agentMessageTimestamp clock formatting; legacy Time unknown has no fabricated timestamp; Community completion and Working feedback retain exact recovery",
-      "fingerprint": "ac00d978abd1247c84d8ea6fcd451e5f8281d7451cfb2af62ef6210dfde44e51"
+      "reason": "Reviewed the integrated recorded-agent banner insets, secondary collection heading size and ordered OpenCode typed-text rendering alongside main’s Community inbox/chat metadata and captured observation-time formatting. Original record copy values, safe fallback rendering, exact recovery and immutable capture/transport contracts remain unchanged; existing browsing and agent-execution guides describe the combined presentation.",
+      "fingerprint": "a1458db00e3b4cb0cc21be0b274aef7f1d1288fe6e240f20ba0973f7f8654657"
     }
   },
   {

@@ -1,0 +1,378 @@
+---
+schema: 1
+id: E-UI-105
+---
+
+# E-UI-105 details 3
+
+<!-- evidence-field:runs runs -->
+## Validation
+
+<!-- run -->
+### Run 1
+
+```yaml
+result: fail
+tests: 1
+failures: 1
+hasNote: true
+noteEncoding: markdown
+
+```
+
+```shell
+node .local/agent-parent-story-proof.mjs
+```
+
+**Notes**
+
+Attempted isolated parent-source diagnostic reconstructed the changed presentation files from a31b3167, but external symlinked dependency setup failed to import before any story test. This proves no baseline result. Removed the owned generated copy; its temporary tsconfigs had also triggered Vite reloads. Log: .local/agent-parent-review-diagnostic.log.
+<!-- /run -->
+
+<!-- run -->
+### Run 2
+
+```yaml
+result: pass
+tests: 1
+failures: 0
+hasNote: true
+noteEncoding: markdown
+
+```
+
+```shell
+CUA: new background tab → Repositories → jj-store demo → Agents → OpenCode
+```
+
+**Notes**
+
+Live Vite at 7464 renders Update the parser in a normal message paragraph, no raw part_1/JSON block; heading and strong both measure 12px. Existing three tool calls and stable selected session remain. The fresh tab first normalized to Projects; normal visible navigation established repository context. Screenshot: ignored .local/agents-readable-opencode.jpg. No baseline comparison.
+<!-- /run -->
+
+<!-- run -->
+### Run 3
+
+```yaml
+result: pass
+tests: 1
+failures: 0
+hasNote: true
+noteEncoding: markdown
+
+```
+
+```shell
+pnpm check:ui-ownership
+```
+
+**Notes**
+
+Production/catalog ownership validator passes.
+<!-- /run -->
+
+<!-- run -->
+### Run 4
+
+```yaml
+result: pass
+tests: 1
+failures: 0
+hasNote: true
+noteEncoding: markdown
+
+```
+
+```shell
+pnpm docs:review application 'Reviewed OpenCode typed-text part rendering in activity and transcript fallback, preserved raw record copy values and unknown-content fallback, and shared collection heading typography; the existing browsing guide remains accurate and capture/transport contracts are unchanged.'
+```
+
+**Notes**
+
+Mapped application source acknowledgement refreshed; existing manual remains accurate.
+<!-- /run -->
+
+<!-- run -->
+### Run 5
+
+```yaml
+result: pass
+tests: 1
+failures: 0
+hasNote: true
+noteEncoding: markdown
+
+```
+
+```shell
+pnpm docs:check
+```
+
+**Notes**
+
+Generated reference/source review and manual closure pass: 141 files, links/anchors valid and nine Mermaid diagrams in light/dark. Log: .local/agent-text-docs-check.log.
+<!-- /run -->
+
+<!-- run -->
+### Run 6
+
+```yaml
+result: pass
+tests: 7
+failures: 0
+hasNote: true
+noteEncoding: markdown
+
+```
+
+```shell
+pnpm spec:validate
+```
+
+**Notes**
+
+Seven validators pass before evidence generation; final evidence-aware run is recorded below. Log: .local/agent-text-spec-validate.log.
+<!-- /run -->
+
+<!-- run -->
+### Run 7
+
+```yaml
+result: pass
+tests: 1
+failures: 0
+hasNote: true
+noteEncoding: markdown
+
+```
+
+```shell
+pnpm progress:history
+```
+
+**Notes**
+
+Generated evidence histories sequentially for 144 tasks before validation; no milestone promotion.
+<!-- /run -->
+
+<!-- run -->
+### Run 8
+
+```yaml
+result: pass
+tests: 1
+failures: 0
+hasNote: true
+noteEncoding: markdown
+
+```
+
+```shell
+pnpm exec prettier --write <changed Markdown/JSON/TS/Svelte/CSS files selected from jj diff --name-only>
+```
+
+**Notes**
+
+Targeted formatter completed; production code already matched formatting.
+<!-- /run -->
+
+<!-- run -->
+### Run 9
+
+```yaml
+result: pass
+tests: 1
+failures: 0
+hasNote: true
+noteEncoding: markdown
+
+```
+
+```shell
+pnpm check:progress
+```
+
+**Notes**
+
+144 tasks and 624 evidence records pass after sequential history generation. Evidence bookkeeping only; no milestone promotion. Log: .local/agent-text-progress.log.
+<!-- /run -->
+
+<!-- run -->
+### Run 10
+
+```yaml
+result: pass
+tests: 1
+failures: 0
+hasNote: true
+noteEncoding: markdown
+
+```
+
+```shell
+pnpm spec:first
+```
+
+**Notes**
+
+Protected-change gate passes: 12 source files and three owning chapters, including explicit unchanged API confirmation. Log: .local/agent-text-spec-first.log.
+<!-- /run -->
+
+<!-- run -->
+### Run 11
+
+```yaml
+result: pass
+tests: 7
+failures: 0
+hasNote: true
+noteEncoding: markdown
+
+```
+
+```shell
+pnpm spec:validate
+```
+
+**Notes**
+
+Final evidence-aware validation passes: seven validators, 3058 chapters and 178 requirements. Log: .local/agent-text-spec-final.log.
+<!-- /run -->
+
+<!-- run -->
+### Run 12
+
+```yaml
+result: pass
+tests: 1
+failures: 0
+hasNote: true
+noteEncoding: markdown
+
+```
+
+```shell
+Changed Markdown line/byte audit
+```
+
+**Notes**
+
+All 13 changed Markdown files fit 400 physical lines and 32768 UTF-8 bytes, largest 369 lines. Generated evidence splitting retains these bounds.
+<!-- /run -->
+
+<!-- run -->
+### Run 13
+
+```yaml
+result: fail
+tests: 1
+failures: 1
+hasNote: true
+noteEncoding: markdown
+
+```
+
+```shell
+pnpm exec prettier --check <changed Markdown/JSON/TS/Svelte/CSS files selected from jj diff --name-only>
+```
+
+**Notes**
+
+Four progress pages were regenerated by navigation update after their earlier formatting. Reformatted these generated pages after the final evidence/navigation edit; no product code changed.
+<!-- /run -->
+
+<!-- run -->
+### Run 14
+
+```yaml
+result: pass
+tests: 1
+failures: 0
+hasNote: true
+noteEncoding: markdown
+
+```
+
+```shell
+pnpm exec prettier --check <changed Markdown/JSON/TS/Svelte/CSS files selected from jj diff --name-only>
+```
+
+**Notes**
+
+Final targeted formatting check passes after progress pages are reformatted; source and catalog remain unchanged.
+<!-- /run -->
+<!-- /evidence-field -->
+
+<!-- evidence-field:result markdown -->
+## Result
+
+pass
+<!-- /evidence-field -->
+
+<!-- evidence-field:remaining list -->
+## Remaining
+
+[]
+<!-- /evidence-field -->
+
+<!-- evidence-field:versions markdown -->
+## Versions
+
+macOS ARM64; Node 26.9.0, pnpm 10.32.1, Svelte 5.57.1, Storybook 10.5.7 and Vitest 4.1.11. Existing synthetic OpenCode fixture profile 1.18.30; no installed-harness execution is qualified by this presentation change.
+<!-- /evidence-field -->
+
+<!-- evidence-field:formats markdown -->
+## Formats
+
+No DTO, transcript-tail, capture, native object, manifest, TOML or storage encoding changes. Existing sanitized JSON/text content is interpreted only at the presentation boundary. Copy retains the full raw record.
+<!-- /evidence-field -->
+
+<!-- evidence-field:scope markdown -->
+## Scope
+
+UI-only slice in jj-store-stack-workspace-ui. Known nonempty OpenCode arrays consisting entirely of typed text parts render in source order with blank lines through existing safe Markdown. Other integrations and mixed, unknown, malformed or empty arrays retain their existing visible fallback. Source identities and raw clipboard values remain unchanged. Community presentation source was inspected first, then Design Core’s Collapsible/Button sources; the reset belongs to this repository-owned collection stylesheet. No new external source dependency or copy was introduced. Main workspace source/data and existing fixture remain untouched. Existing Vite/backend PIDs 27800/27799 were retained. Root aggregates, Rust tests/builds, backend restart, data migration/reseed, package publication, screenshot baselines and main integration are outside scope.
+<!-- /evidence-field -->
+
+<!-- evidence-field:next markdown -->
+## Next
+
+Commit the verified focused UI slice in the separate session workspace. Retain the unrelated Review refinements Op Log role=status story diagnostic for its owning Op Log test work; no full-suite claim. Continue using the existing fixture at 7464.
+<!-- /evidence-field -->
+
+<!-- evidence-field:tooling_failures list -->
+## Tooling failures
+
+- Initial new story assertions used the wrong fixture author and omitted the
+  existing hover visibility wait; corrected without weakening content/copy
+  assertions.
+- New story role-query typings and a forbidden catalog API type import were
+  caught and corrected before final catalog validation.
+- The first combined diagnostic was interrupted and does not qualify its
+  uncompleted families; final direct-consumer family runs pass independently.
+- An isolated parent diagnostic failed during external dependency setup before
+  running tests; no parent baseline result is claimed. The owned temporary
+  snapshot was removed.
+- The installed JJ has no archive subcommand; only its help was attempted.
+  Parent reconstruction used read-only jj file show instead.
+- pnpm spec:search -- ... was rejected for the extra separator; the corrected
+  single-ID command was used. No specification validator was weakened.
+- Navigation regeneration restores unformatted progress-page navigation/table
+  text. Formatting must follow the final evidence/navigation write.
+<!-- /evidence-field -->
+
+<!-- evidence-field:contract_review yaml -->
+## Contract review
+
+```yaml
+status: unchanged
+reason: JST-COLLAB-005 and JST-UI-005/JST-UI-015 already govern readable safe
+  owned conversation and collection presentation; these fixes clarify ordered
+  known OpenCode text parts and retained secondary heading size in the owning
+  chapters. JST-API-005 public DTO/transport, source content, captured
+  identities, publication and copy semantics remain unchanged. JST-DOC-002
+  application source review acknowledgement is refreshed. This is a presentation
+  correction, not a capture decoder, migration or service contract change.
+
+```
+<!-- /evidence-field -->
+

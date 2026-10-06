@@ -12,24 +12,29 @@
     fallback = false,
     ordinary = false,
     occurredAt = 1_704_164_702_456,
+    integration = "codex",
+    mediaType = "text",
   }: {
     content?: string;
     fallback?: boolean;
     ordinary?: boolean;
     occurredAt?: number | null;
+    integration?: typeof agentDetail.session.integration;
+    mediaType?: "text" | "json";
   } = $props();
   const base = createInMemoryStoreController("agents");
+  const session = $derived({ ...agentDetail.session, integration });
   const controller: StoreController = {
     ...base,
     get state() {
       return {
         ...base.state,
-        agentSession: { ...agentDetail, activity: [] },
+        agentSession: { ...agentDetail, session, activity: [] },
         agentTranscript: [
           {
             sequence: 0,
             content,
-            media_type: "text" as const,
+            media_type: mediaType,
             occurred_at_millis: occurredAt ?? undefined,
           },
         ],
@@ -41,7 +46,7 @@
       ...agentDetail.activity[0]!,
       type: "message" as const,
       occurred_at_millis: occurredAt ?? undefined,
-      content: { media_type: "text" as const, content },
+      content: { media_type: mediaType, content },
     },
   ] as typeof agentDetail.activity);
 </script>
@@ -53,9 +58,10 @@
   {:else}<StoreAgentTranscript
       {controller}
       {activity}
-      agent={agentMember(agentDetail.session)}
+      agent={agentMember(session)}
       member={base.state.member}
       sessionId={agentDetail.session.session_id}
+      {integration}
       interactive={false}
     />{/if}
 </main>

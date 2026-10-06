@@ -1,5 +1,15 @@
 # Delivery and validation
 
+Agent collection source reviews retain accurate browsing prose when only the
+unavailable-content banner inset, margin and corners change. Fresh development
+fixture evidence distinguishes current-format generation in an isolated root
+from migration or repair of existing stored data.
+
+OpenCode transcript source review distinguishes readable typed-text presentation
+from the original JSON capture. The browsing guide retains normal conversation
+semantics; rendering and heading-size refinements imply no storage, decoder,
+capture-version or transport change.
+
 Projects feedback source reviews MUST cover repository-scoped retry toasts,
 retained successful rows and hidden-tab recovery. Unsupported capability
 explanations and exact mutation recovery remain contextual. Moving recoverable
@@ -102,6 +112,10 @@ acknowledging source fingerprints. Workspace retirement follows merged consumer
 validation, preserved evidence and process ownership checks. Presentation-only
 Help changes may retain accurate manual prose after explicit review; sidebar
 sizing follows the application navigation requirements.
+
+Main-workspace integration reviews the combined source fingerprints and retains
+each source slice's evidence. Ignored development fixtures remain device-local;
+merging presentation code MUST NOT migrate recorded AgentStore data.
 
 Stacks contract and read-lifecycle delivery reviews service/application coverage
 against the owning source. The manual distinguishes validated command records

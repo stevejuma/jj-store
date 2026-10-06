@@ -133,6 +133,7 @@
         {controller}
         activity={selected.activity}
         sessionId={selected.session.session_id}
+        integration={selected.session.integration}
         {agent}
         member={{
           ...state.member,

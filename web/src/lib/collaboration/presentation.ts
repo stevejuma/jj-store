@@ -4,6 +4,7 @@ import type {
   CommunityMessageModel,
 } from "../community/workspace-model.js";
 import { agentAvatarUrl } from "./agent-avatar.js";
+import { agentMessageContent } from "./agent-message-content.js";
 import type { FileDiffLineContext } from "@lapismd/design-core/diff";
 import type { ReviewInlinePatch } from "../controller/review-anchor-patch.js";
 
@@ -178,18 +179,10 @@ export function transcriptMessage(
   chunk: Model<"AgentTranscriptChunk">,
   summary: Model<"AgentSessionSummary">,
 ): CommunityMessageModel {
-  let content = chunk.content;
-  if (chunk.media_type === "json") {
-    try {
-      content = `\`\`\`json\n${JSON.stringify(JSON.parse(content), null, 2)}\n\`\`\``;
-    } catch {
-      content = `\`\`\`text\n${content}\n\`\`\``;
-    }
-  }
   return {
     id: `${summary.session_id}:${chunk.sequence}`,
     authorId: summary.session_id,
-    content,
+    content: agentMessageContent(chunk, summary.integration),
     ...agentMessageTimestamp(chunk.occurred_at_millis),
   };
 }

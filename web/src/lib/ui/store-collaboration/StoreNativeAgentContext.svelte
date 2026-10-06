@@ -101,6 +101,7 @@
             <StoreAgentTranscript
               activity={session.activity}
               sessionId={session.session.session_id}
+              integration={session.session.integration}
               agent={agentMember(session.session)}
               member={{
                 ...controller.state.member,

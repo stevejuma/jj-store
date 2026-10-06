@@ -25,6 +25,28 @@
 </script>
 
 <Story
+  name="Agent collection typography"
+  args={{ initialPage: "agents" }}
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const header = canvas.getByRole("button", { name: /^Agent sessions/ });
+    await userEvent.click(header);
+    const count = header.querySelector(
+      ".community-projects__list-group-count",
+    )!;
+    await expect(getComputedStyle(header).fontSize).toBe(
+      getComputedStyle(count).fontSize,
+    );
+    await userEvent.click(header);
+    await expect(
+      canvas.getByRole("list", { name: "Agent sessions" }),
+    ).toBeVisible();
+  }}
+>
+  {#snippet template(args)}<StoreRepositoryApplication {...args} />{/snippet}
+</Story>
+
+<Story
   name="Agent response activity"
   args={{ initialPage: "agents" }}
   play={agentSidebarPlay}
@@ -196,6 +218,19 @@
       canvas.getAllByText("The collaboration snapshot could not be loaded.")[0],
     ).toBeVisible();
     await expect(canvas.getByText("No agent sessions")).toBeVisible();
+    const header = canvas.getByRole("button", { name: /^Agent sessions/ });
+    const alert = canvas
+      .getByText("Agent activity unavailable")
+      .closest('[role="alert"]')!;
+    const heading = header.getBoundingClientRect(),
+      bounds = alert.getBoundingClientRect();
+    await expect(Math.abs(bounds.left - heading.left)).toBeLessThanOrEqual(1);
+    await expect(Math.abs(bounds.right - heading.right)).toBeLessThanOrEqual(1);
+    await expect(bounds.top - heading.bottom).toBeGreaterThanOrEqual(8);
+    await expect(
+      parseFloat(getComputedStyle(alert).borderRadius),
+    ).toBeGreaterThan(0);
+    await expect(parseFloat(getComputedStyle(alert).borderLeftWidth)).toBe(1);
   }}
 >
   {#snippet template(args)}<StoreRepositoryApplication {...args} />{/snippet}
