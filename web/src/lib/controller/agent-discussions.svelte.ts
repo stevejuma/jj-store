@@ -1,5 +1,6 @@
 import { Client, type Model } from "../api/client.js";
 import { HttpThreadsDataSource } from "./http-threads-data-source.js";
+import { LocalInboxThreads } from "./local-inbox-threads.js";
 import { createStoreQueryClient } from "./store-query-client.js";
 import { createThreadsController } from "./production-threads.svelte.js";
 import { initialStoreRoute } from "./store-route-history.svelte.js";
@@ -28,34 +29,44 @@ export class AgentDiscussions {
     >
   >({});
   #readers = new Map<string, ReturnType<typeof this.createReader>>();
+  #profiles = $state<Record<string, string>>({});
   constructor(
     private manager: AgentExecution,
     private fetcher?: typeof fetch,
     private principal: (repository: string) => string = () => "",
   ) {}
   reader(repository: string) {
+    // Every rendered message tracks profile adoption, including readers created
+    // while the asynchronous local selection is being prepared.
+    const profile = this.#profiles[repository] ?? "native";
     let reader = this.#readers.get(repository);
     if (!reader) {
-      reader = this.createReader(repository);
+      reader = this.createReader(repository, profile);
       this.#readers.set(repository, reader);
     }
     return reader.threads;
   }
-  private createReader(repository: string) {
+  private createReader(repository: string, profile = "native") {
     const client = new Client(repository, null, () => {}, this.fetcher);
     const queries = createStoreQueryClient();
     let active = true;
     let route = initialStoreRoute();
-    const source = new HttpThreadsDataSource(
-      client,
-      queries,
-      { repository, profile: "native", session: crypto.randomUUID() },
-      () => active,
-    );
+    const local =
+      profile === "local_jj_git"
+        ? new LocalInboxThreads(repository, this.fetcher)
+        : undefined;
+    const source =
+      local ??
+      new HttpThreadsDataSource(
+        client,
+        queries,
+        { repository, profile: "native", session: crypto.randomUUID() },
+        () => active,
+      );
     const threads = createThreadsController({
       source: () => source,
       repository: () => repository,
-      principal: () => this.principal(repository),
+      principal: () => local?.actor ?? this.principal(repository),
       route: () => route,
       select: (id) => {
         route = { ...route, threadId: id };
@@ -63,11 +74,15 @@ export class AgentDiscussions {
     });
     return {
       threads,
+      profile,
+      principal: () => local?.actor ?? this.principal(repository),
+      prepare: () => local?.prepare() ?? Promise.resolve(),
       async invalidate() {
         await source.invalidate("reactions");
         threads.invalidateReactions();
       },
       close() {
+        local?.close();
         active = false;
         threads.clear();
         client.close();
@@ -85,13 +100,40 @@ export class AgentDiscussions {
       );
       if (!Array.isArray(value.messages))
         throw new Error("Invalid recorded message feedback");
-      this.values = { ...this.values, [id]: value };
-      this.errors = { ...this.errors, [id]: "" };
       const session = this.manager.value?.sessions.find((s) => s.id === id);
       if (session) {
+        const profile = value.profile ?? "native";
+        if (!["native", "local_jj_git"].includes(profile))
+          throw new Error("Unknown feedback repository profile");
+        const prior = this.#readers.get(session.repository);
+        if (prior?.profile !== profile) {
+          if (prior?.threads.pending)
+            throw new Error(
+              "Check the original reply status before changing repository profile",
+            );
+          const reader = this.createReader(session.repository, profile);
+          try {
+            await reader.prepare();
+          } catch (cause) {
+            reader.close();
+            throw cause;
+          }
+          const current = this.#readers.get(session.repository);
+          if (current?.threads.pending) {
+            reader.close();
+            throw new Error(
+              "Check the original reply status before changing repository profile",
+            );
+          }
+          current?.close();
+          this.#readers.set(session.repository, reader);
+          this.#profiles[session.repository] = profile;
+        }
         this.reader(session.repository);
         await this.#readers.get(session.repository)?.invalidate();
       }
+      this.values = { ...this.values, [id]: value };
+      this.errors = { ...this.errors, [id]: "" };
     } catch (cause) {
       this.errors = {
         ...this.errors,
@@ -164,7 +206,11 @@ export class AgentDiscussions {
     await this.load(id);
   }
   authorName(repository: string, actor: string) {
-    return actor === this.principal(repository)
+    const local = this.#readers.get(repository);
+    return actor ===
+      (local?.profile === "local_jj_git"
+        ? local.principal()
+        : this.principal(repository))
       ? "You"
       : `Contributor ${actor.slice(0, 8)}`;
   }

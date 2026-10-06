@@ -1,11 +1,15 @@
 import { ApiError, type Model } from "../api/client.js";
-import type { ThreadTransport } from "./thread-types.js";
+import {
+  threadSnapshotKey,
+  type ThreadPage,
+  type ThreadTransport,
+} from "./thread-types.js";
 
 export async function retainThreadHistory(options: {
   transport: ThreadTransport;
   id: string;
   root: string | null;
-  first: Model<"CollabPage">;
+  first: ThreadPage;
   retained: readonly string[];
   more: boolean;
   valid: () => boolean;
@@ -17,7 +21,7 @@ export async function retainThreadHistory(options: {
     if (
       page.items.type !== "events" ||
       page.items.thread_id !== options.id ||
-      page.snapshot.thread_root !== options.root
+      threadSnapshotKey(page.snapshot) !== options.root
     )
       throw new ApiError("thread_changed_refresh_required");
     events.push(...page.items.events);

@@ -252,6 +252,8 @@ pub fn native_commit(commit: &str) -> Result<CommitId> {
 #[schemars(rename = "AgentExecutionFeedback")]
 pub struct Feedback {
     pub messages: Vec<FeedbackMessage>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub profile: Option<String>,
     /// Current browser feedback write capability; does not suppress readable history.
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub write_unavailable: Option<String>,

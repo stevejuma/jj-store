@@ -18313,6 +18313,333 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 }
 ```
 
+## LocalInboxSelection
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "snapshot": {
+      "$ref": "#/components/schemas/LocalCollabSnapshot"
+    },
+    "actor": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/PrincipalId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "snapshot",
+    "actor"
+  ]
+}
+```
+
+## LocalCollabSnapshot
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "profile": {
+      "$ref": "#/components/schemas/LocalProfile"
+    },
+    "repo_id": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/RepositoryId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "metadata_commit": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/GitSha1Id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "state_version": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    }
+  },
+  "required": [
+    "profile",
+    "repo_id",
+    "metadata_commit",
+    "state_version"
+  ]
+}
+```
+
+## LocalInboxPageResponse
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "data": {
+      "$ref": "#/components/schemas/LocalInboxCollabPage"
+    },
+    "next_cursor": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "data",
+    "next_cursor"
+  ]
+}
+```
+
+## LocalInboxCollabPage
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "snapshot": {
+      "$ref": "#/components/schemas/LocalCollabSnapshot"
+    },
+    "items": {
+      "$ref": "#/components/schemas/CollabPageItems"
+    },
+    "next_after": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "snapshot",
+    "items",
+    "next_after"
+  ]
+}
+```
+
+## LocalInboxThreadDetail
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "snapshot": {
+      "$ref": "#/components/schemas/LocalCollabSnapshot"
+    },
+    "thread": {
+      "$ref": "#/components/schemas/ThreadSummaryV1"
+    }
+  },
+  "required": [
+    "snapshot",
+    "thread"
+  ]
+}
+```
+
+## LocalCollabOutcome
+
+```text
+{
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "receipt": {
+          "$ref": "#/components/schemas/LocalCollabReceipt"
+        },
+        "status": {
+          "type": "string",
+          "const": "committed"
+        }
+      },
+      "required": [
+        "status",
+        "receipt"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "$ref": "#/components/schemas/RequestId"
+        },
+        "status": {
+          "type": "string",
+          "const": "outcome_unknown"
+        }
+      },
+      "required": [
+        "status",
+        "request_id"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "$ref": "#/components/schemas/RequestId"
+        },
+        "status": {
+          "type": "string",
+          "const": "not_known"
+        }
+      },
+      "required": [
+        "status",
+        "request_id"
+      ]
+    }
+  ]
+}
+```
+
+## LocalCollabReceipt
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "profile": {
+      "$ref": "#/components/schemas/LocalProfile"
+    },
+    "repository": {
+      "$ref": "#/components/schemas/RepositoryId"
+    },
+    "actor": {
+      "$ref": "#/components/schemas/PrincipalId"
+    },
+    "request_id": {
+      "$ref": "#/components/schemas/RequestId"
+    },
+    "intent": {
+      "$ref": "#/components/schemas/IntentDigest"
+    },
+    "metadata_sequence": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "domain_state_version": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "domain_object": {
+      "$ref": "#/components/schemas/GitSha1Id"
+    },
+    "accepted_at_millis": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "result": {
+      "$ref": "#/components/schemas/CollabCommandResultV1"
+    }
+  },
+  "required": [
+    "version",
+    "profile",
+    "repository",
+    "actor",
+    "request_id",
+    "intent",
+    "metadata_sequence",
+    "domain_state_version",
+    "domain_object",
+    "accepted_at_millis",
+    "result"
+  ]
+}
+```
+
+## ImageAssetV1
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "media_type": {
+      "$ref": "#/components/schemas/ImageMediaTypeV1"
+    },
+    "width": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "height": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "frames": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "bytes": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "format": "uint8",
+        "minimum": 0,
+        "maximum": 255
+      }
+    }
+  },
+  "required": [
+    "schema_version",
+    "media_type",
+    "width",
+    "height",
+    "frames",
+    "bytes"
+  ]
+}
+```
+
+## ImageMediaTypeV1
+
+```text
+{
+  "type": "string",
+  "enum": [
+    "png",
+    "jpeg",
+    "gif",
+    "webp"
+  ]
+}
+```
+
 ## WorkingFile
 
 ```text
@@ -20778,6 +21105,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "items": {
         "$ref": "#/components/schemas/AgentExecutionFeedbackMessage"
       }
+    },
+    "profile": {
+      "type": [
+        "string",
+        "null"
+      ]
     },
     "write_unavailable": {
       "type": [

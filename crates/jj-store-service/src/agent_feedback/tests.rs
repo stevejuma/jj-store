@@ -32,6 +32,7 @@ fn prompt_feedback_is_exact_bounded_and_omits_tombstones() {
         body: Some("Use the existing repository form component.".into()),
     };
     let mut feedback = Feedback {
+        profile: None,
         write_unavailable: None,
         messages: vec![FeedbackMessage {
             row_id: "prompt/assistant".into(),

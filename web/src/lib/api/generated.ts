@@ -2042,6 +2042,111 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/v1/local/repos/{repo}/collaboration/snapshot": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    get: operations["local_collab_snapshot"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    head: operations["local_collab_snapshot_head"];
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/local/repos/{repo}/collaboration/query": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    post: operations["local_collab_query"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/local/repos/{repo}/collaboration/thread": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    post: operations["local_collab_detail"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/local/repos/{repo}/collaboration/commands": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    post: operations["local_collab_apply"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/local/repos/{repo}/collaboration/commands/{request_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    get: operations["local_collab_status"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    head: operations["local_collab_status_head"];
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/local/repos/{repo}/collaboration/assets/{asset}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    get: operations["local_collab_asset"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    head: operations["local_collab_asset_head"];
+    patch?: never;
+    trace?: never;
+  };
   "/v1/local/repos/{repo}/working-copy/read": {
     parameters: {
       query?: never;
@@ -6630,6 +6735,77 @@ export interface components {
       accepted_at_millis: number;
       command: components["schemas"]["ReviewCommandResultV1"] | null;
     };
+    LocalInboxSelection: {
+      snapshot: components["schemas"]["LocalCollabSnapshot"];
+      actor: components["schemas"]["PrincipalId"] | null;
+    };
+    LocalCollabSnapshot: {
+      profile: components["schemas"]["LocalProfile"];
+      repo_id: components["schemas"]["RepositoryId"] | null;
+      metadata_commit: components["schemas"]["GitSha1Id"] | null;
+      /** Format: uint64 */
+      state_version: number;
+    };
+    LocalInboxPageResponse: {
+      data: components["schemas"]["LocalInboxCollabPage"];
+      next_cursor: string | null;
+    };
+    LocalInboxCollabPage: {
+      snapshot: components["schemas"]["LocalCollabSnapshot"];
+      items: components["schemas"]["CollabPageItems"];
+      next_after: string | null;
+    };
+    LocalInboxThreadDetail: {
+      snapshot: components["schemas"]["LocalCollabSnapshot"];
+      thread: components["schemas"]["ThreadSummaryV1"];
+    };
+    LocalCollabOutcome:
+      | {
+          receipt: components["schemas"]["LocalCollabReceipt"];
+          /** @constant */
+          status: "committed";
+        }
+      | {
+          request_id: components["schemas"]["RequestId"];
+          /** @constant */
+          status: "outcome_unknown";
+        }
+      | {
+          request_id: components["schemas"]["RequestId"];
+          /** @constant */
+          status: "not_known";
+        };
+    LocalCollabReceipt: {
+      /** Format: uint32 */
+      version: number;
+      profile: components["schemas"]["LocalProfile"];
+      repository: components["schemas"]["RepositoryId"];
+      actor: components["schemas"]["PrincipalId"];
+      request_id: components["schemas"]["RequestId"];
+      intent: components["schemas"]["IntentDigest"];
+      /** Format: uint64 */
+      metadata_sequence: number;
+      /** Format: uint64 */
+      domain_state_version: number;
+      domain_object: components["schemas"]["GitSha1Id"];
+      /** Format: int64 */
+      accepted_at_millis: number;
+      result: components["schemas"]["CollabCommandResultV1"];
+    };
+    ImageAssetV1: {
+      /** Format: uint32 */
+      schema_version: number;
+      media_type: components["schemas"]["ImageMediaTypeV1"];
+      /** Format: uint32 */
+      width: number;
+      /** Format: uint32 */
+      height: number;
+      /** Format: uint32 */
+      frames: number;
+      bytes: number[];
+    };
+    /** @enum {string} */
+    ImageMediaTypeV1: "png" | "jpeg" | "gif" | "webp";
     WorkingFile: {
       selection: components["schemas"]["WorkingFileSelection"];
       contents: string;
@@ -7196,6 +7372,7 @@ export interface components {
     /** @description Repository-selected messages and ordinary discussion revisions, never journal authority. */
     AgentExecutionFeedback: {
       messages: components["schemas"]["AgentExecutionFeedbackMessage"][];
+      profile?: string | null;
       /** @description Current browser feedback write capability; does not suppress readable history. */
       write_unavailable?: string | null;
     };
@@ -34223,6 +34400,2930 @@ export interface operations {
         content?: never;
       };
       /** @description stale_review, thread_resolved, thread_open, or intent_conflict. No publication by this rejected attempt. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  local_collab_snapshot: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        repo: components["schemas"]["RepositoryId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LocalInboxSelection"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  local_collab_snapshot_head: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        repo: components["schemas"]["RepositoryId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  local_collab_query: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        repo: components["schemas"]["RepositoryId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          metadata_commit?: string | null;
+          query:
+            | {
+                /** Format: uint32 */
+                limit: number;
+                /** @constant */
+                type: "threads";
+              }
+            | {
+                thread_id: string;
+                /** Format: uint32 */
+                limit: number;
+                /** @constant */
+                type: "events";
+              }
+            | {
+                /** @description Identity, immutable content and validation witnesses are explicit, never a UI position. */
+                target:
+                  | {
+                      thread_id: string;
+                      /** @constant */
+                      type: "thread";
+                    }
+                  | {
+                      thread_id: string;
+                      message_id: string;
+                      revision: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "thread_version"
+                          | "thread_event"
+                          | "human_message_revision"
+                          | "thread_link"
+                          | "reaction"
+                          | "reaction_retraction"
+                          | "reaction_slot"
+                          | "custom_emoji_version"
+                          | "image_asset";
+                        id: string;
+                      };
+                      /** @constant */
+                      type: "human_message";
+                    }
+                  | {
+                      session_id: string;
+                      message_id: string;
+                      event_id: string;
+                      batch: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "session_snapshot"
+                          | "turn_snapshot"
+                          | "message_snapshot"
+                          | "tool_snapshot"
+                          | "intent"
+                          | "observation_batch"
+                          | "event_batch"
+                          | "transcript_manifest"
+                          | "transcript_page"
+                          | "transcript_chunk"
+                          | "content"
+                          | "checkpoint_version"
+                          | "association"
+                          | "alias"
+                          | "relation_page"
+                          | "source_state"
+                          | "projection_catalog"
+                          | "catalog_conflict";
+                        id: string;
+                      };
+                      content: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "session_snapshot"
+                          | "turn_snapshot"
+                          | "message_snapshot"
+                          | "tool_snapshot"
+                          | "intent"
+                          | "observation_batch"
+                          | "event_batch"
+                          | "transcript_manifest"
+                          | "transcript_page"
+                          | "transcript_chunk"
+                          | "content"
+                          | "checkpoint_version"
+                          | "association"
+                          | "alias"
+                          | "relation_page"
+                          | "source_state"
+                          | "projection_catalog"
+                          | "catalog_conflict";
+                        id: string;
+                      };
+                      /** @constant */
+                      type: "agent_message";
+                    }
+                  | {
+                      session_id: string;
+                      tool_id: string;
+                      snapshot: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "session_snapshot"
+                          | "turn_snapshot"
+                          | "message_snapshot"
+                          | "tool_snapshot"
+                          | "intent"
+                          | "observation_batch"
+                          | "event_batch"
+                          | "transcript_manifest"
+                          | "transcript_page"
+                          | "transcript_chunk"
+                          | "content"
+                          | "checkpoint_version"
+                          | "association"
+                          | "alias"
+                          | "relation_page"
+                          | "source_state"
+                          | "projection_catalog"
+                          | "catalog_conflict";
+                        id: string;
+                      };
+                      /** @constant */
+                      type: "tool_invocation";
+                    }
+                  | {
+                      session_id: string;
+                      tool_id: string;
+                      snapshot: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "session_snapshot"
+                          | "turn_snapshot"
+                          | "message_snapshot"
+                          | "tool_snapshot"
+                          | "intent"
+                          | "observation_batch"
+                          | "event_batch"
+                          | "transcript_manifest"
+                          | "transcript_page"
+                          | "transcript_chunk"
+                          | "content"
+                          | "checkpoint_version"
+                          | "association"
+                          | "alias"
+                          | "relation_page"
+                          | "source_state"
+                          | "projection_catalog"
+                          | "catalog_conflict";
+                        id: string;
+                      };
+                      content: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "session_snapshot"
+                          | "turn_snapshot"
+                          | "message_snapshot"
+                          | "tool_snapshot"
+                          | "intent"
+                          | "observation_batch"
+                          | "event_batch"
+                          | "transcript_manifest"
+                          | "transcript_page"
+                          | "transcript_chunk"
+                          | "content"
+                          | "checkpoint_version"
+                          | "association"
+                          | "alias"
+                          | "relation_page"
+                          | "source_state"
+                          | "projection_catalog"
+                          | "catalog_conflict";
+                        id: string;
+                      };
+                      /** @constant */
+                      type: "tool_output";
+                    }
+                  | {
+                      thread_id: string;
+                      /** @constant */
+                      type: "review_thread";
+                    }
+                  | {
+                      thread_id: string;
+                      comment_id: string;
+                      revision: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "anchor"
+                          | "comment_body"
+                          | "comment_revision"
+                          | "thread_event"
+                          | "event_page"
+                          | "thread_snapshot"
+                          | "relation_page"
+                          | "status_page";
+                        id: string;
+                      };
+                      /** @constant */
+                      type: "review_comment";
+                    }
+                  | {
+                      task_id: string;
+                      comment_id: string;
+                      /** Format: uint64 */
+                      version: number;
+                      /** @constant */
+                      type: "work_comment";
+                    }
+                  | {
+                      session_id: string;
+                      checkpoint_id: string;
+                      version: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "session_snapshot"
+                          | "turn_snapshot"
+                          | "message_snapshot"
+                          | "tool_snapshot"
+                          | "intent"
+                          | "observation_batch"
+                          | "event_batch"
+                          | "transcript_manifest"
+                          | "transcript_page"
+                          | "transcript_chunk"
+                          | "content"
+                          | "checkpoint_version"
+                          | "association"
+                          | "alias"
+                          | "relation_page"
+                          | "source_state"
+                          | "projection_catalog"
+                          | "catalog_conflict";
+                        id: string;
+                      };
+                      /** @constant */
+                      type: "agent_checkpoint";
+                    };
+                /** Format: uint32 */
+                limit: number;
+                /** @constant */
+                type: "reactions";
+              }
+            | {
+                /** Format: uint32 */
+                limit: number;
+                /** @constant */
+                type: "emojis";
+              };
+          cursor?: string | null;
+        };
+      };
+    };
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LocalInboxPageResponse"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  local_collab_detail: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        repo: components["schemas"]["RepositoryId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          metadata_commit?: string | null;
+          thread_id: string;
+        };
+      };
+    };
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LocalInboxThreadDetail"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  local_collab_apply: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        repo: components["schemas"]["RepositoryId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          /** Format: uint32 */
+          version: number;
+          request_id: string;
+          command:
+            | {
+                intent:
+                  | {
+                      thread_id: string;
+                      title: string;
+                      /** @description Identity, immutable content and validation witnesses are explicit, never a UI position. */
+                      target:
+                        | {
+                            thread_id: string;
+                            /** @constant */
+                            type: "thread";
+                          }
+                        | {
+                            thread_id: string;
+                            message_id: string;
+                            revision: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "thread_version"
+                                | "thread_event"
+                                | "human_message_revision"
+                                | "thread_link"
+                                | "reaction"
+                                | "reaction_retraction"
+                                | "reaction_slot"
+                                | "custom_emoji_version"
+                                | "image_asset";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "human_message";
+                          }
+                        | {
+                            session_id: string;
+                            message_id: string;
+                            event_id: string;
+                            batch: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                            content: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "agent_message";
+                          }
+                        | {
+                            session_id: string;
+                            tool_id: string;
+                            snapshot: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "tool_invocation";
+                          }
+                        | {
+                            session_id: string;
+                            tool_id: string;
+                            snapshot: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                            content: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "tool_output";
+                          }
+                        | {
+                            thread_id: string;
+                            /** @constant */
+                            type: "review_thread";
+                          }
+                        | {
+                            thread_id: string;
+                            comment_id: string;
+                            revision: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "anchor"
+                                | "comment_body"
+                                | "comment_revision"
+                                | "thread_event"
+                                | "event_page"
+                                | "thread_snapshot"
+                                | "relation_page"
+                                | "status_page";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "review_comment";
+                          }
+                        | {
+                            task_id: string;
+                            comment_id: string;
+                            /** Format: uint64 */
+                            version: number;
+                            /** @constant */
+                            type: "work_comment";
+                          }
+                        | {
+                            session_id: string;
+                            checkpoint_id: string;
+                            version: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "agent_checkpoint";
+                          };
+                      /** @constant */
+                      type: "create_agent_discussion";
+                    }
+                  | {
+                      thread_id: string;
+                      title: string;
+                      baseline?:
+                        | (
+                            | {
+                                /** @constant */
+                                profile: "native";
+                                anchor: {
+                                  operations: string[];
+                                  commits: string[];
+                                };
+                              }
+                            | {
+                                /** @constant */
+                                profile: "portable";
+                                anchor: {
+                                  operations: {
+                                    repository: string;
+                                    /** @enum {string} */
+                                    profile: "native_v1" | "git_sha1_jj045";
+                                    operation: string;
+                                    capsule: string;
+                                  }[];
+                                  commits: {
+                                    evidence: {
+                                      repository: string;
+                                      /** @enum {string} */
+                                      profile: "native_v1" | "git_sha1_jj045";
+                                      operation: string;
+                                      capsule: string;
+                                    };
+                                    commit:
+                                      | {
+                                          /** @constant */
+                                          profile: "native_v1";
+                                          id: string;
+                                        }
+                                      | {
+                                          /** @constant */
+                                          profile: "git_sha1_jj045";
+                                          id: string;
+                                        };
+                                  }[];
+                                };
+                              }
+                          )
+                        | null;
+                      /** @constant */
+                      type: "create";
+                    }
+                  | {
+                      thread_id: string;
+                      expected: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "thread_version"
+                          | "thread_event"
+                          | "human_message_revision"
+                          | "thread_link"
+                          | "reaction"
+                          | "reaction_retraction"
+                          | "reaction_slot"
+                          | "custom_emoji_version"
+                          | "image_asset";
+                        id: string;
+                      };
+                      title: string;
+                      /** @constant */
+                      type: "rename";
+                    }
+                  | {
+                      thread_id: string;
+                      expected: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "thread_version"
+                          | "thread_event"
+                          | "human_message_revision"
+                          | "thread_link"
+                          | "reaction"
+                          | "reaction_retraction"
+                          | "reaction_slot"
+                          | "custom_emoji_version"
+                          | "image_asset";
+                        id: string;
+                      };
+                      /** @enum {string} */
+                      action:
+                        | "activate"
+                        | "idle"
+                        | "archive"
+                        | "tombstone"
+                        | "restore";
+                      /** @constant */
+                      type: "lifecycle";
+                    }
+                  | {
+                      thread_id: string;
+                      expected_thread: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "thread_version"
+                          | "thread_event"
+                          | "human_message_revision"
+                          | "thread_link"
+                          | "reaction"
+                          | "reaction_retraction"
+                          | "reaction_slot"
+                          | "custom_emoji_version"
+                          | "image_asset";
+                        id: string;
+                      };
+                      message_id: string;
+                      expected_revision?: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "thread_version"
+                          | "thread_event"
+                          | "human_message_revision"
+                          | "thread_link"
+                          | "reaction"
+                          | "reaction_retraction"
+                          | "reaction_slot"
+                          | "custom_emoji_version"
+                          | "image_asset";
+                        id: string;
+                      } | null;
+                      reply_to?: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "thread_version"
+                          | "thread_event"
+                          | "human_message_revision"
+                          | "thread_link"
+                          | "reaction"
+                          | "reaction_retraction"
+                          | "reaction_slot"
+                          | "custom_emoji_version"
+                          | "image_asset";
+                        id: string;
+                      } | null;
+                      body?: string | null;
+                      /** @constant */
+                      type: "message";
+                    }
+                  | {
+                      thread_id: string;
+                      expected_thread: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "thread_version"
+                          | "thread_event"
+                          | "human_message_revision"
+                          | "thread_link"
+                          | "reaction"
+                          | "reaction_retraction"
+                          | "reaction_slot"
+                          | "custom_emoji_version"
+                          | "image_asset";
+                        id: string;
+                      };
+                      link_id: string;
+                      target:
+                        | {
+                            source_state: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                            event_batch: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                            /** @description Capture adapters may bind explicitly. Absence is the supported unlinked state. */
+                            binding: {
+                              thread_id: string;
+                              observed_thread: {
+                                /** @enum {string} */
+                                kind:
+                                  | "index_page"
+                                  | "thread_version"
+                                  | "thread_event"
+                                  | "human_message_revision"
+                                  | "thread_link"
+                                  | "reaction"
+                                  | "reaction_retraction"
+                                  | "reaction_slot"
+                                  | "custom_emoji_version"
+                                  | "image_asset";
+                                id: string;
+                              };
+                              observed_assignment?: {
+                                /** @enum {string} */
+                                kind:
+                                  | "index_page"
+                                  | "thread_version"
+                                  | "thread_event"
+                                  | "human_message_revision"
+                                  | "thread_link"
+                                  | "reaction"
+                                  | "reaction_retraction"
+                                  | "reaction_slot"
+                                  | "custom_emoji_version"
+                                  | "image_asset";
+                                id: string;
+                              } | null;
+                            };
+                            /** @constant */
+                            type: "capture_gap";
+                          }
+                        | {
+                            session_id: string;
+                            snapshot: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                            primary: boolean;
+                            /** @constant */
+                            type: "session";
+                          }
+                        | {
+                            /** @description Native IDs and portable evidence remain distinct; neither is a device path. */
+                            anchor:
+                              | {
+                                  /** @constant */
+                                  profile: "native";
+                                  anchor: {
+                                    operations: string[];
+                                    commits: string[];
+                                  };
+                                }
+                              | {
+                                  /** @constant */
+                                  profile: "portable";
+                                  anchor: {
+                                    operations: {
+                                      repository: string;
+                                      /** @enum {string} */
+                                      profile: "native_v1" | "git_sha1_jj045";
+                                      operation: string;
+                                      capsule: string;
+                                    }[];
+                                    commits: {
+                                      evidence: {
+                                        repository: string;
+                                        /** @enum {string} */
+                                        profile: "native_v1" | "git_sha1_jj045";
+                                        operation: string;
+                                        capsule: string;
+                                      };
+                                      commit:
+                                        | {
+                                            /** @constant */
+                                            profile: "native_v1";
+                                            id: string;
+                                          }
+                                        | {
+                                            /** @constant */
+                                            profile: "git_sha1_jj045";
+                                            id: string;
+                                          };
+                                    }[];
+                                  };
+                                };
+                            /** @enum {string} */
+                            evidence_method:
+                              | "controlled_scope"
+                              | "hook_boundary"
+                              | "transcript_recovery"
+                              | "historical_import"
+                              | "manual_assertion";
+                            evidence?: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            } | null;
+                            /** @constant */
+                            type: "code";
+                          }
+                        | {
+                            review_id: string;
+                            snapshot: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "anchor"
+                                | "comment_body"
+                                | "comment_revision"
+                                | "thread_event"
+                                | "event_page"
+                                | "thread_snapshot"
+                                | "relation_page"
+                                | "status_page";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "review";
+                          };
+                      observed_primary?: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "thread_version"
+                          | "thread_event"
+                          | "human_message_revision"
+                          | "thread_link"
+                          | "reaction"
+                          | "reaction_retraction"
+                          | "reaction_slot"
+                          | "custom_emoji_version"
+                          | "image_asset";
+                        id: string;
+                      } | null;
+                      /** @constant */
+                      type: "link";
+                    }
+                  | {
+                      thread_id: string;
+                      expected_thread: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "thread_version"
+                          | "thread_event"
+                          | "human_message_revision"
+                          | "thread_link"
+                          | "reaction"
+                          | "reaction_retraction"
+                          | "reaction_slot"
+                          | "custom_emoji_version"
+                          | "image_asset";
+                        id: string;
+                      };
+                      expected_link: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "thread_version"
+                          | "thread_event"
+                          | "human_message_revision"
+                          | "thread_link"
+                          | "reaction"
+                          | "reaction_retraction"
+                          | "reaction_slot"
+                          | "custom_emoji_version"
+                          | "image_asset";
+                        id: string;
+                      };
+                      /** @constant */
+                      type: "detach";
+                    };
+                /** @constant */
+                domain: "thread";
+              }
+            | {
+                /** @description A typed reaction command never accepts an actor from an API caller. */
+                intent:
+                  | {
+                      /** @description Identity, immutable content and validation witnesses are explicit, never a UI position. */
+                      target:
+                        | {
+                            thread_id: string;
+                            /** @constant */
+                            type: "thread";
+                          }
+                        | {
+                            thread_id: string;
+                            message_id: string;
+                            revision: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "thread_version"
+                                | "thread_event"
+                                | "human_message_revision"
+                                | "thread_link"
+                                | "reaction"
+                                | "reaction_retraction"
+                                | "reaction_slot"
+                                | "custom_emoji_version"
+                                | "image_asset";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "human_message";
+                          }
+                        | {
+                            session_id: string;
+                            message_id: string;
+                            event_id: string;
+                            batch: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                            content: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "agent_message";
+                          }
+                        | {
+                            session_id: string;
+                            tool_id: string;
+                            snapshot: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "tool_invocation";
+                          }
+                        | {
+                            session_id: string;
+                            tool_id: string;
+                            snapshot: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                            content: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "tool_output";
+                          }
+                        | {
+                            thread_id: string;
+                            /** @constant */
+                            type: "review_thread";
+                          }
+                        | {
+                            thread_id: string;
+                            comment_id: string;
+                            revision: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "anchor"
+                                | "comment_body"
+                                | "comment_revision"
+                                | "thread_event"
+                                | "event_page"
+                                | "thread_snapshot"
+                                | "relation_page"
+                                | "status_page";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "review_comment";
+                          }
+                        | {
+                            task_id: string;
+                            comment_id: string;
+                            /** Format: uint64 */
+                            version: number;
+                            /** @constant */
+                            type: "work_comment";
+                          }
+                        | {
+                            session_id: string;
+                            checkpoint_id: string;
+                            version: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "agent_checkpoint";
+                          };
+                      value:
+                        | {
+                            /** @constant */
+                            type: "like";
+                          }
+                        | {
+                            /** @constant */
+                            type: "dislike";
+                          }
+                        | {
+                            sequence: string;
+                            /** @constant */
+                            type: "emoji";
+                          }
+                        | {
+                            emoji_id: string;
+                            version: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "thread_version"
+                                | "thread_event"
+                                | "human_message_revision"
+                                | "thread_link"
+                                | "reaction"
+                                | "reaction_retraction"
+                                | "reaction_slot"
+                                | "custom_emoji_version"
+                                | "image_asset";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "custom";
+                          };
+                      observed: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "thread_version"
+                          | "thread_event"
+                          | "human_message_revision"
+                          | "thread_link"
+                          | "reaction"
+                          | "reaction_retraction"
+                          | "reaction_slot"
+                          | "custom_emoji_version"
+                          | "image_asset";
+                        id: string;
+                      }[];
+                      /** @constant */
+                      type: "set";
+                    }
+                  | {
+                      /** @description Identity, immutable content and validation witnesses are explicit, never a UI position. */
+                      target:
+                        | {
+                            thread_id: string;
+                            /** @constant */
+                            type: "thread";
+                          }
+                        | {
+                            thread_id: string;
+                            message_id: string;
+                            revision: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "thread_version"
+                                | "thread_event"
+                                | "human_message_revision"
+                                | "thread_link"
+                                | "reaction"
+                                | "reaction_retraction"
+                                | "reaction_slot"
+                                | "custom_emoji_version"
+                                | "image_asset";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "human_message";
+                          }
+                        | {
+                            session_id: string;
+                            message_id: string;
+                            event_id: string;
+                            batch: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                            content: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "agent_message";
+                          }
+                        | {
+                            session_id: string;
+                            tool_id: string;
+                            snapshot: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "tool_invocation";
+                          }
+                        | {
+                            session_id: string;
+                            tool_id: string;
+                            snapshot: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                            content: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "tool_output";
+                          }
+                        | {
+                            thread_id: string;
+                            /** @constant */
+                            type: "review_thread";
+                          }
+                        | {
+                            thread_id: string;
+                            comment_id: string;
+                            revision: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "anchor"
+                                | "comment_body"
+                                | "comment_revision"
+                                | "thread_event"
+                                | "event_page"
+                                | "thread_snapshot"
+                                | "relation_page"
+                                | "status_page";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "review_comment";
+                          }
+                        | {
+                            task_id: string;
+                            comment_id: string;
+                            /** Format: uint64 */
+                            version: number;
+                            /** @constant */
+                            type: "work_comment";
+                          }
+                        | {
+                            session_id: string;
+                            checkpoint_id: string;
+                            version: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "agent_checkpoint";
+                          };
+                      observed: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "thread_version"
+                          | "thread_event"
+                          | "human_message_revision"
+                          | "thread_link"
+                          | "reaction"
+                          | "reaction_retraction"
+                          | "reaction_slot"
+                          | "custom_emoji_version"
+                          | "image_asset";
+                        id: string;
+                      }[];
+                      /** @constant */
+                      type: "clear";
+                    }
+                  | {
+                      /** @description Identity, immutable content and validation witnesses are explicit, never a UI position. */
+                      target:
+                        | {
+                            thread_id: string;
+                            /** @constant */
+                            type: "thread";
+                          }
+                        | {
+                            thread_id: string;
+                            message_id: string;
+                            revision: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "thread_version"
+                                | "thread_event"
+                                | "human_message_revision"
+                                | "thread_link"
+                                | "reaction"
+                                | "reaction_retraction"
+                                | "reaction_slot"
+                                | "custom_emoji_version"
+                                | "image_asset";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "human_message";
+                          }
+                        | {
+                            session_id: string;
+                            message_id: string;
+                            event_id: string;
+                            batch: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                            content: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "agent_message";
+                          }
+                        | {
+                            session_id: string;
+                            tool_id: string;
+                            snapshot: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "tool_invocation";
+                          }
+                        | {
+                            session_id: string;
+                            tool_id: string;
+                            snapshot: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                            content: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "tool_output";
+                          }
+                        | {
+                            thread_id: string;
+                            /** @constant */
+                            type: "review_thread";
+                          }
+                        | {
+                            thread_id: string;
+                            comment_id: string;
+                            revision: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "anchor"
+                                | "comment_body"
+                                | "comment_revision"
+                                | "thread_event"
+                                | "event_page"
+                                | "thread_snapshot"
+                                | "relation_page"
+                                | "status_page";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "review_comment";
+                          }
+                        | {
+                            task_id: string;
+                            comment_id: string;
+                            /** Format: uint64 */
+                            version: number;
+                            /** @constant */
+                            type: "work_comment";
+                          }
+                        | {
+                            session_id: string;
+                            checkpoint_id: string;
+                            version: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "agent_checkpoint";
+                          };
+                      value?:
+                        | (
+                            | {
+                                /** @constant */
+                                type: "like";
+                              }
+                            | {
+                                /** @constant */
+                                type: "dislike";
+                              }
+                            | {
+                                sequence: string;
+                                /** @constant */
+                                type: "emoji";
+                              }
+                            | {
+                                emoji_id: string;
+                                version: {
+                                  /** @enum {string} */
+                                  kind:
+                                    | "index_page"
+                                    | "thread_version"
+                                    | "thread_event"
+                                    | "human_message_revision"
+                                    | "thread_link"
+                                    | "reaction"
+                                    | "reaction_retraction"
+                                    | "reaction_slot"
+                                    | "custom_emoji_version"
+                                    | "image_asset";
+                                  id: string;
+                                };
+                                /** @constant */
+                                type: "custom";
+                              }
+                          )
+                        | null;
+                      observed: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "thread_version"
+                          | "thread_event"
+                          | "human_message_revision"
+                          | "thread_link"
+                          | "reaction"
+                          | "reaction_retraction"
+                          | "reaction_slot"
+                          | "custom_emoji_version"
+                          | "image_asset";
+                        id: string;
+                      }[];
+                      /** @constant */
+                      type: "resolve_conflict";
+                    };
+                /** @constant */
+                domain: "reaction";
+              }
+            | {
+                intent:
+                  | {
+                      emoji_id: string;
+                      expected?: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "thread_version"
+                          | "thread_event"
+                          | "human_message_revision"
+                          | "thread_link"
+                          | "reaction"
+                          | "reaction_retraction"
+                          | "reaction_slot"
+                          | "custom_emoji_version"
+                          | "image_asset";
+                        id: string;
+                      } | null;
+                      shortcode: string;
+                      label: string;
+                      bytes: number[];
+                      /** @constant */
+                      type: "define";
+                    }
+                  | {
+                      emoji_id: string;
+                      expected: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "thread_version"
+                          | "thread_event"
+                          | "human_message_revision"
+                          | "thread_link"
+                          | "reaction"
+                          | "reaction_retraction"
+                          | "reaction_slot"
+                          | "custom_emoji_version"
+                          | "image_asset";
+                        id: string;
+                      };
+                      /** @constant */
+                      type: "retire";
+                    };
+                /** @constant */
+                domain: "emoji";
+              };
+        };
+      };
+    };
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LocalCollabOutcome"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  local_collab_status: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        repo: components["schemas"]["RepositoryId"];
+        request_id: components["schemas"]["RequestId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LocalCollabOutcome"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  local_collab_status_head: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        repo: components["schemas"]["RepositoryId"];
+        request_id: components["schemas"]["RequestId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  local_collab_asset: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        repo: components["schemas"]["RepositoryId"];
+        asset: components["schemas"]["CollabObjectId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ImageAssetV1"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  local_collab_asset_head: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        repo: components["schemas"]["RepositoryId"];
+        asset: components["schemas"]["CollabObjectId"];
+      };
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
       409: {
         headers: {
           [name: string]: unknown;

@@ -6,7 +6,11 @@ import { createThreadPost } from "./thread-post.svelte.js";
 import { createMessageReactions } from "./message-reactions.svelte.js";
 import { ApiError, type Model } from "../api/client.js";
 import { channelMessages } from "../collaboration/thread-presentation.js";
-import type { ThreadTransport } from "./thread-types.js";
+import {
+  threadSnapshotKey,
+  type ThreadDetail,
+  type ThreadTransport,
+} from "./thread-types.js";
 import type { StoreRoute } from "./contracts.js";
 
 export function createThreadsController(options: {
@@ -20,7 +24,7 @@ export function createThreadsController(options: {
   let generation = 0;
   let committedRequestId = $state("");
   let threads = $state<Model<"ThreadSummaryV1">[]>([]);
-  let detail = $state<Model<"ThreadDetailV1">>();
+  let detail = $state<ThreadDetail>();
   let events = $state<Model<"ThreadEventItemV1">[]>([]);
   let listCursor = $state<string | null>(null),
     eventCursor = $state<string | null>(null);
@@ -118,7 +122,7 @@ export function createThreadsController(options: {
       const loaded = await retainThreadHistory({
         transport,
         id,
-        root: d.snapshot.thread_root,
+        root: threadSnapshotKey(d.snapshot),
         first,
         retained,
         more,

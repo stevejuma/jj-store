@@ -32,7 +32,12 @@ export function createProductionRepositoryThreadNavigation(
         if (!repo) throw new ApiError("access_denied");
         const source = shared.acquire(repo, credential());
         return {
-          list: (cursor?: string) => source.threads!.list(cursor),
+          list: async (cursor?: string) => {
+            const page = await source.threads!.list(cursor);
+            if ("metadata_commit" in page.snapshot)
+              throw new ApiError("unexpected_repository_profile");
+            return { ...page, snapshot: page.snapshot };
+          },
           close: () => source.close(),
         };
       }

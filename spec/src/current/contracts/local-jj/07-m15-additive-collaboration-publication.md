@@ -40,3 +40,14 @@ reply revisions from that selection. The next explicit prompt can include those
 replies as retained context; exact request replay never reads new feedback.
 Provider/reopen qualification does not qualify a local browser Thread transport
 or the broader cold local CLI/UI gate.
+
+The registered-folder inbox Thread/Reaction transport uses the shared domain
+commands and exact device actor, with explicit companion metadata pins rather
+than fabricated native snapshots. Bounded pages and asset reads revalidate the
+folder identity and binding generation. Signed continuations bind the metadata
+commit, query, target and page size and reject changed current selections.
+Command/status routes retain original receipts and never initialize a runner.
+The execution inbox selects this transport from the captured session profile;
+saving a reply or reaction never prompts, resumes or snapshots code. This slice
+requires cold registered-folder proof and does not qualify native reducer 3 or
+the broader M13/M15 completion gates.

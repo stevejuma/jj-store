@@ -21,6 +21,7 @@ impl PinnedCollabRead {
         } else {
             crate::agent_execution::Feedback {
                 messages: vec![],
+                profile: None,
                 write_unavailable: None,
             }
         };

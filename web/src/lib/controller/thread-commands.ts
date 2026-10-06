@@ -1,9 +1,9 @@
 import { ApiError, type Model } from "../api/client.js";
 import { collabRequestId } from "./collab-actions.svelte.js";
-import type { ThreadRequest } from "./thread-types.js";
+import type { ThreadDetail, ThreadRequest } from "./thread-types.js";
 import type { channelMessages } from "../collaboration/thread-presentation.js";
 export function createThreadCommands(options: {
-  detail(): Model<"ThreadDetailV1"> | undefined;
+  detail(): ThreadDetail | undefined;
   projection(): ReturnType<typeof channelMessages>;
   events(): Model<"ThreadEventItemV1">[];
   execute(kind: "threads", request: ThreadRequest): Promise<void>;

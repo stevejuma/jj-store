@@ -42,7 +42,9 @@ pub use review_types::{
     LocalReviewCommand, LocalReviewOutcome, LocalReviewReceipt, LocalReviewRequest,
 };
 mod browser_agents;
+mod browser_collab;
 pub use browser_agents::*;
+pub use browser_collab::*;
 mod browser_reviews;
 pub use browser_reviews::*;
 mod browser_work;

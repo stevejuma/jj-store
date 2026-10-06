@@ -1,3 +1,7 @@
+import {
+  discussionApi,
+  qualifyNativeFeedback,
+} from "./agent-execution-discussion-api.mjs";
 import { expect } from "@playwright/test";
 import { accessible, sendPrompt } from "./agent-execution-browser-ui.mjs";
 
@@ -23,66 +27,22 @@ export async function verifyAgentDiscussion(
     .poll(async () => (await feedback()).messages.length, { timeout: 30000 })
     .toBe(2);
   const original = await feedback();
-  expect(original.write_unavailable).toContain("collaboration replication");
-  const refused = await page.request.post(
-    `${origin}/v1/repos/${repository}/threads/commands`,
-    {
-      headers: admission,
-      data: {
-        version: 1,
-        request_id: crypto.randomUUID().replaceAll("-", ""),
-        command: {
-          type: "create_agent_discussion",
-          thread_id: crypto.randomUUID().replaceAll("-", ""),
-          title: "Refused code repository feedback",
-          target: original.messages[0].target,
-        },
-      },
-    },
-  );
-  expect(refused.status()).toBe(409);
-  expect(await refused.text()).toContain(
-    "collaboration_replication_unsupported",
-  );
-  const unsupported = workspace.locator(
-    `[data-message-id="${original.messages[0].row_id}"]`,
-  );
-  await unsupported.hover();
-  await unsupported.getByRole("button", { name: "Reply", exact: true }).click();
-  const unsupportedPanel = workspace.getByRole("region", {
-    name: /Replies to/,
-  });
-  await expect(
-    unsupportedPanel.getByRole("button", { name: "Save reply" }),
-  ).toBeDisabled();
-  await expect(
-    unsupportedPanel.getByText(/until collaboration replication is qualified/),
-  ).toBeVisible();
-  await unsupported.getByRole("button", { name: "Reply", exact: true }).click();
-  // Positive qualification uses the existing supported WorkStore-home profile.
-  // This is explicit disposable fixture metadata; no production guard is bypassed.
-  const home = await page.request.post(
-    `${origin}/v1/repos/${repository}/work/commands`,
-    {
-      headers: admission,
-      data: {
-        version: 1,
-        request_id: crypto.randomUUID().replaceAll("-", ""),
-        command: {
-          command: "create_project",
-          id: crypto.randomUUID().replaceAll("-", ""),
-          title: "Feedback qualification home",
-          body: "Disposable supported WorkStore fixture",
-        },
-      },
-    },
-  );
-  expect(home.ok()).toBeTruthy();
-  expect((await home.json()).status).toBe("committed");
-  await expect
-    .poll(async () => (await feedback()).write_unavailable)
-    .toBeUndefined();
-  await page.reload();
+  const profile = original.profile ?? "native";
+  const api = discussionApi(page, origin, admission, repository, profile);
+  if (profile === "native")
+    await qualifyNativeFeedback(
+      page,
+      workspace,
+      origin,
+      admission,
+      repository,
+      original,
+      feedback,
+    );
+  else expect(original.write_unavailable).toBeUndefined();
+  const title = (await read("/local/agents")).sessions.find(
+    (s) => s.id === sessionId,
+  ).title;
   const before = (await events()).filter(
     (e) => e.payload.type === "prompt",
   ).length;
@@ -93,8 +53,7 @@ export async function verifyAgentDiscussion(
     await message.hover();
     await message.getByRole("button", { name: "Reply", exact: true }).click();
     const panel = workspace.getByRole("region", {
-      name:
-        role === "user" ? "Replies to You" : "Replies to Browser qualification",
+      name: role === "user" ? "Replies to You" : `Replies to ${title}`,
       exact: true,
     });
     await panel
@@ -104,11 +63,12 @@ export async function verifyAgentDiscussion(
       );
     const saved = page.waitForResponse((response) => {
       if (
-        !response.url().endsWith(`/repos/${repository}/threads/commands`) ||
+        !response.url().endsWith(api.commandPath("threads")) ||
         response.request().method() !== "POST"
       )
         return false;
-      const command = response.request().postDataJSON().command;
+      const data = response.request().postDataJSON().command;
+      const command = data.intent ?? data;
       return (
         command.type === "message" &&
         command.body ===
@@ -127,9 +87,7 @@ export async function verifyAgentDiscussion(
     }
     expect(receipt.ok()).toBeTruthy();
     const exactRequest = receipt.request().postDataJSON().request_id;
-    const committed = await read(
-      `/repos/${repository}/threads/commands/${exactRequest}`,
-    );
+    const committed = await api.receipt("threads", exactRequest);
     expect(committed.status).toBe("committed");
     expect(committed.receipt.request_id).toBe(exactRequest);
     await expect(
@@ -147,27 +105,15 @@ export async function verifyAgentDiscussion(
     expect(current.target).toEqual(row.target);
     expect(current.replies).toHaveLength(1);
     // These are ordinary repository ThreadStore messages, readable elsewhere.
-    const discussion = await read(
-      `/repos/${repository}/threads/${current.threads[0]}`,
-    );
+    const discussion = await api.thread(current.threads[0]);
     expect(discussion.thread.value.agent_message).toEqual(row.target);
     // Use the shared reaction bar and exact original target.
-    const reacted = await page.request.post(
-      `${origin}/v1/repos/${repository}/reactions/commands`,
-      {
-        headers: admission,
-        data: {
-          version: 1,
-          request_id: crypto.randomUUID().replaceAll("-", ""),
-          command: {
-            type: "set",
-            target: row.target,
-            value: { type: "like" },
-            observed: [],
-          },
-        },
-      },
-    );
+    const reacted = await api.command("reactions", {
+      type: "set",
+      target: row.target,
+      value: { type: "like" },
+      observed: [],
+    });
     expect(reacted.ok()).toBeTruthy();
     expect((await reacted.json()).status).toBe("committed");
     await expect(
@@ -225,26 +171,16 @@ export async function verifyAgentDiscussion(
     expect(prepared.text).toContain(message.replies[0].revision.id);
   // Changing committed feedback cannot alter a retained prompt on exact retry.
   const originalThread = retained.messages[0].threads[0];
-  const current = await read(`/repos/${repository}/threads/${originalThread}`);
-  const revised = await page.request.post(
-    `${origin}/v1/repos/${repository}/threads/commands`,
-    {
-      headers: admission,
-      data: {
-        version: 1,
-        request_id: crypto.randomUUID().replaceAll("-", ""),
-        command: {
-          type: "message",
-          thread_id: originalThread,
-          expected_thread: current.thread.reference,
-          message_id: crypto.randomUUID().replaceAll("-", ""),
-          expected_revision: null,
-          reply_to: null,
-          body: "New feedback after dispatch must not replay the prompt.",
-        },
-      },
-    },
-  );
+  const current = await api.thread(originalThread);
+  const revised = await api.command("threads", {
+    type: "message",
+    thread_id: originalThread,
+    expected_thread: current.thread.reference,
+    message_id: crypto.randomUUID().replaceAll("-", ""),
+    expected_revision: null,
+    reply_to: null,
+    body: "New feedback after dispatch must not replay the prompt.",
+  });
   expect(revised.ok()).toBeTruthy();
   expect((await revised.json()).status).toBe("committed");
   const duplicate = await page.request.post(
@@ -256,6 +192,6 @@ export async function verifyAgentDiscussion(
     after,
   );
   console.log(
-    "Native WorkStore inbox: exact replies/reactions; no implicit prompt; next Send context and reload persistence. Native code writes remain refused until reducer 3 qualification.",
+    `${profile === "native" ? "Native WorkStore" : "Registered-folder"} inbox: exact replies/reactions; no implicit prompt; next Send context and reload persistence.`,
   );
 }

@@ -1,4 +1,7 @@
-import { validateAgentAcceptanceOrigin } from "./agent-execution-browser-input.mjs";
+import {
+  validateAgentAcceptanceOrigin,
+  verifyRecordedHistory,
+} from "./agent-execution-browser-input.mjs";
 // Cold production-browser acceptance against the disposable native service.
 import {
   verifyChatFeedback,
@@ -16,7 +19,13 @@ import {
   sendPrompt,
   waitForConnection,
 } from "./agent-execution-browser-ui.mjs";
-const [origin, repository] = process.argv.slice(2);
+const [origin, repository, profile = "native"] = process.argv.slice(2);
+if (!["native", "local_jj_git"].includes(profile))
+  throw Error("Unknown acceptance profile");
+const agentName =
+  profile === "native"
+    ? "Browser qualification"
+    : "Browser qualification local";
 validateAgentAcceptanceOrigin(origin, repository);
 const browser = await chromium.launch();
 try {
@@ -49,9 +58,14 @@ try {
     page.getByRole("dialog", { name: "Agent sessions", exact: true }),
   ).toHaveCount(0);
   await accessible(page, "standalone gallery", '[aria-label="Your agents"]');
-  const { card, setup } = await prepareAgent(page, origin, admission);
+  const { card, setup } = await prepareAgent(
+    page,
+    origin,
+    admission,
+    agentName,
+  );
   await card
-    .getByRole("button", { name: "Start Browser qualification", exact: true })
+    .getByRole("button", { name: `Start ${agentName}`, exact: true })
     .click();
   const launch = page.getByRole("form", {
     name: "Start agent session",
@@ -69,7 +83,7 @@ try {
   const target = (await targets.json()).find(
     (t) => t.repository === repository,
   );
-  if (!target) throw Error("Authorized native target missing");
+  if (!target) throw Error("Authorized target missing");
   await page
     .getByRole("combobox", { name: "Repository workspace", exact: true })
     .click();
@@ -217,7 +231,7 @@ try {
   );
   await page.goto(`${origin}/#/agents/sessions/${sessionId}`);
   const inboxRow = page.getByRole("button", {
-    name: `Open session Browser qualification · ${sessionId}`,
+    name: `Open session ${agentName} · ${sessionId}`,
     exact: true,
   });
   await expect(inboxRow.locator("time")).toHaveAttribute("datetime", /T/);
@@ -274,25 +288,7 @@ try {
       { timeout: 30000 },
     )
     .toBe(true);
-  // The review page deliberately pins historical code. A cold legacy route chooses its own snapshot.
-  const historyPage = await context.newPage();
-  await historyPage.goto(`${origin}/#/repos/${repository}/agents`);
-  await expect(
-    historyPage.getByRole("tab", { name: "Agents", exact: true }),
-  ).toHaveAttribute("aria-selected", "true");
-  await expect(
-    historyPage.getByRole("region", { name: "Agent activity", exact: true }),
-  ).toBeVisible();
-  await expect
-    .poll(
-      () =>
-        historyPage
-          .getByRole("list", { name: "Agent sessions", exact: true })
-          .getByRole("listitem")
-          .count(),
-      { timeout: 30000 },
-    )
-    .toBeGreaterThan(0);
+  await verifyRecordedHistory(context, origin, repository);
   if (errors.length) throw Error(`Production errors: ${errors.join("; ")}`);
   console.log(
     "Cold standalone management, editor, live presence cycle, full-page session, reload/history/review and accessibility passed",

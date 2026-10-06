@@ -116,4 +116,6 @@ The inbox retains the existing native code-repository Thread/Reaction refusal
 until reducer 3 is qualified. The supported native write profile is a WorkStore
 home with a frozen origin ledger; local companion providers retain their own
 qualified ref-CAS behavior. Browser capability presentation cannot bypass these
-publication rules or qualify an unimplemented registered-folder transport.
+publication rules. Registered-folder inbox commands use the same local provider,
+captured profile, exact device actor and original ref-CAS receipts as the CLI;
+their browser transport requires independent cold proof.

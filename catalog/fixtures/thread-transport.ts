@@ -117,8 +117,9 @@ export function createThreadTransport(
   addMessage(THREAD_IDS.thread, THREAD_IDS.message, "Welcome to the channel");
   const emojiVersion = ref("custom_emoji_version", 500),
     preview = ref("image_asset", 501);
-  const transport: ThreadTransport = {
-    list: async () => page({ type: "threads", threads: [...threads.values()] }),
+  const transport = {
+    list: async (_cursor?: string) =>
+      page({ type: "threads", threads: [...threads.values()] }),
     thread: async (id) => ({ snapshot: snapshot(), thread: threads.get(id)! }),
     events: async (id) =>
       page({ type: "events", thread_id: id, events: history.get(id) ?? [] }),
@@ -141,7 +142,7 @@ export function createThreadTransport(
           },
         ],
       }),
-    asset: async () => ({
+    asset: async (_id: string) => ({
       type: "image/png",
       bytes: Uint8Array.from(
         atob(
@@ -253,7 +254,7 @@ export function createThreadTransport(
     },
     status: async (_, id) =>
       receipts.get(id) ?? { status: "not_known", request_id: id },
-  };
+  } satisfies ThreadTransport;
   return {
     transport,
     requests,

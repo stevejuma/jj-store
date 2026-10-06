@@ -103,6 +103,63 @@ async fn saved_agent_replies_and_reactions_survive_restart_and_keep_exact_target
         );
     }
     let reopened = reopen(&root.path().join("repo"));
+    let selection = reopened.inbox_selection().await.unwrap();
+    let pin = selection.snapshot.metadata_commit;
+    let page = reopened
+        .inbox_page(
+            pin,
+            &jj_store_service::collab_pages::Query::Threads { limit: 1 },
+            None,
+        )
+        .await
+        .unwrap();
+    assert_eq!(page.snapshot.metadata_commit, pin);
+    assert!(page.next_after.is_some());
+    let more = reopened
+        .inbox_page(
+            pin,
+            &jj_store_service::collab_pages::Query::Threads { limit: 1 },
+            page.next_after,
+        )
+        .await
+        .unwrap();
+    assert!(more.next_after.is_none());
+    let thread = ThreadId::new([90; 16]);
+    let detail = reopened.inbox_thread(pin, thread).await.unwrap();
+    let events = reopened
+        .inbox_page(
+            pin,
+            &jj_store_service::collab_pages::Query::Events {
+                thread_id: thread,
+                limit: 1,
+            },
+            None,
+        )
+        .await
+        .unwrap();
+    assert!(events.next_after.is_some());
+    let foreign = reopened
+        .inbox_thread(pin, ThreadId::new([91; 16]))
+        .await
+        .unwrap();
+    assert!(
+        reopened
+            .inbox_page(
+                pin,
+                &jj_store_service::collab_pages::Query::Events {
+                    thread_id: thread,
+                    limit: 1
+                },
+                Some(serde_json::to_string(&foreign.thread.value.event).unwrap())
+            )
+            .await
+            .is_err()
+    );
+    assert!(reopened.inbox_thread(None, thread).await.is_err());
+    assert_eq!(
+        detail.thread.value.agent_message.as_ref(),
+        Some(&feedback.messages[0].target)
+    );
     let feedback = reopened.agent_feedback(&rows).await.unwrap();
     assert!(feedback.messages.iter().all(|m| m.replies.len() == 1));
     assert!(feedback.prompt_context().unwrap().contains("Feedback 0"));

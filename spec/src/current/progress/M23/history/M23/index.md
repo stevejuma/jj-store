@@ -13,6 +13,8 @@ not a completion gate selection.
 | [E-EXEC-007](../../../../../history/2026/10/06/E-EXEC-007/index.md) | 2026-10-06 | pass            | Unchanged authority and maintenance boundaries                                                                   |
 | [E-EXEC-008](../../../../../history/2026/10/06/E-EXEC-008/index.md) | 2026-10-06 | pending         | Supported discussion/context verified; current registered-folder inbox and native code writes need qualification |
 | [E-EXEC-009](../../../../../history/2026/10/06/E-EXEC-009/index.md) | 2026-10-06 | pass            | Scoped maintenance, source ownership and publication guards preserved                                            |
+| [E-EXEC-010](../../../../../history/2026/10/07/E-EXEC-010/index.md) | 2026-10-07 | pass            | Registered-folder inbox replies/reactions and explicit next-Send context; native code writes remain gated        |
+| [E-EXEC-011](../../../../../history/2026/10/07/E-EXEC-011/index.md) | 2026-10-07 | pass            | Unchanged provider authority, source ownership and maintenance boundaries                                        |
 
 <!-- generated-navigation -->
 

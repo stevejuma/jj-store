@@ -129,6 +129,7 @@ pub(crate) async fn project(
     }
     let feedback = Feedback {
         messages,
+        profile: None,
         write_unavailable: None,
     };
     if serde_json::to_vec(&feedback)

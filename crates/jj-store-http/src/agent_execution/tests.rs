@@ -72,6 +72,7 @@ impl agents::Manager for Manager {
         assert_eq!(session, "fixture");
         Ok(agents::Feedback {
             messages: vec![],
+            profile: None,
             write_unavailable: None,
         })
     }
@@ -221,4 +222,82 @@ async fn execution_routes_require_local_admin_and_refuse_browser_launch_configur
         .await
         .unwrap();
     assert_eq!(reopened.status(), StatusCode::OK);
+}
+
+#[tokio::test]
+async fn local_inbox_collaboration_routes_require_local_admin_without_actor_input() {
+    let root = tempfile::tempdir().unwrap();
+    let repository = "11".repeat(16);
+    let command = serde_json::json!({"version":1,"request_id":"22".repeat(16),"command":{"domain":"thread","intent":{"type":"create","thread_id":"33".repeat(16),"title":"Reply","baseline":null}}});
+    let paths = [
+        (
+            format!("/v1/local/repos/{repository}/collaboration/snapshot"),
+            None,
+        ),
+        (
+            format!("/v1/local/repos/{repository}/collaboration/query"),
+            Some(
+                serde_json::json!({"metadata_commit":null,"query":{"type":"threads","limit":50},"cursor":null}),
+            ),
+        ),
+        (
+            format!("/v1/local/repos/{repository}/collaboration/thread"),
+            Some(serde_json::json!({"metadata_commit":null,"thread_id":"33".repeat(16)})),
+        ),
+        (
+            format!("/v1/local/repos/{repository}/collaboration/commands"),
+            Some(command.clone()),
+        ),
+        (
+            format!(
+                "/v1/local/repos/{repository}/collaboration/commands/{}",
+                "22".repeat(16)
+            ),
+            None,
+        ),
+        (
+            format!(
+                "/v1/local/repos/{repository}/collaboration/assets/{}",
+                "44".repeat(32)
+            ),
+            None,
+        ),
+    ];
+    for access in [
+        Access::Authenticated,
+        Access::LocalTrusted {
+            principal: m::PrincipalId::new([1; 16]),
+            permission: Permission::Read,
+        },
+    ] {
+        let api = api(root.path(), access);
+        for (path, body) in &paths {
+            assert_eq!(
+                api.router()
+                    .oneshot(request(path, body.clone()))
+                    .await
+                    .unwrap()
+                    .status(),
+                StatusCode::FORBIDDEN,
+                "{path}"
+            );
+        }
+    }
+    let api = api(
+        root.path(),
+        Access::LocalTrusted {
+            principal: m::PrincipalId::new([1; 16]),
+            permission: Permission::Admin,
+        },
+    );
+    let mut injected = command;
+    injected["actor"] = serde_json::json!("55".repeat(16));
+    assert_eq!(
+        api.router()
+            .oneshot(request(&paths[3].0, Some(injected)))
+            .await
+            .unwrap()
+            .status(),
+        StatusCode::BAD_REQUEST
+    );
 }

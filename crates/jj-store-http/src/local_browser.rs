@@ -5,6 +5,7 @@ mod binding;
 mod blame;
 pub(crate) use binding::binding;
 use binding::bound_folder;
+mod collaboration;
 mod conversion;
 mod events;
 mod index_tasks;
@@ -113,6 +114,7 @@ pub(super) fn router() -> Router<Arc<State>> {
         .merge(conversion::router())
         .merge(agents::router())
         .merge(reviews::router())
+        .merge(collaboration::router())
         .merge(events::router())
 }
 fn admit(state: &State) -> Result<()> {
@@ -682,6 +684,7 @@ pub(crate) fn document(document: &mut crate::contract::Document) {
     work::document(document);
     agents::document(document);
     reviews::document(document);
+    collaboration::document(document);
     working_copy::document(document);
     working_tree::document(document);
     stacks::document(document);

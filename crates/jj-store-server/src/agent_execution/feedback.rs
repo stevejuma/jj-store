@@ -8,7 +8,7 @@ impl Supervisor {
         self.authorized(saved.view.repository, &saved.profile, false)
             .await?;
         let rows = recorded_rows(saved)?;
-        let feedback = if saved.profile == "local_jj_git" {
+        let mut feedback = if saved.profile == "local_jj_git" {
             let local = self
                 .0
                 .resources
@@ -17,12 +17,7 @@ impl Supervisor {
                 .ok_or(Error::Unavailable)?
                 .open(saved.view.repository)
                 .map_err(|_| Error::Stale)?;
-            let mut feedback = local.agent_feedback(&rows).await?;
-            feedback.write_unavailable = Some(
-                "Replies and reactions for registered folders are not available in the inbox yet."
-                    .into(),
-            );
-            feedback
+            local.agent_feedback(&rows).await?
         } else {
             let session = self
                 .0
@@ -44,6 +39,7 @@ impl Supervisor {
                     .map_err(|_| Error::Unavailable)?;
             pin.agent_feedback(session, &rows).await?
         };
+        feedback.profile = Some(saved.profile.clone());
         self.authorized(saved.view.repository, &saved.profile, false)
             .await?;
         Ok(feedback)

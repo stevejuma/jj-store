@@ -139,9 +139,8 @@ your draft and reports the failure. Unknown reply outcomes keep the original
 request for Check reply status or Retry same reply; successful recovery clears
 the resolved error. Reactions themselves are not treated as instructions.
 
-Inbox reply/reaction writes currently require the supported native
-WorkStore-home profile. Native code repositories still require collaboration
-replication qualification; registered-folder inbox writes require their browser
-transport. The reply composer explains unavailable writes and retains your
-draft. Reading existing feedback and provider-side prompt context does not
-bypass these gates.
+Inbox reply/reaction writes support registered local folders and the qualified
+native WorkStore-home profile. Native code repositories still require
+collaboration replication qualification. The reply composer explains unavailable
+writes and retains your draft. Reading existing feedback and provider-side
+prompt context does not bypass these gates.

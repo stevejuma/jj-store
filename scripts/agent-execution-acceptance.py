@@ -160,6 +160,19 @@ with tempfile.TemporaryDirectory(prefix='jse-', dir='/private/tmp') as temporary
             if args.browser:
                 assert args.web, 'browser qualification needs a built web root'
                 subprocess.run(['node', str(Path(__file__).with_name('agent-execution-browser.mjs').resolve()), origin, repository], env=environment, check=True, timeout=300)
+                local_folder = root / 'local-source'
+                run(args.jj, ['git', 'init', '--colocate', str(local_folder)], root)
+                local_folder.joinpath('local-source.txt').write_text('Retained local source\n')
+                run(args.jj, ['status'], local_folder)
+                local_folder.joinpath('local-source.txt').write_text('Dirty local source preserved\n')
+                bindings = request(origin, '/local/repositories')
+                registered = request(origin, '/local/repositories', dict(version=1, request_id=uuid.uuid4().hex,
+                    expected_revision=bindings['revision'], path=str(local_folder), name='Local inbox qualification'))
+                assert registered['status'] == 'committed'
+                local_repository = registered['binding']['repository']
+                subprocess.run(['node', str(Path(__file__).with_name('agent-execution-browser.mjs').resolve()), origin, local_repository, 'local_jj_git'], env=environment, check=True, timeout=300)
+                assert local_folder.joinpath('local-source.txt').read_text() == 'Dirty local source preserved\n'
+
             before = wait(origin, lambda v: all(s['published_sequence'] == s['last_sequence'] for s in v['sessions']))
             before_feedback = {s['id']: request(origin, '/local/agents/feedback?session=' + s['id']) for s in before['sessions']}
             before_events = {s['id']: request(origin, '/local/agents/events?session=' + s['id'])['events'] for s in before['sessions']}
@@ -179,18 +192,18 @@ with tempfile.TemporaryDirectory(prefix='jse-', dir='/private/tmp') as temporary
             assert {s['id']: request(origin, '/local/agents/events?session=' + s['id'])['events'] for s in after_restart['sessions']} == before_events
             assert [(s['id'], s['setup_id']) for s in after_restart['sessions']] == [(s['id'], s['setup_id']) for s in before['sessions']]
             wait(origin, lambda v: v['runtime'] == 'ready')
-            selected = after_restart['sessions'][0]
-            session = selected['id']
-            old_events = request(origin, '/local/agents/events?session=' + session)['events']
-            old_prompts = sum(e['payload'].get('type') == 'prompt' for e in old_events)
-            action = 'resume' if selected['capabilities'].get('initialize', {}).get('loadSession') else 'continue_with_context'
-            command(origin, session, dict(action=action))
-            wait(origin, lambda v: next(s for s in v['sessions'] if s['id'] == session)['state'] in ['idle', 'interrupted'])
-            retained = request(origin, '/local/agents/events?session=' + session)['events']
-            assert sum(e['payload'].get('type') == 'prompt' for e in retained) == old_prompts
-            command(origin, session, dict(action='end'))
-            wait(origin, lambda v: next(s for s in v['sessions'] if s['id'] == session)['state'] == 'ended')
-            print('native cold restart retained sessions and exact history; explicit ' + action + ' sent no prompt', flush=True)
+            for selected in after_restart['sessions']:
+                session = selected['id']
+                old_events = request(origin, '/local/agents/events?session=' + session)['events']
+                old_prompts = sum(e['payload'].get('type') == 'prompt' for e in old_events)
+                action = 'resume' if selected['capabilities'].get('initialize', {}).get('loadSession') else 'continue_with_context'
+                command(origin, session, dict(action=action))
+                wait(origin, lambda v: next(s for s in v['sessions'] if s['id'] == session)['state'] in ['idle', 'interrupted'])
+                retained = request(origin, '/local/agents/events?session=' + session)['events']
+                assert sum(e['payload'].get('type') == 'prompt' for e in retained) == old_prompts
+                command(origin, session, dict(action='end'))
+                wait(origin, lambda v: next(s for s in v['sessions'] if s['id'] == session)['state'] == 'ended')
+                print('cold restart retained exact history; explicit ' + action + ' sent no prompt for ' + selected['title'], flush=True)
         finally:
             if server.poll() is None:
                 server.send_signal(signal.SIGTERM)

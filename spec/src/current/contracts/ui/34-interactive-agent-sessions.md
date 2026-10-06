@@ -205,7 +205,15 @@ themselves are not treated as authored instructions. Reply/feedback failures
 retain drafts and exact pending collaboration identities beside their controls.
 
 Repository feedback availability is shown beside the reply composer. Unsupported
-native code repositories and registered-folder inbox transports retain editable
-reply drafts while Save and reaction actions are disabled. Existing replies stay
-readable. Native WorkStore homes retain their qualified publication profile;
-code repository reducer-3 qualification remains a separate gate.
+native code repositories retain editable reply drafts while Save and reaction
+actions are disabled. Existing replies stay readable. Native WorkStore homes
+retain their qualified publication profile; code repository reducer-3
+qualification remains a separate gate.
+
+Registered-folder execution chats use the shared Thread/Reaction controller with
+an owned local transport, preserving actual companion commits and device actors.
+One captured pin is shared by concurrent thread/history reads. Changed current
+pins and superseded replies cannot replace newer state. Receipt replay/status
+keeps original IDs and local actor scope. Existing native repository navigation
+continues to admit native snapshots only. No browser navigation, feedback save
+or read dispatches execution.

@@ -54,6 +54,12 @@ authoritative.
 Optional write_unavailable explains the current inbox write capability without
 hiding readable targets or replies. Native code repositories with an existing
 origin ledger and no WorkStore home retain the reducer-3 publication refusal.
-Registered-folder inbox writes remain unavailable until its browser Thread
-transport is qualified; local provider feedback/context reads remain supported.
-This projection never grants write access or weakens command revalidation.
+The captured profile selects native or registered-folder inbox transport. Local
+collaboration snapshot/query/detail, command/status and retained raster reads
+use the separate /v1/local/repos/{repo}/collaboration namespace, current
+companion pins, signed query-specific continuations, binding generation and the
+existing device actor. Local receipts remain explicitly local; no native
+snapshot fields or identifiers are fabricated. Reads recheck current selection
+and registration, and query/response budgets fail closed. Raster JSON preserves
+validated bounded bytes and media type without fetching external URLs. This
+projection never grants write access or weakens command revalidation.

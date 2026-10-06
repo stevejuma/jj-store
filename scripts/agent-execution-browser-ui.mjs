@@ -30,12 +30,15 @@ export async function accessible(page, label, selector) {
     );
 }
 
-export async function prepareAgent(page, origin, admission) {
+export async function prepareAgent(
+  page,
+  origin,
+  admission,
+  agentName = "Browser qualification",
+) {
   await page.getByRole("button", { name: "Add agent", exact: true }).click();
   const editor = page.getByRole("dialog", { name: "Add agent", exact: true });
-  await editor
-    .getByLabel("Agent name", { exact: true })
-    .fill("Browser qualification");
+  await editor.getByLabel("Agent name", { exact: true }).fill(agentName);
   await editor
     .getByRole("group", { name: "Agent instructions", exact: true })
     .getByRole("textbox", { name: "Markdown editor", exact: true })
@@ -74,7 +77,7 @@ export async function prepareAgent(page, origin, admission) {
     headers: admission,
   });
   const setup = (await savedStatus.json()).setups.find(
-    (s) => s.name === "Browser qualification",
+    (s) => s.name === agentName,
   );
   if (!setup) throw Error("Saved identity missing");
   if (setup.runner !== "codex")
@@ -91,7 +94,7 @@ export async function prepareAgent(page, origin, admission) {
     .toBeGreaterThan(0);
   await card
     .getByRole("button", {
-      name: "View Browser qualification",
+      name: `View ${agentName}`,
       exact: true,
     })
     .press("Enter");
@@ -132,7 +135,7 @@ export async function prepareAgent(page, origin, admission) {
   await page.goBack();
 
   await details
-    .getByRole("button", { name: "Edit Browser qualification", exact: true })
+    .getByRole("button", { name: `Edit ${agentName}`, exact: true })
     .click();
   const edit = page.getByRole("dialog", { name: "Edit agent", exact: true });
   await edit
@@ -267,7 +270,18 @@ export async function sendPrompt(
     page.off("request", record);
   }
   expect(reply.ok()).toBe(true);
-  const outcome = await reply.json();
+  // Chromium may discard response bytes during the concurrent activity stream.
+  // Read the durable outcome by the exact submitted identity instead.
+  const command = reply.request().postDataJSON();
+  expect(command.session_id).toBe(sessionId);
+  expect(command.action.action).toBe("prompt");
+  const saved = await page.request.get(
+    `${origin}/v1/local/agents/outcome?request=${encodeURIComponent(command.request_id)}`,
+    { headers: admission },
+  );
+  expect(saved.ok()).toBe(true);
+  const outcome = await saved.json();
+  expect(outcome.request_id).toBe(command.request_id);
   expect(outcome.session_id).toBe(sessionId);
   expect(outcome.error).toBeNull();
 }
