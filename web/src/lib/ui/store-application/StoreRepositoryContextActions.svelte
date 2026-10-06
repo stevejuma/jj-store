@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { StoreController } from "../../controller/contracts.js";
   import StoreRepositoryActions from "../store-mutations/StoreRepositoryActions.svelte";
+  import StoreAgentLaunchButton from "../store-agent-execution/StoreAgentLaunchButton.svelte";
 
   let { controller }: { controller: StoreController } = $props();
   const view = $derived(controller.state);
@@ -35,6 +36,14 @@
     <p>Actions</p>
     {#key contextKey}
       <StoreRepositoryActions {controller} presentation="panel" />
+      <StoreAgentLaunchButton
+        manager={controller.execution}
+        context={{
+          repository: view.repository.id,
+          commit: view.route.commitId || undefined,
+          text: `Repository: ${view.repository.name}\nSelected revision: ${view.route.commitId ?? ""}`,
+        }}
+      />
     {/key}
   </section>
 {/if}

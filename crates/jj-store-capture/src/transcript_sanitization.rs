@@ -13,8 +13,9 @@ use serde_json::{Value, json};
 use sha2::{Digest as _, Sha256};
 use std::path::Path;
 pub const TRANSCRIPT_POLICY: &str = "mongodb-kingfisher@2.7.0/builtin-medium/transcript-paths/v1";
+#[derive(Clone)]
 pub struct TranscriptSanitizer {
-    scanner: Scanner,
+    scanner: std::sync::Arc<Scanner>,
     replacements: Vec<(String, &'static str)>,
 }
 impl TranscriptSanitizer {
@@ -52,11 +53,43 @@ impl TranscriptSanitizer {
         replacements.sort_by_key(|(path, _)| std::cmp::Reverse(path.len()));
         let cache = crate::path_policy::outside_checkout(cache)?;
         Ok(Self {
-            scanner: crate::agent_sanitization::scanner(&cache)?,
+            scanner: std::sync::Arc::new(crate::agent_sanitization::scanner(&cache)?),
             replacements,
         })
     }
-    pub(crate) fn sanitize(&self, mut value: Value) -> Option<SanitizedPayloadV1> {
+    /// Rebind only path privacy while reusing the immutable compiled scanner.
+    pub fn for_workspace(&self, workspace: &Path) -> CaptureResult<Self> {
+        let text = workspace.to_str().ok_or("invalid transcript workspace")?;
+        if !workspace.is_absolute()
+            || workspace.parent().is_none()
+            || text.contains('\0')
+            || workspace.components().any(|p| {
+                matches!(
+                    p,
+                    std::path::Component::ParentDir | std::path::Component::CurDir
+                )
+            })
+        {
+            return Err("invalid transcript workspace".into());
+        }
+        let mut replacements: Vec<_> = self
+            .replacements
+            .iter()
+            .filter(|(_, tag)| *tag != "$WORKSPACE")
+            .cloned()
+            .collect();
+        let text = text.trim_end_matches('/');
+        if replacements.iter().any(|(path, _)| path == text) {
+            return Err("transcript privacy roots must be distinct".into());
+        }
+        replacements.push((text.to_owned(), "$WORKSPACE"));
+        replacements.sort_by_key(|(p, _)| std::cmp::Reverse(p.len()));
+        Ok(Self {
+            scanner: self.scanner.clone(),
+            replacements,
+        })
+    }
+    pub fn sanitize(&self, mut value: Value) -> Option<SanitizedPayloadV1> {
         scrub(&mut value, &self.replacements)?;
         crate::agent_sanitization::scan_json(value, &self.scanner)
     }

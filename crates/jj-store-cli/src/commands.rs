@@ -14,6 +14,9 @@ use crate::store_commands::StoreCommand;
 
 #[derive(Clone, Debug, Subcommand)]
 pub enum Extension {
+    /// Create an application-owned workspace without snapshotting its source
+    #[command(hide = true)]
+    AgentWorkspace(crate::agent_workspace::Args),
     /// Capture repository-owned activity from supported coding agents
     #[command(long_about = include_str!("../../../docs/cli/agent.md"))]
     Agent(crate::agent_commands::AgentArgs),
@@ -91,6 +94,7 @@ pub async fn run(
     command: Extension,
 ) -> Result<(), CommandError> {
     let args = match command {
+        Extension::AgentWorkspace(args) => return crate::agent_workspace::run(helper, args).await,
         Extension::Agent(args) => return crate::agent_commands::run(ui, helper, args).await,
         Extension::Project(args) => {
             return crate::work_commands::run_project(ui, helper, args).await;

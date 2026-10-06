@@ -40,6 +40,8 @@ pub(crate) struct Capabilities {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub local_capture_management: Option<bool>,
     #[serde(skip_serializing_if = "Option::is_none")]
+    pub local_agent_execution: Option<bool>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub local_settings_management: Option<bool>,
     pub typed_mutations: Vec<String>,
     pub mutation_request_bytes: usize,
@@ -203,6 +205,15 @@ impl From<&Config> for Capabilities {
                 ))
             .then_some(true),
             local_capture_management: (config.local_capture.is_some()
+                && matches!(
+                    config.access,
+                    Access::LocalTrusted {
+                        permission: jj_store_service::auth::Permission::Admin,
+                        ..
+                    }
+                ))
+            .then_some(true),
+            local_agent_execution: (config.local_agents.is_some()
                 && matches!(
                     config.access,
                     Access::LocalTrusted {

@@ -39,6 +39,7 @@ pub struct PreparedServer {
     search: Option<crate::search::PreparedSearch>,
     replication: Option<crate::replication::PreparedReplication>,
     capture: capture::PreparedCapture,
+    agents: Option<crate::agent_execution::Supervisor>,
     storage: Option<AuthoritativeStorage>,
     _state_lock: Option<File>,
 }

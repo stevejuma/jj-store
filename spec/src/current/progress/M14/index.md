@@ -10,9 +10,7 @@
 | M14.5 | Done        | M14.2                   | JST-UI-016,JST-PUB-005,JST-PUB-006       | Storage integrity and non-destructive checkpoints               | Retain bounded maintenance and cold restart coverage                     | E-M14-014                                                                                                                                                                        |
 | M14.6 | In progress | M14.2,M10.7             | JST-UI-016,JST-REPL-012                  | Configured sync status and controls in Settings                 | Retain typed upstream/worker editing; qualify remaining sync integration | E-M14-008,E-M14-010,E-M14-011,E-M14-012,E-M14-013,E-M14-016                                                                                                                      |
 | M14.7 | Planned     | M14.3,M14.4,M14.5,M14.6 | JST-UI-016,JST-SEC-006                   | Integrated local settings and cold persistent acceptance        | Qualify completed native flow and preserve unsupported M13 capabilities  | -                                                                                                                                                                                |
-
 <!-- generated-navigation -->
-
 ## Pages
 
 - [history](history/index.md)

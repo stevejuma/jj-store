@@ -69,9 +69,10 @@ pub(super) async fn prepare(
             identity: Some(&identity),
             host: host.as_ref(),
             storage: storage.as_ref(),
-            admission: verifier
-                .clone()
-                .map(|v| crate::capture_admission::CaptureAdmission::new(registry.clone(), v)),
+            admission: verifier.clone().map(|v| {
+                crate::capture_admission::CaptureAdmission::new(registry.clone(), v)
+                    .excluding_execution(state.join("agent-execution/workspaces"))
+            }),
         },
         capture::CaptureLocations::environment,
     );
@@ -105,7 +106,7 @@ pub(super) async fn prepare(
             last_verified_restore_point: None,
         })
         .collect();
-    let local_workspaces = match (&config.access, verifier.filter(|_| host.is_some())) {
+    let local_workspaces = match (&config.access, verifier.clone().filter(|_| host.is_some())) {
         (
             Access::LocalTrusted {
                 permission: jj_store_service::auth::Permission::Admin,
@@ -206,6 +207,41 @@ pub(super) async fn prepare(
             as Arc<dyn jj_store_service::storage_management::StorageManager>),
         _ => None,
     };
+    let agents = if let (
+        HttpAccess::LocalTrusted {
+            principal,
+            permission: jj_store_service::auth::Permission::Admin,
+        },
+        Some(executable),
+    ) = (&http_access, std::env::var_os("JJ_STORE_ACP_EXECUTABLE"))
+    {
+        let jj = std::env::var_os("JJ_STORE_AGENT_JJ_EXECUTABLE")
+            .map(std::path::PathBuf::from)
+            .or_else(|| {
+                std::env::current_exe()
+                    .ok()
+                    .and_then(|p| p.parent().map(|p| p.join("jj")))
+            });
+        jj.map(|jj| {
+            crate::agent_execution::Supervisor::open(crate::agent_execution::Resources {
+                actor: *principal,
+                root: state.join("agent-execution"),
+                executable: executable.into(),
+                driver: Arc::new(crate::agent_execution::driver::Driver(
+                    jj_store_jj::agent_workspaces::Provider { executable: jj },
+                )),
+                folders: local_repositories.clone(),
+                workspaces: local_workspaces.clone(),
+                verifier,
+                registry: registry.clone(),
+                host: host.clone(),
+            })
+        })
+        .transpose()
+        .map_err(|_| Error::Config("agent execution preparation failed"))?
+    } else {
+        None
+    };
     let http = HttpApi::with_search(
         host,
         state.join("native-reads"),
@@ -251,6 +287,9 @@ pub(super) async fn prepare(
                 None
             },
             local_capture,
+            local_agents: agents
+                .clone()
+                .map(|m| Arc::new(m) as jj_store_service::agent_execution::AgentManager),
             local_storage,
             local_folder_picker: picker,
             local_repositories,
@@ -303,6 +342,7 @@ pub(super) async fn prepare(
         search,
         replication,
         capture,
+        agents,
         storage,
         _state_lock: state_lock,
     })

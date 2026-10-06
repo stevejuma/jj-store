@@ -49,3 +49,5 @@
   {{#include M21/SUMMARY.nav.md}}
 - [M22 specification modernization](M22/index.md)
   {{#include M22/SUMMARY.nav.md}}
+- [M23 interactive agent execution](M23/index.md)
+  {{#include M23/SUMMARY.nav.md}}

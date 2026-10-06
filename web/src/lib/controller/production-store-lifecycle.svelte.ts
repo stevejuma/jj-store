@@ -130,6 +130,8 @@ export async function initializeProductionStore(options: {
       bootstrap.capabilities.local_settings_management === true;
     options.data.captureSupported =
       bootstrap.capabilities.local_capture_management === true;
+    options.data.executionSupported =
+      bootstrap.capabilities.local_agent_execution === true;
     options.data.backups = [...bootstrap.backups];
     await options.events?.(
       bootstrap.capabilities.application_events === true,

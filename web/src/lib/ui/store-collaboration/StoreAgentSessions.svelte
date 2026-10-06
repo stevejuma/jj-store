@@ -8,6 +8,7 @@
   import CommunityProjectsVirtualRows from "../community-projects/CommunityProjectsVirtualRows.svelte";
   import StoreCollaborationSkeleton from "./StoreCollaborationSkeleton.svelte";
   import StoreAgentSessionRow from "./StoreAgentSessionRow.svelte";
+  import StoreAgentExecutionDirectory from "../store-agent-execution/StoreAgentExecutionDirectory.svelte";
   import "./store-collaboration.css";
 
   let { controller }: { controller: StoreController } = $props();
@@ -20,6 +21,10 @@
   aria-busy={state.status.agents === "loading"}
 >
   <ScrollArea type="hover" class="store-agent-sessions__scroll">
+    <StoreAgentExecutionDirectory
+      manager={controller.execution}
+      context={{ repository: state.repository.id }}
+    />
     <StoreWorkCollection
       id="agents"
       title="Agent sessions"

@@ -1,0 +1,26 @@
+# Interactive agent execution
+
+Explicit JJ_STORE_ACP_EXECUTABLE selects a rebuilt harness outside checkout
+configuration. The CLI composition supplies the fixed native-aware JJ executable
+and workspace provider. The LocalTrusted service supervises ACP v2 sessions and
+drains them before storage shutdown. Native and local workspace execution retain
+separate acceptance gates.
+
+`JJ_STORE_AGENT_JJ_EXECUTABLE` optionally selects the paired custom `jj`; the
+default is the `jj` beside the server binary. The hidden `jj agent-workspace`
+command takes full operation and revision IDs, an owned name and an absolute
+destination. It loads source metadata without snapshotting the source working
+copy and checks out only the destination. Creation recovery verifies its parent
+and tree. A durable ready phase precedes opening an adapter; incomplete
+preparation cannot resume or continue execution.
+
+Scanner preparation runs once per supervisor in the background. Status reports
+preparing, ready or unavailable; launches fail Busy before recording dispatch
+when privacy preparation is incomplete. Path rebinding reuses immutable scanner
+rules. `JJ_STORE_AGENT_PRIVACY_CACHE` is trusted launch configuration and must
+point outside a checkout. No browser body supplies these values.
+
+Shutdown stops publication scheduling before closing agents. Process closure is
+bounded at twenty seconds; final publication gets three seconds. Canceled
+publication retains the exact spool intent and unpublished sequence. Restart
+retries publication receipts, never agent prompts.

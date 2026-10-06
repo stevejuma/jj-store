@@ -22,6 +22,7 @@ pub struct CaptureAdmission {
     registry: Arc<dyn RepositoryRegistry>,
     verifier: Arc<dyn WorkspaceVerifier>,
     owned_io: bool,
+    managed_execution_root: Option<std::path::PathBuf>,
 }
 impl CaptureAdmission {
     pub fn new(
@@ -32,7 +33,12 @@ impl CaptureAdmission {
             registry,
             verifier,
             owned_io: false,
+            managed_execution_root: None,
         }
+    }
+    pub(crate) fn excluding_execution(mut self, root: std::path::PathBuf) -> Self {
+        self.managed_execution_root = Some(root);
+        self
     }
     pub(crate) fn for_owned_worker(mut self) -> Self {
         self.owned_io = true;
@@ -63,6 +69,13 @@ impl CaptureAdmission {
                 jj_store_service::local_management::Error::Limit => Error::Limit,
                 _ => Error::Unbound,
             })?;
+        if self
+            .managed_execution_root
+            .as_ref()
+            .is_some_and(|root| std::path::Path::new(&proof.workspace.path).starts_with(root))
+        {
+            return Err(Error::Unbound);
+        }
         if proof.workspace.profile != WorkspaceProfile::Native {
             return Err(Error::Unbound);
         }

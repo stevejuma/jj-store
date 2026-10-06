@@ -58,3 +58,8 @@ selected push, leases and attempt recovery. For general JJ commands, revsets,
 filesets and templates use the
 [pinned upstream manual](https://docs.jj-vcs.dev/v0.45.1/). This reference
 intentionally inventories application-owned commands only.
+
+The application-owned agent-workspace command is an internal paired-JJ boundary
+for exact isolated workspace creation. Interactive prompts and permissions are
+issued by the [Agents UI](../guides/agent-execution.md), not ordinary reads or
+capture commands.

@@ -5,3 +5,4 @@
 - [macOS Glass background](05-macos-glass-background.md)
 - [Repository terminal](06-repository-terminal.md)
 - [Bundled application documentation](07-bundled-application-documentation.md)
+- [Interactive agent execution resources](08-interactive-agent-execution.md)

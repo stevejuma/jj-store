@@ -1931,6 +1931,46 @@
           "license": "Apache-2.0"
         }
       ]
+    },
+    {
+      "local": "web/src/lib/ui/store-agent-execution/StoreAgentSetupEditor.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-agent-editor/CommunityAgentEditorDialog.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/store-agent-execution/StoreAgentPermission.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-agent-activity/AgentPermissionCard.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/store-agent-execution/StoreAgentExecutionHost.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-agents/CommunityAgents.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/store-agent-execution/agent-execution.css",
+      "sources": [
+        {
+          "path": "src/components/community-agents/CommunityAgents.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
     }
   ],
   "owned": [

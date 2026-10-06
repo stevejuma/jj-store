@@ -142,3 +142,14 @@ matching verified checkout before device selection; rejected unpublished input
 can be discarded without advancing the selected revision. Reopen and exact
 replay preserve the outcome without replacing later active state. This metadata
 owner does not execute publication, switching, merge/WIP creation or checkout.
+
+## Agent execution lifetime
+
+An optional bundled regular `jj-acp` and the paired custom JJ are passed to the
+owned LocalTrusted service by absolute path. Agent privacy rules prepare in the
+background before launching is admitted. One warm process owns each active
+isolated workspace. Closing the parent pipe stops publication scheduling, closes
+agents within twenty seconds, and bounds final publication to three seconds
+before HTTP/RPC and RustFS stop. The desktop allows forty seconds for service
+shutdown. Pending publication receipts and interrupted workspaces survive;
+prompts are never replayed. See [agent sessions](../guides/agent-execution.md).

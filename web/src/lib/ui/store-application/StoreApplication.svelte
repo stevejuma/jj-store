@@ -7,6 +7,8 @@
   import StoreHelp from "../store-help/StoreHelp.svelte";
   import { ownApplicationNotifications } from "../../notifications/notification-context.svelte.js";
   import StoreNotificationHost from "../store-notifications/StoreNotificationHost.svelte";
+  import StoreAgentExecutionHost from "../store-agent-execution/StoreAgentExecutionHost.svelte";
+  import { provideAgentExecution } from "../store-agent-execution/context.js";
   // Adapted from CommunityApplication's shell composition; all state is local.
   import { AppShell } from "@lapismd/design-core/shell";
   import StoreApplicationRightPanels from "./StoreApplicationRightPanels.svelte";
@@ -156,6 +158,7 @@
     if (shell.mobile.resolvedMode === "mobile") shell.mobile.showMain();
   }
   const notifications = ownApplicationNotifications(() => controller);
+  provideAgentExecution(() => controller.execution);
 </script>
 
 {#snippet settingsRepository()}
@@ -282,3 +285,18 @@
 
 <StoreIndexPreparationNotice {controller} />
 <StoreNotificationHost owner={notifications} />
+{#if controller.execution?.available()}<StoreAgentExecutionHost
+    manager={controller.execution}
+    onReview={(repository, commit, operation) => {
+      controller.execution!.open = false;
+      void controller.actions.openRoute?.({
+        ...controller.state.route,
+        repository,
+        page: "log",
+        commitId: commit,
+        snapshotOperationId: operation,
+        agentSessionId: null,
+        projectsHub: false,
+      });
+    }}
+  />{/if}

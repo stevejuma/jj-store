@@ -513,6 +513,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         "null"
       ]
     },
+    "local_agent_execution": {
+      "type": [
+        "boolean",
+        "null"
+      ]
+    },
     "local_settings_management": {
       "type": [
         "boolean",
@@ -20390,6 +20396,392 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "request_id",
     "receipt",
     "progress"
+  ]
+}
+```
+
+## AgentExecutionStatus
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "runtime": {
+      "type": "string"
+    },
+    "revision": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "setups": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/AgentExecutionSetup"
+      }
+    },
+    "sessions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/AgentExecutionSession"
+      }
+    },
+    "runners": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/AgentExecutionRunner"
+      }
+    }
+  },
+  "required": [
+    "version",
+    "runtime",
+    "revision",
+    "setups",
+    "sessions",
+    "runners"
+  ]
+}
+```
+
+## AgentExecutionSetup
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "avatar": {
+      "type": "string"
+    },
+    "instructions": {
+      "type": "string"
+    },
+    "runner": {
+      "type": "string"
+    },
+    "preferences": {
+      "$ref": "#/components/schemas/AgentExecutionPreferences"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "avatar",
+    "instructions",
+    "runner",
+    "preferences"
+  ]
+}
+```
+
+## AgentExecutionPreferences
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "model": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "effort": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "mode": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "model",
+    "effort",
+    "mode"
+  ]
+}
+```
+
+## AgentExecutionSession
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "repository": {
+      "$ref": "#/components/schemas/RepositoryId"
+    },
+    "target_id": {
+      "type": "string"
+    },
+    "runner": {
+      "type": "string"
+    },
+    "title": {
+      "type": "string"
+    },
+    "avatar": {
+      "type": "string"
+    },
+    "workspace": {
+      "type": "string"
+    },
+    "base_commit": {
+      "type": "string"
+    },
+    "review_commit": {
+      "type": "string"
+    },
+    "operation": {
+      "$ref": "#/components/schemas/OperationId"
+    },
+    "state": {
+      "type": "string"
+    },
+    "adapter_session_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "capabilities": true,
+    "preferences": {
+      "$ref": "#/components/schemas/AgentExecutionPreferences"
+    },
+    "last_sequence": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "published_sequence": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "last_error": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "repository",
+    "target_id",
+    "runner",
+    "title",
+    "avatar",
+    "workspace",
+    "base_commit",
+    "review_commit",
+    "operation",
+    "state",
+    "adapter_session_id",
+    "capabilities",
+    "preferences",
+    "last_sequence",
+    "published_sequence",
+    "last_error"
+  ]
+}
+```
+
+## AgentExecutionRunner
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "label": {
+      "type": "string"
+    },
+    "available": {
+      "type": "boolean"
+    },
+    "qualified": {
+      "type": "boolean"
+    },
+    "install_hint": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "label",
+    "available",
+    "qualified",
+    "install_hint"
+  ]
+}
+```
+
+## AgentExecutionTarget
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "repository": {
+      "$ref": "#/components/schemas/RepositoryId"
+    },
+    "name": {
+      "type": "string"
+    },
+    "folder": {
+      "type": "string"
+    },
+    "profile": {
+      "type": "string"
+    },
+    "operation": {
+      "$ref": "#/components/schemas/OperationId"
+    },
+    "commit": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "repository",
+    "name",
+    "folder",
+    "profile",
+    "operation",
+    "commit"
+  ]
+}
+```
+
+## AgentExecutionOutcome
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "request_id": {
+      "$ref": "#/components/schemas/RequestId"
+    },
+    "session_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "state": {
+      "type": "string"
+    },
+    "error": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "version",
+    "request_id",
+    "session_id",
+    "state",
+    "error"
+  ]
+}
+```
+
+## AgentExecutionEventPage
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/AgentExecutionEvent"
+      }
+    },
+    "next": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "format": "uint64",
+      "minimum": 0
+    }
+  },
+  "required": [
+    "version",
+    "events",
+    "next"
+  ]
+}
+```
+
+## AgentExecutionEvent
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "sequence": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "payload": true,
+    "committed": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "sequence",
+    "payload",
+    "committed"
   ]
 }
 ```

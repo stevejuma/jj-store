@@ -1,0 +1,129 @@
+.agent-execution-dialog {
+  width: min(96vw, 76rem);
+  max-width: 76rem;
+  height: min(92vh, 60rem);
+  display: flex;
+  flex-direction: column;
+}
+.agent-execution-shell {
+  display: grid;
+  grid-template-columns: 15rem minmax(0, 1fr);
+  flex: 1;
+  min-height: 0;
+  gap: 1rem;
+}
+.agent-execution-directory {
+  border-right: 1px solid var(--border);
+  padding-right: 0.75rem;
+}
+.agent-execution-directory nav {
+  display: grid;
+  gap: 0.4rem;
+}
+.agent-execution-directory h3 {
+  margin: 0.75rem 0.5rem 0.25rem;
+  font-size: var(--community-text-secondary);
+  color: var(--muted-foreground);
+}
+.agent-execution-session-row {
+  width: 100%;
+  justify-content: flex-start;
+  height: auto;
+  text-align: left;
+  padding: 0.7rem;
+  gap: 0.75rem;
+}
+.agent-execution-session-row span:last-child {
+  display: grid;
+  min-width: 0;
+}
+.agent-execution-session-row strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.agent-execution-session-row small {
+  color: var(--muted-foreground);
+  font-weight: normal;
+}
+.agent-execution-setup-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.agent-execution-content {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+}
+.agent-execution-form {
+  display: grid;
+  gap: 0.7rem;
+  padding: 1rem;
+}
+.agent-execution-form h3,
+.agent-conversation h3 {
+  margin: 0;
+}
+.agent-execution-form p,
+.agent-conversation p {
+  margin: 0.25rem 0;
+}
+.agent-execution-form p,
+.agent-conversation header p,
+.agent-conversation > p {
+  color: var(--muted-foreground);
+}
+.agent-execution-form select {
+  padding: 0.5rem;
+  border: 1px solid var(--input);
+  background: var(--background);
+  border-radius: var(--radius-md);
+  max-width: 100%;
+}
+.agent-execution-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+.agent-execution-meta {
+  overflow-wrap: anywhere;
+  font-size: var(--community-text-secondary);
+}
+.agent-conversation {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-height: 0;
+  min-width: 0;
+}
+.agent-conversation header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+.agent-conversation details > summary {
+  cursor: pointer;
+  padding: 0.5rem 0;
+}
+.agent-conversation [data-ui-component="ai-chat-layout"] {
+  flex: 1;
+  min-height: 12rem;
+}
+.agent-setup-editor {
+  max-width: 42rem;
+}
+@media (max-width: 700px) {
+  .agent-execution-shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .agent-execution-directory {
+    max-height: 11rem;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+}

@@ -375,6 +375,28 @@ impl Document {
         }});
     }
 
+    pub(crate) fn local_agent_events<Q: JsonSchema, R: JsonSchema>(
+        &mut self,
+        path: &str,
+        id: &str,
+    ) {
+        self.local_endpoint::<Q, R>("get", path, id);
+        let schema = self.output.subschema_for::<R>().to_value();
+        let operation = self
+            .paths
+            .get_mut(&format!("/v1{path}"))
+            .unwrap()
+            .get_mut("get")
+            .unwrap();
+        operation["responses"]["200"]["description"] = json!(
+            "Bounded live execution activity. Sequence cursors select sanitized device journal events; committed flags report AgentStore publication separately. Reconnect from the last delivered sequence; no command replay."
+        );
+        operation["responses"]["200"]["content"] = json!({"text/event-stream":{
+            "schema":{"type":"string"}, "x-sse-data-schema":schema,
+            "x-sse-events":{"agent-activity":"activity"}
+        }});
+    }
+
     pub(crate) fn body<T: JsonSchema>(&mut self, path: &str, method: &str) {
         let operation = self.paths.get_mut(path).unwrap().get_mut(method).unwrap();
         operation["requestBody"] = json!({"required":true,
@@ -442,6 +464,7 @@ pub fn openapi() -> Value {
     crate::application_events::document(&mut document);
     crate::local_browser::document(&mut document);
     crate::capture_management::document(&mut document);
+    crate::agent_execution::document(&mut document);
     crate::server_settings::document(&mut document);
     document.finish()
 }

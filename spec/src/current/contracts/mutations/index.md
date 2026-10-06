@@ -2,7 +2,6 @@
 
 Read the owning topic and requirement before implementation.
 <!-- generated-navigation -->
-
 ## Pages
 
 - [Typed mutations](01-typed-mutations.md)
@@ -26,3 +25,4 @@ Read the owning topic and requirement before implementation.
 - [Read capability membership](19-read-capability-membership.md)
 - [Scoped application freshness](20-scoped-application-freshness.md)
 - [Local stacks protocol ownership](21-local-stacks-protocol-ownership.md)
+- [Interactive agent execution](22-interactive-agent-execution.md)

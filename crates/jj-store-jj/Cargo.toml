@@ -13,7 +13,7 @@ jj-store-model.workspace = true
 jj-store-object.workspace = true
 jj-store-wal.workspace = true
 async-trait = "0.1"
-tokio = { version = "1", features = ["fs", "io-util", "sync", "time", "rt"] }
+tokio = { version = "1", features = ["fs", "io-util", "sync", "time", "rt", "process"] }
 serde = { version = "1", features = ["derive"] }
 toml = "1.1.6"
 serde_json = { version = "1", features = ["preserve_order"] }
@@ -29,7 +29,7 @@ whoami = "2.1"
 tokio-util = { version = "0.7", features = ["compat"] }
 redb = "=4.3.0"
 prost = "0.14"
-rustix = { version = "=1.1.5", features = ["fs"] }
+rustix = { version = "=1.1.5", features = ["fs", "process"] }
 
 [dev-dependencies]
 tokio = { version = "1", features = ["macros", "rt-multi-thread", "net", "sync", "time"] }

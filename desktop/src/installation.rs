@@ -15,6 +15,7 @@ pub struct Resources {
     pub jj: PathBuf,
     pub rustfs: PathBuf,
     pub web: PathBuf,
+    pub acp: Option<PathBuf>,
 }
 impl Resources {
     pub fn from_root(root: &Path) -> Result<Self> {
@@ -23,6 +24,7 @@ impl Resources {
             jj: root.join("jj"),
             rustfs: root.join("jj-store-rustfs"),
             web: root.join("web"),
+            acp: root.join("jj-acp").exists().then(|| root.join("jj-acp")),
         };
         for file in [
             &value.server,
@@ -40,6 +42,16 @@ impl Resources {
                     "Missing regular bundled resource: {}",
                     file.display()
                 ));
+            }
+        }
+        if let Some(acp) = &value.acp {
+            if !acp.is_file()
+                || fs::symlink_metadata(acp)
+                    .map_err(|e| e.to_string())?
+                    .file_type()
+                    .is_symlink()
+            {
+                return Err("Invalid bundled ACP executable".into());
             }
         }
         Ok(value)

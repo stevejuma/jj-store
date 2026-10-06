@@ -11,6 +11,7 @@ const { positionals, values } = parseArgs({
     "rustfs-runtime": { type: "string" },
     "web-root": { type: "string" },
     "state-dir": { type: "string" },
+    "acp-executable": { type: "string" },
   },
 });
 const mode = positionals[0];
@@ -33,7 +34,14 @@ async function stage() {
   );
   const web = resolve(values["web-root"] ?? join(root, "web/dist"));
   const destination = join(root, "desktop/resources");
-  await stageDesktopResources({ target, runtime, web, destination });
+  const acp = values["acp-executable"] ?? process.env.JJ_STORE_ACP_EXECUTABLE;
+  await stageDesktopResources({
+    target,
+    runtime,
+    web,
+    destination,
+    acp: acp ? resolve(acp) : undefined,
+  });
 }
 if (mode === "prepare") {
   await run("pnpm", ["web:build"]);

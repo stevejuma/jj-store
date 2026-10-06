@@ -48,6 +48,7 @@ export function dependencyErrors(packages) {
       "jj-store-rpc",
     ],
     "jj-store-server": [
+      "jj-agent",
       "jj-store-capture",
       "jj-store-adapters",
       "jj-store-tantivy",

@@ -17,3 +17,4 @@
 - [Durable checkout and combination join](17-durable-checkout-and-combination-join.md)
 - [Initial setup ownership](18-initial-setup-ownership.md)
 - [Ordinary local stack workspace composition](19-ordinary-local-stack-workspace-composition.md)
+- [Interactive agent execution](20-interactive-agent-execution.md)

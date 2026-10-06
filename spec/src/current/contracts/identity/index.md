@@ -2,7 +2,6 @@
 
 Read the owning topic and requirement before implementation.
 <!-- generated-navigation -->
-
 ## Pages
 
 - [Identity and native codecs](01-identity-and-native-codecs.md)

@@ -2,7 +2,6 @@
 
 Read the owning topic and requirement before implementation.
 <!-- generated-navigation -->
-
 ## Pages
 
 - [Read APIs and browser](01-read-apis-and-browser.md)
@@ -45,3 +44,4 @@ Read the owning topic and requirement before implementation.
 - [Ordinary local Stacks transport](38-ordinary-local-stacks-transport.md)
 - [Local stack topology and focused history](39-local-stack-topology-and-focused-history.md)
 - [Complete native stack discovery and boundaries](40-complete-native-stack-discovery-and-boundaries.md)
+- [Interactive agent execution](41-interactive-agent-execution.md)

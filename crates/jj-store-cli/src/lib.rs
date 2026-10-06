@@ -42,4 +42,5 @@ mod token_journal;
 mod local_diagnostics;
 pub mod work_commands;
 
+pub mod agent_workspace;
 pub mod workspace_management;

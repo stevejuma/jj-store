@@ -121,4 +121,8 @@ Existing Help asset manifest version 1, same-origin CSP and session-only positio
 - scripts/docs-assets.test.mjs#Help recovers from a missing initial bundle when
   its manifest is published
 <!-- /evidence-field -->
+<!-- generated-navigation -->
+## Pages
 
+- [E-DOC-009 details 2](details-02.md)
+- [E-DOC-009 details 3](details-03.md)

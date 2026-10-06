@@ -61,3 +61,13 @@ See [agent capture](../guides/capture.md) for setup and verification, and
 [configuration](../reference/configuration.md) for spool and discovery limits.
 Treat a capture preview as potentially sensitive even after sanitization; review
 its contents before intentionally publishing evidence.
+
+## App-owned controller observations
+
+The execution supervisor sanitizes live frames before browser delivery and
+journal durability. It publishes stable sequence batches through the existing
+native WAL/manifest or local companion capture receipt path. The controller-v2
+normalizer preserves app session/turn/tool identities and one final assistant
+message. Reconnect/restart retries exact publication intents, never prompts.
+Privacy path rebinding reuses the immutable compiled scanner. Managed execution
+workspaces are excluded from automatic transcript capture to avoid duplicates.

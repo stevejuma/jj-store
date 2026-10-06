@@ -2,6 +2,15 @@ use super::*;
 
 impl PreparedServer {
     pub async fn run(self, shutdown: impl Future<Output = ()> + Send + 'static) -> Result<()> {
+        use jj_store_service::agent_execution::Manager as _;
+        let publication = self.agents.as_ref().map(|a| a.start_publication());
+        let agents = self.agents.clone();
+        let shutdown = async move {
+            shutdown.await;
+            if let Some(agents) = agents {
+                let _ = agents.shutdown().await;
+            }
+        };
         let mut capture = self.capture.start();
         let search = if let Some(search) = self.search {
             Some(search.start().await)
@@ -55,6 +64,17 @@ impl PreparedServer {
                 }
             }
         };
+        let agents_stopped = if let Some(agents) = self.agents {
+            agents
+                .shutdown()
+                .await
+                .map_err(|_| Error::Service("agent execution shutdown outcome unknown"))
+        } else {
+            Ok(())
+        };
+        if let Some(publication) = publication {
+            publication.abort();
+        }
         let capture_stopped = capture.shutdown().await;
         let replication = if let Some(replication) = replication {
             replication.shutdown().await
@@ -72,6 +92,7 @@ impl PreparedServer {
             Ok(())
         };
         result
+            .and(agents_stopped)
             .and(capture_stopped)
             .and(replication)
             .and(stopped)

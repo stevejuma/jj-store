@@ -2,6 +2,10 @@
   {{#include E-DESK-010/SUMMARY.nav.md}}
 - [E-DOC-009](E-DOC-009/index.md)
   {{#include E-DOC-009/SUMMARY.nav.md}}
+- [E-EXEC-001](E-EXEC-001/index.md)
+  {{#include E-EXEC-001/SUMMARY.nav.md}}
+- [E-EXEC-002](E-EXEC-002/index.md)
+  {{#include E-EXEC-002/SUMMARY.nav.md}}
 - [E-GOV-003](E-GOV-003/index.md)
   {{#include E-GOV-003/SUMMARY.nav.md}}
 - [E-M21-057](E-M21-057/index.md)

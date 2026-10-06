@@ -146,3 +146,13 @@ the complete nonempty, unique member list under the same guards and removes it
 atomically. Reconciliation previews exact legacy merge heads eligible for
 conservative retirement. Frontend focused history records live or pinned intent
 in `stack_history`; every server history request still names an exact operation.
+
+## Installation-local agent execution
+
+The eight `/v1/local/agents` route surfaces require protected LocalTrusted Admin
+admission. Bodies contain stable request IDs, server-issued targets and exact
+operation/revision selections; they cannot supply cwd, executable, environment
+or actor. Current code access is rechecked for status, activity and commands.
+Bounded SSE sequences expose sanitized live activity; publication counters mark
+committed repository evidence separately. Lost outcomes preserve exact requests
+and drafts and never trigger prompt replay.

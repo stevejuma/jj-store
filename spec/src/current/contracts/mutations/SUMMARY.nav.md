@@ -19,3 +19,4 @@
 - [Read capability membership](19-read-capability-membership.md)
 - [Scoped application freshness](20-scoped-application-freshness.md)
 - [Local stacks protocol ownership](21-local-stacks-protocol-ownership.md)
+- [Interactive agent execution](22-interactive-agent-execution.md)

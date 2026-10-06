@@ -34,6 +34,7 @@
 - [Native comment presentation and edit context](34-native-comment-presentation-and-edit-context.md)
 - [Local browser recorded AgentStore](35-local-browser-recorded-agentstore.md)
 - [Initial M18.1 correction semantics](36-initial-m18-1-correction-semantics.md)
+- [Interactive agent execution](36-interactive-agent-execution.md)
 - [Bounded transcript tail format](37-bounded-transcript-tail-format.md)
 - [Editable local capture configuration](38-editable-local-capture-configuration.md)
 - [Cursor and OpenCode local capture extension](39-cursor-and-opencode-local-capture-extension.md)

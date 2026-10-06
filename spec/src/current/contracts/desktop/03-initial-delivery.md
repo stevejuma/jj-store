@@ -20,9 +20,10 @@ executable and web bundle paths. Installation identity, credentials, catalog and
 volume remain selected by the existing format-2 configuration.
 
 Local development and qualification use explicit separate state paths. Public
-signing, notarization, updates, login startup, additional platforms and agent
-execution remain deferred. Screenshots are visual-pending and cannot qualify
-process lifetime, publication, storage or accessibility.
+signing, notarization, updates, login startup and additional platforms remain
+deferred. Optional agent execution is governed by JST-COLLAB-031 through
+JST-COLLAB-033. Screenshots are visual-pending and cannot qualify process
+lifetime, publication, storage or accessibility.
 
 ## Native application branding
 

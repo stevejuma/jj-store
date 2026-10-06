@@ -11,9 +11,7 @@
 | M8a.6 | Deferred | M8a.5   | JST-ADAPT-006,JST-CLI-005,JST-COMPAT-005              | A4: immutable verified inventories/certificates, fault qualification and offline restore                         | Future backup/restore release                     | -                                                   |
 | M8a.7 | Deferred | M8a.6   | JST-COMPAT-003,JST-COMPAT-005,JST-SEC-006,JST-UI-010  | A5: Linux packaging plus external/authenticated/provider release qualification                                   | Future shared and cross-platform release          | -                                                   |
 | M8a.8 | Done     | M8a.4   | JST-SEC-007,JST-API-008,JST-UI-011,JST-CLI-006        | Manual-token multi-repository discovery, independent repository policy and browser selection                     | Retain focused authenticated discovery acceptance | E-M8A-005                                           |
-
 <!-- generated-navigation -->
-
 ## Pages
 
 - [history](history/index.md)

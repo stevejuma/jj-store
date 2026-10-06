@@ -2,6 +2,7 @@ mod codex;
 mod codex_ids;
 mod codex_tool_result;
 mod codex_transcript;
+mod controller;
 mod cursor;
 mod cursor_tool;
 mod cursor_transcript;
@@ -24,7 +25,7 @@ pub(crate) fn normalize(
         crate::IntegrationId::Codex => codex::normalize(profile, batch, output, tool_results),
         crate::IntegrationId::Cursor => cursor::normalize(profile, batch, output),
         crate::IntegrationId::OpenCode => opencode::normalize(profile, batch, output),
-        crate::IntegrationId::OwnedController => unreachable!("unsupported profile returned early"),
+        crate::IntegrationId::OwnedController => controller::normalize(batch, output),
     }
 }
 

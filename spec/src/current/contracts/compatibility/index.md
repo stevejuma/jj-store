@@ -2,7 +2,6 @@
 
 Read the owning topic and requirement before implementation.
 <!-- generated-navigation -->
-
 ## Pages
 
 - [Compatibility and release](01-compatibility-and-release.md)
@@ -18,3 +17,4 @@ Read the owning topic and requirement before implementation.
 - [Installation operational settings contracts](11-installation-operational-settings-contracts.md)
 - [Application freshness compatibility](12-application-freshness-compatibility.md)
 - [Additive ordinary Stacks topology](13-additive-ordinary-stacks-topology.md)
+- [Interactive agent execution qualification profile](13-interactive-agent-execution.md)

@@ -678,3 +678,12 @@ resolving selectors. Selection input retains operation/configuration pins and
 exact native hunk IDs. Undo/Redo is repository-wide; saved membership is
 reconciled only by an explicit confirmed command. Applied-operation warnings
 retain native recovery information and return exit 3 rather than retrying.
+
+## Isolated agent workspaces
+
+The paired custom JJ exposes an internal agent-workspace command used by the
+LocalTrusted supervisor. It loads an exact operation and revision without
+snapshotting dirty source files and checks out only a new named destination.
+Creation checks parent and tree; incomplete preparations cannot execute.
+Completed turns snapshot only their isolated workspace. Explicit cleanup retains
+a bookmark and refuses untracked, ignored or special files.

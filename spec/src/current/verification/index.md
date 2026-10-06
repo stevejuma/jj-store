@@ -3,7 +3,6 @@
 Each requirement appears in exactly one matrix row across this directory. These
 rows record requirement coverage; milestone task status remains in Progress.
 <!-- generated-navigation -->
-
 ## Pages
 
 - [ADAPT verification](adapt.md)

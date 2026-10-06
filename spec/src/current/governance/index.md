@@ -2,7 +2,6 @@
 
 Read the owning topic and requirement before implementation.
 <!-- generated-navigation -->
-
 ## Pages
 
 - [Specification governance](01-specification-governance.md)
@@ -25,4 +24,5 @@ Read the owning topic and requirement before implementation.
 - [Application documentation governance](19-application-documentation-governance.md)
 - [Stack workspace UI-first boundary](20-stack-workspace-ui-first-boundary.md)
 - [Local Stacks main-workspace integration](21-local-stacks-main-workspace-integration.md)
+- [Interactive agent execution qualification](22-interactive-agent-execution.md)
 - [Change map](spec-governance.md)

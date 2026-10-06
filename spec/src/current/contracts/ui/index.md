@@ -2,7 +2,6 @@
 
 Read the owning topic and requirement before implementation.
 <!-- generated-navigation -->
-
 ## Pages
 
 - [Storybook presentation catalog](01-storybook-presentation-catalog.md)
@@ -38,3 +37,4 @@ Read the owning topic and requirement before implementation.
 - [Bundled application documentation](31-bundled-application-documentation.md)
 - [Event-driven freshness migration](32-event-driven-freshness-migration.md)
 - [Complete native stack discovery and boundaries](33-complete-native-stack-discovery-and-boundaries.md)
+- [Interactive agent execution](34-interactive-agent-sessions.md)

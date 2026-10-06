@@ -1,0 +1,125 @@
+use jj_agent::*;
+use serde_json::json;
+fn batch(sequence: u64, mut payload: serde_json::Value) -> SanitizedObservationBatchV1 {
+    payload["controllerSessionId"] = json!("app-session");
+    payload["requestId"] = json!("turn-one");
+    SanitizedObservationBatchV1 {
+        schema_version: 1,
+        batch_id: CaptureBatchId::new([sequence as u8; 16]),
+        integration: IntegrationId::OwnedController,
+        source_instance_id: SourceInstanceId::new([7; 16]),
+        sanitizer_version: "test-v1".into(),
+        representation: SanitizedRepresentation::CanonicalProducer,
+        observations: vec![SanitizedObservationV1 {
+            observation_id: ObservationId::new([sequence as u8; 16]),
+            source_sequence: sequence,
+            occurred_at_millis: Some(1000),
+            source_kind: SourceKind::Controller,
+            source_trust: SourceTrust::AuthenticatedController,
+            payload: SanitizedPayloadV1::new(
+                SanitizedMediaType::Json,
+                &serde_json::to_vec(&payload).unwrap(),
+            )
+            .unwrap(),
+        }],
+    }
+}
+#[test]
+fn controller_turns_preserve_identity_and_emit_one_final_assistant_message() {
+    let profile = NormalizerProfileV1::acp_controller_v2();
+    let chunk=normalize_batch(&profile,&batch(1,json!({"type":"activity","update":{"sessionUpdate":"agent_message_chunk","content":{"text":"part"}}}))).unwrap();
+    assert!(chunk.records.is_empty());
+    let final_batch = batch(
+        2,
+        json!({"type":"record","record":{"status":"completed"},"assistantText":"complete"}),
+    );
+    let first = normalize_batch(&profile, &final_batch).unwrap();
+    let replay = normalize_batch(&profile, &final_batch).unwrap();
+    assert_eq!(first, replay);
+    assert_eq!(first.records.len(), 2);
+    assert!(
+        matches!(&first.records[1],NormalizedActivityRecordV1::Message(message) if message.role==MessageRole::Assistant)
+    );
+}
+#[test]
+fn controller_tool_updates_keep_exact_turn_and_call_identity() {
+    let profile = NormalizerProfileV1::acp_controller_v2();
+    let first=normalize_batch(&profile,&batch(1,json!({"type":"activity","toolSnapshot":{"toolCallId":"tool","title":"Read","kind":"read","status":"in_progress"}}))).unwrap();
+    let second=normalize_batch(&profile,&batch(2,json!({"type":"activity","toolSnapshot":{"toolCallId":"tool","title":"Read","kind":"read","status":"completed"}}))).unwrap();
+    let NormalizedActivityRecordV1::Tool(call) = &first.records[0] else {
+        panic!()
+    };
+    let NormalizedActivityRecordV1::Tool(result) = &second.records[0] else {
+        panic!()
+    };
+    assert_eq!(call.tool_call_id, result.tool_call_id);
+    assert_eq!(call.turn_id, result.turn_id);
+    assert_eq!(result.state, ToolState::Succeeded);
+}
+#[test]
+fn controller_unknown_or_unusable_turns_never_claim_idle() {
+    let profile = NormalizerProfileV1::acp_controller_v2();
+    for record in [
+        json!({"type":"record", "record":{"status":"outcome_unknown"}, "sessionUsable":false}),
+        json!({"type":"record", "record":{"status":"failed"}, "sessionUsable":false}),
+        json!({"type":"record", "record":{"status":"timed_out"}}),
+    ] {
+        let normalized = normalize_batch(&profile, &batch(1, record)).unwrap();
+        assert!(
+            matches!(&normalized.records[0], NormalizedActivityRecordV1::SessionState(state) if state.state == SessionState::Unknown)
+        );
+    }
+}
+#[test]
+fn controller_multiline_tool_titles_remain_publishable_without_losing_evidence() {
+    let title = format!("Write file\n{}", "📝".repeat(150));
+    let observation = batch(
+        1,
+        json!({"type":"activity","toolSnapshot":{"toolCallId":"cursor-write", "title":title, "status":"completed", "kind":"edit"}}),
+    );
+    let normalized =
+        normalize_batch(&NormalizerProfileV1::acp_controller_v2(), &observation).unwrap();
+    let NormalizedActivityRecordV1::Tool(tool) = &normalized.records[0] else {
+        panic!()
+    };
+    let snapshot = ToolInvocationSnapshotV1 {
+        schema_version: 1,
+        tool_call_id: tool.tool_call_id,
+        session_id: tool.session_id,
+        turn_id: tool.turn_id,
+        native_name: tool.native_name.clone(),
+        kind: tool.kind,
+        state: tool.state,
+        attempts: Default::default(),
+        input: None,
+        output: None,
+        evidence: vec![],
+    };
+    snapshot.validate().unwrap();
+    assert!(tool.native_name.len() <= 256);
+    assert!(observation.observations[0].payload.bytes().len() > title.len());
+}
+#[test]
+fn controller_multiline_tool_ids_preserve_exact_identity_in_valid_aliases() {
+    let call = "write:/workspace/file\nargument";
+    let input = batch(
+        1,
+        json!({"type":"activity","toolSnapshot":{"toolCallId":call,"title":"Write file","kind":"edit","status":"completed"}}),
+    );
+    let normalized = normalize_batch(&NormalizerProfileV1::acp_controller_v2(), &input).unwrap();
+    for alias in &normalized.aliases {
+        alias.validate().unwrap();
+    }
+    let tool = normalized
+        .aliases
+        .iter()
+        .find(|a| a.native_kind == NativeEntityKind::Tool)
+        .unwrap();
+    let parts: Vec<String> =
+        serde_json::from_str(tool.native_id.strip_prefix("json:").unwrap()).unwrap();
+    assert_eq!(parts, ["app-session/turn-one", call]);
+    assert_eq!(
+        normalize_batch(&NormalizerProfileV1::acp_controller_v2(), &input).unwrap(),
+        normalized
+    );
+}

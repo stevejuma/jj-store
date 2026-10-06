@@ -6,12 +6,14 @@ export async function stageDesktopResources({
   runtime,
   web,
   destination,
+  acp,
 }) {
   const binaries = [
     [join(target, "jj-store"), "jj-store"],
     [join(target, "jj"), "jj"],
     [runtime, "jj-store-rustfs"],
   ];
+  if (acp) binaries.push([acp, "jj-acp"]);
   const manifest = JSON.parse(
     await readFile(join(web, "asset-manifest.json"), "utf8"),
   );

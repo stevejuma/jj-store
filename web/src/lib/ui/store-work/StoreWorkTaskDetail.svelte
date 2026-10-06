@@ -20,6 +20,7 @@
   import type { WorkController } from "../../controller/work-types.js";
   import StoreWorkComments from "./StoreWorkComments.svelte";
   import StoreWorkTaskStateIcon from "./StoreWorkTaskStateIcon.svelte";
+  import StoreAgentLaunchButton from "../store-agent-execution/StoreAgentLaunchButton.svelte";
   import { taskStateLabel } from "./work-presentation.js";
   import "./community-work-tasks.css";
   import "./task-detail-layout.css";
@@ -99,6 +100,12 @@
           disabled={busy || work.state.loading}
           onclick={onRefresh}><RefreshIcon aria-hidden="true" /></Button
         >{/if}
+      <StoreAgentLaunchButton
+        context={{
+          repository: task.repository || undefined,
+          text: `Task: ${task.title}\nTask ID: ${task.id}\nProject ID: ${task.project}\n${task.body}`,
+        }}
+      />
     </header>
     {#key task.id}<StoreWorkComments {work} {writable} {principal} {busy}>
         {#snippet children(activity, composer)}

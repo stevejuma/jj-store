@@ -49,3 +49,13 @@ Use [development commands](../contributing/development.md) rather than changing
 service defaults to accommodate a temporary fixture. Test contract-capture and
 fault-injection variables are internal harness interfaces and are not supported
 application configuration.
+
+## Interactive execution
+
+`JJ_STORE_ACP_EXECUTABLE` enables the LocalTrusted agent supervisor using an
+absolute control-v2 harness binary. `JJ_STORE_AGENT_JJ_EXECUTABLE` selects the
+paired custom JJ; otherwise the service uses its sibling `jj` executable.
+`JJ_STORE_AGENT_PRIVACY_CACHE` optionally selects the privacy scanner cache
+outside checkouts. These are trusted launch configuration; browser requests
+cannot override them. Adapters remain separately installed and authenticated on
+the service PATH. See [agent sessions](../guides/agent-execution.md).

@@ -25,6 +25,9 @@ the bundle, URL or browser storage.
 
 ## Reading history
 
+The [interactive agent session guide](agent-execution.md) describes named
+setups, isolated workspace launch, permissions, review and explicit cleanup.
+
 Select an operation explicitly when multiple heads exist. Revsets can provide a
 logical workspace and author email in Query context. Graph pagination keeps the
 original operation, time anchor and query even while the editable form changes.

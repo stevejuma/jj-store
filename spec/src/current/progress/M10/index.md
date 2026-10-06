@@ -11,9 +11,7 @@
 | M10.6 | Done        | M10.5   | JST-REPL-004,JST-REPL-010,JST-REPL-011                                                                                                                                   | Complete snapshot-plus-tail bootstrap, format-2 seed upgrade and non-destructive existing-workspace migration | Retain bootstrap, migration and zero-upstream regressions          | E-M10-008,E-M10-010,E-M10-013                                                                                                               |
 | M10.7 | Done        | M10.6   | JST-REPL-001,JST-REPL-006,JST-REPL-011,JST-REPL-012                                                                                                                      | Server-owned worker, one upstream, local outage readiness, controls, finite waits and SSE/search integration  | Retain active profile; expanded hardening stays deferred to M10.8. | E-M10-009,E-M10-010,E-M10-013,E-M10-014                                                                                                     |
 | M10.8 | Deferred    | M10.7   | JST-REPL-011,JST-REPL-012                                                                                                                                                | Expanded pressure/fault soak, browser UI, cold two-instance RustFS, archive/export and topology qualification | Future replication hardening                                       | -                                                                                                                                           |
-
 <!-- generated-navigation -->
-
 ## Pages
 
 - [history](history/index.md)

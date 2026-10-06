@@ -11,3 +11,4 @@
 - [Installation operational settings contracts](11-installation-operational-settings-contracts.md)
 - [Application freshness compatibility](12-application-freshness-compatibility.md)
 - [Additive ordinary Stacks topology](13-additive-ordinary-stacks-topology.md)
+- [Interactive agent execution qualification profile](13-interactive-agent-execution.md)

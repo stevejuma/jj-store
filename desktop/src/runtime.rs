@@ -15,6 +15,11 @@ pub struct ManagedService {
     process: OwnedProcess,
     pub origin: url::Url,
 }
+impl Drop for ManagedService {
+    fn drop(&mut self) {
+        let _ = self.stop();
+    }
+}
 impl ManagedService {
     pub fn start(state: &Path, resources: &Resources) -> Result<Self> {
         let installation = prepare(state, resources)?;
@@ -40,6 +45,10 @@ impl ManagedService {
             .arg(&resources.web)
             .arg("--desktop-rustfs-executable")
             .arg(&resources.rustfs);
+        command.env("JJ_STORE_AGENT_JJ_EXECUTABLE", &resources.jj);
+        if let Some(acp) = &resources.acp {
+            command.env("JJ_STORE_ACP_EXECUTABLE", acp);
+        }
         let mut process = OwnedProcess::spawn(&mut command)?;
         let line = process.first_line(Duration::from_secs(30))?;
         readiness::listening(&line, address)?;
@@ -59,6 +68,6 @@ impl ManagedService {
         self.process.running()
     }
     pub fn stop(&mut self) -> Result<()> {
-        self.process.finish(Duration::from_secs(20))
+        self.process.finish(Duration::from_secs(40))
     }
 }

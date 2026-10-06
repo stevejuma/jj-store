@@ -217,3 +217,7 @@ syntax. The CLI runs without the browser server or repository registration.
 Select an already selected stack header, commit row or Branches entry again to
 deselect it. Stack graphs retain per-row lane spacing and scroll horizontally
 and vertically; commit avatars do not share an imposed alignment column.
+
+The Agents page also offers [interactive agent sessions](agent-execution.md),
+saved named setups and retained workspaces. Repository/project/task actions
+provide code context while independently checking access to linked code.

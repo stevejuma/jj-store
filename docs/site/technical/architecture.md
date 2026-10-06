@@ -194,3 +194,11 @@ provider's interrupted file installer. It shares registered access, scanner
 admission, cancellation and deadlines with ordinary validation. The provider
 alone interprets exact saved progress; fresh data neither normalizes editor
 changes nor grants a transport write capability.
+
+## Interactive agents
+
+The service defines typed installation-local execution and workspace interfaces;
+the server composes its optional supervisor with a configured ACP executable
+over inherited stdio. ACP implementation is not imported by service, model or
+WAL. Code-repository access is checked independently of project/task homes. See
+[agent sessions](../guides/agent-execution.md).

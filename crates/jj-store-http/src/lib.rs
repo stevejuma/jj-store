@@ -1,5 +1,6 @@
 //! Versioned authenticated application API; no direct storage or native JJ types.
 #![forbid(unsafe_code)]
+mod agent_execution;
 mod application_events;
 pub mod assets;
 mod body;
@@ -108,6 +109,7 @@ pub struct Config {
     pub local_sync: Option<Arc<dyn jj_store_service::sync_management::SyncManager>>,
     pub local_settings: Option<Arc<dyn jj_store_service::server_settings::ServerSettingsManager>>,
     pub local_capture: Option<Arc<dyn jj_store_service::capture_management::CaptureManager>>,
+    pub local_agents: Option<jj_store_service::agent_execution::AgentManager>,
     pub local_workspaces: Option<Arc<dyn jj_store_service::local_management::WorkspaceManager>>,
     pub local_folder_picker: Option<Arc<dyn jj_store_service::local_management::FolderPicker>>,
     pub storage_ready: bool,
@@ -138,6 +140,7 @@ impl Default for Config {
             local_storage: None,
             local_sync: None,
             local_capture: None,
+            local_agents: None,
             local_settings: None,
             local_search: None,
             local_folder_picker: None,
@@ -379,6 +382,7 @@ impl HttpApi {
                 .merge(application_events::router())
                 .merge(local_browser::router())
                 .merge(capture_management::router())
+                .merge(agent_execution::router())
                 .merge(server_settings::router())
                 .with_state(self.0.clone())
                 .layer(middleware::from_fn_with_state(self.0.clone(), admit)),
@@ -559,7 +563,10 @@ async fn admit(
             .is_some_and(|path| {
                 matches!(
                     path.as_str(),
-                    "/v1/events" | "/v1/repos/{repo}/events" | "/v1/local/repos/{repo}/events"
+                    "/v1/events"
+                        | "/v1/repos/{repo}/events"
+                        | "/v1/local/repos/{repo}/events"
+                        | "/v1/local/agents/stream"
                 )
             });
     let slots = if event_route {

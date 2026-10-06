@@ -29,3 +29,4 @@
 - [Correct ordinary workspace composition and topology](29-correct-ordinary-workspace-composition-and-topology.md)
 - [Local Stacks operation descriptions](30-local-stacks-operation-descriptions.md)
 - [Direct local Stacks CLI](31-direct-local-stacks-cli.md)
+- [Interactive agent execution](32-interactive-agent-workspaces.md)

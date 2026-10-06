@@ -39,6 +39,49 @@ fn contract_distinguishes_optional_inputs_from_nullable_outputs() {
 }
 
 #[test]
+fn interactive_execution_contract_is_strict_and_has_no_browser_process_configuration() {
+    let doc = openapi();
+    let paths = &doc["paths"];
+    for (path, method) in [
+        ("/v1/local/agents", "get"),
+        ("/v1/local/agents/targets", "get"),
+        ("/v1/local/agents/setups", "post"),
+        ("/v1/local/agents/launch", "post"),
+        ("/v1/local/agents/command", "post"),
+        ("/v1/local/agents/outcome", "get"),
+        ("/v1/local/agents/events", "get"),
+        ("/v1/local/agents/stream", "get"),
+    ] {
+        assert!(paths[path][method].is_object(), "{path}");
+        assert_eq!(paths[path][method]["security"], json!([{}]));
+    }
+    let schemas = &doc["components"]["schemas"];
+    for path in [
+        "/v1/local/agents/launch",
+        "/v1/local/agents/command",
+        "/v1/local/agents/setups",
+    ] {
+        let body = &paths[path]["post"]["requestBody"]["content"]["application/json"]["schema"];
+        assert_eq!(body["additionalProperties"], false);
+        for unsafe_field in ["cwd", "executable", "environment", "actor", "token"] {
+            assert!(body["properties"].get(unsafe_field).is_none());
+        }
+    }
+    for field in [
+        "base_commit",
+        "review_commit",
+        "published_sequence",
+        "last_sequence",
+    ] {
+        assert!(
+            schemas["AgentExecutionSession"]["properties"]
+                .get(field)
+                .is_some()
+        );
+    }
+}
+
+#[test]
 fn contract_preserves_native_shapes_and_hex_id_widths() {
     let doc = openapi();
     let schemas = &doc["components"]["schemas"];
@@ -282,20 +325,20 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
     ] {
         assert!(paths.contains_key(path), "missing integrated route: {path}");
     }
-    assert_eq!(paths.len(), 123);
+    assert_eq!(paths.len(), 145);
     assert_eq!(
         paths
             .keys()
             .filter(|name| name.starts_with("/v1/local/"))
             .count(),
-        43
+        61
     );
     assert_eq!(
         paths
             .keys()
             .filter(|name| !name.starts_with("/v1/local/"))
             .count(),
-        80
+        84
     );
     let mut ids = std::collections::BTreeSet::new();
     for (name, path) in paths {

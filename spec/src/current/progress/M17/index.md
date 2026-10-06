@@ -8,9 +8,7 @@
 | M17.3 | In progress | M17.2   | JST-DESK-004,JST-DESK-005                                                     | Native folder dialogs, chrome, first-render handshake and dirty-edit protection | Qualify remaining native controls and render/dirty-edit gates               | E-DESK-002,E-DESK-003,E-DESK-005,E-DESK-006                                                        |
 | M17.4 | Planned     | M17.3   | JST-DESK-005                                                                  | Cold ARM64 app and DMG persistence and relocation                               | Package and qualify local distribution                                      | E-DESK-010                                                                                         |
 | M17.5 | Partial     | M17.2   | JST-DESK-006,JST-UI-002,JST-UI-006,JST-SEC-005                                | Desktop repository terminal and retained shell sessions                         | Native terminal qualified; retain M16 registry and M17.2 host prerequisites | E-DESK-007,E-DESK-008,E-DESK-009                                                                   |
-
 <!-- generated-navigation -->
-
 ## Pages
 
 - [history](history/index.md)

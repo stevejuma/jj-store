@@ -43,3 +43,12 @@ or versions. Viewing one does not initialize the others. An ordinary code undo
 need not remove a discussion about that code. The selected provider is
 responsible for authorization, durable publication and keeping referenced
 immutable evidence reachable.
+
+## Interactive execution
+
+[Agent sessions](../guides/agent-execution.md) explicitly dispatch installed
+Codex/Cursor adapters in new isolated JJ workspaces. The device supervisor owns
+request receipts, permission lifetimes and process state; AgentStore owns
+committed sanitized observations through its versioned controller projection.
+Multiline tool titles remain evidence while tool snapshot labels are bounded.
+Unknown or unusable turns never project an idle session.

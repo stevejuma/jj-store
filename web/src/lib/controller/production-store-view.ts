@@ -220,6 +220,7 @@ export function productionControllerSurface(
     referenceSearch?: StoreController["referenceSearch"];
     historyQuery?: StoreController["historyQuery"];
     capture?: StoreController["capture"];
+    execution?: StoreController["execution"];
     configuration?: StoreController["configuration"];
     freshness?: StoreController["freshness"];
   },
@@ -236,6 +237,7 @@ export function productionControllerSurface(
       return options.stacks?.controller;
     },
     capture: options.capture,
+    execution: options.execution,
     configuration: options.configuration,
     freshness: options.freshness,
     get threads() {

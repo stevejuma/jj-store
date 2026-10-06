@@ -1,6 +1,7 @@
 //! Owned integration boundary for pinned jj-lib 0.45.1.
 #![forbid(unsafe_code)]
 
+pub mod agent_workspaces;
 pub mod backend;
 pub mod codec;
 mod copy_query;

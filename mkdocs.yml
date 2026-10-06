@@ -71,6 +71,8 @@ nav:
       - Editing and conflicts: guides/editing.md
       - Projects, tasks and discussion: guides/work.md
       - Agent capture: guides/capture.md
+      - Interactive agent sessions: guides/agent-execution.md
+      - Internal workspace command: cli/jj-agent-workspace.md
       - Reviews and reactions: guides/reviews.md
       - Search: guides/search.md
       - Git interoperability: guides/git.md

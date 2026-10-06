@@ -2,7 +2,6 @@
 
 Read the owning topic and requirement before implementation.
 <!-- generated-navigation -->
-
 ## Pages
 
 - [Native JJ integration](01-native-jj-integration.md)
@@ -36,3 +35,4 @@ Read the owning topic and requirement before implementation.
 - [Correct ordinary workspace composition and topology](29-correct-ordinary-workspace-composition-and-topology.md)
 - [Local Stacks operation descriptions](30-local-stacks-operation-descriptions.md)
 - [Direct local Stacks CLI](31-direct-local-stacks-cli.md)
+- [Interactive agent execution](32-interactive-agent-workspaces.md)

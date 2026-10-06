@@ -5,6 +5,10 @@ isolated `docs/capture-preview.md` runbook maps to `cli.md` and
 `collaboration.md`; its launcher and admission examples remain governed
 contracts. Provenance changes are protected ownership and presentation changes.
 
+The `docs/agent-execution.md` runbook maps to `documentation.md` and
+`collaboration.md`; its explicit launch, configuration, continuation and
+credential-boundary examples remain governed contracts.
+
 Local Git-backed companion implementation additionally requires local-jj.md;
 native identity and publication chapters continue to govern their existing
 formats.
