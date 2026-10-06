@@ -226,16 +226,17 @@ impl Supervisor {
                 return Err(Error::Limit);
             }
             saved.view.last_sequence += 1;
-            if let Some(now) = SystemTime::now()
+            let observed_at_millis = SystemTime::now()
                 .duration_since(UNIX_EPOCH)
                 .ok()
-                .and_then(|elapsed| u64::try_from(elapsed.as_millis()).ok())
-            {
+                .and_then(|elapsed| u64::try_from(elapsed.as_millis()).ok());
+            if let Some(now) = observed_at_millis {
                 saved.view.last_activity_at_millis =
                     Some(saved.view.last_activity_at_millis.unwrap_or(0).max(now));
             }
             saved.events.push(Event {
                 sequence: saved.view.last_sequence,
+                observed_at_millis,
                 payload,
                 committed: false,
             });

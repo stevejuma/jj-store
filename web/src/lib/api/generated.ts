@@ -7184,6 +7184,12 @@ export interface components {
     AgentExecutionEvent: {
       /** Format: uint64 */
       sequence: number;
+      /**
+       * Format: uint64
+       * @description Device observation time captured when this event was retained, if known.
+       * @default null
+       */
+      observed_at_millis: number | null;
       payload: unknown;
       committed: boolean;
     };

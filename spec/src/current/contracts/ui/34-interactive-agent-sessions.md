@@ -117,11 +117,12 @@ drafts remain visible, and unapplied preferences survive closing/reopening the
 panel. Mobile uses the shell's right body panel. Resume, continuation, review
 and cleanup remain explicit and target the exact session. The composer supplies
 its own Send/Queue action and Stop turn; only an accepted outcome clears an
-execution draft. There are no controls or normal explanatory text below the
-composer. Empty conversation bodies use shadcn Empty with an icon. Loading the
-selected session or its retained history shows the owned message skeleton and
-keeps the header, list and drafts intact; superseded history completion cannot
-clear a newer loading state.
+execution draft. Below the composer, only the compact Community activity strip
+and exact pending-request recovery actions appear; no ordinary settings or
+explanatory text is shown. Empty conversation bodies use shadcn Empty with an
+icon. Loading the selected session or its retained history shows the owned
+message skeleton and keeps the header, list and drafts intact; superseded
+history completion cannot clear a newer loading state.
 
 Agents gallery skeletons use the same fixed dimensions, grid gap, padding and
 rounded avatar/title/model layout as loaded cards, including narrow screens.
@@ -179,3 +180,17 @@ independent scrolling message area above a bottom composer row. Composer growth
 resizes the message viewport instead of covering messages. The shared Design
 Core LayoutScrollButton offers keyboard-operable Scroll to latest/New messages
 recovery when scrolled back, with scroll state scoped to the selected chat.
+
+Inbox messages reuse the shared Design Core Message, MessageBubble and
+MessageMetadata composition used by recorded agent chats. Known retained event
+observation times use the existing CommunityMessageMeta and
+agentMessageTimestamp formatter with clock text and an exact-date tooltip. User
+prompts and coalesced assistant messages keep the first event time across
+streaming chunks and refresh; legacy messages with no recorded time show Time
+unknown without a fabricated time element. Turn lifecycle records render as
+shared SystemMessage notices within the chat log. A connected running session
+shows Community's streaming Reasoning Working indicator in the message area and
+its compact avatar/activity strip below the composer. Pending outcomes use
+readable labels in that same strip, preserve exact retry/review actions and
+never replay a prompt. The running strip is scoped to the selected session and
+cannot leak into another chat or the directory.

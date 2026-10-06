@@ -43,28 +43,33 @@ prompt. Instructions and project/task context accompany the first prompt.
 The conversation scrolls above a bottom composer row, so growing drafts never
 cover messages. The shared Scroll to latest/New messages control returns to
 recent activity when you scroll back. It shows streamed text, tool activity,
-plans and exact permission choices. Follow-ups queue in the warm session; Stop
-turn cancels the selected turn, and **Session options → End session** closes the
-adapter. The header uses the shared sidebar toggle to show or hide the chat
-list, and its menu also opens Activity log. Workspace and runtime opens the
-inbox's right body sidebar, with the same grouped form styling and background as
-Settings. Workspace and starting revision use the complete Settings copy/link
-form row; visible values truncate while the full value is copied. The revision
-links to its exact repository entity. Model, Thinking and Execution mode use the
-same runtime rows as agent details, showing the associated saved agent
-configuration (or retained session values when it has no saved agent) and
-opening the exact same Edit agent form, including its avatar and instructions
-fields. Save agent updates future defaults and applies runtime choices to a
-connected session using the same harness. The existing session keeps its
-captured instructions and workspace. Closing the sidebar preserves unapplied
-preferences and your conversation draft. The composer supplies Send and has no
-controls beneath it. Empty bodies use shadcn Empty with an icon; session/history
-loading shows the owned skeleton. Resume uses the adapter's explicit load
-capability. New session with saved context starts a fresh adapter session and
-labels that distinction. Neither action sends a prompt automatically. Resume
-failures appear as an error in the composer, with their safe ACP code and
-retained draft/history. If the harness no longer has its saved conversation,
-choose New session with saved context explicitly.
+plans and exact permission choices. Messages show their retained observation
+time using the same clock-time metadata as recorded agent chats, with an
+exact-date tooltip. Older untimed history shows Time unknown. Turn completion
+appears as a system notice. During a connected turn, Working appears in the chat
+and a compact agent activity strip below the composer. Follow-ups queue in the
+warm session; Stop turn cancels the selected turn, and **Session options → End
+session** closes the adapter. The header uses the shared sidebar toggle to show
+or hide the chat list, and its menu also opens Activity log. Workspace and
+runtime opens the inbox's right body sidebar, with the same grouped form styling
+and background as Settings. Workspace and starting revision use the complete
+Settings copy/link form row; visible values truncate while the full value is
+copied. The revision links to its exact repository entity. Model, Thinking and
+Execution mode use the same runtime rows as agent details, showing the
+associated saved agent configuration (or retained session values when it has no
+saved agent) and opening the exact same Edit agent form, including its avatar
+and instructions fields. Save agent updates future defaults and applies runtime
+choices to a connected session using the same harness. The existing session
+keeps its captured instructions and workspace. Closing the sidebar preserves
+unapplied preferences and your conversation draft. The composer supplies Send.
+Beneath it, only the compact activity strip and explicit pending-request
+recovery actions appear. Empty bodies use shadcn Empty with an icon;
+session/history loading shows the owned skeleton. Resume uses the adapter's
+explicit load capability. New session with saved context starts a fresh adapter
+session and labels that distinction. Neither action sends a prompt
+automatically. Resume failures appear as an error in the composer, with their
+safe ACP code and retained draft/history. If the harness no longer has its saved
+conversation, choose New session with saved context explicitly.
 
 Request identities and drafts survive refresh and navigation. If another setup
 save changes the configuration version, the editor retains your draft and shows

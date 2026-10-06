@@ -209,3 +209,8 @@ from the supervised process and completed ACP handshake. Legacy journals default
 the association to unassigned and descriptions to empty. Optional last activity
 time belongs to the private execution journal and advances only when an event is
 retained; it neither establishes live presence nor changes repository authority.
+
+Execution-event observation times are optional private journal metadata. New
+captures preserve the same value through AgentStore's existing observation-time
+field without changing source-sequence identities, native object formats or
+manifest authority.

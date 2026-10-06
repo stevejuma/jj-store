@@ -84,3 +84,10 @@ and retains the exact selected session and message. Failed/unknown
 configuration, disconnection, navigation or bounded timeout retains the draft
 and dispatches no prompt. Reads and editor navigation never apply preferences or
 resume a process automatically.
+
+Each execution event optionally retains observed_at_millis, the device
+wall-clock observation time captured when that event is appended. It is
+read-only, survives journal restart/resume and publication, and defaults to
+unknown for legacy events. It is not a provider-authored timestamp and does not
+change native AgentStore identities or authority. Refresh, status reads and
+rendering never fabricate missing times.

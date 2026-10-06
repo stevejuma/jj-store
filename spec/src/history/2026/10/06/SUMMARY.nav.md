@@ -12,6 +12,10 @@
   {{#include E-EXEC-004/SUMMARY.nav.md}}
 - [E-EXEC-005](E-EXEC-005/index.md)
   {{#include E-EXEC-005/SUMMARY.nav.md}}
+- [E-EXEC-006](E-EXEC-006/index.md)
+  {{#include E-EXEC-006/SUMMARY.nav.md}}
+- [E-EXEC-007](E-EXEC-007/index.md)
+  {{#include E-EXEC-007/SUMMARY.nav.md}}
 - [E-GOV-003](E-GOV-003/index.md)
   {{#include E-GOV-003/SUMMARY.nav.md}}
 - [E-M21-057](E-M21-057/index.md)

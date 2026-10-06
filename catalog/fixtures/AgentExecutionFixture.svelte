@@ -3,6 +3,7 @@
   import { commandReceipts } from "./agent-command-receipts.js";
   import { revisionFixture } from "./agent-execution-revisions.js";
   import {
+    fixtureJsonResponse as json,
     fixtureSession,
     fixtureRunners,
     fixtureAgentTargets,
@@ -43,6 +44,7 @@
     resumeFailure = false,
     retainedError = false,
     longHistory = false,
+    chatFeedback,
     revisionIndexRequired = false,
     status = "Online",
   }: {
@@ -65,6 +67,7 @@
     resumeFailure?: boolean;
     retainedError?: boolean;
     longHistory?: boolean;
+    chatFeedback?: "completed" | "working";
     revisionIndexRequired?: boolean;
     status?:
       "Online" | "Offline" | "Starting" | "Working" | "Unknown" | "Empty";
@@ -141,11 +144,6 @@
   const receipts = untrack(() =>
     commandReceipts(() => fixtureStatus.sessions[0], uncertainConfiguration),
   );
-  const json = (body: unknown, status = 200) =>
-    new Response(JSON.stringify(body), {
-      status,
-      headers: { "content-type": "application/json" },
-    });
   const revisions = untrack(() =>
     revisionFixture(repository, operation, revisionIndexRequired),
   );
@@ -208,7 +206,14 @@
               await new Promise<void>((resolve) => {
                 resolveHistory = resolve;
               });
-            return json(eventsResponse(permission, retainedError, longHistory));
+            return json(
+              eventsResponse(
+                permission,
+                retainedError,
+                longHistory,
+                chatFeedback,
+              ),
+            );
           }
           if (path.includes("/stream"))
             return new Response(

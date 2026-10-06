@@ -20803,6 +20803,16 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "format": "uint64",
       "minimum": 0
     },
+    "observed_at_millis": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "format": "uint64",
+      "minimum": 0,
+      "description": "Device observation time captured when this event was retained, if known.",
+      "default": null
+    },
     "payload": true,
     "committed": {
       "type": "boolean"
@@ -20810,6 +20820,7 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
   },
   "required": [
     "sequence",
+    "observed_at_millis",
     "payload",
     "committed"
   ]

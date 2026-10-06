@@ -30,7 +30,7 @@
       "docs/site/concepts/collaboration.md"
     ],
     "review": {
-      "reason": "Reviewed final controller-v2 exact alias encoding, bounded labels, terminal text and unknown/unusable outcomes against collaboration and capture manuals.",
+      "reason": "Reviewed timestamp propagation through existing AgentStore capture metadata; native identity, immutable publication, sanitization and receipt authority unchanged",
       "fingerprint": "0e5a30f69415fa0964fa33ca0c0d49a7c58ec1960d9f3ce865dfe1d529554703"
     }
   },
@@ -65,8 +65,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Optional last_activity_at_millis belongs to private execution metadata; event retention advances it, legacy journals leave it unknown, and status/setup writes do not fabricate activity.",
-      "fingerprint": "6cdd0352507462437d227ae4cb429bbf5800d33fd410bfbab99bddb044157f89"
+      "reason": "Execution journal records device observation time, generated event DTO and captured observations retain it; reviewed restart, publication authority and legacy unknown timing in lifecycle and architecture pages",
+      "fingerprint": "a50b4f2738384575ce0a11702f1fcd1ca1d67c8f620e35ec2ddcbc8079d306f2"
     }
   },
   {
@@ -96,8 +96,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Retained execution events persist a nondecreasing observation time across restart; live connection clears independently and old journals keep unknown timing until new activity.",
-      "fingerprint": "5310cb21e1a6a615ed251cac808fddf103622da0a577f9788728709cbbff0d28"
+      "reason": "Reviewed unchanged configuration/environment controls and updated lifecycle journal persistence; event observation metadata adds no setting, launch flag or credential surface",
+      "fingerprint": "d8dca6d7641d6f89cc591716784c66c88ecab1cef6b574e1f8d447f8be9008b3"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Final formatted agent guides and owning chapters describe Community inbox composition, shared runtime editing, exact configure receipts, safe composer resume errors and explicit recovery; source and publication boundaries are unchanged.",
-      "fingerprint": "042c9b57d28f53884621ce003152dc1b9d0a479af901fb88030d980419c3bd99"
+      "reason": "Inbox and recorded agent chats now share CommunityMessageMeta and agentMessageTimestamp clock formatting; legacy Time unknown has no fabricated timestamp; Community completion and Working feedback retain exact recovery",
+      "fingerprint": "ac00d978abd1247c84d8ea6fcd451e5f8281d7451cfb2af62ef6210dfde44e51"
     }
   },
   {
@@ -154,8 +154,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Regenerated session schema adds optional read-only last_activity_at_millis; generated manual reflects event observation timing without changing commands or native publication.",
-      "fingerprint": "44222ef4ba867a8ebd7a41ea95a771743dac5f9368a67dd04661cbc8224b01bf"
+      "reason": "Regenerated event DTO and type references for optional retained observation time; HTTP version, admission, CLI commands and transports remain unchanged",
+      "fingerprint": "481ad8e3233c0a7b256700f90990e5cf269810a73707446e8be8b5cd66daa3f5"
     }
   }
 ]

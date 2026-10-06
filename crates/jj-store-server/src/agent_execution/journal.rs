@@ -159,12 +159,14 @@ mod tests {
                         "base_commit":"22".repeat(20),"review_commit":"22".repeat(20),
                         "operation":"33".repeat(64),"state":"idle","adapter_session_id":"adapter",
                         "capabilities":{},"preferences":{"model":null,"effort":null,"mode":"ask"},
-                        "last_sequence":0,"last_activity_at_millis":1791324000000_u64,
+                        "last_sequence":1,"last_activity_at_millis":1791324000000_u64,
                         "published_sequence":0,"last_error":null},
                     "workspace":{"source":root.path().join("source"),"path":path,
                         "metadata":root.path().join("source/.jj"),"operation":"33".repeat(64),
                         "commit":"22".repeat(20),"name":format!("agent-{id}")},
-                    "profile":"local_jj_git","instructions":"Original instructions","context":null,"events":[]
+                    "profile":"local_jj_git","instructions":"Original instructions","context":null,"events":[{
+                        "sequence":1,"observed_at_millis":1791323999000_u64,
+                        "payload":{"type":"prompt","requestId":"turn","text":"Hello"},"committed":false}]
                 }
             }
         });
@@ -180,6 +182,15 @@ mod tests {
         assert_eq!(saved.view.last_activity_at_millis, Some(1791324000000));
         assert_eq!(saved.view.state, "interrupted");
         assert_eq!(saved.instructions, "Original instructions");
+        assert_eq!(saved.events[0].observed_at_millis, Some(1791323999000));
+        let payload = saved.events[0].payload.clone();
+        persist(root.path(), &state).unwrap();
+        let reopened = read(root.path()).unwrap();
+        assert_eq!(
+            reopened.sessions[&id].events[0].observed_at_millis,
+            Some(1791323999000)
+        );
+        assert_eq!(reopened.sessions[&id].events[0].payload, payload);
         // The old journal format predates association, connection and timing.
         value["sessions"][&id]["view"]
             .as_object_mut()
@@ -198,7 +209,18 @@ mod tests {
             serde_json::to_vec(&value).unwrap(),
         )
         .unwrap();
+        value["sessions"][&id]["events"][0]
+            .as_object_mut()
+            .unwrap()
+            .remove("observed_at_millis");
+        fs::write(
+            root.path().join("state.json"),
+            serde_json::to_vec(&value).unwrap(),
+        )
+        .unwrap();
         let legacy = read(root.path()).unwrap();
+        assert_eq!(legacy.sessions[&id].events[0].observed_at_millis, None);
+        assert_eq!(legacy.sessions[&id].events[0].payload, payload);
         assert_eq!(legacy.sessions[&id].view.setup_id, None);
         assert!(!legacy.sessions[&id].view.connected);
         assert_eq!(legacy.sessions[&id].view.last_activity_at_millis, None);

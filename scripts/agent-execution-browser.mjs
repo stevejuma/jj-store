@@ -1,4 +1,8 @@
 // Cold production-browser acceptance against the disposable native service.
+import {
+  verifyChatFeedback,
+  verifyChatWorking,
+} from "./agent-execution-chat-feedback.mjs";
 import { chromium, expect } from "@playwright/test";
 import {
   accessible,
@@ -147,6 +151,7 @@ try {
     "Reply with the phrase browser integration accepted. Do not run tools or change files.",
   );
   await sendPrompt(page, workspace, sessionId, origin, admission);
+  await verifyChatWorking(workspace);
   await page
     .getByRole("navigation", { name: "Repository navigation" })
     .first()
@@ -173,15 +178,7 @@ try {
   await expect(
     workspace.getByText("Turn completed", { exact: true }),
   ).toBeVisible();
-  await accessible(page, "conversation", '[aria-label="Agent sessions inbox"]');
-  await page.emulateMedia({ colorScheme: "dark" });
-  await expect(page.locator("html")).toHaveClass(/dark/);
-  await accessible(
-    page,
-    "dark conversation",
-    '[aria-label="Agent sessions inbox"]',
-  );
-  await page.emulateMedia({ colorScheme: "light" });
+  await verifyChatFeedback(page, workspace, origin, admission, sessionId);
   await composer.fill("Retained inbox draft");
   await sessionOption(page, "Activity log");
   await expect(page).toHaveURL(new RegExp(`/agents/sessions/${sessionId}`));

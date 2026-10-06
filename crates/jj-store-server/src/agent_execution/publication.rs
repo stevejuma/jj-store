@@ -112,7 +112,9 @@ impl Supervisor {
                             saved.view.id, event.sequence
                         ))),
                         source_sequence: event.sequence,
-                        occurred_at_millis: None,
+                        occurred_at_millis: event
+                            .observed_at_millis
+                            .and_then(|time| i64::try_from(time).ok()),
                         source_kind: SourceKind::Controller,
                         source_trust: SourceTrust::AuthenticatedController,
                         payload: SanitizedPayloadV1::new(

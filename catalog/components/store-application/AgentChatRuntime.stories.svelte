@@ -108,7 +108,7 @@
     const draft = await c.findByRole("textbox", { name: "Markdown editor" });
     await userEvent.type(draft, "Keep uncertain prompt");
     await userEvent.click(c.getByRole("button", { name: "Send" }));
-    await c.findByText(/outcome_unknown/);
+    await c.findByText(/Outcome unknown/);
     await expect(draft).toHaveTextContent("Keep uncertain prompt");
     await expect(
       JSON.parse(c.getByLabelText("Session commands").textContent ?? "[]"),

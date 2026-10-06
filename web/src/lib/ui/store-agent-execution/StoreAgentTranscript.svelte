@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { SystemMessage } from "@lapismd/design-core/ai/chat";
+  import { Reasoning } from "@lapismd/design-core/ai/experimental";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { agentMember } from "../community-agents/model.js";
   import CommunityAgentTranscriptMessage from "../community-agent-activity/CommunityAgentTranscriptMessage.svelte";
@@ -20,6 +22,8 @@
     {#if row.kind === "user" || row.kind === "assistant"}<CommunityAgentTranscriptMessage
         role={row.kind}
         text={row.text}
+        observedAtMillis={row.observedAtMillis}
+        messageId={row.id}
         author={row.kind === "assistant"
           ? agentMember({
               id: session.id,
@@ -53,8 +57,12 @@
           status: text(object(v).status),
         }))}
       />
-    {:else if row.kind === "record"}<p role="status">
+    {:else if row.kind === "record"}<SystemMessage>
         Turn {row.text.replaceAll("_", " ")}
-      </p>{/if}
+      </SystemMessage>{/if}
   {/each}
+  {#if session.connected && session.state === "running"}<Reasoning
+      label="Working"
+      streaming
+    />{/if}
 {/if}

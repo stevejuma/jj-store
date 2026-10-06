@@ -5,6 +5,7 @@
   import CommunitySkeleton from "../community-skeleton/CommunitySkeleton.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import CommunityAgentActivityFeed from "../community-agent-activity/CommunityAgentActivityFeed.svelte";
+  import StoreAgentRequestRecovery from "./StoreAgentRequestRecovery.svelte";
   import StoreAgentTranscript from "./StoreAgentTranscript.svelte";
   import CommunityChatComposer from "../community-chat-composer/CommunityChatComposer.svelte";
   import { activityRows, runtimeChoices } from "./presentation.js";
@@ -182,6 +183,7 @@
             {/snippet}
           </CommunityChatComposer>
         </form>
+        <StoreAgentRequestRecovery {manager} {session} />
       {/snippet}
       {#if manager.eventsLoading}<CommunitySkeleton
           layout="messages"

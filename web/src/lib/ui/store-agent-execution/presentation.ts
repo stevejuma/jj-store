@@ -10,6 +10,7 @@ export type ActivityRow = {
   value: Record<string, unknown>;
   request: string;
   sequence: number;
+  observedAtMillis?: number;
 };
 export function activityRows(events: readonly AgentEvent[]): ActivityRow[] {
   const rows = new Map<string, ActivityRow>();
@@ -31,6 +32,14 @@ export function activityRows(events: readonly AgentEvent[]): ActivityRow[] {
         value: data,
         request,
         sequence: Number(event.sequence),
+        observedAtMillis: rows.has(id)
+          ? rows.get(id)?.observedAtMillis
+          : typeof event.observed_at_millis === "number" &&
+              Number.isSafeInteger(event.observed_at_millis) &&
+              event.observed_at_millis >= 0 &&
+              event.observed_at_millis <= 8_640_000_000_000_000
+            ? event.observed_at_millis
+            : undefined,
       });
     if (type === "prompt") row(`${request}/user`, "user", text(value.text));
     if (type === "activity" && update.sessionUpdate === "agent_message_chunk") {

@@ -37,6 +37,32 @@ async fn saved_setup_revision_is_independent_of_session_activity() {
         .last_activity_at_millis
         .expect("retained handshake activity has an observation time");
     assert!(opened_at > 0);
+    let session_id = launch.session_id.clone().unwrap();
+    let opened_events = supervisor
+        .events(actor, session_id.clone(), 0)
+        .await
+        .unwrap()
+        .events;
+    assert!(!opened_events.is_empty());
+    assert!(
+        opened_events
+            .iter()
+            .all(|event| event.observed_at_millis.is_some_and(|time| time > 0))
+    );
+    assert_eq!(
+        supervisor
+            .events(actor, session_id.clone(), 0)
+            .await
+            .unwrap()
+            .events
+            .iter()
+            .map(|event| event.observed_at_millis)
+            .collect::<Vec<_>>(),
+        opened_events
+            .iter()
+            .map(|event| event.observed_at_millis)
+            .collect::<Vec<_>>()
+    );
     assert_eq!(supervisor.status(actor).await.unwrap().revision, observed);
     let command = SetupCommand {
         version: 1,
@@ -94,6 +120,11 @@ async fn saved_setup_revision_is_independent_of_session_activity() {
         .unwrap();
     assert!(ended_at >= opened_at);
     supervisor.shutdown().await.unwrap();
+    let retained_events = supervisor
+        .events(actor, session_id.clone(), 0)
+        .await
+        .unwrap()
+        .events;
     let reopened = Supervisor::open(resources.clone()).unwrap();
     assert_eq!(
         reopened.status(actor).await.unwrap().sessions[0].last_activity_at_millis,
@@ -106,6 +137,11 @@ async fn saved_setup_revision_is_independent_of_session_activity() {
     assert_eq!(
         reopened.status(actor).await.unwrap().setups[0].name,
         "Review helper"
+    );
+    let restored_events = reopened.events(actor, session_id, 0).await.unwrap().events;
+    assert_eq!(
+        serde_json::to_value(restored_events).unwrap(),
+        serde_json::to_value(retained_events).unwrap()
     );
     reopened.shutdown().await.unwrap();
     // A pre-split private journal preserves its original conditional revision.

@@ -160,3 +160,13 @@ Legacy sessions without timing remain unknown until new activity; reopening or
 refreshing status never invents a timestamp. Resume remains explicit. Validated
 avatars are bounded together across setups and retained sessions to 8 MiB,
 within the existing 32 MiB private execution journal.
+
+Submitted agent chats first enter the installation's private execution journal.
+The publisher then captures sanitized events into the selected repository's
+AgentStore using durable spool receipts and the existing native or local
+companion publication path. The inbox reads retained journal activity;
+repository agent history reads committed captures. Saved agent configurations
+stay installation-local, and unsent composer drafts stay in browser memory. New
+events retain their device observation time through restart and publication,
+carrying it into the existing captured occurred_at_millis field. Legacy untimed
+events stay unknown; publication and refresh do not invent times.

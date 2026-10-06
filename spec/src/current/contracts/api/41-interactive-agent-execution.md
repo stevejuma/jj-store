@@ -30,3 +30,10 @@ supplies or edits this field.
 Setup description defaults to empty for legacy requests/journals and is bounded
 to 280 characters. Avatar remains a string with bounded image/emoji forms. Only
 setup writes accept a 2 MiB body; other execution bodies retain 512 KiB.
+
+Each execution event optionally retains observed_at_millis, the device
+wall-clock observation time captured when that event is appended. It is
+read-only, survives journal restart/resume and publication, and defaults to
+unknown for legacy events. It is not a provider-authored timestamp and does not
+change native AgentStore identities or authority. Refresh, status reads and
+rendering never fabricate missing times.

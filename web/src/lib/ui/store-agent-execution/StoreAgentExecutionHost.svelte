@@ -170,7 +170,9 @@
     {:else}<p role="status">
         This session is unavailable or no longer accessible.
       </p>{/if}
-    <StoreAgentRequestRecovery {manager} />
+    {#if route.agentView !== "session"}<StoreAgentRequestRecovery
+        {manager}
+      />{/if}
   </CommunityInbox>
 {:else}
   <AppShell.Body layout="regions" label="Agents workspace">

@@ -123,6 +123,9 @@ pub struct Session {
 #[schemars(rename = "AgentExecutionEvent")]
 pub struct Event {
     pub sequence: u64,
+    /// Device observation time captured when this event was retained, if known.
+    #[serde(default)]
+    pub observed_at_millis: Option<u64>,
     pub payload: serde_json::Value,
     pub committed: bool,
 }

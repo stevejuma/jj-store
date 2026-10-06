@@ -2307,6 +2307,26 @@
           "license": "Apache-2.0"
         }
       ]
+    },
+    {
+      "local": "web/src/lib/ui/community-agent-composer-activity/CommunityAgentComposerActivity.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-agent-composer-activity/CommunityAgentComposerActivity.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/store-agent-execution/StoreAgentTranscript.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-agent-activity/CommunityAgentTranscript.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
     }
   ],
   "owned": [

@@ -8,6 +8,7 @@ import {
 import type { AgentEvent } from "../src/lib/controller/agent-execution-types.js";
 const event = (sequence: number, payload: unknown): AgentEvent => ({
   sequence,
+  observed_at_millis: null,
   payload,
   committed: false,
 });
@@ -114,4 +115,34 @@ test("live text and tool deltas retain turn identity and exact permission lifeti
     "completed",
   );
   assert.equal(rows.filter((r) => r.kind === "permission").length, 0);
+});
+
+test("message times retain first observation across chunks and never fabricate legacy times", () => {
+  const chunk = (sequence: number, timestamp?: number) => ({
+    ...event(sequence, {
+      type: "activity",
+      requestId: "one",
+      update: {
+        sessionUpdate: "agent_message_chunk",
+        content: { text: "chunk" },
+      },
+    }),
+    observed_at_millis: timestamp ?? null,
+  });
+  const user = {
+    ...event(1, { type: "prompt", requestId: "one", text: "Hello" }),
+    observed_at_millis: 1000,
+  };
+  const rows = activityRows([user, chunk(2, 2000), chunk(3, 3000)]);
+  assert.deepEqual(
+    rows.map((row) => row.observedAtMillis),
+    [1000, 2000],
+  );
+  assert.equal(rows[1].text, "chunkchunk");
+  assert.equal(
+    activityRows([chunk(1), chunk(2, 3000)])[0].observedAtMillis,
+    undefined,
+  );
+  assert.equal(activityRows([chunk(1, NaN)])[0].observedAtMillis, undefined);
+  assert.deepEqual(activityRows([user, chunk(2, 2000), chunk(3, 3000)]), rows);
 });
