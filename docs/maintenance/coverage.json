@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed combined directory reuse and focused Stacks startup/chip/navigation presentation against browsing and editing guides; loaded pages, initial skeletons, retained drafts and bounded context remain accurately described.",
-      "fingerprint": "0b4b1aa87be3e554983afea9647149045d9be8aaefe040a86174bd804f1c628d"
+      "reason": "Scoped the top conflict banner to the active Workspace tab; reviewed Branches and focused history omission with retained Details and notification conflict actions against the browsing guide.",
+      "fingerprint": "19d78d5641e949e7bf8dabdb65fb93b1b09dac807b8ab98d12820a7cf55389de"
     }
   },
   {

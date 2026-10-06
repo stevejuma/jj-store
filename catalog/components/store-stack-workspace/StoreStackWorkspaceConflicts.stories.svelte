@@ -208,6 +208,13 @@
     );
     for (const name of ["Branches", "Workspace", "Commits", "Op Log"]) {
       await userEvent.click(tabs.getByRole("tab", { name }));
+      await waitFor(() => {
+        const banner = canvas.queryByText(
+          /^Workspace has unresolved conflicts/,
+        );
+        if (name === "Workspace") expect(banner).toBeVisible();
+        else expect(banner).toBeNull();
+      });
       await userEvent.click(
         actions.getByRole("button", { name: "Resolve conflicts" }),
       );
@@ -217,6 +224,12 @@
         "active",
       );
     }
+    await userEvent.click(tabs.getByRole("tab", { name: "Workspace" }));
+    await waitFor(() =>
+      expect(
+        canvas.getByText(/^Workspace has unresolved conflicts/),
+      ).toBeVisible(),
+    );
     const portal = within(canvasElement.ownerDocument.body);
     const toast =
       portal

@@ -382,3 +382,8 @@ Main-workspace integration regenerates API manual references from the combined
 executable route inventory and reviews each changed source fingerprint against
 its owning manual pages. Preserve both parents' historical qualification and
 provider limits; integration evidence does not imply a new release gate.
+
+The local Stacks browsing guide distinguishes the Workspace-only top conflict
+banner from rail and notification actions available in all focused tabs.
+Standalone narrow-layout evidence verifies the selected Workspace item through
+the existing More menu, including Escape focus restoration and the width bound.

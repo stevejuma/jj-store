@@ -152,9 +152,9 @@ shared-package release qualification does not alter those original Git gates.
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                        | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work          | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| M21         | In progress | -                       | JST-UI-020                                                                                                                                                                                                        | Local stack workspaces: UI first, then separately approved local backend integration                                           | Ordinary-local accepted; broader provider/release gates remain separate                          | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-041,E-M21-042,E-M21-043,E-M21-044,E-M21-045,E-M21-046,E-M21-047,E-M21-048,E-M21-049,E-M21-050,E-M21-051,E-M21-052,E-M21-053,E-M21-054,E-M21-055,E-M21-056,E-M21-058,E-M21-059                                                                                                                                                                                                         |
-| M21.1       | Partial     | -                       | JST-UI-020,JST-GOV-008                                                                                                                                                                                            | Reused Storybook workspace views, stateful mock controller, interactions and accessibility                                     | UI reviewed for backend integration; registry/visual gates remain separate                       | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M21-041,E-M21-042,E-M21-043,E-M21-044,E-M21-054,E-M21-055,E-M21-056,E-M21-058,E-M21-059                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
-| M21.2       | In progress | M21.1                   | JST-UI-020                                                                                                                                                                                                        | Local jj-lib megamerges, TOML settings and independent named unfinished work                                                   | Ordinary-local accepted; broader provider/release gates remain separate                          | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-042,E-M21-045,E-M21-046,E-M21-047,E-M21-048,E-M21-049,E-M21-050,E-M21-051,E-M21-052,E-M21-053,E-M21-054,E-M21-055,E-M21-056,E-M21-058,E-M21-059                                                                                                                                                                           |
+| M21         | In progress | -                       | JST-UI-020                                                                                                                                                                                                        | Local stack workspaces: UI first, then separately approved local backend integration                                           | Ordinary-local accepted; broader provider/release gates remain separate                          | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-041,E-M21-042,E-M21-043,E-M21-044,E-M21-045,E-M21-046,E-M21-047,E-M21-048,E-M21-049,E-M21-050,E-M21-051,E-M21-052,E-M21-053,E-M21-054,E-M21-055,E-M21-056,E-M21-058,E-M21-059,E-M21-060                                                                                                                                                                                               |
+| M21.1       | Partial     | -                       | JST-UI-020,JST-GOV-008                                                                                                                                                                                            | Reused Storybook workspace views, stateful mock controller, interactions and accessibility                                     | UI reviewed for backend integration; registry/visual gates remain separate                       | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M21-041,E-M21-042,E-M21-043,E-M21-044,E-M21-054,E-M21-055,E-M21-056,E-M21-058,E-M21-059,E-M21-060                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| M21.2       | In progress | M21.1                   | JST-UI-020                                                                                                                                                                                                        | Local jj-lib megamerges, TOML settings and independent named unfinished work                                                   | Ordinary-local accepted; broader provider/release gates remain separate                          | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-042,E-M21-045,E-M21-046,E-M21-047,E-M21-048,E-M21-049,E-M21-050,E-M21-051,E-M21-052,E-M21-053,E-M21-054,E-M21-055,E-M21-056,E-M21-058,E-M21-059,E-M21-060                                                                                                                                                                 |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -109931,6 +109931,137 @@ entries.
   "next": "Continue from the integrated Main history; retain the clean Stacks workspace and running source preview. Package publication, release/scale/fault/RustFS and visual-baseline gates remain separate.",
   "verification_scope": "Cross-layer merge overlaps justify the affected Rust packages, native Stacks/recovery/registered local-route and admission binaries, directly affected UI/Files stories and controller units, and combined contract/document/specification/progress gates. Root aggregate check/test/build/spec:check lanes, unrelated Rust/UI suites, scale/fault/RustFS/release qualification, package publication and screenshot baselines are out of scope.",
   "summary": "Both completed histories are integrated. Main retains bounded directory/quick-metadata reuse and cached read admission; Stacks retains local TOML, native megamerge/WIP semantics, mutation controls, focused navigation, shared conflict editing, startup skeletons and bounded history chips. Shared bindings retain current registration authorization and cached traversal checks. Original evidence objects are unchanged; generated API manuals now describe the combined route inventory."
+},
+{
+  "id": "E-M21-060",
+  "tasks": ["M21", "M21.1", "M21.2"],
+  "date": "2026-10-06",
+  "kind": "ui",
+  "change": "Enclosing Jujutsu change: Show the conflict banner only on the Workspace tab",
+  "scope": "Scope the top Resolve conflicts banner to the actual selected Workspace tab while retaining rail and notification actions across focused tabs. Align the standalone conflict story with Workspace entry and repair its existing narrow overflow assertion.",
+  "files": [
+    "catalog/components/store-stack-workspace/StoreStackWorkspace.stories.svelte",
+    "catalog/components/store-stack-workspace/StoreStackWorkspaceConflicts.stories.svelte",
+    "docs/maintenance/coverage.json",
+    "docs/site/guides/browsing.md",
+    "spec/src/api.md",
+    "spec/src/documentation.md",
+    "spec/src/milestones.md",
+    "spec/src/ui.md",
+    "web/src/lib/ui/store-stack-workspace/StoreStackWorkspace.svelte"
+  ],
+  "versions": "JJ 0.45.1; pnpm 10.32.1; Svelte 5.57.1; Storybook 10.5.7; Vitest 4.1.11. Existing Design Core local validation dependency unchanged.",
+  "formats": "No API, command, TOML, native identity, layout, browser storage, manifest or WAL format change. One presentation condition uses focusedView with controller.page fallback.",
+  "before": "Main clean at empty kpsvovzq/d9aec901 above integrated zzpnwqpp/4b5539c9. Banner was outside canvas/history content and rendered on all four focused tabs. The retained canvas page stays Workspace during history, so checking controller.page alone is insufficient.",
+  "runs": [
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceConflicts.stories.svelte -t <display name>",
+      "result": "pass",
+      "failures": 0,
+      "note": "Initial filter matched no tests: all six skipped. This was not regression evidence; reran the entire exact conflict family."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceConflicts.stories.svelte",
+      "result": "fail",
+      "failures": 1,
+      "note": "Before implementation: new four-tab scope assertion failed on Branches, with five other stories passing. /tmp/stacks-banner-scope-before-family.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook <conflict and standalone workspace stories>",
+      "result": "fail",
+      "failures": 2,
+      "note": "First after: 19 passed/2 failed. Conflict story still requested the old global banner from Branches; NarrowLayout expected Workspace to remain a direct tab despite overflow. /tmp/stacks-banner-scope-after.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook <same two families>",
+      "result": "fail",
+      "failures": 2,
+      "note": "Standalone conflict navigation initially used an ambiguous Workspace tab query; scoped it to Local repository views. NarrowLayout remained. /tmp/stacks-banner-scope-final-stories.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook <same two families>",
+      "result": "fail",
+      "failures": 1,
+      "note": "20 passed; only NarrowLayout failed. Four-tab banner/retained editor and standalone conflict flows pass. /tmp/stacks-banner-scope-complete-stories.log."
+    },
+    {
+      "command": "Restore only the unchanged parent banner component for a controlled baseline; pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspace.stories.svelte -t NarrowLayout; restore scoped component in finally",
+      "result": "fail",
+      "failures": 1,
+      "note": "Pre-existing narrow assertion reproduced on the parent component: one failed/14 skipped. No shared helper or production layout change was needed. /tmp/stacks-banner-narrow-parent.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspace.stories.svelte -t NarrowLayout",
+      "result": "pass",
+      "failures": 0,
+      "note": "One passed/14 skipped after checking the visible selected More trigger, selected Workspace menu item, Escape focus restoration, Workspace content and unchanged 390px width limit. /tmp/stacks-banner-narrow-after.log."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check; pnpm check:ui-ownership; pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "Zero type errors/warnings; 244 catalog modules and 1141 production modules; ownership passes. /tmp/stacks-banner-web.log, catalog.log, ownership.log and architecture.log."
+    },
+    {
+      "command": "pnpm docs:review application <Workspace-only banner review>; pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "Browsing guide and source fingerprint updated. 139-file closure, links/anchors and nine light/dark offline diagrams pass. /tmp/stacks-banner-docs.log."
+    },
+    {
+      "command": "Owned Vite root transfer to Main and runUiDevelopment(Main, retained fixture environment, backendOnly=true)",
+      "result": "pass",
+      "failures": 0,
+      "note": "Existing merged native executable reused to match Main additive reads; no Rust rebuild/test. Main Vite 91701 on 7476 and backend 92095 on 7478 reuse the source .local/dev-demo. Saved UI backend configuration is byte-identical; fixture, registration and app settings preserved. /tmp/stacks-banner-live-main.log."
+    },
+    {
+      "command": "CUA cold reload and Branches/Commits/Op Log/Workspace navigation on the existing live user tab",
+      "result": "pass",
+      "failures": 0,
+      "note": "Real conflicted workspace: banner counts 0,0,0,1 respectively. Returned to the original Workspace route; two conflicts and thirteen unstaged files retained. Rail/toast resolution actions remain available; no resolution or graph/membership mutation requested; ordinary startup refresh retains normal JJ snapshot policy."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook <conflict and standalone workspace stories>",
+      "result": "pass",
+      "failures": 0,
+      "note": "21 passed in two files after the narrow overflow repair. /tmp/stacks-banner-all-stories.log."
+    },
+    {
+      "command": "pnpm catalog:check",
+      "result": "fail",
+      "failures": 3,
+      "note": "Final leaf-story edits used Playwright-only exact options on three Testing Library getByRole/findByRole calls. Removed those unsupported options; string role names already match exactly. /tmp/stacks-banner-catalog-final.log."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "fail",
+      "failures": 2,
+      "note": "Protected mapping requires API and documentation chapter updates alongside UI. Added explicit unchanged-transport boundary and manual/overflow verification scope; no contract fields added. /tmp/stacks-banner-spec-first.log."
+    },
+    {
+      "command": "pnpm catalog:check; pnpm spec:first; pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "Final types zero errors/warnings, 244 catalog modules; spec-first five protected files/four chapters; validate five validators/23 chapters/173 requirements. /tmp/stacks-banner-catalog-complete2.log, spec-first-final2.log and spec-validate-final2.log."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-stack-workspace/StoreStackWorkspaceConflicts.stories.svelte catalog/components/store-stack-workspace/StoreStackWorkspace.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "Final after typed query correction: 21 passed in two files in a fresh browser process. /tmp/stacks-banner-verified-stories.log."
+    },
+    {
+      "command": "pnpm exec prettier --check <eight changed UI/story/manual/canonical files>",
+      "result": "pass",
+      "failures": 0,
+      "note": "All changed non-ledger files formatted. Ledger prefix and only the newest evidence entry are formatted separately, preserving historical payloads. /tmp/stacks-banner-format-final.log."
+    }
+  ],
+  "result": "pass",
+  "remaining": [],
+  "next": "Continue UI work from Main; existing Main Vite/backend remains available on 7476/7478 with the preserved fixture. Other gates and visual baselines remain separate.",
+  "verification_scope": "UI-only presentation scope. Exact four-tab regression, directly affected conflict/standalone stories, web/catalog types, UI ownership/architecture, documentation/specification/progress and cold live browser. The standalone narrow assertion was reproduced as pre-existing and repaired in its own story without changing shared infrastructure or production layout. Unrelated story families, root aggregate lanes, Rust builds/tests, package publication, screenshot comparisons and visual baselines remain out of scope; no milestone promotion.",
+  "summary": "Top conflict feedback renders only on the selected Workspace tab, using focusedView so retained Workspace state cannot leak the banner into Commits or Op Log. Rail and notification resolution remain usable across all four tabs. Standalone conflict flow enters Workspace before resolution. Existing narrow overflow regression now checks the selected More entry and focus restoration without changing production layout."
 }
 ]
 ```

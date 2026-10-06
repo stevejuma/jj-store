@@ -220,8 +220,16 @@
       await portal.findByText("Applying introduces conflicts"),
     ).toBeVisible();
     await applyPreview(canvasElement);
+    expect(
+      canvas.queryByText(/^Workspace has unresolved conflicts/),
+    ).toBeNull();
     await userEvent.click(
-      canvas.getByRole("button", { name: "Resolve conflicts" }),
+      within(
+        canvas.getByRole("tablist", { name: "Local repository views" }),
+      ).getByRole("tab", { name: "Workspace" }),
+    );
+    await userEvent.click(
+      await canvas.findByRole("button", { name: "Resolve conflicts" }),
     );
     await userEvent.click(
       await portal.findByRole("button", {
@@ -307,10 +315,22 @@
   args={{ narrow: true }}
   parameters={{ viewport: { defaultViewport: "mobile1" } }}
   play={async ({ canvasElement }) => {
-    const canvas = workspaceCanvas(canvasElement);
-    await waitFor(() =>
-      expect(canvas.getByRole("tab", { name: "Workspace" })).toBeVisible(),
-    );
+    const canvas = workspaceCanvas(canvasElement),
+      portal = workspacePortal(canvasElement);
+    const more = await canvas.findByRole("button", {
+      name: "More local repository views",
+    });
+    expect(more).toHaveAttribute("aria-current", "page");
+    await userEvent.click(more);
+    const workspace = await portal.findByRole("menuitem", {
+      name: "Workspace",
+    });
+    expect(workspace).toHaveAttribute("aria-current", "page");
+    await userEvent.keyboard("{Escape}");
+    expect(more).toHaveFocus();
+    expect(
+      canvasElement.querySelector('.stack-workspace[data-page="workspace"]'),
+    ).toBeVisible();
     await expect(
       canvasElement.querySelector(".stack-workspace")!.scrollWidth,
     ).toBeLessThanOrEqual(390);

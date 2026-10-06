@@ -153,7 +153,7 @@
   {#if !snapshot || !controller.snapshotLoaded || !eligible}
     <StoreStackWorkspaceState {controller} />
   {:else}
-    {#if snapshot.conflicts.length}<CommunityProjectsColumnAlert
+    {#if (focusedView ?? controller.page) === "workspace" && snapshot.conflicts.length}<CommunityProjectsColumnAlert
         inline
         description="Workspace has unresolved conflicts"
       >

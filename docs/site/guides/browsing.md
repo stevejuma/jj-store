@@ -128,21 +128,22 @@ new operation needs preparation, use the existing Prepare graph index action.
 Unstaged counts reflect loaded files; a `+` means more remain to load.
 
 Conflicted Unstaged files show a warning icon and the workspace banner's warning
-background in each listing mode. The top conflict banner keeps its message,
-conflict-count chip and resolution action on one row. The Details rail's Actions
-section offers Resolve conflicts, workspace settings, branch browsing and
-refresh, plus Reapply saved branches when membership differs. Resolve conflicts
-is also available from the local-workspace notification, including while
-browsing Commits or Op Log. Its button keeps a muted background at rest, with
-hover and keyboard focus feedback. Both open the same in-app conflict surface
-used by Op Log without leaving the selected tab. The file browser retains your
-resolution draft when you switch files or hide the browser. Three-term text
-conflicts have an editable Resolved pane; multi-sided conflicts let you compare
-each native version against the current resolution in the same editable Merge
-Editor. Review every version, stage the merged file, then preview the
-complete-file resolution. Other conflicts and applied branches are retained.
-Unsupported or pending commands remain unavailable. An unavailable text diff
-shows one message spanning the column width; it preserves the native reason.
+background in each listing mode. The top conflict banner appears only on the
+Workspace tab and keeps its message, conflict-count chip and resolution action
+on one row. The Details rail's Actions section offers Resolve conflicts,
+workspace settings, branch browsing and refresh, plus Reapply saved branches
+when membership differs. Resolve conflicts is also available from the
+local-workspace notification, including while browsing Commits or Op Log. Its
+button keeps a muted background at rest, with hover and keyboard focus feedback.
+Both open the same in-app conflict surface used by Op Log without leaving the
+selected tab. The file browser retains your resolution draft when you switch
+files or hide the browser. Three-term text conflicts have an editable Resolved
+pane; multi-sided conflicts let you compare each native version against the
+current resolution in the same editable Merge Editor. Review every version,
+stage the merged file, then preview the complete-file resolution. Other
+conflicts and applied branches are retained. Unsupported or pending commands
+remain unavailable. An unavailable text diff shows one message spanning the
+column width; it preserves the native reason.
 
 Select a branch to load its bounded stack history. Dependent branch segments use
 native ancestry and bookmarks, with changed files inline for the selected

@@ -1,5 +1,9 @@
 # Read APIs and browser
 
+The top Stacks conflict banner is scoped to the active Workspace tab. This
+presentation condition adds no transport fields or commands and does not change
+existing conflict actions in focused history or local workspace configuration.
+
 The browser may reuse successful local names-only path responses for 30 seconds
 in its existing session cache, keyed by repository, registration generation,
 captured head and the exact operation/commit/path/window request. Closed sources

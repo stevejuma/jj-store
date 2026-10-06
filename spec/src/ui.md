@@ -389,12 +389,13 @@ conflicted. Selected and hovered conflict rows retain this warning surface with
 a visible selection marker. Unavailable Stacks diffs show one description
 without a duplicate title, spanning both column edges directly below the header;
 the existing hunk scrollbar padding remains intact. The top workspace conflict
-banner has one row with its message, a labelled conflict-count chip and a
-trailing Resolve conflicts button, without listing paths or adding a separate
-title row; its warning icon is vertically centered with the text, vertical
-padding is 4px and the row has an 8px bottom margin. The count uses the smaller
-indicator font on a compact round secondary surface distinct from the warning
-background.
+banner appears only while the Workspace tab is active; Branches, Commits and Op
+Log omit it even when the retained canvas tab is Workspace. It has one row with
+its message, a labelled conflict-count chip and a trailing Resolve conflicts
+button, without listing paths or adding a separate title row; its warning icon
+is vertically centered with the text, vertical padding is 4px and the row has an
+8px bottom margin. The count uses the smaller indicator font on a compact round
+secondary surface distinct from the warning background.
 
 Back uses a ghost public Button with circular hover treatment, an icon and
 tooltip and restores the exact entry repository route and selections; a direct
