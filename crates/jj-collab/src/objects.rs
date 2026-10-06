@@ -157,6 +157,11 @@ impl CollabObjectV1 {
     }
     pub fn agent_dependencies(&self) -> BTreeSet<AgentObjectRef> {
         match self {
+            Self::ThreadVersion(v) => v
+                .agent_message
+                .as_ref()
+                .map(|t| t.agent_dependencies())
+                .unwrap_or_default(),
             Self::ThreadLink(v) => match &v.target {
                 ThreadLinkTargetV1::CaptureGap {
                     source_state,

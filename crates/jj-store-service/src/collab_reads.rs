@@ -1,4 +1,5 @@
 //! Credential-free collaboration pins; every query reauthorizes its current viewer.
+mod agent_feedback;
 mod materialization;
 use crate::{
     auth::Permission,
@@ -161,6 +162,7 @@ pub struct EmojiPageV1 {
 /// Immutable, bounded source closure without a stored session or credential.
 /// Transport continuation registries own its capacity, expiry and query binding.
 pub struct PinnedCollabRead {
+    feedback_writable: bool,
     snapshot: CollabReadSnapshotV1,
     viewer: m::PrincipalId,
     thread: Arc<ThreadData>,
@@ -245,6 +247,8 @@ impl PinnedCollabRead {
                 _ => return Err(Error::Corrupt),
             };
             let result = Self {
+                feedback_writable: manifest.domains().is_some()
+                    && !(manifest.replication_root.is_some() && manifest.work_root.is_none()),
                 snapshot,
                 viewer,
                 thread,

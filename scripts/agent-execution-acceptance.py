@@ -160,7 +160,8 @@ with tempfile.TemporaryDirectory(prefix='jse-', dir='/private/tmp') as temporary
             if args.browser:
                 assert args.web, 'browser qualification needs a built web root'
                 subprocess.run(['node', str(Path(__file__).with_name('agent-execution-browser.mjs').resolve()), origin, repository], env=environment, check=True, timeout=300)
-            before = request(origin, '/local/agents')
+            before = wait(origin, lambda v: all(s['published_sequence'] == s['last_sequence'] for s in v['sessions']))
+            before_feedback = {s['id']: request(origin, '/local/agents/feedback?session=' + s['id']) for s in before['sessions']}
             before_events = {s['id']: request(origin, '/local/agents/events?session=' + s['id'])['events'] for s in before['sessions']}
             assert all(e.get('observed_at_millis') for events in before_events.values() for e in events)
             server.send_signal(signal.SIGTERM)
@@ -174,6 +175,7 @@ with tempfile.TemporaryDirectory(prefix='jse-', dir='/private/tmp') as temporary
             assert [(s['id'], s['last_sequence']) for s in after_restart['sessions']] == [(s['id'], s['last_sequence']) for s in before['sessions']]
             assert all(s['state'] in ['ended', 'interrupted'] and not s['connected'] for s in after_restart['sessions'])
             assert after_restart['setups'] == before['setups']
+            assert {s['id']: request(origin, '/local/agents/feedback?session=' + s['id']) for s in after_restart['sessions']} == before_feedback
             assert {s['id']: request(origin, '/local/agents/events?session=' + s['id'])['events'] for s in after_restart['sessions']} == before_events
             assert [(s['id'], s['setup_id']) for s in after_restart['sessions']] == [(s['id'], s['setup_id']) for s in before['sessions']]
             wait(origin, lambda v: v['runtime'] == 'ready')

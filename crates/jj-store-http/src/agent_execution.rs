@@ -32,6 +32,7 @@ macro_rules! endpoints {
         (post, "/local/agents/launch", launch, "local_agents_launch", routes::Empty, agents::Launch, agents::Outcome),
         (post, "/local/agents/command", command, "local_agents_command", routes::Empty, agents::Command, agents::Outcome),
         (get, "/local/agents/outcome", outcome, "local_agents_outcome", OutcomeQuery, routes::Empty, agents::Outcome),
+        (get, "/local/agents/feedback", feedback, "local_agents_feedback", EventsQuery, routes::Empty, agents::Feedback),
         (get, "/local/agents/events", events, "local_agents_events", EventsQuery, routes::Empty, agents::EventPage)
     } };
 }
@@ -148,3 +149,15 @@ mutation!(launch, agents::Launch, launch);
 mutation!(command, agents::Command, command);
 #[cfg(test)]
 mod tests;
+
+async fn feedback(
+    ExtractState(state): ExtractState<Arc<State>>,
+    query: routes::Input<EventsQuery>,
+) -> Result<Response> {
+    let q = routes::input(query)?;
+    if q.after != 0 {
+        return Err(Error::invalid());
+    }
+    let (m, actor) = manager(&state)?;
+    state.json(&m.feedback(actor, q.session).await.map_err(failure)?)
+}

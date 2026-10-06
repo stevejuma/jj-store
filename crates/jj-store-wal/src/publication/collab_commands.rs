@@ -289,6 +289,18 @@ impl Coordinator {
         base: &ManifestSnapshot,
         command: &ThreadCommandV1,
     ) -> std::result::Result<(), CollabCommandError> {
+        if let ThreadCommandV1::CreateAgentDiscussion { target, .. } = command {
+            let agents = self
+                .agent_store(
+                    base.manifest
+                        .agent_root
+                        .ok_or(Error::Corrupt("agent source root"))?,
+                )
+                .await?;
+            let reader =
+                CollabTargetReaderV1::new(self.records.repository, None, Some(&agents), None)?;
+            resolve_reaction_target(&reader, target).await?;
+        }
         if let ThreadCommandV1::Create {
             baseline: Some(anchor),
             ..

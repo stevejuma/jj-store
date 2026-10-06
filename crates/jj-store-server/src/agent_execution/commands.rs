@@ -167,6 +167,9 @@ impl Manager for Supervisor {
                     .rev()
                     .find(|e| matches!(e.payload["type"].as_str(), Some("prompt" | "continuation")))
                     .is_none_or(|e| e.payload["type"] == "continuation");
+                let feedback = self.feedback_saved(&saved).await?.prompt_context()?;
+                self.authorized(saved.view.repository, &saved.profile, true)
+                    .await?;
                 let prepared = if first {
                     format!(
                         "{}\n{}\n{}",
@@ -178,7 +181,7 @@ impl Manager for Supervisor {
                     text.clone()
                 };
                 frame["type"] = json!("prompt");
-                frame["text"] = json!(prepared);
+                frame["text"] = json!(format!("{feedback}{prepared}"));
                 frame["maxDurationMs"] = json!(max_duration_ms);
             }
             Action::Configure { preferences: p } => {
@@ -392,6 +395,10 @@ impl Manager for Supervisor {
             events,
             next,
         })
+    }
+    async fn feedback(&self, actor: PrincipalId, session: String) -> Result<Feedback> {
+        self.actor(actor)?;
+        self.feedback_saved(&self.saved(&session)?).await
     }
     fn subscribe(&self) -> broadcast::Receiver<u64> {
         self.0.changed.subscribe()

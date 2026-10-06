@@ -227,6 +227,9 @@ pub trait Manager: Send + Sync {
     async fn command(&self, actor: PrincipalId, command: Command) -> Result<Outcome>;
     async fn outcome(&self, actor: PrincipalId, request: RequestId) -> Result<Outcome>;
     async fn events(&self, actor: PrincipalId, session: String, after: u64) -> Result<EventPage>;
+    async fn feedback(&self, _actor: PrincipalId, _session: String) -> Result<Feedback> {
+        Err(Error::Unavailable)
+    }
     fn subscribe(&self) -> tokio::sync::broadcast::Receiver<u64>;
     async fn shutdown(&self) -> Result<()>;
 }
@@ -242,4 +245,34 @@ pub fn valid_commit(commit: &str) -> bool {
 /// Display-only conversion cannot invent or remap a native identity.
 pub fn native_commit(commit: &str) -> Result<CommitId> {
     commit.parse().map_err(|_| Error::Invalid)
+}
+
+/// Repository-selected messages and ordinary discussion revisions, never journal authority.
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
+#[schemars(rename = "AgentExecutionFeedback")]
+pub struct Feedback {
+    pub messages: Vec<FeedbackMessage>,
+    /// Current browser feedback write capability; does not suppress readable history.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub write_unavailable: Option<String>,
+}
+impl Feedback {
+    pub fn prompt_context(&self) -> Result<String> {
+        crate::agent_feedback::context(self)
+    }
+}
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
+#[schemars(rename = "AgentExecutionFeedbackMessage")]
+pub struct FeedbackMessage {
+    pub row_id: String,
+    pub target: jj_collab::ReactionTargetV1,
+    pub threads: Vec<jj_collab::ThreadId>,
+    pub replies: Vec<FeedbackReply>,
+}
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
+#[schemars(rename = "AgentExecutionFeedbackReply")]
+pub struct FeedbackReply {
+    pub thread_id: jj_collab::ThreadId,
+    pub revision: jj_collab::CollabObjectRef,
+    pub message: jj_collab::HumanMessageRevisionV1,
 }

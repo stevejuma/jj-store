@@ -117,3 +117,14 @@ export const fixtureJsonResponse = (body: unknown, status = 200) =>
     status,
     headers: { "content-type": "application/json" },
   });
+
+export function prepareSessionFixture(
+  status: import("../../web/src/lib/controller/agent-execution-types.js").AgentStatus,
+  empty: boolean,
+  associated: boolean,
+  retainedError: boolean,
+) {
+  if (empty) status.sessions = [];
+  else if (!associated) status.sessions[0].setup_id = null;
+  if (retainedError) status.sessions[0].last_error = "process_outcome_unknown";
+}

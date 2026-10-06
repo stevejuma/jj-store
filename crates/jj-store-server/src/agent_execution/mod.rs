@@ -2,6 +2,7 @@
 mod avatar;
 mod commands;
 pub mod driver;
+mod feedback;
 mod journal;
 mod launch;
 mod publication;

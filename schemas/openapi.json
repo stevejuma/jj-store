@@ -9037,6 +9037,550 @@
                             "maxLength": 32
                           },
                           "title": { "type": "string" },
+                          "target": {
+                            "description": "Identity, immutable content and validation witnesses are explicit, never a UI position.",
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "thread_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "const": "thread"
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": ["type", "thread_id"]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "thread_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "message_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "revision": {
+                                    "type": "object",
+                                    "properties": {
+                                      "kind": {
+                                        "type": "string",
+                                        "enum": [
+                                          "index_page",
+                                          "thread_version",
+                                          "thread_event",
+                                          "human_message_revision",
+                                          "thread_link",
+                                          "reaction",
+                                          "reaction_retraction",
+                                          "reaction_slot",
+                                          "custom_emoji_version",
+                                          "image_asset"
+                                        ]
+                                      },
+                                      "id": {
+                                        "type": "string",
+                                        "pattern": "^[0-9a-f]{64}$",
+                                        "minLength": 64,
+                                        "maxLength": 64
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": ["kind", "id"]
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "const": "human_message"
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": [
+                                  "type",
+                                  "thread_id",
+                                  "message_id",
+                                  "revision"
+                                ]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "session_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "message_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "event_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "batch": {
+                                    "type": "object",
+                                    "properties": {
+                                      "kind": {
+                                        "type": "string",
+                                        "enum": [
+                                          "index_page",
+                                          "session_snapshot",
+                                          "turn_snapshot",
+                                          "message_snapshot",
+                                          "tool_snapshot",
+                                          "intent",
+                                          "observation_batch",
+                                          "event_batch",
+                                          "transcript_manifest",
+                                          "transcript_page",
+                                          "transcript_chunk",
+                                          "content",
+                                          "checkpoint_version",
+                                          "association",
+                                          "alias",
+                                          "relation_page",
+                                          "source_state",
+                                          "projection_catalog",
+                                          "catalog_conflict"
+                                        ]
+                                      },
+                                      "id": {
+                                        "type": "string",
+                                        "pattern": "^[0-9a-f]{64}$",
+                                        "minLength": 64,
+                                        "maxLength": 64
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": ["kind", "id"]
+                                  },
+                                  "content": {
+                                    "type": "object",
+                                    "properties": {
+                                      "kind": {
+                                        "type": "string",
+                                        "enum": [
+                                          "index_page",
+                                          "session_snapshot",
+                                          "turn_snapshot",
+                                          "message_snapshot",
+                                          "tool_snapshot",
+                                          "intent",
+                                          "observation_batch",
+                                          "event_batch",
+                                          "transcript_manifest",
+                                          "transcript_page",
+                                          "transcript_chunk",
+                                          "content",
+                                          "checkpoint_version",
+                                          "association",
+                                          "alias",
+                                          "relation_page",
+                                          "source_state",
+                                          "projection_catalog",
+                                          "catalog_conflict"
+                                        ]
+                                      },
+                                      "id": {
+                                        "type": "string",
+                                        "pattern": "^[0-9a-f]{64}$",
+                                        "minLength": 64,
+                                        "maxLength": 64
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": ["kind", "id"]
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "const": "agent_message"
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": [
+                                  "type",
+                                  "session_id",
+                                  "message_id",
+                                  "event_id",
+                                  "batch",
+                                  "content"
+                                ]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "session_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "tool_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "snapshot": {
+                                    "type": "object",
+                                    "properties": {
+                                      "kind": {
+                                        "type": "string",
+                                        "enum": [
+                                          "index_page",
+                                          "session_snapshot",
+                                          "turn_snapshot",
+                                          "message_snapshot",
+                                          "tool_snapshot",
+                                          "intent",
+                                          "observation_batch",
+                                          "event_batch",
+                                          "transcript_manifest",
+                                          "transcript_page",
+                                          "transcript_chunk",
+                                          "content",
+                                          "checkpoint_version",
+                                          "association",
+                                          "alias",
+                                          "relation_page",
+                                          "source_state",
+                                          "projection_catalog",
+                                          "catalog_conflict"
+                                        ]
+                                      },
+                                      "id": {
+                                        "type": "string",
+                                        "pattern": "^[0-9a-f]{64}$",
+                                        "minLength": 64,
+                                        "maxLength": 64
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": ["kind", "id"]
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "const": "tool_invocation"
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": [
+                                  "type",
+                                  "session_id",
+                                  "tool_id",
+                                  "snapshot"
+                                ]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "session_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "tool_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "snapshot": {
+                                    "type": "object",
+                                    "properties": {
+                                      "kind": {
+                                        "type": "string",
+                                        "enum": [
+                                          "index_page",
+                                          "session_snapshot",
+                                          "turn_snapshot",
+                                          "message_snapshot",
+                                          "tool_snapshot",
+                                          "intent",
+                                          "observation_batch",
+                                          "event_batch",
+                                          "transcript_manifest",
+                                          "transcript_page",
+                                          "transcript_chunk",
+                                          "content",
+                                          "checkpoint_version",
+                                          "association",
+                                          "alias",
+                                          "relation_page",
+                                          "source_state",
+                                          "projection_catalog",
+                                          "catalog_conflict"
+                                        ]
+                                      },
+                                      "id": {
+                                        "type": "string",
+                                        "pattern": "^[0-9a-f]{64}$",
+                                        "minLength": 64,
+                                        "maxLength": 64
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": ["kind", "id"]
+                                  },
+                                  "content": {
+                                    "type": "object",
+                                    "properties": {
+                                      "kind": {
+                                        "type": "string",
+                                        "enum": [
+                                          "index_page",
+                                          "session_snapshot",
+                                          "turn_snapshot",
+                                          "message_snapshot",
+                                          "tool_snapshot",
+                                          "intent",
+                                          "observation_batch",
+                                          "event_batch",
+                                          "transcript_manifest",
+                                          "transcript_page",
+                                          "transcript_chunk",
+                                          "content",
+                                          "checkpoint_version",
+                                          "association",
+                                          "alias",
+                                          "relation_page",
+                                          "source_state",
+                                          "projection_catalog",
+                                          "catalog_conflict"
+                                        ]
+                                      },
+                                      "id": {
+                                        "type": "string",
+                                        "pattern": "^[0-9a-f]{64}$",
+                                        "minLength": 64,
+                                        "maxLength": 64
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": ["kind", "id"]
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "const": "tool_output"
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": [
+                                  "type",
+                                  "session_id",
+                                  "tool_id",
+                                  "snapshot",
+                                  "content"
+                                ]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "thread_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "const": "review_thread"
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": ["type", "thread_id"]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "thread_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "comment_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "revision": {
+                                    "type": "object",
+                                    "properties": {
+                                      "kind": {
+                                        "type": "string",
+                                        "enum": [
+                                          "index_page",
+                                          "anchor",
+                                          "comment_body",
+                                          "comment_revision",
+                                          "thread_event",
+                                          "event_page",
+                                          "thread_snapshot",
+                                          "relation_page",
+                                          "status_page"
+                                        ]
+                                      },
+                                      "id": {
+                                        "type": "string",
+                                        "pattern": "^[0-9a-f]{64}$",
+                                        "minLength": 64,
+                                        "maxLength": 64
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": ["kind", "id"]
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "const": "review_comment"
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": [
+                                  "type",
+                                  "thread_id",
+                                  "comment_id",
+                                  "revision"
+                                ]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "task_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "comment_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "version": {
+                                    "type": "integer",
+                                    "format": "uint64",
+                                    "minimum": 0
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "const": "work_comment"
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": [
+                                  "type",
+                                  "task_id",
+                                  "comment_id",
+                                  "version"
+                                ]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "session_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "checkpoint_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "version": {
+                                    "type": "object",
+                                    "properties": {
+                                      "kind": {
+                                        "type": "string",
+                                        "enum": [
+                                          "index_page",
+                                          "session_snapshot",
+                                          "turn_snapshot",
+                                          "message_snapshot",
+                                          "tool_snapshot",
+                                          "intent",
+                                          "observation_batch",
+                                          "event_batch",
+                                          "transcript_manifest",
+                                          "transcript_page",
+                                          "transcript_chunk",
+                                          "content",
+                                          "checkpoint_version",
+                                          "association",
+                                          "alias",
+                                          "relation_page",
+                                          "source_state",
+                                          "projection_catalog",
+                                          "catalog_conflict"
+                                        ]
+                                      },
+                                      "id": {
+                                        "type": "string",
+                                        "pattern": "^[0-9a-f]{64}$",
+                                        "minLength": 64,
+                                        "maxLength": 64
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": ["kind", "id"]
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "const": "agent_checkpoint"
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": [
+                                  "type",
+                                  "session_id",
+                                  "checkpoint_id",
+                                  "version"
+                                ]
+                              }
+                            ]
+                          },
+                          "type": {
+                            "type": "string",
+                            "const": "create_agent_discussion"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": ["type", "thread_id", "title", "target"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "thread_id": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{32}$",
+                            "minLength": 32,
+                            "maxLength": 32
+                          },
+                          "title": { "type": "string" },
                           "baseline": {
                             "anyOf": [
                               {
@@ -38557,6 +39101,235 @@
         "security": [{}]
       }
     },
+    "/v1/local/agents/feedback": {
+      "get": {
+        "operationId": "local_agents_feedback",
+        "tags": ["local"],
+        "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+        "parameters": [
+          {
+            "name": "session",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" },
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0,
+              "default": 0
+            },
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result at the reported snapshot.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentExecutionFeedback"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request, unknown query field or invalid cursor.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing repository Bearer credential.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied, including revoked credentials or disallowed Origin.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "404": {
+            "description": "Object not committed in the selected snapshot or unknown route.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "405": {
+            "description": "Unsupported method.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "408": {
+            "description": "Native query canceled.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "409": {
+            "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "410": {
+            "description": "Index task expired or was lost on server restart.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "413": {
+            "description": "Request or response resource limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "503": {
+            "description": "Busy, unavailable, corrupt or incomplete history.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "504": {
+            "description": "Request or response deadline exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          }
+        },
+        "x-jj-store-query-schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "session": { "type": "string" },
+            "after": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0,
+              "default": 0
+            }
+          },
+          "required": ["session"]
+        },
+        "security": [{}]
+      },
+      "head": {
+        "operationId": "local_agents_feedback_head",
+        "tags": ["local"],
+        "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+        "parameters": [
+          {
+            "name": "session",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" },
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0,
+              "default": 0
+            },
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result at the reported snapshot."
+          },
+          "400": {
+            "description": "Invalid request, unknown query field or invalid cursor."
+          },
+          "401": { "description": "Missing repository Bearer credential." },
+          "403": {
+            "description": "Access denied, including revoked credentials or disallowed Origin."
+          },
+          "404": {
+            "description": "Object not committed in the selected snapshot or unknown route."
+          },
+          "405": { "description": "Unsupported method." },
+          "408": { "description": "Native query canceled." },
+          "409": {
+            "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index."
+          },
+          "410": {
+            "description": "Index task expired or was lost on server restart."
+          },
+          "413": {
+            "description": "Request or response resource limit exceeded."
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding."
+          },
+          "503": {
+            "description": "Busy, unavailable, corrupt or incomplete history."
+          },
+          "504": { "description": "Request or response deadline exceeded." }
+        },
+        "x-jj-store-query-schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "session": { "type": "string" },
+            "after": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0,
+              "default": 0
+            }
+          },
+          "required": ["session"]
+        },
+        "security": [{}]
+      }
+    },
     "/v1/local/agents/events": {
       "get": {
         "operationId": "local_agents_events",
@@ -43128,6 +43901,12 @@
           "baseline": {
             "anyOf": [
               { "$ref": "#/components/schemas/ThreadCodeAnchorV1" },
+              { "type": "null" }
+            ]
+          },
+          "agent_message": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/ReactionTargetV1" },
               { "type": "null" }
             ]
           }
@@ -50428,6 +51207,50 @@
           "error": { "type": ["string", "null"] }
         },
         "required": ["version", "request_id", "session_id", "state", "error"]
+      },
+      "AgentExecutionFeedback": {
+        "type": "object",
+        "properties": {
+          "messages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentExecutionFeedbackMessage"
+            }
+          },
+          "write_unavailable": {
+            "type": ["string", "null"],
+            "description": "Current browser feedback write capability; does not suppress readable history."
+          }
+        },
+        "required": ["messages"],
+        "description": "Repository-selected messages and ordinary discussion revisions, never journal authority."
+      },
+      "AgentExecutionFeedbackMessage": {
+        "type": "object",
+        "properties": {
+          "row_id": { "type": "string" },
+          "target": { "$ref": "#/components/schemas/ReactionTargetV1" },
+          "threads": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ThreadId" }
+          },
+          "replies": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AgentExecutionFeedbackReply"
+            }
+          }
+        },
+        "required": ["row_id", "target", "threads", "replies"]
+      },
+      "AgentExecutionFeedbackReply": {
+        "type": "object",
+        "properties": {
+          "thread_id": { "$ref": "#/components/schemas/ThreadId" },
+          "revision": { "$ref": "#/components/schemas/CollabObjectRef" },
+          "message": { "$ref": "#/components/schemas/HumanMessageRevisionV1" }
+        },
+        "required": ["thread_id", "revision", "message"]
       },
       "AgentExecutionEventPage": {
         "type": "object",

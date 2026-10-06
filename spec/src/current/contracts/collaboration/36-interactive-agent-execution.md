@@ -91,3 +91,29 @@ read-only, survives journal restart/resume and publication, and defaults to
 unknown for legacy events. It is not a provider-authored timestamp and does not
 change native AgentStore identities or authority. Refresh, status reads and
 rendering never fabricate missing times.
+
+Repository discussion in the inbox targets the exact published AgentStore user
+or assistant message. A ThreadVersion optionally retains an immutable
+agent_message target (session, message, event batch/event and content); the
+CreateAgentDiscussion command accepts only that typed target and validates it
+against the currently selected AgentStore before publication. Legacy versions
+omit the field without changing their canonical bytes. Replies remain ordinary
+ThreadStore human message revisions; reactions retain the original exact
+AgentStore target and server-derived actor. Pending capture supports drafting
+but cannot receive durable feedback until its original record is selected.
+
+The next explicit Prompt reads authorized committed, visible discussion replies
+from one captured repository selection, with bounded object, reply and byte
+budgets. Target membership is revalidated; tombstoned threads/messages and
+unavailable targets are excluded. Context identifies the original message and
+exact reply revisions, separates human feedback from the new prompt, and is
+retained with the original prompt request before dispatch. Retry/status reads
+never re-read feedback or dispatch again. Saving feedback, reacting and browsing
+never execute or resume an agent. Read failure or exhausted context budget
+retains the prompt draft and fails closed instead of silently omitting replies.
+
+The inbox retains the existing native code-repository Thread/Reaction refusal
+until reducer 3 is qualified. The supported native write profile is a WorkStore
+home with a frozen origin ledger; local companion providers retain their own
+qualified ref-CAS behavior. Browser capability presentation cannot bypass these
+publication rules or qualify an unimplemented registered-folder transport.

@@ -12,6 +12,8 @@ export function createLocalConfiguration(
   const execution = new AgentExecution(
     () => data.accessMode === "local_trusted" && data.executionSupported,
     fetcher,
+    (repository) =>
+      data.repositories.find((r) => r.id === repository)?.principal ?? "",
   );
   const configuration = createServerSettings({
     available: () =>

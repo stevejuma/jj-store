@@ -6749,6 +6749,16 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
           "type": "null"
         }
       ]
+    },
+    "agent_message": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/ReactionTargetV1"
+        },
+        {
+          "type": "null"
+        }
+      ]
     }
   },
   "required": [
@@ -20753,6 +20763,91 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "session_id",
     "state",
     "error"
+  ]
+}
+```
+
+## AgentExecutionFeedback
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "messages": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/AgentExecutionFeedbackMessage"
+      }
+    },
+    "write_unavailable": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Current browser feedback write capability; does not suppress readable history."
+    }
+  },
+  "required": [
+    "messages"
+  ],
+  "description": "Repository-selected messages and ordinary discussion revisions, never journal authority."
+}
+```
+
+## AgentExecutionFeedbackMessage
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "row_id": {
+      "type": "string"
+    },
+    "target": {
+      "$ref": "#/components/schemas/ReactionTargetV1"
+    },
+    "threads": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ThreadId"
+      }
+    },
+    "replies": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/AgentExecutionFeedbackReply"
+      }
+    }
+  },
+  "required": [
+    "row_id",
+    "target",
+    "threads",
+    "replies"
+  ]
+}
+```
+
+## AgentExecutionFeedbackReply
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "thread_id": {
+      "$ref": "#/components/schemas/ThreadId"
+    },
+    "revision": {
+      "$ref": "#/components/schemas/CollabObjectRef"
+    },
+    "message": {
+      "$ref": "#/components/schemas/HumanMessageRevisionV1"
+    }
+  },
+  "required": [
+    "thread_id",
+    "revision",
+    "message"
   ]
 }
 ```

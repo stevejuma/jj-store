@@ -18,6 +18,7 @@ export function createThreadsController(options: {
   selectReply?: (id: string | null) => void;
 }) {
   let generation = 0;
+  let committedRequestId = $state("");
   let threads = $state<Model<"ThreadSummaryV1">[]>([]);
   let detail = $state<Model<"ThreadDetailV1">>();
   let events = $state<Model<"ThreadEventItemV1">[]>([]);
@@ -39,7 +40,10 @@ export function createThreadsController(options: {
         richReactions,
         restore,
       ),
-    onCommitted: (id) => post.committed(id),
+    onCommitted: (id) => {
+      committedRequestId = id;
+      post.committed(id);
+    },
   });
   const richReactions = createMessageReactions({
     source: options.source,
@@ -209,6 +213,12 @@ export function createThreadsController(options: {
   });
   return {
     ...commands,
+    get committedRequestId() {
+      return committedRequestId;
+    },
+    get postedThreadId() {
+      return post.postedThreadId;
+    },
     get threads() {
       return threads;
     },
@@ -252,6 +262,7 @@ export function createThreadsController(options: {
     get emojis() {
       return richReactions.emojis;
     },
+    invalidateReactions: richReactions.invalidate,
     reactionError: richReactions.getError,
     getReaction: richReactions.getReaction,
     reactionModels: richReactions.reactionModels,

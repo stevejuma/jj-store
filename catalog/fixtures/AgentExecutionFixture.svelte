@@ -1,11 +1,13 @@
 <script lang="ts">
+  import { fixtureExecutionStatus } from "./agent-execution-status.js";
   import { eventsResponse } from "./agent-execution-events.js";
+  import { agentDiscussionFixture } from "./agent-discussion-fixture.js";
+  import AgentExecutionCommandOutput from "./AgentExecutionCommandOutput.svelte";
   import { commandReceipts } from "./agent-command-receipts.js";
   import { revisionFixture } from "./agent-execution-revisions.js";
   import {
     fixtureJsonResponse as json,
-    fixtureSession,
-    fixtureRunners,
+    prepareSessionFixture,
     fixtureAgentTargets,
   } from "./agent-execution-session.js";
   import { AppShell } from "@lapismd/design-core/shell";
@@ -45,10 +47,16 @@
     retainedError = false,
     longHistory = false,
     chatFeedback,
+    agentReplies = false,
+    unknownReply = false,
+    feedbackWriteUnavailable = false,
     revisionIndexRequired = false,
     status = "Online",
   }: {
     permission?: boolean;
+    agentReplies?: boolean;
+    unknownReply?: boolean;
+    feedbackWriteUnavailable?: boolean;
     fail?: boolean;
     staleSave?: boolean;
     preparing?: boolean;
@@ -98,54 +106,45 @@
   const repository = "11".repeat(16),
     operation = "22".repeat(64),
     commit = "33".repeat(20);
-  let fixtureStatus = $state<AgentStatus>({
-    version: 1,
-    runtime: untrack(() => preparing) ? "preparing" : "ready",
-    revision: 0,
-    setups: untrack(() => status === "Empty")
-      ? []
-      : [
-          setup,
-          ...(untrack(() => alternativeAgent)
-            ? [
-                {
-                  ...setup,
-                  id: "other-agent",
-                  name: "Planning helper",
-                  runner: "cursor",
-                },
-              ]
-            : []),
-        ],
-    sessions: [
-      untrack(() =>
-        fixtureSession({
-          repository,
-          operation,
-          commit,
-          status,
-          permission,
-          workspacePath,
-          lastActivityAt,
-          preferences: sessionPreferences ?? setup.preferences,
-          modeReady: agentModeReady,
-          advertisedModels,
-        }),
-      ),
-    ],
-    runners: fixtureRunners,
-  });
-  untrack(() => {
-    if (emptySessions) fixtureStatus.sessions = [];
-    else if (!agentAssociated) fixtureStatus.sessions[0].setup_id = null;
-    if (retainedError)
-      fixtureStatus.sessions[0].last_error = "process_outcome_unknown";
-  });
+  let fixtureStatus = $state<AgentStatus>(
+    untrack(() =>
+      fixtureExecutionStatus({
+        repository,
+        operation,
+        commit,
+        setup,
+        status,
+        preparing,
+        alternativeAgent,
+        permission,
+        workspacePath,
+        lastActivityAt,
+        sessionPreferences,
+        agentModeReady,
+        advertisedModels,
+      }),
+    ),
+  );
+  untrack(() =>
+    prepareSessionFixture(
+      fixtureStatus,
+      emptySessions,
+      agentAssociated,
+      retainedError,
+    ),
+  );
   const receipts = untrack(() =>
     commandReceipts(() => fixtureStatus.sessions[0], uncertainConfiguration),
   );
   const revisions = untrack(() =>
     revisionFixture(repository, operation, revisionIndexRequired),
+  );
+  const discussionFixture = untrack(() =>
+    agentDiscussionFixture(
+      agentReplies,
+      unknownReply,
+      feedbackWriteUnavailable,
+    ),
   );
   const manager = untrack(
     () =>
@@ -153,6 +152,8 @@
         () => true,
         async (input, init) => {
           const path = String(input);
+          const discussion = await discussionFixture(path, init);
+          if (discussion) return discussion;
           const revision = revisions(path);
           if (revision) return revision;
           if (path.includes("/targets"))
@@ -231,6 +232,7 @@
           if (status === "Unknown") throw new TypeError("Status unavailable");
           return json(fixtureStatus);
         },
+        () => "22".repeat(16),
       ),
   );
   let route = $state<StoreRoute>(agentsRoute());
@@ -266,12 +268,7 @@
             resolveConfiguration = undefined;
           }}>Resolve fixture configuration</Button
         >{/if}
-      {#if lastCommand}<output aria-label="Session commands"
-          >{JSON.stringify(commands)}</output
-        >
-        <output aria-label="Last session command"
-          >{JSON.stringify(lastCommand)}</output
-        >{/if}
+      <AgentExecutionCommandOutput {commands} {lastCommand} />
       <StoreAgentLaunchButton {manager} /><Button
         onclick={() => manager.openSession(fixtureStatus.sessions[0].id)}
         >Open fixture conversation</Button

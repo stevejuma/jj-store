@@ -2327,6 +2327,21 @@
           "license": "Apache-2.0"
         }
       ]
+    },
+    {
+      "local": "web/src/lib/ui/store-agent-execution/StoreAgentInboxMessage.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-agent-activity/CommunityAgentTranscriptMessage.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        },
+        {
+          "path": "src/components/community-transcript-reply-composer/CommunityTranscriptReplyComposer.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
     }
   ],
   "owned": [

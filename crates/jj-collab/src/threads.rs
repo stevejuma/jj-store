@@ -49,10 +49,15 @@ pub struct ThreadVersionV1 {
     pub previous: Option<CollabObjectRef>,
     pub event: CollabObjectRef,
     pub baseline: Option<ThreadCodeAnchorV1>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub agent_message: Option<ReactionTargetV1>,
 }
 impl ThreadVersionV1 {
     pub fn validate(&self) -> Result<()> {
         schema(self.schema_version)?;
+        if let Some(target) = &self.agent_message {
+            validate_agent_discussion(target)?;
+        }
         if !label(&self.title, 1024) || self.accepted_at_millis < 0 {
             return Err(Error::Invalid("Thread version"));
         }
@@ -67,6 +72,12 @@ impl ThreadVersionV1 {
         }
         Ok(())
     }
+}
+pub(crate) fn validate_agent_discussion(target: &ReactionTargetV1) -> Result<()> {
+    if !matches!(target, ReactionTargetV1::AgentMessage { .. }) {
+        return Err(Error::Invalid("agent discussion target"));
+    }
+    target.validate()
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(tag = "type", rename_all = "snake_case", deny_unknown_fields)]

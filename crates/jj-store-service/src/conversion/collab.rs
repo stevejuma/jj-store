@@ -53,6 +53,9 @@ fn translate(
             return Err("conversion rebuilds collaboration catalogs".into());
         }
         CollabObjectV1::ThreadVersion(v) => {
+            if let Some(t) = &mut v.agent_message {
+                target(t, c, a, r)?;
+            }
             if v.baseline.is_some() {
                 return Err("Thread code baseline requires qualified conversion evidence".into());
             }

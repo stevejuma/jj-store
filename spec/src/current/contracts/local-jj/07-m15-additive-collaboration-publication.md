@@ -30,3 +30,13 @@ most 256 rows and four MiB, and require the captured metadata commit for a
 continuation. Raw reaction records are not exposed by the local asset reader.
 Capture-plus-binding publication and cold full-process CLI/UI acceptance remain
 separate pending gates.
+
+Explicit CreateAgentDiscussion validates an exact selected AgentMessage target
+and retains its immutable baseline and event/content dependencies in the
+ordinary ThreadStore. Human replies use existing message commands and receipts;
+neither discussion nor reaction publication controls execution. Execution
+feedback captures one authorized companion metadata commit and projects visible
+reply revisions from that selection. The next explicit prompt can include those
+replies as retained context; exact request replay never reads new feedback.
+Provider/reopen qualification does not qualify a local browser Thread transport
+or the broader cold local CLI/UI gate.

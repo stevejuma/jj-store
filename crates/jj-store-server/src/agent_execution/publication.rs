@@ -10,7 +10,7 @@ use jj_store_capture::{
     local_agent_publication::drain_local_capture_spool, transcript_sanitization::TRANSCRIPT_POLICY,
 };
 use sha2::{Digest as _, Sha256};
-fn identity(value: &str) -> [u8; 16] {
+pub(super) fn identity(value: &str) -> [u8; 16] {
     Sha256::digest(value.as_bytes())[..16]
         .try_into()
         .expect("digest")

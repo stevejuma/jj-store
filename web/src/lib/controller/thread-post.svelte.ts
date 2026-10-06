@@ -24,6 +24,7 @@ export function createThreadPost(options: {
   open: (id: string) => Promise<void>;
 }) {
   const drafts = new Map<string, Draft>();
+  let postedThreadId = $state("");
   const identity = () => `${options.repository()}:${options.principal()}`;
   function committed(id: string) {
     for (const draft of drafts.values())
@@ -77,6 +78,7 @@ export function createThreadPost(options: {
         await options.execute(current.request);
       }
       if (valid() && current.committed) {
+        postedThreadId = current.thread;
         drafts.delete(key);
         await options.open(current.thread);
       }
@@ -95,10 +97,17 @@ export function createThreadPost(options: {
   return {
     committed,
     resume,
+    get postedThreadId() {
+      return postedThreadId;
+    },
     clear() {
       drafts.clear();
     },
-    async create(title: string, body?: string) {
+    async create(
+      title: string,
+      body?: string,
+      target?: import("./thread-types.js").ReactionTarget,
+    ) {
       const key = identity(),
         existing = drafts.get(key);
       if (
@@ -126,12 +135,19 @@ export function createThreadPost(options: {
         request: {
           version: 1,
           request_id: collabRequestId(),
-          command: {
-            type: "create",
-            thread_id: thread,
-            title: title.trim(),
-            baseline: null,
-          },
+          command: target
+            ? {
+                type: "create_agent_discussion",
+                thread_id: thread,
+                title: title.trim(),
+                target,
+              }
+            : {
+                type: "create",
+                thread_id: thread,
+                title: title.trim(),
+                baseline: null,
+              },
         },
       });
       await resume();

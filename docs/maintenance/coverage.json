@@ -12,8 +12,8 @@
       "docs/site/concepts/snapshots.md"
     ],
     "review": {
-      "reason": "Reviewed combined main catalog-root point reads and Stacks WAL/object/model history against publication, storage and snapshot manuals; manifest CAS, staged exclusion, closure proofs and retained request semantics remain accurate.",
-      "fingerprint": "3df507c63636483f3b9970c0bde6ed4eb4c5c8340adfed9768167bd438fda552"
+      "reason": "Reviewed additive exact AgentMessage discussion validation and retained external dependencies; manifest CAS, WAL receipts and reducer/publication authority unchanged",
+      "fingerprint": "9e30afe53800e73e988252cbc33cb400bbee77efa06f018b1983fc7311c35b07"
     }
   },
   {
@@ -30,8 +30,8 @@
       "docs/site/concepts/collaboration.md"
     ],
     "review": {
-      "reason": "Reviewed timestamp propagation through existing AgentStore capture metadata; native identity, immutable publication, sanitization and receipt authority unchanged",
-      "fingerprint": "0e5a30f69415fa0964fa33ca0c0d49a7c58ec1960d9f3ce865dfe1d529554703"
+      "reason": "Reviewed inbox discussion/context persistence and explicit unsupported native/local browser gates; origin ledger and request replay unchanged",
+      "fingerprint": "3820c3df53c0231dadf4674f6a38b347415796dd21929a240bb0f9d852b6086a"
     }
   },
   {
@@ -65,8 +65,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Execution journal records device observation time, generated event DTO and captured observations retain it; reviewed restart, publication authority and legacy unknown timing in lifecycle and architecture pages",
-      "fingerprint": "a50b4f2738384575ce0a11702f1fcd1ca1d67c8f620e35ec2ddcbc8079d306f2"
+      "reason": "Reviewed authorized feedback write availability and additive discussion conversion regression; publication guards remain unchanged",
+      "fingerprint": "f0e3dc7fdd868b126298128f323d2fe06e06ec0e61d887133078087a30d09f3e"
     }
   },
   {
@@ -96,8 +96,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed unchanged configuration/environment controls and updated lifecycle journal persistence; event observation metadata adds no setting, launch flag or credential surface",
-      "fingerprint": "d8dca6d7641d6f89cc591716784c66c88ecab1cef6b574e1f8d447f8be9008b3"
+      "reason": "Reviewed feedback availability and pinned read metadata; installation settings, launch configuration and credential handling remain unchanged",
+      "fingerprint": "28700a0f6629c8e5614460f3611a335bcbaede38ca50f784299c92910f55714b"
     }
   },
   {
@@ -122,8 +122,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "A watcher invalidation permits one fresh physical admission recheck before any command dispatch; changed identity/generation and continued invalidation remain refused; bounded agent avatar/CSP admission remains",
-      "fingerprint": "4d8bc5f4543daac2432ec06d1896a9c76a864e5268c94bddf2fb86a9434da405"
+      "reason": "Reviewed feedback availability projection and exact HTTP admission regression; native code-repository publication refusal retained",
+      "fingerprint": "20766789d1a0d402b15789758df0e867f0453c0042e7c4c4c2ebd95153862c1d"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed the integrated recorded-agent banner insets, secondary collection heading size and ordered OpenCode typed-text rendering alongside main’s Community inbox/chat metadata and captured observation-time formatting. Original record copy values, safe fallback rendering, exact recovery and immutable capture/transport contracts remain unchanged; existing browsing and agent-execution guides describe the combined presentation.",
-      "fingerprint": "a1458db00e3b4cb0cc21be0b274aef7f1d1288fe6e240f20ba0973f7f8654657"
+      "reason": "Reviewed unavailable feedback projection retaining editable drafts and readable replies without unsupported reaction queries; exact shared Community messages/actions remain unchanged",
+      "fingerprint": "0d67d01455978cb494212fde4bd9c6814f51c973adaef306be24ff144d7ca55b"
     }
   },
   {
@@ -154,8 +154,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Regenerated event DTO and type references for optional retained observation time; HTTP version, admission, CLI commands and transports remain unchanged",
-      "fingerprint": "481ad8e3233c0a7b256700f90990e5cf269810a73707446e8be8b5cd66daa3f5"
+      "reason": "Regenerated optional feedback write_unavailable DTO; canonical IDs and existing command revalidation unchanged",
+      "fingerprint": "ee21236d36804ce04524d1824a4a70472d19bc1cdbaaf99f5aac88e3639dc58d"
     }
   }
 ]

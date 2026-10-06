@@ -121,3 +121,27 @@ session explicitly before sending. Send uses the configured agent's negotiated
 runtime choices and waits for the exact accepted configuration receipt and
 confirmed mode readiness before submitting the message; failed configuration
 retains your draft.
+
+## Replies and reactions
+
+Hover or focus a saved user/agent message to reply or react. Replies are
+ordinary repository ThreadStore messages linked to that exact captured
+AgentStore message; reactions use the original message's exact persisted target.
+They remain in repository history after the process ends or the service
+restarts. You can draft a reply before its original message is published, then
+save once it is available.
+
+Saving a reply or reaction does not run the agent. The next explicit Send reads
+committed, visible replies as follow-up context, with their original message and
+exact reply revisions. Deleted messages and tombstoned discussions are omitted.
+If feedback cannot be read or exceeds the bounded context allowance, Send keeps
+your draft and reports the failure. Unknown reply outcomes keep the original
+request for Check reply status or Retry same reply; successful recovery clears
+the resolved error. Reactions themselves are not treated as instructions.
+
+Inbox reply/reaction writes currently require the supported native
+WorkStore-home profile. Native code repositories still require collaboration
+replication qualification; registered-folder inbox writes require their browser
+transport. The reply composer explains unavailable writes and retains your
+draft. Reading existing feedback and provider-side prompt context does not
+bypass these gates.

@@ -153,7 +153,10 @@ test("activity reconnect preserves explicit command errors and does not dispatch
     expect(manager.activityError).toBe("");
     expect(
       paths.every(
-        (path) => path.includes("/events?") || path.includes("/stream?"),
+        (path) =>
+          path.includes("/events?") ||
+          path.includes("/stream?") ||
+          path.includes("/feedback?"),
       ),
     ).toBe(true);
   } finally {

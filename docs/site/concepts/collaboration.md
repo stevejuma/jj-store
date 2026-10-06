@@ -52,3 +52,9 @@ request receipts, permission lifetimes and process state; AgentStore owns
 committed sanitized observations through its versioned controller projection.
 Multiline tool titles remain evidence while tool snapshot labels are bounded.
 Unknown or unusable turns never project an idle session.
+
+In the native execution inbox, replies to saved agent and prompt messages use
+ordinary ThreadStore revisions with an exact AgentMessage baseline. Saving them
+is separate from execution. The next explicit Send includes committed visible
+replies as bounded follow-up context; reads, reactions and reply saves do not
+start or resume a harness. See [Agent sessions](../guides/agent-execution.md).

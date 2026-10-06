@@ -37,3 +37,23 @@ read-only, survives journal restart/resume and publication, and defaults to
 unknown for legacy events. It is not a provider-authored timestamp and does not
 change native AgentStore identities or authority. Refresh, status reads and
 rendering never fabricate missing times.
+
+GET /v1/local/agents/feedback?session=<execution-id> is a bounded read-only,
+LocalTrusted Admin projection of repository-selected message targets and
+ordinary ThreadStore replies. It maps request/role rows through the owned
+capture normalizer, validates exact message membership and captures Agent/Thread
+roots in one authorized selection. It does not expose staged objects or grant
+linked repository access. The response includes row_id, typed target, discussion
+thread IDs and exact visible human-message revisions. Reads never create a
+thread, initialize collaboration domains, apply preferences or dispatch a
+prompt. Typed repository Thread creation adds create_agent_discussion with an
+exact AgentMessage target. Existing collaboration commands, actors, observed
+reaction slots, original request/status receipts and admission limits remain
+authoritative.
+
+Optional write_unavailable explains the current inbox write capability without
+hiding readable targets or replies. Native code repositories with an existing
+origin ledger and no WorkStore home retain the reducer-3 publication refusal.
+Registered-folder inbox writes remain unavailable until its browser Thread
+transport is qualified; local provider feedback/context reads remain supported.
+This projection never grants write access or weakens command revalidation.

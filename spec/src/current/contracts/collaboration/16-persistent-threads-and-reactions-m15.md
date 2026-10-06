@@ -157,3 +157,13 @@ code-only; complete collaboration exports and verified Nostr mappings are later
 adapters. Notifications are optional committed-event consumers and are never a
 publication prerequisite. No backfill, controller dispatch or adapter projection
 is implicit in Thread/Reaction publication.
+
+CreateAgentDiscussion is an explicit typed Thread creation command carrying only
+an exact AgentMessage reaction target. The selected ThreadVersion retains that
+immutable optional agent_message baseline across renaming and lifecycle changes;
+its event batch and content are retained dependencies. Native/local publication
+validates selected session, event, message and content membership through the
+existing shared target resolver before acceptance. Human replies remain ordinary
+ThreadStore revisions; no captured transcript is duplicated in the thread.
+Absent fields preserve canonical legacy bytes. This adds neither a primary
+session assignment nor any runner side effect.

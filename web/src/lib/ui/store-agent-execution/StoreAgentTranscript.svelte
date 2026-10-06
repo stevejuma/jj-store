@@ -3,7 +3,7 @@
   import { Reasoning } from "@lapismd/design-core/ai/experimental";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { agentMember } from "../community-agents/model.js";
-  import CommunityAgentTranscriptMessage from "../community-agent-activity/CommunityAgentTranscriptMessage.svelte";
+  import StoreAgentInboxMessage from "./StoreAgentInboxMessage.svelte";
   import CommunityAgentTranscriptPlan from "../community-agent-activity/CommunityAgentTranscriptPlan.svelte";
   import CommunityAgentTranscriptTools from "../community-agent-activity/CommunityAgentTranscriptTools.svelte";
   import StoreAgentPermission from "./StoreAgentPermission.svelte";
@@ -19,11 +19,9 @@
 
 {#if session}
   {#each rows as row (row.id)}
-    {#if row.kind === "user" || row.kind === "assistant"}<CommunityAgentTranscriptMessage
-        role={row.kind}
-        text={row.text}
-        observedAtMillis={row.observedAtMillis}
-        messageId={row.id}
+    {#if row.kind === "user" || row.kind === "assistant"}<StoreAgentInboxMessage
+        {manager}
+        row={{ ...row, kind: row.kind }}
         author={row.kind === "assistant"
           ? agentMember({
               id: session.id,
@@ -41,7 +39,7 @@
               manager.command({ action: "cancel", target: row.request })}
             >Cancel queued prompt</Button
           >{/if}
-      </CommunityAgentTranscriptMessage>
+      </StoreAgentInboxMessage>
     {:else if row.kind === "permission" && session.state === "running"}<StoreAgentPermission
         {manager}
         value={row.value}

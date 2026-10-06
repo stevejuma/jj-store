@@ -4,6 +4,7 @@ mod actor;
 mod agent_commands;
 mod agent_descriptor;
 mod agent_evidence;
+mod agent_feedback;
 mod agent_io;
 mod agent_pages;
 mod agent_provenance_pages;

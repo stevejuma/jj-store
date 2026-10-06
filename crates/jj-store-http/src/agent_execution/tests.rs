@@ -63,11 +63,70 @@ impl agents::Manager for Manager {
             next: None,
         })
     }
+    async fn feedback(
+        &self,
+        actor: m::PrincipalId,
+        session: String,
+    ) -> agents::Result<agents::Feedback> {
+        assert_eq!(actor, m::PrincipalId::new([1; 16]));
+        assert_eq!(session, "fixture");
+        Ok(agents::Feedback {
+            messages: vec![],
+            write_unavailable: None,
+        })
+    }
     fn subscribe(&self) -> tokio::sync::broadcast::Receiver<u64> {
         self.changes.subscribe()
     }
     async fn shutdown(&self) -> agents::Result<()> {
         Ok(())
+    }
+}
+#[tokio::test]
+async fn feedback_is_read_only_local_admin_and_rejects_unbound_queries() {
+    let root = tempfile::tempdir().unwrap();
+    for access in [
+        Access::Authenticated,
+        Access::LocalTrusted {
+            principal: m::PrincipalId::new([1; 16]),
+            permission: Permission::Read,
+        },
+    ] {
+        let response = api(root.path(), access)
+            .router()
+            .oneshot(request("/v1/local/agents/feedback?session=fixture", None))
+            .await
+            .unwrap();
+        assert_eq!(response.status(), StatusCode::FORBIDDEN);
+    }
+    let api = api(
+        root.path(),
+        Access::LocalTrusted {
+            principal: m::PrincipalId::new([1; 16]),
+            permission: Permission::Admin,
+        },
+    );
+    let response = api
+        .router()
+        .oneshot(request("/v1/local/agents/feedback?session=fixture", None))
+        .await
+        .unwrap();
+    assert_eq!(response.status(), StatusCode::OK);
+    let feedback: serde_json::Value =
+        serde_json::from_slice(&to_bytes(response.into_body(), 4096).await.unwrap()).unwrap();
+    assert_eq!(feedback, serde_json::json!({"messages":[]}));
+    for path in [
+        "/v1/local/agents/feedback?session=fixture&after=1",
+        "/v1/local/agents/feedback?session=fixture&actor=caller",
+    ] {
+        assert_eq!(
+            api.router()
+                .oneshot(request(path, None))
+                .await
+                .unwrap()
+                .status(),
+            StatusCode::BAD_REQUEST
+        );
     }
 }
 fn api(root: &std::path::Path, access: Access) -> HttpApi {

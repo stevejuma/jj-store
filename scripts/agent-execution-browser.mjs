@@ -1,8 +1,10 @@
+import { validateAgentAcceptanceOrigin } from "./agent-execution-browser-input.mjs";
 // Cold production-browser acceptance against the disposable native service.
 import {
   verifyChatFeedback,
   verifyChatWorking,
 } from "./agent-execution-chat-feedback.mjs";
+import { verifyAgentDiscussion } from "./agent-execution-discussion.mjs";
 import { chromium, expect } from "@playwright/test";
 import {
   accessible,
@@ -15,11 +17,7 @@ import {
   waitForConnection,
 } from "./agent-execution-browser-ui.mjs";
 const [origin, repository] = process.argv.slice(2);
-if (
-  !/^http:\/\/127\.0\.0\.1:\d+$/.test(origin ?? "") ||
-  !/^[a-f0-9]{32}$/.test(repository ?? "")
-)
-  throw Error("explicit disposable native origin and repository required");
+validateAgentAcceptanceOrigin(origin, repository);
 const browser = await chromium.launch();
 try {
   const context = await browser.newContext({
@@ -179,6 +177,14 @@ try {
     workspace.getByText("Turn completed", { exact: true }),
   ).toBeVisible();
   await verifyChatFeedback(page, workspace, origin, admission, sessionId);
+  await verifyAgentDiscussion(
+    page,
+    workspace,
+    origin,
+    admission,
+    sessionId,
+    repository,
+  );
   await composer.fill("Retained inbox draft");
   await sessionOption(page, "Activity log");
   await expect(page).toHaveURL(new RegExp(`/agents/sessions/${sessionId}`));

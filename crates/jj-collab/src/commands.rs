@@ -8,6 +8,11 @@ use std::collections::BTreeMap;
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(tag = "type", rename_all = "snake_case", deny_unknown_fields)]
 pub enum ThreadCommandV1 {
+    CreateAgentDiscussion {
+        thread_id: ThreadId,
+        title: String,
+        target: ReactionTargetV1,
+    },
     Create {
         thread_id: ThreadId,
         title: String,
@@ -49,6 +54,7 @@ impl ThreadCommandV1 {
     pub fn thread_id(&self) -> ThreadId {
         match self {
             Self::Create { thread_id, .. }
+            | Self::CreateAgentDiscussion { thread_id, .. }
             | Self::Rename { thread_id, .. }
             | Self::Lifecycle { thread_id, .. }
             | Self::Message { thread_id, .. }
@@ -58,6 +64,12 @@ impl ThreadCommandV1 {
     }
     pub fn validate(&self) -> Result<()> {
         match self {
+            Self::CreateAgentDiscussion { title, target, .. } => {
+                if !label(title, 1024) {
+                    return Err(Error::Invalid("Thread title"));
+                }
+                crate::threads::validate_agent_discussion(target)?;
+            }
             Self::Create {
                 title, baseline, ..
             } => {
@@ -245,7 +257,7 @@ impl ThreadStateV1 {
         let mut root = self.root.clone();
         let old = self.threads.get(&thread_id).copied();
         let expected = match command {
-            ThreadCommandV1::Create { .. } => None,
+            ThreadCommandV1::Create { .. } | ThreadCommandV1::CreateAgentDiscussion { .. } => None,
             ThreadCommandV1::Rename { expected, .. }
             | ThreadCommandV1::Lifecycle { expected, .. } => Some(*expected),
             ThreadCommandV1::Message {
@@ -264,7 +276,20 @@ impl ThreadStateV1 {
         let mut message = None;
         let mut link = None;
         let mut reassigned_from = None;
+        let agent_message = match command {
+            ThreadCommandV1::CreateAgentDiscussion { target, .. } => Some(target.clone()),
+            _ => old.and_then(|r| match graph.get(r).ok()? {
+                CollabObjectV1::ThreadVersion(v) => v.agent_message.clone(),
+                _ => None,
+            }),
+        };
         let (title, status, baseline, event_kind) = match command {
+            ThreadCommandV1::CreateAgentDiscussion { title, .. } => (
+                title.clone(),
+                ThreadStatusV1::Created,
+                None,
+                ThreadEventKindV1::Created,
+            ),
             ThreadCommandV1::Create {
                 title, baseline, ..
             } => (
@@ -566,6 +591,7 @@ impl ThreadStateV1 {
             previous: old,
             event,
             baseline,
+            agent_message,
         }))?;
         root.threads = graph.catalog_update(
             root.threads,

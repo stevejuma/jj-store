@@ -39,6 +39,11 @@ impl LocalRepository {
             let reviews = self.review_store_at(pin.as_ref(), repository).await?;
             let (domain, bytes, retained, result) = match &request.command {
                 LocalCollabCommand::Thread { intent: command } => {
+                    if let ThreadCommandV1::CreateAgentDiscussion { target, .. } = command {
+                        let reader =
+                            CollabTargetReaderV1::new(repository, None, Some(&agents), None)?;
+                        resolve_reaction_target(&reader, target).await?;
+                    }
                     validate_link(command, &agents, &reviews).await?;
                     let (root, result) = threads.state.apply(
                         command,

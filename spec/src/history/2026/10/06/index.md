@@ -13,6 +13,8 @@ Browse the child pages below.
 - [E-EXEC-005](E-EXEC-005/index.md)
 - [E-EXEC-006](E-EXEC-006/index.md)
 - [E-EXEC-007](E-EXEC-007/index.md)
+- [E-EXEC-008](E-EXEC-008/index.md)
+- [E-EXEC-009](E-EXEC-009/index.md)
 - [E-GOV-003](E-GOV-003/index.md)
 - [E-M21-057](E-M21-057/index.md)
 - [E-M21-058](E-M21-058/index.md)

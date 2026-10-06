@@ -3,6 +3,8 @@ use jj_store_jj::local_metadata::{Domain, Limits, MetadataStore};
 use jj_store_model as m;
 use jj_store_service::local_repository::*;
 use std::{collections::BTreeSet, path::Path, process::Command};
+#[path = "local_collab/agent_discussion.rs"]
+mod agent_discussion;
 
 fn fixture() -> (tempfile::TempDir, LocalRepository) {
     let root = tempfile::tempdir().unwrap();

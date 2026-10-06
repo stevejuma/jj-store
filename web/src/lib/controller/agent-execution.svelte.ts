@@ -1,4 +1,6 @@
 import { activeAgentSession } from "./agent-activity-session.js";
+import { showAgentLaunch } from "./agent-execution-launch-context.js";
+import { AgentDiscussions } from "./agent-discussions.svelte.js";
 import { consumeAgentEvents } from "./agent-execution-stream.js";
 import { LocalClient } from "../api/local-client.js";
 import { agentLaunchDraft } from "./agent-execution-types.js";
@@ -49,24 +51,20 @@ export class AgentExecution {
   #stream?: AbortController;
   #timer?: ReturnType<typeof setTimeout>;
   readonly client: LocalClient;
+  readonly discussions: AgentDiscussions;
   constructor(
     readonly available: () => boolean,
     fetcher?: typeof fetch,
+    principal?: (repository: string) => string,
   ) {
     this.client = new LocalClient("", fetcher);
+    this.discussions = new AgentDiscussions(this, fetcher, principal);
   }
   get session() {
     return this.value?.sessions.find((s) => s.id === this.selected);
   }
-  async show(context: AgentLaunchContext = {}) {
-    if (!this.available()) return;
-    this.context = context;
-    this.launchDraft = agentLaunchDraft(context.commit);
-    this.setupId = "";
-    this.open = true;
-    this.launchOpen = true;
-    this.onNavigate?.("new");
-    await this.refresh();
+  show(context: AgentLaunchContext = {}) {
+    return showAgentLaunch(this, context);
   }
   directory = () => this.onNavigate?.("directory");
   startAgent(id: string) {
@@ -103,6 +101,7 @@ export class AgentExecution {
       if (!this.#alive) return;
       this.value = status;
       this.targets = targets;
+      if (this.selected && this.open) void this.discussions.load(this.selected);
       if (this.pending) await this.checkOutcome();
       this.connectionError = "";
     } catch (cause) {
@@ -122,6 +121,7 @@ export class AgentExecution {
     this.#stream?.abort();
     this.drafts[id] ??= "";
     this.selected = id;
+    void this.discussions.load(id);
     this.events = [];
     this.eventsLoading = true;
     const abort = (this.#stream = new AbortController());
@@ -289,6 +289,7 @@ export class AgentExecution {
     return request_id;
   }
   destroy() {
+    this.discussions.destroy();
     this.#alive = false;
     clearTimeout(this.#timer);
     this.#stream?.abort();

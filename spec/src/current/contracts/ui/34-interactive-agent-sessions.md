@@ -194,3 +194,18 @@ its compact avatar/activity strip below the composer. Pending outcomes use
 readable labels in that same strip, preserve exact retry/review actions and
 never replay a prompt. The running strip is scoped to the selected session and
 cannot leak into another chat or the directory.
+
+Published inbox prompt and assistant messages expose the existing Community
+message action toolbar, exact reactions and a reply discussion composer. Replies
+use the ordinary repository ThreadStore and stay visible after navigation and
+restart. Unpublished records retain reply drafts but show that publication is
+required before saving. Saving a reply never sends a prompt. On the next
+explicit Send, committed replies become follow-up context; reaction values
+themselves are not treated as authored instructions. Reply/feedback failures
+retain drafts and exact pending collaboration identities beside their controls.
+
+Repository feedback availability is shown beside the reply composer. Unsupported
+native code repositories and registered-folder inbox transports retain editable
+reply drafts while Save and reaction actions are disabled. Existing replies stay
+readable. Native WorkStore homes retain their qualified publication profile;
+code repository reducer-3 qualification remains a separate gate.

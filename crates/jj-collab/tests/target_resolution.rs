@@ -140,6 +140,7 @@ impl Reader {
         let reference = self
             .graph
             .stage(CollabObjectV1::ThreadVersion(ThreadVersionV1 {
+                agent_message: None,
                 schema_version: 1,
                 thread_id: tid(),
                 title: "Tests".into(),

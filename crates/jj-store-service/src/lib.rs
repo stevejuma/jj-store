@@ -42,6 +42,7 @@ pub mod work;
 pub mod git_bridge;
 
 pub mod agent_execution;
+mod agent_feedback;
 pub mod capture_management;
 pub mod local_management;
 
