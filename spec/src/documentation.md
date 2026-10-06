@@ -399,3 +399,7 @@ dependent-name search, exact branch-card boundaries, shared lower cards and
 partial application. The generated API manual includes the guarded topology
 query and its additive fields; source review records keep the native/TOML
 compatibility and read-only guarantees explicit.
+
+The Stacks browsing guide documents single-click Apply/Unapply, retained grouped
+membership and unknown-outcome state inspection. This presentation change keeps
+the existing local command guards and TOML format unchanged.

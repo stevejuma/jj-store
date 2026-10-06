@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Browsing documents top-level inventory, Shared and Partially applied cards; native lower boundaries and ordered commits preserve alias selection, file ranges and existing workspace controls.",
-      "fingerprint": "d1fa15e76f9e7ba1e8eef6e1ec2ee8a68e11a5401a8bdb72b917b3252062d7c5"
+      "reason": "Stacks membership actions execute immediately through existing guarded commands; the browsing guide documents single-click Apply/Unapply and state inspection after unknown outcomes.",
+      "fingerprint": "6a6c81c737cfce6d7a6f549317c7ba5cb53ea7bd76d8b457a63ecff4f1315bb9"
     }
   },
   {

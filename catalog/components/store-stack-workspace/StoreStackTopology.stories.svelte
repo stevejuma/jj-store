@@ -59,7 +59,7 @@
     );
     await waitFor(() =>
       expect(
-        within(document.body).getByText(/"unapply_branches"/),
+        canvas.getByLabelText("Executed membership command"),
       ).toHaveTextContent('"branches":["cloud-observability"]'),
     );
   }}

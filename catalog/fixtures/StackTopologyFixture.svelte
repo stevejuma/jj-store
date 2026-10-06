@@ -146,9 +146,13 @@
       summary: JSON.stringify(localStacksCommand(snapshot, request.command)),
       conflicts: [],
     }),
-    apply: async () => ({ status: "unknown" }),
+    apply: async (request) => {
+      executed = JSON.stringify(localStacksCommand(snapshot, request.command));
+      return { status: "unknown" };
+    },
     status: async () => ({ status: "unknown" }),
   };
+  let executed = $state("");
   const controller = new StackWorkspaceController(adapter);
   const shell = new AppShellController();
   onMount(() => {
@@ -157,6 +161,7 @@
   });
 </script>
 
+<output aria-label="Executed membership command">{executed}</output>
 <Button
   disabled={!loading}
   onclick={() => {

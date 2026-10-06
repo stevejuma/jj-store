@@ -501,10 +501,15 @@ its changed files inline; opening a file places its read-only diff to the right
 of the history column. Target history cannot be applied, staged or rewritten.
 Selecting another branch returns to the ordinary stack flow. Selected stacks
 expose Apply to workspace or Unapply from workspace in a body action card rather
-than the column header. Membership actions keep the existing preview and mock
-apply flow, update branch groups after confirmation, and remain disabled while a
-command is pending. Delete local remains visibly unavailable as in the source
-reference. Workspace stacks retain Unapply in their menus without the body card.
+than the column header. Apply and Unapply execute immediately from one click,
+including grouped column and individual bookmark menu actions. They reuse the
+current operation/configuration guards and update branch groups after successful
+execution, without opening a confirmation or advisory preview. Repeated clicks
+remain disabled during execution. An unknown outcome retains the exact request
+and opens the existing status/recovery controls; ordinary local execution never
+automatically replays it. Known rejection preserves drafts and permits refresh.
+Delete local remains visibly unavailable as in the source reference. Workspace
+stacks retain Unapply in their menus without the body card.
 
 The workspace footer reuses lightly shaded owned chips for folder, named
 workspace, base branch, applied-stack count and unstaged-file count. Existing

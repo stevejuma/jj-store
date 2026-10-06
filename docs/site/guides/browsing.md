@@ -128,8 +128,10 @@ branches stay separate; merge ancestry remains a graph. Branches already
 integrated into the target remain in browsing and saved membership but do not
 occupy active columns. Empty branches at the target remain commit destinations.
 Column **Unapply stack** removes its head and exclusively represented applied
-members in one previewed transaction, retaining explicit members shared with
-another applied stack; **Unapply branch** removes only that bookmark. Applying a
+members in one transaction, retaining explicit members shared with another
+applied stack; **Unapply branch** removes only that bookmark. Apply and Unapply
+execute from one click without a confirmation dialog. If the outcome is unknown,
+use the recovery controls to inspect JJ state before trying again. Applying a
 branch does not apply an unapplied descendant. Workspace shows those derived
 columns and Unstaged changes; file diffs open beside their originating column.
 Each named workspace retains its unfinished work when you switch. Active refresh

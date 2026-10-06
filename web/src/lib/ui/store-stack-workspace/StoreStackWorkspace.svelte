@@ -26,6 +26,7 @@
   } from "../../controller/stack-workspace/presentation.js";
   import type { StackWorkspaceController } from "../../controller/stack-workspace/controller.svelte.js";
   import type { WorkspaceCommand } from "../../controller/stack-workspace/types.js";
+  import { applyWorkspaceMembership } from "../../controller/stack-workspace/command-request.js";
   import "../store-work/community-work-layout.css";
   import "../store-application/store-application.css";
   import StoreStackWorkspacePicker from "./StoreStackWorkspacePicker.svelte";
@@ -71,6 +72,8 @@
   );
   function command(value: WorkspaceCommand) {
     if (controller.locked) return;
+    if (value.kind === "apply_stack" || value.kind === "unapply_stack")
+      return void applyWorkspaceMembership(controller, value);
     const eligibility = controller.eligibility(value.kind);
     if (!eligibility.allowed) {
       controller.validation = eligibility.reason;

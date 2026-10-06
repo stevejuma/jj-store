@@ -2,7 +2,6 @@
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import StackWorkspaceApplicationFixture from "../../fixtures/StackWorkspaceApplicationFixture.svelte";
-  import { applyPreview } from "../../fixtures/stack-workspace/story-actions.js";
   const { Story } = defineMeta({
     title: "JJ Store/Stacks/Branches",
     component: StackWorkspaceApplicationFixture,
@@ -79,10 +78,10 @@
       within(body as HTMLElement).getByRole("button", { name: "Delete local" }),
     ).toBeEnabled();
     await userEvent.click(apply);
-    await applyPreview(canvasElement);
-    const unapply = within(stack).getByRole("button", {
+    const unapply = await within(stack).findByRole("button", {
       name: "Unapply feature/search",
     });
+    expect(within(document.body).queryByRole("dialog")).toBeNull();
     expect(unapply).toHaveTextContent("Unapply from workspace");
     const branches = canvas.getByRole("region", { name: "Branches" });
     expect(
@@ -91,12 +90,12 @@
       }),
     ).toBeVisible();
     await userEvent.click(unapply);
-    await applyPreview(canvasElement);
     await waitFor(() =>
       expect(
         within(stack).getByRole("button", { name: "Apply feature/search" }),
       ).toBeVisible(),
     );
+    expect(within(document.body).queryByRole("dialog")).toBeNull();
     expect(
       within(branchGroup(branches, "Local branches")).getByRole("option", {
         name: "feature/search",

@@ -2606,3 +2606,9 @@ stack; grouped unapply retains explicit members shared with another active lane.
 Existing commit/create controls admit proven dependencies of applied heads while
 retaining native immutable, target, operation and configuration guards. No
 membership migration is implied.
+
+Stacks Apply/Unapply controls invoke the existing guarded command POST directly,
+without a separate advisory preview request. Operation, binding-generation and
+configuration-revision checks remain authoritative at execution. This frontend
+flow changes no wire schema, grouped-unapply semantics or unknown-outcome retry
+policy; an uncertain result retains the exact UI request for state inspection.

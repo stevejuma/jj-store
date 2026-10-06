@@ -278,7 +278,7 @@ export class LocalStacksSession {
         throw new WorkspaceCommandError(
           cause.code === "stale_local_stacks" ? "stale" : "invalid",
           cause.code === "stale_local_stacks"
-            ? "The local workspace changed. Cancel the preview, refresh and review again."
+            ? "The local workspace changed. Refresh and try again."
             : "JJ could not apply this workspace change. Refresh and inspect its current state.",
         );
       throw cause;

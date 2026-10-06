@@ -11,14 +11,18 @@
 </script>
 
 <Dialog.Root
-  open={Boolean(controller.preview)}
+  open={Boolean(controller.preview || controller.pending)}
   onOpenChange={(open) => {
     if (!open) controller.cancelPreview();
   }}
 >
   <DialogFrame
-    title={controller.preview?.title ?? "Preview workspace command"}
-    description="Review the exact command before applying."
+    title={controller.pending
+      ? "Workspace outcome unknown"
+      : (controller.preview?.title ?? "Preview workspace command")}
+    description={controller.pending
+      ? "Check the workspace state before another command."
+      : "Review the exact command before applying."}
     preventScroll={false}
   >
     {#if controller.preview}
@@ -27,25 +31,25 @@
           title="Applying introduces conflicts"
           description={controller.preview.conflicts.join(", ")}
         />{/if}
-      {#if controller.pending}<CommunityProjectsColumnAlert
-          title="Outcome awaiting confirmation"
-          description={controller.adapter.retryPending === false
-            ? "Refresh JJ state and inspect operation history before another attempt."
-            : "Check status or retry the original request. New commands stay blocked."}
-        />
-        <p class="stack-workspace__request">
-          Request: {controller.pending.id}
-        </p>{/if}
-      {#if controller.validation}<p role="alert">
-          {controller.validation}
-        </p>{/if}
     {/if}
+    {#if controller.pending}<CommunityProjectsColumnAlert
+        title="Outcome awaiting confirmation"
+        description={controller.adapter.retryPending === false
+          ? "Refresh JJ state and inspect operation history before another attempt."
+          : "Check status or retry the original request. New commands stay blocked."}
+      />
+      <p class="stack-workspace__request">
+        Request: {controller.pending.id}
+      </p>{/if}
+    {#if controller.validation}<p role="alert">
+        {controller.validation}
+      </p>{/if}
     {#snippet footer()}
-      <Button
-        variant="outline"
-        disabled={controller.busy || Boolean(controller.pending)}
-        onclick={() => controller.cancelPreview()}>Cancel preview</Button
-      >
+      {#if controller.preview}<Button
+          variant="outline"
+          disabled={controller.busy || Boolean(controller.pending)}
+          onclick={() => controller.cancelPreview()}>Cancel preview</Button
+        >{/if}
       {#if controller.pending}<Button
           variant="outline"
           disabled={controller.busy}
