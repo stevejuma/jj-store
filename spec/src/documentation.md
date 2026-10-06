@@ -1,5 +1,9 @@
 # Application documentation
 
+The integrated browsing and API references retain native Stacks discovery and
+progressive Blame together. Review the combined source fingerprints and preserve
+each feature's existing limitations and verification evidence.
+
 The Blame guide documents on-demand recorded-file annotation, progressive
 genuine origins, source-first display, retained progress, commit navigation and
 slow JJ history. Transport and local technical pages describe operation binding,
@@ -403,3 +407,13 @@ integrated membership, grouped versus individual Unapply, retained merge/WIP
 rewrites, guarded reconciliation cleanup, and explicit live/pinned focused
 history. Managed history preparation and transient refresh ownership retain
 loading feedback and drafts without implying a repository repair.
+
+The Stacks guide also explains top-level discovery before workspace setup,
+dependent-name search, exact branch-card boundaries, shared lower cards and
+partial application. The generated API manual includes the guarded topology
+query and its additive fields; source review records keep the native/TOML
+compatibility and read-only guarantees explicit.
+
+The Stacks browsing guide documents single-click Apply/Unapply, retained grouped
+membership and unknown-outcome state inspection. This presentation change keeps
+the existing local command guards and TOML format unchanged.

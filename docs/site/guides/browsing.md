@@ -141,14 +141,24 @@ newest applied head, showing aliases together without duplicate commits. Sibling
 branches stay separate; merge ancestry remains a graph. Branches already
 integrated into the target remain in browsing and saved membership but do not
 occupy active columns. Empty branches at the target remain commit destinations.
-Column **Unapply stack** removes every explicitly applied member shown by that
-column in one previewed transaction; **Unapply branch** removes only that
-bookmark. Applying a branch does not apply an unapplied descendant. Workspace
-shows those derived columns and Unstaged changes; file diffs open beside their
-originating column. Each named workspace retains its unfinished work when you
-switch. Active refresh snapshots files with normal JJ rules. Names, target and
-membership are local settings in `.jj/jj-store/stacks.toml`; they are not
-tracked repository files.
+Column **Unapply stack** removes its head and exclusively represented applied
+members in one transaction, retaining explicit members shared with another
+applied stack; **Unapply branch** removes only that bookmark. Apply and Unapply
+execute from one click without a confirmation dialog. If the outcome is unknown,
+use the recovery controls to inspect JJ state before trying again. Applying a
+branch does not apply an unapplied descendant. Workspace shows those derived
+columns and Unstaged changes; file diffs open beside their originating column.
+Each named workspace retains its unfinished work when you switch. Active refresh
+snapshots files with normal JJ rules. Names, target and membership are local
+settings in `.jj/jj-store/stacks.toml`; they are not tracked repository files.
+
+The Branches picker lists top-level stacks. Search a lower branch or alias name
+to find its containing stack. Each stack shows connected branch cards, newest
+first, with commits belonging to that branch's exact range. Shared lower
+branches appear in both sibling stacks with a **Shared** label. **Partially
+applied** means only a lower branch is currently in your workspace; applying the
+top entry is an explicit choice. Discovery is independent of loaded history
+pages, so a pending page shows a skeleton without losing proven card boundaries.
 
 Workspace commands complete independently of the graph index. If history at the
 new operation needs preparation, columns show skeletons until their bounded

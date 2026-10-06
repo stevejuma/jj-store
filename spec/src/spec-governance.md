@@ -1,5 +1,11 @@
 # Specification governance
 
+Progressive Blame integration retains both the verified Blame slices and native
+Stacks history. Resolve shared ledger and documentation fingerprints without
+discarding either parent's evidence. Both committed feature histories remain
+ancestors of main. Keep main's working change separate and preserve any ongoing
+edits when advancing the workspace above the verified integration.
+
 The Blame UI slice extracts file display controls from the owned Community file
 panel and retains that panel's pinned source/license in
 `docs/ui-provenance.json`. The attribution presenter and query lifecycle are

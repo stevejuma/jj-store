@@ -2093,6 +2093,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/v1/local/repos/{repo}/stacks/topology": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    post: operations["local_stacks_topology"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/v1/local/repos/{repo}/stacks/conflict": {
     parameters: {
       query?: never;
@@ -6512,6 +6529,42 @@ export interface components {
           /** @constant */
           type: "symlink";
         };
+    LocalStacksTopologyResponse: {
+      /** Format: uint32 */
+      version: number;
+      operation: components["schemas"]["OperationId"];
+      target: string;
+      target_commit: string;
+      topology: components["schemas"]["LocalStacksTopology"];
+    };
+    LocalStacksTopology: {
+      lanes: components["schemas"]["LocalStacksTopologyLane"][];
+      integrated: string[];
+      complete: boolean;
+      /** @default [] */
+      inventory: components["schemas"]["LocalStacksTopologyLane"][];
+    };
+    LocalStacksTopologyLane: {
+      /** @description Newest first. Names on one tip are aliases, not additional segments. */
+      heads: components["schemas"]["LocalStacksTopologyHead"][];
+      applied: string[];
+      /**
+       * @description Explicit members removable without changing another active lane's membership.
+       * @default []
+       */
+      unapply: string[];
+    };
+    LocalStacksTopologyHead: {
+      names: string[];
+      commit: string;
+      /**
+       * @description Exact lower bookmark or first excluded target ancestor; None at ambiguous merges.
+       * @default null
+       */
+      base_commit: string | null;
+      /** @default false */
+      shared: boolean;
+    };
     LocalStacksConflict: {
       source: string;
       path: string;
@@ -6567,20 +6620,6 @@ export interface components {
       unavailable_reason?: string | null;
       /** @default false */
       membership_changed: boolean;
-    };
-    LocalStacksTopology: {
-      lanes: components["schemas"]["LocalStacksTopologyLane"][];
-      integrated: string[];
-      complete: boolean;
-    };
-    LocalStacksTopologyLane: {
-      /** @description Newest first. Multiple names on one tip are aliases, not extra segments. */
-      heads: components["schemas"]["LocalStacksTopologyHead"][];
-      applied: string[];
-    };
-    LocalStacksTopologyHead: {
-      names: string[];
-      commit: string;
     };
     LocalStacksPreview: {
       title: string;
@@ -34078,6 +34117,148 @@ export interface operations {
         };
       };
       /** @description stale_work, cursor_reset, intent_conflict or work_replication_unsupported. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  local_stacks_topology: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        repo: components["schemas"]["RepositoryId"];
+      };
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          /** Format: uint32 */
+          version: number;
+          /** Format: uint64 */
+          binding_generation: number;
+          operation: string;
+          target: string;
+          target_commit: string;
+        };
+      };
+    };
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["LocalStacksTopologyResponse"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
       409: {
         headers: {
           [name: string]: unknown;

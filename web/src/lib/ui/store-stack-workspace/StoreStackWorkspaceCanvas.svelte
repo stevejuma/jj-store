@@ -9,8 +9,9 @@
   import StoreStackTargetHistory from "./StoreStackTargetHistory.svelte";
   import StoreStackWorkspaceDiff from "./StoreStackWorkspaceDiff.svelte";
   import {
-    selectedWorkspace,
     appliedStacks,
+    browsingStack,
+    isAppliedBranch,
     stackBookmarks,
     stackLaneMembers,
   } from "../../controller/stack-workspace/presentation.js";
@@ -30,12 +31,11 @@
   let registeredStacks = $state<string[]>([]);
   let registeredDiffs = $state<string[]>([]);
   const snapshot = $derived(controller.snapshot!);
-  const workspace = $derived(selectedWorkspace(snapshot));
   const stacks = $derived(
     controller.page === "workspace"
       ? appliedStacks(snapshot)
-      : snapshot.stacks.filter(
-          (stack) => stack.id === controller.selectedStack,
+      : [browsingStack(snapshot, controller.selectedStack)].filter(
+          (stack): stack is NonNullable<typeof stack> => Boolean(stack),
         ),
   );
   const canvas = ColumnCanvas.createColumnCanvasController({
@@ -213,11 +213,13 @@
         {controller}
         {stack}
         {showStackActions}
-        applied={workspace?.applied.includes(stack.id) ?? false}
+        applied={[stack.name, ...(stack.heads[0]?.aliases ?? [])].some((name) =>
+          isAppliedBranch(snapshot, name),
+        )}
         {onCommand}
         onDrop={drop}
       />
-      {#each controller.diffs.filter((diff) => stackLaneMembers(snapshot, stack).some((member) => diff.origin === `stack-${member.id}`) && registeredDiffs.includes(diff.origin)) as diff (diff.origin)}
+      {#each controller.diffs.filter((diff) => stacks.find( (candidate) => stackLaneMembers(snapshot, candidate).some((member) => diff.origin === `stack-${member.id}`) )?.id === stack.id && registeredDiffs.includes(diff.origin)) as diff (diff.origin)}
         <StoreStackWorkspaceDiff {controller} {diff} {onCommand} />
       {/each}
     {/each}

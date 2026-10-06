@@ -1,4 +1,4 @@
-import { projectStackRange } from "./stack-segments.js";
+import { projectStackRange, shareStackSegments } from "./stack-segments.js";
 import type { StackWorkspaceReads } from "./reads.js";
 import {
   cloneWorkspace,
@@ -78,6 +78,7 @@ export class LoadedStackRanges {
     snapshot.stacks = snapshot.stacks.map((stack) =>
       this.restore(stack, snapshot.target?.commit),
     );
+    for (const stack of snapshot.stacks) shareStackSegments(snapshot, stack);
     snapshot.loadedTargetHistory = this.target(snapshot.target?.commit);
   }
   async refresh(

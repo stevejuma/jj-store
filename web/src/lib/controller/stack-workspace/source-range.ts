@@ -40,13 +40,13 @@ export function stackSourceRange(
     const segment = stack!.segments?.find(
       (segment) => segment.head.name === name,
     );
-    if (segment?.baseCommit === null)
+    if (segment?.baseCommit === null || head.baseCommit === null)
       throw new WorkspaceCommandError(
         "invalid",
         "Load more stack history to identify this branch’s lower boundary.",
       );
     return {
-      from: segment?.baseCommit ?? snapshot.target.commit,
+      from: head.baseCommit ?? segment?.baseCommit ?? snapshot.target.commit,
       to: head.commit,
     };
   }

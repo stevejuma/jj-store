@@ -43,6 +43,11 @@ test("dependent segments use native parent links and compare each head with its 
     node("lower", ["base"], ["lower"]),
     node("middle", ["lower"]),
   ]);
+  expect(projected.commits.map((commit) => commit.id)).toEqual([
+    "lower",
+    "middle",
+    "tip",
+  ]);
   expect(projected.heads).toEqual([
     { name: "upper", commit: "tip" },
     { name: "lower", commit: "lower" },
@@ -78,6 +83,24 @@ test("partial segment boundaries remain unavailable until bounded continuation p
   );
   expect(complete.segments?.[0]?.baseCommit).toBe("lower");
 });
+test("a native missing edge into excluded target ancestry retains proven branch cards", () => {
+  const lower = node("lower", ["fork"], ["lower", "alias"]);
+  lower.graph!.edges = [{ target: "fork", kind: "missing" }];
+  const projected = projectStackRange(stack, "advanced-target", [
+    node("tip", ["lower"], ["upper"]),
+    lower,
+  ]);
+  expect(
+    projected.segments?.map((s) => [
+      s.head.name,
+      s.baseCommit,
+      s.commits.map((c) => c.id),
+    ]),
+  ).toEqual([
+    ["upper", "lower", ["tip"]],
+    ["alias", "fork", ["lower"]],
+  ]);
+});
 test("merge or elided ancestry keeps the provider graph and does not invent a linear stack", () => {
   const commits = [
     node("tip", ["left", "right"], ["upper"]),
@@ -89,4 +112,73 @@ test("merge or elided ancestry keeps the provider graph and does not invent a li
   expect(projected.segments).toHaveLength(1);
   expect(projected.segments?.[0]?.commits).toEqual(commits);
   expect(projected.commits.map((c) => c.id)).toEqual(["right", "left", "tip"]);
+});
+
+test("native topology keeps unloaded lower cards and their exact boundaries beyond page one", () => {
+  const scoped = {
+    ...stack,
+    topologyHeads: [
+      { name: "upper", commit: "tip", baseCommit: "lower" },
+      {
+        name: "lower",
+        commit: "lower",
+        aliases: ["alias"],
+        baseCommit: "fork",
+        shared: true,
+      },
+    ],
+  };
+  const result = projectStackRange(
+    scoped,
+    "advanced-target",
+    [node("tip", ["next"])],
+    "page-two",
+  );
+  expect(
+    result.segments?.map((s) => [s.head.name, s.baseCommit, s.unloaded]),
+  ).toEqual([
+    ["upper", "lower", false],
+    ["lower", "fork", true],
+  ]);
+  expect(result.segments?.at(-1)?.nextCursor).toBe("page-two");
+});
+
+test("a merge in the lowest card does not erase the valid card above it", () => {
+  const result = projectStackRange(
+    {
+      ...stack,
+      topologyHeads: [
+        { name: "upper", commit: "tip", baseCommit: "merge" },
+        { name: "merged", commit: "merge", baseCommit: null },
+      ],
+    },
+    "base",
+    [
+      node("tip", ["merge"]),
+      node("merge", ["left", "right"]),
+      node("left", ["base"]),
+      node("right", ["base"]),
+    ],
+  );
+  expect(
+    result.segments?.map((s) => [s.head.name, s.commits.map((c) => c.id)]),
+  ).toEqual([
+    ["upper", ["tip"]],
+    ["merged", ["merge", "left", "right"]],
+  ]);
+  expect(result.segments?.[1]?.baseCommit).toBeNull();
+  expect(result.segments?.[1]?.commits[0]?.graph?.parents).toEqual([
+    "left",
+    "right",
+  ]);
+});
+
+test("an exhausted integrated range is empty rather than an unloaded skeleton or bookmark-only history", () => {
+  const result = projectStackRange(
+    { ...stack, commits: [node("tip", ["base"])] },
+    "advanced-target",
+    [],
+  );
+  expect(result.commits).toEqual([]);
+  expect(result.segments?.[0]?.unloaded).toBe(false);
 });

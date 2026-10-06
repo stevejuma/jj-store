@@ -1,4 +1,5 @@
 import { workspaceSourceStack } from "./files.js";
+import { workspaceCommandRequest } from "./command-request.js";
 import { outcomeText, blocksRetry } from "./local-state.js";
 import { updateWorkspaceControllerSnapshot } from "./controller-snapshot.js";
 import { selectWorkspaceFile, closeWorkspaceDiff } from "./diff-selection.js";
@@ -207,13 +208,7 @@ export class StackWorkspaceController {
       this.validation = eligibility.reason;
       return;
     }
-    const request: WorkspaceRequest = {
-      id: globalThis.crypto.randomUUID(),
-      repository: snapshot.repository,
-      revision: snapshot.revision,
-      ...(snapshot.readKey ? { readKey: snapshot.readKey } : {}),
-      command: cloneWorkspace(command),
-    };
+    const request = workspaceCommandRequest(snapshot, command);
     const ticket = ++this.#command;
     this.busy = true;
     try {
@@ -230,8 +225,7 @@ export class StackWorkspaceController {
     if (this.busy || this.pending) return;
     this.preview = null;
   }
-  async apply() {
-    const request = this.pending ?? this.preview?.request;
+  async apply(request = this.pending ?? this.preview?.request) {
     if (!request || this.busy || this.#closed) return;
     if (blocksRetry(this.adapter, this.pending)) return;
     this.busy = true;

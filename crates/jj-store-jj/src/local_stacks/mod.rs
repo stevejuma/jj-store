@@ -35,8 +35,10 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use state::state;
 mod topology;
+mod topology_query;
 use std::{path::PathBuf, sync::Arc};
 pub use topology::{Head as TopologyHead, Lane as TopologyLane, Topology};
+pub use topology_query::{TopologyRequest, TopologyResponse, read_topology};
 
 #[derive(Debug, thiserror::Error)]
 pub enum Error {

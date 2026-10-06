@@ -16,9 +16,11 @@
     controller,
     stack,
     onOtherDrop,
+    context,
   }: {
     controller: StackWorkspaceController;
     stack: WorkspaceStack;
+    context?: string;
     onOtherDrop: (event: DragEvent) => void;
   } = $props();
   const id = $props.id();
@@ -76,14 +78,14 @@
     controller.drag.leave(event, { kind: "stage", id: stack.id })}
   ondrop={drop}
   role="group"
-  aria-label={`Commit composer for ${stack.name}`}
+  aria-label={`Commit composer for ${stack.name}${context ? ` in stack ${context}` : ""}`}
 >
   <StoreStackDropGuide
     feedback={controller.drag.for({ kind: "stage", id: stack.id })}
   />
   {#if draft}
     <form
-      aria-label={`${draft.commit ? "Edit" : "Create"} commit in ${stack.name}`}
+      aria-label={`${draft.commit ? "Edit" : "Create"} commit in ${stack.name}${context ? ` in stack ${context}` : ""}`}
       onsubmit={(event) => {
         event.preventDefault();
         preview();

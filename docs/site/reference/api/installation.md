@@ -14347,6 +14347,211 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
 }
 ```
 
+## POST /v1/local/repos/{repo}/stacks/topology
+
+LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.
+
+```text
+{
+  "operationId": "local_stacks_topology",
+  "tags": [
+    "local"
+  ],
+  "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+  "parameters": [
+    {
+      "name": "repo",
+      "in": "path",
+      "required": true,
+      "schema": {
+        "$ref": "#/components/schemas/RepositoryId"
+      }
+    }
+  ],
+  "responses": {
+    "200": {
+      "description": "Authorized result at the reported snapshot.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/LocalStacksTopologyResponse"
+          }
+        }
+      }
+    },
+    "400": {
+      "description": "Invalid request, unknown query field or invalid cursor.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "401": {
+      "description": "Missing repository Bearer credential.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "403": {
+      "description": "Access denied, including revoked credentials or disallowed Origin.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "404": {
+      "description": "Object not committed in the selected snapshot or unknown route.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "405": {
+      "description": "Unsupported method.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "408": {
+      "description": "Native query canceled.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "409": {
+      "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "410": {
+      "description": "Index task expired or was lost on server restart.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "413": {
+      "description": "Request or response resource limit exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "415": {
+      "description": "Unsupported request media type or content encoding.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "503": {
+      "description": "Busy, unavailable, corrupt or incomplete history.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "504": {
+      "description": "Request or response deadline exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    }
+  },
+  "x-jj-store-query-schema": {
+    "type": "object",
+    "additionalProperties": false
+  },
+  "security": [
+    {}
+  ],
+  "requestBody": {
+    "required": true,
+    "content": {
+      "application/json": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "integer",
+              "format": "uint32",
+              "minimum": 0
+            },
+            "binding_generation": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0
+            },
+            "operation": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{128}$",
+              "minLength": 128,
+              "maxLength": 128
+            },
+            "target": {
+              "type": "string"
+            },
+            "target_commit": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "version",
+            "binding_generation",
+            "operation",
+            "target",
+            "target_commit"
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
 ## POST /v1/local/repos/{repo}/stacks/conflict
 
 LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.

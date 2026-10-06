@@ -80,6 +80,42 @@ export function productionStacksHttp(cold = false, dependent = false) {
         workspaces: [],
         warning: null,
       });
+    if (path.endsWith("/stacks/topology"))
+      return json({
+        version: 1,
+        operation: body.operation,
+        target: body.target,
+        target_commit: body.target_commit,
+        topology: {
+          complete: true,
+          lanes: [],
+          integrated: [],
+          inventory: [
+            {
+              applied: [],
+              unapply: [],
+              heads: [
+                {
+                  names: ["topic"],
+                  commit: topic,
+                  base_commit: dependent ? history[1]!.id : base,
+                  shared: false,
+                },
+                ...(dependent
+                  ? [
+                      {
+                        names: ["foundation"],
+                        commit: history[1]!.id,
+                        base_commit: base,
+                        shared: false,
+                      },
+                    ]
+                  : []),
+              ],
+            },
+          ],
+        },
+      });
     if (path.endsWith("/snapshot"))
       return json({
         ...pin,
@@ -203,7 +239,10 @@ export function productionStacksHttp(cold = false, dependent = false) {
             : [commit(base, "Workspace target", [])]
           ).map((commit) => ({
             commit,
-            edges: commit.parents.map((target) => ({ target, kind: "direct" })),
+            edges: commit.parents.map((target) => ({
+              target,
+              kind: target === base ? "missing" : "direct",
+            })),
           })),
           next: null,
         };

@@ -55,7 +55,12 @@
         (filter === "workspace"
           ? bookmark.workspace
           : bookmark.targets.length > 1);
-      const searchable = [bookmark.name, bookmark.description, bookmark.author]
+      const searchable = [
+        bookmark.name,
+        bookmark.description,
+        bookmark.author,
+        ...(bookmark.searchTerms ?? []),
+      ]
         .filter(Boolean)
         .join(" ")
         .toLocaleLowerCase();
@@ -91,7 +96,9 @@
         >{bookmark.name}</CommandView.ItemLabel
       >
       {#if bookmark.workspace}<CommunityChip size="compact" tone="success"
-          >Workspace</CommunityChip
+          >{bookmark.partiallyApplied
+            ? "Partially applied"
+            : "Workspace"}</CommunityChip
         >{:else if bookmark.default}<CommunityChip
           size="compact"
           variant="muted">default</CommunityChip

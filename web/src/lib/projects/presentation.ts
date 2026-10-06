@@ -4,6 +4,8 @@ export interface Bookmark {
   targets: readonly string[];
   default?: boolean;
   workspace?: boolean;
+  partiallyApplied?: boolean;
+  searchTerms?: readonly string[];
   description?: string;
   author?: string;
   authorEmail?: string;

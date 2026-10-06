@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Documented shared native/local JJ annotation, on-demand worker admission, retained progress and cooperative cancellation; source reads remain pinned and read-only.",
-      "fingerprint": "8e7a89309945add4c4af0e33ad342232b960730b023ea8b01915ff89644ab814"
+      "reason": "Integrated verified progressive Blame and syntax highlighting with native Stacks discovery; retained both feature contracts and their documented limits.",
+      "fingerprint": "671a227cc1d3b586514fbe719d9ad0151556676726bce3ac08874bace85062d2"
     }
   },
   {
@@ -65,7 +65,7 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed Blame service integration against authority and read-session documentation; preparation and caches remain disposable and preserve exact pins.",
+      "reason": "Integrated verified progressive Blame and syntax highlighting with native Stacks discovery; retained both feature contracts and their documented limits.",
       "fingerprint": "a7ca205504ac326f9689c892827e3070919122f26cd6c28b20d2b8f500e13eaa"
     }
   },
@@ -122,8 +122,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Documented additive native/local Blame routes, range semantics, authorization on cache hits and explicit continuation reset.",
-      "fingerprint": "80db3ff62b2ab05ba5f3a130ba80f01d01c0f50638bf42370f270f8318048867"
+      "reason": "Integrated verified progressive Blame and syntax highlighting with native Stacks discovery; retained both feature contracts and their documented limits.",
+      "fingerprint": "64058ea891a3749fb6d758632cff8b6ce24e4834d89c2ee583546561345d522a"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Source and Blame share the existing C/C++ and Rust editor grammars through the public tokenizer extension; extensionless README stays plain text.",
-      "fingerprint": "7a7d835a9821683b54d7f38d0d408969d8cabb997035b09a5648b6e2257bfba0"
+      "reason": "Integrated progressive Blame and C/Rust source highlighting with committed direct Stacks apply/unapply actions; preserve both behaviors and existing limitations.",
+      "fingerprint": "7c5bab751e3c9ab3d93ce6b207fd108b8288a872136659fc56f9f15d5f206eee"
     }
   },
   {
@@ -154,8 +154,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Regenerated the registered HTTP reference for Blame routes; existing CLI commands and native identities are unchanged.",
-      "fingerprint": "b3f8044ca21b3960f137a2a7330df3344e900f18ce76d49ed97b5e4a9ed8248b"
+      "reason": "Integrated verified progressive Blame and syntax highlighting with native Stacks discovery; retained both feature contracts and their documented limits.",
+      "fingerprint": "b6d034e9dd6a8af7eec846ab0ce727bbf15a8e31b249dce922a15a26b124404d"
     }
   }
 ]

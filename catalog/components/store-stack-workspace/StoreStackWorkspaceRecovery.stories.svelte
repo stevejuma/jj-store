@@ -27,6 +27,29 @@
 </script>
 
 <Story
+  name="Immediate membership opens recovery only after an unknown outcome"
+  args={{ page: "branches", fault: "unknown" }}
+  play={async ({ canvasElement }) => {
+    const canvas = workspaceCanvas(canvasElement),
+      portal = workspacePortal(canvasElement);
+    await userEvent.click(
+      await canvas.findByRole("option", { name: "feature/api" }),
+    );
+    await userEvent.click(
+      await canvas.findByRole("button", { name: "Unapply feature/api" }),
+    );
+    await portal.findByRole("dialog", { name: "Workspace outcome unknown" });
+    expect(portal.getByText("Outcome awaiting confirmation")).toBeVisible();
+    expect(portal.queryByRole("button", { name: "Apply command" })).toBeNull();
+    expect(portal.queryByRole("button", { name: "Cancel preview" })).toBeNull();
+    expect(canvas.getByRole("button", { name: "Create stack" })).toBeDisabled();
+    await userEvent.click(portal.getByRole("button", { name: "Check status" }));
+    await canvas.findByRole("button", { name: "Apply feature/api" });
+    expect(portal.queryByRole("dialog")).toBeNull();
+  }}
+/>
+
+<Story
   name="Unknown outcome status"
   args={{ fault: "unknown" }}
   play={async ({ canvasElement }) => {

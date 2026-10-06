@@ -48,7 +48,7 @@ pub(super) async fn validate(
             branch(repo, name)?;
             let reference = parent.as_deref().unwrap_or(&saved.target);
             resolve(repo, reference)?;
-            if parent.is_some() && !saved.applied.iter().any(|b| b == reference) {
+            if parent.is_some() && !topology::contains(repo, saved, reference).await? {
                 return Err(Error::Invalid);
             }
             (

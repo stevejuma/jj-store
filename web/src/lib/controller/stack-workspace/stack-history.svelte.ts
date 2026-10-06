@@ -1,4 +1,4 @@
-import { projectStackRange } from "./stack-segments.js";
+import { projectStackRange, shareStackSegments } from "./stack-segments.js";
 import {
   cloneWorkspace,
   type StackWorkspaceAdapter,
@@ -141,7 +141,7 @@ export class WorkspaceStackHistory {
         },
       };
       const current = this.#context!;
-      this.accept({
+      const updated = {
         ...current,
         stacks: current.stacks.map((item) =>
           item.id === id
@@ -153,7 +153,12 @@ export class WorkspaceStackHistory {
               )
             : item,
         ),
-      });
+      };
+      shareStackSegments(
+        updated,
+        updated.stacks.find((stack) => stack.id === id)!,
+      );
+      this.accept(updated);
     } catch (error) {
       if (!this.#closed && !owner.signal.aborted && scope === this.#scope)
         this.#states = {

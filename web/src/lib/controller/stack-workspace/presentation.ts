@@ -40,7 +40,11 @@ export function stackLaneMembers(
 ) {
   return snapshot.stacks.filter(
     (item) =>
-      item.id === stack.id || stack.appliedBranches?.includes(item.name),
+      item.id === stack.id ||
+      stack.topologyHeads?.some(
+        (head) => head.name === item.name || head.aliases?.includes(item.name),
+      ) ||
+      stack.appliedBranches?.includes(item.name),
   );
 }
 /** Group each bookmark's own commits, newest first, without duplicating lower segments. */
@@ -49,6 +53,7 @@ export function stackGroups(stack: WorkspaceStack) {
     return stack.segments.map((segment) => ({
       head: segment.head,
       commits: segment.commits,
+      unloaded: segment.unloaded,
     }));
   return stack.heads.map((head, index) => {
     const tip = stack.commits.findIndex((commit) => commit.id === head.commit);
@@ -58,6 +63,7 @@ export function stackGroups(stack: WorkspaceStack) {
       : -1;
     return {
       head,
+      unloaded: false,
       commits:
         tip < 0
           ? []
@@ -72,15 +78,39 @@ export function stackGroups(stack: WorkspaceStack) {
 }
 /** Feed the existing repository branch picker; bookmark target conflicts remain distinct from workspace conflicts. */
 export function stackBookmarks(snapshot: WorkspaceSnapshot): Bookmark[] {
-  if (snapshot.bookmarks)
-    return snapshot.bookmarks.map((bookmark) => ({
-      ...bookmark,
-      workspace: snapshot.stacks.some(
-        (stack) =>
-          stack.heads.some((head) => head.name === bookmark.name) &&
-          Boolean(selectedWorkspace(snapshot)?.applied.includes(stack.id)),
-      ),
-    }));
+  if (snapshot.bookmarks) {
+    const inventory = snapshot.topology?.complete
+      ? snapshot.topology.inventory
+      : undefined;
+    const names = new Set(
+      inventory?.flatMap((lane) => lane.heads.flatMap((head) => head.names)),
+    );
+    const roots = new Map(
+      inventory?.map((lane) => [lane.heads[0]?.names[0], lane]),
+    );
+    return snapshot.bookmarks
+      .filter(
+        (bookmark) => !names.has(bookmark.name) || roots.has(bookmark.name),
+      )
+      .map((bookmark) => {
+        const lane = roots.get(bookmark.name);
+        const members = lane?.heads.flatMap((head) => head.names) ?? [
+          bookmark.name,
+        ];
+        const applied =
+          lane?.heads[0]?.names.some((name) =>
+            isAppliedBranch(snapshot, name),
+          ) ?? isAppliedBranch(snapshot, bookmark.name);
+        const partial =
+          !applied && members.some((name) => isAppliedBranch(snapshot, name));
+        return {
+          ...bookmark,
+          workspace: applied || partial,
+          partiallyApplied: partial,
+          searchTerms: members,
+        };
+      });
+  }
   return snapshot.stacks.flatMap((stack) =>
     stack.heads.map((head) => {
       const tip = stack.commits.find((commit) => commit.id === head.commit);
@@ -194,4 +224,29 @@ export function retainedWorkspaceSelection(
 export function isAppliedBranch(snapshot: WorkspaceSnapshot, name: string) {
   const id = snapshot.stacks.find((stack) => stack.name === name)?.id;
   return Boolean(id && selectedWorkspace(snapshot)?.applied.includes(id));
+}
+
+/** A native proven dependent destination is editable without redundant saved membership. */
+export function isWorkspaceBranch(snapshot: WorkspaceSnapshot, name: string) {
+  return (
+    isAppliedBranch(snapshot, name) ||
+    Boolean(
+      snapshot.topology?.complete &&
+      snapshot.topology.lanes.some((lane) =>
+        lane.heads.some((head) => head.names.includes(name)),
+      ),
+    )
+  );
+}
+
+export function browsingStack(snapshot: WorkspaceSnapshot, id: string | null) {
+  const selected = snapshot.stacks.find((stack) => stack.id === id);
+  if (!selected || !snapshot.topology?.complete) return selected;
+  const lane = snapshot.topology.inventory?.find((lane) =>
+    lane.heads.some((head) => head.names.includes(selected.name)),
+  );
+  return (
+    snapshot.stacks.find((stack) => stack.name === lane?.heads[0]?.names[0]) ??
+    selected
+  );
 }

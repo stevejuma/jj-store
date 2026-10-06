@@ -180,3 +180,44 @@ async fn route_admits_only_registered_local_generations_and_typed_commands() {
         StatusCode::FORBIDDEN
     );
 }
+
+#[tokio::test]
+async fn topology_query_enforces_generation_origin_and_closed_request_shape() {
+    let root = tempfile::tempdir().unwrap();
+    let api = api(root.path(), manager(root.path()), trusted());
+    let repo = m::RepositoryId::new([1; 16]);
+    let body = serde_json::json!({"version":1,"binding_generation":6,"operation":"a".repeat(128),"target":"main","target_commit":"b".repeat(40)});
+    assert_eq!(
+        request_at(
+            &api,
+            repo,
+            body.clone(),
+            "https://foreign.example",
+            "/topology"
+        )
+        .await
+        .0,
+        StatusCode::FORBIDDEN
+    );
+    assert_eq!(
+        request_at(
+            &api,
+            repo,
+            body.clone(),
+            "http://127.0.0.1:7443",
+            "/topology"
+        )
+        .await
+        .0,
+        StatusCode::CONFLICT
+    );
+    let mut arbitrary = body;
+    arbitrary["path"] = serde_json::json!("/arbitrary");
+    assert_eq!(
+        request_at(&api, repo, arbitrary, "http://127.0.0.1:7443", "/topology")
+            .await
+            .0,
+        StatusCode::BAD_REQUEST
+    );
+    assert!(!root.path().join(".jj/jj-store").exists());
+}

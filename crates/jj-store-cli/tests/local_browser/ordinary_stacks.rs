@@ -59,6 +59,20 @@ pub async fn qualify(endpoint: &str, id: &str, folder: &Path) -> Vec<Value> {
             .unwrap()
             .contains("Core primary")
     );
+    let saved = &state["workspaces"][0];
+    let config_before = fs::read(folder.join(".jj/jj-store/stacks.toml")).unwrap();
+    let topology: Value = client.post(format!("{endpoint}/local/repos/{id}/stacks/topology"))
+        .header("x-jj-store-protocol", "1")
+        .json(&json!({"version":1,"binding_generation":snapshot["generation"],"operation":state["operation"],"target":saved["target"],"target_commit":saved["target_commit"]}))
+        .send().await.unwrap().error_for_status().unwrap().json().await.unwrap();
+    assert_eq!(topology["operation"], state["operation"]);
+    assert_eq!(topology["topology"]["complete"], true);
+    assert!(topology["topology"]["inventory"].is_array());
+    assert_eq!(
+        config_before,
+        fs::read(folder.join(".jj/jj-store/stacks.toml")).unwrap()
+    );
+    samples.push(json!({"path":"/v1/local/repos/{repo}/stacks/topology","method":"post","status":200,"media":"application/json","data":topology}));
     let workspace = state["active"].as_str().unwrap().to_owned();
     for command in [
         json!({"kind":"update","workspace":workspace,"name":"Updated second","target":"core-topic"}),

@@ -509,10 +509,15 @@ its changed files inline; opening a file places its read-only diff to the right
 of the history column. Target history cannot be applied, staged or rewritten.
 Selecting another branch returns to the ordinary stack flow. Selected stacks
 expose Apply to workspace or Unapply from workspace in a body action card rather
-than the column header. Membership actions keep the existing preview and mock
-apply flow, update branch groups after confirmation, and remain disabled while a
-command is pending. Delete local remains visibly unavailable as in the source
-reference. Workspace stacks retain Unapply in their menus without the body card.
+than the column header. Apply and Unapply execute immediately from one click,
+including grouped column and individual bookmark menu actions. They reuse the
+current operation/configuration guards and update branch groups after successful
+execution, without opening a confirmation or advisory preview. Repeated clicks
+remain disabled during execution. An unknown outcome retains the exact request
+and opens the existing status/recovery controls; ordinary local execution never
+automatically replays it. Known rejection preserves drafts and permits refresh.
+Delete local remains visibly unavailable as in the source reference. Workspace
+stacks retain Unapply in their menus without the body card.
 
 The workspace footer reuses lightly shaded owned chips for folder, named
 workspace, base branch, applied-stack count and unstaged-file count. Existing
@@ -2787,3 +2792,32 @@ local binding or authorization disposes its accepted-operation owner; transient
 read pressure retains a loaded controller, drafts and pending commands. Grouped
 branch cards render retained lower-branch selections using their original branch
 identities. Managed-index readiness restores bounded stack history.
+
+### Complete native stack discovery and boundaries
+
+JST-LOCAL-005 and JST-UI-020 separate bounded stack inventory from saved
+membership. The read-only POST `/v1/local/repos/{repo}/stacks/topology`
+validates the binding generation, exact operation and target bookmark/commit
+without snapshotting, creating TOML or reconciling repository heads. Discovery
+considers at most 4,096 non-internal bookmarks and 50,000 ancestry steps,
+independent of history pages. Ordered heads carry exact lower boundaries,
+aliases and shared-dependency flags. Only proven linear dependencies suppress
+picker entries; incomplete discovery never hides unproven branches. Empty target
+bookmarks remain destinations and integrated bookmarks remain browsable. Native
+merges retain all parent edges. Workspace lanes include unapplied dependent
+cards reachable from applied heads. Shared lower branches appear in each sibling
+stack; grouped unapply retains explicit members shared with another active lane.
+Existing commit/create controls admit proven dependencies of applied heads while
+retaining native immutable, target, operation and configuration guards. No
+membership migration is implied.
+
+The Stacks picker searches all dependent names and aliases through their
+containing top-level entry; ordinary repository branch browsing is unchanged. A
+top-level entry with only a lower member applied shows **Partially applied**;
+Workspace keeps the actual applied slice until the user applies the upper head.
+Cards show newest branches first, with compact Branches headers and existing
+Workspace controls. Shared lower cards carry **Shared**. Their original raw
+bookmark identities continue to own drafts, selections and adjacent diffs, with
+only one visible diff column per owner. Native boundaries remain usable before
+history pages arrive; unloaded card content uses skeletons. Drawing-only missing
+or indirect edges cannot invalidate a proven native boundary.

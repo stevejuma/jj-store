@@ -651,3 +651,18 @@ completion. The first workspace becomes selected before the command is
 acknowledged. Interrupted original requests retain the same preview and
 workspace identity. This private setup proof enables no HTTP command route or
 writable UI capability and does not initialize a workspace during reads.
+
+## Ordinary JJ stack inventory
+
+The ordinary local profile discovers stacks from eligible local bookmarks at one
+exact operation and target, independently of saved applied membership.
+`POST /v1/local/repos/{repo}/stacks/topology` is a guarded read query that also
+works before workspace setup. It considers at most 4,096 bookmarks and 50,000
+ancestry steps; incomplete results cannot hide unproven picker entries.
+
+Ordered heads expose same-tip aliases, proven lower boundaries and shared lower
+branches. Native merge ambiguity stops linear splitting without erasing cards
+above it. The lowest card retains the native graph. Existing lower-card commands
+are permitted when this topology proves their membership beneath an applied
+head, with ordinary immutable, target and stale-command guards. Discovery never
+modifies TOML, membership, merge/WIP commits or working files.

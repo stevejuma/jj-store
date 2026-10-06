@@ -45,11 +45,9 @@
     onDrop: (event: DragEvent, target: "stack" | "commit", id: string) => void;
   } = $props();
   const preparing = $derived(
-    Boolean(
-      controller.adapter.readStackHistory &&
+    controller.adapter.readStackHistory !== undefined &&
       !controller.histories.state(stack.id).loaded &&
-      stack.heads.length,
-    ),
+      stack.heads.length > 0,
   );
   $effect(() => {
     const id = stack.id;
@@ -232,6 +230,7 @@
         <StoreStackCommitComposer
           {controller}
           stack={member}
+          context={stack.name}
           onOtherDrop={(event) => onDrop(event, "stack", member.id)}
         />
       {/each}
@@ -266,19 +265,35 @@
                 stroke-width={REPOSITORY_LOG_STROKE_WIDTH}
               /></svg
             >{/if}
-          <StoreStackBookmarkCard
-            {controller}
-            {stack}
-            showActions={showStackActions}
-            name={group.head.name}
-            aliases={group.head.aliases ?? []}
-            commits={group.commits}
-            {onCommand}
-          />
+          {#if group.unloaded}
+            <CommunityProjectsRepositorySkeleton
+              layout="graph"
+              label={`Loading history for ${group.head.name}`}
+              count={3}
+            />
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={controller.histories.state(stack.id).loading}
+              onclick={() => void controller.histories.load(stack.id, true)}
+              >Load history for {group.head.name}</Button
+            >
+          {:else}
+            <StoreStackBookmarkCard
+              {controller}
+              {stack}
+              showActions={showStackActions}
+              name={group.head.name}
+              aliases={group.head.aliases ?? []}
+              shared={group.head.shared ?? false}
+              commits={group.commits}
+              {onCommand}
+            />
+          {/if}
         {/each}
       </div>
       {#if !stack.commits.length}<p class="stack-workspace__empty">
-          No commits yet. Create a commit or assign selected changes.
+          No commits outside the workspace target in this branch.
         </p>{/if}
     {/if}
   </ColumnCanvas.Body>

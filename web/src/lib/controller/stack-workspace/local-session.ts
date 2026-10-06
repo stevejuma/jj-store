@@ -1,3 +1,4 @@
+import { StackTopologyQuery } from "./topology-query.js";
 import { inspectLocalCommits } from "./local-inspection.js";
 import { localMutationKinds } from "./local-mutations.js";
 import { localCommitSource } from "./local-selections.js";
@@ -17,6 +18,7 @@ import {
 /** Local command state stays separate from operation-pinned browsing and its continuations. */
 export class LocalStacksSession {
   state: Model<"LocalStacksState"> | null = null;
+  readonly #topology = new StackTopologyQuery();
   #confirmed: Model<"LocalStacksState"> | null = null;
   constructor(
     readonly source: StoreDataSource,
@@ -141,6 +143,7 @@ export class LocalStacksSession {
     const result = this.state
       ? projectLocalStacks(snapshot, this.state)
       : snapshot;
+    await this.#topology.project(result, this);
     if (!this.source.stacks?.preview)
       result.capabilities = result.capabilities.filter(
         (kind) => !localMutationKinds.some((mutation) => mutation === kind),
@@ -275,7 +278,7 @@ export class LocalStacksSession {
         throw new WorkspaceCommandError(
           cause.code === "stale_local_stacks" ? "stale" : "invalid",
           cause.code === "stale_local_stacks"
-            ? "The local workspace changed. Cancel the preview, refresh and review again."
+            ? "The local workspace changed. Refresh and try again."
             : "JJ could not apply this workspace change. Refresh and inspect its current state.",
         );
       throw cause;

@@ -144,8 +144,9 @@ export class ProductionStackWorkspaceAdapter implements StackWorkspaceAdapter {
       previous?.revision ?? 1,
       result.cursor,
     );
-    this.ranges.project(this.#snapshot);
     await this.#local.project(this.#snapshot);
+    if (epoch !== this.#epoch) throw new ApiError("snapshot_mismatch");
+    this.ranges.project(this.#snapshot);
     for (const commit of retainStackContents(previous, this.#snapshot))
       this.#commits.set(commit.id, commit);
     return cloneWorkspace(this.#snapshot);
@@ -162,6 +163,7 @@ export class ProductionStackWorkspaceAdapter implements StackWorkspaceAdapter {
   ) {
     const snapshot = this.#context(request);
     const target = findWorkspaceTarget(snapshot, request.target);
+    const epoch = ++this.#epoch;
     if (this.source.stacks && this.#local.state?.active)
       return this.#local.target(target);
     this.ranges.clear();
@@ -177,6 +179,7 @@ export class ProductionStackWorkspaceAdapter implements StackWorkspaceAdapter {
       snapshot.branchesNextCursor,
     );
     await this.#local.project(this.#snapshot);
+    if (epoch !== this.#epoch) throw new ApiError("snapshot_mismatch");
     return cloneWorkspace(this.#snapshot);
   }
   async readBranches(request: {
@@ -225,8 +228,9 @@ export class ProductionStackWorkspaceAdapter implements StackWorkspaceAdapter {
       snapshot.revision,
       page.cursor,
     );
-    this.ranges.project(this.#snapshot);
     await this.#local.project(this.#snapshot);
+    if (epoch !== this.#epoch) throw new ApiError("snapshot_mismatch");
+    this.ranges.project(this.#snapshot);
     return cloneWorkspace(this.#snapshot);
   }
   async readTargetHistory(

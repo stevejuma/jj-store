@@ -106,7 +106,10 @@
       "Actions for feature/api",
       "Unapply stack",
     );
-    await applyPreview(canvasElement);
+    await waitFor(() =>
+      expect(canvas.getByRole("button", { name: "Refresh" })).toBeEnabled(),
+    );
+    expect(workspacePortal(canvasElement).queryByRole("dialog")).toBeNull();
     await userEvent.click(
       canvas.getByRole("option", { name: "feature/workspace" }),
     );
@@ -115,7 +118,10 @@
       "Actions for feature/workspace",
       "Unapply stack",
     );
-    await applyPreview(canvasElement);
+    await waitFor(() =>
+      expect(canvas.getByRole("button", { name: "Refresh" })).toBeEnabled(),
+    );
+    expect(workspacePortal(canvasElement).queryByRole("dialog")).toBeNull();
     await userEvent.click(
       within(
         canvas.getByRole("tablist", { name: "Local repository views" }),
@@ -132,7 +138,10 @@
     await userEvent.click(
       canvas.getByRole("button", { name: "Apply feature/api" }),
     );
-    await applyPreview(canvasElement);
+    await waitFor(() =>
+      expect(canvas.getByRole("button", { name: "Refresh" })).toBeEnabled(),
+    );
+    expect(workspacePortal(canvasElement).queryByRole("dialog")).toBeNull();
     await userEvent.click(
       within(
         canvas.getByRole("tablist", { name: "Local repository views" }),
@@ -172,7 +181,7 @@
     ).toBeVisible();
     await expect(
       canvas.getByText(
-        "No commits yet. Create a commit or assign selected changes.",
+        "No commits outside the workspace target in this branch.",
       ),
     ).toBeVisible();
   }}
@@ -203,7 +212,7 @@
 />
 
 <Story
-  name="Conflict preview and resolution"
+  name="Immediate apply with native conflicts and resolution"
   args={{ page: "branches" }}
   play={async ({ canvasElement }) => {
     const canvas = workspaceCanvas(canvasElement),
@@ -216,10 +225,8 @@
         name: "Apply feature/search",
       }),
     );
-    await expect(
-      await portal.findByText("Applying introduces conflicts"),
-    ).toBeVisible();
-    await applyPreview(canvasElement);
+    await canvas.findByRole("button", { name: "Unapply feature/search" });
+    expect(portal.queryByRole("dialog")).toBeNull();
     expect(
       canvas.queryByText(/^Workspace has unresolved conflicts/),
     ).toBeNull();

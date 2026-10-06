@@ -20,9 +20,13 @@
   import StoreStackWorkspaceCanvas from "./StoreStackWorkspaceCanvas.svelte";
   import StoreStackWorkspaceForm from "./StoreStackWorkspaceForm.svelte";
   import StoreStackWorkspacePreview from "./StoreStackWorkspacePreview.svelte";
-  import { selectedWorkspace } from "../../controller/stack-workspace/presentation.js";
+  import {
+    selectedWorkspace,
+    isWorkspaceBranch,
+  } from "../../controller/stack-workspace/presentation.js";
   import type { StackWorkspaceController } from "../../controller/stack-workspace/controller.svelte.js";
   import type { WorkspaceCommand } from "../../controller/stack-workspace/types.js";
+  import { applyWorkspaceMembership } from "../../controller/stack-workspace/command-request.js";
   import "../store-work/community-work-layout.css";
   import "../store-application/store-application.css";
   import StoreStackWorkspacePicker from "./StoreStackWorkspacePicker.svelte";
@@ -68,6 +72,8 @@
   );
   function command(value: WorkspaceCommand) {
     if (controller.locked) return;
+    if (value.kind === "apply_stack" || value.kind === "unapply_stack")
+      return void applyWorkspaceMembership(controller, value);
     const eligibility = controller.eligibility(value.kind);
     if (!eligibility.allowed) {
       controller.validation = eligibility.reason;
@@ -88,7 +94,11 @@
       value.kind === "create_commit" &&
       controller.page === "workspace" &&
       controller.snapshot &&
-      selectedWorkspace(controller.snapshot)?.applied.includes(value.stack)
+      isWorkspaceBranch(
+        controller.snapshot,
+        controller.snapshot.stacks.find((stack) => stack.id === value.stack)
+          ?.name ?? "",
+      )
     ) {
       for (const selection of value.selections ?? [value.selection])
         controller.commitDrafts.open(
