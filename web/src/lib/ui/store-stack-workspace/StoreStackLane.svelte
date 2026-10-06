@@ -7,6 +7,7 @@
   import StoreStackDropGuide from "./StoreStackDropGuide.svelte";
   import StoreStackCommitComposer from "./StoreStackCommitComposer.svelte";
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
+  import CommunityProjectsRepositorySkeleton from "../community-projects/CommunityProjectsRepositorySkeleton.svelte";
   import GitBranch from "@lucide/svelte/icons/git-branch";
   import Pencil from "@lucide/svelte/icons/pencil";
   import Trash from "@lucide/svelte/icons/trash-2";
@@ -19,7 +20,10 @@
   } from "../../projects/repository-log-graph.js";
   import CommunityChip from "../community-chip/CommunityChip.svelte";
   import StoreStackBookmarkCard from "./StoreStackBookmarkCard.svelte";
-  import { stackGroups } from "../../controller/stack-workspace/presentation.js";
+  import {
+    stackGroups,
+    stackLaneMembers,
+  } from "../../controller/stack-workspace/presentation.js";
   import type { StackWorkspaceController } from "../../controller/stack-workspace/controller.svelte.js";
   import type {
     WorkspaceCommand,
@@ -40,6 +44,13 @@
     onCommand: (command: WorkspaceCommand) => void;
     onDrop: (event: DragEvent, target: "stack" | "commit", id: string) => void;
   } = $props();
+  const preparing = $derived(
+    Boolean(
+      controller.adapter.readStackHistory &&
+      !controller.histories.state(stack.id).loaded &&
+      stack.heads.length,
+    ),
+  );
   $effect(() => {
     const id = stack.id;
     controller.snapshot?.readKey;
@@ -105,6 +116,9 @@
                 onCommand({
                   kind: applied ? "unapply_stack" : "apply_stack",
                   stack: stack.id,
+                  ...(controller.page === "branches"
+                    ? { branch: stack.name }
+                    : {}),
                 })}
               >{#if applied}<Eject aria-hidden="true" />{:else}<LogIn
                   aria-hidden="true"
@@ -188,6 +202,7 @@
               onCommand({
                 kind: applied ? "unapply_stack" : "apply_stack",
                 stack: stack.id,
+                branch: stack.name,
               })}
           >
             {applied ? "Unapply from workspace" : "Apply to workspace"}
@@ -212,34 +227,59 @@
         {controller}
         {stack}
         onOtherDrop={(event) => onDrop(event, "stack", stack.id)}
-      />{/if}
-    <div class="stack-workspace__bookmarks">
-      {#each stackGroups(stack) as group, index (group.head.name)}
-        {#if index > 0}<svg
-            class="stack-workspace__bookmark-link"
-            data-ui-part="stack-link"
-            aria-hidden="true"
-            ><line
-              x1={repositoryLogLaneX(0)}
-              x2={repositoryLogLaneX(0)}
-              y1="0"
-              y2="100%"
-              stroke="var(--ui-log-lane-1, #2563eb)"
-              stroke-width={REPOSITORY_LOG_STROKE_WIDTH}
-            /></svg
-          >{/if}
-        <StoreStackBookmarkCard
+      />
+      {#each stackLaneMembers(controller.snapshot!, stack).filter((member) => member.id !== stack.id && controller.commitDrafts.get(controller.snapshot!.active!, member.id)) as member (member.id)}
+        <StoreStackCommitComposer
           {controller}
-          {stack}
-          showActions={showStackActions}
-          name={group.head.name}
-          commits={group.commits}
-          {onCommand}
+          stack={member}
+          onOtherDrop={(event) => onDrop(event, "stack", member.id)}
         />
       {/each}
-    </div>
-    {#if !stack.commits.length}<p class="stack-workspace__empty">
-        No commits yet. Create a commit or assign selected changes.
-      </p>{/if}
+    {/if}
+    {#if preparing}
+      <CommunityProjectsRepositorySkeleton
+        layout="graph"
+        label={`Loading history for ${stack.name}`}
+        count={5}
+      />
+      {#if !controller.histories.state(stack.id).loading && !controller.histories.state(stack.id).error}
+        <Button
+          variant="outline"
+          size="sm"
+          onclick={() => void controller.histories.load(stack.id)}
+          >Retry stack history</Button
+        >
+      {/if}
+    {:else}
+      <div class="stack-workspace__bookmarks">
+        {#each stackGroups(stack) as group, index (group.head.name)}
+          {#if index > 0}<svg
+              class="stack-workspace__bookmark-link"
+              data-ui-part="stack-link"
+              aria-hidden="true"
+              ><line
+                x1={repositoryLogLaneX(0)}
+                x2={repositoryLogLaneX(0)}
+                y1="0"
+                y2="100%"
+                stroke="var(--ui-log-lane-1, #2563eb)"
+                stroke-width={REPOSITORY_LOG_STROKE_WIDTH}
+              /></svg
+            >{/if}
+          <StoreStackBookmarkCard
+            {controller}
+            {stack}
+            showActions={showStackActions}
+            name={group.head.name}
+            aliases={group.head.aliases ?? []}
+            commits={group.commits}
+            {onCommand}
+          />
+        {/each}
+      </div>
+      {#if !stack.commits.length}<p class="stack-workspace__empty">
+          No commits yet. Create a commit or assign selected changes.
+        </p>{/if}
+    {/if}
   </ColumnCanvas.Body>
 </ColumnCanvas.Column>

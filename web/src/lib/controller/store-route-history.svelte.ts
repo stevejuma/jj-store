@@ -163,6 +163,9 @@ export function createStoreRouteHistory(
     selectSnapshot(operation: string) {
       push({
         ...route,
+        ...(route.context === "stacks"
+          ? { stackHistory: "pinned" as const }
+          : {}),
         snapshotOperationId: operation,
         fileDisplay: undefined,
         bookmark: "",

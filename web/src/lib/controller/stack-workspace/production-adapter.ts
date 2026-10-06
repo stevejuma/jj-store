@@ -1,3 +1,4 @@
+import { retainStackContents } from "./retained-diffs.js";
 import { findWorkspaceTarget } from "./local-state.js";
 import { LocalStacksSession } from "./local-session.js";
 import { readIssuedStackHistory } from "./issued-history.js";
@@ -145,6 +146,8 @@ export class ProductionStackWorkspaceAdapter implements StackWorkspaceAdapter {
     );
     this.ranges.project(this.#snapshot);
     await this.#local.project(this.#snapshot);
+    for (const commit of retainStackContents(previous, this.#snapshot))
+      this.#commits.set(commit.id, commit);
     return cloneWorkspace(this.#snapshot);
   }
   #context(request: {

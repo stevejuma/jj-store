@@ -39,7 +39,7 @@ export type StackCommit = {
   };
   files: WorkspaceFile[];
 };
-export type StackHead = { name: string; commit: string };
+export type StackHead = { name: string; commit: string; aliases?: string[] };
 export type WorkspaceTargetBranch = StackHead &
   Pick<StackCommit, "message" | "author" | "email" | "createdAt">;
 export type WorkspaceHistoryRequest = {
@@ -70,6 +70,9 @@ export type WorkspaceStack = {
   /** Oldest to newest, as in the Changeyard stack model. */
   commits: StackCommit[];
   conflicts: boolean;
+  /** Operation-owned lane metadata; inventory and saved membership stay separate. */
+  appliedBranches?: string[];
+  topologyHeads?: StackHead[];
   /** Explicit provider segments; their displayed rows are newest first. */
   segments?: {
     head: StackHead;
@@ -98,6 +101,8 @@ export type WorkspaceConflict = {
 };
 export type WorkspaceSnapshot = {
   repository: string;
+  operation?: string;
+  topology?: import("../../api/client.js").Model<"LocalStacksTopology">;
   /** Physical folder on this device; null means no local checkout link. */
   folder: string | null;
   profile: "native" | "git_sha1_jj045";
@@ -144,6 +149,8 @@ export type WorkspaceCommand =
   | {
       kind: "apply_stack" | "unapply_stack" | "delete_stack" | "rebase";
       stack: string;
+      /** Individual bookmark action; omitted Unapply acts on the whole column. */
+      branch?: string;
     }
   | {
       kind: "create_stack";
@@ -298,6 +305,7 @@ export class WorkspaceCommandError extends Error {
 export const cloneWorkspace = <T>(value: T): T =>
   JSON.parse(JSON.stringify(value)) as T;
 export interface StackWorkspaceControllerOptions {
+  acceptedOperation?: (repository: string, operation: string) => void;
   initial?: WorkspaceSnapshot;
   /** False when initial data is only a verified local binding seed. */
   initialLoaded?: boolean;

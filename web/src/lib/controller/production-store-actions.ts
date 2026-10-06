@@ -200,11 +200,11 @@ export function createProductionStoreActions(options: {
       options.history.page(page);
       await options.restoreRoute();
     },
-    async selectStacksView(view) {
+    async selectStacksView(view, historyMode) {
       const retainedCanvas =
         isStacksRoute(options.history.route) &&
         (view === "branches" || view === "workspace");
-      options.history.stacks.select(view);
+      options.history.stacks.select(view, historyMode);
       if (retainedCanvas) {
         const desired = options.history.route;
         options.data.status.error = "";

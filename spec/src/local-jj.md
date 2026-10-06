@@ -969,13 +969,23 @@ target bookmarks, ordered applied heads, and app-owned retention bookmark names;
 commits, trees and unfinished edits remain native JJ state. No config enters
 tracked files, portable companion history or installation-private catalogs.
 
-Each named workspace retains a merge of applied tips (target fallback when
-empty), and a WIP child. Membership changes preserve the WIP delta through
-native rebase; switching snapshots the outgoing checkout and restores the
-incoming WIP. First setup preserves checkout contents and existing revisions.
-Later workspaces inherit the target and start empty. Refresh and commands
-snapshot with normal ignore/auto-track/file-size rules through explicit POST
-transport; historical GETs and operation-pinned code queries remain read-only.
+Each named workspace retains a merge of its target and distinct applied tips,
+and a WIP child. Membership changes rewrite the retained merge's parents and
+composed tree, preserving its change identity; native rebase preserves the WIP
+delta and identity without leaving obsolete merge heads. Setup creates these
+changes once. Bounded operation-owned topology describes aliases, linear
+dependencies and integrated applied branches independently of history pages.
+Atomic grouped unapply validates all selected members before changing
+membership. Explicit reconciliation uses the same parent calculation and may
+retire only unreferenced live merge heads proven by bounded native
+operation/reference history to have been replaced by this workspace. User
+references, working copies and user descendants are protected; descriptions
+alone never prove ownership. Refresh never repairs membership or cleans up graph
+state; switching snapshots the outgoing checkout and restores the incoming WIP.
+First setup preserves checkout contents and existing revisions. Later workspaces
+inherit the target and start empty. Refresh and commands snapshot with normal
+ignore/auto-track/file-size rules through explicit POST transport; historical
+GETs and operation-pinned code queries remain read-only.
 
 Commands validate operation/configuration revisions before execution. Previews
 are advisory, not retained unpublished operations. Unknown transport outcomes
@@ -1895,3 +1905,9 @@ boundaries. Visible applied lanes load their own bounded pages; other repository
 history stays unloaded. Aliases do not duplicate commit rows within a lane.
 Explicitly applied bookmarks retain their own column and UI identity, even when
 they share ancestry; browsing a branch selects its own advertised top.
+
+Local Stacks bounded history MUST use the managed code index when available,
+with the same exact-operation visibility, paging and authorization as JJ Log. An
+absent generation starts normal bounded preparation; a ready generation MUST
+serve StackHistory rather than repeatedly requesting the older graph index. The
+explicit prepared-index path remains supported for compatibility.

@@ -366,3 +366,21 @@ test("file display modes restore through Back/Forward and clear on page changes"
   expect(history.route.fileDisplay).toBeUndefined();
   history.destroy();
 });
+
+test("focused live and pinned histories survive reload and browser Back/Forward", () => {
+  const live = `#/repos/${repository}/log?context=stacks&stack_history=live&at_op=${operation}`;
+  const navigation = fakeBrowser(live);
+  const history = createStoreRouteHistory(navigation.browser);
+  history.selectSnapshot("98".repeat(64));
+  const pinned = storeRouteToHash(history.route)!;
+  expect(history.route.stackHistory).toBe("pinned");
+  navigation.visit(live);
+  expect(history.route.stackHistory).toBe("live");
+  navigation.visit(pinned);
+  expect(history.route.snapshotOperationId).toBe("98".repeat(64));
+  expect(history.route.stackHistory).toBe("pinned");
+  history.destroy();
+  const reloaded = createStoreRouteHistory(navigation.browser);
+  expect(reloaded.route.stackHistory).toBe("pinned");
+  reloaded.destroy();
+});

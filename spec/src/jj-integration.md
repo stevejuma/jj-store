@@ -1845,3 +1845,25 @@ unknown-outcome inspection remain required. Production file dragging uses exact
 loaded source/path pairs; partial dragging uses issued native hunk tokens. Net
 branch comparisons remain read-only. Undo/Redo remains available without a
 selected named workspace.
+
+### Correct ordinary workspace composition and topology
+
+Local Stacks compose the target and distinct applied tip commit IDs, rewriting
+only the retained app-owned merge on explicit membership or target changes.
+Native descendant rebasing preserves the merge and WIP change identities,
+conflicts, user bookmarks and other workspaces. Normal content mutations
+continue through native propagation. Operation-owned topology visits at most
+50,000 ancestry steps; unavailable topology cannot be presented as independent
+columns. Aliases share a segment; linear dependencies group below their highest
+applied tip, while siblings, shared applied bases and merge sides retain
+distinct DAG meaning. Strict target ancestors remain saved but leave active
+columns.
+
+Explicit reconciliation can retire eligible legacy heads proven by the same
+internal merge reference moving between distinct changes in recorded Stacks
+operations. Search at most 256 linear operations, stopping at forks. Referenced
+commits and any user descendants are protected; matching descriptions alone
+never authorize cleanup. Refresh does not compose or clean the graph, and native
+operation history retains recovery. The local mutation regressions include a
+stock-JJ `testy` topology fixture and guarded cleanup, separately from live-page
+read verification.

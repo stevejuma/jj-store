@@ -68,7 +68,7 @@ export class StackWorkspaceController {
   readonly branches: WorkspaceBranches;
   constructor(
     readonly adapter: StackWorkspaceAdapter,
-    options: StackWorkspaceControllerOptions = {},
+    readonly options: StackWorkspaceControllerOptions = {},
   ) {
     this.physical = new WorkspacePhysicalObservation(adapter);
     this.branches = new WorkspaceBranches(

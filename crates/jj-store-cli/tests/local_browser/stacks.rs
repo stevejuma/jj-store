@@ -87,6 +87,20 @@ async fn local_stack_history_is_bounded_pinned_and_read_only() {
             .await
             .unwrap(),
     );
+    let managed_scratch = tempfile::tempdir().unwrap();
+    let managed = Arc::new(
+        reader
+            .prepare_code_index(
+                access.clone(),
+                operation,
+                managed_scratch.path().into(),
+                16 * 1024 * 1024,
+                Default::default(),
+                Cancellation::default(),
+            )
+            .await
+            .unwrap(),
+    );
     let mut after = None;
     let mut actual = vec![];
     loop {
@@ -106,6 +120,25 @@ async fn local_stack_history_is_bounded_pinned_and_read_only() {
         else {
             panic!("stack response expected")
         };
+        let q::Response::StackHistory(indexed) = reader
+            .read_code_index(
+                access.clone(),
+                managed.clone(),
+                q::Request::StackHistory(q::stacks::Request {
+                    head,
+                    base: Some(base),
+                    limit: 2,
+                    after,
+                }),
+            )
+            .await
+            .unwrap()
+        else {
+            panic!("managed stack response expected")
+        };
+        assert_eq!(indexed.commits, page.commits);
+        assert_eq!(indexed.next, page.next);
+        assert_eq!(indexed.operation, operation);
         assert_eq!(page.operation, operation);
         assert_eq!(page.head, head);
         assert_eq!(page.base, Some(base));

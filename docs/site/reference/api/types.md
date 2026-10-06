@@ -18636,6 +18636,16 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         "type": "string"
       },
       "default": []
+    },
+    "topology": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/LocalStacksTopology"
+        },
+        {
+          "type": "null"
+        }
+      ]
     }
   },
   "required": [
@@ -18706,6 +18716,86 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "wip_commit",
     "conflicted",
     "membership_changed"
+  ]
+}
+```
+
+## LocalStacksTopology
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "lanes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/LocalStacksTopologyLane"
+      }
+    },
+    "integrated": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "complete": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "lanes",
+    "integrated",
+    "complete"
+  ]
+}
+```
+
+## LocalStacksTopologyLane
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "heads": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/LocalStacksTopologyHead"
+      },
+      "description": "Newest first. Multiple names on one tip are aliases, not extra segments."
+    },
+    "applied": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "heads",
+    "applied"
+  ]
+}
+```
+
+## LocalStacksTopologyHead
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "names": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "commit": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "names",
+    "commit"
   ]
 }
 ```

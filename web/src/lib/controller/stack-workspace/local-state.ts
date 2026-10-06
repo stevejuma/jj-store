@@ -16,6 +16,8 @@ export function projectLocalStacks(
     (workspace) => workspace.id === state.active,
   );
   snapshot.active = state.active;
+  snapshot.operation = state.operation;
+  snapshot.topology = state.topology ?? undefined;
   snapshot.workspaces = state.workspaces.map((workspace) => ({
     id: workspace.id,
     name: workspace.name,
@@ -32,6 +34,9 @@ export function projectLocalStacks(
   snapshot.workspaceWarning =
     state.warning ??
     active?.unavailable_reason ??
+    (state.topology?.complete === false
+      ? "Workspace topology is unavailable within the bounded read. Branch browsing and saved membership remain available."
+      : null) ??
     (active?.membership_changed
       ? "Native branch membership differs from saved configuration after a CLI/Undo change. Review it and explicitly reapply saved branches to reconcile; Refresh does not change the graph."
       : null) ??
@@ -66,19 +71,23 @@ export function projectLocalStacks(
   }));
   for (const branch of active?.applied ?? []) {
     if (!snapshot.stacks.some((s) => s.name === branch)) {
+      const head = state.topology?.lanes
+        .flatMap((lane) => lane.heads)
+        .find((head) => head.names.includes(branch));
       snapshot.stacks.push({
         id: `branch:${JSON.stringify([branch])}`,
         name: branch,
         base: active?.target ?? "",
-        heads: [],
+        heads: head?.commit ? [{ name: branch, commit: head.commit }] : [],
         commits: [],
         conflicts: false,
       });
-      snapshot.branchUnavailableReasons = {
-        ...snapshot.branchUnavailableReasons,
-        [branch]:
-          "This saved applied bookmark is missing or conflicted. Restore it with JJ or explicitly unapply it.",
-      };
+      if (!head?.commit)
+        snapshot.branchUnavailableReasons = {
+          ...snapshot.branchUnavailableReasons,
+          [branch]:
+            "This saved applied bookmark is missing or conflicted. Restore it with JJ or explicitly unapply it.",
+        };
     }
   }
   if (active?.unavailable_reason || active?.membership_changed) {
@@ -117,6 +126,23 @@ export function projectLocalStacks(
     snapshot.bookmarks = snapshot.bookmarks?.filter(
       (bookmark) => bookmark.name !== active.target,
     );
+  }
+  for (const lane of state.topology?.lanes ?? []) {
+    const stack = snapshot.stacks.find(
+      (stack) => stack.name === lane.heads[0]?.names[0],
+    );
+    if (!stack) continue;
+    stack.appliedBranches = lane.applied;
+    stack.topologyHeads = lane.heads
+      .filter((head) => head.commit)
+      .map((head) => ({
+        name: head.names[0]!,
+        commit: head.commit,
+        aliases: head.names.slice(1),
+      }));
+    // An unloaded range is never used to infer membership or dependency boundaries.
+    if (!stack.segments && stack.topologyHeads.length)
+      stack.heads = stack.topologyHeads;
   }
   snapshot.readKey = JSON.stringify([
     snapshot.readKey,
@@ -197,9 +223,27 @@ export function localStacksCommand(
         "invalid",
         "The selected branch is unavailable.",
       );
+    if (
+      command.kind === "unapply_stack" &&
+      !command.branch &&
+      stack.appliedBranches
+    ) {
+      return { kind: "unapply_branches", branches: stack.appliedBranches };
+    }
+    const branch = command.branch ?? stack.name;
+    if (
+      !snapshot.stacks.some((item) => item.name === branch) &&
+      !stack.heads.some(
+        (head) => head.name === branch || head.aliases?.includes(branch),
+      )
+    )
+      throw new WorkspaceCommandError(
+        "invalid",
+        "The selected branch is unavailable.",
+      );
     return {
       kind: command.kind === "apply_stack" ? "apply" : "unapply",
-      branch: stack.name,
+      branch,
     };
   }
   throw new WorkspaceCommandError(

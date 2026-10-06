@@ -359,3 +359,54 @@ async fn managed_reads_and_controls_reject_revoked_or_changed_registration() {
         State::Ready(_)
     ));
 }
+
+#[tokio::test]
+async fn managed_stack_history_starts_its_operation_index() {
+    let source = tempfile::tempdir().unwrap();
+    let cache = tempfile::tempdir().unwrap();
+    jj(source.path(), &["git", "init", "--colocate"]);
+    jj(source.path(), &["new", "-m", "Stack head"]);
+    let head = jj(
+        source.path(),
+        &["log", "--no-graph", "-r", "@", "-T", "commit_id"],
+    )
+    .parse()
+    .unwrap();
+    let access: Arc<dyn q::Access> = Arc::new(ReadBinding(source.path().join(".jj/repo")));
+    let reader = q::Executor::new(1).unwrap();
+    let operation = reader.heads(access.clone()).await.unwrap().heads[0];
+    let indexes = manager(cache.path());
+    let request = q::Request::StackHistory(q::stacks::Request {
+        head,
+        base: None,
+        limit: 1,
+        after: None,
+    });
+    assert!(matches!(
+        indexes
+            .local_read(access.clone(), operation, request.clone())
+            .await,
+        Err(q::Error::IndexRebuildRequired)
+    ));
+    let response = tokio::time::timeout(Duration::from_secs(10), async {
+        loop {
+            match indexes
+                .local_read(access.clone(), operation, request.clone())
+                .await
+            {
+                Ok(response) => break response,
+                Err(q::Error::IndexRebuildRequired | q::Error::Busy) => {
+                    tokio::time::sleep(Duration::from_millis(10)).await
+                }
+                Err(error) => panic!("unexpected preparation error: {error:?}"),
+            }
+        }
+    })
+    .await
+    .unwrap();
+    let q::Response::StackHistory(page) = response else {
+        panic!("stack history")
+    };
+    assert_eq!(page.commits[0].commit.id, head);
+    assert!(page.next.is_some());
+}

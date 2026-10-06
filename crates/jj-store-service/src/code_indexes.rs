@@ -435,6 +435,7 @@ impl Indexes {
                 if matches!(
                     request,
                     local::Request::Graph(local::GraphRequest::Log { .. }, _)
+                        | local::Request::StackHistory(_)
                         | local::Request::Commit { .. }
                 ) {
                     self.start_local(access, operation).await?;

@@ -1,4 +1,4 @@
-import { createProductionStacks } from "./production-stacks.svelte.js";
+import { createProductionStacksReaders } from "./production-stacks-history.js";
 import { createReadScope } from "./read-scope.js";
 import { connectRepositorySource } from "./production-repository-connect.js";
 import { createEntitySearch } from "./production-entity-search.js";
@@ -15,7 +15,6 @@ import type {
 } from "./contracts.js";
 
 import type { StoreDataSource } from "./native-data-source.js";
-import { createProductionStoreReaders } from "./production-store-reader.svelte.js";
 import { createProductionStoreState } from "./production-store-state.svelte.js";
 import { createStoreRouteHistory } from "./store-route-history.svelte.js";
 import { productionControllerSurface } from "./production-store-view.js";
@@ -52,24 +51,18 @@ export function createProductionStoreController(
   const activeSource = () => requireProductionSource(source);
   const current = (ticket: number, active: StoreDataSource) =>
     ticket === version() && active === source;
-  const { reader, historyQuery } = createProductionStoreReaders({
+  const { reader, historyQuery, stacks } = createProductionStacksReaders({
     data,
     history,
     source: activeSource,
+    localSource: () => source,
     version,
     begin: invalidate,
     signal,
     current,
-    restoreStacks: (contextOnly) =>
-      contextOnly ? stacks.ensure() : stacks.restore(),
-  });
-
-  const stacks = createProductionStacks({
-    data,
-    source: () => source,
-    route: () => history.route,
     fetcher: options.fetcher,
   });
+
   const {
     projects,
     clear: clearProjects,

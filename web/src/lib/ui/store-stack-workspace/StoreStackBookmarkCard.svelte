@@ -6,21 +6,24 @@
   import CommunityRelativeTime from "../community-relative-time/CommunityRelativeTime.svelte";
   import CommunityProjectsGitAuthorAvatar from "../community-projects/CommunityProjectsGitAuthorAvatar.svelte";
   import CommunityProjectsRevisionGraph from "../community-projects/CommunityProjectsRevisionGraph.svelte";
+  import { stackCardSelection } from "../../controller/stack-workspace/card-selection.js";
   import StoreStackSourceFiles from "./StoreStackSourceFiles.svelte";
   import StoreStackBookmarkActions from "./StoreStackBookmarkActions.svelte";
   import StoreStackCommitActions from "./StoreStackCommitActions.svelte";
-  import {
-    workspaceBranchSource,
-    workspaceAggregateSource,
-  } from "../../controller/stack-workspace/files.js";
+  import { workspaceAggregateSource } from "../../controller/stack-workspace/files.js";
   import {
     buildRepositoryLogGraph,
     repositoryLogSvgWidth,
   } from "../../projects/repository-log-graph.js";
-  import { stackRevisions } from "../../controller/stack-workspace/presentation.js";
+  import {
+    stackRevisions,
+    isAppliedBranch,
+  } from "../../controller/stack-workspace/presentation.js";
   import StoreStackDropGuide from "./StoreStackDropGuide.svelte";
-  import { commitDropPlacement } from "../../controller/stack-workspace/commit-placement.js";
-  import { WORKSPACE_DRAG_TYPE } from "../../controller/stack-workspace/drag.js";
+  import {
+    commitEventRow,
+    commitRowTarget,
+  } from "../../controller/stack-workspace/commit-placement.js";
   import type { StackWorkspaceController } from "../../controller/stack-workspace/controller.svelte.js";
   import type {
     StackCommit,
@@ -31,6 +34,7 @@
     controller,
     stack,
     name,
+    aliases = [],
     commits,
     showActions = true,
     onCommand,
@@ -38,6 +42,7 @@
     controller: StackWorkspaceController;
     stack: WorkspaceStack;
     name: string;
+    aliases?: string[];
     commits: StackCommit[];
     showActions?: boolean;
     onCommand: (command: WorkspaceCommand) => void;
@@ -45,8 +50,18 @@
   const graphInset = $derived(
     repositoryLogSvgWidth(buildRepositoryLogGraph(stackRevisions(stack))),
   );
+  const card = $derived(
+    stackCardSelection(
+      controller.snapshot!,
+      controller.stackSelections,
+      stack,
+      name,
+      aliases,
+      commits,
+    ),
+  );
   const diff = $derived(
-    controller.diffs.find((diff) => diff.origin === `stack-${stack.id}`),
+    controller.diffs.find((diff) => diff.origin === `stack-${card.owner}`),
   );
   const diffSelection = $derived(
     diff && !workspaceAggregateSource(diff.source)
@@ -57,45 +72,14 @@
         }
       : null,
   );
-  const branchSource = $derived(workspaceBranchSource(stack.id, name));
+  const branchSource = $derived(card.branchSource);
   const headerTarget = $derived({
     kind: "stack" as const,
     id: stack.id,
     branch: name,
   });
-  const branchSelected = $derived(
-    controller.stackSelections[stack.id] === branchSource,
-  );
   const tip = $derived(commits[0]);
-  const selected = $derived(
-    commits.find(
-      (commit) => commit.id === controller.selectedCommitFor(stack.id),
-    ),
-  );
-  function eventCommit(event: DragEvent) {
-    return event.target instanceof Element
-      ? event.target.closest<HTMLElement>("[data-revision-id]")?.dataset
-          .revisionId
-      : undefined;
-  }
-  function rowTarget(event: DragEvent) {
-    const row =
-      event.target instanceof Element
-        ? event.target.closest<HTMLElement>("[data-revision-id]")
-        : null;
-    if (!row?.dataset.revisionId) return null;
-    return {
-      kind: "commit" as const,
-      id: row.dataset.revisionId,
-      placement: commitDropPlacement(
-        controller.drag.payload ??
-          event.dataTransfer?.getData(WORKSPACE_DRAG_TYPE) ??
-          null,
-        row.getBoundingClientRect(),
-        event.clientY,
-      ),
-    };
-  }
+  const selected = $derived(card.commit);
 </script>
 
 <Card.Root
@@ -104,7 +88,7 @@
 >
   <Card.Header
     class="stack-workspace__bookmark-header stack-workspace__drop-target"
-    data-selected={branchSelected || undefined}
+    data-selected={card.branchSelected || undefined}
     data-drop-target-state={controller.drag.state(headerTarget)}
     ondragover={(event) =>
       controller.drag.over(
@@ -124,7 +108,11 @@
       if (command) onCommand(command);
     }}
     onclick={() => {
-      if (!controller.locked) controller.selectStackFiles(stack.id, name);
+      if (!controller.locked)
+        controller.selectStackFiles(
+          controller.page === "branches" ? stack.id : card.owner,
+          controller.page === "branches" ? name : card.branch,
+        );
     }}
   >
     <StoreStackDropGuide feedback={controller.drag.for(headerTarget)} />
@@ -136,7 +124,7 @@
           class="stack-workspace__branch-title"
           disabled={controller.locked}
           aria-label={`Show all changes in ${name}`}
-          aria-pressed={branchSelected}
+          aria-pressed={card.branchSelected}
           ><ColumnCanvas.Title>{name}</ColumnCanvas.Title></button
         ></Card.Title
       >
@@ -151,10 +139,13 @@
         >{/if}
       <div class="stack-workspace__branch-chips">
         <CommunityChip variant="muted">Local bookmark</CommunityChip>
+        {#each aliases as alias}<CommunityChip variant="muted"
+            >{alias}</CommunityChip
+          >{/each}
       </div>
     </div>
   </Card.Header>
-  {#if branchSelected}
+  {#if card.branchSelected}
     <Card.Content class="stack-workspace__branch-files">
       <StoreStackSourceFiles
         {controller}
@@ -167,7 +158,11 @@
   {/if}
   {#if showActions}<StoreStackBookmarkActions
       stack={stack.id}
+      commitStack={controller.snapshot?.stacks.find(
+        (item) => item.name === name,
+      )?.id ?? stack.id}
       {name}
+      applied={isAppliedBranch(controller.snapshot!, name)}
       canAddCommit={name === stack.heads[0]?.name}
       commit={stack.heads.find((head) => head.name === name)?.commit ??
         stack.base}
@@ -187,7 +182,7 @@
   <!-- svelte-ignore a11y_no_static_element_interactions -->
   <div
     ondragstart={(event) => {
-      const id = eventCommit(event);
+      const id = commitEventRow(event)?.dataset.revisionId;
       if (
         id &&
         (controller.can("move_commit") || controller.can("reorder_commit")) &&
@@ -196,7 +191,7 @@
         controller.drag.start(event, { kind: "commit", commit: id });
     }}
     ondragover={(event) => {
-      const target = rowTarget(event);
+      const target = commitRowTarget(event, controller.drag.payload);
       if (target)
         controller.drag.over(
           event,
@@ -206,7 +201,7 @@
         );
     }}
     ondragleave={(event) => {
-      const id = eventCommit(event);
+      const id = commitEventRow(event)?.dataset.revisionId;
       if (id)
         controller.drag.leave(
           event,
@@ -217,7 +212,7 @@
         );
     }}
     ondrop={(event) => {
-      const target = rowTarget(event);
+      const target = commitRowTarget(event, controller.drag.payload);
       if (target) {
         const command = controller.drag.drop(
           event,
@@ -244,11 +239,14 @@
         controller.drag.for({ kind: "commit", id: revision.eventId })
           ?.placement}
       endBorder={false}
-      selectedId={controller.selectedCommitFor(stack.id)}
+      selectedId={selected?.id ?? null}
       graphLabel={`Commits in ${name}`}
       onSelect={(revision) => {
         if (!controller.locked)
-          controller.selectCommit(revision.eventId, stack.id);
+          controller.selectCommit(
+            revision.eventId,
+            controller.page === "branches" ? stack.id : card.owner,
+          );
       }}
       draggable={(revision) =>
         (controller.can("move_commit") || controller.can("reorder_commit")) &&
@@ -282,7 +280,7 @@
             ariaLabel={`Changed files in ${name}`}
             selectedPath={diff?.source === selected.id ? diff.path : null}
             onSelectPath={(path) =>
-              controller.selectFile(selected.id, path, undefined, stack.id)}
+              controller.selectFile(selected.id, path, undefined, card.owner)}
           />{/if}
       {/snippet}
     </CommunityProjectsRevisionGraph>

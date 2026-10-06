@@ -45,6 +45,7 @@ export const repositoryPages = new Set<StorePage>([
 export const repositoryQueryKeys = new Set([
   "context",
   "stack_tab",
+  "stack_history",
   "at_op",
   "history_query",
   "history_time",

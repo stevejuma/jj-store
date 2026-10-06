@@ -23,10 +23,12 @@ pub async fn qualify(endpoint: &str, id: &str, folder: &Path) -> Vec<Value> {
         json!({"kind":"setup","name":"Core primary","target":"main"}),
         json!({"kind":"apply","branch":"core-topic"}),
         json!({"kind":"unapply","branch":"core-topic"}),
+        json!({"kind":"apply","branch":"core-topic"}),
+        json!({"kind":"unapply_branches","branches":["core-topic"]}),
         json!({"kind":"create","name":"Core second"}),
         json!({"kind":"refresh"}),
     ] {
-        state = client
+        let response = client
             .post(format!("{endpoint}/local/repos/{id}/stacks"))
             .header("x-jj-store-protocol", "1")
             .json(
@@ -35,14 +37,17 @@ pub async fn qualify(endpoint: &str, id: &str, folder: &Path) -> Vec<Value> {
             )
             .send()
             .await
-            .unwrap()
-            .error_for_status()
-            .unwrap()
-            .json()
-            .await
             .unwrap();
+        let status = response.status();
+        let body = response.text().await.unwrap();
+        assert!(status.is_success(), "{command}: {status}: {body}");
+        state = serde_json::from_str(&body).unwrap();
         assert_eq!(state["version"], 1);
         assert!(state["warning"].is_null(), "{state}");
+        if !state["active"].is_null() {
+            assert_eq!(state["topology"]["complete"], true);
+            assert!(state["topology"]["lanes"].is_array());
+        }
         samples.push(
             json!({"path":"/v1/local/repos/{repo}/stacks","method":"post",
             "status":200,"media":"application/json","data":state}),

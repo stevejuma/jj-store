@@ -180,7 +180,10 @@ export function localMutationCommand(
     case "uncommit":
       return { kind: "uncommit", commit: commit(command.commit) };
     case "rebase":
-      return { kind: "rebase", branch: stack(command.stack).name };
+      return {
+        kind: "rebase",
+        branch: command.branch ?? stack(command.stack).name,
+      };
     case "squash_branch":
       if (!stack(command.stack).heads.some((h) => h.name === command.name))
         throw new WorkspaceCommandError(

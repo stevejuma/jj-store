@@ -116,9 +116,41 @@ pub async fn preview(access: Arc<dyn Access>, root: PathBuf, request: Request) -
             )
             .await?
         }
+        Command::UnapplyBranches { ref branches } => {
+            topology::validate_unapply(&config, branches)?;
+            Preview {
+                title: "Unapply stack".into(),
+                summary: format!(
+                    "Remove {} from the workspace together. Branches and unfinished work are retained.",
+                    branches.join(", ")
+                ),
+                paths: vec![],
+            }
+        }
         Command::Reconcile => {
-            parents(repo.as_ref(), config.active().ok_or(Error::Invalid)?)?;
-            Preview{title:"Reapply saved workspace branches".into(),summary:"Explicitly rebuild membership from the saved applied bookmarks and preserve WIP. This changes native graph state; TOML is not an Undo journal.".into(),paths:vec![]}
+            let saved = config.active().ok_or(Error::Invalid)?;
+            parents(repo.as_ref(), saved)?;
+            let obsolete = cleanup::candidates(&repo, saved).await?;
+            let cleanup = if obsolete.is_empty() {
+                String::new()
+            } else {
+                format!(
+                    " Retire {} obsolete internal merge heads: {}. They remain recoverable through JJ operation history.",
+                    obsolete.len(),
+                    obsolete
+                        .iter()
+                        .map(|c| c.id().hex())
+                        .collect::<Vec<_>>()
+                        .join(", ")
+                )
+            };
+            Preview {
+                title: "Reapply saved workspace branches".into(),
+                summary: format!(
+                    "Compose the target and saved applied bookmarks, preserving the merge and WIP changes.{cleanup} This changes native graph state; TOML is not an Undo journal."
+                ),
+                paths: vec![],
+            }
         }
         Command::Undo | Command::Redo => {
             history::target(&repo, matches!(request.command, Command::Redo)).await?;

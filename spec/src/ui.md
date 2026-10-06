@@ -2732,8 +2732,23 @@ unproven paginated boundary remains unavailable until more history is loaded.
 Merge/elided ancestry retains the provider graph without invented linear
 boundaries. Visible applied lanes load their own bounded pages; other repository
 history stays unloaded. Aliases do not duplicate commit rows within a lane.
-Explicitly applied bookmarks retain their own column and UI identity, even when
-they share ancestry; browsing a branch selects its own advertised top.
+Applied membership and branch inventory are distinct from workspace columns.
+Bounded native topology at the active operation groups proven linear dependent
+bookmarks into one column, retaining aliases without duplicate commits. Siblings
+and merge-side ancestry are not flattened. Branches already integrated into the
+target remain browsable but do not add active columns; empty branches exactly at
+the target remain usable destinations. Column Unapply atomically removes its
+explicit applied members; branch Unapply removes only that bookmark. Regrouping
+preserves branch-keyed drafts, selections and adjacent diffs. Topology does not
+depend on loaded commit pages, and unavailable history is never represented as
+complete bookmark-only history.
+
+Focused Commits and Op Log follow the current workspace operation by default.
+Accepted workspace operations update the application-owned live history pin;
+explicit historical inspection remains pinned. The frontend `stack_history`
+field round-trips live/pinned intent through reload and navigation. Legacy
+focused history defaults to live. History remains repository-wide and lazy;
+loading/preparation must complete before the new graph replaces the old one.
 
 An exact displayed commit receiving a dropped file/hunk MUST retain its title in
 the destination picker even when it is not a bookmark head. Refreshing the
@@ -2757,3 +2772,9 @@ Same-scope refresh and history updates retain authoritative loaded file
 summaries and patches in the draft/drop selection model. A changed read scope
 invalidates that cache before projection; visible cached rows cannot become
 stale selections solely because a same-operation read completed.
+
+Focused history exposes Follow current operation in Workspace actions. Losing a
+local binding or authorization disposes its accepted-operation owner; transient
+read pressure retains a loaded controller, drafts and pending commands. Grouped
+branch cards render retained lower-branch selections using their original branch
+identities. Managed-index readiness restores bounded stack history.

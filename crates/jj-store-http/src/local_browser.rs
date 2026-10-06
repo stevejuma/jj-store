@@ -532,6 +532,7 @@ async fn query(
     let core = matches!(
         &query.request,
         local::Request::Graph(local::GraphRequest::Log { .. }, _)
+            | local::Request::StackHistory(_)
             | local::Request::Commit { .. }
             | local::Request::CommitSummary { .. }
             | local::Request::Paths(_)

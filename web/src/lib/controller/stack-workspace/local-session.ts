@@ -214,7 +214,10 @@ export class LocalStacksSession {
         );
     }
     const local = localStacksCommand(snapshot, command);
-    if (localMutationKinds.some((kind) => kind === command.kind)) {
+    if (
+      local.kind === "unapply_branches" ||
+      localMutationKinds.some((kind) => kind === command.kind)
+    ) {
       if (!this.source.stacks.preview) return unavailableStackCommand();
       const preview = await this.source.stacks.preview({
         version: 1,

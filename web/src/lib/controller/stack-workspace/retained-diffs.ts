@@ -1,4 +1,5 @@
 import { workspaceSourceFiles, workspaceSourceStack } from "./files.js";
+import { cloneWorkspace } from "./types.js";
 import type {
   WorkspaceSnapshot,
   WorkspaceOpenDiff,
@@ -68,5 +69,25 @@ export function reconcileSourceDiffs(
           : {}),
       },
     ];
+  });
+}
+
+/** Retain exact immutable sources while the new operation's graph is preparing.
+ * Presentation segments and cursors are reissued, so the lane shows a skeleton. */
+export function retainStackContents(
+  previous: WorkspaceSnapshot | null,
+  next: WorkspaceSnapshot,
+) {
+  if (previous?.target?.commit !== next.target?.commit) return [];
+  return next.stacks.flatMap((stack) => {
+    const prior = previous?.stacks.find((item) => item.id === stack.id);
+    if (
+      stack.segments ||
+      !stack.heads[0]?.commit ||
+      prior?.heads[0]?.commit !== stack.heads[0].commit
+    )
+      return [];
+    stack.commits = cloneWorkspace(prior.commits);
+    return stack.commits;
   });
 }

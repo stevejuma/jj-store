@@ -121,3 +121,44 @@ test.each([
     "invalid",
   );
 });
+
+test("accepted native operations follow both histories while explicit pins survive tab changes", () => {
+  const f = fixture("stacks");
+  const current = "98".repeat(64);
+  f.navigation.acceptOperation(repository, current);
+  for (const view of ["log", "oplog"] as const) {
+    f.navigation.select(view);
+    expect(f.route).toMatchObject({
+      snapshotOperationId: current,
+      stackHistory: "live",
+    });
+  }
+  f.select({ stackHistory: "pinned", snapshotOperationId: operation });
+  f.navigation.select("workspace");
+  f.navigation.acceptOperation(repository, "76".repeat(64));
+  f.navigation.select("oplog");
+  expect(f.route).toMatchObject({
+    snapshotOperationId: operation,
+    stackHistory: "pinned",
+  });
+  const reloaded = storeRouteFromHash(storeRouteToHash(f.route)!);
+  expect(reloaded.kind === "route" && reloaded.route.stackHistory).toBe(
+    "pinned",
+  );
+  f.navigation.select("log");
+  expect(f.route).toMatchObject({
+    snapshotOperationId: "76".repeat(64),
+    stackHistory: "live",
+  });
+});
+
+test.each([
+  "log?stack_history=live",
+  "stacks?stack_history=pinned",
+  "oplog?context=stacks&stack_history=wrong",
+  "log?context=stacks&stack_history=live&stack_history=pinned",
+])("rejects invalid history modes: %s", (path) => {
+  expect(storeRouteFromHash(`#/repos/${repository}/${path}`).kind).toBe(
+    "invalid",
+  );
+});

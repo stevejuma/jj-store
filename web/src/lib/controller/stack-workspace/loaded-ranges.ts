@@ -60,8 +60,8 @@ export class LoadedStackRanges {
                 ...new Map(
                   [
                     ...commit.graph!.bookmarks,
-                    ...stack.commits.find((item) => item.id === head.commit)!
-                      .graph!.bookmarks,
+                    ...(stack.commits.find((item) => item.id === head.commit)
+                      ?.graph?.bookmarks ?? []),
                   ].map((bookmark) => [
                     JSON.stringify([bookmark.name, bookmark.remote]),
                     bookmark,

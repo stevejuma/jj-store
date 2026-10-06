@@ -37,6 +37,12 @@
   controller={workspace}
   showPicker={false}
   focusedView={view}
+  historyMode={route.stackHistory ?? "live"}
+  onHistoryMode={view === "log" || view === "oplog"
+    ? (mode) => {
+        void controller.actions.selectStacksView(view, mode);
+      }
+    : undefined}
   onSelectView={(next) => {
     void controller.actions.selectStacksView(next);
   }}

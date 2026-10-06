@@ -131,6 +131,19 @@ export async function restoreProductionStoreRoute(
   if (desired.context === "stacks") {
     await reads.restoreStacks?.(true);
     if (history.route !== desired) return;
+    const operation = history.stacks.operation(desired.repository);
+    if (
+      desired.stackHistory !== "pinned" &&
+      operation &&
+      operation !== desired.snapshotOperationId
+    ) {
+      history.replace({
+        ...desired,
+        stackHistory: "live",
+        snapshotOperationId: operation,
+      });
+      desired = history.route;
+    }
   }
   const referencesReady = reads.prepareReferences
     ? await reads.prepareReferences(desired)

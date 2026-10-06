@@ -985,3 +985,17 @@ unknown-outcome inspection remain required. Production file dragging uses exact
 loaded source/path pairs; partial dragging uses issued native hunk tokens. Net
 branch comparisons remain read-only. Undo/Redo remains available without a
 selected named workspace.
+
+### Additive ordinary Stacks topology
+
+HTTP V1 local workspace state adds optional operation-owned `topology`, with
+bounded completeness, ordered lanes, same-tip alias names and integrated saved
+branches. The additive `unapply_branches` command removes an explicit set in one
+operation/config-guarded transaction; existing `unapply` remains compatible.
+TOML version1 and stable bookmark identities are unchanged. Existing workspaces
+are corrected only through explicit reconciliation previews, including eligible
+legacy head IDs. No read migrates or repairs source graphs. Focused frontend
+history accepts `stack_history=live|pinned`; legacy focused links default to
+live, and explicit historical snapshots remain pinned across reload/navigation.
+Native JJ identity, object, WAL, manifest and durable layout formats stay
+unchanged.

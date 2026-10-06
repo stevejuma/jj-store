@@ -173,3 +173,114 @@ test("explicit index preparation restores Stacks at its exact operation and perf
     controller.actions.destroy();
   }
 });
+
+test.each(["live", "pinned"] as const)(
+  "focused %s history uses the correct operation after refresh and tab entry",
+  async (mode) => {
+    const fixture = productionStacksHttp();
+    let latest = stackOperation;
+    const fetcher: typeof fetch = async (input, init) => {
+      const response = await fixture.fetcher(input, init);
+      if (!response.headers.get("content-type")?.includes("application/json"))
+        return response;
+      const request = init?.body ? JSON.parse(String(init.body)) : null;
+      const operation = String(input).endsWith("/query")
+        ? (request?.operation ?? latest)
+        : latest;
+      const json = JSON.stringify(await response.json()).replaceAll(
+        stackOperation,
+        operation,
+      );
+      return new Response(json, {
+        status: response.status,
+        headers: response.headers,
+      });
+    };
+    fixture.browser.push(
+      `#/repos/${stackRepository}/log?context=stacks&stack_history=${mode}&at_op=${stackOperation}`,
+    );
+    const controller = createProductionStoreController({ ...fixture, fetcher });
+    try {
+      await vi.waitFor(() =>
+        expect(controller.state.status.navigation).toBe("ready"),
+      );
+      const stacks = controller.stackWorkspace;
+      latest = "d".repeat(128);
+      await controller.actions.refresh();
+      expect(controller.state.route.snapshotOperationId).toBe(
+        mode === "live" ? latest : stackOperation,
+      );
+      expect(controller.state.status.error).toBe("");
+      await controller.actions.selectStacksView("workspace");
+      latest = "e".repeat(128);
+      await controller.actions.selectStacksView("log");
+      expect(controller.state.route.snapshotOperationId).toBe(
+        mode === "live" ? latest : stackOperation,
+      );
+      expect(controller.stackWorkspace).toBe(stacks);
+      expect(controller.state.status.error).toBe("");
+      const graphs = fixture.requests.filter(
+        (request) => request.body?.request?.kind === "graph",
+      );
+      expect(graphs.at(-1)?.body.operation).toBe(
+        mode === "live" ? latest : stackOperation,
+      );
+    } finally {
+      controller.actions.destroy();
+    }
+  },
+);
+
+test("an accepted workspace mutation advances both focused history tabs without eager graph reads", async () => {
+  const fixture = productionStacksHttp();
+  let latest = stackOperation;
+  const fetcher: typeof fetch = async (input, init) => {
+    const request = init?.body ? JSON.parse(String(init.body)) : null;
+    if (
+      String(input).endsWith("/stacks") &&
+      ["setup", "create"].includes(request?.command?.kind)
+    )
+      latest = "f".repeat(128);
+    const response = await fixture.fetcher(input, init);
+    if (!response.headers.get("content-type")?.includes("application/json"))
+      return response;
+    const value = await response.json();
+    if (String(input).endsWith("/stacks") && latest !== stackOperation)
+      value.revision = 1;
+    return new Response(
+      JSON.stringify(value).replaceAll(stackOperation, latest),
+      { status: response.status, headers: response.headers },
+    );
+  };
+  const controller = createProductionStoreController({ ...fixture, fetcher });
+  try {
+    await vi.waitFor(() =>
+      expect(controller.stackWorkspace?.snapshot?.targetOptions).toHaveLength(
+        2,
+      ),
+    );
+    const stacks = controller.stackWorkspace!;
+    await stacks.chooseTarget(stacks.snapshot!.targetOptions![0]!);
+    await stacks.prepare({ kind: "create_workspace", name: "New workspace" });
+    expect(stacks.preview).not.toBeNull();
+    await stacks.apply();
+    expect(stacks.snapshot?.operation).toBe(latest);
+    expect(latest).not.toBe(stackOperation);
+    expect(
+      fixture.requests.filter(
+        (request) => request.body?.request?.kind === "graph",
+      ),
+    ).toHaveLength(0);
+    for (const tab of ["log", "oplog"] as const) {
+      await controller.actions.selectStacksView(tab);
+      expect(controller.stackWorkspace).toBe(stacks);
+      expect(controller.state.route.snapshotOperationId).toBe(latest);
+      const reads = fixture.requests.filter(
+        (request) => request.body?.request?.kind === "graph",
+      );
+      expect(reads.at(-1)?.body.operation).toBe(latest);
+    }
+  } finally {
+    controller.actions.destroy();
+  }
+});

@@ -108,6 +108,20 @@ async fn managed_local_http_activates_without_subscribers_resumes_and_captures_t
         status, 200,
         "first open prepared before any history request: {first_log}"
     );
+    let selected = first_log["data"]["data"]["data"]["nodes"][0]["commit"]["id"]
+        .as_str()
+        .unwrap();
+    let stack = json!({"operation":operation,"cursor":null,"request":{"kind":"stack_history","query":{"head":selected,"base":null,"limit":1,"after":null}}});
+    let (status, stack_page) =
+        request(&client, port, &format!("{base}/query"), Some(&stack), false).await;
+    assert_eq!(
+        status, 200,
+        "managed stack history must reuse JJ Log's ready index: {stack_page}"
+    );
+    assert_eq!(
+        stack_page["data"]["data"]["commits"][0]["commit"]["id"],
+        selected
+    );
     let mut samples = vec![];
     let (status, started) = request(
         &client,

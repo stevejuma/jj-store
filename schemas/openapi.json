@@ -33713,6 +33713,21 @@
                       {
                         "type": "object",
                         "properties": {
+                          "branches": {
+                            "type": "array",
+                            "items": { "type": "string" }
+                          },
+                          "kind": {
+                            "type": "string",
+                            "const": "unapply_branches"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": ["kind", "branches"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
                           "branch": { "type": "string" },
                           "kind": { "type": "string", "const": "set_target" }
                         },
@@ -34245,6 +34260,21 @@
                         },
                         "additionalProperties": false,
                         "required": ["kind", "branch"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "branches": {
+                            "type": "array",
+                            "items": { "type": "string" }
+                          },
+                          "kind": {
+                            "type": "string",
+                            "const": "unapply_branches"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": ["kind", "branches"]
                       },
                       {
                         "type": "object",
@@ -46843,6 +46873,12 @@
             "type": "array",
             "items": { "type": "string" },
             "default": []
+          },
+          "topology": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/LocalStacksTopology" },
+              { "type": "null" }
+            ]
           }
         },
         "required": [
@@ -46882,6 +46918,38 @@
           "conflicted",
           "membership_changed"
         ]
+      },
+      "LocalStacksTopology": {
+        "type": "object",
+        "properties": {
+          "lanes": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/LocalStacksTopologyLane" }
+          },
+          "integrated": { "type": "array", "items": { "type": "string" } },
+          "complete": { "type": "boolean" }
+        },
+        "required": ["lanes", "integrated", "complete"]
+      },
+      "LocalStacksTopologyLane": {
+        "type": "object",
+        "properties": {
+          "heads": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/LocalStacksTopologyHead" },
+            "description": "Newest first. Multiple names on one tip are aliases, not extra segments."
+          },
+          "applied": { "type": "array", "items": { "type": "string" } }
+        },
+        "required": ["heads", "applied"]
+      },
+      "LocalStacksTopologyHead": {
+        "type": "object",
+        "properties": {
+          "names": { "type": "array", "items": { "type": "string" } },
+          "commit": { "type": "string" }
+        },
+        "required": ["names", "commit"]
       },
       "LocalStacksPreview": {
         "type": "object",

@@ -15,7 +15,9 @@
   import type { WorkspaceCommand } from "../../controller/stack-workspace/types.js";
   let {
     stack,
+    commitStack = stack,
     name,
+    applied = true,
     canAddCommit,
     commit,
     empty,
@@ -28,7 +30,9 @@
     onCommand,
   }: {
     stack: string;
+    commitStack?: string;
     name: string;
+    applied?: boolean;
     canAddCommit: boolean;
     commit: string;
     empty: boolean;
@@ -58,8 +62,11 @@
               aria-label={`Add empty commit to ${name}`}
               disabled={disabled || !enabled("create_commit")}
               onclick={() =>
-                onCommand({ kind: "create_commit", stack, message: "" })}
-              ><GitCommit aria-hidden="true" /></Button
+                onCommand({
+                  kind: "create_commit",
+                  stack: commitStack,
+                  message: "",
+                })}><GitCommit aria-hidden="true" /></Button
             >
           {/snippet}
         </Tooltip.Trigger><Tooltip.Content>Add empty commit</Tooltip.Content
@@ -121,7 +128,7 @@
           onSelect={() =>
             onCommand(
               empty
-                ? { kind: "create_commit", stack, message: "" }
+                ? { kind: "create_commit", stack: commitStack, message: "" }
                 : {
                     kind: "add_empty_commit",
                     commit,
@@ -154,14 +161,15 @@
         <Menu.Item
           title={reason("rebase") || undefined}
           disabled={!enabled("rebase")}
-          onSelect={() => onCommand({ kind: "rebase", stack })}
+          onSelect={() => onCommand({ kind: "rebase", stack, branch: name })}
           ><GitBranch aria-hidden="true" />Rebase onto base</Menu.Item
         >
         <Menu.Item
           title={reason("unapply_stack") || undefined}
-          disabled={!enabled("unapply_stack")}
-          onSelect={() => onCommand({ kind: "unapply_stack", stack })}
-          ><Eject aria-hidden="true" />Unapply stack</Menu.Item
+          disabled={!applied || !enabled("unapply_stack")}
+          onSelect={() =>
+            onCommand({ kind: "unapply_stack", stack, branch: name })}
+          ><Eject aria-hidden="true" />Unapply branch</Menu.Item
         >
       </Menu.Group></Menu.Content
     ></Menu.Root

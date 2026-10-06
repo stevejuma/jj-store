@@ -12,6 +12,7 @@
     selectedWorkspace,
     appliedStacks,
     stackBookmarks,
+    stackLaneMembers,
   } from "../../controller/stack-workspace/presentation.js";
   import type { StackWorkspaceController } from "../../controller/stack-workspace/controller.svelte.js";
   import type { WorkspaceCommand } from "../../controller/stack-workspace/types.js";
@@ -216,7 +217,7 @@
         {onCommand}
         onDrop={drop}
       />
-      {#each controller.diffs.filter((diff) => diff.origin === `stack-${stack.id}` && registeredDiffs.includes(diff.origin)) as diff (diff.origin)}
+      {#each controller.diffs.filter((diff) => stackLaneMembers(snapshot, stack).some((member) => diff.origin === `stack-${member.id}`) && registeredDiffs.includes(diff.origin)) as diff (diff.origin)}
         <StoreStackWorkspaceDiff {controller} {diff} {onCommand} />
       {/each}
     {/each}

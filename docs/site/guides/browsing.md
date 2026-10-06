@@ -105,8 +105,13 @@ For a registered local JJ repository, select **Stacks** in its repository tabs,
 before Branches, and choose the target branch. This opens focused navigation:
 Back, Branches, Workspace, Commits and Op Log. Commits and Op Log show the
 repository-wide histories while retaining your workspace drafts and open diffs.
-On first open or reload, a skeleton covers connection, local binding discovery
-and workspace loading. Later refreshes keep loaded content and drafts visible.
+They follow the current workspace operation by default, including after accepted
+commands or a successful refresh. In Workspace actions, turn off **Follow
+current operation** to keep a historical snapshot pinned. Selecting an explicit
+historical snapshot also pins it. The URL retains this choice across reloads and
+browser Back/Forward; older focused links default to following current JJ. On
+first open or reload, a skeleton covers connection, local binding discovery and
+workspace loading. Later refreshes keep loaded content and drafts visible.
 Failed reads show a notification and a Retry control instead of an inline error
 banner. History chips cap long labels with ellipsis; hover shows the full value.
 The workspace picker and workspace actions stay available. If a read starts
@@ -117,15 +122,25 @@ Op Log show the selected repository history metadata. Back has a circular hover
 treatment and restores the repository view and selections you came from; after a
 direct link or reload it returns to Overview. Stacks does not have a separate
 left-sidebar entry. Create a named workspace, then use Branches to apply or
-unapply branch stacks. Workspace shows the applied stacks and Unstaged changes;
-file diffs open beside their originating column. Each named workspace retains
-its unfinished work when you switch. Active refresh snapshots files with normal
-JJ rules. Names, target and membership are local settings in
-`.jj/jj-store/stacks.toml`; they are not tracked repository files.
+unapply branches. Workspace groups proven linear dependencies beneath their
+newest applied head, showing aliases together without duplicate commits. Sibling
+branches stay separate; merge ancestry remains a graph. Branches already
+integrated into the target remain in browsing and saved membership but do not
+occupy active columns. Empty branches at the target remain commit destinations.
+Column **Unapply stack** removes every explicitly applied member shown by that
+column in one previewed transaction; **Unapply branch** removes only that
+bookmark. Applying a branch does not apply an unapplied descendant. Workspace
+shows those derived columns and Unstaged changes; file diffs open beside their
+originating column. Each named workspace retains its unfinished work when you
+switch. Active refresh snapshots files with normal JJ rules. Names, target and
+membership are local settings in `.jj/jj-store/stacks.toml`; they are not
+tracked repository files.
 
 Workspace commands complete independently of the graph index. If history at the
-new operation needs preparation, use the existing Prepare graph index action.
-Unstaged counts reflect loaded files; a `+` means more remain to load.
+new operation needs preparation, columns show skeletons until their bounded
+history is ready. Managed code history prepares automatically; installations
+using explicit preparation retain the Prepare graph index action. Unstaged
+counts reflect loaded files; a `+` means more remain to load.
 
 Conflicted Unstaged files show a warning icon and the workspace banner's warning
 background in each listing mode. The top conflict banner appears only on the
@@ -159,4 +174,8 @@ another attempt. Selecting another working change through the CLI keeps your
 named workspaces and clears the active selection until you choose one. Undo and
 Redo follow native repository operation history, including CLI commands. They do
 not undo saved TOML settings. Refresh and Switch never silently restore saved
-branch membership; use **Reapply saved branches** to reconcile it.
+branch membership; use **Reapply saved branches** to reconcile it. That preview
+also lists eligible obsolete workspace merge heads from older versions. Only
+heads proven by recorded workspace operations and unreferenced by user
+bookmarks, other workspaces or descendants can be retired. Native operation
+history retains recovery. Reading or refreshing never performs this repair.

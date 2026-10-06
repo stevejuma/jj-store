@@ -19,13 +19,26 @@ flowchart TB
 ## Local stack workspaces
 
 The Stacks page operates directly on a registered ordinary local JJ folder using
-jj-lib 0.45.1. Setup retains the existing checkout, applied branches become the
-parents of a megamerge, and a WIP child retains unfinished edits. Switching
-snapshots the outgoing workspace and checks out the selected workspace's WIP.
-Active refresh follows normal JJ ignore, auto-track, sparse-checkout and
-file-size policy. Rewrites propagate through native descendants; Refresh and
-Switch do not rebuild saved branch membership. Explicit Reapply saved branches
-reconciles it when needed.
+jj-lib 0.45.1. Setup retains the existing checkout and creates a megamerge from
+the target plus distinct applied tips, with a WIP child retaining unfinished
+edits. Membership or target changes rewrite that app-owned merge and let native
+JJ descendant rebasing preserve the WIP delta and both change identities.
+Switching snapshots the outgoing workspace and checks out the selected
+workspace's WIP. Active refresh follows normal JJ ignore, auto-track,
+sparse-checkout and file-size policy. Rewrites propagate through native
+descendants; Refresh and Switch do not rebuild saved branch membership. Explicit
+Reapply saved branches reconciles it when needed. The preview offers
+conservative cleanup of legacy merge heads using recorded retention-reference
+transitions across at most 256 linear operations. Referenced heads and user
+descendants remain protected; matching a commit description alone never proves
+ownership.
+
+Operation-owned topology groups aliases and proven linear dependencies,
+independent of loaded history pages. A 50,000-step total ancestry budget bounds
+it. Traversal stops at merges, and a shared applied base of sibling heads keeps
+its own action ownership. Incomplete topology is reported rather than guessed.
+Grouped unapply validates all supplied members and publishes their removal in
+one native transaction. Saved branch membership and TOML format remain intact.
 
 Names, target branches, ordered membership and local retention bookmark names
 are saved atomically in `.jj/jj-store/stacks.toml`. This file is outside tracked

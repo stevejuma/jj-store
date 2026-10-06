@@ -1,3 +1,4 @@
+import { WORKSPACE_DRAG_TYPE } from "./drag.js";
 import { stackGroups } from "./presentation.js";
 import type {
   WorkspaceCommand,
@@ -104,4 +105,24 @@ export function commitDropPlacement(
   } catch {
     return undefined;
   }
+}
+
+/** Resolve native drag rows from their explicit commit identity. */
+export function commitEventRow(event: DragEvent) {
+  return event.target instanceof Element
+    ? event.target.closest<HTMLElement>("[data-revision-id]")
+    : null;
+}
+export function commitRowTarget(event: DragEvent, payload: string | null) {
+  const row = commitEventRow(event);
+  if (!row?.dataset.revisionId) return null;
+  return {
+    kind: "commit" as const,
+    id: row.dataset.revisionId,
+    placement: commitDropPlacement(
+      payload ?? event.dataTransfer?.getData(WORKSPACE_DRAG_TYPE) ?? null,
+      row.getBoundingClientRect(),
+      event.clientY,
+    ),
+  };
 }

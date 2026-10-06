@@ -1274,3 +1274,11 @@ membership, code profiles and response bounds. Public catalog projection strips
 private retained objects and proposed after-state. Neither catalog readiness nor
 the existence of these DTOs authorizes a command; registered runtime joins and
 transport/executor acceptance remain required.
+
+Grouped local Stacks Unapply validates the entire explicitly applied bookmark
+set under one operation/configuration guard and uses one native transaction.
+Membership and target changes rewrite the retained app-owned megamerge from the
+target plus distinct applied tips, preserving WIP delta and change identities.
+Reconciliation previews list conservatively proven obsolete merge heads before
+retirement; ordinary reads and refresh never repair repository graphs. Native
+operation history remains the recovery path.

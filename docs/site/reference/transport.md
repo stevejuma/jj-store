@@ -26,10 +26,12 @@ observing the captured task until its terminal status; never retarget it to a
 newer selection. These tasks build derived indexes and do not publish code.
 
 Local `stack_history` queries retain an exact operation, head and optional base.
-Their opaque continuation belongs to that range and page size; raw internal
-anchors are refused. The client checks the nested range as well as the envelope
-and refuses oversized or non-advancing pages. This additive read variant grants
-no stack mutation or physical checkout capability.
+They share JJ Log's managed code index, including bounded automatic preparation
+and current binding authorization. The explicit prepared-index reader remains
+supported. Their opaque continuation belongs to that range and page size; raw
+internal anchors are refused. The client checks the nested range as well as the
+envelope and refuses oversized or non-advancing pages. This additive read
+variant grants no stack mutation or physical checkout capability.
 
 Local `working-tree/observe` is a read-only POST with a version, expected
 registered binding generation and exact operation. The server resolves the
@@ -126,3 +128,12 @@ Delete removes only its saved local configuration. Both validate the shown
 operation and TOML revision. Native work is retained; unknown outcomes require
 inspection instead of automatic replay. See
 [Local repositories](../technical/local.md#local-stack-workspaces).
+
+Local Stacks state additionally returns bounded topology at its selected
+operation: ordered column heads and aliases, explicitly applied members,
+integrated branches and completeness. This is a derived projection; saved TOML
+membership and branch identities remain unchanged. `unapply_branches` validates
+the complete nonempty, unique member list under the same guards and removes it
+atomically. Reconciliation previews exact legacy merge heads eligible for
+conservative retirement. Frontend focused history records live or pinned intent
+in `stack_history`; every server history request still names an exact operation.

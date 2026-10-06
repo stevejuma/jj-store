@@ -64,6 +64,11 @@ pub(super) async fn state(
     } else {
         vec![]
     };
+    let topology = if let Some(saved) = config.active().filter(|_| active.is_some()) {
+        Some(topology::read(repo, saved).await?)
+    } else {
+        None
+    };
     Ok(State {
         version: 1,
         operation: repo.op_id().hex().parse().map_err(|_| Error::Invalid)?,
@@ -74,5 +79,6 @@ pub(super) async fn state(
         can_undo: history::target(repo, false).await.is_ok(),
         can_redo: history::target(repo, true).await.is_ok(),
         conflicts,
+        topology,
     })
 }

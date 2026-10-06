@@ -2296,3 +2296,9 @@ Ordinary local Stacks Settings and removal remain application HTTP commands
 through the registered filesystem runtime. They use jj-lib directly; no new CLI
 syntax, installed executable or service is introduced. Focused registered
 local-browser responses cover Update and Delete alongside the core commands.
+
+The local-browser CLI host routes bounded Stacks history through its managed
+code index, matching JJ Log's exact-operation selection and readiness lifecycle.
+The older explicit preparation path remains compatible. Startup and service
+control contracts are unchanged; development backend restarts retain fixtures
+and do not reconcile users' saved branch membership.

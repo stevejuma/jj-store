@@ -19,10 +19,29 @@ export function activeWorkspace(snapshot: WorkspaceSnapshot) {
   return workspace;
 }
 export function appliedStacks(snapshot: WorkspaceSnapshot) {
+  if (snapshot.topology) {
+    if (!snapshot.topology.complete) return [];
+    return snapshot.topology.lanes.flatMap((lane) => {
+      const stack = snapshot.stacks.find(
+        (stack) => stack.name === lane.heads[0]?.names[0],
+      );
+      return stack ? [stack] : [];
+    });
+  }
   const byId = new Map(snapshot.stacks.map((stack) => [stack.id, stack]));
   return normalizeAppliedStacks(selectedWorkspace(snapshot)?.applied ?? [])
     .map((id) => byId.get(id))
     .filter((stack): stack is WorkspaceStack => Boolean(stack));
+}
+/** Original branch IDs remain the owners of drafts, selections and adjacent diffs. */
+export function stackLaneMembers(
+  snapshot: WorkspaceSnapshot,
+  stack: WorkspaceStack,
+) {
+  return snapshot.stacks.filter(
+    (item) =>
+      item.id === stack.id || stack.appliedBranches?.includes(item.name),
+  );
 }
 /** Group each bookmark's own commits, newest first, without duplicating lower segments. */
 export function stackGroups(stack: WorkspaceStack) {
@@ -170,4 +189,9 @@ export function retainedWorkspaceSelection(
     ? selection.selectedCommit
     : null;
   return { selectedStack, selectedBranch, selectedCommit };
+}
+
+export function isAppliedBranch(snapshot: WorkspaceSnapshot, name: string) {
+  const id = snapshot.stacks.find((stack) => stack.name === name)?.id;
+  return Boolean(id && selectedWorkspace(snapshot)?.applied.includes(id));
 }

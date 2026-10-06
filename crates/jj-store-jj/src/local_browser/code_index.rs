@@ -299,6 +299,7 @@ impl Executor {
         if !matches!(
             request,
             Request::Graph(GraphRequest::Log { .. }, _)
+                | Request::StackHistory(_)
                 | Request::Commit { .. }
                 | Request::CommitSummary { .. }
                 | Request::Paths(_)
@@ -344,7 +345,10 @@ impl Executor {
                     .map_or(&context.store, |guard| &guard.source)
                     .clone();
                 let guard = scoped::Guard::new(source, &context.access, budget.clone(), limits);
-                if !matches!(request, Request::Graph(_, _) | Request::Commit { .. }) {
+                if !matches!(
+                    request,
+                    Request::Graph(_, _) | Request::StackHistory(_) | Request::Commit { .. }
+                ) {
                     context.store = guard.store();
                     context.scoped = Some(guard);
                     return context.dispatch(operation, request, false).await;

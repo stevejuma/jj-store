@@ -15158,6 +15158,26 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 {
                   "type": "object",
                   "properties": {
+                    "branches": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "kind": {
+                      "type": "string",
+                      "const": "unapply_branches"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "kind",
+                    "branches"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
                     "branch": {
                       "type": "string"
                     },
@@ -16082,6 +16102,26 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                   "required": [
                     "kind",
                     "branch"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "branches": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      }
+                    },
+                    "kind": {
+                      "type": "string",
+                      "const": "unapply_branches"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "kind",
+                    "branches"
                   ]
                 },
                 {

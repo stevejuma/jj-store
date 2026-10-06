@@ -4,6 +4,7 @@ export interface StoreRoute {
   fileDisplay?: "source" | "preview" | "blame";
   context?: "stacks";
   stackTab?: "branches" | "workspace";
+  stackHistory?: "live" | "pinned";
   historyQuery?: string;
   historyTime?: number;
   commentId?: string | null;

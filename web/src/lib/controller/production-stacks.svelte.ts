@@ -16,6 +16,8 @@ export function createProductionStacks(options: {
   source(): StoreDataSource | null;
   route(): StoreRoute;
   fetcher?: typeof fetch;
+  acceptedOperation?: (repository: string, operation: string) => void;
+  released?: (repository: string) => void;
 }) {
   let controller = $state<StackWorkspaceController>();
   let adapter: ProductionStackWorkspaceAdapter | undefined;
@@ -27,6 +29,7 @@ export function createProductionStacks(options: {
     epoch++;
     pending?.abort();
     pending = null;
+    if (owner) options.released?.(owner.repository);
     controller?.close();
     controller = undefined;
     adapter = undefined;
@@ -75,7 +78,7 @@ export function createProductionStacks(options: {
         clear();
         return;
       }
-      const captured = await source.snapshot();
+      const captured = await source.snapshot(true);
       if (!current()) return;
       if (
         !isLocal(captured) ||
@@ -89,6 +92,7 @@ export function createProductionStacks(options: {
         String(adapter.binding.generation) !== String(binding.generation) ||
         adapter.binding.path !== binding.path
       ) {
+        if (owner) options.released?.(owner.repository);
         controller?.close();
         adapter = new ProductionStackWorkspaceAdapter(
           source,
@@ -104,6 +108,7 @@ export function createProductionStacks(options: {
           operation,
         };
         controller = new StackWorkspaceController(adapter, {
+          acceptedOperation: options.acceptedOperation,
           initialLoaded: false,
           initial: productionStackSnapshot(
             localStackReferences([]),
@@ -124,6 +129,7 @@ export function createProductionStacks(options: {
                   "local_folder_unavailable",
                   "local_identity_changed",
                   "snapshot_mismatch",
+                  "access_denied",
                 ].includes(cause.code)
               )
                 clear();
@@ -137,8 +143,12 @@ export function createProductionStacks(options: {
         loaded = false;
       }
       // Revalidate ownership above, but do not replace a pending selection/read or command.
+      if (!load && captured.heads.length === 1)
+        options.acceptedOperation?.(source.repository, captured.heads[0]!);
       if (controller!.locked) return;
-      adapter.setOperation(operation);
+      // Canvas reads follow their native session, even beside pinned history.
+      // Re-entering a history tab must not reset an accepted workspace operation.
+      if (!loaded) adapter.setOperation(operation);
       if (load) {
         await controller!.refresh();
         if (!current()) return;
@@ -153,13 +163,27 @@ export function createProductionStacks(options: {
       }
     } catch (cause) {
       if (current()) {
-        clear();
+        if (
+          !controller?.snapshotLoaded ||
+          (cause instanceof ApiError &&
+            [
+              "local_folder_unavailable",
+              "local_identity_changed",
+              "snapshot_mismatch",
+              "access_denied",
+            ].includes(cause.code))
+        )
+          clear();
         reportProductionStoreError(options.data, cause);
       }
     } finally {
       client.close();
       if (pending === abort) pending = null;
     }
+  }
+  async function ensure() {
+    await restore(false);
+    if (controller && !loaded) await restore();
   }
   return {
     get loading() {
@@ -170,9 +194,9 @@ export function createProductionStacks(options: {
     },
     clear,
     restore,
-    async ensure() {
-      await restore(false);
-      if (controller && !loaded) await restore();
+    ensure,
+    restoreRoute(contextOnly = false) {
+      return contextOnly ? ensure() : restore();
     },
   };
 }

@@ -233,3 +233,24 @@ test("binding revalidation preserves an in-flight canvas selection read", async 
   expect(controller.snapshot?.base).toBe("chosen-target");
   stacks.clear();
 });
+
+test("transient refresh pressure preserves the loaded workspace and drafts, while lost authority disposes it", async () => {
+  const { stacks, source, data } = fixture();
+  await stacks.restore();
+  const controller = stacks.controller!;
+  controller.commitDrafts.drafts = {
+    retained: { title: "Keep draft", body: "", selections: [] },
+  };
+  vi.mocked(source.snapshot).mockRejectedValueOnce(new ApiError("busy"));
+  await stacks.ensure();
+  expect(stacks.controller).toBe(controller);
+  expect(controller.commitDrafts.drafts.retained?.title).toBe("Keep draft");
+  expect(data.status.error).toContain("busy");
+  await stacks.ensure();
+  expect(stacks.controller).toBe(controller);
+  vi.mocked(source.snapshot).mockRejectedValueOnce(
+    new ApiError("access_denied"),
+  );
+  await stacks.ensure();
+  expect(stacks.controller).toBeUndefined();
+});

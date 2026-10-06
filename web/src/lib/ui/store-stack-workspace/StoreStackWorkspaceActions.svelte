@@ -17,10 +17,14 @@
     controller,
     command,
     onSettings,
+    historyMode,
+    onHistoryMode,
   }: {
     controller: StackWorkspaceController;
     command: (value: WorkspaceCommand) => void;
     onSettings?: () => void;
+    historyMode?: "live" | "pinned";
+    onHistoryMode?: (mode: "live" | "pinned") => void;
   } = $props();
   const snapshot = $derived(controller.snapshot);
   const eligible = $derived(
@@ -62,6 +66,15 @@
           class="stack-workspace__action-menu"
         >
           <Menu.Group>
+            {#if onHistoryMode}
+              <Menu.CheckboxItem
+                checked={historyMode !== "pinned"}
+                onCheckedChange={(live) =>
+                  onHistoryMode?.(live ? "live" : "pinned")}
+                >Follow current operation</Menu.CheckboxItem
+              >
+              <Menu.Separator />
+            {/if}
             <Menu.Item
               disabled={!onSettings || !snapshot.active}
               onSelect={() => onSettings?.()}

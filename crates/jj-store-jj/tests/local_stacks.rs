@@ -26,6 +26,9 @@ impl local_browser::Access for Access {
         Ok(())
     }
 }
+#[path = "local_stacks/topology.rs"]
+mod topology;
+
 fn stock(root: &Path, args: &[&str]) -> String {
     let result = Process::new("/opt/homebrew/bin/jj")
         .current_dir(root)
@@ -128,7 +131,7 @@ async fn megamerge_membership_preserves_dirty_work_and_named_workspace_switching
             root,
             &["log", "-r", "@-", "--no-graph", "-T", "parents.len()"]
         ),
-        "2"
+        "3"
     );
     assert!(stock(root, &["file", "list"]).contains("draft.txt"));
     assert!(!stock(root, &["file", "list"]).contains("ignored.txt"));
@@ -1727,7 +1730,7 @@ async fn moving_a_tip_retains_applied_edges_in_inactive_workspaces() {
             &[
                 "log",
                 "-r",
-                &format!("{}-", retained.merge_commit),
+                &format!("{}- & topic-one", retained.merge_commit),
                 "--no-graph",
                 "-T",
                 "commit_id"

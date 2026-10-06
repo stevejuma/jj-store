@@ -79,8 +79,10 @@ export function createProductionRefresh(options: {
       const oldHead = data.head,
         counts = storeLoadedWindows(data);
       const followedHead =
-        oldHead?.heads.length === 1 &&
-        route.snapshotOperationId === oldHead.heads[0];
+        route.context === "stacks"
+          ? route.stackHistory !== "pinned"
+          : oldHead?.heads.length === 1 &&
+            route.snapshotOperationId === oldHead.heads[0];
       if (!automatic) options.stopFeed();
       const captured = await active.snapshot(true);
       try {
@@ -91,7 +93,8 @@ export function createProductionRefresh(options: {
       data.heads = [...captured.heads];
       data.head = captured;
       const selected =
-        automatic && !followedHead
+        (route.context === "stacks" && route.stackHistory === "pinned") ||
+        (automatic && !followedHead)
           ? route.snapshotOperationId
           : data.heads.length === 1
             ? data.heads[0]!
@@ -125,6 +128,12 @@ export function createProductionRefresh(options: {
           changeId: route.bookmark ? null : route.changeId,
         });
       history.refresh(selected);
+      if (
+        selected &&
+        route.context === "stacks" &&
+        route.stackHistory !== "pinned"
+      )
+        history.stacks.acceptOperation(route.repository, selected);
       data.status.refreshAvailable = false;
       if (!automatic) options.follow(active);
       if (selected) await reader.restorePage();

@@ -26,6 +26,7 @@ export function storePageRoute(route: StoreRoute, page: StorePage): StoreRoute {
     fileDisplay: undefined,
     context: undefined,
     stackTab: undefined,
+    stackHistory: undefined,
     historyQuery: undefined,
     historyTime: undefined,
     projectsHub: false,
@@ -62,7 +63,8 @@ export function createStoreStacksNavigation(options: {
   let returnRoute: StoreRoute | undefined;
   const retained = new Map<string, StoreRoute>();
   const canvas = new Map<string, "branches" | "workspace">();
-  function select(view: StoreStacksView) {
+  const operations = new Map<string, string>();
+  function select(view: StoreStacksView, historyMode?: "live" | "pinned") {
     const current = options.route();
     if (isStacksRoute(current)) {
       retained.set(
@@ -73,18 +75,38 @@ export function createStoreStacksNavigation(options: {
         canvas.set(current.repository, current.stackTab ?? "workspace");
     } else returnRoute = { ...current };
     const page = view === "log" || view === "oplog" ? view : "stacks";
-    const next = retained.get(`${current.repository}:${view}`) ?? {
+    let next = retained.get(`${current.repository}:${view}`) ?? {
       ...storePageRoute(current, page),
       workspace: null,
       ...(page === "stacks"
         ? { stackTab: view as "branches" | "workspace" }
         : { context: "stacks" as const }),
     };
+    if (next.context === "stacks" && historyMode)
+      next = { ...next, stackHistory: historyMode };
     if (view === "branches" || view === "workspace")
       canvas.set(current.repository, view);
-    options.push(next);
+    options.push(
+      next.context === "stacks" && next.stackHistory !== "pinned"
+        ? {
+            ...next,
+            stackHistory: "live",
+            snapshotOperationId:
+              operations.get(current.repository) ?? next.snapshotOperationId,
+          }
+        : next,
+    );
   }
   return {
+    acceptOperation(repository: string, operation: string) {
+      operations.set(repository, operation);
+    },
+    operation(repository: string) {
+      return operations.get(repository);
+    },
+    clear(repository: string) {
+      operations.delete(repository);
+    },
     select,
     enter() {
       select(canvas.get(options.route().repository) ?? "workspace");

@@ -6,8 +6,11 @@ export function projectStackRange(
   commits: StackCommit[],
   cursor?: string,
 ): WorkspaceStack {
-  const head = stack.heads.find((head) => head.name === stack.name)!;
+  const head =
+    stack.topologyHeads?.[0] ??
+    stack.heads.find((head) => head.name === stack.name)!;
   const byId = new Map(commits.map((commit) => [commit.id, commit]));
+  const retained = stack.commits.filter((commit) => !byId.has(commit.id));
   const path: StackCommit[] = [],
     seen = new Set<string>();
   let next = head.commit,
@@ -29,7 +32,7 @@ export function projectStackRange(
     return {
       ...stack,
       heads: [head],
-      commits: [...commits].reverse(),
+      commits: [...retained, ...[...commits].reverse()],
       segments: [
         { head, baseCommit: cursor ? null : base, commits, nextCursor: cursor },
       ],
@@ -50,13 +53,23 @@ export function projectStackRange(
       )
       .map((bookmark) => bookmark.name)
       .sort();
-    if (names[0])
-      boundaries.push({ head: { name: names[0], commit: commit.id }, index });
+    const known = stack.topologyHeads?.find(
+      (head) => head.commit === commit.id,
+    );
+    if (known || names[0])
+      boundaries.push({
+        head: known ?? {
+          name: names[0]!,
+          commit: commit.id,
+          ...(names.length > 1 ? { aliases: names.slice(1) } : {}),
+        },
+        index,
+      });
   }
   return {
     ...stack,
     heads: boundaries.map((boundary) => boundary.head),
-    commits: [...path].reverse(),
+    commits: [...retained, ...[...path].reverse()],
     segments: boundaries.map((boundary, index) => ({
       head: boundary.head,
       baseCommit: boundaries[index + 1]?.head.commit ?? (cursor ? null : base),

@@ -94,6 +94,7 @@ export type StoreControllerActions = {
   selectPage(page: StorePage): void | Promise<void>;
   selectStacksView(
     view: import("./store-stacks-navigation.js").StoreStacksView,
+    historyMode?: "live" | "pinned",
   ): void | Promise<void>;
   leaveStacks(): void | Promise<void>;
   navigate(delta: -1 | 1): void | Promise<void>;

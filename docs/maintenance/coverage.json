@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed merged bounded native/local reads and ordinary Stacks commands against the local manual: metadata admission remains read-only, JJ megamerge and retained WIP use native transactions and recovery retains exact extras.",
-      "fingerprint": "cbf60aa628e28711e07b2d6e640974238db2d69909a24e2150a6849bdc2f53a9"
+      "reason": "Documented target-inclusive retained merge rewrites, operation-owned topology bounds and conservative legacy cleanup; source history and TOML remain the local authority.",
+      "fingerprint": "7edd51c4573b893a91faff1ed248d37efc5c5b211c50aba791d1d8a9c8c0dab8"
     }
   },
   {
@@ -65,8 +65,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed combined local read admission and Stacks service interfaces against architecture/transport documentation: authorization remains owned by registered local bindings and no service becomes repository authority.",
-      "fingerprint": "3371fc8e4d549406b0072a2a369453166573722fdd89d39beee128b74d8e46ff"
+      "reason": "Managed Stacks history now starts and reuses the same operation-index owner as JJ Log, preserving existing binding authorization, bounded preparation and derived-cache ownership.",
+      "fingerprint": "0cb6b5a615e09a5dd41823a06e79a5ef31b5df1784f3e70a80bdb9dc90c14a40"
     }
   },
   {
@@ -122,8 +122,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed merged registered-folder binding against security/transport manuals: cached inner validation retains fresh boundary authorization; Stacks and working-tree commands retain same-origin and generation guards.",
-      "fingerprint": "3fc9bded7f78e62b5fcb70c5e0fa0accc3ae2e5797ecf64bf7ba8881dfaff3c0"
+      "reason": "Registered StackHistory requests now use managed core read dispatch with exact operation and generation admission; grouped unapply and topology remain under existing local guards.",
+      "fingerprint": "b3fb4e9f579d3f1f795d66bd668e10d9517c06a2f86ffceaaef24e9a27884b13"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Scoped the top conflict banner to the active Workspace tab; reviewed Branches and focused history omission with retained Details and notification conflict actions against the browsing guide.",
-      "fingerprint": "19d78d5641e949e7bf8dabdb65fb93b1b09dac807b8ab98d12820a7cf55389de"
+      "reason": "Verified native grouped cards retain branch-owned selections without switching branch-browsing columns; live history follows accepted operations, preserves historical pins and safely disposes local owners.",
+      "fingerprint": "689f2b51b962de6e4d825639505345e273c51ef62b11378c9a59c0e042f68100"
     }
   },
   {
@@ -154,8 +154,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Reviewed combined generated paths and ordinary Stacks route contracts against transport/CLI guides; additive path metadata mode and existing Stacks inputs retain exact operation and local generation boundaries.",
-      "fingerprint": "965c335c82b7907e4dcb22577ad4f35990a00462d89fc1bfd407a342580dc2c9"
+      "reason": "Reviewed additive LocalStacks topology and UnapplyBranches schema, regenerated API references, and documented frontend-only live/pinned route fields without changing backend exact-operation contracts.",
+      "fingerprint": "bcdbd384ebc5a58021524bacb1f397a5652c7f801a217b401fe78d2ac3e0ae69"
     }
   }
 ]

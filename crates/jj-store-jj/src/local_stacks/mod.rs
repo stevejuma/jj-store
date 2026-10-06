@@ -1,5 +1,6 @@
 //! Ordinary local JJ megamerges. App settings are local; JJ owns code and checkout.
 mod basic;
+mod cleanup;
 mod config;
 mod conflicts;
 mod content;
@@ -33,7 +34,9 @@ pub use preview::{Preview, preview};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use state::state;
+mod topology;
 use std::{path::PathBuf, sync::Arc};
+pub use topology::{Head as TopologyHead, Lane as TopologyLane, Topology};
 
 #[derive(Debug, thiserror::Error)]
 pub enum Error {
@@ -107,6 +110,9 @@ pub enum Command {
     },
     Unapply {
         branch: String,
+    },
+    UnapplyBranches {
+        branches: Vec<String>,
     },
     SetTarget {
         branch: String,
@@ -219,6 +225,8 @@ pub struct State {
     pub can_redo: bool,
     #[serde(default)]
     pub conflicts: Vec<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub topology: Option<Topology>,
 }
 
 /// Runs under HTTP admission, JJ's WC lock and a local settings lock; never shells out.
@@ -386,6 +394,15 @@ pub async fn execute(access: Arc<dyn Access>, root: PathBuf, request: Request) -
                     .set_wc_commit(name.clone(), rebuilt.id().clone())
                     .map_err(jj)?;
             }
+            Command::UnapplyBranches { ref branches } => {
+                topology::validate_unapply(&config, branches)?;
+                let saved = config.active_mut().ok_or(Error::Invalid)?;
+                saved.applied.retain(|b| !branches.contains(b));
+                let rebuilt = build(tx.repo_mut(), &repo, saved, Some(&wc), false).await?;
+                tx.repo_mut()
+                    .set_wc_commit(name.clone(), rebuilt.id().clone())
+                    .map_err(jj)?;
+            }
             Command::SetTarget { ref branch } => {
                 resolve(repo.as_ref(), branch)?;
                 let saved = config.active_mut().ok_or(Error::Invalid)?;
@@ -515,6 +532,9 @@ pub async fn execute(access: Arc<dyn Access>, root: PathBuf, request: Request) -
             }
             Command::Reconcile => {
                 let saved = config.active().ok_or(Error::Invalid)?;
+                for obsolete in cleanup::candidates(&repo, saved).await? {
+                    tx.repo_mut().record_abandoned_commit(&obsolete);
+                }
                 let wip = build(tx.repo_mut(), &repo, saved, Some(&wc), false).await?;
                 tx.repo_mut()
                     .set_wc_commit(name.clone(), wip.id().clone())
@@ -603,14 +623,10 @@ fn resolve_any(repo: &dyn jj_lib::repo::Repo, reference: &str) -> Result<Commit>
         .map_err(jj)
 }
 fn parents(repo: &dyn jj_lib::repo::Repo, saved: &SavedWorkspace) -> Result<Vec<Commit>> {
-    let references = if saved.applied.is_empty() {
-        vec![saved.target.clone()]
-    } else {
-        saved.applied.clone()
-    };
+    let references = std::iter::once(&saved.target).chain(&saved.applied);
     let mut parents = Vec::new();
     for reference in references {
-        let commit = resolve(repo, &reference)?;
+        let commit = resolve(repo, reference)?;
         if !parents.iter().any(|c: &Commit| c.id() == commit.id()) {
             parents.push(commit);
         }
@@ -636,11 +652,21 @@ async fn build(
     let tree = rewrite::merge_commit_trees(mut_repo, &parents)
         .await
         .map_err(jj)?;
-    let merge = mut_repo
-        .new_commit(
-            parents.iter().map(|c| c.id().clone()).collect(),
-            tree.clone(),
-        )
+    let parent_ids = parents.iter().map(|c| c.id().clone()).collect();
+    let previous = if old_wip.is_some() && !first {
+        Some(resolve_any(mut_repo, &saved.merge_ref)?)
+    } else {
+        None
+    };
+    let builder = if let Some(previous) = &previous {
+        mut_repo
+            .rewrite_commit(previous)
+            .set_parents(parent_ids)
+            .set_tree(tree.clone())
+    } else {
+        mut_repo.new_commit(parent_ids, tree.clone())
+    };
+    let merge = builder
         .set_description(format!("Workspace {} merge", saved.name))
         .write()
         .await

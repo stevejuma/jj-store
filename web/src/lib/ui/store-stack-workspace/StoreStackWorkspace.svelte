@@ -37,6 +37,8 @@
     onSettings,
     focusedView,
     onSelectView,
+    historyMode,
+    onHistoryMode,
     onBack,
     history,
   }: {
@@ -46,6 +48,8 @@
     onSettings?: () => void;
     focusedView?: StoreStacksView;
     onSelectView?: (view: StoreStacksView) => void;
+    historyMode?: "live" | "pinned";
+    onHistoryMode?: (mode: "live" | "pinned") => void;
     onBack?: () => void;
     history?: Snippet;
   } = $props();
@@ -148,6 +152,8 @@
         {controller}
         {command}
         {onSettings}
+        {historyMode}
+        {onHistoryMode}
       />{/snippet}
   </StoreStacksNavigation>
   {#if !snapshot || !controller.snapshotLoaded || !eligible}

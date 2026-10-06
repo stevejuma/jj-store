@@ -387,3 +387,9 @@ The local Stacks browsing guide distinguishes the Workspace-only top conflict
 banner from rail and notification actions available in all focused tabs.
 Standalone narrow-layout evidence verifies the selected Workspace item through
 the existing More menu, including Escape focus restoration and the width bound.
+
+The local Stacks manuals document native topology-based grouping, aliases and
+integrated membership, grouped versus individual Unapply, retained merge/WIP
+rewrites, guarded reconciliation cleanup, and explicit live/pinned focused
+history. Managed history preparation and transient refresh ownership retain
+loading feedback and drafts without implying a repository repair.

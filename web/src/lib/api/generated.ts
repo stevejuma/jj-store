@@ -6482,6 +6482,7 @@ export interface components {
       can_redo: boolean;
       /** @default [] */
       conflicts: string[];
+      topology?: components["schemas"]["LocalStacksTopology"] | null;
     };
     LocalStacksWorkspace: {
       id: string;
@@ -6495,6 +6496,20 @@ export interface components {
       unavailable_reason?: string | null;
       /** @default false */
       membership_changed: boolean;
+    };
+    LocalStacksTopology: {
+      lanes: components["schemas"]["LocalStacksTopologyLane"][];
+      integrated: string[];
+      complete: boolean;
+    };
+    LocalStacksTopologyLane: {
+      /** @description Newest first. Multiple names on one tip are aliases, not extra segments. */
+      heads: components["schemas"]["LocalStacksTopologyHead"][];
+      applied: string[];
+    };
+    LocalStacksTopologyHead: {
+      names: string[];
+      commit: string;
     };
     LocalStacksPreview: {
       title: string;
@@ -34107,6 +34122,11 @@ export interface operations {
                 kind: "unapply";
               }
             | {
+                branches: string[];
+                /** @constant */
+                kind: "unapply_branches";
+              }
+            | {
                 branch: string;
                 /** @constant */
                 kind: "set_target";
@@ -34438,6 +34458,11 @@ export interface operations {
                 branch: string;
                 /** @constant */
                 kind: "unapply";
+              }
+            | {
+                branches: string[];
+                /** @constant */
+                kind: "unapply_branches";
               }
             | {
                 branch: string;
