@@ -17,7 +17,7 @@
   import StoreMutationPreview from "../store-mutations/StoreMutationPreview.svelte";
   import CommunityProjectsMarkdownPreview from "./CommunityProjectsMarkdownPreview.svelte";
   import RepositoryFileCodeEditor from "./RepositoryFileCodeEditor.svelte";
-  import { tokenizeRepositorySource } from "./repository-source-tokenizer.js";
+  import { repositorySourceTokenizer } from "./repository-source-tokenizer.js";
   import "./store-file-editor.css";
   import "../editor-focus.css";
 
@@ -168,7 +168,7 @@
       hasLineNumbers
       width="100%"
       container="section"
-      tokenizer={language === "rust" ? tokenizeRepositorySource : undefined}
+      tokenizer={repositorySourceTokenizer(language)}
       highlightMode="spans"
     />
   {/if}

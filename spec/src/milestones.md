@@ -152,9 +152,9 @@ shared-package release qualification does not alter those original Git gates.
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                        | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work          | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| M21         | In progress | -                       | JST-UI-020                                                                                                                                                                                                        | Local stack workspaces: UI first, then separately approved local backend integration                                           | Ordinary-local accepted; broader provider/release gates remain separate                          | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-041,E-M21-042,E-M21-043,E-M21-044,E-M21-045,E-M21-046,E-M21-047,E-M21-048,E-M21-049,E-M21-050,E-M21-051,E-M21-052,E-M21-053,E-M21-054,E-M21-055,E-M21-056,E-M21-058,E-M21-059,E-M21-060,E-M21-061                                                                                                                                                                                               |
-| M21.1       | Partial     | -                       | JST-UI-020,JST-GOV-008                                                                                                                                                                                            | Reused Storybook workspace views, stateful mock controller, interactions and accessibility                                     | UI reviewed for backend integration; registry/visual gates remain separate                       | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M21-041,E-M21-042,E-M21-043,E-M21-044,E-M21-054,E-M21-055,E-M21-056,E-M21-058,E-M21-059,E-M21-060,E-M21-061                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
-| M21.2       | In progress | M21.1                   | JST-UI-020                                                                                                                                                                                                        | Local jj-lib megamerges, TOML settings and independent named unfinished work                                                   | Ordinary-local accepted; broader provider/release gates remain separate                          | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-042,E-M21-045,E-M21-046,E-M21-047,E-M21-048,E-M21-049,E-M21-050,E-M21-051,E-M21-052,E-M21-053,E-M21-054,E-M21-055,E-M21-056,E-M21-058,E-M21-059,E-M21-060,E-M21-061                                                                                                                                                                 |
+| M21         | In progress | -                       | JST-UI-020                                                                                                                                                                                                        | Local stack workspaces: UI first, then separately approved local backend integration                                           | Ordinary-local accepted; broader provider/release gates remain separate                          | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-041,E-M21-042,E-M21-043,E-M21-044,E-M21-045,E-M21-046,E-M21-047,E-M21-048,E-M21-049,E-M21-050,E-M21-051,E-M21-052,E-M21-053,E-M21-054,E-M21-055,E-M21-056,E-M21-058,E-M21-059,E-M21-060,E-M21-061                                                                                                                                                                                     |
+| M21.1       | Partial     | -                       | JST-UI-020,JST-GOV-008                                                                                                                                                                                            | Reused Storybook workspace views, stateful mock controller, interactions and accessibility                                     | UI reviewed for backend integration; registry/visual gates remain separate                       | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M21-041,E-M21-042,E-M21-043,E-M21-044,E-M21-054,E-M21-055,E-M21-056,E-M21-058,E-M21-059,E-M21-060,E-M21-061                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| M21.2       | In progress | M21.1                   | JST-UI-020                                                                                                                                                                                                        | Local jj-lib megamerges, TOML settings and independent named unfinished work                                                   | Ordinary-local accepted; broader provider/release gates remain separate                          | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-042,E-M21-045,E-M21-046,E-M21-047,E-M21-048,E-M21-049,E-M21-050,E-M21-051,E-M21-052,E-M21-053,E-M21-054,E-M21-055,E-M21-056,E-M21-058,E-M21-059,E-M21-060,E-M21-061                                                                                                                                                       |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -110905,6 +110905,133 @@ entries.
     "crates/jj-store-cli/tests/local_browser/managed_http.rs#managed_local_http_activates_without_subscribers_resumes_and_captures_tasks",
     "web/tests/store-blame.test.ts#blame admission explains UTF-8 byte and line bounds"
   ]
+},
+{
+  "id": "E-READ-095",
+  "date": "2026-10-06",
+  "tasks": [
+    "M4.6",
+    "M13.4"
+  ],
+  "requirements": [
+    "JST-UI-005",
+    "JST-GOV-007"
+  ],
+  "kind": "Shared Source and Blame language highlighting",
+  "revision": "enclosing Jujutsu change qvvzswvy",
+  "before": "Blame used only the Design Core built-in tokenizer, which did not support C/C++ or Rust. Source used a separate Rust regex extension. TypeScript already rendered colors; extensionless Linux README intentionally selected plain text.",
+  "scope": "Reuse existing public CodeMirror C/C++ and Rust grammars through CodeBlock custom-tokenizer and flatTokensToLines APIs; preserve source text, multiline context, pending attribution and shared styles. Supersedes E-READ-092 C presentation deferral via the existing public extension point, without changing Design Core.",
+  "versions": "macOS ARM64;pnpm10.32.1;Vitest4.1.11;existing provisioned Design Core local validation package reports0.1.2(manifest ^0.2.0 unchanged);@codemirror/lang-cpp6.0.3;@codemirror/lang-rust6.0.2;@lezer/highlight1.2.5. No dependency refresh or publication.",
+  "formats": "No backend/API/schema/native identity/source-state format change. Existing file contents and public syntax token offsets only.",
+  "files": [
+    "catalog/components/store-application/StoreBlame.stories.svelte",
+    "catalog/fixtures/StoreBlameFixture.svelte",
+    "docs/maintenance/coverage.json",
+    "docs/site/guides/browsing.md",
+    "spec/src/api.md",
+    "spec/src/documentation.md",
+    "spec/src/milestones.md",
+    "spec/src/ui.md",
+    "web/src/lib/ui/community-projects/CommunityProjectsRepositoryFilePanel.svelte",
+    "web/src/lib/ui/community-projects/StoreFileEditor.svelte",
+    "web/src/lib/ui/community-projects/repository-source-tokenizer.ts",
+    "web/src/lib/ui/store-blame/StoreBlameView.svelte",
+    "web/tests/repository-source-tokenizer.test.ts"
+  ],
+  "runs": [
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreBlame.stories.svelte",
+      "result": "fail",
+      "failures": 2,
+      "note": "blame-highlight-before.log: initial3 failures/7 passes, two caused by fixture directory mismatching its sample path. Corrected fixture route. blame-highlight-baseline.log:2 failures/8 passes reproduce missing Rust/C keyword tokens; TypeScript computed colors and extensionless README pass."
+    },
+    {
+      "command": "pnpm exec tsx --test web/tests/repository-source-tokenizer.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "blame-highlight-tokens.log:4/4, C/C++ directives/keywords, Rust lifetime/raw strings, multiline comments and bounded ordered line offsets, unknown/default-language fallback."
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "blame-highlight-web.log and blame-highlight-catalog.log:0 errors/0 warnings,248 catalog modules."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreBlame.stories.svelte catalog/components/store-application/StoreFileEditor.stories.svelte catalog/components/store-application/StoreRepositoryApplication.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "blame-highlight-stories.log:18/18, fresh Vitest/Vite Chromium process. Actual computed colors, exact source reconstruction, pending origins, Source/Blame switching, existing source/edit and route/cache interactions. No visual baseline update."
+    },
+    {
+      "command": "pnpm check:architecture; pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": "blame-highlight-architecture.log:1155 modules. blame-highlight-ownership.log:ownership validator passes. Existing editor grammar dependencies and public Design Core extension only; no upstream patch, copied tokenizer or added dependency."
+    },
+    {
+      "command": "pnpm exec prettier --write <changed UI/spec/test/docs files>; pnpm docs:review application \"Source and Blame share the existing C/C++ and Rust editor grammars through the public tokenizer extension; extensionless README stays plain text.\"; pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "Targeted formatting, application fingerprint and browsing guide updated. blame-highlight-docs-check.log:139-file closure; links/anchors and9 Mermaid diagrams in light/dark pass."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "fail",
+      "failures": 1,
+      "note": "blame-highlight-spec-first.log:mapped API chapter missing for protected UI/tests. Added source-response/line-offset clarification; no transport changes."
+    },
+    {
+      "command": "pnpm spec:first; pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "blame-highlight-spec-first-final.log:9 protected files/3 canonical chapters. blame-highlight-spec-validate.log:5 validators/23 chapters/173 requirements. Repeated after ledger append below."
+    },
+    {
+      "command": "pnpm exec tsx -e <read-only Linux file tokenizer timing probe>",
+      "result": "pass",
+      "failures": 0,
+      "note": "blame-highlight-linux-tokens.log:altera_edac.c62285 bytes/5496 tokens/249ms;fs/inode.c85316 bytes/7579 tokens/101ms. One development sample each; these are source highlighting timings, not blame attribution benchmarks."
+    },
+    {
+      "command": "jj --no-pager st; jj rebase -r @ -d qvvzswvy (preview workspace); CUA fresh Linux Blame tab",
+      "result": "pass",
+      "failures": 0,
+      "note": "Clean preview advanced to the fix. README remains plain text. Nested-file URLs without directory context hit existing unavailable-file handling; using the original include/crypto directory context loaded acompress.h.145 mounted token spans,keyword #ifndef rgb(215,58,73),comment rgb(106,115,125),source rgb(36,41,46),3 pending origin cells. Saved .local/blame-highlight-linux.png; temporary tab closed. No backend restart."
+    },
+    {
+      "command": "jj --no-pager st (main)",
+      "result": "pass",
+      "failures": 0,
+      "note": "Main Stacks discovery became committed555e25ad,then acquired active Apply and unapply stacks without confirmation work in otvxrvnt. spec/src/ui.md still overlaps; main untouched under AGENTS. Preview and retained workspace provide the verified change."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "fail",
+      "failures": 2,
+      "note": "blame-highlight-progress.log: the ledger checker does not recognize Svelte Story names as named tests. Kept executable node test references and recorded browser stories under their actual Vitest run above."
+    },
+    {
+      "command": "pnpm exec prettier --check <changed files>; pnpm check:progress; pnpm spec:first; pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "blame-highlight-progress-final.log:142 tasks. Governance-final:9 protected files/4 chapters,5 validators pass. Initial formatting check reported three pre-existing table spacing lines in the ledger; normalized those spaces only, retaining every historical JSON entry. Final formatting/progress/spec commands repeated before commit."
+    }
+  ],
+  "tests": [
+    "web/tests/repository-source-tokenizer.test.ts#C and C++ source use genuine syntax tokens including preprocessor directives",
+    "web/tests/repository-source-tokenizer.test.ts#multiline comments retain their type without crossing source line boundaries"
+  ],
+  "verification_scope": "UI-only focused tokenizer tests, affected Source/editor/Blame stories with cold browser interaction and color checks, types, architecture/ownership and documentation/spec governance. No milestone promotion.",
+  "result": "pending",
+  "remaining": [
+    "Main landing remains blocked by active overlapping Stacks UI changes in otvxrvnt. Preview contains the fix."
+  ],
+  "out_of_scope": [
+    "Rust/server tests,generated contracts,full root suites,release registry validation,visual baseline approval and further blame-performance work.",
+    "New grammar detection for extensionless README or other unknown languages."
+  ],
+  "next": "Verified highlighting slice is committed in bounded-reads and served by the retained preview. Land in main after the overlapping Stacks work is settled."
 }
 ]
 ```

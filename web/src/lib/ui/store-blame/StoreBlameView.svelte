@@ -1,5 +1,6 @@
 <script lang="ts">
   import {
+    flatTokensToLines,
     tokenizeAsync,
     type TokenLine,
   } from "@lapismd/design-core/shadcn/code-block";
@@ -7,6 +8,7 @@
   import type { StoreRoute } from "../../controller/contracts.js";
   import type { BlameViewState } from "../../controller/blame-types.js";
   import CommunityProjectsVirtualRows from "../community-projects/CommunityProjectsVirtualRows.svelte";
+  import { repositorySourceTokenizer } from "../community-projects/repository-source-tokenizer.js";
   import StoreBlameGroup from "./StoreBlameGroup.svelte";
   import { blameChunks, sourceLines } from "./blame-model.js";
   let {
@@ -40,13 +42,15 @@
     const code = contents;
     const language = resolveDiffLanguage(path) ?? "plaintext";
     tokens = [];
-    void tokenizeAsync(code, language, abort.signal)
-      .then((value) => {
-        if (!abort.signal.aborted) tokens = value;
-      })
-      .catch(() => {
-        /* Highlighting is optional; plain source remains usable. */
-      });
+    void (async () => {
+      const custom = repositorySourceTokenizer(language);
+      const value = custom
+        ? flatTokensToLines(custom(code, language), code)
+        : await tokenizeAsync(code, language, abort.signal);
+      if (!abort.signal.aborted) tokens = value;
+    })().catch(() => {
+      /* Highlighting is optional; plain source remains usable. */
+    });
     return () => abort.abort();
   });
 </script>

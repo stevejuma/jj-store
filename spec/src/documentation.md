@@ -6,6 +6,9 @@ slow JJ history. Transport and local technical pages describe operation binding,
 continuation reset and cooperative cancellation. Regenerate the HTTP reference
 and review source fingerprints with the owning implementation; documentation
 must not promise full Linux attribution timing from progress-only measurements.
+The guide distinguishes shared Source/Blame syntax highlighting from plain-text
+fallback for unknown or extensionless filenames; attribution progress does not
+gate source colors.
 
 Stacks manuals explain expandable unchanged diff context and the shared Op Log
 conflict surface. Multi-sided native text versions use explicit pairwise Merge

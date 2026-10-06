@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Documented progressive Blame with bounded-file explanations, scoped cache invalidation, immediate source, genuine commit links and slow-history limitations.",
-      "fingerprint": "51f3bb64b67fc8361d16134e011d84a9a37e17170579f5f6f7d543dee8ca292c"
+      "reason": "Source and Blame share the existing C/C++ and Rust editor grammars through the public tokenizer extension; extensionless README stays plain text.",
+      "fingerprint": "7a7d835a9821683b54d7f38d0d408969d8cabb997035b09a5648b6e2257bfba0"
     }
   },
   {

@@ -15,14 +15,17 @@
     restored = false,
     empty = false,
     contentKind = "text",
+    sample,
   }: {
     enabled?: boolean;
     restored?: boolean;
     empty?: boolean;
     contentKind?: "text" | "binary" | "large";
+    sample?: { path: string; contents: string };
   } = $props();
   const origin = "56".repeat(20);
-  const initial = `#/repos/${"ab".repeat(16)}/files?at_op=${"12".repeat(64)}&commit=${"34".repeat(20)}&file=src%2Fsample.ts&directory=src`;
+  const path = untrack(() => sample?.path ?? "src/sample.ts");
+  const initial = `#/repos/${"ab".repeat(16)}/files?at_op=${"12".repeat(64)}&commit=${"34".repeat(20)}&file=${encodeURIComponent(path)}`;
   const browserHashes = [
     untrack(() => initial + (restored ? "&file_view=blame" : "")),
   ];
@@ -56,14 +59,15 @@
   const contents = untrack(() =>
     empty
       ? ""
-      : Array.from(
+      : (sample?.contents ??
+        Array.from(
           { length: 600 },
           (_, i) =>
             `const value${i + 1} = ${i + 1};${i === 0 ? " // " + "a long source line ".repeat(100) : ""}`,
-        ).join("\n"),
+        ).join("\n")),
   );
   const blob = $derived({
-    path: "src/sample.ts",
+    path,
     contents,
     binary: contentKind === "binary",
     too_large: contentKind === "large",

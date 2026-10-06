@@ -11,6 +11,10 @@ source. Cache state cannot authorize reads. Expired progress returns an explicit
 The browser accepts `file_view=source|preview|blame` only on Files with a
 selected file, commit and operation. Source causes no annotation request. Blame
 uses one sequential request at a time and the existing scoped query cache.
+Syntax highlighting derives from the existing file-content response and filename
+on the client, including while origins remain pending. It adds no blame requests
+or response fields and preserves the source line offsets used by attributed
+ranges.
 
 The top Stacks conflict banner is scoped to the active Workspace tab. This
 presentation condition adds no transport fields or commands and does not change

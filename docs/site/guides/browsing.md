@@ -32,6 +32,9 @@ from. Source appears immediately; attribution fills in progressively using JJ's
 merge-aware, same-path semantics. Each attributed group links to the actual
 origin commit at the original operation. Returning to Source stops further
 requests. Revisiting resumes retained progress or reuses a completed result.
+Blame and Source share syntax highlighting, including C/C++ and Rust, while
+origins are still loading. Unknown languages and extensionless files such as
+`README` display as plain text.
 
 Large histories can take a long time, including before the first origin appears.
 Loading cells remain skeletons; terminal unresolved lines say “Origin

@@ -19,7 +19,7 @@
   import type { RepositoryCommitSummary as ProjectForgeCommit } from "../../projects/repository-log.js";
   import CommunityProjectsMarkdownPreview from "./CommunityProjectsMarkdownPreview.svelte";
   import CommunityProjectsRepositoryFilePanelHeader from "./CommunityProjectsRepositoryFilePanelHeader.svelte";
-  import { tokenizeRepositorySource } from "./repository-source-tokenizer.js";
+  import { repositorySourceTokenizer } from "./repository-source-tokenizer.js";
   import StoreFileDisplayControls from "./StoreFileDisplayControls.svelte";
   import StoreFileBlame from "../store-blame/StoreFileBlame.svelte";
   import { BLAME_UNAVAILABLE } from "../store-blame/blame-model.js";
@@ -264,9 +264,7 @@
                 hasLineNumbers
                 width="100%"
                 container="section"
-                tokenizer={language === "rust"
-                  ? tokenizeRepositorySource
-                  : undefined}
+                tokenizer={repositorySourceTokenizer(language)}
                 highlightMode="spans"
               />
             {/if}

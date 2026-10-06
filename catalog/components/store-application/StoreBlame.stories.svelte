@@ -2,6 +2,43 @@
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import StoreBlameFixture from "../../fixtures/StoreBlameFixture.svelte";
+  import { expectSourceHighlight } from "./source-highlight-assertions.js";
+
+  async function expectBlameHighlight(
+    root: HTMLElement,
+    language: string,
+    path: string,
+    contents: string,
+  ) {
+    const canvas = within(root);
+    const view = canvas.getByRole("region", { name: `Blame for ${path}` });
+    await waitFor(() => {
+      const token = view.querySelector(".ui-code-token-keyword");
+      expect(token).not.toBeNull();
+      expect(getComputedStyle(token!).color).not.toBe(
+        getComputedStyle(view.querySelector("code")!).color,
+      );
+    });
+    expect(
+      Array.from(
+        view.querySelectorAll("code"),
+        (line) => line.textContent,
+      ).join("\n"),
+    ).toBe(contents);
+    expect(within(view).getAllByRole("status")[0]).toHaveAccessibleName(
+      /Loading origin/,
+    );
+    await userEvent.click(canvas.getByRole("button", { name: "Source" }));
+    await expectSourceHighlight(root, language, /pub|static/);
+    await userEvent.click(canvas.getByRole("button", { name: "Blame" }));
+    await waitFor(() =>
+      expect(
+        canvas
+          .getByRole("region", { name: `Blame for ${path}` })
+          .querySelector(".ui-code-token-keyword"),
+      ).not.toBeNull(),
+    );
+  }
   const { Story } = defineMeta({
     title: "JJ Store/Repository/Blame",
     component: StoreBlameFixture,
@@ -9,6 +46,68 @@
     parameters: { layout: "padded" },
   });
 </script>
+
+<Story
+  name="Rust highlighting matches Source while origins load"
+  args={{
+    restored: true,
+    sample: {
+      path: "src/lib.rs",
+      contents:
+        'pub fn main() {\n    /* a comment\n       across lines */\n    println!("<not-markup>");\n}',
+    },
+  }}
+  play={async ({ canvasElement, args }) => {
+    await expectBlameHighlight(
+      canvasElement,
+      "rust",
+      args.sample!.path,
+      args.sample!.contents,
+    );
+  }}
+/>
+<Story
+  name="Linux C highlighting matches Source while origins load"
+  args={{
+    restored: true,
+    sample: {
+      path: "drivers/edac/sample.c",
+      contents:
+        "static int sample(void) {\n    /* a comment\n       across lines */\n    return 42;\n}",
+    },
+  }}
+  play={async ({ canvasElement, args }) => {
+    await expectBlameHighlight(
+      canvasElement,
+      "c",
+      args.sample!.path,
+      args.sample!.contents,
+    );
+  }}
+/>
+<Story
+  name="Extensionless README remains plain text"
+  args={{
+    restored: true,
+    sample: {
+      path: "README",
+      contents: "Linux kernel\n============\nRead <documentation> before use.",
+    },
+  }}
+  play={async ({ canvasElement, args }) => {
+    const view = within(canvasElement).getByRole("region", {
+      name: "Blame for README",
+    });
+    expect(
+      Array.from(
+        view.querySelectorAll("code"),
+        (line) => line.textContent,
+      ).join("\n"),
+    ).toBe(args.sample!.contents);
+    expect(view.querySelector('[class*="ui-code-token-"]')).toBeNull();
+    expect(view.querySelector("documentation")).toBeNull();
+  }}
+/>
 
 <Story
   name="Progress resumes and completed views are cached"
@@ -104,6 +203,9 @@
     await waitFor(() =>
       expect(view.querySelector(".ui-code-token-keyword")).not.toBeNull(),
     );
+    await expect(
+      getComputedStyle(view.querySelector(".ui-code-token-keyword")!).color,
+    ).not.toBe(getComputedStyle(view.querySelector("code")!).color);
     const link = within(view).getAllByRole("link")[0]!;
     await expect(getComputedStyle(link).textOverflow).toBe("ellipsis");
     await expect(link.scrollWidth).toBeGreaterThan(link.clientWidth);

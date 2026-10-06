@@ -18,6 +18,15 @@ results and resumes pending progress; operational preparation and failures use
 shared notices. Slow JJ comparisons do not block the browser or the server async
 request threads.
 
+Blame uses the same filename language and syntax token theme as Source,
+independently of attribution progress. The repository's public CodeBlock
+extension maps the existing C/C++ and Rust editor grammars to Design Core tokens
+in recorded Source, draft Source and Blame. Multiline syntax retains its grammar
+context while token offsets remain within each displayed line. Other supported
+languages use Design Core's tokenizer; unknown and extensionless files such as
+`README` stay plain text. Highlighting never changes or interprets source text
+as markup.
+
 Files reuses loaded directory windows, including completed attribution, within
 the same source, read scope, operation and commit. Repeated selections share a
 pending names request. Revisiting a directory resumes only unfinished metadata
@@ -1391,14 +1400,15 @@ gutter stays beside and vertically aligned with the content, and the editor,
 gutter and active line retain the content-card theme background. Markdown files
 open in safe preview mode, and draft preview/source modes retain unsaved
 content. Source mode uses the public Design Core CodeBlock with the
-filename/source body on the theme background. Rust source previews use
-CodeBlock's public custom-tokenizer extension point so `.rs` files highlight in
-the catalog while retaining the shared code component. Both recorded and unsaved
-Source views enable syntax highlighting for the detected filename language.
-Built-in languages use the shared tokenizer; only Rust receives the repository's
-custom extension. Token spans use the packaged theme stylesheet so highlighting
-works under the served content-security policy without injected styles. Unknown
-languages remain plain text, and source is never executed as markup.
+filename/source body on the theme background. C/C++ and Rust source previews use
+CodeBlock's public custom-tokenizer extension point with the application's
+existing editor grammars while retaining the shared code component. Both
+recorded and unsaved Source views enable syntax highlighting for the detected
+filename language. Built-in languages use the shared tokenizer; C/C++ and Rust
+receive the repository's custom extension, also used by Blame. Token spans use
+the packaged theme stylesheet so highlighting works under the served
+content-security policy without injected styles. Unknown languages remain plain
+text, and source is never executed as markup.
 
 An authenticated single-target bookmark exposes Edit for an existing bounded
 UTF-8 ordinary file. The editor keeps filename and content independently

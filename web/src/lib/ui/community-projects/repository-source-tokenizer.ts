@@ -1,46 +1,6 @@
-const RUST_KEYWORDS = new Set([
-  "as",
-  "async",
-  "await",
-  "break",
-  "const",
-  "continue",
-  "crate",
-  "dyn",
-  "else",
-  "enum",
-  "extern",
-  "false",
-  "fn",
-  "for",
-  "if",
-  "impl",
-  "in",
-  "let",
-  "loop",
-  "match",
-  "mod",
-  "move",
-  "mut",
-  "pub",
-  "ref",
-  "return",
-  "self",
-  "Self",
-  "static",
-  "struct",
-  "super",
-  "trait",
-  "true",
-  "type",
-  "unsafe",
-  "use",
-  "where",
-  "while",
-]);
-
-const RUST_TOKEN_PATTERN =
-  /("(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*')|(\/\/[^\n]*|\/\*[\s\S]*?\*\/)|(\b[A-Za-z_]\w*!?\b)|(\b\d(?:[\d_]*)(?:\.\d[\d_]*)?\b)|([{}()[\];,.])|([<>+\-*/%=&|!?:]+)/g;
+import { cppLanguage } from "@codemirror/lang-cpp";
+import { rustLanguage } from "@codemirror/lang-rust";
+import { highlightTree, tagHighlighter, tags } from "@lezer/highlight";
 
 export type RepositorySourceToken = {
   type: string;
@@ -48,79 +8,50 @@ export type RepositorySourceToken = {
   end: number;
 };
 
+// Map the editor's grammar tags to Design Core's public syntax token types.
+// Other languages continue to use Design Core's built-in tokenizer.
+const syntax = tagHighlighter([
+  { tag: [tags.keyword, tags.meta], class: "keyword" },
+  { tag: [tags.string, tags.escape], class: "string" },
+  { tag: tags.comment, class: "comment" },
+  { tag: tags.number, class: "number" },
+  { tag: tags.bool, class: "constant" },
+  { tag: tags.typeName, class: "type" },
+  { tag: tags.function(tags.variableName), class: "function" },
+  { tag: tags.propertyName, class: "property" },
+  { tag: tags.operator, class: "operator" },
+  { tag: tags.punctuation, class: "punctuation" },
+]);
+
+export function repositorySourceTokenizer(language: string) {
+  return language === "rust" || language === "c" || language === "cpp"
+    ? tokenizeRepositorySource
+    : undefined;
+}
+
+/** Public CodeBlock extension, shared by recorded/draft Source and Blame. */
 export function tokenizeRepositorySource(
   code: string,
   language: string,
 ): RepositorySourceToken[] {
-  if (language !== "rust") {
-    return [];
-  }
+  const grammar =
+    language === "rust"
+      ? rustLanguage
+      : language === "c" || language === "cpp"
+        ? cppLanguage
+        : undefined;
+  if (!grammar) return [];
   const tokens: RepositorySourceToken[] = [];
-  const pattern = new RegExp(RUST_TOKEN_PATTERN.source, "g");
-  let cursor = 0;
-  for (let match = pattern.exec(code); match; match = pattern.exec(code)) {
-    const value = match[0];
-    const start = match.index;
-    const end = start + value.length;
-    pushPlainTokens(tokens, code, cursor, start);
-    if (match[1]) {
-      tokens.push({ type: "string", start, end });
-    } else if (match[2]) {
-      tokens.push({ type: "comment", start, end });
-    } else if (match[3]) {
-      tokens.push({
-        type: RUST_KEYWORDS.has(value)
-          ? "keyword"
-          : isFunctionLike(code, end)
-            ? "function"
-            : "variable",
-        start,
-        end,
-      });
-    } else if (match[4]) {
-      tokens.push({ type: "number", start, end });
-    } else if (match[5]) {
-      tokens.push({ type: "punctuation", start, end });
-    } else {
-      tokens.push({ type: "operator", start, end });
+  highlightTree(grammar.parser.parse(code), syntax, (from, to, type) => {
+    // Design Core's flat-to-line adapter expects tokens within a single line.
+    // Parse the whole file first so multiline strings/comments keep context.
+    let start = from;
+    while (start < to) {
+      const newline = code.indexOf("\n", start);
+      const end = newline < 0 ? to : Math.min(to, newline);
+      if (start < end) tokens.push({ type, start, end });
+      start = end + 1;
     }
-    cursor = end;
-  }
-  pushPlainTokens(tokens, code, cursor, code.length);
+  });
   return tokens;
-}
-
-function isFunctionLike(code: string, end: number): boolean {
-  for (let index = end; index < code.length; index++) {
-    const character = code[index];
-    if (character === "(") {
-      return true;
-    }
-    if (character !== " " && character !== "\t") {
-      return false;
-    }
-  }
-  return false;
-}
-
-function pushPlainTokens(
-  tokens: RepositorySourceToken[],
-  code: string,
-  start: number,
-  end: number,
-) {
-  let runStart: number | null = null;
-  for (let index = start; index < end; index++) {
-    if (code[index] === "\n") {
-      if (runStart !== null) {
-        tokens.push({ type: "variable", start: runStart, end: index });
-        runStart = null;
-      }
-    } else if (runStart === null) {
-      runStart = index;
-    }
-  }
-  if (runStart !== null) {
-    tokens.push({ type: "variable", start: runStart, end });
-  }
 }
