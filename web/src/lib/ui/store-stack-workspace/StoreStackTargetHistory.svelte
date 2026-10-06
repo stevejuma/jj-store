@@ -17,6 +17,7 @@
     repositoryLogSvgWidth,
   } from "../../projects/repository-log-graph.js";
   import { TARGET_HISTORY_ORIGIN } from "../../controller/stack-workspace/target-history.svelte.js";
+  import { toggleTargetCommit } from "../../controller/stack-workspace/selection-actions.js";
   import type { StackWorkspaceController } from "../../controller/stack-workspace/controller.svelte.js";
   let { controller }: { controller: StackWorkspaceController } = $props();
   const history = $derived(controller.targetHistory);
@@ -39,7 +40,7 @@
   const revisions = $derived(
     stack ? stackRevisions(stack, history.commits) : [],
   );
-  const graphInset = $derived(
+  const graphWidth = $derived(
     repositoryLogSvgWidth(buildRepositoryLogGraph(revisions)),
   );
 </script>
@@ -61,7 +62,7 @@
         <ColumnCanvas.Toggle aria-label={`Collapse ${branch.name}`} />
       </ColumnCanvas.HeaderActions>
     </ColumnCanvas.Header>
-    <ColumnCanvas.Body scrollStrategy="styled">
+    <ColumnCanvas.Body scrollStrategy="styled" orientation="both">
       <StoreNotice
         noticeKey="stack-workspace-target-history"
         title="Branch history unavailable"
@@ -90,7 +91,7 @@
       {:else}
         <Card.Root
           class="stack-workspace__bookmark-card"
-          style={`--stack-graph-inset: ${graphInset}px`}
+          style={`min-width: calc(${graphWidth}px + 18rem)`}
           data-loaded-commits={history.commits.length}
         >
           <Card.Header class="stack-workspace__bookmark-header">
@@ -118,12 +119,12 @@
           <CommunityProjectsRevisionGraph
             {revisions}
             avatarSize="xsmall"
-            {graphInset}
             continuous
             endBorder={false}
             selectedId={history.selectedId}
             graphLabel={`Commits in ${branch.name}`}
-            onSelect={(revision) => history.selectCommit(revision.eventId)}
+            onSelect={(revision) =>
+              toggleTargetCommit(controller, revision.eventId)}
             hasMore={history.hasMore && !history.error}
             loading={history.loading}
             onLoadMore={() => void history.loadMore()}

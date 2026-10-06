@@ -4,7 +4,7 @@
   import type { StoreStacksView } from "../../controller/store-stacks-navigation.js";
   import StoreStacksNavigation from "./StoreStacksNavigation.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import Folder from "@lucide/svelte/icons/folder";
+  import StoreStackFolderCopy from "./StoreStackFolderCopy.svelte";
   import FolderKanban from "@lucide/svelte/icons/folder-kanban";
   import GitBranch from "@lucide/svelte/icons/git-branch";
   import GitBranchPlus from "@lucide/svelte/icons/git-branch-plus";
@@ -235,17 +235,9 @@
         </div>
         <footer class="stack-workspace__footer">
           <div class="stack-workspace__footer-items">
-            <CommunityChip
-              variant="muted"
-              shape="square"
-              class="stack-workspace__folder"
-            >
-              {#snippet leading()}<Folder
-                  size={14}
-                  aria-hidden="true"
-                />{/snippet}
-              {snapshot.folder}
-            </CommunityChip>
+            {#if snapshot.folder}<StoreStackFolderCopy
+                path={snapshot.folder}
+              />{/if}
             <CommunityChip variant="muted" shape="square">
               {#snippet leading()}<FolderKanban
                   size={14}

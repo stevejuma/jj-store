@@ -64,6 +64,16 @@
         name: "Show all changes in stack feature/api",
       }),
     );
+    expect(
+      within(stack).queryByRole("region", {
+        name: "Changed files in branch feature/api",
+      }),
+    ).toBeNull();
+    await userEvent.click(
+      within(stack).getByRole("button", {
+        name: "Show all changes in stack feature/api",
+      }),
+    );
     const top = within(stack)
       .getByRole("button", { name: "Show all changes in feature/api" })
       .closest(".stack-workspace__bookmark-card")!;

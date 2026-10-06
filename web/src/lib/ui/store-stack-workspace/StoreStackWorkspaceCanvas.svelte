@@ -1,4 +1,8 @@
 <script lang="ts">
+  import {
+    toggleStackBranch,
+    toggleTargetBranch,
+  } from "../../controller/stack-workspace/selection-actions.js";
   import { onDestroy, untrack } from "svelte";
   import { ScrollArea } from "@lapismd/design-core/shadcn/scroll-area";
   import * as ColumnCanvas from "@lapismd/design-core/shadcn/column-canvas";
@@ -185,7 +189,7 @@
               : (controller.selectedBranch ?? "")}
             onSelect={(name) => {
               if (name === snapshot.target?.name) {
-                void controller.selectTargetBranch();
+                toggleTargetBranch(controller);
                 return;
               }
               const stack =
@@ -193,7 +197,7 @@
                 snapshot.stacks.find((item) =>
                   item.heads.some((head) => head.name === name),
                 );
-              if (stack) controller.selectStack(stack.id, name);
+              if (stack) toggleStackBranch(controller, stack.id, name);
               else
                 controller.validation =
                   snapshot.branchUnavailableReasons?.[name] ??

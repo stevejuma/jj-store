@@ -136,6 +136,20 @@
           getComputedStyle(banner).backgroundColor,
         );
       }
+      await waitFor(() => {
+        const rows = [
+          ...column.querySelectorAll<HTMLElement>(
+            '[data-ui-part="file-row"], [data-ui-part="directory-row"]',
+          ),
+        ];
+        expect(rows.length).toBeGreaterThan(3);
+        for (let index = 1; index < rows.length; index += 1) {
+          expect(
+            rows[index].getBoundingClientRect().top -
+              rows[index - 1].getBoundingClientRect().bottom,
+          ).toBeCloseTo(2, 1);
+        }
+      });
       for (const path of ["README.md", "src/resolved.ts"]) {
         const row = within(column).getByRole("button", {
           name: path,

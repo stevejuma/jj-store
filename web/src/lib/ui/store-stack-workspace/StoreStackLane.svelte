@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { toggleStackSource } from "../../controller/stack-workspace/selection-actions.js";
   import { untrack } from "svelte";
   import * as ColumnCanvas from "@lapismd/design-core/shadcn/column-canvas";
   import * as Menu from "@lapismd/design-core/shadcn/dropdown-menu";
@@ -66,14 +67,11 @@
   <ColumnCanvas.Header
     class="stack-workspace__stack-header"
     onclick={(event) => {
-      if (
-        !controller.locked &&
-        !(
-          event.target instanceof Element &&
-          event.target.closest('[data-ui-part="column-header-actions"]')
-        )
-      )
-        controller.selectStackFiles(stack.id);
+      if (!(
+        event.target instanceof Element &&
+        event.target.closest('[data-ui-part="column-header-actions"]')
+      ))
+        toggleStackSource(controller, stack.id, { branch: stack.name });
     }}
   >
     <GitBranch size={16} aria-hidden="true" /><ColumnCanvas.Title
@@ -153,6 +151,7 @@
   </ColumnCanvas.Header>
   <ColumnCanvas.Body
     scrollStrategy="styled"
+    orientation="both"
     class="stack-workspace__drop-target"
     data-drop-target-state={controller.drag.state({
       kind: "stack",

@@ -1,3 +1,4 @@
+import FolderRootIcon from "@lucide/svelte/icons/folder-root";
 import GitMergeIcon from "@lucide/svelte/icons/git-merge";
 import BriefcasePlusIcon from "@lucide/svelte/icons/briefcase-plus";
 import GitBranchPlusIcon from "@lucide/svelte/icons/git-branch-plus";
@@ -24,8 +25,8 @@ export function navigationItemIcon(
   if (item.kind === "channel") return HashIcon;
   if (["threads", "more-threads", "retry-threads"].includes(item.kind))
     return MessagesSquareIcon;
-  if (item.kind === "projects" || item.kind === "project")
-    return FolderKanbanIcon;
+  if (item.kind === "projects") return FolderRootIcon;
+  if (item.kind === "project") return FolderKanbanIcon;
   if (item.kind === "stacks") return GitMergeIcon;
   if (item.kind === "branches") return GitBranchIcon;
   if (item.kind === "log") return GitCommitIcon;

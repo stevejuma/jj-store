@@ -1,7 +1,7 @@
 <script lang="ts">
   // CommunityApplication projectBreadcrumb, with native routes.
   import * as Breadcrumb from "@lapismd/design-core/shadcn/breadcrumb";
-  import FolderKanbanIcon from "@lucide/svelte/icons/folder-kanban";
+  import FolderRootIcon from "@lucide/svelte/icons/folder-root";
   import type { StoreController } from "../../controller/contracts.js";
   import { projectsRouteToHash } from "../../controller/projects-route-codec.js";
   import "./community-work-breadcrumb.css";
@@ -22,7 +22,7 @@
     <Breadcrumb.List>
       <Breadcrumb.Item>
         {#if !route.projectId && tab === "projects"}<Breadcrumb.Page
-            ><FolderKanbanIcon aria-hidden="true" /><span>Projects</span
+            ><FolderRootIcon aria-hidden="true" /><span>Projects</span
             ></Breadcrumb.Page
           >
         {:else}<Breadcrumb.Link
@@ -31,7 +31,7 @@
               event.preventDefault();
               void hub.openHub();
             }}
-            ><FolderKanbanIcon aria-hidden="true" /><span>Projects</span
+            ><FolderRootIcon aria-hidden="true" /><span>Projects</span
             ></Breadcrumb.Link
           >{/if}
       </Breadcrumb.Item>

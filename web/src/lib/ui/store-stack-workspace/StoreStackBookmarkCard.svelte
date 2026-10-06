@@ -6,6 +6,7 @@
   import CommunityRelativeTime from "../community-relative-time/CommunityRelativeTime.svelte";
   import CommunityProjectsGitAuthorAvatar from "../community-projects/CommunityProjectsGitAuthorAvatar.svelte";
   import CommunityProjectsRevisionGraph from "../community-projects/CommunityProjectsRevisionGraph.svelte";
+  import { toggleStackSource } from "../../controller/stack-workspace/selection-actions.js";
   import { stackCardSelection } from "../../controller/stack-workspace/card-selection.js";
   import StoreStackSourceFiles from "./StoreStackSourceFiles.svelte";
   import StoreStackBookmarkActions from "./StoreStackBookmarkActions.svelte";
@@ -50,7 +51,7 @@
     showActions?: boolean;
     onCommand: (command: WorkspaceCommand) => void;
   } = $props();
-  const graphInset = $derived(
+  const graphWidth = $derived(
     repositoryLogSvgWidth(buildRepositoryLogGraph(stackRevisions(stack))),
   );
   const card = $derived(
@@ -87,7 +88,7 @@
 
 <Card.Root
   class="stack-workspace__bookmark-card"
-  style={`--stack-graph-inset: ${graphInset}px`}
+  style={`min-width: calc(${graphWidth}px + 18rem)`}
 >
   <Card.Header
     class="stack-workspace__bookmark-header stack-workspace__drop-target"
@@ -112,10 +113,7 @@
     }}
     onclick={() => {
       if (!controller.locked)
-        controller.selectStackFiles(
-          controller.page === "branches" ? stack.id : card.owner,
-          controller.page === "branches" ? name : card.branch,
-        );
+        toggleStackSource(controller, card.owner, { branch: card.branch });
     }}
   >
     <StoreStackDropGuide feedback={controller.drag.for(headerTarget)} />
@@ -233,7 +231,6 @@
     <CommunityProjectsRevisionGraph
       revisions={stackRevisions(stack, commits)}
       avatarSize="xsmall"
-      {graphInset}
       continuous
       hasMore={name === stack.heads.at(-1)?.name &&
         controller.histories.state(stack.id).hasMore}
@@ -249,10 +246,9 @@
       graphLabel={`Commits in ${name}`}
       onSelect={(revision) => {
         if (!controller.locked)
-          controller.selectCommit(
-            revision.eventId,
-            controller.page === "branches" ? stack.id : card.owner,
-          );
+          toggleStackSource(controller, card.owner, {
+            commit: revision.eventId,
+          });
       }}
       draggable={(revision) =>
         (controller.can("move_commit") || controller.can("reorder_commit")) &&

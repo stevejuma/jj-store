@@ -11,7 +11,7 @@
   import BotIcon from "@lucide/svelte/icons/bot";
   import StoreProjectsActivity from "./StoreProjectsActivity.svelte";
   import StoreWorkEmpty from "./StoreWorkEmpty.svelte";
-  import FolderKanban from "@lucide/svelte/icons/folder-kanban";
+  import FolderRoot from "@lucide/svelte/icons/folder-root";
   import ListTodo from "@lucide/svelte/icons/list-todo";
   import MessageSquare from "@lucide/svelte/icons/message-square";
   import FolderGit from "@lucide/svelte/icons/folder-git-2";
@@ -158,7 +158,7 @@
                 aria-hidden="true"
               />{:else if tab === "activity"}<HistoryIcon
                 aria-hidden="true"
-              />{:else}<FolderKanban aria-hidden="true" />{/if}
+              />{:else}<FolderRoot aria-hidden="true" />{/if}
             <h1>{tab[0]!.toUpperCase() + tab.slice(1)}</h1>
           </div>
           <StoreProjectsActions

@@ -342,6 +342,17 @@
       c.getByRole("button", { name: "Collapse left sidebar" }),
     );
     const trigger = c.getByRole("button", { name: "Your projects" });
+    expect(
+      c
+        .getByRole("heading", { name: /^Projects$/ })
+        .parentElement?.querySelector("svg.lucide-folder-root"),
+    ).not.toBeNull();
+    expect(
+      c
+        .getByRole("button", { name: /^Projects$/ })
+        .querySelector("svg.lucide-folder-root"),
+    ).not.toBeNull();
+    expect(trigger.querySelector("svg.lucide-folder-kanban")).not.toBeNull();
     await userEvent.click(trigger);
     const search = await body.findByPlaceholderText("Search your projects");
     const options = within(body.getByRole("listbox"));

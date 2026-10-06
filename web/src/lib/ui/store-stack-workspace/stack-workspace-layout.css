@@ -93,3 +93,9 @@
   height: 100%;
   padding: 1rem;
 }
+
+.stack-workspace[data-page="branches"]
+  .community-bookmark-cards
+  .community-bookmark-card {
+  cursor: pointer;
+}

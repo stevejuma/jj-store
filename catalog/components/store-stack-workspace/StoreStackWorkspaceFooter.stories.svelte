@@ -1,6 +1,6 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
-  import { expect, userEvent, within } from "storybook/test";
+  import { expect, fn, userEvent, waitFor, within } from "storybook/test";
   import StackWorkspaceFixture from "../../fixtures/StackWorkspaceFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Stacks/Footer",
@@ -40,6 +40,40 @@
       );
     }
     expect(footer.textContent).not.toMatch(/Folder:|Base:/);
+    const folder = within(footer).getByRole("button", {
+      name: "Copy folder path: /home/example/code/local-demo",
+    });
+    expect(folder.querySelector("svg.lucide-folder")).not.toBeNull();
+    if (import.meta.env.MODE === "test") {
+      const { userEvent: pointer } = await import("vitest/browser");
+      await pointer.hover(canvasElement);
+      const rest = getComputedStyle(folder).backgroundColor;
+      await pointer.hover(folder);
+      await waitFor(() =>
+        expect(getComputedStyle(folder).backgroundColor).not.toBe(rest),
+      );
+      await pointer.hover(canvasElement);
+    }
+    const descriptor = Object.getOwnPropertyDescriptor(navigator, "clipboard");
+    const write = fn(async (_value: string) => {});
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: { writeText: write },
+    });
+    try {
+      folder.focus();
+      await userEvent.keyboard("{Enter}");
+      expect(write).toHaveBeenCalledWith("/home/example/code/local-demo");
+      expect(await portal.findByText("Folder path copied")).toBeVisible();
+      write.mockRejectedValueOnce(new Error("Clipboard denied"));
+      await userEvent.click(folder);
+      expect(
+        await portal.findByText("Could not copy the folder path. Try again."),
+      ).toBeVisible();
+    } finally {
+      if (descriptor) Object.defineProperty(navigator, "clipboard", descriptor);
+      else Reflect.deleteProperty(navigator, "clipboard");
+    }
     await userEvent.click(action);
     expect(
       within(

@@ -5,6 +5,7 @@
   import CircleDotIcon from "@lucide/svelte/icons/circle-dot";
   import MessageCircleIcon from "@lucide/svelte/icons/message-circle";
   import GitBranchIcon from "@lucide/svelte/icons/git-branch";
+  import FolderRootIcon from "@lucide/svelte/icons/folder-root";
   import FolderKanbanIcon from "@lucide/svelte/icons/folder-kanban";
   import HistoryIcon from "@lucide/svelte/icons/history";
   import ListTodoIcon from "@lucide/svelte/icons/list-todo";
@@ -94,7 +95,7 @@
     {/each}
   {:else}
     {@render item(
-      FolderKanbanIcon,
+      FolderRootIcon,
       "Projects",
       "",
       () => void hub.openHub("projects"),

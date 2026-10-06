@@ -408,21 +408,23 @@ Command View/Popover behavior. Deleted versions stay visible but disabled.
 Changing the comparison retains the reviewed resolution and still requires
 explicit whole-file staging.
 
-Unstaged uses the shared virtual FileListing in all three modes. Current
-conflict paths and unresolved target-side native terms show an accessible
-warning indicator and the same background as the workspace warning banner;
-resolved target values are not marked merely because their before-side was
-conflicted. Selected and hovered conflict rows retain this warning surface with
-a visible selection marker. Unavailable Stacks diffs show one description
-without a duplicate title, spanning both column edges directly below the header;
-the existing hunk scrollbar padding remains intact. The top workspace conflict
-banner appears only while the Workspace tab is active; Branches, Commits and Op
-Log omit it even when the retained canvas tab is Workspace. It has one row with
-its message, a labelled conflict-count chip and a trailing Resolve conflicts
-button, without listing paths or adding a separate title row; its warning icon
-is vertically centered with the text, vertical padding is 4px and the row has an
-8px bottom margin. The count uses the smaller indicator font on a compact round
-secondary surface distinct from the warning background.
+Unstaged uses the shared virtual FileListing in all three modes. File rows
+retain the shared 2px gap so adjacent selected or warning backgrounds stay
+visually separate, including after virtual scrolling. Current conflict paths and
+unresolved target-side native terms show an accessible warning indicator and the
+same background as the workspace warning banner; resolved target values are not
+marked merely because their before-side was conflicted. Selected and hovered
+conflict rows retain this warning surface with a visible selection marker.
+Unavailable Stacks diffs show one description without a duplicate title,
+spanning both column edges directly below the header; the existing hunk
+scrollbar padding remains intact. The top workspace conflict banner appears only
+while the Workspace tab is active; Branches, Commits and Op Log omit it even
+when the retained canvas tab is Workspace. It has one row with its message, a
+labelled conflict-count chip and a trailing Resolve conflicts button, without
+listing paths or adding a separate title row; its warning icon is vertically
+centered with the text, vertical padding is 4px and the row has an 8px bottom
+margin. The count uses the smaller indicator font on a compact round secondary
+surface distinct from the warning background.
 
 Back uses a ghost public Button with circular hover treatment, an icon and
 tooltip and restores the exact entry repository route and selections; a direct
@@ -523,9 +525,12 @@ The workspace footer reuses lightly shaded owned chips for folder, named
 workspace, base branch, applied-stack count and unstaged-file count. Existing
 Folder, Project and Git branch icons identify the corresponding values without
 the redundant Folder: or Base: prefixes; count icons retain their text labels.
-The retained-draft action pairs its label with the existing edit icon and uses
-the same chip surface. Neutral theme foreground at seven-percent tint supplies a
-very light grey in light mode and the corresponding subdued dark-mode surface.
+The folder chip is a keyboard-accessible copy button with its leading folder
+icon, the shared chip hover/focus treatment and success/failure feedback; it
+copies the complete local path. The retained-draft action pairs its label with
+the existing edit icon and uses the same chip surface. Neutral theme foreground
+at seven-percent tint supplies a very light grey in light mode and the
+corresponding subdued dark-mode surface.
 
 The horizontal canvas, column bodies, branch and workspace Command Views, and
 expanded file lists use explicit styled shadcn Scroll Areas. Stack and diff
@@ -595,6 +600,13 @@ sources, self-targets and pending commands cannot mutate or stage changes.
 Entering target children preserves its guide; leaving, dropping, cancelling or
 teardown clears drag feedback. Drops stage files or open an exact preview and
 never apply a command immediately. Unstaged has a small horizontal body inset.
+
+Activating a selected stack header or commit row again deselects it and
+collapses its inline file list. The Branches picker, including its target card,
+likewise toggles selection off. These selectable Branches rows show a pointer
+cursor. Deselecting preserves retained drafts, loaded history and adjacent diffs
+without mutating repository state. Empty branch-history copy uses the secondary
+text scale.
 
 Creating a stack uses the existing Settings form group and separate bordered
 rows for Name, Branch relationship and the conditional Add to stack picker.
@@ -1243,6 +1255,11 @@ may be reused by later branches only after the current row is captured; trailing
 vacancies are trimmed. The graph SVG paints above square row dividers so a
 divider cannot cut across a colored lane or node.
 
+The main Projects navigation action uses the Lucide folder-root icon in both
+sidebar states, the main Projects heading and its breadcrumb, distinct from the
+folder-kanban icon for individual projects and the Your projects picker,
+including when the sidebar is collapsed.
+
 The catalog shell omits a redundant sidebar brand header and uses Community's
 muted breadcrumb and stateful sidebar glyphs. Branch cards span their list
 width; bookmark headings remain sticky during list scrolling. Column Canvas
@@ -1251,7 +1268,9 @@ operation-head status rows use a neighboring neutral grey so the information bar
 reads separately from the header. Shell bodies retain padded content insets, and
 collapsed columns span the usable padded body area. Each graph row places its
 author and metadata after that row's occupied lanes, without aligning avatars
-across rows. Wide graphs preserve readable row content and scroll horizontally
+across rows. Stack branch cards and target history use these same per-row insets
+without a shared avatar alignment override, and their column viewports scroll on
+both axes. Wide graphs preserve readable row content and scroll horizontally
 inside the existing column viewport while retaining vertical virtualization,
 selection and paging. JJ Log and Op Log rows are square-edged and retain bottom
 dividers through the final visible row. Column warnings and failures use the
