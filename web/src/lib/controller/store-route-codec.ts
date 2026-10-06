@@ -51,6 +51,13 @@ export function storeRouteToHash(route: StoreRoute): string | null {
   if (route.comparisonParentId) query.set("parent", route.comparisonParentId);
   if (route.comparisonGroupId) query.set("group", route.comparisonGroupId);
   if (route.path) query.set("file", route.path);
+  if (
+    route.fileDisplay &&
+    route.page === "files" &&
+    route.path &&
+    route.commitId
+  )
+    query.set("file_view", route.fileDisplay);
   if (route.directory) query.set("directory", route.directory);
   if (route.agentSessionId) query.set("session", route.agentSessionId);
   if (route.threadId) query.set("thread", route.threadId);
@@ -108,6 +115,18 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
   const comparisonParentId = one(query, "parent");
   const comparisonGroupId = one(query, "group");
   const path = one(query, "file");
+  const fileDisplay = one(query, "file_view");
+  if (
+    fileDisplay !== null &&
+    (page !== "files" ||
+      !path ||
+      !commitId ||
+      !["source", "preview", "blame"].includes(fileDisplay ?? ""))
+  )
+    return {
+      kind: "invalid",
+      message: "File display requires a selected recorded file.",
+    };
   const directory = one(query, "directory");
   const agentSessionId = one(query, "session");
   const primaryThread = one(query, "thread");
@@ -251,6 +270,9 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
     kind: "route",
     route: {
       ...stacksFields,
+      ...(fileDisplay
+        ? { fileDisplay: fileDisplay as "source" | "preview" | "blame" }
+        : {}),
       ...(historyQuery ? { historyQuery } : {}),
       ...(historyTime !== null ? { historyTime: Number(historyTime) } : {}),
       page,

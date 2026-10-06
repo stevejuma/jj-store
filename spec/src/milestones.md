@@ -110202,6 +110202,158 @@ entries.
   ],
   "next": "Land the reproducible feasibility evidence in Main and retain the temporary workspace. Resume only with an agreed narrow solution for JJ annotation comparison admission/cancellation, then repeat the gate before implementing API or UI. Do not broaden into a new index, reader redesign or an upstream annotation fork within the current slice.",
   "verification_scope": "Focused Rust probes plus affected package check and canonical/governance/progress checks. Preserve the failed opt-in gate explicitly; passing correctness and first-window measurements do not qualify the Blame feature."
+},
+{
+  "id": "E-READ-092",
+  "date": "2026-10-06",
+  "tasks": ["M4.6", "M13.4"],
+  "requirements": ["JST-UI-001", "JST-UI-005", "JST-UI-019", "JST-GOV-007"],
+  "kind": "Capability-gated progressive Blame UI with fixture-backed lifecycle evidence",
+  "revision": "enclosing Jujutsu change pvlzsxrt",
+  "before": "Main and retained bounded-reads workspace initially shared the clean E-READ-091 parent. Blame had no route, controls or presenter. The user separately authorized the next UI slice after the reader comparison blocker. Initial exact regression failed because blame-model did not exist.",
+  "scope": "Repository-owned file panel controls, file_view hash restoration, progressive grouped source and bounded virtual chunks, real-origin commit routes, query-observer lifecycle and retained progress. Production has no Blame provider or HTTP route, so Blame is disabled; restored URLs explain unavailability and keep source. No upstream, Rust, backend, server restart or generated wire contract changes.",
+  "versions": "macOS ARM64; repository pnpm 10.32.1, Svelte 5, Vitest 4.1.11, Storybook 10.5.7, Playwright Chromium; released Design Core public tokenizeAsync and TokenLine APIs; unchanged jj-lib 0.45.1.",
+  "formats": "file_view=source|preview|blame on a recorded Files selection. Optional internal UI provider, not an HTTP contract. UI progress uses one-based end-exclusive ranges with deduplicated real commit summaries. Session cache scope is host-owned and includes source/access generation and algorithm; only latest cumulative progress survives unobserved batches for the existing ten-minute cache lifetime.",
+  "files": [
+    "catalog/components/store-application/StoreBlame.stories.svelte",
+    "catalog/components/store-application/StoreFileEditor.stories.svelte",
+    "catalog/fixtures/StoreBlameFixture.svelte",
+    "docs/ui-provenance.json",
+    "spec/src/api.md",
+    "spec/src/jj-integration.md",
+    "spec/src/spec-governance.md",
+    "spec/src/ui.md",
+    "web/src/lib/controller/blame-query.ts",
+    "web/src/lib/controller/blame-types.ts",
+    "web/src/lib/controller/contracts.ts",
+    "web/src/lib/controller/controller-actions.ts",
+    "web/src/lib/controller/production-file-reader.svelte.ts",
+    "web/src/lib/controller/production-store-actions.ts",
+    "web/src/lib/controller/store-route-codec.ts",
+    "web/src/lib/controller/store-route-fields.ts",
+    "web/src/lib/controller/store-route-history.svelte.ts",
+    "web/src/lib/controller/store-route-types.ts",
+    "web/src/lib/controller/store-stacks-navigation.ts",
+    "web/src/lib/ui/community-projects/CommunityProjectsRepositoryFilePanel.svelte",
+    "web/src/lib/ui/community-projects/StoreFileDisplayControls.svelte",
+    "web/src/lib/ui/store-blame/StoreBlameGroup.svelte",
+    "web/src/lib/ui/store-blame/StoreBlameView.svelte",
+    "web/src/lib/ui/store-blame/StoreFileBlame.svelte",
+    "web/src/lib/ui/store-blame/blame-model.ts",
+    "web/tests/store-blame.test.ts",
+    "web/tests/vite/blame-query.test.ts",
+    "web/tests/vite/store-route-history.test.ts",
+    "spec/src/milestones.md"
+  ],
+  "tests": [
+    "web/tests/store-blame.test.ts#file display routes restore and reject invalid contexts",
+    "web/tests/store-route-codec.test.ts#native operation route hash round-trips every stable selection",
+    "web/tests/vite/blame-query.test.ts#observers coalesce, release independently, resume progress and reuse completion",
+    "web/tests/vite/store-route-history.test.ts#route history restores, pushes and replaces native browser hashes",
+    "web/tests/vite/store-stacks-navigation.test.ts#focused tabs retain independent selections and return to the exact repository route",
+    "web/tests/vite/production-file-reader.test.ts#files load the selected commit metadata independently of graph history"
+  ],
+  "runs": [
+    {
+      "command": "jj --no-pager st; jj describe -m \"Add capability-gated progressive Blame presentation\"",
+      "result": "pass",
+      "note": "Clean retained workspace used. No edits to main.",
+      "failures": 0
+    },
+    {
+      "command": "pnpm exec tsx --test web/tests/store-blame.test.ts",
+      "result": "fail",
+      "note": "blame-ui-before.log: expected missing implementation before state. Implemented model and route support.",
+      "failures": 1
+    },
+    {
+      "command": "pnpm exec tsx --test web/tests/store-blame.test.ts web/tests/store-route-codec.test.ts",
+      "result": "pass",
+      "note": "Initial and final node lanes pass 15 tests; final blame-ui-node-final.log.",
+      "failures": 0
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/blame-query.test.ts web/tests/vite/store-route-history.test.ts",
+      "result": "pass",
+      "note": "blame-ui-query-tests.log: 17 tests, coalescing, cancellation, completion/revisit and route restoration.",
+      "failures": 0
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check",
+      "result": "fail",
+      "note": "Initial diagnostics: unsupported aria-description button prop; Svelte state binding shadowed the rune; invalid Testing Library exact option. Replaced with describedby, renamed prop and corrected queries. All resolved in final checks.",
+      "failures": 1
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreBlame.stories.svelte",
+      "result": "fail",
+      "note": "Initial cold browser run exposed a reactive provider-subscription loop and was interrupted. Subscription now uses untrack so provider counters and query internals do not become view dependencies.",
+      "failures": 1
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreBlame.stories.svelte catalog/components/store-application/StoreFileEditor.stories.svelte",
+      "result": "pass",
+      "note": "blame-ui-stories2.log: seven tests including two existing file editor regressions; runtime and accessibility checks enabled.",
+      "failures": 0
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreBlame.stories.svelte",
+      "result": "pass",
+      "note": "blame-ui-stories3.log and blame-ui-stories-final.log: seven Blame cases after adding binary/oversized and final narrow-panel/visible-continuation assertions. Fresh Chromium process; final 22.50s. 600-line fixture keeps fewer than 250 rendered lines after scrolling; horizontal scroll works, source token spans render, description ellipsizes, visible mid-group origins persist. No screenshot baseline approval.",
+      "failures": 0
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/blame-query.test.ts web/tests/vite/store-route-history.test.ts web/tests/vite/store-stacks-navigation.test.ts web/tests/vite/production-file-reader.test.ts",
+      "result": "pass",
+      "note": "blame-ui-units-final.log:42 tests; final2:43 tests including preserving proven ranges on terminal failure and retaining only one cumulative cache record. No independent lifecycle or directory regressions.",
+      "failures": 0
+    },
+    {
+      "command": "pnpm web:check; pnpm catalog:check",
+      "result": "pass",
+      "note": "blame-ui-check-final.log and blame-ui-catalog-check3.log: zero errors/warnings; 246 catalog modules. Later changes only adjusted verified CSS geometry and tests.",
+      "failures": 0
+    },
+    {
+      "command": "pnpm check:ui-ownership; pnpm check:architecture; pnpm spec:first; pnpm spec:validate",
+      "result": "pass",
+      "note": "Ownership passed; final architecture1150 modules; spec-first24 protected files/3 chapters at that stage; final validate5 validators/23 chapters/173 requirements. Final ledger gates recorded below.",
+      "failures": 0
+    },
+    {
+      "command": "pnpm exec prettier --write <changed TypeScript, Svelte, provenance and canonical files>",
+      "result": "pass",
+      "note": "blame-ui-format*.log. Historical ledger is preserved byte-for-byte; final entry formatted independently.",
+      "failures": 0
+    },
+    {
+      "command": "pnpm spec:first; pnpm check:progress; pnpm spec:validate",
+      "result": "fail",
+      "failures": 1,
+      "note": "First final bookkeeping pass: spec-first and validate passed; progress entry lacked named test references, failure counts, result and remaining fields. Corrected ledger schema; no product issue."
+    },
+    {
+      "command": "pnpm check:progress; pnpm exec prettier --check spec/src/milestones.md; pnpm exec prettier --check <final changed UI/query files>",
+      "result": "pass",
+      "failures": 0,
+      "note": "blame-ui-progress2.log:142 tasks, bookkeeping only. blame-ui-ledger-format.log and blame-ui-last-format.log pass. Final spec-first:24 protected files/5 chapters; final validate:5 validators/23 chapters/173 requirements. All historical evidence preserved."
+    },
+    {
+      "command": "jj --no-pager diff --check",
+      "result": "fail",
+      "failures": 1,
+      "note": "Installed JJ has no --check diff option. This command made no edits. Prettier, architecture, typed checks and reviewed JJ diff/stat supply the applicable validation; no unsupported gate claimed."
+    }
+  ],
+  "next": "Commit the verified UI slice in retained bounded-reads. Coordinate landing with active Stacks work in main. Separately resolve the existing backend comparison gate before enabling a production provider; preserve no-blame-work behavior for Source.",
+  "verification_scope": "Focused UI, route, query lifecycle and direct consumer checks; cold Chromium component interactions with blocking a11y/runtime diagnostics. Fixture evidence is not live server or Linux attribution acceptance.",
+  "result": "pending",
+  "remaining": [
+    "E-READ-091 remains blocked: live annotation provider/API, Linux complete-attribution latency, server cursor/auth/integrity/memory admission and historical comparison cancellation are not qualified by UI fixtures.",
+    "Released Design Core tokenizer highlights its supported languages; C remains plain source with that public API. Linux C highlighting needs a separately owned upstream extension before full Linux presentation qualification. No dependency source alias or private import was added.",
+    "Main now contains active Stacks changes in store-route-types, store-route-history and store-stacks-navigation plus shared canonical chapters. The AGENTS instruction to stop on overlapping work prevents automatic landing into that active working change; main remains untouched.",
+    "Visual baseline approval, HTTP contract generation, Rust checks, full UI/root suites, release-scale verification and service restarts are outside this UI-only slice. No milestone promoted."
+  ]
 }
 ]
 ```

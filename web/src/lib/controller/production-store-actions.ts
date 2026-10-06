@@ -240,9 +240,23 @@ export function createProductionStoreActions(options: {
       options.history.push({ ...route, evolutionCommitId: id });
       if (id) await options.reader.loadEvolution();
     },
+    setFileDisplay(fileDisplay) {
+      const route = options.history.route;
+      if (
+        route.page === "files" &&
+        route.path &&
+        route.commitId &&
+        route.snapshotOperationId
+      )
+        options.history.push({ ...route, fileDisplay });
+    },
     async selectFile(path) {
       options.invalidate();
-      options.history.push({ ...options.history.route, path });
+      options.history.push({
+        ...options.history.route,
+        path,
+        fileDisplay: undefined,
+      });
       options.data.blob = undefined;
       if (!path) return;
       if (options.history.route.page === "files")

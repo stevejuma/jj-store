@@ -6,16 +6,11 @@
     fileEditUnavailable,
   } from "../../projects/repository-file-stats.js";
   import { resolveDiffLanguage } from "@lapismd/design-core/diff";
-  import { Button } from "@lapismd/design-core/shadcn/button";
-  import * as ButtonGroup from "@lapismd/design-core/shadcn/button-group";
   import { CodeBlock } from "@lapismd/design-core/shadcn/code-block";
   import * as Empty from "@lapismd/design-core/shadcn/empty";
   import { ScrollArea } from "@lapismd/design-core/shadcn/scroll-area";
   import { Skeleton } from "@lapismd/design-core/shadcn/skeleton";
-  import CodeXmlIcon from "@lucide/svelte/icons/code-xml";
-  import EyeIcon from "@lucide/svelte/icons/eye";
   import FileIcon from "@lucide/svelte/icons/file";
-  import PencilIcon from "@lucide/svelte/icons/pencil";
 
   import type {
     RepositoryBlob as ProjectForgeBlobResponse,
@@ -25,6 +20,9 @@
   import CommunityProjectsMarkdownPreview from "./CommunityProjectsMarkdownPreview.svelte";
   import CommunityProjectsRepositoryFilePanelHeader from "./CommunityProjectsRepositoryFilePanelHeader.svelte";
   import { tokenizeRepositorySource } from "./repository-source-tokenizer.js";
+  import StoreFileDisplayControls from "./StoreFileDisplayControls.svelte";
+  import StoreFileBlame from "../store-blame/StoreFileBlame.svelte";
+  import { BLAME_UNAVAILABLE } from "../store-blame/blame-model.js";
   import StoreFileEditor from "./StoreFileEditor.svelte";
 
   let {
@@ -65,6 +63,24 @@
     controller.state.repository.profile === "git_sha1_jj045",
   );
   let fileView = $state<"preview" | "source" | "edit">("preview");
+  const displayMode = $derived(
+    editing ? fileView : (controller.state.route.fileDisplay ?? fileView),
+  );
+  const blameReason = $derived(
+    editing
+      ? "Finish editing before opening recorded Blame."
+      : !controller.blame
+        ? BLAME_UNAVAILABLE
+        : !controller.state.route.commitId ||
+            !controller.state.route.snapshotOperationId
+          ? "Select a recorded commit to view Blame."
+          : "",
+  );
+  function selectDisplay(mode: "source" | "preview" | "blame") {
+    if (mode === "blame" && blameReason) return;
+    if (mode !== "blame") fileView = mode;
+    if (!editing) controller.actions.setFileDisplay?.(mode);
+  }
   let displayedPath = $state("");
   let editSessionPath = $state("");
   let draftContents = $state("");
@@ -192,54 +208,24 @@
           {:else if blob.contents !== undefined}
             <header class="community-projects__file-content-header">
               <span>{blob.path}</span>
-              <ButtonGroup.Root
-                class="community-projects__file-view-toggle"
-                aria-label="File display"
-              >
-                {#if isMarkdown}<Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    data-selected={fileView === "preview"}
-                    aria-pressed={fileView === "preview"}
-                    onclick={() => (fileView = "preview")}
-                  >
-                    <EyeIcon data-icon="inline-start" aria-hidden="true" />
-                    Preview
-                  </Button>{/if}
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  data-selected={fileView === "source"}
-                  aria-pressed={fileView === "source"}
-                  onclick={() => (fileView = "source")}
-                >
-                  <CodeXmlIcon data-icon="inline-start" aria-hidden="true" />
-                  Source
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  data-selected={fileView === "edit"}
-                  aria-pressed={fileView === "edit"}
-                  title={localEditing
-                    ? "Edit the physical working file"
-                    : editUnavailable || "Edit file"}
-                  disabled={localEditing
-                    ? !working.available() || working.pending
-                    : Boolean(editUnavailable)}
-                  onclick={() => {
-                    if (editing) fileView = "edit";
-                    else if (localEditing) void working.open();
-                    else beginEditing();
-                  }}
-                >
-                  <PencilIcon data-icon="inline-start" aria-hidden="true" />
-                  {localEditing ? "Working copy" : "Edit"}
-                </Button>
-              </ButtonGroup.Root>
+              <StoreFileDisplayControls
+                mode={displayMode}
+                {isMarkdown}
+                {localEditing}
+                {blameReason}
+                editDisabled={localEditing
+                  ? !working.available() || working.pending
+                  : Boolean(editUnavailable)}
+                editTitle={localEditing
+                  ? "Edit the physical working file"
+                  : editUnavailable || "Edit file"}
+                onSelect={selectDisplay}
+                onEdit={() => {
+                  if (editing) fileView = "edit";
+                  else if (localEditing) void working.open();
+                  else beginEditing();
+                }}
+              />
             </header>
             {#if working.error}<p role="alert">{working.error}</p>{/if}
             {#if editing && working.file}
@@ -262,7 +248,9 @@
                 bind:contents={draftContents}
                 onCancel={cancelEditing}
               />
-            {:else if fileView === "preview" && isMarkdown}
+            {:else if displayMode === "blame"}
+              <StoreFileBlame {controller} {blob} {now} />
+            {:else if displayMode === "preview" && isMarkdown}
               <CommunityProjectsMarkdownPreview
                 content={blob.contents ?? ""}
                 label={`Markdown preview for ${blob.path}`}

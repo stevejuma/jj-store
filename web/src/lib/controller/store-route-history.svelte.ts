@@ -164,6 +164,7 @@ export function createStoreRouteHistory(
       push({
         ...route,
         snapshotOperationId: operation,
+        fileDisplay: undefined,
         bookmark: "",
         inspectedOperationId: null,
         commitId: null,

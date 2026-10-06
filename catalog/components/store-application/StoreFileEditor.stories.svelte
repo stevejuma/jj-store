@@ -76,7 +76,7 @@
       within(fileDisplay)
         .getAllByRole("button")
         .map((button) => button.textContent?.trim()),
-    ).toEqual(["Preview", "Source", "Edit"]);
+    ).toEqual(["Preview", "Source", "Blame", "Edit"]);
     await userEvent.click(
       within(fileDisplay).getByRole("button", { name: "Edit" }),
     );

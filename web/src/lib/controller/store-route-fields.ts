@@ -57,6 +57,7 @@ export const repositoryQueryKeys = new Set([
   "parent",
   "group",
   "file",
+  "file_view",
   "directory",
   "session",
   "thread",

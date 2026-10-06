@@ -1,6 +1,7 @@
 import type { StorePage } from "../ui/community-navigation/model.js";
 
 export interface StoreRoute {
+  fileDisplay?: "source" | "preview" | "blame";
   context?: "stacks";
   stackTab?: "branches" | "workspace";
   historyQuery?: string;

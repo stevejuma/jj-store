@@ -243,7 +243,12 @@ export function createProductionFileReader(context: FileReaderContext) {
     data.collapsedDirectoryPaths = expanded;
   }
   async function selectDirectory(directory: string) {
-    history.push({ ...history.route, directory, path: null });
+    history.push({
+      ...history.route,
+      directory,
+      path: null,
+      fileDisplay: undefined,
+    });
     const commit = history.route.commitId;
     if (commit && data.fileViewMode === "tree")
       await loadFiles(commit, { path: directory, recursive: false });

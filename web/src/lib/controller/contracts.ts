@@ -152,6 +152,7 @@ export interface StoreControllerState {
 }
 /** Community's state/actions contract shape, scoped to local JJ presentation. */
 export interface StoreController {
+  readonly blame?: import("./blame-types.js").BlameController;
   /** Workspace binding discovery can continue after repository connection. */
   readonly stackWorkspaceLoading?: boolean;
   readonly stackWorkspace?: import("./stack-workspace/controller.svelte.js").StackWorkspaceController;

@@ -86,6 +86,7 @@ export type StoreControllerActions = {
   ): Promise<import("./working-copy-types.js").WorkingFile>;
   setFileViewMode(mode: FileListingViewMode): void | Promise<void>;
   toggleDirectory(path: string): void | Promise<void>;
+  setFileDisplay?(mode: "source" | "preview" | "blame"): void;
   openRoute?(route: StoreRoute): Promise<void>;
   openThreads?(id?: string | null, repository?: string): Promise<void>;
   openReview?(repository: string, thread: string): Promise<void>;

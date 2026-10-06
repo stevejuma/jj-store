@@ -23,6 +23,7 @@ export function storePageRoute(route: StoreRoute, page: StorePage): StoreRoute {
   return {
     ...route,
     page,
+    fileDisplay: undefined,
     context: undefined,
     stackTab: undefined,
     historyQuery: undefined,

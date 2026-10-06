@@ -351,3 +351,18 @@ test("focused history survives browser Back, Forward and reload with exact selec
   reloaded.destroy();
   history.destroy();
 });
+
+test("file display modes restore through Back/Forward and clear on page changes", () => {
+  const base = `#/repos/${repository}/files?at_op=${operation}&commit=${"34".repeat(20)}&file=test.ts`;
+  const browser = fakeBrowser(base + "&file_view=blame");
+  const history = createStoreRouteHistory(browser.browser);
+  expect(history.route.fileDisplay).toBe("blame");
+  history.push({ ...history.route, fileDisplay: "source" });
+  browser.visit(base + "&file_view=blame");
+  expect(history.route.fileDisplay).toBe("blame");
+  browser.visit(base + "&file_view=source");
+  expect(history.route.fileDisplay).toBe("source");
+  history.page("log");
+  expect(history.route.fileDisplay).toBeUndefined();
+  history.destroy();
+});

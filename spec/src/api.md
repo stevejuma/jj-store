@@ -1,5 +1,14 @@
 # Read APIs and browser
 
+The browser accepts `file_view=source|preview|blame` only on Files with a
+selected file, commit and operation. This is presentation state, not an HTTP
+Blame API. An optional internal UI provider can supply cumulative proven
+annotation ranges under an exact source/access scope. No production provider is
+enabled until the E-READ-091 comparison/cancellation gate is qualified. Fixtures
+cannot grant a production capability. Links from attribution preserve the
+original operation and actual origin commit; absent capability produces no
+annotation requests.
+
 The top Stacks conflict banner is scoped to the active Workspace tab. This
 presentation condition adds no transport fields or commands and does not change
 existing conflict actions in focused history or local workspace configuration.

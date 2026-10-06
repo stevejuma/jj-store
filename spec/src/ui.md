@@ -1,5 +1,24 @@
 # Storybook presentation catalog
 
+Blame presentation is capability-gated while the upstream synchronous comparison
+gate in E-READ-091 remains unresolved. Production MUST NOT issue annotation
+requests until a qualified provider exists. The file panel exposes a disabled
+Blame control with a contextual explanation; restored `file_view=blame` routes
+retain source and explain unavailability. Source and Markdown Preview keep their
+existing defaults when no display mode is encoded.
+
+An enabled provider presents recorded ordinary text immediately, with skeletons
+only in unresolved attribution cells. Consecutive same-origin lines share an
+author/avatar, first-line ellipsized description and relative date. Virtualized
+continuation chunks retain attribution while the original group header is off
+screen; source scrolls horizontally independently of the compact gutter. Links
+open the actual origin commit in Commits with the original operation and file,
+clearing incompatible selections. Unknown terminal origins have no commit link.
+Operational failures use shared toasts and preserve proven ranges. Leaving Blame
+aborts its observer; completed results and partial progress may be reused only
+within the provider's valid source/access scope. This UI slice uses fixture
+providers for lifecycle evidence and does not qualify live attribution.
+
 Files reuses loaded directory windows, including completed attribution, within
 the same source, read scope, operation and commit. Repeated selections share a
 pending names request. Revisiting a directory resumes only unfinished metadata
