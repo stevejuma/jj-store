@@ -80,14 +80,9 @@ export function documentationPlugin(root) {
     try {
       assets = await helpAssets(root);
     } catch (error) {
-      if (!(
-        error instanceof Error &&
-        "code" in error &&
-        error.code === "ENOENT"
-      ))
-        throw error;
-      server.config.logger.warn(
-        "Help is unavailable. Run pnpm docs:build before starting Vite.",
+      throw new Error(
+        `Cannot start without a valid Help bundle. Run pnpm docs:build before starting Vite. ${error instanceof Error ? error.message : String(error)}`,
+        { cause: error },
       );
     }
     if ("watcher" in server) {

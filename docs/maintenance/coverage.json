@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed Stacks browser topology, shared configuration, selection toggles and per-row graphs against current source; documented interoperability with the local CLI.",
-      "fingerprint": "45345c6e5be327f48cfe8ef4a2520ebcb37b814eda50f67740b05ff15515bc6e"
+      "reason": "Reviewed Help's themed loading skeleton at desktop, tablet and mobile sizes, sidebar/close styling, Retry toasts and retained portable navigation; user-facing manual prose remains accurate.",
+      "fingerprint": "bd88e8fa610265b029fe897e3bc8664772e7911534d74391b7f503cdb4e1a5f0"
     }
   },
   {

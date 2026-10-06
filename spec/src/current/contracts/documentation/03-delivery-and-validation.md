@@ -81,7 +81,8 @@ existing processes and runtime markers intact. Vite observes publication of the
 documentation manifest through filesystem events, validates a complete new
 bundle, and replaces its in-memory assets only after validation succeeds. An
 unfinished or rejected rebuild retains the last validated bundle. Missing
-initial assets recover when a valid manifest is published. Reloads are serial,
+initial assets prevent Vite development and preview startup with an actionable
+`pnpm docs:build` error, including direct Vite entry points. Reloads are serial,
 superseded reads cannot replace newer assets, and shutdown releases observers.
 This development mechanism performs no periodic reads or application reloads;
 production and desktop retain their startup-loaded immutable bundles.
@@ -123,6 +124,15 @@ application preference record. Standalone documentation defaults to the Original
 palette, with its light/dark control selecting Original or Original Dark. Theme
 CSS is bundled from the owning application sources; fonts and light/dark diagram
 variants remain local and manifest-validated.
+
+The embedded manual MUST show an accessible skeleton during initial loading and
+pending page reads. Failures use the application toast owner with a bounded
+error message and Retry; dismissed conditions remain dismissed during retry
+until a successful document establishes recovery. Portable internal navigation
+retains the document, search runtime, header and theme/font resources instead of
+reloading the iframe. It validates bundled page structure, resolves relative
+links/assets, preserves Back/Forward and scroll, and cancels obsolete reads. No
+deployment-specific site URL or external navigation service is required.
 
 The table-of-contents rail has no separating border. At desktop widths the idle
 search field aligns with the rail's content edge and uses the app's muted

@@ -10,6 +10,11 @@ export function admittedHelpMessage(
     event.source === frame &&
     event.origin === origin &&
     (event.data?.type === "jj-store-help-ready" ||
+      event.data?.type === "jj-store-help-loading" ||
+      (event.data?.type === "jj-store-help-error" &&
+        typeof event.data.message === "string" &&
+        event.data.message.length > 0 &&
+        event.data.message.length <= 500) ||
       event.data?.type === "jj-store-help-close" ||
       event.data?.type === "jj-store-help-focus-close")
   );

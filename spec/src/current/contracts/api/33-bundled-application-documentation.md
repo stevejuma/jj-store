@@ -1,5 +1,11 @@
 # Bundled application documentation
 
+Help's loading, readiness and bounded error protocol is restricted to its exact
+same-origin frame. Internal document reads remain under the existing `/help/`
+asset allowlist and CSP. Skeletons and application Retry toasts add no public
+API or credential transport. Direct Vite startup requires a validated manual;
+running rebuilds retain the last validated bytes until replacement succeeds.
+
 The Help entry uses the primary sidebar's collapsed and expanded spacing. This
 presentation change preserves the same overlay, local document routes and
 admission policy.

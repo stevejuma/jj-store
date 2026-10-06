@@ -75,13 +75,19 @@ async function harness(root) {
   };
 }
 
-test("Help recovers from a missing initial bundle when its manifest is published", async (t) => {
+test("Vite refuses a missing initial Help bundle before listening", async (t) => {
   const root = join(await fixture(t), "build");
+  await assert.rejects(
+    harness(root).then((server) => {
+      t.after(() => server.plugin.closeBundle?.());
+      return server;
+    }),
+    /pnpm docs:build/u,
+  );
+  await publish(root, "recovered");
   const server = await harness(root);
   t.after(() => server.plugin.closeBundle?.());
-  assert.equal(server.read().statusCode, 404);
-  await publish(root, "recovered");
-  await eventually(() => assert.equal(server.read().body, "recovered"));
+  assert.equal(server.read().body, "recovered");
   assert.match(
     server.read().headers["Content-Security-Policy"],
     /frame-ancestors 'self'/u,
@@ -110,6 +116,16 @@ test("Help retains validated bytes until a safe complete replacement is publishe
   await eventually(() => assert.equal(server.read().body, "third"));
 });
 
+test("Vite preview refuses an invalid initial Help manifest", async (t) => {
+  const root = await fixture(t);
+  await publish(root, "unsafe", ["index.html", "../secret.html"]);
+  const plugin = documentationPlugin(root);
+  await assert.rejects(
+    plugin.configurePreviewServer({}),
+    /pnpm docs:build.*Unsafe documentation path/u,
+  );
+});
+
 test("Help releases its manifest observers when the server closes", async (t) => {
   const root = await fixture(t);
   await publish(root, "first");
@@ -127,6 +143,7 @@ test("a cold Vite server reloads rebuilt Help through real filesystem publicatio
   await mkdir(web);
   const docs = join(root, "docs/build");
   await mkdir(join(root, "docs"));
+  await publish(docs, "initial manual");
   const server = await createServer({
     configFile: false,
     root: web,
@@ -145,14 +162,6 @@ test("a cold Vite server reloads rebuilt Help through real filesystem publicatio
     return send(...args);
   };
   const origin = `http://127.0.0.1:${server.httpServer.address().port}`;
-  assert.equal((await fetch(origin + "/help/")).status, 404);
-  await publish(docs, "initial manual");
-  await eventually(async () =>
-    assert.equal(
-      await (await fetch(origin + "/help/")).text(),
-      "initial manual",
-    ),
-  );
   const response = await fetch(origin + "/help/");
   assert.equal(response.status, 200);
   assert.equal(await response.text(), "initial manual");

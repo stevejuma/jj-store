@@ -67,4 +67,5 @@
   observe();
   window.addEventListener("pagehide", () => observer.disconnect());
   window.addEventListener("pageshow", observe);
+  window.addEventListener("jj-store-help-page", sync);
 })();

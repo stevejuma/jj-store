@@ -7,7 +7,7 @@
 }
 .md-header {
   color: var(--foreground);
-  background: var(--store-theme-chrome, var(--sidebar));
+  background: var(--sidebar);
   box-shadow: none;
 }
 .md-header__inner {
@@ -54,7 +54,7 @@
   min-width: 0;
   margin: 0;
   background: var(--background);
-  border: 1px solid var(--border);
+  border: 1px solid color-mix(in srgb, var(--foreground) 11%, transparent);
   border-radius: 1rem;
   min-height: calc(100vh - 6rem);
 }
@@ -74,13 +74,23 @@
   color: var(--foreground);
 }
 .md-sidebar .md-nav .md-nav__link:is(:hover, :focus-visible) {
-  background: var(--muted);
+  background: color-mix(in srgb, var(--foreground) 7%, transparent);
   color: var(--foreground);
 }
-.md-nav__link--active:not(.md-nav__link--index) {
+.md-sidebar .md-nav .md-nav__link--active:not(.md-nav__link--index) {
   color: var(--foreground);
-  background: color-mix(in srgb, var(--foreground) 8%, transparent);
+  background: color-mix(in srgb, var(--foreground) 11%, transparent);
   font-weight: 600;
+}
+html[data-store-prominent="true"]:is(
+    [data-store-theme="buzz"],
+    [data-store-theme="buzz-dark"]
+  )
+  .md-sidebar
+  .md-nav
+  .md-nav__link--active:not(.md-nav__link--index) {
+  color: var(--background);
+  background: var(--foreground);
 }
 .md-nav__title,
 .md-nav--primary .md-nav__item--nested > .md-nav__link {
@@ -223,4 +233,23 @@ body .md-sidebar--secondary .md-nav__title {
   .md-search__form {
     border-radius: 0;
   }
+}
+
+/* Standalone navigation shares the embedded Help loading state. */
+body[data-help-loading] .md-content {
+  position: relative;
+}
+body[data-help-loading] .md-content__inner {
+  visibility: hidden;
+}
+.help-page-skeleton {
+  position: absolute;
+  inset: 2rem;
+  border-radius: var(--radius);
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--muted) 0 0.875rem,
+    transparent 0.875rem 2rem
+  );
+  opacity: 0.65;
 }

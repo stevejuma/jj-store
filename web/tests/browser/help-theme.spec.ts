@@ -91,6 +91,7 @@ test("embedded Help follows live application appearance across pages and reopeni
         mode: "light",
         fontSize: "smaller",
         glass: true,
+        prominent: true,
         opacity: 80,
       }),
     ),
@@ -108,6 +109,21 @@ test("embedded Help follows live application appearance across pages and reopeni
     /\.dark\.svg$/,
   );
   await expect(help.locator("h1")).toHaveText("Architecture¶");
+  await expect(help.locator("html")).toHaveAttribute(
+    "data-store-prominent",
+    "true",
+  );
+  const articleColor = await help
+    .locator("article.md-typeset")
+    .evaluate((element) => getComputedStyle(element).color);
+  await expect(
+    help.getByRole("link", { name: "Architecture", exact: true }),
+  ).toHaveCSS("background-color", articleColor);
+  expect(
+    await help
+      .locator(".md-header")
+      .evaluate((element) => getComputedStyle(element).backgroundColor),
+  ).not.toBe("rgba(0, 0, 0, 0)");
   await page.getByRole("button", { name: "Close Help" }).click();
   await peer.evaluate(() =>
     localStorage.setItem(

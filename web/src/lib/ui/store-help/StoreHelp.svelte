@@ -4,6 +4,8 @@
   import { Button } from "@lapismd/design-core/shadcn/button";
   import BookOpenIcon from "@lucide/svelte/icons/book-open";
   import XIcon from "@lucide/svelte/icons/x";
+  import StoreHelpSkeleton from "./StoreHelpSkeleton.svelte";
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import { helpSession, admittedHelpMessage } from "./help-session.js";
   let {
     compact = false,
@@ -14,16 +16,37 @@
   let opened = $state(false);
   let mounted = $state(false);
   let ready = $state(false);
-  let failed = $state(false);
+  let failure = $state<string | null>(null);
+  let loading = $state(false);
   let source = $state(helpSession.path);
   let opener: HTMLElement | null = null;
   let timeout: ReturnType<typeof setTimeout> | undefined;
   function arm() {
     clearTimeout(timeout);
-    failed = false;
+    loading = true;
     timeout = setTimeout(() => {
-      if (!ready) failed = true;
+      fail("Documentation did not finish loading. Please retry.");
     }, 15000);
+  }
+  function fail(message: string) {
+    clearTimeout(timeout);
+    loading = false;
+    failure = message;
+  }
+  function loaded() {
+    // Error responses cannot send the ready protocol. Surface their actual
+    // plain-text error immediately rather than waiting for the readiness timer.
+    try {
+      const document = frame?.contentDocument;
+      if (!document || document.URL === "about:blank") return;
+      if (!document.querySelector('[data-md-component="container"]'))
+        fail(
+          document.body.textContent?.trim().slice(0, 500) ||
+            "Documentation could not be loaded.",
+        );
+    } catch {
+      fail("Documentation could not be loaded from this application.");
+    }
   }
   function open(event: MouseEvent) {
     opener =
@@ -31,7 +54,7 @@
     mounted = true;
     opened = true;
     dialog?.showModal();
-    arm();
+    if (loading || (!ready && !failure)) arm();
   }
   function close() {
     if (frame?.contentWindow) {
@@ -72,9 +95,14 @@
     }
     if (event.data.type === "jj-store-help-close") {
       if (opened) close();
+    } else if (event.data.type === "jj-store-help-loading") {
+      arm();
+    } else if (event.data.type === "jj-store-help-error") {
+      fail(event.data.message);
     } else {
       ready = true;
-      failed = false;
+      loading = false;
+      failure = null;
       clearTimeout(timeout);
       if (helpSession.path === source && helpSession.scrollY) {
         frame?.contentWindow?.scrollTo(0, helpSession.scrollY);
@@ -83,7 +111,7 @@
     }
   }
   function focusBoundary(event: KeyboardEvent) {
-    if (event.key !== "Tab" || !event.shiftKey || !ready || failed) return;
+    if (event.key !== "Tab" || !event.shiftKey || !ready || loading) return;
     const closeButton = dialog?.querySelector('[aria-label="Close Help"]');
     if (event.target !== closeButton) return;
     const document = frame?.contentDocument;
@@ -104,15 +132,28 @@
     items.at(-1)?.focus();
   }
   function retry() {
-    ready = false;
-    source = "/help/";
-    frame?.contentWindow?.location.replace(source);
     arm();
+    if (ready) {
+      frame?.contentWindow?.postMessage(
+        { type: "jj-store-help-retry" },
+        window.location.origin,
+      );
+    } else {
+      frame?.contentWindow?.location.replace(source);
+    }
   }
   $effect(() => () => clearTimeout(timeout));
 </script>
 
 <svelte:window onmessage={message} />
+<StoreNotice
+  noticeKey="help-load"
+  scope="help"
+  title="Help could not be loaded"
+  message={failure}
+  pending={loading}
+  action={{ id: "retry-help", label: "Retry", run: retry }}
+/>
 <div
   class="store-help-entry"
   data-sidebar={sidebar || undefined}
@@ -122,6 +163,7 @@
     variant="ghost"
     size={compact ? "icon-sm" : "default"}
     class="store-help-trigger"
+    data-sidebar={sidebar || undefined}
     data-compact={compact || undefined}
     aria-label="Help"
     title={compact ? "Help" : undefined}
@@ -145,22 +187,25 @@
     <Button
       variant="ghost"
       size="icon-sm"
+      class="store-help-close"
       aria-label="Close Help"
       onclick={close}><XIcon aria-hidden="true" /></Button
     >
   </header>
-  {#if !ready && !failed}<p role="status">Loading documentation…</p>{/if}
-  {#if failed}<div role="alert">
-      <p>Documentation could not be loaded from this application build.</p>
-      <Button variant="outline" onclick={retry}>Retry</Button>
-    </div>{/if}
-  {#if mounted}<iframe
-      bind:this={frame}
-      src={source}
-      title="jj-store documentation"
-      class:ready
-      referrerpolicy="no-referrer"
-    ></iframe>{/if}
+  <div class="store-help__body">
+    {#if loading && !ready}<div class="store-help__loading">
+        <StoreHelpSkeleton />
+      </div>{/if}
+    {#if mounted}<iframe
+        bind:this={frame}
+        src={source}
+        title="jj-store documentation"
+        class:ready
+        onload={loaded}
+        onerror={() => fail("Documentation could not be loaded. Please retry.")}
+        referrerpolicy="no-referrer"
+      ></iframe>{/if}
+  </div>
 </dialog>
 
 <style>
@@ -179,6 +224,11 @@
   :global(.store-help-trigger[data-compact]) {
     width: 2rem;
     justify-content: center;
+  }
+  :global(.store-help-trigger[data-sidebar]:is(:hover, :focus-visible)),
+  :global(.store-help-close:is(:hover, :focus-visible)) {
+    color: var(--foreground);
+    background: color-mix(in srgb, var(--foreground) 7%, transparent);
   }
   .store-help {
     position: fixed;
@@ -205,7 +255,8 @@
     align-items: center;
     justify-content: space-between;
     padding: 0.4rem 1rem;
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid
+      color-mix(in srgb, var(--foreground) 11%, transparent);
     flex-shrink: 0;
     background: var(--store-theme-chrome, var(--sidebar));
   }
@@ -217,9 +268,16 @@
     font-size: var(--community-text-body, 0.875rem);
     margin: 0;
   }
-  p,
-  [role="alert"] {
-    padding: 1rem;
+  .store-help__body {
+    position: relative;
+    display: flex;
+    flex: 1;
+    min-height: 0;
+  }
+  .store-help__loading {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
   }
   iframe {
     border: 0;

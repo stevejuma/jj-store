@@ -6,6 +6,23 @@ its same-origin frame and returns focus on dismissal. The underlying application
 remains mounted, preserving route, drafts and pending commands. Docs page/scroll
 state remains session-only.
 
+Initial Help loads show a labelled skeleton matching the manual's header,
+navigation/content/contents columns, semantic palette and responsive rail
+breakpoints. Pending page navigation keeps the real chrome and rails with a
+content skeleton rather than inline loading text. Failed loads publish the
+actual bounded response or readiness error through the application notification
+owner, with an explicit Retry action. Retry retains dismissal until successful
+recovery; no duplicate inline error is shown. Closing Help preserves the
+underlying route and drafts.
+
+Internal page navigation retains the iframe document, header, search runtime,
+theme and fonts. Same-origin bundled pages replace their validated content and
+navigation regions, resolve relative assets against the requested page and
+reinitialize Material's document lifecycle. Back/Forward restores page and
+scroll; aborted or superseded reads cannot replace newer content. External and
+modified links retain ordinary browser behavior. Loading/error/ready messages
+are admitted only from the exact same-origin Help frame.
+
 The Help entry follows primary sidebar navigation geometry: a centered 2rem icon
 button with 0.5rem horizontal rail padding when collapsed, and a full-width
 labelled button inset by 0.75rem when expanded. Connection-screen Help retains
@@ -21,6 +38,12 @@ a light/dark switch using the Original palette. Light/dark Mermaid images follow
 the resolved color mode. The navigation rails fill their allotted widths without
 fixed inner padding; groups initially collapse on the landing page and reveal
 the selected page's path after navigation.
+
+Help's sidebar links, section hover and Close button use the app sidebar's
+theme-derived interaction treatments, including prominent Buzz selections.
+Overlay/content separators use a subtle foreground tint rather than a neutral
+grey border. The sticky documentation header retains an opaque palette surface
+so scrolling content cannot show through it, including with glass/Buzz chrome.
 
 Repository Files render the selected row window before commit headers, per-path
 attribution and landing documents. Those independent reads retain the explicit

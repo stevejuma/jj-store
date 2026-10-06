@@ -9,6 +9,41 @@ test("Help only accepts its exact same-origin frame message protocol", () => {
     data: { type: "jj-store-help-close" },
   } as MessageEvent;
   assert.equal(admittedHelpMessage(event, frame, event.origin), true);
+  for (const data of [
+    { type: "jj-store-help-loading" },
+    { type: "jj-store-help-ready" },
+    { type: "jj-store-help-error", message: "Documentation unavailable" },
+  ]) {
+    assert.equal(
+      admittedHelpMessage(
+        { ...event, data } as MessageEvent,
+        frame,
+        event.origin,
+      ),
+      true,
+    );
+    assert.equal(
+      admittedHelpMessage(
+        { ...event, data } as MessageEvent,
+        {} as Window,
+        event.origin,
+      ),
+      false,
+    );
+  }
+  for (const message of [null, 123, "", "x".repeat(501)]) {
+    assert.equal(
+      admittedHelpMessage(
+        {
+          ...event,
+          data: { type: "jj-store-help-error", message },
+        } as MessageEvent,
+        frame,
+        event.origin,
+      ),
+      false,
+    );
+  }
   assert.equal(admittedHelpMessage(event, {} as Window, event.origin), false);
   assert.equal(
     admittedHelpMessage(event, frame, "https://elsewhere.test"),

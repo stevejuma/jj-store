@@ -6,6 +6,12 @@ change map additionally maps `docs/site/`, `docs/maintenance/`, `mkdocs.yml`,
 `pyproject.toml` and `uv.lock` to `documentation.md`. Documentation checks are
 part of normal checks and generated Help is part of browser/desktop packaging.
 
+Help startup/loading/navigation changes require direct documentation asset and
+development-preflight regressions plus cold Chromium/WebKit Help lifecycle,
+search, theme, retry and browser-history checks. Record missing-bundle refusal
+separately from retained-bundle rebuild recovery. Unrelated storage/Rust suites
+and visual baselines remain outside this UI/documentation slice.
+
 The user-requested performance-first bounded-read continuation runs focused
 regressions and affected package/boundary checks per delivery change. Complete
 combined integration, large-scale, fault, cold-browser, real-RustFS and release
