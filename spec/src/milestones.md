@@ -110354,6 +110354,75 @@ entries.
     "Main now contains active Stacks changes in store-route-types, store-route-history and store-stacks-navigation plus shared canonical chapters. The AGENTS instruction to stop on overlapping work prevents automatic landing into that active working change; main remains untouched.",
     "Visual baseline approval, HTTP contract generation, Rust checks, full UI/root suites, release-scale verification and service restarts are outside this UI-only slice. No milestone promoted."
   ]
+},
+{
+  "id": "E-READ-093",
+  "date": "2026-10-06",
+  "tasks": ["M4.6", "M13.4"],
+  "requirements": ["JST-UI-005", "JST-GOV-007"],
+  "kind": "Blame UI integrated in main with active Stacks work retained and live preview verified",
+  "revision": "enclosing Jujutsu change tmotwyknlwly",
+  "versions": "Same UI dependencies and server processes as E-READ-092; macOS ARM64; pnpm 10.32.1; Vitest 4.1.11.",
+  "formats": "No API, generated contract, persisted repository or dependency changes. Existing file_view presentation contract retained.",
+  "files": ["spec/src/milestones.md"],
+  "before": "User explicitly authorized main integration after the overlap warning. Main held active Stacks change lmpkknlw on empty change 5103af31. Blame UI was committed as pvlzsxrt/a5d00c50. The open port7470 Vite process served the clean codex-preview workspace at e955df8a, not main; its backend was PID80426.",
+  "runs": [
+    {
+      "command": "jj --no-pager st; jj --no-pager log; record immutable main commit and changed paths under .local/blame-integration",
+      "result": "pass",
+      "failures": 0,
+      "note": "Inspected both workspaces and recorded main-before.txt/main-before-files.txt before rebase. Main contained active Stacks changes; explicit user integration instruction governs this overlap."
+    },
+    {
+      "command": "jj bookmark create codex/main-before-blame-ui-20261006 -r @; jj rebase -s @ -d pvlzsxrt; jj bookmark delete codex/main-before-blame-ui-20261006",
+      "result": "pass",
+      "failures": 0,
+      "note": "Blame becomes main parent; original uncommitted Stacks change ID retained. Temporary bookmark followed the rewrite and was deleted; original immutable commit ID and JJ operation history remain the recovery record. One append conflict in store-route-history.test.ts was resolved by keeping both the Blame display test and the Stacks live/pinned test."
+    },
+    {
+      "command": "jj resolve --list",
+      "result": "fail",
+      "failures": 1,
+      "note": "After explicit conflict resolution, installed JJ returned No conflicts found at this revision with nonzero exit; this confirms no unresolved conflict rather than a failed product check."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/store-route-history.test.ts web/tests/vite/store-stacks-navigation.test.ts web/tests/vite/blame-query.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "Main .local/blame-integration/routing-tests.log:3 files,36 tests pass on integrated source, including both independently added history tests."
+    },
+    {
+      "command": "pnpm web:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "Main .local/blame-integration/web-check.log:zero errors and warnings for integrated UI."
+    },
+    {
+      "command": "Compare main-before immutable file bytes against rebased files outside the Blame diff; jj log -r \"pvlzsxrt & ancestors(@)\"",
+      "result": "pass",
+      "failures": 0,
+      "note": "preservation.json:36 original nonoverlapping paths identical; five were concurrently updated by continuing Stacks work and were not overwritten. a5d00c50 verified in main ancestry. Both fileDisplay and stackHistory fields remain."
+    },
+    {
+      "command": "jj new pvlzsxrt -m \"Preview committed Blame UI\" (codex-preview workspace); jj --no-pager st",
+      "result": "pass",
+      "failures": 0,
+      "note": "Clean preview workspace advanced to the committed UI slice; it remains empty at1228e447. Existing Vite picked up source changes. Development fixture and backend were not restarted or reset."
+    },
+    {
+      "command": "CUA reload existing port7470 Linux file tab, inspect DOM and capture visible file controls",
+      "result": "pass",
+      "failures": 0,
+      "note": "The pinned include/crypto/acompress.h page showed Source, disabled Blame and Working copy, with the unavailable explanation. Subsequent user navigation to CREDITS also shows those controls. Screenshot:main .local/blame-integration/blame-ui-live.jpg. The original operation pin remains. No production annotation provider is enabled."
+    }
+  ],
+  "result": "pass",
+  "remaining": [],
+  "out_of_scope": [
+    "E-READ-091 live annotation comparison/cancellation gate and public-provider qualification remain blocked; C syntax highlighting remains as recorded in E-READ-092.",
+    "Rust, Stacks feature qualification, new browser suites, root aggregates, dependency updates, server restarts and release/visual-baseline approval were not part of this integration."
+  ],
+  "next": "Retain bounded-reads for follow-up. Production Blame remains disabled until the separately scoped backend feasibility gate is resolved."
 }
 ]
 ```
