@@ -14,6 +14,8 @@ mod mutations;
 mod operation_description;
 mod policy;
 mod preview;
+mod read;
+pub use read::ReadSession;
 mod settings;
 mod state;
 use self::config::{Config, SavedWorkspace};

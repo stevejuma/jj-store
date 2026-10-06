@@ -666,3 +666,15 @@ above it. The lowest card retains the native graph. Existing lower-card commands
 are permitted when this topology proves their membership beneath an applied
 head, with ordinary immutable, target and stale-command guards. Discovery never
 modifies TOML, membership, merge/WIP commits or working files.
+
+## Local Stacks CLI
+
+`jj-store stack` directly invokes the ordinary Git-backed JJ stack engine. It
+shares physical-workspace TOML with the UI and uses native snapshots,
+working-copy locks, transactions and descendant propagation. CLI inspection with
+`--no-snapshot` and mutation `--dry-run` load one existing operation head
+without reconciliation or configuration writes; normal commands snapshot before
+resolving selectors. Selection input retains operation/configuration pins and
+exact native hunk IDs. Undo/Redo is repository-wide; saved membership is
+reconciled only by an explicit confirmed command. Applied-operation warnings
+retain native recovery information and return exit 3 rather than retrying.

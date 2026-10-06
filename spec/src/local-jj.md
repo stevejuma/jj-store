@@ -1027,6 +1027,14 @@ commits. Staging is UI intent and does not move content before confirmed
 execution. Unstaged reads the active merge-to-WIP delta using bounded paths and
 lazy patches.
 
+The standalone `jj-store stack` CLI uses this same ordinary-local engine and
+physical workspace TOML directly. Its local invocation context validates the
+resolved workspace and Git backend without creating companion metadata or
+requiring HTTP registration. Non-snapshot inspections and dry runs load exactly
+one existing operation head and never reconcile heads. CLI execution snapshots
+before resolving selectors, then retains the existing operation/configuration
+and native selection guards; stale outcomes are not automatically retried.
+
 ## Historical retained stacks execution contracts
 
 The following implementation evidence describes the previous retained-executor

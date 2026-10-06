@@ -21,6 +21,12 @@ the same origin. It is resolved relative to the configuration file. See
 Startup rejects missing, oversized or unsafe listed assets. Authenticated shared
 serving and external object storage are deferred beyond the local release.
 
+Local stack workspaces also run directly through `jj-store stack`, without a
+server or registration. Start with
+`jj-store stack init --name NAME --target BOOKMARK` in an ordinary Git-backed JJ
+workspace; use `jj-store help stack` for workspace, branch, content, conflict
+and native history commands.
+
 
 ```text
 Usage: jj-store [OPTIONS] [COMMAND]
@@ -32,6 +38,916 @@ Usage: jj-store [OPTIONS] [COMMAND]
 | `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
 | `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
 | `-h, --help` | Print help (see a summary with '-h') |  |
+
+## jj-store stack
+
+Run local Stacks actions directly in an ordinary JJ workspace
+
+```text
+Usage: jj-store stack [OPTIONS] [COMMAND]
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack status
+
+Show workspace, applied stacks, unfinished paths and conflicts
+
+```text
+Usage: jj-store stack status [OPTIONS]
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack list
+
+Discover top-level stacks relative to the active or explicitly selected target
+
+```text
+Usage: jj-store stack list [OPTIONS]
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `--target <TARGET>` | Exact target bookmark; no implicit remote fetch |  |
+| `--all <ALL>` | Include integrated and unavailable bookmark recovery choices | Default: false; Values: true, false |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack show
+
+Show connected branch cards and one bounded commit page for each
+
+```text
+Usage: jj-store stack show [OPTIONS] <BOOKMARK>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `--target <TARGET>` | Exact target bookmark for browsing before workspace creation |  |
+| `bookmark` | Exact bookmark name; aliases retain their native identity Required. |  |
+| `--limit <LIMIT>` | Maximum rows per returned page (1-500) | Default: 50 |
+| `--after <AFTER>` | Continue one exact branch card; requires --card |  |
+| `--card <CARD>` | Exact branch-card bookmark to show or continue |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack init
+
+Create the initial merge/WIP workspace, retaining current unfinished work
+
+```text
+Usage: jj-store stack init [OPTIONS] --name <NAME> --target <TARGET>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `--name <NAME>` | New workspace or bookmark name Required. |  |
+| `--target <TARGET>` | Exact target bookmark; no implicit remote fetch Required. |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack workspace
+
+List, create, switch, update or remove named local workspace configurations
+
+```text
+Usage: jj-store stack workspace [OPTIONS] <COMMAND>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack workspace list
+
+Show retained workspaces and their native merge/WIP identities
+
+```text
+Usage: jj-store stack workspace list [OPTIONS]
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack workspace create
+
+Create and switch to an empty workspace inheriting the target
+
+```text
+Usage: jj-store stack workspace create [OPTIONS] <NAME>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `name` | New workspace or bookmark name Required. |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack workspace switch
+
+Switch checkout to the retained workspace by exact name or ID
+
+```text
+Usage: jj-store stack workspace switch [OPTIONS] <WORKSPACE>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `workspace` | Exact saved workspace name or ID Required. |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack workspace update
+
+Update the active workspace, preserving unspecified settings
+
+```text
+Usage: jj-store stack workspace update [OPTIONS]
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `--name <NAME>` | New workspace or bookmark name |  |
+| `--target <TARGET>` | Exact target bookmark; no implicit remote fetch |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack workspace delete
+
+Remove configuration while retaining native unfinished work; requires --yes
+
+```text
+Usage: jj-store stack workspace delete [OPTIONS] <WORKSPACE>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `workspace` | Exact saved workspace name or ID Required. |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack apply
+
+Apply this exact bookmark tip immediately
+
+```text
+Usage: jj-store stack apply [OPTIONS] <BOOKMARK>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `bookmark` | Exact bookmark name; aliases retain their native identity Required. |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack unapply
+
+Unapply a stack atomically, preserving members shared with other stacks
+
+```text
+Usage: jj-store stack unapply [OPTIONS] <BOOKMARK>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `bookmark` | Exact bookmark name; aliases retain their native identity Required. |  |
+| `--branch-only <BRANCH_ONLY>` | Remove only this explicitly applied bookmark | Default: false; Values: true, false |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack create
+
+Create and apply a stack at the target or above an applied branch
+
+```text
+Usage: jj-store stack create [OPTIONS] <NAME>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `name` | New workspace or bookmark name Required. |  |
+| `--parent <PARENT>` | Exact applied branch beneath the new stack |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack branch
+
+Create, rename or delete a bookmark
+
+```text
+Usage: jj-store stack branch [OPTIONS] <COMMAND>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack branch create
+
+Label the selected commit or its single parent
+
+```text
+Usage: jj-store stack branch create [OPTIONS] <--above <ABOVE>|--below <BELOW>> <NAME>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `name` | New workspace or bookmark name Required. |  |
+| `--above <ABOVE>` | Insert above this exact single native revision |  |
+| `--below <BELOW>` | Insert below this exact single native revision |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack branch rename
+
+Rename a bookmark across saved workspace membership
+
+```text
+Usage: jj-store stack branch rename [OPTIONS] <OLD> <NEW>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `old` | Existing bookmark name Required. |  |
+| `new` | New bookmark name Required. |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack branch delete
+
+Delete a top-level bookmark while retaining lower bookmarks and commits
+
+```text
+Usage: jj-store stack branch delete [OPTIONS] <NAME>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `name` | New workspace or bookmark name Required. |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack rebase
+
+Rebase a branch segment onto the workspace target with native propagation
+
+```text
+Usage: jj-store stack rebase [OPTIONS] <BOOKMARK>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `bookmark` | Exact bookmark name; aliases retain their native identity Required. |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack squash-branch
+
+Squash a branch segment using its proven native boundary
+
+```text
+Usage: jj-store stack squash-branch [OPTIONS] <BOOKMARK>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `bookmark` | Exact bookmark name; aliases retain their native identity Required. |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack commit
+
+Create a commit on the selected applied branch from exact selected changes
+
+```text
+Usage: jj-store stack commit [OPTIONS] --branch <BRANCH> <--message <MESSAGE>|--message-file <MESSAGE_FILE>> [-- <PATHS>...]
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `--branch <BRANCH>` | Exact branch bookmark (net comparisons are inspection only) Required. |  |
+| `-m, --message <MESSAGE>` | Explicit commit description (empty is allowed only where JJ allows it) |  |
+| `--message-file <MESSAGE_FILE>` | Read the description from a bounded UTF-8 file |  |
+| `--from <FROM>` | Source revision; defaults to WIP (split defaults to its selected commit) |  |
+| `--all <ALL>` | Select all changed paths from the exact source | Default: false; Values: true, false |
+| `--empty <EMPTY>` | Deliberately create an empty commit (commit command only) | Default: false; Values: true, false |
+| `--hunk <HUNK>` | Native hunk ID; requires exactly one path and pinned operation/revision |  |
+| `--selection-file <SELECTION_FILE>` | Version-1 operation/revision/selections JSON for mixed native sources |  |
+| `paths` | Exact file paths relative to -C; directories expand only through --all |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack edit
+
+Reword a commit and optionally transfer selected changes into it
+
+```text
+Usage: jj-store stack edit [OPTIONS] <--message <MESSAGE>|--message-file <MESSAGE_FILE>> <REVISION> [-- <PATHS>...]
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `revision` | Native JJ selector resolving exactly one visible commit Required. |  |
+| `-m, --message <MESSAGE>` | Explicit commit description (empty is allowed only where JJ allows it) |  |
+| `--message-file <MESSAGE_FILE>` | Read the description from a bounded UTF-8 file |  |
+| `--from <FROM>` | Source revision; defaults to WIP (split defaults to its selected commit) |  |
+| `--all <ALL>` | Select all changed paths from the exact source | Default: false; Values: true, false |
+| `--empty <EMPTY>` | Deliberately create an empty commit (commit command only) | Default: false; Values: true, false |
+| `--hunk <HUNK>` | Native hunk ID; requires exactly one path and pinned operation/revision |  |
+| `--selection-file <SELECTION_FILE>` | Version-1 operation/revision/selections JSON for mixed native sources |  |
+| `paths` | Exact file paths relative to -C; directories expand only through --all |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack split
+
+Extract selected changes from this commit into a new child
+
+```text
+Usage: jj-store stack split [OPTIONS] <--message <MESSAGE>|--message-file <MESSAGE_FILE>> <REVISION> [-- <PATHS>...]
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `revision` | Native JJ selector resolving exactly one visible commit Required. |  |
+| `-m, --message <MESSAGE>` | Explicit commit description (empty is allowed only where JJ allows it) |  |
+| `--message-file <MESSAGE_FILE>` | Read the description from a bounded UTF-8 file |  |
+| `--from <FROM>` | Source revision; defaults to WIP (split defaults to its selected commit) |  |
+| `--all <ALL>` | Select all changed paths from the exact source | Default: false; Values: true, false |
+| `--empty <EMPTY>` | Deliberately create an empty commit (commit command only) | Default: false; Values: true, false |
+| `--hunk <HUNK>` | Native hunk ID; requires exactly one path and pinned operation/revision |  |
+| `--selection-file <SELECTION_FILE>` | Version-1 operation/revision/selections JSON for mixed native sources |  |
+| `paths` | Exact file paths relative to -C; directories expand only through --all |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack transfer
+
+Squash selected content into an exact mutable destination, retaining sources
+
+```text
+Usage: jj-store stack transfer [OPTIONS] --to <TO> [-- <PATHS>...]
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `--to <TO>` | Native JJ selector for the destination commit Required. |  |
+| `--from <FROM>` | Source revision; defaults to WIP (split defaults to its selected commit) |  |
+| `--all <ALL>` | Select all changed paths from the exact source | Default: false; Values: true, false |
+| `--empty <EMPTY>` | Deliberately create an empty commit (commit command only) | Default: false; Values: true, false |
+| `--hunk <HUNK>` | Native hunk ID; requires exactly one path and pinned operation/revision |  |
+| `--selection-file <SELECTION_FILE>` | Version-1 operation/revision/selections JSON for mixed native sources |  |
+| `paths` | Exact file paths relative to -C; directories expand only through --all |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack reword
+
+Change a native commit description
+
+```text
+Usage: jj-store stack reword [OPTIONS] <--message <MESSAGE>|--message-file <MESSAGE_FILE>> <REVISION>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `revision` | Native JJ selector resolving exactly one visible commit Required. |  |
+| `-m, --message <MESSAGE>` | Explicit commit description (empty is allowed only where JJ allows it) |  |
+| `--message-file <MESSAGE_FILE>` | Read the description from a bounded UTF-8 file |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack empty
+
+Insert an empty commit above or below the selected revision
+
+```text
+Usage: jj-store stack empty [OPTIONS] <--above <ABOVE>|--below <BELOW>> <--message <MESSAGE>|--message-file <MESSAGE_FILE>>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `--above <ABOVE>` | Insert above this exact single native revision |  |
+| `--below <BELOW>` | Insert below this exact single native revision |  |
+| `-m, --message <MESSAGE>` | Explicit commit description (empty is allowed only where JJ allows it) |  |
+| `--message-file <MESSAGE_FILE>` | Read the description from a bounded UTF-8 file |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack move
+
+Move one revision above or below the selected destination
+
+```text
+Usage: jj-store stack move [OPTIONS] <--above <ABOVE>|--below <BELOW>> <REVISION>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `revision` | Native JJ selector resolving exactly one visible commit Required. |  |
+| `--above <ABOVE>` | Insert above this exact single native revision |  |
+| `--below <BELOW>` | Insert below this exact single native revision |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack squash
+
+Squash a complete revision into another revision
+
+```text
+Usage: jj-store stack squash [OPTIONS] --into <INTO> <REVISION>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `revision` | Native JJ selector resolving exactly one visible commit Required. |  |
+| `--into <INTO>` | Native JJ selector for the squash destination Required. |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack uncommit
+
+Move a complete commit's changes back into unfinished work
+
+```text
+Usage: jj-store stack uncommit [OPTIONS] <REVISION>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `revision` | Native JJ selector resolving exactly one visible commit Required. |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack abandon
+
+Abandon a mutable commit; requires --yes
+
+```text
+Usage: jj-store stack abandon [OPTIONS] <REVISION>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `revision` | Native JJ selector resolving exactly one visible commit Required. |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack diff
+
+Show selected commit/WIP file changes, or a read-only net branch comparison
+
+```text
+Usage: jj-store stack diff [OPTIONS] [PATH]
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `--from <FROM>` | Native JJ source selector; defaults to the working copy |  |
+| `--branch <BRANCH>` | Exact branch bookmark (net comparisons are inspection only) |  |
+| `--after <AFTER>` | Canonical path continuation from the previous page |  |
+| `--limit <LIMIT>` | Maximum rows per returned page (1-500) | Default: 100 |
+| `path` | File path relative to -C |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack hunks
+
+Show exact native hunk IDs and patches with operation/configuration pins
+
+```text
+Usage: jj-store stack hunks [OPTIONS] <PATH>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `path` | File path relative to -C Required. |  |
+| `--from <FROM>` | Native JJ source selector; defaults to the working copy |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack discard
+
+Discard selected WIP content; requires --yes
+
+```text
+Usage: jj-store stack discard [OPTIONS] [-- <PATHS>...]
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `--from <FROM>` | Source revision; defaults to WIP (split defaults to its selected commit) |  |
+| `--all <ALL>` | Select all changed paths from the exact source | Default: false; Values: true, false |
+| `--empty <EMPTY>` | Deliberately create an empty commit (commit command only) | Default: false; Values: true, false |
+| `--hunk <HUNK>` | Native hunk ID; requires exactly one path and pinned operation/revision |  |
+| `--selection-file <SELECTION_FILE>` | Version-1 operation/revision/selections JSON for mixed native sources |  |
+| `paths` | Exact file paths relative to -C; directories expand only through --all |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack conflicts
+
+List WIP conflict paths or inspect a file's ordered native versions
+
+```text
+Usage: jj-store stack conflicts [OPTIONS] [PATH]
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `path` | File path relative to -C |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack resolve
+
+Submit complete supported text resolution from a file or stdin (-)
+
+```text
+Usage: jj-store stack resolve [OPTIONS] --file <FILE> <PATH>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `path` | File path relative to -C Required. |  |
+| `--file <FILE>` | Reviewed UTF-8 resolution file, or - for stdin Required. |  |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack refresh
+
+Snapshot files and refresh the local workspace state
+
+```text
+Usage: jj-store stack refresh [OPTIONS]
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack reconcile
+
+Explicitly reconcile saved membership and eligible obsolete merges; requires --yes
+
+```text
+Usage: jj-store stack reconcile [OPTIONS]
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack undo
+
+Undo the native repository operation, including ordinary CLI changes
+
+```text
+Usage: jj-store stack undo [OPTIONS]
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store stack redo
+
+Redo the native repository operation
+
+```text
+Usage: jj-store stack redo [OPTIONS]
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `-C, --directory <DIRECTORY>` | Discover the JJ workspace from this directory Inherited by subcommands. | Default: . |
+| `--no-snapshot <NO_SNAPSHOT>` | Inspect the last snapshot without writing repository or settings state Inherited by subcommands. | Default: false; Values: true, false |
+| `--dry-run <DRY_RUN>` | Validate and describe a mutation against the last snapshot without writing Inherited by subcommands. | Default: false; Values: true, false |
+| `--yes <YES>` | Confirm deletion, abandonment, discard or reconciliation Inherited by subcommands. | Default: false; Values: true, false |
+| `--expect-operation <EXPECT_OPERATION>` | Reject a changed operation (also returned by status/hunks JSON) Inherited by subcommands. |  |
+| `--expect-revision <EXPECT_REVISION>` | Reject changed workspace configuration Inherited by subcommands. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
 
 ## jj-store init
 

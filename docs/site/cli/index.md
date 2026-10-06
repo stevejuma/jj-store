@@ -1,9 +1,9 @@
 # CLI reference
 
 The custom `jj` executable registers application-owned extensions alongside
-upstream JJ commands. `jj-store` is the paired standalone server executable.
-This reference is generated from their actual parsers, including nested
-commands, inherited arguments, defaults and enumerated values.
+upstream JJ commands. `jj-store` provides the paired server and server-free
+local Stacks commands. This reference is generated from their actual parsers,
+including nested commands, inherited arguments, defaults and enumerated values.
 
 | Family                         | Purpose                                                                     |
 | ------------------------------ | --------------------------------------------------------------------------- |
@@ -15,6 +15,14 @@ commands, inherited arguments, defaults and enumerated values.
 | [jj review](jj-review.md)      | Exact artifact discussions, workflow and revision recovery                  |
 | [jj sync](jj-sync.md)          | Local replication controls, finite waits and reconciliation                 |
 | [jj replica](jj-replica.md)    | Issuer-bound frontier/checkpoint inspection                                 |
+
+## Local Stacks
+
+Run `jj-store stack init --name NAME --target BOOKMARK` in an ordinary
+Git-backed JJ workspace, then use `stack apply`, `unapply`, `status`, `list` and
+`show`. Workspace, file/hunk, branch, graph and text-conflict commands share the
+UI engine and `.jj/jj-store/stacks.toml`. No server or registration is required.
+Use `jj-store help stack` for the complete guide.
 
 ## Command conventions
 

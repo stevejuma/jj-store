@@ -203,3 +203,17 @@ also lists eligible obsolete workspace merge heads from older versions. Only
 heads proven by recorded workspace operations and unreferenced by user
 bookmarks, other workspaces or descendants can be retired. Native operation
 history retains recovery. Reading or refreshing never performs this repair.
+
+### Use Stacks from the local CLI
+
+`jj-store stack` uses the same ordinary-local engine and physical workspace
+configuration as this view. A workspace created or updated with the CLI is
+available through the browser's normal refresh. `apply` and grouped `unapply`
+preserve the same dependent/shared branch membership; native file/hunk commands
+retain the same exact selections and descendant propagation. Use
+`jj-store help stack` for commands and [CLI reference](../cli/jj-store.md) for
+syntax. The CLI runs without the browser server or repository registration.
+
+Select an already selected stack header, commit row or Branches entry again to
+deselect it. Stack graphs retain per-row lane spacing and scroll horizontally
+and vertically; commit avatars do not share an imposed alignment column.

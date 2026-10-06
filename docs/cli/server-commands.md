@@ -15,3 +15,13 @@ Use the explicit development paths `target/debug/jj-store` and
 
 Token and operator grant administration is retained for the deferred
 authenticated/shared deployment and is not required by LocalTrusted.
+
+## Local Stacks
+
+`jj-store stack` runs directly in an ordinary Git-backed JJ workspace. Use
+`stack status`, `list`, `show`, `apply` and `unapply` to work with native
+stacks; `stack workspace` manages named merge/WIP configurations. Commit,
+file/hunk, branch, graph and supported text conflict actions share the
+application's engine. Normal commands snapshot; `--no-snapshot` inspects and
+`--dry-run` validates the last recorded snapshot without writing. Use
+`jj-store help stack` for the guide.

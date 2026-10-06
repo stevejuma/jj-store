@@ -31,6 +31,7 @@ mod review_presentation;
 pub mod server_commands;
 pub mod server_desktop;
 mod server_process;
+pub mod stack_commands;
 mod state_lease;
 mod store_commands;
 pub mod sync_commands;

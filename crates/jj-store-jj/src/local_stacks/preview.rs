@@ -156,7 +156,85 @@ pub async fn preview(access: Arc<dyn Access>, root: PathBuf, request: Request) -
             history::target(&repo, matches!(request.command, Command::Redo)).await?;
             Preview{title:"Restore native JJ operation".into(),summary:"Repository-wide JJ Undo/Redo includes CLI operations. Code and bookmarks follow the native operation log; local TOML remains separate and is not reapplied.".into(),paths:vec![]}
         }
-        _ => return Err(Error::Invalid),
+        Command::Setup {
+            ref name,
+            ref target,
+        } => {
+            if !config.workspaces.is_empty() {
+                return Err(Error::Invalid);
+            }
+            config.validate_name(name, None)?;
+            resolve(repo.as_ref(), target)?;
+            Preview {
+                title: "Set up workspace".into(),
+                summary: format!(
+                    "Create {name} targeting {target}, retaining current unfinished work."
+                ),
+                paths: vec![],
+            }
+        }
+        Command::Create { ref name } => {
+            config.validate_name(name, None)?;
+            if config.workspaces.is_empty() || config.workspaces.len() >= 64 {
+                return Err(Error::Invalid);
+            }
+            Preview {
+                title: "Create workspace".into(),
+                summary: format!(
+                    "Create and switch to {name}, inheriting the target and starting empty."
+                ),
+                paths: vec![],
+            }
+        }
+        Command::Switch { ref workspace } | Command::Delete { ref workspace } => {
+            let saved = config
+                .workspaces
+                .iter()
+                .find(|w| &w.id == workspace)
+                .ok_or(Error::Invalid)?;
+            if matches!(request.command, Command::Switch { .. }) {
+                resolve_any(repo.as_ref(), &saved.wip_ref)?;
+            }
+            Preview {
+                title: "Workspace action".into(),
+                summary: operation_description::describe(&request.command, &config),
+                paths: vec![],
+            }
+        }
+        Command::Apply { ref branch }
+        | Command::Unapply { ref branch }
+        | Command::SetTarget { ref branch } => {
+            let saved = config.active().ok_or(Error::Invalid)?;
+            if matches!(request.command, Command::Unapply { .. }) {
+                if !saved.applied.contains(branch) {
+                    return Err(Error::Invalid);
+                }
+            } else {
+                resolve(repo.as_ref(), branch)?;
+            }
+            Preview {
+                title: "Workspace membership".into(),
+                summary: operation_description::describe(&request.command, &config),
+                paths: vec![],
+            }
+        }
+        Command::Update {
+            ref workspace,
+            ref name,
+            ref target,
+        } => {
+            if config.active.as_ref() != Some(workspace) {
+                return Err(Error::Invalid);
+            }
+            config.validate_name(name, Some(workspace))?;
+            resolve(repo.as_ref(), target)?;
+            Preview {
+                title: "Update workspace".into(),
+                summary: format!("Save {name} targeting {target}; preserve unfinished work."),
+                paths: vec![],
+            }
+        }
+        Command::Refresh => return Err(Error::Invalid),
     };
     access.authorize().await.map_err(|_| Error::Denied)?;
     Ok(result)
@@ -164,7 +242,7 @@ pub async fn preview(access: Arc<dyn Access>, root: PathBuf, request: Request) -
 
 pub(super) async fn load(
     access: &Arc<dyn Access>,
-    root: &PathBuf,
+    root: &std::path::Path,
     version: u32,
     generation: u64,
     operation: Option<jj_store_model::OperationId>,
@@ -178,23 +256,7 @@ pub(super) async fn load(
     if version != 1 || generation != access.generation() {
         return Err(Error::Stale);
     }
-    access.authorize().await.map_err(|_| Error::Denied)?;
-    let settings = settings::load(root)?;
-    let workspace = Workspace::load(
-        &settings,
-        root,
-        &default_backend_factories(),
-        &default_working_copy_factories(),
-    )
-    .map_err(jj)?;
-    if workspace.workspace_root() != root.as_path()
-        || workspace.repo_path().canonicalize().map_err(jj)?
-            != access.metadata_path().canonicalize().map_err(jj)?
-    {
-        return Err(Error::Denied);
-    }
-    let repo = workspace.repo_loader().load_at_head().await.map_err(jj)?;
-    let config = config::Storage::read_only(root)?;
+    let (workspace, repo, config, settings) = read::load(access, root).await?;
     if operation.as_ref().map(|v| v.to_string()) != Some(repo.op_id().hex())
         || revision != Some(config.revision)
     {

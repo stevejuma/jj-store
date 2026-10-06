@@ -345,14 +345,14 @@ checked-in config.
 
 ## Requirements
 
-| ID          | Requirement                                                                                                                                                                                                                                                                                                                                       |
-| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| JST-CLI-001 | Custom commands MUST use jj store under upstream CliRunner; LocalTrusted MUST provide initialization, run, repository registration and diagnostics without user credentials, while authenticated mode MUST provide explicit registry and manual-token administration.                                                                             |
-| JST-CLI-002 | Custom command families MUST provide authored Markdown long help, short help, keyword help, hints, JSON results, TTY paging, no-pager, color controls, completions, and build information.                                                                                                                                                        |
-| JST-CLI-003 | Ordinary JJ commands MUST preserve upstream behavior; a tested capability matrix MUST report unsupported backend commands honestly.                                                                                                                                                                                                               |
-| JST-CLI-004 | Development MUST use explicit build paths and MUST NOT replace installed jj or start unrelated services.                                                                                                                                                                                                                                          |
-| JST-CLI-005 | Configuration format 2 MUST explicitly tag access and authority storage, reject every older format, and provide explicit bounded local or authenticated-registry initialization, verified catalog registration, help and completion commands; configuration migration, external-authority qualification, backup control and restore are deferred. |
-| JST-CLI-006 | Authenticated setup MUST explicitly initialize private installation and catalog state, generate a manual bearer credential without persisting it, accept case-sensitive slash-separated repository aliases, and grant or revoke that credential independently through each repository's durable token policy.                                     |
+| ID          | Requirement                                                                                                                                                                                                                                                                                                                                                                                                  |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| JST-CLI-001 | Native client custom commands MUST use jj store under upstream CliRunner; standalone jj-store stack commands MUST run directly on ordinary local JJ repositories through the shared Stacks engine; LocalTrusted MUST provide initialization, run, repository registration and diagnostics without user credentials, while authenticated mode MUST provide explicit registry and manual-token administration. |
+| JST-CLI-002 | Custom command families MUST provide authored Markdown long help, short help, keyword help, hints, JSON results, TTY paging, no-pager, color controls, completions, and build information.                                                                                                                                                                                                                   |
+| JST-CLI-003 | Ordinary JJ commands MUST preserve upstream behavior; a tested capability matrix MUST report unsupported backend commands honestly.                                                                                                                                                                                                                                                                          |
+| JST-CLI-004 | Development MUST use explicit build paths and MUST NOT replace installed jj or start unrelated services.                                                                                                                                                                                                                                                                                                     |
+| JST-CLI-005 | Configuration format 2 MUST explicitly tag access and authority storage, reject every older format, and provide explicit bounded local or authenticated-registry initialization, verified catalog registration, help and completion commands; configuration migration, external-authority qualification, backup control and restore are deferred.                                                            |
+| JST-CLI-006 | Authenticated setup MUST explicitly initialize private installation and catalog state, generate a manual bearer credential without persisting it, accept case-sensitive slash-separated repository aliases, and grant or revoke that credential independently through each repository's durable token policy.                                                                                                |
 
 ## M0 extension qualification
 
@@ -2313,3 +2313,39 @@ The registered local-browser host also exposes the operation-pinned Stacks
 inventory query before workspace setup. Its captured-response acceptance covers
 the additive topology fields and proves the query leaves existing TOML bytes
 unchanged. No new CLI syntax or installed executable replacement is required.
+
+## Server-free local Stacks CLI
+
+`jj-store stack` exposes the ordinary local mutation profile through the shared
+jj-lib engine, without a server, repository registration or companion metadata
+initialization. `-C PATH` discovers the physical workspace from that directory;
+only qualified Git-backed JJ repositories are supported. Native selectors must
+resolve exactly one visible commit; membership uses exact bookmark names.
+
+Status, topology, bounded history, diffs, native hunks and conflict terms
+support text and JSON output. Normal reads and execution snapshot using JJ
+policy. `--no-snapshot` inspection and `--dry-run` use a nonmutating single-head
+loader: no configuration creation, operation-head reconciliation or checkout
+changes. Concurrent heads require explicit native JJ reconciliation before
+inspection. Previews are advisory and inspect the last snapshot. Command parsing
+and missing confirmation fail before snapshots. `--yes` is required for
+workspace/bookmark deletion, abandonment, discard and reconciliation;
+apply/unapply execute directly.
+
+Workspace, branch, selected-content, graph, supported text conflict and native
+Undo/Redo actions reuse existing operation/configuration/source guards. Stack
+unapply uses the native lane's exclusive explicit members; `--branch-only`
+removes only the selected bookmark. Native history is repository-wide and TOML
+is not an Undo journal. Selection input binds operation/configuration and exact
+sources, paths and native hunk IDs. Stale selections never regenerate or
+broaden. Messages use explicit arguments or bounded files; resolution text also
+supports stdin. Mixed-source selection files are ephemeral input, never staging
+storage.
+
+JSON results carry operation and configuration identities. Exit codes are 0 for
+success, 1 for execution failure, 2 for invalid arguments, and 3 for an applied
+operation requiring checkout/settings attention; the latter includes the applied
+operation and a no-retry warning. Help, keyword guidance and completions
+describe all commands. Remote/PR workflows and interactive pickers remain
+outside this local CLI slice. Development acceptance uses disposable
+repositories and explicit binaries, and does not replace installed executables.

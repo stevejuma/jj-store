@@ -152,9 +152,9 @@ shared-package release qualification does not alter those original Git gates.
 | M18.7       | Deferred    | M18.6                   | JST-COLLAB-028,JST-COLLAB-029                                                                                                                                                                                     | Verified archives, portable carriers and broader deployment policies                                                           | Resume after usable preview feedback; retain original acceptance contract                        | E-M17-081                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
 | M18.8       | Done        | M18.1                   | JST-COLLAB-017,JST-COLLAB-018,JST-COLLAB-019,JST-COLLAB-030,JST-UI-016,JST-GOV-003                                                                                                                                | Usable Codex capture preview on current main with automatic UI and real-service restart evidence                               | Try running preview; gather feedback before reopening deferred harness and release work          | E-M17-081,E-M18-001,E-M18-002,E-M18-003,E-M18-004,E-M18-006,E-M18-010,E-M18-011,E-M18-012,E-M18-014,E-M18-015,E-M18-019,E-M18-020                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
 | M19         | Partial     | M4.9                    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004                                                                                                                                                                   | Bundled Markdown manual, generated references, review gates and accessible offline Help                                        | Complete registry dependency and packaged WKWebView release qualification                        | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| M21         | In progress | -                       | JST-UI-020                                                                                                                                                                                                        | Local stack workspaces: UI first, then separately approved local backend integration                                           | Ordinary-local accepted; broader provider/release gates remain separate                          | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-041,E-M21-042,E-M21-043,E-M21-044,E-M21-045,E-M21-046,E-M21-047,E-M21-048,E-M21-049,E-M21-050,E-M21-051,E-M21-052,E-M21-053,E-M21-054,E-M21-055,E-M21-056,E-M21-058,E-M21-059,E-M21-060,E-M21-061,E-M21-062,E-M21-063,E-M21-064,E-M21-065                                                                                                                                             |
+| M21         | In progress | -                       | JST-UI-020                                                                                                                                                                                                        | Local stack workspaces: UI first, then separately approved local backend integration                                           | Ordinary-local accepted; broader provider/release gates remain separate                          | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-041,E-M21-042,E-M21-043,E-M21-044,E-M21-045,E-M21-046,E-M21-047,E-M21-048,E-M21-049,E-M21-050,E-M21-051,E-M21-052,E-M21-053,E-M21-054,E-M21-055,E-M21-056,E-M21-058,E-M21-059,E-M21-060,E-M21-061,E-M21-062,E-M21-063,E-M21-064,E-M21-065,E-M21-066                                                                                                                                   |
 | M21.1       | Partial     | -                       | JST-UI-020,JST-GOV-008                                                                                                                                                                                            | Reused Storybook workspace views, stateful mock controller, interactions and accessibility                                     | UI reviewed for backend integration; registry/visual gates remain separate                       | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M21-041,E-M21-042,E-M21-043,E-M21-044,E-M21-054,E-M21-055,E-M21-056,E-M21-058,E-M21-059,E-M21-060,E-M21-061,E-M21-062,E-M21-063,E-M21-064,E-M21-065                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
-| M21.2       | In progress | M21.1                   | JST-UI-020                                                                                                                                                                                                        | Local jj-lib megamerges, TOML settings and independent named unfinished work                                                   | Ordinary-local accepted; broader provider/release gates remain separate                          | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-042,E-M21-045,E-M21-046,E-M21-047,E-M21-048,E-M21-049,E-M21-050,E-M21-051,E-M21-052,E-M21-053,E-M21-054,E-M21-055,E-M21-056,E-M21-058,E-M21-059,E-M21-060,E-M21-061,E-M21-062,E-M21-063,E-M21-064,E-M21-065                                                                                                               |
+| M21.2       | In progress | M21.1                   | JST-UI-020                                                                                                                                                                                                        | Local jj-lib megamerges, TOML settings and independent named unfinished work                                                   | Ordinary-local accepted; broader provider/release gates remain separate                          | E-M20-001,E-M20-002,E-M20-003,E-M20-004,E-M20-005,E-M20-006,E-M20-007,E-M20-008,E-M20-009,E-M20-010,E-M21-001,E-M21-002,E-M21-003,E-M21-004,E-M21-005,E-M21-006,E-M21-007,E-M21-008,E-M21-009,E-M21-010,E-M21-011,E-M21-012,E-M21-013,E-M21-014,E-M21-015,E-M21-016,E-M21-017,E-M21-018,E-M21-019,E-M21-020,E-M21-021,E-M21-022,E-M21-023,E-M21-024,E-M21-025,E-M21-026,E-M21-027,E-M21-028,E-M21-029,E-M21-030,E-M21-031,E-M21-032,E-M21-033,E-M21-034,E-M21-035,E-M21-036,E-M21-037,E-M21-038,E-M21-039,E-M21-040,E-M21-042,E-M21-045,E-M21-046,E-M21-047,E-M21-048,E-M21-049,E-M21-050,E-M21-051,E-M21-052,E-M21-053,E-M21-054,E-M21-055,E-M21-056,E-M21-058,E-M21-059,E-M21-060,E-M21-061,E-M21-062,E-M21-063,E-M21-064,E-M21-065,E-M21-066                                                                                                     |
 
 The user reopened production browsing integration on 27 September 2026 after
 accepting the Storybook application. M4.9–M4.14 now own promotion into the
@@ -111843,6 +111843,216 @@ entries.
   "result": "pass",
   "remaining": [],
   "next": "New local Stacks operations use readable text. Continue UI verification on main Storybook port 6057 and the retained Vite port 7476 service."
+},
+{
+  "id": "E-M21-066",
+  "date": "2026-10-06",
+  "tasks": [
+    "M21",
+    "M21.2"
+  ],
+  "kind": "server-free local Stacks CLI and native engine interoperability",
+  "revision": "Enclosing Jujutsu change otwqqtrz: Add a server-free local Stacks command family",
+  "scope": "Expose full existing ordinary-local Stacks functionality through jj-store stack: inspection, workspace/branch/content/graph/conflict/history actions, exact file/hunk pins, native snapshots, no-snapshot inspection and nonmutating dry runs.",
+  "files": [
+    "crates/jj-store-cli/src/lib.rs",
+    "crates/jj-store-cli/src/server_commands.rs",
+    "crates/jj-store-cli/src/stack_commands/args.rs",
+    "crates/jj-store-cli/src/stack_commands/context.rs",
+    "crates/jj-store-cli/src/stack_commands/mutations.rs",
+    "crates/jj-store-cli/src/stack_commands/queries.rs",
+    "crates/jj-store-cli/src/stack_commands/selection.rs",
+    "crates/jj-store-cli/src/stack_commands.rs",
+    "crates/jj-store-cli/tests/stack_cli.rs",
+    "crates/jj-store-jj/src/local_stacks/mod.rs",
+    "crates/jj-store-jj/src/local_stacks/preview.rs",
+    "crates/jj-store-jj/src/local_stacks/read.rs",
+    "docs/cli/server-commands.md",
+    "docs/cli/server.md",
+    "docs/cli/stacks.md",
+    "docs/maintenance/coverage.json",
+    "docs/site/cli/index.md",
+    "docs/site/cli/jj-store.md",
+    "docs/site/guides/browsing.md",
+    "docs/site/technical/local.md",
+    "spec/src/cli.md",
+    "spec/src/documentation.md",
+    "spec/src/jj-integration.md",
+    "spec/src/local-jj.md",
+    "spec/src/milestones.md"
+  ],
+  "versions": "JJ/jj-lib 0.45.1; macOS ARM64; pnpm 10.32.1; no package publication or installed executable replacement.",
+  "formats": "Existing version-1 TOML, native graph model, command DTOs and HTTP schemas unchanged. Transient version-1 mixed-source CLI selection input reuses operation/revision/Selection fields. Text/JSON results include exact pins. CLI exit 3 identifies applied-operation attention; no retry.",
+  "before": "target/debug/jj-store stack --help rejected the unrecognized subcommand (exit 2). Native previews used load_at_head, which could reconcile concurrent operation heads. No Stacks CLI existed.",
+  "tests": [
+    "crates/jj-store-cli/tests/stack_cli.rs#stack_help_and_completions_are_discoverable_without_a_repository",
+    "crates/jj-store-cli/tests/stack_cli.rs#inspection_dry_run_and_invalid_arguments_preserve_native_state",
+    "crates/jj-store-cli/tests/stack_cli.rs#workspace_membership_and_settings_keep_native_merge_wip_and_checkout",
+    "crates/jj-store-cli/tests/stack_cli.rs#topology_cards_aliases_partial_application_and_native_history_agree",
+    "crates/jj-store-cli/tests/stack_cli.rs#selected_files_and_hunks_preserve_unselected_work_and_reject_stale_input",
+    "crates/jj-store-cli/tests/stack_cli.rs#graph_branch_and_content_actions_use_native_rewrites",
+    "crates/jj-store-cli/tests/stack_cli.rs#linked_workspace_and_relative_paths_use_its_own_local_configuration",
+    "crates/jj-store-cli/tests/stack_cli.rs#grouped_unapply_preserves_shared_explicit_members",
+    "crates/jj-store-cli/tests/stack_cli.rs#text_conflict_resolution_and_native_undo_redo_retain_work",
+    "crates/jj-store-cli/tests/stack_cli.rs#concurrent_heads_and_ambiguous_selectors_do_not_reconcile_during_inspection",
+    "crates/jj-store-cli/tests/stack_cli.rs#movement_and_abandonment_preserve_other_applied_branches",
+    "crates/jj-store-cli/tests/stack_cli.rs#diff_continuations_integrated_choices_and_reconciliation_are_exact"
+  ],
+  "runs": [
+    {
+      "command": "jj --no-pager st/log/diff; target/debug/jj-store --no-pager stack --help",
+      "result": "fail",
+      "failures": 1,
+      "note": "Started clean above 1238d234. before.log: stack is unrecognized, exit 2."
+    },
+    {
+      "command": "cargo check -p jj-store-jj --locked",
+      "result": "fail",
+      "failures": 1,
+      "note": "jj-check-initial.log: initial reader passed Arc<ReadonlyRepo> to a Repo trait object. Fixed by borrowing its underlying repository."
+    },
+    {
+      "command": "cargo check -p jj-store-cli --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "cli-check-initial.log: new command family and reader compile."
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test stack_cli --locked",
+      "result": "fail",
+      "failures": 3,
+      "note": "executable-initial.log: 4 passed/3 failed. Fixed subdirectory discovery with native find_workspace_dir. Corrected test JSON option placement before -- and stable graph fixture selectors."
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test stack_cli --locked",
+      "result": "fail",
+      "failures": 1,
+      "note": "executable-second.log: 8 passed/1 failed. The inserted commit advanced its bookmark, making the fixture source and destination identical. Changed graph coverage to valid distinct native commits without loosening assertions."
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test stack_cli --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "executable-third.log and executable-final.log: 11 passed. Includes all local mutation mappings, exact hunks, mixed-source selection, native conflicts/Undo/Redo, shared unapply, linked workspaces and nonmutating concurrent-head refusal."
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test stack_cli --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "executable-complete.log: final 12 passed after adding before-setup history and bounded diff/history continuation, integrated/empty branch and reconciliation cases."
+    },
+    {
+      "command": "cargo test -p jj-store-jj --test local_stacks --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "native-stacks.log: all 33 directly affected native scenarios pass, including guards, WIP identities, conflicts, operation metadata and applied-settings failure."
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test server_executable standalone_help_configuration_completions_and_build_info_are_consistent --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "standalone.log: one existing presentation/help/completion/build-information test passes."
+    },
+    {
+      "command": "cargo test -p jj-store-cli --test local_browser filesystem_runtime_registers_and_reads_without_native_storage --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "http-interop.log: one registered-folder host test passes, including the existing actual Stacks HTTP command/contract qualification. Isolated filesystem service; no RustFS or live sample mutation."
+    },
+    {
+      "command": "cargo check -p jj-store-cli -p jj-store-jj --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "check-final.log: affected package checks pass."
+    },
+    {
+      "command": "cargo clippy -p jj-store-cli -p jj-store-jj --lib --locked -- -D warnings",
+      "result": "fail",
+      "failures": 22,
+      "note": "clippy.log: 21 inherited JJ diagnostics plus a new reader &PathBuf diagnostic. Fixed the reader and newly exposed preview pointer diagnostic. Unrelated diagnostic files remain untouched."
+    },
+    {
+      "command": "cargo clippy -p jj-store-cli -p jj-store-jj --lib --locked",
+      "result": "pass",
+      "failures": 0,
+      "note": "clippy-advisory.log and clippy-final.log complete with inherited warnings retained. clippy-final-provenance.log proves all 21 diagnostic source files byte-identical to parent; no diagnostic in Stacks CLI/read/preview changes. This is not a strict-lint pass."
+    },
+    {
+      "command": "cargo fmt --all; cargo fmt --all -- --check; pnpm exec prettier --write changed canonical/manual files",
+      "result": "pass",
+      "failures": 0,
+      "note": "rustfmt-final.log and format-final.log pass. Only task files formatted; generated command reference uses generator conventions. Linker compact-unwind warning is inherited and does not fail builds."
+    },
+    {
+      "command": "pnpm docs:generate",
+      "result": "fail",
+      "failures": 1,
+      "note": "docs-generate.log: missing argument documentation for stack show bookmark. Added authored help for all stack arguments."
+    },
+    {
+      "command": "pnpm docs:generate; pnpm docs:review cli/local/contracts/application with topic-specific explanations",
+      "result": "pass",
+      "failures": 0,
+      "note": "docs-generate-final.log: parser reference regenerated. CLI/local/contracts reviews recorded. Baseline application review was stale despite no UI edits; inspected current Stacks controller/card semantics and documented CLI interoperability, current selection toggles and per-row graphs before renewing that review."
+    },
+    {
+      "command": "pnpm docs:check",
+      "result": "fail",
+      "failures": 1,
+      "note": "docs-check.log: inherited stale application source-review fingerprint; corrected through actual source/document review, not by disabling checks."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "fail",
+      "failures": 2,
+      "note": "spec-first.log: missing mapped JJ integration and documentation chapters. Added their owning delivery/verification requirements."
+    },
+    {
+      "command": "pnpm spec:first; pnpm spec:validate; pnpm check:boundaries; pnpm check:architecture",
+      "result": "pass",
+      "failures": 0,
+      "note": "spec-first-final.log: 19 protected files/4 chapters; spec-validation-final.log: 5 validators/23 chapters/173 requirements; boundaries.log:17 packages; architecture.log:1163 modules pass."
+    },
+    {
+      "command": "target/debug/jj-store --no-pager stack --help; target/debug/jj-store --no-pager --format=json stack status --no-snapshot",
+      "result": "pass",
+      "failures": 0,
+      "note": "after-help.log and main-read-only.log: built executable discovers commands and inspects main without creating Stacks settings or changing graph/checkout. Installed CLI and live services untouched."
+    },
+    {
+      "command": "pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "docs-check-final.log: strict manual build succeeds;9 diagrams rendered in both themes;139 files/15,228,329 bytes with valid links/anchors and current source reviews."
+    },
+    {
+      "command": "pnpm check:progress; pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "progress-final.log:142 tasks evidence bookkeeping; spec-first-delivery.log:20 protected files/5 chapters. Historical614 entries remain byte-identical; no milestone status promoted."
+    },
+    {
+      "command": "pnpm exec prettier --check changed canonical/manual/review files",
+      "result": "fail",
+      "failures": 1,
+      "note": "prettier-check.log: docs review tool expanded coverage.json arrays. Formatted the review file without changing review content."
+    },
+    {
+      "command": "pnpm exec prettier --write docs/maintenance/coverage.json; pnpm exec prettier --check changed canonical/manual/review files; documentation source-review validation",
+      "result": "pass",
+      "failures": 0,
+      "note": "coverage-format.log and prettier-final.log pass; all documentation topic source fingerprints validate. Generated CLI reference remains byte-exact to the registered parser;614 historical evidence records preserved."
+    }
+  ],
+  "verification_scope": "Focused changed Rust packages and direct CLI/HTTP consumers: 12 cold executable CLI scenarios, 33 existing native Stacks scenarios, one standalone presentation scenario and one actual registered-folder HTTP interoperability scenario. Targeted package checks, documentation, format and governance gates; no full-repository claim.",
+  "out_of_scope": [
+    "Remote fetch/push/PR workflows, interactive terminal UI, manifest-backed stack execution, installed CLI replacement, publication, sample graph repair, unrelated test suites and screenshot/baseline changes.",
+    "No web/catalog source edits; UI tests/types are out of scope. Existing browser styling and controllers remain unchanged. Cold evidence is the real executable process suite.",
+    "Strict Clippy -D warnings remains blocked by 21 pre-existing JJ diagnostics in byte-identical source files. Advisory Clippy completes with 25 inherited diagnostics across JJ/service/HTTP; no diagnostic remains in new or changed CLI/reader code."
+  ],
+  "result": "pass",
+  "remaining": [],
+  "next": "Use the explicitly built target/debug/jj-store stack executable locally. Native jj log/op log provide general history; remote/PR workflows remain separately scoped."
 }
 ]
 ```

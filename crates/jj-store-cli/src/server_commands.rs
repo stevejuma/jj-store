@@ -27,6 +27,8 @@ pub struct ServerCli {
 }
 #[derive(Debug, Subcommand)]
 pub enum ServerCommand {
+    /// Run local Stacks actions directly in an ordinary JJ workspace
+    Stack(crate::stack_commands::StackArgs),
     /// Create a new private local installation with managed RustFS storage
     Init {
         #[arg(long, required = true)]
@@ -222,6 +224,7 @@ pub fn main() -> u8 {
             return 2;
         }
     };
+    let stack_command = matches!(&cli.command, Some(ServerCommand::Stack(_)));
     let result = (|| -> AuthorityResult<()> {
         let ui = ui(&cli.color)?;
         let runtime = tokio::runtime::Builder::new_multi_thread()
@@ -233,14 +236,21 @@ pub fn main() -> u8 {
     match result {
         Ok(()) => 0,
         Err(error) => {
-            eprintln!(
-                "Error: {error}\nHint: Use 'jj-store help -k config'; verify paths, credentials and the selected repository."
-            );
-            1
+            if stack_command {
+                eprintln!(
+                    "Error: {error}\nHint: Use 'jj-store stack status --no-snapshot' and 'jj-store help stack'."
+                );
+                crate::stack_commands::error_code(&error)
+            } else {
+                eprintln!(
+                    "Error: {error}\nHint: Use 'jj-store help -k config'; verify paths, credentials and the selected repository."
+                );
+                1
+            }
         }
     }
 }
-fn emit(
+pub(crate) fn emit(
     ui: &Ui,
     format: Format,
     no_pager: bool,
@@ -254,7 +264,7 @@ fn emit(
     }
     Ok(())
 }
-fn help(ui: &Ui, no_pager: bool, path: &[String]) -> AuthorityResult<()> {
+pub(crate) fn help(ui: &Ui, no_pager: bool, path: &[String]) -> AuthorityResult<()> {
     let mut app = ServerCli::command();
     app.build();
     let mut command = &mut app;
@@ -292,6 +302,7 @@ async fn run(ui: &Ui, cli: ServerCli) -> AuthorityResult<()> {
         return help(ui, no_pager, &[]);
     };
     match command {
+        ServerCommand::Stack(args) => crate::stack_commands::run(ui, format, no_pager, args).await,
         ServerCommand::Init {
             local,
             state_dir,

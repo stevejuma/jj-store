@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Integrated verified progressive Blame and syntax highlighting with native Stacks discovery; retained both feature contracts and their documented limits.",
-      "fingerprint": "671a227cc1d3b586514fbe719d9ad0151556676726bce3ac08874bace85062d2"
+      "reason": "Documented direct local Stacks inspection and execution, native snapshots and nonmutating single-head previews.",
+      "fingerprint": "c8fa6ee45f61c3d4c4ad710ead753c933f11d5788cff1782fd02f85b209299c4"
     }
   },
   {
@@ -109,8 +109,8 @@
       "docs/site/getting-started/work.md"
     ],
     "review": {
-      "reason": "Reviewed rebased paired CLI/server reader wiring and Stacks working-tree owner against installation and CLI tutorials; explicit development binaries and original request recovery remain accurate, with no parser syntax changes or new release qualification.",
-      "fingerprint": "b06cb23c03c29a9e73b4a8dd0e4ddd4ad01ce076a9c85c8cbda61718469a5849"
+      "reason": "Documented the server-free Stacks parser, shared engine, exact selections and applied-operation exit behavior.",
+      "fingerprint": "e83db1414a5e201b6f8659bd88053dae20be1ec4bffc16133dc5fd043bd5ac29"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Integrated progressive Blame and C/Rust source highlighting with committed direct Stacks apply/unapply actions; preserve both behaviors and existing limitations.",
-      "fingerprint": "7c5bab751e3c9ab3d93ce6b207fd108b8288a872136659fc56f9f15d5f206eee"
+      "reason": "Reviewed Stacks browser topology, shared configuration, selection toggles and per-row graphs against current source; documented interoperability with the local CLI.",
+      "fingerprint": "45345c6e5be327f48cfe8ef4a2520ebcb37b814eda50f67740b05ff15515bc6e"
     }
   },
   {
@@ -154,8 +154,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Integrated verified progressive Blame and syntax highlighting with native Stacks discovery; retained both feature contracts and their documented limits.",
-      "fingerprint": "b6d034e9dd6a8af7eec846ab0ce727bbf15a8e31b249dce922a15a26b124404d"
+      "reason": "Reviewed authored Stacks help and parser-derived reference; HTTP contracts and existing command schemas remain unchanged.",
+      "fingerprint": "e1c46edd4b067ed83b46efffa5b0c5b9d31bfcac5415a78dd19231a94ffa3dc1"
     }
   }
 ]
