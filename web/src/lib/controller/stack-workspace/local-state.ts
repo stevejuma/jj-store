@@ -1,3 +1,4 @@
+import { projectStackTopology } from "./topology-projection.js";
 import { localFileSelections } from "./local-selections.js";
 import { localMutationCommand, localMutationKinds } from "./local-mutations.js";
 import type { LocalStacksCommand } from "./local-transport.js";
@@ -127,23 +128,7 @@ export function projectLocalStacks(
       (bookmark) => bookmark.name !== active.target,
     );
   }
-  for (const lane of state.topology?.lanes ?? []) {
-    const stack = snapshot.stacks.find(
-      (stack) => stack.name === lane.heads[0]?.names[0],
-    );
-    if (!stack) continue;
-    stack.appliedBranches = lane.applied;
-    stack.topologyHeads = lane.heads
-      .filter((head) => head.commit)
-      .map((head) => ({
-        name: head.names[0]!,
-        commit: head.commit,
-        aliases: head.names.slice(1),
-      }));
-    // An unloaded range is never used to infer membership or dependency boundaries.
-    if (!stack.segments && stack.topologyHeads.length)
-      stack.heads = stack.topologyHeads;
-  }
+  if (state.topology) projectStackTopology(snapshot, state.topology);
   snapshot.readKey = JSON.stringify([
     snapshot.readKey,
     String(state.revision),
@@ -228,7 +213,10 @@ export function localStacksCommand(
       !command.branch &&
       stack.appliedBranches
     ) {
-      return { kind: "unapply_branches", branches: stack.appliedBranches };
+      return {
+        kind: "unapply_branches",
+        branches: stack.unapplyBranches ?? stack.appliedBranches,
+      };
     }
     const branch = command.branch ?? stack.name;
     if (

@@ -215,3 +215,90 @@ test("another branch card selection does not redirect a lower branch click", () 
   expect(card.branch).toBe("lower");
   expect(card.branchSelected).toBe(false);
 });
+
+test("complete inventory hides dependent entries, searches aliases and preserves a partially applied lower slice", async () => {
+  const { stackBookmarks, browsingStack } =
+    await import("../../src/lib/controller/stack-workspace/presentation.js");
+  const { snapshot, state } = fixture();
+  state.workspaces[0]!.applied = ["lower"];
+  state.topology!.inventory = structuredClone(state.topology!.lanes);
+  state.topology!.lanes = [
+    {
+      heads: [state.topology!.inventory[0]!.heads[1]!],
+      applied: ["lower"],
+      unapply: ["lower"],
+    },
+  ];
+  snapshot.bookmarks = snapshot.stacks.map((stack) => ({
+    name: stack.name,
+    targets: [stack.heads[0]!.commit],
+  }));
+  const result = projectLocalStacks(snapshot, state);
+  const bookmarks = stackBookmarks(result);
+  expect(bookmarks.map((b) => b.name)).toEqual([
+    "upper",
+    "sibling",
+    "integrated",
+    "empty",
+  ]);
+  expect(bookmarks[0]).toMatchObject({
+    workspace: true,
+    partiallyApplied: true,
+    searchTerms: ["upper", "lower", "alias"],
+  });
+  expect(appliedStacks(result).map((s) => s.name)).toEqual(["lower"]);
+  expect(browsingStack(result, result.stacks[1]!.id)?.name).toBe("upper");
+  expect(
+    localStacksCommand(result, {
+      kind: "apply_stack",
+      stack: result.stacks[0]!.id,
+    }),
+  ).toEqual({ kind: "apply", branch: "upper" });
+  result.topology!.complete = false;
+  expect(stackBookmarks(result).map((b) => b.name)).toContain("lower");
+});
+
+test("discovered lower destinations retain drafts, exact comparisons and exclusive grouped unapply", async () => {
+  const { stackSourceRange } =
+    await import("../../src/lib/controller/stack-workspace/source-range.js");
+  const { workspaceDropFeedback } =
+    await import("../../src/lib/controller/stack-workspace/drag.js");
+  const { snapshot, state } = fixture();
+  state.workspaces[0]!.applied = ["upper", "lower", "sibling"];
+  const upper = state.topology!.lanes[0]!;
+  upper.heads[0]!.base_commit = "lower";
+  upper.heads[1]!.base_commit = "actual-fork";
+  upper.heads[1]!.shared = true;
+  upper.applied = ["upper", "lower"];
+  upper.unapply = ["upper"];
+  state.topology!.lanes[1]!.heads.push(upper.heads[1]!);
+  state.topology!.inventory = structuredClone(state.topology!.lanes);
+  const result = projectLocalStacks(snapshot, state);
+  const lower = result.stacks[1]!;
+  expect(
+    stackSourceRange(
+      result,
+      new Map(),
+      workspaceBranchSource(lower.id, "lower"),
+    ),
+  ).toEqual({ from: "actual-fork", to: "lower" });
+  expect(
+    localStacksCommand(result, {
+      kind: "unapply_stack",
+      stack: result.stacks[0]!.id,
+    }),
+  ).toEqual({ kind: "unapply_branches", branches: ["upper"] });
+  // Now only the upper head is saved: discovery still permits the lower composer.
+  result.workspaces[0]!.applied = [result.stacks[0]!.id];
+  const drafts = new WorkspaceCommitDrafts();
+  expect(drafts.open(result, lower.id)).toBe(true);
+  const selection = { source: "unassigned", path: "new.txt" };
+  result.workspaces[0]!.unassigned = [{ path: selection.path, hunks: [] }];
+  expect(
+    workspaceDropFeedback(
+      result,
+      JSON.stringify({ kind: "selection", selection }),
+      { kind: "stack", id: lower.id },
+    ).state,
+  ).toBe("valid");
+});

@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Documented target-inclusive retained merge rewrites, operation-owned topology bounds and conservative legacy cleanup; source history and TOML remain the local authority.",
-      "fingerprint": "7edd51c4573b893a91faff1ed248d37efc5c5b211c50aba791d1d8a9c8c0dab8"
+      "reason": "Documented bounded ordinary-JJ topology query, native exact card boundaries, aliases and shared lower branches; discovery never changes configuration, merge/WIP or working files.",
+      "fingerprint": "d0cc527527cc42ef6a750d7a0352c859cb10d9e1722cf7a436f5284be530bbb4"
     }
   },
   {
@@ -122,8 +122,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Registered StackHistory requests now use managed core read dispatch with exact operation and generation admission; grouped unapply and topology remain under existing local guards.",
-      "fingerprint": "b3fb4e9f579d3f1f795d66bd668e10d9517c06a2f86ffceaaef24e9a27884b13"
+      "reason": "Reviewed the registered-folder topology POST: typed generation, exact operation and target guards, unchanged admission and error envelopes. Generated endpoint documentation now includes the query.",
+      "fingerprint": "27c589f4d1f6a3017cade048dfd60da1fb006adb739f8e05e0eb6a0de0c5df5c"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Verified native grouped cards retain branch-owned selections without switching branch-browsing columns; live history follows accepted operations, preserves historical pins and safely disposes local owners.",
-      "fingerprint": "689f2b51b962de6e4d825639505345e273c51ef62b11378c9a59c0e042f68100"
+      "reason": "Browsing documents top-level inventory, Shared and Partially applied cards; native lower boundaries and ordered commits preserve alias selection, file ranges and existing workspace controls.",
+      "fingerprint": "d1fa15e76f9e7ba1e8eef6e1ec2ee8a68e11a5401a8bdb72b917b3252062d7c5"
     }
   },
   {
@@ -154,8 +154,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Reviewed additive LocalStacks topology and UnapplyBranches schema, regenerated API references, and documented frontend-only live/pinned route fields without changing backend exact-operation contracts.",
-      "fingerprint": "bcdbd384ebc5a58021524bacb1f397a5652c7f801a217b401fe78d2ac3e0ae69"
+      "reason": "Regenerated API reference for the additive local topology query and inventory, per-head native boundaries/shared flags and exclusive unapply members. TOML and native identity formats are unchanged.",
+      "fingerprint": "af395d544ef904cffea89587a40d46400a301cc9852facadc32eb53e4e790fdb"
     }
   }
 ]

@@ -5,10 +5,31 @@ use management::stacks;
 pub(super) fn router() -> Router<Arc<State>> {
     Router::new()
         .route("/local/repos/{repo}/stacks", post(execute))
+        .route("/local/repos/{repo}/stacks/topology", post(topology))
         .route("/local/repos/{repo}/stacks/preview", post(preview))
         .route("/local/repos/{repo}/stacks/inspect", post(inspect))
         .route("/local/repos/{repo}/stacks/hunks", post(hunks))
         .route("/local/repos/{repo}/stacks/conflict", post(conflict))
+}
+async fn topology(
+    ExtractState(state): ExtractState<Arc<State>>,
+    Path(repo): Path<m::RepositoryId>,
+    args: routes::Input<routes::Empty>,
+    body: Body<stacks::TopologyRequest>,
+) -> Result<Response> {
+    routes::input(args)?;
+    let request = decode_body(body)?;
+    let access = bound_folder(&state, repo).await?;
+    access.authorize().await?;
+    let root = std::path::PathBuf::from(&access.folder.path);
+    let runtime = tokio::runtime::Handle::current();
+    let value = blocking(&state, move || {
+        runtime
+            .block_on(stacks::read_topology(access, root, request))
+            .map_err(map_error)
+    })
+    .await?;
+    state.json(&value)
 }
 async fn conflict(
     ExtractState(state): ExtractState<Arc<State>>,
@@ -126,6 +147,12 @@ fn map_error(error: stacks::Error) -> Error {
     }
 }
 pub(super) fn document(document: &mut crate::contract::Document) {
+    document.local_endpoint::<routes::Empty, stacks::TopologyResponse>(
+        "post",
+        "/local/repos/{repo}/stacks/topology",
+        "local_stacks_topology",
+    );
+    document.body::<stacks::TopologyRequest>("/v1/local/repos/{repo}/stacks/topology", "post");
     document.local_endpoint::<routes::Empty, stacks::Conflict>(
         "post",
         "/local/repos/{repo}/stacks/conflict",

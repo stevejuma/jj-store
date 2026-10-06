@@ -18,6 +18,7 @@
   import {
     stackRevisions,
     isAppliedBranch,
+    isWorkspaceBranch,
   } from "../../controller/stack-workspace/presentation.js";
   import StoreStackDropGuide from "./StoreStackDropGuide.svelte";
   import {
@@ -35,6 +36,7 @@
     stack,
     name,
     aliases = [],
+    shared = false,
     commits,
     showActions = true,
     onCommand,
@@ -43,6 +45,7 @@
     stack: WorkspaceStack;
     name: string;
     aliases?: string[];
+    shared?: boolean;
     commits: StackCommit[];
     showActions?: boolean;
     onCommand: (command: WorkspaceCommand) => void;
@@ -75,8 +78,8 @@
   const branchSource = $derived(card.branchSource);
   const headerTarget = $derived({
     kind: "stack" as const,
-    id: stack.id,
-    branch: name,
+    id: card.owner,
+    branch: card.branch,
   });
   const tip = $derived(commits[0]);
   const selected = $derived(card.commit);
@@ -128,7 +131,7 @@
           ><ColumnCanvas.Title>{name}</ColumnCanvas.Title></button
         ></Card.Title
       >
-      {#if tip}<Card.Description
+      {#if tip && controller.page === "workspace"}<Card.Description
           ><CommunityProjectsGitAuthorAvatar
             name={tip.author}
             email={tip.email}
@@ -139,6 +142,7 @@
         >{/if}
       <div class="stack-workspace__branch-chips">
         <CommunityChip variant="muted">Local bookmark</CommunityChip>
+        {#if shared}<CommunityChip variant="muted">Shared</CommunityChip>{/if}
         {#each aliases as alias}<CommunityChip variant="muted"
             >{alias}</CommunityChip
           >{/each}
@@ -150,7 +154,7 @@
       <StoreStackSourceFiles
         {controller}
         source={branchSource}
-        ariaLabel={`Changed files in branch ${name}`}
+        ariaLabel={`Changed files in branch ${name}${shared ? ` in stack ${stack.name}` : ""}`}
         selectedPath={diff?.source === branchSource ? diff.path : null}
         onSelectPath={(path) => controller.selectFile(branchSource, path)}
       />
@@ -163,13 +167,15 @@
       )?.id ?? stack.id}
       {name}
       applied={isAppliedBranch(controller.snapshot!, name)}
-      canAddCommit={name === stack.heads[0]?.name}
+      canAddCommit={isWorkspaceBranch(controller.snapshot!, name) &&
+        stack.heads.find((head) => head.name === name)?.baseCommit !== null}
       commit={stack.heads.find((head) => head.name === name)?.commit ??
         stack.base}
       empty={!commits.length}
-      below={stack.heads[
-        stack.heads.findIndex((head) => head.name === name) + 1
-      ]?.commit ?? stack.base}
+      below={stack.heads.find((head) => head.name === name)?.baseCommit ??
+        stack.heads[stack.heads.findIndex((head) => head.name === name) + 1]
+          ?.commit ??
+        stack.base}
       canRewrite={!commits.some((commit) => commit.immutable)}
       canSquash={commits.length > 1 &&
         !commits.some((commit) => commit.immutable)}
@@ -277,7 +283,7 @@
         {#if selected}<StoreStackSourceFiles
             {controller}
             source={selected.id}
-            ariaLabel={`Changed files in ${name}`}
+            ariaLabel={`Changed files in ${name}${shared ? ` in stack ${stack.name}` : ""}`}
             selectedPath={diff?.source === selected.id ? diff.path : null}
             onSelectPath={(path) =>
               controller.selectFile(selected.id, path, undefined, card.owner)}

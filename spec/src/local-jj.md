@@ -1903,11 +1903,30 @@ unproven paginated boundary remains unavailable until more history is loaded.
 Merge/elided ancestry retains the provider graph without invented linear
 boundaries. Visible applied lanes load their own bounded pages; other repository
 history stays unloaded. Aliases do not duplicate commit rows within a lane.
-Explicitly applied bookmarks retain their own column and UI identity, even when
-they share ancestry; browsing a branch selects its own advertised top.
+Derived top-level stacks own columns; branch identities remain independent for
+drafts, selections and actions. Dependent and alias bookmarks are represented
+inside their containing stack, rather than as duplicate picker entries.
 
 Local Stacks bounded history MUST use the managed code index when available,
 with the same exact-operation visibility, paging and authorization as JJ Log. An
 absent generation starts normal bounded preparation; a ready generation MUST
 serve StackHistory rather than repeatedly requesting the older graph index. The
 explicit prepared-index path remains supported for compatibility.
+
+### Complete native stack discovery and boundaries
+
+JST-LOCAL-005 and JST-UI-020 separate bounded stack inventory from saved
+membership. The read-only POST `/v1/local/repos/{repo}/stacks/topology`
+validates the binding generation, exact operation and target bookmark/commit
+without snapshotting, creating TOML or reconciling repository heads. Discovery
+considers at most 4,096 non-internal bookmarks and 50,000 ancestry steps,
+independent of history pages. Ordered heads carry exact lower boundaries,
+aliases and shared-dependency flags. Only proven linear dependencies suppress
+picker entries; incomplete discovery never hides unproven branches. Empty target
+bookmarks remain destinations and integrated bookmarks remain browsable. Native
+merges retain all parent edges. Workspace lanes include unapplied dependent
+cards reachable from applied heads. Shared lower branches appear in each sibling
+stack; grouped unapply retains explicit members shared with another active lane.
+Existing commit/create controls admit proven dependencies of applied heads while
+retaining native immutable, target, operation and configuration guards. No
+membership migration is implied.

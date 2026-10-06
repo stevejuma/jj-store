@@ -1,4 +1,4 @@
-//! Operation-owned topology, independent of paginated presentation history.
+//! Operation-owned stack inventory, independent of membership and history pages.
 use super::*;
 use std::collections::{BTreeMap, BTreeSet};
 
@@ -7,13 +7,21 @@ use std::collections::{BTreeMap, BTreeSet};
 pub struct Head {
     pub names: Vec<String>,
     pub commit: String,
+    /// Exact lower bookmark or first excluded target ancestor; None at ambiguous merges.
+    #[serde(default)]
+    pub base_commit: Option<String>,
+    #[serde(default)]
+    pub shared: bool,
 }
 #[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[schemars(rename = "LocalStacksTopologyLane")]
 pub struct Lane {
-    /// Newest first. Multiple names on one tip are aliases, not extra segments.
+    /// Newest first. Names on one tip are aliases, not additional segments.
     pub heads: Vec<Head>,
     pub applied: Vec<String>,
+    /// Explicit members removable without changing another active lane's membership.
+    #[serde(default)]
+    pub unapply: Vec<String>,
 }
 #[derive(Clone, Debug, Default, Serialize, Deserialize, JsonSchema)]
 #[schemars(rename = "LocalStacksTopology")]
@@ -21,25 +29,39 @@ pub struct Topology {
     pub lanes: Vec<Lane>,
     pub integrated: Vec<String>,
     pub complete: bool,
+    #[serde(default)]
+    pub inventory: Vec<Lane>,
 }
 
-pub(super) async fn read(repo: &ReadonlyRepo, saved: &SavedWorkspace) -> Result<Topology> {
+pub(super) async fn discover(
+    repo: &ReadonlyRepo,
+    target_name: &str,
+    applied: &[String],
+) -> Result<Topology> {
     let mut result = Topology {
         complete: true,
         ..Default::default()
     };
-    let Ok(target) = resolve(repo, &saved.target) else {
+    let Ok(target) = resolve(repo, target_name) else {
         result.complete = false;
         return Ok(result);
     };
+    let names: Vec<_> = repo
+        .view()
+        .local_bookmarks()
+        .filter(|(name, _)| {
+            name.as_str() != target_name && !name.as_str().starts_with(config::INTERNAL_PREFIX)
+        })
+        .map(|(name, _)| name.as_str().to_owned())
+        .take(4097)
+        .collect();
+    if names.len() > 4096 {
+        result.complete = false;
+        return Ok(result);
+    }
     let mut heads: Vec<Head> = vec![];
-    for name in &saved.applied {
+    for name in &names {
         let Ok(commit) = resolve(repo, name) else {
-            // Missing/conflicted membership remains individually recoverable.
-            heads.push(Head {
-                names: vec![name.clone()],
-                commit: String::new(),
-            });
             continue;
         };
         if commit.id() != target.id()
@@ -55,38 +77,45 @@ pub(super) async fn read(repo: &ReadonlyRepo, saved: &SavedWorkspace) -> Result<
         {
             head.names.push(name.clone());
         } else {
-            // Distinct empty branches at the target are independent destinations.
             heads.push(Head {
                 names: vec![name.clone()],
                 commit: commit.id().hex(),
+                base_commit: None,
+                shared: false,
             });
         }
+    }
+    // Preserve the chosen applied alias while giving unapplied aliases stable ordering.
+    for head in &mut heads {
+        head.names.sort_by_key(|name| {
+            (
+                applied.iter().position(|n| n == name).unwrap_or(usize::MAX),
+                name.clone(),
+            )
+        });
     }
     let positions: BTreeMap<_, _> = heads
         .iter()
         .enumerate()
-        .filter(|(_, h)| !h.commit.is_empty() && h.commit != target.id().hex())
+        .filter(|(_, h)| h.commit != target.id().hex())
         .map(|(i, h)| (h.commit.clone(), i))
         .collect();
-    let mut paths = Vec::new();
+    let mut paths = vec![];
     let mut cache = BTreeMap::new();
-    let mut lower = BTreeSet::new();
     let mut work = 0;
-    for (index, head) in heads.iter().enumerate() {
+    for index in 0..heads.len() {
         let mut path = vec![index];
-        if !head.commit.is_empty() && head.commit != target.id().hex() {
-            let mut current = resolve(repo, &head.names[0])?;
-            let mut seen = BTreeSet::new();
+        let mut current = resolve(repo, &heads[index].names[0])?;
+        if current.id() == target.id() {
+            heads[index].base_commit = Some(target.id().hex());
+        } else {
             loop {
                 work += 1;
                 if work > 50_000 {
                     result.complete = false;
                     return Ok(result);
                 }
-                if current.id() == target.id()
-                    || current.parent_ids().len() != 1
-                    || !seen.insert(current.id().clone())
-                {
+                if current.parent_ids().len() != 1 {
                     break;
                 }
                 let parent = current.parent_ids()[0].clone();
@@ -96,18 +125,18 @@ pub(super) async fn read(repo: &ReadonlyRepo, saved: &SavedWorkspace) -> Result<
                     .await
                     .map_err(jj)?
                 {
+                    if path.len() == 1 {
+                        heads[index].base_commit = Some(parent.hex());
+                    }
                     break;
                 }
-                if let Some(&position) = positions.get(&parent.hex()) {
-                    path.push(position);
-                    lower.insert(position);
+                if let Some(&lower) = positions.get(&parent.hex()) {
+                    if path.len() == 1 {
+                        heads[index].base_commit = Some(parent.hex());
+                    }
+                    path.push(lower);
                 }
                 if !cache.contains_key(&parent) {
-                    if cache.len() >= 50_000 {
-                        result.complete = false;
-                        result.lanes.clear();
-                        return Ok(result);
-                    }
                     cache.insert(
                         parent.clone(),
                         repo.store().get_commit(&parent).map_err(jj)?,
@@ -118,42 +147,103 @@ pub(super) async fn read(repo: &ReadonlyRepo, saved: &SavedWorkspace) -> Result<
         }
         paths.push(path);
     }
-    // A shared applied base is not a linear dependency of either sibling.
-    // Keep it as its own lane instead of duplicating ownership/actions.
-    let mut children = BTreeMap::<usize, BTreeSet<usize>>::new();
-    for path in &paths {
-        for pair in path.windows(2) {
-            children.entry(pair[1]).or_default().insert(pair[0]);
+    let roots = |indices: Vec<usize>| {
+        indices
+            .iter()
+            .copied()
+            .filter(|i| !indices.iter().any(|j| i != j && paths[*j].contains(i)))
+            .collect::<Vec<_>>()
+    };
+    let inventory_roots = roots((0..heads.len()).collect());
+    let active_roots = roots(
+        (0..heads.len())
+            .filter(|i| heads[*i].names.iter().any(|n| applied.contains(n)))
+            .collect(),
+    );
+    let lanes = |root_indices: &[usize]| {
+        root_indices
+            .iter()
+            .map(|&index| {
+                let path = &paths[index];
+                let lane_heads = path
+                    .iter()
+                    .map(|&i| {
+                        let mut h = heads[i].clone();
+                        h.shared = inventory_roots
+                            .iter()
+                            .filter(|&&r| paths[r].contains(&i))
+                            .count()
+                            > 1;
+                        h
+                    })
+                    .collect::<Vec<_>>();
+                let members = applied
+                    .iter()
+                    .filter(|name| lane_heads.iter().any(|h| h.names.contains(name)))
+                    .cloned()
+                    .collect::<Vec<_>>();
+                let unapply = members
+                    .iter()
+                    .filter(|name| {
+                        !active_roots.iter().any(|&other| {
+                            other != index
+                                && paths[other].iter().any(|&i| heads[i].names.contains(name))
+                        })
+                    })
+                    .cloned()
+                    .collect();
+                Lane {
+                    heads: lane_heads,
+                    applied: members,
+                    unapply,
+                }
+            })
+            .collect::<Vec<_>>()
+    };
+    result.inventory = lanes(&inventory_roots);
+    result.lanes = lanes(&active_roots);
+    for name in applied {
+        if resolve(repo, name).is_err() {
+            result.lanes.push(Lane {
+                heads: vec![Head {
+                    names: vec![name.clone()],
+                    commit: String::new(),
+                    base_commit: None,
+                    shared: false,
+                }],
+                applied: vec![name.clone()],
+                unapply: vec![name.clone()],
+            });
         }
     }
-    let forks: BTreeSet<_> = children
-        .iter()
-        .filter(|(_, children)| children.len() > 1)
-        .map(|(&index, _)| index)
-        .collect();
-    lower.retain(|index| !forks.contains(index));
-    for (index, mut path) in paths.into_iter().enumerate() {
-        if lower.contains(&index) {
-            continue;
-        }
-        if let Some(boundary) = path.iter().skip(1).position(|index| forks.contains(index)) {
-            path.truncate(boundary + 1);
-        }
-        let lane_heads: Vec<_> = path.into_iter().map(|i| heads[i].clone()).collect();
-        result.lanes.push(Lane {
-            applied: lane_heads.iter().flat_map(|h| h.names.clone()).collect(),
-            heads: lane_heads,
-        });
-    }
-    // Preserve saved membership ordering, even if a lower branch was applied first.
     result.lanes.sort_by_key(|lane| {
-        saved
-            .applied
+        applied
             .iter()
             .position(|name| lane.applied.contains(name))
             .unwrap_or(usize::MAX)
     });
     Ok(result)
+}
+
+pub(super) async fn read(repo: &ReadonlyRepo, saved: &SavedWorkspace) -> Result<Topology> {
+    discover(repo, &saved.target, &saved.applied).await
+}
+
+pub(super) async fn contains(
+    repo: &ReadonlyRepo,
+    saved: &SavedWorkspace,
+    branch: &str,
+) -> Result<bool> {
+    if saved.applied.iter().any(|name| name == branch) {
+        return Ok(true);
+    }
+    let topology = read(repo, saved).await?;
+    Ok(topology.complete
+        && topology.lanes.iter().any(|lane| {
+            lane.heads
+                .iter()
+                .any(|head| head.names.iter().any(|name| name == branch))
+        }))
 }
 
 pub(super) fn validate_unapply(config: &Config, branches: &[String]) -> Result<()> {

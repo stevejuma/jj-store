@@ -26,6 +26,8 @@ impl local_browser::Access for Access {
         Ok(())
     }
 }
+#[path = "local_stacks/discovery.rs"]
+mod discovery;
 #[path = "local_stacks/topology.rs"]
 mod topology;
 

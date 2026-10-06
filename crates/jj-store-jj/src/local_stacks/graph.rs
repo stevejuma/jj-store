@@ -19,15 +19,30 @@ fn user_commit(repo: &ReadonlyRepo, config: &Config, id: &str) -> Result<Commit>
     Ok(commit)
 }
 /// Stop at the next bookmark boundary. Never enumerate repository history.
-pub(super) fn segment(repo: &ReadonlyRepo, config: &Config, branch: &str) -> Result<Vec<Commit>> {
+pub(super) async fn segment(
+    repo: &ReadonlyRepo,
+    config: &Config,
+    branch: &str,
+) -> Result<Vec<Commit>> {
     if branch.contains('@') || config.workspaces.iter().any(|w| w.target == branch) {
         return Err(Error::Invalid);
     }
-    let target = resolve(repo, &config.active().ok_or(Error::Invalid)?.target)?;
+    let topology = topology::read(repo, config.active().ok_or(Error::Invalid)?).await?;
+    if !topology.complete {
+        return Err(Error::Invalid);
+    }
+    let boundary = topology
+        .inventory
+        .iter()
+        .chain(&topology.lanes)
+        .flat_map(|lane| &lane.heads)
+        .find(|head| head.names.iter().any(|name| name == branch))
+        .and_then(|head| head.base_commit.as_ref())
+        .ok_or(Error::Invalid)?;
     let mut commit = resolve(repo, branch)?;
     let mut result = vec![];
     loop {
-        if commit.id() == target.id() {
+        if commit.id().hex() == *boundary {
             break;
         }
         if commit.parent_ids().len() != 1 || result.len() >= 500 {
@@ -83,7 +98,7 @@ async fn location(
             })
         }
         Command::Rebase { branch } => {
-            let commits = segment(repo, config, branch)?;
+            let commits = segment(repo, config, branch).await?;
             let target = resolve(repo, &config.active().ok_or(Error::Invalid)?.target)?;
             Ok(MoveCommitsLocation {
                 new_parent_ids: vec![target.id().clone()],
@@ -96,7 +111,7 @@ async fn location(
         _ => Err(Error::Invalid),
     }
 }
-fn squash_pair(
+async fn squash_pair(
     repo: &ReadonlyRepo,
     config: &Config,
     workspace: &jj_lib::ref_name::WorkspaceName,
@@ -118,7 +133,7 @@ fn squash_pair(
                 .map_err(jj)?,
         )),
         Command::SquashBranch { branch } => {
-            let mut commits = segment(repo, config, branch)?;
+            let mut commits = segment(repo, config, branch).await?;
             let target = commits.pop().ok_or(Error::Invalid)?;
             if commits.is_empty() {
                 return Err(Error::Invalid);
@@ -145,7 +160,7 @@ pub(super) async fn validate(
         affected.extend(loc.new_child_ids.clone());
         policy::rewritable(repo, workspace, settings, config, affected)?;
     } else {
-        let (sources, target) = squash_pair(repo, config, workspace, command)?;
+        let (sources, target) = squash_pair(repo, config, workspace, command).await?;
         if sources.iter().any(|c| c.id() == target.id()) {
             return Err(Error::Invalid);
         }
@@ -173,7 +188,7 @@ pub(super) async fn execute(
         .await
         .map_err(jj)?;
     } else {
-        let (sources, target) = squash_pair(repo, config, workspace, command)?;
+        let (sources, target) = squash_pair(repo, config, workspace, command).await?;
         let mut selections = vec![];
         for commit in sources {
             selections.push(rewrite::CommitWithSelection {

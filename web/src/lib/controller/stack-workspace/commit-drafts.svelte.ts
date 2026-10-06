@@ -1,3 +1,4 @@
+import { isWorkspaceBranch } from "./presentation.js";
 import { workspaceSourceFiles } from "./files.js";
 import {
   cloneWorkspace,
@@ -33,9 +34,10 @@ export class WorkspaceCommitDrafts {
       !snapshot.active ||
       snapshot.availability !== "ready" ||
       !snapshot.folder ||
-      !snapshot.workspaces
-        .find((item) => item.id === snapshot.active)
-        ?.applied.includes(stack) ||
+      !isWorkspaceBranch(
+        snapshot,
+        snapshot.stacks.find((item) => item.id === stack)?.name ?? "",
+      ) ||
       !snapshot.stacks.some((item) => item.id === stack)
     )
       return false;

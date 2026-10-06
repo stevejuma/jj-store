@@ -1,16 +1,25 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { onMount, untrack } from "svelte";
   import { AppShell, AppShellController } from "@lapismd/design-core/shell";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import StoreStackWorkspace from "../../web/src/lib/ui/store-stack-workspace/StoreStackWorkspace.svelte";
   import { StackWorkspaceController } from "../../web/src/lib/controller/stack-workspace/controller.svelte.js";
+  import { projectStackTopology } from "../../web/src/lib/controller/stack-workspace/topology-projection.js";
   import { localStacksCommand } from "../../web/src/lib/controller/stack-workspace/local-state.js";
   import {
     cloneWorkspace,
     type StackWorkspaceAdapter,
   } from "../../web/src/lib/controller/stack-workspace/types.js";
   import { workspaceFixture, fixtureCommit } from "./stack-workspace/data.js";
+  let {
+    partial = false,
+    shared = false,
+  }: { partial?: boolean; shared?: boolean } = $props();
+  const initiallyPartial = untrack(() => partial);
+  const initiallyShared = untrack(() => shared);
   const snapshot = workspaceFixture();
+  snapshot.target.name = "trunk";
+  snapshot.base = "trunk";
   const names = [
     "cloud-observability",
     "cloud-runner",
@@ -28,31 +37,58 @@
     commits: [],
     conflicts: false,
   }));
-  snapshot.workspaces[0]!.applied = names;
-  const heads = [
-    { name: names[0]!, commit: names[0]! },
-    { name: names[1]!, commit: names[1]!, aliases: [names[2]!] },
+  snapshot.stacks[2]!.heads[0]!.commit = names[1]!;
+  const inventory = [
+    {
+      heads: [
+        {
+          names: [names[0]!],
+          commit: names[0]!,
+          base_commit: names[1]!,
+          shared: false,
+        },
+        {
+          names: names.slice(1, 3),
+          commit: names[1]!,
+          base_commit: "fork",
+          shared: false,
+        },
+      ],
+      applied: [initiallyPartial ? names[1]! : names[0]!],
+      unapply: [initiallyPartial ? names[1]! : names[0]!],
+    },
+    ...names.slice(3, 5).map((name) => ({
+      heads: [
+        { names: [name], commit: name, base_commit: "fork", shared: false },
+      ],
+      applied: [name],
+      unapply: [name],
+    })),
   ];
-  snapshot.stacks[0]!.heads = heads;
-  snapshot.stacks[0]!.topologyHeads = heads;
-  snapshot.stacks[0]!.appliedBranches = names.slice(0, 3);
-  snapshot.topology = {
+  if (initiallyShared) {
+    inventory[0]!.heads[1]!.shared = true;
+    inventory[1]!.heads[0]!.base_commit = names[1]!;
+    inventory[1]!.heads.push(inventory[0]!.heads[1]!);
+  }
+  snapshot.workspaces[0]!.applied = [
+    initiallyPartial ? names[1]! : names[0]!,
+    ...names.slice(3, 5),
+  ];
+  snapshot.bookmarks = snapshot.stacks.map((stack) => ({
+    name: stack.name,
+    targets: [stack.heads[0]!.commit],
+  }));
+  projectStackTopology(snapshot, {
     complete: true,
     integrated: names.slice(5),
-    lanes: [
-      {
-        heads: [
-          { names: [names[0]!], commit: names[0]! },
-          { names: names.slice(1, 3), commit: names[1]! },
-        ],
-        applied: names.slice(0, 3),
-      },
-      ...names.slice(3, 5).map((name) => ({
-        heads: [{ names: [name], commit: name }],
-        applied: [name],
-      })),
-    ],
-  };
+    inventory,
+    lanes: initiallyPartial
+      ? [
+          { ...inventory[0]!, heads: inventory[0]!.heads.slice(1) },
+          ...inventory.slice(1),
+        ]
+      : inventory,
+  });
   let release!: () => void;
   let loading = $state(true);
   const ready = new Promise<void>((resolve) => {
@@ -63,15 +99,38 @@
     readTargetHistory: async () => ({ commits: [] }),
     readStackHistory: async ({ head }) => {
       await ready;
-      const ids = head === names[0] ? names.slice(0, 2) : [head];
+      const ids =
+        head === names[0] || (initiallyShared && head === names[3])
+          ? [head, names[1]!, "cloud-config"]
+          : head === names[1]
+            ? [names[1]!, "cloud-config"]
+            : [head];
       return {
         commits: ids.map((id, index) => {
-          const parent = ids[index + 1] ?? snapshot.target.commit;
+          const parent = ids[index + 1] ?? "fork";
           return {
-            ...fixtureCommit(id, `Commit ${id}`, []),
+            ...fixtureCommit(
+              id,
+              id === names[0]
+                ? "add deployment health summary"
+                : id === names[1]
+                  ? "add deployment preview command"
+                  : id === "cloud-config"
+                    ? "prepare cloud deployment config"
+                    : `Commit ${id}`,
+              [],
+            ),
             graph: {
               parents: [parent],
-              edges: [{ target: parent, kind: "direct" as const }],
+              edges: [
+                {
+                  target: parent,
+                  kind:
+                    parent === "fork"
+                      ? ("missing" as const)
+                      : ("direct" as const),
+                },
+              ],
               bookmarks: [],
               workspaces: [],
               conflicted: false,

@@ -1867,3 +1867,10 @@ never authorize cleanup. Refresh does not compose or clean the graph, and native
 operation history retains recovery. The local mutation regressions include a
 stock-JJ `testy` topology fixture and guarded cleanup, separately from live-page
 read verification.
+
+Native stack discovery considers the bounded local bookmark inventory before
+applied membership. A linear path records the next bookmark or first excluded
+target ancestor as its exact lower boundary. It stops at native merges without
+dropping previously proven boundaries; graph pages retain every parent. This
+same derivation authorizes lower-branch commit/create destinations beneath an
+applied tip. It never changes the target/merge/WIP composition during a read.

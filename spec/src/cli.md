@@ -2302,3 +2302,8 @@ code index, matching JJ Log's exact-operation selection and readiness lifecycle.
 The older explicit preparation path remains compatible. Startup and service
 control contracts are unchanged; development backend restarts retain fixtures
 and do not reconcile users' saved branch membership.
+
+The registered local-browser host also exposes the operation-pinned Stacks
+inventory query before workspace setup. Its captured-response acceptance covers
+the additive topology fields and proves the query leaves existing TOML bytes
+unchanged. No new CLI syntax or installed executable replacement is required.

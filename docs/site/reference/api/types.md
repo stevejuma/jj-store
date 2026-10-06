@@ -18443,6 +18443,151 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 }
 ```
 
+## LocalStacksTopologyResponse
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "operation": {
+      "$ref": "#/components/schemas/OperationId"
+    },
+    "target": {
+      "type": "string"
+    },
+    "target_commit": {
+      "type": "string"
+    },
+    "topology": {
+      "$ref": "#/components/schemas/LocalStacksTopology"
+    }
+  },
+  "required": [
+    "version",
+    "operation",
+    "target",
+    "target_commit",
+    "topology"
+  ]
+}
+```
+
+## LocalStacksTopology
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "lanes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/LocalStacksTopologyLane"
+      }
+    },
+    "integrated": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "complete": {
+      "type": "boolean"
+    },
+    "inventory": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/LocalStacksTopologyLane"
+      },
+      "default": []
+    }
+  },
+  "required": [
+    "lanes",
+    "integrated",
+    "complete",
+    "inventory"
+  ]
+}
+```
+
+## LocalStacksTopologyLane
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "heads": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/LocalStacksTopologyHead"
+      },
+      "description": "Newest first. Names on one tip are aliases, not additional segments."
+    },
+    "applied": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "unapply": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Explicit members removable without changing another active lane's membership.",
+      "default": []
+    }
+  },
+  "required": [
+    "heads",
+    "applied",
+    "unapply"
+  ]
+}
+```
+
+## LocalStacksTopologyHead
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "names": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "commit": {
+      "type": "string"
+    },
+    "base_commit": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Exact lower bookmark or first excluded target ancestor; None at ambiguous merges.",
+      "default": null
+    },
+    "shared": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "names",
+    "commit",
+    "base_commit",
+    "shared"
+  ]
+}
+```
+
 ## LocalStacksConflict
 
 ```text
@@ -18716,86 +18861,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "wip_commit",
     "conflicted",
     "membership_changed"
-  ]
-}
-```
-
-## LocalStacksTopology
-
-```text
-{
-  "type": "object",
-  "properties": {
-    "lanes": {
-      "type": "array",
-      "items": {
-        "$ref": "#/components/schemas/LocalStacksTopologyLane"
-      }
-    },
-    "integrated": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "complete": {
-      "type": "boolean"
-    }
-  },
-  "required": [
-    "lanes",
-    "integrated",
-    "complete"
-  ]
-}
-```
-
-## LocalStacksTopologyLane
-
-```text
-{
-  "type": "object",
-  "properties": {
-    "heads": {
-      "type": "array",
-      "items": {
-        "$ref": "#/components/schemas/LocalStacksTopologyHead"
-      },
-      "description": "Newest first. Multiple names on one tip are aliases, not extra segments."
-    },
-    "applied": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    }
-  },
-  "required": [
-    "heads",
-    "applied"
-  ]
-}
-```
-
-## LocalStacksTopologyHead
-
-```text
-{
-  "type": "object",
-  "properties": {
-    "names": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      }
-    },
-    "commit": {
-      "type": "string"
-    }
-  },
-  "required": [
-    "names",
-    "commit"
   ]
 }
 ```

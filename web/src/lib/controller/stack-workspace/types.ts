@@ -39,7 +39,14 @@ export type StackCommit = {
   };
   files: WorkspaceFile[];
 };
-export type StackHead = { name: string; commit: string; aliases?: string[] };
+export type StackHead = {
+  name: string;
+  commit: string;
+  aliases?: string[];
+  /** Native topology boundary; null means ambiguous, undefined means legacy provider. */
+  baseCommit?: string | null;
+  shared?: boolean;
+};
 export type WorkspaceTargetBranch = StackHead &
   Pick<StackCommit, "message" | "author" | "email" | "createdAt">;
 export type WorkspaceHistoryRequest = {
@@ -72,12 +79,14 @@ export type WorkspaceStack = {
   conflicts: boolean;
   /** Operation-owned lane metadata; inventory and saved membership stay separate. */
   appliedBranches?: string[];
+  unapplyBranches?: string[];
   topologyHeads?: StackHead[];
   /** Explicit provider segments; their displayed rows are newest first. */
   segments?: {
     head: StackHead;
     /** Null until the remaining bounded history proves the lower boundary. */
     baseCommit: string | null;
+    unloaded?: boolean;
     commits: StackCommit[];
     nextCursor?: string;
   }[];

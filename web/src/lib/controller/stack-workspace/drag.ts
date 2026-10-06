@@ -1,5 +1,5 @@
 import { workspaceSourceFiles } from "./files.js";
-import { activeWorkspace } from "./presentation.js";
+import { activeWorkspace, isWorkspaceBranch } from "./presentation.js";
 import { moveCommitProblem, sortCommitProblem } from "./commit-placement.js";
 import type {
   WorkspaceCommand,
@@ -228,7 +228,7 @@ export function workspaceDropFeedback(
   }
   if (
     command.kind === "create_commit" &&
-    !activeWorkspace(snapshot).applied.includes(command.stack)
+    !isWorkspaceBranch(snapshot, stack?.name ?? "")
   )
     return invalid("Apply the stack before staging changes.");
   if (

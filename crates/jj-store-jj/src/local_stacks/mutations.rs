@@ -67,7 +67,7 @@ pub(super) async fn validate(
 ) -> Result<Commit> {
     message(text)?;
     let saved = config.active().ok_or(Error::Invalid)?;
-    if !saved.applied.iter().any(|b| b == branch) || branch.contains('@') {
+    if !topology::contains(repo, saved, branch).await? || branch.contains('@') {
         return Err(Error::Invalid);
     }
     let head = resolve(repo, branch)?;

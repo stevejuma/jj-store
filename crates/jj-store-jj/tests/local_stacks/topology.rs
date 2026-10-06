@@ -509,7 +509,7 @@ async fn sample_testy_topology_has_three_columns_and_native_target_plus_wip() {
     );
     assert_eq!(
         topology.integrated,
-        ["feature/bootstrap-cleanup", "feature/readme-polish"]
+        ["feature/bootstrap-cleanup", "feature/readme-polish", "main"]
     );
     assert_eq!(
         stock(
