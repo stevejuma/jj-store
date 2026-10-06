@@ -31,11 +31,15 @@
       count={state.agentSessions.length}
       Icon={BotIcon}
     >
-      {#if state.status.error}<CommunityProjectsColumnAlert
-          title="Agent activity unavailable"
-          description={state.status.error}
-          tone="destructive"
-        />{/if}
+      {#if state.status.error}
+        <div class="store-agent-sessions__notice">
+          <CommunityProjectsColumnAlert
+            title="Agent activity unavailable"
+            description={state.status.error}
+            tone="destructive"
+          />
+        </div>
+      {/if}
       {#if (state.status.connection === "connecting" || state.status.navigation === "loading" || state.status.agents === "loading") && state.agentSessions.length === 0}
         <StoreCollaborationSkeleton label="Loading agent sessions" agents />
       {:else if state.agentSessions.length === 0}
@@ -88,6 +92,15 @@
 </section>
 
 <style>
+  .store-agent-sessions__notice {
+    margin: 0.5rem 1rem;
+  }
+
+  .store-agent-sessions__notice :global(.community-projects-column-alert) {
+    border-width: 1px;
+    border-radius: 0.45rem;
+  }
+
   :global(.store-agent-sessions__scroll) {
     flex: 1;
     min-width: 0;

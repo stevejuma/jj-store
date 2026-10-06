@@ -37,6 +37,7 @@ Generated from evidence task references and historical mappings. This history is
 | [E-M18-008](../../../../../history/2026/10/04/E-M18-008/index.md) | 2026-10-04 | pass | Original outcome |
 | [E-M18-009](../../../../../history/2026/10/04/E-M18-009/index.md) | 2026-10-04 | pass | Original outcome |
 | [E-M18-017](../../../../../history/2026/10/04/E-M18-017/index.md) | 2026-10-04 | pending | Original outcome |
+| [E-UI-104](../../../../../history/2026/10/06/E-UI-104/index.md) | 2026-10-06 | pass | Original outcome |
 <!-- generated-navigation -->
 ## Pages
 

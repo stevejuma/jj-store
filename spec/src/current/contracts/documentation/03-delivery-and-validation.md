@@ -1,5 +1,10 @@
 # Delivery and validation
 
+Agent collection source reviews retain accurate browsing prose when only the
+unavailable-content banner inset, margin and corners change. Fresh development
+fixture evidence distinguishes current-format generation in an isolated root
+from migration or repair of existing stored data.
+
 Projects feedback source reviews MUST cover repository-scoped retry toasts,
 retained successful rows and hidden-tab recovery. Unsupported capability
 explanations and exact mutation recovery remain contextual. Moving recoverable

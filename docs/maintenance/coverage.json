@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed scoped caption colors preserving Design Core bubble foreground and real populated-message contrast, independent activity recovery and retained explicit command errors.",
-      "fingerprint": "c18c120e904358b530b44a3282d9864fbad8ef3f73c29835994304982534e525"
+      "reason": "Reviewed Agents unavailable-content banner inset, margin and rounded border; existing browsing prose remains accurate. Session, transcript, retry, notification and transport behavior are unchanged.",
+      "fingerprint": "66c43e5fd53337d69087bee30bf0837180241a9ec8a59813f83ae8b2d2317eb4"
     }
   },
   {

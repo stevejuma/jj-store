@@ -8,6 +8,7 @@ Generated from evidence task references and historical mappings. This history is
 | [E-M17-003](../../../../../history/2026/10/02/E-M17-003/index.md) | 2026-10-02 | pending | Original outcome |
 | [E-M17-004](../../../../../history/2026/10/02/E-M17-004/index.md) | 2026-10-02 | pass | Original outcome |
 | [E-M17-034](../../../../../history/2026/10/02/E-M17-034/index.md) | 2026-10-02 | pass | Original outcome |
+| [E-UI-104](../../../../../history/2026/10/06/E-UI-104/index.md) | 2026-10-06 | pass | Original outcome |
 <!-- generated-navigation -->
 ## Pages
 
