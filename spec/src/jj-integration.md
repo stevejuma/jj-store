@@ -1,37 +1,40 @@
 # Native JJ integration
 
-## Progressive file blame feasibility gate
+## Progressive file blame
 
-The proposed file Blame reader uses the pinned JJ `FileAnnotator` at an explicit
-operation and commit, with same-path, merge-aware semantics. Before exposing
-live routes or enabling attribution, qualify incremental topological domains
-against complete JJ annotation and measure Linux through the existing read-only
-local adapter. Every successful window must preserve unresolved origins as
-unresolved; a snapshot or an interrupted computation is never a proven line
-origin.
+The user accepts pinned JJ 0.45.1 annotation semantics and complete-attribution
+latency. Native and local Blame use the same `FileAnnotator`, exact operation
+pins and authorized prepared core readers. Source is independent of annotation.
+Process consecutive topological domains of at most 64 commits and yield after a
+cooperative one-second slice. Retain data-only progress and verified summaries;
+unresolved lines never receive fabricated or snapshot origins.
 
-The feasibility slice must establish bounded history discovery, historical file
-reads, comparison work, retained memory and cancellation. A small output or a
-64-commit domain alone does not establish those properties. Warm progress
-responses target five seconds, independently from complete-attribution time. If
-the upstream API cannot satisfy the gate with existing readers and indexes,
-record the blocker and stop before adding public contracts or enabling
-attribution; reader/index redesign and an upstream annotation fork require a
-separate scope.
+Synchronous JJ comparisons are not preemptible. Run annotation on admitted
+blocking workers with ordinary on-demand read admission (background metadata
+observation must not starve the active view), retain admission until the worker
+exits, and check cancellation and deadlines before and after work. Cancellation
+prevents further windows and late publication; it may wait for an in-flight
+comparison. The original failed E-READ-091 hard comparison deadline probe
+remains historical evidence, not a production hard-latency guarantee. No JJ
+fork, Git projection, or new index is required by this accepted tradeoff.
 
-The initial gate is stopped at JJ 0.45.1's synchronous line comparison. A
-one-commit domain over two 240,000-byte files with 40,000 reverse-ordered unique
-lines ran for 6.85 seconds in the development test profile and returned success
-after a surrounding one-second Tokio timeout. `FileAnnotator::compute` calls
-`ContentDiff::by_line` internally without a budget/cancellation callback;
-neither a smaller ancestry window nor the outer timeout admits or interrupts
-that work. The existing bounded line-diff helper is not used by annotation. Do
-not expose the proposed reader until comparison admission and cancellation are
-qualified. This finding is distinct from the successful Linux first-window
-latency probes; complete Linux attribution, server retention and HTTP/UI
-behavior are unqualified. The separately authorized UI slice may use fixture
-providers to verify presentation and navigation while keeping production Blame
-disabled; it does not satisfy this reader gate.
+Bound cache retention and temporary allocations through shared memory admission.
+Continuation retries reuse cumulative progress; source/access checks still run
+on cache hits. Continuations bind backend, repository, epoch or registration,
+operation, commit, path and algorithm version. Expiry or eviction is an explicit
+reset of the same selection. Failed or canceled windows never replace accepted
+progress. Core index preparation is allowed; changed-path indexing is not.
+
+The initial adapter admits ordinary UTF-8 files through 256 KiB and 32,768
+selected lines, at most 32 pending sources and 16 parents per visited commit.
+These are service safeguards, not upstream JJ defaults. Each request processes
+up to 64 windows of 64 commits within the cooperative slice, reserving 256 MiB
+for trial state/comparison scratch plus separately charged retained state.
+Historical blobs use the same byte cap. Existing total read/work/output limits
+remain in force. At most eight data-only entries remain cached, with idle LRU
+replacement and ten-minute inactivity expiry; valid use renews expiry so a slow
+active annotation can finish. Expiry never drops an active worker's charge.
+Failed core preparation is terminal for ordinary Blame polling.
 
 ## Existing native read behavior
 

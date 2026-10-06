@@ -1,5 +1,11 @@
 # CLI and server commands
 
+Progressive Blame acceptance uses the CLI package's actual native and local
+reader fixtures and registered HTTP routes. Compare genuine origins with
+upstream JJ; verify source preservation, exact operation pins, cache reuse,
+continuation reset and denied/stale reads. Only the explicit development backend
+is rebuilt for preview qualification. Installed CLI commands remain unchanged.
+
 The development server shares bounded local-folder admission entries across code
 requests. Registration persistence synchronously invalidates them; existing
 physical watcher hints also invalidate them. Missed events remain covered by

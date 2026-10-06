@@ -7,7 +7,11 @@
   import type { BlameViewState } from "../../controller/blame-types.js";
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import StoreBlameView from "./StoreBlameView.svelte";
-  import { sourceLines, BLAME_UNAVAILABLE } from "./blame-model.js";
+  import {
+    sourceLines,
+    blameSizeReason,
+    BLAME_UNAVAILABLE,
+  } from "./blame-model.js";
   let {
     controller,
     blob,
@@ -16,8 +20,10 @@
     $props();
   let state = $state<BlameViewState>({ status: "loading" });
   const route = $derived(controller.state.route);
+  const sizeReason = $derived(blameSizeReason(blob.contents ?? ""));
   const available = $derived(
     Boolean(
+      !sizeReason &&
       controller.blame &&
       route.page === "files" &&
       route.commitId &&
@@ -58,11 +64,19 @@
 </script>
 
 <StoreNotice
+  noticeKey={`blame-preparation:${key}`}
+  title="Preparing Blame"
+  severity="info"
+  message={state.preparing ? "Preparing the graph index…" : undefined}
+/>
+<StoreNotice
   noticeKey={`blame:${key}`}
   title="Unable to load Blame"
   message={state.error}
 />
-{#if !available}<p class="store-blame-unavailable">{BLAME_UNAVAILABLE}</p>{/if}
+{#if !available}<p class="store-blame-unavailable">
+    {sizeReason ?? BLAME_UNAVAILABLE}
+  </p>{/if}
 <StoreBlameView
   contents={blob.contents ?? ""}
   path={blob.path}

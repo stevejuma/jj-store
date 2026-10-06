@@ -149,6 +149,13 @@ struct Paths {
     #[serde(default)]
     direction: c::Direction,
 }
+#[derive(Deserialize, schemars::JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub(crate) struct Blame {
+    pub at_op: m::OperationId,
+    pub path: String,
+    pub continuation: Option<String>,
+}
 fn yes() -> bool {
     true
 }
@@ -358,6 +365,7 @@ macro_rules! endpoints {
             (get, "/repos/{repo}/evolution", evolution, Evolution, Envelope<q::GraphPage>, Reply::Json(200)),
             (get, "/repos/{repo}/commits/{commit}", commit, Selection, Envelope<CommitDetail>, Reply::Json(200)),
             (get, "/repos/{repo}/commits/{commit}/tree", tree, Directory, Envelope<c::TreePage>, Reply::Json(200)),
+            (get, "/repos/{repo}/commits/{commit}/blame", blame, Blame, q::blame::Page, Reply::Json(200)),
             (get, "/repos/{repo}/commits/{commit}/paths", paths, Paths, browsing::Window<c::paths::Page>, Reply::Json(200)),
             (get, "/repos/{repo}/commits/{commit}/conflicts", conflicts, Conflicts, Envelope<c::conflicts::Response>, Reply::Json(200)),
             (get, "/repos/{repo}/files/{file}", file, Selection, String, Reply::Binary),
@@ -1285,4 +1293,27 @@ async fn query_info(
             .map_err(|_| Error::unavailable())?;
     }
     envelope(&state, &read, info).await
+}
+
+async fn blame(
+    ExtractState(state): ExtractState<Arc<State>>,
+    context: Context,
+    args: Input<Blame>,
+) -> Result<Response> {
+    let args = input(args)?;
+    let read = pinned(&context, &state, Some(args.at_op)).await?;
+    match state
+        .code_indexes
+        .native_blame(
+            read.clone(),
+            context.id("commit")?,
+            args.path,
+            args.continuation,
+        )
+        .await
+    {
+        Ok(page) => state.json(&page),
+        Err(q::Error::IndexRebuildRequired) => Err(Error::rebuild(read.snapshot().await?.clone())),
+        Err(error) => Err(error.into()),
+    }
 }

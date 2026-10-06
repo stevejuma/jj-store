@@ -16,6 +16,7 @@ export function createBlameQuery(options: {
     selection: BlameSelection,
     continuation: string | null,
     signal: AbortSignal,
+    preparing: (value: boolean) => void,
   ): Promise<BlameProgress>;
 }): BlameController {
   const prefix = ["file-blame", options.scope];
@@ -57,6 +58,14 @@ export function createBlameQuery(options: {
                     selection,
                     continuation,
                     signal,
+                    (preparing) => {
+                      if (!abort.signal.aborted)
+                        publish({
+                          status: "loading",
+                          preparing,
+                          ...(progress ? { progress } : {}),
+                        });
+                    },
                   );
                   signal.throwIfAborted();
                   if (!options.active())

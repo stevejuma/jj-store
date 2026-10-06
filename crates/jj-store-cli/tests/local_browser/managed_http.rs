@@ -122,7 +122,27 @@ async fn managed_local_http_activates_without_subscribers_resumes_and_captures_t
         stack_page["data"]["data"]["commits"][0]["commit"]["id"],
         selected
     );
-    let mut samples = vec![];
+    let blame_path = format!("{base}/commits/{selected}/blame?at_op={operation}&path=hello.txt");
+    let (status, blame) = request(&client, port, &blame_path, None, false).await;
+    assert_eq!(status, 200, "{blame}");
+    assert_eq!(blame["operation"], operation);
+    assert_eq!(blame["complete"], true);
+    assert_eq!(blame["ranges"][0]["commit_id"], selected);
+    let mut samples = vec![
+        json!({"method":"get","path":"/v1/local/repos/{repo}/commits/{commit}/blame","status":200,"media":"application/json","data":blame}),
+    ];
+    let (_, cached) = request(&client, port, &blame_path, None, false).await;
+    assert_eq!(cached["history_commits"], blame["history_commits"]);
+    let (status, reset) = request(
+        &client,
+        port,
+        &format!("{blame_path}&continuation=unknown"),
+        None,
+        false,
+    )
+    .await;
+    assert_eq!(status, 409, "{reset}");
+    assert_eq!(reset["code"], "blame_reset");
     let (status, started) = request(
         &client,
         port,

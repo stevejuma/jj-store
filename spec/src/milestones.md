@@ -110659,6 +110659,252 @@ entries.
     "Full root suites,external Linux scale qualification,RustFS/release/backend-provider expansion,screenshot comparisons/baselines and package publication are outside this slice; managed external Linux fixture remains ignored. No milestone promotion."
   ],
   "remaining": []
+},
+{
+  "id": "E-READ-094",
+  "date": "2026-10-06",
+  "tasks": [
+    "M4.6",
+    "M13.4"
+  ],
+  "requirements": [
+    "JST-JJ-003",
+    "JST-LOCAL-004",
+    "JST-UI-005",
+    "JST-GOV-007"
+  ],
+  "kind": "Enable progressive native and local JJ Blame with accepted cooperative cancellation",
+  "revision": "enclosing Jujutsu change qntsvuuv",
+  "before": "Production Blame was disabled without an annotation provider. User explicitly accepted pinned JJ semantics and latency, replacing the previous hard comparison deadline gate. Work began above main fe3cb82c in retained bounded-reads; main and preview were clean and unrelated Stacks work remains in ancestry.",
+  "scope": "Shared FileAnnotator adapter, data-only progress cache, native/local authorized readers and registered routes, generated contracts and existing UI provider. No Git blame, JJ fork, reader/index redesign or changed-path preparation.",
+  "versions": "macOS ARM64; jj-lib 0.45.1; development Rust profile; pnpm 10.32.1; Vitest 4.1.11; existing released Design Core public APIs.",
+  "formats": "Additive BlamePage V1, native/local GET commits/{commit}/blame, opaque algorithm/source/operation/file-bound continuation and 409 blame_reset. No native identity, repository persistence, installed CLI, RPC or source-state format change.",
+  "files": [
+    "crates/jj-store-cli/tests/local_browser/managed_code.rs",
+    "crates/jj-store-cli/tests/local_browser/managed_http.rs",
+    "crates/jj-store-cli/tests/native_lifecycle/http_browsing.rs",
+    "crates/jj-store-cli/tests/native_lifecycle/path_metadata.rs",
+    "crates/jj-store-http/src/error.rs",
+    "crates/jj-store-http/src/local_browser.rs",
+    "crates/jj-store-http/src/local_browser/blame.rs",
+    "crates/jj-store-http/src/routes.rs",
+    "crates/jj-store-jj/src/local_browser/budget.rs",
+    "crates/jj-store-jj/src/local_browser/code_index.rs",
+    "crates/jj-store-jj/src/local_browser/code_index/blame_probe.rs",
+    "crates/jj-store-jj/src/local_browser/mod.rs",
+    "crates/jj-store-jj/src/query/access.rs",
+    "crates/jj-store-jj/src/query/blame.rs",
+    "crates/jj-store-jj/src/query/blame/tests.rs",
+    "crates/jj-store-jj/src/query/blame_probe.rs",
+    "crates/jj-store-jj/src/query/code_index/native.rs",
+    "crates/jj-store-jj/src/query/mod.rs",
+    "crates/jj-store-service/src/code_indexes.rs",
+    "crates/jj-store-service/src/code_indexes/blame.rs",
+    "crates/jj-store-service/src/code_indexes/paths.rs",
+    "docs/maintenance/coverage.json",
+    "docs/site/guides/browsing.md",
+    "docs/site/reference/api/code.md",
+    "docs/site/reference/api/installation.md",
+    "docs/site/reference/api/types.md",
+    "docs/site/reference/transport.md",
+    "docs/site/technical/local.md",
+    "schemas/openapi.json",
+    "spec/src/api.md",
+    "spec/src/cli.md",
+    "spec/src/compatibility.md",
+    "spec/src/documentation.md",
+    "spec/src/jj-integration.md",
+    "spec/src/local-jj.md",
+    "spec/src/milestones.md",
+    "spec/src/mutations.md",
+    "spec/src/spec-governance.md",
+    "spec/src/ui.md",
+    "web/src/lib/api/generated.ts",
+    "web/src/lib/controller/blame-query.ts",
+    "web/src/lib/controller/blame-types.ts",
+    "web/src/lib/controller/http-blame.ts",
+    "web/src/lib/controller/http-local-query.ts",
+    "web/src/lib/controller/http-store-data-source.ts",
+    "web/src/lib/controller/native-data-source.ts",
+    "web/src/lib/controller/production-store-view.ts",
+    "web/src/lib/ui/store-blame/StoreFileBlame.svelte",
+    "web/src/lib/ui/store-blame/blame-model.ts",
+    "web/tests/store-blame.test.ts",
+    "web/tests/vite/http-blame.test.ts"
+  ],
+  "runs": [
+    {
+      "command": "jj --no-pager st/log/diff; jj new qntsvuuv in codex-preview; jj workspace update-stale",
+      "result": "pass",
+      "failures": 0,
+      "note": "Inspected main, temporary and preview states; main remained clean. Preview advanced to implementation; stale descendants refreshed after evidence/source updates. Historical ledger entries preserved."
+    },
+    {
+      "command": "cargo check --locked -p jj-store-jj -p jj-store-service -p jj-store-http",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/blame-rust-check-final.log passes; earlier missing ObjectId import, unawaited async has_id and test type ambiguity corrected before verified checks."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-jj --lib query::blame -- --nocapture",
+      "result": "pass",
+      "failures": 0,
+      "note": ".local/blame-shared-verified.log:4 pass, original synchronous comparison hard-deadline probe remains ignored historical evidence. Covers both object widths, full-JJ parity, merges, repeated lines, empty/missing final newline, partial windows, retry idempotency, failed final authorization, cache-hit denial, cancellation and expiry/capacity."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-cli --test native_lifecycle path_metadata_crosses_merges_and_retains_the_ancestry_bound -- --nocapture; cargo test --locked -p jj-store-cli --test local_browser progressive_blame_preserves_local_source_and_rejects_stale_generation -- --nocapture",
+      "result": "pass",
+      "failures": 0,
+      "note": "blame-native-verified.log and blame-local-verified.log:1 each passes. Native origins Base/Left/Right match merge semantics, cache reuse and foreign operation denial. Local generation/revocation denial and source witness unchanged. Repeated after admission adjustment in blame-native-admission.log/blame-local-admission.log."
+    },
+    {
+      "command": "JJ_STORE_BROWSING_CONTRACT_CAPTURE=$PWD/.local/blame-native-contracts.json cargo test --locked -p jj-store-cli --test native_lifecycle http_browsing_windows_are_authorized_pinned_cursor_bound_and_contract_captured -- --nocapture; JJ_STORE_MANAGED_LOCAL_CAPTURE=$PWD/.local/blame-local-contracts.json cargo test --locked -p jj-store-cli --test local_browser managed_local_http_activates_without_subscribers_resumes_and_captures_tasks -- --nocapture",
+      "result": "pass",
+      "failures": 0,
+      "note": "blame-native-http-verified.log and blame-local-http.log:1 each passes, including cold preparation, complete origin response, cached revisit and explicit reset; native unauthenticated cache hit denied. Sixteen registered captures validated using scripts/contracts-validation.mjs against generated schemas."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-cli --test native_lifecycle http_browsing_windows_are_authorized_pinned_cursor_bound_and_contract_captured -- --nocapture",
+      "result": "fail",
+      "failures": 1,
+      "note": "First compile of preparation failure guard hit Rust private method path_start_allowed. Changed visibility to its parent module; final registered native/local runs pass."
+    },
+    {
+      "command": "pnpm contracts:generate; pnpm test:contracts",
+      "result": "pass",
+      "failures": 0,
+      "note": "blame-contracts.log/blame-contracts-final.log:OpenAPI and TypeScript regenerated. blame-contract-tests.log:7 tests and contract tsc pass. Complete unrelated registered capture suite excluded by focused policy."
+    },
+    {
+      "command": "JJ_STORE_BLAME_LINUX_METADATA=/Users/stevejuma/code/linux/.jj/repo cargo test --locked -p jj-store-jj --lib local_browser::code_index::blame_probe::linux_production_blame_progress_preserves_source -- --ignored --exact --nocapture",
+      "result": "pass",
+      "failures": 0,
+      "note": "blame-linux-production.log:one-commit prototype processed only14\u201364 commits per response; changed to real64-commit windows. blame-linux-windows.log final64-window probe:12 successful responses, source witness unchanged at operation c29523a6 and commit062871f. COPYING3.679/3.971/4.262s,512/1216/1728 cumulative commits; altera4.049/4.646/5.816s,576/1024/1408; inode3.725/5.590/6.601s,384/640/704; CREDITS4.698/4.313/4.075s,448/576/1088. All remained incomplete with0 proven origins over these first3 responses. Other development checks were running; full completion and isolated warm latency not claimed."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project catalog-unit web/tests/vite/http-blame.test.ts web/tests/vite/blame-query.test.ts web/tests/vite/store-route-history.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "blame-ui-verified.log:23 pass. Completed-cache reuse, preparation cancellation, terminal failures, same-selection reset, identity mismatch, concurrent observers, route restoration and late-publication rejection."
+    },
+    {
+      "command": "pnpm exec tsx --test web/tests/store-blame.test.ts",
+      "result": "pass",
+      "failures": 0,
+      "note": "blame-model-verified.log:4 pass, including byte/line admission explanations and routes/groups."
+    },
+    {
+      "command": "pnpm exec vitest run --config catalog/vitest.config.ts --project storybook catalog/components/store-application/StoreBlame.stories.svelte",
+      "result": "pass",
+      "failures": 0,
+      "note": "blame-stories-cold.log:7 pass in fresh Vite/Chromium with blocking runtime/a11y checks. Final size-explanation wiring repeated in blame-stories-last.log. Visual baselines unchanged."
+    },
+    {
+      "command": "pnpm web:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "Initial2 generated-number union diagnostics corrected with explicit Number conversion; blame-web-verified.log/blame-web-final.log zero errors/warnings. Final scoped source and size guards checked in blame-web-last.log."
+    },
+    {
+      "command": "pnpm check:architecture; pnpm check:boundaries; pnpm check:ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": "blame-architecture-verified.log:1155 modules; boundaries17 packages; ownership1 validator. Initial310/301-line source cap failures resolved by owning native Blame factory extraction, without cap/allowlist changes."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "fail",
+      "failures": 4,
+      "note": "Initial missing mapped CLI/compatibility/mutations and subsequently documentation chapters. Updated all owning chapters; blame-spec-first-verified.log39 protected files/9 chapters passes."
+    },
+    {
+      "command": "pnpm spec:first; pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "blame-spec-first-verified.log and blame-spec-validate.log pass,5 validators/23 chapters/173 requirements. Final ledger governance recorded in subsequent final logs."
+    },
+    {
+      "command": "pnpm docs:generate; pnpm docs:review local/services/http/application/contracts with topic-specific explanations; pnpm docs:check",
+      "result": "pass",
+      "failures": 0,
+      "note": "blame-docs-check.log:139-file documentation closure,links/anchors and9 Mermaid diagrams light/dark. Source fingerprints reviewed again after final UI/admission changes."
+    },
+    {
+      "command": "rustfmt --edition 2024 <changed Rust files>; pnpm exec prettier --write <changed UI/spec/docs files>",
+      "result": "pass",
+      "failures": 0,
+      "note": "Targeted formatting only; historical ledger entries retained byte-identically. Final formatting/ledger validation recorded after entry append."
+    },
+    {
+      "command": "pnpm dev:backend:build; JJ_STORE_DEV_ROOT=/Users/stevejuma/code/lapismd/jj-store-codex-preview/.local/codex-preview JJ_STORE_DEV_PORT=7470 JJ_STORE_DEV_BACKEND_PORT=7472 JJ_STORE_DEV_SERVER=/Users/stevejuma/code/lapismd/jj-store-bounded-reads/target/debug/jj-store pnpm dev:backend:restart",
+      "result": "pass",
+      "failures": 0,
+      "note": "blame-preview-restart.log:fixture preserved,only7472 backend replaced;Vite PID302 unchanged. Corrected ignored runtime ownership markers to the observed preview runner before invoking the owned restart. Installed CLI and unrelated main/Stacks services untouched."
+    },
+    {
+      "command": "CUA fresh hidden tab on pinned Linux CREDITS; click Blame/Source; CDP Network response observation",
+      "result": "pass",
+      "failures": 0,
+      "note": "Original user tab13 CDP focus timed out twice; kept it intact and used fresh14. Blame enabled, source and origin skeletons present, original pin preserved. Source navigation stopped further Blame responses. First live trace found background admission starvation (repeated503 busy after4 successful windows); switched on-demand Blame to ordinary read admission. Screenshot .local/blame-live.png records presentation; final admission result follows."
+    },
+    {
+      "command": "pnpm dev:backend:build; preview fixture pnpm dev:backend:restart (same explicit environment as above)",
+      "result": "pass",
+      "failures": 0,
+      "note": "blame-backend-build-final.log/blame-preview-restart-final.log:ordinary on-demand admission rebuilt and running on7472,PID92236;UI PID302 remains. Both production reader regressions repeated and pass in blame-local-admission.log/blame-native-admission.log."
+    },
+    {
+      "command": "pnpm exec tsx --test web/tests/store-blame.test.ts; pnpm web:check; cold StoreBlame.stories.svelte; pnpm docs:review; pnpm check:architecture/boundaries/ui-ownership",
+      "result": "pass",
+      "failures": 0,
+      "note": "Final model4/4,types0 diagnostics,cold stories7/7,documentation fingerprints,1155 UI modules,17 Rust boundaries and ownership pass. Exact logs blame-model-verified,blame-web-last,blame-stories-last,blame-docs-review-final and final architecture/boundaries/ownership logs."
+    },
+    {
+      "command": "jj --no-pager st (main)",
+      "result": "pass",
+      "failures": 0,
+      "note": "Main was initially clean but acquired uncommitted Complete native stack discovery and branch boundaries work in sktnmmmv. Generated contracts/specs overlap. Stopped main integration as required; temporary change and preview remain isolated above committed fe3cb82c."
+    },
+    {
+      "command": "CUA fresh Linux CREDITS Blame after rebuilt on-demand admission; CDP Network.responseReceived/getResponseBody; return to Source",
+      "result": "pass",
+      "failures": 0,
+      "note": "Live7470/7472:preparation/reset409s recovered on the same operation after restart,then7 consecutive200 responses with advancing cursors. Response header latencies2305,2367,2367,2295,2245,2605,2312ms;latest6720 history commits,4582 lines,0 proven origins,not complete. Existing source remains visible;no invented origins or full-completion claim. Source navigation removes Blame and prior cancellation check observed0 later Blame responses. Saved .local/blame-live-response.json and .local/blame-live.png;temporary test tab retained no writes to Linux."
+    },
+    {
+      "command": "pnpm check:progress; pnpm spec:first; pnpm spec:validate; parse old/current ledger JSON",
+      "result": "pass",
+      "failures": 0,
+      "note": "blame-progress-final.log/bookkeeping142 tasks;spec-first/validate pass before final live evidence append. All607 historical entries preserved;E-READ-094 appended. Final repeat in blame-governance-final.log/blame-progress-last.log."
+    }
+  ],
+  "verification_scope": "Focused shared annotation tests, native/local production readers, both registered HTTP consumers and response captures, affected Rust/type/contract checks, query/navigation/model tests, cold Chromium story interactions, original Linux read-only probes, live preview and governance/documentation checks. No milestone promotion.",
+  "limitations": [
+    "Upstream synchronous line comparisons cannot be preempted. Cancellation prevents subsequent work and late publication, retaining worker admission until exit.",
+    "Service bounds: 256 KiB selected/historical blobs, 32768 selected lines, 32 pending sources, 16 parents per visited commit, 64 topological windows of 64 commits per cooperative one-second request, existing hard read/work/output budgets; memory admission reserves trial scratch plus retained estimates. These are application safeguards, not JJ defaults.",
+    "Eight idle-LRU cache entries with ten-minute inactivity expiry; active requests renew expiry. Eviction/restart returns explicit same-selection reset.",
+    "Linux progress probes qualified response delivery and source preservation, not complete attribution latency. The warm five-second target was exceeded on some development samples; no fast full-attribution claim."
+  ],
+  "out_of_scope": [
+    "Full Linux completion/first-proven-origin benchmark, release-scale/RustFS/RSS pressure qualification, full root suites and visual baselines.",
+    "Rename/copy tracing, working-copy blame, ignore revisions and C syntax highlighting beyond released Design Core support."
+  ],
+  "result": "pending",
+  "remaining": [
+    "Main landing blocked by active overlapping Stacks edits in sktnmmmv: shared generated contracts, canonical chapters and generated API documentation. AGENTS requires stopping on overlapping work; main left intact."
+  ],
+  "next": "Keep the verified change and preview available. Land after the active Stacks change is committed or coordination explicitly resolves the overlap.",
+  "tests": [
+    "crates/jj-store-jj/src/query/blame/tests.rs#annotation_matches_jj_merges_repeated_lines_empty_and_missing_newline",
+    "crates/jj-store-jj/src/query/blame/tests.rs#retries_cancellation_reset_and_selection_binding",
+    "crates/jj-store-jj/src/query/blame/tests.rs#cache_expiry_and_capacity_preserve_active_progress",
+    "crates/jj-store-jj/src/query/blame_probe.rs#incremental_domains_match_complete_annotation_for_edits_and_merges",
+    "crates/jj-store-cli/tests/local_browser/managed_code.rs#progressive_blame_preserves_local_source_and_rejects_stale_generation",
+    "crates/jj-store-cli/tests/native_lifecycle/path_metadata.rs#path_metadata_crosses_merges_and_retains_the_ancestry_bound",
+    "crates/jj-store-cli/tests/native_lifecycle/http_browsing.rs#http_browsing_windows_are_authorized_pinned_cursor_bound_and_contract_captured",
+    "crates/jj-store-cli/tests/local_browser/managed_http.rs#managed_local_http_activates_without_subscribers_resumes_and_captures_tasks",
+    "web/tests/store-blame.test.ts#blame admission explains UTF-8 byte and line bounds"
+  ]
 }
 ]
 ```

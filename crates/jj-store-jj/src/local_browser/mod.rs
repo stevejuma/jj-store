@@ -833,7 +833,9 @@ fn bounded_git_header(
     if header.kind() != kind {
         return Err(Error::Corrupt);
     }
-    if header.size() > 4 * 1024 * 1024 {
+    if header.size() > 4 * 1024 * 1024
+        || (kind == gix::object::Kind::Blob && header.size() > budget.blob_limit)
+    {
         return Err(Error::Limit);
     }
     budget.read_bytes(header.size() as usize)

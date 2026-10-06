@@ -10,6 +10,7 @@ pub(crate) struct Budget {
     metadata: AtomicU64,
     output: AtomicU64,
     byte_limit: u64,
+    pub(super) blob_limit: u64,
     metadata_limit: u64,
 }
 impl Budget {
@@ -28,6 +29,7 @@ impl Budget {
             metadata: AtomicU64::new(0),
             output: AtomicU64::new(0),
             byte_limit: 64 * 1024 * 1024,
+            blob_limit: limits.max_blob_bytes.min(4 * 1024 * 1024),
             metadata_limit: 100_000,
         }
     }

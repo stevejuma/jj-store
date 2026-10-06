@@ -77,6 +77,7 @@ export type StoreReviewCommandRequest = Exact<
 >;
 
 export interface StoreDataSource {
+  readonly blame?: import("./blame-types.js").BlameController;
   readonly repository: string;
   readonly workingCopy?: import("./working-copy-types.js").WorkingCopyTransport;
   readonly stacks?: import("./stack-workspace/local-transport.js").LocalStacksTransport;

@@ -25,6 +25,15 @@ body and an interrupted observation is not confirmed cancellation. Keep
 observing the captured task until its terminal status; never retarget it to a
 newer selection. These tasks build derived indexes and do not publish code.
 
+Native and local `GET .../commits/{commit}/blame` require `at_op` and a
+canonical `path`; optional `continuation` resumes cached JJ annotation.
+Responses carry exact file identity, line count, compact one-based end-exclusive
+origin ranges, shared commit summaries and completion/work information. Source
+remains in its existing file response. An expired or evicted continuation
+returns `409 blame_reset`; restart only the same pinned selection. Authorization
+is rechecked on every request, including cache hits. Failed preparation stops
+progress polling. No changed-path index is built for Blame.
+
 Local `stack_history` queries retain an exact operation, head and optional base.
 They share JJ Log's managed code index, including bounded automatic preparation
 and current binding authorization. The explicit prepared-index reader remains

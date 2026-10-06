@@ -1,5 +1,12 @@
 # Application documentation
 
+The Blame guide documents on-demand recorded-file annotation, progressive
+genuine origins, source-first display, retained progress, commit navigation and
+slow JJ history. Transport and local technical pages describe operation binding,
+continuation reset and cooperative cancellation. Regenerate the HTTP reference
+and review source fingerprints with the owning implementation; documentation
+must not promise full Linux attribution timing from progress-only measurements.
+
 Stacks manuals explain expandable unchanged diff context and the shared Op Log
 conflict surface. Multi-sided native text versions use explicit pairwise Merge
 Editor review and whole-file staging; pair completion cannot prove the complete

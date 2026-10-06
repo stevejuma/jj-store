@@ -8,6 +8,7 @@ import {
   blameCommitRoute,
   blameChunks,
   sourceLines,
+  blameSizeReason,
 } from "../src/lib/ui/store-blame/blame-model.js";
 const hash = `#/repos/${"ab".repeat(16)}/files?at_op=${"12".repeat(64)}&commit=${"34".repeat(20)}&file=src%2Ftest.ts&directory=src`;
 test("file display routes restore and reject invalid contexts", () => {
@@ -71,4 +72,11 @@ test("line counts, unknown origins and bounded continuation groups", () => {
     ],
   );
   assert.equal(rows[1]!.continued, true);
+});
+
+test("blame admission explains UTF-8 byte and line bounds", () => {
+  assert.equal(blameSizeReason("a".repeat(256 * 1024)), undefined);
+  assert.match(blameSizeReason("é".repeat(128 * 1024 + 1))!, /256 KiB/);
+  assert.equal(blameSizeReason("a\n".repeat(32_768)), undefined);
+  assert.match(blameSizeReason("a\n".repeat(32_769))!, /32,768 lines/);
 });

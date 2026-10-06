@@ -196,3 +196,74 @@ async fn linux_first_window_uses_guarded_pinned_reader() {
         "Blame feasibility gate failed: {failures:?}"
     );
 }
+
+#[tokio::test(flavor = "multi_thread")]
+#[ignore = "requires explicit existing Linux metadata; measures live adapter progress"]
+async fn linux_production_blame_progress_preserves_source() {
+    let metadata = PathBuf::from(std::env::var_os("JJ_STORE_BLAME_LINUX_METADATA").unwrap())
+        .canonicalize()
+        .unwrap();
+    let before = source_state(&metadata);
+    let access: Arc<dyn super::super::Access> = Arc::new(Access(metadata));
+    let operation="c29523a65dc707ab052cd66095169427e17ca54eebefc2ee497fb2fe6d78d5772a91ae9f071aa78e0565b585f2ab8b9dff734e3d47e93899683ee7070f66283e".parse().unwrap();
+    let executor = Executor::new(2).unwrap();
+    let output = tempfile::tempdir().unwrap();
+    let prepared = Arc::new(
+        executor
+            .prepare_code_index(
+                access.clone(),
+                operation,
+                output.path().into(),
+                1024 * 1024 * 1024,
+                preparation::Limits::default(),
+                Cancellation::default(),
+            )
+            .await
+            .unwrap(),
+    );
+    let cache = Arc::new(crate::query::blame::Cache::default());
+    for path in [
+        "COPYING",
+        "drivers/edac/altera_edac.c",
+        "fs/inode.c",
+        "CREDITS",
+    ] {
+        let key = crate::query::blame::Selection {
+            scope: "linux-probe".into(),
+            repository: access.repository(),
+            operation,
+            commit: "062871f1371b2e02a272ff5279c6479aff0a37ef".into(),
+            path: path.into(),
+        };
+        let mut cursor = None;
+        for run in 0..3 {
+            let start = Instant::now();
+            let page = executor
+                .blame_code_index(
+                    access.clone(),
+                    prepared.clone(),
+                    cache.clone(),
+                    key.clone(),
+                    cursor.clone(),
+                )
+                .await;
+            eprintln!(
+                "production blame {path} window {run}: {:?} {:?}",
+                start.elapsed(),
+                page.as_ref().map(|p| (
+                    p.history_commits,
+                    p.line_count,
+                    p.ranges.iter().map(|r| r.end - r.start).sum::<usize>(),
+                    p.complete,
+                    &p.stats
+                ))
+            );
+            let page = page.unwrap();
+            cursor = page.continuation;
+            if page.complete {
+                break;
+            }
+        }
+    }
+    assert_eq!(source_state(access.metadata_path()), before);
+}

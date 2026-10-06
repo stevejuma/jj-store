@@ -226,6 +226,9 @@ export function productionControllerSurface(
   pause?: StoreController["actions"]["setRefreshPaused"],
 ): StoreController {
   return {
+    get blame() {
+      return source()?.blame;
+    },
     get stackWorkspaceLoading() {
       return options.stacks?.loading ?? false;
     },

@@ -354,6 +354,7 @@ impl NativeAuthority for ReadOnlyAuthority {
 pub(crate) struct ReadStore {
     staged: Option<Arc<Mutex<BTreeSet<m::ObjectKey>>>>,
     predicate_files: bool,
+    file_limit: Option<u64>,
     inner: Arc<dyn ObjectStore>,
     access: Arc<dyn ReadAccess>,
     budget: Arc<Budget>,
@@ -368,10 +369,15 @@ impl ReadStore {
         Self {
             staged: None,
             predicate_files,
+            file_limit: None,
             inner,
             access,
             budget,
         }
+    }
+    pub(crate) fn with_file_limit(mut self, bytes: u64) -> Self {
+        self.file_limit = Some(bytes);
+        self
     }
     pub(crate) fn with_staged(mut self, staged: Arc<Mutex<BTreeSet<m::ObjectKey>>>) -> Self {
         self.staged = Some(staged);
@@ -454,6 +460,14 @@ impl ObjectStore for ReadStore {
                 self.budget.limits.max_object_bytes,
             )
             .map_err(|_| storage::Error::Limit)?;
+        if matches!(object, m::ObjectKey::File(_))
+            && self
+                .file_limit
+                .is_some_and(|limit| download.metadata.len > limit + m::envelope::HEADER_LEN as u64)
+        {
+            self.budget.fail(Error::Limit);
+            return Err(storage::Error::Limit);
+        }
         let predicate_file = self.predicate_files && matches!(object, m::ObjectKey::File(_));
         if predicate_file {
             self.budget

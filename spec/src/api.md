@@ -1,13 +1,16 @@
 # Read APIs and browser
 
+Native and local `GET .../commits/{commit}/blame` accept an explicit `at_op`,
+canonical file `path` and optional opaque `continuation`. The shared versioned
+response identifies repository, operation, commit, path and file; contains line
+count, one-based end-exclusive attributed ranges, deduplicated genuine commit
+summaries, completion, continuation and work counters; and never retransmits
+source. Cache state cannot authorize reads. Expired progress returns an explicit
+`blame_reset`; clients may restart only the same pinned selection.
+
 The browser accepts `file_view=source|preview|blame` only on Files with a
-selected file, commit and operation. This is presentation state, not an HTTP
-Blame API. An optional internal UI provider can supply cumulative proven
-annotation ranges under an exact source/access scope. No production provider is
-enabled until the E-READ-091 comparison/cancellation gate is qualified. Fixtures
-cannot grant a production capability. Links from attribution preserve the
-original operation and actual origin commit; absent capability produces no
-annotation requests.
+selected file, commit and operation. Source causes no annotation request. Blame
+uses one sequential request at a time and the existing scoped query cache.
 
 The top Stacks conflict banner is scoped to the active Workspace tab. This
 presentation condition adds no transport fields or commands and does not change

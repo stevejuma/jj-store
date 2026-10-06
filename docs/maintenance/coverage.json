@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Documented target-inclusive retained merge rewrites, operation-owned topology bounds and conservative legacy cleanup; source history and TOML remain the local authority.",
-      "fingerprint": "7edd51c4573b893a91faff1ed248d37efc5c5b211c50aba791d1d8a9c8c0dab8"
+      "reason": "Documented shared native/local JJ annotation, on-demand worker admission, retained progress and cooperative cancellation; source reads remain pinned and read-only.",
+      "fingerprint": "8e7a89309945add4c4af0e33ad342232b960730b023ea8b01915ff89644ab814"
     }
   },
   {
@@ -65,8 +65,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Managed Stacks history now starts and reuses the same operation-index owner as JJ Log, preserving existing binding authorization, bounded preparation and derived-cache ownership.",
-      "fingerprint": "0cb6b5a615e09a5dd41823a06e79a5ef31b5df1784f3e70a80bdb9dc90c14a40"
+      "reason": "Reviewed Blame service integration against authority and read-session documentation; preparation and caches remain disposable and preserve exact pins.",
+      "fingerprint": "a7ca205504ac326f9689c892827e3070919122f26cd6c28b20d2b8f500e13eaa"
     }
   },
   {
@@ -122,8 +122,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Registered StackHistory requests now use managed core read dispatch with exact operation and generation admission; grouped unapply and topology remain under existing local guards.",
-      "fingerprint": "b3fb4e9f579d3f1f795d66bd668e10d9517c06a2f86ffceaaef24e9a27884b13"
+      "reason": "Documented additive native/local Blame routes, range semantics, authorization on cache hits and explicit continuation reset.",
+      "fingerprint": "80db3ff62b2ab05ba5f3a130ba80f01d01c0f50638bf42370f270f8318048867"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Verified native grouped cards retain branch-owned selections without switching branch-browsing columns; live history follows accepted operations, preserves historical pins and safely disposes local owners.",
-      "fingerprint": "689f2b51b962de6e4d825639505345e273c51ef62b11378c9a59c0e042f68100"
+      "reason": "Documented progressive Blame with bounded-file explanations, scoped cache invalidation, immediate source, genuine commit links and slow-history limitations.",
+      "fingerprint": "51f3bb64b67fc8361d16134e011d84a9a37e17170579f5f6f7d543dee8ca292c"
     }
   },
   {
@@ -154,8 +154,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Reviewed additive LocalStacks topology and UnapplyBranches schema, regenerated API references, and documented frontend-only live/pinned route fields without changing backend exact-operation contracts.",
-      "fingerprint": "bcdbd384ebc5a58021524bacb1f397a5652c7f801a217b401fe78d2ac3e0ae69"
+      "reason": "Regenerated the registered HTTP reference for Blame routes; existing CLI commands and native identities are unchanged.",
+      "fingerprint": "b3f8044ca21b3960f137a2a7330df3344e900f18ce76d49ed97b5e4a9ed8248b"
     }
   }
 ]

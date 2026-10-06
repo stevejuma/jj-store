@@ -135,6 +135,46 @@ async fn http_browsing_windows_are_authorized_pinned_cursor_bound_and_contract_c
             "data": body,
         }));
     }
+    let blame_path = format!("commits/{}/blame?at_op={}&path=a.txt", f.head, f.operation);
+    let (status, blame) = tokio::time::timeout(std::time::Duration::from_secs(10), async {
+        loop {
+            let response = json(&router, &f.f.reader, &blame_path).await;
+            if response.1["code"] != "index_rebuild_required" {
+                break response;
+            }
+            tokio::time::sleep(std::time::Duration::from_millis(20)).await;
+        }
+    })
+    .await
+    .unwrap();
+    assert_eq!(status, StatusCode::OK, "{blame}");
+    assert_eq!(blame["operation"], f.operation.to_string());
+    assert_eq!(blame["complete"], true);
+    assert_eq!(blame["ranges"][0]["commit_id"], f.head.to_string());
+    samples.push(serde_json::json!({"method":"get", "path":"/v1/repos/{repo}/commits/{commit}/blame", "status":200, "media":"application/json", "data":blame}));
+    let (_, cached) = json(&router, &f.f.reader, &blame_path).await;
+    assert_eq!(cached["history_commits"], blame["history_commits"]);
+    let (status, reset) = json(
+        &router,
+        &f.f.reader,
+        &format!("{blame_path}&continuation=unknown"),
+    )
+    .await;
+    assert_eq!(status, StatusCode::CONFLICT);
+    assert_eq!(reset["code"], "blame_reset");
+    let denied_blame = router
+        .clone()
+        .oneshot(
+            Request::builder()
+                .uri(format!("/v1/repos/{REPO}/{blame_path}"))
+                .header("host", "127.0.0.1:7443")
+                .header("x-jj-store-protocol", "1")
+                .body(Body::empty())
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+    assert_eq!(denied_blame.status(), StatusCode::UNAUTHORIZED);
     let cursor = first_cursor.expect("two bookmark fixture pages");
     let (status, next) = json(
         &router,

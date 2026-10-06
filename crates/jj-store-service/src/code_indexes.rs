@@ -1,4 +1,5 @@
 //! One bounded native/local core-index owner. Existing events supply fresh sources.
+mod blame;
 mod jobs;
 mod paths;
 mod tasks;
@@ -137,6 +138,7 @@ pub struct Indexes {
     policy: q::cache::Policy,
     changes: freshness::Signals,
     registry: Mutex<Registry>,
+    blame: Arc<q::blame::Cache>,
 }
 impl Drop for Indexes {
     fn drop(&mut self) {
@@ -159,6 +161,7 @@ impl Indexes {
             policy,
             changes: Default::default(),
             registry: Default::default(),
+            blame: Default::default(),
         })
     }
     pub fn freshness(&self) -> tokio::sync::broadcast::Receiver<freshness::Change> {

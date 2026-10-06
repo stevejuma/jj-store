@@ -504,14 +504,11 @@ of a writer racing the atomic rename.
 
 ## Bounded local code reads
 
-Progressive file Blame remains behind the integration feasibility gate described
-in `jj-integration.md`. The opt-in Linux probe uses the existing scoped backend,
-an explicit operation and a privately prepared core index; it does not publish
-source state or expose a local Blame route. Initial 64-commit windows meet the
-warm latency target, but JJ's internal synchronous comparison does not yet meet
-the bounded-work/cancellation gate. Neither source-index reuse nor cached
-authorization fixes that comparison boundary. Full attribution and production
-Blame retention, admission and presentation remain unqualified.
+Progressive file Blame uses the shared JJ annotation adapter and existing scoped
+operation-pinned backend with the prepared core index. Source metadata and
+working-copy state remain unchanged. The user accepts JJ latency and cooperative
+cancellation at read/comparison boundaries as specified in `jj-integration.md`.
+Full authorization and source validation remain mandatory for retained progress.
 
 Operation/view-only requests MUST prove the selected operation is retained and
 stop ancestry discovery once that proof is available. Query information,

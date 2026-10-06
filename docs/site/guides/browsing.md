@@ -27,6 +27,17 @@ queries are bounded; an incomplete response must not be read as proof that a
 path or change does not exist. A displayed file comes from the chosen snapshot,
 not necessarily the physical working file on disk.
 
+Choose **Blame** beside Source to see where a recorded text file's lines came
+from. Source appears immediately; attribution fills in progressively using JJ's
+merge-aware, same-path semantics. Each attributed group links to the actual
+origin commit at the original operation. Returning to Source stops further
+requests. Revisiting resumes retained progress or reuses a completed result.
+
+Large histories can take a long time, including before the first origin appears.
+Loading cells remain skeletons; terminal unresolved lines say “Origin
+unavailable.” Binary, conflicted and oversized files explain why Blame is
+unavailable. Rename/copy tracing and working-copy blame are not supported.
+
 Use the comparison selector to inspect the relevant parent or group. Merge
 commits can have multiple parents, and an aggregate comparison is different from
 selecting a specific parent. Keep that choice when interpreting a diff or

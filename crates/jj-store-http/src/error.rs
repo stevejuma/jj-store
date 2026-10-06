@@ -138,6 +138,7 @@ impl From<q::Error> for Error {
             E::Invalid | E::NotDirectory | E::Range => Self::invalid(),
             E::EpochChanged => Self::new(StatusCode::CONFLICT, "epoch_changed"),
             E::IndexRebuildRequired => Self::new(StatusCode::CONFLICT, "index_rebuild_required"),
+            E::BlameReset => Self::new(StatusCode::CONFLICT, "blame_reset"),
             E::Canceled => Self::new(StatusCode::REQUEST_TIMEOUT, "canceled"),
             E::Corrupt => Self::new(StatusCode::SERVICE_UNAVAILABLE, "corrupt_history"),
             E::Incomplete => Self::new(StatusCode::SERVICE_UNAVAILABLE, "incomplete_history"),

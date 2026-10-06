@@ -1,3 +1,4 @@
+import { createNativeBlame } from "./http-blame.js";
 import { readHttpGraph } from "./http-graph-reads.js";
 import { httpReferences } from "./http-reference-reads.js";
 import { HttpFileReads } from "./http-file-reads.js";
@@ -55,6 +56,12 @@ export class HttpStoreDataSource
     super(client);
     this.#client = client;
     this.#scope = { repository, session, profile: this.profile };
+    this.#blame = createNativeBlame(
+      client,
+      queryClient,
+      () => JSON.stringify(this.#scope),
+      () => this.#active,
+    );
     this.#query = createHttpQuery(queryClient, this.#scope, () => this.#active);
     this.#files = new HttpFileReads(client, this.#query);
     this.threads = new HttpThreadsDataSource(
@@ -78,6 +85,10 @@ export class HttpStoreDataSource
     );
   }
 
+  readonly #blame: ReturnType<typeof createNativeBlame>;
+  get blame() {
+    return this.#blame();
+  }
   capabilities() {
     return this.#query<Model<"Capabilities">>(
       "capabilities",

@@ -11714,6 +11714,145 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 }
 ```
 
+## BlamePage
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "repository": {
+      "$ref": "#/components/schemas/RepositoryId"
+    },
+    "operation": {
+      "$ref": "#/components/schemas/OperationId"
+    },
+    "commit": {
+      "type": "string"
+    },
+    "path": {
+      "type": "string"
+    },
+    "file_id": {
+      "type": "string"
+    },
+    "line_count": {
+      "type": "integer",
+      "format": "uint",
+      "minimum": 0
+    },
+    "ranges": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/BlameRange"
+      }
+    },
+    "commits": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/components/schemas/BlameCommit"
+      }
+    },
+    "complete": {
+      "type": "boolean"
+    },
+    "continuation": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "history_commits": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "stats": {
+      "$ref": "#/components/schemas/GraphStats"
+    }
+  },
+  "required": [
+    "version",
+    "repository",
+    "operation",
+    "commit",
+    "path",
+    "file_id",
+    "line_count",
+    "ranges",
+    "commits",
+    "complete",
+    "continuation",
+    "history_commits",
+    "stats"
+  ]
+}
+```
+
+## BlameRange
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "start": {
+      "type": "integer",
+      "format": "uint",
+      "minimum": 0
+    },
+    "end": {
+      "type": "integer",
+      "format": "uint",
+      "minimum": 0
+    },
+    "commit_id": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "start",
+    "end",
+    "commit_id"
+  ]
+}
+```
+
+## BlameCommit
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "change_id": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "author": {
+      "$ref": "#/components/schemas/GraphSignature"
+    },
+    "committer": {
+      "$ref": "#/components/schemas/GraphSignature"
+    }
+  },
+  "required": [
+    "id",
+    "change_id",
+    "description",
+    "author",
+    "committer"
+  ]
+}
+```
+
 ## Window3
 
 ```text
@@ -12715,6 +12854,7 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "string",
       "enum": [
         "canceled",
+        "blame_reset",
         "denied",
         "not_committed",
         "epoch_changed",

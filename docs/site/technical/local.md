@@ -16,6 +16,25 @@ flowchart TB
   Commit --> Evidence[Explicitly retained evidence closure]
 ```
 
+## Recorded file annotation
+
+Native and registered local repositories share the pinned JJ `FileAnnotator`
+through their authorized core-index readers. Data-only annotation state and
+verified summaries are retained, with eight idle-LRU slots and ten-minute
+inactivity expiry under shared memory admission. Slow active work renews its
+expiry. Each request visits topological windows of 64 commits in a cooperative
+one-second slice, subject to ordinary read/work limits. Blobs are capped at 256
+KiB, selected files at 32,768 lines, pending sources at 32 and parents per
+visited commit at 16. These safeguards are application allowances, not JJ
+configuration defaults.
+
+Annotation runs on an admitted blocking worker. Synchronous JJ comparisons
+cannot be preempted; cancellation stops later work and rejects late results,
+while admission remains held until the comparison exits. This accepted latency
+tradeoff does not permit source index repair, snapshotting, imports or writes.
+Progress requests can exceed the cooperative target, and full Linux attribution
+may be much slower than progress responses.
+
 ## Local stack workspaces
 
 The Stacks page operates directly on a registered ordinary local JJ folder using

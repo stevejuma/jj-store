@@ -2,6 +2,7 @@
 use crate::*;
 mod agents;
 mod binding;
+mod blame;
 pub(crate) use binding::binding;
 use binding::bound_folder;
 mod conversion;
@@ -104,6 +105,7 @@ pub(super) fn router() -> Router<Arc<State>> {
     }
     endpoints!(register)
         .merge(index_tasks::router())
+        .merge(blame::router())
         .merge(work::router())
         .merge(working_copy::router())
         .merge(working_tree::router())
@@ -676,6 +678,7 @@ pub(crate) fn document(document: &mut crate::contract::Document) {
     }
     endpoints!(register);
     index_tasks::document(document);
+    blame::document(document);
     work::document(document);
     agents::document(document);
     reviews::document(document);

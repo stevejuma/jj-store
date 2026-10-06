@@ -2,7 +2,7 @@
 use super::*;
 use q::content::{ContentReader, paths as native};
 impl Indexes {
-    fn path_start_allowed(&self, key: &Key) -> q::Result<()> {
+    pub(super) fn path_start_allowed(&self, key: &Key) -> q::Result<()> {
         if let Some(entry) = self.registry.lock().unwrap().entries.get(key) {
             match &entry.task.state {
                 State::Failed(error) => return Err(error.clone()),

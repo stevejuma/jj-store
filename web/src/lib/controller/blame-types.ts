@@ -1,6 +1,6 @@
 import type { RepositoryCommitSummary } from "../projects/repository-log.js";
 
-/** Internal presentation boundary; no wire endpoint is enabled by this type. */
+/** Presentation boundary shared by native and local annotation readers. */
 export interface BlameSelection {
   repository: string;
   operation: string;
@@ -25,6 +25,7 @@ export interface BlameViewState {
   progress?: BlameProgress;
   status: "loading" | "ready" | "failed";
   error?: string;
+  preparing?: boolean;
 }
 export interface BlameController {
   /** Provider owns source/access invalidation; inactive scopes may never replay data. */

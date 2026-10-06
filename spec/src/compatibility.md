@@ -1,5 +1,12 @@
 # Compatibility and release
 
+The additive Blame V1 response and native/local routes use pinned jj-lib 0.45.1
+same-path, all-parent annotation semantics. Source URLs retain their behavior;
+`file_view=blame` opts into attribution. Continuations are process-local and
+algorithm-bound; eviction/restart requires an explicit same-selection reset.
+Synchronous comparisons retain upstream latency and cooperative cancellation;
+this slice makes no hard per-comparison timing or cross-version cache guarantee.
+
 Available V1 path metadata adds `attribution: path_change | snapshot`. Snapshot
 metadata describes the selected revision when bounded first-parent history finds
 no change; clients identify it with an accessible Snapshot icon. Missing

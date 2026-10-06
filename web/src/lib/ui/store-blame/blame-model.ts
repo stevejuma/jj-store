@@ -10,6 +10,13 @@ export function sourceLines(contents: string): string[] {
   if (lines.at(-1) === "") lines.pop();
   return lines;
 }
+/** Matches the recorded-file admission of the shared JJ annotation adapter. */
+export function blameSizeReason(contents: string): string | undefined {
+  return new TextEncoder().encode(contents).byteLength > 256 * 1024 ||
+    sourceLines(contents).length > 32_768
+    ? "Blame is unavailable for files larger than 256 KiB or 32,768 lines."
+    : undefined;
+}
 export function blameCommitRoute(
   route: StoreRoute,
   commitId: string,

@@ -685,3 +685,122 @@ async fn indexed_merge_history_resolves_parent_contents_without_source_writes() 
     );
     assert_eq!(super::preparation_acceptance::files(&metadata), before);
 }
+
+#[tokio::test]
+async fn progressive_blame_preserves_local_source_and_rejects_stale_generation() {
+    let source = tempfile::tempdir().unwrap();
+    let output = tempfile::tempdir().unwrap();
+    jj(source.path(), &["git", "init", "--colocate"]);
+    fs::write(source.path().join("file.txt"), "base\nunchanged\n").unwrap();
+    jj(source.path(), &["describe", "-m", "Base"]);
+    jj(source.path(), &["new", "-m", "Edit"]);
+    fs::write(source.path().join("file.txt"), "edit\nunchanged\n").unwrap();
+    let commit = jj(
+        source.path(),
+        &["log", "--no-graph", "-r", "@", "-T", "commit_id"],
+    )
+    .trim()
+    .to_owned();
+    let metadata = source.path().join(".jj/repo");
+    let access: Arc<dyn q::Access> = Arc::new(ReadBinding(metadata.clone()));
+    let executor = q::Executor::new(2).unwrap();
+    let operation = executor.heads(access.clone()).await.unwrap().heads[0];
+    let before = super::preparation_acceptance::files(&metadata);
+    let prepared = Arc::new(
+        executor
+            .prepare_code_index(
+                access.clone(),
+                operation,
+                output.path().into(),
+                16 * 1024 * 1024,
+                q::preparation::Limits::default(),
+                Cancellation::default(),
+            )
+            .await
+            .unwrap(),
+    );
+    let cache = Arc::new(jj_store_jj::query::blame::Cache::default());
+    let key = jj_store_jj::query::blame::Selection {
+        scope: "local-test".into(),
+        repository: access.repository(),
+        operation,
+        commit,
+        path: "file.txt".into(),
+    };
+    let page = executor
+        .blame_code_index(
+            access.clone(),
+            prepared.clone(),
+            cache.clone(),
+            key.clone(),
+            None,
+        )
+        .await
+        .unwrap();
+    assert!(page.complete);
+    assert_eq!(page.line_count, 2);
+    assert_eq!(
+        page.ranges
+            .iter()
+            .map(|r| page.commits[&r.commit_id].description.trim())
+            .collect::<Vec<_>>(),
+        ["Edit", "Base"]
+    );
+    let cached = executor
+        .blame_code_index(
+            access.clone(),
+            prepared.clone(),
+            cache.clone(),
+            key.clone(),
+            None,
+        )
+        .await
+        .unwrap();
+    assert_eq!(cached.history_commits, page.history_commits);
+    struct Changed {
+        inner: Arc<dyn q::Access>,
+        generation: u64,
+        denied: bool,
+    }
+    #[async_trait::async_trait]
+    impl q::Access for Changed {
+        fn repository(&self) -> jj_store_model::RepositoryId {
+            self.inner.repository()
+        }
+        fn generation(&self) -> u64 {
+            self.generation
+        }
+        fn metadata_path(&self) -> &std::path::Path {
+            self.inner.metadata_path()
+        }
+        async fn authorize(&self) -> q::Result<()> {
+            if self.denied {
+                Err(q::Error::Denied)
+            } else {
+                Ok(())
+            }
+        }
+    }
+    for (generation, denied, expected) in [
+        (2, false, q::Error::EpochChanged),
+        (1, true, q::Error::Denied),
+    ] {
+        let changed = Arc::new(Changed {
+            inner: access.clone(),
+            generation,
+            denied,
+        });
+        assert_eq!(
+            executor
+                .blame_code_index(changed, prepared.clone(), cache.clone(), key.clone(), None)
+                .await
+                .unwrap_err(),
+            expected
+        );
+    }
+    assert_eq!(super::preparation_acceptance::files(&metadata), before);
+    assert_eq!(
+        fs::read_to_string(source.path().join("file.txt")).unwrap(),
+        "edit\nunchanged\n"
+    );
+}

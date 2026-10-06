@@ -378,3 +378,96 @@ impl Executor {
         .await
     }
 }
+
+impl Executor {
+    pub async fn blame_code_index(
+        &self,
+        access: Arc<dyn Access>,
+        prepared: Arc<Prepared>,
+        cache: Arc<crate::query::blame::Cache>,
+        key: crate::query::blame::Selection,
+        continuation: Option<String>,
+    ) -> Result<crate::query::blame::Page> {
+        if key.repository != access.repository() || key.operation != prepared.snapshot.operation {
+            return Err(Error::NotCommitted);
+        }
+        let mut limits = self.limits;
+        limits.max_blob_bytes = crate::query::blame::MAX_FILE_BYTES as u64;
+        let executor = Executor::with_workers(self.workers.clone(), limits);
+        let permit = self.workers.acquire()?;
+        executor
+            .worker_with_permit(access, permit, move |access, budget| {
+                Box::pin(async move {
+                    if access.repository() != prepared.snapshot.repository
+                        || access.metadata_path() != prepared.metadata
+                    {
+                        return Err(Error::NotCommitted);
+                    }
+                    if access.generation() != prepared.snapshot.generation {
+                        return Err(Error::EpochChanged);
+                    }
+                    let operation = prepared.snapshot.operation;
+                    let mut context = Context::open(
+                        access,
+                        operation,
+                        budget.clone(),
+                        limits,
+                        true,
+                        vec![],
+                        false,
+                    )
+                    .await?;
+                    if selection(&context, operation)? != prepared.selection {
+                        return Err(Error::Corrupt);
+                    }
+                    Arc::get_mut(&mut context.access)
+                        .ok_or(Error::Unavailable)?
+                        .code_index = Some(prepared.clone());
+                    let source = context
+                        .scoped
+                        .as_ref()
+                        .map_or(&context.store, |guard| &guard.source)
+                        .clone();
+                    let guard = scoped::Guard::new(source, &context.access, budget.clone(), limits);
+                    let selected = operation_store::selected(&context, operation).await?;
+                    let raw = loader(context.access.binding.metadata_path())?;
+                    let settings = UserSettings::from_config(StackedConfig::with_defaults())
+                        .map_err(|_| Error::Unavailable)?;
+                    let loader = RepoLoader::new(
+                        settings,
+                        guard.store(),
+                        selected.op_store().clone(),
+                        raw.op_heads_store().clone(),
+                        prepared.index.clone(),
+                        Arc::new(Submodules),
+                    );
+                    let repo = loader
+                        .load_at(&selected)
+                        .await
+                        .map_err(|_| Error::Unavailable)?;
+                    crate::query::blame::read(
+                        repo.as_ref(),
+                        &cache,
+                        key,
+                        continuation.as_deref(),
+                        || budget.check(),
+                        || {
+                            let s = budget.stats();
+                            crate::query::Stats {
+                                metadata_nodes: s.metadata_nodes,
+                                object_bytes: s.object_bytes,
+                                work: s.work,
+                                ..Default::default()
+                            }
+                        },
+                        async || {
+                            budget.until(context.access.binding.authorize()).await??;
+                            Ok(())
+                        },
+                    )
+                    .await
+                })
+            })
+            .await
+    }
+}

@@ -40,7 +40,7 @@ fn origins(annotator: &FileAnnotator) -> Vec<Option<(b::CommitId, usize)>> {
         .collect()
 }
 
-async fn commit(
+pub(crate) async fn commit(
     repo: &Arc<ReadonlyRepo>,
     parents: Vec<b::CommitId>,
     text: &[u8],

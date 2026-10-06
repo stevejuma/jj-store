@@ -1,3 +1,4 @@
+import { createHttpBlame } from "./http-blame.js";
 import { readQuery } from "./read-query.js";
 import {
   ApiError,
@@ -39,6 +40,40 @@ export class HttpLocalQuery {
   ) {
     this.client = new LocalClient(repository, fetcher);
     this.#reads = reads ?? createStoreQueryClient();
+  }
+  #blameScope = "";
+  #blame: ReturnType<typeof createHttpBlame> | undefined;
+  get blame() {
+    const generation = this.head?.generation;
+    const scope = JSON.stringify([
+      this.session,
+      this.profile,
+      this.repository,
+      generation,
+    ]);
+    if (!this.#blame || scope !== this.#blameScope) {
+      this.#blameScope = scope;
+      this.#blame = createHttpBlame({
+        client: this.#reads,
+        scope,
+        active: () =>
+          !this.client.closed.signal.aborted &&
+          this.head?.generation === generation,
+        request: (selection, continuation, signal) => {
+          const query = new URLSearchParams({
+            at_op: fullId(selection.operation),
+            path: selection.path,
+          });
+          if (continuation) query.set("continuation", continuation);
+          return this.client.request(
+            `commits/${fullId(selection.commit, 40)}/blame?${query}`,
+            undefined,
+            signal,
+          );
+        },
+      });
+    }
+    return this.#blame;
   }
   protected read<T>(
     path: string,

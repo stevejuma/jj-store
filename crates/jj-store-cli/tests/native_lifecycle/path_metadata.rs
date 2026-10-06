@@ -180,6 +180,61 @@ async fn path_metadata_crosses_merges_and_retains_the_ancestry_bound() {
         .await
         .unwrap(),
     );
+    let blame_cache = Arc::new(jj_store_jj::query::blame::Cache::default());
+    let blame_selection = jj_store_jj::query::blame::Selection {
+        scope: "native-test".into(),
+        repository: jj_store_jj::query::ReadAccess::repository(read.as_ref()),
+        operation,
+        commit: merge.to_string(),
+        path: "merged.txt".into(),
+    };
+    let blame = exec
+        .blame_code_index(
+            f.store.clone(),
+            read.clone(),
+            prepared.clone(),
+            blame_cache.clone(),
+            blame_selection.clone(),
+            None,
+        )
+        .await
+        .unwrap();
+    assert!(blame.complete);
+    assert_eq!(blame.line_count, 3);
+    let descriptions: Vec<_> = blame
+        .ranges
+        .iter()
+        .map(|range| blame.commits[&range.commit_id].description.as_str())
+        .collect();
+    assert_eq!(descriptions, ["Left edit", "Base", "Right edit"]);
+    let cached = exec
+        .blame_code_index(
+            f.store.clone(),
+            read.clone(),
+            prepared.clone(),
+            blame_cache.clone(),
+            blame_selection.clone(),
+            None,
+        )
+        .await
+        .unwrap();
+    assert_eq!(cached.history_commits, blame.history_commits);
+    let wrong_operation = jj_store_jj::query::blame::Selection {
+        operation: m::OperationId::new([111; 64]),
+        ..blame_selection
+    };
+    assert!(
+        exec.blame_code_index(
+            f.store.clone(),
+            read.clone(),
+            prepared.clone(),
+            blame_cache,
+            wrong_operation,
+            None
+        )
+        .await
+        .is_err()
+    );
     let indexed = reader.with_code_index(prepared);
     let indexed_page = read.paths(&indexed, request(selected)).await.unwrap();
     assert_eq!(indexed_page.entries, page.entries);

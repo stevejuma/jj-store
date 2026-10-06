@@ -1,6 +1,7 @@
 //! Owned, bounded native graph queries. Upstream objects never cross this API.
 pub(crate) mod access;
 pub mod admission;
+pub mod blame;
 #[cfg(test)]
 pub(crate) mod blame_probe;
 pub mod cache;
@@ -37,6 +38,8 @@ use workers::Workers;
 pub enum Error {
     #[error("query request was canceled")]
     Canceled,
+    #[error("blame progress expired; restart the same selection")]
+    BlameReset,
     #[error("query is not authorized")]
     Denied,
     #[error("query object is not committed in this snapshot")]

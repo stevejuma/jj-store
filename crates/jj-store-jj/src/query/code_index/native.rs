@@ -25,10 +25,16 @@ fn stores(
     access: Arc<dyn ReadAccess>,
     budget: Arc<Budget>,
     max_object_bytes: u64,
+    blame: bool,
 ) -> Result<NativeStores> {
     let objects = Arc::new(
         NativeObjects::new(
-            Arc::new(ReadStore::new(store, access.clone(), budget.clone(), true)),
+            Arc::new(if blame {
+                ReadStore::new(store, access.clone(), budget.clone(), false)
+                    .with_file_limit(blame::MAX_FILE_BYTES as u64)
+            } else {
+                ReadStore::new(store, access.clone(), budget.clone(), true)
+            }),
             access.repository(),
             max_object_bytes,
         )
@@ -196,6 +202,7 @@ impl GraphExecutor {
                             access.clone(),
                             budget.clone(),
                             limits.max_object_bytes,
+                            false,
                         )?;
                         let settings = UserSettings::from_config(StackedConfig::with_defaults())
                             .map_err(|_| Error::Unavailable)?;
@@ -281,6 +288,7 @@ impl GraphExecutor {
                             access.clone(),
                             budget.clone(),
                             limits.max_object_bytes,
+                            false,
                         )?;
                         let settings = UserSettings::from_config(StackedConfig::with_defaults())
                             .map_err(|_| Error::Unavailable)?;
@@ -312,6 +320,68 @@ impl GraphExecutor {
                     })
                     .await?;
                 result.map_err(|e| budget.failure().unwrap_or(e))
+            }))
+        })
+        .await
+        .map_err(|_| Error::Unavailable)?;
+        cancel.disarm();
+        result
+    }
+}
+
+impl GraphExecutor {
+    pub async fn blame_code_index(
+        &self,
+        store: Arc<dyn ObjectStore>,
+        access: Arc<dyn ReadAccess>,
+        prepared: Arc<Prepared>,
+        cache: Arc<blame::Cache>,
+        key: blame::Selection,
+        continuation: Option<String>,
+    ) -> Result<blame::Page> {
+        prepared.validate(access.as_ref())?;
+        if key.repository != access.repository() || key.operation != access.operation() {
+            return Err(Error::NotCommitted);
+        }
+        let permit = self.workers.acquire()?;
+        let budget = Arc::new(Budget::new(self.limits)?);
+        budget.authorize(access.as_ref()).await?;
+        let cancel = budget.cancellation.clone().drop_guard();
+        let runtime = tokio::runtime::Handle::current();
+        let result = tokio::task::spawn_blocking(move || {
+            let _permit = permit;
+            runtime.block_on(tokio::task::LocalSet::new().run_until(async {
+                let stores = stores(
+                    store,
+                    access.clone(),
+                    budget.clone(),
+                    budget.limits.max_object_bytes,
+                    true,
+                )?;
+                let settings = UserSettings::from_config(StackedConfig::with_defaults())
+                    .map_err(|_| Error::Unavailable)?;
+                let loader = stores
+                    .resident_loader(&settings, prepared.index.clone())
+                    .map_err(|_| Error::Unavailable)?;
+                let repo = stores
+                    .load_at(&loader, access.operation())
+                    .await
+                    .map_err(|_| Error::Unavailable)?;
+                let result = budget
+                    .until(blame::read(
+                        repo.as_ref(),
+                        &cache,
+                        key,
+                        continuation.as_deref(),
+                        || budget.check(),
+                        || budget.stats(),
+                        async || budget.authorize(access.as_ref()).await,
+                    ))
+                    .await?;
+                budget.authorize(access.as_ref()).await?;
+                let page = result.map_err(|e| budget.failure().unwrap_or(e))?;
+                budget.complete_output(&page)?;
+                Ok(page)
             }))
         })
         .await
