@@ -1,0 +1,18 @@
+# M12 tasks and gates
+
+| ID    | Status | Depends           | Requirements                                                                                    | Gate                                                                                | Next                                | Evidence                                                                                            |
+| ----- | ------ | ----------------- | ----------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- | ----------------------------------- | --------------------------------------------------------------------------------------------------- |
+| M12   | Done   | M11.1,M11.2,M11.3 | JST-GIT-001,JST-GIT-002,JST-GIT-003,JST-GIT-004,JST-GIT-005,JST-GIT-006,JST-GIT-007,JST-GIT-008 | Native fetch/edit/push/external-merge cycle with cache-loss and fault qualification | Maintain qualified bookmark bridge  | E-M12-001,E-M12-002,E-M12-003,E-M12-004,E-M12-005,E-M12-006,E-M12-007,E-M12-008,E-M12-009,E-M12-010 |
+| M12.1 | Done   | M11.1,M11.2,M11.3 | JST-GIT-001                                                                                     | GB0: Parsed backend-aware dispatch and ordinary path regression                     | Complete staged bridge gate         | E-M12-001                                                                                           |
+| M12.2 | Done   | M12.1             | JST-GIT-002,JST-GIT-003                                                                         | GB1: Exact conversion and native retained cache-loss identity                       | Complete staged bridge gate         | E-M12-002                                                                                           |
+| M12.3 | Done   | M12.2             | JST-GIT-004,JST-GIT-008                                                                         | GB2: Bounded fetch with native tracking and concurrent ref merge                    | Complete staged bridge gate         | E-M12-003,E-M12-004,E-M12-006                                                                       |
+| M12.4 | Done   | M12.3             | JST-GIT-005,JST-GIT-006                                                                         | GB3: Selected single-ref push with leases and durable recovery                      | Complete staged bridge gate         | E-M12-005,E-M12-006                                                                                 |
+| M12.5 | Done   | M12.4             | JST-GIT-007                                                                                     | GB4: Fault/concurrency and qualified data-only native replication                   | Complete staged bridge gate         | E-M12-006,E-M12-008,E-M12-009                                                                       |
+| M12.6 | Done   | M12.5             | JST-GIT-001,JST-GIT-005                                                                         | GB5: Bookmark selectors safe remote lifecycle and atomic multi-ref parity           | Complete staged bridge gate         | E-M12-007,E-M12-009                                                                                 |
+| M12.7 | Done   | M12.6             | JST-GIT-002,JST-GIT-007,JST-GIT-008                                                             | GB6: Cold real-RustFS external merge credentials resources and UI freshness         | Maintain cold native Git acceptance | E-M12-008,E-M12-010                                                                                 |
+
+<!-- generated-navigation -->
+
+## Pages
+
+- [history](history/index.md)

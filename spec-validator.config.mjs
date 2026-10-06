@@ -1,25 +1,11 @@
-import {
-  defineConfig,
-  singleIdVerification,
-  tableRequirements,
-} from "@lapismd/spec-validator";
+import { defineConfig } from "@lapismd/spec-validator";
+import { changeConfirmations } from "./scripts/spec/change-confirmations.mjs";
 
-export default defineConfig(tableRequirements(), {
-  name: "jj-store",
-  plugins: ["scripts/check-ui-ownership.mjs"],
-  idPattern: /^JST-[A-Z]+-\d{3}$/,
-  tableSection: "Requirements",
-  ruleIds: {
-    summary: "JST-GOV-001",
-    governance: "JST-GOV-001",
-    verification: "JST-GOV-001",
-    book: "JST-GOV-001",
-    bookIgnore: "JST-GOV-001",
-    specFirst: "JST-GOV-002",
-    internal: "JST-GOV-001",
-  },
+export default defineConfig({
+  requirementStyle: "table",
+  minAcceptance: 0,
+  maxAcceptance: null,
   validators: {
-    summary: true,
     governance: {
       extras: ["AGENTS.md", "README.md"],
       normative: true,
@@ -28,19 +14,55 @@ export default defineConfig(tableRequirements(), {
       references: true,
       changeMap: true,
     },
-    verification: singleIdVerification({
+    summary: {
+      fragments: true,
+    },
+    fileLimits: {
+      maxLines: 400,
+      maxBytes: 32768,
+    },
+    qmd: {
+      collection: "jj-store-current",
+      defaultScope: "current",
+      scopes: {
+        current: {
+          collection: "jj-store-current",
+          path: "spec/src/current",
+        },
+        history: {
+          collection: "jj-store-history",
+          path: "spec/src/history",
+        },
+        all: {
+          collection: "jj-store-all",
+          path: "spec/src",
+        },
+      },
+    },
+    verification: {
+      mode: "table",
       headers: {
         ids: ["ID"],
         status: ["Status"],
         evidence: ["Evidence"],
         required: [],
       },
+      idMode: "single",
       statuses: ["Implemented", "Planned"],
-    }),
+      statusMatch: "exact",
+      rowMultiplicity: "exactly-one",
+      rejectOrphans: true,
+      requireEvidence: true,
+      files: [
+        "^current/verification/(?!(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+      ],
+    },
     book: true,
     specFirst: {
       mode: "mapped",
-      canonicalPattern: "^spec/src/(?!SUMMARY|verification).+\\.md$",
+      confirmationProvider: changeConfirmations,
+      canonicalPattern:
+        "^spec/src/current/(?:contracts|governance)/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
       ignore: [
         "(^|/)node_modules/",
         "(^|/)(?:target|dist|build)/",
@@ -50,105 +72,173 @@ export default defineConfig(tableRequirements(), {
       rules: [
         {
           pattern:
+            "^spec/(?:archive/|relocations\\.json$|history-relations\\.yml$)",
+          chapterPatterns: [
+            "^spec/src/current/governance/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+          ],
+        },
+        {
+          pattern: "^\\.qmd/",
+          chapterPatterns: [
+            "^spec/src/current/governance/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+          ],
+        },
+        {
+          pattern:
             "^(?:docs/(?:site/|maintenance/)|mkdocs\\.yml$|pyproject\\.toml$|uv\\.lock$)",
-          chapters: ["spec/src/documentation.md"],
+          chapterPatterns: [
+            "^spec/src/current/contracts/documentation/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+          ],
         },
         {
           pattern: "^docs/capture-preview\\.md$",
-          chapters: ["spec/src/cli.md", "spec/src/collaboration.md"],
+          chapterPatterns: [
+            "^spec/src/current/contracts/cli/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+            "^spec/src/current/contracts/collaboration/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+          ],
         },
-        { pattern: "^desktop/", chapters: ["spec/src/desktop.md"] },
+        {
+          pattern: "^desktop/",
+          chapterPatterns: [
+            "^spec/src/current/contracts/desktop/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+          ],
+        },
         {
           pattern: "^crates/jj-store-jj/(?:src|tests)/local_",
-          chapters: ["spec/src/local-jj.md"],
+          chapterPatterns: [
+            "^spec/src/current/contracts/local-jj/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+          ],
         },
         {
           pattern:
             "^crates/jj-store-(?:cli|jj|wal|service|rpc)/(?:src|tests)/.*git[_-](?:bridge|interop)",
-          chapters: ["spec/src/git-interop.md"],
+          chapterPatterns: [
+            "^spec/src/current/contracts/git-interop/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+          ],
         },
         {
           pattern: "^(?:catalog/|\\.storybook/|docs/catalog\\.md$)",
-          chapters: ["spec/src/ui.md"],
+          chapterPatterns: [
+            "^spec/src/current/contracts/ui/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+          ],
         },
         {
           pattern: "^docs/ui-provenance\\.json$",
-          chapters: ["spec/src/spec-governance.md", "spec/src/ui.md"],
+          chapterPatterns: [
+            "^spec/src/current/governance/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+            "^spec/src/current/contracts/ui/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+          ],
         },
         {
           pattern: "^rustfmt\\.toml$",
-          chapters: ["spec/src/spec-governance.md"],
+          chapterPatterns: [
+            "^spec/src/current/governance/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+          ],
         },
         {
           pattern: "^crates/jj-store-model/",
-          chapters: ["spec/src/identity.md"],
+          chapterPatterns: [
+            "^spec/src/current/contracts/identity/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+          ],
         },
         {
           pattern: "^crates/jj-store-object/",
-          chapters: ["spec/src/object-store.md"],
+          chapterPatterns: [
+            "^spec/src/current/contracts/object-store/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+          ],
         },
         {
           pattern: "^crates/jj-store-wal/",
-          chapters: ["spec/src/publication.md"],
+          chapterPatterns: [
+            "^spec/src/current/contracts/publication/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+          ],
         },
         {
           pattern: "^crates/jj-store-replication/",
-          chapters: ["spec/src/replication.md"],
+          chapterPatterns: [
+            "^spec/src/current/contracts/replication/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+          ],
         },
         {
           pattern: "^crates/jj-work/",
-          chapters: ["spec/src/projects.md"],
+          chapterPatterns: [
+            "^spec/src/current/contracts/projects/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+          ],
         },
         {
           pattern: "^crates/jj-(?:agent|review|collab)/",
-          chapters: ["spec/src/collaboration.md"],
+          chapterPatterns: [
+            "^spec/src/current/contracts/collaboration/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+          ],
         },
         {
           pattern: "^crates/jj-store-capture/",
-          chapters: ["spec/src/collaboration.md"],
+          chapterPatterns: [
+            "^spec/src/current/contracts/collaboration/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+          ],
         },
         {
           pattern: "^crates/jj-store-jj/",
-          chapters: ["spec/src/jj-integration.md"],
+          chapterPatterns: [
+            "^spec/src/current/contracts/jj-integration/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+          ],
         },
         {
           pattern: "^crates/jj-store-service/",
-          chapters: ["spec/src/mutations.md"],
+          chapterPatterns: [
+            "^spec/src/current/contracts/mutations/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+          ],
         },
         {
           pattern: "^crates/jj-store-rpc/",
-          chapters: ["spec/src/jj-integration.md"],
+          chapterPatterns: [
+            "^spec/src/current/contracts/jj-integration/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+          ],
         },
         {
           pattern: "^crates/jj-store-server/",
-          chapters: ["spec/src/cli.md"],
+          chapterPatterns: [
+            "^spec/src/current/contracts/cli/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+          ],
         },
         {
           pattern: "^(?:crates/jj-store-http/|web/|docs/browser\\.md$)",
-          chapters: ["spec/src/api.md"],
+          chapterPatterns: [
+            "^spec/src/current/contracts/api/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+          ],
         },
         {
           pattern: "^crates/jj-store-(?:adapters|tantivy)/",
-          chapters: ["spec/src/adapters.md"],
+          chapterPatterns: [
+            "^spec/src/current/contracts/adapters/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+          ],
         },
         {
           pattern: "^(?:crates/jj-store-cli/|bins/|docs/cli/)",
-          chapters: ["spec/src/cli.md"],
+          chapterPatterns: [
+            "^spec/src/current/contracts/cli/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+          ],
         },
         {
           pattern:
             "^(?:crates/jj-store-testkit/|runtime/|fixtures/|schemas/|proto/|docs/upstream-lock|docs/embedded-rustfs-qualification|docs/codec|docs/compatibility|docs/licenses/|docs/evidence/|scripts/.*(?:rustfs|spike|upstream)|deploy/)",
-          chapters: ["spec/src/compatibility.md"],
+          chapterPatterns: [
+            "^spec/src/current/contracts/compatibility/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+          ],
         },
         {
           pattern:
             "^(?:scripts/|AGENTS\\.md$|spec-validator\\.config\\.mjs$|spec/book\\.toml$|\\.gitignore$|\\.prettier)",
-          chapters: ["spec/src/spec-governance.md"],
+          chapterPatterns: [
+            "^spec/src/current/governance/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+          ],
         },
         {
           pattern:
             "^(?:Cargo\\.(?:toml|lock)$|rust-toolchain\\.toml$|package\\.json$|pnpm-lock\\.yaml$|README\\.md$|LICENSE\\.md$|docs/implementation-plan\\.md$|docs/reference/)",
-          chapters: ["spec/src/architecture.md"],
+          chapterPatterns: [
+            "^spec/src/current/contracts/architecture/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+          ],
         },
       ],
       protected: [
@@ -156,30 +246,70 @@ export default defineConfig(tableRequirements(), {
       ],
     },
   },
+  ruleIds: {
+    summary: "JST-GOV-001",
+    fileLimits: "JST-GOV-010",
+    qmd: "JST-GOV-001",
+    governance: "JST-GOV-001",
+    verification: "JST-GOV-001",
+    book: "JST-GOV-001",
+    bookIgnore: "JST-GOV-001",
+    specFirst: "JST-GOV-002",
+    internal: "JST-GOV-001",
+  },
+  diagnostics: {},
   check: {
     lanes: [
-      { name: "documentation", command: "pnpm", args: ["docs:check"] },
+      {
+        name: "documentation",
+        command: "pnpm",
+        args: ["docs:check"],
+      },
       {
         name: "catalog-cold-browser",
         command: "pnpm",
         args: ["catalog:test:browser"],
       },
-      { name: "catalog-check", command: "pnpm", args: ["catalog:check"] },
-      { name: "catalog-unit", command: "pnpm", args: ["catalog:test"] },
+      {
+        name: "catalog-check",
+        command: "pnpm",
+        args: ["catalog:check"],
+      },
+      {
+        name: "catalog-unit",
+        command: "pnpm",
+        args: ["catalog:test"],
+      },
       {
         name: "catalog-interaction",
         command: "pnpm",
         args: ["test:storybook"],
       },
-      { name: "catalog-build", command: "pnpm", args: ["build-storybook"] },
-      { name: "browser-check", command: "pnpm", args: ["web:check"] },
-      { name: "browser-unit", command: "pnpm", args: ["web:test"] },
+      {
+        name: "catalog-build",
+        command: "pnpm",
+        args: ["build-storybook"],
+      },
+      {
+        name: "browser-check",
+        command: "pnpm",
+        args: ["web:check"],
+      },
+      {
+        name: "browser-unit",
+        command: "pnpm",
+        args: ["web:test"],
+      },
       {
         name: "browser-interaction",
         command: "pnpm",
         args: ["web:test:browser"],
       },
-      { name: "contracts", command: "pnpm", args: ["contracts:check"] },
+      {
+        name: "contracts",
+        command: "pnpm",
+        args: ["contracts:check"],
+      },
       {
         name: "rustfmt",
         command: "cargo",
@@ -214,4 +344,34 @@ export default defineConfig(tableRequirements(), {
     build: true,
     first: true,
   },
+  name: "jj-store",
+  plugins: ["scripts/check-ui-ownership.mjs"],
+  idPattern: "^JST-[A-Z]+-\\d{3}$",
+  tableSection: "Requirements",
+  documentRoles: [
+    {
+      pattern: "(?:^|/)(?:index|SUMMARY(?:\\.nav)?)\\.md$",
+      role: "navigation",
+    },
+    {
+      pattern: "^current/(?:contracts|governance)/",
+      role: "contract",
+    },
+    {
+      pattern: "^current/verification/",
+      role: "verification",
+    },
+    {
+      pattern: "^current/progress/",
+      role: "progress",
+    },
+    {
+      pattern: "^history/",
+      role: "history",
+    },
+    {
+      pattern: "^[^/]+\\.md$",
+      role: "navigation",
+    },
+  ],
 });

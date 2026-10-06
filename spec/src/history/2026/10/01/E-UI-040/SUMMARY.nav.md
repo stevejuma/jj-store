@@ -1,0 +1,3 @@
+- [E-UI-040 details 2](details-02.md)
+- [E-UI-040 details 3](details-03.md)
+- [E-UI-040 details 4](details-04.md)

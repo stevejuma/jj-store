@@ -1,0 +1,2 @@
+- [E-M9-036 details 2](details-02.md)
+- [E-M9-036 details 3](details-03.md)

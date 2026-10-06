@@ -30,3 +30,6 @@
 /scripts/docs/__pycache__/
 /docs/site/assets/generated/
 /docs/build/
+
+spec/.generated/
+.qmd/index.sqlite*

@@ -1,0 +1,9 @@
+# OBJ verification
+
+| ID          | Status      | Evidence                                                                                                                                                                                                                         |
+| ----------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| JST-OBJ-001 | Implemented | `crates/jj-store-object/tests/contract.rs`; `crates/jj-store-jj/tests/native_objects.rs`; `docs/evidence/m1-native-rustfs.json`; [M1](../progress/index.md)                                                                      |
+| JST-OBJ-002 | Implemented | `docs/evidence/m0-rustfs-cold.json` (single-node topology only); [M0](../progress/index.md)                                                                                                                                      |
+| JST-OBJ-003 | Implemented | `crates/jj-store-object/tests/contract.rs`; `crates/jj-store-jj/tests/native_objects.rs`; `docs/evidence/m1-native-rustfs.json`; [M1](../progress/index.md)                                                                      |
+| JST-OBJ-004 | Implemented | `crates/jj-store-object/tests/contract.rs`; `crates/jj-store-jj/tests/native_objects.rs`; `docs/evidence/m1-native-rustfs.json`; [M1](../progress/index.md)                                                                      |
+| JST-OBJ-005 | Implemented | `crates/jj-store-server/tests/embedded_storage.rs`; [E-M8A-001](../../history/2026/09/28/E-M8A-001/index.md); [E-M8A-002](../../history/2026/09/28/E-M8A-002/index.md); [E-M8A-004](../../history/2026/09/28/E-M8A-004/index.md) |

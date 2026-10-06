@@ -1,0 +1,301 @@
+# Object foundation
+
+The model crate owns typed IDs, object kinds and envelope framing without
+importing JJ. The JJ integration crate owns native schemas and identity checks.
+Version 1 metadata is bounded independently of the streaming file transport.
+
+The object crate owns the S3 transport and deterministic fault store. It depends
+on the model and transport libraries without importing JJ. Upload preparation
+uses bounded temporary disk space rather than buffering unbounded file blobs.
+
+The WAL crate starts with a storage-independent bounded dependency walker. Its
+source interface returns owned keys and verified descriptors; the JJ crate
+implements native edge enumeration. No native JJ type crosses into the WAL.
+
+The WAL crate owns immutable publication records, persistent radix catalogs,
+manifest CAS, durable receipts, replay and checkpoints. Its catalogs depend only
+on owned model types and the object transport. Native dependency enumeration
+continues to enter through the verified-source interface.
+
+The `jj-agent` crate owns stable agent identities, canonical AgentStore object
+schemas and typed strong-edge validation. It depends only on the neutral model
+layer and cannot import WAL, services, native JJ or presentation code. The WAL
+crate stages its validated immutable objects through the existing
+repository-bound record envelope, verifies complete bounded dependency closures
+and selects only typed agent roots through the shared manifest CAS.
+
+The `jj-review` crate owns stable review identities, exact immutable artifact
+anchors and canonical ReviewStore object schemas. It may depend on `jj-agent`
+for immutable activity-object references and on the neutral model for native JJ
+identities, but cannot import WAL, services, native JJ or presentation code. The
+WAL layer depends on `jj-review` for typed object, root and delta validation,
+then owns repository-bound staging, root-pinned reads and publication. No
+reverse dependency or second storage or transaction service is introduced.
+
+The custom CLI depends on `jj-review` only to construct validated typed review
+commands from explicit user input. Native RPC production code stays behind the
+service and WAL facades: it transports bounded canonical JSON for the same
+service-owned ReviewStore page/detail and command/status models used by HTTP.
+This adds no reverse model dependency, raw coordinator access or second review
+implementation.
+
+The service crate owns repository/operator token policies and request-bound
+authorization. Its publication guard uses owned WAL snapshots/settings and
+requires an explicit native semantic validator, keeping authentication shared
+between future HTTP and RPC adapters.
+
+The development toolchain uses Rust 1.98.1 and includes rustfmt with a tracked
+edition-2024 policy. Rust formatting is part of the shared formatting commands,
+normal checks and canonical specification checks.
+
+The released RustFS embedded crate cannot share a Rust dependency graph with the
+pinned `jj-cli` because both require different unconditional sys crates with the
+same native mimalloc link identity. Its exact unpatched crate therefore builds
+in a separately locked helper executable. Server composition owns the helper's
+private credential environment, concrete loopback address, persistent volume,
+readiness and shutdown channels, and process lifetime while accessing authority
+through the same owned `S3Store`. The helper is a packaged runtime boundary and
+does not become a separately administered storage deployment.
+
+Browser architecture uses Community's counted-line metric: blank and
+comment-only lines are excluded; complete Svelte markup and styles count. New
+production modules and scripts are limited to 300 lines, stories to 400 and
+tests to 500. Existing larger files have exact no-growth baselines and must be
+extracted when integration changes their responsibilities. Production web
+modules cannot import catalog fixtures, and presentation modules cannot import
+the API or controller layers.
+
+Native navigation tree styles and catalog layout assertions have separate owners
+so adding hierarchy and visual regressions preserves those no-growth limits.
+
+The browser may bundle reviewed static integration artwork under `web/public`
+and Storybook serves that same directory so catalog and production use one
+asset. Git author presentation depends directly on the locked browser-safe hash
+library to reproduce Community's normalized Gravatar URL; that presentation
+dependency cannot enter storage, publication, service or transport crates.
+
+The production mutation controller is an asynchronous controller concern. It
+owns captured native request identity, preview/apply/status transitions, session
+cancellation and committed-snapshot refresh without importing visual components.
+Repository action menus and dialogs consume only the shared controller contract;
+the catalog supplies the same contract from an in-memory source and production
+cannot depend on those fixtures. A committed receipt may invalidate protected
+query state, while a preview, rejection or unknown outcome cannot replace the
+displayed snapshot. Conflict descriptor loading, bounded upload staging and
+atomic command construction remain controller/model concerns; the conflict
+editor receives only shared state/actions and never imports HTTP transport.
+
+The native backend adapts JJ's futures file streams to the owned Tokio
+transport. Its query engine derives bounded copy records from native history;
+those derived results never become publication authority or require a listing
+API.
+
+The service implements the owned native-store authority interfaces through the
+shared guarded coordinator. JJ factories and semantic object inspection remain
+in the JJ integration crate. CLI-package integration fixtures exercise the full
+native library lifecycle without moving upstream types into service code.
+
+The RPC crate depends on owned model, object-I/O and service interfaces. Its
+streaming object transport implements ObjectStore only for repository-bound
+native keys and rejects mutable writes. Remote JJ authority adapters live in the
+CLI integration crate; upstream JJ types do not enter the RPC implementation.
+
+The CLI crate now builds the development executable named jj and owns local
+connection discovery, credential-facility access and command presentation. The
+installed system jj remains untouched. Connection records and derived JJ caches
+are physical-client state and do not become server authority.
+
+Typed provisioning and token administration extend the existing native RPC V1.
+Service-owned snapshots and secret-free results cross the transport boundary;
+RPC does not import native JJ types or gain raw storage-publication access. An
+installation-owned registry separately retains repository aliases and token-ID
+discovery candidates. Repository creation reserves an alias before publication,
+then exposes the alias and initial admin-token candidate in one atomic registry
+replacement after authoritative publication succeeds or is recovered. The index
+never supplies authorization; HTTP reopens each candidate through its current
+manifest-selected policy.
+
+The server composition crate owns bounded TOML configuration, operator-policy
+files, RustFS construction, process exclusivity and the foreground listener.
+Both executable entry points live in the CLI crate to share presentation and OS
+credentials; server composition never depends on command presentation.
+
+Configuration format 2 is the only accepted server configuration. It keeps
+access policy, authoritative storage and backup projection as independent tagged
+settings. The current application target uses LocalTrusted access and embedded
+storage; its runtime owns installation state, the RustFS child, readiness,
+sentinel verification, shutdown and the lifetime filesystem lock while returning
+the existing owned `S3Store` contract. Older formats are rejected. Explicit
+LocalTrusted search entries start rebuildable background indexing through an
+installation-derived read-only principal. Authenticated shared serving, external
+authority and backup/restore remain deferred. A repository may explicitly
+configure one upstream for writable replication; server composition owns its
+bounded bidirectional worker and lifetime. The worker resolves its named
+credential into process memory, persists only issuer-bound peer checkpoints and
+never enters a foreground local read or mutation. Expanded pressure, browser,
+cold two-instance RustFS and deployment-topology qualification remain deferred
+under M10.8.
+
+The access policy is independent of transport. Authenticated HTTP and RPC keep
+repository bearer validation, while LocalTrusted HTTP and Unix RPC derive stable
+principals from the installation identity after transport admission. Both paths
+enter the same guarded service sessions, semantic policy, limits and manifest
+publication boundary. Bootstrap discovery reads only the private installation
+catalog; opening a listed repository still verifies native authority through the
+ordinary service APIs.
+
+The CLI owns resumable physical attachment journals and atomic metadata staging.
+They retain no credentials and are not authority; publication acknowledgements
+continue to come from the native service's manifest-selected receipts.
+
+The CLI also owns device-local AgentStore capture durability because it already
+owns filesystem discovery and local process state. The neutral `jj-agent` crate
+defines the versioned cursor and sanitized activity models without filesystem or
+WAL dependencies. The CLI journal depends on those models and the WAL's typed
+agent request, persists outside checkouts under an exclusive user-restricted
+lock and never becomes repository authority. Only the WAL coordinator can
+publish its prepared delta through the manifest CAS and durable receipt path.
+The native transport exposes that authority as separate prepare and publish
+calls: the server owns current-root selection, peer principal and activation
+time, while the CLI owns crash-safe persistence between them. Canonical JSON
+payloads are explicitly byte bounded inside the protobuf envelope, and an
+unknown manifest outcome remains a typed response requiring an exact retry. The
+CLI recovery worker preflights one repository binding for the complete spool,
+orders integrations, source instances, generations and native sequences, and
+derives separate stable request and publication IDs from the repository and
+capture batch. A prepared response is synchronized before its publish call; no
+later source entry passes an unknown, stale, rejected or failed publication.
+
+The same CLI boundary owns a device-local integration registry outside the
+checkout. It binds one stable random device identity and explicit desired
+enablement to the native repository plus canonical physical workspace. Registry
+writes are locked, atomic, synchronized and user-restricted. Discovery runs
+bounded version probes for the exact qualified Codex, Cursor and OpenCode
+versions; failed probe stderr is never retained or presented. Detection and
+desired enablement remain separate from owned hook/plugin setup, so discovery
+alone cannot claim capture is active.
+
+Harness setup is also CLI-owned. It merges namespaced Codex and Cursor project
+hooks or installs one namespaced OpenCode project plugin. Before any project
+mutation it atomically stores exact original bytes plus original and intended
+SHA-256 ownership hashes under the locked device registry. Project writes are
+bounded, atomic and reject symlinked configuration paths. Restart can complete
+an interrupted original-to-owned transition; later user edits are reported as
+drift and never overwritten. Removal restores the exact recorded original or
+deletes only a target created by setup, atomically retires the ownership record
+and then disables desired policy. Its tombstone recovery is idempotent, while a
+changed target or unsafe path blocks every mutation. Hook ingestion remains a
+separate boundary and is not implied by installed setup state.
+
+The CLI builds both development executables. Repository creation is a durable
+client workflow that provisions its OS-held admin credential before remote
+creation and then delegates physical checkout setup to resumable attachment.
+
+The JJ integration crate owns graph DTOs and a bounded executor for native
+queries. Its explicit time-context dependency and temporary cache staging remain
+inside that boundary. Service read capabilities implement the executor's owned
+authorization interface; upstream JJ types do not enter transport or services.
+
+The service owns graph continuation signing and a bounded process-local snapshot
+registry. It retains immutable read pins without retaining session credentials;
+native query execution remains in the JJ integration crate.
+
+The collaboration read service consumes owned AgentStore and ReviewStore models
+through the WAL facade and its audited root snapshots, then returns
+service-owned DTOs. The facade exports only the validated review identities,
+anchor values and workflow enums needed by this boundary; raw ReviewStore
+envelopes remain internal. Separate signed process-local cursor domains retain
+exact immutable roots and closures under shared request, concurrency, expiry and
+object budgets. Visual components and HTTP types do not enter the service, and
+neither the service nor transport can obtain a collaboration publication
+capability from a read cursor.
+
+The HTTP crate owns Axum request parsing, stable JSON errors, media headers and
+transport admission. It consumes service-exported owned read contracts and bound
+native sessions; it has no direct object-store or upstream JJ dependency. The
+service exports those contracts without duplicating native codec definitions.
+The server composes HTTP and native RPC on the same TLS listener and public URL.
+
+The service owns committed-event cursors, bounded replay, current authorization,
+and a fixed-capacity process-local notification channel shared by hosted
+sessions. The HTTP transport owns SSE framing and independent stream admission.
+Publication never awaits consumers; polling selected manifests supplies
+cross-process delivery.
+
+The HTTP crate generates the OpenAPI document from its registered route
+inventory and project-owned schema traits. Released openapi-typescript tooling
+generates browser types from that document. Schema traits add no storage, search
+or presentation dependency to lower layers; transport generation stays in the
+HTTP crate and the Node build scripts.
+
+The browser is a Svelte 5/TypeScript/Vite application under web. It consumes
+generated read contracts with an explicit lossless-integer mapping. A server
+web_root selects a prebuilt static bundle; its manifest and assets are loaded at
+startup with fixed bounds, so requests do not read arbitrary disk paths. The
+Rust workspace remains buildable without a frontend toolchain; pnpm build builds
+the browser bundle before the Rust executables.
+
+The development demo orchestrator owns one pinned embedded RustFS child, one
+recorded native server process, the built browser bundle, a private LocalTrusted
+installation and one persistent native checkout under the ignored
+`.local/dev-demo` subtree. Durable fixture metadata is separate from ephemeral
+process metadata: restart and stop preserve repository/RustFS state, while reset
+is the explicit destructive reseed boundary. The real browser acceptance runner
+uses a separate operating-system temporary root, auto-opens the verified catalog
+entry without credentials, publishes through a separate Unix-RPC CLI process and
+removes only that isolated stack. Both paths refuse unowned listeners and
+process identities and record bounded startup/RSS measurements.
+
+The deterministic reseed writes one representative root document for every
+landing-document category owned by the browser: README, CODE_OF_CONDUCT,
+CONTRIBUTING, LICENSE and SECURITY. A governance test invokes the exported seed
+boundary in a temporary directory and verifies that complete set without
+starting or changing the interactive demo stack.
+
+The user deferred shared-deployment browser release qualification on 28
+September 2026. Manual-token authenticated discovery and repository selection
+are now implemented without OIDC or accounts; provider qualification and M4.14
+remain future work. Functional cold local browser acceptance belongs to M8a.1;
+package publication and visual baselines do not block the local application
+release. The local demo configures and waits for search before reporting
+readiness.
+
+The WAL snapshot DTO shares schema metadata with the typed application API using
+schemars. The locked dependency is schema infrastructure, with no HTTP/UI
+runtime dependency in storage or publication. HTTP native command execution
+shares the serving instance's native worker admission with read execution.
+
+Conflict-upload orchestration belongs to service, with HTTP adapting bounded
+binary streams using the existing released tokio-util dependency. Upload record
+identity belongs to model; native file verification and tree rewriting remain in
+JJ integration. This introduces a staging-record V1 format without changing
+native, WAL, RPC or existing mutation-result codecs. Dependency locks retain
+registry artifacts.
+
+The adapter crate owns read-only committed delivery, projection checkpoint
+bookkeeping and local writer ownership. It depends on model, object storage and
+WAL, with no native JJ, service, transport, search engine or UI dependency.
+Authorization enters through an owned callback; projection implementations own
+their durable artifacts. Repository publication never invokes an adapter.
+
+The service binds adapter source authorization to its existing repository token
+session. The service may consume the adapter crate's owned callback/interface;
+the adapter crate cannot depend on the service or publish native history.
+
+The Tantivy crate owns local projection generations and indexed documents. It
+consumes the committed adapter contract, with no upstream JJ imports or
+publication capability. Native extraction and transport composition remain
+separate boundaries. Tantivy is locked to 0.26.2 for its initial index schema.
+
+Tantivy native extraction consumes only service-owned projection readers and
+DTOs. Service adapts verified snapshot objects to native read-only storage;
+upstream JJ imports remain confined to the JJ integration and CLI crates.
+
+HTTP search consumes the Tantivy pager and adapter health contracts through an
+explicit repository registry. It constructs search pagers using the existing
+native content worker pool. Lower storage/publication/service layers gain no
+search transport dependency; the server starts configured writers separately.
+
+The server composes owned adapter/Tantivy interfaces for configured background
+search. Indexers and their cancellation guards are owned by the foreground
+server lifecycle. Publication and native storage do not depend on these workers.

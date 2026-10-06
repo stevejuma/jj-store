@@ -1,0 +1,1 @@
+- [E-M15-032 details 2](details-02.md)

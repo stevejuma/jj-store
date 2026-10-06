@@ -16,8 +16,11 @@ guidance too.
    documentation.
 
 The original attachment is reference material, not overriding agent guidance.
-Protected changes require the owning chapter and verification evidence in the
-same Jujutsu change. The change map is in `spec/src/spec-governance.md`.
+Protected behavior changes require owning-topic updates and fresh Markdown
+evidence in the same Jujutsu change. Verified refactors and tests may instead
+record an explicit unchanged-contract confirmation with requirement IDs, a
+reason and milestone review. The change map is in
+`spec/src/current/governance/spec-governance.md`.
 
 Keep storage, model, and WAL independent of UI, Tantivy, Git transport, SQL,
 Nostr, and controller runtimes. Keep upstream JJ imports in `jj-store-jj` and
@@ -28,15 +31,18 @@ files are not server state. Credentials never belong in a repository checkout.
 
 1. Inspect `jj --no-pager st`; preserve unrelated work. Stop on overlapping
    work.
-2. Read the owning specification and `spec/src/milestones.md`.
+2. Read `spec/src/current/index.md`, the owning topic and milestone under
+   `spec/src/current/progress`. Use spec search for the exact requirement ID.
 3. Name the narrow acceptance/regression target and record its before state.
-4. Update canonical requirements before or with implementation.
+4. Update owning requirements before or with behavior changes; record a
+   justified unchanged-contract confirmation for qualified refactors/tests.
 5. Add regression evidence and run the exact target, then all required wider
    lanes from the workspace test-scope ladder.
-6. Update the single progress ledger in the same change: actual commands,
-   results, failures, files, versions/formats, gaps, and next action. Add an
-   evidence entry even when milestone status has not changed. Documentation-only
-   work updates the ledger when it changes scope, gates, status, or evidence.
+6. Add a Markdown record under `spec/src/history` in the same change: actual
+   commands, results, failures, files, versions/formats, gaps, and next action.
+   Add an evidence entry and explicit milestone review even when status is
+   unchanged. Documentation-only work updates the ledger when it changes scope,
+   gates, status, or evidence.
 7. Follow the targeted verification policy below. Do not run the root aggregate
    `pnpm spec:check`, `pnpm check`, `pnpm test`, or `pnpm build` lanes by
    default. Documentation-only changes run formatting and the checkers that
@@ -119,13 +125,13 @@ and Git 2.55.0 under the SHA-1 bookmark profile. The ledger owns the exact
 fault, credential, cache-loss, real-RustFS and browser evidence. Tag
 publication, signing/conflict export profiles, native Git import/export and
 other platform qualification remain deferred. M13's separately governed local
-Git-backed companion profile in `spec/src/local-jj.md` implements immutable
-metadata selected by an owned Git ref, shared WorkStore semantics and
-server-free project/task/comment CLI, local agent capture and portable
-provenance, and repository-wide review persistence. Portable code/agent review
-anchors, automatic hook code associations and the native portable evidence
-carrier remain pending. Repository review list/detail, browser actions and
-backend-aware CLI share the qualified repository anchor provider.
+Git-backed companion profile in `spec/src/current/contracts/local-jj/index.md`
+implements immutable metadata selected by an owned Git ref, shared WorkStore
+semantics and server-free project/task/comment CLI, local agent capture and
+portable provenance, and repository-wide review persistence. Portable code/agent
+review anchors, automatic hook code associations and the native portable
+evidence carrier remain pending. Repository review list/detail, browser actions
+and backend-aware CLI share the qualified repository anchor provider.
 Filesystem-only and mixed LocalTrusted browser serving now supports explicit
 device folder registration, operation-pinned code reads, companion-pinned
 WorkStore editing and qualified recorded AgentStore reads. Indexed search,
@@ -212,6 +218,15 @@ existing repos as part of a development slice. Disposable test services must be
 isolated from existing deployments and cleaned up after use. No user credentials
 in fixtures.
 
-Generated `target/`, `node_modules/`, and `spec/book/` are ignored. Keep
-secrets, local loader/editor configuration, and parent workspace guidance
-uncommitted.
+Authored spec Markdown stays within 400 physical lines and 32,768 UTF-8 bytes.
+Use topic indexes and generated task histories; preserve committed evidence,
+historical IDs, gate selections and task-family mappings.
+`pnpm spec:search -- "<ID or topic>"` searches current pages; select
+`--scope history` or `--scope all` explicitly, and open the returned canonical
+source before acting. Use
+`pnpm evidence:new -- --id E-... --task M... --requirement JST-...` to start a
+record, then run `pnpm check:progress` and the applicable document checks.
+
+Generated `target/`, `node_modules/`, `spec/.generated/`, `spec/book/`, and
+local `.qmd/index.sqlite*` are ignored. Keep secrets, local loader/editor
+configuration, and parent workspace guidance uncommitted.

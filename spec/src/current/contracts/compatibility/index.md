@@ -1,0 +1,20 @@
+# Compatibility and release
+
+Read the owning topic and requirement before implementation.
+<!-- generated-navigation -->
+
+## Pages
+
+- [Compatibility and release](01-compatibility-and-release.md)
+- [Requirements](02-requirements.md)
+- [M0 audit evidence](03-m0-audit-evidence.md)
+- [M0 extension qualification](04-m0-extension-qualification.md)
+- [M1 codec conformance](05-m1-codec-conformance.md)
+- [Compiled storage client qualification](06-compiled-storage-client-qualification.md)
+- [Standalone native deployment](07-standalone-native-deployment.md)
+- [Standalone native deployment (continued 2)](08-standalone-native-deployment-continued-2.md)
+- [Local-management compatibility](09-local-management-compatibility.md)
+- [History query compatibility](10-history-query-compatibility.md)
+- [Installation operational settings contracts](11-installation-operational-settings-contracts.md)
+- [Application freshness compatibility](12-application-freshness-compatibility.md)
+- [Additive ordinary Stacks topology](13-additive-ordinary-stacks-topology.md)

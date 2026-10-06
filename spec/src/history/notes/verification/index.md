@@ -1,0 +1,14 @@
+# verification
+
+Browse the child pages below.
+<!-- generated-navigation -->
+## Pages
+
+- [Verification delivery notes](01-verification-delivery-notes.md)
+- [Verification](02-verification.md)
+- [Verification](03-verification-continued-2.md)
+- [Verification](04-verification-continued-3.md)
+- [Verification](05-verification-continued-4.md)
+- [Verification](06-verification-continued-5.md)
+- [Original checkout and combination coordination](07-original-checkout-and-combination-coordination.md)
+- [Explicit initial stack setup evidence](08-explicit-initial-stack-setup-evidence.md)

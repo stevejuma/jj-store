@@ -1,0 +1,73 @@
+# Bounded transcript tail format
+
+The supported AgentStore transcript page encoding is `transcript_tail_page`,
+page schema 2, under the existing TranscriptPage semantic kind. A tail retains
+up to 256 ordered chunk references and an optional strong prefix reference to
+another current tail. Schema-1 forward pages are unsupported and rejected by
+decoding, retained-closure audit, reads, append and recovery. There is no
+automatic conversion, compatibility reader or migration profile. Current
+`AgentRootV1`, chunk and manifest encodings retain their identity; version-1
+naming alone does not indicate an obsolete format.
+
+Tail append reads at most one selected page and its last chunk, copies the
+bounded tail and stages only new tails. Root-pinned sequence witnesses derived
+during complete provider closure auditing qualify ordering and record counts.
+Missing, corrupt or inconsistent ordering evidence fails closed. Witnesses are
+rebuildable snapshot metadata and cannot publish state. Other streams in a
+manifest remain retained.
+
+Current reads walk prefix-before-tail with cycle, page, stream identity, byte
+and record limits. Every supported selected manifest remains reconstructible
+from its own closure. Provider closure audits remain mandatory and separate from
+projection append I/O; no publication authority or dependency check is weakened.
+Durable capture spools, exact prepared requests and receipts remain independent
+retry contracts. Removing obsolete AgentStore encodings does not rewrite or
+discard those durable intents.
+
+API source management retains a memory-only association to the last admitted
+reader source and exact snapshot generation witness. The association survives
+pause, source acquisition failure and terminal cache retention; it grants no new
+source eligibility, Write access, import consent or publication authority. The
+selected source page may inspect publication coverage for at most 100 such
+associations in one existing FIFO/lock turn, reading the bounded publication
+catalog and retained reader metadata once. Empty pages and file-only pages
+perform no snapshot evidence inspection. No transcript body, pending body,
+OpenCode request or new source owner is allowed in this read. Missing/corrupt
+history or an unavailable/rebound prepared metadata handle yields absent
+coverage, never an invented zero-message committed frontier. Captured sequence
+and logical count remain distinct from exact contiguous native receipt sequence
+and optional committed count. An empty lifecycle receipt may qualify count zero.
+This source coverage is distinct from per-request accepted import completion.
+Installation Admin/configuration and selected control-file admission bracket
+metadata inspection. API history import/export and normal configured OpenCode
+startup remain separately gated.
+
+Capture presentation schedules ordinary status, loaded source coverage and
+original import progress observations independently of stable command ownership.
+The read-only busy response defers observation without reporting unavailable or
+discarding selected data. Bounded read retries honor cancellation; continued
+contention leaves initial data loading or retained observations refreshing.
+Command refusals, unknown outcomes and exact retry identities remain unchanged;
+automatic read retries MUST NOT resend mutation commands. UI closure or
+visibility cannot cancel, replace or automatically resend a pending command.
+Background source discovery never retargets an accepted import. Only qualified
+Codex profiles expose history import in the initial preview. Source coverage
+freshness records the browser time of accepted validated observations, retained
+across failed/busy reads and view navigation. It is presentation metadata, not a
+harness activity timestamp or persisted repository fact.
+
+Installation capture feedback follows JST-UI-019: operational failures use
+installation-scoped notifications while exact unknown-command recovery remains
+beside the retained original request. Notification dismissal or navigation
+cannot release, retarget or retry the command.
+
+Agent prompt-element disclosures are presentation derived from recorded text,
+independent of harness identity. Their renderer never modifies captured source,
+canonical content, media type, request identity or copy values. Markup
+attributes are inert text, including highlighted names and values. Compact
+single-line leaf presentation retains both tags and safe inline Markdown;
+nested/multiline nodes retain disclosures. Borderless rows preserve child-level
+indentation and syntax token colors without modifying attribute text. The shared
+Markdown safe-HTML and link policy still applies to element bodies. Malformed,
+unfinished or excessively nested markup falls back to visible literal text
+rather than discarding source.

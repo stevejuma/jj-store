@@ -7,3 +7,11 @@ src = "src"
 [build]
 build-dir = "book"
 create-missing = false
+
+[preprocessor.repository-references]
+command = "node ../../scripts/spec/book-references.mjs"
+before = ["links"]
+
+[output.html.fold]
+enable = true
+level = 1

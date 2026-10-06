@@ -1,0 +1,3 @@
+- [E-M20-005 details 2](details-02.md)
+- [E-M20-005 details 3](details-03.md)
+- [E-M20-005 details 4](details-04.md)

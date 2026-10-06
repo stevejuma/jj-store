@@ -1,0 +1,33 @@
+# Requirement verification
+
+Each requirement appears in exactly one matrix row across this directory. These
+rows record requirement coverage; milestone task status remains in Progress.
+<!-- generated-navigation -->
+
+## Pages
+
+- [ADAPT verification](adapt.md)
+- [API verification](api.md)
+- [ARCH verification](arch.md)
+- [CLI verification](cli.md)
+- [COLLAB verification (continued 2)](collab-02.md)
+- [COLLAB verification (continued 3)](collab-03.md)
+- [COLLAB verification](collab.md)
+- [COMPAT verification](compat.md)
+- [DESK verification](desk.md)
+- [DOC verification](doc.md)
+- [GIT verification](git.md)
+- [GOV verification](gov.md)
+- [ID verification](id.md)
+- [JJ verification](jj.md)
+- [LOCAL verification (continued 2)](local-02.md)
+- [LOCAL verification](local.md)
+- [MUT verification](mut.md)
+- [OBJ verification](obj.md)
+- [PUB verification](pub.md)
+- [REPL verification](repl.md)
+- [SEC verification](sec.md)
+- [UI verification (continued 2)](ui-02.md)
+- [UI verification (continued 3)](ui-03.md)
+- [UI verification](ui.md)
+- [WORK verification](work.md)

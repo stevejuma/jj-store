@@ -1,0 +1,2 @@
+- [E-READ-072 details 2](details-02.md)
+- [E-READ-072 details 3](details-03.md)

@@ -1,0 +1,30 @@
+# Previous chapter links
+
+These compatibility pages retain the former chapter paths and anchors. Start
+with the current specification for implementation.
+<!-- generated-navigation -->
+
+## Pages
+
+- [Adapters and Tantivy (previous location)](adapters.md)
+- [Read APIs and browser (previous location)](api.md)
+- [Architecture (previous location)](architecture.md)
+- [CLI and server commands (previous location)](cli.md)
+- [Agent activity, repository reviews, Threads and Reactions (previous location)](collaboration.md)
+- [Compatibility and release (previous location)](compatibility.md)
+- [Desktop application (previous location)](desktop.md)
+- [Application documentation (previous location)](documentation.md)
+- [Explicit Git interoperability (previous location)](git-interop.md)
+- [Identity and native codecs (previous location)](identity.md)
+- [Native JJ integration (previous location)](jj-integration.md)
+- [Local Git-backed JJ collaboration (previous location)](local-jj.md)
+- [Implementation progress (previous location)](milestones.md)
+- [Typed mutations (previous location)](mutations.md)
+- [Object storage (previous location)](object-store.md)
+- [Native projects and tasks (previous location)](projects.md)
+- [Publication and recovery (previous location)](publication.md)
+- [Local-first writable replication (previous location)](replication.md)
+- [Security and deployment (previous location)](security.md)
+- [Specification governance (previous location)](spec-governance.md)
+- [Storybook presentation catalog (previous location)](ui.md)
+- [Verification (previous location)](verification.md)

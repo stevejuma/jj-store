@@ -1,0 +1,1 @@
+- [E-READ-050 details 2](details-02.md)

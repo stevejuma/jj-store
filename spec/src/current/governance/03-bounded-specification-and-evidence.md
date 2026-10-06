@@ -1,0 +1,53 @@
+# Bounded specification and evidence
+
+JST-GOV-010 governs all authored specification Markdown, including navigation,
+progress and evidence detail pages: at most 400 physical lines and 32,768 UTF-8
+bytes. Counts include examples, frontmatter and tables. Generated book staging
+and immutable original archives are not authored specification pages. Current
+contracts define each requirement once; verification files validate one row per
+requirement across their union. Historical source and evidence remain lossless.
+
+JST-GOV-011 permits an explicit unchanged-contract confirmation for protected
+refactors and tests. It names affected requirements and source paths, explains
+why the contract is unchanged, includes actual validation and confirms the
+milestone review. Behavior changes update their owning topics. Every affected
+owner requires coverage. A reused parent record cannot confirm a new change.
+Task histories derive backlinks from records; task completion still selects
+original-gate evidence explicitly. Resolution links never overwrite historical
+results or automatically promote milestones. All selected-revision reads use
+that revision, and merge checks audit every parent.
+
+The one generated book also bundles tracked repository files referenced by its
+pages. Supplements identify their original paths and remain references; they
+define no canonical requirements or task states. Transitive links close within
+the generated output, source commands and authored files remain intact, and
+untracked files cannot enter the book. The folded navigation opens current
+reading areas before history and previous chapter links.
+
+## Authoring evidence
+
+Start a record with
+`pnpm evidence:new -- --id E-AREA-NNN --task M... --requirement JST-AREA-NNN`;
+repeat task and requirement flags for all affected owners. IDs are unique across
+all dates. The generated record belongs under `spec/src/history/YYYY/MM/DD/ID`
+and remains pending until its actual validation and reviews are filled in.
+
+Retain the `evidence-field` and run delimiters when editing. The schema-1
+frontmatter identifies each fragment; prose remains readable Markdown, commands
+use shell fences, and run results and structured review fields use YAML. Detail
+pages preserve field and run order. The parser restores literal prose entities
+and exact multiline commands, including failed attempts. Use an appended record
+to correct committed evidence.
+
+After changing records or task rows, run `pnpm progress:history` to regenerate
+task backlinks and bounded navigation, then `pnpm check:progress` and
+`pnpm spec:first`. Completion evidence is selected in the task table; a passing
+history record alone does not complete a task. `spec/history-relations.yml`
+records explicit resolution or supersession with a reason while retaining each
+original result.
+
+Navigation regeneration paginates wide indexes and writes bounded SUMMARY
+fragments under reserved SUMMARY folders. These derived pages preserve complete
+chapter coverage and remain outside default search. Generated footer markers are
+separated from evidence fields, so headings and delimiters inside recorded
+commands remain exact.

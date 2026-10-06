@@ -1,0 +1,6 @@
+E-READ-096:
+  resolves: [E-READ-094, E-READ-095]
+  reason: Main integration completed the previously recorded landing blockers.
+E-READ-094:
+  supersedes: [E-READ-091]
+  reason: Accepted cooperative cancellation replaces the proposed hard comparison deadline; the original failed probe remains a failure.

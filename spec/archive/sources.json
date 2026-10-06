@@ -1,0 +1,120 @@
+{
+  "spec/src/publication.md": {
+    "archive": "spec/archive/2026-10-06/publication.source",
+    "sha256": "85b47453f22d4bfd393a7a3f546feae9775d4242874551047aa5165a2a3e924e"
+  },
+  "spec/src/local-jj.md": {
+    "archive": "spec/archive/2026-10-06/local-jj.source",
+    "sha256": "5071c64911a89d3ba39dfd3fc385d4d63c70483799a6ed94f2bc68ff407917dd"
+  },
+  "spec/src/collaboration.md": {
+    "archive": "spec/archive/2026-10-06/collaboration.source",
+    "sha256": "6b7a0dd1b8c5152cdf9dcfcda980432dde1c120e55bd2dde55fe83f57e134f22"
+  },
+  "spec/src/replication.md": {
+    "archive": "spec/archive/2026-10-06/replication.source",
+    "sha256": "3cafe0661c3205be222fbd4b183784f494d73c230491035b3ab2aeff735c97c8"
+  },
+  "spec/src/jj-integration.md": {
+    "archive": "spec/archive/2026-10-06/jj-integration.source",
+    "sha256": "c4969547b5d1f03fcba1ba1b51a6f306e43fffdee6a9409e9b5bd488d0d71a64"
+  },
+  "spec/src/spec-governance.md": {
+    "archive": "spec/archive/2026-10-06/spec-governance.source",
+    "sha256": "cc5177979192b65f8d4653c31cb92ba773c31313555ff0809ef8b81a4fe1d64c"
+  },
+  "spec/src/architecture.md": {
+    "archive": "spec/archive/2026-10-06/architecture.source",
+    "sha256": "6de4c61477ad0ada280f4adc4ab9f786ee063c34c31b3f9c9ada324271da5769"
+  },
+  "spec/src/api.md": {
+    "archive": "spec/archive/2026-10-06/api.source",
+    "sha256": "ec928fce3c4e3b19e7719bcc80793e83f45b7756662e33652db224b02428f039"
+  },
+  "spec/src/cli.md": {
+    "archive": "spec/archive/2026-10-06/cli.source",
+    "sha256": "65e36974aac3559fbfe32f14c1b239074bbe22c7269e6e79af33a814c793f0c9"
+  },
+  "spec/src/SUMMARY.md": {
+    "archive": "spec/archive/2026-10-06/SUMMARY.source",
+    "sha256": "13df8c417a65718a34be89910bcad53b5bce605250c3ddbeb03857ef18b12510"
+  },
+  "spec/src/identity.md": {
+    "archive": "spec/archive/2026-10-06/identity.source",
+    "sha256": "cdd2436bb71886bdcb81c0bb5c21fe11ea99a00816e140cc4453994f26ce9ebf"
+  },
+  "spec/src/adapters.md": {
+    "archive": "spec/archive/2026-10-06/adapters.source",
+    "sha256": "97eff5e5cc8236ccc5e35d891645c03c9a5e3b7a06bc95fe9650f4136f86a9e0"
+  },
+  "spec/src/desktop.md": {
+    "archive": "spec/archive/2026-10-06/desktop.source",
+    "sha256": "6f41711a62c8051a4929747951eeffe3c08d26ea13f84aa6182c56d3d892d23e"
+  },
+  "spec/src/projects.md": {
+    "archive": "spec/archive/2026-10-06/projects.source",
+    "sha256": "b81a9dd8018327734187b9f06bdfa35231f7cdccbeba3db47b514ba666a3b61c"
+  },
+  "spec/src/verification.md": {
+    "archive": "spec/archive/2026-10-06/verification.source",
+    "sha256": "d66e97938276d67b3e61ab6e40f3b3b6259eb5cd25a879025c6dc5b6a5bc0de4",
+    "parts": [
+      "spec/archive/2026-10-06/verification.source.part-001",
+      "spec/archive/2026-10-06/verification.source.part-002",
+      "spec/archive/2026-10-06/verification.source.part-003"
+    ]
+  },
+  "spec/src/index.md": {
+    "archive": "spec/archive/2026-10-06/index.source",
+    "sha256": "0e1d2b1d81927df9c5ebcf45d5f6b4bfe5604aca59f544efbdbdc83f78744a18"
+  },
+  "spec/src/git-interop.md": {
+    "archive": "spec/archive/2026-10-06/git-interop.source",
+    "sha256": "fc420873e174056c52ff873cfcff6a90762f0034f518e2eede52912202440b26"
+  },
+  "spec/src/compatibility.md": {
+    "archive": "spec/archive/2026-10-06/compatibility.source",
+    "sha256": "bb28d70342c89ee5fbd0b3ee7a74574ad56a29ffb0f71fc4d1c0144947295e39"
+  },
+  "spec/src/documentation.md": {
+    "archive": "spec/archive/2026-10-06/documentation.source",
+    "sha256": "bfeef99882c02b5be7679884e5307fdaf274f02dcb2e112c9a5693dba960fb02"
+  },
+  "spec/src/object-store.md": {
+    "archive": "spec/archive/2026-10-06/object-store.source",
+    "sha256": "5f75253eb3ed7b2c722965aacf05e326fe6753d04b3c101fd277ddfb4ff72b7d"
+  },
+  "spec/src/milestones.md": {
+    "archive": "spec/archive/2026-10-06/milestones.source",
+    "sha256": "3e4bb573150cbcb171276c6d5b401544e4fb63ac9701c16b1a40dc84856de304",
+    "parts": [
+      "spec/archive/2026-10-06/milestones.source.part-001",
+      "spec/archive/2026-10-06/milestones.source.part-002",
+      "spec/archive/2026-10-06/milestones.source.part-003",
+      "spec/archive/2026-10-06/milestones.source.part-004",
+      "spec/archive/2026-10-06/milestones.source.part-005",
+      "spec/archive/2026-10-06/milestones.source.part-006",
+      "spec/archive/2026-10-06/milestones.source.part-007",
+      "spec/archive/2026-10-06/milestones.source.part-008",
+      "spec/archive/2026-10-06/milestones.source.part-009",
+      "spec/archive/2026-10-06/milestones.source.part-010",
+      "spec/archive/2026-10-06/milestones.source.part-011",
+      "spec/archive/2026-10-06/milestones.source.part-012",
+      "spec/archive/2026-10-06/milestones.source.part-013",
+      "spec/archive/2026-10-06/milestones.source.part-014",
+      "spec/archive/2026-10-06/milestones.source.part-015"
+    ]
+  },
+  "spec/src/ui.md": {
+    "archive": "spec/archive/2026-10-06/ui.source",
+    "sha256": "68ff00afb8f555c4a1ca76335da51c8765b004ac840d07fb21224fb4dc2c0275"
+  },
+  "spec/src/mutations.md": {
+    "archive": "spec/archive/2026-10-06/mutations.source",
+    "sha256": "1681776f8a06fc95a08cb463c2fdaa81037346d99ab14a76715e34b3c92a42b3"
+  },
+  "spec/src/security.md": {
+    "archive": "spec/archive/2026-10-06/security.source",
+    "sha256": "81e99345e9b673669d693a86155ab93f7e3c7bead0cf58e334c943015124c06e"
+  }
+}

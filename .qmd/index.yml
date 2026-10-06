@@ -1,0 +1,24 @@
+collections:
+  jj-store-current:
+    path: spec/src/current
+    pattern: "**/*.md"
+    ignore: ["**/SUMMARY*.md", "**/SUMMARY*/**"]
+    context:
+      /: Current jj-store requirements, verification and milestone status.
+  jj-store-history:
+    path: spec/src/history
+    pattern: "**/*.md"
+    ignore: ["**/SUMMARY*.md", "**/SUMMARY*/**"]
+    includeByDefault: false
+    context:
+      /:
+        Immutable historical evidence; original outcomes are not current status.
+  jj-store-all:
+    path: spec/src
+    pattern: "**/*.md"
+    ignore: ["**/SUMMARY*.md", "**/SUMMARY*/**"]
+    includeByDefault: false
+models:
+  embed: hf:ggml-org/embeddinggemma-300M-GGUF/embeddinggemma-300M-Q8_0.gguf
+  generate: hf:tobil/qmd-query-expansion-1.7B-gguf/qmd-query-expansion-1.7B-q4_k_m.gguf
+  rerank: hf:ggml-org/Qwen3-Reranker-0.6B-Q8_0-GGUF/qwen3-reranker-0.6b-q8_0.gguf

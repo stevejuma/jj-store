@@ -1,0 +1,19 @@
+# Publication and recovery
+
+Read the owning topic and requirement before implementation.
+<!-- generated-navigation -->
+
+## Pages
+
+- [Publication and recovery](01-publication-and-recovery.md)
+- [Requirements](02-requirements.md)
+- [Verified dependency inventories](03-verified-dependency-inventories.md)
+- [V1 control records and catalogs](04-v1-control-records-and-catalogs.md)
+- [Typed application intent](05-typed-application-intent.md)
+- [Selected adapter reads](06-selected-adapter-reads.md)
+- [Selected AgentStore reads](07-selected-agentstore-reads.md)
+- [Native WorkStore](08-native-workstore.md)
+- [Retained Git interoperability domain](09-retained-git-interoperability-domain.md)
+- [M15 additive collaboration publication](10-m15-additive-collaboration-publication.md)
+- [M18 capture publication qualification](11-m18-capture-publication-qualification.md)
+- [Manifest-selected point membership](12-manifest-selected-point-membership.md)

@@ -1,0 +1,9 @@
+# COMPAT verification
+
+| ID             | Status      | Evidence                                                                                                                                                                                                                                      |
+| -------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| JST-COMPAT-001 | Implemented | `docs/upstream-lock.md`; `docs/codec-coverage.md`; `fixtures/native-profile/m0-hashes.json`; [M0](../progress/index.md)                                                                                                                       |
+| JST-COMPAT-002 | Implemented | `crates/jj-store-jj/tests/compatibility.rs`; `docs/evidence/m0-rustfs-cold.json`; [M0](../progress/index.md)                                                                                                                                  |
+| JST-COMPAT-003 | Implemented | `crates/jj-store-server/tests/embedded_storage.rs`; `web/tests/real/native-repository.spec.ts`; [local release evidence](../../../../docs/evidence/m8a-local-release.md); [E-M8A-004](../../history/2026/09/28/E-M8A-004/index.md)            |
+| JST-COMPAT-004 | Planned     | [Compatibility and release](../contracts/compatibility/index.md); [milestone gate](../progress/index.md)                                                                                                                                      |
+| JST-COMPAT-005 | Implemented | [embedded RustFS qualification](../../../../docs/embedded-rustfs-qualification.md); `scripts/real-browser-acceptance.mjs`; [E-M8A-001](../../history/2026/09/28/E-M8A-001/index.md); [E-M8A-004](../../history/2026/09/28/E-M8A-004/index.md) |

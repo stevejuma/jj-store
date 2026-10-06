@@ -20,3 +20,8 @@ docs/site/cli/jj-*.md
 docs/site/reference/http-api.md
 docs/site/reference/defaults.md
 docs/site/reference/api
+
+spec/archive/
+spec/src/history/
+spec/.generated/
+.qmd/index.sqlite*

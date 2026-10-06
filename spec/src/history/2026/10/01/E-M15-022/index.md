@@ -1,0 +1,306 @@
+---
+schema: 1
+id: E-M15-022
+---
+
+# E-M15-022
+
+<!-- evidence-field:id markdown -->
+## Id
+
+E-M15-022
+<!-- /evidence-field -->
+
+<!-- evidence-field:tasks list -->
+## Tasks
+
+- M15
+- M15.3
+- M15.5
+- M15.6
+<!-- /evidence-field -->
+
+<!-- evidence-field:date markdown -->
+## Date
+
+2026-10-01
+<!-- /evidence-field -->
+
+<!-- evidence-field:kind markdown -->
+## Kind
+
+rebase-native-threads-with-local-browser-main
+<!-- /evidence-field -->
+
+<!-- evidence-field:revision markdown -->
+## Revision
+
+enclosing Jujutsu change msszrzpn
+<!-- /evidence-field -->
+
+<!-- evidence-field:versions markdown -->
+## Versions
+
+JJ 0.45.1; Rust 1.98.1; CARGO_INCREMENTAL=0; Svelte 5.57.1/Vite 8.3.1/Vitest 4.1.11/Storybook 10.5.7. Retain the inherited Design Core local development snapshot and the source/license provenance qualified in E-M15-019; no registry-only foundation claim.
+<!-- /evidence-field -->
+
+<!-- evidence-field:formats markdown -->
+## Formats
+
+Rebase original Threads commit ed22112b onto clean main vkutkopr / c347df2d, including main local Git-backed browser, Git SHA-1 operation-message recognition and collapsed/project navigation refinements. Combined OpenAPI inventory: 85 paths, comprising 67 native and 18 local. No storage, canonical object, manifest or companion format change.
+<!-- /evidence-field -->
+
+<!-- evidence-field:before markdown -->
+## Before
+
+Both workspaces clean: main default@ ozomqkpp / 2a6ce3ef with parent c347df2d, isolated threads-reactions@ mlqxppvk / f870563f with parent msszrzpn / ed22112b. 161 main-changed files, 23 overlaps. Rebase produces conflicts in milestones.md, production-store-controller.svelte.ts and StoreAgentContext.svelte; main server PID 23243 is independently running on port 7460.
+<!-- /evidence-field -->
+
+<!-- evidence-field:files list -->
+## Files
+
+- .storybook/vite.config.ts
+- AGENTS.md
+- catalog/components/community-projects/CommunityProjectsRepositoryDirectory.stories.svelte
+- catalog/components/store-application/StoreRepositorySearch.stories.svelte
+- catalog/components/store-search/StoreRecentSearch.stories.svelte
+- catalog/components/store-search/StoreSearchCommand.stories.svelte
+- catalog/components/store-threads/StoreThreadAlignment.stories.svelte
+- catalog/components/store-threads/StoreThreads.stories.svelte
+- catalog/fixtures/StoreThreadsFixture.svelte
+- catalog/fixtures/thread-transport.ts
+- crates/jj-store-cli/tests/native_lifecycle/http_threads_reactions.rs
+- crates/jj-store-http/src/content_search.rs
+- crates/jj-store-http/src/lib.rs
+- crates/jj-store-http/src/routes.rs
+- crates/jj-store-service/src/collab_reads.rs
+- crates/jj-store-service/src/content_search/cursors.rs
+- crates/jj-store-service/src/content_search/extract.rs
+- crates/jj-store-service/src/content_search/models.rs
+- crates/jj-store-service/src/content_search.rs
+- crates/jj-store-service/src/lib.rs
+- crates/jj-store-service/src/thread_directory.rs
+- crates/jj-store-service/tests/collab_pagination.rs
+- crates/jj-store-service/tests/content_search.rs
+- docs/catalog.md
+- docs/ui-provenance.json
+- package.json
+- pnpm-lock.yaml
+- schemas/openapi.json
+- scripts/catalog-browser.test.mjs
+- scripts/check-ui-ownership.mjs
+- scripts/local-package-pnpmfile.cjs
+- scripts/local-package-pnpmfile.test.mjs
+- scripts/ui-ownership.test.mjs
+- spec/src/adapters.md
+- spec/src/api.md
+- spec/src/architecture.md
+- spec/src/cli.md
+- spec/src/collaboration.md
+- spec/src/compatibility.md
+- spec/src/milestones.md
+- spec/src/mutations.md
+- spec/src/spec-governance.md
+- spec/src/ui.md
+- spec/src/verification.md
+- spec-validator.config.mjs
+- web/src/lib/api/generated.ts
+- web/src/lib/collaboration/presentation.ts
+- web/src/lib/collaboration/thread-presentation.ts
+- web/src/lib/community/community-link-normalize.ts
+- web/src/lib/community/community-links.ts
+- web/src/lib/community/composer-media.ts
+- web/src/lib/community/composer-model.ts
+- web/src/lib/community/content-mentions.ts
+- web/src/lib/community/contracts.ts
+- web/src/lib/community/conversations.ts
+- web/src/lib/community/send-contracts.ts
+- web/src/lib/community/workspace-model.ts
+- web/src/lib/controller/contracts.ts
+- web/src/lib/controller/global-search-presentation.ts
+- web/src/lib/controller/global-search-types.ts
+- web/src/lib/controller/global-search.svelte.ts
+- web/src/lib/controller/production-entity-search.ts
+- web/src/lib/controller/production-repository-connect.ts
+- web/src/lib/controller/production-store-controller.svelte.ts
+- web/src/lib/controller/production-store-view.ts
+- web/src/lib/controller/production-threads.svelte.ts
+- web/src/lib/controller/production-work.svelte.ts
+- web/src/lib/controller/projects-route-codec.ts
+- web/src/lib/controller/store-route-codec.ts
+- web/src/lib/controller/store-search-types.ts
+- web/src/lib/controller/work-comment-focus.ts
+- web/src/lib/controller/work-types.ts
+- web/src/lib/ui/community-channel-settings/CommunityChannelSettings.css
+- web/src/lib/ui/community-channel-settings/CommunityChannelSettings.svelte
+- web/src/lib/ui/community-chat-composer/CommunityChatComposer.svelte
+- web/src/lib/ui/community-chat-composer/CommunityComposerAutocompleteLayer.svelte
+- web/src/lib/ui/community-chat-composer/CommunityComposerChannelChip.svelte
+- web/src/lib/ui/community-chat-composer/CommunityComposerChipDismiss.svelte
+- web/src/lib/ui/community-chat-composer/CommunityComposerEditContext.svelte
+- web/src/lib/ui/community-chat-composer/CommunityComposerEntityChip.svelte
+- web/src/lib/ui/community-chat-composer/CommunityComposerMemberChip.svelte
+- web/src/lib/ui/community-chat-composer/CommunityComposerMemberReference.svelte
+- web/src/lib/ui/community-chat-composer/CommunityComposerRemovableChip.svelte
+- web/src/lib/ui/community-chat-composer/CommunityComposerToolbar.svelte
+- web/src/lib/ui/community-chat-composer/autocomplete-rank.ts
+- web/src/lib/ui/community-chat-composer/autocomplete.ts
+- web/src/lib/ui/community-chat-composer/composer-0.css
+- web/src/lib/ui/community-chat-composer/composer-1.css
+- web/src/lib/ui/community-chat-composer/composer-autocomplete-apply.ts
+- web/src/lib/ui/community-chat-composer/composer-autocomplete.svelte.ts
+- web/src/lib/ui/community-chat-composer/composer-chip-remove.ts
+- web/src/lib/ui/community-chat-composer/composer-chip-widgets.ts
+- web/src/lib/ui/community-chat-composer/composer-decorations.ts
+- web/src/lib/ui/community-chat-composer/composer-entity-links.ts
+- web/src/lib/ui/community-chat-composer/composer-extension.ts
+- web/src/lib/ui/community-chat-composer/composer-mention-insert.ts
+- web/src/lib/ui/community-chat-composer/composer-mention-token.ts
+- web/src/lib/ui/community-chat-composer/composer-reference-decorations.ts
+- web/src/lib/ui/community-chat-composer/composer-room-tokens.ts
+- web/src/lib/ui/community-chat-composer/composer-slash-catalog.ts
+- web/src/lib/ui/community-chat-composer/composer-slash-context.ts
+- web/src/lib/ui/community-chat-composer/composer-slash-insert.ts
+- web/src/lib/ui/community-chat-composer/composer-slash-session.ts
+- web/src/lib/ui/community-chat-composer/composer-slash.ts
+- web/src/lib/ui/community-chat-composer/composer-token-references.ts
+- web/src/lib/ui/community-chat-composer/composer-widgets.ts
+- web/src/lib/ui/community-chat-composer/model.ts
+- web/src/lib/ui/community-chat-composer/props.ts
+- web/src/lib/ui/community-composer-mention-picker/CommunityComposerMentionPicker.css
+- web/src/lib/ui/community-composer-mention-picker/CommunityComposerMentionPicker.svelte
+- web/src/lib/ui/community-composer-room-icon/CommunityComposerRoomIcon.svelte
+- web/src/lib/ui/community-composer-slash-picker/CommunityComposerSlashPicker.svelte
+- web/src/lib/ui/community-composer-slash-picker/slash-picker-rows.ts
+- web/src/lib/ui/community-composer-status.css
+- web/src/lib/ui/community-conversation/CommunityConversation.svelte
+- web/src/lib/ui/community-conversation/conversation-day.ts
+- web/src/lib/ui/community-conversation/conversation.css
+- web/src/lib/ui/community-details/CommunityDetails.svelte
+- web/src/lib/ui/community-emoji-picker/CommunityEmojiPicker.svelte
+- web/src/lib/ui/community-entity-chip/CommunityEntityChip.svelte
+- web/src/lib/ui/community-entity-chip/CommunityEntityChipFrame.svelte
+- web/src/lib/ui/community-entity-chip/CommunityEntityChipIcon.svelte
+- web/src/lib/ui/community-entity-chip/community-entity-link.css
+- web/src/lib/ui/community-entity-chip/navigation.ts
+- web/src/lib/ui/community-markdown-content/CommunityChannelReference.svelte
+- web/src/lib/ui/community-markdown-content/CommunityEmojiReference.svelte
+- web/src/lib/ui/community-markdown-content/CommunityEntityReference.svelte
+- web/src/lib/ui/community-markdown-content/CommunityMarkdownContent.svelte
+- web/src/lib/ui/community-markdown-content/CommunityMemberReference.svelte
+- web/src/lib/ui/community-markdown-content/CommunitySpoiler.svelte
+- web/src/lib/ui/community-markdown-content/context.ts
+- web/src/lib/ui/community-markdown-content/preview-mentions.ts
+- web/src/lib/ui/community-markdown-content/syntax-entity.ts
+- web/src/lib/ui/community-markdown-content/syntax-hast-links.ts
+- web/src/lib/ui/community-markdown-content/syntax-hast.ts
+- web/src/lib/ui/community-markdown-content/syntax-tokens.ts
+- web/src/lib/ui/community-markdown-content/syntax.ts
+- web/src/lib/ui/community-member-avatar/handle.ts
+- web/src/lib/ui/community-member-hover-card/CommunityMemberHoverCard.svelte
+- web/src/lib/ui/community-message/CommunityMessage.svelte
+- web/src/lib/ui/community-message/CommunityMessageMeta.svelte
+- web/src/lib/ui/community-message/CommunityMessageReplySummary.svelte
+- web/src/lib/ui/community-message/community-message.css
+- web/src/lib/ui/community-message/grouping.ts
+- web/src/lib/ui/community-message/implicit-mentions.ts
+- web/src/lib/ui/community-message/message-activity.ts
+- web/src/lib/ui/community-message/message-local.css
+- web/src/lib/ui/community-message/props.ts
+- web/src/lib/ui/community-message-actions/CommunityMessageActions.svelte
+- web/src/lib/ui/community-message-actions/message-action-hover.svelte.ts
+- web/src/lib/ui/community-project-channel-icon/CommunityProjectChannelIcon.svelte
+- web/src/lib/ui/community-projects/CommunityProjectsMarkdownPreview.svelte
+- web/src/lib/ui/community-projects/StoreFileEditor.svelte
+- web/src/lib/ui/community-reactions/CommunityReactions.svelte
+- web/src/lib/ui/community-reply-context/CommunityReplyContext.svelte
+- web/src/lib/ui/community-reply-preview/CommunityReplyPreview.svelte
+- web/src/lib/ui/community-report-dialog/CommunityReportDialog.svelte
+- web/src/lib/ui/community-search-command/CommunitySearchCommand.svelte
+- web/src/lib/ui/community-search-command/model.ts
+- web/src/lib/ui/community-search-command/search-command.css
+- web/src/lib/ui/community-skeleton/CommunitySkeleton.svelte
+- web/src/lib/ui/community-thread-panel/CommunityThreadMessage.svelte
+- web/src/lib/ui/community-thread-panel/CommunityThreadPanel.svelte
+- web/src/lib/ui/community-thread-panel/CommunityThreadTreeRow.svelte
+- web/src/lib/ui/community-thread-panel/props.ts
+- web/src/lib/ui/community-thread-panel/thread-panel.css
+- web/src/lib/ui/community-thread-panel/thread-tree-layout.ts
+- web/src/lib/ui/community-workspace/CommunityWorkspaceSurface.svelte
+- web/src/lib/ui/community-workspace/model.ts
+- web/src/lib/ui/focus-message.ts
+- web/src/lib/ui/forum-topic-list/ForumTopicList.svelte
+- web/src/lib/ui/forum-topic-list/VirtualForumTopicRows.svelte
+- web/src/lib/ui/forum-topic-list/forum-topic-list.css
+- web/src/lib/ui/forum-topic-list/topic-row-estimate.ts
+- web/src/lib/ui/store-application/StoreApplication.svelte
+- web/src/lib/ui/store-application/StoreApplicationHeaderActions.svelte
+- web/src/lib/ui/store-application/create-store-shell.ts
+- web/src/lib/ui/store-application/entity-context.ts
+- web/src/lib/ui/store-collaboration/StoreAgentContext.svelte
+- web/src/lib/ui/store-collaboration/StoreAgentToolReview.svelte
+- web/src/lib/ui/store-collaboration/StoreAgentTranscript.svelte
+- web/src/lib/ui/store-collaboration/StoreCommentableCommitDiff.svelte
+- web/src/lib/ui/store-collaboration/StoreRepositoryActivity.svelte
+- web/src/lib/ui/store-collaboration/StoreReviewComposer.svelte
+- web/src/lib/ui/store-collaboration/StoreReviewConversation.svelte
+- web/src/lib/ui/store-collaboration/StoreReviewDetail.svelte
+- web/src/lib/ui/store-mutations/StoreMutationFields.svelte
+- web/src/lib/ui/store-search/StoreSearchCommand.svelte
+- web/src/lib/ui/store-search/StoreSearchOverlay.svelte
+- web/src/lib/ui/store-search/search-context.ts
+- web/src/lib/ui/store-threads/StoreMessageReactions.svelte
+- web/src/lib/ui/store-threads/StoreThreadCreate.svelte
+- web/src/lib/ui/store-threads/StoreThreadHeader.svelte
+- web/src/lib/ui/store-threads/StoreThreadReplies.svelte
+- web/src/lib/ui/store-threads/StoreThreadSettings.svelte
+- web/src/lib/ui/store-threads/StoreThreadSidebar.svelte
+- web/src/lib/ui/store-threads/StoreThreads.svelte
+- web/src/lib/ui/store-threads/store-threads.css
+- web/src/lib/ui/store-threads/thread-context.ts
+- web/src/lib/ui/store-threads/thread-panel.svelte.ts
+- web/src/lib/ui/store-threads/thread-view.ts
+- web/src/lib/ui/store-work/StoreProjectsActivity.svelte
+- web/src/lib/ui/store-work/StoreProjectsDirectory.svelte
+- web/src/lib/ui/store-work/StoreProjectsRepositories.svelte
+- web/src/lib/ui/store-work/StoreProjectsReviews.svelte
+- web/src/lib/ui/store-work/StoreRepositoryDirectoryRow.svelte
+- web/src/lib/ui/store-work/StoreWorkComments.svelte
+- web/src/lib/ui/store-work/StoreWorkProjectForm.svelte
+- web/src/lib/ui/store-work/StoreWorkProjectRows.svelte
+- web/src/lib/ui/store-work/StoreWorkReviewRow.svelte
+- web/src/lib/ui/store-work/StoreWorkTaskDetail.svelte
+- web/src/lib/ui/store-work/StoreWorkTaskForm.svelte
+- web/src/lib/ui/store-work/StoreWorkTaskRows.svelte
+- web/src/lib/ui/store-work/repository-directory-presentation.ts
+- web/src/lib/ui/store-work/work-presentation.ts
+- web/tests/browser/threads-alignment.spec.ts
+- web/tests/native-entity-links.test.ts
+- web/tests/vite/global-search.test.ts
+- web/tests/vite/production-threads.test.ts
+- web/vite.config.ts
+<!-- /evidence-field -->
+
+<!-- evidence-field:removed_files list -->
+## Removed files
+
+- web/src/lib/controller/production-route-restore.ts
+<!-- /evidence-field -->
+
+<!-- evidence-field:tests list -->
+## Tests
+
+- web/tests/vite/global-search.test.ts#global_search_does_not_issue_native_requests_for_local_profiles
+- web/tests/vite/local-browser-merge.test.ts#profile_route_reconnects_before_restoring_threads_without_a_code_operation
+- web/tests/vite/local-browser-merge.test.ts#local_profile_switch_preserves_unknown_native_thread_intent
+- web/tests/browser/threads-alignment.spec.ts#cold LocalTrusted Threads shell
+  settings references scoped search and reply focus
+- web/tests/real/local-browser.spec.ts#local_repository_opens_files_history_agents_and_accessible_folder_controls
+- web/tests/real/local-browser.spec.ts#local_projects_tasks_comments_match_cli_and_recover_unknown_outcomes
+- web/tests/real/local-browser.spec.ts#local_folder_reconnect_and_removal_preserve_code_and_collaboration
+<!-- /evidence-field -->
+<!-- generated-navigation -->
+## Pages
+
+- [E-M15-022 details 2](details-02.md)
+- [E-M15-022 details 3](details-03.md)

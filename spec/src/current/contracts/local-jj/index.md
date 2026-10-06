@@ -1,0 +1,38 @@
+# Local Git-backed JJ collaboration
+
+Read the owning topic and requirement before implementation.
+<!-- generated-navigation -->
+
+## Pages
+
+- [Local Git-backed JJ collaboration](01-local-git-backed-jj-collaboration.md)
+- [Requirements](02-requirements.md)
+- [Publication profile](03-publication-profile.md)
+- [Delivery gates](04-delivery-gates.md)
+- [Pending capabilities and acceptance](05-pending-capabilities-and-acceptance.md)
+- [Independent conversion profile](06-independent-conversion-profile.md)
+- [M15 additive collaboration publication](07-m15-additive-collaboration-publication.md)
+- [Local browser delivery slice](08-local-browser-delivery-slice.md)
+- [Pinned local WorkStore transport](09-pinned-local-workstore-transport.md)
+- [Local AgentStore browser selection](10-local-agentstore-browser-selection.md)
+- [Physical working-file Save](11-physical-working-file-save.md)
+- [Bounded local code reads](12-bounded-local-code-reads.md)
+- [Rich history query delivery](13-rich-history-query-delivery.md)
+- [M18 shared capture qualification](14-m18-shared-capture-qualification.md)
+- [Freshness producer ownership](15-freshness-producer-ownership.md)
+- [Ordinary local stack workspaces](16-ordinary-local-stack-workspaces.md)
+- [Historical retained stacks execution contracts](17-historical-retained-stacks-execution-contracts.md)
+- [Bounded stack history browsing](18-bounded-stack-history-browsing.md)
+- [Installation-owned combination selection](19-installation-owned-combination-selection.md)
+- [Explicit retained extra-metadata recovery](20-explicit-retained-extra-metadata-recovery.md)
+- [Explicit retained derived-index restoration](21-explicit-retained-derived-index-restoration.md)
+- [Exact retained operation-head publication](22-exact-retained-operation-head-publication.md)
+- [Exact tree-changing checkout preparation](23-exact-tree-changing-checkout-preparation.md)
+- [Durable tree-changing checkout inputs](24-durable-tree-changing-checkout-inputs.md)
+- [Original full physical inventory for checkout recovery](25-original-full-physical-inventory-for-checkout-recovery.md)
+- [Retained tree-file installation and interrupted progress](26-retained-tree-file-installation-and-interrupted-progress.md)
+- [Retained native tree-checkout completion](27-retained-native-tree-checkout-completion.md)
+- [Exact unchanged-tree checkout completion](28-exact-unchanged-tree-checkout-completion.md)
+- [Original command and combination completion join](29-original-command-and-combination-completion-join.md)
+- [Explicit initial stack workspace setup](30-explicit-initial-stack-workspace-setup.md)
+- [Complete native stack discovery and boundaries](31-complete-native-stack-discovery-and-boundaries.md)

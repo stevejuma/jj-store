@@ -1,144 +1,25 @@
-# Desktop application
+# Desktop application (previous location)
 
-The desktop application uses Tauri 2 on macOS ARM64 and the existing production
-Svelte application. Its bundled foreground service owns persistent embedded
-RustFS; native presentation never becomes repository authority. The Buzz host at
-ef2aa1ae38fadcc0bc22b8bf6ed96b35933146be is an architectural reference.
+Read the [current area](current/contracts/desktop/index.md) for the
+authoritative specification. These links retain the previous chapter location.
 
-## Requirements
+<span id="desktop-application"></span>
+[Desktop application](current/contracts/desktop/01-desktop-application.md#desktop-application)
 
-| ID           | Requirement                                                                                                                                                                                                                                                                    |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| JST-DESK-001 | Desktop MUST use an independently locked host with explicit bundled executable and browser paths, a private installation outside checkouts, and no installed-tool replacement or implicit attachment to another service.                                                       |
-| JST-DESK-002 | Desktop MUST validate its child's listening event and protected LocalTrusted bootstrap before loading the same-origin production UI. Its installation origin MUST survive restart; occupied ports and incompatible state MUST fail explicitly without reset.                   |
-| JST-DESK-003 | Desktop MUST own a bounded parent-lifetime channel, startup and shutdown deadlines and captured output. Closing that channel MUST gracefully stop the server and its RustFS helper. Interrupted mutations retain their existing unknown-outcome semantics.                     |
-| JST-DESK-004 | The macOS host MUST support single-instance reopening, retained window geometry, Dock/tray reopening and explicit Quit. Closing the main window hides it while its managed service remains alive. Native permissions MUST be restricted to the managed main window and origin. |
-| JST-DESK-005 | Packaged ARM64 app and DMG qualification MUST use cold real-RustFS and WKWebView flows, including restart, relocation, failure and persistence. Native controls, dirty-edit protection and public distribution require their own evidence.                                     |
-| JST-DESK-006 | Desktop MUST provide bounded repository-folder terminal sessions, typed exact-origin IPC, retained in-memory sessions, accessible dock controls and verified shell cleanup without changing repository authority.                                                              |
+<span id="requirements"></span>
+[Requirements](current/contracts/desktop/02-requirements.md#requirements)
 
-## Initial delivery
+<span id="initial-delivery"></span>
+[Initial delivery](current/contracts/desktop/03-initial-delivery.md#initial-delivery)
 
-The first slice establishes supervised launch and the native window without
-adding repository-privileged JavaScript APIs or relaxing the ordinary browser
-CSP. Native folder-dialog integration, first-render handshake, zoom and
-dirty-edit Quit protection remain subsequent gates. The existing server-owned
-folder picker remains available through its authorized HTTP route.
+<span id="macos-integrated-header"></span>
+[macOS integrated header](current/contracts/desktop/04-macos-integrated-header.md#macos-integrated-header)
 
-`jj-store run --desktop-supervised` requires LocalTrusted literal-loopback mode
-and a pipe on standard input. Optional desktop bind, web-root and RustFS-runtime
-overrides apply only to that supervised launch and never rewrite installation
-configuration. EOF requests the ordinary graceful shutdown; other launch modes
-retain their existing signal behavior. Overrides cannot enable development
-browser annotations, authenticated serving or external storage.
+<span id="macos-glass-background"></span>
+[macOS Glass background](current/contracts/desktop/05-macos-glass-background.md#macos-glass-background)
 
-The host uses an empty private installation and the existing Projects hub. Fresh
-initialization selects and records a private loopback port once. Future launches
-retain it; a port collision is an error. Resource relocation overrides only the
-executable and web bundle paths. Installation identity, credentials, catalog and
-volume remain selected by the existing format-2 configuration.
+<span id="repository-terminal"></span>
+[Repository terminal](current/contracts/desktop/06-repository-terminal.md#repository-terminal)
 
-Local development and qualification use explicit separate state paths. Public
-signing, notarization, updates, login startup, additional platforms and agent
-execution remain deferred. Screenshots are visual-pending and cannot qualify
-process lifetime, publication, storage or accessibility.
-
-## macOS integrated header
-
-The main window uses `TitleBarStyle::Overlay` and a hidden native title while
-retaining native close, minimize and fullscreen controls. Traffic lights use the
-Buzz reference position of 16,25 logical pixels. The application header reserves
-80 CSS pixels at its leading edge and a fixed 40 CSS pixel height. Its 28px
-controls and centered header content use Buzz's 3px macOS offset, aligning their
-centers with the native controls. The inset MUST configure both the native
-window and webview so geometry restoration and resizing retain it. Native
-controls and header geometry do not scale with application text. Narrow layouts
-retain this header.
-
-The host supplies a presentation-only macOS marker before application startup.
-Ordinary browser clients do not reserve native-control space or enable window
-drag regions. The managed main window's exact loopback origin receives only
-window dragging, Tauri's internal double-click zoom and the single boolean
-`set_glass_background` presentation command. No wildcard origin, generic
-filesystem, shell, dialog or core permission is granted. The repository terminal
-extension adds only its named desktop commands. Window controls and links inside
-the header retain their ordinary click behavior. This slice uses Tauri's
-standard double-click zoom; matching the macOS custom double-click preference
-remains a separate refinement.
-
-## macOS Glass background
-
-JST-DESK-004 and JST-UI-018 govern the Buzz glass adaptation. The NSWindow MUST
-remain opaque. Enabling glass MUST clear any previous native material, install
-Sidebar vibrancy and clear only the WKWebView canvas before the renderer exposes
-transparency. The renderer MUST serialize native toggles and expose only the
-current successfully installed effect; failure leaves opaque theme surfaces.
-Disabling paints opaque CSS before clearing vibrancy. Changing only the theme or
-tint opacity MUST NOT reinstall the native effect. Disposal clears the effect
-without allowing late acknowledgements to change a destroyed renderer.
-
-The exact managed origin and main window receive only the boolean appearance
-command; no material selector, arbitrary window target or generic effects API is
-exposed. Native glass uses one translucent theme wash over native blur with
-30-90 percent tint opacity, the Buzz light/dark gradient and neutral 2.4 percent
-wash. Nested chrome passes through that wash; main content and portalled
-controls remain opaque. Ordinary browser glass retains its application-only
-backdrop. The macOS private API feature is confined to this development host;
-distribution qualification remains a separate gate.
-
-AppKit focus, movement, resize, late window updates and glass relayout MUST
-retain the same native control centers and native hover tracking. The host
-restores geometry and tracking on the main UI thread using the original NSWindow
-buttons; no HTML traffic-light replacements or custom hover glyphs are
-introduced. One window-filtered AppKit update observer corrects late layout only
-when geometry differs, with a reentrancy guard and no polling. Its retained
-token is removed on host exit. Platform interop is confined to documented
-NSWindow and retained view hierarchy borrows within Tauri's main-thread callback
-or a live notification's retained window object; no platform pointer escapes or
-becomes authority.
-
-## Repository terminal
-
-Desktop terminal sessions are governed by JST-DESK-006. Desktop MUST own
-bounded, repository-bound interactive terminal sessions independently of the
-managed repository service. Only the exact managed main window and origin may
-use the typed terminal bridge. Targets come from revalidated ready local
-registrations or native workspace links, never arbitrary renderer paths,
-commands or environment. Missing links require explicit linking; opening a
-terminal must not clone, create a workspace, or publish metadata.
-
-Sessions use a filtered login-shell environment, a PTY and a native Alacritty
-grid. Input, dimensions, session count, scrollback, parser work and frame
-delivery are bounded. A subscription allows one in-flight frame and one
-replacement snapshot; stale acknowledgements cannot release a newer
-subscription. Terminal output cannot access the clipboard. Native sessions and
-output remain in memory; repeated open request identities resolve the same
-session. Hide/navigation and renderer reload preserve sessions, tab close ends
-its shell, and Quit cleans up sessions before the managed service. Restart does
-not recreate shells. Late callbacks from closing or removed sessions MUST NOT
-publish obsolete error notices; failures for active sessions remain visible.
-
-The desktop header MUST place a terminal toggle beside the right-sidebar toggle,
-using a bottom-panel icon whose filled region and accessible expanded state
-track the dock. No terminal footer bar is shown. The terminal toolbar uses a
-muted surface, rounded tabs and add control, with maximize and hide controls at
-the right. Each tab has an inline leading close button that remains separately
-operable from selection. Tab selection retains focus for arrow-key navigation.
-Tabs and toolbar buttons MUST have visible hover and keyboard focus states in
-light and dark themes. The resize separator MUST be a single visible pixel while
-retaining pointer and keyboard resizing. The folder path is available through
-the tab tooltip, without a duplicate row above shell output. Maximizing MUST
-close the far-right details sidebar; restoring the dock does not reopen that
-sidebar. The Svelte dock provides repository/folder-bound tabs, keyboard and
-pointer resizing, maximize/restore, Cmd+J, IME, selection/copy, bracketed paste
-and readable terminal text. Multiple eligible folders require a choice; one is
-selected automatically. Only versioned dock geometry is persisted. Existing
-refresh retains historical selections, editor drafts and pending mutations. Cold
-native WKWebView and production-CSP evidence remains distinct from fixture
-stories.
-
-## Bundled application documentation
-
-JST-DOC-003 bundles the generated manual with paired desktop resources. Staging
-validates its independent allowlist and preserves nested documentation assets.
-Help fills the application viewport beneath native window controls, using the
-existing external-link policy.
+<span id="bundled-application-documentation"></span>
+[Bundled application documentation](current/contracts/desktop/07-bundled-application-documentation.md#bundled-application-documentation)
