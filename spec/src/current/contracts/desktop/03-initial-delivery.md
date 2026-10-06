@@ -23,3 +23,15 @@ Local development and qualification use explicit separate state paths. Public
 signing, notarization, updates, login startup, additional platforms and agent
 execution remain deferred. Screenshots are visual-pending and cannot qualify
 process lifetime, publication, storage or accessibility.
+
+## Native application branding
+
+JST-DESK-001 packages repository-owned blue-jay and orange-gear artwork from
+`desktop/icons`. The default PNG and multi-resolution macOS ICNS use the
+transparent variant with a pale outer edge that retains contrast on light and
+dark surfaces. Both light and dark SVG sources and exports remain owned assets.
+Tauri uses the default PNG for its window/tray icon and the explicit ICNS for
+the macOS bundle. Icon selection is static and does not change appearance
+preferences. Branding preserves the installation, managed service and Dock/tray
+lifecycle contracts in JST-DESK-001 and JST-DESK-004; complete app/DMG
+qualification under JST-DESK-005 remains a separate gate.

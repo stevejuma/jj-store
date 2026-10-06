@@ -13,6 +13,6 @@
     "active": true,
     "targets": ["app", "dmg"],
     "resources": ["resources/"],
-    "icon": ["icons/icon.png"]
+    "icon": ["icons/icon.png", "icons/icon.icns"]
   }
 }

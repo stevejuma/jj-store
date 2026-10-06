@@ -1,3 +1,5 @@
+- [E-DESK-010](E-DESK-010/index.md)
+  {{#include E-DESK-010/SUMMARY.nav.md}}
 - [E-GOV-003](E-GOV-003/index.md)
   {{#include E-GOV-003/SUMMARY.nav.md}}
 - [E-M21-057](E-M21-057/index.md)

@@ -11,6 +11,7 @@ not a completion gate selection.
 | [E-DESK-004](../../../../../history/2026/10/03/E-DESK-004/index.md) | 2026-10-03 | pass            | Original outcome |
 | [E-DESK-005](../../../../../history/2026/10/03/E-DESK-005/index.md) | 2026-10-03 | pending         | Original outcome |
 | [E-DESK-006](../../../../../history/2026/10/03/E-DESK-006/index.md) | 2026-10-03 | pass            | Original outcome |
+| [E-DESK-010](../../../../../history/2026/10/06/E-DESK-010/index.md) | 2026-10-06 | pass            | Original outcome |
 
 <!-- generated-navigation -->
 
