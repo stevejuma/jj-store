@@ -1,5 +1,36 @@
 # Native JJ integration
 
+## Progressive file blame feasibility gate
+
+The proposed file Blame reader uses the pinned JJ `FileAnnotator` at an explicit
+operation and commit, with same-path, merge-aware semantics. Before exposing
+routes or UI, qualify incremental topological domains against complete JJ
+annotation and measure Linux through the existing read-only local adapter. Every
+successful window must preserve unresolved origins as unresolved; a snapshot or
+an interrupted computation is never a proven line origin.
+
+The feasibility slice must establish bounded history discovery, historical file
+reads, comparison work, retained memory and cancellation. A small output or a
+64-commit domain alone does not establish those properties. Warm progress
+responses target five seconds, independently from complete-attribution time. If
+the upstream API cannot satisfy the gate with existing readers and indexes,
+record the blocker and stop before adding public contracts or presentation;
+reader/index redesign and an upstream annotation fork require a separate scope.
+
+The initial gate is stopped at JJ 0.45.1's synchronous line comparison. A
+one-commit domain over two 240,000-byte files with 40,000 reverse-ordered unique
+lines ran for 6.85 seconds in the development test profile and returned success
+after a surrounding one-second Tokio timeout. `FileAnnotator::compute` calls
+`ContentDiff::by_line` internally without a budget/cancellation callback;
+neither a smaller ancestry window nor the outer timeout admits or interrupts
+that work. The existing bounded line-diff helper is not used by annotation. Do
+not expose the proposed reader until comparison admission and cancellation are
+qualified. This finding is distinct from the successful Linux first-window
+latency probes; complete Linux attribution, server retention and HTTP/UI
+behavior are unqualified.
+
+## Existing native read behavior
+
 The local read capability keeps authoritative `authorize` at request and task
 boundaries. Its default inner-loop `check` also authorizes; server composition
 may implement it using a one-second validated binding cache with synchronous

@@ -1,4 +1,6 @@
 //! Owned standard JJ code-index handle; advanced preparation remains separate.
+#[cfg(test)]
+mod blame_probe;
 mod source;
 use super::*;
 use crate::query::{Cancellation, code_index as standard};

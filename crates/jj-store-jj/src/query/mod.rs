@@ -1,6 +1,8 @@
 //! Owned, bounded native graph queries. Upstream objects never cross this API.
 pub(crate) mod access;
 pub mod admission;
+#[cfg(test)]
+pub(crate) mod blame_probe;
 pub mod cache;
 pub mod code_index;
 pub mod content;

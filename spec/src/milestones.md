@@ -110062,6 +110062,146 @@ entries.
   "next": "Continue UI work from Main; existing Main Vite/backend remains available on 7476/7478 with the preserved fixture. Other gates and visual baselines remain separate.",
   "verification_scope": "UI-only presentation scope. Exact four-tab regression, directly affected conflict/standalone stories, web/catalog types, UI ownership/architecture, documentation/specification/progress and cold live browser. The standalone narrow assertion was reproduced as pre-existing and repaired in its own story without changing shared infrastructure or production layout. Unrelated story families, root aggregate lanes, Rust builds/tests, package publication, screenshot comparisons and visual baselines remain out of scope; no milestone promotion.",
   "summary": "Top conflict feedback renders only on the selected Workspace tab, using focusedView so retained Workspace state cannot leak the banner into Commits or Op Log. Rail and notification resolution remain usable across all four tabs. Standalone conflict flow enters Workspace before resolution. Existing narrow overflow regression now checks the selected More entry and focus restoration without changing production layout."
+},
+{
+  "id": "E-READ-091",
+  "date": "2026-10-06",
+  "tasks": ["M4.6", "M13.4"],
+  "requirements": ["JST-JJ-003", "JST-LOCAL-004", "JST-GOV-007"],
+  "kind": "Progressive Blame feasibility stopped at upstream synchronous comparison gate",
+  "revision": "enclosing Jujutsu change wuyoqxpo",
+  "before": "No Blame route, controller or UI exists. The agreed first slice must qualify incremental JJ annotation and bounded execution before exposing contracts. Main was clean at e7483f29; retained bounded-reads workspace was clean and was advanced to that parent using jj new. The development servers were not restarted.",
+  "scope": "Test-only FileAnnotator domain/correctness probes and an opt-in Linux probe through existing scoped local readers and privately prepared core index. No production runtime, API, DTO, generated contract, UI, cache or installed binary change. Stop at the explicit feasibility gate after measuring a single synchronous comparison that exceeds the cooperative deadline and warm target.",
+  "versions": "macOS ARM64; pinned jj-lib/jj-core 0.45.1; cargo development test profile (unoptimized, debug=0); current repository toolchain and dependencies.",
+  "formats": "Persisted state, identities, HTTP/RPC contracts and generated consumers unchanged. New probes compile only under cfg(test). No upstream source, dependency patch or annotation fork.",
+  "files": [
+    "crates/jj-store-jj/src/query/mod.rs",
+    "crates/jj-store-jj/src/query/blame_probe.rs",
+    "crates/jj-store-jj/src/local_browser/code_index.rs",
+    "crates/jj-store-jj/src/local_browser/code_index/blame_probe.rs",
+    "spec/src/jj-integration.md",
+    "spec/src/local-jj.md",
+    "spec/src/spec-governance.md",
+    "spec/src/milestones.md"
+  ],
+  "tests": [
+    "crates/jj-store-jj/src/query/blame_probe.rs#incremental_domains_match_complete_annotation_for_edits_and_merges",
+    "crates/jj-store-jj/src/query/blame_probe.rs#synchronous_comparison_honors_progress_deadline",
+    "crates/jj-store-jj/src/local_browser/code_index/blame_probe.rs#linux_first_window_uses_guarded_pinned_reader"
+  ],
+  "runs": [
+    {
+      "command": "jj new e7483f29 -m \"Qualify progressive JJ file blame\"; jj --no-pager st",
+      "result": "pass",
+      "failures": 0,
+      "note": "Clean temporary workspace based on current Main. Retains all committed Stacks work; no unrelated changes."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-jj --lib query::blame_probe:: -- --nocapture",
+      "result": "pass",
+      "failures": 0,
+      "note": "Initial batched correctness probe passed (0.63s). SimpleBackend native-width and Git SHA-1 fixtures; ordinary edits, integration merge, repeated lines, empty file, missing final newline; batch sizes 1,2,3,64. Every intermediate proven origin equals the full annotation."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-jj --lib query::blame_probe:: -- --nocapture",
+      "result": "fail",
+      "failures": 1,
+      "note": "Initial Linux probe compilation used nonexistent Cancellation::new. Corrected to the existing Default constructor. No product code change."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-jj --lib blame_probe:: -- --nocapture",
+      "result": "pass",
+      "failures": 0,
+      "note": "Final focused.log: 1 passed, 2 explicitly ignored opt-in measurements, 83 unrelated tests filtered out. Final fixture run 0.99s. Ignored cases were separately invoked below."
+    },
+    {
+      "command": "JJ_STORE_BLAME_LINUX_METADATA=/Users/stevejuma/code/linux/.jj/repo cargo test --locked -p jj-store-jj --lib local_browser::code_index::blame_probe::linux_first_window_uses_guarded_pinned_reader -- --ignored --exact --nocapture",
+      "result": "pass",
+      "failures": 0,
+      "note": "linux-first-window.log: source index copied privately, preparation 4.071s. First/warm first-window seconds COPYING 1.717/1.214, altera_edac.c 1.315/1.358, inode.c 1.283/1.487. This is a direct reader probe, not HTTP and not complete blame."
+    },
+    {
+      "command": "cargo test --locked -p jj-store-jj --lib query::blame_probe::synchronous_comparison_honors_progress_deadline -- --ignored --exact --nocapture",
+      "result": "fail",
+      "failures": 1,
+      "note": "synchronous-comparison.log: 240000 bytes and 40000 reverse-ordered unique lines per version, within current 256 KiB preview limit; domain contains one commit. A 1s Tokio timeout returned Ok(Ok(())) after 6.8487925s. Warm progress target <5s failed. FileAnnotator invokes ContentDiff::by_line internally without the service bounded-diff helper or a comparison/cancellation callback. This failure remains intentionally unrepaired and visible behind the opt-in gate; no route or UI was exposed."
+    },
+    {
+      "command": "JJ_STORE_BLAME_LINUX_METADATA=/Users/stevejuma/code/linux/.jj/repo cargo test --locked -p jj-store-jj --lib local_browser::code_index::blame_probe::linux_first_window_uses_guarded_pinned_reader -- --ignored --exact --nocapture",
+      "result": "pass",
+      "failures": 0,
+      "note": "linux-source-witness.log: final source metadata names/sizes/modification times unchanged for op heads, source index, Git extra metadata and working-copy state. Preparation 4.114s; first/warm seconds COPYING 2.438/1.828, altera_edac.c 1.502/1.404, inode.c 1.654/1.306. Six reader invocations, each starts fresh annotation and computes one 64-commit window. No retained result cache is implemented. Object bytes/work respectively: 6505114/311675, 7002423/321457, 6776053/312149; 111 metadata records each. Origins found 0/20, 0/2225, 0/3061. OS caches were not cleared; package check ran concurrently. Source witness is not a complete integrity or authorization test."
+    },
+    {
+      "command": "cargo check --locked -p jj-store-jj",
+      "result": "pass",
+      "failures": 0,
+      "note": "check.log: affected production package check passed. No unrelated Rust packages or UI suites invoked."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "fail",
+      "failures": 1,
+      "note": "spec-first.log: mapped local-jj canonical chapter missing for local reader probe registration. Added explicit local feasibility boundary; no transport change."
+    },
+    {
+      "command": "pnpm exec prettier --check spec/src/jj-integration.md spec/src/local-jj.md spec/src/spec-governance.md",
+      "result": "fail",
+      "failures": 2,
+      "note": "format.log: two new prose sections needed wrapping; ran prettier --write on jj-integration.md and spec-governance.md."
+    },
+    {
+      "command": "rustfmt --edition 2024 --check crates/jj-store-jj/src/query/blame_probe.rs crates/jj-store-jj/src/local_browser/code_index/blame_probe.rs",
+      "result": "pass",
+      "failures": 0,
+      "note": "Only new Rust probe files formatted with rustfmt; final targeted formatting check passed."
+    },
+    {
+      "command": "pnpm spec:first",
+      "result": "pass",
+      "failures": 0,
+      "note": "spec-first-final.log: four protected files/four canonical chapters; local chapter gap resolved."
+    },
+    {
+      "command": "pnpm spec:validate",
+      "result": "pass",
+      "failures": 0,
+      "note": "spec-validate.log: five validators, 23 chapters, 173 requirements."
+    },
+    {
+      "command": "pnpm check:progress",
+      "result": "pass",
+      "failures": 0,
+      "note": "progress.log: 142 tasks; evidence bookkeeping only; stopped feature gate remains blocked."
+    },
+    {
+      "command": "pnpm exec prettier --check spec/src/jj-integration.md spec/src/local-jj.md spec/src/spec-governance.md",
+      "result": "pass",
+      "failures": 0,
+      "note": "format-final.log: all changed prose formatted. New ledger entry formatted separately as JSON to preserve historical evidence."
+    },
+    {
+      "command": "cargo fmt -p jj-store-jj -- --check",
+      "result": "fail",
+      "failures": 2,
+      "note": "rust-format.log: two module declarations needed alphabetical ordering; repaired only the new cfg(test) registrations."
+    },
+    {
+      "command": "cargo fmt -p jj-store-jj -- --check",
+      "result": "pass",
+      "failures": 0,
+      "note": "rust-format-final.log: affected Rust package formatted."
+    }
+  ],
+  "result": "blocked",
+  "remaining": [
+    "The explicit bounded-comparison/cancellation gate fails on pinned JJ 0.45.1. Smaller history windows do not bound or interrupt one internal synchronous comparison. Do not expose this prototype as a production Blame reader.",
+    "Full Linux attribution, first-proven-origin time and retained-memory measurements were not pursued after the blocker. The first-window latency target passes, but all sampled lines remain unresolved at that window.",
+    "Production native-backend authorization, stale/expired cursors, cross-request retention, coalescing, retries, cancellation rollback, API/schema generation, UI and cold browser acceptance remain unimplemented/unqualified. The native-width correctness fixture is SimpleBackend, not a native service authorization proof.",
+    "Existing progress/task statuses remain unchanged. No milestone promotion. Full suites, root aggregate checks, release/RustFS qualification, visual baselines and service restarts are out of scope for this test-only stopped slice."
+  ],
+  "next": "Land the reproducible feasibility evidence in Main and retain the temporary workspace. Resume only with an agreed narrow solution for JJ annotation comparison admission/cancellation, then repeat the gate before implementing API or UI. Do not broaden into a new index, reader redesign or an upstream annotation fork within the current slice.",
+  "verification_scope": "Focused Rust probes plus affected package check and canonical/governance/progress checks. Preserve the failed opt-in gate explicitly; passing correctness and first-window measurements do not qualify the Blame feature."
 }
 ]
 ```

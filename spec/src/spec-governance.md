@@ -1,5 +1,16 @@
 # Specification governance
 
+Progressive Blame begins with test-only JJ annotation feasibility probes and
+owning integration requirements. Qualify batched origin correctness and measure
+the exact operation-pinned Linux reader before exposing contracts or UI. Keep
+the opt-in synchronous-comparison gate visibly failing when it demonstrates an
+upstream limit; do not weaken it or mark the feature implemented. This stopped
+slice runs the affected Rust package check, focused probes, formatting,
+canonical and progress checks. HTTP generation/captures, service/UI suites and
+runtime restarts are outside its unchanged production surface. Land the recorded
+gate outcome without promoting a milestone or implying complete annotation
+support.
+
 Stacks context and conflict-editor reuse changes owned UI presentation plus the
 bounded local native conflict reader. Qualify exact context/descriptor
 regressions, shared editor/application stories and local Stacks native tests
