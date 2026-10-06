@@ -13,12 +13,14 @@ import time
 import urllib.error
 import urllib.request
 import uuid
+import urllib.parse
 
 parser = argparse.ArgumentParser()
 for name in ['server', 'jj', 'rustfs', 'acp']:
     parser.add_argument('--' + name, required=True, type=Path)
 parser.add_argument('--web', type=Path)
 parser.add_argument('--browser', action='store_true')
+parser.add_argument('--browser-only', action='store_true')
 args = parser.parse_args()
 environment = dict(os.environ, JJ_STORE_ACP_EXECUTABLE=str(args.acp.resolve()),
                    JJ_STORE_AGENT_JJ_EXECUTABLE=str(args.jj.resolve()))
@@ -92,18 +94,36 @@ with tempfile.TemporaryDirectory(prefix='jse-', dir='/private/tmp') as temporary
             request(origin, '/repos/' + repository + '/local/workspaces/link', dict(version=1, expected_revision=0, path=str(source)))
             wait(origin, lambda v: v['runtime'] == 'ready')
             print('native real-RustFS server and exact workspace selection ready', flush=True)
-            for runner in ['codex', 'cursor']:
+            for runner in ([] if args.browser_only else ['codex', 'cursor']):
                 targets = request(origin, '/local/agents/targets?repository=' + repository)
                 target = next(t for t in targets if t['profile'] == 'native')
+                setup_id = 'qualification-' + runner
+                current = request(origin, '/local/agents')
+                request(origin, '/local/agents/setups', dict(version=1, request_id=uuid.uuid4().hex,
+                    expected_revision=current['revision'], remove=None,
+                    setup=dict(id=setup_id, name='Qualification ' + runner, avatar='🤖', description='A qualified local agent', instructions='Preserve the source folder.',
+                        runner=runner, preferences=dict(model=None, effort=None, mode=None))))
                 launched = request(origin, '/local/agents/launch', dict(version=1, request_id=uuid.uuid4().hex,
                     target_id=target['id'], repository=repository, operation=target['operation'], commit=target['commit'],
-                    runner=runner, setup_id=None, context=None))
+                    runner=runner, setup_id=setup_id, context=None))
                 session = launched['session_id']
                 def view(value):
                     return next(s for s in value['sessions'] if s['id'] == session)
                 status = wait(origin, lambda v: view(v)['state'] in ['idle', 'interrupted'])
                 assert view(status)['state'] == 'idle', 'native adapter failed to open'
-                mode = 'read-only' if runner == 'codex' else 'agent'
+                assert view(status)['connected'] and view(status)['setup_id'] == setup_id
+                captured = dict(view(status))
+                current = request(origin, '/local/agents')
+                original_setup = next(s for s in current['setups'] if s['id'] == setup_id)
+                edited_setup = dict(original_setup, name='Edited for future launches', avatar='https://example.com/agent.png')
+                request(origin, '/local/agents/setups', dict(version=1, request_id=uuid.uuid4().hex,
+                    expected_revision=current['revision'], remove=None, setup=edited_setup))
+                current = request(origin, '/local/agents')
+                assert view(current)['avatar'] == captured['avatar'] and view(current)['title'] == captured['title']
+                request(origin, '/local/agents/setups', dict(version=1, request_id=uuid.uuid4().hex,
+                    expected_revision=current['revision'], remove=setup_id, setup=None))
+                assert view(request(origin, '/local/agents'))['setup_id'] == setup_id
+                mode = 'read-only'  if runner == 'codex' else 'agent'
                 command(origin, session, dict(action='configure', preferences=dict(model=None, effort=None, mode=mode)))
                 wait(origin, lambda v: view(v)['capabilities'].get('modeReady') is True)
                 request_id, _ = command(origin, session, dict(action='prompt', max_duration_ms=180000,
@@ -133,7 +153,8 @@ with tempfile.TemporaryDirectory(prefix='jse-', dir='/private/tmp') as temporary
                 assert source.joinpath('source.txt').read_text() == 'dirty source\n'
                 assert not source.joinpath('agent-acceptance.txt').exists()
                 command(origin, session, dict(action='end'))
-                wait(origin, lambda v: view(v)['state'] == 'ended')
+                ended = wait(origin, lambda v: view(v)['state'] == 'ended')
+                assert not view(ended)['connected']
                 time.sleep(.5)
                 print(runner + ': native isolated edit, source preservation, AgentStore publication; ' + str(permissions) + ' permission decisions', flush=True)
             if args.browser:
@@ -149,7 +170,9 @@ with tempfile.TemporaryDirectory(prefix='jse-', dir='/private/tmp') as temporary
             assert json.loads(server.stdout.readline())['address'] == '127.0.0.1:' + str(port)
             after_restart = request(origin, '/local/agents')
             assert [(s['id'], s['last_sequence']) for s in after_restart['sessions']] == [(s['id'], s['last_sequence']) for s in before['sessions']]
-            assert all(s['state'] in ['ended', 'interrupted'] for s in after_restart['sessions'])
+            assert all(s['state'] in ['ended', 'interrupted'] and not s['connected'] for s in after_restart['sessions'])
+            assert after_restart['setups'] == before['setups']
+            assert [(s['id'], s['setup_id']) for s in after_restart['sessions']] == [(s['id'], s['setup_id']) for s in before['sessions']]
             wait(origin, lambda v: v['runtime'] == 'ready')
             selected = after_restart['sessions'][0]
             session = selected['id']

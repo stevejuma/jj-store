@@ -81,3 +81,9 @@ retained handles checked before and after seeks for size, identity and timestamp
 changes. Coarse or unsupported timestamp proofs require bounded full checksum
 checks; changed segments fail explicitly even if mtime is restored. No earlier
 caller's credentials are retained.
+
+A filesystem watcher invalidating physical admission during its inspection may
+trigger one additional physical identity/generation check before the HTTP
+boundary admits the operation. This bounded recheck dispatches no command and
+replays no mutation. A changed identity/generation or continued invalidation
+still fails closed and publishes no stale admission entry.

@@ -57,6 +57,10 @@
   <CommunityNavigation
     model={{
       ...model,
+      primaryItems: [
+        ...model.primaryItems,
+        { id: "agents", label: "Agents", kind: "agents" },
+      ],
       sections: model.sections.map((section) => ({
         ...section,
         actions: [

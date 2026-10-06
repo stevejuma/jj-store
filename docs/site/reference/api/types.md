@@ -20465,6 +20465,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "avatar": {
       "type": "string"
     },
+    "description": {
+      "type": "string",
+      "default": ""
+    },
     "instructions": {
       "type": "string"
     },
@@ -20479,6 +20483,7 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "id",
     "name",
     "avatar",
+    "description",
     "instructions",
     "runner",
     "preferences"
@@ -20530,6 +20535,18 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "id": {
       "type": "string"
     },
+    "setup_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "default": null
+    },
+    "connected": {
+      "type": "boolean",
+      "description": "Read-only live supervisor projection, never journal authority.",
+      "default": false
+    },
     "repository": {
       "$ref": "#/components/schemas/RepositoryId"
     },
@@ -20575,6 +20592,16 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "format": "uint64",
       "minimum": 0
     },
+    "last_activity_at_millis": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "format": "uint64",
+      "minimum": 0,
+      "description": "Device observation time of the latest retained execution event, if known.",
+      "default": null
+    },
     "published_sequence": {
       "type": "integer",
       "format": "uint64",
@@ -20589,6 +20616,8 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
   },
   "required": [
     "id",
+    "setup_id",
+    "connected",
     "repository",
     "target_id",
     "runner",
@@ -20603,6 +20632,7 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "capabilities",
     "preferences",
     "last_sequence",
+    "last_activity_at_millis",
     "published_sequence",
     "last_error"
   ]

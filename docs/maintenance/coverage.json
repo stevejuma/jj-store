@@ -65,8 +65,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed typed agent manager/workspace boundaries, independently admitted code access and sanitized configuration persistence; transport and architecture guides cover execution.",
-      "fingerprint": "da88a70f6f2008bc2fac8477e1ac972c083f4e30ab783f97010e96462d7e1a1f"
+      "reason": "Optional last_activity_at_millis belongs to private execution metadata; event retention advances it, legacy journals leave it unknown, and status/setup writes do not fabricate activity.",
+      "fingerprint": "6cdd0352507462437d227ae4cb429bbf5800d33fd410bfbab99bddb044157f89"
     }
   },
   {
@@ -96,8 +96,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed independent durable setup revisions, legacy private-journal initialization, and cold execution/owner lifetime; setup edits cannot race live activity.",
-      "fingerprint": "967733766021f871fc64acd0cfe641df0258fe37d9144d877489c65ea0a2710f"
+      "reason": "Retained execution events persist a nondecreasing observation time across restart; live connection clears independently and old journals keep unknown timing until new activity.",
+      "fingerprint": "5310cb21e1a6a615ed251cac808fddf103622da0a577f9788728709cbbff0d28"
     }
   },
   {
@@ -122,8 +122,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed final eight strict LocalTrusted Admin agent surfaces, origin admission, protected body shapes and bounded independent SSE.",
-      "fingerprint": "444af311b4e50a9b82c3976ac647dcc8983b4ae42f84168452f2292c2134d55e"
+      "reason": "A watcher invalidation permits one fresh physical admission recheck before any command dispatch; changed identity/generation and continued invalidation remain refused; bounded agent avatar/CSP admission remains",
+      "fingerprint": "4d8bc5f4543daac2432ec06d1896a9c76a864e5268c94bddf2fb86a9434da405"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed scoped caption colors preserving Design Core bubble foreground and real populated-message contrast, independent activity recovery and retained explicit command errors.",
-      "fingerprint": "c18c120e904358b530b44a3282d9864fbad8ef3f73c29835994304982534e525"
+      "reason": "Final formatted agent guides and owning chapters describe Community inbox composition, shared runtime editing, exact configure receipts, safe composer resume errors and explicit recovery; source and publication boundaries are unchanged.",
+      "fingerprint": "042c9b57d28f53884621ce003152dc1b9d0a479af901fb88030d980419c3bd99"
     }
   },
   {
@@ -154,8 +154,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Reviewed generated execution schemas and parser-derived internal workspace reference; request identities and strict process-free browser bodies remain accurate.",
-      "fingerprint": "c1dd5b30b5f86aae6cbb01ac340f9d57e6ab2d24469fb807532e79c4982d6f76"
+      "reason": "Regenerated session schema adds optional read-only last_activity_at_millis; generated manual reflects event observation timing without changing commands or native publication.",
+      "fingerprint": "44222ef4ba867a8ebd7a41ea95a771743dac5f9368a67dd04661cbc8224b01bf"
     }
   }
 ]

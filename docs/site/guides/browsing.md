@@ -221,3 +221,10 @@ and vertically; commit avatars do not share an imposed alignment column.
 The Agents page also offers [interactive agent sessions](agent-execution.md),
 saved named setups and retained workspaces. Repository/project/task actions
 provide code context while independently checking access to linked code.
+
+The main **Agents** destination is a standalone configuration gallery. Click an
+agent to open its Community details sidebar; its actions open an explicit
+session preparation page or existing session workspace. Editing uses the
+Community avatar and harness/model form. See
+[Interactive agent sessions](agent-execution.md) for live status, saved
+preferences and recovery from a concurrent save.

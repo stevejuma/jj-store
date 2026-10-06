@@ -43,6 +43,7 @@
     detailsRail,
     selectPage,
     children,
+    agents,
   }: {
     controller: StoreController;
     stackWorkspace?: StackWorkspaceController;
@@ -61,6 +62,7 @@
     detailsRail: AppShellController["right"];
     selectPage(page: StorePage): void;
     children?: Snippet<[StorePage, string]>;
+    agents?: Snippet;
   } = $props();
   const focusedStacks = $derived(isStacksRoute(current));
   const stacksPreparing = $derived(
@@ -89,7 +91,8 @@
   <StoreTerminalWorkspace
     repository={current.repository}
     profile={controller.state.repository.profile ?? "native"}
-    enabled={!focusedStacks &&
+    enabled={!current.agentsHub &&
+      !focusedStacks &&
       !settingsOpen &&
       !conflictOpen &&
       !(
@@ -117,6 +120,7 @@
         section={settingsSection}
         onClose={closeSettings}
       />
+    {:else if current.agentsHub}{@render agents?.()}
     {:else}
       {#if shell.mobile.resolvedMode === "mobile"}
         <AppShell.Toolbar>

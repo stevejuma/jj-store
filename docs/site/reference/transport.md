@@ -156,3 +156,9 @@ or actor. Current code access is rechecked for status, activity and commands.
 Bounded SSE sequences expose sanitized live activity; publication counters mark
 committed repository evidence separately. Lost outcomes preserve exact requests
 and drafts and never trigger prompt replay.
+
+Installation Agents status includes optional session `setup_id` and read-only
+`connected`, computed from the current ACP process and handshake. Setups have an
+optional/default-empty description and bounded avatar string. Only setup writes
+accept up to 2 MiB; other execution request limits remain 512 KiB. Conditional
+save revisions and original request identities retain their existing semantics.

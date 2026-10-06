@@ -1,0 +1,195 @@
+.agent-profile {
+  min-width: 0;
+  grid-template-columns: minmax(0, 1fr);
+  padding: 1.25rem;
+  display: grid;
+  gap: 1.5rem;
+}
+.agent-profile header {
+  display: grid;
+  justify-items: center;
+  gap: 0.875rem;
+  padding: 1.5rem 0 0.5rem;
+}
+.agent-profile header h2 {
+  margin: 0;
+}
+.agent-profile__name-edit.agent-profile__name-edit {
+  display: inline-flex;
+  width: auto;
+  height: auto;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.125rem 0.375rem;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+}
+.agent-profile__name-edit-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--muted-foreground);
+  opacity: 0;
+  transform: translateX(-0.125rem);
+  transition:
+    opacity 0.16s ease,
+    transform 0.16s ease;
+}
+.agent-profile header:hover .agent-profile__name-edit-icon,
+.agent-profile__name-edit:hover .agent-profile__name-edit-icon,
+.agent-profile__name-edit:focus-visible .agent-profile__name-edit-icon {
+  opacity: 1;
+  transform: translateX(0);
+}
+.agent-profile__name-edit-icon svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+.agent-profile h2,
+.agent-profile h3,
+.agent-profile p {
+  margin: 0;
+}
+.agent-profile h2 {
+  font-size: var(--community-text-page);
+  font-weight: 650;
+  text-align: center;
+}
+.agent-profile h3 {
+  font-size: var(--community-text-body);
+  font-weight: 600;
+}
+.agent-profile p {
+  color: var(--muted-foreground);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.agent-profile__signals {
+  display: flex;
+  gap: 0.625rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.agent-profile__tabs {
+  width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  justify-content: flex-start;
+}
+.agent-profile__tabs > button {
+  flex: 1 0 auto;
+}
+.agent-profile__info,
+.agent-profile__channels,
+.agent-profile__runtime,
+.agent-profile__memories {
+  display: grid;
+  gap: 1.25rem;
+  padding-top: 1rem;
+}
+.agent-profile__runtime-fields {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+.agent-profile__runtime-fields > * {
+  min-width: 0;
+  padding: 0.75rem 1rem;
+}
+.agent-profile__runtime-fields > * + * {
+  border-top: 1px solid var(--border);
+}
+.agent-profile__runtime-field.agent-profile__runtime-field {
+  justify-content: space-between;
+  width: 100%;
+  height: auto;
+  min-height: 3.25rem;
+  border-radius: 0;
+  color: inherit;
+  text-align: left;
+}
+.agent-profile__runtime-field > span {
+  display: grid;
+  min-width: 0;
+  gap: 0.125rem;
+}
+.agent-profile__runtime-field > span > span {
+  color: var(--muted-foreground);
+  font-size: var(--community-text-secondary);
+  font-weight: 500;
+}
+.agent-profile__runtime-field strong {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  font-weight: 600;
+}
+.agent-profile__runtime-field svg {
+  width: 1rem;
+  height: 1rem;
+  color: var(--muted-foreground);
+}
+.agent-profile__info-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+.agent-profile__info-list > li + li {
+  border-top: 1px solid var(--border);
+}
+.agent-profile__info-row,
+.agent-profile__activity-link {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 1.125rem 1rem;
+  min-height: 4.5rem;
+  width: 100%;
+  height: auto;
+  text-align: left;
+  white-space: normal;
+}
+.agent-profile__info-link {
+  border-radius: 0;
+  justify-content: flex-start;
+}
+.agent-profile__info-value {
+  display: grid;
+  flex: 1;
+  min-width: 0;
+  gap: 0.25rem;
+  font-weight: 400;
+  overflow-wrap: anywhere;
+}
+.agent-profile__info-value strong {
+  font-size: var(--community-text-body);
+  font-weight: 500;
+  color: var(--foreground);
+}
+.agent-profile__info-value > span,
+.agent-profile__view {
+  color: var(--muted-foreground);
+}
+.agent-profile__info-row > svg {
+  width: 1.125rem;
+  height: 1.125rem;
+  flex-shrink: 0;
+}
+.agent-profile__activity-link {
+  border-radius: 1rem;
+  box-shadow: none;
+  justify-content: flex-start;
+}
+.agent-profile__activity-link > span:first-of-type {
+  flex: 1;
+}
+.agent-profile__key {
+  font-family: var(--font-mono, monospace);
+  font-size: var(--community-text-secondary);
+}

@@ -3,10 +3,8 @@
   import "./composer-0.css";
   import "./composer-1.css";
   import "../community-composer-status.css";
-  import Mira, {
-    type MiraHandle,
-    type MiraMarkdownActionId,
-  } from "@lapismd/mira";
+  import Mira from "@lapismd/mira";
+  import type { MiraHandle, MiraMarkdownActionId } from "@lapismd/mira";
   import { Composer, type ComposerStatus } from "@lapismd/design-core/ai/chat";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { ScrollArea } from "@lapismd/design-core/shadcn/scroll-area";
@@ -52,6 +50,7 @@
     submitLabel,
     mode = "chat",
     showSubmitButton = mode === "chat",
+    clearOnSubmit = true,
     additionalActions,
     onSubmit,
     onCancel,
@@ -132,7 +131,7 @@
         ...(context ? { context } : {}),
       });
       if (!active) return;
-      if (value === submitted) value = "";
+      if (clearOnSubmit && value === submitted) value = "";
       clearAutocomplete();
     } catch (cause) {
       if (!active) return;

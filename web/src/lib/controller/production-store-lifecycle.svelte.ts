@@ -86,8 +86,9 @@ export function followProductionExternalRoutes(options: {
     }
     if (
       result.kind === "route" &&
-      result.route.page === "projects" &&
-      !isRepositoryProjects(result.route)
+      (result.route.agentsHub ||
+        (result.route.page === "projects" &&
+          !isRepositoryProjects(result.route)))
     ) {
       void options.restore();
       return;

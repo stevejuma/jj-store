@@ -1,3 +1,4 @@
+import { agentsRoute } from "./agents-route-codec.js";
 import { createProductionStacksReaders } from "./production-stacks-history.js";
 import { createReadScope } from "./read-scope.js";
 import { connectRepositorySource } from "./production-repository-connect.js";
@@ -123,6 +124,9 @@ export function createProductionStoreController(
     restoreRoute,
     fetcher: options.fetcher,
   });
+  local.execution.onNavigate = (view, id, relatedId) => {
+    void openRoute(agentsRoute(view, id, relatedId));
+  };
   function disconnect(message = "", denied = false, preserveSession = false) {
     const repositoryStatus = data.status.repositories;
     invalidate();

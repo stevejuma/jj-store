@@ -384,3 +384,31 @@ test("focused live and pinned histories survive reload and browser Back/Forward"
   expect(reloaded.route.stackHistory).toBe("pinned");
   reloaded.destroy();
 });
+
+test("global Agents and recorded repository history survive Back, Forward and reload", () => {
+  const hash = `#/repos/${repository}/agents?at_op=${operation}&session=${session}`;
+  const nav = fakeBrowser(hash),
+    history = createStoreRouteHistory(nav.browser);
+  const directory = storeRouteFromHash("#/agents"),
+    live = storeRouteFromHash(`#/agents/sessions/${session}`);
+  if (directory.kind !== "route" || live.kind !== "route")
+    throw new Error("Agents route missing");
+  history.push(directory.route);
+  history.push(live.route);
+  nav.visit("#/agents");
+  expect(history.route.agentsHub).toBe(true);
+  expect(history.canForward).toBe(true);
+  nav.visit(hash);
+  expect(history.route.agentSessionId).toBe(session);
+  expect(history.route.agentsHub).not.toBe(true);
+  nav.visit(`#/agents/sessions/${session}`);
+  expect(history.route.executionSessionId).toBe(session);
+  const reload = createStoreRouteHistory(fakeBrowser("#/agents").browser);
+  expect(reload.route.repository).toBe("");
+  expect(reload.route.agentsHub).toBe(true);
+  history.connect(repository, operation);
+  expect(history.route.page).toBe("files");
+  expect(history.route.agentsHub).not.toBe(true);
+  history.destroy();
+  reload.destroy();
+});

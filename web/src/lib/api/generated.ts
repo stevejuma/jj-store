@@ -7105,6 +7105,8 @@ export interface components {
       id: string;
       name: string;
       avatar: string;
+      /** @default  */
+      description: string;
       instructions: string;
       runner: string;
       preferences: components["schemas"]["AgentExecutionPreferences"];
@@ -7116,6 +7118,13 @@ export interface components {
     };
     AgentExecutionSession: {
       id: string;
+      /** @default null */
+      setup_id: string | null;
+      /**
+       * @description Read-only live supervisor projection, never journal authority.
+       * @default false
+       */
+      connected: boolean;
       repository: components["schemas"]["RepositoryId"];
       target_id: string;
       runner: string;
@@ -7131,6 +7140,12 @@ export interface components {
       preferences: components["schemas"]["AgentExecutionPreferences"];
       /** Format: uint64 */
       last_sequence: number;
+      /**
+       * Format: uint64
+       * @description Device observation time of the latest retained execution event, if known.
+       * @default null
+       */
+      last_activity_at_millis: number | null;
       /** Format: uint64 */
       published_sequence: number;
       last_error: string | null;
@@ -38394,6 +38409,8 @@ export interface operations {
             id: string;
             name: string;
             avatar: string;
+            /** @default  */
+            description?: string;
             instructions: string;
             runner: string;
             preferences: {

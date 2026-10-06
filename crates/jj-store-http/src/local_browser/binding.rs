@@ -24,7 +24,9 @@ impl Binding {
         let admission = self.admission.clone();
         tokio::task::spawn_blocking(move || {
             if let Some(admission) = admission {
-                admission.validate(&folder, generation, force, || manager.folder(repo))
+                validate_binding(&admission, &folder, generation, force, || {
+                    manager.folder(repo)
+                })
             } else {
                 let (current, current_generation) = manager.folder(repo)?;
                 if current != folder || current_generation != generation {
@@ -36,6 +38,76 @@ impl Binding {
         .await
         .map_err(|_| local::Error::Unavailable)?
         .map_err(|_| local::Error::Denied)
+    }
+}
+/// One physical recheck after a watcher invalidates admission during inspection.
+/// No command has been dispatched; identity/generation changes still fail closed.
+fn validate_binding(
+    admission: &management::admission::FolderAdmission,
+    folder: &management::LocalFolder,
+    generation: u64,
+    force: bool,
+    mut load: impl FnMut() -> management::Result<(management::LocalFolder, u64)>,
+) -> management::Result<()> {
+    let result = admission.validate(folder, generation, force, &mut load);
+    if matches!(result, Err(management::Error::Stale)) {
+        admission.validate(folder, generation, true, load)
+    } else {
+        result
+    }
+}
+#[cfg(test)]
+mod tests {
+    use super::*;
+    fn folder() -> management::LocalFolder {
+        management::LocalFolder {
+            path: "/repo".into(),
+            metadata: "/repo/.jj/repo".into(),
+            repository: None,
+        }
+    }
+    #[test]
+    fn watcher_race_rechecks_before_admitting_the_binding() {
+        let admission = management::admission::FolderAdmission::default();
+        let folder = folder();
+        let mut reads = 0;
+        validate_binding(&admission, &folder, 1, true, || {
+            reads += 1;
+            if reads == 1 {
+                admission.invalidate();
+            }
+            Ok((folder.clone(), 1))
+        })
+        .unwrap();
+        assert_eq!(reads, 2);
+        assert!(admission.cached(&folder, 1));
+    }
+    #[test]
+    fn recheck_refuses_changed_identity_and_continuous_invalidation() {
+        let admission = management::admission::FolderAdmission::default();
+        let folder = folder();
+        let mut reads = 0;
+        assert_eq!(
+            validate_binding(&admission, &folder, 1, true, || {
+                reads += 1;
+                if reads == 1 {
+                    admission.invalidate();
+                    Ok((folder.clone(), 1))
+                } else {
+                    Ok((folder.clone(), 2))
+                }
+            }),
+            Err(management::Error::IdentityChanged)
+        );
+        assert!(!admission.cached(&folder, 1));
+        assert_eq!(
+            validate_binding(&admission, &folder, 1, true, || {
+                admission.invalidate();
+                Ok((folder.clone(), 1))
+            }),
+            Err(management::Error::Stale)
+        );
+        assert!(!admission.cached(&folder, 1));
     }
 }
 #[async_trait::async_trait]

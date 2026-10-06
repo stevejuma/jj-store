@@ -7,10 +7,12 @@
   import StoreHelp from "../store-help/StoreHelp.svelte";
   import { ownApplicationNotifications } from "../../notifications/notification-context.svelte.js";
   import StoreNotificationHost from "../store-notifications/StoreNotificationHost.svelte";
+  import StoreAgentExecutionNotice from "../store-agent-execution/StoreAgentExecutionNotice.svelte";
   import StoreAgentExecutionHost from "../store-agent-execution/StoreAgentExecutionHost.svelte";
   import { provideAgentExecution } from "../store-agent-execution/context.js";
   // Adapted from CommunityApplication's shell composition; all state is local.
   import { AppShell } from "@lapismd/design-core/shell";
+  import StoreAgentDetailsSidebar from "../store-agent-execution/StoreAgentDetailsSidebar.svelte";
   import StoreApplicationRightPanels from "./StoreApplicationRightPanels.svelte";
   import { createStoreShell } from "./create-store-shell.js";
   import { repositoryDetailsPanelId } from "../layout-storage.js";
@@ -161,6 +163,25 @@
   provideAgentExecution(() => controller.execution);
 </script>
 
+{#snippet agents()}{#if controller.execution}<StoreAgentExecutionHost
+      manager={controller.execution}
+      route={current}
+      onReview={(repository, commit, operation) =>
+        void controller.actions.openRoute?.({
+          ...current,
+          agentsHub: false,
+          agentView: undefined,
+          executionSessionId: null,
+          setupId: null,
+          repository,
+          page: "log",
+          commitId: commit,
+          snapshotOperationId: operation,
+          agentSessionId: null,
+          projectsHub: false,
+        })}
+    />{/if}{/snippet}
+
 {#snippet settingsRepository()}
   <StoreSettingsRepository
     {controller}
@@ -186,7 +207,7 @@
       />{:else if !settingsOpen && current.page === "threads"}<StoreThreadsBreadcrumb
         {controller}
       />{/if}{/snippet}
-  {#snippet headerEnd()}{#if !settingsOpen}<StoreApplicationHeaderActions
+  {#snippet headerEnd()}{#if !settingsOpen && !current.agentsHub}<StoreApplicationHeaderActions
         {controller}
         disabled={editorOpen}
         detailsOpen={!detailsRail.closed}
@@ -246,12 +267,18 @@
     {detailsRail}
     {selectPage}
     {children}
+    {agents}
     linkFolder={() => {
       openSettings();
       selectSettings("repository");
     }}
   />
-  {#if !settingsOpen}<StoreApplicationRightPanels
+  {#if !settingsOpen && current.agentsHub && controller.execution}<StoreAgentDetailsSidebar
+      manager={controller.execution}
+      {shell}
+      route={current}
+    />{/if}
+  {#if !settingsOpen && !current.agentsHub}<StoreApplicationRightPanels
       {controller}
       {stackWorkspace}
       {shell}
@@ -285,18 +312,9 @@
 
 <StoreIndexPreparationNotice {controller} />
 <StoreNotificationHost owner={notifications} />
-{#if controller.execution?.available()}<StoreAgentExecutionHost
+{#if controller.execution}<StoreAgentExecutionNotice
     manager={controller.execution}
-    onReview={(repository, commit, operation) => {
-      controller.execution!.open = false;
-      void controller.actions.openRoute?.({
-        ...controller.state.route,
-        repository,
-        page: "log",
-        commitId: commit,
-        snapshotOperationId: operation,
-        agentSessionId: null,
-        projectsHub: false,
-      });
-    }}
+    activeSession={current.agentsHub && current.agentView === "session"
+      ? current.executionSessionId
+      : undefined}
   />{/if}

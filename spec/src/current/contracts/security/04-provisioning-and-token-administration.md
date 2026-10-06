@@ -101,17 +101,21 @@ rejection. Source data is always text. Static serving has an explicit bounded
 asset allowlist, rejects symlinks and path escapes, and never falls back to the
 app for unknown API paths. Browser assets contain no deployment credentials.
 
-Static assets retain the strict production CSP by default. Style attributes
-allow only the hash of an empty reset, so dialog teardown can clear temporary
-CSSOM locks without admitting nonempty inline attributes or inline scripts. The
+Static assets retain the strict production CSP by default. Image sources allow
+same-origin, HTTPS and data images for the Community avatar picker. Agent saves
+validate bounded raster data, the fixed emoji SVG template and credential-free
+HTTPS URLs; the server never fetches avatar URLs. Script, style, connection and
+frame restrictions remain independent of image sources. Style attributes allow
+only the hash of an empty reset, so dialog teardown can clear temporary CSSOM
+locks without admitting nonempty inline attributes or inline scripts. The
 explicit `development_browser_annotations = true` server setting permits inline
 scripts and styles for browser annotation helpers only with a loopback
 LocalTrusted listener and a configured browser bundle. Configuration rejects
 this setting for authenticated deployments, non-loopback listeners or missing
-bundles. It does not enable eval, external resource origins or framed embedding,
-and does not change API CSP, origin/fetch-metadata checks, authentication or
-repository authorization. Ordinary LocalTrusted installation also defaults to
-strict CSP.
+bundles. It does not enable eval, external script/style/connection origins or
+framed embedding, and does not change API CSP, origin/fetch-metadata checks,
+authentication or repository authorization. Ordinary LocalTrusted installation
+also defaults to strict CSP.
 
 The shared listener returns HTTP 404 for unknown ordinary routes. Unknown native
 gRPC services retain the protocol-specific UNIMPLEMENTED status.

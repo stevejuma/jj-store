@@ -1,107 +1,135 @@
 <script lang="ts">
   import { untrack } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import { Input } from "@lapismd/design-core/shadcn/input";
-  import { Textarea } from "@lapismd/design-core/shadcn/textarea";
+  import * as Field from "@lapismd/design-core/shadcn/field";
+  import StoreWorkField from "../store-work/StoreWorkField.svelte";
+  import * as Empty from "@lapismd/design-core/shadcn/empty";
+  import MessageIcon from "@lucide/svelte/icons/messages-square";
+  import StoreAgentPicker from "./StoreAgentPicker.svelte";
+  import StoreAgentRevisionPicker from "./StoreAgentRevisionPicker.svelte";
+  import StoreRepositoryPicker from "../store-application/StoreRepositoryPicker.svelte";
+  import CommunityChatComposer from "../community-chat-composer/CommunityChatComposer.svelte";
+  import CommunityAgentActivityFeed from "../community-agent-activity/CommunityAgentActivityFeed.svelte";
   import type { AgentExecution } from "../../controller/agent-execution.svelte.js";
   let { manager }: { manager: AgentExecution } = $props();
   const formId = $props.id();
-  let targetId = $state("");
-  let runner = $state("codex");
-  let setup = $state("");
-  let commit = $state("");
-  const target = $derived(manager.targets.find((t) => t.id === targetId));
-  const saved = $derived(manager.value?.setups.find((s) => s.id === setup));
+  const draft = $derived(manager.launchDraft);
+  const target = $derived(manager.targets.find((t) => t.id === draft.targetId));
+  const saved = $derived(
+    manager.value?.setups.find((s) => s.id === manager.setupId),
+  );
+  const draftKey = $derived(`new:${manager.setupId || "unassigned"}`);
   $effect(() => {
-    if (!targetId && manager.targets.length) targetId = manager.targets[0].id;
+    manager.drafts[draftKey] ??= "";
   });
   $effect(() => {
-    const selected = targetId,
+    if (!draft.targetId && manager.targets.length)
+      draft.targetId = manager.targets[0].id;
+  });
+  $effect(() => {
+    const selected = draft.targetId,
       contextual = manager.context.commit;
     untrack(() => {
       const target = manager.targets.find((t) => t.id === selected);
-      if (target) commit = contextual || target.commit;
+      if (target && !draft.commit) draft.commit = contextual || target.commit;
     });
   });
   $effect(() => {
-    if (saved) runner = saved.runner;
+    if (saved) draft.runner = saved.runner;
   });
-  const valid = $derived(/^(?:[0-9a-f]{40}|[0-9a-f]{128})$/.test(commit));
+  const valid = $derived(/^(?:[0-9a-f]{40}|[0-9a-f]{128})$/.test(draft.commit));
 </script>
 
-<form
-  class="agent-execution-form"
-  aria-label="Start agent session"
-  onsubmit={(event) => {
-    event.preventDefault();
-    if (target && valid) void manager.launch(target, runner, setup, commit);
-  }}
->
-  <h3>Start a session</h3>
-  {#if manager.value?.runtime === "preparing"}<p role="status">
-      Preparing agent sessions…
-    </p>{:else if manager.value?.runtime === "unavailable"}<p role="status">
-      Agent execution is unavailable on this device.
-    </p>{/if}
-  <p>
-    Create an isolated JJ workspace from the selected revision. Uncommitted
-    source-folder edits stay in the source folder.
-  </p>
-  {#if !manager.targets.length}<p role="status">
-      Register a local JJ folder or link a native repository workspace to launch
-      a session.
-    </p>{/if}
-  <label for={`${formId}-target`}>Repository workspace</label>
-  <select id={`${formId}-target`} bind:value={targetId} disabled={manager.busy}
-    >{#each manager.targets as item (item.id)}<option value={item.id}
-        >{item.name} · {item.profile} · {item.folder}</option
-      >{/each}</select
-  >
-  <label for={`${formId}-revision`}>Exact starting revision</label>
-  <Input
-    id={`${formId}-revision`}
-    bind:value={commit}
-    required
-    aria-invalid={!valid}
-    disabled={manager.busy}
-  />
-  {#if commit && !valid}<p>
-      Use the full revision ID from this repository.
-    </p>{/if}
-  {#if target}<p class="agent-execution-meta">
-      Operation: {target.operation}
-    </p>{/if}
-  <label for={`${formId}-setup`}>Saved setup</label>
-  <select id={`${formId}-setup`} bind:value={setup} disabled={manager.busy}
-    ><option value="">No saved setup</option
-    >{#each manager.value?.setups ?? [] as item (item.id)}<option
-        value={item.id}>{item.avatar} {item.name}</option
-      >{/each}</select
-  >
-  <label for={`${formId}-runner`}>Runner</label>
-  <select
-    id={`${formId}-runner`}
-    bind:value={runner}
-    disabled={manager.busy || !!saved}
-    >{#each manager.value?.runners ?? [] as item (item.id)}<option
-        value={item.id}
-        >{item.label}{item.available ? "" : " · unavailable"}</option
-      >{/each}</select
-  >
-  {#if manager.context.text}<label for={`${formId}-context`}
-      >Context for the first prompt</label
-    ><Textarea
-      id={`${formId}-context`}
-      bind:value={manager.context.text}
-      rows={4}
-    />{/if}
-  <Button
-    type="submit"
-    disabled={manager.busy ||
-      !!manager.pending ||
-      !target ||
-      !valid ||
-      !manager.value?.runners.find((r) => r.id === runner)?.available ||
-      manager.value?.runtime !== "ready"}>Create session workspace</Button
-  >
-</form>
+<div class="agent-conversation">
+  <CommunityAgentActivityFeed conversationKey={draftKey} empty>
+    {#snippet messageComposer()}
+      <form
+        id={formId}
+        aria-label="Start agent session"
+        onsubmit={(event) => {
+          event.preventDefault();
+          if (target && valid)
+            void manager.launch(
+              target,
+              draft.runner,
+              manager.setupId,
+              draft.commit,
+            );
+        }}
+      >
+        <CommunityChatComposer
+          mode="form"
+          ariaLabel="Message to agent"
+          placeholder={`Message ${saved?.name ?? "the agent"}…`}
+          bind:value={
+            () => manager.drafts[draftKey] ?? "",
+            (value) => {
+              manager.drafts[draftKey] = value;
+            }
+          }
+          disabled={manager.busy || !!manager.pending}
+        />
+      </form>
+    {/snippet}
+    <Empty.Root class="agent-draft-empty"
+      ><Empty.Header
+        ><Empty.Media variant="icon"
+          ><MessageIcon aria-hidden="true" /></Empty.Media
+        ><Empty.Title>Start a chat with {saved?.name ?? "an agent"}</Empty.Title
+        ><Empty.Description
+          >Choose an agent, repository and starting revision, then connect.
+          These selections are fixed for the session. Your message stays in the
+          draft until you Send.</Empty.Description
+        ></Empty.Header
+      ><Empty.Content>
+        <div class="agent-draft-selections">
+          <Field.Group class="community-settings__option-group">
+            <StoreWorkField label="Agent" bordered={false}
+              ><StoreAgentPicker {manager} /></StoreWorkField
+            >
+            <StoreWorkField label="Repository" bordered={false}
+              ><StoreRepositoryPicker
+                variant="ghost"
+                label="Repository workspace"
+                repositories={manager.targets.map((item) => ({
+                  id: item.id,
+                  name: item.name,
+                  description: item.folder,
+                }))}
+                value={draft.targetId}
+                controlled
+                disabled={manager.busy || !!manager.pending}
+                onChange={(value) => {
+                  draft.targetId = value;
+                  draft.commit =
+                    manager.targets.find((t) => t.id === value)?.commit ?? "";
+                }}
+              /></StoreWorkField
+            >
+            <StoreWorkField label="Starting revision" bordered={false}
+              ><StoreAgentRevisionPicker {manager} {target} /></StoreWorkField
+            ></Field.Group
+          >
+          <Button
+            type="submit"
+            form={formId}
+            disabled={manager.busy ||
+              !!manager.pending ||
+              !target ||
+              !valid ||
+              !manager.value?.runners.find((r) => r.id === draft.runner)
+                ?.available ||
+              manager.value?.runtime !== "ready"}>Connect agent</Button
+          >
+        </div>
+      </Empty.Content></Empty.Root
+    >
+    {#if manager.context.text}<p>
+        Context for the first prompt: {manager.context.text}
+      </p>{/if}
+    {#if !manager.targets.length}<p role="status">
+        Register a local JJ folder or link a repository workspace to start a
+        chat.
+      </p>{/if}
+  </CommunityAgentActivityFeed>
+</div>

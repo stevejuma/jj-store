@@ -25,6 +25,7 @@ export interface ComposerProps {
   submitLabel?: string;
   mode?: "chat" | "form";
   showSubmitButton?: boolean;
+  clearOnSubmit?: boolean;
   additionalActions?: Snippet;
   onSubmit?: (submission: CommunityComposerSubmission) => void | Promise<void>;
   onCancel?: () => void;

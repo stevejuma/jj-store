@@ -10,7 +10,9 @@ export function selectStoreNavigation(
   controller: StoreController,
   item: CommunityNavigationItemModel,
 ) {
-  if (item.kind === "threads")
+  if (item.id === "agents" && item.kind === "agents")
+    controller.execution?.directory();
+  else if (item.kind === "threads")
     void controller.actions.openThreads?.(null, item.repository);
   else if (item.kind === "channel")
     void controller.actions.openThreads?.(item.thread, item.repository);
@@ -49,6 +51,7 @@ export function selectStoreNavigation(
 }
 
 export function activeStoreNavigation(route: StoreRoute) {
+  if (route.agentsHub) return "agents";
   if (route.page === "threads")
     return route.threadId
       ? `thread:${route.repository}:${route.threadId}`

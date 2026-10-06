@@ -22,3 +22,11 @@ export function object(value: unknown): Record<string, unknown> {
 export function text(value: unknown): string {
   return typeof value === "string" ? value : "";
 }
+
+export type AgentView = NonNullable<
+  import("./store-route-types.js").StoreRoute["agentView"]
+>;
+
+export function agentLaunchDraft(commit = "") {
+  return { targetId: "", runner: "codex", commit };
+}

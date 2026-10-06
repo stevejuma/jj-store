@@ -1,4 +1,7 @@
+import { activeAgentSession } from "./agent-activity-session.js";
+import { consumeAgentEvents } from "./agent-execution-stream.js";
 import { LocalClient } from "../api/local-client.js";
+import { agentLaunchDraft } from "./agent-execution-types.js";
 import { ApiError, decode, type Model } from "../api/client.js";
 import type {
   AgentAction,
@@ -6,6 +9,7 @@ import type {
   AgentLaunchContext,
   AgentOutcome,
   AgentSetup,
+  AgentView,
   AgentStatus,
   AgentTarget,
 } from "./agent-execution-types.js";
@@ -13,16 +17,25 @@ const newId = () => crypto.randomUUID().replaceAll("-", "");
 /** Installation owner retains drafts and exact pending identities across navigation. */
 export class AgentExecution {
   open = $state(false);
+  onNavigate?: (view: AgentView, id?: string, relatedId?: string) => void;
+  setupId = $state("");
+  launchDraft = $state({ targetId: "", runner: "codex", commit: "" });
   launchOpen = $state(false);
   context = $state<AgentLaunchContext>({});
   value = $state<AgentStatus | null>(null);
   targets = $state<AgentTarget[]>([]);
   selected = $state("");
   events = $state<AgentEvent[]>([]);
+  eventsLoading = $state(false);
   drafts = $state<Record<string, string>>({});
+  setupDraftRevisions = $state<Record<string, number | bigint>>({});
   setupDrafts = $state<Record<string, AgentSetup>>({});
   busy = $state(false);
   error = $state("");
+  errorSessionId = $state("");
+  setupConflict = $state(false);
+  detailsId = $state("");
+  editRequested = $state<AgentSetup | undefined>();
   connectionError = $state("");
   activityError = $state("");
   pending = $state<{
@@ -48,9 +61,34 @@ export class AgentExecution {
   async show(context: AgentLaunchContext = {}) {
     if (!this.available()) return;
     this.context = context;
+    this.launchDraft = agentLaunchDraft(context.commit);
+    this.setupId = "";
     this.open = true;
     this.launchOpen = true;
+    this.onNavigate?.("new");
     await this.refresh();
+  }
+  directory = () => this.onNavigate?.("directory");
+  startAgent(id: string) {
+    this.context = {};
+    this.launchDraft = { targetId: "", runner: "codex", commit: "" };
+    this.setupId = id;
+    this.onNavigate?.("new", id);
+  }
+  openSession(id: string, agent?: string) {
+    this.onNavigate?.("session", id, agent);
+  }
+  viewSessions = (agent?: string) => this.onNavigate?.("sessions", agent);
+  viewActivity(agent?: string, session?: string) {
+    if (session) return this.openSession(session, agent);
+    const active = activeAgentSession(this.value?.sessions ?? [], agent);
+    if (active) this.openSession(active.id, agent);
+    else this.viewSessions(agent);
+  }
+  pauseView() {
+    this.open = false;
+    clearTimeout(this.#timer);
+    this.#stream?.abort();
   }
   async refresh() {
     if (!this.#alive || !this.available() || this.#refreshing) return;
@@ -82,8 +120,10 @@ export class AgentExecution {
   }
   async select(id: string) {
     this.#stream?.abort();
+    this.drafts[id] ??= "";
     this.selected = id;
     this.events = [];
+    this.eventsLoading = true;
     const abort = (this.#stream = new AbortController());
     try {
       let after = 0;
@@ -100,77 +140,20 @@ export class AgentExecution {
         after = Number(page.events.at(-1)?.sequence ?? after);
         if (page.next === null || page.next === undefined) break;
       } while (!abort.signal.aborted);
-      void this.stream(id, after, abort.signal);
+      void consumeAgentEvents(this.client, id, after, abort.signal, {
+        alive: () => this.#alive,
+        receive: (events) => {
+          this.activityError = "";
+          this.events = [...this.events, ...events];
+        },
+        failed: (message) => {
+          this.activityError = message;
+        },
+      });
     } catch (cause) {
-      if (!abort.signal.aborted) this.error = String(cause);
-    }
-  }
-  private async stream(id: string, after: number, signal: AbortSignal) {
-    while (this.#alive && !signal.aborted) {
-      try {
-        const response = await this.client.fetch(
-          `agents/stream?session=${id}&after=${after}`,
-          { signal },
-        );
-        if (
-          !response.ok ||
-          !response.headers.get("content-type")?.startsWith("text/event-stream")
-        )
-          throw new Error("Agent activity unavailable");
-        const reader = response.body!.getReader(),
-          decoder = new TextDecoder();
-        let buffer = "";
-        try {
-          while (!signal.aborted) {
-            const next = await reader.read();
-            if (next.done) break;
-            buffer += decoder.decode(next.value, { stream: true });
-            if (buffer.length > 16 * 1024 * 1024)
-              throw new Error("Agent activity limit");
-            let end: number;
-            while ((end = buffer.indexOf("\n\n")) >= 0) {
-              const frame = buffer.slice(0, end);
-              buffer = buffer.slice(end + 2);
-              const data = frame
-                .split("\n")
-                .filter((line) => line.startsWith("data:"))
-                .map((line) => line.slice(5).trimStart())
-                .join("\n");
-              if (!data) continue;
-              const page = decode(data) as Model<"AgentExecutionEventPage">;
-              this.activityError = "";
-              const added = page.events.filter(
-                (e) => Number(e.sequence) > after,
-              );
-              if (added.length) {
-                after = Number(added.at(-1)!.sequence);
-                this.events = [...this.events, ...added];
-              }
-            }
-          }
-        } finally {
-          await reader.cancel().catch(() => {});
-          reader.releaseLock();
-        }
-      } catch (cause) {
-        if (!signal.aborted)
-          this.activityError =
-            cause instanceof Error
-              ? cause.message
-              : "Agent activity reconnecting";
-      }
-      if (!signal.aborted)
-        await new Promise<void>((resolve) => {
-          const timeout = setTimeout(resolve, 1000);
-          signal.addEventListener(
-            "abort",
-            () => {
-              clearTimeout(timeout);
-              resolve();
-            },
-            { once: true },
-          );
-        });
+      if (!abort.signal.aborted) this.activityError = String(cause);
+    } finally {
+      if (this.#stream === abort) this.eventsLoading = false;
     }
   }
   private accept(outcome: AgentOutcome) {
@@ -215,16 +198,26 @@ export class AgentExecution {
     if (this.busy || this.pending || !this.available()) return;
     this.busy = true;
     this.error = "";
+    this.errorSessionId =
+      path === "agents/command" ? String(body.session_id) : "";
+    this.setupConflict = false;
     this.pending = { path, body, draft };
     try {
       if (path === "agents/setups") {
         this.value = await this.client.request<AgentStatus>(path, body);
         this.pending = null;
+        return this.value.revision;
       } else {
         const outcome = await this.client.request<AgentOutcome>(path, body);
         this.accept(outcome);
         if (path === "agents/launch" && outcome.session_id) {
           this.launchOpen = false;
+          const key = `new:${typeof body.setup_id === "string" ? body.setup_id : "unassigned"}`;
+          if (this.drafts[key]) {
+            this.drafts[outcome.session_id] = this.drafts[key];
+            delete this.drafts[key];
+          }
+          this.onNavigate?.("session", outcome.session_id);
           await this.select(outcome.session_id);
         }
       }
@@ -241,6 +234,8 @@ export class AgentExecution {
         ].includes(cause.code)
       ) {
         this.pending = null;
+        this.setupConflict =
+          path === "agents/setups" && cause.code === "agent_selection_changed";
         this.error = cause.message;
       } else
         this.error = `${cause instanceof Error ? cause.message : "Request failed"}. The request identity is retained; check its outcome.`;
@@ -267,22 +262,31 @@ export class AgentExecution {
       context: this.context.text || null,
     });
   }
-  async saveSetup(setup?: AgentSetup, remove?: string) {
-    await this.send("agents/setups", {
+  async saveSetup(
+    setup?: AgentSetup,
+    remove?: string,
+    revision?: number | bigint,
+  ) {
+    return this.send("agents/setups", {
       version: 1,
       request_id: newId(),
-      expected_revision: this.value?.revision ?? 0,
+      expected_revision: revision ?? this.value?.revision ?? 0,
       setup: setup ?? null,
       remove: remove ?? null,
     });
   }
   async command(action: AgentAction, draft?: string) {
-    if (!this.selected) return;
+    await this.commandSession(this.selected, action, draft);
+  }
+  async commandSession(id: string, action: AgentAction, draft?: string) {
+    if (!id || this.busy || this.pending || !this.available()) return;
+    const request_id = newId();
     await this.send(
       "agents/command",
-      { version: 1, request_id: newId(), session_id: this.selected, action },
+      { version: 1, request_id, session_id: id, action },
       draft,
     );
+    return request_id;
   }
   destroy() {
     this.#alive = false;

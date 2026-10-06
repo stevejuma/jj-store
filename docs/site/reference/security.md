@@ -49,3 +49,8 @@ served from an explicit local asset list and can be framed only by its own
 origin. The application and API responses remain protected independently. Help
 never receives repository tokens. Closing it preserves the underlying view and
 in-memory drafts rather than reconnecting the application.
+
+Browser image CSP permits same-origin, HTTPS and data images for Community
+avatars. Agent saves accept credential-free HTTPS image URLs, bounded raster
+data and the fixed Community emoji SVG template. The server does not fetch
+remote avatars. Script, style, connection and frame restrictions remain intact.

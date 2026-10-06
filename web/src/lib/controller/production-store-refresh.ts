@@ -39,6 +39,7 @@ export function createProductionRefresh(options: {
         history.route.page !== "projects"
       )
         await options.discover?.();
+      if (history.route.agentsHub) return;
       if (history.route.page === "threads") {
         const active = options.source(),
           route = history.route;

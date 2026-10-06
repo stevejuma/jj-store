@@ -188,7 +188,10 @@ export function createProductionStoreActions(options: {
         }
         return;
       }
-      if (options.history.route.page === "projects") {
+      if (
+        options.history.route.page === "projects" ||
+        options.history.route.agentsHub
+      ) {
         options.history.connect(
           id,
           options.data.heads.length === 1 ? options.data.heads[0]! : null,

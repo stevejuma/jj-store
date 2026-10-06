@@ -20563,6 +20563,10 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 "avatar": {
                   "type": "string"
                 },
+                "description": {
+                  "type": "string",
+                  "default": ""
+                },
                 "instructions": {
                   "type": "string"
                 },

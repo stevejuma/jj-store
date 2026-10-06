@@ -25,7 +25,15 @@ impl Manager for Supervisor {
             })
         })?;
         let mut admitted = Vec::new();
-        for session in status.sessions {
+        for mut session in status.sessions {
+            let live = self
+                .0
+                .runtimes
+                .lock()
+                .map_err(|_| Error::Unavailable)?
+                .get(&session.id)
+                .is_some_and(|sender| !sender.is_closed());
+            session.connected = connection_ready(&session, live);
             let saved = self.saved(&session.id)?;
             if self
                 .authorized(session.repository, &saved.profile, false)
@@ -59,7 +67,9 @@ impl Manager for Supervisor {
         if let Some(setup) = &command.setup {
             if !label(&setup.id, 64)
                 || !label(&setup.name, 128)
-                || !label(&setup.avatar, 128)
+                || !avatar::valid(&setup.avatar)
+                || setup.description.chars().count() > 280
+                || setup.description.contains('\0')
                 || setup.instructions.len() > 32768
                 || !matches!(setup.runner.as_str(), "codex" | "cursor")
             {
@@ -68,13 +78,17 @@ impl Manager for Supervisor {
             preferences(&setup.preferences)?;
             let sanitizer =
                 runtime::sanitizer(self, &self.0.resources.root.join("workspaces")).await?;
+            let avatar = setup.avatar.clone();
+            let mut authored = setup.clone();
+            authored.avatar.clear();
             command.setup = Some(
                 serde_json::from_value(runtime::safe(
                     &sanitizer,
-                    serde_json::to_value(setup).map_err(|_| Error::Invalid)?,
+                    serde_json::to_value(authored).map_err(|_| Error::Invalid)?,
                 )?)
                 .map_err(|_| Error::Invalid)?,
             );
+            command.setup.as_mut().ok_or(Error::Invalid)?.avatar = avatar;
         }
         self.update(|s| {
             if command.expected_revision != s.setup_revision.unwrap_or(s.revision) {
@@ -459,5 +473,44 @@ impl Manager for Supervisor {
             .lock()
             .map_err(|_| Error::Unavailable)? = Some(true);
         stopped.map_err(|_| Error::Unavailable)?
+    }
+}
+
+fn connection_ready(session: &Session, live: bool) -> bool {
+    live && session.adapter_session_id.is_some()
+        && matches!(session.state.as_str(), "idle" | "running")
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn presence_requires_live_process_and_completed_handshake() {
+        let mut session: Session = serde_json::from_value(json!({
+            "id":"a", "repository":"11".repeat(16), "target_id":"target",
+            "runner":"codex", "title":"Helper", "avatar":"🤖", "workspace":"/tmp/a",
+            "base_commit":"22".repeat(20), "review_commit":"22".repeat(20),
+            "operation":"33".repeat(64), "state":"idle", "adapter_session_id":"adapter",
+            "capabilities":{}, "preferences":{"model":null,"effort":null,"mode":null},
+            "last_sequence":0,"published_sequence":0,"last_error":null
+        }))
+        .unwrap();
+        assert_eq!(session.setup_id, None);
+        assert!(!session.connected);
+        assert!(!connection_ready(&session, false));
+        assert!(connection_ready(&session, true));
+        session.state = "running".into();
+        assert!(connection_ready(&session, true));
+        for state in ["preparing", "opening", "interrupted", "ended", "cleaned"] {
+            session.state = state.into();
+            assert!(!connection_ready(&session, true));
+        }
+        session.state = "idle".into();
+        session.adapter_session_id = None;
+        assert!(!connection_ready(&session, true));
+        session.setup_id = Some("helper".into());
+        let restored: Session =
+            serde_json::from_value(serde_json::to_value(&session).unwrap()).unwrap();
+        assert_eq!(restored.setup_id.as_deref(), Some("helper"));
     }
 }

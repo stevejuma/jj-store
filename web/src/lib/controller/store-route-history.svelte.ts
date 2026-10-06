@@ -137,6 +137,7 @@ export function createStoreRouteHistory(
               snapshotOperationId: operation,
             };
       if (
+        route.agentsHub ||
         (route.page === "projects" && route.projectsHub) ||
         (route.repository && route.repository !== repository)
       )

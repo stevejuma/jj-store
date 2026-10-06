@@ -1,0 +1,213 @@
+.agents {
+  max-width: 76rem;
+  padding: 1rem;
+  display: grid;
+  gap: 1.75rem;
+  margin-inline: auto;
+  align-content: start;
+}
+.agents--body-header {
+  max-width: none;
+  padding-top: 1rem;
+  margin-inline: 0;
+}
+.agents header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.agents h1,
+.agents h2,
+.agents p {
+  margin: 0;
+}
+.agents h1 {
+  font-size: var(--community-text-page);
+  font-weight: 650;
+  letter-spacing: -0.035em;
+}
+.agents h2 {
+  font-size: var(--community-text-section);
+  font-weight: 600;
+}
+.agents p {
+  color: var(--muted-foreground);
+  line-height: 1.6;
+}
+.agents header p {
+  margin-top: 0.35rem;
+}
+.agents__description {
+  max-width: 40rem;
+}
+.agents__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, min(100%, 13rem));
+  gap: 1rem;
+  align-items: start;
+}
+.agents__add-card {
+  height: 16.25rem;
+  box-sizing: border-box;
+  min-width: 0;
+  border: 1px dashed var(--border);
+  border-radius: 1rem;
+  background: transparent;
+  color: var(--muted-foreground);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 1px 3px color-mix(in oklab, var(--foreground) 5%, transparent);
+  transition:
+    background-color 150ms,
+    border-color 150ms,
+    color 150ms;
+}
+.agents__add-card:hover {
+  border-color: color-mix(in oklab, var(--border) 70%, var(--foreground));
+  background: color-mix(in oklab, var(--muted) 70%, transparent);
+  color: var(--foreground);
+}
+.agents__add-card:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+.agents__add-card:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+.agents__add-card svg {
+  width: 2rem;
+  height: 2rem;
+}
+.agents__card {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  position: relative;
+  min-width: 0;
+  height: 16.25rem;
+  box-sizing: border-box;
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  background: color-mix(in oklab, var(--muted) 50%, var(--background));
+  box-shadow: 0 1px 3px color-mix(in oklab, var(--foreground) 7%, transparent);
+  transition:
+    background-color 150ms,
+    border-color 150ms;
+}
+.agents__card-open {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+  height: 100%;
+  padding: 1rem;
+  border: 0;
+  border-radius: inherit;
+  background: transparent;
+  color: var(--foreground);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.agents__card:hover {
+  background: color-mix(in oklab, var(--muted) 75%, var(--background));
+}
+.agents__card-open:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+.agents__avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 9rem;
+  flex: 1;
+  padding-bottom: 0.75rem;
+}
+.agents__avatar-content {
+  position: relative;
+}
+.agents__processing {
+  position: absolute;
+  z-index: 2;
+  left: 50%;
+  bottom: 0;
+  transform: translate(-50%, 50%);
+}
+.agents__restore {
+  position: relative;
+  z-index: 2;
+}
+.agents__processing [data-ui-component="button"] {
+  border-radius: 999px;
+}
+.agents__details {
+  display: grid;
+  gap: 0.25rem;
+  justify-items: start;
+  width: 100%;
+  min-width: 0;
+}
+.agents__details strong {
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--community-text-section);
+  font-weight: 600;
+}
+.agents__about {
+  color: var(--muted-foreground);
+  font-size: var(--community-text-body);
+  line-height: 1.4;
+  min-height: 1.4em;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.agents__card-menu {
+  z-index: 2;
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  border-radius: 0.5rem;
+}
+.agents__card-actions {
+  width: 12rem;
+  max-width: calc(100vw - 2rem);
+}
+.agents__empty {
+  min-height: 17rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  text-align: center;
+  border: 1px dashed var(--border);
+  border-radius: 1rem;
+  padding: 2rem;
+}
+.agents__empty svg {
+  width: 2rem;
+  height: 2rem;
+  color: var(--muted-foreground);
+}
+.agents__empty p {
+  max-width: 34rem;
+}

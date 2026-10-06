@@ -202,3 +202,10 @@ the server composes its optional supervisor with a configured ACP executable
 over inherited stdio. ACP implementation is not imported by service, model or
 WAL. Code-repository access is checked independently of project/task homes. See
 [agent sessions](../guides/agent-execution.md).
+
+Installation agent setups are separate from repository AgentStore evidence.
+Session views retain the original setup ID and project a live connection only
+from the supervised process and completed ACP handshake. Legacy journals default
+the association to unassigned and descriptions to empty. Optional last activity
+time belongs to the private execution journal and advances only when an event is
+retained; it neither establishes live presence nor changes repository authority.

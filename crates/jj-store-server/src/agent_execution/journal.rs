@@ -56,7 +56,9 @@ pub(super) fn read(root: &Path) -> Result<State> {
     if state.sessions.len() > 64 || state.setups.len() > 64 || state.intents.len() > 4096 {
         return Err(Error::Limit);
     }
+    avatar::budget(&state)?;
     for saved in state.sessions.values_mut() {
+        saved.view.connected = false;
         let expected = root
             .join("workspaces")
             .join(format!("agent-{}", saved.view.id));
@@ -100,6 +102,7 @@ pub(super) fn read(root: &Path) -> Result<State> {
 }
 const MAX_BYTES: usize = 32 * 1024 * 1024;
 pub(super) fn persist(root: &Path, state: &State) -> Result<()> {
+    avatar::budget(state)?;
     let bytes = serde_json::to_vec(state).map_err(|_| Error::Unavailable)?;
     if bytes.len() > MAX_BYTES {
         return Err(Error::Limit);
@@ -137,4 +140,67 @@ pub(super) fn digest(value: &impl Serialize) -> Result<String> {
     Ok(hex::encode(Sha256::digest(
         serde_json::to_vec(value).map_err(|_| Error::Invalid)?,
     )))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn journal_restart_retains_agent_association_but_never_connection() {
+        let root = tempfile::tempdir().unwrap();
+        let id = "44".repeat(16);
+        let path = root.path().join("workspaces").join(format!("agent-{id}"));
+        let mut value = json!({
+            "owner":null,"revision":1,"setups":{},"intents":{},"sessions":{
+                id.clone():{
+                    "view":{"id":id,"setup_id":"helper","connected":true,
+                        "repository":"11".repeat(16),"target_id":"fixture","runner":"codex",
+                        "title":"Original name","avatar":"🤖","workspace":path,
+                        "base_commit":"22".repeat(20),"review_commit":"22".repeat(20),
+                        "operation":"33".repeat(64),"state":"idle","adapter_session_id":"adapter",
+                        "capabilities":{},"preferences":{"model":null,"effort":null,"mode":"ask"},
+                        "last_sequence":0,"last_activity_at_millis":1791324000000_u64,
+                        "published_sequence":0,"last_error":null},
+                    "workspace":{"source":root.path().join("source"),"path":path,
+                        "metadata":root.path().join("source/.jj"),"operation":"33".repeat(64),
+                        "commit":"22".repeat(20),"name":format!("agent-{id}")},
+                    "profile":"local_jj_git","instructions":"Original instructions","context":null,"events":[]
+                }
+            }
+        });
+        fs::write(
+            root.path().join("state.json"),
+            serde_json::to_vec(&value).unwrap(),
+        )
+        .unwrap();
+        let state = read(root.path()).unwrap();
+        let saved = &state.sessions[&id];
+        assert_eq!(saved.view.setup_id.as_deref(), Some("helper"));
+        assert!(!saved.view.connected);
+        assert_eq!(saved.view.last_activity_at_millis, Some(1791324000000));
+        assert_eq!(saved.view.state, "interrupted");
+        assert_eq!(saved.instructions, "Original instructions");
+        // The old journal format predates association, connection and timing.
+        value["sessions"][&id]["view"]
+            .as_object_mut()
+            .unwrap()
+            .remove("setup_id");
+        value["sessions"][&id]["view"]
+            .as_object_mut()
+            .unwrap()
+            .remove("connected");
+        value["sessions"][&id]["view"]
+            .as_object_mut()
+            .unwrap()
+            .remove("last_activity_at_millis");
+        fs::write(
+            root.path().join("state.json"),
+            serde_json::to_vec(&value).unwrap(),
+        )
+        .unwrap();
+        let legacy = read(root.path()).unwrap();
+        assert_eq!(legacy.sessions[&id].view.setup_id, None);
+        assert!(!legacy.sessions[&id].view.connected);
+        assert_eq!(legacy.sessions[&id].view.last_activity_at_millis, None);
+    }
 }

@@ -1971,6 +1971,342 @@
           "license": "Apache-2.0"
         }
       ]
+    },
+    {
+      "local": "web/src/lib/ui/community-agents/agents.css",
+      "sources": [
+        {
+          "path": "src/components/community-agents/CommunityAgents.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-agents/CommunityAgents.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-agents/CommunityAgents.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-agents/model.ts",
+      "sources": [
+        {
+          "path": "src/components/community-agents/model.ts",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-agent-editor/CommunityAgentEditorModelField.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-agent-editor/CommunityAgentEditorModelField.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-agent-editor/CommunityAgentEditorModelPicker.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-agent-editor/CommunityAgentEditorModelPicker.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-agent-editor/CommunityAgentEditorHarnessIcon.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-agent-editor/CommunityAgentEditorHarnessIcon.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-agent-editor/CommunityAgentEditorThinkingField.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-agent-editor/CommunityAgentEditorThinkingField.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/community/agent-editor-harness-tabs.ts",
+      "sources": [
+        {
+          "path": "src/community/agent-editor-harness-tabs.ts",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/community/agent-editor-model-rows.ts",
+      "sources": [
+        {
+          "path": "src/community/agent-editor-model-rows.ts",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/community/agent-runtime-contracts.ts",
+      "sources": [
+        {
+          "path": "src/community/agent-runtime-contracts.ts",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-agent-editor/agent-editor.css",
+      "sources": [
+        {
+          "path": "src/components/community-agent-editor/CommunityAgentEditorDialog.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-agent-editor/CommunityAgentEditorModeField.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-agent-editor/CommunityAgentEditorPermissionField.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-agent-activity/CommunityAgentActivityFeed.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-agent-activity/CommunityAgentActivityFeed.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-agent-activity/activity-feed.css",
+      "sources": [
+        {
+          "path": "src/components/community-agent-activity/activity-feed.css",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-agent-activity/CommunityAgentTranscriptMessage.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-agent-activity/CommunityAgentTranscriptMessage.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-agent-activity/CommunityAgentTranscriptPlan.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-agent-activity/CommunityAgentTranscriptPlan.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-agent-activity/transcript-plan.css",
+      "sources": [
+        {
+          "path": "src/components/community-agent-activity/transcript-plan.css",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-agent-activity/CommunityAgentTranscriptTools.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-agent-activity/CommunityAgentTranscriptTools.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-avatar-picker/CommunityAvatarPicker.svelte",
+      "reason": "Copied Community image/URL and colored emoji picker; palette uses fixed CSS selectors for strict production CSP.",
+      "sources": [
+        {
+          "path": "src/components/community-avatar-picker/CommunityAvatarPicker.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0",
+          "attribution": "Copyright LapisMD contributors. Apache-2.0; maintained by jj-store."
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-avatar-picker/avatar-picker.css",
+      "reason": "Copied picker styles.",
+      "sources": [
+        {
+          "path": "src/components/community-avatar-picker/CommunityAvatarPicker.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0",
+          "attribution": "Copyright LapisMD contributors. Apache-2.0; maintained by jj-store."
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-avatar-picker/image-files.ts",
+      "reason": "Copied bounded browser image reader.",
+      "sources": [
+        {
+          "path": "src/components/community-avatar-picker/image-files.ts",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0",
+          "attribution": "Copyright LapisMD contributors. Apache-2.0; maintained by jj-store."
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-avatar-picker/legacy-avatar.ts",
+      "reason": "Community emoji template previews legacy emoji without changing storage.",
+      "sources": [
+        {
+          "path": "src/components/community-avatar-picker/CommunityAvatarPicker.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0",
+          "attribution": "Copyright LapisMD contributors. Apache-2.0; maintained by jj-store."
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-agent-editor/CommunityAgentEditorDialog.svelte",
+      "reason": "Copied form composition with local configuration bindings; Community relay/persona/participant policy omitted.",
+      "sources": [
+        {
+          "path": "src/components/community-agent-editor/CommunityAgentEditorDialog.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0",
+          "attribution": "Copyright LapisMD contributors. Apache-2.0; maintained by jj-store."
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-agent-profile/CommunityAgentProfile.svelte",
+      "reason": "Copied Community agent profile header, actions, Info and Runtime; local configuration/session adapters replace Nostr channels/memories.",
+      "sources": [
+        {
+          "path": "src/components/community-agent-profile/CommunityAgentProfile.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-agent-profile/CommunityAgentRuntimeFields.svelte",
+      "reason": "Copied runtime preference rows with local saved values and explicit editor callbacks.",
+      "sources": [
+        {
+          "path": "src/components/community-agent-profile/CommunityAgentRuntimeFields.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-agent-profile/agent-profile.css",
+      "reason": "Copied relevant profile styles, externally scoped under agent-profile.",
+      "sources": [
+        {
+          "path": "src/components/community-agent-profile/CommunityAgentProfile.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-profile-actions/CommunityProfileActions.svelte",
+      "reason": "Copied Community profile action tiles.",
+      "sources": [
+        {
+          "path": "src/components/community-profile-actions/CommunityProfileActions.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-profile-actions/profile-action-tiles.css",
+      "reason": "Copied Community action tile styling.",
+      "sources": [
+        {
+          "path": "src/components/community-profile-actions/profile-action-tiles.css",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/store-agent-execution/StoreAgentDetailsSidebar.svelte",
+      "reason": "Copied standard profile sidebar composition, local selected-agent adapter and focus/mobile behavior.",
+      "sources": [
+        {
+          "path": "src/components/community-application/CommunityApplication.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-inbox/CommunityInbox.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-inbox/CommunityInbox.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-inbox/inbox.css",
+      "sources": [
+        {
+          "path": "src/components/community-inbox/CommunityInbox.css",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-agent-processing-control/CommunityAgentProcessingControl.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-agent-processing-control/CommunityAgentProcessingControl.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
     }
   ],
   "owned": [

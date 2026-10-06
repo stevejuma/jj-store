@@ -24,18 +24,15 @@
         variant="ghost"
         size="sm"
         onclick={async () => {
-          await manager.show(context);
-          manager.launchOpen = false;
-        }}>Manage sessions and setups</Button
+          manager.directory();
+        }}>Manage agents</Button
       >
     </div>
     {#each manager.value?.sessions.filter((s) => !context.repository || s.repository === context.repository) ?? [] as session (session.id)}<Button
         variant="ghost"
         onclick={async () => {
-          await manager.show(context);
-          manager.launchOpen = false;
-          await manager.select(session.id);
-        }}>{session.avatar} {session.title} · {session.state}</Button
+          manager.openSession(session.id);
+        }}>{session.title} · {session.state}</Button
       >{/each}
   </section>{/if}
 

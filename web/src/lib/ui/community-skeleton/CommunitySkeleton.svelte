@@ -5,17 +5,20 @@
     label = "Loading content",
     count = 4,
     padded = false,
+    galleryVariant = "default",
   }: {
     layout: "gallery" | "timeline" | "messages" | "details" | "repository";
     label?: string;
     count?: number;
     padded?: boolean;
+    galleryVariant?: "default" | "agents";
   } = $props();
 </script>
 
 <div
   class="community-skeleton"
   data-layout={layout}
+  data-gallery-variant={galleryVariant}
   data-padded={padded ? "" : undefined}
   role="status"
   aria-label={label}
@@ -101,6 +104,19 @@
   }
   [data-layout="gallery"] .community-skeleton__text {
     flex: none;
+  }
+  [data-layout="gallery"][data-gallery-variant="agents"]
+    .community-skeleton__items {
+    grid-template-columns: repeat(auto-fill, min(100%, 13rem));
+    gap: 1rem;
+  }
+  [data-layout="gallery"][data-gallery-variant="agents"]
+    .community-skeleton__item {
+    box-sizing: border-box;
+    height: 16.25rem;
+    min-height: 0;
+    padding: 1rem;
+    border-radius: 1rem;
   }
   [data-layout="timeline"] .community-skeleton__item {
     position: relative;

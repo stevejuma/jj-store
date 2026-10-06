@@ -1,173 +1,215 @@
 <script lang="ts">
+  import { eventsResponse } from "./agent-execution-events.js";
+  import { commandReceipts } from "./agent-command-receipts.js";
+  import { revisionFixture } from "./agent-execution-revisions.js";
+  import {
+    fixtureSession,
+    fixtureRunners,
+    fixtureAgentTargets,
+  } from "./agent-execution-session.js";
+  import { AppShell } from "@lapismd/design-core/shell";
+  import CommunityAppShell from "../../web/src/lib/ui/community-app-shell/CommunityAppShell.svelte";
+  import { createStoreShell } from "../../web/src/lib/ui/store-application/create-store-shell.js";
+  import { agentsRoute } from "../../web/src/lib/controller/agents-route-codec.js";
+  import StoreAgentDetailsSidebar from "../../web/src/lib/ui/store-agent-execution/StoreAgentDetailsSidebar.svelte";
+  import StoreAgentExecutionNotice from "../../web/src/lib/ui/store-agent-execution/StoreAgentExecutionNotice.svelte";
+  import type { StoreRoute } from "../../web/src/lib/controller/contracts.js";
   import { onDestroy, untrack } from "svelte";
   import { AgentExecution } from "../../web/src/lib/controller/agent-execution.svelte.js";
-  import type { AgentStatus } from "../../web/src/lib/controller/agent-execution-types.js";
+  import type {
+    AgentStatus,
+    AgentSession,
+  } from "../../web/src/lib/controller/agent-execution-types.js";
   import StoreAgentExecutionHost from "../../web/src/lib/ui/store-agent-execution/StoreAgentExecutionHost.svelte";
   import StoreAgentLaunchButton from "../../web/src/lib/ui/store-agent-execution/StoreAgentLaunchButton.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   let {
     permission = false,
     fail = false,
-  }: { permission?: boolean; fail?: boolean } = $props();
+    staleSave = false,
+    preparing = false,
+    emptySessions = false,
+    alternativeAgent = false,
+    holdHistory = false,
+    lastActivityAt = Date.now(),
+    workspacePath = "/device/agent-workspaces/helper",
+    advertisedModels = false,
+    savedModel = null,
+    sessionPreferences,
+    agentAssociated = true,
+    agentModeReady = true,
+    holdConfiguration = false,
+    uncertainConfiguration = false,
+    resumeFailure = false,
+    retainedError = false,
+    longHistory = false,
+    revisionIndexRequired = false,
+    status = "Online",
+  }: {
+    permission?: boolean;
+    fail?: boolean;
+    staleSave?: boolean;
+    preparing?: boolean;
+    emptySessions?: boolean;
+    alternativeAgent?: boolean;
+    holdHistory?: boolean;
+    lastActivityAt?: number | null;
+    workspacePath?: string;
+    advertisedModels?: boolean;
+    savedModel?: string | null;
+    sessionPreferences?: AgentSession["preferences"];
+    agentAssociated?: boolean;
+    agentModeReady?: boolean;
+    holdConfiguration?: boolean;
+    uncertainConfiguration?: boolean;
+    resumeFailure?: boolean;
+    retainedError?: boolean;
+    longHistory?: boolean;
+    revisionIndexRequired?: boolean;
+    status?:
+      "Online" | "Offline" | "Starting" | "Working" | "Unknown" | "Empty";
+  } = $props();
   const setup = {
     id: "helper",
     name: "Repository helper",
     avatar: "🤖",
+    description: "Repository review and edits",
     instructions: "Keep changes focused.",
     runner: "codex",
-    preferences: { model: null, effort: null, mode: "ask" },
+    preferences: {
+      model: untrack(() => savedModel),
+      effort: null,
+      mode: "ask",
+    },
   };
+  let staleSaveRemaining = untrack(() => staleSave);
+  let resolveConfiguration = $state<(() => void) | undefined>();
+  let resolveHistory = $state<(() => void) | undefined>();
+  let commands = $state<Record<string, unknown>[]>([]);
+  let lastCommand = $state<Record<string, unknown> | null>(null);
+  let lastOpened = $state<{
+    repository: string;
+    commit: string;
+    operation: string;
+  }>();
   const repository = "11".repeat(16),
     operation = "22".repeat(64),
     commit = "33".repeat(20);
-  let state = $state<AgentStatus>({
+  let fixtureStatus = $state<AgentStatus>({
     version: 1,
-    runtime: "ready",
+    runtime: untrack(() => preparing) ? "preparing" : "ready",
     revision: 0,
-    setups: [setup],
+    setups: untrack(() => status === "Empty")
+      ? []
+      : [
+          setup,
+          ...(untrack(() => alternativeAgent)
+            ? [
+                {
+                  ...setup,
+                  id: "other-agent",
+                  name: "Planning helper",
+                  runner: "cursor",
+                },
+              ]
+            : []),
+        ],
     sessions: [
-      {
-        id: "44".repeat(16),
-        repository,
-        target_id: "fixture",
-        runner: "codex",
-        title: "Repository helper",
-        avatar: "🤖",
-        workspace: "/device/agent-workspaces/helper",
-        base_commit: commit,
-        review_commit: commit,
-        operation,
-        state: untrack(() => permission) ? "running" : "idle",
-        adapter_session_id: "adapter",
-        capabilities: {
-          initialize: { loadSession: true },
-          session: {
-            modes: {
-              availableModes: [
-                { id: "ask", name: "Ask" },
-                { id: "read-only", name: "Read only" },
-              ],
-            },
-          },
-          modeReady: true,
-        },
-        preferences: setup.preferences,
-        last_sequence: 2,
-        published_sequence: 1,
-        last_error: null,
-      },
+      untrack(() =>
+        fixtureSession({
+          repository,
+          operation,
+          commit,
+          status,
+          permission,
+          workspacePath,
+          lastActivityAt,
+          preferences: sessionPreferences ?? setup.preferences,
+          modeReady: agentModeReady,
+          advertisedModels,
+        }),
+      ),
     ],
-    runners: [
-      {
-        id: "codex",
-        label: "Codex",
-        available: true,
-        qualified: false,
-        install_hint: null,
-      },
-    ],
+    runners: fixtureRunners,
   });
+  untrack(() => {
+    if (emptySessions) fixtureStatus.sessions = [];
+    else if (!agentAssociated) fixtureStatus.sessions[0].setup_id = null;
+    if (retainedError)
+      fixtureStatus.sessions[0].last_error = "process_outcome_unknown";
+  });
+  const receipts = untrack(() =>
+    commandReceipts(() => fixtureStatus.sessions[0], uncertainConfiguration),
+  );
   const json = (body: unknown, status = 200) =>
     new Response(JSON.stringify(body), {
       status,
       headers: { "content-type": "application/json" },
     });
+  const revisions = untrack(() =>
+    revisionFixture(repository, operation, revisionIndexRequired),
+  );
   const manager = untrack(
     () =>
       new AgentExecution(
         () => true,
         async (input, init) => {
           const path = String(input);
+          const revision = revisions(path);
+          if (revision) return revision;
           if (path.includes("/targets"))
-            return json([
-              {
-                id: "fixture",
-                repository,
-                name: "Fixture",
-                folder: "/device/source",
-                profile: "local_jj_git",
-                operation,
-                commit,
-              },
-            ]);
+            return json(fixtureAgentTargets(repository, operation, commit));
           if (path.endsWith("/setups")) {
             const body = JSON.parse(String(init?.body));
-            state = {
-              ...state,
-              revision: Number(state.revision) + 1,
+            if (staleSaveRemaining) {
+              staleSaveRemaining = false;
+              fixtureStatus.revision = Number(fixtureStatus.revision) + 1;
+            }
+            if (
+              Number(body.expected_revision) !== Number(fixtureStatus.revision)
+            )
+              return json({ code: "agent_selection_changed" }, 409);
+            fixtureStatus = {
+              ...fixtureStatus,
+              revision: Number(fixtureStatus.revision) + 1,
               setups: [
-                ...state.setups.filter((s) => s.id !== body.setup?.id),
+                ...fixtureStatus.setups.filter(
+                  (s) => s.id !== (body.setup?.id ?? body.remove),
+                ),
                 ...(body.setup ? [body.setup] : []),
               ],
             };
-            return json(state);
+            return json(fixtureStatus);
           }
           if (path.endsWith("/command") || path.endsWith("/launch")) {
             if (fail) throw new TypeError("Connection lost");
             const body = JSON.parse(String(init?.body));
-            return json({
-              version: 1,
-              request_id: body.request_id,
-              session_id: state.sessions[0].id,
-              state: "queued",
-              error: null,
-            });
+            if (path.endsWith("/command")) {
+              lastCommand = body;
+              commands = [...commands, body];
+              if (body.action.action === "configure") {
+                if (holdConfiguration)
+                  await new Promise<void>((resolve) => {
+                    resolveConfiguration = resolve;
+                  });
+              }
+            }
+            return json(receipts.dispatch(body, resumeFailure));
           }
           if (path.includes("/outcome"))
-            return json({
-              version: 1,
-              request_id: new URL(path, "http://fixture").searchParams.get(
-                "request",
+            return json(
+              receipts.outcome(
+                new URL(path, "http://fixture").searchParams.get("request") ??
+                  "",
               ),
-              session_id: state.sessions[0].id,
-              state: "outcome_unknown",
-              error: "connection_lost",
-            });
-          if (path.includes("/events"))
-            return json({
-              version: 1,
-              next: null,
-              events: [
-                {
-                  sequence: 1,
-                  committed: true,
-                  payload: { type: "started", requestId: "55".repeat(16) },
-                },
-                {
-                  sequence: 2,
-                  committed: false,
-                  payload: permission
-                    ? {
-                        type: "permission",
-                        permissionId: "exact-permission",
-                        requestId: "55".repeat(16),
-                        request: {
-                          toolCall: { title: "Edit source" },
-                          options: [
-                            {
-                              optionId: "allow-exact",
-                              kind: "allow_once",
-                              name: "Allow once",
-                            },
-                            {
-                              optionId: "reject-exact",
-                              kind: "reject_once",
-                              name: "Reject once",
-                            },
-                          ],
-                        },
-                      }
-                    : {
-                        type: "activity",
-                        requestId: "55".repeat(16),
-                        update: {
-                          sessionUpdate: "agent_message_chunk",
-                          content: { text: "Ready to help." },
-                        },
-                      },
-                },
-              ],
-            });
+            );
+          if (path.includes("/events")) {
+            if (holdHistory)
+              await new Promise<void>((resolve) => {
+                resolveHistory = resolve;
+              });
+            return json(eventsResponse(permission, retainedError, longHistory));
+          }
           if (path.includes("/stream"))
             return new Response(
               new ReadableStream({
@@ -181,19 +223,72 @@
               }),
               { headers: { "content-type": "text/event-stream" } },
             );
-          return json(state);
+          if (status === "Unknown") throw new TypeError("Status unavailable");
+          return json(fixtureStatus);
         },
       ),
   );
-  onDestroy(() => manager.destroy());
+  let route = $state<StoreRoute>(agentsRoute());
+  const shell = untrack(() => createStoreShell(undefined, false));
+  untrack(() => {
+    manager.onNavigate = (view, id, relatedId) =>
+      (route = agentsRoute(view, id, relatedId));
+    if (status === "Unknown") manager.value = fixtureStatus;
+  });
+  onDestroy(() => {
+    manager.destroy();
+    void shell.dispose();
+  });
 </script>
 
-<StoreAgentLaunchButton {manager} />
-<Button
-  onclick={async () => {
-    await manager.show();
-    manager.launchOpen = false;
-    await manager.select(state.sessions[0].id);
-  }}>Open fixture conversation</Button
+<CommunityAppShell
+  controller={shell}
+  displayMode="desktop"
+  desktopChrome={false}
+  style="height: 100dvh"
 >
-<StoreAgentExecutionHost {manager} />
+  <AppShell.Main>
+    <div>
+      {#if resolveHistory}<Button
+          onclick={() => {
+            resolveHistory?.();
+            resolveHistory = undefined;
+          }}>Resolve fixture history</Button
+        >{/if}
+      {#if resolveConfiguration}<Button
+          onclick={() => {
+            resolveConfiguration?.();
+            resolveConfiguration = undefined;
+          }}>Resolve fixture configuration</Button
+        >{/if}
+      {#if lastCommand}<output aria-label="Session commands"
+          >{JSON.stringify(commands)}</output
+        >
+        <output aria-label="Last session command"
+          >{JSON.stringify(lastCommand)}</output
+        >{/if}
+      <StoreAgentLaunchButton {manager} /><Button
+        onclick={() => manager.openSession(fixtureStatus.sessions[0].id)}
+        >Open fixture conversation</Button
+      ><Button onclick={() => manager.directory()}>Manage fixture agents</Button
+      >
+    </div>
+    {#if lastOpened}<output aria-label="Last opened revision"
+        >{JSON.stringify(lastOpened)}</output
+      >{/if}
+    <StoreAgentExecutionHost
+      {manager}
+      {route}
+      onReview={(repository, commit, operation) => {
+        lastOpened = { repository, commit, operation };
+      }}
+    />
+  </AppShell.Main>
+  <StoreAgentDetailsSidebar {manager} {shell} {route} />
+</CommunityAppShell>
+<StoreAgentExecutionNotice
+  {manager}
+  activeSession={route.agentView === "session"
+    ? route.executionSessionId
+    : undefined}
+/>

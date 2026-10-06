@@ -74,6 +74,7 @@ impl Supervisor {
         let id = command.request_id.to_string();
         let name = format!("agent-{id}");
         let path = self.0.resources.root.join("workspaces").join(&name);
+        self.read(|state| avatar::reserve(state, setup.as_ref().map_or(4, |s| s.avatar.len())))?;
         self.remember(command.request_id, digest, Some(id.clone()))?;
         let sanitizer = runtime::sanitizer(self, &path).await?;
         let context = runtime::safe(&sanitizer, json!({"context":command.context}))?["context"]
@@ -81,6 +82,8 @@ impl Supervisor {
             .map(str::to_owned);
         let view = Session {
             id: id.clone(),
+            setup_id: command.setup_id.clone(),
+            connected: false,
             repository: target.repository,
             target_id: target.id,
             runner: command.runner,
@@ -106,6 +109,7 @@ impl Supervisor {
                 |s| s.preferences.clone(),
             ),
             last_sequence: 0,
+            last_activity_at_millis: None,
             published_sequence: 0,
             last_error: None,
         };

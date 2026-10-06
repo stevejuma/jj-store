@@ -21,7 +21,7 @@
 
 <article class="agent-permission-card" aria-label="Agent permission request">
   <div>
-    <h3>{title || "Permission requested"}</h3>
+    <h2>{title || "Permission requested"}</h2>
     <p>The agent requested an explicit action.</p>
   </div>
   <CodeBlock
@@ -72,7 +72,7 @@
     border-radius: var(--radius-lg);
     background: var(--background);
   }
-  h3 {
+  h2 {
     font-size: var(--community-text-body);
     font-weight: 600;
     margin: 0;

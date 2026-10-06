@@ -38,7 +38,7 @@ macro_rules! endpoints {
 pub(crate) fn router() -> Router<Arc<State>> {
     macro_rules! register {
         ($(($method:ident,$path:literal,$handler:path,$id:literal,$query:ty,$body:ty,$response:ty)),*) => {
-            Router::new()$(.route($path,$method($handler).layer(DefaultBodyLimit::max(512 * 1024))))*
+            Router::new()$(.route($path,$method($handler).layer(DefaultBodyLimit::max(if $path == "/local/agents/setups" { 2 * 1024 * 1024 } else { 512 * 1024 }))))*
         };
     }
     endpoints!(register).route("/local/agents/stream", get(stream::events))

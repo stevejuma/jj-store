@@ -22,6 +22,10 @@ export function createProductionConnect(context: {
   return async (repository: string, token: string | null) => {
     const { data, projects } = context;
     if (data.accessMode === "local_trusted") void projects.navigation.load();
+    if (context.route().agentsHub) {
+      data.status.connection = "disconnected";
+      return;
+    }
     if (
       data.accessMode === "local_trusted" &&
       ((context.route().page === "projects" && context.route().projectsHub) ||

@@ -33,6 +33,10 @@ async fn saved_setup_revision_is_independent_of_session_activity() {
         .await
         .unwrap();
     wait(&supervisor, actor, |s| s.sessions[0].state == "idle").await;
+    let opened_at = supervisor.status(actor).await.unwrap().sessions[0]
+        .last_activity_at_millis
+        .expect("retained handshake activity has an observation time");
+    assert!(opened_at > 0);
     assert_eq!(supervisor.status(actor).await.unwrap().revision, observed);
     let command = SetupCommand {
         version: 1,
@@ -42,6 +46,7 @@ async fn saved_setup_revision_is_independent_of_session_activity() {
             id: "helper".into(),
             name: "Review helper".into(),
             avatar: "🤖".into(),
+            description: String::new(),
             instructions: "Preserve source files.".into(),
             runner: "codex".into(),
             preferences: Preferences {
@@ -53,6 +58,7 @@ async fn saved_setup_revision_is_independent_of_session_activity() {
         remove: None,
     };
     let saved = supervisor.save_setup(actor, command.clone()).await.unwrap();
+    assert_eq!(saved.sessions[0].last_activity_at_millis, Some(opened_at));
     assert_eq!(saved.revision, observed + 1);
     assert_eq!(
         supervisor
@@ -83,8 +89,16 @@ async fn saved_setup_revision_is_independent_of_session_activity() {
         .await
         .unwrap();
     wait(&supervisor, actor, |s| s.sessions[0].state == "ended").await;
+    let ended_at = supervisor.status(actor).await.unwrap().sessions[0]
+        .last_activity_at_millis
+        .unwrap();
+    assert!(ended_at >= opened_at);
     supervisor.shutdown().await.unwrap();
     let reopened = Supervisor::open(resources.clone()).unwrap();
+    assert_eq!(
+        reopened.status(actor).await.unwrap().sessions[0].last_activity_at_millis,
+        Some(ended_at)
+    );
     assert_eq!(
         reopened.status(actor).await.unwrap().revision,
         saved.revision

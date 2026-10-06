@@ -12,14 +12,18 @@ through admitted LocalTrusted Admin APIs and independently authorized code
 repositories. A project or task home does not authorize linked code.
 
 Saved named setups and process receipts are installation-owned private state.
-Setups retain name, avatar, instructions and runtime preferences with
-conditional revisions. The executable and process environment remain launch
-configuration. No browser request supplies commands, environment, credential or
-arbitrary path. A stable original request identity precedes every dispatch.
-Unknown outcomes are queryable and never cause prompt replay. Service restart
-preserves history and workspace ownership, not executing processes. Resume is
-explicit and capability gated; unsupported resume offers a new session linked to
-retained context.
+Setups retain name, avatar, optional description, instructions and runtime
+preferences with conditional revisions. Sessions retain an optional original
+setup_id independently of setup edits/deletion; legacy sessions remain
+unassigned. The read-only connected projection requires a current supervised
+process and completed ACP handshake, never persisted history or executable
+availability. Restart disconnects all sessions without replay. The executable
+and process environment remain launch configuration. No browser request supplies
+commands, environment, credential or arbitrary path. A stable original request
+identity precedes every dispatch. Unknown outcomes are queryable and never cause
+prompt replay. Service restart preserves history and workspace ownership, not
+executing processes. Resume is explicit and capability gated; unsupported resume
+offers a new session linked to retained context.
 
 Every session owns a new named physical workspace from the exact selected
 operation/revision. Creation retains an original journal and preserves source
@@ -51,3 +55,32 @@ including installed Cursor newline-bearing IDs. If the encoded alias exceeds
 sanitized observation; projected tool IDs continue to derive from the original
 full scoped ID. No native JJ identity, enum encoding or validation limit
 changes.
+
+Avatar values admit legacy emoji, credential-free HTTPS URLs, up to 1 MiB of
+PNG/JPEG/GIF/WebP inline bytes, or Community's fixed colored emoji SVG template.
+Arbitrary SVG markup and other schemes are rejected. Authored text remains
+sanitized; validated image bytes remain opaque. The setup endpoint is bounded to
+2 MiB; other command limits remain unchanged. Setup and retained session avatars
+together are bounded to 8 MiB, within the existing 32 MiB journal and 16 MiB
+response limits. Failed size checks publish no partial save.
+
+The standalone profile and inbox controls end an explicitly selected associated
+session by ID. Activity log navigates to the associated active session or the
+filtered inbox; legacy activity links retain explicit session selection.
+Browsing the session inbox or activity log does not launch a process, replay a
+prompt or replace a chat draft. Session end retains its captured configuration,
+workspace and durable history.
+
+Session last_activity_at_millis is optional private execution metadata, captured
+when an event is retained and preserved through restart/resume. Legacy history
+without a timestamp stays unknown until new activity. Status reads, setup edits
+and publication progress never fabricate activity. It does not change native
+AgentStore event identities or publication authority.
+
+Explicit Send may apply the selected saved agent runtime preferences to its live
+session before prompting. It requires an advertised execution mode, confirms
+negotiated readiness and an accepted receipt for the exact configure request,
+and retains the exact selected session and message. Failed/unknown
+configuration, disconnection, navigation or bounded timeout retains the draft
+and dispatches no prompt. Reads and editor navigation never apply preferences or
+resume a process automatically.

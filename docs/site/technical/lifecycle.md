@@ -153,3 +153,10 @@ agents within twenty seconds, and bounds final publication to three seconds
 before HTTP/RPC and RustFS stop. The desktop allows forty seconds for service
 shutdown. Pending publication receipts and interrupted workspaces survive;
 prompts are never replayed. See [agent sessions](../guides/agent-execution.md).
+
+Agent restart preserves setup associations, avatar/configuration snapshots and
+history and last observed activity time while clearing live connection state.
+Legacy sessions without timing remain unknown until new activity; reopening or
+refreshing status never invents a timestamp. Resume remains explicit. Validated
+avatars are bounded together across setups and retained sessions to 8 MiB,
+within the existing 32 MiB private execution journal.

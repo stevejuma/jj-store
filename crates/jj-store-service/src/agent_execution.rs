@@ -36,6 +36,8 @@ pub struct Setup {
     pub id: String,
     pub name: String,
     pub avatar: String,
+    #[serde(default)]
+    pub description: String,
     pub instructions: String,
     pub runner: String,
     pub preferences: Preferences,
@@ -91,6 +93,11 @@ pub struct Launch {
 #[schemars(rename = "AgentExecutionSession")]
 pub struct Session {
     pub id: String,
+    #[serde(default)]
+    pub setup_id: Option<String>,
+    /// Read-only live supervisor projection, never journal authority.
+    #[serde(default)]
+    pub connected: bool,
     pub repository: RepositoryId,
     pub target_id: String,
     pub runner: String,
@@ -105,6 +112,9 @@ pub struct Session {
     pub capabilities: serde_json::Value,
     pub preferences: Preferences,
     pub last_sequence: u64,
+    /// Device observation time of the latest retained execution event, if known.
+    #[serde(default)]
+    pub last_activity_at_millis: Option<u64>,
     pub published_sequence: u64,
     pub last_error: Option<String>,
 }

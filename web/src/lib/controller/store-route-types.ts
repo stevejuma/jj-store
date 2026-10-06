@@ -11,6 +11,10 @@ export interface StoreRoute {
   threadId?: string | null;
   replyId?: string | null;
   projectsHub?: boolean;
+  agentsHub?: boolean;
+  agentView?: "directory" | "new" | "sessions" | "session" | "activity";
+  executionSessionId?: string | null;
+  setupId?: string | null;
   workTab?: import("./projects-hub-types.js").ProjectsTab;
   workQuery?: string;
   workActivity?: import("./native-activity-filter.js").NativeActivityFilter;

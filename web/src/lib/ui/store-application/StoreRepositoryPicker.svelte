@@ -8,6 +8,7 @@
   import FolderGitIcon from "@lucide/svelte/icons/folder-git-2";
   import XIcon from "@lucide/svelte/icons/x";
   import type { ScrollAreaStrategy } from "@lapismd/design-core/shadcn/scroll-area";
+  import { untrack, type Snippet } from "svelte";
   let {
     id,
     label = "Repository",
@@ -17,6 +18,12 @@
     allowEmpty = false,
     disabled = false,
     variant = "outline",
+    iconOnly = false,
+    triggerIcon,
+    itemIcon,
+    notice,
+    noticeAction,
+    onSearch,
     searchLabel = "Search repositories",
     groupLabel = "Repositories",
     emptyResult = "No matching repositories.",
@@ -40,6 +47,12 @@
     allowEmpty?: boolean;
     disabled?: boolean;
     variant?: "outline" | "ghost";
+    iconOnly?: boolean;
+    triggerIcon?: Snippet;
+    itemIcon?: Snippet<[string]>;
+    notice?: string;
+    noticeAction?: Snippet;
+    onSearch?: (query: string) => void;
     searchLabel?: string;
     groupLabel?: string;
     emptyResult?: string;
@@ -55,11 +68,15 @@
   const selected = $derived(repositories.find((repo) => repo.id === value));
   const visible = $derived(
     repositories.filter((repo) =>
-      `${repo.name} ${repo.id}`
+      `${repo.name} ${repo.id} ${repo.description ?? ""}`
         .toLocaleLowerCase()
         .includes(query.trim().toLocaleLowerCase()),
     ),
   );
+  $effect(() => {
+    const search = query;
+    untrack(() => onSearch?.(search));
+  });
   function handleOpen(next: boolean) {
     open = next;
     if (next) query = "";
@@ -80,25 +97,31 @@
         {id}
         type="button"
         {variant}
+        size={iconOnly ? "icon-sm" : "default"}
         role="combobox"
         class={[
           "store-repository-picker__trigger",
           variant === "ghost" && "store-repository-picker__trigger--ghost",
+          iconOnly && "store-repository-picker__trigger--icon",
           props.class,
         ]}
         aria-label={label}
         aria-expanded={open}
         {disabled}
-        title={value || emptyLabel}
+        title={iconOnly && selected
+          ? `${selected.name}${selected.description ? ` · ${selected.description}` : ""}`
+          : value || emptyLabel}
       >
-        <FolderGitIcon aria-hidden="true" />
-        <span
-          >{selected?.name ??
-            (value
-              ? `Unavailable repository · ${value.slice(0, 8)}`
-              : emptyLabel)}</span
-        >
-        <ChevronDownIcon aria-hidden="true" />
+        {#if triggerIcon}{@render triggerIcon()}{:else}<FolderGitIcon
+            aria-hidden="true"
+          />{/if}
+        {#if !iconOnly}<span class="store-repository-picker__value"
+            >{selected?.name ??
+              (value
+                ? `Unavailable repository · ${value.slice(0, 8)}`
+                : emptyLabel)}</span
+          >
+          <ChevronDownIcon aria-hidden="true" />{/if}
       </Button>
     {/snippet}
   </Popover.Trigger>
@@ -130,6 +153,8 @@
             >{/snippet}</Popover.Close
         >
       </div>
+      {#if notice}<p role="status">{notice}</p>{/if}
+      {#if noticeAction}{@render noticeAction()}{/if}
       <CommandView.List {scrollStrategy}>
         {#if !visible.length && !(allowEmpty && !query)}<CommandView.Empty
             >{emptyResult}</CommandView.Empty
@@ -157,7 +182,9 @@
               <CommandView.ItemIcon
                 >{#if repo.id === value}<CheckIcon
                     aria-hidden="true"
-                  />{:else}<FolderGitIcon
+                  />{:else if itemIcon}{@render itemIcon(
+                    repo.id,
+                  )}{:else}<FolderGitIcon
                     aria-hidden="true"
                   />{/if}</CommandView.ItemIcon
               >
@@ -188,15 +215,25 @@
 
 <style>
   :global(.store-repository-picker__trigger) {
-    width: 100%;
     min-width: 0;
     justify-content: flex-start;
+  }
+  :global(
+    .store-repository-picker__trigger:not(
+      .store-repository-picker__trigger--icon
+    )
+  ) {
+    width: 100%;
   }
   :global(.store-repository-picker__trigger--ghost) {
     border: 0;
     color: var(--muted-foreground);
   }
-  :global(.store-repository-picker__trigger > span) {
+  :global(.store-repository-picker__trigger--icon) {
+    flex: none;
+    justify-content: center;
+  }
+  :global(.store-repository-picker__value) {
     flex: 1;
     overflow: hidden;
     text-overflow: ellipsis;

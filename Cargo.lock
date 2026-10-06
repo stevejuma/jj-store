@@ -4170,6 +4170,7 @@ version = "0.1.0"
 dependencies = [
  "async-trait",
  "axum",
+ "base64 0.22.1",
  "futures 0.3.34",
  "getrandom 0.4.3",
  "hex",
@@ -4187,6 +4188,7 @@ dependencies = [
  "jj-store-tantivy",
  "jj-store-wal",
  "notify",
+ "percent-encoding",
  "reqwest",
  "rustix",
  "serde",

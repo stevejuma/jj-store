@@ -1,3 +1,4 @@
+import { readAgentsHash, agentsRouteToHash } from "./agents-route-codec.js";
 import {
   safeLabel,
   safePath,
@@ -33,6 +34,8 @@ export type StoreRouteHashResult =
   | { kind: "route"; route: StoreRoute };
 
 export function storeRouteToHash(route: StoreRoute): string | null {
+  if (route.agentsHub && route.page === "agents")
+    return agentsRouteToHash(route);
   if (route.projectsHub && route.page === "projects")
     return projectsRouteToHash(route);
   if (!repositoryId.test(route.repository) || !repositoryPages.has(route.page))
@@ -71,6 +74,8 @@ export function storeRouteToHash(route: StoreRoute): string | null {
 }
 
 export function storeRouteFromHash(hash: string): StoreRouteHashResult {
+  const agents = readAgentsHash(hash);
+  if (agents) return agents;
   if (hash.startsWith("#/projects")) {
     const route = projectsRouteFromHash(hash);
     return route
