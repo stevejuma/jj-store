@@ -5,6 +5,11 @@ unavailable-content banner inset, margin and corners change. Fresh development
 fixture evidence distinguishes current-format generation in an isolated root
 from migration or repair of existing stored data.
 
+OpenCode transcript source review distinguishes readable typed-text presentation
+from the original JSON capture. The browsing guide retains normal conversation
+semantics; rendering and heading-size refinements imply no storage, decoder,
+capture-version or transport change.
+
 Projects feedback source reviews MUST cover repository-scoped retry toasts,
 retained successful rows and hidden-tab recovery. Unsupported capability
 explanations and exact mutation recovery remain contextual. Moving recoverable

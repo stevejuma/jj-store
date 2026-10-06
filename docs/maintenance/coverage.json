@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed Agents unavailable-content banner inset, margin and rounded border; existing browsing prose remains accurate. Session, transcript, retry, notification and transport behavior are unchanged.",
-      "fingerprint": "66c43e5fd53337d69087bee30bf0837180241a9ec8a59813f83ae8b2d2317eb4"
+      "reason": "Reviewed OpenCode typed-text part rendering in activity and transcript fallback, preserved raw record copy values and unknown-content fallback, and shared collection heading typography; the existing browsing guide remains accurate and capture/transport contracts are unchanged.",
+      "fingerprint": "6c9b0c081c3f66a6489b3d7ec3724ee01d82a655214c9b40eadd69f7b932a93a"
     }
   },
   {

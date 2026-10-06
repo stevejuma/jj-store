@@ -1,8 +1,12 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
-  import { expect, userEvent, waitFor, within } from "storybook/test";
+  import { expect, fn, userEvent, waitFor, within } from "storybook/test";
   import Fixture from "../../fixtures/AgentPromptFixture.svelte";
   import { inertPromptMarkup } from "../../fixtures/agent-prompt-markup.js";
+  const openCodeParts = JSON.stringify([
+    { id: "part_1", type: "text", text: "Update the **parser**." },
+    { id: "part_2", type: "text", text: "Keep the review anchors exact." },
+  ]);
   const { Story } = defineMeta({
     title: "JJ Store/Agent prompt markup",
     component: Fixture,
@@ -57,6 +61,74 @@
     await expect(c.getByText("<example />", { exact: true })).toBeVisible();
   }
 </script>
+
+<Story
+  name="OpenCode typed text message parts"
+  args={{
+    integration: "open_code",
+    mediaType: "json",
+    content: openCodeParts,
+  }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    const message = await c.findByRole("article", {
+      name: "Message from Maya Chen",
+    });
+    await expect(
+      within(message).getByText("parser", { selector: "strong", exact: true }),
+    ).toBeVisible();
+    await expect(message).toHaveTextContent("Keep the review anchors exact.");
+    await expect(message.querySelector("pre")).toBeNull();
+    await expect(message).not.toHaveTextContent("part_1");
+    const write = fn();
+    const descriptor = Object.getOwnPropertyDescriptor(navigator, "clipboard");
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: { writeText: write },
+    });
+    try {
+      await userEvent.hover(message);
+      await waitFor(() =>
+        expect(message).toHaveAttribute("data-actions-visible"),
+      );
+      await userEvent.click(
+        within(message).getByRole("button", { name: "More message actions" }),
+      );
+      const page = within(document.body);
+      const copy = page.getByRole("menuitem", { name: /^Copy$/ });
+      copy.focus();
+      await userEvent.keyboard("{ArrowRight}");
+      await userEvent.click(
+        await page.findByRole("menuitem", {
+          name: /^Copy message$/,
+        }),
+      );
+      await expect(write).toHaveBeenCalledWith(openCodeParts);
+    } finally {
+      if (descriptor) Object.defineProperty(navigator, "clipboard", descriptor);
+      else Reflect.deleteProperty(navigator, "clipboard");
+    }
+  }}
+/>
+
+<Story
+  name="OpenCode transcript fallback text parts"
+  args={{
+    fallback: true,
+    integration: "open_code",
+    mediaType: "json",
+    content: JSON.stringify([
+      { id: "part_1", type: "text", text: "Update the parser" },
+    ]),
+  }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await expect(
+      await c.findByText("Update the parser", { exact: true }),
+    ).toBeVisible();
+    await expect(canvasElement.querySelector("pre")).toBeNull();
+  }}
+/>
 
 <Story
   name="Compact XML leaves retain closing tags, Markdown and highlighted syntax"

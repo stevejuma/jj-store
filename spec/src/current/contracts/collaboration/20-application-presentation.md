@@ -55,6 +55,13 @@ bounded reply-tree indentation, guides and connectors, retain copyable
 author/comment identities and keep the composer at the bottom of an open
 discussion.
 
+For recorded OpenCode JSON messages consisting entirely of typed text parts,
+activity and transcript fallback render each part's text in source order through
+the existing safe Markdown renderer. Other integrations, mixed/unknown parts,
+empty arrays and malformed content retain their visible structured/literal
+fallback. Presentation MUST NOT rewrite captured content or native identities;
+Copy message retains the complete original record.
+
 Each rendered text-diff row exposes a keyboard and pointer reachable comment
 action through Design Core's line-accessory boundary. Activating it opens an
 inline composer after that row. A committed first comment creates one

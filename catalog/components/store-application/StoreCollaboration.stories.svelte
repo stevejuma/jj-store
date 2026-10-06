@@ -25,6 +25,28 @@
 </script>
 
 <Story
+  name="Agent collection typography"
+  args={{ initialPage: "agents" }}
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const header = canvas.getByRole("button", { name: /^Agent sessions/ });
+    await userEvent.click(header);
+    const count = header.querySelector(
+      ".community-projects__list-group-count",
+    )!;
+    await expect(getComputedStyle(header).fontSize).toBe(
+      getComputedStyle(count).fontSize,
+    );
+    await userEvent.click(header);
+    await expect(
+      canvas.getByRole("list", { name: "Agent sessions" }),
+    ).toBeVisible();
+  }}
+>
+  {#snippet template(args)}<StoreRepositoryApplication {...args} />{/snippet}
+</Story>
+
+<Story
   name="Agent response activity"
   args={{ initialPage: "agents" }}
   play={agentSidebarPlay}

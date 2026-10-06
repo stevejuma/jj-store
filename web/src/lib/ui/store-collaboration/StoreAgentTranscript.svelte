@@ -11,6 +11,7 @@
   import StoreAgentTools from "./StoreAgentTools.svelte";
   import { agentMessageTimestamp } from "../../collaboration/presentation.js";
   import { agentTimeline } from "../../collaboration/agent-timeline.js";
+  import { agentMessageContent } from "../../collaboration/agent-message-content.js";
   import StoreMessageActions from "./StoreMessageActions.svelte";
   import CommunityProjectsVirtualRows from "../community-projects/CommunityProjectsVirtualRows.svelte";
 
@@ -22,6 +23,7 @@
     controller,
     interactive = true,
     sessionId,
+    integration,
   }: {
     activity: readonly Model<"AgentActivity">[];
     agent: CommunityMemberModel;
@@ -30,6 +32,7 @@
     controller: StoreController;
     interactive?: boolean;
     sessionId: string;
+    integration: Model<"IntegrationId">;
   } = $props();
 
   const members = $derived([agent, member]);
@@ -45,20 +48,12 @@
   function message(
     entry: Extract<Model<"AgentActivity">, { type: "message" }>,
   ): CommunityMessageModel {
-    let content = entry.content.content;
-    if (entry.content.media_type === "json") {
-      try {
-        content = `\`\`\`json\n${JSON.stringify(JSON.parse(content), null, 2)}\n\`\`\``;
-      } catch {
-        content = `\`\`\`text\n${content}\n\`\`\``;
-      }
-    }
     const author =
       entry.role === "assistant" || entry.role === "tool" ? agent : member;
     return {
       id: entry.message_id,
       authorId: author.id,
-      content,
+      content: agentMessageContent(entry.content, integration),
       ...agentMessageTimestamp(entry.occurred_at_millis),
       reactions: entry.reaction_target
         ? controller.threads?.reactionModels(entry.reaction_target)

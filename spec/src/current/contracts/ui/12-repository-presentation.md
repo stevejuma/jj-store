@@ -13,3 +13,7 @@ collection header's 16px side inset, has 8px vertical margin and uses the same
 rounded corners. Its themed destructive surface and complete border remain
 contained within the collection; other shared column alerts retain their
 existing presentation.
+
+Collapsible collection headings retain the shared secondary text size and the
+application font family. Button font inheritance MUST NOT reset that size;
+Agents and the other repository/Projects collections use the same scale.
