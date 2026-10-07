@@ -21,3 +21,12 @@ app/DMG/WKWebView distribution, other platforms, additional adapters and live
 permission requests not raised by either installed adapter remain outside this
 qualified profile. No service installation, demo reset, credential inspection,
 automatic prompt replay or package publication is part of this slice.
+
+Runtime tooling maintenance uses separate fixed-catalog installer and original
+receipt tests, with real npm downloads confined to disposable private roots.
+Cold runtime-settings acceptance checks keyboard confirmation/cancel, light/dark
+and narrow accessibility, retained rows and zero execution/install commands from
+reads. Existing capture-setting consumers run their focused stories. Node
+provisioning, managed Cursor installation, authenticated post-install turns and
+visual baselines remain separately qualified; lint diagnostics in unchanged code
+are recorded independently of the required package checks.

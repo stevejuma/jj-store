@@ -52,6 +52,10 @@ impl Drop for OwnedChild {
 }
 impl Supervisor {
     pub(super) async fn spawn(&self, id: &str, load: Option<String>) -> Result<()> {
+        if self.tooling_busy()? {
+            return Err(Error::Busy);
+        }
+        let paths = std::env::join_paths(self.tooling_paths()?).map_err(|_| Error::Unavailable)?;
         let saved = self.saved(id)?;
         let sanitizer = sanitizer(self, &saved.workspace.path).await?;
         let mut runtimes = self.0.runtimes.lock().map_err(|_| Error::Unavailable)?;
@@ -60,6 +64,7 @@ impl Supervisor {
         }
         let mut command = Command::new(&self.0.resources.executable);
         command
+            .env("PATH", paths)
             .args([
                 "serve",
                 "--max-turn-duration",

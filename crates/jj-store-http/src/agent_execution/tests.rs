@@ -9,6 +9,50 @@ struct Manager {
 }
 #[async_trait::async_trait]
 impl agents::Manager for Manager {
+    async fn runtime_status(
+        &self,
+        actor: m::PrincipalId,
+    ) -> agents::Result<agents::tooling::Status> {
+        assert_eq!(actor, m::PrincipalId::new([1; 16]));
+        Ok(agents::tooling::Status {
+            version: 1,
+            runtimes: vec![],
+            node_version: None,
+            npm_available: false,
+            install_supported: false,
+            install_unavailable: Some("fixture".into()),
+            pending: None,
+        })
+    }
+    async fn install_runtime(
+        &self,
+        actor: m::PrincipalId,
+        command: agents::tooling::Command,
+    ) -> agents::Result<agents::tooling::Outcome> {
+        assert_eq!(actor, m::PrincipalId::new([1; 16]));
+        assert_eq!(command.runtime_id, "codex");
+        Ok(agents::tooling::Outcome {
+            version: 1,
+            request_id: command.request_id,
+            runtime_id: command.runtime_id,
+            state: "installing".into(),
+            error: None,
+        })
+    }
+    async fn runtime_outcome(
+        &self,
+        actor: m::PrincipalId,
+        request: m::RequestId,
+    ) -> agents::Result<agents::tooling::Outcome> {
+        assert_eq!(actor, m::PrincipalId::new([1; 16]));
+        Ok(agents::tooling::Outcome {
+            version: 1,
+            request_id: request,
+            runtime_id: "codex".into(),
+            state: "completed".into(),
+            error: None,
+        })
+    }
     async fn status(&self, actor: m::PrincipalId) -> agents::Result<agents::Status> {
         assert_eq!(actor, m::PrincipalId::new([1; 16]));
         Ok(agents::Status {
@@ -82,6 +126,100 @@ impl agents::Manager for Manager {
     async fn shutdown(&self) -> agents::Result<()> {
         Ok(())
     }
+}
+#[tokio::test]
+async fn runtime_management_is_local_admin_only_with_fixed_typed_inputs_and_original_receipts() {
+    let root = tempfile::tempdir().unwrap();
+    let id = "88".repeat(16);
+    let command =
+        serde_json::json!({"version":1,"request_id":id,"runtime_id":"codex","action":"install"});
+    for access in [
+        Access::Authenticated,
+        Access::LocalTrusted {
+            principal: m::PrincipalId::new([1; 16]),
+            permission: Permission::Read,
+        },
+    ] {
+        let api = api(root.path(), access);
+        for (path, body) in [
+            ("/v1/local/agents/runtimes", None),
+            ("/v1/local/agents/runtimes/install", Some(command.clone())),
+            (
+                &format!("/v1/local/agents/runtimes/outcome?request={id}"),
+                None,
+            ),
+        ] {
+            assert_eq!(
+                api.router()
+                    .oneshot(request(path, body))
+                    .await
+                    .unwrap()
+                    .status(),
+                StatusCode::FORBIDDEN
+            );
+        }
+    }
+    let api = api(
+        root.path(),
+        Access::LocalTrusted {
+            principal: m::PrincipalId::new([1; 16]),
+            permission: Permission::Admin,
+        },
+    );
+    assert_eq!(
+        api.router()
+            .oneshot(request("/v1/local/agents/runtimes", None))
+            .await
+            .unwrap()
+            .status(),
+        StatusCode::OK
+    );
+    let response = api
+        .router()
+        .oneshot(request(
+            "/v1/local/agents/runtimes/install",
+            Some(command.clone()),
+        ))
+        .await
+        .unwrap();
+    assert_eq!(response.status(), StatusCode::OK);
+    let value: serde_json::Value =
+        serde_json::from_slice(&to_bytes(response.into_body(), 4096).await.unwrap()).unwrap();
+    assert_eq!(value["request_id"], id);
+    assert_eq!(value["state"], "installing");
+    for key in ["package", "path", "environment", "url", "actor"] {
+        let mut injected = command.clone();
+        injected[key] = serde_json::json!("untrusted");
+        assert_eq!(
+            api.router()
+                .oneshot(request("/v1/local/agents/runtimes/install", Some(injected)))
+                .await
+                .unwrap()
+                .status(),
+            StatusCode::BAD_REQUEST
+        );
+    }
+    assert_eq!(
+        api.router()
+            .oneshot(request("/v1/local/agents/runtimes?install=true", None))
+            .await
+            .unwrap()
+            .status(),
+        StatusCode::BAD_REQUEST
+    );
+    let response = api
+        .router()
+        .oneshot(request(
+            &format!("/v1/local/agents/runtimes/outcome?request={id}"),
+            None,
+        ))
+        .await
+        .unwrap();
+    assert_eq!(response.status(), StatusCode::OK);
+    let value: serde_json::Value =
+        serde_json::from_slice(&to_bytes(response.into_body(), 4096).await.unwrap()).unwrap();
+    assert_eq!(value["request_id"], id);
+    assert_eq!(value["state"], "completed");
 }
 #[tokio::test]
 async fn feedback_is_read_only_local_admin_and_rejects_unbound_queries() {

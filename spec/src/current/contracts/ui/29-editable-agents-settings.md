@@ -29,3 +29,17 @@ and unlinked sources; absent native message/tool timing remains unknown. Cursor
 settings explain the one-time `jj agent setup cursor --transcript-capture` step.
 Saved/effective values and restart-required state apply independently to both
 Cursor products and the configured OpenCode API endpoint.
+
+Settings → Agents includes a Runtimes tab with the existing divided settings
+rows, harness icons, readable tooling status and Check again. LocalTrusted Admin
+users may explicitly Install or Update the fixed Codex runtime. Confirmation
+names the pinned adapter and CLI versions, private device scope and download.
+Readiness means executable tooling, not authentication or agent presence. Cursor
+uses its vendor setup/update guide; unsupported installers are never implied.
+Missing Node.js 22+ or npm links to Node's setup guide. Refresh retains rows and
+reports Unknown on failure; installation state and original request identity
+survive tab navigation. No read, refresh or chat action installs tooling.
+
+Ready runtimes use Community's green success chip and omit Install. Guide links
+and installation confirmation actions use the shared semantic button styling,
+with inline icons. Runtime and capture tabs show only their own controls.

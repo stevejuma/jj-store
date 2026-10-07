@@ -126,10 +126,8 @@ reason: M23 original Done gates remain unchanged. This maintenance slice
 
 E-EXEC-018
 <!-- /evidence-field -->
-
-
 <!-- generated-navigation -->
 ## Pages
 
-- [E-EXEC-018 details](details-02.md)
-- [E-EXEC-018 details](details-03.md)
+- [E-EXEC-018 details 2](details-02.md)
+- [E-EXEC-018 details 3](details-03.md)

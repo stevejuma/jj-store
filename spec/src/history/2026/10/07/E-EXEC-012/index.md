@@ -132,8 +132,6 @@ reason: Updated owning UI and collaboration topics with exact session-load
 
 ```
 <!-- /evidence-field -->
-
-
 <!-- generated-navigation -->
 ## Pages
 

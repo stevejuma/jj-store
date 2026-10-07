@@ -93,10 +93,22 @@ files. It does not merge or push agent changes.
 Start the LocalTrusted server with `JJ_STORE_ACP_EXECUTABLE` set to the absolute
 path of a rebuilt `jj-acp` binary supporting control version 2. Keep the paired
 custom `jj` beside the server, or select it with `JJ_STORE_AGENT_JJ_EXECUTABLE`.
-Install and authenticate `codex-acp` or `cursor-agent` separately and make it
-available on the server's PATH. The app does not install adapters or store their
-credentials. Privacy-rule preparation may briefly show Preparing agent sessions
-before launch is available.
+Open **Settings → Agents → Runtimes** to check tooling on this device. Codex's
+**Install** or **Update** action downloads ACP 1.13.1 and CLI 0.156.1 into
+private jj-store tooling after confirmation. Discovery and launch use that
+selection across service restarts, without depending on an npm cache path.
+Existing global tools stay available. End connected sessions before changing
+tooling. Node.js 22+ with npm is required; the page links to its installer when
+needed. Cursor uses its vendor installation/update guide. Additional managed
+installers and private Node provisioning are not yet qualified.
+
+Ready describes tooling availability, separately from Online/Working presence
+and provider login. Authenticate through the vendor CLI on the device; the app
+does not store credentials or start a session after installation. Check again
+refreshes status. A failed update keeps the previous selection. Lost responses
+retain the original request for status checks; interrupted staging is not used
+or replayed after restart. Privacy preparation may briefly show Preparing agent
+sessions before launch is available.
 
 For desktop resource staging, pass `--acp-executable /absolute/path/to/jj-acp`
 to `node scripts/desktop.mjs stage`. The optional executable is bundled with the

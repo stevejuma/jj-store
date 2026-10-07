@@ -141,4 +141,7 @@ verification
 - crates/jj-store-http/src/agent_execution/tests.rs#feedback_is_read_only_local_admin_and_rejects_unbound_queries
 - crates/jj-store-service/tests/conversion_agent_discussion.rs#conversion_preserves_agent_discussion_identity_and_requires_exact_witness_mapping
 <!-- /evidence-field -->
+<!-- generated-navigation -->
+## Pages
 
+- [E-EXEC-008 details 2](details-02.md)

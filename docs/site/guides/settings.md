@@ -77,3 +77,17 @@ JJ work. Settings are stored locally in `.jj/jj-store/stacks.toml` and do not
 enter repository history. See
 [local stack workspaces](../technical/local.md#local-stack-workspaces) for
 retention and unknown-command outcomes.
+
+## Agent runtimes
+
+Open **Agents → Runtimes** to check Codex and Cursor tooling on this device.
+**Check again** refreshes readiness independently of agent Online/Offline
+status. Codex **Install/Update** confirms its maintained adapter/CLI versions
+and stores them in a private jj-store directory. Node.js 22+ with npm is
+required. Cursor uses its vendor setup/update guide. End connected sessions
+before changing tooling. Installation never connects an agent; authenticate and
+start explicitly.
+
+Ready runtimes use Community's green success chip and omit Install. Guide links
+and installation confirmation actions use the shared semantic button styling,
+with inline icons. Runtime and capture tabs show only their own controls.

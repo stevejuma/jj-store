@@ -229,6 +229,23 @@ pub trait WorkspaceDriver: Send + Sync {
 /// Optional LocalTrusted runtime; repository and actor checks remain host-owned.
 #[async_trait::async_trait]
 pub trait Manager: Send + Sync {
+    async fn runtime_status(&self, _actor: PrincipalId) -> Result<tooling::Status> {
+        Err(Error::Unavailable)
+    }
+    async fn install_runtime(
+        &self,
+        _actor: PrincipalId,
+        _command: tooling::Command,
+    ) -> Result<tooling::Outcome> {
+        Err(Error::Unavailable)
+    }
+    async fn runtime_outcome(
+        &self,
+        _actor: PrincipalId,
+        _request: RequestId,
+    ) -> Result<tooling::Outcome> {
+        Err(Error::Unavailable)
+    }
     async fn status(&self, actor: PrincipalId) -> Result<Status>;
     async fn targets(
         &self,
@@ -261,6 +278,7 @@ pub fn native_commit(commit: &str) -> Result<CommitId> {
 }
 
 pub mod context;
+pub mod tooling;
 
 /// Repository-selected messages and ordinary discussion revisions, never journal authority.
 #[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]

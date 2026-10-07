@@ -158,7 +158,7 @@ in `stack_history`; every server history request still names an exact operation.
 
 ## Installation-local agent execution
 
-The eight `/v1/local/agents` route surfaces require protected LocalTrusted Admin
+The `/v1/local/agents` route surfaces require protected LocalTrusted Admin
 admission. Bodies contain stable request IDs, server-issued targets and exact
 operation/revision selections; they cannot supply cwd, executable, environment
 or actor. Current code access is rechecked for status, activity and commands.
@@ -171,3 +171,10 @@ Installation Agents status includes optional session `setup_id` and read-only
 optional/default-empty description and bounded avatar string. Only setup writes
 accept up to 2 MiB; other execution request limits remain 512 KiB. Conditional
 save revisions and original request identities retain their existing semantics.
+
+Runtime settings add three independent LocalTrusted Admin endpoints:
+`GET /v1/local/agents/runtimes`, `POST /v1/local/agents/runtimes/install` and
+`GET /v1/local/agents/runtimes/outcome?request=<original-id>`. Installs accept
+only the fixed runtime ID, install/update action, version and original request
+ID. Packages, paths, URLs, environment and credentials cannot come from the
+browser. Reads and receipt queries never install or dispatch an agent.

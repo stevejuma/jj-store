@@ -5,6 +5,7 @@ import {
 import { openAgentActivity } from "./agent-activity-session.js";
 import * as launch from "./agent-execution-launch-context.js";
 import { AgentDiscussions } from "./agent-discussions.svelte.js";
+import { AgentRuntimes } from "./agent-runtimes.svelte.js";
 import { consumeAgentEvents } from "./agent-execution-stream.js";
 import { LocalClient } from "../api/local-client.js";
 import { ApiError, type Model } from "../api/client.js";
@@ -55,6 +56,7 @@ export class AgentExecution {
   #timer?: ReturnType<typeof setTimeout>;
   readonly client: LocalClient;
   readonly discussions: AgentDiscussions;
+  readonly tooling: AgentRuntimes;
   constructor(
     readonly available: () => boolean,
     fetcher?: typeof fetch,
@@ -62,6 +64,7 @@ export class AgentExecution {
     freshness?: import("./application-freshness.js").ApplicationFreshness,
   ) {
     this.client = new LocalClient("", fetcher);
+    this.tooling = new AgentRuntimes(available, fetcher);
     this.discussions = new AgentDiscussions(
       this.client,
       () => this.value?.sessions ?? [],
@@ -282,6 +285,7 @@ export class AgentExecution {
     return request_id;
   }
   destroy() {
+    this.tooling.destroy();
     this.discussions.destroy();
     this.#alive = false;
     clearTimeout(this.#timer);

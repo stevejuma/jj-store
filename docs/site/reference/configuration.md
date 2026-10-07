@@ -174,3 +174,10 @@ private checks add no configuration or production mutation capability.
 A known Published receipt cannot reauthorize candidate publication before its
 checkout witness is saved. Lost selection retains the original receipt pending
 and requires explicit recovery of the original selection.
+
+Agent runtime selection is installation-owned private journal state, outside
+repositories and TOML configuration. Settings explicitly installs fixed Codex
+tooling into a fresh private directory. Failed verification keeps the previous
+selection; interrupted unselected staging is never replayed. Discovery/launch
+resolve that bin directory first, followed by device PATH and conventional tool
+directories. There is no npm-cache search or global binary replacement.

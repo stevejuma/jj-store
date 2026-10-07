@@ -9,6 +9,7 @@ mod launch;
 mod publication;
 mod runtime;
 mod targets;
+mod tooling;
 use jj_store_model::{OperationId, PrincipalId, RepositoryId, RequestId};
 use jj_store_service::{
     administration::RepositoryHost,
@@ -47,6 +48,7 @@ struct Inner {
     runtimes: Mutex<BTreeMap<String, mpsc::Sender<Value>>>,
     runtime_tasks: Mutex<BTreeMap<String, tokio::task::AbortHandle>>,
     publication_worker: Mutex<Option<tokio::task::AbortHandle>>,
+    installer_task: Mutex<Option<tokio::task::JoinHandle<()>>>,
     shutdown: tokio::sync::Mutex<()>,
     shutdown_finished: Mutex<Option<bool>>,
     mutation: tokio::sync::Mutex<()>,
@@ -85,6 +87,7 @@ impl Supervisor {
             runtimes: Mutex::new(BTreeMap::new()),
             runtime_tasks: Mutex::new(BTreeMap::new()),
             publication_worker: Mutex::new(None),
+            installer_task: Mutex::new(None),
             shutdown: tokio::sync::Mutex::new(()),
             shutdown_finished: Mutex::new(None),
             mutation: tokio::sync::Mutex::new(()),
@@ -255,36 +258,4 @@ fn preferences(value: &Preferences) -> Result<()> {
         }
     }
     Ok(())
-}
-fn available(name: &str) -> bool {
-    std::env::var_os("PATH")
-        .is_some_and(|paths| std::env::split_paths(&paths).any(|p| p.join(name).is_file()))
-}
-fn runners() -> Vec<Runner> {
-    [
-        (
-            "codex",
-            "Codex",
-            "codex-acp",
-            "Install @agentclientprotocol/codex-acp and authenticate Codex",
-        ),
-        (
-            "cursor",
-            "Cursor",
-            "cursor-agent",
-            "Install Cursor and run cursor-agent login",
-        ),
-    ]
-    .into_iter()
-    .map(|(id, label, bin, hint)| {
-        let available = available(bin);
-        Runner {
-            id: id.into(),
-            label: label.into(),
-            available,
-            qualified: false,
-            install_hint: (!available).then(|| hint.into()),
-        }
-    })
-    .collect()
 }

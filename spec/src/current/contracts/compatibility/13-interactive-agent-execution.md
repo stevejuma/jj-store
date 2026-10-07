@@ -26,3 +26,12 @@ cancellation and deadlines remain separately identified fixture proof.
 This profile does not qualify signed desktop distribution, WKWebView packaging,
 other platforms or adapters, automatic merging/pushing, credential provisioning,
 replication, backups or source-folder migration.
+
+Runtime-management qualification distinguishes fixed-catalog fixture installs,
+real disposable npm downloads and authenticated provider sessions. macOS/Linux
+Node.js 22+ with npm is the initial installer prerequisite. Codex ACP 1.13.1 and
+CLI 0.156.1 are the maintained catalog targets. Startup/private selection,
+failed-update retention, interruption, process-group teardown, typed Admin
+admission and cold settings UI require focused evidence. Private Node
+provisioning, managed Cursor installation, other harnesses and visual baselines
+remain separate.

@@ -222,3 +222,9 @@ Execution-event observation times are optional private journal metadata. New
 captures preserve the same value through AgentStore's existing observation-time
 field without changing source-sequence identities, native object formats or
 manifest authority.
+
+The application separately owns a fixed runtime catalog and explicit tooling
+installer. Its private versioned directories and selected receipt live outside
+repository checkouts; neither jj-acp nor repository services install tooling.
+Discovery and process launch share that selection. Installation never changes
+AgentStore, starts a session or supplies credentials.

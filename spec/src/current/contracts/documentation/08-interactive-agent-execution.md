@@ -13,3 +13,9 @@ fingerprints cover the new interfaces. Browser and desktop Help bundle the same
 guide; bundled harness availability alone does not qualify a live adapter or a
 signed desktop release. Fixture permission proof stays distinct from installed
 adapter turns that raised no permission request.
+
+The guide documents Settings → Agents → Runtimes, explicit private Codex
+installation/update, pinned versions, Node/npm prerequisites, vendor Cursor
+setup, exact installation receipts and restart/failure retention. Readiness,
+authentication and connected presence remain distinct. Reference prose records
+Buzz's private-path design inspiration without adding a checkout dependency.

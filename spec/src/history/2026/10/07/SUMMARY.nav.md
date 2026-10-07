@@ -22,5 +22,7 @@
   {{#include E-EXEC-020/SUMMARY.nav.md}}
 - [E-EXEC-021](E-EXEC-021/index.md)
   {{#include E-EXEC-021/SUMMARY.nav.md}}
+- [E-EXEC-022](E-EXEC-022/index.md)
+  {{#include E-EXEC-022/SUMMARY.nav.md}}
 - [E-UI-107](E-UI-107/index.md)
   {{#include E-UI-107/SUMMARY.nav.md}}

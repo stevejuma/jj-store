@@ -367,4 +367,7 @@ pnpm exec prettier --check catalog/components/store-application/AgentDiscussion.
 All changed formatted sources pass; generated evidence uses its governed Markdown writer. Scoped prettier --write commands prepared these sources. No visual baseline update, publication, installation, demo reset or backend restart.
 <!-- /run -->
 <!-- /evidence-field -->
+<!-- generated-navigation -->
+## Pages
+
 

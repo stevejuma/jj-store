@@ -3,6 +3,8 @@
 mod real;
 #[path = "agent_execution/setups.rs"]
 mod setups;
+#[path = "agent_execution/tooling.rs"]
+mod tooling;
 use jj_store_model::{PrincipalId, RequestId};
 use jj_store_server::{
     agent_execution::{Resources, Supervisor, driver::Driver},

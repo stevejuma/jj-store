@@ -71,6 +71,7 @@
       />
       <StoreAgentSettings
         management={controller.capture}
+        runtimes={controller.execution?.tooling}
         onRepository={(id) => void openCaptureRepository(id)}
         repositoryNavigationReason={settingsNavigationReason(
           controller.state.settings,

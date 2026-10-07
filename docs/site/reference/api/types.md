@@ -21043,6 +21043,191 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 }
 ```
 
+## AgentRuntimeStatus
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "runtimes": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/AgentRuntime"
+      }
+    },
+    "node_version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "npm_available": {
+      "type": "boolean"
+    },
+    "install_supported": {
+      "type": "boolean"
+    },
+    "install_unavailable": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "pending": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/AgentRuntimeOutcome"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "version",
+    "runtimes",
+    "node_version",
+    "npm_available",
+    "install_supported",
+    "install_unavailable",
+    "pending"
+  ]
+}
+```
+
+## AgentRuntime
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "label": {
+      "type": "string"
+    },
+    "state": {
+      "type": "string"
+    },
+    "adapter_version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "cli_version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "managed": {
+      "type": "boolean"
+    },
+    "action": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/AgentRuntimeAction"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "detail": {
+      "type": "string"
+    },
+    "guide_url": {
+      "type": "string"
+    },
+    "target_version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "target_cli_version": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "label",
+    "state",
+    "adapter_version",
+    "cli_version",
+    "managed",
+    "action",
+    "detail",
+    "guide_url",
+    "target_version",
+    "target_cli_version"
+  ]
+}
+```
+
+## AgentRuntimeAction
+
+```text
+{
+  "type": "string",
+  "enum": [
+    "install",
+    "update"
+  ]
+}
+```
+
+## AgentRuntimeOutcome
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "request_id": {
+      "$ref": "#/components/schemas/RequestId"
+    },
+    "runtime_id": {
+      "type": "string"
+    },
+    "state": {
+      "type": "string"
+    },
+    "error": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "version",
+    "request_id",
+    "runtime_id",
+    "state",
+    "error"
+  ]
+}
+```
+
 ## AgentExecutionTarget
 
 ```text

@@ -1,0 +1,27 @@
+.store-runtime__identity {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+.store-runtime__actions {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 0.35rem;
+}
+.store-runtime__pending {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.store-runtime__pending p {
+  flex: 1;
+  font-size: var(--community-text-secondary);
+}
+@media (max-width: 40rem) {
+  .store-runtime__actions {
+    align-self: flex-end;
+  }
+}

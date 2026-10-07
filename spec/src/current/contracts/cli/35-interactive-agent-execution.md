@@ -32,3 +32,12 @@ projections introduce no CLI command, executable selection, installed-tool
 replacement or automatic execution. The ready workspace operation may differ
 from the original launch pin before its first turn; neither value is inferred by
 the client.
+
+Application-managed Codex tooling resolves before ambient PATH and conventional
+device tool directories, using executable-bit checks. The private selected bin
+and its resolved Node are supplied to jj-acp for both launch and resume.
+Installs never replace global tools, authenticate, restart sessions or change
+jj-acp's no-network/no-auto-install contract. Shutdown aborts the bounded
+installer process group before storage teardown. Only the explicit Settings
+install command may fetch the fixed packages; ordinary development restarts
+preserve selection.

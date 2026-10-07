@@ -1,1 +1,1 @@
-- [E-UI-107 details](details-02.md)
+- [E-UI-107 details 2](details-02.md)

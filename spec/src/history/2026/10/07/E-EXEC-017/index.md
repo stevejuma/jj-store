@@ -90,12 +90,10 @@ verification
 - crates/jj-store-http/src/agent_execution/tests.rs#feedback_preparation_refusals_have_specific_transport_codes
 - crates/jj-store-server/src/agent_execution/delivery/tests.rs#cancelled_initial_prompt_does_not_lose_continuation_context_to_a_queued_turn
 <!-- /evidence-field -->
-
-
 <!-- generated-navigation -->
 ## Pages
 
-- [E-EXEC-017 details](details-02.md)
-- [E-EXEC-017 details](details-03.md)
-- [E-EXEC-017 details](details-04.md)
-- [E-EXEC-017 details](details-05.md)
+- [E-EXEC-017 details 2](details-02.md)
+- [E-EXEC-017 details 3](details-03.md)
+- [E-EXEC-017 details 4](details-04.md)
+- [E-EXEC-017 details 5](details-05.md)

@@ -93,10 +93,8 @@ verification
 - crates/jj-store-server/src/agent_execution/feedback.rs#committed_session_aliases_preserve_capture_identity_and_isolate_instances
 - crates/jj-store-server/src/agent_execution/journal.rs#journal_restart_retains_agent_association_but_never_connection
 <!-- /evidence-field -->
-
-
 <!-- generated-navigation -->
 ## Pages
 
-- [E-EXEC-020 details](details-02.md)
-- [E-EXEC-020 details](details-03.md)
+- [E-EXEC-020 details 2](details-02.md)
+- [E-EXEC-020 details 3](details-03.md)

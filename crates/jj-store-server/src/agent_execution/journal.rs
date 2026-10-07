@@ -42,6 +42,10 @@ pub(super) struct State {
     pub setups: BTreeMap<String, Setup>,
     pub sessions: BTreeMap<String, SavedSession>,
     pub intents: BTreeMap<RequestId, Intent>,
+    #[serde(default)]
+    pub runtime_installs: BTreeMap<RequestId, super::tooling::InstallIntent>,
+    #[serde(default)]
+    pub runtime_selection: Option<super::tooling::Selection>,
 }
 pub(super) fn read(root: &Path) -> Result<State> {
     let path = root.join("state.json");
@@ -63,6 +67,18 @@ pub(super) fn read(root: &Path) -> Result<State> {
         return Err(Error::Limit);
     }
     let mut state: State = serde_json::from_slice(&bytes).map_err(|_| Error::Unavailable)?;
+    if state.runtime_installs.len() > 128 {
+        return Err(Error::Limit);
+    }
+    if let Some(selected) = &state.runtime_selection
+        && !state
+            .runtime_installs
+            .get(&selected.request_id)
+            .is_some_and(|i| i.outcome.state == "completed")
+    {
+        return Err(Error::Unavailable);
+    }
+    super::tooling::recover(&mut state);
     if state.sessions.len() > 64 || state.setups.len() > 64 || state.intents.len() > 4096 {
         return Err(Error::Limit);
     }

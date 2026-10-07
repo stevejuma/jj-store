@@ -159,3 +159,9 @@ disconnection and restart. A retained validated target survives transient read
 failure; mutation-time authorization and target validation remain authoritative.
 Reply and edit contexts retain exact parent/revision witnesses across refresh; a
 changed or unavailable target fails explicitly without replacing the draft.
+
+JST-COLLAB-031 through JST-COLLAB-033 keep runtime installation separate from
+saved agents, repository collaboration and execution. Settings installation
+changes future tooling discovery only; it never starts/resumes/prompts an agent,
+changes saved preferences or alters repository history. A live process blocks
+replacement. Authentication remains the harness vendor's explicit device login.

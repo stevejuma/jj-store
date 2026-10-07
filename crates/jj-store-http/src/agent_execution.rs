@@ -27,6 +27,9 @@ struct EventsQuery {
 macro_rules! endpoints {
     ($register:ident) => { $register! {
         (get, "/local/agents", status, "local_agents_status", routes::Empty, routes::Empty, agents::Status),
+        (get, "/local/agents/runtimes", runtimes, "local_agents_runtimes", routes::Empty, routes::Empty, agents::tooling::Status),
+        (post, "/local/agents/runtimes/install", install_runtime, "local_agents_runtime_install", routes::Empty, agents::tooling::Command, agents::tooling::Outcome),
+        (get, "/local/agents/runtimes/outcome", runtime_outcome, "local_agents_runtime_outcome", OutcomeQuery, routes::Empty, agents::tooling::Outcome),
         (get, "/local/agents/targets", targets, "local_agents_targets", TargetsQuery, routes::Empty, Vec<agents::Target>),
         (post, "/local/agents/setups", setups, "local_agents_setups", routes::Empty, agents::SetupCommand, agents::Status),
         (post, "/local/agents/launch", launch, "local_agents_launch", routes::Empty, agents::Launch, agents::Outcome),
@@ -152,6 +155,24 @@ macro_rules! mutation {
 mutation!(setups, agents::SetupCommand, save_setup);
 mutation!(launch, agents::Launch, launch);
 mutation!(command, agents::Command, command);
+mutation!(install_runtime, agents::tooling::Command, install_runtime);
+
+async fn runtimes(
+    ExtractState(state): ExtractState<Arc<State>>,
+    query: routes::Input<routes::Empty>,
+) -> Result<Response> {
+    routes::input(query)?;
+    let (m, actor) = manager(&state)?;
+    state.json(&m.runtime_status(actor).await.map_err(failure)?)
+}
+async fn runtime_outcome(
+    ExtractState(state): ExtractState<Arc<State>>,
+    query: routes::Input<OutcomeQuery>,
+) -> Result<Response> {
+    let q = routes::input(query)?;
+    let (m, actor) = manager(&state)?;
+    state.json(&m.runtime_outcome(actor, q.request).await.map_err(failure)?)
+}
 #[cfg(test)]
 mod tests;
 

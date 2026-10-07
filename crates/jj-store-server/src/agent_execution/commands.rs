@@ -1,6 +1,29 @@
 use super::*;
 #[async_trait::async_trait]
 impl Manager for Supervisor {
+    async fn runtime_status(
+        &self,
+        actor: PrincipalId,
+    ) -> Result<jj_store_service::agent_execution::tooling::Status> {
+        self.actor(actor)?;
+        self.tooling_status().await
+    }
+    async fn install_runtime(
+        &self,
+        actor: PrincipalId,
+        command: jj_store_service::agent_execution::tooling::Command,
+    ) -> Result<jj_store_service::agent_execution::tooling::Outcome> {
+        self.actor(actor)?;
+        self.tooling_install(command).await
+    }
+    async fn runtime_outcome(
+        &self,
+        actor: PrincipalId,
+        request: RequestId,
+    ) -> Result<jj_store_service::agent_execution::tooling::Outcome> {
+        self.actor(actor)?;
+        self.install_outcome(request)
+    }
     async fn status(&self, actor: PrincipalId) -> Result<Status> {
         self.actor(actor)?;
         let mut status = self.read(|s| {
@@ -21,9 +44,10 @@ impl Manager for Supervisor {
                 revision: s.setup_revision.unwrap_or(s.revision),
                 setups: s.setups.values().cloned().collect(),
                 sessions: s.sessions.values().map(|s| s.view.clone()).collect(),
-                runners: runners(),
+                runners: vec![],
             })
         })?;
+        status.runners = self.runners()?;
         let mut admitted = Vec::new();
         for mut session in status.sessions {
             let live = self
@@ -441,6 +465,16 @@ impl Manager for Supervisor {
         self.0
             .stopping
             .store(true, std::sync::atomic::Ordering::Release);
+        let installer = self
+            .0
+            .installer_task
+            .lock()
+            .map_err(|_| Error::Unavailable)?
+            .take();
+        if let Some(installer) = installer {
+            installer.abort();
+            let _ = tokio::time::timeout(Duration::from_secs(3), installer).await;
+        }
         if let Some(worker) = self
             .0
             .publication_worker

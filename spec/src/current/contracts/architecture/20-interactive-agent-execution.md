@@ -18,3 +18,13 @@ replays a prompt.
 Privacy rules compile on a detached preparation thread that owns no subprocess
 or publication. Service shutdown does not wait for unused scanner preparation;
 the stopping supervisor discards a late result.
+
+The application owns a fixed runtime catalog outside jj-acp. Explicit Codex
+installation runs resolved npm without a shell into a fresh private request
+directory, with exact adapter/CLI versions, fixed public registry, no lifecycle
+scripts, private cache/config and bounded time/disk use. Verified executable and
+version probes precede atomic journal selection; failed updates keep the
+previous selection. Discovery and launch share the selected private bin path
+plus resolved Node and conventional device tool directories. No npx-cache search
+is used. Node provisioning and a managed Cursor installer remain separate
+qualification.

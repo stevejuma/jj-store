@@ -65,8 +65,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed additive local managed-session DTO projections, exact repository admission and unchanged owned service/native AgentStore authority; architecture and transport document the boundary.",
-      "fingerprint": "501dae732f3a1fd436063b82f5ca6b6dae80ee4471228286536cce54a861cff8"
+      "reason": "Reviewed independent runtime DTOs with exact adapter/CLI targets and LocalTrusted Admin original-install receipts, preserving repository and execution authority. Updated architecture/transport references.",
+      "fingerprint": "2fe50551244fd79b96cbc4b732a6b3d2add39443ab71ea10adea871fb52c3bd8"
     }
   },
   {
@@ -96,8 +96,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed recomputed managed capture aliases and ready workspace proofs; installation journal defaults remain backward compatible and no TOML keys, credentials or repository migrations change.",
-      "fingerprint": "9aa02f2c587a46f80112adf484ad01e973a0ded8e70256922a58eaa1fe49d702"
+      "reason": "Reviewed fixed tooling catalog, private durable runtime selection and unconfirmed receipt projection, installer teardown and shared discovery/launch paths. Ready suppresses redundant Install; no TOML or credentials added.",
+      "fingerprint": "4b47a8e4eb1458c28499f93e6367b6ae23c05177551acd06213018a686ac19d0"
     }
   },
   {
@@ -122,8 +122,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Agent prompt preparation exposes specific pre-dispatch feedback read and budget refusal codes. Public session schemas and ordinary collaboration transport remain unchanged.",
-      "fingerprint": "a243761936c2f0fcace452ad5e5411806ede664656a0b028903fcd0e538060f5"
+      "reason": "Reviewed strict LocalTrusted Admin runtime routes and forbidden browser package/path/environment inputs, original receipt querying and unchanged agent/session/collaboration admission.",
+      "fingerprint": "d519d86087134c48bea930570bf54b107629f7837e9bd8515d5831d8a1aece15"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed exact installation-owned capture aliases and workspace proofs for repository agent avatars, last-activity labels and inbox workspace navigation. Captured identities survive setup editing/deletion; canonical AgentStore data remains unchanged and unmatched captures retain integration identities.",
-      "fingerprint": "bec0795716f7d7f35d4d9dcaf2d09a19b554c671998f37b3ebdda03c4d3c6442"
+      "reason": "Reviewed runtime success chips, shared semantic guide and dialog buttons, Ready install suppression and capture-tab isolation; no chat execution from settings controls",
+      "fingerprint": "0933decc164824967d9141206eff62587f7c1d153519cc912cdb6675a3b9b347"
     }
   },
   {
@@ -154,8 +154,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Regenerated OpenAPI, TypeScript and API type reference for read-only local recorded_session_ids, workspace_name and workspace_operation; launch and canonical repository formats remain unchanged.",
-      "fingerprint": "04a31c014672abce108a8a7315d0b3d0a497228d955cabd0f0362ba2977c0819"
+      "reason": "Generated API and TypeScript references match fixed runtime inventory and install/update commands, target versions and original-install receipts. Existing session and native canonical formats are unchanged.",
+      "fingerprint": "682544915262af9cd7242a5dfb63f6a6e87cded1f7d8f25e0cdf923d232b8c03"
     }
   }
 ]

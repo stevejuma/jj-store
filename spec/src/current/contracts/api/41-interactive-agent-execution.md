@@ -79,3 +79,11 @@ when the selected new feedback exceeds 128 replies/32 KiB. Both are proven
 pre-dispatch refusals: the composer retains the draft, explains recovery and
 allows a new explicit Send. No execution intent is saved for these refusals.
 Private revision delivery metadata is not exposed as a public session field.
+
+GET /v1/local/agents/runtimes exposes the fixed tooling catalog and
+prerequisites. POST /v1/local/agents/runtimes/install accepts only version,
+original request_id, runtime_id and install/update action. GET
+/v1/local/agents/runtimes/outcome queries that original receipt. All three
+require LocalTrusted Admin. Commands cannot supply a package, URL, executable,
+path, environment or credentials. Tooling outcomes remain separate from session
+outcomes and conditional setup revisions.
