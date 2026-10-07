@@ -31,6 +31,7 @@
     onStart,
     onActivity,
     onSessions,
+    onChat,
     onStop,
     onCopy,
   }: {
@@ -42,12 +43,13 @@
     onStart: () => void;
     onActivity: () => void;
     onSessions: () => void;
+    onChat?: () => void;
     onStop: (session: string) => void;
     onCopy: () => void;
   } = $props();
   let tab = $state("info");
   const presence = $derived(
-    agentAvailability(agent.id, status?.sessions ?? [], unknown),
+    agentAvailability(agent.id, status?.sessions ?? [], unknown, status),
   );
   const connected = $derived(
     (status?.sessions ?? []).filter(
@@ -96,17 +98,20 @@
     </div>
   </header>
   <CommunityProfileActions label="Agent profile actions" compact>
-    {#if connected.length === 1}<Button
+    {#if ["Starting", "Idle", "Online", "Working", "Queued", "Needs attention", "Stopping"].includes(presence.label)}<Button
         disabled={pending || unknown}
-        onclick={() => onStop(connected[0].id)}
+        onclick={() => onStop(agent.id)}
         ><StopIcon aria-hidden="true" />Stop agent</Button
       >
     {:else}<Button
         disabled={pending || unknown || !harness?.available}
-        onclick={onStart}><PlayIcon aria-hidden="true" />Start session</Button
+        onclick={onStart}><PlayIcon aria-hidden="true" />Start agent</Button
+      >{/if}
+    {#if onChat}<Button variant="secondary" disabled={pending} onclick={onChat}
+        >New chat</Button
       >{/if}
     <Button variant="secondary" disabled={pending} onclick={onSessions}
-      ><MessageIcon aria-hidden="true" />View sessions</Button
+      ><MessageIcon aria-hidden="true" />View chats</Button
     >
     {#if connected.length > 1}<Button variant="secondary" onclick={onSessions}
         >Manage running sessions</Button

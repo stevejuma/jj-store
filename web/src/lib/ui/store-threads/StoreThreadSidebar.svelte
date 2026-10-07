@@ -24,6 +24,7 @@
     /></AppShell.Sidebar.Header
   >
   {#if panel.kind === "replies" && threads && controller.state.route.replyId}<StoreThreadReplies
+      {controller}
       {threads}
       rootId={controller.state.route.replyId}
       {members}

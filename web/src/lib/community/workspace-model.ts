@@ -79,6 +79,8 @@ export interface CommunityWorkspaceNavigationSectionModel {
 }
 
 export interface CommunityMemberModel {
+  /** Exact saved ACP setup association; never inferred from a name or avatar. */
+  acpAgentId?: string;
   id: string;
   name: string;
   handle: string;

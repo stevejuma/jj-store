@@ -1,3 +1,7 @@
+import {
+  agentLiveState,
+  agentLiveLabels,
+} from "../../controller/agent-live-status.js";
 import type {
   AgentSession,
   AgentSetup,
@@ -13,13 +17,29 @@ export function agentMember(
     handle: "",
     avatarUrl: agent.avatar,
     role: "agent",
+    kind: "agent",
+    acpAgentId: agent.id,
   };
 }
 export function agentAvailability(
   id: string,
   sessions: readonly AgentSession[],
   unknown: boolean,
+  status?:
+    import("../../controller/agent-execution-types.js").AgentStatus | null,
 ) {
+  if (status?.live_agents?.some((a) => a.agent_id === id)) {
+    const state = agentLiveState(status, id, unknown);
+    return {
+      label: agentLiveLabels[state],
+      presence:
+        state === "offline"
+          ? "offline"
+          : ["idle", "working"].includes(state)
+            ? "online"
+            : "unknown",
+    } as const;
+  }
   const matching = sessions.filter((session) => session.setup_id === id);
   if (unknown) return { label: "Unknown", presence: "unknown" } as const;
   if (matching.some((s) => s.connected && s.state === "running"))

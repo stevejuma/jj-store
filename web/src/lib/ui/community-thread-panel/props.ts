@@ -18,6 +18,8 @@ import type {
 } from "../community-workspace/model.js";
 
 export type ThreadPanelProps = {
+  audienceKey?: string;
+  initialAgentIds?: readonly string[];
   messageSupplement?: Snippet<[CommunityMessageModel]>;
   messageMetadata?: Snippet<[CommunityMessageModel]>;
   virtualize?: boolean;

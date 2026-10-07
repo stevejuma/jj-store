@@ -12,6 +12,7 @@
   import CommunityChip from "../community-chip/CommunityChip.svelte";
   import StoreIdentityCopy from "./StoreIdentityCopy.svelte";
   import StoreAgentTranscript from "./StoreAgentTranscript.svelte";
+  import { managedRecordedAgent } from "../../collaboration/managed-agent.js";
   let {
     context,
     controller,
@@ -102,7 +103,14 @@
               activity={session.activity}
               sessionId={session.session.session_id}
               integration={session.session.integration}
-              agent={agentMember(session.session)}
+              agent={agentMember(
+                session.session,
+                managedRecordedAgent(
+                  controller.state.repository.id,
+                  session.session,
+                  controller.execution?.value?.sessions,
+                ),
+              )}
               member={{
                 ...controller.state.member,
                 kind:

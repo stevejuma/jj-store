@@ -8,11 +8,18 @@
     manager,
     value,
     title,
+    sessionId,
   }: {
     manager: AgentExecution;
+    sessionId?: string;
     value: Record<string, unknown>;
     title: string;
   } = $props();
+  const session = $derived(
+    sessionId
+      ? manager.value?.sessions.find((s) => s.id === sessionId)
+      : manager.session,
+  );
   const request = $derived(object(value.request));
   const options = $derived(
     Array.isArray(request.options) ? request.options.map(object) : [],
@@ -39,9 +46,9 @@
         size="sm"
         disabled={manager.busy ||
           !!manager.pending ||
-          manager.session?.state !== "running"}
+          session?.state !== "running"}
         onclick={() =>
-          manager.command({
+          manager.commandSession(session?.id ?? "", {
             action: "permission",
             permission_id: text(value.permissionId),
             option_id: text(option.optionId),
@@ -52,9 +59,9 @@
       size="sm"
       disabled={manager.busy ||
         !!manager.pending ||
-        manager.session?.state !== "running"}
+        session?.state !== "running"}
       onclick={() =>
-        manager.command({
+        manager.commandSession(session?.id ?? "", {
           action: "permission",
           permission_id: text(value.permissionId),
           option_id: null,

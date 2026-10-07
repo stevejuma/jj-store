@@ -35,3 +35,10 @@ failed-update retention, interruption, process-group teardown, typed Admin
 admission and cold settings UI require focused evidence. Private Node
 provisioning, managed Cursor installation, other harnesses and visual baselines
 remain separate.
+
+M24 adds explicitly selected control version 3, warm workers, conversation homes
+and additive local status/binding fields with journal defaults. Canonical
+AgentStore and ThreadStore formats and manifest/ref-CAS authority remain
+unchanged. M23 version-2 qualification stays separate. Fleet fixture, installed
+adapters, native materialization and cold built-browser gates are recorded
+independently.

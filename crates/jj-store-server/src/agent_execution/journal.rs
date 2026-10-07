@@ -23,6 +23,12 @@ pub(super) struct SavedSession {
     pub context_generation: u64,
     #[serde(default)]
     pub initial_context_delivered: bool,
+    #[serde(default)]
+    pub code_workspaces: BTreeMap<RepositoryId, Workspace>,
+    #[serde(default)]
+    pub origin_link: Option<jj_store_service::collab_mutations::Request>,
+    #[serde(default)]
+    pub origin_linked: bool,
 }
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -46,6 +52,15 @@ pub(super) struct State {
     pub runtime_installs: BTreeMap<RequestId, super::tooling::InstallIntent>,
     #[serde(default)]
     pub runtime_selection: Option<super::tooling::Selection>,
+    #[serde(default)]
+    pub worker_generations: BTreeMap<String, u64>,
+    #[serde(default)]
+    pub warm_agents: std::collections::BTreeSet<String>,
+    #[serde(default)]
+    pub conversations:
+        BTreeMap<String, jj_store_service::agent_execution::conversations::Conversation>,
+    #[serde(default)]
+    pub personal_home: Option<super::conversation_home::Home>,
 }
 pub(super) fn read(root: &Path) -> Result<State> {
     let path = root.join("state.json");
@@ -82,6 +97,36 @@ pub(super) fn read(root: &Path) -> Result<State> {
     if state.sessions.len() > 64 || state.setups.len() > 64 || state.intents.len() > 4096 {
         return Err(Error::Limit);
     }
+    if state.warm_agents.len() > 64
+        || state.worker_generations.len() > 64
+        || state
+            .worker_generations
+            .iter()
+            .any(|(id, generation)| !label(id, 64) || *generation == 0)
+        || state
+            .warm_agents
+            .iter()
+            .any(|id| !state.setups.contains_key(id))
+        || state.conversations.len() > 128
+    {
+        return Err(Error::Limit);
+    }
+    for (id, conversation) in &state.conversations {
+        if id != &conversation.id
+            || id.parse::<RequestId>().is_err()
+            || !label(&conversation.origin.scope, 256)
+            || conversation.origin.context.len() > 32768
+            || conversation.participants.len() > 64
+            || conversation.participants.iter().any(|id| {
+                !state.sessions.get(id).is_some_and(|s| {
+                    s.view.conversation_id.as_deref() == Some(&conversation.id)
+                        && s.view.repository == conversation.home
+                })
+            })
+        {
+            return Err(Error::Unavailable);
+        }
+    }
     avatar::budget(&state)?;
     for saved in state.sessions.values_mut() {
         saved.view.connected = false;
@@ -109,6 +154,37 @@ pub(super) fn read(root: &Path) -> Result<State> {
                 .any(|(i, e)| e.sequence != i as u64 + 1)
         {
             return Err(Error::Unavailable);
+        }
+        if saved.code_workspaces.len() > 8
+            || saved.code_workspaces.len() != saved.view.repository_bindings.len()
+            || saved
+                .view
+                .conversation_id
+                .as_ref()
+                .is_some_and(|id| !state.conversations.contains_key(id))
+        {
+            return Err(Error::Unavailable);
+        }
+        for (repository, workspace) in &saved.code_workspaces {
+            let expected = saved
+                .workspace
+                .path
+                .join("repositories")
+                .join(repository.to_string());
+            let binding = saved
+                .view
+                .repository_bindings
+                .iter()
+                .find(|b| b.repository == *repository)
+                .ok_or(Error::Unavailable)?;
+            if workspace.path != expected
+                || binding.workspace != expected.to_string_lossy()
+                || workspace.operation != binding.operation
+                || workspace.commit != binding.commit
+                || !matches!(binding.profile.as_str(), "native" | "local_jj_git")
+            {
+                return Err(Error::Unavailable);
+            }
         }
         if !matches!(
             saved.view.state.as_str(),

@@ -28,3 +28,8 @@ previous selection. Discovery and launch share the selected private bin path
 plus resolved Node and conventional device tool directories. No npx-cache search
 is used. Node provisioning and a managed Cursor installer remain separate
 qualification.
+
+M24 adds
+[reusable agent conversations](../collaboration/37-reusable-agent-conversations.md)
+under JST-COLLAB-034 through JST-COLLAB-036. Existing M23 qualification remains
+unchanged.

@@ -16,6 +16,7 @@
   import CircleCheckIcon from "@lucide/svelte/icons/circle-check";
   import RotateCcwIcon from "@lucide/svelte/icons/rotate-ccw";
   import type { StoreController } from "../../controller/contracts.js";
+  import { managedRecordedAgent } from "../../collaboration/managed-agent.js";
   import {
     anchorLabel,
     principalMember,
@@ -109,7 +110,14 @@
             </dt>
             <dd>
               {#if context?.agents.sessions[0]}<CommunityMemberAvatar
-                  member={agentMember(context.agents.sessions[0].session)}
+                  member={agentMember(
+                    context.agents.sessions[0].session,
+                    managedRecordedAgent(
+                      controller.state.repository.id,
+                      context.agents.sessions[0].session,
+                      controller.execution?.value?.sessions,
+                    ),
+                  )}
                   size="small"
                   decorative
                 />{/if}

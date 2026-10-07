@@ -16,6 +16,7 @@
     ? ""
     : manager.error) ||
     manager.connectionError ||
+    manager.targetError ||
     manager.activityError}
   pending={manager.busy}
   action={{

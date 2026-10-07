@@ -55,8 +55,22 @@
     }),
   );
   const catalog = $derived(
-    harnessCatalog(manager.value?.sessions ?? [], draft.runner),
+    harnessCatalog(
+      manager.value?.sessions ?? [],
+      draft.runner,
+      manager.catalogs.values[draft.runner]?.facts,
+    ),
   );
+  $effect(() => {
+    const runner = draft.runner;
+    const available =
+      manager.value?.runtime === "ready" &&
+      manager.value.runners.some((r) => r.id === runner && r.available);
+    if (open && available)
+      untrack(() => {
+        if (!catalog.session) void manager.catalogs.load(runner);
+      });
+  });
   const facts = $derived(catalog.facts);
   const hasCatalog = $derived(
     runtimeChoices(facts, "model").length ||
@@ -67,6 +81,7 @@
       const { facts } = harnessCatalog(
         manager.value?.sessions ?? [],
         runner.id,
+        manager.catalogs.values[runner.id]?.facts,
       );
       const options = runtimeChoices(facts, "model");
       return [
@@ -167,13 +182,17 @@
 <CommunityAgentEditorDialog
   runtimeNotice={session
     ? "Save changes the agent defaults for future chats. Model, thinking and execution mode also apply to this connected session when using its current harness. Its captured instructions and workspace stay unchanged."
-    : !hasCatalog
-      ? "No model or thinking choices have been advertised for this harness. Use harness defaults or connect a session to load its catalog. Saved preferences remain until you change them."
-      : catalog.remembered
-        ? "Showing choices from this harness's last session. Availability is checked again when a new session connects. Saved preferences remain until you change them."
-        : catalog.session
-          ? "Model and thinking choices come from the connected harness. Saved preferences remain until you change them."
-          : "Connect a session with this harness to load its model and thinking choices. Saved preferences remain until you change them."}
+    : manager.catalogs.errors[draft.runner]
+      ? manager.catalogs.errors[draft.runner]
+      : manager.catalogs.loading[draft.runner] && !hasCatalog
+        ? "Loading models and thinking choices from the installed harness…"
+        : !hasCatalog
+          ? "No model or thinking choices have been advertised for this harness. Saved preferences remain until you change them."
+          : catalog.remembered
+            ? "Showing choices from this harness's last session. Availability is checked again when a new session connects. Saved preferences remain until you change them."
+            : catalog.session
+              ? "Model and thinking choices come from the connected harness. Saved preferences remain until you change them."
+              : "Model and thinking choices come from the installed harness. Availability is checked again when a chat connects."}
   saveUnavailable={manager.value?.runtime === "preparing"
     ? "Preparing agent configuration. Save becomes available when preparation completes."
     : manager.value?.runtime === "unavailable"
@@ -195,4 +214,8 @@
   {modes}
   onModel={selectModel}
   onSave={save}
+  modelsLoading={manager.catalogs.loading[draft.runner]}
+  onRetryModels={manager.catalogs.errors[draft.runner]
+    ? () => void manager.catalogs.load(draft.runner, true)
+    : undefined}
 />

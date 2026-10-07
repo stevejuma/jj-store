@@ -18,9 +18,9 @@ pub(super) fn safe(sanitizer: &TranscriptSanitizer, value: Value) -> Result<Valu
     let payload = sanitizer.sanitize(value).ok_or(Error::Unavailable)?;
     serde_json::from_slice(payload.bytes()).map_err(|_| Error::Unavailable)
 }
-struct OwnedChild(Child);
+pub(super) struct OwnedChild(pub(super) Child);
 impl OwnedChild {
-    async fn stop(&mut self) {
+    pub(super) async fn stop(&mut self) {
         if let Some(pid) = self
             .0
             .id()
@@ -59,7 +59,12 @@ impl Supervisor {
         let saved = self.saved(id)?;
         let sanitizer = sanitizer(self, &saved.workspace.path).await?;
         let mut runtimes = self.0.runtimes.lock().map_err(|_| Error::Unavailable)?;
-        if !runtimes.is_empty() {
+        if !runtimes.is_empty()
+            || self
+                .0
+                .catalog_active
+                .load(std::sync::atomic::Ordering::Acquire)
+        {
             return Err(Error::Busy);
         }
         let mut command = Command::new(&self.0.resources.executable);
@@ -272,7 +277,12 @@ impl Supervisor {
             Ok(())
         })
     }
-    fn permission_kind(&self, id: &str, permission: &Value, option: &Value) -> Result<Value> {
+    pub(super) fn permission_kind(
+        &self,
+        id: &str,
+        permission: &Value,
+        option: &Value,
+    ) -> Result<Value> {
         Ok(self
             .saved(id)?
             .events
@@ -285,7 +295,7 @@ impl Supervisor {
             .unwrap_or(Value::Null))
     }
 }
-async fn write(stdin: &mut tokio::process::ChildStdin, value: Value) -> Result<()> {
+pub(super) async fn write(stdin: &mut tokio::process::ChildStdin, value: Value) -> Result<()> {
     let mut bytes = serde_json::to_vec(&value).map_err(|_| Error::Invalid)?;
     if bytes.len() > 1024 * 1024 {
         return Err(Error::Limit);
@@ -296,7 +306,7 @@ async fn write(stdin: &mut tokio::process::ChildStdin, value: Value) -> Result<(
         .map_err(|_| Error::Unavailable)?
         .map_err(|_| Error::Unavailable)
 }
-async fn bounded_line(
+pub(super) async fn bounded_line(
     reader: &mut BufReader<tokio::process::ChildStdout>,
     bytes: &mut Vec<u8>,
 ) -> Result<bool> {

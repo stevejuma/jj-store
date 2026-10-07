@@ -7,6 +7,7 @@ import {
 export function harnessCatalog(
   sessions: readonly AgentSession[],
   runner: string,
+  discovered?: unknown,
 ) {
   const matching = sessions.filter((session) => session.runner === runner);
   const session =
@@ -24,7 +25,10 @@ export function harnessCatalog(
       )[0];
   return {
     session,
-    facts: object(object(session?.capabilities).session),
-    remembered: !!session && !session.connected,
+    facts:
+      session?.connected || !discovered
+        ? object(object(session?.capabilities).session)
+        : object(discovered),
+    remembered: !!session && !session.connected && !discovered,
   };
 }

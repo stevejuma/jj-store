@@ -1,4 +1,5 @@
 import { Prec } from "@codemirror/state";
+import { getAllContexts } from "svelte";
 
 import { EditorView, keymap } from "@codemirror/view";
 
@@ -37,6 +38,7 @@ export interface CommunityComposerEditorState {
 }
 
 export interface CommunityComposerExtensionOptions {
+  contexts?: Map<unknown, unknown>;
   members(): readonly CommunityMemberModel[];
   rooms(): readonly CommunityRoomModel[];
   emojis(): readonly CommunityCustomEmoji[];
@@ -66,13 +68,17 @@ export function createCommunityComposerExtension(
   options: CommunityComposerExtensionOptions,
 ): MiraExtension {
   const navigation = useCommunityEntityNavigation();
+  const widgets = {
+    ...options,
+    contexts: getAllContexts<Map<unknown, unknown>>(),
+  };
   return defineMiraExtension({
     name: "community-chat-composer",
     codeMirror: () => [
       EditorView.contentAttributes.of(() => ({
         "aria-disabled": String(options.disabled()),
       })),
-      communityTokenDecorations(options, navigation),
+      communityTokenDecorations(widgets, navigation),
       communityComposerPasteHandler(),
       EditorView.updateListener.of((update) => {
         if (!update.selectionSet && !update.docChanged) return;

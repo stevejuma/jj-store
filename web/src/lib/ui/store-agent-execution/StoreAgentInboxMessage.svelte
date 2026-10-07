@@ -14,8 +14,10 @@
     author,
     children,
     openReply = false,
+    sessionId,
   }: {
     manager: AgentExecution;
+    sessionId?: string;
     row: {
       id: string;
       text: string;
@@ -26,7 +28,11 @@
     children?: Snippet;
     openReply?: boolean;
   } = $props();
-  const session = $derived(manager.session!);
+  const session = $derived(
+    (sessionId
+      ? manager.value?.sessions.find((s) => s.id === sessionId)
+      : manager.session)!,
+  );
   const discussions = $derived(manager.discussions);
   const feedback = $derived(discussions.message(session.id, row.id));
   const threads = $derived(discussions.reader(session.repository));

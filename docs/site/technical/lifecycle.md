@@ -170,3 +170,13 @@ stay installation-local, and unsent composer drafts stay in browser memory. New
 events retain their device observation time through restart and publication,
 carrying it into the existing captured occurred_at_millis field. Legacy untimed
 events stay unknown; publication and refresh do not invent times.
+
+## Reusable ACP worker lifetime
+
+Start warms the saved agent in place without a session or prompt. Stop retains
+work/history and disables automatic warming until explicit Start or Send.
+Enabled agents warm on service restart within the four-worker cap; migrated
+agents begin disabled. Surplus idle workers retire after ten minutes. Shutdown
+uses a dedicated signal even when a command queue is full. An immediate Start
+awaits the stopping generation before creating another. Restart retains exact
+conversations and interrupted history without replaying a prompt.

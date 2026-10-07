@@ -1,4 +1,7 @@
 <script lang="ts">
+  import { useAgentExecution } from "./context.js";
+  import { agentMember } from "../community-agents/model.js";
+  import { mentionedAgentIds } from "../../community/agent-mentions.js";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import CommunityChatComposer from "../community-chat-composer/CommunityChatComposer.svelte";
   import CommunityThreadTreeRow from "../community-thread-panel/CommunityThreadTreeRow.svelte";
@@ -27,6 +30,7 @@
     author: CommunityMemberModel;
     onClose(): void;
   } = $props();
+  const manager = useAgentExecution();
   const key = $derived(`${sessionId}:${row.id}`);
   const feedback = $derived(discussions.message(sessionId, row.id));
   const threads = $derived(discussions.reader(repository));
@@ -153,6 +157,16 @@
   {/snippet}
   {#key discussions.recovered[key]}<CommunityChatComposer
       bind:value={discussions.drafts[key]}
+      members={[...members, ...(manager?.value?.setups ?? []).map(agentMember)]}
+      audienceKey={context?.edit
+        ? undefined
+        : JSON.stringify([
+            discussions.actor(repository),
+            repository,
+            sessionId,
+            row.id,
+          ])}
+      initialAgentIds={author.acpAgentId ? [author.acpAgentId] : []}
       context={context?.edit
         ? { kind: "edit", id: context.edit, label: "Editing reply" }
         : {
@@ -177,8 +191,30 @@
         ? () => discussions.load(sessionId)
         : undefined}
       onSubmit={feedback && !unavailable && !blocked
-        ? (submission) =>
-            discussions.save(sessionId, row.id, submission.content)
+        ? async (submission) => {
+            const ids = mentionedAgentIds(submission.content);
+            if (!ids.length || context?.edit)
+              return discussions.save(sessionId, row.id, submission.content);
+            if (!manager?.available())
+              throw new Error("Agent execution is unavailable.");
+            manager.chat.show(
+              {
+                scope: `agent-reply:${repository}:${sessionId}:${row.id}`,
+                home: repository,
+                thread: feedback?.threads[0] ?? null,
+                agent_target: feedback.target,
+                context: JSON.stringify({
+                  session: sessionId,
+                  message: row.id,
+                  content: row.text,
+                }),
+              },
+              [],
+              undefined,
+              false,
+            );
+            await manager.chat.send(submission.content, ids);
+          }
         : undefined}
     />{/key}
   {#if threads.pending && discussions.awaiting(sessionId, row.id)}

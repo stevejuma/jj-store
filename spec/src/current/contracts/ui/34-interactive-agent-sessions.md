@@ -270,3 +270,8 @@ indicator. Inbox repository-link tooltips name the repository, and links select
 the retained ready workspace at its exact operation, including before the first
 turn. Unavailable associations fall back to repository navigation without
 inventing a workspace or identity.
+
+M24 adds
+[reusable agent conversations](../collaboration/37-reusable-agent-conversations.md)
+under JST-COLLAB-034 through JST-COLLAB-036. Existing M23 qualification remains
+unchanged.

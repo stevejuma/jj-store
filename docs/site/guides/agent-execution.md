@@ -1,44 +1,52 @@
 # Interactive agent sessions
 
-The Agents views and repository, project and task actions can start Codex or
-Cursor sessions on this device. Register an ordinary Git-backed JJ folder, or
-link a native repository workspace, then choose its exact starting revision. The
-app creates a new isolated JJ workspace. Dirty source files remain in the source
-folder. Agents edit the isolated workspace, which stays available for review
-after the session ends.
+Saved agents are reusable across general chats, repositories, projects and
+discussions. Start warms an agent in place without creating a session or sending
+instructions. New chat opens a general draft. Stop agent preserves history and
+isolated work and disables background warming until explicit Start or Send.
+Enabled agents warm on service restart within the four-worker cap.
 
-Open **Agents** in the main sidebar to manage agents independently of a
-repository. Fixed-size tiles show avatar, name and model; presence stays on the
-avatar and details contains the readable status. Click a card for its Community
-details sidebar; choose Edit there or in the card menu to change its
-configuration. Add agent uses Community's form, with image upload, HTTPS image
-URL or colored emoji, an optional description, instructions, and a combined
-harness/model picker. Images stay in private device state; uploads are limited
-to 1 MiB. Existing emoji avatars remain supported.
+Open **Agents** in the main sidebar to manage saved names, avatars,
+instructions, harnesses and model/effort/mode preferences. Click a card for its
+details or use its menu to Edit, Start, Stop or open chats. ACP avatars show
+live Starting, Idle, Queued, Working, Needs attention, Stopping, Offline, Error
+or Unknown status across the app. Failed status refresh is Unknown; historical
+identity is retained and is associated only by its exact saved agent ID.
 
-**View sessions** opens an inbox with session chats on the left and the selected
-conversation on the right. Empty lists stay visible until you explicitly start a
-session. Session rows show the last activity time, with an exact date on hover;
-older sessions without recorded timing omit that row until new activity.
-**Activity log** opens the active session for that agent, or its session inbox
-when no session is active. The conversation is the activity log. **Stop agent**
-in the details sidebar ends that agent's connected session while preserving its
-workspace and history. Chat drafts survive switching to Activity log and using
-Back/Forward.
+Use **Chat** beside the top-bar Details toggle in a repository or project to
+open the right body sidebar. Its composer and header stay fixed while messages
+scroll. Opening is draft-only and reopening restores the scoped chat and draft.
+New chat starts another explicit conversation. The outer details rail remains
+independent. Use **@** autocomplete to choose one or more saved agents, write a
+message and press Send. **Automatically mention agents** is opt-in and retains
+recipients across replies and reopening. Remove a tag or unpin it to stop
+including that agent. This preference never sends a message automatically.
 
-Named setups save an avatar, description, instructions, runner and model, effort
-and mode preferences. Start opens a draft chat in the inbox. Choose the agent,
-repository/workspace and starting revision in the centered setup form, then
-Connect agent to create its isolated session. The command pickers use the
-settings form styling. Your typed message stays in the composer for explicit
-Send; agent, repository and starting revision are fixed after connection. Online
-means a connected ACP session, Working means a running turn, Starting means
-connection is in progress, and Offline means no live associated session. Unknown
-means status could not be refreshed; cards and drafts remain available.
-Installed adapters are shown separately. After connection, the app shows the
-runner's advertised choices and applied preferences. Choose **Session options →
-Workspace and runtime → Edit execution mode**, then Save agent before sending a
-prompt. Instructions and project/task context accompany the first prompt.
+A general Send lazily creates a personal metadata home. Existing discussions
+keep their own home. Attach registered repositories to authorize code work;
+registered native repositories without a selected workspace can be materialized.
+Unknown external repositories require registration; cloning is not supported.
+The controller prepares every participant and attachment before prompting and
+includes instructions, origin context and selected revisions in the first real
+message. Reuse is isolated by conversation, agent and repository. Dirty source
+files remain untouched, and each attachment reports its own isolated snapshot
+and review link. No automatic merge, push or cleanup occurs.
+
+Repository chats use the visible code revision even when its operation is newer
+than the source checkout. Project context keeps its metadata selection separate
+from linked code. Workspace discovery errors appear independently of live agent
+status, so a failed workspace refresh does not obscure a known Idle agent.
+
+Originating discussions retain typed links to one canonical AgentStore
+transcript. Agent replies are visible there even when the chat sidebar is
+closed. Stop turn, End participation and Stop agent have separate lifetimes.
+Restart preserves exact history and never replays an unknown prompt; resume is
+capability-gated and a new continuation session is labelled explicitly.
+
+**View chats** also provides the retained session inbox. Its legacy version-2
+setup form still supports exact workspace/revision selection and negotiated
+runtime options. Historical sessions and their existing qualified controls
+remain available independently of the new contextual chat.
 
 The conversation scrolls above a bottom composer row, so growing drafts never
 cover messages. The shared Scroll to latest/New messages control returns to
@@ -120,11 +128,12 @@ lifecycle receipts are private device state outside repository checkouts.
 Repository history remains subject to independent code-repository access; access
 to a project or task home does not grant execution in linked code.
 
-The agent editor can show models from the harness's latest retained negotiated
-catalog when no session is online. It labels these remembered choices, retains
-saved preferences and checks availability again when a new session connects.
-Opening the editor does not start a harness. If Starting revision reports an
-index that needs preparation, choose Rebuild index to prepare that exact
+Add agent loads model, thinking and execution-mode choices from the installed
+harness before your first chat. Discovery sends no prompt and creates no chat or
+repository workspace. If discovery fails, Retry models keeps your editor draft.
+Connected sessions provide their negotiated choices; saved preferences are
+checked again when a chat connects. If Starting revision reports an index that
+needs preparation, choose Rebuild index to prepare that exact
 repository/operation and reload its choices. Your selected revision and typed
 message remain retained during recovery.
 

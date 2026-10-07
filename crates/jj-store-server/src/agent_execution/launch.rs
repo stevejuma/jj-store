@@ -82,6 +82,8 @@ impl Supervisor {
             .map(str::to_owned);
         let view = Session {
             id: id.clone(),
+            conversation_id: None,
+            repository_bindings: vec![],
             setup_id: command.setup_id.clone(),
             recorded_session_ids: Vec::new(),
             workspace_name: None,
@@ -137,6 +139,9 @@ impl Supervisor {
             context_replies: Default::default(),
             context_generation: 0,
             initial_context_delivered: false,
+            code_workspaces: BTreeMap::new(),
+            origin_link: None,
+            origin_linked: false,
         };
         self.update(|s| {
             if s.sessions.len() >= 64 {

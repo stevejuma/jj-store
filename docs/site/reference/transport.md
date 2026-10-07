@@ -178,3 +178,22 @@ Runtime settings add three independent LocalTrusted Admin endpoints:
 only the fixed runtime ID, install/update action, version and original request
 ID. Packages, paths, URLs, environment and credentials cannot come from the
 browser. Reads and receipt queries never install or dispatch an agent.
+
+## Reusable ACP conversation controls
+
+LocalTrusted Admin may use POST /v1/local/agents/control to Start or Stop an
+exact saved agent and POST /v1/local/agents/chat for an explicit conversation
+Send. Both carry stable request identities. Chat carries an origin, exact agent
+IDs and separately authorized registered repository attachments. Status includes
+conversations and authoritative live agent states. Stop turn, End participation
+and Stop agent have different lifetimes. Generated installation API reference
+documents the additive request/response fields; native manifest/ref-CAS
+authority is unchanged.
+
+`GET /v1/local/agents/catalog?runner=codex` (or `cursor`) returns sanitized
+advertised configuration choices under LocalTrusted Admin admission. It starts
+no repository work or application chat and sends no prompt. The installation
+owns its private discovery directory and bounded process lifetime; callers
+cannot supply a directory, executable, environment, actor or prompt. Choices are
+cached in memory and checked again during real chat negotiation. Discovery
+failure retains the agent editor draft and supports explicit Retry models.

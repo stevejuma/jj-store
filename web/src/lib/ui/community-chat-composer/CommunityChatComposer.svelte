@@ -3,6 +3,13 @@
   import "./composer-0.css";
   import "./composer-1.css";
   import "../community-composer-status.css";
+  import {
+    composerSubmission,
+    editLastComposerMessage,
+  } from "./composer-submission.js";
+  import { createComposerAgentAudience } from "./composer-agent-audience.svelte.js";
+  import CommunityComposerStatusActions from "./CommunityComposerStatusActions.svelte";
+  import CommunityComposerAgentAudience from "./CommunityComposerAgentAudience.svelte";
   import Mira from "@lapismd/mira";
   import type { MiraHandle, MiraMarkdownActionId } from "@lapismd/mira";
   import { Composer, type ComposerStatus } from "@lapismd/design-core/ai/chat";
@@ -17,9 +24,9 @@
     createCommunityComposerExtension,
     refreshCommunityComposerTokenDecorations,
   } from "./composer-extension.js";
-  import {
-    type CommunityComposerAutocompleteItem,
-    type CommunityComposerAutocompleteQuery,
+  import type {
+    CommunityComposerAutocompleteItem,
+    CommunityComposerAutocompleteQuery,
   } from "./autocomplete.js";
   import {
     applyComposerAutocompleteSelection,
@@ -39,6 +46,8 @@
     formattingOpen = $bindable(false),
     placeholder = "Write a message",
     members = [],
+    audienceKey,
+    initialAgentIds = [],
     rooms = [],
     communityEmojis = [],
     context,
@@ -92,8 +101,14 @@
       selectedIndex = 0;
     },
   });
-  const clearAutocomplete = autocomplete.clear,
-    updateAutocomplete = autocomplete.update;
+  const clearAutocomplete = autocomplete.clear;
+  const audience = createComposerAgentAudience({
+    scope: () => audienceKey,
+    initial: () => initialAgentIds,
+    members: () => members,
+    value: () => value,
+    setValue: (next) => (value = next),
+  });
   let active = true;
   onDestroy(() => {
     active = false;
@@ -123,15 +138,10 @@
     error = "";
     const submitted = value;
     try {
-      await onSubmit({
-        content: submitted.trim(),
-        mentionPubkeys: [],
-        channelIds: [],
-        attachments: [],
-        ...(context ? { context } : {}),
-      });
+      await onSubmit(composerSubmission(submitted, context));
       if (!active) return;
-      if (clearOnSubmit && value === submitted) value = "";
+      if (clearOnSubmit && value === submitted)
+        value = audience.restore(submitted);
       clearAutocomplete();
     } catch (cause) {
       if (!active) return;
@@ -157,7 +167,7 @@
     },
     onSelection: () => {},
     onAutocompleteQuery: (q) => {
-      void updateAutocomplete(q);
+      void autocomplete.update(q);
     },
     onAutocompleteMove: (direction) => {
       selectedIndex = (selectedIndex + direction + items.length) % items.length;
@@ -165,14 +175,8 @@
     onAutocompleteAccept: () => selectAutocomplete(selectedIndex),
     onAutocompleteDismiss: clearAutocomplete,
     submitOnEnter: () => mode === "chat" && showSubmitButton,
-    onSubmit: () => {
-      void submit();
-    },
-    onEditLast: () => {
-      if (!onEditLastMessage) return false;
-      onEditLastMessage();
-      return true;
-    },
+    onSubmit: () => void submit(),
+    onEditLast: () => editLastComposerMessage(onEditLastMessage),
     onCancelEdit: () => onCancelContext?.(),
   });
   $effect(() => {
@@ -218,6 +222,11 @@
     }}
   >
     {#snippet drawer()}
+      {#if audienceKey && members.some((m) => !!m.acpAgentId)}<CommunityComposerAgentAudience
+          {audience}
+          {members}
+          disabled={blocked}
+        />{/if}
       {#if context?.kind === "reply" || context?.kind === "transcript-reply"}<CommunityReplyContext
           target={context.target}
           onCancel={onCancelContext}
@@ -226,26 +235,13 @@
           label={context.label}
           onCancel={onCancelContext}
         />{/if}
-      {#if status && (error || onRetryComposerStatus || onDismissComposerStatus)}<span
-          class="community-composer-status-actions"
-        >
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onclick={() => (error ? submit() : onRetryComposerStatus?.())}
-            >Retry</Button
-          >
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onclick={() => {
-              error = "";
-              onDismissComposerStatus?.();
-            }}>Dismiss</Button
-          >
-        </span>{/if}
+      {#if status && (error || onRetryComposerStatus || onDismissComposerStatus)}<CommunityComposerStatusActions
+          {error}
+          onRetry={onRetryComposerStatus}
+          onDismiss={onDismissComposerStatus}
+          onRetryError={submit}
+          onClearError={() => (error = "")}
+        />{/if}
     {/snippet}
     {#snippet input()}<div class="community-chat-composer__editor-wrap">
         <ScrollArea

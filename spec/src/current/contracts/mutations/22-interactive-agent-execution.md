@@ -23,3 +23,8 @@ selection and completed receipt share one atomic journal write. A service
 restart marks unselected interrupted installs as interrupted without replay;
 only a new explicit command may prepare another directory. Unknown browser
 outcomes query the original receipt and never resend installation automatically.
+
+M24 adds
+[reusable agent conversations](../collaboration/37-reusable-agent-conversations.md)
+under JST-COLLAB-034 through JST-COLLAB-036. Existing M23 qualification remains
+unchanged.

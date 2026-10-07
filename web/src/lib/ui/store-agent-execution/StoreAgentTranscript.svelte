@@ -45,11 +45,14 @@
         openReply={restoredReply === `${session.id}:${row.id}`}
         row={{ ...row, kind: row.kind }}
         author={row.kind === "assistant"
-          ? agentMember({
-              id: session.id,
-              name: session.title,
-              avatar: session.avatar,
-            })
+          ? {
+              ...agentMember({
+                id: session.setup_id ?? session.id,
+                name: session.title,
+                avatar: session.avatar,
+              }),
+              acpAgentId: session.setup_id ?? undefined,
+            }
           : { id: "user", name: "You", handle: "", initials: "YO" }}
       >
         {#if row.kind === "user" && queued.has(row.request) && idle}<Button

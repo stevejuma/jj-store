@@ -24,5 +24,7 @@
   {{#include E-EXEC-021/SUMMARY.nav.md}}
 - [E-EXEC-022](E-EXEC-022/index.md)
   {{#include E-EXEC-022/SUMMARY.nav.md}}
+- [E-FLEET-001](E-FLEET-001/index.md)
+  {{#include E-FLEET-001/SUMMARY.nav.md}}
 - [E-UI-107](E-UI-107/index.md)
   {{#include E-UI-107/SUMMARY.nav.md}}

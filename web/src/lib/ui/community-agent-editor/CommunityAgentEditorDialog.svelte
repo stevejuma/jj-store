@@ -23,6 +23,8 @@
     onUseLatest,
     pending = false,
     saveUnavailable = "",
+    onRetryModels,
+    modelsLoading = false,
     runtimeNotice = "Model and thinking choices come from a connected harness. Saved preferences remain until you change them.",
     rows,
     thinking,
@@ -39,6 +41,8 @@
     pending?: boolean;
     saveUnavailable?: string;
     runtimeNotice?: string;
+    onRetryModels?: () => void;
+    modelsLoading?: boolean;
     rows: readonly EditorModelRow[];
     thinking: readonly { value: string; name: string }[];
     modes: readonly { value: string; name: string }[];
@@ -178,6 +182,13 @@
             {/if}
           {/if}
           <Field.Description>{runtimeNotice}</Field.Description>
+          {#if onRetryModels}<Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={modelsLoading}
+              onclick={onRetryModels}>Retry models</Button
+            >{/if}
           {#if modes.length}
             <CommunityAgentEditorModeField
               id={`${editorId}-mode`}

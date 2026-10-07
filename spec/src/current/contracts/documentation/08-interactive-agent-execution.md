@@ -19,3 +19,10 @@ installation/update, pinned versions, Node/npm prerequisites, vendor Cursor
 setup, exact installation receipts and restart/failure retention. Readiness,
 authentication and connected presence remain distinct. Reference prose records
 Buzz's private-path design inspiration without adding a checkout dependency.
+
+M24 adds the reusable fleet and contextual chat guides: in-place Start/Stop,
+repository-free personal homes, registered native materialization, exact @ tags,
+opt-in reply recipients, scoped drafts and global ACP avatar status. Regenerate
+the installation API reference and review changed source fingerprints. Real
+native, installed adapter and cold browser gates remain independently recorded
+in E-FLEET-001; documentation review never substitutes for them.

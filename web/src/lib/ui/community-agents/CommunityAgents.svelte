@@ -27,6 +27,7 @@
     onStart,
     onStop,
     onSessions,
+    onChat,
     onDelete,
     onRefresh,
   }: {
@@ -40,6 +41,7 @@
     onStart(id: string): void;
     onStop?(session: string): void;
     onSessions(id?: string): void;
+    onChat?(id: string): void;
     onDelete(agent: AgentSetup): void;
     onRefresh(): void;
   } = $props();
@@ -120,10 +122,17 @@
           agent.id,
           value?.sessions ?? [],
           unknown,
+          value,
         )}
-        {@const live = value?.sessions.find(
-          (s) => s.setup_id === agent.id && s.connected,
-        )}
+        {@const live = [
+          "Starting",
+          "Idle",
+          "Queued",
+          "Working",
+          "Needs attention",
+          "Stopping",
+          "Online",
+        ].includes(status.label)}
         <div class="agents__card" data-agent-id={agent.id}>
           <button
             class="agents__card-open"
@@ -152,7 +161,7 @@
                         !value?.runners.find((r) => r.id === agent.runner)
                           ?.available)}
                     onChange={() =>
-                      live ? onStop?.(live.id) : onStart(agent.id)}
+                      live ? onStop?.(agent.id) : onStart(agent.id)}
                   />
                 </div>{/if}
             </div>
@@ -183,10 +192,14 @@
                     !value?.runners.find((r) => r.id === agent.runner)
                       ?.available}
                   onSelect={() => onStart(agent.id)}
-                  >Start session</DropdownMenu.Item
+                  >Start agent</DropdownMenu.Item
                 >
+                {#if onChat}<DropdownMenu.Item
+                    onSelect={() => onChat?.(agent.id)}
+                    >New chat</DropdownMenu.Item
+                  >{/if}
                 <DropdownMenu.Item onSelect={() => onSessions(agent.id)}
-                  >View sessions</DropdownMenu.Item
+                  >View chats</DropdownMenu.Item
                 >
                 <DropdownMenu.Item onSelect={() => onEdit(agent)}
                   >Edit agent</DropdownMenu.Item

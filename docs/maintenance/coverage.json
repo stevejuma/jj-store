@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed exact selected operation/revision workspace creation, parent/tree verification, symlink refusal, isolated snapshots and safe explicit cleanup.",
-      "fingerprint": "83dd40d5df58d75ce98bbc07d8f6158ea9cdc166dc726f965a268c35cbcc4ed5"
+      "reason": "Reviewed personal companion initialization, fixed registered native attachment provisioning and independent isolated snapshots; source working files remain protected.",
+      "fingerprint": "cde69ec6b3bac525484c1761da5ed252c7d8cdf20eb0c2abce61727223eb69e9"
     }
   },
   {
@@ -65,8 +65,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed independent runtime DTOs with exact adapter/CLI targets and LocalTrusted Admin original-install receipts, preserving repository and execution authority. Updated architecture/transport references.",
-      "fingerprint": "2fe50551244fd79b96cbc4b732a6b3d2add39443ab71ea10adea871fb52c3bd8"
+      "reason": "Reviewed unchanged catalog cache semantics after lint cleanup: five-minute memory retention, no-prompt private negotiation, shutdown reaping and four-process admission remain as documented.",
+      "fingerprint": "6f9469ed11b6c9079645ba34f6df47ef8ed93788070b0ea34f4bc7683bb28279"
     }
   },
   {
@@ -96,8 +96,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed fixed tooling catalog, private durable runtime selection and unconfirmed receipt projection, installer teardown and shared discovery/launch paths. Ready suppresses redundant Install; no TOML or credentials added.",
-      "fingerprint": "4b47a8e4eb1458c28499f93e6367b6ae23c05177551acd06213018a686ac19d0"
+      "reason": "Reviewed equivalent catalog cache let-chain cleanup; private discovery configuration, process cap, five-minute cache and bounded shutdown remain unchanged, as documented in the agent guide and lifecycle pages.",
+      "fingerprint": "122c933a862a314c1ecb38d50680dc42724408fb3ff2ebcf7cc99ae170195ee8"
     }
   },
   {
@@ -109,7 +109,7 @@
       "docs/site/getting-started/work.md"
     ],
     "review": {
-      "reason": "Reviewed internal workspace command argument documentation and paired custom executable paths without ordinary-read execution dispatch.",
+      "reason": "Reviewed explicit paired ACP version 3 and paired custom JJ provisioning through fixed internal commands; installed executables remain untouched.",
       "fingerprint": "bc583a24617aee5fc378db8f95722996223ef417f81f133301d72ebfd5aeac9c"
     }
   },
@@ -122,8 +122,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed strict LocalTrusted Admin runtime routes and forbidden browser package/path/environment inputs, original receipt querying and unchanged agent/session/collaboration admission.",
-      "fingerprint": "d519d86087134c48bea930570bf54b107629f7837e9bd8515d5831d8a1aece15"
+      "reason": "Reviewed LocalTrusted Admin-only model catalog query, runner allowlist, typed sanitized response and refusal of directory/prompt/actor injection",
+      "fingerprint": "8a3f502cb6adfa53cca08036f2949ffa6cd8abb42dedf1a490e864f3cacf6b67"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed runtime success chips, shared semantic guide and dialog buttons, Ready install suppression and capture-tab isolation; no chat execution from settings controls",
-      "fingerprint": "0933decc164824967d9141206eff62587f7c1d153519cc912cdb6675a3b9b347"
+      "reason": "Verified formatting-only expansion of avatar status CSS blocks against the prior snapshot; status indicators, accessible runtime labels, reduced-motion behavior, chat selectors and pre-chat model discovery retain their qualified contracts.",
+      "fingerprint": "f62712235b9657bfe9965390e5b963f570ad7ca1945f0309e53ad565d1d0e25f"
     }
   },
   {
@@ -154,8 +154,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Generated API and TypeScript references match fixed runtime inventory and install/update commands, target versions and original-install receipts. Existing session and native canonical formats are unchanged.",
-      "fingerprint": "682544915262af9cd7242a5dfb63f6a6e87cded1f7d8f25e0cdf923d232b8c03"
+      "reason": "Reviewed additive model catalog schema, LocalTrusted Admin-only query, sanitized advertised choices and no-prompt discovery contract",
+      "fingerprint": "9906b0d88381b5373bdb14f50bedf5c3bd1fc75897719511bcc7cd8803dbb8a6"
     }
   }
 ]

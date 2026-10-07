@@ -91,3 +91,13 @@ start explicitly.
 Ready runtimes use Community's green success chip and omit Install. Guide links
 and installation confirmation actions use the shared semantic button styling,
 with inline icons. Runtime and capture tabs show only their own controls.
+
+## Reusable agents and chat
+
+On the Agents screen, Start warms an agent in place; it does not open a chat.
+New chat opens a repository-free draft. In a project or repository, use Chat
+beside the top-bar Details toggle to open the right body sidebar. Opening never
+sends a message. Attach registered repositories, select one or more saved agents
+with @, write a message and press Send. Automatically mention agents is opt-in
+and retains exact recipients for replies; remove a tag or unpin it to stop
+including that agent. ACP avatars show the current worker state across the app.

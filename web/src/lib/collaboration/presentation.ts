@@ -22,7 +22,12 @@ export function integrationLabel(
 
 export function agentMember(
   summary: Model<"AgentSessionSummary">,
-  captured?: { title: string; avatar: string; connected?: boolean },
+  captured?: {
+    title: string;
+    avatar: string;
+    connected?: boolean;
+    setup_id?: string | null;
+  },
 ): CommunityMemberModel {
   const name = captured?.title || integrationLabel(summary.integration);
   const avatarUrl = captured?.avatar || agentAvatarUrl(summary.integration);
@@ -33,6 +38,7 @@ export function agentMember(
     initials: name.slice(0, 2).toUpperCase(),
     ...(avatarUrl ? { avatarUrl } : {}),
     kind: "agent",
+    acpAgentId: captured?.setup_id ?? undefined,
     presence:
       captured?.connected !== undefined
         ? captured.connected

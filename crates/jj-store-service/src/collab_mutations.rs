@@ -1,6 +1,7 @@
 //! Receipt-backed typed Thread/Reaction commands for authenticated transports.
 use crate::{auth::Permission, native::NativeSession};
-use jj_collab::{CollabCommandResultV1, CollabCommandV1};
+use jj_collab::CollabCommandResultV1;
+pub use jj_collab::{CollabCommandV1, ThreadCommandV1, ThreadId, ThreadLinkId, ThreadLinkTargetV1};
 use jj_store_model as m;
 use jj_store_wal::{
     self as wal,

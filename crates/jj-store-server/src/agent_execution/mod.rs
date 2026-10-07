@@ -1,9 +1,17 @@
 //! Local device execution; journal admission precedes every process side effect.
 mod avatar;
+mod catalog;
 mod commands;
+mod conversation_frames;
+mod conversation_home;
+mod conversation_links;
+mod conversation_origin;
+mod conversation_prompts;
+mod conversations;
 mod delivery;
 pub mod driver;
 mod feedback;
+mod fleet;
 mod journal;
 mod launch;
 mod publication;
@@ -39,6 +47,7 @@ pub struct Resources {
     pub verifier: Option<Arc<dyn WorkspaceVerifier>>,
     pub registry: Arc<dyn RepositoryRegistry>,
     pub host: Option<RepositoryHost>,
+    pub native_socket: Option<PathBuf>,
 }
 #[derive(Clone)]
 pub struct Supervisor(Arc<Inner>);
@@ -46,6 +55,9 @@ struct Inner {
     resources: Resources,
     state: Mutex<State>,
     runtimes: Mutex<BTreeMap<String, mpsc::Sender<Value>>>,
+    fleet: Mutex<BTreeMap<String, fleet::Worker>>,
+    catalogs: tokio::sync::Mutex<catalog::Cache>,
+    catalog_active: std::sync::atomic::AtomicBool,
     runtime_tasks: Mutex<BTreeMap<String, tokio::task::AbortHandle>>,
     publication_worker: Mutex<Option<tokio::task::AbortHandle>>,
     installer_task: Mutex<Option<tokio::task::JoinHandle<()>>>,
@@ -53,6 +65,7 @@ struct Inner {
     shutdown_finished: Mutex<Option<bool>>,
     mutation: tokio::sync::Mutex<()>,
     publication: tokio::sync::Mutex<()>,
+    conversation_dispatch: tokio::sync::Mutex<()>,
     changed: broadcast::Sender<u64>,
     stopping: std::sync::atomic::AtomicBool,
     sanitizer: Mutex<Option<jj_store_capture::transcript_sanitization::TranscriptSanitizer>>,
@@ -85,6 +98,9 @@ impl Supervisor {
             resources,
             state: Mutex::new(state),
             runtimes: Mutex::new(BTreeMap::new()),
+            fleet: Mutex::new(BTreeMap::new()),
+            catalogs: tokio::sync::Mutex::new(Default::default()),
+            catalog_active: std::sync::atomic::AtomicBool::new(false),
             runtime_tasks: Mutex::new(BTreeMap::new()),
             publication_worker: Mutex::new(None),
             installer_task: Mutex::new(None),
@@ -92,6 +108,7 @@ impl Supervisor {
             shutdown_finished: Mutex::new(None),
             mutation: tokio::sync::Mutex::new(()),
             publication: tokio::sync::Mutex::new(()),
+            conversation_dispatch: tokio::sync::Mutex::new(()),
             changed,
             stopping: std::sync::atomic::AtomicBool::new(false),
             sanitizer: Mutex::new(None),
@@ -147,6 +164,7 @@ impl Supervisor {
         let this = self.clone();
         let worker = tokio::spawn(async move {
             while !this.0.stopping.load(std::sync::atomic::Ordering::Acquire) {
+                let _ = this.warm_enabled().await;
                 let _ = this.publish().await;
                 tokio::time::sleep(Duration::from_secs(2)).await;
             }
@@ -233,6 +251,23 @@ impl Supervisor {
         })
     }
     fn sender(&self, id: &str) -> Result<mpsc::Sender<Value>> {
+        let saved = self.saved(id)?;
+        if saved.view.conversation_id.is_some() {
+            if !matches!(saved.view.state.as_str(), "idle" | "running" | "opening") {
+                return Err(Error::Unavailable);
+            }
+            let workers = self.0.fleet.lock().map_err(|_| Error::Unavailable)?;
+            let worker = workers
+                .get(saved.view.setup_id.as_deref().ok_or(Error::Invalid)?)
+                .ok_or(Error::Unavailable)?;
+            if saved.view.capabilities["workerGeneration"] != worker.generation
+                || worker.sender.is_closed()
+                || matches!(worker.state.as_str(), "stopping" | "offline" | "error")
+            {
+                return Err(Error::Unavailable);
+            }
+            return Ok(worker.sender.clone());
+        }
         self.0
             .runtimes
             .lock()
@@ -241,7 +276,14 @@ impl Supervisor {
             .cloned()
             .ok_or(Error::Unavailable)
     }
-    fn send(&self, id: &str, frame: Value) -> Result<()> {
+    fn send(&self, id: &str, mut frame: Value) -> Result<()> {
+        if self.saved(id)?.view.conversation_id.is_some() {
+            frame["version"] = json!(3);
+            frame["sessionId"] = json!(id);
+            if frame["type"] == "close" {
+                frame["type"] = json!("close_session");
+            }
+        }
         self.sender(id)?.try_send(frame).map_err(|_| Error::Busy)
     }
 }

@@ -102,8 +102,11 @@ export function composerTokenMember(
   if (!memberId) return undefined;
   const id = memberId.trim().toLowerCase();
   return (
-    members.find((member) => member.id.trim().toLowerCase() === id) ??
-    contentMentionFallbackMember(memberId, source)
+    members.find((member) =>
+      member.acpAgentId
+        ? member.acpAgentId === memberId
+        : member.id.trim().toLowerCase() === id,
+    ) ?? contentMentionFallbackMember(memberId, source)
   );
 }
 
@@ -115,6 +118,8 @@ export function hasComposerReferenceBoundary(
   if (token.startsWith(":")) return true;
   const before = value[index - 1] ?? "";
   const after = value[index + token.length] ?? "";
+  if (token.startsWith("jj-store-agent:") && token.endsWith(";"))
+    return !/[\p{L}\p{N}_]/u.test(before);
   return !/[\p{L}\p{N}_]/u.test(before) && !/[\p{L}\p{N}_-]/u.test(after);
 }
 

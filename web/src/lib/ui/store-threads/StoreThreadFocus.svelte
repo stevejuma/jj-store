@@ -20,6 +20,7 @@
 >
   {#if controller.threads && controller.state.route.replyId}
     <StoreThreadReplies
+      {controller}
       threads={controller.threads}
       rootId={controller.state.route.replyId}
       members={threadMembers(controller)}

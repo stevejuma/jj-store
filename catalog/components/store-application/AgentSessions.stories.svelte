@@ -22,9 +22,7 @@
     const details = within(
       await c.findByRole("complementary", { name: "Agent details sidebar" }),
     );
-    await userEvent.click(
-      details.getByRole("button", { name: "View sessions" }),
-    );
+    await userEvent.click(details.getByRole("button", { name: "View chats" }));
     await c.findByText("No sessions yet", { exact: true });
     await expect(
       c.getByText("Select a session", { exact: true }),
@@ -149,7 +147,7 @@
         card.queryByText(text, { exact: true }),
       ).not.toBeInTheDocument();
     await expect(
-      card.getByRole("img", { name: "Repository helper, Online" }),
+      card.getByRole("img", { name: "Repository helper, Idle" }),
     ).toBeVisible();
   }}
 />
@@ -165,8 +163,8 @@
     const actions = within(
       await c.findByRole("group", { name: "Agent profile actions" }),
     );
-    const start = actions.getByRole("button", { name: "Start session" });
-    const sessions = actions.getByRole("button", { name: "View sessions" });
+    const start = actions.getByRole("button", { name: "Start agent" });
+    const sessions = actions.getByRole("button", { name: "View chats" });
     await expect(start.getBoundingClientRect().height).toBe(80);
     await expect(sessions.getBoundingClientRect().height).toBe(80);
     await expect(start).toHaveAttribute("data-variant", "default");
@@ -176,7 +174,7 @@
 />
 
 <Story
-  name="Card start opens exact agent preparation"
+  name="Card start warms the exact agent without opening a session"
   args={{ status: "Offline", emptySessions: true }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
@@ -187,13 +185,20 @@
       start.closest(".agents__card")!.getBoundingClientRect().height,
     ).toBe(260);
     await userEvent.click(start);
-    const launch = within(
-      await c.findByRole("form", { name: "Start agent session" }),
+    await waitFor(() =>
+      expect(
+        JSON.parse(c.getByLabelText("Agent controls").textContent ?? "[]"),
+      ).toMatchObject([{ version: 1, agent_id: "helper", start: true }]),
     );
-    await c.findByText("Start a chat with Repository helper", { exact: true });
     await expect(
-      c.getByRole("button", { name: "Connect agent" }),
-    ).toBeEnabled();
+      c.queryByRole("form", { name: "Start agent session" }),
+    ).not.toBeInTheDocument();
+    await expect(
+      c.getByRole("button", { name: "View Repository helper" }),
+    ).toBeVisible();
+    await expect(
+      c.getByRole("img", { name: "Repository helper, Idle" }),
+    ).toBeVisible();
   }}
 />
 

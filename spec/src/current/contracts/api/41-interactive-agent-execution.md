@@ -87,3 +87,14 @@ original request_id, runtime_id and install/update action. GET
 require LocalTrusted Admin. Commands cannot supply a package, URL, executable,
 path, environment or credentials. Tooling outcomes remain separate from session
 outcomes and conditional setup revisions.
+
+M24 adds
+[reusable agent conversations](../collaboration/37-reusable-agent-conversations.md)
+under JST-COLLAB-034 through JST-COLLAB-036. Existing M23 qualification remains
+unchanged.
+
+GET /v1/local/agents/catalog?runner=codex (or cursor) requires LocalTrusted
+Admin and exposes only sanitized advertised configuration choices. Unknown
+harnesses and extra directory/prompt/actor inputs are refused. The bounded
+no-prompt discovery, ephemeral adapter negotiation, process-slot admission,
+cleanup and memory-only cache are governed by the M24 conversation chapter.

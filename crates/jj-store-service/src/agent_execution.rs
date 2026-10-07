@@ -98,6 +98,10 @@ pub struct Launch {
 pub struct Session {
     pub id: String,
     #[serde(default)]
+    pub conversation_id: Option<String>,
+    #[serde(default)]
+    pub repository_bindings: Vec<conversations::Binding>,
+    #[serde(default)]
     pub setup_id: Option<String>,
     /// Read-only capture-normalizer aliases for this installation-owned session.
     #[serde(default)]
@@ -158,6 +162,10 @@ pub struct Status {
     pub setups: Vec<Setup>,
     pub sessions: Vec<Session>,
     pub runners: Vec<Runner>,
+    #[serde(default)]
+    pub live_agents: Vec<fleet::LiveAgent>,
+    #[serde(default)]
+    pub conversations: Vec<conversations::Conversation>,
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(tag = "action", rename_all = "snake_case", deny_unknown_fields)]
@@ -214,6 +222,17 @@ pub struct Workspace {
 /// JJ composition owns executable selection and physical workspace operations.
 #[async_trait::async_trait]
 pub trait WorkspaceDriver: Send + Sync {
+    async fn initialize_personal(&self, _path: PathBuf) -> Result<Workspace> {
+        Err(Error::Unavailable)
+    }
+    async fn materialize(
+        &self,
+        _repository: RepositoryId,
+        _path: PathBuf,
+        _socket: PathBuf,
+    ) -> Result<Workspace> {
+        Err(Error::Unavailable)
+    }
     async fn inspect(&self, path: PathBuf) -> Result<Workspace>;
     async fn create(
         &self,
@@ -229,6 +248,9 @@ pub trait WorkspaceDriver: Send + Sync {
 /// Optional LocalTrusted runtime; repository and actor checks remain host-owned.
 #[async_trait::async_trait]
 pub trait Manager: Send + Sync {
+    async fn catalog(&self, _actor: PrincipalId, _runner: String) -> Result<catalog::Catalog> {
+        Err(Error::Unavailable)
+    }
     async fn runtime_status(&self, _actor: PrincipalId) -> Result<tooling::Status> {
         Err(Error::Unavailable)
     }
@@ -244,6 +266,20 @@ pub trait Manager: Send + Sync {
         _actor: PrincipalId,
         _request: RequestId,
     ) -> Result<tooling::Outcome> {
+        Err(Error::Unavailable)
+    }
+    async fn send_conversation(
+        &self,
+        _actor: PrincipalId,
+        _command: conversations::Send,
+    ) -> Result<conversations::SendOutcome> {
+        Err(Error::Unavailable)
+    }
+    async fn control_agent(
+        &self,
+        _actor: PrincipalId,
+        _command: fleet::Control,
+    ) -> Result<Outcome> {
         Err(Error::Unavailable)
     }
     async fn status(&self, actor: PrincipalId) -> Result<Status>;
@@ -311,3 +347,9 @@ pub struct FeedbackReply {
     pub revision: jj_collab::CollabObjectRef,
     pub message: jj_collab::HumanMessageRevisionV1,
 }
+
+pub mod fleet;
+
+pub mod conversations;
+
+pub mod catalog;

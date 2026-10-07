@@ -45,6 +45,8 @@
   }));
   const status: AgentStatus = {
     version: 1,
+    live_agents: [],
+    conversations: [],
     runtime: "ready",
     revision: 1,
     setups: [],

@@ -1,5 +1,13 @@
 <script lang="ts">
   import { sectionDisclosure } from "../disclosure-layout.svelte.js";
+  import { useAgentExecution } from "../store-agent-execution/context.js";
+  import { originAgentIds } from "../../controller/agent-chat-context.js";
+  import { agentMember } from "../community-agents/model.js";
+  import {
+    dispatchWorkAgents,
+    workChatOrigin,
+  } from "../../controller/agent-work-dispatch.js";
+  import StoreLinkedAgentConversation from "../store-agent-chat/StoreLinkedAgentConversation.svelte";
   // @community-copy CommunityProjects.svelte task Activity (Apache-2.0), native comments.
   import { focusNativeMessage } from "../focus-message.js";
   import StoreWorkEmpty from "./StoreWorkEmpty.svelte";
@@ -33,6 +41,8 @@
     disabled = $derived(
       !writable || busy || view.loading || view.writing || !!view.pending,
     );
+  const manager = useAgentExecution();
+  const chatOrigin = $derived(workChatOrigin(work));
   let draft = $state(
     untrack(() => workDraft(work, `comments:${view.task?.id ?? ""}`)),
   );
@@ -53,6 +63,7 @@
         workMember(c.actor.created_by),
       ]),
     ).values(),
+    ...(manager?.value?.setups ?? []).map(agentMember),
   ]);
   const reply = $derived(view.comments.find((c) => c.id === draft.reply));
   const context = $derived(
@@ -85,6 +96,14 @@
   async function save(content: string) {
     if (!view.task) return;
     draft.body = content;
+    if (
+      !draft.edit &&
+      (await dispatchWorkAgents(manager, work, content, draft.reply))
+    ) {
+      draft.body = "";
+      draft.reply = null;
+      return;
+    }
     const comment = view.comments.find((row) => row.id === draft.edit);
     if (
       draft.edit &&
@@ -231,6 +250,12 @@
               title="No comments yet"
               description="Add a comment to this task."
             />{/if}
+          {#if manager}<StoreLinkedAgentConversation
+              {manager}
+              scope={chatOrigin.scope}
+              home={chatOrigin.home}
+              member={workMember(principal ?? "local")}
+            />{/if}
         </div>
       </Collapsible.Content>
     </Collapsible.Root>
@@ -249,6 +274,19 @@
       {disabled}
       {context}
       {members}
+      initialAgentIds={originAgentIds(
+        manager,
+        chatOrigin.scope,
+        chatOrigin.home,
+      )}
+      audienceKey={draft.edit
+        ? undefined
+        : JSON.stringify([
+            principal,
+            chatOrigin.home,
+            chatOrigin.scope,
+            draft.reply ?? "main",
+          ])}
       onCancelContext={() => {
         if (draft.edit) draft.body = "";
         draft.edit = null;

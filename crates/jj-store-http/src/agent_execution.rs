@@ -9,6 +9,11 @@ use jj_store_service::agent_execution as agents;
 mod stream;
 #[derive(Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
+struct CatalogQuery {
+    runner: String,
+}
+#[derive(Deserialize, schemars::JsonSchema)]
+#[serde(deny_unknown_fields)]
 struct TargetsQuery {
     repository: Option<m::RepositoryId>,
 }
@@ -26,12 +31,15 @@ struct EventsQuery {
 }
 macro_rules! endpoints {
     ($register:ident) => { $register! {
+        (get, "/local/agents/catalog", catalog, "local_agents_catalog", CatalogQuery, routes::Empty, agents::catalog::Catalog),
         (get, "/local/agents", status, "local_agents_status", routes::Empty, routes::Empty, agents::Status),
         (get, "/local/agents/runtimes", runtimes, "local_agents_runtimes", routes::Empty, routes::Empty, agents::tooling::Status),
         (post, "/local/agents/runtimes/install", install_runtime, "local_agents_runtime_install", routes::Empty, agents::tooling::Command, agents::tooling::Outcome),
         (get, "/local/agents/runtimes/outcome", runtime_outcome, "local_agents_runtime_outcome", OutcomeQuery, routes::Empty, agents::tooling::Outcome),
         (get, "/local/agents/targets", targets, "local_agents_targets", TargetsQuery, routes::Empty, Vec<agents::Target>),
         (post, "/local/agents/setups", setups, "local_agents_setups", routes::Empty, agents::SetupCommand, agents::Status),
+        (post, "/local/agents/chat", send_conversation, "local_agents_chat", routes::Empty, agents::conversations::Send, agents::conversations::SendOutcome),
+        (post, "/local/agents/control", control_agent, "local_agents_control", routes::Empty, agents::fleet::Control, agents::Outcome),
         (post, "/local/agents/launch", launch, "local_agents_launch", routes::Empty, agents::Launch, agents::Outcome),
         (post, "/local/agents/command", command, "local_agents_command", routes::Empty, agents::Command, agents::Outcome),
         (get, "/local/agents/outcome", outcome, "local_agents_outcome", OutcomeQuery, routes::Empty, agents::Outcome),
@@ -152,6 +160,12 @@ macro_rules! mutation {
         }
     };
 }
+mutation!(
+    send_conversation,
+    agents::conversations::Send,
+    send_conversation
+);
+mutation!(control_agent, agents::fleet::Control, control_agent);
 mutation!(setups, agents::SetupCommand, save_setup);
 mutation!(launch, agents::Launch, launch);
 mutation!(command, agents::Command, command);
@@ -186,4 +200,13 @@ async fn feedback(
     }
     let (m, actor) = manager(&state)?;
     state.json(&m.feedback(actor, q.session).await.map_err(failure)?)
+}
+
+async fn catalog(
+    ExtractState(state): ExtractState<Arc<State>>,
+    query: routes::Input<CatalogQuery>,
+) -> Result<Response> {
+    let q = routes::input(query)?;
+    let (m, actor) = manager(&state)?;
+    state.json(&m.catalog(actor, q.runner).await.map_err(failure)?)
 }

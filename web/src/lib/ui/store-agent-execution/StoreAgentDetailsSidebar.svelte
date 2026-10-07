@@ -100,10 +100,11 @@
           unknown={!!manager.connectionError}
           pending={manager.busy || !!manager.pending}
           onEdit={() => (manager.editRequested = agent)}
-          onStart={() => manager.startAgent(agent.id)}
+          onStart={() => void manager.startAgent(agent.id)}
+          onChat={() => manager.newChat(agent.id)}
           onSessions={() => manager.viewSessions(agent.id)}
           onActivity={() => manager.viewActivity(agent.id)}
-          onStop={(id) => void manager.commandSession(id, { action: "end" })}
+          onStop={(id) => void manager.stopAgent(id)}
           onCopy={() => {
             void copy(agent.id);
           }}

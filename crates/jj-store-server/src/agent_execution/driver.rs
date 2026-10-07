@@ -22,6 +22,25 @@ fn workspace(value: jj_store_jj::agent_workspaces::Selection, source: PathBuf) -
 }
 #[async_trait::async_trait]
 impl WorkspaceDriver for Driver {
+    async fn initialize_personal(&self, path: PathBuf) -> Result<Workspace> {
+        self.0
+            .initialize_personal(&path)
+            .await
+            .map(|w| workspace(w, path))
+            .map_err(|_| Error::Unavailable)
+    }
+    async fn materialize(
+        &self,
+        repo: RepositoryId,
+        path: PathBuf,
+        socket: PathBuf,
+    ) -> Result<Workspace> {
+        self.0
+            .materialize(repo, &path, &socket)
+            .await
+            .map(|w| workspace(w, path))
+            .map_err(|_| Error::Unavailable)
+    }
     async fn inspect(&self, path: PathBuf) -> Result<Workspace> {
         let selected = self
             .0

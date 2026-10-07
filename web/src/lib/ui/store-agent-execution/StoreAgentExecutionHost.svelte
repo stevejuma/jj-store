@@ -105,8 +105,7 @@
     editorOpen = true;
   }
   function start() {
-    if (route.setupId) manager.startAgent(route.setupId);
-    else void manager.show();
+    manager.newChat(route.setupId ?? undefined);
   }
   $effect(() => {
     const agent = manager.editRequested;
@@ -145,8 +144,14 @@
       : (chat?.title ?? "Agent session")}
     threadMember={route.agentView === "new"
       ? agent && agentMember(agent)
-      : chat &&
-        agentMember({ id: chat.id, name: chat.title, avatar: chat.avatar })}
+      : chat && {
+          ...agentMember({
+            id: chat.setup_id ?? chat.id,
+            name: chat.title,
+            avatar: chat.avatar,
+          }),
+          acpAgentId: chat.setup_id ?? undefined,
+        }}
     threadStatus={route.agentView === "new" || !chat
       ? undefined
       : `${chat.runner} · ${chat.state} · Published ${chat.published_sequence}/${chat.last_sequence}`}
@@ -197,8 +202,9 @@
           onOpen={(agent) => (manager.detailsId = agent.id)}
           onAdd={() => edit()}
           onEdit={edit}
-          onStart={(id) => manager.startAgent(id)}
-          onStop={(id) => void manager.commandSession(id, { action: "end" })}
+          onStart={(id) => void manager.startAgent(id)}
+          onChat={(id) => manager.newChat(id)}
+          onStop={(id) => void manager.stopAgent(id)}
           onSessions={(id) => manager.viewSessions(id)}
           onDelete={(agent) => (deleting = agent)}
           onRefresh={() => void manager.refresh()}

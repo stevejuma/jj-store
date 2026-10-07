@@ -1,6 +1,7 @@
 <script lang="ts">
   import StoreTerminalToggle from "../store-terminal/StoreTerminalToggle.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
+  import MessageCircleIcon from "@lucide/svelte/icons/message-circle";
   import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
   import type { StoreController } from "../../controller/contracts.js";
   import CommunitySidebarToggleIcon from "../community-app-shell/CommunitySidebarToggleIcon.svelte";
@@ -36,6 +37,19 @@
     >{/if}
   <StoreTerminalToggle {disabled} />
 {/if}
+{#if controller.execution}<Button
+    variant="ghost"
+    size="icon-sm"
+    aria-label="Open chat"
+    title="Chat"
+    aria-expanded={controller.execution.chat.open}
+    disabled={disabled || !controller.execution.available()}
+    onclick={() =>
+      controller.execution?.chat.open
+        ? controller.execution.chat.close()
+        : controller.execution?.chat.showContext(controller)}
+    ><MessageCircleIcon aria-hidden="true" /></Button
+  >{/if}
 <span class="community-app-shell__sidebar-action">
   <Button
     variant="default"

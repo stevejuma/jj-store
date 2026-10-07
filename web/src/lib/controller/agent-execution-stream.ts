@@ -79,3 +79,24 @@ export async function consumeAgentEvents(
       });
   }
 }
+
+export async function readAgentEventHistory(
+  client: LocalClient,
+  id: string,
+  signal: AbortSignal,
+  receive: (events: AgentEvent[]) => void,
+) {
+  let after = 0;
+  do {
+    const page = await client.request<Model<"AgentExecutionEventPage">>(
+      `agents/events?session=${id}&after=${after}`,
+      undefined,
+      signal,
+    );
+    if (signal.aborted) break;
+    receive(page.events);
+    after = Number(page.events.at(-1)?.sequence ?? after);
+    if (page.next === null || page.next === undefined) break;
+  } while (!signal.aborted);
+  return after;
+}

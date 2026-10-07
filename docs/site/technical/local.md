@@ -687,3 +687,13 @@ snapshotting dirty source files and checks out only a new named destination.
 Creation checks parent and tree; incomplete preparations cannot execute.
 Completed turns snapshot only their isolated workspace. Explicit cleanup retains
 a bookmark and refuses untracked, ignored or special files.
+
+## Reusable agent conversations
+
+A reusable agent warms independently of code. General chat lazily creates a
+personal metadata home on explicit Send. Registered native repositories without
+a selected workspace can be materialized through the paired custom JJ; ordinary
+registered folders use an isolated JJ workspace. Each conversation, agent and
+repository retains its own binding. Selected operations and revisions stay
+distinct from the latest isolated snapshot. Dirty source files remain untouched;
+no automatic merge, push or cleanup occurs.

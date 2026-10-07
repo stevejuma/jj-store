@@ -9,6 +9,8 @@
   import CommunityConversation from "../community-conversation/CommunityConversation.svelte";
   let {
     model,
+    audienceKey,
+    initialAgentIds,
     communityEmojis = [],
     readOnly = false,
     readOnlyReason,
@@ -19,6 +21,8 @@
     messageMetadata,
   }: {
     model: CommunityWorkspaceModel;
+    audienceKey?: string;
+    initialAgentIds?: readonly string[];
     communityEmojis?: readonly CommunityCustomEmoji[];
     readOnly?: boolean;
     readOnlyReason?: string;
@@ -42,6 +46,8 @@
 
 {#if room}<CommunityConversation
     {room}
+    {audienceKey}
+    {initialAgentIds}
     {rooms}
     messages={model.messages}
     members={model.members}

@@ -14,6 +14,7 @@
   import { isRepositoryProjects } from "../../controller/projects-view-cache.js";
   import { isStacksRoute } from "../../controller/store-stacks-navigation.js";
   import StoreProjectsRail from "../store-work/StoreProjectsRail.svelte";
+  import StoreAgentChatSidebar from "../store-agent-chat/StoreAgentChatSidebar.svelte";
   import StoreAgentSidebar from "../store-collaboration/StoreAgentSidebar.svelte";
   import StoreThreadSidebar from "../store-threads/StoreThreadSidebar.svelte";
   import { useThreadPanel } from "../store-threads/thread-panel.svelte.js";
@@ -33,6 +34,7 @@
     shell: AppShellController;
     onSelectPage: StoreController["actions"]["selectPage"];
   } = $props();
+  const chatOpen = $derived(controller.execution?.chat.open === true);
   const appearance = useAppearance();
   const agentFocused = $derived(appearance?.live.threads === "focus");
   const current = $derived(controller.state.route);
@@ -56,6 +58,28 @@
   const agentController = $derived(
     projectAgent ? controller.projects?.agents.response : controller,
   );
+  let chatOpener: HTMLElement | null = null;
+  $effect(() => {
+    const open = chatOpen;
+    untrack(() => {
+      if (open) {
+        chatOpener =
+          document.activeElement instanceof HTMLElement
+            ? document.activeElement
+            : null;
+        shell.right.open();
+        if (shell.mobile.resolvedMode === "mobile")
+          shell.mobile.show("right", "right", chatOpener);
+      }
+    });
+  });
+  async function closeChat() {
+    controller.execution?.chat.close();
+    shell.right.close();
+    if (shell.mobile.resolvedMode === "mobile") shell.mobile.showMain();
+    await tick();
+    if (chatOpener?.isConnected) chatOpener.focus({ preventScroll: true });
+  }
   let previousAgentKey: string | null = null;
   let agentOpener = $state<HTMLElement | null>(null);
   $effect(() => {
@@ -138,7 +162,7 @@
   }
 </script>
 
-{#if current.page === "threads" && controller.threads?.detail && !threadFocused}
+{#if !chatOpen && current.page === "threads" && controller.threads?.detail && !threadFocused}
   <AppShell.Sidebar
     side="right"
     constraintPriority={0}
@@ -151,7 +175,7 @@
     <StoreThreadSidebar {controller} />
   </AppShell.Sidebar>
 {/if}
-{#if stackSettingsKey && stackWorkspace}
+{#if !chatOpen && stackSettingsKey && stackWorkspace}
   <AppShell.Sidebar
     side="right"
     constraintPriority={0}
@@ -180,8 +204,8 @@
   />
 {/snippet}
 <!-- Controlled open clears the mobile sheet before its teleported content is removed. -->
-{@render agentResponse(true)}
-{#if agentKey && !agentFocused}
+{#if !chatOpen}{@render agentResponse(true)}{/if}
+{#if !chatOpen && agentKey && !agentFocused}
   <AppShell.Sidebar
     side="right"
     constraintPriority={0}
@@ -195,6 +219,21 @@
     {@render agentResponse()}
   </AppShell.Sidebar>
 {/if}
+
+{#if chatOpen && controller.execution}<AppShell.Sidebar
+    side="right"
+    constraintPriority={0}
+    constrainedPresentation="replace-main"
+    class="community-application__standard-right-sidebar"
+    label="Chat"
+    mobileLabel="Chat"
+    resizeLabel="Resize chat sidebar"
+    closeable
+    ><StoreAgentChatSidebar
+      {controller}
+      onClose={closeChat}
+    /></AppShell.Sidebar
+  >{/if}
 
 <AppShell.Sidebar
   side="right"

@@ -1,6 +1,7 @@
 //! Fixed native-aware JJ executable boundary for application-owned workspaces.
 mod cleanup;
 mod command;
+mod provision;
 use jj_lib::{
     protos::local_working_copy::Checkout,
     workspace::{DefaultWorkspaceLoaderFactory, WorkspaceLoaderFactory as _},

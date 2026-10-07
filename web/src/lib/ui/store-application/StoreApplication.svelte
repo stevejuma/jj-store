@@ -10,6 +10,7 @@
   import StoreAgentExecutionNotice from "../store-agent-execution/StoreAgentExecutionNotice.svelte";
   import StoreAgentExecutionHost from "../store-agent-execution/StoreAgentExecutionHost.svelte";
   import { provideAgentExecution } from "../store-agent-execution/context.js";
+  import { observeAgentChats } from "../../controller/agent-chat-navigation.svelte.js";
   // Adapted from CommunityApplication's shell composition; all state is local.
   import { AppShell } from "@lapismd/design-core/shell";
   import StoreAgentDetailsSidebar from "../store-agent-execution/StoreAgentDetailsSidebar.svelte";
@@ -116,6 +117,7 @@
     storage,
   );
   const current = $derived(controller.state.route);
+  observeAgentChats(() => controller);
   let searchOpen = $state(false);
   let settingsOpen = $state(false);
   $effect(() => {
@@ -208,7 +210,7 @@
       />{:else if !settingsOpen && current.page === "threads"}<StoreThreadsBreadcrumb
         {controller}
       />{/if}{/snippet}
-  {#snippet headerEnd()}{#if !settingsOpen && !current.agentsHub}<StoreApplicationHeaderActions
+  {#snippet headerEnd()}{#if !settingsOpen && (!current.agentsHub || controller.execution?.chat.open)}<StoreApplicationHeaderActions
         {controller}
         disabled={editorOpen}
         detailsOpen={!detailsRail.closed}
@@ -274,12 +276,12 @@
       selectSettings("repository");
     }}
   />
-  {#if !settingsOpen && current.agentsHub && controller.execution}<StoreAgentDetailsSidebar
+  {#if !settingsOpen && current.agentsHub && controller.execution && !controller.execution.chat.open}<StoreAgentDetailsSidebar
       manager={controller.execution}
       {shell}
       route={current}
     />{/if}
-  {#if !settingsOpen && !current.agentsHub}<StoreApplicationRightPanels
+  {#if !settingsOpen && (!current.agentsHub || controller.execution?.chat.open)}<StoreApplicationRightPanels
       {controller}
       {stackWorkspace}
       {shell}

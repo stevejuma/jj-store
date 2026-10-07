@@ -1,4 +1,8 @@
 //! Real JJ workspaces and LocalAgentStore; controlled harness is fixture evidence.
+#[path = "agent_execution/conversations.rs"]
+mod conversations;
+#[path = "agent_execution/fleet.rs"]
+mod fleet;
 #[path = "agent_execution/real.rs"]
 mod real;
 #[path = "agent_execution/setups.rs"]
@@ -92,6 +96,7 @@ impl Fixture {
             verifier: None,
             registry,
             host: None,
+            native_socket: None,
         };
         Self {
             _root: root,

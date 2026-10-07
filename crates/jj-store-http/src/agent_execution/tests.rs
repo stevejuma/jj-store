@@ -9,6 +9,20 @@ struct Manager {
 }
 #[async_trait::async_trait]
 impl agents::Manager for Manager {
+    async fn catalog(
+        &self,
+        actor: m::PrincipalId,
+        runner: String,
+    ) -> agents::Result<agents::catalog::Catalog> {
+        assert_eq!(actor, m::PrincipalId::new([1; 16]));
+        if runner != "codex" {
+            return Err(agents::Error::Invalid);
+        }
+        Ok(agents::catalog::Catalog {
+            runner,
+            facts: serde_json::json!({"models":{"availableModels":[{"modelId":"fixture-model","name":"Fixture model"}]}}),
+        })
+    }
     async fn runtime_status(
         &self,
         actor: m::PrincipalId,
@@ -62,6 +76,8 @@ impl agents::Manager for Manager {
             setups: vec![],
             sessions: vec![],
             runners: vec![],
+            live_agents: vec![],
+            conversations: vec![],
         })
     }
     async fn targets(
@@ -143,6 +159,7 @@ async fn runtime_management_is_local_admin_only_with_fixed_typed_inputs_and_orig
         let api = api(root.path(), access);
         for (path, body) in [
             ("/v1/local/agents/runtimes", None),
+            ("/v1/local/agents/catalog?runner=codex", None),
             ("/v1/local/agents/runtimes/install", Some(command.clone())),
             (
                 &format!("/v1/local/agents/runtimes/outcome?request={id}"),
@@ -460,5 +477,44 @@ async fn feedback_preparation_refusals_have_specific_transport_codes() {
         let body = to_bytes(response.into_body(), 1024).await.unwrap();
         let value: serde_json::Value = serde_json::from_slice(&body).unwrap();
         assert_eq!(value["code"], code);
+    }
+}
+
+#[tokio::test]
+async fn model_catalog_is_typed_local_admin_discovery() {
+    let root = tempfile::tempdir().unwrap();
+    let api = api(
+        root.path(),
+        Access::LocalTrusted {
+            principal: m::PrincipalId::new([1; 16]),
+            permission: Permission::Admin,
+        },
+    );
+    let response = api
+        .router()
+        .oneshot(request("/v1/local/agents/catalog?runner=codex", None))
+        .await
+        .unwrap();
+    assert_eq!(response.status(), StatusCode::OK);
+    let value: serde_json::Value =
+        serde_json::from_slice(&to_bytes(response.into_body(), 4096).await.unwrap()).unwrap();
+    assert_eq!(value["runner"], "codex");
+    assert_eq!(
+        value["facts"]["models"]["availableModels"][0]["modelId"],
+        "fixture-model"
+    );
+    for path in [
+        "/v1/local/agents/catalog?runner=other",
+        "/v1/local/agents/catalog?runner=codex&cwd=/tmp",
+        "/v1/local/agents/catalog?runner=codex&prompt=untrusted",
+    ] {
+        assert_eq!(
+            api.router()
+                .oneshot(request(path, None))
+                .await
+                .unwrap()
+                .status(),
+            StatusCode::BAD_REQUEST
+        );
     }
 }

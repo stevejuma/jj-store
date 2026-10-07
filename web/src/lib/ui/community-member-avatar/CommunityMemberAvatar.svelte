@@ -1,4 +1,9 @@
 <script lang="ts">
+  import { useAgentExecution } from "../store-agent-execution/context.js";
+  import {
+    agentLiveState,
+    agentLiveLabels,
+  } from "../../controller/agent-live-status.js";
   import { communityMemberAvatarContent } from "../../community/avatar-content.js";
   import type { CommunityMemberModel } from "../community-workspace/model.js";
   import {
@@ -23,23 +28,37 @@
     presence?: CommunityMemberModel["presence"] | "unknown";
   } = $props();
 
+  const execution = useAgentExecution();
+  const liveState = $derived(
+    member.acpAgentId
+      ? agentLiveState(
+          execution?.value ?? null,
+          member.acpAgentId,
+          !!execution?.connectionError,
+        )
+      : undefined,
+  );
+  const indicatorVisible = $derived(showPresence || !!member.acpAgentId);
+  const hidden = $derived(decorative && !member.acpAgentId);
   const resolvedShape = $derived(shape ?? communityMemberAvatarShape(member));
   const presence = $derived(presenceOverride ?? member.presence ?? "offline");
   const content = $derived(communityMemberAvatarContent(member));
   const fallbackTone = $derived(communityMemberAvatarFallbackTone(member.name));
   const presenceLabel = $derived(
-    presence === "online"
-      ? "Online"
-      : presence === "away"
-        ? "Away"
-        : presence === "unknown"
-          ? "Presence unknown"
-          : "Offline",
+    liveState
+      ? agentLiveLabels[liveState]
+      : presence === "online"
+        ? "Online"
+        : presence === "away"
+          ? "Away"
+          : presence === "unknown"
+            ? "Presence unknown"
+            : "Offline",
   );
   const accessibleLabel = $derived(
-    decorative
+    hidden
       ? undefined
-      : showPresence
+      : indicatorVisible
         ? `${member.name}, ${presenceLabel}`
         : `${member.name} avatar`,
   );
@@ -50,9 +69,10 @@
   data-ui-component="community-member-avatar"
   data-size={size}
   data-shape={resolvedShape}
-  aria-hidden={decorative ? "true" : undefined}
+  title={liveState ? `${member.name}, ${presenceLabel}` : undefined}
+  aria-hidden={hidden ? "true" : undefined}
   aria-label={accessibleLabel}
-  role={decorative ? undefined : "img"}
+  role={hidden ? undefined : "img"}
 >
   <span
     class="community-member-avatar__image"
@@ -68,12 +88,28 @@
       <span aria-hidden="true">{content.initials}</span>
     {/if}
   </span>
-  {#if showPresence}
+  {#if indicatorVisible}
     <span
       class="community-member-avatar__presence"
       data-ui-part="presence"
       data-presence={presence}
+      data-runtime={liveState}
       aria-hidden="true"
-    ></span>
+      >{#if liveState}<span class="community-member-avatar__runtime-symbol"
+          >{liveState === "attention"
+            ? "!"
+            : liveState === "working"
+              ? "▶"
+              : liveState === "queued"
+                ? "…"
+                : liveState === "idle"
+                  ? "✓"
+                  : liveState === "error"
+                    ? "×"
+                    : liveState === "offline"
+                      ? "−"
+                      : "○"}</span
+        >{/if}</span
+    >
   {/if}
 </span>

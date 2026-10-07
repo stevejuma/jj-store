@@ -78,6 +78,8 @@
       <CommunityChatComposer
         bind:value={draft.value}
         members={panel.members}
+        audienceKey={draft.editing ? undefined : panel.audienceKey}
+        initialAgentIds={panel.initialAgentIds}
         rooms={panel.rooms ?? []}
         communityEmojis={panel.communityEmojis ?? []}
         disabled={panel.disabled}

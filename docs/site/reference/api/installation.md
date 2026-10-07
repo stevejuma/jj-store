@@ -25881,6 +25881,261 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
 }
 ```
 
+## GET /v1/local/agents/catalog
+
+LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.
+
+```text
+{
+  "operationId": "local_agents_catalog",
+  "tags": [
+    "local"
+  ],
+  "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+  "parameters": [
+    {
+      "name": "runner",
+      "in": "query",
+      "required": true,
+      "schema": {
+        "type": "string"
+      },
+      "style": "form",
+      "explode": true
+    }
+  ],
+  "responses": {
+    "200": {
+      "description": "Authorized result at the reported snapshot.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/AgentExecutionCatalog"
+          }
+        }
+      }
+    },
+    "400": {
+      "description": "Invalid request, unknown query field or invalid cursor.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "401": {
+      "description": "Missing repository Bearer credential.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "403": {
+      "description": "Access denied, including revoked credentials or disallowed Origin.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "404": {
+      "description": "Object not committed in the selected snapshot or unknown route.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "405": {
+      "description": "Unsupported method.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "408": {
+      "description": "Native query canceled.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "409": {
+      "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "410": {
+      "description": "Index task expired or was lost on server restart.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "413": {
+      "description": "Request or response resource limit exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "415": {
+      "description": "Unsupported request media type or content encoding.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "503": {
+      "description": "Busy, unavailable, corrupt or incomplete history.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "504": {
+      "description": "Request or response deadline exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    }
+  },
+  "x-jj-store-query-schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "runner": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "runner"
+    ]
+  },
+  "security": [
+    {}
+  ]
+}
+```
+
+## HEAD /v1/local/agents/catalog
+
+LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.
+
+```text
+{
+  "operationId": "local_agents_catalog_head",
+  "tags": [
+    "local"
+  ],
+  "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+  "parameters": [
+    {
+      "name": "runner",
+      "in": "query",
+      "required": true,
+      "schema": {
+        "type": "string"
+      },
+      "style": "form",
+      "explode": true
+    }
+  ],
+  "responses": {
+    "200": {
+      "description": "Authorized result at the reported snapshot."
+    },
+    "400": {
+      "description": "Invalid request, unknown query field or invalid cursor."
+    },
+    "401": {
+      "description": "Missing repository Bearer credential."
+    },
+    "403": {
+      "description": "Access denied, including revoked credentials or disallowed Origin."
+    },
+    "404": {
+      "description": "Object not committed in the selected snapshot or unknown route."
+    },
+    "405": {
+      "description": "Unsupported method."
+    },
+    "408": {
+      "description": "Native query canceled."
+    },
+    "409": {
+      "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index."
+    },
+    "410": {
+      "description": "Index task expired or was lost on server restart."
+    },
+    "413": {
+      "description": "Request or response resource limit exceeded."
+    },
+    "415": {
+      "description": "Unsupported request media type or content encoding."
+    },
+    "503": {
+      "description": "Busy, unavailable, corrupt or incomplete history."
+    },
+    "504": {
+      "description": "Request or response deadline exceeded."
+    }
+  },
+  "x-jj-store-query-schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "runner": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "runner"
+    ]
+  },
+  "security": [
+    {}
+  ]
+}
+```
+
 ## GET /v1/local/agents
 
 LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.
@@ -27292,6 +27547,1038 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
             "version",
             "request_id",
             "expected_revision"
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
+## POST /v1/local/agents/chat
+
+LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.
+
+```text
+{
+  "operationId": "local_agents_chat",
+  "tags": [
+    "local"
+  ],
+  "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+  "parameters": [],
+  "responses": {
+    "200": {
+      "description": "Authorized result at the reported snapshot.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/AgentConversationOutcome"
+          }
+        }
+      }
+    },
+    "400": {
+      "description": "Invalid request, unknown query field or invalid cursor.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "401": {
+      "description": "Missing repository Bearer credential.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "403": {
+      "description": "Access denied, including revoked credentials or disallowed Origin.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "404": {
+      "description": "Object not committed in the selected snapshot or unknown route.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "405": {
+      "description": "Unsupported method.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "408": {
+      "description": "Native query canceled.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "409": {
+      "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "410": {
+      "description": "Index task expired or was lost on server restart.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "413": {
+      "description": "Request or response resource limit exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "415": {
+      "description": "Unsupported request media type or content encoding.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "503": {
+      "description": "Busy, unavailable, corrupt or incomplete history.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "504": {
+      "description": "Request or response deadline exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    }
+  },
+  "x-jj-store-query-schema": {
+    "type": "object",
+    "additionalProperties": false
+  },
+  "security": [
+    {}
+  ],
+  "requestBody": {
+    "required": true,
+    "content": {
+      "application/json": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "integer",
+              "format": "uint32",
+              "minimum": 0
+            },
+            "request_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{32}$",
+              "minLength": 32,
+              "maxLength": 32
+            },
+            "conversation_id": {
+              "type": "string"
+            },
+            "origin": {
+              "type": "object",
+              "properties": {
+                "scope": {
+                  "type": "string"
+                },
+                "home": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "pattern": "^[0-9a-f]{32}$",
+                  "minLength": 32,
+                  "maxLength": 32
+                },
+                "thread": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "pattern": "^[0-9a-f]{32}$",
+                  "minLength": 32,
+                  "maxLength": 32
+                },
+                "agent_target": {
+                  "anyOf": [
+                    {
+                      "description": "Identity, immutable content and validation witnesses are explicit, never a UI position.",
+                      "oneOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "thread_id": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            },
+                            "type": {
+                              "type": "string",
+                              "const": "thread"
+                            }
+                          },
+                          "additionalProperties": false,
+                          "required": [
+                            "type",
+                            "thread_id"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "thread_id": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            },
+                            "message_id": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            },
+                            "revision": {
+                              "type": "object",
+                              "properties": {
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "index_page",
+                                    "thread_version",
+                                    "thread_event",
+                                    "human_message_revision",
+                                    "thread_link",
+                                    "reaction",
+                                    "reaction_retraction",
+                                    "reaction_slot",
+                                    "custom_emoji_version",
+                                    "image_asset"
+                                  ]
+                                },
+                                "id": {
+                                  "type": "string",
+                                  "pattern": "^[0-9a-f]{64}$",
+                                  "minLength": 64,
+                                  "maxLength": 64
+                                }
+                              },
+                              "additionalProperties": false,
+                              "required": [
+                                "kind",
+                                "id"
+                              ]
+                            },
+                            "type": {
+                              "type": "string",
+                              "const": "human_message"
+                            }
+                          },
+                          "additionalProperties": false,
+                          "required": [
+                            "type",
+                            "thread_id",
+                            "message_id",
+                            "revision"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "session_id": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            },
+                            "message_id": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            },
+                            "event_id": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            },
+                            "batch": {
+                              "type": "object",
+                              "properties": {
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "index_page",
+                                    "session_snapshot",
+                                    "turn_snapshot",
+                                    "message_snapshot",
+                                    "tool_snapshot",
+                                    "intent",
+                                    "observation_batch",
+                                    "event_batch",
+                                    "transcript_manifest",
+                                    "transcript_page",
+                                    "transcript_chunk",
+                                    "content",
+                                    "checkpoint_version",
+                                    "association",
+                                    "alias",
+                                    "relation_page",
+                                    "source_state",
+                                    "projection_catalog",
+                                    "catalog_conflict"
+                                  ]
+                                },
+                                "id": {
+                                  "type": "string",
+                                  "pattern": "^[0-9a-f]{64}$",
+                                  "minLength": 64,
+                                  "maxLength": 64
+                                }
+                              },
+                              "additionalProperties": false,
+                              "required": [
+                                "kind",
+                                "id"
+                              ]
+                            },
+                            "content": {
+                              "type": "object",
+                              "properties": {
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "index_page",
+                                    "session_snapshot",
+                                    "turn_snapshot",
+                                    "message_snapshot",
+                                    "tool_snapshot",
+                                    "intent",
+                                    "observation_batch",
+                                    "event_batch",
+                                    "transcript_manifest",
+                                    "transcript_page",
+                                    "transcript_chunk",
+                                    "content",
+                                    "checkpoint_version",
+                                    "association",
+                                    "alias",
+                                    "relation_page",
+                                    "source_state",
+                                    "projection_catalog",
+                                    "catalog_conflict"
+                                  ]
+                                },
+                                "id": {
+                                  "type": "string",
+                                  "pattern": "^[0-9a-f]{64}$",
+                                  "minLength": 64,
+                                  "maxLength": 64
+                                }
+                              },
+                              "additionalProperties": false,
+                              "required": [
+                                "kind",
+                                "id"
+                              ]
+                            },
+                            "type": {
+                              "type": "string",
+                              "const": "agent_message"
+                            }
+                          },
+                          "additionalProperties": false,
+                          "required": [
+                            "type",
+                            "session_id",
+                            "message_id",
+                            "event_id",
+                            "batch",
+                            "content"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "session_id": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            },
+                            "tool_id": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            },
+                            "snapshot": {
+                              "type": "object",
+                              "properties": {
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "index_page",
+                                    "session_snapshot",
+                                    "turn_snapshot",
+                                    "message_snapshot",
+                                    "tool_snapshot",
+                                    "intent",
+                                    "observation_batch",
+                                    "event_batch",
+                                    "transcript_manifest",
+                                    "transcript_page",
+                                    "transcript_chunk",
+                                    "content",
+                                    "checkpoint_version",
+                                    "association",
+                                    "alias",
+                                    "relation_page",
+                                    "source_state",
+                                    "projection_catalog",
+                                    "catalog_conflict"
+                                  ]
+                                },
+                                "id": {
+                                  "type": "string",
+                                  "pattern": "^[0-9a-f]{64}$",
+                                  "minLength": 64,
+                                  "maxLength": 64
+                                }
+                              },
+                              "additionalProperties": false,
+                              "required": [
+                                "kind",
+                                "id"
+                              ]
+                            },
+                            "type": {
+                              "type": "string",
+                              "const": "tool_invocation"
+                            }
+                          },
+                          "additionalProperties": false,
+                          "required": [
+                            "type",
+                            "session_id",
+                            "tool_id",
+                            "snapshot"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "session_id": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            },
+                            "tool_id": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            },
+                            "snapshot": {
+                              "type": "object",
+                              "properties": {
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "index_page",
+                                    "session_snapshot",
+                                    "turn_snapshot",
+                                    "message_snapshot",
+                                    "tool_snapshot",
+                                    "intent",
+                                    "observation_batch",
+                                    "event_batch",
+                                    "transcript_manifest",
+                                    "transcript_page",
+                                    "transcript_chunk",
+                                    "content",
+                                    "checkpoint_version",
+                                    "association",
+                                    "alias",
+                                    "relation_page",
+                                    "source_state",
+                                    "projection_catalog",
+                                    "catalog_conflict"
+                                  ]
+                                },
+                                "id": {
+                                  "type": "string",
+                                  "pattern": "^[0-9a-f]{64}$",
+                                  "minLength": 64,
+                                  "maxLength": 64
+                                }
+                              },
+                              "additionalProperties": false,
+                              "required": [
+                                "kind",
+                                "id"
+                              ]
+                            },
+                            "content": {
+                              "type": "object",
+                              "properties": {
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "index_page",
+                                    "session_snapshot",
+                                    "turn_snapshot",
+                                    "message_snapshot",
+                                    "tool_snapshot",
+                                    "intent",
+                                    "observation_batch",
+                                    "event_batch",
+                                    "transcript_manifest",
+                                    "transcript_page",
+                                    "transcript_chunk",
+                                    "content",
+                                    "checkpoint_version",
+                                    "association",
+                                    "alias",
+                                    "relation_page",
+                                    "source_state",
+                                    "projection_catalog",
+                                    "catalog_conflict"
+                                  ]
+                                },
+                                "id": {
+                                  "type": "string",
+                                  "pattern": "^[0-9a-f]{64}$",
+                                  "minLength": 64,
+                                  "maxLength": 64
+                                }
+                              },
+                              "additionalProperties": false,
+                              "required": [
+                                "kind",
+                                "id"
+                              ]
+                            },
+                            "type": {
+                              "type": "string",
+                              "const": "tool_output"
+                            }
+                          },
+                          "additionalProperties": false,
+                          "required": [
+                            "type",
+                            "session_id",
+                            "tool_id",
+                            "snapshot",
+                            "content"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "thread_id": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            },
+                            "type": {
+                              "type": "string",
+                              "const": "review_thread"
+                            }
+                          },
+                          "additionalProperties": false,
+                          "required": [
+                            "type",
+                            "thread_id"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "thread_id": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            },
+                            "comment_id": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            },
+                            "revision": {
+                              "type": "object",
+                              "properties": {
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "index_page",
+                                    "anchor",
+                                    "comment_body",
+                                    "comment_revision",
+                                    "thread_event",
+                                    "event_page",
+                                    "thread_snapshot",
+                                    "relation_page",
+                                    "status_page"
+                                  ]
+                                },
+                                "id": {
+                                  "type": "string",
+                                  "pattern": "^[0-9a-f]{64}$",
+                                  "minLength": 64,
+                                  "maxLength": 64
+                                }
+                              },
+                              "additionalProperties": false,
+                              "required": [
+                                "kind",
+                                "id"
+                              ]
+                            },
+                            "type": {
+                              "type": "string",
+                              "const": "review_comment"
+                            }
+                          },
+                          "additionalProperties": false,
+                          "required": [
+                            "type",
+                            "thread_id",
+                            "comment_id",
+                            "revision"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "task_id": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            },
+                            "comment_id": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            },
+                            "version": {
+                              "type": "integer",
+                              "format": "uint64",
+                              "minimum": 0
+                            },
+                            "type": {
+                              "type": "string",
+                              "const": "work_comment"
+                            }
+                          },
+                          "additionalProperties": false,
+                          "required": [
+                            "type",
+                            "task_id",
+                            "comment_id",
+                            "version"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "session_id": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            },
+                            "checkpoint_id": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            },
+                            "version": {
+                              "type": "object",
+                              "properties": {
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "index_page",
+                                    "session_snapshot",
+                                    "turn_snapshot",
+                                    "message_snapshot",
+                                    "tool_snapshot",
+                                    "intent",
+                                    "observation_batch",
+                                    "event_batch",
+                                    "transcript_manifest",
+                                    "transcript_page",
+                                    "transcript_chunk",
+                                    "content",
+                                    "checkpoint_version",
+                                    "association",
+                                    "alias",
+                                    "relation_page",
+                                    "source_state",
+                                    "projection_catalog",
+                                    "catalog_conflict"
+                                  ]
+                                },
+                                "id": {
+                                  "type": "string",
+                                  "pattern": "^[0-9a-f]{64}$",
+                                  "minLength": 64,
+                                  "maxLength": 64
+                                }
+                              },
+                              "additionalProperties": false,
+                              "required": [
+                                "kind",
+                                "id"
+                              ]
+                            },
+                            "type": {
+                              "type": "string",
+                              "const": "agent_checkpoint"
+                            }
+                          },
+                          "additionalProperties": false,
+                          "required": [
+                            "type",
+                            "session_id",
+                            "checkpoint_id",
+                            "version"
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "default": null
+                },
+                "context": {
+                  "type": "string"
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "scope",
+                "context"
+              ]
+            },
+            "agent_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "attachments": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "repository": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{32}$",
+                    "minLength": 32,
+                    "maxLength": 32
+                  },
+                  "target_id": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  },
+                  "operation": {
+                    "type": [
+                      "string",
+                      "null"
+                    ],
+                    "pattern": "^[0-9a-f]{128}$",
+                    "minLength": 128,
+                    "maxLength": 128
+                  },
+                  "commit": {
+                    "type": [
+                      "string",
+                      "null"
+                    ]
+                  }
+                },
+                "additionalProperties": false,
+                "required": [
+                  "repository"
+                ]
+              }
+            },
+            "text": {
+              "type": "string"
+            },
+            "max_duration_ms": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "version",
+            "request_id",
+            "conversation_id",
+            "origin",
+            "agent_ids",
+            "attachments",
+            "text",
+            "max_duration_ms"
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
+## POST /v1/local/agents/control
+
+LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.
+
+```text
+{
+  "operationId": "local_agents_control",
+  "tags": [
+    "local"
+  ],
+  "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+  "parameters": [],
+  "responses": {
+    "200": {
+      "description": "Authorized result at the reported snapshot.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/AgentExecutionOutcome"
+          }
+        }
+      }
+    },
+    "400": {
+      "description": "Invalid request, unknown query field or invalid cursor.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "401": {
+      "description": "Missing repository Bearer credential.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "403": {
+      "description": "Access denied, including revoked credentials or disallowed Origin.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "404": {
+      "description": "Object not committed in the selected snapshot or unknown route.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "405": {
+      "description": "Unsupported method.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "408": {
+      "description": "Native query canceled.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "409": {
+      "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "410": {
+      "description": "Index task expired or was lost on server restart.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "413": {
+      "description": "Request or response resource limit exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "415": {
+      "description": "Unsupported request media type or content encoding.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "503": {
+      "description": "Busy, unavailable, corrupt or incomplete history.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "504": {
+      "description": "Request or response deadline exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    }
+  },
+  "x-jj-store-query-schema": {
+    "type": "object",
+    "additionalProperties": false
+  },
+  "security": [
+    {}
+  ],
+  "requestBody": {
+    "required": true,
+    "content": {
+      "application/json": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "integer",
+              "format": "uint32",
+              "minimum": 0
+            },
+            "request_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{32}$",
+              "minLength": 32,
+              "maxLength": 32
+            },
+            "agent_id": {
+              "type": "string"
+            },
+            "start": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "version",
+            "request_id",
+            "agent_id",
+            "start"
           ]
         }
       }

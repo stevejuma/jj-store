@@ -36,6 +36,8 @@ export function fixtureExecutionStatus(input: {
   } = input;
   return {
     version: 1,
+    live_agents: [],
+    conversations: [],
     runtime: preparing ? "preparing" : "ready",
     revision: 0,
     setups:

@@ -36,6 +36,7 @@
 - [Initial M18.1 correction semantics](36-initial-m18-1-correction-semantics.md)
 - [Interactive agent execution](36-interactive-agent-execution.md)
 - [Bounded transcript tail format](37-bounded-transcript-tail-format.md)
+- [Reusable agents and contextual conversations](37-reusable-agent-conversations.md)
 - [Editable local capture configuration](38-editable-local-capture-configuration.md)
 - [Cursor and OpenCode local capture extension](39-cursor-and-opencode-local-capture-extension.md)
 - [Cursor transcript hook handoff and shared file reader](40-cursor-transcript-hook-handoff-and-shared-file-reader.md)

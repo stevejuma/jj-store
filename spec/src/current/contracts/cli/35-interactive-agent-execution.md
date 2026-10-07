@@ -41,3 +41,8 @@ jj-acp's no-network/no-auto-install contract. Shutdown aborts the bounded
 installer process group before storage teardown. Only the explicit Settings
 install command may fetch the fixed packages; ordinary development restarts
 preserve selection.
+
+M24 adds
+[reusable agent conversations](../collaboration/37-reusable-agent-conversations.md)
+under JST-COLLAB-034 through JST-COLLAB-036. Existing M23 qualification remains
+unchanged.

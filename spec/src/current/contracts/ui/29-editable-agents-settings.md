@@ -43,3 +43,8 @@ survive tab navigation. No read, refresh or chat action installs tooling.
 Ready runtimes use Community's green success chip and omit Install. Guide links
 and installation confirmation actions use the shared semantic button styling,
 with inline icons. Runtime and capture tabs show only their own controls.
+
+M24 adds
+[reusable agent conversations](../collaboration/37-reusable-agent-conversations.md)
+under JST-COLLAB-034 through JST-COLLAB-036. Existing M23 qualification remains
+unchanged.

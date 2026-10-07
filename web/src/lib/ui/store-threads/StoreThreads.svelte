@@ -1,4 +1,8 @@
 <script lang="ts">
+  import { agentMember } from "../community-agents/model.js";
+  import StoreLinkedAgentConversation from "../store-agent-chat/StoreLinkedAgentConversation.svelte";
+  import { originAgentIds } from "../../controller/agent-chat-context.js";
+  import { sendDiscussionMessage } from "../../controller/agent-discussion-dispatch.js";
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import "./store-threads.css";
   import CommunityWorkspaceSurface from "../community-workspace/CommunityWorkspaceSurface.svelte";
@@ -29,7 +33,10 @@
   });
   const threads = $derived(controller.threads);
   const panel = useThreadPanel();
-  const members = $derived(threadMembers(controller));
+  const members = $derived([
+    ...threadMembers(controller),
+    ...(controller.execution?.value?.setups ?? []).map(agentMember),
+  ]);
   const disabled = $derived(threadDisabled(controller));
   const projection = $derived(threads?.projection);
   const room = $derived({
@@ -132,6 +139,16 @@
       <div class="store-threads__conversation">
         <CommunityWorkspaceSurface
           {model}
+          audienceKey={JSON.stringify([
+            controller.state.member.id,
+            controller.state.route.repository,
+            room.id,
+          ])}
+          initialAgentIds={originAgentIds(
+            controller.execution,
+            `thread:${controller.state.route.repository}:${room.id}`,
+            controller.state.route.repository,
+          )}
           communityEmojis={threads.emojis}
           readOnly={disabled}
           readOnlyReason="This thread is read only or has an action awaiting confirmation."
@@ -149,7 +166,7 @@
               threads
                 .toggle(projection.targets[id]!, emoji, custom, true)
                 .catch(() => {}),
-            onSendMessage: (_, text) => threads.send(text),
+            onSendMessage: (_, text) => sendDiscussionMessage(controller, text),
             onOpenThread: reply,
             onReply: reply,
             onSaveMessageEdit: (id, text) => threads.send(text, undefined, id),
@@ -174,6 +191,12 @@
                 showControls={false}
               />{/if}{/snippet}
         </CommunityWorkspaceSurface>
+        {#if controller.execution}<StoreLinkedAgentConversation
+            manager={controller.execution}
+            scope={`thread:${controller.state.route.repository}:${room.id}`}
+            home={controller.state.route.repository}
+            member={controller.state.member}
+          />{/if}
       </div>
     {:else}<ScrollArea
         bind:viewportRef={forumViewport}

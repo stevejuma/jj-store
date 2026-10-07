@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { AgentExecutionConfigurationFixture } from "./agent-execution-configuration.svelte.js";
   import { fixtureExecutionStatus } from "./agent-execution-status.js";
   import { eventsResponse } from "./agent-execution-events.js";
   import * as discussion from "./agent-discussion-fixture.js";
@@ -14,6 +15,7 @@
   import { createMemoryStoryStorage } from "./memory-storage.js";
   import CommunityAppShell from "../../web/src/lib/ui/community-app-shell/CommunityAppShell.svelte";
   import { createStoreShell } from "../../web/src/lib/ui/store-application/create-store-shell.js";
+  import { provideAgentExecution } from "../../web/src/lib/ui/store-agent-execution/context.js";
   import { agentsRoute } from "../../web/src/lib/controller/agents-route-codec.js";
   import StoreAgentDetailsSidebar from "../../web/src/lib/ui/store-agent-execution/StoreAgentDetailsSidebar.svelte";
   import StoreAgentExecutionNotice from "../../web/src/lib/ui/store-agent-execution/StoreAgentExecutionNotice.svelte";
@@ -96,7 +98,6 @@
       mode: "ask",
     },
   };
-  let staleSaveRemaining = untrack(() => staleSave);
   let resolveConfiguration = $state<(() => void) | undefined>();
   let resolveHistory = $state<(() => void) | undefined>();
   let commands = $state<Record<string, unknown>[]>([]);
@@ -136,6 +137,14 @@
       retainedError,
     ),
   );
+  const configuration = untrack(
+    () =>
+      new AgentExecutionConfigurationFixture(
+        () => fixtureStatus,
+        (value) => (fixtureStatus = value),
+        staleSave,
+      ),
+  );
   const receipts = untrack(() =>
     commandReceipts(() => fixtureStatus.sessions[0], uncertainConfiguration),
   );
@@ -161,28 +170,8 @@
           if (revision) return revision;
           if (path.includes("/targets"))
             return json(fixtureAgentTargets(repository, operation, commit));
-          if (path.endsWith("/setups")) {
-            const body = JSON.parse(String(init?.body));
-            if (staleSaveRemaining) {
-              staleSaveRemaining = false;
-              fixtureStatus.revision = Number(fixtureStatus.revision) + 1;
-            }
-            if (
-              Number(body.expected_revision) !== Number(fixtureStatus.revision)
-            )
-              return json({ code: "agent_selection_changed" }, 409);
-            fixtureStatus = {
-              ...fixtureStatus,
-              revision: Number(fixtureStatus.revision) + 1,
-              setups: [
-                ...fixtureStatus.setups.filter(
-                  (s) => s.id !== (body.setup?.id ?? body.remove),
-                ),
-                ...(body.setup ? [body.setup] : []),
-              ],
-            };
-            return json(fixtureStatus);
-          }
+          const configured = configuration.respond(path, init);
+          if (configured) return configured;
           if (path.endsWith("/command") || path.endsWith("/launch")) {
             if (fail) throw new TypeError("Connection lost");
             const body = JSON.parse(String(init?.body));
@@ -239,6 +228,7 @@
         () => "22".repeat(16),
       ),
   );
+  provideAgentExecution(() => manager);
   let route = $state<StoreRoute>(agentsRoute());
   const shell = untrack(() => createStoreShell(undefined, false));
   const inboxStorage = createMemoryStoryStorage();
@@ -299,3 +289,7 @@
     ? route.executionSessionId
     : undefined}
 />
+
+{#if configuration.controls.length}<output aria-label="Agent controls"
+    >{JSON.stringify(configuration.controls)}</output
+  >{/if}

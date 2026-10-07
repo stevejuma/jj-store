@@ -1,14 +1,23 @@
 import {
+  readAgentExecutionStatus,
+  agentControlBody,
+  agentLaunchBody,
+} from "./agent-execution-status.js";
+import {
   isAgentCommandRefusal,
   agentCommandError,
 } from "./agent-execution-errors.js";
 import { openAgentActivity } from "./agent-activity-session.js";
 import * as launch from "./agent-execution-launch-context.js";
 import { AgentDiscussions } from "./agent-discussions.svelte.js";
+import { AgentChat } from "./agent-chat.svelte.js";
+import { AgentModelCatalog } from "./agent-model-catalog.svelte.js";
 import { AgentRuntimes } from "./agent-runtimes.svelte.js";
-import { consumeAgentEvents } from "./agent-execution-stream.js";
+import {
+  consumeAgentEvents,
+  readAgentEventHistory,
+} from "./agent-execution-stream.js";
 import { LocalClient } from "../api/local-client.js";
-import { ApiError, type Model } from "../api/client.js";
 import type {
   AgentAction,
   AgentEvent,
@@ -43,6 +52,7 @@ export class AgentExecution {
   detailsId = $state("");
   editRequested = $state<AgentSetup | undefined>();
   connectionError = $state("");
+  targetError = $state("");
   activityError = $state("");
   pending = $state<{
     path: string;
@@ -56,6 +66,8 @@ export class AgentExecution {
   #timer?: ReturnType<typeof setTimeout>;
   readonly client: LocalClient;
   readonly discussions: AgentDiscussions;
+  readonly chat: AgentChat;
+  readonly catalogs: AgentModelCatalog;
   readonly tooling: AgentRuntimes;
   constructor(
     readonly available: () => boolean,
@@ -64,6 +76,8 @@ export class AgentExecution {
     freshness?: import("./application-freshness.js").ApplicationFreshness,
   ) {
     this.client = new LocalClient("", fetcher);
+    this.chat = new AgentChat(this);
+    this.catalogs = new AgentModelCatalog(this.client);
     this.tooling = new AgentRuntimes(available, fetcher);
     this.discussions = new AgentDiscussions(
       this.client,
@@ -80,9 +94,12 @@ export class AgentExecution {
     return launch.showAgentLaunch(this, context);
   }
   directory = () => this.onNavigate?.("directory");
-  startAgent(id: string) {
-    launch.prepareAgentDraft(this, id);
+  startAgent = (id: string) =>
+    this.send("agents/control", agentControlBody(id, true));
+  stopAgent(id: string) {
+    return this.send("agents/control", agentControlBody(id, false));
   }
+  newChat = (id?: string) => this.chat.showGeneral(id);
   openSession(id: string, agent?: string) {
     this.onNavigate?.("session", id, agent);
   }
@@ -92,22 +109,19 @@ export class AgentExecution {
   }
   pauseView() {
     this.open = false;
-    clearTimeout(this.#timer);
     this.#stream?.abort();
   }
   async refresh() {
     if (!this.#alive || !this.available() || this.#refreshing) return;
     this.#refreshing = true;
     try {
-      const [status, targets] = await Promise.all([
-        this.client.request<AgentStatus>("agents"),
-        this.client.request<AgentTarget[]>(
-          `agents/targets${this.context.repository ? `?repository=${encodeURIComponent(this.context.repository)}` : ""}`,
-        ),
-      ]);
+      const [status, targets, targetError] = await readAgentExecutionStatus(
+        this.client,
+      );
       if (!this.#alive) return;
       this.value = status;
       this.targets = targets;
+      this.targetError = targetError;
       if (this.pending) await this.checkOutcome();
       this.connectionError = "";
     } catch (cause) {
@@ -119,7 +133,7 @@ export class AgentExecution {
     } finally {
       this.#refreshing = false;
       clearTimeout(this.#timer);
-      if (this.#alive && this.open)
+      if (this.#alive && this.available())
         this.#timer = setTimeout(() => void this.refresh(), 2000);
     }
   }
@@ -132,20 +146,14 @@ export class AgentExecution {
     this.eventsLoading = true;
     const abort = (this.#stream = new AbortController());
     try {
-      let after = 0;
-      do {
-        const page = await this.client.request<
-          Model<"AgentExecutionEventPage">
-        >(
-          `agents/events?session=${id}&after=${after}`,
-          undefined,
-          abort.signal,
-        );
-        if (abort.signal.aborted || !this.#alive) return;
-        this.events = [...this.events, ...page.events];
-        after = Number(page.events.at(-1)?.sequence ?? after);
-        if (page.next === null || page.next === undefined) break;
-      } while (!abort.signal.aborted);
+      const after = await readAgentEventHistory(
+        this.client,
+        id,
+        abort.signal,
+        (events) => {
+          if (this.#alive) this.events = [...this.events, ...events];
+        },
+      );
       void consumeAgentEvents(this.client, id, after, abort.signal, {
         alive: () => this.#alive,
         receive: (events) => {
@@ -246,17 +254,10 @@ export class AgentExecution {
     setupId?: string,
     commit?: string,
   ) {
-    await this.send("agents/launch", {
-      version: 1,
-      request_id: newId(),
-      target_id: target.id,
-      repository: target.repository,
-      operation: target.operation,
-      commit: commit || target.commit,
-      runner,
-      setup_id: setupId || null,
-      context: this.context.text || null,
-    });
+    await this.send(
+      "agents/launch",
+      agentLaunchBody(target, runner, setupId, commit, this.context.text),
+    );
   }
   async saveSetup(
     setup?: AgentSetup,
@@ -285,6 +286,8 @@ export class AgentExecution {
     return request_id;
   }
   destroy() {
+    this.chat.destroy();
+    this.catalogs.destroy();
     this.tooling.destroy();
     this.discussions.destroy();
     this.#alive = false;

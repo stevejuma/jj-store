@@ -75,6 +75,18 @@ fn queued_replies_reserve_release_and_deliver_only_on_exact_started() {
     )
     .unwrap();
     assert!(!excluded(&state, &id).contains(&revision(12)));
+    let unsent = prepare_one(&mut state, &id, 14);
+    observe(
+        &mut state,
+        &id,
+        &json!({"type":"error","requestId":unsent,"code":"dispatch_not_sent"}),
+    )
+    .unwrap();
+    assert!(!excluded(&state, &id).contains(&revision(14)));
+    assert_eq!(
+        state.intents[&unsent].prompt.as_ref().unwrap().state,
+        DeliveryState::Released
+    );
     let d = prepare_one(&mut state, &id, 13);
     observe(
         &mut state,

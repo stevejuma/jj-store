@@ -41,3 +41,7 @@ formats.
 Git interoperability additionally protects
 `^crates/jj-store-(?:cli|jj|wal|service|rpc)/(?:src|tests)/.*git[_-](?:bridge|interop)`
 and requires `git-interop.md`.
+
+M24 extends the owned Community-derived composer audience copies, with exact
+saved ACP identities and installation-local status. Attribution remains in
+`docs/ui-provenance.json`; Community imports remain prohibited.

@@ -63,3 +63,12 @@ The application-owned agent-workspace command is an internal paired-JJ boundary
 for exact isolated workspace creation. Interactive prompts and permissions are
 issued by the [Agents UI](../guides/agent-execution.md), not ordinary reads or
 capture commands.
+
+## Reusable conversation execution
+
+The paired jj-acp executable must support explicitly selected control version 3
+for reusable-agent conversations. The application exposes Start/Stop and
+contextual Send; legacy version-2 session controls remain supported. The paired
+custom JJ provisions personal companion homes or materializes registered native
+attachments within app-managed paths. Development validation uses explicit
+binary paths and does not replace installed CLIs.

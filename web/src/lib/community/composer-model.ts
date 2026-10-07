@@ -20,6 +20,7 @@ export type CommunityComposerContext =
 export interface CommunityComposerSubmission {
   content: string;
   mentionPubkeys: readonly string[];
+  agentIds?: readonly string[];
   channelIds: readonly string[];
   attachments: readonly CommunityUploadedMedia[];
   context?: CommunityComposerContext;

@@ -235,6 +235,10 @@ pub(super) async fn prepare(
                 verifier,
                 registry: registry.clone(),
                 host: host.clone(),
+                native_socket: match &config.access {
+                    Access::LocalTrusted { rpc_socket, .. } => Some(rpc_socket.clone()),
+                    _ => None,
+                },
             })
         })
         .transpose()

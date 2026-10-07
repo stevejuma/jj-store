@@ -12,6 +12,8 @@ export function fixtureSession(input: {
   modeReady: boolean;
 }): AgentSession {
   return {
+    conversation_id: null,
+    repository_bindings: [],
     id: "44".repeat(16),
     setup_id: "helper",
     recorded_session_ids: ["a1".repeat(16)],

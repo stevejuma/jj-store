@@ -201,6 +201,17 @@ impl Supervisor {
         }
         if self.0.stopping.load(std::sync::atomic::Ordering::Acquire)
             || self.tooling_busy()?
+            || self
+                .0
+                .catalog_active
+                .load(std::sync::atomic::Ordering::Acquire)
+            || self
+                .0
+                .fleet
+                .lock()
+                .map_err(|_| Error::Unavailable)?
+                .values()
+                .any(|w| !w.sender.is_closed())
             || !self
                 .0
                 .runtimes

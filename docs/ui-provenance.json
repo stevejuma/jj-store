@@ -2364,6 +2364,67 @@
           "license": "Apache-2.0"
         }
       ]
+    },
+    {
+      "local": "web/src/lib/community/agent-audience.ts",
+      "sources": [
+        {
+          "path": "src/components/community-chat-composer/persistent-agent-audience.ts",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-chat-composer/CommunityComposerAgentAudience.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-chat-composer/CommunityChatComposer.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-chat-composer/CommunityComposerStatusActions.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-chat-composer/CommunityChatComposer.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-chat-composer/composer-agent-audience.svelte.ts",
+      "sources": [
+        {
+          "path": "src/components/community-chat-composer/composer-agent-audience.ts",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-chat-composer/composer-submission.ts",
+      "sources": [
+        {
+          "path": "src/components/community-chat-composer/CommunityChatComposer.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/community/agent-mentions.ts",
+      "reason": "Owned exact saved-ACP identity encoding extends the Community composer token presentation; no Nostr identity or dispatch authority is inferred.",
+      "sources": [
+        {
+          "path": "src/components/community-chat-composer/composer-mention-token.ts",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
     }
   ],
   "owned": [

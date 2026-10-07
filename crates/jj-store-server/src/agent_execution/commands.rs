@@ -1,6 +1,28 @@
 use super::*;
 #[async_trait::async_trait]
 impl Manager for Supervisor {
+    async fn catalog(
+        &self,
+        actor: PrincipalId,
+        runner: String,
+    ) -> Result<jj_store_service::agent_execution::catalog::Catalog> {
+        self.actor(actor)?;
+        self.model_catalog(runner).await
+    }
+    async fn send_conversation(
+        &self,
+        actor: PrincipalId,
+        command: jj_store_service::agent_execution::conversations::Send,
+    ) -> Result<jj_store_service::agent_execution::conversations::SendOutcome> {
+        self.conversation_send(actor, command).await
+    }
+    async fn control_agent(
+        &self,
+        actor: PrincipalId,
+        command: jj_store_service::agent_execution::fleet::Control,
+    ) -> Result<Outcome> {
+        self.agent_control(actor, command).await
+    }
     async fn runtime_status(
         &self,
         actor: PrincipalId,
@@ -45,18 +67,15 @@ impl Manager for Supervisor {
                 setups: s.setups.values().cloned().collect(),
                 sessions: s.sessions.values().map(|s| s.view.clone()).collect(),
                 runners: vec![],
+                live_agents: vec![],
+                conversations: s.conversations.values().cloned().collect(),
             })
         })?;
         status.runners = self.runners()?;
+        status.live_agents = self.live_agents()?;
         let mut admitted = Vec::new();
         for mut session in status.sessions {
-            let live = self
-                .0
-                .runtimes
-                .lock()
-                .map_err(|_| Error::Unavailable)?
-                .get(&session.id)
-                .is_some_and(|sender| !sender.is_closed());
+            let live = self.sender(&session.id).is_ok();
             session.connected = connection_ready(&session, live);
             let saved = self.saved(&session.id)?;
             if self
@@ -115,6 +134,7 @@ impl Manager for Supervisor {
             );
             command.setup.as_mut().ok_or(Error::Invalid)?.avatar = avatar;
         }
+        let removed = command.remove.clone();
         self.update(|s| {
             if command.expected_revision != s.setup_revision.unwrap_or(s.revision) {
                 return Err(Error::Stale);
@@ -136,6 +156,7 @@ impl Manager for Supervisor {
             }
             if let Some(id) = command.remove {
                 s.setups.remove(&id);
+                s.warm_agents.remove(&id);
             }
             s.intents.insert(
                 command.request_id,
@@ -153,6 +174,9 @@ impl Manager for Supervisor {
             );
             Ok(())
         })?;
+        if let Some(id) = removed {
+            self.stop_worker(&id)?;
+        }
         self.status(actor).await
     }
     async fn launch(&self, actor: PrincipalId, command: Launch) -> Result<Outcome> {
@@ -168,6 +192,10 @@ impl Manager for Supervisor {
         let saved = self.saved(&command.session_id)?;
         self.authorized(saved.view.repository, &saved.profile, true)
             .await?;
+        for binding in &saved.view.repository_bindings {
+            self.authorized(binding.repository, &binding.profile, true)
+                .await?;
+        }
         if let Some(outcome) = self.duplicate(command.request_id, &digest)? {
             return Ok(outcome);
         }
@@ -208,9 +236,10 @@ impl Manager for Supervisor {
                     .await?;
                 let prepared = if first {
                     format!(
-                        "{}\n{}\n{}",
+                        "{}\n{}\n{}\n{}",
                         saved.instructions,
                         saved.context.as_deref().unwrap_or(""),
+                        retained_context(&saved),
                         text
                     )
                 } else {
@@ -275,15 +304,34 @@ impl Manager for Supervisor {
                 if self.sender(id).is_ok() || saved.view.state == "cleaned" {
                     return Err(Error::Busy);
                 }
-                if command.action != Action::Cleanup && !saved.workspace_ready {
+                if saved.view.conversation_id.is_some() {
+                    if command.action == Action::Cleanup {
+                        return Err(Error::Invalid);
+                    }
+                    for workspace in saved.code_workspaces.values() {
+                        let current = self
+                            .0
+                            .resources
+                            .driver
+                            .inspect(workspace.path.clone())
+                            .await?;
+                        if current.metadata != workspace.metadata || current.name != workspace.name
+                        {
+                            return Err(Error::Stale);
+                        }
+                    }
+                } else if command.action != Action::Cleanup && !saved.workspace_ready {
                     return Err(Error::Stale);
                 }
-                let current = self
-                    .0
-                    .resources
-                    .driver
-                    .inspect(saved.workspace.path.clone())
-                    .await?;
+                let current = if saved.view.conversation_id.is_some() {
+                    saved.workspace.clone()
+                } else {
+                    self.0
+                        .resources
+                        .driver
+                        .inspect(saved.workspace.path.clone())
+                        .await?
+                };
                 if current.metadata != saved.workspace.metadata
                     || current.name != saved.workspace.name
                 {
@@ -352,6 +400,28 @@ impl Manager for Supervisor {
                 self.finish(command.request_id, "cleaned", None)
             }
             Action::Resume | Action::ContinueWithContext => {
+                if saved.view.conversation_id.is_some() {
+                    let setup = self.read(|s| {
+                        s.setups
+                            .get(saved.view.setup_id.as_deref().ok_or(Error::Invalid)?)
+                            .cloned()
+                            .ok_or(Error::Stale)
+                    })?;
+                    if command.action == Action::ContinueWithContext {
+                        self.update(|s| {
+                            s.sessions
+                                .get_mut(id)
+                                .ok_or(Error::Invalid)?
+                                .view
+                                .adapter_session_id = None;
+                            delivery::continuation(s, id)
+                        })?;
+                        self.append(id, json!({"type":"continuation","requestId":request,"label":"New adapter session with saved context"}))?;
+                    }
+                    drop(_guard);
+                    self.open_participation(&setup, id).await?;
+                    return self.finish(command.request_id, "opening", None);
+                }
                 let load = if command.action == Action::Resume {
                     saved.view.adapter_session_id
                 } else {
@@ -494,6 +564,15 @@ impl Manager for Supervisor {
             let _ = sender
                 .try_send(json!({"version":2,"type":"close","requestId":format!("shutdown-{id}")}));
         }
+        {
+            let mut workers = self.0.fleet.lock().map_err(|_| Error::Unavailable)?;
+            for (id, worker) in workers.iter_mut() {
+                worker.state = "stopping".into();
+                let _ = worker.sender.try_send(
+                    json!({"version":3,"type":"close","requestId":format!("shutdown-{id}")}),
+                );
+            }
+        }
         let stopped = tokio::time::timeout(Duration::from_secs(20), async {
             loop {
                 if self
@@ -502,6 +581,17 @@ impl Manager for Supervisor {
                     .lock()
                     .map_err(|_| Error::Unavailable)?
                     .is_empty()
+                    && self
+                        .0
+                        .fleet
+                        .lock()
+                        .map_err(|_| Error::Unavailable)?
+                        .values()
+                        .all(|w| w.sender.is_closed())
+                    && !self
+                        .0
+                        .catalog_active
+                        .load(std::sync::atomic::Ordering::Acquire)
                 {
                     return Ok(());
                 }
@@ -574,5 +664,44 @@ mod tests {
         let restored: Session =
             serde_json::from_value(serde_json::to_value(&session).unwrap()).unwrap();
         assert_eq!(restored.setup_id.as_deref(), Some("helper"));
+    }
+}
+
+pub(super) fn retained_context(saved: &SavedSession) -> String {
+    if saved.view.conversation_id.is_none()
+        || !saved
+            .events
+            .iter()
+            .any(|e| e.payload["type"] == "continuation")
+    {
+        return String::new();
+    }
+    let mut bytes = 0;
+    let mut messages = saved
+        .events
+        .iter()
+        .rev()
+        .filter_map(|e| {
+            let (role, text) = match e.payload["type"].as_str() {
+                Some("prompt") => ("user", e.payload["text"].as_str()?),
+                Some("record") => ("assistant", e.payload["assistantText"].as_str()?),
+                _ => return None,
+            };
+            if text.len() > 16384 || bytes + text.len() > 16384 {
+                return None;
+            }
+            bytes += text.len();
+            Some(json!({"role":role,"text":text}).to_string())
+        })
+        .take(20)
+        .collect::<Vec<_>>();
+    messages.reverse();
+    if messages.is_empty() {
+        String::new()
+    } else {
+        format!(
+            "Retained conversation history (continuation):\n{}\nEnd retained history.",
+            messages.join("\n")
+        )
     }
 }

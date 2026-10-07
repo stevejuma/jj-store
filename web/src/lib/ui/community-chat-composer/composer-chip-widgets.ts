@@ -104,6 +104,7 @@ class CommunityMemberWidget extends WidgetType {
     host.dataset.uiPart = "composer-member-reference";
     const component = mount(CommunityComposerMemberChip, {
       target: host,
+      context: this.options.contexts,
       props: {
         member: this.member,
         token: this.label,

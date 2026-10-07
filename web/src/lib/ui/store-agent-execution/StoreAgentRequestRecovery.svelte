@@ -35,12 +35,15 @@
 </script>
 
 {#if pending || working}<CommunityAgentComposerActivity
-    member={member &&
-      agentMember({
-        id: member.id,
+    member={member && {
+      ...agentMember({
+        id: "setup_id" in member ? (member.setup_id ?? member.id) : member.id,
         name: "title" in member ? member.title : member.name,
         avatar: member.avatar,
-      })}
+      }),
+      acpAgentId:
+        "setup_id" in member ? (member.setup_id ?? undefined) : member.id,
+    }}
     {label}
     {state}
     streaming={state === "running" ||

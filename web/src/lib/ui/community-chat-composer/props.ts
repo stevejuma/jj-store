@@ -14,6 +14,8 @@ export interface ComposerProps {
   formattingOpen?: boolean;
   placeholder?: string;
   members?: readonly CommunityMemberModel[];
+  audienceKey?: string;
+  initialAgentIds?: readonly string[];
   rooms?: readonly CommunityRoomModel[];
   communityEmojis?: readonly CommunityCustomEmoji[];
   context?: CommunityComposerContext;

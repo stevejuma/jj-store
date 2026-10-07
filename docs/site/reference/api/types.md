@@ -20737,6 +20737,24 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 }
 ```
 
+## AgentExecutionCatalog
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "runner": {
+      "type": "string"
+    },
+    "facts": true
+  },
+  "required": [
+    "runner",
+    "facts"
+  ]
+}
+```
+
 ## AgentExecutionStatus
 
 ```text
@@ -20773,6 +20791,20 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "items": {
         "$ref": "#/components/schemas/AgentExecutionRunner"
       }
+    },
+    "live_agents": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/AgentFleetStatus"
+      },
+      "default": []
+    },
+    "conversations": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/AgentConversation"
+      },
+      "default": []
     }
   },
   "required": [
@@ -20781,7 +20813,9 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "revision",
     "setups",
     "sessions",
-    "runners"
+    "runners",
+    "live_agents",
+    "conversations"
   ]
 }
 ```
@@ -20871,6 +20905,20 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
   "properties": {
     "id": {
       "type": "string"
+    },
+    "conversation_id": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "default": null
+    },
+    "repository_bindings": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/AgentConversationWorkspace"
+      },
+      "default": []
     },
     "setup_id": {
       "type": [
@@ -20981,6 +21029,8 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
   },
   "required": [
     "id",
+    "conversation_id",
+    "repository_bindings",
     "setup_id",
     "recorded_session_ids",
     "workspace_name",
@@ -21003,6 +21053,51 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "last_activity_at_millis",
     "published_sequence",
     "last_error"
+  ]
+}
+```
+
+## AgentConversationWorkspace
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "repository": {
+      "$ref": "#/components/schemas/RepositoryId"
+    },
+    "target_id": {
+      "type": "string"
+    },
+    "profile": {
+      "type": "string"
+    },
+    "workspace": {
+      "type": "string"
+    },
+    "selected_operation": {
+      "$ref": "#/components/schemas/OperationId"
+    },
+    "base_commit": {
+      "type": "string"
+    },
+    "operation": {
+      "$ref": "#/components/schemas/OperationId"
+    },
+    "commit": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "repository",
+    "target_id",
+    "profile",
+    "workspace",
+    "selected_operation",
+    "base_commit",
+    "operation",
+    "commit"
   ]
 }
 ```
@@ -21039,6 +21134,143 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "available",
     "qualified",
     "install_hint"
+  ]
+}
+```
+
+## AgentFleetStatus
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "agent_id": {
+      "type": "string"
+    },
+    "state": {
+      "type": "string"
+    },
+    "enabled": {
+      "type": "boolean"
+    },
+    "generation": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "error": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "agent_id",
+    "state",
+    "enabled",
+    "generation",
+    "error"
+  ]
+}
+```
+
+## AgentConversation
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "origin": {
+      "$ref": "#/components/schemas/AgentConversationOrigin"
+    },
+    "home": {
+      "$ref": "#/components/schemas/RepositoryId"
+    },
+    "discussion_thread": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/ThreadId"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "participants": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "id",
+    "origin",
+    "home",
+    "discussion_thread",
+    "participants"
+  ]
+}
+```
+
+## AgentConversationOrigin
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "scope": {
+      "type": "string"
+    },
+    "home": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/RepositoryId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "thread": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/ThreadId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "agent_target": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/ReactionTargetV1"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "context": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "scope",
+    "home",
+    "thread",
+    "agent_target",
+    "context"
   ]
 }
 ```
@@ -21265,6 +21497,34 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "profile",
     "operation",
     "commit"
+  ]
+}
+```
+
+## AgentConversationOutcome
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "request_id": {
+      "$ref": "#/components/schemas/RequestId"
+    },
+    "conversation_id": {
+      "type": "string"
+    },
+    "agents": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/AgentExecutionOutcome"
+      }
+    }
+  },
+  "required": [
+    "request_id",
+    "conversation_id",
+    "agents"
   ]
 }
 ```

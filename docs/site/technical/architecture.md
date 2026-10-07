@@ -228,3 +228,22 @@ installer. Its private versioned directories and selected receipt live outside
 repository checkouts; neither jj-acp nor repository services install tooling.
 Discovery and process launch share that selection. Installation never changes
 AgentStore, starts a session or supplies credentials.
+
+## Warm workers and conversations
+
+The installation supervisor owns saved agents, warm process generations and a
+durable conversation journal. Explicit control version 3 initializes one adapter
+independently of its bounded session scopes. A conversation owns a canonical
+AgentStore transcript at a metadata home, with typed links from originating
+discussions. Every participant, attachment, origin link and sanitized prompt
+frame is prepared before prompting. Unknown outcomes remain retained and are
+never replayed automatically. Four workers, one active turn per worker and
+bounded queues constrain resource use.
+
+Agent model discovery is a LocalTrusted Admin read separate from repository and
+conversation execution. It negotiates advertised configuration in a private
+installation directory with no prompt, code binding or application chat.
+Discovery shares the four-process limit, rejects permission/activity traffic,
+closes and reaps its child before completing, and stores sanitized choices in
+memory only. Foreground shutdown waits for active discovery cleanup as well as
+live workers.

@@ -28,6 +28,8 @@
     rooms = [],
     messages,
     members,
+    audienceKey,
+    initialAgentIds,
     onSend,
     onReply,
     onOpenThread,
@@ -50,6 +52,8 @@
     rooms?: readonly CommunityRoomModel[];
     messages: CommunityMessageModel[];
     members: CommunityMemberModel[];
+    audienceKey?: string;
+    initialAgentIds?: readonly string[];
     onSend?: (content: string) => void | Promise<void>;
     onReply?: (id: string) => void;
     onOpenThread?: (id: string) => void;
@@ -127,6 +131,8 @@
         </div>{/if}{/snippet}
     {#snippet composer()}{#if footer}{@render footer()}{:else}
         <CommunityChatComposer
+          {audienceKey}
+          {initialAgentIds}
           bind:value={draft.value}
           {members}
           rooms={rooms.length ? rooms : [room]}

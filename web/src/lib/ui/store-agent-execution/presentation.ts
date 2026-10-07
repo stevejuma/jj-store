@@ -22,7 +22,8 @@ function openingReplay(value: Record<string, unknown>) {
   return (
     value.type === "activity" &&
     !!session &&
-    value.requestId === `open-${session}`
+    (value.requestId === `open-${session}` ||
+      text(value.requestId).startsWith(`open-${session}-`))
   );
 }
 /** Old UI versions exposed a reply composer on this synthetic replay row. */

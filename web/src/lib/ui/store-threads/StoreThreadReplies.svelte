@@ -1,4 +1,8 @@
 <script lang="ts">
+  import { agentMember } from "../community-agents/model.js";
+  import { originAgentIds } from "../../controller/agent-chat-context.js";
+  import { sendDiscussionMessage } from "../../controller/agent-discussion-dispatch.js";
+  import type { StoreController } from "../../controller/contracts.js";
   import CommunityThreadPanel from "../community-thread-panel/CommunityThreadPanel.svelte";
   import type {
     CommunityMemberModel,
@@ -9,12 +13,14 @@
   import { replyRoot, threadDescendants } from "./thread-view.js";
   let {
     threads,
+    controller,
     rootId,
     members,
     currentMemberId,
     disabled,
   }: {
     threads: ThreadsController;
+    controller?: StoreController;
     rootId: string;
     members: CommunityMemberModel[];
     currentMemberId?: string;
@@ -35,8 +41,26 @@
 
 <CommunityThreadPanel
   thread={{ rootMessageId: conversationRoot, messages }}
-  {members}
+  members={[
+    ...members,
+    ...(controller?.execution?.value?.setups ?? []).map(agentMember),
+  ]}
+  audienceKey={controller
+    ? JSON.stringify([
+        controller.state.member.id,
+        controller.state.route.repository,
+        controller.state.route.threadId,
+        conversationRoot,
+      ])
+    : undefined}
   {currentMemberId}
+  initialAgentIds={controller
+    ? originAgentIds(
+        controller.execution,
+        `thread:${controller.state.route.repository}:${controller.state.route.threadId}`,
+        controller.state.route.repository,
+      )
+    : undefined}
   {disabled}
   focusMessageId={rootId}
   history={{
@@ -50,7 +74,10 @@
   disabledReason="Sending replies is unavailable."
   onSendReply={disabled
     ? undefined
-    : (parent, text) => threads.send(text, parent)}
+    : (parent, text) =>
+        controller
+          ? sendDiscussionMessage(controller, text, parent)
+          : threads.send(text, parent)}
   onReply={disabled ? undefined : threads.selectReply}
   communityEmojis={threads.emojis}
   onToggleReaction={disabled
