@@ -29,7 +29,7 @@
     const body = composer.querySelector('[data-ui-part="body"]')!;
     const cm = composer.querySelector(".cm-editor")!;
     const page = canvasElement.querySelector(".appearance-composer-fixture")!;
-    const action = c.getByRole("button", { name: "Mention or link" });
+    const action = c.getByRole("button", { name: "Mention someone" });
     for (const theme of themeNames) {
       await waitFor(() =>
         expect(document.documentElement.dataset.storeTheme).toBe(theme),

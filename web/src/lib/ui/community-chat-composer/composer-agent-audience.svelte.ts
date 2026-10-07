@@ -66,20 +66,49 @@ export function createComposerAgentAudience(input: {
     untrack(() => {
       if (enabled) {
         const removed = previous.filter((id) => !next.includes(id));
-        if (pinned.some((id) => removed.includes(id))) {
-          pinned = pinned.filter((id) => !removed.includes(id));
+        const updated = [
+          ...new Set([
+            ...pinned.filter((id) => !removed.includes(id)),
+            ...known(next),
+          ]),
+        ].slice(0, 4);
+        if (JSON.stringify(pinned) !== JSON.stringify(updated)) {
+          pinned = updated;
           persist();
         }
       }
       previous = next;
     });
   });
+  function unpin(id: string) {
+    pinned = pinned.filter((p) => p !== id);
+    input.setValue(
+      input.value().replaceAll(agentMentionToken(id), "").trimStart(),
+    );
+    persist();
+  }
   return {
+    get available() {
+      return !!input.scope() && input.members().some((m) => !!m.acpAgentId);
+    },
+    get lockedMemberIds() {
+      return input
+        .members()
+        .filter((m) => m.acpAgentId && pinned.includes(m.acpAgentId))
+        .map((m) => m.id);
+    },
     get enabled() {
       return enabled;
     },
     get pinned() {
       return pinned;
+    },
+    get mentionButtonMember() {
+      return enabled
+        ? pinned.flatMap((id) =>
+            input.members().filter((m) => m.acpAgentId === id),
+          )[0]
+        : undefined;
     },
     toggle(next: boolean) {
       enabled = next;
@@ -107,11 +136,22 @@ export function createComposerAgentAudience(input: {
       }
       persist();
     },
-    unpin(id: string) {
-      pinned = pinned.filter((p) => p !== id);
-      input.setValue(
-        input.value().replaceAll(agentMentionToken(id), "").trimStart(),
-      );
+    unpin,
+    dismissMember(id: string) {
+      const agentId = input.members().find((m) => m.id === id)?.acpAgentId;
+      if (agentId) unpin(agentId);
+    },
+    toggleMember(id: string) {
+      if (!input.scope()) return;
+      const agentId = input.members().find((m) => m.id === id)?.acpAgentId;
+      if (!agentId) return;
+      if (pinned.includes(agentId)) return unpin(agentId);
+      const updated = known([...pinned, agentId]);
+      if (!updated.includes(agentId)) return;
+      enabled = true;
+      pinned = updated;
+      if (!mentionedAgentIds(input.value()).includes(agentId))
+        input.setValue(`${agentMentionToken(agentId)} ${input.value()}`);
       persist();
     },
     restore(submitted: string) {

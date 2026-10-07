@@ -2425,6 +2425,17 @@
           "license": "Apache-2.0"
         }
       ]
+    },
+    {
+      "local": "web/src/lib/ui/community-composer-mention-button/CommunityComposerMentionButton.svelte",
+      "reason": "Owned Community avatar pill and dismiss control for automatically addressed ACP agents; uses existing app-lifetime runtime avatar context.",
+      "sources": [
+        {
+          "path": "src/components/community-composer-mention-button/CommunityComposerMentionButton.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
     }
   ],
   "owned": [

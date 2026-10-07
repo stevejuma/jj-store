@@ -55,23 +55,29 @@ introduced.
 The very top bar places Chat immediately before Details, following Terminal when
 present. Project and repository chat opens in the standard right body sidebar,
 with a fixed header/composer and scrolling transcript; the outer details rail is
-independent. Reopening restores the scoped chat and draft. New chat is explicit.
-Repository selections use the previous centered chat draft and divided form rows
-inside the body. Multiple attachments remain supported. Repositories with
-multiple physical sources expose a workspace picker; choosing one captures that
-target's exact operation/revision. The far-right header control is the standard
-close icon. Visible context/repository attachments can be edited before sending;
-unresolved requests freeze their original selections.
+independent. Reopening restores the scoped chat and draft. The sidebar header
+contains only the Chat title and the standard far-right close icon; new-chat
+actions remain in the agent navigation. Repository selections use the previous
+centered chat draft and divided form rows inside the body. Multiple attachments
+remain supported. Repositories with multiple physical sources expose a workspace
+picker; choosing one captures that target's exact operation/revision. The
+far-right header control is the standard close icon. Visible context/repository
+attachments can be edited before sending; unresolved requests freeze their
+original selections.
 
 The composer supports @ autocomplete using exact saved-agent IDs and multiple
-recipients. Encoded agent tokens have an explicit closing delimiter, so focus
-changes and adjacent text cannot consume the recipient identity. Automatically
-mention agents is opt-in. Pins are scoped by device, actor, home and
-conversation, persist across successful sends/reopening, and can be removed
-explicitly. Origin discussion recipients seed the audience. The device-local
-personal-home alias scopes pins before and after lazy provisioning without
-resetting the opt-in. Disabling the preference clears pins. Editing ordinary
-text never dispatches agents.
+recipients. Its automatic-mention switch appears inside the agent picker.
+Selecting or pinning an agent while enabled immediately shows Community's
+addressed-agent avatar pill beside @; its dismiss control removes that exact
+recipient. The picker also exposes individual pin controls. These controls are
+disabled while the composer is blocked and never send a message. Encoded agent
+tokens have an explicit closing delimiter, so focus changes and adjacent text
+cannot consume the recipient identity. Automatically mention agents is opt-in.
+Pins are scoped by device, actor, home and conversation, persist across
+successful sends/reopening, and can be removed explicitly. Origin discussion
+recipients seed the audience. The device-local personal-home alias scopes pins
+before and after lazy provisioning without resetting the opt-in. Disabling the
+preference clears pins. Editing ordinary text never dispatches agents.
 
 Every exactly associated ACP avatar shows runtime state from one app-lifetime
 subscription: Starting, Idle, Queued, Working, Needs attention, Stopping,

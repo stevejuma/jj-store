@@ -9,7 +9,6 @@
   } from "./composer-submission.js";
   import { createComposerAgentAudience } from "./composer-agent-audience.svelte.js";
   import CommunityComposerStatusActions from "./CommunityComposerStatusActions.svelte";
-  import CommunityComposerAgentAudience from "./CommunityComposerAgentAudience.svelte";
   import Mira from "@lapismd/mira";
   import type { MiraHandle, MiraMarkdownActionId } from "@lapismd/mira";
   import { Composer, type ComposerStatus } from "@lapismd/design-core/ai/chat";
@@ -204,6 +203,14 @@
       {query}
       {items}
       {selectedIndex}
+      disabled={blocked}
+      showAutoMention={query.kind === "member" && audience.available}
+      autoMentionEnabled={audience.enabled}
+      lockedAgentPubkeys={audience.lockedMemberIds}
+      onAutoMentionChange={(enabled) => audience.toggle(enabled)}
+      onToggleAlwaysAddress={audience.available
+        ? audience.toggleMember
+        : undefined}
       onSelect={selectAutocomplete}
     />{/if}
   <Composer
@@ -222,11 +229,6 @@
     }}
   >
     {#snippet drawer()}
-      {#if audienceKey && members.some((m) => !!m.acpAgentId)}<CommunityComposerAgentAudience
-          {audience}
-          {members}
-          disabled={blocked}
-        />{/if}
       {#if context?.kind === "reply" || context?.kind === "transcript-reply"}<CommunityReplyContext
           target={context.target}
           onCancel={onCancelContext}
@@ -268,6 +270,8 @@
       <CommunityComposerToolbar
         bind:formattingOpen
         disabled={blocked}
+        mentionMember={audience.mentionButtonMember}
+        onDismissMention={audience.dismissMember}
         {communityEmojis}
         onAction={applyAction}
         onInsert={insert}

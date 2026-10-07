@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Verified formatting-only expansion of avatar status CSS blocks against the prior snapshot; status indicators, accessible runtime labels, reduced-motion behavior, chat selectors and pre-chat model discovery retain their qualified contracts.",
-      "fingerprint": "f62712235b9657bfe9965390e5b963f570ad7ca1945f0309e53ad565d1d0e25f"
+      "reason": "Verified the picker switch/pin actions and @ avatar pill use exact saved ACP IDs. The unused legacy audience component remains for historical source evidence, while the composer renders no preference drawer; active UI and dispatch contracts are unchanged.",
+      "fingerprint": "1604c0197ce164173ced5d4c5c5270f09121e97ab6e6273ac4eeaa51d885b4ad"
     }
   },
   {

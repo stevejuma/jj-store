@@ -24,6 +24,9 @@ try {
   await expect(composer).toBeVisible();
   const editor = composer.getByRole("textbox", { name: "Markdown editor" });
   await editor.fill("@Native");
+  await page
+    .getByRole("switch", { name: "Automatically mention agents" })
+    .check();
   await page.getByRole("option", { name: /Native fleet helper/ }).click();
   await expect(editor).toContainText("Native fleet helper");
   await expect(
@@ -32,7 +35,11 @@ try {
       exact: true,
     }),
   ).toBeVisible();
-  await composer.getByLabel("Automatically mention agents").check();
+  await expect(
+    composer.getByRole("button", {
+      name: "Don't automatically mention Native fleet helper in this thread",
+    }),
+  ).toBeVisible();
   await editor.pressSequentially(
     'Reply with exactly "Browser fleet accepted." Do not access or modify files.',
   );
@@ -72,9 +79,13 @@ try {
   ).toBeVisible({ timeout: 15000 });
   await page.getByRole("button", { name: "Close", exact: true }).click();
   await page.getByRole("button", { name: "Open chat", exact: true }).click();
+  await composer.getByRole("button", { name: "Mention someone" }).click();
   await expect(
-    composer.getByLabel("Automatically mention agents"),
+    page.getByRole("switch", {
+      name: "Automatically mention agents",
+    }),
   ).toBeChecked();
+  await editor.press("Escape");
   const findings = await new AxeBuilder({ page })
     .include('[data-ui-component="agent-chat"]')
     .analyze();

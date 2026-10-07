@@ -57,12 +57,8 @@
 </script>
 
 <AppShell.Sidebar.Header class="agent-chat-heading">
-  <strong>Chat</strong><Button
-    variant="ghost"
-    size="sm"
-    disabled={chat.busy || !!chat.pending}
-    onclick={() => chat.newConversation()}>New chat</Button
-  ><AppShell.Sidebar.Close label="Close" onclick={onClose} />
+  <strong>Chat</strong>
+  <AppShell.Sidebar.Close label="Close" onclick={onClose} />
 </AppShell.Sidebar.Header>
 <AppShell.Sidebar.Body scrollable={false}>
   {#if chat.draft}

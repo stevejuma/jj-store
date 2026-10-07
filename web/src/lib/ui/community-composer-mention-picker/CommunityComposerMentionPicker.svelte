@@ -17,6 +17,7 @@
     items,
     selectedIndex = 0,
     placement = "above",
+    disabled = false,
     showAutoMention = false,
     autoMentionEnabled = false,
     lockedAgentPubkeys = [],
@@ -29,6 +30,7 @@
     items: readonly CommunityComposerAutocompleteItem[];
     selectedIndex?: number;
     placement?: "above" | "below";
+    disabled?: boolean;
     showAutoMention?: boolean;
     autoMentionEnabled?: boolean;
     lockedAgentPubkeys?: readonly string[];
@@ -76,6 +78,7 @@
       </label>
       <Switch
         id={switchId}
+        {disabled}
         checked={autoMentionEnabled}
         aria-label="Automatically mention agents"
         onCheckedChange={(checked) => onAutoMentionChange(checked === true)}
@@ -102,6 +105,7 @@
           {@const agent = item.member?.kind === "agent"}
           <button
             type="button"
+            {disabled}
             role="option"
             aria-selected={index === selectedIndex}
             tabindex="-1"
@@ -161,6 +165,7 @@
               {@const pinned = locked.has(item.member.id)}
               <Button
                 type="button"
+                {disabled}
                 variant="ghost"
                 size="icon-xs"
                 aria-label={pinned

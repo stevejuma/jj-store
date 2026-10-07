@@ -45,3 +45,8 @@ and requires `git-interop.md`.
 M24 extends the owned Community-derived composer audience copies, with exact
 saved ACP identities and installation-local status. Attribution remains in
 `docs/ui-provenance.json`; Community imports remain prohibited.
+
+The M24 picker alignment copies Community's addressed-agent mention button into
+the owned UI and reuses the owned picker switch/pin presentation. Provenance
+records its source revision and Apache-2.0 license; dispatch and audience
+storage continue to use exact local saved-agent identities.

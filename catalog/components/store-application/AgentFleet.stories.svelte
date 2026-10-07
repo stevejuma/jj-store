@@ -23,16 +23,42 @@
     const editor = within(
       c.getByRole("group", { name: "Message to agents" }),
     ).getByRole("textbox", { name: "Markdown editor" });
+    await expect(
+      c.queryByRole("switch", {
+        name: "Automatically mention agents",
+      }),
+    ).not.toBeInTheDocument();
     await userEvent.click(editor);
     await userEvent.type(editor, "@Help");
     const picker = within(document.body);
+    const automatic = await picker.findByRole("switch", {
+      name: "Automatically mention agents",
+    });
+    await expect(
+      automatic.closest(
+        '[data-ui-component="community-composer-mention-picker"]',
+      ),
+    ).not.toBeNull();
+    await userEvent.click(automatic);
     await userEvent.click(
       await picker.findByRole("option", { name: /Helper/ }),
     );
     await expect(
       within(editor).getByRole("img", { name: "Helper, Offline" }),
     ).toBeVisible();
-    await userEvent.click(c.getByLabelText("Automatically mention agents"));
+    const addressed = await c.findByRole("button", {
+      name: "Don't automatically mention Helper in this thread",
+    });
+    await expect(
+      addressed.closest(
+        '[data-ui-component="community-composer-mention-button"]',
+      ),
+    ).toHaveAttribute("data-addressed", "true");
+    await expect(
+      c.queryByRole("switch", {
+        name: "Automatically mention agents",
+      }),
+    ).not.toBeInTheDocument();
     await userEvent.type(editor, "Explain this repository");
     await userEvent.click(c.getByRole("button", { name: "Send message" }));
     await waitFor(() =>
@@ -49,15 +75,70 @@
     ).toBeVisible();
     await userEvent.click(c.getByRole("button", { name: /^Close$/ }));
     await userEvent.click(chat);
+    await userEvent.click(c.getByRole("button", { name: "Mention someone" }));
     await expect(
-      c.getByLabelText("Automatically mention agents"),
+      picker.getByRole("switch", {
+        name: "Automatically mention agents",
+      }),
     ).toBeChecked();
     await userEvent.click(
-      c.getByRole("button", { name: "Stop always mentioning Helper" }),
+      within(
+        c.getByRole("toolbar", { name: "Message formatting and actions" }),
+      ).getByRole("button", {
+        name: "Don't automatically mention Helper in this thread",
+      }),
     );
     await expect(
-      c.queryByRole("button", { name: "Stop always mentioning Helper" }),
+      c.queryByRole("button", {
+        name: "Don't automatically mention Helper in this thread",
+      }),
     ).not.toBeInTheDocument();
+  }}
+/>
+<Story
+  name="Picker pin selects an agent without sending"
+  args={{ general: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await userEvent.click(
+      await c.findByRole("button", { name: "Mention someone" }),
+    );
+    const automatic = await c.findByRole("switch", {
+      name: "Automatically mention agents",
+    });
+    const picker = within(
+      automatic.closest<HTMLElement>(
+        '[data-ui-component="community-composer-mention-picker"]',
+      )!,
+    );
+    await userEvent.click(
+      picker.getByRole("button", {
+        name: /^Automatically mention Helper$/,
+      }),
+    );
+    await expect(automatic).toBeChecked();
+    await expect(
+      picker.getByRole("button", {
+        name: "Don't automatically mention Helper in this thread",
+      }),
+    ).toHaveAttribute("aria-pressed", "true");
+    await expect(
+      c.getByRole("textbox", { name: "Markdown editor" }),
+    ).toHaveTextContent("Helper");
+    await expect(c.getByLabelText("Agent fleet requests")).toHaveTextContent(
+      "[]",
+    );
+    await userEvent.click(
+      picker.getByRole("button", {
+        name: "Don't automatically mention Helper in this thread",
+      }),
+    );
+    await expect(
+      c.getByRole("textbox", { name: "Markdown editor" }),
+    ).not.toHaveTextContent("Helper");
+    await expect(c.getByLabelText("Agent fleet requests")).toHaveTextContent(
+      "[]",
+    );
   }}
 />
 <Story
@@ -83,6 +164,14 @@
       page = within(document.body);
     await userEvent.click(await c.findByRole("button", { name: "Open chat" }));
     const selections = c.getByLabelText("Chat context");
+    const header = canvasElement.querySelector<HTMLElement>(
+      ".agent-chat-heading",
+    );
+    await expect(header).not.toBeNull();
+    await expect(within(header!).getAllByRole("button")).toHaveLength(1);
+    await expect(
+      within(header!).getByRole("button", { name: /^Close$/ }),
+    ).toBeVisible();
     await expect(
       selections.closest('[data-ui-part="sidebar-body"]'),
     ).not.toBeNull();

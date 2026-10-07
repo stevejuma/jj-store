@@ -23,6 +23,12 @@ prompt or worktree; cache, refusal and blocked-probe shutdown regressions pass.
 The final focused CLI, public-contract, interaction/accessibility and cold
 production browser lanes pass. M24 stays In progress for the independent gates
 above; this review does not expand their qualification.
+
+E-FLEET-002 removes the redundant New chat action from the chat sidebar header,
+leaving its title and close icon. The automatic-mention switch and per-agent
+pins use the Community picker, and @ shows the addressed agent's dismissible
+avatar pill. Existing agent navigation still starts chats. This presentation
+review leaves M24's status and independent qualification gates unchanged.
 <!-- generated-navigation -->
 
 ## Pages

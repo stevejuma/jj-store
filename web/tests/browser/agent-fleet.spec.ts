@@ -190,14 +190,26 @@ test("cold contextual chat uses exact tags, retains pins and reopens independent
   const f = await fleet(page);
   await page.goto(`/#/repos/${repo}/files`);
   await page.getByRole("button", { name: "Open chat", exact: true }).click();
+  const header = page.locator(".agent-chat-heading");
+  await expect(header.getByRole("button")).toHaveCount(1);
+  await expect(
+    header.getByRole("button", { name: "Close", exact: true }),
+  ).toBeVisible();
   const composer = page.getByRole("group", { name: "Message to agents" });
   await expect(composer).toBeVisible();
   expect(f.sends).toHaveLength(0);
   const editor = composer.getByRole("textbox", { name: "Markdown editor" });
   await editor.fill("@Fleet");
+  await page
+    .getByRole("switch", { name: "Automatically mention agents" })
+    .check();
   await page.getByRole("option", { name: /Fleet helper/ }).click();
   await expect(editor).toContainText("Fleet helper");
-  await composer.getByLabel("Automatically mention agents").check();
+  await expect(
+    composer.getByRole("button", {
+      name: "Don't automatically mention Fleet helper in this thread",
+    }),
+  ).toBeVisible();
   await editor.pressSequentially("Explain this repository");
   await expect(editor).toContainText("Fleet helper");
   await page
@@ -212,9 +224,13 @@ test("cold contextual chat uses exact tags, retains pins and reopens independent
   expect(f.sends[0].attachments[0].repository).toBe(repo);
   await page.getByRole("button", { name: "Close", exact: true }).click();
   await page.getByRole("button", { name: "Open chat", exact: true }).click();
+  await composer.getByRole("button", { name: "Mention someone" }).click();
   await expect(
-    composer.getByLabel("Automatically mention agents"),
+    page.getByRole("switch", {
+      name: "Automatically mention agents",
+    }),
   ).toBeChecked();
+  await editor.press("Escape");
   await expect(editor).toContainText("Fleet helper");
   expect(
     (

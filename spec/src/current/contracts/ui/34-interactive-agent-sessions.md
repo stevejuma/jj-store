@@ -275,3 +275,7 @@ M24 adds
 [reusable agent conversations](../collaboration/37-reusable-agent-conversations.md)
 under JST-COLLAB-034 through JST-COLLAB-036. Existing M23 qualification remains
 unchanged.
+
+The M24 chat sidebar header contains its title and Close only. Its automatic
+agent mention preference lives in the picker, with individual pin controls and
+the owned Community addressed-agent avatar/dismiss presentation beside @.

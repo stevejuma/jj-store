@@ -16,11 +16,14 @@ identity is retained and is associated only by its exact saved agent ID.
 Use **Chat** beside the top-bar Details toggle in a repository or project to
 open the right body sidebar. Its composer and header stay fixed while messages
 scroll. Opening is draft-only and reopening restores the scoped chat and draft.
-New chat starts another explicit conversation. The outer details rail remains
-independent. Use **@** autocomplete to choose one or more saved agents, write a
-message and press Send. **Automatically mention agents** is opt-in and retains
-recipients across replies and reopening. Remove a tag or unpin it to stop
-including that agent. This preference never sends a message automatically.
+The sidebar header contains the Chat title and close icon. The outer details
+rail remains independent. Use **@** autocomplete to choose one or more saved
+agents, write a message and press Send. **Automatically mention agents** is
+opt-in and retains recipients across replies and reopening. Enable it in the
+agent picker; pin controls choose individual recipients. The @ control shows the
+addressed agent's avatar while automatic tagging is active. Its dismiss action
+removes that recipient. Remove a tag or unpin it to stop including that agent.
+This preference never sends a message automatically.
 
 A general Send lazily creates a personal metadata home. Existing discussions
 keep their own home. Attach registered repositories to authorize code work;

@@ -11,6 +11,7 @@
     items,
     selectedIndex = 0,
     placement = "above",
+    disabled = false,
     showAutoMention = false,
     autoMentionEnabled = false,
     lockedAgentPubkeys = [],
@@ -23,6 +24,7 @@
     items: readonly CommunityComposerAutocompleteItem[];
     selectedIndex?: number;
     placement?: "above" | "below";
+    disabled?: boolean;
     showAutoMention?: boolean;
     autoMentionEnabled?: boolean;
     lockedAgentPubkeys?: readonly string[];
@@ -48,6 +50,7 @@
     {selectedIndex}
     {placement}
     {showAutoMention}
+    {disabled}
     {autoMentionEnabled}
     {lockedAgentPubkeys}
     bind:listRef

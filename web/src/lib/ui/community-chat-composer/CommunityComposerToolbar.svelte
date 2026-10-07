@@ -1,7 +1,8 @@
 <script lang="ts">
   import { Button } from "@lapismd/design-core/shadcn/button";
   import type { MiraMarkdownActionId } from "@lapismd/mira";
-  import AtSign from "@lucide/svelte/icons/at-sign";
+  import CommunityComposerMentionButton from "../community-composer-mention-button/CommunityComposerMentionButton.svelte";
+  import type { CommunityMemberModel } from "../community-workspace/model.js";
   import TypeIcon from "@lucide/svelte/icons/type";
   import Bold from "@lucide/svelte/icons/bold";
   import Italic from "@lucide/svelte/icons/italic";
@@ -20,6 +21,8 @@
     onAction,
     onInsert,
     onEmoji,
+    mentionMember,
+    onDismissMention,
   }: {
     formattingOpen?: boolean;
     disabled: boolean;
@@ -27,6 +30,8 @@
     onAction: (action: MiraMarkdownActionId) => void;
     onInsert: (text: string) => void;
     onEmoji: (emoji: string, custom?: CommunityCustomEmoji) => void;
+    mentionMember?: CommunityMemberModel;
+    onDismissMention?: (id: string) => void;
   } = $props();
   const actions = [
     { id: "bold", label: "Bold", icon: Bold },
@@ -73,14 +78,12 @@
         ><action.icon aria-hidden="true" /></Button
       >{/each}
   {:else}
-    <Button
-      type="button"
-      variant="ghost"
-      size="icon-sm"
-      aria-label="Mention or link"
+    <CommunityComposerMentionButton
+      member={mentionMember}
       {disabled}
-      onclick={() => onInsert("/")}><AtSign aria-hidden="true" /></Button
-    >
+      onclick={() => onInsert("@")}
+      onDismiss={onDismissMention}
+    />
     <CommunityEmojiPicker
       label="Add emoji"
       {disabled}
