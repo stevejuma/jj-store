@@ -26,6 +26,11 @@
     ),
   );
   let restoredReply = $state("");
+  $effect(() => {
+    const id = session?.id,
+      repository = session?.repository;
+    if (id && repository) return manager.discussions.watch(id, repository);
+  });
 </script>
 
 {#if session}

@@ -17,6 +17,8 @@ not a completion gate selection.
 | [E-EXEC-011](../../../../../history/2026/10/07/E-EXEC-011/index.md) | 2026-10-07 | pass            | Unchanged provider authority, source ownership and maintenance boundaries                                        |
 | [E-EXEC-012](../../../../../history/2026/10/07/E-EXEC-012/index.md) | 2026-10-07 | pass            | Resume replay exclusion and exact retained reply draft recovery; cold focused fixtures                           |
 | [E-EXEC-013](../../../../../history/2026/10/07/E-EXEC-013/index.md) | 2026-10-07 | pass            | Unchanged API, ownership, persistence and documentation boundaries                                               |
+| [E-EXEC-014](../../../../../history/2026/10/07/E-EXEC-014/index.md) | 2026-10-07 | pass            | Ordinary replies independent of execution; cold discussion and recovery regressions                              |
+| [E-EXEC-015](../../../../../history/2026/10/07/E-EXEC-015/index.md) | 2026-10-07 | pass            | Ordinary replies independent of execution; unchanged publication and API boundaries                              |
 
 <!-- generated-navigation -->
 

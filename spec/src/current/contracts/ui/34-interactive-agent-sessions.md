@@ -225,3 +225,13 @@ pins and superseded replies cannot replace newer state. Receipt replay/status
 keeps original IDs and local actor scope. Existing native repository navigation
 continues to admit native snapshots only. No browser navigation, feedback save
 or read dispatches execution.
+
+Ordinary inbox replies and reactions depend only on repository collaboration
+authority and exact published targets, never agent connection, execution mode or
+pending runner commands. Background feedback errors retain validated targets and
+editable drafts; the normal repository command revalidates them on save. Only
+unavailable targets/access, in-flight collaboration saves and unresolved
+collaboration receipts block submission, with contextual explanations. Replies
+reuse Community thread rows for nesting, editing and reactions. Discussion
+refresh follows repository freshness, reconnect and bounded active-view checks
+independently of runner status. No discussion action dispatches execution.

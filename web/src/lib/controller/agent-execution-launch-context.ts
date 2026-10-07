@@ -16,3 +16,10 @@ export async function showAgentLaunch(
   manager.onNavigate?.("new");
   await manager.refresh();
 }
+
+export function prepareAgentDraft(manager: AgentExecution, id: string) {
+  manager.context = {};
+  manager.launchDraft = { targetId: "", runner: "codex", commit: "" };
+  manager.setupId = id;
+  manager.onNavigate?.("new", id);
+}

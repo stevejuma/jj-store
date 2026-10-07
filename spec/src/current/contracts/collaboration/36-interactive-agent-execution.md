@@ -125,3 +125,9 @@ qualified ref-CAS behavior. Browser capability presentation cannot bypass these
 publication rules. Registered-folder inbox commands use the same local provider,
 captured profile, exact device actor and original ref-CAS receipts as the CLI;
 their browser transport requires independent cold proof.
+
+Ordinary discussion commands remain available for published targets after end,
+disconnection and restart. A retained validated target survives transient read
+failure; mutation-time authorization and target validation remain authoritative.
+Reply and edit contexts retain exact parent/revision witnesses across refresh; a
+changed or unavailable target fails explicitly without replacing the draft.

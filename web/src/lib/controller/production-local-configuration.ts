@@ -14,6 +14,7 @@ export function createLocalConfiguration(
     fetcher,
     (repository) =>
       data.repositories.find((r) => r.id === repository)?.principal ?? "",
+    freshness,
   );
   const configuration = createServerSettings({
     available: () =>

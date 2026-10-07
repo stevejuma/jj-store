@@ -55,7 +55,7 @@
     status = "Online",
   }: {
     permission?: boolean;
-    agentReplies?: boolean;
+    agentReplies?: boolean | "refresh-failed";
     unknownReply?: boolean;
     feedbackWriteUnavailable?: boolean;
     replayHistory?: boolean;

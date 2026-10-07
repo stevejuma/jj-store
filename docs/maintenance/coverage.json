@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed exact session-load replay exclusion and explicit retained reply draft recovery; canonical message targets, ThreadStore saves, receipts and execution dispatch remain unchanged",
-      "fingerprint": "9867759b0c26b33c969bc08e14f577dc1178e34794169c408567e75ce9bd8f43"
+      "reason": "Reviewed runner-independent ordinary replies, shared nested reply presentation and independent discussion freshness; public API and repository publication authority remain unchanged",
+      "fingerprint": "fda078bd2c77251041892883d829d23765b71ad183cca5329fd6f2400228f178"
     }
   },
   {

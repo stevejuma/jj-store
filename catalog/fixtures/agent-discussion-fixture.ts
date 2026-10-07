@@ -12,10 +12,11 @@ export function seedReplayDrafts(drafts: Record<string, string>) {
 }
 
 export function agentDiscussionFixture(
-  enabled: boolean,
+  enabled: boolean | "refresh-failed",
   unknownFirst = false,
   writeUnavailable = false,
 ) {
+  let feedbackReads = 0;
   const { transport } = createThreadTransport({ unknownFirst });
   const targets = ["user", "assistant"].map((role, i) => ({
     row_id: `${"55".repeat(16)}/${role}`,
@@ -30,6 +31,8 @@ export function agentDiscussionFixture(
   }));
   return async (path: string, init?: RequestInit) => {
     if (path.includes("/feedback")) {
+      if (enabled === "refresh-failed" && ++feedbackReads > 1)
+        throw new Error("Feedback refresh failed");
       if (!enabled) return json({ messages: [] });
       const list = await transport.list();
       const threads = list.items.type === "threads" ? list.items.threads : [];
@@ -55,7 +58,21 @@ export function agentDiscussionFixture(
                 });
             }
         }
-        messages.push({ ...row, threads: ids, replies });
+        const latest = new Map<string, Model<"AgentExecutionFeedbackReply">>();
+        for (const reply of replies)
+          if (!latest.has(reply.message.message_id))
+            latest.set(reply.message.message_id, reply);
+        messages.push({
+          ...row,
+          threads: ids,
+          replies: [...latest.values()]
+            .filter((r) => r.message.body !== null)
+            .sort(
+              (a, b) =>
+                Number(a.message.accepted_at_millis) -
+                Number(b.message.accepted_at_millis),
+            ),
+        });
       }
       return json({
         messages,

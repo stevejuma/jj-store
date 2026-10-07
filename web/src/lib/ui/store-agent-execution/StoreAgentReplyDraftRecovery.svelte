@@ -39,8 +39,7 @@
   const blocked = $derived(
     threads.busy ||
       !!threads.pending ||
-      discussions.awaiting(session.id, source) ||
-      !!discussions.errors[session.id],
+      discussions.awaiting(session.id, source),
   );
   const selected = $derived(options.find((option) => option.value === target));
   function restore() {

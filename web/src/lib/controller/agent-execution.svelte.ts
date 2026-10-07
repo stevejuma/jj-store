@@ -1,10 +1,9 @@
-import { activeAgentSession } from "./agent-activity-session.js";
-import { showAgentLaunch } from "./agent-execution-launch-context.js";
+import { openAgentActivity } from "./agent-activity-session.js";
+import * as launch from "./agent-execution-launch-context.js";
 import { AgentDiscussions } from "./agent-discussions.svelte.js";
 import { consumeAgentEvents } from "./agent-execution-stream.js";
 import { LocalClient } from "../api/local-client.js";
-import { agentLaunchDraft } from "./agent-execution-types.js";
-import { ApiError, decode, type Model } from "../api/client.js";
+import { ApiError, type Model } from "../api/client.js";
 import type {
   AgentAction,
   AgentEvent,
@@ -56,32 +55,33 @@ export class AgentExecution {
     readonly available: () => boolean,
     fetcher?: typeof fetch,
     principal?: (repository: string) => string,
+    freshness?: import("./application-freshness.js").ApplicationFreshness,
   ) {
     this.client = new LocalClient("", fetcher);
-    this.discussions = new AgentDiscussions(this, fetcher, principal);
+    this.discussions = new AgentDiscussions(
+      this.client,
+      () => this.value?.sessions ?? [],
+      fetcher,
+      principal,
+      freshness,
+    );
   }
   get session() {
     return this.value?.sessions.find((s) => s.id === this.selected);
   }
   show(context: AgentLaunchContext = {}) {
-    return showAgentLaunch(this, context);
+    return launch.showAgentLaunch(this, context);
   }
   directory = () => this.onNavigate?.("directory");
   startAgent(id: string) {
-    this.context = {};
-    this.launchDraft = { targetId: "", runner: "codex", commit: "" };
-    this.setupId = id;
-    this.onNavigate?.("new", id);
+    launch.prepareAgentDraft(this, id);
   }
   openSession(id: string, agent?: string) {
     this.onNavigate?.("session", id, agent);
   }
   viewSessions = (agent?: string) => this.onNavigate?.("sessions", agent);
   viewActivity(agent?: string, session?: string) {
-    if (session) return this.openSession(session, agent);
-    const active = activeAgentSession(this.value?.sessions ?? [], agent);
-    if (active) this.openSession(active.id, agent);
-    else this.viewSessions(agent);
+    openAgentActivity(this, agent, session);
   }
   pauseView() {
     this.open = false;
@@ -101,7 +101,6 @@ export class AgentExecution {
       if (!this.#alive) return;
       this.value = status;
       this.targets = targets;
-      if (this.selected && this.open) void this.discussions.load(this.selected);
       if (this.pending) await this.checkOutcome();
       this.connectionError = "";
     } catch (cause) {

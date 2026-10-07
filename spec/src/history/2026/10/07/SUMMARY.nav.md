@@ -6,3 +6,9 @@
   {{#include E-EXEC-012/SUMMARY.nav.md}}
 - [E-EXEC-013](E-EXEC-013/index.md)
   {{#include E-EXEC-013/SUMMARY.nav.md}}
+
+- [E-EXEC-014](E-EXEC-014/index.md)
+  {{#include E-EXEC-014/SUMMARY.nav.md}}
+
+- [E-EXEC-015](E-EXEC-015/index.md)
+  {{#include E-EXEC-015/SUMMARY.nav.md}}

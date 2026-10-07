@@ -1,10 +1,12 @@
+import type { LocalClient } from "../api/local-client.js";
 import { Client, type Model } from "../api/client.js";
 import { HttpThreadsDataSource } from "./http-threads-data-source.js";
 import { LocalInboxThreads } from "./local-inbox-threads.js";
 import { createStoreQueryClient } from "./store-query-client.js";
 import { createThreadsController } from "./production-threads.svelte.js";
 import { initialStoreRoute } from "./store-route-history.svelte.js";
-import type { AgentExecution } from "./agent-execution.svelte.js";
+import { watchAgentDiscussion } from "./agent-discussion-refresh.js";
+import type { ApplicationFreshness } from "./application-freshness.js";
 import type { ReactionTarget } from "./thread-types.js";
 type Feedback = Model<"AgentExecutionFeedback">;
 
@@ -15,6 +17,7 @@ export class AgentDiscussions {
   drafts = $state<Record<string, string>>({});
   recovered = $state<Record<string, number>>({});
   #loading = new Set<string>();
+  #alive = true;
   #awaiting = $state<
     Record<
       string,
@@ -31,9 +34,15 @@ export class AgentDiscussions {
   #readers = new Map<string, ReturnType<typeof this.createReader>>();
   #profiles = $state<Record<string, string>>({});
   constructor(
-    private manager: AgentExecution,
+    private client: LocalClient,
+    private sessions: () => readonly {
+      id: string;
+      repository: string;
+      title: string;
+    }[],
     private fetcher?: typeof fetch,
     private principal: (repository: string) => string = () => "",
+    private freshness?: ApplicationFreshness,
   ) {}
   reader(repository: string) {
     // Every rendered message tracks profile adoption, including readers created
@@ -92,15 +101,16 @@ export class AgentDiscussions {
     };
   }
   async load(id: string) {
-    if (this.#loading.has(id)) return;
+    if (!this.#alive || this.#loading.has(id)) return;
     this.#loading.add(id);
     try {
-      const value = await this.manager.client.request<Feedback>(
+      const value = await this.client.request<Feedback>(
         `agents/feedback?session=${encodeURIComponent(id)}`,
       );
+      if (!this.#alive) return;
       if (!Array.isArray(value.messages))
         throw new Error("Invalid recorded message feedback");
-      const session = this.manager.value?.sessions.find((s) => s.id === id);
+      const session = this.sessions().find((s) => s.id === id);
       if (session) {
         const profile = value.profile ?? "native";
         if (!["native", "local_jj_git"].includes(profile))
@@ -118,6 +128,10 @@ export class AgentDiscussions {
             reader.close();
             throw cause;
           }
+          if (!this.#alive) {
+            reader.close();
+            return;
+          }
           const current = this.#readers.get(session.repository);
           if (current?.threads.pending) {
             reader.close();
@@ -132,9 +146,11 @@ export class AgentDiscussions {
         this.reader(session.repository);
         await this.#readers.get(session.repository)?.invalidate();
       }
+      if (!this.#alive) return;
       this.values = { ...this.values, [id]: value };
       this.errors = { ...this.errors, [id]: "" };
     } catch (cause) {
+      if (!this.#alive) return;
       this.errors = {
         ...this.errors,
         [id]: cause instanceof Error ? cause.message : String(cause),
@@ -143,15 +159,33 @@ export class AgentDiscussions {
       this.#loading.delete(id);
     }
   }
+  watch(id: string, repository: string) {
+    return watchAgentDiscussion(
+      () => this.load(id),
+      repository,
+      this.freshness,
+    );
+  }
+  actor(repository: string) {
+    return (
+      this.#readers.get(repository)?.principal() ?? this.principal(repository)
+    );
+  }
+  contexts = $state<
+    Record<
+      string,
+      { reply?: string; edit?: string; revision?: string; thread?: string }
+    >
+  >({});
   message(id: string, row: string) {
     return this.values[id]?.messages.find((m) => m.row_id === row);
   }
   async save(id: string, row: string, body: string) {
-    const session = this.manager.value?.sessions.find((s) => s.id === id);
+    const session = this.sessions().find((s) => s.id === id);
     const message = this.message(id, row);
     if (this.values[id]?.write_unavailable)
       throw new Error(this.values[id].write_unavailable!);
-    if (!session || !message || this.errors[id])
+    if (!session || !message)
       throw new Error(
         "Waiting for this message to be published. Your reply draft is retained.",
       );
@@ -159,16 +193,42 @@ export class AgentDiscussions {
     const key = `${id}:${row}`,
       draft = this.drafts[key];
     try {
-      if (message.threads[0]) {
-        await threads.open(message.threads[0]);
-        await threads.send(body);
+      const context = this.contexts[key];
+      const thread = context?.thread ?? message.threads[0];
+      if (thread) {
+        if (!message.threads.includes(thread))
+          throw new Error("The original discussion is unavailable.");
+        await threads.open(thread);
+        const target = context?.edit ?? context?.reply;
+        if (threads.detail?.thread.value.thread_id !== thread)
+          throw new Error(
+            "The discussion could not be loaded. Retry your reply.",
+          );
+        if (
+          target &&
+          threads.projection.targets[target]?.type === "human_message"
+        ) {
+          const current = threads.projection.targets[target];
+          if (
+            current.type !== "human_message" ||
+            current.revision.id !== context?.revision
+          )
+            throw new Error(
+              "The reply changed. Reopen its reply or edit action to continue.",
+            );
+        } else if (target)
+          throw new Error("The original reply is unavailable.");
+        await threads.send(body, context?.reply, context?.edit);
       } else
         await threads.create(
           `Replies to ${session.title}`,
           body,
           message.target,
         );
-      if (this.drafts[key] === draft) this.drafts[key] = "";
+      if (this.drafts[key] === draft) {
+        this.drafts[key] = "";
+        delete this.contexts[key];
+      }
       await this.load(id);
     } catch (cause) {
       const pending = threads.pending;
@@ -201,6 +261,7 @@ export class AgentDiscussions {
     ) {
       if (this.drafts[key] === awaiting.draft) this.drafts[key] = "";
       this.recovered[key] = (this.recovered[key] ?? 0) + 1;
+      delete this.contexts[key];
       delete this.#awaiting[key];
     }
     await this.load(id);
@@ -226,6 +287,7 @@ export class AgentDiscussions {
     return threads.toggle(target, emoji, custom, fromBar).catch(() => {});
   }
   destroy() {
+    this.#alive = false;
     for (const reader of this.#readers.values()) reader.close();
     this.#readers.clear();
   }
