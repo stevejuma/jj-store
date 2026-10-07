@@ -76,3 +76,43 @@
     }
   }}
 />
+
+<Story
+  name="Pending reply keeps recovery text and context readable"
+  args={{ pending: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await expect(await c.findByText("Retained reply context")).toBeVisible();
+    await expect(
+      c.getByText(
+        "Check the original reply status before saving another reply.",
+      ),
+    ).toBeVisible();
+    await expect(
+      c.getByRole("button", { name: "Send message" }),
+    ).toBeDisabled();
+    const composer = canvasElement.querySelector(
+      '[data-ui-component="ai-chat-composer"]',
+    )!;
+    await expect(getComputedStyle(composer).opacity).toBe("1");
+  }}
+/>
+
+<Story
+  name="Saving reply keeps context readable without a status"
+  args={{ busy: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await expect(await c.findByText("Retained reply context")).toBeVisible();
+    await expect(
+      c.getByRole("button", { name: "Send message" }),
+    ).toBeDisabled();
+    await expect(
+      c.getByRole("textbox", { name: "Markdown editor" }),
+    ).toHaveAttribute("contenteditable", "false");
+    const composer = canvasElement.querySelector(
+      '[data-ui-component="ai-chat-composer"]',
+    )!;
+    await expect(getComputedStyle(composer).opacity).toBe("1");
+  }}
+/>

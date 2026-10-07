@@ -130,6 +130,10 @@ impl Supervisor {
             events: Vec::new(),
             workspace_ready: false,
             pending_capture_end: None,
+            delivered_replies: Default::default(),
+            context_replies: Default::default(),
+            context_generation: 0,
+            initial_context_delivered: false,
         };
         self.update(|s| {
             if s.sessions.len() >= 64 {

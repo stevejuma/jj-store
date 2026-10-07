@@ -108,15 +108,30 @@ replay rows instead of assigning fabricated feedback targets. Retained reply
 drafts require explicit selection of a validated original message; restoring a
 draft never saves feedback or dispatches execution.
 
-The next explicit Prompt reads authorized committed, visible discussion replies
-from one captured repository selection, with bounded object, reply and byte
-budgets. Target membership is revalidated; tombstoned threads/messages and
-unavailable targets are excluded. Context identifies the original message and
-exact reply revisions, separates human feedback from the new prompt, and is
-retained with the original prompt request before dispatch. Retry/status reads
-never re-read feedback or dispatch again. Saving feedback, reacting and browsing
-never execute or resume an agent. Read failure or exhausted context budget
-retains the prompt draft and fails closed instead of silently omitting replies.
+The next explicit Prompt captures one authorized AgentStore/ThreadStore
+selection. It collects visible human replies to exact published session messages
+and visible human messages in its active primary repository thread. Only new or
+edited immutable revisions are selected, identified by
+repository/thread/message/revision IDs; overlapping paths deduplicate. Parent
+relationships, authors and original message/thread context accompany the
+separated feedback section. Reactions, review comments, unrelated threads and
+tombstones are excluded. The selected batch remains bounded to 128 replies and
+32 KiB. Read or budget failures retain the draft and dispatch nothing.
+
+The private journal atomically retains original sanitized prompt intent,
+prepared frame and exact selected feedback batch before dispatch. Queued batches
+reserve revisions; the exact harness started event atomically marks them
+delivered. Proven rejection/cancellation before start releases reservations;
+uncertain outcomes retain the batch without rereading context or replaying
+prompts. New replies after the captured selection wait for the next explicit
+Send. Resume and restart preserve delivery state. Fresh adapter continuation
+uses whole retained records and initializes delivery state from structured
+feedback actually included; it never infers delivery from transcript text.
+Carried context reserves its revisions until that prompt starts; cancelling the
+first queued prompt keeps initial context eligible for a later explicit Send.
+Legacy journals begin with empty delivery metadata and include currently
+eligible replies once on their next Send. ThreadStore, ReactionStore and jj-acp
+protocol formats remain unchanged.
 
 The inbox retains the existing native code-repository Thread/Reaction refusal
 until reducer 3 is qualified. The supported native write profile is a WorkStore

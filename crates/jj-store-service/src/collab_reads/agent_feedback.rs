@@ -33,4 +33,37 @@ impl PinnedCollabRead {
         self.authorize(&session).await.map_err(|_| Error::Denied)?;
         Ok(result)
     }
+    pub async fn agent_prompt_context(
+        &self,
+        session: Arc<NativeSession>,
+        rows: &[(
+            String,
+            jj_store_wal::publication::AgentSessionId,
+            jj_store_wal::publication::MessageId,
+        )],
+        sessions: &std::collections::BTreeSet<jj_store_wal::publication::AgentSessionId>,
+        excluded: &std::collections::BTreeSet<crate::agent_execution::context::ReplyRevision>,
+    ) -> crate::agent_execution::Result<crate::agent_execution::context::ContextBatch> {
+        use crate::agent_execution::{Error, context::ContextBatch};
+        self.authorize(&session).await.map_err(|_| Error::Denied)?;
+        let result = if let Some(agents) = &self.agents {
+            let reader = session
+                .coordinator
+                .selected_agent_reader(agents)
+                .map_err(|_| Error::Unavailable)?;
+            crate::agent_execution::context::collect(
+                &reader,
+                &self.thread.state,
+                &self.thread.graph,
+                rows,
+                sessions,
+                excluded,
+            )
+            .await?
+        } else {
+            ContextBatch::default()
+        };
+        self.authorize(&session).await.map_err(|_| Error::Denied)?;
+        Ok(result)
+    }
 }

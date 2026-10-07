@@ -235,3 +235,13 @@ collaboration receipts block submission, with contextual explanations. Replies
 reuse Community thread rows for nesting, editing and reactions. Discussion
 refresh follows repository freshness, reconnect and bounded active-view checks
 independently of runner status. No discussion action dispatches execution.
+
+Explicit Send includes only new or edited human discussion revisions from the
+session's published messages and active primary repository thread. Feedback
+read/budget refusal appears in the composer, retains its draft and permits an
+explicit retry without an unknown-dispatch warning. Reactions remain outside
+prompt context. Queued/resumed/restarted sessions retain exact delivery
+progress.
+
+Pending-reply status and original-message context retain readable contrast while
+composer submission is disabled, using Community's interactive status drawer.

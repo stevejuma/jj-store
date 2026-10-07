@@ -19,6 +19,8 @@ not a completion gate selection.
 | [E-EXEC-013](../../../../../history/2026/10/07/E-EXEC-013/index.md) | 2026-10-07 | pass            | Unchanged API, ownership, persistence and documentation boundaries                                               |
 | [E-EXEC-014](../../../../../history/2026/10/07/E-EXEC-014/index.md) | 2026-10-07 | pass            | Ordinary replies independent of execution; cold discussion and recovery regressions                              |
 | [E-EXEC-015](../../../../../history/2026/10/07/E-EXEC-015/index.md) | 2026-10-07 | pass            | Ordinary replies independent of execution; unchanged publication and API boundaries                              |
+| [E-EXEC-016](../../../../../history/2026/10/07/E-EXEC-016/index.md) | 2026-10-07 | pass            | Incremental primary-thread and message discussion context; durable exact delivery progress                       |
+| [E-EXEC-017](../../../../../history/2026/10/07/E-EXEC-017/index.md) | 2026-10-07 | pass            | Unchanged canonical publication, source ownership and ordinary command authority                                 |
 
 <!-- generated-navigation -->
 

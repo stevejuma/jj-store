@@ -116,6 +116,7 @@ impl Manager for Supervisor {
                 command.request_id,
                 Intent {
                     digest,
+                    prompt: None,
                     outcome: Outcome {
                         version: 1,
                         request_id: command.request_id,
@@ -147,6 +148,8 @@ impl Manager for Supervisor {
         }
         let id = &command.session_id;
         let request = command.request_id.to_string();
+        let mut context_batch = None;
+        let mut carries_initial_context = false;
         let mut frame = json!({"version":2,"requestId":request});
         match &command.action {
             Action::Prompt {
@@ -161,13 +164,21 @@ impl Manager for Supervisor {
                     return Err(Error::Invalid);
                 }
                 self.sender(id)?;
-                let first = saved
-                    .events
-                    .iter()
-                    .rev()
-                    .find(|e| matches!(e.payload["type"].as_str(), Some("prompt" | "continuation")))
-                    .is_none_or(|e| e.payload["type"] == "continuation");
-                let feedback = self.feedback_saved(&saved).await?.prompt_context()?;
+                let first = self.read(|s| delivery::needs_initial_context(s, id))?;
+                carries_initial_context = first;
+                let mut feedback =
+                    self.prompt_feedback(&saved, first)
+                        .await
+                        .map_err(|error| match error {
+                            Error::Limit => Error::FeedbackLimit,
+                            Error::Denied => Error::Denied,
+                            _ => Error::FeedbackUnavailable,
+                        })?;
+                if first {
+                    feedback
+                        .revisions
+                        .extend(saved.context_replies.iter().cloned());
+                }
                 self.authorized(saved.view.repository, &saved.profile, true)
                     .await?;
                 let prepared = if first {
@@ -181,7 +192,8 @@ impl Manager for Supervisor {
                     text.clone()
                 };
                 frame["type"] = json!("prompt");
-                frame["text"] = json!(format!("{feedback}{prepared}"));
+                frame["text"] = json!(format!("{}{prepared}", feedback.text));
+                context_batch = Some(feedback);
                 frame["maxDurationMs"] = json!(max_duration_ms);
             }
             Action::Configure { preferences: p } => {
@@ -260,7 +272,41 @@ impl Manager for Supervisor {
                 }
             }
         }
-        self.remember(command.request_id, digest, Some(id.clone()))?;
+        if let Some(mut batch) = context_batch {
+            let sanitizer = runtime::sanitizer(self, &saved.workspace.path).await?;
+            let original = if let Action::Prompt { text, .. } = &command.action {
+                text
+            } else {
+                return Err(Error::Invalid);
+            };
+            batch.text = runtime::safe(&sanitizer, json!({"text":batch.text}))?["text"]
+                .as_str()
+                .ok_or(Error::Invalid)?
+                .to_owned();
+            if batch.text.len() > 32768 {
+                return Err(Error::FeedbackLimit);
+            }
+            let original = runtime::safe(&sanitizer, json!({"text":original}))?["text"]
+                .as_str()
+                .ok_or(Error::Invalid)?
+                .to_owned();
+            // Dispatch exactly the sanitized frame retained with the original intent.
+            frame = runtime::safe(&sanitizer, frame)?;
+            self.update(|s| {
+                delivery::prepare(
+                    s,
+                    id,
+                    command.request_id,
+                    digest,
+                    original,
+                    batch,
+                    frame.clone(),
+                    carries_initial_context,
+                )
+            })?;
+        } else {
+            self.remember(command.request_id, digest, Some(id.clone()))?;
+        }
         match command.action {
             Action::Cleanup => {
                 if self
@@ -287,26 +333,7 @@ impl Manager for Supervisor {
                     None
                 };
                 if load.is_none() {
-                    self.update(|s| {
-                        let saved = s.sessions.get_mut(id).ok_or(Error::Invalid)?;
-                        saved.context = Some(format!(
-                            "Saved context from prior session (new adapter session):\n{}",
-                            saved
-                                .events
-                                .iter()
-                                .filter(|e| matches!(
-                                    e.payload["type"].as_str(),
-                                    Some("prompt" | "record")
-                                ))
-                                .map(|e| e.payload.to_string())
-                                .collect::<Vec<_>>()
-                                .join("\n")
-                                .chars()
-                                .take(32768)
-                                .collect::<String>()
-                        ));
-                        Ok(())
-                    })?;
+                    self.update(|s| delivery::continuation(s, id))?;
                     self.append(id, json!({"type":"continuation","requestId":request,"label":"New adapter session with saved context"}))?;
                 }
                 self.session_state(id, "opening", None)?;
@@ -317,10 +344,6 @@ impl Manager for Supervisor {
                 self.finish(command.request_id, "opening", None)
             }
             action => {
-                if let Action::Prompt { .. } = action {
-                    let sanitizer = runtime::sanitizer(self, &saved.workspace.path).await?;
-                    self.append(id, runtime::safe(&sanitizer, frame.clone())?)?;
-                }
                 if let Action::Configure { preferences } = action {
                     let sanitizer = runtime::sanitizer(self, &saved.workspace.path).await?;
                     let preferences: Preferences = serde_json::from_value(runtime::safe(
@@ -338,11 +361,8 @@ impl Manager for Supervisor {
                     })?;
                 }
                 if self.send(id, frame).is_err() {
-                    return self.finish(
-                        command.request_id,
-                        "outcome_unknown",
-                        Some("dispatch_outcome_unknown"),
-                    );
+                    self.update(|s| delivery::observe(s, id, &json!({"type":"error", "requestId":request, "code":"dispatch_not_sent"})))?;
+                    return self.finish(command.request_id, "failed", Some("dispatch_not_sent"));
                 }
                 self.read(|s| Ok(s.intents[&command.request_id].outcome.clone()))
             }

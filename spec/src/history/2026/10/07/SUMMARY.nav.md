@@ -12,3 +12,9 @@
 
 - [E-EXEC-015](E-EXEC-015/index.md)
   {{#include E-EXEC-015/SUMMARY.nav.md}}
+
+- [E-EXEC-016](E-EXEC-016/index.md)
+  {{#include E-EXEC-016/SUMMARY.nav.md}}
+
+- [E-EXEC-017](E-EXEC-017/index.md)
+  {{#include E-EXEC-017/SUMMARY.nav.md}}

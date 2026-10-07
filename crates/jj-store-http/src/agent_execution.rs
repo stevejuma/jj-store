@@ -81,6 +81,11 @@ fn failure(error: agents::Error) -> Error {
         agents::Error::Stale => (StatusCode::CONFLICT, "agent_selection_changed"),
         agents::Error::Conflict => (StatusCode::CONFLICT, "agent_request_identity_conflict"),
         agents::Error::Busy => (StatusCode::CONFLICT, "agent_execution_busy"),
+        agents::Error::FeedbackLimit => (StatusCode::PAYLOAD_TOO_LARGE, "agent_feedback_limit"),
+        agents::Error::FeedbackUnavailable => (
+            StatusCode::SERVICE_UNAVAILABLE,
+            "agent_feedback_unavailable",
+        ),
         agents::Error::Limit => (StatusCode::PAYLOAD_TOO_LARGE, "agent_execution_limit"),
         agents::Error::Unavailable => (
             StatusCode::SERVICE_UNAVAILABLE,

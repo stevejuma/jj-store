@@ -1,3 +1,7 @@
+import {
+  isAgentCommandRefusal,
+  agentCommandError,
+} from "./agent-execution-errors.js";
 import { openAgentActivity } from "./agent-activity-session.js";
 import * as launch from "./agent-execution-launch-context.js";
 import { AgentDiscussions } from "./agent-discussions.svelte.js";
@@ -221,21 +225,11 @@ export class AgentExecution {
         }
       }
     } catch (cause) {
-      if (
-        cause instanceof ApiError &&
-        [
-          "invalid_agent_execution",
-          "agent_selection_changed",
-          "agent_execution_busy",
-          "agent_execution_denied",
-          "agent_request_identity_conflict",
-          "agent_execution_limit",
-        ].includes(cause.code)
-      ) {
+      if (isAgentCommandRefusal(cause)) {
         this.pending = null;
         this.setupConflict =
           path === "agents/setups" && cause.code === "agent_selection_changed";
-        this.error = cause.message;
+        this.error = agentCommandError(cause);
       } else
         this.error = `${cause instanceof Error ? cause.message : "Request failed"}. The request identity is retained; check its outcome.`;
     } finally {

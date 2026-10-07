@@ -301,3 +301,26 @@ async fn local_inbox_collaboration_routes_require_local_admin_without_actor_inpu
         StatusCode::BAD_REQUEST
     );
 }
+
+#[tokio::test]
+async fn feedback_preparation_refusals_have_specific_transport_codes() {
+    use axum::response::IntoResponse;
+    for (error, expected_status, code) in [
+        (
+            agents::Error::FeedbackLimit,
+            StatusCode::PAYLOAD_TOO_LARGE,
+            "agent_feedback_limit",
+        ),
+        (
+            agents::Error::FeedbackUnavailable,
+            StatusCode::SERVICE_UNAVAILABLE,
+            "agent_feedback_unavailable",
+        ),
+    ] {
+        let response = failure(error).into_response();
+        assert_eq!(response.status(), expected_status);
+        let body = to_bytes(response.into_body(), 1024).await.unwrap();
+        let value: serde_json::Value = serde_json::from_slice(&body).unwrap();
+        assert_eq!(value["code"], code);
+    }
+}

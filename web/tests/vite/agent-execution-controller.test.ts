@@ -208,3 +208,56 @@ test("conditional setup save returns its acknowledged revision even if the follo
     manager.destroy();
   }
 });
+
+test.each([
+  ["agent_feedback_unavailable", 503, "Retry Send"],
+  ["agent_feedback_limit", 413, "128 replies or 32 KiB"],
+])(
+  "%s retains an editable prompt without uncertain dispatch",
+  async (code, status, reason) => {
+    const commands: unknown[] = [];
+    const manager = new AgentExecution(
+      () => true,
+      async (input, init) => {
+        if (String(input).endsWith("/command")) {
+          commands.push(JSON.parse(String(init?.body)));
+          return new Response(JSON.stringify({ code }), {
+            status,
+            headers: { "content-type": "application/json" },
+          });
+        }
+        return new Response(
+          JSON.stringify(
+            String(input).includes("/targets")
+              ? []
+              : {
+                  version: 1,
+                  runtime: "ready",
+                  revision: 1,
+                  setups: [],
+                  sessions: [],
+                  runners: [],
+                },
+          ),
+        );
+      },
+    );
+    try {
+      const id = "11".repeat(16);
+      manager.selected = id;
+      manager.drafts[id] = "Keep this prompt";
+      await manager.commandSession(id, {
+        action: "prompt",
+        text: "Keep this prompt",
+        max_duration_ms: 1000,
+      });
+      expect(commands).toHaveLength(1);
+      expect(manager.pending).toBeNull();
+      expect(manager.drafts[id]).toBe("Keep this prompt");
+      expect(manager.error).toContain(reason);
+      expect(manager.error).toContain("not sent");
+    } finally {
+      manager.destroy();
+    }
+  },
+);

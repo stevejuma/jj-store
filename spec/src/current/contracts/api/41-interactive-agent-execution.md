@@ -63,3 +63,10 @@ snapshot fields or identifiers are fabricated. Reads recheck current selection
 and registration, and query/response budgets fail closed. Raster JSON preserves
 validated bounded bytes and media type without fetching external URLs. This
 projection never grants write access or weakens command revalidation.
+
+Prompt preparation returns agent_feedback_unavailable (503) when its authorized
+repository discussion snapshot cannot be read, or agent_feedback_limit (413)
+when the selected new feedback exceeds 128 replies/32 KiB. Both are proven
+pre-dispatch refusals: the composer retains the draft, explains recovery and
+allows a new explicit Send. No execution intent is saved for these refusals.
+Private revision delivery metadata is not exposed as a public session field.

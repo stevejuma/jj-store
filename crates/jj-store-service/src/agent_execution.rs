@@ -20,6 +20,10 @@ pub enum Error {
     Conflict,
     #[error("agent execution busy")]
     Busy,
+    #[error("discussion context exceeds the reply or byte budget")]
+    FeedbackLimit,
+    #[error("discussion context could not be read")]
+    FeedbackUnavailable,
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
@@ -246,6 +250,8 @@ pub fn valid_commit(commit: &str) -> bool {
 pub fn native_commit(commit: &str) -> Result<CommitId> {
     commit.parse().map_err(|_| Error::Invalid)
 }
+
+pub mod context;
 
 /// Repository-selected messages and ordinary discussion revisions, never journal authority.
 #[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]

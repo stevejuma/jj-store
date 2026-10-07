@@ -3,7 +3,12 @@ import {
   qualifyNativeFeedback,
 } from "./agent-execution-discussion-api.mjs";
 import { expect } from "@playwright/test";
-import { accessible, sendPrompt } from "./agent-execution-browser-ui.mjs";
+import {
+  accessible,
+  sendPrompt,
+  sessionOption,
+  waitForConnection,
+} from "./agent-execution-browser-ui.mjs";
 
 export async function verifyAgentDiscussion(
   page,
@@ -43,6 +48,14 @@ export async function verifyAgentDiscussion(
   const title = (await read("/local/agents")).sessions.find(
     (s) => s.id === sessionId,
   ).title;
+  await sessionOption(page, "End session");
+  await expect
+    .poll(
+      async () =>
+        (await read("/local/agents")).sessions.find((s) => s.id === sessionId)
+          ?.state,
+    )
+    .toBe("ended");
   const before = (await events()).filter(
     (e) => e.payload.type === "prompt",
   ).length;
@@ -137,6 +150,44 @@ export async function verifyAgentDiscussion(
   await page.reload();
   const retained = await feedback();
   expect(retained.messages.map((m) => m.replies.length)).toEqual([1, 1]);
+  // Native repositories expose the thread screen. Registered local folders
+  // expose the qualified collaboration command API and agent inbox instead.
+  const repositoryThread = retained.messages[0].threads[0];
+  const externalFeedback =
+    "Repository discussion from another screen or client.";
+  if (profile === "native") {
+    await page.goto(
+      `${origin}/#/repos/${repository}/threads?thread=${repositoryThread}`,
+    );
+    await page
+      .getByRole("textbox", { name: "Markdown editor" })
+      .fill(externalFeedback);
+    await page
+      .getByRole("button", { name: "Send message", exact: true })
+      .click();
+  } else {
+    const detail = await api.thread(repositoryThread);
+    const external = await api.command("threads", {
+      type: "message",
+      thread_id: repositoryThread,
+      expected_thread: detail.thread.reference,
+      message_id: crypto.randomUUID().replaceAll("-", ""),
+      expected_revision: null,
+      reply_to: null,
+      body: externalFeedback,
+    });
+    expect(external.ok(), await external.text()).toBeTruthy();
+  }
+  await expect
+    .poll(async () => (await feedback()).messages[0].replies.length)
+    .toBe(2);
+  expect(
+    (await read("/local/agents")).sessions.find((s) => s.id === sessionId)
+      ?.state,
+  ).toBe("ended");
+  await page.goto(`${origin}/#/agents/sessions/${sessionId}`);
+  await sessionOption(page, "Resume session");
+  await waitForConnection(page, origin, admission, sessionId);
   const composer = workspace.getByRole("textbox", { name: "Markdown editor" });
   await composer.fill(
     "Reply briefly using the saved follow-up feedback. Do not run tools or change files.",
@@ -167,6 +218,7 @@ export async function verifyAgentDiscussion(
   const prepared = after.at(-1).payload;
   expect(prepared.text).toContain("Saved user feedback");
   expect(prepared.text).toContain("Saved assistant feedback");
+  expect(prepared.text).toContain(externalFeedback);
   for (const message of retained.messages)
     expect(prepared.text).toContain(message.replies[0].revision.id);
   // Changing committed feedback cannot alter a retained prompt on exact retry.
@@ -191,6 +243,55 @@ export async function verifyAgentDiscussion(
   expect((await events()).filter((e) => e.payload.type === "prompt")).toEqual(
     after,
   );
+  await composer.fill(
+    "Reply with second delivery accepted. Do not run tools or change files.",
+  );
+  await sendPrompt(page, workspace, sessionId, origin, admission);
+  await expect
+    .poll(
+      async () =>
+        (await read("/local/agents")).sessions.find((s) => s.id === sessionId)
+          ?.state,
+      { timeout: 180000 },
+    )
+    .toBe("idle");
+  const second = (await events())
+    .filter((e) => e.payload.type === "prompt")
+    .at(-1).payload.text;
+  expect(second).toContain("New feedback after dispatch");
+  expect(second).not.toContain("Saved user feedback");
+  expect(second).not.toContain("Saved assistant feedback");
+  expect(second).not.toContain(externalFeedback);
+  const originalReply = retained.messages[0].replies[0];
+  const latestThread = await api.thread(originalThread);
+  const edit = await api.command("threads", {
+    type: "message",
+    thread_id: originalThread,
+    expected_thread: latestThread.thread.reference,
+    message_id: originalReply.message.message_id,
+    expected_revision: originalReply.revision,
+    reply_to: originalReply.message.reply_to,
+    body: "Edited feedback delivered once.",
+  });
+  expect(edit.ok(), await edit.text()).toBeTruthy();
+  await composer.fill(
+    "Reply with edited delivery accepted. Do not run tools or change files.",
+  );
+  await sendPrompt(page, workspace, sessionId, origin, admission);
+  await expect
+    .poll(
+      async () =>
+        (await read("/local/agents")).sessions.find((s) => s.id === sessionId)
+          ?.state,
+      { timeout: 180000 },
+    )
+    .toBe("idle");
+  const third = (await events())
+    .filter((e) => e.payload.type === "prompt")
+    .at(-1).payload.text;
+  expect(third).toContain("Edited feedback delivered once");
+  expect(third).not.toContain("New feedback after dispatch");
+  expect(third).not.toContain("Saved assistant feedback");
   console.log(
     `${profile === "native" ? "Native WorkStore" : "Registered-folder"} inbox: exact replies/reactions; no implicit prompt; next Send context and reload persistence.`,
   );

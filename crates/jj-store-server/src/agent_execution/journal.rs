@@ -15,12 +15,22 @@ pub(super) struct SavedSession {
     pub workspace_ready: bool,
     #[serde(default)]
     pub pending_capture_end: Option<u64>,
+    #[serde(default)]
+    pub delivered_replies: std::collections::BTreeSet<context::ReplyRevision>,
+    #[serde(default)]
+    pub context_replies: std::collections::BTreeSet<context::ReplyRevision>,
+    #[serde(default)]
+    pub context_generation: u64,
+    #[serde(default)]
+    pub initial_context_delivered: bool,
 }
 #[derive(Clone, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub(super) struct Intent {
     pub digest: String,
     pub outcome: Outcome,
+    #[serde(default)]
+    pub prompt: Option<super::delivery::PromptDelivery>,
 }
 #[derive(Clone, Default, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]

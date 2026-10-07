@@ -1,6 +1,7 @@
 //! Local device execution; journal admission precedes every process side effect.
 mod avatar;
 mod commands;
+mod delivery;
 pub mod driver;
 mod feedback;
 mod journal;
@@ -202,6 +203,7 @@ impl Supervisor {
                 request,
                 Intent {
                     digest,
+                    prompt: None,
                     outcome: outcome.clone(),
                 },
             );
@@ -222,25 +224,8 @@ impl Supervisor {
     fn append(&self, id: &str, mut payload: Value) -> Result<()> {
         payload["controllerSessionId"] = json!(id);
         self.update(|s| {
-            let saved = s.sessions.get_mut(id).ok_or(Error::Invalid)?;
-            if saved.events.len() >= 8192 {
-                return Err(Error::Limit);
-            }
-            saved.view.last_sequence += 1;
-            let observed_at_millis = SystemTime::now()
-                .duration_since(UNIX_EPOCH)
-                .ok()
-                .and_then(|elapsed| u64::try_from(elapsed.as_millis()).ok());
-            if let Some(now) = observed_at_millis {
-                saved.view.last_activity_at_millis =
-                    Some(saved.view.last_activity_at_millis.unwrap_or(0).max(now));
-            }
-            saved.events.push(Event {
-                sequence: saved.view.last_sequence,
-                observed_at_millis,
-                payload,
-                committed: false,
-            });
+            delivery::observe(s, id, &payload)?;
+            delivery::append(s, id, payload)?;
             Ok(())
         })
     }

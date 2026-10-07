@@ -4,57 +4,7 @@ use jj_store_wal::publication::*;
 #[tokio::test]
 async fn saved_agent_replies_and_reactions_survive_restart_and_keep_exact_targets() {
     let (root, repo) = fixture();
-    let batch = SanitizedObservationBatchV1 {
-        schema_version:1, batch_id:CaptureBatchId::new([81;16]), integration:IntegrationId::OwnedController,
-        source_instance_id:SourceInstanceId::new([82;16]), sanitizer_version:"test".into(),
-        representation:SanitizedRepresentation::SanitizedNative,
-        observations: [serde_json::json!({"type":"prompt","controllerSessionId":"live","requestId":"turn","text":"Question"}),
-            serde_json::json!({"type":"record","controllerSessionId":"live","requestId":"turn","assistantText":"Answer"})]
-            .into_iter().enumerate().map(|(i,payload)| SanitizedObservationV1 {
-                observation_id:ObservationId::new([i as u8+1;16]),source_sequence:i as u64+1,
-                occurred_at_millis:Some(10+i as i64),source_kind:SourceKind::Controller,
-                source_trust:SourceTrust::AuthenticatedController,
-                payload:SanitizedPayloadV1::new(SanitizedMediaType::Json,&serde_json::to_vec(&payload).unwrap()).unwrap()
-            }).collect(),
-    };
-    let profile = NormalizerProfileV1::acp_controller_v2();
-    repo.apply_agent_command(&LocalAgentRequest {
-        version: 1,
-        request_id: m::RequestId::new([81; 16]),
-        command: LocalAgentCommand::Capture {
-            profile,
-            batch: Box::new(batch),
-        },
-    })
-    .await
-    .unwrap();
-    let agents = repo.agent_store().await.unwrap();
-    let selected = agents
-        .reads()
-        .list_sessions(None, 20)
-        .await
-        .unwrap()
-        .selections[0]
-        .1;
-    let AgentObjectV1::SessionSnapshot(session) = agents.object(selected).await.unwrap() else {
-        panic!()
-    };
-    let mut rows = Vec::new();
-    for batch in &session.event_batches {
-        let AgentObjectV1::EventBatch(events) = agents.object(*batch).await.unwrap() else {
-            panic!()
-        };
-        for event in events.events {
-            if let AgentEventV1::MessageCompleted {
-                session_id,
-                message_id,
-                ..
-            } = event
-            {
-                rows.push((message_id.to_string(), session_id, message_id));
-            }
-        }
-    }
+    let (_, _, rows) = capture(&repo).await;
     let feedback = repo.agent_feedback(&rows).await.unwrap();
     assert_eq!(feedback.messages.len(), 2);
     for (i, message) in feedback.messages.iter().enumerate() {
@@ -220,4 +170,65 @@ async fn saved_agent_replies_and_reactions_survive_restart_and_keep_exact_target
             .len(),
         0
     );
+}
+
+pub(super) async fn capture(
+    repo: &LocalRepository,
+) -> (
+    AgentSessionId,
+    AgentObjectRef,
+    Vec<(String, AgentSessionId, MessageId)>,
+) {
+    let batch = SanitizedObservationBatchV1 {
+        schema_version:1, batch_id:CaptureBatchId::new([81;16]), integration:IntegrationId::OwnedController,
+        source_instance_id:SourceInstanceId::new([82;16]), sanitizer_version:"test".into(),
+        representation:SanitizedRepresentation::SanitizedNative,
+        observations: [serde_json::json!({"type":"prompt","controllerSessionId":"live","requestId":"turn","text":"Question"}),
+            serde_json::json!({"type":"record","controllerSessionId":"live","requestId":"turn","assistantText":"Answer"})]
+            .into_iter().enumerate().map(|(i,payload)| SanitizedObservationV1 {
+                observation_id:ObservationId::new([i as u8+1;16]),source_sequence:i as u64+1,
+                occurred_at_millis:Some(10+i as i64),source_kind:SourceKind::Controller,
+                source_trust:SourceTrust::AuthenticatedController,
+                payload:SanitizedPayloadV1::new(SanitizedMediaType::Json,&serde_json::to_vec(&payload).unwrap()).unwrap()
+            }).collect(),
+    };
+    let profile = NormalizerProfileV1::acp_controller_v2();
+    repo.apply_agent_command(&LocalAgentRequest {
+        version: 1,
+        request_id: m::RequestId::new([81; 16]),
+        command: LocalAgentCommand::Capture {
+            profile,
+            batch: Box::new(batch),
+        },
+    })
+    .await
+    .unwrap();
+    let agents = repo.agent_store().await.unwrap();
+    let selected = agents
+        .reads()
+        .list_sessions(None, 20)
+        .await
+        .unwrap()
+        .selections[0]
+        .1;
+    let AgentObjectV1::SessionSnapshot(session) = agents.object(selected).await.unwrap() else {
+        panic!()
+    };
+    let mut rows = Vec::new();
+    for batch in &session.event_batches {
+        let AgentObjectV1::EventBatch(events) = agents.object(*batch).await.unwrap() else {
+            panic!()
+        };
+        for event in events.events {
+            if let AgentEventV1::MessageCompleted {
+                session_id,
+                message_id,
+                ..
+            } = event
+            {
+                rows.push((message_id.to_string(), session_id, message_id));
+            }
+        }
+    }
+    (session.session_id, selected, rows)
 }

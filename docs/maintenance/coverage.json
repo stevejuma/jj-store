@@ -65,8 +65,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed local companion-pinned inbox pages, exact device actors, source visibility and shared typed command receipts",
-      "fingerprint": "c171f48a828d0bbc48e902b8cbbe0fb62f2f88f48bfbb27630499b70b24ad1e9"
+      "reason": "Authorized single-snapshot agent context joins exact message discussions and primary threads, selecting new immutable revisions under bounded reply and byte limits.",
+      "fingerprint": "215c66c6b2091e460570d306e60afde9781ee2adf3e4adc2c50d027e9999c8df"
     }
   },
   {
@@ -96,8 +96,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed new local inbox reads and execution profile selection; installation configuration and credential handling unchanged",
-      "fingerprint": "3d0d9735e51380eea7aa3a8a16fa4cc74a5a6aeca488ad8ec2900ddac82e2a25"
+      "reason": "Private delivery journals retain queued batches and exact started acknowledgements, with generation-scoped reservations and cancellation-safe initial continuation context.",
+      "fingerprint": "5353294b9d91a0d6286a366d8732f3088a7be8a47e117a43d372b970fdc9e64c"
     }
   },
   {
@@ -122,8 +122,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed LocalTrusted Admin inbox collaboration snapshot/query/detail/command/status/asset routes and signed registration-bound cursors",
-      "fingerprint": "e6ff3a225fc1c8ed4222253ea252379e9cf6c1f1e8f69a940da92389e1a7fe4c"
+      "reason": "Agent prompt preparation exposes specific pre-dispatch feedback read and budget refusal codes. Public session schemas and ordinary collaboration transport remain unchanged.",
+      "fingerprint": "a243761936c2f0fcace452ad5e5411806ede664656a0b028903fcd0e538060f5"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed runner-independent ordinary replies, shared nested reply presentation and independent discussion freshness; public API and repository publication authority remain unchanged",
-      "fingerprint": "fda078bd2c77251041892883d829d23765b71ad183cca5329fd6f2400228f178"
+      "reason": "Reviewed incremental context refusal errors and readable disabled reply/edit drawers. The existing Design Core option is enabled when status or reply context is present; editor and Send stay disabled during saves.",
+      "fingerprint": "4b0675c888312f25995c1c8e734a7c114f31793ea1c89b6e89e35c2be8dc176d"
     }
   },
   {

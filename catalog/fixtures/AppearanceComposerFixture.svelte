@@ -8,6 +8,8 @@
   import CommunityChatComposer from "../../web/src/lib/ui/community-chat-composer/CommunityChatComposer.svelte";
   import { createMemoryStoryStorage } from "./memory-storage.js";
 
+  let { pending = false, busy = false }: { pending?: boolean; busy?: boolean } =
+    $props();
   const appearance = ownAppearance(
     createAppearanceStore(createMemoryStoryStorage()),
   );
@@ -35,6 +37,21 @@
   >
   <CommunityChatComposer
     bind:value
+    disabled={pending}
+    {busy}
+    context={pending || busy
+      ? {
+          kind: "transcript-reply",
+          target: { authorName: "You", content: "Retained reply context" },
+        }
+      : undefined}
+    composerStatus={pending
+      ? {
+          type: "warning",
+          message:
+            "Check the original reply status before saving another reply.",
+        }
+      : undefined}
     placeholder="Write a message"
     onSubmit={async () => {}}
   />

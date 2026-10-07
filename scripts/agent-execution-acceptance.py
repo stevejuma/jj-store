@@ -159,7 +159,7 @@ with tempfile.TemporaryDirectory(prefix='jse-', dir='/private/tmp') as temporary
                 print(runner + ': native isolated edit, source preservation, AgentStore publication; ' + str(permissions) + ' permission decisions', flush=True)
             if args.browser:
                 assert args.web, 'browser qualification needs a built web root'
-                subprocess.run(['node', str(Path(__file__).with_name('agent-execution-browser.mjs').resolve()), origin, repository], env=environment, check=True, timeout=300)
+                subprocess.run(['node', str(Path(__file__).with_name('agent-execution-browser.mjs').resolve()), origin, repository], env=environment, check=True, timeout=600)
                 local_folder = root / 'local-source'
                 run(args.jj, ['git', 'init', '--colocate', str(local_folder)], root)
                 local_folder.joinpath('local-source.txt').write_text('Retained local source\n')
@@ -170,7 +170,7 @@ with tempfile.TemporaryDirectory(prefix='jse-', dir='/private/tmp') as temporary
                     expected_revision=bindings['revision'], path=str(local_folder), name='Local inbox qualification'))
                 assert registered['status'] == 'committed'
                 local_repository = registered['binding']['repository']
-                subprocess.run(['node', str(Path(__file__).with_name('agent-execution-browser.mjs').resolve()), origin, local_repository, 'local_jj_git'], env=environment, check=True, timeout=300)
+                subprocess.run(['node', str(Path(__file__).with_name('agent-execution-browser.mjs').resolve()), origin, local_repository, 'local_jj_git'], env=environment, check=True, timeout=600)
                 assert local_folder.joinpath('local-source.txt').read_text() == 'Dirty local source preserved\n'
 
             before = wait(origin, lambda v: all(s['published_sequence'] == s['last_sequence'] for s in v['sessions']))
@@ -201,6 +201,11 @@ with tempfile.TemporaryDirectory(prefix='jse-', dir='/private/tmp') as temporary
                 wait(origin, lambda v: next(s for s in v['sessions'] if s['id'] == session)['state'] in ['idle', 'interrupted'])
                 retained = request(origin, '/local/agents/events?session=' + session)['events']
                 assert sum(e['payload'].get('type') == 'prompt' for e in retained) == old_prompts
+                if action == 'resume' and before_feedback[session]['messages']:
+                    command(origin, session, dict(action='prompt', text='Reply with restart delivery accepted. Do not run tools or change files.', max_duration_ms=180000))
+                    wait(origin, lambda v: next(s for s in v['sessions'] if s['id'] == session)['state'] == 'idle')
+                    latest = [e['payload'] for e in request(origin, '/local/agents/events?session=' + session)['events'] if e['payload'].get('type') == 'prompt'][-1]
+                    assert 'Committed human discussion' not in latest['text']
                 command(origin, session, dict(action='end'))
                 wait(origin, lambda v: next(s for s in v['sessions'] if s['id'] == session)['state'] == 'ended')
                 print('cold restart retained exact history; explicit ' + action + ' sent no prompt for ' + selected['title'], flush=True)

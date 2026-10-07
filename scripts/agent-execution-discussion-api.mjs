@@ -38,13 +38,24 @@ export function discussionApi(page, origin, admission, repository, profile) {
       ),
     async thread(id) {
       if (!local) return get(`/repos/${repository}/threads/${id}`);
-      const selection = await get(`${root}/snapshot`);
-      const r = await post(`${root}/thread`, {
-        metadata_commit: selection.snapshot.metadata_commit,
-        thread_id: id,
-      });
-      expect(r.ok(), await r.text()).toBeTruthy();
-      return r.json();
+      // Publication may advance the companion pin between these two reads.
+      // Refresh only this read selection; mutation requests are never retried here.
+      for (let attempt = 0; attempt < 3; attempt++) {
+        const selection = await get(`${root}/snapshot`);
+        const r = await post(`${root}/thread`, {
+          metadata_commit: selection.snapshot.metadata_commit,
+          thread_id: id,
+        });
+        const value = await r.json();
+        if (
+          r.status() === 409 &&
+          value.code === "stale_local_metadata" &&
+          attempt < 2
+        )
+          continue;
+        expect(r.ok(), JSON.stringify(value)).toBeTruthy();
+        return value;
+      }
     },
   };
 }

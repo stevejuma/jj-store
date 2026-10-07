@@ -132,12 +132,18 @@ restarts. You can draft a reply before its original message is published, then
 save once it is available.
 
 Saving a reply or reaction does not run the agent. The next explicit Send reads
-committed, visible replies as follow-up context, with their original message and
-exact reply revisions. Deleted messages and tombstoned discussions are omitted.
-If feedback cannot be read or exceeds the bounded context allowance, Send keeps
-your draft and reports the failure. Unknown reply outcomes keep the original
-request for Check reply status or Retry same reply; successful recovery clears
-the resolved error. Reactions themselves are not treated as instructions.
+new or edited committed replies as follow-up context, including human discussion
+in the session's linked primary repository thread. Replies added from another
+screen or client are included. Each revision is delivered once, with its author,
+parent relationship and original message/thread context. Edits become eligible
+again. Delivery progress survives resume and service restart; queued prompts
+reserve their selected replies. Deleted messages and tombstoned discussions are
+omitted. Ordinary replies and reactions work while the agent is stopped or
+disconnected; only explicit agent Send needs a running session. If feedback
+cannot be read or exceeds the bounded context allowance, Send keeps your draft
+and reports the failure. Unknown reply outcomes keep the original request for
+Check reply status or Retry same reply; successful recovery clears the resolved
+error. Reactions themselves are not treated as instructions.
 
 Inbox reply/reaction writes support registered local folders and the qualified
 native WorkStore-home profile. Native code repositories still require

@@ -208,6 +208,7 @@
     density="spacious"
     elevation="none"
     disabled={blocked}
+    interactiveDrawerWhenDisabled={Boolean(status || context)}
     {status}
     statusPosition="top"
     aria-label={ariaLabel}
