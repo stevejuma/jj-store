@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
   activityRows,
+  openingReplayRowIds,
   runtimeChoices,
   queuedRequests,
 } from "../src/lib/ui/store-agent-execution/presentation.js";
@@ -145,4 +146,70 @@ test("message times retain first observation across chunks and never fabricate l
   );
   assert.equal(activityRows([chunk(1, NaN)])[0].observedAtMillis, undefined);
   assert.deepEqual(activityRows([user, chunk(2, 2000), chunk(3, 3000)]), rows);
+});
+
+test("resume history is not a new message or feedback target", () => {
+  const chunk = (sequence: number, requestId: string, content: string) => ({
+    ...event(sequence, {
+      type: "activity",
+      controllerSessionId: "session",
+      requestId,
+      update: {
+        sessionUpdate: "agent_message_chunk",
+        content: { text: content },
+      },
+    }),
+    observed_at_millis: sequence * 1000,
+  });
+  const original = [
+    event(1, { type: "prompt", requestId: "first", text: "Help?" }),
+    chunk(2, "first", "Ready to help."),
+    event(3, {
+      type: "record",
+      requestId: "first",
+      record: { status: "completed" },
+    }),
+    event(4, { type: "prompt", requestId: "second", text: "Workspace?" }),
+    chunk(5, "second", "$WORKSPACE"),
+  ];
+  const replay = [
+    chunk(6, "open-session", "Ready to help."),
+    chunk(7, "open-session", "$WORKSPACE"),
+    event(8, {
+      type: "activity",
+      controllerSessionId: "session",
+      requestId: "open-session",
+      update: { sessionUpdate: "plan", entries: [] },
+    }),
+  ];
+  const subsequent = [
+    event(9, { type: "prompt", requestId: "third", text: "License?" }),
+    chunk(10, "third", "Checking "),
+    chunk(11, "third", "now."),
+    // A different session's opening ID is not a replay marker for this session.
+    chunk(12, "open-other", "Genuine streaming text"),
+  ];
+  const rows = activityRows([...original, ...replay, ...subsequent]);
+  assert.deepEqual(rows.slice(0, original.length), activityRows(original));
+  assert.equal(
+    rows.some((row) => row.request === "open-session"),
+    false,
+  );
+  assert.equal(
+    rows.find((row) => row.id === "third/assistant")?.text,
+    "Checking now.",
+  );
+  assert.equal(
+    rows.find((row) => row.id === "third/assistant")?.observedAtMillis,
+    10000,
+  );
+  assert.equal(
+    rows.find((row) => row.id === "open-other/assistant")?.text,
+    "Genuine streaming text",
+  );
+  assert.equal(replay.length, 3, "projection does not mutate journal history");
+  assert.deepEqual(
+    openingReplayRowIds([...original, ...replay, ...subsequent]),
+    ["open-session/assistant"],
+  );
 });

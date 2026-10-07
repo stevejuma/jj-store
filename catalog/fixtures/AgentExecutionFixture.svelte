@@ -1,7 +1,7 @@
 <script lang="ts">
   import { fixtureExecutionStatus } from "./agent-execution-status.js";
   import { eventsResponse } from "./agent-execution-events.js";
-  import { agentDiscussionFixture } from "./agent-discussion-fixture.js";
+  import * as discussion from "./agent-discussion-fixture.js";
   import AgentExecutionCommandOutput from "./AgentExecutionCommandOutput.svelte";
   import { commandReceipts } from "./agent-command-receipts.js";
   import { revisionFixture } from "./agent-execution-revisions.js";
@@ -50,6 +50,7 @@
     agentReplies = false,
     unknownReply = false,
     feedbackWriteUnavailable = false,
+    replayHistory = false,
     revisionIndexRequired = false,
     status = "Online",
   }: {
@@ -57,6 +58,7 @@
     agentReplies?: boolean;
     unknownReply?: boolean;
     feedbackWriteUnavailable?: boolean;
+    replayHistory?: boolean;
     fail?: boolean;
     staleSave?: boolean;
     preparing?: boolean;
@@ -140,7 +142,7 @@
     revisionFixture(repository, operation, revisionIndexRequired),
   );
   const discussionFixture = untrack(() =>
-    agentDiscussionFixture(
+    discussion.agentDiscussionFixture(
       agentReplies,
       unknownReply,
       feedbackWriteUnavailable,
@@ -213,6 +215,7 @@
                 retainedError,
                 longHistory,
                 chatFeedback,
+                replayHistory,
               ),
             );
           }
@@ -238,6 +241,7 @@
   let route = $state<StoreRoute>(agentsRoute());
   const shell = untrack(() => createStoreShell(undefined, false));
   untrack(() => {
+    if (replayHistory) discussion.seedReplayDrafts(manager.discussions.drafts);
     manager.onNavigate = (view, id, relatedId) =>
       (route = agentsRoute(view, id, relatedId));
     if (status === "Unknown") manager.value = fixtureStatus;

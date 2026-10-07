@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed registered-folder inbox transport profile adoption, retained replies and exact receipt recovery; shared Community message presentation remains unchanged",
-      "fingerprint": "b35088e5aee4b0138e6cf09e3fc7c17d82a44a3a4aa4c4c3c0789e85b6a853e3"
+      "reason": "Reviewed exact session-load replay exclusion and explicit retained reply draft recovery; canonical message targets, ThreadStore saves, receipts and execution dispatch remain unchanged",
+      "fingerprint": "9867759b0c26b33c969bc08e14f577dc1178e34794169c408567e75ce9bd8f43"
     }
   },
   {

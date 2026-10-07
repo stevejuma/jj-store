@@ -204,6 +204,14 @@ explicit Send, committed replies become follow-up context; reaction values
 themselves are not treated as authored instructions. Reply/feedback failures
 retain drafts and exact pending collaboration identities beside their controls.
 
+ACP session-load history under the exact supervised opening request does not
+create new chat messages or feedback targets. Original prompt message identities
+and observation times remain unchanged; raw history is retained. A reply draft
+left on a replay row by an earlier UI stays visible with an explicit original
+published-message picker. Restoring it never overwrites another draft, moves an
+unresolved collaboration request or dispatches a save/prompt. The original
+message composer performs any subsequent explicit save against its exact target.
+
 Repository feedback availability is shown beside the reply composer. Unsupported
 native code repositories retain editable reply drafts while Save and reaction
 actions are disabled. Existing replies stay readable. Native WorkStore homes

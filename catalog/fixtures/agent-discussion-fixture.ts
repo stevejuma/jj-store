@@ -3,6 +3,14 @@ import { fixtureJsonResponse as json } from "./agent-execution-session.js";
 import { targetKey } from "../../web/src/lib/collaboration/thread-presentation.js";
 import type { Model } from "../../web/src/lib/controller/thread-types.js";
 
+export function seedReplayDrafts(drafts: Record<string, string>) {
+  const session = "44".repeat(16);
+  drafts[`${session}:open-${session}/assistant`] =
+    "Is there a license in the repo?";
+  drafts[`${session}:${"55".repeat(16)}/user`] =
+    "Keep the existing prompt reply";
+}
+
 export function agentDiscussionFixture(
   enabled: boolean,
   unknownFirst = false,

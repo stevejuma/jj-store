@@ -13,6 +13,7 @@
     row,
     author,
     children,
+    openReply = false,
   }: {
     manager: AgentExecution;
     row: {
@@ -23,6 +24,7 @@
     };
     author: CommunityMemberModel;
     children?: Snippet;
+    openReply?: boolean;
   } = $props();
   const session = $derived(manager.session!);
   const discussions = $derived(manager.discussions);
@@ -33,6 +35,9 @@
     discussions.values[session.id]?.write_unavailable,
   );
   let expanded = $state(false);
+  $effect(() => {
+    if (openReply) expanded = true;
+  });
   $effect(() => {
     discussions.drafts[key] ??= "";
   });

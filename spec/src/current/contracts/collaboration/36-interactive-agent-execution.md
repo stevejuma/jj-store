@@ -102,6 +102,12 @@ ThreadStore human message revisions; reactions retain the original exact
 AgentStore target and server-derived actor. Pending capture supports drafting
 but cannot receive durable feedback until its original record is selected.
 
+ACP session-load history updates scoped to the supervised opening request do not
+create new canonical user/assistant messages. Inbox projection excludes those
+replay rows instead of assigning fabricated feedback targets. Retained reply
+drafts require explicit selection of a validated original message; restoring a
+draft never saves feedback or dispatches execution.
+
 The next explicit Prompt reads authorized committed, visible discussion replies
 from one captured repository selection, with bounded object, reply and byte
 budgets. Target membership is revalidated; tombstoned threads/messages and

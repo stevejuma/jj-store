@@ -4,13 +4,36 @@ export function eventsResponse(
   retainedError = false,
   longHistory = false,
   feedback?: "completed" | "working",
+  replayHistory = false,
 ): {
   version: number;
   next: null;
   events: AgentEvent[];
 } {
   if (feedback)
-    return { version: 1, next: null, events: feedbackEvents(feedback) };
+    return {
+      version: 1,
+      next: null,
+      events: [
+        ...feedbackEvents(feedback),
+        ...(replayHistory
+          ? ["Ready to help.", "$WORKSPACE"].map((content, index) => ({
+              sequence: 7 + index,
+              observed_at_millis: 1791324004000 + index * 1000,
+              committed: true,
+              payload: {
+                type: "activity",
+                controllerSessionId: "44".repeat(16),
+                requestId: `open-${"44".repeat(16)}`,
+                update: {
+                  sessionUpdate: "agent_message_chunk",
+                  content: { text: content },
+                },
+              },
+            }))
+          : []),
+      ],
+    };
   return {
     version: 1,
     next: null,

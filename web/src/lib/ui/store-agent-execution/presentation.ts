@@ -12,6 +12,28 @@ export type ActivityRow = {
   sequence: number;
   observedAtMillis?: number;
 };
+function openingReplay(value: Record<string, unknown>) {
+  const session = text(value.controllerSessionId);
+  return (
+    value.type === "activity" &&
+    !!session &&
+    value.requestId === `open-${session}`
+  );
+}
+/** Old UI versions exposed a reply composer on this synthetic replay row. */
+export function openingReplayRowIds(events: readonly AgentEvent[]) {
+  return [
+    ...new Set(
+      events.flatMap((event) => {
+        const value = object(event.payload);
+        return openingReplay(value) &&
+          object(value.update).sessionUpdate === "agent_message_chunk"
+          ? [`${text(value.requestId)}/assistant`]
+          : [];
+      }),
+    ),
+  ];
+}
 export function activityRows(events: readonly AgentEvent[]): ActivityRow[] {
   const rows = new Map<string, ActivityRow>();
   for (const event of events) {
@@ -19,6 +41,9 @@ export function activityRows(events: readonly AgentEvent[]): ActivityRow[] {
       request = text(value.requestId),
       update = object(value.update),
       type = text(value.type);
+    // session/load replays history under the opening request. Those chunks
+    // have no new canonical message identity and must not become chat rows.
+    if (openingReplay(value)) continue;
     const row = (
       id: string,
       kind: ActivityRow["kind"],
