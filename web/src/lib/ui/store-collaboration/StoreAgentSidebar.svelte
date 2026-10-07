@@ -3,6 +3,7 @@
   import type { StoreController } from "../../controller/contracts.js";
   import CommunityProjectsColumnAlert from "../community-projects/CommunityProjectsColumnAlert.svelte";
   import { agentMember } from "../../collaboration/presentation.js";
+  import { managedRecordedAgent } from "../../collaboration/managed-agent.js";
   import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
   import StoreAgentSessionMenu from "./StoreAgentSessionMenu.svelte";
   import StoreDiscussionSheet from "../store-discussion/StoreDiscussionSheet.svelte";
@@ -27,7 +28,14 @@
   } = $props();
   const agent = $derived(
     controller?.state.agentSession
-      ? agentMember(controller.state.agentSession.session)
+      ? agentMember(
+          controller.state.agentSession.session,
+          managedRecordedAgent(
+            controller.state.repository.id,
+            controller.state.agentSession.session,
+            controller.execution?.value?.sessions,
+          ),
+        )
       : undefined,
   );
   const failure = $derived(error || controller?.state.status.error);

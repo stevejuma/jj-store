@@ -9,6 +9,7 @@
   import StoreCollaborationSkeleton from "./StoreCollaborationSkeleton.svelte";
   import StoreAgentSessionRow from "./StoreAgentSessionRow.svelte";
   import StoreAgentExecutionDirectory from "../store-agent-execution/StoreAgentExecutionDirectory.svelte";
+  import { managedRecordedAgent } from "../../collaboration/managed-agent.js";
   import "./store-collaboration.css";
 
   let { controller }: { controller: StoreController } = $props();
@@ -79,6 +80,11 @@
               <StoreAgentSessionRow
                 {session}
                 {association}
+                managed={managedRecordedAgent(
+                  state.repository.id,
+                  session,
+                  controller.execution?.value?.sessions,
+                )}
                 collection
                 selectedId={state.route.agentSessionId}
                 onSelect={controller.actions.selectAgentSession}

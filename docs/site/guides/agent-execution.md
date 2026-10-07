@@ -151,6 +151,16 @@ chat's repository at its retained operation. Drag the list boundary to resize
 it, or focus the boundary and use Arrow keys, Home and End. Double-click resets
 its width. The directory's View sessions and Refresh agents icons have tooltips.
 
+Repository history uses the managed session's captured name and avatar when its
+exact recorded session ID is associated with this installation. Existing
+sessions retain that identity after the saved agent is edited or deleted;
+unmatched captures keep the integration label. The row shows its last recorded
+activity before the lifecycle state when available. Workspace choices use the
+same captured avatar for an exact workspace association. Inbox repository icons
+name the repository and open the retained workspace at its operation, including
+before the first turn. These links and presentation controls never start an
+agent or change repository history.
+
 Message clocks use the first available recorded observation time. Older saved
 events written before timestamp capture have no exact time to recover; their
 group shows Time not recorded instead of repeating an unknown clock on each

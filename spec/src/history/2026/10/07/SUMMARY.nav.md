@@ -18,3 +18,7 @@
   {{#include E-EXEC-018/SUMMARY.nav.md}}
 - [E-EXEC-019](E-EXEC-019/index.md)
   {{#include E-EXEC-019/SUMMARY.nav.md}}
+- [E-EXEC-020](E-EXEC-020/index.md)
+  {{#include E-EXEC-020/SUMMARY.nav.md}}
+- [E-EXEC-021](E-EXEC-021/index.md)
+  {{#include E-EXEC-021/SUMMARY.nav.md}}

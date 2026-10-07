@@ -7316,6 +7316,21 @@ export interface components {
       /** @default null */
       setup_id: string | null;
       /**
+       * @description Read-only capture-normalizer aliases for this installation-owned session.
+       * @default []
+       */
+      recorded_session_ids: components["schemas"]["AgentSessionId"][];
+      /**
+       * @description Read-only name from the retained ready workspace proof, absent after cleanup.
+       * @default null
+       */
+      workspace_name: string | null;
+      /**
+       * @description Operation from that ready workspace proof, including creation before the first turn.
+       * @default null
+       */
+      workspace_operation: components["schemas"]["OperationId"] | null;
+      /**
        * @description Read-only live supervisor projection, never journal authority.
        * @default false
        */

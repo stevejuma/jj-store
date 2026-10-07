@@ -21,6 +21,15 @@ setup does not alter existing session snapshots. Connected is projected from a
 live supervised process and completed handshake, never accepted from a browser
 mutation or reconstructed from persisted idle/running history.
 
+JST-API-001 and JST-API-006 include read-only recorded_session_ids,
+workspace_name and workspace_operation on admitted local session views. The
+capture normalizer's exact committed aliases supply recorded IDs; a ready
+retained workspace proof supplies its name and operation. Cleanup omits
+workspace values. Status clears stored projections and recomputes them for
+legacy sessions after independent repository admission. These fields support
+exact UI identity/navigation joins; they add no launch/command inputs or
+canonical repository fields.
+
 Optional read-only last_activity_at_millis records the device's observation time
 of the latest retained execution event. It persists across restart, defaults to
 unknown in legacy journals and never advances from status reads or setup saves.

@@ -55,18 +55,18 @@
       chat.querySelector('[data-ui-part="presence"]'),
     ).toHaveAttribute("data-presence", "offline");
     const link = c.getByRole("link", {
-      name: "Open workspace repository for Repository helper",
+      name: "Open Fixture repository",
     });
     await expect(link).toHaveAttribute(
       "href",
-      `#/repos/${"11".repeat(16)}/files?at_op=${"22".repeat(64)}`,
+      `#/repos/${"11".repeat(16)}/files?at_op=${"22".repeat(64)}&workspace=agent-${"44".repeat(16)}`,
     );
     await expect(chat.contains(link)).toBe(false);
     await expect(link.textContent?.trim()).toBe("");
     link.focus();
     await expect(
       await within(document.body).findByRole("tooltip"),
-    ).toHaveTextContent("Open workspace repository");
+    ).toHaveTextContent("Open Fixture repository");
     await expect(
       c.queryByLabelText("Session commands"),
     ).not.toBeInTheDocument();

@@ -14,6 +14,9 @@ export function fixtureSession(input: {
   return {
     id: "44".repeat(16),
     setup_id: "helper",
+    recorded_session_ids: ["a1".repeat(16)],
+    workspace_name: "agent-" + "44".repeat(16),
+    workspace_operation: input.operation,
     connected: !["Offline", "Starting"].includes(input.status),
     repository: input.repository,
     target_id: "fixture",

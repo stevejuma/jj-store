@@ -21,26 +21,38 @@ export function sessionItems(
   status: AgentStatus | null,
   agent?: string | null,
   unknown = false,
+  repositories: readonly { id: string; name: string }[] = [],
 ) {
-  return associatedSessions(status, agent).map((session) => ({
-    id: session.id,
-    author: agentMember({
+  return associatedSessions(status, agent).map((session) => {
+    const repositoryName =
+      repositories.find((r) => r.id === session.repository)?.name ??
+      `repository ${session.repository.slice(0, 12)}`;
+    const query = new URLSearchParams({
+      at_op: session.workspace_name
+        ? (session.workspace_operation ?? session.operation)
+        : session.operation,
+    });
+    if (session.workspace_name) query.set("workspace", session.workspace_name);
+    return {
       id: session.id,
-      name: session.title,
-      avatar: session.avatar,
-    }),
-    context: `${session.setup_id ? (status?.setups.find((s) => s.id === session.setup_id)?.name ?? "Deleted agent") : "Unassigned"} · ${session.runner}`,
-    lastActivityAt:
-      typeof session.last_activity_at_millis === "number" &&
-      Number.isSafeInteger(session.last_activity_at_millis) &&
-      session.last_activity_at_millis > 0 &&
-      session.last_activity_at_millis <= 8_640_000_000_000_000
-        ? session.last_activity_at_millis / 1_000
-        : undefined,
-    status: sessionStatus(session, unknown),
-    repository: {
-      href: `#/repos/${encodeURIComponent(session.repository)}/files?${new URLSearchParams({ at_op: session.operation })}`,
-      label: `Open workspace repository for ${session.title}`,
-    },
-  }));
+      author: agentMember({
+        id: session.id,
+        name: session.title,
+        avatar: session.avatar,
+      }),
+      context: `${session.setup_id ? (status?.setups.find((s) => s.id === session.setup_id)?.name ?? "Deleted agent") : "Unassigned"} · ${session.runner}`,
+      lastActivityAt:
+        typeof session.last_activity_at_millis === "number" &&
+        Number.isSafeInteger(session.last_activity_at_millis) &&
+        session.last_activity_at_millis > 0 &&
+        session.last_activity_at_millis <= 8_640_000_000_000_000
+          ? session.last_activity_at_millis / 1_000
+          : undefined,
+      status: sessionStatus(session, unknown),
+      repository: {
+        href: `#/repos/${encodeURIComponent(session.repository)}/files?${query}`,
+        label: `Open ${repositoryName}`,
+      },
+    };
+  });
 }

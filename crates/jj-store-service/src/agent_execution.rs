@@ -99,6 +99,15 @@ pub struct Session {
     pub id: String,
     #[serde(default)]
     pub setup_id: Option<String>,
+    /// Read-only capture-normalizer aliases for this installation-owned session.
+    #[serde(default)]
+    pub recorded_session_ids: Vec<crate::collaboration::AgentSessionIdentity>,
+    /// Read-only name from the retained ready workspace proof, absent after cleanup.
+    #[serde(default)]
+    pub workspace_name: Option<String>,
+    /// Operation from that ready workspace proof, including creation before the first turn.
+    #[serde(default)]
+    pub workspace_operation: Option<OperationId>,
     /// Read-only live supervisor projection, never journal authority.
     #[serde(default)]
     pub connected: bool,

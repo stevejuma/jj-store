@@ -40,6 +40,7 @@ impl Manager for Supervisor {
                 .await
                 .is_ok()
             {
+                feedback::attach_identity(&mut session, &saved)?;
                 admitted.push(session);
             }
         }

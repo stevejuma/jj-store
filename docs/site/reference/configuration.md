@@ -45,6 +45,11 @@ and region. The initializer creates the private state required by those paths.
 Filesystem mode requires LocalTrusted Admin and rejects native search,
 replication and backup entries. External S3 release qualification remains open.
 
+Managed agent names, avatars and original setup associations remain private
+installation state. Repository views may enrich recorded captures from their
+exact admitted local associations. These read-only projections require no TOML
+key or repository migration and remain distinct from portable AgentStore data.
+
 The following complete filesystem configuration is parser-tested. Replace
 `/DOCS_STATE` and `/DOCS_WEB` with actual initialized state and built asset
 paths; the example does not create installation identity files.

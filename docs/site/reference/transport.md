@@ -77,6 +77,15 @@ unchanged.
 
 ## Mutations
 
+The LocalTrusted `GET /v1/local/agents` session DTO includes read-only
+`recorded_session_ids`, `workspace_name` and `workspace_operation`. Committed
+capture aliases supply the exact recorded IDs. Ready retained workspace proofs
+supply the name and operation; cleanup removes both workspace projections.
+Legacy journals load with defaults and status recomputes the values. These
+installation-scoped presentation fields do not modify repository AgentStore
+formats, authorize code access, or dispatch execution. See
+[agent execution](../guides/agent-execution.md) for their browser use.
+
 Owned workspace-discovery input binds a repository, current registration
 generation and exact operation. Its response distinguishes absent, ready, stale
 and pending state and retains a scoped complete selected-combination catalog.

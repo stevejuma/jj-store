@@ -22,21 +22,39 @@ export function integrationLabel(
 
 export function agentMember(
   summary: Model<"AgentSessionSummary">,
+  captured?: { title: string; avatar: string; connected?: boolean },
 ): CommunityMemberModel {
-  const name = integrationLabel(summary.integration);
+  const name = captured?.title || integrationLabel(summary.integration);
+  const avatarUrl = captured?.avatar || agentAvatarUrl(summary.integration);
   return {
     id: summary.session_id,
     name,
     handle: `${name.toLowerCase()} agent`,
     initials: name.slice(0, 2).toUpperCase(),
-    ...(agentAvatarUrl(summary.integration)
-      ? { avatarUrl: agentAvatarUrl(summary.integration) }
-      : {}),
+    ...(avatarUrl ? { avatarUrl } : {}),
     kind: "agent",
-    presence: summary.state === "active" ? "online" : "offline",
+    presence:
+      captured?.connected !== undefined
+        ? captured.connected
+          ? "online"
+          : "offline"
+        : summary.state === "active"
+          ? "online"
+          : "offline",
     status: `${summary.state} · ${summary.coverage.completeness} capture`,
     role: "Agent",
   };
+}
+
+export function agentLastActivityAt(summary: Model<"AgentSessionSummary">) {
+  const value = summary.last_activity_at_millis;
+  if (value === null || value === undefined) return undefined;
+  const millis = Number(value);
+  return Number.isSafeInteger(millis) &&
+    millis >= 0 &&
+    millis <= 8_640_000_000_000_000
+    ? millis / 1_000
+    : undefined;
 }
 
 export function anchorAgentSession(

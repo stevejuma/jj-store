@@ -9,6 +9,9 @@
   import XIcon from "@lucide/svelte/icons/x";
   import type { StoreController } from "../../controller/contracts.js";
   import { encodeJjChangeId } from "../../projects/repository-log-graph.js";
+  import { managedWorkspaceAgent } from "../../collaboration/managed-agent.js";
+  import { agentMember } from "../community-agents/model.js";
+  import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
   let {
     controller,
     disabled = false,
@@ -25,9 +28,19 @@
   let open = $state(false),
     query = $state("");
   const view = $derived(controller.state);
+  const selectedAgent = $derived(
+    managedWorkspaceAgent(
+      view.repository.id,
+      view.route.workspace,
+      controller.execution?.value?.sessions,
+    ),
+  );
   function handleOpen(next: boolean) {
     open = next;
-    if (next) query = "";
+    if (next) {
+      query = "";
+      void controller.execution?.refresh();
+    }
   }
   function choose(workspace: string | null) {
     handleOpen(false);
@@ -54,7 +67,16 @@
           !view.route.snapshotOperationId ||
           view.workingCopiesStatus === "loading"}
       >
-        <FolderGit2Icon aria-hidden="true" />
+        {#if selectedAgent}<CommunityMemberAvatar
+            member={agentMember({
+              id: selectedAgent.id,
+              name: selectedAgent.title,
+              avatar: selectedAgent.avatar,
+            })}
+            size="inline"
+            shape="rounded"
+            decorative
+          />{:else}<FolderGit2Icon aria-hidden="true" />{/if}
         <span>{view.route.workspace ?? emptyLabel}</span>
         <ChevronDownIcon aria-hidden="true" />
       </Button>
@@ -105,12 +127,26 @@
             >
           </CommandView.Item>
           {#each view.workingCopies as copy (copy.workspace)}
+            {@const agent = managedWorkspaceAgent(
+              view.repository.id,
+              copy.workspace,
+              controller.execution?.value?.sessions,
+            )}
             <CommandView.Item
               value={`${copy.workspace} ${copy.changeId} ${copy.message}`}
               onSelect={() => choose(copy.workspace)}
             >
               <CommandView.ItemIcon
-                >{#if view.route.workspace === copy.workspace}<CheckIcon
+                >{#if agent}<CommunityMemberAvatar
+                    member={agentMember({
+                      id: agent.id,
+                      name: agent.title,
+                      avatar: agent.avatar,
+                    })}
+                    size="inline"
+                    shape="rounded"
+                    decorative
+                  />{:else if view.route.workspace === copy.workspace}<CheckIcon
                     aria-hidden="true"
                   />{:else}<FolderGit2Icon
                     aria-hidden="true"
@@ -120,6 +156,11 @@
               <CommandView.ItemDescription
                 >{encodeJjChangeId(copy.changeId).slice(0, 12)} · {copy.message}</CommandView.ItemDescription
               >
+              {#if agent && view.route.workspace === copy.workspace}<CommandView.ItemIcon
+                  style="grid-area: shortcut"
+                  aria-label="Selected workspace"
+                  ><CheckIcon aria-hidden="true" /></CommandView.ItemIcon
+                >{/if}
             </CommandView.Item>
           {/each}
         </CommandView.Group>

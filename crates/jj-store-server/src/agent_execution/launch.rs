@@ -83,6 +83,9 @@ impl Supervisor {
         let view = Session {
             id: id.clone(),
             setup_id: command.setup_id.clone(),
+            recorded_session_ids: Vec::new(),
+            workspace_name: None,
+            workspace_operation: None,
             connected: false,
             repository: target.repository,
             target_id: target.id,

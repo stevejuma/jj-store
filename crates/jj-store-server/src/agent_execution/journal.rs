@@ -69,6 +69,9 @@ pub(super) fn read(root: &Path) -> Result<State> {
     avatar::budget(&state)?;
     for saved in state.sessions.values_mut() {
         saved.view.connected = false;
+        saved.view.recorded_session_ids.clear();
+        saved.view.workspace_name = None;
+        saved.view.workspace_operation = None;
         let expected = root
             .join("workspaces")
             .join(format!("agent-{}", saved.view.id));
@@ -164,6 +167,8 @@ mod tests {
             "owner":null,"revision":1,"setups":{},"intents":{},"sessions":{
                 id.clone():{
                     "view":{"id":id,"setup_id":"helper","connected":true,
+                        "recorded_session_ids":["aa".repeat(16)],"workspace_name":"untrusted-projection",
+                        "workspace_operation":"66".repeat(64),
                         "repository":"11".repeat(16),"target_id":"fixture","runner":"codex",
                         "title":"Original name","avatar":"🤖","workspace":path,
                         "base_commit":"22".repeat(20),"review_commit":"22".repeat(20),
@@ -189,6 +194,9 @@ mod tests {
         let saved = &state.sessions[&id];
         assert_eq!(saved.view.setup_id.as_deref(), Some("helper"));
         assert!(!saved.view.connected);
+        assert!(saved.view.recorded_session_ids.is_empty());
+        assert!(saved.view.workspace_name.is_none());
+        assert!(saved.view.workspace_operation.is_none());
         assert_eq!(saved.view.last_activity_at_millis, Some(1791324000000));
         assert_eq!(saved.view.state, "interrupted");
         assert_eq!(saved.instructions, "Original instructions");

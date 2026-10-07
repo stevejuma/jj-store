@@ -25,6 +25,19 @@ prompt replay. Service restart preserves history and workspace ownership, not
 executing processes. Resume is explicit and capability gated; unsupported resume
 offers a new session linked to retained context.
 
+JST-API-001 and JST-API-006 also cover the additive local status DTO fields. The
+admitted local execution status exposes read-only recorded_session_ids,
+workspace_name and workspace_operation projections. Recorded IDs come from the
+capture normalizer's exact committed session aliases, never a client-side hash
+or name match. The workspace name/operation come from the retained, ready
+workspace proof and are omitted after cleanup. These projections are recomputed
+for legacy journals; their saved values are not authority. Repository UI joins
+require the exact repository and recorded session ID, or exact workspace name,
+and refuse ambiguous matches. Captured session title/avatar and the original
+setup_id remain installation metadata after setup editing/deletion. Native
+AgentStore bytes and session identities are unchanged; these presentation joins
+do not publish agent settings.
+
 Every session owns a new named physical workspace from the exact selected
 operation/revision. Creation retains an original journal and preserves source
 working files, including unsnapshotted edits. Completed or stopped turns may

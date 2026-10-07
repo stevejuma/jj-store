@@ -20879,6 +20879,34 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       ],
       "default": null
     },
+    "recorded_session_ids": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/AgentSessionId"
+      },
+      "description": "Read-only capture-normalizer aliases for this installation-owned session.",
+      "default": []
+    },
+    "workspace_name": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Read-only name from the retained ready workspace proof, absent after cleanup.",
+      "default": null
+    },
+    "workspace_operation": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/OperationId"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Operation from that ready workspace proof, including creation before the first turn.",
+      "default": null
+    },
     "connected": {
       "type": "boolean",
       "description": "Read-only live supervisor projection, never journal authority.",
@@ -20954,6 +20982,9 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
   "required": [
     "id",
     "setup_id",
+    "recorded_session_ids",
+    "workspace_name",
+    "workspace_operation",
     "connected",
     "repository",
     "target_id",

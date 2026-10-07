@@ -7,6 +7,14 @@ without changing native object/manifest identity encodings. The private
 execution journal is installation state; it is not a repository format or
 authority.
 
+Read-only recorded_session_ids, workspace_name and workspace_operation are
+additive local status fields with legacy journal defaults. Stored projections
+are discarded; status derives them from committed normalizer aliases and ready
+workspace proofs. Original setup association and captured name/avatar survive
+restart and setup editing/deletion. JST-COMPAT-001/JST-COMPAT-003/JST-COMPAT-005
+native identities, canonical repository formats and qualification scope remain
+unchanged; no repository migration or historical republishing is required.
+
 M23 qualifies installed Codex and Cursor independently against ordinary
 registered Git-backed JJ folders and linked native repositories with real
 RustFS. Dirty source files are preserved; only the new isolated workspace is

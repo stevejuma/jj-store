@@ -258,3 +258,15 @@ double-click. Stories use isolated layout storage. Mobile does not show the
 resize handle. Conversation top padding keeps the first message's hover actions
 inside the scrollport. Agents directory header actions are icon-only View
 sessions and Refresh agents buttons with shadcn tooltips.
+
+Recorded repository session rows and their selected response use the captured
+managed agent name/avatar when an exact, repository-scoped recorded-session
+association is available. Unmatched or ambiguous sessions retain their
+integration identity. Their bottom row shows the last recorded activity time
+before the lifecycle chip, omitting absent times and retaining exact-date
+tooltips. Workspace Command View choices use that same captured avatar for an
+exact admitted workspace association, retaining the workspace name and selected
+indicator. Inbox repository-link tooltips name the repository, and links select
+the retained ready workspace at its exact operation, including before the first
+turn. Unavailable associations fall back to repository navigation without
+inventing a workspace or identity.

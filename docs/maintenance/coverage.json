@@ -65,8 +65,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Authorized single-snapshot agent context joins exact message discussions and primary threads, selecting new immutable revisions under bounded reply and byte limits.",
-      "fingerprint": "215c66c6b2091e460570d306e60afde9781ee2adf3e4adc2c50d027e9999c8df"
+      "reason": "Reviewed additive local managed-session DTO projections, exact repository admission and unchanged owned service/native AgentStore authority; architecture and transport document the boundary.",
+      "fingerprint": "501dae732f3a1fd436063b82f5ca6b6dae80ee4471228286536cce54a861cff8"
     }
   },
   {
@@ -96,8 +96,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Private delivery journals retain queued batches and exact started acknowledgements, with generation-scoped reservations and cancellation-safe initial continuation context.",
-      "fingerprint": "5353294b9d91a0d6286a366d8732f3088a7be8a47e117a43d372b970fdc9e64c"
+      "reason": "Reviewed recomputed managed capture aliases and ready workspace proofs; installation journal defaults remain backward compatible and no TOML keys, credentials or repository migrations change.",
+      "fingerprint": "9aa02f2c587a46f80112adf484ad01e973a0ded8e70256922a58eaa1fe49d702"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed Community inbox resizing with isolated, versioned device persistence, independent session repository links/presence, shared day and turn dividers, readable legacy timing groups and shadcn icon-action tooltips. The read-only current-UI acceptance covers pointer/keyboard/reload/mobile and light/dark accessibility.",
-      "fingerprint": "6c35f8f8bea4df1791844230dff1f021ca28712cced37df0b577ac09899db3e6"
+      "reason": "Reviewed exact installation-owned capture aliases and workspace proofs for repository agent avatars, last-activity labels and inbox workspace navigation. Captured identities survive setup editing/deletion; canonical AgentStore data remains unchanged and unmatched captures retain integration identities.",
+      "fingerprint": "bec0795716f7d7f35d4d9dcaf2d09a19b554c671998f37b3ebdda03c4d3c6442"
     }
   },
   {
@@ -154,8 +154,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Regenerated local inbox DTO/routes and optional feedback profile; canonical identities and existing receipt formats unchanged",
-      "fingerprint": "c366395ca785900771851c7b8741473b11c5c042d95af0089e5fa4ebaa5a73e0"
+      "reason": "Regenerated OpenAPI, TypeScript and API type reference for read-only local recorded_session_ids, workspace_name and workspace_operation; launch and canonical repository formats remain unchanged.",
+      "fingerprint": "04a31c014672abce108a8a7315d0b3d0a497228d955cabd0f0362ba2977c0819"
     }
   }
 ]

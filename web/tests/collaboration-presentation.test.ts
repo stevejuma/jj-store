@@ -84,6 +84,18 @@ test("agent session durations stay compact", () => {
   assert.equal(formatAgentSessionDuration(90_000_000), "1d 1h");
 });
 
+test("managed repository sessions use captured identity without changing message authors", () => {
+  const recorded = {
+    ...summary(1, 2),
+    integration: "owned_controller" as const,
+  };
+  const agent = agentMember(recorded, { title: "Nyra", avatar: "🐝" });
+  assert.equal(agent.name, "Nyra");
+  assert.equal(agent.avatarUrl, "🐝");
+  assert.equal(agent.id, recorded.session_id);
+  assert.equal(agentMember(recorded).name, "Controller");
+});
+
 test("supported agents use bundled artwork and agent avatar shape metadata", () => {
   assert.equal(agentAvatarUrl("codex"), "/agent-icons/codex.svg");
   assert.equal(agentAvatarUrl("cursor"), "/agent-icons/cursor.svg");

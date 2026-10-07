@@ -283,6 +283,7 @@
     </div>
     <StoreAgentExecutionHost
       {manager}
+      repositories={[{ id: repository, name: "Fixture repository" }]}
       {route}
       layoutStorage={inboxStorage}
       onReview={(repository, commit, operation) => {

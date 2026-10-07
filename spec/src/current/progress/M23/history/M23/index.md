@@ -23,6 +23,8 @@ not a completion gate selection.
 | [E-EXEC-017](../../../../../history/2026/10/07/E-EXEC-017/index.md) | 2026-10-07 | pass            | Unchanged canonical publication, source ownership and ordinary command authority                                         |
 | [E-EXEC-018](../../../../../history/2026/10/07/E-EXEC-018/index.md) | 2026-10-07 | pass            | Inbox links/presence, date and turn dividers, honest clocks and persisted resizing; current light/dark/mobile acceptance |
 | [E-EXEC-019](../../../../../history/2026/10/07/E-EXEC-019/index.md) | 2026-10-07 | pass            | Unchanged execution authority, public contracts and owned presentation boundaries                                        |
+| [E-EXEC-020](../../../../../history/2026/10/07/E-EXEC-020/index.md) | 2026-10-07 | pass            | Exact managed agent identities, last activity and workspace navigation                                                   |
+| [E-EXEC-021](../../../../../history/2026/10/07/E-EXEC-021/index.md) | 2026-10-07 | pass            | Unchanged canonical authority, source ownership and maintenance boundaries                                               |
 
 <!-- generated-navigation -->
 

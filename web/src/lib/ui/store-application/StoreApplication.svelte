@@ -165,6 +165,7 @@
 
 {#snippet agents()}{#if controller.execution}<StoreAgentExecutionHost
       manager={controller.execution}
+      repositories={controller.state.repositories}
       route={current}
       onReview={(repository, commit, operation) =>
         void controller.actions.openRoute?.({

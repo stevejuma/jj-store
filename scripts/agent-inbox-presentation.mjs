@@ -83,7 +83,9 @@ try {
   const repository = chat.locator("..").getByRole("link");
   await expect(repository).toHaveAttribute(
     "href",
-    new RegExp("^#/repos/[0-9a-f]{32}/files\\?at_op=[0-9a-f]{128}$"),
+    new RegExp(
+      "^#/repos/[0-9a-f]{32}/files\\?at_op=[0-9a-f]{128}(?:&workspace=[^#]+)?$",
+    ),
   );
   expect(await repository.evaluate((e) => !!e.closest("button"))).toBe(false);
   const list = workspace.getByRole("complementary", {

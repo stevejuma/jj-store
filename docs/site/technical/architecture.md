@@ -68,6 +68,14 @@ ordinary physical validation continues to reject changed editor state.
 
 ## What is authoritative?
 
+Managed ACP presentation joins installation-owned captured identities to
+repository AgentStore sessions through the capture normalizer's exact committed
+aliases. Ready workspace names and operations come from retained workspace
+proofs. Status reauthorizes the repository and recomputes these read-only
+values, including after restart; saved projections do not become authority. The
+browser does not derive native IDs or infer associations from names. This leaves
+native AgentStore bytes, publication and ordinary discussion targets unchanged.
+
 | State                         | Authority                                       | Rebuildable or device-local data        |
 | ----------------------------- | ----------------------------------------------- | --------------------------------------- |
 | Native code and collaboration | Manifest-selected immutable closure             | Search indexes and disposable Git cache |

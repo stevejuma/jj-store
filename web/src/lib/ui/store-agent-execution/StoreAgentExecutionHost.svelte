@@ -22,11 +22,13 @@
     route,
     onReview,
     layoutStorage,
+    repositories = [],
   }: {
     manager: AgentExecution;
     route: StoreRoute;
     onReview?: (repository: string, commit: string, operation: string) => void;
     layoutStorage?: Storage;
+    repositories?: readonly { id: string; name: string }[];
   } = $props();
   let editorOpen = $state(false),
     editing = $state<AgentSetup | undefined>(),
@@ -62,7 +64,12 @@
           },
         ]
       : []),
-    ...sessionItems(manager.value, route.setupId, !!manager.connectionError),
+    ...sessionItems(
+      manager.value,
+      route.setupId,
+      !!manager.connectionError,
+      repositories,
+    ),
   ]);
   $effect(() => {
     if (route.agentView === "activity" && manager.value)

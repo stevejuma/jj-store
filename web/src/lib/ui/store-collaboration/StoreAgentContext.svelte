@@ -17,6 +17,7 @@
   import StoreAgentTranscript from "./StoreAgentTranscript.svelte";
   import StoreAgentSessionMenu from "./StoreAgentSessionMenu.svelte";
   import StoreMessageActions from "./StoreMessageActions.svelte";
+  import { managedRecordedAgent } from "../../collaboration/managed-agent.js";
 
   let {
     controller,
@@ -24,7 +25,18 @@
   }: { controller: StoreController; showHeader?: boolean } = $props();
   const state = $derived(controller.state);
   const selected = $derived(state.agentSession);
-  const agent = $derived(selected ? agentMember(selected.session) : undefined);
+  const agent = $derived(
+    selected
+      ? agentMember(
+          selected.session,
+          managedRecordedAgent(
+            state.repository.id,
+            selected.session,
+            controller.execution?.value?.sessions,
+          ),
+        )
+      : undefined,
+  );
   const association = $derived.by(
     () =>
       selected?.code[0] ??

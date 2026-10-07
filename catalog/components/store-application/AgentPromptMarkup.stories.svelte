@@ -81,8 +81,12 @@
     await expect(message.querySelector("pre")).toBeNull();
     await expect(message).not.toHaveTextContent("part_1");
     const write = fn();
-    const descriptor = Object.getOwnPropertyDescriptor(navigator, "clipboard");
-    Object.defineProperty(navigator, "clipboard", {
+    const clipboardOwner = canvasElement.ownerDocument.defaultView!.navigator;
+    const descriptor = Object.getOwnPropertyDescriptor(
+      clipboardOwner,
+      "clipboard",
+    );
+    Object.defineProperty(clipboardOwner, "clipboard", {
       configurable: true,
       value: { writeText: write },
     });
@@ -94,19 +98,37 @@
       await userEvent.click(
         within(message).getByRole("button", { name: "More message actions" }),
       );
-      const page = within(document.body);
+      const page = within(canvasElement.ownerDocument.body);
       const copy = page.getByRole("menuitem", { name: /^Copy$/ });
-      copy.focus();
-      await userEvent.keyboard("{ArrowRight}");
+      await userEvent.click(copy);
+      const pointerMessage = await page.findByRole("menuitem", {
+        name: /^Copy message$/,
+      });
+      await waitFor(() => expect(pointerMessage).toBeVisible());
+      await userEvent.click(pointerMessage);
+      await waitFor(() => expect(write).toHaveBeenCalledWith(openCodeParts));
+      // Also exercise a complete keyboard path without moving the pointer out
+      // of a keyboard-opened submenu during its focus transition.
       await userEvent.click(
-        await page.findByRole("menuitem", {
-          name: /^Copy message$/,
-        }),
+        within(message).getByRole("button", { name: "More message actions" }),
       );
-      await expect(write).toHaveBeenCalledWith(openCodeParts);
+      const keyboardCopy = await page.findByRole("menuitem", {
+        name: /^Copy$/,
+      });
+      keyboardCopy.focus();
+      await userEvent.keyboard("{ArrowRight}");
+      const keyboardMessage = await page.findByRole("menuitem", {
+        name: /^Copy message$/,
+      });
+      await waitFor(() => expect(keyboardMessage).toBeVisible());
+      keyboardMessage.focus();
+      await userEvent.keyboard("{Enter}");
+      await waitFor(() => expect(write).toHaveBeenCalledTimes(2));
+      await expect(write).toHaveBeenLastCalledWith(openCodeParts);
     } finally {
-      if (descriptor) Object.defineProperty(navigator, "clipboard", descriptor);
-      else Reflect.deleteProperty(navigator, "clipboard");
+      if (descriptor)
+        Object.defineProperty(clipboardOwner, "clipboard", descriptor);
+      else Reflect.deleteProperty(clipboardOwner, "clipboard");
     }
   }}
 />

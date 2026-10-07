@@ -1,9 +1,11 @@
 <script lang="ts">
   import type { Model } from "../../api/client.js";
   import type { AgentAssociation } from "../../controller/repository-read-types.js";
+  import type { AgentSession } from "../../controller/agent-execution-types.js";
   import {
     agentMember,
     agentSessionTiming,
+    agentLastActivityAt,
   } from "../../collaboration/presentation.js";
   import MessagesSquareIcon from "@lucide/svelte/icons/messages-square";
   import WrenchIcon from "@lucide/svelte/icons/wrench";
@@ -17,20 +19,27 @@
     session,
     selectedId = null,
     association,
+    managed,
     collection = false,
     onSelect,
   }: {
     session: Model<"AgentSessionSummary">;
     selectedId?: string | null;
     association?: AgentAssociation | null;
+    managed?: AgentSession;
     collection?: boolean;
     onSelect: (id: string) => void;
   } = $props();
-  const agent = $derived(agentMember(session)),
+  const agent = $derived(agentMember(session, managed)),
+    lastActivity = $derived(agentLastActivityAt(session)),
     timing = $derived(agentSessionTiming(session));
 </script>
 
-<div role="listitem" class="store-agent-session-item">
+<div
+  role="listitem"
+  class="store-agent-session-item"
+  data-session-id={session.session_id}
+>
   <div
     class="store-collaboration__row"
     data-kind="agent"
@@ -83,13 +92,14 @@
         </span>
       </span>
       <span class="store-collaboration__row-meta"
-        ><CommunityChip
+        >{#if lastActivity !== undefined}<CommunityRelativeTime
+            timestamp={lastActivity}
+            ariaLabel={`Last activity: ${new Date(lastActivity * 1_000).toLocaleString()}`}
+          />{/if}<CommunityChip
           size="compact"
           tone={session.state === "active" ? "success" : "neutral"}
           >{session.state}</CommunityChip
-        >{#if timing}<span class="store-collaboration__agent-start"
-            ><CommunityRelativeTime timestamp={timing.startedAt} /></span
-          >{/if}<span class="store-collaboration__agent-metrics"
+        ><span class="store-collaboration__agent-metrics"
           ><span
             class="store-collaboration__metric"
             aria-label={`${session.transcript_count} transcripts`}

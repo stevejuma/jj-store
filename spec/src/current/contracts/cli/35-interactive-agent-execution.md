@@ -24,3 +24,11 @@ Shutdown stops publication scheduling before closing agents. Process closure is
 bounded at twenty seconds; final publication gets three seconds. Canceled
 publication retains the exact spool intent and unpublished sequence. Restart
 retries publication receipts, never agent prompts.
+
+JST-CLI-004 remains unchanged for managed-identity presentation. Rebuilt
+explicit development binaries may replace the owned development backend while
+retaining Vite and its fixture. Read-only capture-alias and workspace-proof
+projections introduce no CLI command, executable selection, installed-tool
+replacement or automatic execution. The ready workspace operation may differ
+from the original launch pin before its first turn; neither value is inferred by
+the client.
