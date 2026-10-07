@@ -10,17 +10,20 @@
   import CloseIcon from "@lucide/svelte/icons/x";
   import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
   import CommunitySkeleton from "../community-skeleton/CommunitySkeleton.svelte";
-  import CommunityRelativeTime from "../community-relative-time/CommunityRelativeTime.svelte";
-  import { formatCommunityFullDate } from "../community-relative-time/model.js";
+  import CommunityInboxItem from "./CommunityInboxItem.svelte";
+  import { createInboxResize } from "./inbox-resize.svelte.js";
+  import type { SessionInboxItem } from "./model.js";
+  import { resolveLayoutStorage } from "../layout-storage.js";
   import type { CommunityMemberModel } from "../community-workspace/model.js";
   import type { Snippet } from "svelte";
-  import { tick } from "svelte";
+  import { tick, untrack } from "svelte";
   import "./inbox.css";
   let {
     items,
     activeId,
     title = "Sessions",
     loading = false,
+    layoutStorage,
     onSelect,
     onNew,
     onBack,
@@ -33,17 +36,11 @@
     threadSidebar,
     children,
   }: {
-    items: readonly {
-      id: string;
-      author: CommunityMemberModel;
-      context: string;
-      excerpt?: string;
-      lastActivityAt?: number;
-      status: string;
-    }[];
+    items: readonly SessionInboxItem[];
     activeId?: string | null;
     title?: string;
     loading?: boolean;
+    layoutStorage?: Storage;
     onSelect: (id: string) => void;
     onNew: () => void;
     onBack: () => void;
@@ -57,6 +54,13 @@
     children: Snippet;
   } = $props();
   const shell = useAppShell();
+  let bodyElement = $state<HTMLElement | null>(null);
+  let listElement = $state<HTMLElement | null>(null);
+  const resize = createInboxResize(
+    () => bodyElement,
+    () => listElement,
+    untrack(() => resolveLayoutStorage(layoutStorage)),
+  );
   let listOpen = $state(true);
   let sidebarOpen = $state(false);
   let actionsElement = $state<HTMLDivElement>();
@@ -80,16 +84,21 @@
 </script>
 
 <AppShell.Body
+  bind:ref={bodyElement}
   layout="regions"
   label="Agent sessions inbox"
   class="lc-community-inbox"
 >
   <AppShell.Body.Sidebar
+    bind:ref={listElement}
     side="left"
     panelId="agent-sessions"
     label="Session chats"
     mobileLabel="Sessions"
     class="lc-community-inbox__list-region"
+    style={resize.width === undefined
+      ? undefined
+      : `--ui-shell-body-sidebar-width: ${resize.width}px`}
     bind:open={listOpen}
   >
     <div class="lc-community-inbox__list">
@@ -111,40 +120,11 @@
       <ScrollArea class="lc-community-inbox__scroll">
         <div class="lc-community-inbox__items" aria-label="Session chats">
           {#each items as item (item.id)}
-            <Button
-              variant="ghost"
-              class="lc-community-inbox__item"
-              data-active={item.id === activeId ? "" : undefined}
-              aria-pressed={item.id === activeId}
-              data-ui-part="inbox-conversation"
-              aria-label={`Open session ${item.author.name} · ${item.id}`}
-              onclick={() => onSelect(item.id)}
-            >
-              <CommunityMemberAvatar
-                member={item.author}
-                size="small"
-                shape="rounded"
-                decorative
-              />
-              <span class="lc-community-inbox__item-body">
-                <span class="lc-community-inbox__item-heading"
-                  ><strong>{item.author.name}</strong><span>{item.status}</span
-                  ></span
-                >
-                <span class="lc-community-inbox__context">{item.context}</span>
-                {#if item.lastActivityAt !== undefined}<span
-                    class="lc-community-inbox__context"
-                  >
-                    <CommunityRelativeTime
-                      timestamp={item.lastActivityAt}
-                      ariaLabel={`Last activity: ${formatCommunityFullDate(item.lastActivityAt)}`}
-                    />
-                  </span>
-                {:else if item.excerpt}<span class="lc-community-inbox__excerpt"
-                    >{item.excerpt}</span
-                  >{/if}
-              </span>
-            </Button>
+            <CommunityInboxItem
+              {item}
+              active={item.id === activeId}
+              onSelect={() => onSelect(item.id)}
+            />
           {/each}
           {#if loading && !items.length}<CommunitySkeleton
               layout="messages"
@@ -164,6 +144,23 @@
       </ScrollArea>
     </div>
   </AppShell.Body.Sidebar>
+  {#if listOpen && shell.mobile.resolvedMode !== "mobile"}
+    <button
+      type="button"
+      class="lc-community-inbox__resize-handle"
+      data-resizing={resize.resizing ? "" : undefined}
+      aria-label="Resize session chats"
+      title="Drag to resize. Double-click to reset width."
+      onpointerdown={resize.begin}
+      onpointermove={resize.move}
+      onpointerup={resize.finish}
+      onpointercancel={resize.finish}
+      ondblclick={resize.reset}
+      onkeydown={resize.key}
+    >
+      <span aria-hidden="true"></span>
+    </button>
+  {/if}
   <AppShell.Body.Content
     label="Selected agent session"
     class="lc-community-inbox__thread-region"

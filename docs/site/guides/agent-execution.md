@@ -145,6 +145,17 @@ and reports the failure. Unknown reply outcomes keep the original request for
 Check reply status or Retry same reply; successful recovery clears the resolved
 error. Reactions themselves are not treated as instructions.
 
+The inbox uses date banners and bordered turn dividers like repository threads.
+Its session avatars show connection presence, and the repository icon opens the
+chat's repository at its retained operation. Drag the list boundary to resize
+it, or focus the boundary and use Arrow keys, Home and End. Double-click resets
+its width. The directory's View sessions and Refresh agents icons have tooltips.
+
+Message clocks use the first available recorded observation time. Older saved
+events written before timestamp capture have no exact time to recover; their
+group shows Time not recorded instead of repeating an unknown clock on each
+message. Refresh and the last activity time do not supply historical timestamps.
+
 Inbox reply/reaction writes support registered local folders and the qualified
 native WorkStore-home profile. Native code repositories still require
 collaboration replication qualification. The reply composer explains unavailable

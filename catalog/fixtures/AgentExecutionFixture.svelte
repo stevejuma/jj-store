@@ -11,6 +11,7 @@
     fixtureAgentTargets,
   } from "./agent-execution-session.js";
   import { AppShell } from "@lapismd/design-core/shell";
+  import { createMemoryStoryStorage } from "./memory-storage.js";
   import CommunityAppShell from "../../web/src/lib/ui/community-app-shell/CommunityAppShell.svelte";
   import { createStoreShell } from "../../web/src/lib/ui/store-application/create-store-shell.js";
   import { agentsRoute } from "../../web/src/lib/controller/agents-route-codec.js";
@@ -240,6 +241,7 @@
   );
   let route = $state<StoreRoute>(agentsRoute());
   const shell = untrack(() => createStoreShell(undefined, false));
+  const inboxStorage = createMemoryStoryStorage();
   untrack(() => {
     if (replayHistory) discussion.seedReplayDrafts(manager.discussions.drafts);
     manager.onNavigate = (view, id, relatedId) =>
@@ -272,19 +274,17 @@
             resolveConfiguration = undefined;
           }}>Resolve fixture configuration</Button
         >{/if}
-      <AgentExecutionCommandOutput {commands} {lastCommand} />
+      <AgentExecutionCommandOutput {commands} {lastCommand} {lastOpened} />
       <StoreAgentLaunchButton {manager} /><Button
         onclick={() => manager.openSession(fixtureStatus.sessions[0].id)}
         >Open fixture conversation</Button
       ><Button onclick={() => manager.directory()}>Manage fixture agents</Button
       >
     </div>
-    {#if lastOpened}<output aria-label="Last opened revision"
-        >{JSON.stringify(lastOpened)}</output
-      >{/if}
     <StoreAgentExecutionHost
       {manager}
       {route}
+      layoutStorage={inboxStorage}
       onReview={(repository, commit, operation) => {
         lastOpened = { repository, commit, operation };
       }}

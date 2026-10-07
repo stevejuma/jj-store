@@ -42,6 +42,7 @@
     discussions.drafts[key] ??= "";
   });
   const disabled = $derived(threads.busy || !!threads.pending);
+  const timing = $derived(agentMessageTimestamp(row.observedAtMillis));
 </script>
 
 <CommunityMessage
@@ -50,7 +51,8 @@
     id: row.id,
     authorId: author.id,
     content: row.text,
-    ...agentMessageTimestamp(row.observedAtMillis),
+    ...timing,
+    timestamp: timing.createdAt ? timing.timestamp : "",
     reactions:
       feedback && !unavailable ? threads.reactionModels(feedback.target) : [],
   }}

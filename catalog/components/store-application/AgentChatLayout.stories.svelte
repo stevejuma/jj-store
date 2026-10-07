@@ -63,3 +63,39 @@
     ).not.toBeInTheDocument();
   }}
 />
+
+<Story
+  name="First message hover actions remain within the padded chat viewport"
+  args={{ chatFeedback: "completed" }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await userEvent.click(
+      c.getByRole("button", { name: "Open fixture conversation" }),
+    );
+    const first = await c.findByRole("article", { name: "Message from You" });
+    const viewport = canvasElement.querySelector<HTMLElement>(
+      '[data-ui-component="ai-chat-layout"] [data-ui-part="scroll-area-viewport"]',
+    )!;
+    viewport.scrollTop = 0;
+    viewport.dispatchEvent(new Event("scroll"));
+    await userEvent.hover(first);
+    const actions = first.querySelector<HTMLElement>(
+      '[data-ui-part="message-actions"]',
+    )!;
+    await waitFor(() => {
+      expect(
+        within(first).getByRole("button", { name: "Reply" }),
+      ).toBeVisible();
+      expect(actions.getBoundingClientRect().top).toBeGreaterThanOrEqual(
+        viewport.getBoundingClientRect().top,
+      );
+    });
+    const area = canvasElement.querySelector('[data-ui-part="message-area"]')!;
+    await expect(
+      Number.parseFloat(getComputedStyle(area).paddingTop),
+    ).toBeGreaterThanOrEqual(12);
+    await expect(
+      within(first).getByRole("button", { name: "Reply" }),
+    ).toBeVisible();
+  }}
+/>

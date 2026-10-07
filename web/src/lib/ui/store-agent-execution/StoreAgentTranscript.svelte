@@ -10,6 +10,7 @@
   import StoreAgentPermission from "./StoreAgentPermission.svelte";
   import {
     activityRows,
+    activityDayDividers,
     openingReplayRowIds,
     queuedRequests,
   } from "./presentation.js";
@@ -18,6 +19,7 @@
   let { manager }: { manager: AgentExecution } = $props();
   const session = $derived(manager.session);
   const rows = $derived(activityRows(manager.events));
+  const days = $derived(activityDayDividers(rows));
   const queued = $derived(queuedRequests(manager.events));
   const idle = $derived(session?.connected === true);
   const retainedReplayDrafts = $derived(
@@ -35,6 +37,9 @@
 
 {#if session}
   {#each rows as row (row.id)}
+    {#if days.has(row.id)}<SystemMessage variant="divider">
+        {days.get(row.id)}
+      </SystemMessage>{/if}
     {#if row.kind === "user" || row.kind === "assistant"}<StoreAgentInboxMessage
         {manager}
         openReply={restoredReply === `${session.id}:${row.id}`}
@@ -72,7 +77,7 @@
           status: text(object(v).status),
         }))}
       />
-    {:else if row.kind === "record"}<SystemMessage>
+    {:else if row.kind === "record"}<SystemMessage variant="divider">
         Turn {row.text.replaceAll("_", " ")}
       </SystemMessage>{/if}
   {/each}

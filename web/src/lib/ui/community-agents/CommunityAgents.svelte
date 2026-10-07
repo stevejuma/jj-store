@@ -2,8 +2,10 @@
   // Community agent gallery; local execution data and actions replace relay plumbing.
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as DropdownMenu from "@lapismd/design-core/shadcn/dropdown-menu";
+  import * as Tooltip from "@lapismd/design-core/shadcn/tooltip";
   import PlusIcon from "@lucide/svelte/icons/plus";
   import RefreshIcon from "@lucide/svelte/icons/refresh-cw";
+  import SessionsIcon from "@lucide/svelte/icons/messages-square";
   import MoreIcon from "@lucide/svelte/icons/ellipsis-vertical";
   import CommunitySkeleton from "../community-skeleton/CommunitySkeleton.svelte";
   import CommunityAgentProcessingControl from "../community-agent-processing-control/CommunityAgentProcessingControl.svelte";
@@ -37,7 +39,7 @@
     onOpen(agent: AgentSetup): void;
     onStart(id: string): void;
     onStop?(session: string): void;
-    onSessions(id: string): void;
+    onSessions(id?: string): void;
     onDelete(agent: AgentSetup): void;
     onRefresh(): void;
   } = $props();
@@ -49,9 +51,43 @@
       <h1>Agents</h1>
       <p>Your agents on this device.</p>
     </div>
-    <Button variant="outline" onclick={onRefresh} disabled={busy || !available}
-      ><RefreshIcon aria-hidden="true" />Refresh agents</Button
-    >
+    <div class="agents__header-actions">
+      <Tooltip.Provider>
+        <Tooltip.Root>
+          <Tooltip.Trigger
+            >{#snippet child({ props })}
+              <Button
+                {...props}
+                variant="ghost"
+                size="icon-sm"
+                aria-label="View sessions"
+                onclick={() => onSessions()}
+              >
+                <SessionsIcon aria-hidden="true" />
+              </Button>
+            {/snippet}</Tooltip.Trigger
+          >
+          <Tooltip.Content role="tooltip">View sessions</Tooltip.Content>
+        </Tooltip.Root>
+        <Tooltip.Root>
+          <Tooltip.Trigger
+            >{#snippet child({ props })}
+              <Button
+                {...props}
+                variant="ghost"
+                size="icon-sm"
+                aria-label="Refresh agents"
+                onclick={onRefresh}
+                disabled={busy || !available}
+              >
+                <RefreshIcon aria-hidden="true" />
+              </Button>
+            {/snippet}</Tooltip.Trigger
+          >
+          <Tooltip.Content role="tooltip">Refresh agents</Tooltip.Content>
+        </Tooltip.Root>
+      </Tooltip.Provider>
+    </div>
   </header>
   {#if !available}<div class="agents__empty">
       <h2>Agent execution unavailable</h2>

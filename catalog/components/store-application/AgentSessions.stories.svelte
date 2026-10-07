@@ -34,6 +34,7 @@
     ).not.toBeInTheDocument();
   }}
 />
+
 <Story
   name="Activity log keeps exact chat and its retained draft"
   args={{ lastActivityAt: 1_735_689_600_000 }}

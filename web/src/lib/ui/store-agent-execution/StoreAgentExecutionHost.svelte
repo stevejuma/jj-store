@@ -21,10 +21,12 @@
     manager,
     route,
     onReview,
+    layoutStorage,
   }: {
     manager: AgentExecution;
     route: StoreRoute;
     onReview?: (repository: string, commit: string, operation: string) => void;
+    layoutStorage?: Storage;
   } = $props();
   let editorOpen = $state(false),
     editing = $state<AgentSetup | undefined>(),
@@ -121,6 +123,7 @@
 
 {#if route.agentView === "session" || route.agentView === "sessions" || route.agentView === "new" || route.agentView === "activity"}
   <CommunityInbox
+    {layoutStorage}
     items={inboxItems}
     activeId={route.agentView === "new"
       ? "new-session"

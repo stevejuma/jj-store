@@ -166,6 +166,26 @@
   white-space: normal;
 }
 
+.lc-community-inbox__item-row {
+  position: relative;
+}
+
+.lc-community-inbox__repository[data-ui-component="button"] {
+  position: absolute;
+  inset-block-start: 0.5rem;
+  inset-inline-end: 0.5rem;
+}
+
+.lc-community-inbox__item-heading {
+  padding-inline-end: 1.75rem;
+}
+
+.lc-community-inbox__item-heading strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .lc-community-inbox__item[data-ui-component="button"][data-active] {
   background: color-mix(in srgb, var(--accent) 72%, transparent);
 }

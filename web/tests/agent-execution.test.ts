@@ -2,6 +2,7 @@ import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
   activityRows,
+  activityDayDividers,
   openingReplayRowIds,
   runtimeChoices,
   queuedRequests,
@@ -142,10 +143,49 @@ test("message times retain first observation across chunks and never fabricate l
   assert.equal(rows[1].text, "chunkchunk");
   assert.equal(
     activityRows([chunk(1), chunk(2, 3000)])[0].observedAtMillis,
-    undefined,
+    3000,
   );
   assert.equal(activityRows([chunk(1, NaN)])[0].observedAtMillis, undefined);
+  assert.equal(
+    activityRows([chunk(1), chunk(2)])[0].observedAtMillis,
+    undefined,
+  );
   assert.deepEqual(activityRows([user, chunk(2, 2000), chunk(3, 3000)]), rows);
+});
+
+test("inbox day dividers share thread labels and group genuinely unrecorded times", () => {
+  const rows = activityRows([
+    {
+      ...event(1, { type: "prompt", requestId: "one", text: "First" }),
+      observed_at_millis: Date.UTC(2025, 0, 1, 12),
+    },
+    {
+      ...event(2, {
+        type: "record",
+        requestId: "one",
+        record: { status: "completed" },
+      }),
+      observed_at_millis: Date.UTC(2025, 0, 1, 13),
+    },
+    event(3, { type: "prompt", requestId: "legacy", text: "Not recorded" }),
+    event(4, {
+      type: "record",
+      requestId: "legacy",
+      record: { status: "completed" },
+    }),
+    {
+      ...event(5, { type: "prompt", requestId: "next", text: "Next day" }),
+      observed_at_millis: Date.UTC(2025, 0, 2, 12),
+    },
+  ]);
+  const dividers = activityDayDividers(rows);
+  assert.deepEqual(
+    [...dividers.keys()],
+    ["one/user", "legacy/user", "next/user"],
+  );
+  assert.equal(dividers.get("legacy/user"), "Time not recorded");
+  assert.notEqual(dividers.get("one/user"), dividers.get("next/user"));
+  assert.deepEqual(activityDayDividers([]), new Map());
 });
 
 test("resume history is not a new message or feedback target", () => {

@@ -22,7 +22,7 @@
     const completed = await c.findByText("Turn completed");
     await expect(
       completed.closest('[data-ui-component="ai-chat-system-message"]'),
-    ).not.toBeNull();
+    ).toHaveAttribute("data-variant", "divider");
     await expect(completed.closest('[role="log"]')).not.toBeNull();
     await expect(
       c.queryByText("Working", { exact: true }),
@@ -103,7 +103,7 @@
 />
 
 <Story
-  name="Messages use shared timestamp metadata and retain unknown legacy times"
+  name="Messages use shared timestamp metadata and group unrecorded legacy times"
   args={{ chatFeedback: "completed" }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
@@ -140,7 +140,18 @@
     )!;
     await expect(legacy.querySelector("time")).toBeNull();
     await expect(
-      within(legacy).getByText("Time unknown", { exact: true }),
+      c.getByText("Time not recorded", { exact: true }),
     ).toBeVisible();
+    await expect(
+      c.queryByText("Time unknown", { exact: true }),
+    ).not.toBeInTheDocument();
+    const dividers = canvasElement.querySelectorAll(
+      '[data-ui-component="ai-chat-system-message"][data-variant="divider"]',
+    );
+    await expect(dividers.length).toBe(4);
+    for (const divider of dividers)
+      await expect(
+        divider.querySelectorAll('[data-ui-component="separator"]'),
+      ).toHaveLength(2);
   }}
 />

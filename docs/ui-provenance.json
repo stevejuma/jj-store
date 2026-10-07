@@ -2342,6 +2342,28 @@
           "license": "Apache-2.0"
         }
       ]
+    },
+    {
+      "local": "web/src/lib/ui/community-inbox/CommunityInboxItem.svelte",
+      "reason": "Extracted Community inbox conversation row; owned session presence and independent repository link.",
+      "sources": [
+        {
+          "path": "src/components/community-inbox/CommunityInbox.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-inbox/inbox-resize.svelte.ts",
+      "reason": "Extracted Community bounded pointer and keyboard resizing; local body/sidebar references and hidden/mobile handling.",
+      "sources": [
+        {
+          "path": "src/components/community-inbox/CommunityInbox.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
     }
   ],
   "owned": [
@@ -2468,6 +2490,14 @@
     {
       "local": "web/src/lib/ui/store-stack-workspace/StoreStackWorkspaceDetailsActions.svelte",
       "reason": "Application-owned composition of existing Design Core Buttons and the owned navigation styling for capability-gated workspace rail actions; reuses the current Stacks controller and Merge Editor, with no external source dependency."
+    },
+    {
+      "local": "web/src/lib/ui/community-inbox/model.ts",
+      "reason": "Installation-owned session row adapter and authorized repository-route metadata; locally authored, not copied from Community."
+    },
+    {
+      "local": "web/src/lib/ui/community-inbox/inbox-layout.ts",
+      "reason": "Versioned installation layout adapter for the agent inbox, with its own stable panel identity and storage refusal handling; locally authored."
     }
   ],
   "desktopAppearance": {

@@ -2,9 +2,11 @@
   let {
     commands,
     lastCommand,
+    lastOpened,
   }: {
     commands: Record<string, unknown>[];
     lastCommand: Record<string, unknown> | null | undefined;
+    lastOpened?: { repository: string; commit: string; operation: string };
   } = $props();
 </script>
 
@@ -14,3 +16,6 @@
     >{JSON.stringify(lastCommand)}</output
   >
 {/if}
+{#if lastOpened}<output aria-label="Last opened revision"
+    >{JSON.stringify(lastOpened)}</output
+  >{/if}

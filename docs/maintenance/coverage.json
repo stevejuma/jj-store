@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed incremental context refusal errors and readable disabled reply/edit drawers. The existing Design Core option is enabled when status or reply context is present; editor and Send stay disabled during saves.",
-      "fingerprint": "4b0675c888312f25995c1c8e734a7c114f31793ea1c89b6e89e35c2be8dc176d"
+      "reason": "Reviewed Community inbox resizing with isolated, versioned device persistence, independent session repository links/presence, shared day and turn dividers, readable legacy timing groups and shadcn icon-action tooltips. The read-only current-UI acceptance covers pointer/keyboard/reload/mobile and light/dark accessibility.",
+      "fingerprint": "6c35f8f8bea4df1791844230dff1f021ca28712cced37df0b577ac09899db3e6"
     }
   },
   {

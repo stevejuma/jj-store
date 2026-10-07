@@ -185,10 +185,12 @@ Inbox messages reuse the shared Design Core Message, MessageBubble and
 MessageMetadata composition used by recorded agent chats. Known retained event
 observation times use the existing CommunityMessageMeta and
 agentMessageTimestamp formatter with clock text and an exact-date tooltip. User
-prompts and coalesced assistant messages keep the first event time across
-streaming chunks and refresh; legacy messages with no recorded time show Time
-unknown without a fabricated time element. Turn lifecycle records render as
-shared SystemMessage notices within the chat log. A connected running session
+prompts and coalesced assistant messages keep the first available recorded event
+time across streaming chunks and refresh. The inbox uses the same full-width day
+dividers as repository threads, and bordered SystemMessage dividers for turn
+lifecycle records. Legacy groups with no recorded time show one Time not
+recorded divider and omit individual clock labels; no time is fabricated from
+refresh, last activity or neighboring messages. A connected running session
 shows Community's streaming Reasoning Working indicator in the message area and
 its compact avatar/activity strip below the composer. Pending outcomes use
 readable labels in that same strip, preserve exact retry/review actions and
@@ -245,3 +247,14 @@ progress.
 
 Pending-reply status and original-message context retain readable contrast while
 composer submission is disabled, using Community's interactive status drawer.
+
+Inbox session rows show Community avatar presence and an icon-only, tooltipped
+link to that chat's exact repository and retained operation in place of the
+status tag. The repository link is independent of the chat selection control.
+The chat column reuses Community's bounded pointer/keyboard resize behavior,
+persists its preferred width under an independent versioned device-layout key,
+clamps to available body width, retains it while hidden, and resets on
+double-click. Stories use isolated layout storage. Mobile does not show the
+resize handle. Conversation top padding keeps the first message's hover actions
+inside the scrollport. Agents directory header actions are icon-only View
+sessions and Refresh agents buttons with shadcn tooltips.

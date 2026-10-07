@@ -6,15 +6,15 @@
   {{#include E-EXEC-012/SUMMARY.nav.md}}
 - [E-EXEC-013](E-EXEC-013/index.md)
   {{#include E-EXEC-013/SUMMARY.nav.md}}
-
 - [E-EXEC-014](E-EXEC-014/index.md)
   {{#include E-EXEC-014/SUMMARY.nav.md}}
-
 - [E-EXEC-015](E-EXEC-015/index.md)
   {{#include E-EXEC-015/SUMMARY.nav.md}}
-
 - [E-EXEC-016](E-EXEC-016/index.md)
   {{#include E-EXEC-016/SUMMARY.nav.md}}
-
 - [E-EXEC-017](E-EXEC-017/index.md)
   {{#include E-EXEC-017/SUMMARY.nav.md}}
+- [E-EXEC-018](E-EXEC-018/index.md)
+  {{#include E-EXEC-018/SUMMARY.nav.md}}
+- [E-EXEC-019](E-EXEC-019/index.md)
+  {{#include E-EXEC-019/SUMMARY.nav.md}}

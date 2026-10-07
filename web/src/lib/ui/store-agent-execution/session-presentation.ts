@@ -38,5 +38,9 @@ export function sessionItems(
         ? session.last_activity_at_millis / 1_000
         : undefined,
     status: sessionStatus(session, unknown),
+    repository: {
+      href: `#/repos/${encodeURIComponent(session.repository)}/files?${new URLSearchParams({ at_op: session.operation })}`,
+      label: `Open workspace repository for ${session.title}`,
+    },
   }));
 }

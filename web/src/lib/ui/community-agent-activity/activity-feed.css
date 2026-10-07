@@ -35,5 +35,6 @@
   [data-ui-part="message-area"] {
   width: 100%;
   max-width: none;
+  padding-block-start: 0.75rem;
   padding-block-end: 0.75rem;
 }

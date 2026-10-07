@@ -3,6 +3,11 @@ import {
   text,
   type AgentEvent,
 } from "../../controller/agent-execution-types.js";
+import { agentMessageTimestamp } from "../../collaboration/presentation.js";
+import {
+  communityMessageDay,
+  communityMessageDayLabel,
+} from "../community-conversation/conversation-day.js";
 export type ActivityRow = {
   id: string;
   kind: "user" | "assistant" | "tool" | "plan" | "permission" | "record";
@@ -57,14 +62,12 @@ export function activityRows(events: readonly AgentEvent[]): ActivityRow[] {
         value: data,
         request,
         sequence: Number(event.sequence),
-        observedAtMillis: rows.has(id)
-          ? rows.get(id)?.observedAtMillis
-          : typeof event.observed_at_millis === "number" &&
-              Number.isSafeInteger(event.observed_at_millis) &&
-              event.observed_at_millis >= 0 &&
-              event.observed_at_millis <= 8_640_000_000_000_000
-            ? event.observed_at_millis
-            : undefined,
+        observedAtMillis:
+          rows.get(id)?.observedAtMillis ??
+          (agentMessageTimestamp(event.observed_at_millis).createdAt &&
+          Number(event.observed_at_millis) >= 0
+            ? Number(event.observed_at_millis)
+            : undefined),
       });
     if (type === "prompt") row(`${request}/user`, "user", text(value.text));
     if (type === "activity" && update.sessionUpdate === "agent_message_chunk") {
@@ -99,6 +102,29 @@ export function activityRows(events: readonly AgentEvent[]): ActivityRow[] {
       row(`${request}/record`, "record", text(object(value.record).status));
   }
   return [...rows.values()];
+}
+/** Use the thread chat's day presentation, with honest groups for legacy data. */
+export function activityDayDividers(rows: readonly ActivityRow[]) {
+  const dividers = new Map<string, string>();
+  let previous: string | undefined;
+  for (const row of rows) {
+    const message = {
+      id: row.id,
+      authorId: "",
+      content: row.text,
+      ...agentMessageTimestamp(row.observedAtMillis),
+    };
+    const day = communityMessageDay(message);
+    if (day !== previous)
+      dividers.set(
+        row.id,
+        day === "unknown"
+          ? "Time not recorded"
+          : communityMessageDayLabel(message),
+      );
+    previous = day;
+  }
+  return dividers;
 }
 export function choices(value: unknown, key: string, id = "id") {
   const array = object(value)[key];

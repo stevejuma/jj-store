@@ -211,3 +211,8 @@
 .agents__empty p {
   max-width: 34rem;
 }
+.agents__header-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
