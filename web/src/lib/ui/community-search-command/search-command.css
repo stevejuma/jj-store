@@ -47,11 +47,13 @@
 }
 
 .community-search-command__browse-icon :is(svg:first-child) {
+  --ui-command-view-icon-size: 1.1rem;
   width: 1.1rem;
   height: 1.1rem;
 }
 
 .community-search-command__browse-icon :is(svg:last-child) {
+  --ui-command-view-icon-size: 0.65rem;
   position: absolute;
   right: -0.2rem;
   bottom: -0.2rem;

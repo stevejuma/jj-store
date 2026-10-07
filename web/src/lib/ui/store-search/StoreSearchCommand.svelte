@@ -22,6 +22,7 @@
     status,
     errors,
     scopeLabel,
+    scopeKind,
     activeScopeLabel,
     onScope,
     onClearScope,
@@ -42,6 +43,7 @@
     status?: string;
     errors?: readonly string[];
     scopeLabel?: string;
+    scopeKind?: CommunitySearchRow["kind"];
     activeScopeLabel?: string;
     onScope?: () => void;
     onClearScope?: () => void;
@@ -67,6 +69,7 @@
   {onQueryChange}
   {onOpenChangeComplete}
   {scopeLabel}
+  {scopeKind}
   {activeScopeLabel}
   {onScope}
   {onClearScope}

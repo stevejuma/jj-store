@@ -6,6 +6,7 @@
     StoreSearchResult,
   } from "../../controller/contracts.js";
   import type { GlobalSearchScope } from "../../controller/global-search-types.js";
+  import type { CommunitySearchRow } from "../community-search-command/model.js";
   import StoreSearchCommand from "./StoreSearchCommand.svelte";
   import StoreThreadCreate from "../store-threads/StoreThreadCreate.svelte";
   import StoreWorkProjectForm from "../store-work/StoreWorkProjectForm.svelte";
@@ -25,6 +26,19 @@
   const global = $derived(controller.globalSearch);
   const work = $derived(controller.projects?.detail ?? controller.work);
   const context = $derived(currentSearchScope(controller));
+  const sectionKinds = {
+    all: "repository",
+    threads: "thread",
+    projects: "project",
+    tasks: "task",
+    code: "file",
+  } as const satisfies Record<
+    NonNullable<GlobalSearchScope["section"]>,
+    CommunitySearchRow["kind"]
+  >;
+  const scopeKind = $derived(
+    context.task ? "task" : sectionKinds[context.section ?? "all"],
+  );
   const homePermission = $derived(
     controller.state.repositories.find(
       (r) => r.id === controller.projects?.route.repository,
@@ -85,6 +99,7 @@
     {
       id: "browse-threads",
       label: "Browse threads",
+      kind: "thread" as const,
       run: () =>
         choose(() => {
           void controller.actions.openThreads?.();
@@ -93,6 +108,7 @@
     {
       id: "browse-projects",
       label: "Browse projects",
+      kind: "project" as const,
       run: () =>
         choose(() => {
           void controller.projects?.openHub("projects");
@@ -101,6 +117,7 @@
     {
       id: "browse-tasks",
       label: "Browse tasks",
+      kind: "task" as const,
       run: () =>
         choose(() => {
           void controller.projects?.openHub("tasks");
@@ -109,6 +126,7 @@
     {
       id: "browse-repositories",
       label: "Browse repositories",
+      kind: "repository" as const,
       run: () =>
         choose(() => {
           void controller.projects?.openHub("repositories");
@@ -119,6 +137,7 @@
           {
             id: "create-thread",
             label: "Create new thread",
+            kind: "thread" as const,
             create: true,
             run: () =>
               choose(() => {
@@ -132,6 +151,7 @@
           {
             id: "create-project",
             label: "Create new project",
+            kind: "project" as const,
             create: true,
             run: () =>
               choose(() => {
@@ -146,6 +166,7 @@
           {
             id: "create-task",
             label: "Create new task",
+            kind: "task" as const,
             create: true,
             run: () =>
               choose(() => {
@@ -156,9 +177,10 @@
       : []),
   ]);
   const sections = $derived(
-    ["threads", "projects", "tasks", "code"].map((section) => ({
+    (["threads", "projects", "tasks", "code"] as const).map((section) => ({
       id: `scope:${section}`,
       label: `Search ${section}`,
+      kind: sectionKinds[section],
       run: () =>
         changeScope({
           label: section[0]!.toUpperCase() + section.slice(1),
@@ -179,6 +201,7 @@
   status={global?.status}
   errors={global?.errors}
   scopeLabel={context.label}
+  {scopeKind}
   activeScopeLabel={scope?.label}
   onScope={() => changeScope(context)}
   onClearScope={() => changeScope()}

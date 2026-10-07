@@ -1,5 +1,10 @@
 # Captured application content search
 
+Workspace search icon presentation does not alter JST-API-004/JST-API-005
+authorization, bounded source reads, exact result identities or navigation.
+Entity/search and entity/create badges are decorative UI metadata only; HTTP
+DTOs, search scopes and canonical repository formats remain unchanged.
+
 Native application content search retains bounded data-only indexes keyed by
 repository, epoch and immutable Thread/Work roots. Validate complete selected
 domains once per retained generation, admit normalized body growth before

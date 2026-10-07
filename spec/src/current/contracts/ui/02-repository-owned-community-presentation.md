@@ -24,6 +24,12 @@ permission-gated create/browse actions. Content search includes stored Thread
 messages/replies and WorkStore descriptions/comments; code search keeps its
 independent operation pins.
 
+Workspace search context, section and browse actions use each entity's icon with
+Community's compact search badge at the bottom right. Create actions use the
+matching entity icon with a plus badge. These decorations are hidden from
+assistive technology; labels, keyboard selection, permission gates and exact
+navigation remain authoritative. Search result icons retain their entity type.
+
 The Thread toolbar supplies the page's level-one heading with the copied channel
 typography. Its header and the standard settings, contributor and reply headers
 share the shell geometry tokens and aligned separator; consumer header content

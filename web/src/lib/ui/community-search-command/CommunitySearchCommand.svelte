@@ -25,6 +25,7 @@
     errors = [],
     now,
     scopeLabel,
+    scopeKind,
     activeScopeLabel,
     onScope,
     onClearScope,
@@ -42,6 +43,7 @@
     errors?: readonly string[];
     now: number;
     scopeLabel?: string;
+    scopeKind?: CommunitySearchRow["kind"];
     activeScopeLabel?: string;
     onScope?: () => void;
     onClearScope?: () => void;
@@ -137,7 +139,7 @@
               value="scope:context"
               onSelect={() => focusAfter(onScope)}
               ><CommandView.ItemIcon
-                ><Search aria-hidden="true" /></CommandView.ItemIcon
+                >{@render actionIcon(scopeKind)}</CommandView.ItemIcon
               ><CommandView.ItemLabel
                 >Search in {scopeLabel}</CommandView.ItemLabel
               ><CommandView.ItemDescription
@@ -184,7 +186,7 @@
                 value={section.id}
                 onSelect={() => focusAfter(section.run)}
                 ><CommandView.ItemIcon
-                  ><Search aria-hidden="true" /></CommandView.ItemIcon
+                  >{@render actionIcon(section.kind)}</CommandView.ItemIcon
                 ><CommandView.ItemLabel>{section.label}</CommandView.ItemLabel
                 ></CommandView.Item
               >{/each}</CommandView.Group
@@ -194,9 +196,10 @@
                 value={action.id}
                 onSelect={action.run}
                 ><CommandView.ItemIcon
-                  >{#if action.create}<Plus aria-hidden="true" />{:else}<Search
-                      aria-hidden="true"
-                    />{/if}</CommandView.ItemIcon
+                  >{@render actionIcon(
+                    action.kind,
+                    action.create,
+                  )}</CommandView.ItemIcon
                 ><CommandView.ItemLabel>{action.label}</CommandView.ItemLabel
                 ></CommandView.Item
               >{/each}</CommandView.Group
@@ -207,6 +210,20 @@
     </CommandView.Root>
   </Dialog.Content></Dialog.Root
 >
+{#snippet actionIcon(
+  kind: CommunitySearchRow["kind"] | undefined,
+  create = false,
+)}
+  {#if kind}
+    {@const Icon = icons[kind]}
+    <span class="community-search-command__browse-icon" aria-hidden="true">
+      <Icon />
+      {#if create}<Plus />{:else}<Search />{/if}
+    </span>
+  {:else if create}<Plus aria-hidden="true" />{:else}<Search
+      aria-hidden="true"
+    />{/if}
+{/snippet}
 {#snippet resultItem(result: CommunitySearchRow)}
   {@const Icon = icons[result.kind]}
   <CommandView.Item

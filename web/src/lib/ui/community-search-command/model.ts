@@ -19,6 +19,7 @@ export interface CommunitySearchRow {
 export interface CommunitySearchAction {
   id: string;
   label: string;
+  kind?: CommunitySearchRow["kind"];
   run: () => void;
   create?: boolean;
 }
