@@ -85,7 +85,8 @@
     transform: translateY(calc(-100% + 0.15rem));
   }
   .community-message__actions[data-menu-open],
-  :global(.community-message[data-actions-visible])
+  :global(.community-message[data-actions-visible]) .community-message__actions,
+  :global([data-ui-component="agent-tool-message"][data-actions-visible])
     .community-message__actions {
     opacity: 1;
     pointer-events: auto;

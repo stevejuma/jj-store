@@ -1,4 +1,5 @@
 //! Bounded exact message feedback shared by native and local selections.
+use crate::agent_execution::FeedbackSubject;
 use crate::agent_execution::{Error, Feedback, FeedbackMessage, FeedbackReply, Result};
 use jj_collab::*;
 use jj_store_wal::publication::*;
@@ -10,7 +11,11 @@ pub(crate) async fn project(
     agents: &dyn AgentSnapshotRead,
     state: &ThreadStateV1,
     graph: &CollabGraphV1,
-    rows: &[(String, AgentSessionId, MessageId)],
+    rows: &[(
+        String,
+        AgentSessionId,
+        crate::agent_execution::FeedbackSubject,
+    )],
 ) -> Result<Feedback> {
     if rows.len() > 256 || state.messages.len() > 4096 || state.threads.len() > 4096 {
         return Err(Error::Limit);
@@ -43,6 +48,43 @@ pub(crate) async fn project(
         if session.session_id != session_id {
             return Err(Error::Invalid);
         }
+        for (tool_id, snapshot) in &session.tools {
+            if !rows
+                .iter()
+                .any(|r| r.1 == session_id && r.2 == FeedbackSubject::Tool(*tool_id))
+            {
+                continue;
+            }
+            reads += 1;
+            if reads > 4096 {
+                return Err(Error::Limit);
+            }
+            let AgentObjectV1::ToolSnapshot(tool) = agents
+                .read_object(*snapshot)
+                .await
+                .map_err(|_| Error::Unavailable)?
+            else {
+                return Err(Error::Invalid);
+            };
+            if tool.session_id != session_id || tool.tool_call_id != *tool_id {
+                return Err(Error::Invalid);
+            }
+            let target = if let Some(content) = tool.output {
+                ReactionTargetV1::ToolOutput {
+                    session_id,
+                    tool_id: *tool_id,
+                    snapshot: *snapshot,
+                    content,
+                }
+            } else {
+                ReactionTargetV1::ToolInvocation {
+                    session_id,
+                    tool_id: *tool_id,
+                    snapshot: *snapshot,
+                }
+            };
+            targets.insert((session_id, FeedbackSubject::Tool(*tool_id)), target);
+        }
         for batch in &session.event_batches {
             reads += 1;
             if reads > 4096 {
@@ -66,7 +108,7 @@ pub(crate) async fn project(
                     && sid == session_id
                 {
                     targets.insert(
-                        (sid, message_id),
+                        (sid, FeedbackSubject::Message(message_id)),
                         ReactionTargetV1::AgentMessage {
                             session_id: sid,
                             message_id,
@@ -80,8 +122,9 @@ pub(crate) async fn project(
         }
     }
     let mut messages = Vec::new();
-    for (row_id, session_id, message_id) in rows {
-        let Some(target) = targets.get(&(*session_id, *message_id)).cloned() else {
+    for (row_id, session_id, subject) in rows {
+        let target = targets.get(&(*session_id, *subject)).cloned();
+        let Some(target) = target else {
             continue;
         };
         resolve_reaction_target(&reader, &target)

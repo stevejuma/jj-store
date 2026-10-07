@@ -30,8 +30,8 @@
       "docs/site/concepts/collaboration.md"
     ],
     "review": {
-      "reason": "Documented separate defaults, compute inference and captured message context with native repository publication unchanged.",
-      "fingerprint": "2c7ceb4fcf9f07ba473a0099ce3e8c08d293fe51fc90df75fe0f8697cb81da69"
+      "reason": "Reviewed separate authored text and XML content blocks, captured wire context, exact tool feedback targets and unchanged native ThreadStore/AgentStore authority; documented fleet limits and shared lifecycle/tool presentation without closing independent adapter gates.",
+      "fingerprint": "47af375b510232c1b0914df7a0540c255fe4114796bd1e7e694ef5c695ddd232"
     }
   },
   {
@@ -65,8 +65,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed additive fixed native GGUF picker contracts and capability; repository mutations and publication authority unchanged.",
-      "fingerprint": "715baf10610ec0283bcfc3d05e8ade5608380ae4b00cc6f158cd69aed3a169de"
+      "reason": "Reviewed exact committed message/tool feedback resolution for both providers, explicit-Send discussion context and retained rich views; native authorization, snapshot pinning, publication receipts and conversion refusals remain unchanged.",
+      "fingerprint": "09c2786ac6e30546dc4f8d013429f785dc8b1e26b14df429bbcccad8fdd68c5a"
     }
   },
   {
@@ -96,8 +96,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed jj-agent packaged companion readiness with stable local runner identity and existing launch/receipt semantics.",
-      "fingerprint": "76525accb638eaa39a521613e64ba81b5d1d87456fb18a0036903e7adabba746"
+      "reason": "Reviewed sanitized authored text and separate XML/captured wire context before dispatch, one-turn capability-gated delivery and no replay after restart; existing executable, environment, credential and lifecycle admission remain unchanged.",
+      "fingerprint": "433557e189dfeaf77f6f3ef54ba22310ebc1b8b269dacc0dd846b1e68eac8d8d"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed Compute command menu, Files layout and consistent icon agent actions across repository and Projects/task headers with retained context; API schema unchanged",
-      "fingerprint": "aaa47093e19470a5ecfa1c19f8d28b9480cdde4010eb4e570812ba63d3514852"
+      "reason": "Reviewed the Compute/main rebase with shared chat rows, icon lifecycle records, composer warnings, saved comparisons and captured text/XML context; independent source and distribution gates remain open.",
+      "fingerprint": "2279597c8f39723a8d02a7d2817c8aeb6242438ab03e30ad041faf646ea2e67a"
     }
   },
   {

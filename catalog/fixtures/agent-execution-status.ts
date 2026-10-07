@@ -4,6 +4,23 @@ import type {
   AgentSetup,
   AgentSession,
 } from "../../web/src/lib/controller/agent-execution-types.js";
+export function fixtureExecutionSetup(model: string | null): AgentSetup {
+  return {
+    id: "helper",
+    name: "Repository helper",
+    avatar: "🤖",
+    description: "Repository review and edits",
+    instructions: "Keep changes focused.",
+    options: {
+      inherit_defaults: false,
+      provider: null,
+      endpoint: null,
+      environment: {},
+    },
+    runner: "codex",
+    preferences: { model, effort: null, mode: "ask" },
+  };
+}
 export function fixtureExecutionStatus(input: {
   repository: string;
   operation: string;

@@ -376,4 +376,7 @@ pnpm exec prettier --check web/src/lib/ui/store-settings/StoreCompute*.svelte we
 All affected authored presentation, fixture, guide, source-review and canonical milestone files pass formatting after history generation. Unrelated historical navigation-only rewrites restored.
 <!-- /run -->
 <!-- /evidence-field -->
+<!-- generated-navigation -->
+## Pages
 
+- [E-COMPUTE-002 details 2](details-02.md)

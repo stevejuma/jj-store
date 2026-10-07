@@ -52,6 +52,7 @@ export type CommunityMessageProps = {
   onViewMemberActivity?: (member: CommunityMemberModel) => void | Promise<void>;
   currentMemberId?: string;
   replyActionLabel?: string;
+  content?: Snippet;
   supplement?: Snippet;
   metadataSupplement?: Snippet;
   avatarShape?: "circle" | "rounded";

@@ -8,3 +8,5 @@ Browse the child pages below.
 - [E-COMPUTE-003](E-COMPUTE-003/index.md)
 - [E-COMPUTE-004](E-COMPUTE-004/index.md)
 - [E-COMPUTE-005](E-COMPUTE-005/index.md)
+- [E-FLEET-005](E-FLEET-005/index.md)
+- [E-FLEET-006](E-FLEET-006/index.md)

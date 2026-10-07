@@ -1,7 +1,10 @@
 import { createThreadTransport } from "./thread-transport.js";
 import { fixtureJsonResponse as json } from "./agent-execution-session.js";
 import { targetKey } from "../../web/src/lib/collaboration/thread-presentation.js";
-import type { Model } from "../../web/src/lib/controller/thread-types.js";
+import type {
+  Model,
+  ReactionTarget,
+} from "../../web/src/lib/controller/thread-types.js";
 
 export function seedReplayDrafts(drafts: Record<string, string>) {
   const session = "44".repeat(16);
@@ -18,7 +21,10 @@ export function agentDiscussionFixture(
 ) {
   let feedbackReads = 0;
   const { transport } = createThreadTransport({ unknownFirst });
-  const targets = ["user", "assistant"].map((role, i) => ({
+  const targets: { row_id: string; target: ReactionTarget }[] = [
+    "user",
+    "assistant",
+  ].map((role, i) => ({
     row_id: `${"55".repeat(16)}/${role}`,
     target: {
       type: "agent_message" as const,
@@ -29,6 +35,16 @@ export function agentDiscussionFixture(
       content: { kind: "content" as const, id: (i ? "22" : "11").repeat(32) },
     },
   }));
+  targets.push({
+    row_id: `${"55".repeat(16)}/tool/read`,
+    target: {
+      type: "tool_output",
+      session_id: "99".repeat(16),
+      tool_id: "77".repeat(16),
+      snapshot: { kind: "tool_snapshot", id: "88".repeat(32) },
+      content: { kind: "content", id: "66".repeat(32) },
+    },
+  });
   return async (path: string, init?: RequestInit) => {
     if (path.includes("/feedback")) {
       if (enabled === "refresh-failed" && ++feedbackReads > 1)

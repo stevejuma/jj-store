@@ -44,8 +44,8 @@ fn controller_turns_preserve_identity_and_emit_one_final_assistant_message() {
 #[test]
 fn controller_tool_updates_keep_exact_turn_and_call_identity() {
     let profile = NormalizerProfileV1::acp_controller_v2();
-    let first=normalize_batch(&profile,&batch(1,json!({"type":"activity","toolSnapshot":{"toolCallId":"tool","title":"Read","kind":"read","status":"in_progress"}}))).unwrap();
-    let second=normalize_batch(&profile,&batch(2,json!({"type":"activity","toolSnapshot":{"toolCallId":"tool","title":"Read","kind":"read","status":"completed"}}))).unwrap();
+    let first=normalize_batch(&profile,&batch(1,json!({"type":"activity","toolSnapshot":{"toolCallId":"tool","title":"Read","kind":"read","status":"in_progress","rawOutput":null,"content":[]}}))).unwrap();
+    let second=normalize_batch(&profile,&batch(2,json!({"type":"activity","toolSnapshot":{"toolCallId":"tool","title":"Read","kind":"read","status":"completed","rawOutput":{"formatted_output":"captured file"}}}))).unwrap();
     let NormalizedActivityRecordV1::Tool(call) = &first.records[0] else {
         panic!()
     };
@@ -55,6 +55,11 @@ fn controller_tool_updates_keep_exact_turn_and_call_identity() {
     assert_eq!(call.tool_call_id, result.tool_call_id);
     assert_eq!(call.turn_id, result.turn_id);
     assert_eq!(result.state, ToolState::Succeeded);
+    assert!(call.output.is_none());
+    assert!(result.output.is_some());
+    let mut combined = first.clone();
+    combined.records.extend(second.records);
+    assert!(combined.reduce_tools().tools[0].output.is_some());
 }
 #[test]
 fn controller_unknown_or_unusable_turns_never_claim_idle() {
@@ -147,4 +152,26 @@ fn sent_context_preserves_human_text_snapshot_and_message_identity_after_deliver
     assert_eq!(data["text"], "hello");
     assert_eq!(data["context"]["blocks"][0]["text"], "revision-one");
     assert_eq!(data["context"]["delivery"], "sent");
+}
+
+#[test]
+fn controller_tool_outputs_retain_raw_file_bytes_and_structured_evidence() {
+    let raw = json!({"formatted_output":"export const answer = 42;\n","exit_code":0});
+    let content = json!([{ "type":"terminal", "terminalId":"captured" }]);
+    let normalized = normalize_batch(&NormalizerProfileV1::acp_controller_v2(), &batch(9,json!({"type":"activity","toolSnapshot":{"toolCallId":"read","title":"Read file","kind":"read","status":"completed","rawOutput":raw,"content":content}}))).unwrap();
+    let tool = normalized
+        .records
+        .iter()
+        .find_map(|record| {
+            if let NormalizedActivityRecordV1::Tool(tool) = record {
+                Some(tool)
+            } else {
+                None
+            }
+        })
+        .unwrap();
+    let value: serde_json::Value =
+        serde_json::from_slice(tool.output.as_ref().unwrap().bytes()).unwrap();
+    assert_eq!(value["rawOutput"], raw);
+    assert_eq!(value["content"], content);
 }

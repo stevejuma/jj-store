@@ -61,6 +61,7 @@
     onViewMemberActivity,
     currentMemberId,
     replyActionLabel = "Reply in thread",
+    content,
     supplement,
     metadataSupplement,
     avatarShape,
@@ -87,9 +88,6 @@
       : members.map((member) =>
           member.id === currentMemberId ? { ...member, name: "You" } : member,
         ),
-  );
-  const activityContent = $derived(
-    messageActivityContent(message.activity, activityMembers),
   );
 
   const replyAction = $derived(
@@ -161,10 +159,12 @@
   {/snippet}
 
   <MessageBubble variant="ghost" {density}>
-    {#if message.activity}
+    {#if content}
+      {@render content()}
+    {:else if message.activity}
       <CommunityMarkdownContent
         class="community-message__content community-message__activity"
-        content={activityContent}
+        content={messageActivityContent(message.activity, activityMembers)}
         mentionPubkeys={message.activity.targetMemberId === undefined
           ? []
           : [message.activity.targetMemberId]}

@@ -13,10 +13,15 @@
   import { conversationError } from "./conversation-error.js";
   import type { AgentExecution } from "../../controller/agent-execution.svelte.js";
   import { object, text } from "../../controller/agent-execution-types.js";
+  import { completedAgentChanges } from "../../controller/agent-workspace-changes.js";
+  import StoreAgentChangesPanel from "../store-agent-chat/StoreAgentChangesPanel.svelte";
   let { manager }: { manager: AgentExecution } = $props();
   const session = $derived(manager.session);
   const facts = $derived(object(session?.capabilities));
   const rows = $derived(activityRows(manager.events));
+  const changes = $derived(
+    session ? completedAgentChanges(session, manager.events) : [],
+  );
   const active = $derived(
     [...manager.events]
       .reverse()
@@ -112,6 +117,13 @@
       empty={!rows.length && !manager.eventsLoading}
     >
       {#snippet messageComposer()}
+        {#each changes as selection (`${selection.repository}:${selection.operation}:${selection.commit}`)}
+          <StoreAgentChangesPanel
+            {selection}
+            repositoryName={selection.repository.slice(0, 8)}
+            fetcher={manager.client.fetcher}
+          />
+        {/each}
         <form
           aria-label="Send agent prompt"
           onsubmit={(event) => {
@@ -137,25 +149,27 @@
               : undefined}
             composerStatus={error
               ? { type: "error", message: error }
-              : !idle
-                ? {
-                    type: "warning",
-                    message:
-                      session.state === "preparing" ||
-                      session.state === "opening"
-                        ? "Connecting the agent. Your draft is retained."
-                        : object(facts.initialize).loadSession === true &&
-                            session.state !== "cleaned"
-                          ? "Resume this session from Session options to continue. Your draft is retained."
-                          : "Start a new session with saved context from Session options to continue. Your draft is retained.",
-                  }
-                : !ready && !canConfigure
+              : manager.activityError
+                ? { type: "warning", message: manager.activityError }
+                : !idle
                   ? {
                       type: "warning",
                       message:
-                        "Choose an execution mode in Session options → Workspace and runtime → Edit execution mode before sending.",
+                        session.state === "preparing" ||
+                        session.state === "opening"
+                          ? "Connecting the agent. Your draft is retained."
+                          : object(facts.initialize).loadSession === true &&
+                              session.state !== "cleaned"
+                            ? "Resume this session from Session options to continue. Your draft is retained."
+                            : "Start a new session with saved context from Session options to continue. Your draft is retained.",
                     }
-                  : undefined}
+                  : !ready && !canConfigure
+                    ? {
+                        type: "warning",
+                        message:
+                          "Choose an execution mode in Session options → Workspace and runtime → Edit execution mode before sending.",
+                      }
+                    : undefined}
             ariaLabel="Message to agent"
             placeholder={session.state === "running"
               ? "Queue a follow-up…"

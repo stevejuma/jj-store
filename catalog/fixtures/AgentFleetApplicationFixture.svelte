@@ -11,6 +11,11 @@
     fixtureRunners,
     fixtureJsonResponse as json,
   } from "./agent-execution-session.js";
+  import {
+    changeRepository,
+    fleetChangesResponse,
+    completedFleetConversation,
+  } from "./agent-fleet-changes.js";
   import type {
     AgentStatus,
     AgentEvent,
@@ -21,18 +26,23 @@
     multipleWorkspaces = false,
     modelFailure = false,
     catalogSession,
+    completedChanges = false,
+    reconnect = false,
   }: {
     general?: boolean;
     directory?: boolean;
     multipleWorkspaces?: boolean;
     modelFailure?: boolean;
     catalogSession?: "live" | "remembered";
+    completedChanges?: boolean;
+    reconnect?: boolean;
   } = $props();
   const base = untrack(() =>
     createInMemoryStoreController(directory ? "agents" : "branches"),
   );
   let requests = $state<Record<string, unknown>[]>([]);
   let catalogRequests = $state(0);
+  let updatesUnavailable = $state(untrack(() => reconnect));
   let status: AgentStatus = untrack(() => ({
     version: 1,
     runtime: "ready",
@@ -82,6 +92,8 @@
           const path = String(input);
           const settings = defaults.respond(path, init);
           if (settings) return settings;
+          if (path.includes(`/repos/${changeRepository}/query`))
+            return fleetChangesResponse(init);
           if (path.includes("/catalog")) {
             catalogRequests++;
             return modelFailure
@@ -133,6 +145,11 @@
               write_unavailable: null,
             });
           if (path.includes("/events")) {
+            if (updatesUnavailable)
+              return new Response(JSON.stringify({ code: "unavailable" }), {
+                status: 503,
+                headers: { "content-type": "application/json" },
+              });
             const url = new URL(path, "http://localhost");
             const id = url.searchParams.get("session")!;
             const after = Number(url.searchParams.get("after"));
@@ -243,7 +260,24 @@
   };
   const storage = untrack(createMemoryStoryStorage);
   $effect(() => {
-    if (general) untrack(() => manager.chat.showGeneral());
+    if (completedChanges || reconnect)
+      untrack(() => {
+        manager.value = status;
+        manager.chat.showGeneral("agent-0");
+        const conversation = manager.chat.selected;
+        const completed = completedFleetConversation(
+          status,
+          conversation,
+          manager.chat.draft!.origin,
+          completedChanges,
+        );
+        status = completed.status;
+        events[completed.session.id] = completed.events;
+        manager.value = status;
+        manager.chat.events[completed.session.id] = completed.events;
+        void manager.chat.refresh();
+      });
+    else if (general) untrack(() => manager.chat.showGeneral());
   });
   onDestroy(() => manager.destroy());
 </script>
@@ -251,3 +285,9 @@
 <StoreApplication {controller} layoutStorage={storage} initiallyCollapsed />
 <output aria-label="Agent fleet requests">{JSON.stringify(requests)}</output>
 <output aria-label="Model catalog requests">{catalogRequests}</output>
+{#if reconnect}<button
+    onclick={() => {
+      updatesUnavailable = false;
+      void manager.chat.refresh();
+    }}>Restore chat updates</button
+  >{/if}

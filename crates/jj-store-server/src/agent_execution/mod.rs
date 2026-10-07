@@ -17,6 +17,8 @@ mod fleet;
 mod journal;
 mod launch;
 mod local_agent;
+
+mod prompt_context;
 mod publication;
 mod runtime;
 mod secrets;

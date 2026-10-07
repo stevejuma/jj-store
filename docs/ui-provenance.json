@@ -2448,6 +2448,83 @@
           "license": "Apache-2.0"
         }
       ]
+    },
+    {
+      "local": "web/src/lib/ui/community-agent-activity/transcript-tool-rich.ts",
+      "reason": "Copied Community rich detail models/labels, adapted to retained local tool identities and file reads.",
+      "sources": [
+        {
+          "path": "src/components/community-agent-activity/transcript-tool-rich.ts",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-agent-activity/transcript-tool-rich-detail.ts",
+      "reason": "Copied Community edit/shell/search detector, extended for ACP kinds, empty sides, partial preimages and captured output envelopes.",
+      "sources": [
+        {
+          "path": "src/components/community-agent-activity/transcript-tool-rich-detail.ts",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-agent-activity/transcript-tool-values.ts",
+      "reason": "Extracted copied Community JSON/value helpers to keep production modules bounded.",
+      "sources": [
+        {
+          "path": "src/components/community-agent-activity/transcript-tool-rich-detail.ts",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-agent-activity/TranscriptToolRichDetail.svelte",
+      "reason": "Copied Community diff/shell/search views; added path-aware captured file highlighting and missing-preimage disclosure.",
+      "sources": [
+        {
+          "path": "src/components/community-agent-activity/TranscriptToolRichDetail.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-agent-activity/TranscriptToolDetail.svelte",
+      "reason": "Copied Community raw/rich detail composition, with an accessible explicit JSON toggle and retained local payloads.",
+      "sources": [
+        {
+          "path": "src/components/community-agent-activity/TranscriptToolDetail.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-agent-activity/transcript-tool-adapters.ts",
+      "reason": "Local ACP and recorded AgentStore adapters for the copied rich tool presentation; no external source or type imports.",
+      "sources": [
+        {
+          "path": "src/components/community-agent-activity/rich-transcript-tool-props.ts",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/store-agent-execution/activity-row-groups.ts",
+      "reason": "Community adjacent-tool timeline grouping adapted to exact ACP session, request and recorded-day boundaries.",
+      "sources": [
+        {
+          "path": "src/components/community-agent-activity/model.ts",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
     }
   ],
   "owned": [

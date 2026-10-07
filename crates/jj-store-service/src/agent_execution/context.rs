@@ -25,7 +25,11 @@ pub(crate) async fn collect(
     agents: &dyn AgentSnapshotRead,
     state: &ThreadStateV1,
     graph: &CollabGraphV1,
-    rows: &[(String, AgentSessionId, MessageId)],
+    rows: &[(
+        String,
+        AgentSessionId,
+        crate::agent_execution::FeedbackSubject,
+    )],
     sessions: &BTreeSet<AgentSessionId>,
     excluded: &BTreeSet<ReplyRevision>,
 ) -> Result<ContextBatch> {

@@ -22,6 +22,7 @@
     interactive?: boolean;
   } = $props();
   const drafts = useDrafts();
+  let rawDetails = $state<Record<string, boolean>>({});
   const byId = $derived(
     new Map(items.map((entry) => [entry.tool.tool_call_id, entry])),
   );
@@ -54,7 +55,16 @@
 
 {#snippet detail(call: { id?: string })}
   {@const entry = call.id ? byId.get(call.id) : undefined}
-  {#if entry}<StoreAgentToolDetail tool={entry.tool} {patches} />{/if}
+  {#if entry}
+    {@const key = `${controller.state.agentSession?.session.session_id}:${entry.tool.tool_call_id}`}
+    <StoreAgentToolDetail
+      tool={entry.tool}
+      {patches}
+      bind:raw={
+        () => rawDetails[key] ?? false, (value) => (rawDetails[key] = value)
+      }
+    />
+  {/if}
 {/snippet}
 
 {#snippet timing(call: { id?: string })}
@@ -68,6 +78,7 @@
 {/snippet}
 
 <Chat.ToolCalls
+  style="--ui-ai-chat-tool-width: 100%; --ui-ai-chat-tool-trigger-padding-inline: 0.5rem;"
   label={items.length > 1 ? "Tool calls" : "Tool activity"}
   defaultExpanded={initialExpanded}
   calls={items.map(({ tool }) => ({

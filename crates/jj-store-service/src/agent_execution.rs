@@ -1,4 +1,6 @@
 //! Application-owned execution contracts, independent of ACP implementation.
+mod feedback_subject;
+pub use feedback_subject::FeedbackSubject;
 use jj_store_model::{CommitId, OperationId, PrincipalId, RepositoryId, RequestId};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};

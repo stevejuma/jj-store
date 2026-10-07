@@ -7,13 +7,12 @@
   import type { StoreController } from "../../controller/contracts.js";
   import CommunityChatComposer from "../community-chat-composer/CommunityChatComposer.svelte";
   import CommunityAgentActivityFeed from "../community-agent-activity/CommunityAgentActivityFeed.svelte";
-  import StoreAgentInboxMessage from "../store-agent-execution/StoreAgentInboxMessage.svelte";
-  import StoreAgentPermission from "../store-agent-execution/StoreAgentPermission.svelte";
-  import CommunityAgentTranscriptTools from "../community-agent-activity/CommunityAgentTranscriptTools.svelte";
-  import CommunityAgentTranscriptPlan from "../community-agent-activity/CommunityAgentTranscriptPlan.svelte";
+  import StoreAgentChatRows from "../store-agent-execution/StoreAgentChatRows.svelte";
   import { activityRows } from "../store-agent-execution/presentation.js";
   import { agentMember } from "../community-agents/model.js";
   import StoreAgentBindings from "./StoreAgentBindings.svelte";
+  import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
+  import { mentionedAgentIds } from "../../community/agent-mentions.js";
   import {
     agentLiveState,
     agentLiveLabels,
@@ -26,6 +25,32 @@
   const manager = $derived(controller.execution!);
   const chat = $derived(manager.chat);
   const members = $derived((manager.value?.setups ?? []).map(agentMember));
+  const headingIds = $derived(mentionedAgentIds(chat.draft?.text ?? ""));
+  const sessionMembers = $derived([
+    ...new Map(
+      chat.sessions.map((s) => [
+        s.setup_id ?? s.id,
+        {
+          ...agentMember({
+            id: s.setup_id ?? s.id,
+            name: s.title,
+            avatar: s.avatar,
+          }),
+          acpAgentId: s.setup_id ?? undefined,
+        },
+      ]),
+    ).values(),
+  ]);
+  const headingAgents = $derived(
+    headingIds.length
+      ? headingIds.flatMap((id) => {
+          const member =
+            members.find((m) => m.id === id) ??
+            sessionMembers.find((m) => m.id === id);
+          return member ? [member] : [];
+        })
+      : sessionMembers,
+  );
   const rows = $derived(
     chat.sessions
       .flatMap((session) =>
@@ -57,7 +82,12 @@
 </script>
 
 <AppShell.Sidebar.Header class="agent-chat-heading">
-  <strong>Chat</strong>
+  {#each headingAgents as agent (agent.id)}<CommunityMemberAvatar
+      member={agent}
+      size="small"
+    />{/each}
+  <strong>{headingAgents.length === 1 ? headingAgents[0]!.name : "Chat"}</strong
+  >
   <AppShell.Sidebar.Close label="Close" onclick={onClose} />
 </AppShell.Sidebar.Header>
 <AppShell.Sidebar.Body scrollable={false}>
@@ -88,46 +118,8 @@
         {:else}
           <StoreAgentChatRepositories {controller} />
         {/if}
-        {#each rows as row (row.key)}
-          {#if row.kind === "user" || row.kind === "assistant"}<StoreAgentInboxMessage
-              {manager}
-              sessionId={row.session.id}
-              row={{ ...row, kind: row.kind }}
-              author={row.kind === "assistant"
-                ? {
-                    ...agentMember({
-                      id: row.session.setup_id ?? row.session.id,
-                      name: row.session.title,
-                      avatar: row.session.avatar,
-                    }),
-                    acpAgentId: row.session.setup_id ?? undefined,
-                  }
-                : controller.state.member}
-            />
-          {:else if row.kind === "permission" && row.session.state === "running"}<StoreAgentPermission
-              {manager}
-              sessionId={row.session.id}
-              value={row.value}
-              title={row.text}
-            />
-          {:else if row.kind === "tool"}<CommunityAgentTranscriptTools
-              item={row}
-            />
-          {:else if row.kind === "plan"}<CommunityAgentTranscriptPlan
-              entries={(Array.isArray(row.value.entries)
-                ? row.value.entries
-                : []
-              ).map((v) => ({
-                content: text(object(v).content),
-                status: text(object(v).status),
-              }))}
-            />
-          {:else if row.kind === "record"}<p class="agent-chat-turn-status">
-              {row.session.title}: {row.text.replaceAll("_", " ")}
-            </p>{/if}
-        {/each}
+        <StoreAgentChatRows {manager} {rows} user={controller.state.member} />
         {#snippet messageComposer()}
-          {#if chat.streamError}<p role="status">{chat.streamError}</p>{/if}
           {#each chat.sessions as session (session.id)}<div
               class="agent-chat-participant"
             >
@@ -170,7 +162,9 @@
               disabled={chat.busy || !!chat.pending || !manager.available()}
               composerStatus={chat.error
                 ? { type: "error", message: chat.error }
-                : undefined}
+                : chat.streamError
+                  ? { type: "warning", message: chat.streamError }
+                  : undefined}
               onSubmit={(submission) =>
                 chat.send(submission.content, submission.agentIds ?? [])}
             />{/key}
@@ -216,10 +210,6 @@
     height: 100%;
     min-height: 0;
     overflow: hidden;
-  }
-  .agent-chat-turn-status {
-    color: var(--muted-foreground);
-    padding: 0.75rem;
   }
   .agent-chat-participant {
     padding: 0.25rem 0.75rem;

@@ -97,11 +97,15 @@ async fn repository_free_chat_reuses_isolated_bindings_and_never_replays_after_r
             .unwrap();
         assert!(page.events.iter().any(|e| {
             e.payload["type"] == "prompt"
-                && e.payload["text"].as_str().is_some_and(|t| {
+                && e.payload["text"] == "First real message"
+                && e.payload["userText"] == "First real message"
+                && e.payload["context"].as_str().is_some_and(|t| {
                     t.contains("Bootstrap instructions")
                         && t.contains("Initial context")
-                        && t.contains("First real message")
+                        && t.starts_with("<agent_context>")
                 })
+                && e.payload["sentContext"]["wireText"] == e.payload["text"]
+                && e.payload["sentContext"]["wireContext"] == e.payload["context"]
         }));
     }
     assert!(resources.root.join("personal-home/.jj").exists());

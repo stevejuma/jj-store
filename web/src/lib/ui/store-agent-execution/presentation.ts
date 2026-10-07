@@ -10,7 +10,14 @@ import {
 } from "../community-conversation/conversation-day.js";
 export type ActivityRow = {
   id: string;
-  kind: "user" | "assistant" | "tool" | "plan" | "permission" | "record";
+  kind:
+    | "user"
+    | "assistant"
+    | "tool"
+    | "plan"
+    | "permission"
+    | "record"
+    | "session";
   text: string;
   value: Record<string, unknown>;
   request: string;
@@ -70,8 +77,14 @@ export function activityRows(events: readonly AgentEvent[]): ActivityRow[] {
             ? Number(event.observed_at_millis)
             : undefined),
       });
+    if (type === "opened" && !rows.has("session/started"))
+      row("session/started", "session", "Session started");
     if (type === "prompt" || type === "context_delivery")
-      row(`${request}/user`, "user", text(value.userText) || text(value.text));
+      row(
+        `${request}/user`,
+        "user",
+        text(value.userText) || text(value.authoredText) || text(value.text),
+      );
     if (type === "activity" && update.sessionUpdate === "agent_message_chunk") {
       const id = `${request}/assistant`,
         previous = rows.get(id);

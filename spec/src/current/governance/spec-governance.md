@@ -79,3 +79,7 @@ source-pinned mesh-llm weight catalog as owned UI data. Their source paths,
 revisions and Apache-2.0 attribution are recorded in `docs/ui-provenance.json`.
 No runtime, build or type import from either checkout is introduced. Advisory
 RAM fit remains separate from measured inference/platform qualification.
+
+M24 rich tool presentation copies retained-value adapters and Community detail
+helpers into owned production files, with pinned attribution. Shared live chat
+rows retain the existing Community message composition and XML prompt renderer.

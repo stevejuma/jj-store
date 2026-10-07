@@ -107,6 +107,11 @@
       await waitFor(() => expect(pointerMessage).toBeVisible());
       await userEvent.click(pointerMessage);
       await waitFor(() => expect(write).toHaveBeenCalledWith(openCodeParts));
+      // The clipboard mock resolves before the portal finishes closing. Wait
+      // for that visible transition before reopening for the keyboard path.
+      await waitFor(() =>
+        expect(page.queryByRole("menuitem", { name: /^Copy$/ })).toBeNull(),
+      );
       // Also exercise a complete keyboard path without moving the pointer out
       // of a keyboard-opened submenu during its focus transition.
       await userEvent.click(

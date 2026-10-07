@@ -17,7 +17,7 @@
     : manager.error) ||
     manager.connectionError ||
     manager.targetError ||
-    manager.activityError}
+    (!activeSession ? manager.activityError : "")}
   pending={manager.busy}
   action={{
     id: "refresh-agent-execution",

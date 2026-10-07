@@ -74,7 +74,12 @@ impl ThreadVersionV1 {
     }
 }
 pub(crate) fn validate_agent_discussion(target: &ReactionTargetV1) -> Result<()> {
-    if !matches!(target, ReactionTargetV1::AgentMessage { .. }) {
+    if !matches!(
+        target,
+        ReactionTargetV1::AgentMessage { .. }
+            | ReactionTargetV1::ToolInvocation { .. }
+            | ReactionTargetV1::ToolOutput { .. }
+    ) {
         return Err(Error::Invalid("agent discussion target"));
     }
     target.validate()

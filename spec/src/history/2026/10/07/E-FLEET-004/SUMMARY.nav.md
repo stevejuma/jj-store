@@ -1,0 +1,2 @@
+- [Recorded failures and repairs](attempts.md)
+- [Final chat qualification](qualification.md)

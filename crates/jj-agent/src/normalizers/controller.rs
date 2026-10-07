@@ -233,7 +233,14 @@ fn tool_record(
             capture_state: CaptureState::Observed,
             permission_state: PermissionState::NotObserved,
             input: value.get("rawInput").map(json_payload).transpose()?,
-            output: value.get("content").map(json_payload).transpose()?,
+            output: match value.get("rawOutput").filter(|v| !v.is_null()) {
+                Some(_) => Some(json_payload(value)?),
+                None => value
+                    .get("content")
+                    .filter(|v| !v.is_null() && !v.as_array().is_some_and(Vec::is_empty))
+                    .map(json_payload)
+                    .transpose()?,
+            },
             conflicting_terminal_states: vec![],
         }));
     Ok(())

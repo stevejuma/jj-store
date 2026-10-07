@@ -19,7 +19,10 @@
     await userEvent.click(
       c.getByRole("button", { name: "Open fixture conversation" }),
     );
-    const completed = await c.findByText("Turn completed");
+    const completed = await c.findByRole("group", { name: "Turn completed" });
+    await expect(completed.querySelector("svg")).not.toBeNull();
+    await expect(completed.querySelector("time")).not.toBeNull();
+    await expect(completed).toHaveAttribute("title", "Turn completed");
     await expect(
       completed.closest('[data-ui-component="ai-chat-system-message"]'),
     ).toHaveAttribute("data-variant", "divider");

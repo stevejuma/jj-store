@@ -290,19 +290,10 @@ impl Manager for Supervisor {
                 }
                 self.authorized(saved.view.repository, &saved.profile, true)
                     .await?;
-                let prepared = if first {
-                    format!(
-                        "{}\n{}\n{}\n{}",
-                        saved.instructions,
-                        saved.context.as_deref().unwrap_or(""),
-                        retained_context(&saved),
-                        text
-                    )
-                } else {
-                    text.clone()
-                };
+                let context = prompt_context::prepared(&saved, &feedback.text, first)?;
                 frame["type"] = json!("prompt");
-                frame["text"] = json!(format!("{}{prepared}", feedback.text));
+                frame["text"] = json!(text);
+                frame["context"] = json!(context);
                 context_batch = Some(feedback);
                 frame["maxDurationMs"] = json!(max_duration_ms);
             }
@@ -428,6 +419,7 @@ impl Manager for Supervisor {
                 sent_context::capture(&saved, &original, &batch.text, carries_initial_context),
             )?;
             recorded["sentContext"]["wireText"] = recorded["text"].clone();
+            recorded["sentContext"]["wireContext"] = recorded["context"].clone();
             self.update(|s| {
                 delivery::prepare(
                     s,
@@ -564,6 +556,13 @@ impl Manager for Supervisor {
             .filter(|e| e.sequence > after)
             .take(128)
             .collect();
+        let mut events = events;
+        self.read(|state| {
+            for event in &mut events {
+                prompt_context::presentation(event, state);
+            }
+            Ok(())
+        })?;
         let next = events
             .last()
             .filter(|e| e.sequence < saved.view.last_sequence)

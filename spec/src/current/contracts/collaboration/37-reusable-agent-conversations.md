@@ -56,14 +56,34 @@ The very top bar places Chat immediately before Details, following Terminal when
 present. Project and repository chat opens in the standard right body sidebar,
 with a fixed header/composer and scrolling transcript; the outer details rail is
 independent. Reopening restores the scoped chat and draft. The sidebar header
-contains only the Chat title and the standard far-right close icon; new-chat
-actions remain in the agent navigation. Repository selections use the previous
-centered chat draft and divided form rows inside the body. Multiple attachments
-remain supported. Repositories with multiple physical sources expose a workspace
+shows the exact selected agent's name/avatar with authoritative ACP presence, or
+the participants' avatars for multiple recipients, and the standard far-right
+close icon; an unaddressed draft retains the Chat title. New-chat actions remain
+in the agent navigation. Repository selections use the previous centered chat
+draft and divided form rows inside the body. Multiple attachments remain
+supported. Repositories with multiple physical sources expose a workspace
 picker; choosing one captures that target's exact operation/revision. The
 far-right header control is the standard close icon. Visible context/repository
 attachments can be edited before sending; unresolved requests freeze their
 original selections.
+
+Chat update/reconnect failures appear as warnings inside the composer. Exact
+Send/recovery errors retain precedence; the warning clears on successful history
+refresh without disabling composition or replaying a prompt.
+
+After a completed turn with a confirmed repository snapshot, a panel above the
+composer compares the binding's original base against that exact saved commit at
+its recorded operation. It shows edited-file totals, captured line counts, three
+initial paths, an expandable remaining list and View changes with the same
+comparison. Native and registered-folder reads remain pinned and bounded;
+partial, binary, unavailable and unknown outcomes cannot imply zero changes or
+fabricated counts. Reads admit at most two 50-path pages and four concurrent
+file comparisons, retaining at most 2 MiB of diff text. Counts from available
+hunks remain exact even when a text preview exceeds that retained-byte limit.
+Each repository has an independent panel. No panel read, expansion or diff view
+dispatches execution. Generic repository-operation Undo is not a session-scoped
+inverse; the panel exposes that action as unavailable until an exact guarded
+agent-change undo contract is qualified.
 
 The composer supports @ autocomplete using exact saved-agent IDs and multiple
 recipients. Its automatic-mention switch appears inside the agent picker.
@@ -103,3 +123,30 @@ refuses permission/activity frames, sanitizes configuration only, closes and
 reaps its process and retains choices in memory for five minutes. Failure
 remains visible and retryable. No discovery read installs tooling or warms a
 saved agent.
+
+Bootstrap, repository and discussion context remains separate from user-authored
+text in both retained prompt frames and ACP session/prompt content blocks. The
+controller prepares bounded XML sections, retains the exact sanitized frame
+before dispatch and reserves delivery as before. The harness uses an embedded
+resource only when the adapter advertises embeddedContext; otherwise a separate
+ordered text block supplies the same XML in the same turn. No context-only turn,
+context replay or unauthenticated filesystem read is introduced.
+
+The captured Sent context snapshot retains sanitized authored wire text and the
+separate XML wire context. Delivery updates enrich the same user-message row,
+preserving its original observation time and independently inspectable snapshot.
+
+Execution feedback includes exact committed tool aliases and selected invocation
+or output snapshots alongside messages. Tool discussion replies use ordinary
+ThreadStore authority and participate in incremental explicit-Send context.
+Reactions remain outside prompt context. Tool discussions admit the existing
+typed ToolInvocation/ToolOutput targets in ThreadVersion and
+CreateAgentDiscussion; forged or unsupported targets remain refused by exact
+resolution. Existing storage formats, reducers, publication receipts and
+unsupported-profile refusals remain unchanged.
+
+OwnedController tool normalization retains rawOutput as captured JSON alongside
+any structured content so recorded read/command views can display original
+bytes. Existing content-only observations keep their representation. Native
+aliases, normalizer profile identity and publication receipts remain unchanged;
+older observations and snapshots are never rewritten.

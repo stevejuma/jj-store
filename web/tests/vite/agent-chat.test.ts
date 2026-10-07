@@ -262,3 +262,108 @@ test("captured task context preserves full native version integers", () => {
     '"version": 9007199254740995',
   );
 });
+
+// Live chat row projection is shared by the inbox and contextual sidebar.
+import { activityRows } from "../../src/lib/ui/store-agent-execution/presentation.js";
+test("retains recorded lifecycle clocks and separates original text from context", () => {
+  const events = [
+    {
+      sequence: 1,
+      observed_at_millis: 1000,
+      committed: true,
+      payload: {
+        type: "opened",
+        requestId: "open-s",
+        controllerSessionId: "s",
+      },
+    },
+    {
+      sequence: 2,
+      observed_at_millis: 2000,
+      committed: true,
+      payload: {
+        type: "prompt",
+        requestId: "p",
+        text: "Authored",
+        context: "<agent_context>facts</agent_context>",
+      },
+    },
+    {
+      sequence: 3,
+      observed_at_millis: 3000,
+      committed: true,
+      payload: {
+        type: "record",
+        requestId: "p",
+        record: { status: "completed" },
+      },
+    },
+    {
+      sequence: 4,
+      observed_at_millis: 4000,
+      committed: true,
+      payload: {
+        type: "opened",
+        requestId: "open-s-2",
+        controllerSessionId: "s",
+      },
+    },
+  ];
+  const rows = activityRows(events);
+  expect(rows.map((row) => row.kind)).toEqual(["session", "user", "record"]);
+  expect(rows[0].observedAtMillis).toBe(1000);
+  expect(rows[2].observedAtMillis).toBe(3000);
+  expect(rows[1].text).toBe("Authored");
+  expect(rows[1].value.context).toBe("<agent_context>facts</agent_context>");
+  const legacy = activityRows([
+    {
+      ...events[1],
+      payload: {
+        type: "prompt",
+        requestId: "p",
+        text: "captured prefix\nAuthored",
+        authoredText: "Authored",
+        context: "<agent_context>captured prefix</agent_context>",
+      },
+    },
+  ]);
+  expect(legacy[0].text).toBe("Authored");
+});
+
+test("context delivery updates one authored row without replacing its recorded clock or XML", () => {
+  const prompt = {
+    type: "prompt",
+    requestId: "p",
+    text: "Original message",
+    userText: "Original message",
+    context: "<agent_context>Captured facts</agent_context>",
+    sentContext: {
+      version: 1,
+      delivery: "prepared",
+      wireText: "Original message",
+      wireContext: "<agent_context>Captured facts</agent_context>",
+    },
+  };
+  const rows = activityRows([
+    { sequence: 1, observed_at_millis: 2000, committed: true, payload: prompt },
+    {
+      sequence: 2,
+      observed_at_millis: 4000,
+      committed: true,
+      payload: {
+        ...prompt,
+        type: "context_delivery",
+        sentContext: { ...prompt.sentContext, delivery: "sent" },
+      },
+    },
+  ]);
+  expect(rows).toHaveLength(1);
+  expect(rows[0].id).toBe("p/user");
+  expect(rows[0].text).toBe("Original message");
+  expect(rows[0].observedAtMillis).toBe(2000);
+  expect(rows[0].value.context).toBe(prompt.context);
+  expect(rows[0].value.sentContext).toEqual({
+    ...prompt.sentContext,
+    delivery: "sent",
+  });
+});

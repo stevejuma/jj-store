@@ -167,3 +167,9 @@ existing shared target resolver before acceptance. Human replies remain ordinary
 ThreadStore revisions; no captured transcript is duplicated in the thread.
 Absent fields preserve canonical legacy bytes. This adds neither a primary
 session assignment nor any runner side effect.
+
+M24 live execution tool rows may create ordinary discussions bound to the
+existing exact ToolInvocation or ToolOutput target. These use the same validated
+ThreadVersion field and command as agent-message discussions, without new
+object/event formats. Resolution still verifies selected evidence, authorization
+and supported collaboration profiles before acceptance.

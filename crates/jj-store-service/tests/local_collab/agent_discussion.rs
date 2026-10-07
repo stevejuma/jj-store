@@ -177,7 +177,11 @@ pub(super) async fn capture(
 ) -> (
     AgentSessionId,
     AgentObjectRef,
-    Vec<(String, AgentSessionId, MessageId)>,
+    Vec<(
+        String,
+        AgentSessionId,
+        jj_store_service::agent_execution::FeedbackSubject,
+    )>,
 ) {
     let batch = SanitizedObservationBatchV1 {
         schema_version:1, batch_id:CaptureBatchId::new([81;16]), integration:IntegrationId::OwnedController,
@@ -226,9 +230,157 @@ pub(super) async fn capture(
                 ..
             } = event
             {
-                rows.push((message_id.to_string(), session_id, message_id));
+                rows.push((
+                    message_id.to_string(),
+                    session_id,
+                    jj_store_service::agent_execution::FeedbackSubject::Message(message_id),
+                ));
             }
         }
     }
     (session.session_id, selected, rows)
+}
+
+#[tokio::test]
+async fn tool_feedback_targets_selected_output_and_retains_replies_and_reactions() {
+    use jj_store_service::agent_execution::FeedbackSubject;
+    let (root, repo) = fixture();
+    let mut payload = serde_json::json!({"type":"activity","controllerSessionId":"tool-chat","requestId":"turn","toolSnapshot":{"toolCallId":"read","kind":"read","title":"Read file","status":"completed","rawOutput":{"formatted_output":"captured bytes"}}});
+    let batch = SanitizedObservationBatchV1 {
+        schema_version: 1,
+        batch_id: CaptureBatchId::new([71; 16]),
+        integration: IntegrationId::OwnedController,
+        source_instance_id: SourceInstanceId::new([72; 16]),
+        sanitizer_version: "test".into(),
+        representation: SanitizedRepresentation::SanitizedNative,
+        observations: vec![SanitizedObservationV1 {
+            observation_id: ObservationId::new([73; 16]),
+            source_sequence: 1,
+            occurred_at_millis: Some(123),
+            source_kind: SourceKind::Controller,
+            source_trust: SourceTrust::AuthenticatedController,
+            payload: SanitizedPayloadV1::new(
+                SanitizedMediaType::Json,
+                &serde_json::to_vec(&payload).unwrap(),
+            )
+            .unwrap(),
+        }],
+    };
+    repo.apply_agent_command(&LocalAgentRequest {
+        version: 1,
+        request_id: m::RequestId::new([71; 16]),
+        command: LocalAgentCommand::Capture {
+            profile: NormalizerProfileV1::acp_controller_v2(),
+            batch: Box::new(batch),
+        },
+    })
+    .await
+    .unwrap();
+    let agents = repo.agent_store().await.unwrap();
+    let selected = agents
+        .reads()
+        .list_sessions(None, 20)
+        .await
+        .unwrap()
+        .selections[0]
+        .1;
+    let AgentObjectV1::SessionSnapshot(session) = agents.object(selected).await.unwrap() else {
+        panic!()
+    };
+    let tool_id = *session.tools.keys().next().unwrap();
+    let rows = vec![(
+        "turn/tool/read".into(),
+        session.session_id,
+        FeedbackSubject::Tool(tool_id),
+    )];
+    let target = repo.agent_feedback(&rows).await.unwrap().messages[0]
+        .target
+        .clone();
+    assert!(matches!(target,ReactionTargetV1::ToolOutput {tool_id:id,..} if id==tool_id));
+    let created = thread_result(receipt(
+        repo.apply_collab_command(&request(
+            75,
+            LocalCollabCommand::Thread {
+                intent: ThreadCommandV1::CreateAgentDiscussion {
+                    thread_id: ThreadId::new([75; 16]),
+                    title: "Tool reply".into(),
+                    target: target.clone(),
+                },
+            },
+        ))
+        .await
+        .unwrap(),
+    ));
+    repo.apply_collab_command(&request(
+        76,
+        LocalCollabCommand::Thread {
+            intent: ThreadCommandV1::Message {
+                thread_id: created.thread_id,
+                expected_thread: created.version,
+                message_id: HumanMessageId::new([76; 16]),
+                expected_revision: None,
+                reply_to: None,
+                body: Some("Use the captured file".into()),
+            },
+        },
+    ))
+    .await
+    .unwrap();
+    repo.apply_collab_command(&react(
+        77,
+        target.clone(),
+        ReactionValueV1::Like,
+        BTreeSet::new(),
+    ))
+    .await
+    .unwrap();
+    let reopened = reopen(&root.path().join("repo"));
+    let feedback = reopened.agent_feedback(&rows).await.unwrap();
+    assert_eq!(feedback.messages[0].target, target);
+    assert_eq!(feedback.messages[0].replies.len(), 1);
+    assert_eq!(
+        reopened
+            .reaction_query(&target, None, 20, None)
+            .await
+            .unwrap()
+            .rows
+            .len(),
+        1
+    );
+    let context = reopened
+        .agent_prompt_context(
+            &rows,
+            &BTreeSet::from([session.session_id]),
+            &BTreeSet::new(),
+        )
+        .await
+        .unwrap();
+    assert!(context.text.contains("Use the captured file"));
+    assert!(context.text.contains("tool_output"));
+    assert!(
+        reopened
+            .agent_prompt_context(
+                &rows,
+                &BTreeSet::from([session.session_id]),
+                &context.revisions
+            )
+            .await
+            .unwrap()
+            .text
+            .is_empty()
+    );
+    payload["toolSnapshot"]["toolCallId"] = serde_json::json!("forged");
+    let forged = [(
+        "turn/tool/forged".into(),
+        session.session_id,
+        FeedbackSubject::Tool(ToolCallId::new([255; 16])),
+    )];
+    assert!(
+        reopened
+            .agent_feedback(&forged)
+            .await
+            .unwrap()
+            .messages
+            .is_empty()
+    );
 }

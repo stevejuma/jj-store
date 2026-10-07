@@ -33,17 +33,7 @@ impl Supervisor {
                 .revisions
                 .extend(saved.context_replies.iter().cloned());
         }
-        let prepared = if first {
-            format!(
-                "{}\n{}\n{}\n{}",
-                saved.instructions,
-                saved.context.as_deref().unwrap_or(""),
-                commands::retained_context(&saved),
-                text
-            )
-        } else {
-            text.clone()
-        };
+        let context = prompt_context::prepared(&saved, &batch.text, first)?;
         let sanitizer = runtime::sanitizer(self, &saved.workspace.path).await?;
         batch.text = runtime::safe(&sanitizer, json!({"text":batch.text}))?["text"]
             .as_str()
@@ -56,12 +46,13 @@ impl Supervisor {
             .as_str()
             .ok_or(Error::Invalid)?
             .to_owned();
-        let context = sent_context::capture(&saved, &original, &batch.text, first);
+        let captured = sent_context::capture(&saved, &original, &batch.text, first);
         let mut frame = runtime::safe(
             &sanitizer,
-            json!({"version":2,"type":"prompt","requestId":command.request_id.to_string(),"text":format!("{}{prepared}",batch.text),"maxDurationMs":max_duration_ms,"userText":original,"sentContext":context}),
+            json!({"version":2,"type":"prompt","requestId":command.request_id.to_string(),"text":text,"context":context,"maxDurationMs":max_duration_ms,"userText":original,"sentContext":captured}),
         )?;
         frame["sentContext"]["wireText"] = frame["text"].clone();
+        frame["sentContext"]["wireContext"] = frame["context"].clone();
         let digest = journal::digest(command)?;
         self.update(|s| {
             delivery::prepare(

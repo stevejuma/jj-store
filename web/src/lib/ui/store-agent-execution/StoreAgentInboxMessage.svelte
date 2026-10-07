@@ -7,13 +7,16 @@
   import StoreAgentDiscussion from "./StoreAgentDiscussion.svelte";
   import StoreMessageActions from "../store-collaboration/StoreMessageActions.svelte";
   import StoreMessageReactions from "../store-threads/StoreMessageReactions.svelte";
+  import CommunityReactions from "../community-reactions/CommunityReactions.svelte";
   import { agentMessageTimestamp } from "../../collaboration/presentation.js";
+  import { createMessageActionHover } from "../community-message-actions/message-action-hover.svelte.js";
   import type { AgentExecution } from "../../controller/agent-execution.svelte.js";
   let {
     manager,
     row,
     author,
     children,
+    content,
     openReply = false,
     sessionId,
   }: {
@@ -22,12 +25,13 @@
     row: {
       id: string;
       text: string;
-      kind: "user" | "assistant";
+      kind: "user" | "assistant" | "tool";
       observedAtMillis?: number;
       value?: Record<string, unknown>;
     };
     author: CommunityMemberModel;
     children?: Snippet;
+    content?: Snippet;
     openReply?: boolean;
   } = $props();
   const session = $derived(
@@ -51,70 +55,100 @@
   });
   const disabled = $derived(threads.busy || !!threads.pending);
   const timing = $derived(agentMessageTimestamp(row.observedAtMillis));
+  const toolHover = createMessageActionHover();
 </script>
 
-<CommunityMessage
-  promptElements
-  message={{
-    id: row.id,
-    authorId: author.id,
-    content: row.text,
-    ...timing,
-    timestamp: timing.createdAt ? timing.timestamp : "",
-    reactions:
-      feedback && !unavailable ? threads.reactionModels(feedback.target) : [],
-  }}
-  {author}
-  members={[author]}
-  highlighted={row.kind === "user"}
-  avatarShape={row.kind === "assistant" ? "rounded" : "circle"}
-  onToggleReaction={feedback && !disabled && !unavailable
-    ? (_id, emoji, custom) =>
-        discussions.toggle(
-          session.repository,
-          feedback.target,
-          emoji,
-          custom,
-          true,
-        )
-    : undefined}
->
-  {#snippet supplement()}<StoreMessageActions
-      onReply={() => (expanded = !expanded)}
-      reactionDisabled={disabled || !!unavailable}
-      communityEmojis={threads.emojis}
-      onReact={feedback && !disabled && !unavailable
-        ? (emoji, custom) =>
-            discussions.toggle(
-              session.repository,
-              feedback.target,
-              emoji,
-              custom,
-            )
-        : undefined}
-      authorName={author.name}
-      items={[{ label: "Copy message", value: row.text }]}
-    />{/snippet}
-  {#snippet metadataSupplement()}
-    {#if row.kind === "user" && row.value?.sentContext}<StoreAgentSentContext
-        value={row.value.sentContext}
-      />{/if}
-    {@render children?.()}
-    {#if feedback && !unavailable}<StoreMessageReactions
-        {threads}
-        target={feedback.target}
-        showControls={false}
-      />{/if}
-    {#if feedback?.replies.length}<Button
-        variant="ghost"
-        size="sm"
-        onclick={() => (expanded = !expanded)}
-      >
-        {feedback.replies.length}
-        {feedback.replies.length === 1 ? "reply" : "replies"}
-      </Button>{/if}
-  {/snippet}
-</CommunityMessage>
+{#snippet actions()}<StoreMessageActions
+    onReply={() => (expanded = !expanded)}
+    reactionDisabled={disabled || !!unavailable}
+    communityEmojis={threads.emojis}
+    onReact={feedback && !disabled && !unavailable
+      ? (emoji, custom) =>
+          discussions.toggle(session.repository, feedback.target, emoji, custom)
+      : undefined}
+    authorName={author.name}
+    items={[{ label: "Copy message", value: row.text }]}
+  />{/snippet}
+{#snippet metadata()}
+  {#if row.kind === "user" && row.value?.sentContext}<StoreAgentSentContext
+      value={row.value.sentContext}
+    />{/if}
+  {@render children?.()}
+  {#if feedback && !unavailable}<StoreMessageReactions
+      {threads}
+      target={feedback.target}
+      showControls={false}
+    />{/if}
+  {#if feedback?.replies.length}<Button
+      variant="ghost"
+      size="sm"
+      onclick={() => (expanded = !expanded)}
+    >
+      {feedback.replies.length}
+      {feedback.replies.length === 1 ? "reply" : "replies"}
+    </Button>{/if}
+{/snippet}
+
+{#if row.kind === "tool"}
+  <article
+    class="store-agent-tool-row"
+    aria-label={`Tool call: ${row.text}`}
+    data-ui-component="agent-tool-message"
+    data-message-id={row.id}
+    data-actions-visible={toolHover.visible || undefined}
+    {...toolHover.handlers}
+  >
+    {@render content?.()}
+    {@render actions()}
+    {#if feedback && !unavailable && threads.reactionModels(feedback.target).length}
+      <CommunityReactions
+        mode="bar"
+        label={`Reactions to ${row.text}`}
+        reactions={threads.reactionModels(feedback.target)}
+        onToggle={(emoji) =>
+          discussions.toggle(
+            session.repository,
+            feedback.target,
+            emoji,
+            undefined,
+            true,
+          )}
+      />
+    {/if}
+    {@render metadata()}
+  </article>
+{:else}
+  <CommunityMessage
+    promptElements
+    message={{
+      id: row.id,
+      authorId: author.id,
+      content: row.text,
+      ...timing,
+      timestamp: timing.createdAt ? timing.timestamp : "",
+      reactions:
+        feedback && !unavailable ? threads.reactionModels(feedback.target) : [],
+    }}
+    {author}
+    {content}
+    members={[author]}
+    highlighted={row.kind === "user"}
+    avatarShape={row.kind !== "user" ? "rounded" : "circle"}
+    onToggleReaction={feedback && !disabled && !unavailable
+      ? (_id, emoji, custom) =>
+          discussions.toggle(
+            session.repository,
+            feedback.target,
+            emoji,
+            custom,
+            true,
+          )
+      : undefined}
+  >
+    {#snippet supplement()}{@render actions()}{/snippet}
+    {#snippet metadataSupplement()}{@render metadata()}{/snippet}
+  </CommunityMessage>
+{/if}
 {#if expanded}
   <StoreAgentDiscussion
     {discussions}
@@ -125,3 +159,10 @@
     onClose={() => (expanded = false)}
   />
 {/if}
+
+<style>
+  .store-agent-tool-row {
+    position: relative;
+    min-width: 0;
+  }
+</style>

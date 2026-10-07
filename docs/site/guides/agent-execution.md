@@ -16,14 +16,15 @@ identity is retained and is associated only by its exact saved agent ID.
 Use **Chat** beside the top-bar Details toggle in a repository or project to
 open the right body sidebar. Its composer and header stay fixed while messages
 scroll. Opening is draft-only and reopening restores the scoped chat and draft.
-The sidebar header contains the Chat title and close icon. The outer details
-rail remains independent. Use **@** autocomplete to choose one or more saved
-agents, write a message and press Send. **Automatically mention agents** is
-opt-in and retains recipients across replies and reopening. Enable it in the
-agent picker; pin controls choose individual recipients. The @ control shows the
-addressed agent's avatar while automatic tagging is active. Its dismiss action
-removes that recipient. Remove a tag or unpin it to stop including that agent.
-This preference never sends a message automatically.
+The sidebar header shows the selected agent's avatar and name, or Chat for an
+unaddressed draft, with a far-right close icon. The outer details rail remains
+independent. Use **@** autocomplete to choose one or more saved agents, write a
+message and press Send. **Automatically mention agents** is opt-in and retains
+recipients across replies and reopening. Enable it in the agent picker; pin
+controls choose individual recipients. The @ control shows the addressed agent's
+avatar while automatic tagging is active. Its dismiss action removes that
+recipient. Remove a tag or unpin it to stop including that agent. This
+preference never sends a message automatically.
 
 A general Send lazily creates a personal metadata home. Existing discussions
 keep their own home. Attach registered repositories to authorize code work;
@@ -57,9 +58,11 @@ recent activity when you scroll back. It shows streamed text, tool activity,
 plans and exact permission choices. Messages show their retained observation
 time using the same clock-time metadata as recorded agent chats, with an
 exact-date tooltip. Older untimed history shows Time unknown. Turn completion
-appears as a system notice. During a connected turn, Working appears in the chat
-and a compact agent activity strip below the composer. Follow-ups queue in the
-warm session; Stop turn cancels the selected turn, and **Session options → End
+appears as an outcome icon beside its recorded time in a system divider; the
+session starts with a clock icon and its recorded time. Both have accessible
+labels and tooltips. During a connected turn, Working appears in the chat and a
+compact agent activity strip below the composer. Follow-ups queue in the warm
+session; Stop turn cancels the selected turn, and **Session options → End
 session** closes the adapter. The header uses the shared sidebar toggle to show
 or hide the chat list, and its menu also opens Activity log. Workspace and
 runtime opens the inbox's right body sidebar, with the same grouped form styling
@@ -125,11 +128,13 @@ For desktop resource staging, pass `--acp-executable /absolute/path/to/jj-acp`
 to `node scripts/desktop.mjs stage`. The optional executable is bundled with the
 paired JJ runtime. Without it, ordinary browsing remains available.
 
-Execution currently admits one warm process at a time, up to sixteen queued
-commands, sixty-four retained sessions and sixty-four saved setups. Setups and
-lifecycle receipts are private device state outside repository checkouts.
-Repository history remains subject to independent code-repository access; access
-to a project or task home does not grant execution in linked code.
+The legacy version-2 profile admits one warm process at a time, up to sixteen
+queued commands, sixty-four retained sessions and sixty-four saved setups. The
+version-3 reusable fleet admits four workers, sixteen queued turns per
+participation and sixty-four queued turns in total. Setups and lifecycle
+receipts are private device state outside repository checkouts. Repository
+history remains subject to independent code-repository access; access to a
+project or task home does not grant execution in linked code.
 
 Add agent loads model, thinking and execution-mode choices from the installed
 harness before your first chat. Discovery sends no prompt and creates no chat or
@@ -151,9 +156,11 @@ retains your draft.
 Hover or focus a saved user/agent message to reply or react. Replies are
 ordinary repository ThreadStore messages linked to that exact captured
 AgentStore message; reactions use the original message's exact persisted target.
-They remain in repository history after the process ends or the service
-restarts. You can draft a reply before its original message is published, then
-save once it is available.
+Tool rows use the same reply and reaction actions for their exact committed
+invocation or output. Consecutive tools share one expandable, full-width section
+with slim rows and inset icons. They remain in repository history after the
+process ends or the service restarts. You can draft a reply before its original
+message is published, then save once it is available.
 
 Saving a reply or reaction does not run the agent. The next explicit Send reads
 new or edited committed replies as follow-up context, including human discussion
@@ -252,7 +259,36 @@ do not extend it; stopping agents or exiting the app releases the assertion.
 
 Expand Sent context below a user message to inspect its captured instructions,
 page/repository identities, bounded file excerpts, project/task descriptions,
-reply context and exact sanitized wire text. Rich previews use captured content
-and versions rather than fetching current data. Prepared, queued, sent, failed
-and unknown delivery are distinct; historical messages without snapshots are not
-reconstructed. Adapter-internal context is outside this disclosure.
+reply context and exact sanitized text/context blocks. Rich previews use
+captured content and versions rather than fetching current data. Prepared,
+queued, sent, failed and unknown delivery are distinct; historical messages
+without snapshots are not reconstructed. Adapter-internal context is outside
+this disclosure.
+
+Authored text and bootstrap/repository/discussion context are retained
+separately. Context appears as bounded XML sections in the chat and travels in
+the same ACP turn as a separate content block: an embedded resource when the
+adapter advertises support, otherwise a separate ordered text block. Sent
+context retains the exact sanitized wire text and XML; delivery updates preserve
+the original message identity and recorded time. No context-only prompt is sent.
+
+Open a tool row to see its captured file contents, edit diff, command output or
+search matches. File contents use syntax highlighting when a recorded path
+identifies the language. **Raw JSON** shows the complete sanitized tool record;
+**Formatted** returns to its readable view. Missing edit preimages and retained
+truncation/redaction notices stay visible. These controls display recorded data
+and never read the current file or run another command.
+
+Contextual chat headers show the selected agent's avatar and current ACP status.
+An update connection failure appears as a warning inside the composer and clears
+when history refresh succeeds. Your editable draft and explicit Send remain
+available; exact command errors take precedence.
+
+After a completed turn saves a repository snapshot, the panel above the composer
+shows the edited files and line counts since the agent's starting revision.
+Expand the list to see more paths, or choose **View changes** or a path to
+inspect that saved comparison. The inbox uses the same panel. Binary or
+unavailable text has unknown line counts, and previews are bounded to 100 files.
+These controls read saved repository state and never send another prompt.
+**Undo** is currently unavailable: the ordinary repository operation undo is not
+a safe inverse of only this agent's edits.

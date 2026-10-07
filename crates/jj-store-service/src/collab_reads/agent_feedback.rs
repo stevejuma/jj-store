@@ -6,7 +6,7 @@ impl PinnedCollabRead {
         rows: &[(
             String,
             jj_store_wal::publication::AgentSessionId,
-            jj_store_wal::publication::MessageId,
+            crate::agent_execution::FeedbackSubject,
         )],
     ) -> crate::agent_execution::Result<crate::agent_execution::Feedback> {
         use crate::agent_execution::Error;
@@ -39,7 +39,7 @@ impl PinnedCollabRead {
         rows: &[(
             String,
             jj_store_wal::publication::AgentSessionId,
-            jj_store_wal::publication::MessageId,
+            crate::agent_execution::FeedbackSubject,
         )],
         sessions: &std::collections::BTreeSet<jj_store_wal::publication::AgentSessionId>,
         excluded: &std::collections::BTreeSet<crate::agent_execution::context::ReplyRevision>,

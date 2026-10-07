@@ -368,4 +368,13 @@ CARGO_TARGET_AARCH64_APPLE_DARWIN_RUNNER="/usr/bin/env HOME=/Users/stevejuma/cod
 Model loaded; fixture client had a 2-second inference timeout. Corrected native-only timeout and cleanup-before-assertion.
 <!-- /run -->
 <!-- /evidence-field -->
+<!-- generated-navigation -->
+## Pages
 
+- [E-COMPUTE-001 details 2](details-02.md)
+- [E-COMPUTE-001 details 3](details-03.md)
+- [E-COMPUTE-001 details 4](details-04.md)
+- [E-COMPUTE-001 details 5](details-05.md)
+- [E-COMPUTE-001 details 6](details-06.md)
+- [E-COMPUTE-001 details 7](details-07.md)
+- [E-COMPUTE-001 details 8](details-08.md)

@@ -250,6 +250,13 @@ live workers.
 
 ## Local inference ownership
 
+Agent feedback resolves the exact committed message, tool invocation or tool
+output through the selected AgentStore snapshot before reading or writing its
+ThreadStore discussion. Native and registered local providers retain their own
+authorization and publication paths. Tool reactions do not enter prompt context;
+committed discussion replies become eligible only on an explicit Send. Rich tool
+views display retained evidence and never read current working files.
+
 The installation supervises the separate compute helper and maintained local ACP
 agent. MeshLLM owns native inference, while the app owns model receipts,
 resource limits and explicit paired-machine admission. The coding helper runs on

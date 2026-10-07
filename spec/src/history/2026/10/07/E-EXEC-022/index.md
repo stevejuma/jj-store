@@ -175,7 +175,6 @@ lmwxwnrz (enclosing Jujutsu change; parent b8698e2f)
 - web/tests/vite/agent-execution-controller.test.ts#stopping an agent targets
   its session without changing another chat or replaying a prompt
 <!-- /evidence-field -->
-
 <!-- generated-navigation -->
 ## Pages
 

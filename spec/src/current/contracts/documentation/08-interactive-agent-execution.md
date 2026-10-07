@@ -45,3 +45,9 @@ The guide identifies Compute model size/fit labels as RAM-based estimates,
 retains unknown metadata, and distinguishes draft selection from explicit
 download/start. Source review does not claim GPU-fit or real-model
 qualification.
+
+The guide describes selected-agent header presence, composer-local reconnect
+warnings and completed snapshot file panels shared with the inbox. It identifies
+bounded and unavailable text previews, exact saved comparisons and the lack of a
+qualified session-specific Undo. These presentation/read controls do not expand
+execution authority, rewrite saved history or qualify an inverse mutation.

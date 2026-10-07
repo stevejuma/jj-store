@@ -21,4 +21,5 @@ Browse the child pages below.
 - [E-FLEET-001](E-FLEET-001/index.md)
 - [E-FLEET-002](E-FLEET-002/index.md)
 - [E-FLEET-003](E-FLEET-003/index.md)
+- [E-FLEET-004](E-FLEET-004/index.md)
 - [E-UI-107](E-UI-107/index.md)

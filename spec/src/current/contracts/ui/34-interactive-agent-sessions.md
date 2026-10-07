@@ -280,3 +280,54 @@ The M24 chat sidebar header contains its title and Close only, with no bottom
 border. Its automatic agent mention preference lives in the picker, with
 individual pin controls and the owned Community addressed-agent avatar/dismiss
 presentation beside @.
+
+The M24 chat sidebar header shows selected-agent avatars with live presence,
+their name for a single recipient, and Close. Unaddressed drafts retain Chat.
+Its automatic agent mention preference lives in the picker, with individual pin
+controls and the owned Community addressed-agent avatar/dismiss presentation
+beside @.
+
+History refresh failures use the composer's warning drawer, subordinate to exact
+command/recovery errors, and clear after successful refresh. Confirmed completed
+repository snapshots expose a bounded, operation-pinned file-change panel above
+the composer, with readable per-file/total line counts, expandable paths and a
+read-only exact diff view. Missing or partial content is explicit. Unqualified
+session-specific Undo remains unavailable and cannot invoke generic operation
+undo. The completed-change presentation is shared by sidebar and inbox sessions.
+
+ACP chat and recorded agent tools share owned Community-derived rich details for
+file edits, commands and search results. Read tools display captured file
+contents with language inferred from the recorded path. Tool details bind the
+public CodeBlock variable/plain-text token to the application foreground so
+syntax accents cannot make ordinary file bytes or header text unreadable. An
+explicit raw JSON toggle retains the complete sanitized tool payload,
+independently per exact tool/session. Views use retained evidence only: opening
+details or switching presentation never reads the current filesystem, executes
+commands or prompts an agent. Missing preimages, partial/redacted/truncated data
+and unsupported payloads remain explicit; a friendly view cannot invent file
+contents, edit success or changes. Existing status, permission, identity,
+duration, review and reply-draft behavior remains unchanged.
+
+All live agent chats use one row composition for messages, tools, permissions,
+plans and lifecycle records across the inbox and project/repository sidebar.
+Tool rows retain their slim ToolCalls presentation with a small leading inset
+inside the hover control before the icon, without an outer card, avatar or
+author header. Adjacent tools from the same session, turn and recorded day form
+one collapsed expandable ToolCalls group. Collapsed groups and expanded calls
+use the full available container width, with fixed-size disclosure icons.
+Messages, permissions, plans and lifecycle rows split groups. Single calls
+retain their individual presentation. Expanding a group exposes each call's
+exact rich/raw details, replies and reactions; updates retain the group's
+first-call identity and disclosure state. Shared hover actions, exact replies
+and reactions remain available. Publication and collaboration availability
+govern saves; connection state does not. The first retained opened event shows a
+clock icon in a system divider with its recorded time; each turn record shows
+its outcome icon and recorded time. Accessible labels and tooltips name the
+session start or exact turn outcome. Absent times remain absent. Day grouping is
+shared across these surfaces.
+
+Prepared XML context is rendered separately using the existing prompt-element
+renderer before the authored message. Raw bootstrap JSON cannot be concatenated
+into authored text. Retained legacy prompts may expose an exact original from
+the delivery intent and its captured prefix as separate XML context; immutable
+published messages and observation payloads are not rewritten.

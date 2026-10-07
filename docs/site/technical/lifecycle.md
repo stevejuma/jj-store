@@ -181,6 +181,14 @@ uses a dedicated signal even when a command queue is full. An immediate Start
 awaits the stopping generation before creating another. Restart retains exact
 conversations and interrupted history without replaying a prompt.
 
+Before dispatch, the journal retains the exact sanitized authored text, separate
+XML context and captured Sent context snapshot. ACP supplies both in one turn,
+using an embedded resource only when advertised. Context delivery enriches the
+same message identity and preserves its observation time. Refresh or restart
+does not reconstruct the context or submit another turn. Completed-change panels
+read only the recorded base, saved commit and operation; they cannot dispatch
+execution or undo a session.
+
 Full compute distributions include ACP, local-agent, coding-tool and compute
 helpers. The desktop verifies regular resource paths, source pins and
 executable/ native-runtime checksums before spawning. Helpers share the owned

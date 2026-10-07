@@ -97,13 +97,13 @@ impl Supervisor {
     }
 }
 
-fn recorded_rows(saved: &SavedSession) -> Result<Vec<(String, AgentSessionId, MessageId)>> {
+fn recorded_rows(saved: &SavedSession) -> Result<Vec<(String, AgentSessionId, FeedbackSubject)>> {
     Ok(recorded_targets(saved)?.0)
 }
 fn recorded_targets(
     saved: &SavedSession,
 ) -> Result<(
-    Vec<(String, AgentSessionId, MessageId)>,
+    Vec<(String, AgentSessionId, FeedbackSubject)>,
     std::collections::BTreeSet<AgentSessionId>,
 )> {
     let mut rows = BTreeMap::new();
@@ -113,13 +113,29 @@ fn recorded_targets(
         e.committed
             && matches!(
                 e.payload["type"].as_str(),
-                Some("prompt" | "record" | "opened")
+                Some("prompt" | "record" | "opened" | "activity")
             )
     }) {
         let normalized = normalize_event(saved, event)?;
         for alias in normalized.aliases {
             if let AgentEntityRefV1::Session { session_id } = &alias.target {
                 sessions.insert(*session_id);
+            }
+            if let AgentEntityRefV1::Tool {
+                session_id,
+                tool_call_id,
+            } = alias.target
+            {
+                let request = event.payload["requestId"].as_str().ok_or(Error::Invalid)?;
+                let call = event.payload["toolSnapshot"]["toolCallId"]
+                    .as_str()
+                    .ok_or(Error::Invalid)?;
+                let row = format!("{request}/tool/{call}");
+                sessions.insert(session_id);
+                rows.insert(
+                    row.clone(),
+                    (row, session_id, FeedbackSubject::Tool(tool_call_id)),
+                );
             }
             if let AgentEntityRefV1::Message {
                 session_id,
@@ -132,7 +148,10 @@ fn recorded_targets(
                     .ok_or(Error::Invalid)?
                     .to_owned();
                 sessions.insert(session_id);
-                rows.insert(row.clone(), (row, session_id, message_id));
+                rows.insert(
+                    row.clone(),
+                    (row, session_id, FeedbackSubject::Message(message_id)),
+                );
             }
         }
     }

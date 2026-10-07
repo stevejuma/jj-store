@@ -38,7 +38,34 @@ model-picker, repository header, Files layout and chat-border follow-up.
 Existing status and independent qualification gates remain unchanged; visual
 baselines are unapproved. The unchanged-parent Op Log status assertion failure
 remains a separate recorded gap.
+
+E-FLEET-004 ports the missing Community tool detail helpers and renderers into
+the owned UI. ACP chats and recorded tools share rich file/read/edit, shell and
+search views with independent raw JSON toggles and explicit incomplete-data
+states. The follow-up consolidates live chat rows, timed lifecycle dividers,
+tool feedback and separately retained XML context with capability-gated ACP
+blocks. Consecutive tools share one expandable section, fill their container and
+retain fixed-size disclosure icons and the inset inside the hover control.
+Lifecycle rows use start/outcome icons beside recorded times, with accessible
+labels and tooltips. This regression review preserves independent adapter, live
+permission and desktop gates. Final qualification remains recorded in
+E-FLEET-004.
+
+E-FLEET-005 adds selected-agent live avatars to contextual chat headers, moves
+history reconnect warnings into the composer and shares a completed-change panel
+with inbox sessions. Native/local comparisons are pinned to the captured base,
+commit and operation, with bounded reads, honest unavailable counts and a
+read-only diff viewer. Session-specific Undo remains unqualified. This UI review
+does not close the retained source qualification decision or change M24's
+independent adapter, permission, desktop and platform gates.
+
+E-FLEET-006 rebases the shared chat and saved-change work onto the integrated
+Compute workspace, retaining XML prompt blocks and captured Sent context
+together. The user requested local main integration with the recorded source
+gaps retained. M24 remains In progress; temporary-workspace deletion awaits
+separate confirmation.
 <!-- generated-navigation -->
+
 ## Pages
 
 - [history](history/index.md)

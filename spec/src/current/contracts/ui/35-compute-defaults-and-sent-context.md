@@ -72,6 +72,10 @@ inspection remain accessible by keyboard. Queued, sent, failed and unknown
 delivery are distinguished. Multiple recipients retain separate context; old
 messages never fabricate missing snapshots.
 
+The shared agent chat row preserves this disclosure alongside separately
+rendered XML context. Delivery updates enrich its captured state while retaining
+the original authored message, identity and observation time.
+
 Import GGUF joins its path input to an explicit file-icon Browse button when the
 service advertises native file selection. Browse selects a GGUF file on the
 service machine and fills the draft without importing. Cancellation, failed

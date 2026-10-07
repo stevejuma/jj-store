@@ -1,6 +1,10 @@
 <script lang="ts">
   import { AgentExecutionConfigurationFixture } from "./agent-execution-configuration.svelte.js";
-  import { fixtureExecutionStatus } from "./agent-execution-status.js";
+  import {
+    fixtureExecutionStatus,
+    fixtureExecutionSetup,
+  } from "./agent-execution-status.js";
+  import { appendChatToolEvents } from "./agent-chat-tool-events.js";
   import { eventsResponse } from "./agent-execution-events.js";
   import * as discussion from "./agent-discussion-fixture.js";
   import AgentExecutionCommandOutput from "./AgentExecutionCommandOutput.svelte";
@@ -50,6 +54,7 @@
     retainedError = false,
     longHistory = false,
     chatFeedback,
+    chatTools = false,
     agentReplies = false,
     unknownReply = false,
     feedbackWriteUnavailable = false,
@@ -80,30 +85,13 @@
     resumeFailure?: boolean;
     retainedError?: boolean;
     longHistory?: boolean;
+    chatTools?: boolean | "grouped";
     chatFeedback?: "completed" | "working";
     revisionIndexRequired?: boolean;
     status?:
       "Online" | "Offline" | "Starting" | "Working" | "Unknown" | "Empty";
   } = $props();
-  const setup = {
-    id: "helper",
-    name: "Repository helper",
-    avatar: "🤖",
-    description: "Repository review and edits",
-    instructions: "Keep changes focused.",
-    options: {
-      inherit_defaults: false,
-      provider: null,
-      endpoint: null,
-      environment: {},
-    },
-    runner: "codex",
-    preferences: {
-      model: untrack(() => savedModel),
-      effort: null,
-      mode: "ask",
-    },
-  };
+  const setup = untrack(() => fixtureExecutionSetup(savedModel));
   let resolveConfiguration = $state<(() => void) | undefined>();
   let resolveHistory = $state<(() => void) | undefined>();
   let commands = $state<Record<string, unknown>[]>([]);
@@ -205,15 +193,16 @@
               await new Promise<void>((resolve) => {
                 resolveHistory = resolve;
               });
-            return json(
-              eventsResponse(
-                permission,
-                retainedError,
-                longHistory,
-                chatFeedback,
-                replayHistory,
-              ),
+            const result = eventsResponse(
+              permission,
+              retainedError,
+              longHistory,
+              chatFeedback,
+              replayHistory,
             );
+            if (chatTools)
+              appendChatToolEvents(result.events, chatTools === "grouped");
+            return json(result);
           }
           if (path.includes("/stream"))
             return new Response(
