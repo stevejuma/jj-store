@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Verified the picker switch/pin actions and @ avatar pill use exact saved ACP IDs. The unused legacy audience component remains for historical source evidence, while the composer renders no preference drawer; active UI and dispatch contracts are unchanged.",
-      "fingerprint": "1604c0197ce164173ced5d4c5c5270f09121e97ab6e6273ac4eeaa51d885b4ad"
+      "reason": "Runtime summaries now use an owned presentation component with the harness avatar in the first column and identity, status, smaller descriptions and versions in the second. Loading rows match. Installation, readiness, recovery and trailing actions retain their qualified behavior.",
+      "fingerprint": "5f408a8e41b4b65e8af528cf5f036e2d99eb54ca198ccf6bff7819fa166e1ac6"
     }
   },
   {

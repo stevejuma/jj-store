@@ -44,6 +44,12 @@ Ready runtimes use Community's green success chip and omit Install. Guide links
 and installation confirmation actions use the shared semantic button styling,
 with inline icons. Runtime and capture tabs show only their own controls.
 
+Runtime summaries place the harness avatar in a separate first column and all
+identity, status, description and version text in the second column.
+Descriptions use Community's smaller secondary text size. Loading rows retain
+this alignment; the trailing action controls and runtime management behavior
+remain unchanged.
+
 M24 adds
 [reusable agent conversations](../collaboration/37-reusable-agent-conversations.md)
 under JST-COLLAB-034 through JST-COLLAB-036. Existing M23 qualification remains

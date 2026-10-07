@@ -29,6 +29,11 @@ leaving its title and close icon. The automatic-mention switch and per-agent
 pins use the Community picker, and @ shows the addressed agent's dismissible
 avatar pill. Existing agent navigation still starts chats. This presentation
 review leaves M24's status and independent qualification gates unchanged.
+
+E-FLEET-003 aligns runtime rows with a separate avatar column, grouped identity
+and status text, and smaller descriptions. Its presentation checks and local
+workspace integration preserve the M24 qualification scope; the fleet workspace
+remains available for follow-up work.
 <!-- generated-navigation -->
 
 ## Pages

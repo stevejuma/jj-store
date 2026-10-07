@@ -28,5 +28,7 @@
   {{#include E-FLEET-001/SUMMARY.nav.md}}
 - [E-FLEET-002](E-FLEET-002/index.md)
   {{#include E-FLEET-002/SUMMARY.nav.md}}
+- [E-FLEET-003](E-FLEET-003/index.md)
+  {{#include E-FLEET-003/SUMMARY.nav.md}}
 - [E-UI-107](E-UI-107/index.md)
   {{#include E-UI-107/SUMMARY.nav.md}}

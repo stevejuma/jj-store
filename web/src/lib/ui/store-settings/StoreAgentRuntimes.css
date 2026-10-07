@@ -1,3 +1,18 @@
+.store-runtime__summary {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 0.65rem;
+}
+.store-runtime__copy {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+.store-runtime__description {
+  font-size: var(--community-text-secondary);
+}
 .store-runtime__identity {
   display: flex;
   align-items: center;

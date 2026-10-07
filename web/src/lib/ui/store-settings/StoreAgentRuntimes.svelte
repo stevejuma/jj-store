@@ -4,16 +4,13 @@
   import * as Dialog from "@lapismd/design-core/shadcn/dialog";
   import * as DropdownMenu from "@lapismd/design-core/shadcn/dropdown-menu";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import CommunityChip from "../community-chip/CommunityChip.svelte";
   import { Skeleton } from "@lapismd/design-core/shadcn/skeleton";
   import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
   import DownloadIcon from "@lucide/svelte/icons/download";
   import ExternalLinkIcon from "@lucide/svelte/icons/external-link";
   import EllipsisVerticalIcon from "@lucide/svelte/icons/ellipsis-vertical";
-  import CheckIcon from "@lucide/svelte/icons/check";
-  import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
-  import { agentAvatarUrl } from "../../collaboration/agent-avatar.js";
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
+  import StoreAgentRuntimeSummary from "./StoreAgentRuntimeSummary.svelte";
   import StoreSettingsEmpty from "./StoreSettingsEmpty.svelte";
   import type {
     AgentRuntimes,
@@ -34,15 +31,6 @@
     !value?.install_supported ||
       Boolean(management?.pending || management?.saving || management?.error),
   );
-  const labels: Record<string, string> = {
-    ready: "Ready",
-    cli_missing: "CLI needed",
-    adapter_needed: "Adapter needed",
-    update_available: "Update available",
-    node_needed: "Node.js needed",
-    installing: "Installing…",
-    unknown: "Unknown",
-  };
   $effect(() => {
     if (!active || !management) return;
     const owner = management;
@@ -114,46 +102,7 @@
               class="store-settings__option-row"
             >
               <Field.Content>
-                <div class="store-runtime__identity">
-                  <CommunityMemberAvatar
-                    member={{
-                      id: runtime.id,
-                      name: runtime.label,
-                      handle: runtime.id,
-                      initials: runtime.label.slice(0, 2),
-                      kind: "agent",
-                      avatarUrl: agentAvatarUrl(
-                        runtime.id === "cursor" ? "cursor" : "codex",
-                      ),
-                    }}
-                    size="small"
-                    decorative
-                  />
-                  <Field.Label>{runtime.label}</Field.Label>
-                  <CommunityChip
-                    variant={status === "ready" ? "subtle" : "muted"}
-                    tone={status === "ready" ? "success" : "neutral"}
-                    size="compact"
-                  >
-                    {#snippet leading()}{#if status === "ready"}<CheckIcon
-                          aria-hidden="true"
-                        />{/if}{/snippet}
-                    {labels[status] ?? "Unknown"}
-                  </CommunityChip>
-                </div>
-                <Field.Description>{runtime.detail}</Field.Description>
-                {#if runtime.adapter_version || runtime.cli_version}
-                  <Field.Description>
-                    {runtime.adapter_version
-                      ? `ACP ${runtime.adapter_version} · `
-                      : ""}
-                    {runtime.cli_version
-                      ? `CLI ${runtime.cli_version} · `
-                      : ""}{runtime.managed
-                      ? "Managed by jj-store"
-                      : "Device installation"}
-                  </Field.Description>
-                {/if}
+                <StoreAgentRuntimeSummary {runtime} {status} />
               </Field.Content>
               <div class="store-runtime__actions">
                 <DropdownMenu.Root>
@@ -262,11 +211,16 @@
               orientation="horizontal"
               class="store-settings__option-row"
             >
-              <Field.Content
-                ><Skeleton class="h-6 w-40" /><Skeleton
-                  class="h-4 w-64"
-                /></Field.Content
-              ><Skeleton class="h-8 w-20" />
+              <Field.Content>
+                <div class="store-runtime__summary">
+                  <Skeleton class="h-8 w-8 rounded-lg" />
+                  <div class="store-runtime__copy">
+                    <Skeleton class="h-4 w-40" />
+                    <Skeleton class="h-3 w-64 max-w-full" />
+                  </div>
+                </div>
+              </Field.Content>
+              <Skeleton class="h-8 w-20" />
             </Field.Field>{/each}
         </Field.Group>
       </div>
