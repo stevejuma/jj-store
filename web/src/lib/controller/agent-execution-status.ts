@@ -43,3 +43,17 @@ export const agentLaunchBody = (
   setup_id: setupId || null,
   context: context || null,
 });
+
+export function agentSetupBody(
+  setup: unknown,
+  remove: string | undefined,
+  revision: number | bigint,
+) {
+  return {
+    version: 1,
+    request_id: crypto.randomUUID().replaceAll("-", ""),
+    expected_revision: revision,
+    setup: setup ?? null,
+    remove: remove ?? null,
+  };
+}

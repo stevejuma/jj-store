@@ -21,6 +21,7 @@ async fn warming_agent_creates_no_session_or_workspace_and_stop_survives_restart
                 request_id: RequestId::new([121; 16]),
                 expected_revision: revision,
                 setup: Some(Setup {
+                    options: Default::default(),
                     id: "warm-agent".into(),
                     name: "Warm agent".into(),
                     avatar: "🤖".into(),

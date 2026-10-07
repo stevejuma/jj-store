@@ -71,10 +71,19 @@ impl Supervisor {
         Ok([
             ("codex", "Codex", "codex-acp"),
             ("cursor", "Cursor", "cursor-agent"),
+            ("local", "Local agent", "jj-store-local-agent"),
         ]
         .into_iter()
         .map(|(id, label, bin)| {
-            let available = paths::resolve(&paths, bin).is_some();
+            let available = if id == "local" {
+                self.companion("jj-store-local-agent", "JJ_STORE_LOCAL_AGENT_EXECUTABLE")
+                    .is_ok()
+                    && self
+                        .companion("jj-store-agent-tools", "JJ_STORE_AGENT_TOOLS_EXECUTABLE")
+                        .is_ok()
+            } else {
+                paths::resolve(&paths, bin).is_some()
+            };
             Runner {
                 id: id.into(),
                 label: label.into(),

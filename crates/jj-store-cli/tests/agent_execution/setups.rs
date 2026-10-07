@@ -69,6 +69,7 @@ async fn saved_setup_revision_is_independent_of_session_activity() {
         request_id: RequestId::new([102; 16]),
         expected_revision: observed,
         setup: Some(Setup {
+            options: Default::default(),
             id: "helper".into(),
             name: "Review helper".into(),
             avatar: "🤖".into(),

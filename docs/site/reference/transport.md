@@ -197,3 +197,19 @@ owns its private discovery directory and bounded process lifetime; callers
 cannot supply a directory, executable, environment, actor or prompt. Choices are
 cached in memory and checked again during real chat negotiation. Discovery
 failure retains the agent editor draft and supports explicit Retry models.
+
+## Installation compute and agent defaults
+
+LocalTrusted Admin reads and writes `/v1/local/agents/settings` and
+`/v1/local/compute`. Writes carry independent expected revisions and stable
+request identities. `/v1/local/agents/secrets` writes a device credential; reads
+never return its value. Settings persist opaque references, ordinary environment
+values and explicit overrides outside repository state. Catalog queries for a
+saved setup use its effective configuration.
+
+Compute operations explicitly prepare the native runtime, download or import
+weights, start or stop a model, and pair or revoke a trusted machine. A lost
+operation response is checked through its original agent outcome receipt; it
+does not authorize repeating downloads or inference. Private loopback inference
+requires a process token, and paired transport requires mutual machine
+admission. No compute operation grants repository or tool access.

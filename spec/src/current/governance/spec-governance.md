@@ -9,6 +9,10 @@ The `docs/agent-execution.md` runbook maps to `documentation.md` and
 `collaboration.md`; its explicit launch, configuration, continuation and
 credential-boundary examples remain governed contracts.
 
+The `docs/local-compute.md` runbook maps to documentation, collaboration and
+compatibility chapters. Its helper packaging, model lifecycle, private pairing
+and credential examples remain governed contracts.
+
 Local Git-backed companion implementation additionally requires local-jj.md;
 native identity and publication chapters continue to govern their existing
 formats.
@@ -50,3 +54,14 @@ The M24 picker alignment copies Community's addressed-agent mention button into
 the owned UI and reuses the owned picker switch/pin presentation. Provenance
 records its source revision and Apache-2.0 license; dispatch and audience
 storage continue to use exact local saved-agent identities.
+
+M25 governs bundled agent/compute helper integration through compatibility,
+architecture, collaboration and desktop chapters. Source/fixture evidence, real
+local model tools, trusted transport and platform distribution evidence stay
+separate. Cross-layer verification selects each affected direct boundary rather
+than unrelated storage qualification. Model weights are explicit local data and
+never tracked source or packaged credentials.
+
+The local-compute runbook maps to documentation, collaboration and desktop
+chapters. Its configuration, custody and staging examples remain executable
+contracts, with platform distribution gates recorded in M25.

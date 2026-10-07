@@ -3,6 +3,7 @@
   import { Button } from "@lapismd/design-core/shadcn/button";
   import type { CommunityMemberModel } from "../community-workspace/model.js";
   import CommunityMessage from "../community-message/CommunityMessage.svelte";
+  import StoreAgentSentContext from "./StoreAgentSentContext.svelte";
   import StoreAgentDiscussion from "./StoreAgentDiscussion.svelte";
   import StoreMessageActions from "../store-collaboration/StoreMessageActions.svelte";
   import StoreMessageReactions from "../store-threads/StoreMessageReactions.svelte";
@@ -23,6 +24,7 @@
       text: string;
       kind: "user" | "assistant";
       observedAtMillis?: number;
+      value?: Record<string, unknown>;
     };
     author: CommunityMemberModel;
     children?: Snippet;
@@ -94,6 +96,9 @@
       items={[{ label: "Copy message", value: row.text }]}
     />{/snippet}
   {#snippet metadataSupplement()}
+    {#if row.kind === "user" && row.value?.sentContext}<StoreAgentSentContext
+        value={row.value.sentContext}
+      />{/if}
     {@render children?.()}
     {#if feedback && !unavailable}<StoreMessageReactions
         {threads}

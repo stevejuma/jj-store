@@ -26,7 +26,9 @@
       await page.findByRole("dialog", { name: "Edit agent" }),
     );
     await expect(
-      editor.getByText(/Showing choices from this harness's last session/),
+      await editor.findByText(
+        /Showing choices from this harness's last session/,
+      ),
     ).toBeVisible();
     await userEvent.click(editor.getByRole("option", { name: /Codex Fast/ }));
     await expect(editor.getByText("Selected model: Codex Fast")).toBeVisible();
@@ -59,7 +61,9 @@
       await page.findByRole("dialog", { name: "Edit agent" }),
     );
     await expect(
-      editor.getByText(/No model or thinking choices have been advertised/),
+      await editor.findByText(
+        /No model or thinking choices have been advertised/,
+      ),
     ).toBeVisible();
     await expect(
       editor.getByRole("option", {

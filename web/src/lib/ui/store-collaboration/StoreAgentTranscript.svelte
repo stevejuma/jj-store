@@ -11,7 +11,11 @@
   import StoreAgentTools from "./StoreAgentTools.svelte";
   import { agentMessageTimestamp } from "../../collaboration/presentation.js";
   import { agentTimeline } from "../../collaboration/agent-timeline.js";
-  import { agentMessageContent } from "../../collaboration/agent-message-content.js";
+  import StoreAgentSentContext from "../store-agent-execution/StoreAgentSentContext.svelte";
+  import {
+    agentSentContext,
+    agentMessageContent,
+  } from "../../collaboration/agent-message-content.js";
   import StoreMessageActions from "./StoreMessageActions.svelte";
   import CommunityProjectsVirtualRows from "../community-projects/CommunityProjectsVirtualRows.svelte";
 
@@ -117,7 +121,9 @@
                 { label: "Copy sequence", value: String(entry.sequence) },
               ]}
             />{/snippet}
-          {#snippet metadataSupplement()}{#if controller.threads && entry.reaction_target}<StoreMessageReactions
+          {#snippet metadataSupplement()}<StoreAgentSentContext
+              value={agentSentContext(entry.content, integration)}
+            />{#if controller.threads && entry.reaction_target}<StoreMessageReactions
                 threads={controller.threads}
                 target={entry.reaction_target}
                 showControls={false}

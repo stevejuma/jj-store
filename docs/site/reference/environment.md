@@ -53,9 +53,29 @@ application configuration.
 ## Interactive execution
 
 `JJ_STORE_ACP_EXECUTABLE` enables the LocalTrusted agent supervisor using an
-absolute control-v2 harness binary. `JJ_STORE_AGENT_JJ_EXECUTABLE` selects the
-paired custom JJ; otherwise the service uses its sibling `jj` executable.
-`JJ_STORE_AGENT_PRIVACY_CACHE` optionally selects the privacy scanner cache
-outside checkouts. These are trusted launch configuration; browser requests
-cannot override them. Adapters remain separately installed and authenticated on
-the service PATH. See [agent sessions](../guides/agent-execution.md).
+absolute harness binary supporting control version 3.
+`JJ_STORE_AGENT_JJ_EXECUTABLE` selects the paired custom JJ; otherwise the
+service uses its sibling `jj` executable. `JJ_STORE_AGENT_PRIVACY_CACHE`
+optionally selects the privacy scanner cache outside checkouts. These are
+trusted launch configuration; browser requests cannot override them. Adapters
+remain separately installed and authenticated on the service PATH. See
+[agent sessions](../guides/agent-execution.md).
+
+Full distributions stage ACP and the following helpers beside the service. These
+trusted server environment variables select explicit absolute resource paths;
+agent Advanced rows cannot override controller-owned names.
+
+| Variable                              | Purpose                                                                                                                                   |
+| ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `JJ_STORE_LOCAL_AGENT_EXECUTABLE`     | Owned Buzz-derived ACP local model agent                                                                                                  |
+| `JJ_STORE_AGENT_TOOLS_EXECUTABLE`     | Permission-gated session coding helper                                                                                                    |
+| `JJ_STORE_COMPUTE_EXECUTABLE`         | Supervised model management and private inference helper                                                                                  |
+| `JJ_STORE_COMPUTE_NATIVE_RUNTIME_DIR` | Pinned bundled native artifact directory; Prepare verifies it without downloading another runtime                                         |
+| `JJ_STORE_COMPUTE_IDENTITY`           | Stable 32-byte hexadecimal machine secret supplied through headless process configuration; macOS otherwise uses the installation Keychain |
+
+Provider variables belong in global/per-agent Advanced configuration as ordinary
+values or external secret references. Resolution occurs at trusted launch;
+workers retain their launch environment until explicitly restarted. The
+controller supplies managed local/paired inference endpoints and private process
+tokens. No raw credential belongs in an executable path, command argument,
+repository file or browser persistence.

@@ -19,3 +19,15 @@ export function agentCommandError(cause: ApiError): string {
     return "Could not read repository discussion. Retry Send after the repository is available. Your prompt was not sent.";
   return cause.message;
 }
+
+export function retainUnknownAgentOutcome(owner: {
+  outcome: { state: string } | null;
+  pending: unknown;
+  error: string;
+}) {
+  if (owner.outcome?.state === "outcome_unknown") {
+    owner.pending = null;
+    owner.error =
+      "The interrupted request remains in session history. Review the workspace before explicitly continuing.";
+  }
+}

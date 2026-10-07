@@ -46,6 +46,12 @@ impl ManagedService {
             .arg("--desktop-rustfs-executable")
             .arg(&resources.rustfs);
         command.env("JJ_STORE_AGENT_JJ_EXECUTABLE", &resources.jj);
+        for (variable, path) in &resources.helpers {
+            command.env(variable, path);
+        }
+        if let Some(native) = &resources.native_runtime {
+            command.env("JJ_STORE_COMPUTE_NATIVE_RUNTIME_DIR", native);
+        }
         if let Some(acp) = &resources.acp {
             command.env("JJ_STORE_ACP_EXECUTABLE", acp);
         }

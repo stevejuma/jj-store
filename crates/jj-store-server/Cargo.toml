@@ -7,6 +7,7 @@ license.workspace = true
 publish = false
 
 [dependencies]
+ed25519-dalek = "=3.0.0-rc.0"
 jj-agent.workspace = true
 rustix = { version = "=1.1.5", features = ["process"] }
 notify = "8.2"
@@ -45,3 +46,6 @@ tonic = { version = "0.14", features = ["transport", "tls-ring"] }
 jj-collab.workspace = true
 jj-store-wal.workspace = true
 tokio = { version = "1", features = ["macros", "rt-multi-thread", "test-util"] }
+
+[target.'cfg(target_os = "macos")'.dependencies]
+security-framework = "3"

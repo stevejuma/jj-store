@@ -8,6 +8,7 @@
   import { tick, untrack, onDestroy } from "svelte";
   import type { AgentExecution } from "../../controller/agent-execution.svelte.js";
   import type { StoreRoute } from "../../controller/contracts.js";
+  import { Button } from "@lapismd/design-core/shadcn/button";
   import CommunityAgentProfile from "../community-agent-profile/CommunityAgentProfile.svelte";
   let {
     manager,
@@ -94,6 +95,25 @@
       /></AppShell.Sidebar.Header
     >
     <AppShell.Sidebar.Body>
+      {#if manager.value?.live_agents?.find((live) => live.agent_id === agent.id)?.inference_host}<p
+          class="store-agent-inference-host"
+        >
+          Inference host: {manager.value?.live_agents?.find(
+            (live) => live.agent_id === agent.id,
+          )?.inference_host}
+        </p>{/if}
+      {#if manager.value?.live_agents?.find((live) => live.agent_id === agent.id)?.restart_required}
+        <p>Configuration changed. Restart required.</p>
+        <Button
+          variant="outline"
+          disabled={manager.busy || !!manager.pending}
+          onclick={async () => {
+            await manager.stopAgent(agent.id);
+            if (!manager.pending && !manager.error)
+              await manager.startAgent(agent.id);
+          }}>Restart agent</Button
+        >
+      {/if}
       {#key agent.id}<CommunityAgentProfile
           {agent}
           status={manager.value}
@@ -114,6 +134,11 @@
 </AppShell.Sidebar>
 
 <style>
+  .store-agent-inference-host {
+    overflow-wrap: anywhere;
+    font-size: 0.75rem;
+    color: var(--muted-foreground);
+  }
   :global(.store-agent-details-header[data-ui-part="sidebar-header"]) {
     border-block-end: 0;
   }

@@ -1,12 +1,16 @@
 /** Device-local opt-in audience; stores exact IDs, never credentials or prompts. */
 const key = "jj-store:agent-audiences:v1";
 type Audiences = Record<string, { enabled: boolean; ids: string[] }>;
-export function readAgentAudience(scope: string, storage?: Storage) {
+export function readAgentAudience(
+  scope: string,
+  storage?: Storage,
+  defaultEnabled = false,
+) {
   try {
     const all = JSON.parse(storage?.getItem(key) ?? "{}") as Audiences;
     const value = all[scope];
     return {
-      enabled: value?.enabled === true,
+      enabled: value ? value.enabled === true : defaultEnabled,
       ids: Array.isArray(value?.ids)
         ? value.ids
             .filter((id) => typeof id === "string" && id.length <= 64)
@@ -14,7 +18,7 @@ export function readAgentAudience(scope: string, storage?: Storage) {
         : [],
     };
   } catch {
-    return { enabled: false, ids: [] as string[] };
+    return { enabled: defaultEnabled, ids: [] as string[] };
   }
 }
 export function writeAgentAudience(

@@ -1,3 +1,4 @@
+import { stageAgentResources } from "./agent-runtime-resources.mjs";
 import { stageDesktopResources } from "./desktop-resources.mjs";
 import { spawn } from "node:child_process";
 import { resolve, join } from "node:path";
@@ -5,6 +6,7 @@ import { parseArgs } from "node:util";
 
 const root = resolve(import.meta.dirname, "..");
 const { positionals, values } = parseArgs({
+  args: process.argv.slice(2).filter((value) => value !== "--"),
   allowPositionals: true,
   options: {
     "server-dir": { type: "string" },
@@ -12,6 +14,8 @@ const { positionals, values } = parseArgs({
     "web-root": { type: "string" },
     "state-dir": { type: "string" },
     "acp-executable": { type: "string" },
+    "native-runtime-dir": { type: "string" },
+    destination: { type: "string" },
   },
 });
 const mode = positionals[0];
@@ -33,15 +37,40 @@ async function stage() {
       join(root, "runtime/embedded-rustfs/target/debug/jj-store-rustfs"),
   );
   const web = resolve(values["web-root"] ?? join(root, "web/dist"));
-  const destination = join(root, "desktop/resources");
+  const destination = resolve(
+    values.destination ?? join(root, "desktop/resources"),
+  );
   const acp = values["acp-executable"] ?? process.env.JJ_STORE_ACP_EXECUTABLE;
+  if (!acp)
+    throw Error("Provide the pinned jj-acp executable using --acp-executable");
   await stageDesktopResources({
     target,
     runtime,
     web,
     destination,
-    acp: acp ? resolve(acp) : undefined,
+    acp: resolve(acp),
   });
+  await stageAgentResources(
+    destination,
+    {
+      "jj-acp": resolve(acp),
+      "jj-store-local-agent": join(
+        root,
+        "runtime/local-agent/target/debug/jj-store-local-agent",
+      ),
+      "jj-store-agent-tools": join(
+        root,
+        "runtime/local-agent/target/debug/jj-store-agent-tools",
+      ),
+      "jj-store-compute": join(
+        root,
+        "runtime/compute/target/debug/jj-store-compute",
+      ),
+    },
+    values["native-runtime-dir"]
+      ? resolve(values["native-runtime-dir"])
+      : undefined,
+  );
 }
 if (mode === "prepare") {
   await run("pnpm", ["web:build"]);
@@ -50,6 +79,19 @@ if (mode === "prepare") {
     "build",
     "--manifest-path",
     "runtime/embedded-rustfs/Cargo.toml",
+    "--locked",
+  ]);
+  await run("cargo", [
+    "build",
+    "--manifest-path",
+    "runtime/local-agent/Cargo.toml",
+    "--workspace",
+    "--locked",
+  ]);
+  await run("cargo", [
+    "build",
+    "--manifest-path",
+    "runtime/compute/Cargo.toml",
     "--locked",
   ]);
   await stage();

@@ -56,10 +56,12 @@ impl Supervisor {
             .as_str()
             .ok_or(Error::Invalid)?
             .to_owned();
-        let frame = runtime::safe(
+        let context = sent_context::capture(&saved, &original, &batch.text, first);
+        let mut frame = runtime::safe(
             &sanitizer,
-            json!({"version":2,"type":"prompt","requestId":command.request_id.to_string(),"text":format!("{}{prepared}",batch.text),"maxDurationMs":max_duration_ms}),
+            json!({"version":2,"type":"prompt","requestId":command.request_id.to_string(),"text":format!("{}{prepared}",batch.text),"maxDurationMs":max_duration_ms,"userText":original,"sentContext":context}),
         )?;
+        frame["sentContext"]["wireText"] = frame["text"].clone();
         let digest = journal::digest(command)?;
         self.update(|s| {
             delivery::prepare(
@@ -73,6 +75,10 @@ impl Supervisor {
                 first,
             )
         })?;
-        Ok(frame)
+        let mut dispatch = frame;
+        let body = dispatch.as_object_mut().ok_or(Error::Invalid)?;
+        body.remove("userText");
+        body.remove("sentContext");
+        Ok(dispatch)
     }
 }

@@ -53,3 +53,5 @@
   {{#include M23/SUMMARY.nav.md}}
 - [M24 reusable ACP agents and contextual conversations](M24/index.md)
   {{#include M24/SUMMARY.nav.md}}
+- [M25 local compute, agent configuration and sent context](M25/index.md)
+  {{#include M25/SUMMARY.nav.md}}

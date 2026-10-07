@@ -54,3 +54,17 @@ Browser image CSP permits same-origin, HTTPS and data images for Community
 avatars. Agent saves accept credential-free HTTPS image URLs, bounded raster
 data and the fixed Community emoji SVG template. The server does not fetch
 remote avatars. Script, style, connection and frame restrictions remain intact.
+
+## Local models and paired compute
+
+Provider credentials resolve from operator environment references or the desktop
+Keychain. Browser drafts remain in memory, and durable configuration contains
+only opaque credential references. Resolved values are registered as exact
+redactions before transcript capture. Advanced environment settings cannot
+override controller-owned launch variables.
+
+Sharing is disabled initially and requires explicit mutual pairing by machine
+identity. Peers receive bounded inference access only; files and coding tools
+remain on the requesting machine. Revocation closes admitted peer connections
+while local inference remains available. Public discovery and automatic cloud
+fallback remain disabled.

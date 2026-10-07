@@ -91,6 +91,12 @@
     avatar: "🤖",
     description: "Repository review and edits",
     instructions: "Keep changes focused.",
+    options: {
+      inherit_defaults: false,
+      provider: null,
+      endpoint: null,
+      environment: {},
+    },
     runner: "codex",
     preferences: {
       model: untrack(() => savedModel),

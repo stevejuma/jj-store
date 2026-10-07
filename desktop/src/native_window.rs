@@ -33,6 +33,7 @@ pub fn build(handle: &AppHandle, origin: url::Url) -> tauri::Result<WebviewWindo
                 .permission("core:window:allow-start-dragging")
                 .permission("core:window:allow-internal-toggle-maximize")
                 .permission("allow-set-glass-background")
+                .permission("allow-agent-power")
                 .permission("allow-terminal-targets")
                 .permission("allow-terminal-list")
                 .permission("allow-terminal-open")

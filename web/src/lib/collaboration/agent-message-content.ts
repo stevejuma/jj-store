@@ -8,6 +8,17 @@ export function agentMessageContent(
   try {
     const value: unknown = JSON.parse(content.content);
     if (
+      integration === "owned_controller" &&
+      value &&
+      typeof value === "object" &&
+      !Array.isArray(value) &&
+      "schema" in value &&
+      value.schema === "jj-store.sent-context.v1" &&
+      "text" in value &&
+      typeof value.text === "string"
+    )
+      return value.text;
+    if (
       integration === "open_code" &&
       Array.isArray(value) &&
       value.length > 0 &&
@@ -25,5 +36,21 @@ export function agentMessageContent(
     return `\`\`\`json\n${JSON.stringify(value, null, 2)}\n\`\`\``;
   } catch {
     return `\`\`\`text\n${content.content}\n\`\`\``;
+  }
+}
+
+export function agentSentContext(
+  content: Model<"AgentContent">,
+  integration: Model<"IntegrationId">,
+): unknown {
+  if (integration !== "owned_controller" || content.media_type !== "json")
+    return undefined;
+  try {
+    const value = JSON.parse(content.content);
+    return value.schema === "jj-store.sent-context.v1"
+      ? value.context
+      : undefined;
+  } catch {
+    return undefined;
   }
 }

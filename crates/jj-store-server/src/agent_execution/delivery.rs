@@ -167,6 +167,20 @@ pub(super) fn observe(state: &mut State, id: &str, event: &Value) -> Result<()> 
                 .extend(prompt.batch.revisions.iter().cloned());
         }
         intent.outcome.state = "started".into();
+        if let Some(mut frame) = saved
+            .events
+            .iter()
+            .find(|e| {
+                e.payload["type"] == "prompt" && e.payload["requestId"] == request.to_string()
+            })
+            .map(|e| e.payload.clone())
+        {
+            if frame["sentContext"]["version"] == 1 {
+                frame["type"] = json!("context_delivery");
+                frame["sentContext"]["delivery"] = json!("sent");
+                append(state, id, frame)?;
+            }
+        }
     } else if prompt.state == DeliveryState::Reserved
         && ((event["type"] == "record" && event["record"]["status"] == "cancelled")
             || (event["type"] == "error"

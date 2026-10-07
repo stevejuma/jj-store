@@ -123,3 +123,28 @@ fn controller_multiline_tool_ids_preserve_exact_identity_in_valid_aliases() {
         normalized
     );
 }
+
+#[test]
+fn sent_context_preserves_human_text_snapshot_and_message_identity_after_delivery() {
+    let mut input = json!({"type":"prompt","text":"Instructions plus hello","userText":"hello","sentContext":{"version":1,"blocks":[{"title":"Pinned","text":"revision-one"}],"delivery":"prepared"}});
+    let first = normalize_batch(
+        &NormalizerProfileV1::acp_controller_v2(),
+        &batch(1, input.clone()),
+    )
+    .unwrap();
+    input["type"] = json!("context_delivery");
+    input["sentContext"]["delivery"] = json!("sent");
+    let second =
+        normalize_batch(&NormalizerProfileV1::acp_controller_v2(), &batch(2, input)).unwrap();
+    let NormalizedActivityRecordV1::Message(prepared) = &first.records[0] else {
+        panic!()
+    };
+    let NormalizedActivityRecordV1::Message(sent) = &second.records[0] else {
+        panic!()
+    };
+    assert_eq!(prepared.message_id, sent.message_id);
+    let data: serde_json::Value = serde_json::from_slice(sent.content.bytes()).unwrap();
+    assert_eq!(data["text"], "hello");
+    assert_eq!(data["context"]["blocks"][0]["text"], "revision-one");
+    assert_eq!(data["context"]["delivery"], "sent");
+}

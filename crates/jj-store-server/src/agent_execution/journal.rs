@@ -9,6 +9,8 @@ pub(super) struct SavedSession {
     pub workspace: Workspace,
     pub profile: String,
     pub instructions: String,
+    #[serde(default)]
+    pub options: settings::RuntimeOptions,
     pub context: Option<String>,
     pub events: Vec<Event>,
     #[serde(default)]
@@ -41,6 +43,20 @@ pub(super) struct Intent {
 #[derive(Clone, Default, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub(super) struct State {
+    #[serde(default)]
+    pub settings: settings::Settings,
+    #[serde(default)]
+    pub compute: jj_store_service::agent_execution::compute::Settings,
+    #[serde(default)]
+    pub compute_models: std::collections::BTreeSet<String>,
+    #[serde(default)]
+    pub compute_runtime_prepared: bool,
+    #[serde(default)]
+    pub compute_peer_port: Option<u16>,
+    #[serde(default)]
+    pub compute_generation: u64,
+    #[serde(default)]
+    pub compute_identity: Option<String>,
     pub owner: Option<PrincipalId>,
     pub revision: u64,
     #[serde(default)]
@@ -197,11 +213,20 @@ pub(super) fn read(root: &Path) -> Result<State> {
     for intent in state.intents.values_mut() {
         if matches!(
             intent.outcome.state.as_str(),
-            "dispatching" | "queued" | "started"
+            "dispatching" | "queued" | "started" | "configuring" | "stopping"
         ) {
             intent.outcome.state = "outcome_unknown".into();
             intent.outcome.error = Some("process_interrupted_no_replay".into());
         }
+    }
+    let uncertain: Vec<_> = state
+        .intents
+        .iter()
+        .filter(|(_, i)| i.outcome.state == "outcome_unknown")
+        .map(|(request, _)| *request)
+        .collect();
+    for request in uncertain {
+        sent_context::outcome(&mut state, request, "outcome_unknown")?;
     }
     Ok(state)
 }

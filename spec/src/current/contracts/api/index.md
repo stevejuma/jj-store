@@ -45,3 +45,4 @@ Read the owning topic and requirement before implementation.
 - [Local stack topology and focused history](39-local-stack-topology-and-focused-history.md)
 - [Complete native stack discovery and boundaries](40-complete-native-stack-discovery-and-boundaries.md)
 - [Interactive agent execution](41-interactive-agent-execution.md)
+- [Installation agent settings and compute](42-compute-and-agent-settings.md)

@@ -18,3 +18,4 @@
 - [Initial setup ownership](18-initial-setup-ownership.md)
 - [Ordinary local stack workspace composition](19-ordinary-local-stack-workspace-composition.md)
 - [Interactive agent execution](20-interactive-agent-execution.md)
+- [Local compute resources](21-local-compute-resources.md)

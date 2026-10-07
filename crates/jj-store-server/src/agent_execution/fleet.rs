@@ -4,6 +4,8 @@ use jj_store_service::agent_execution::fleet::{Control, LiveAgent};
 use std::process::Stdio;
 use tokio::{io::BufReader, process::Command};
 pub(super) struct Worker {
+    pub configuration: String,
+    pub inference_host: Option<String>,
     pub sender: mpsc::Sender<Value>,
     pub state: String,
     pub generation: u64,
@@ -88,11 +90,31 @@ impl Supervisor {
                         "offline"
                     };
                     LiveAgent {
+                        inference_host: worker.and_then(|w| w.inference_host.clone()).or_else(
+                            || {
+                                s.setups.get(id).and_then(|setup| {
+                                    configuration::inference_host(
+                                        &configuration::resolve(setup, &s.settings),
+                                        s,
+                                    )
+                                })
+                            },
+                        ),
                         agent_id: id.clone(),
                         enabled: s.warm_agents.contains(id),
                         generation: worker.map_or(0, |w| w.generation),
                         state: state.into(),
                         error: worker.and_then(|w| w.error.clone()),
+                        restart_required: worker.is_some_and(|w| {
+                            !w.sender.is_closed()
+                                && s.setups.get(id).is_some_and(|setup| {
+                                    configuration::launch_digest(
+                                        &configuration::resolve(setup, &s.settings),
+                                        s,
+                                    )
+                                    .is_ok_and(|key| key != w.configuration)
+                                })
+                        }),
                     }
                 })
                 .collect())
@@ -215,7 +237,7 @@ impl Supervisor {
         if self.tooling_busy()? {
             return Err(Error::Busy);
         }
-        let setup = self.read(|s| s.setups.get(id).cloned().ok_or(Error::Stale))?;
+        let setup = self.effective_setup(id)?;
         let paths = std::env::join_paths(self.tooling_paths()?).map_err(|_| Error::Unavailable)?;
         let closing = {
             let workers = self.0.fleet.lock().map_err(|_| Error::Unavailable)?;
@@ -267,6 +289,18 @@ impl Supervisor {
             self.stop_worker(&name)?;
             let _ = tokio::time::timeout(Duration::from_secs(20), sender.closed()).await;
         }
+        {
+            let workers = self.0.fleet.lock().map_err(|_| Error::Unavailable)?;
+            if workers.get(id).is_some_and(|w| !w.sender.is_closed()) {
+                return Ok(());
+            }
+        }
+        let root = self.0.resources.root.join("workspaces");
+        let mut command = Command::new(&self.0.resources.executable);
+        command.arg("serve");
+        self.launch_environment(&mut command, &setup)?;
+        self.local_launch(&mut command, &setup, true).await?;
+        self.register_launch_secrets(&command, &setup)?;
         let mut workers = self.0.fleet.lock().map_err(|_| Error::Unavailable)?;
         if workers.get(id).is_some_and(|w| !w.sender.is_closed()) {
             return Ok(());
@@ -298,18 +332,10 @@ impl Supervisor {
             s.worker_generations.insert(id.into(), generation);
             Ok(generation)
         })?;
-        let root = self.0.resources.root.join("workspaces");
-        let mut command = Command::new(&self.0.resources.executable);
+
         command
             .env("PATH", paths)
-            .args([
-                "serve",
-                "--control-version",
-                "3",
-                "--runner",
-                &setup.runner,
-                "--cwd",
-            ])
+            .args(["--control-version", "3", "--runner", &setup.runner, "--cwd"])
             .arg(&root)
             .args([
                 "--queue-capacity",
@@ -336,6 +362,8 @@ impl Supervisor {
         workers.insert(
             id.into(),
             Worker {
+                inference_host: self.read(|s| Ok(configuration::inference_host(&setup, s)))?,
+                configuration: self.read(|s| configuration::launch_digest(&setup, s))?,
                 sender,
                 state: "starting".into(),
                 generation,

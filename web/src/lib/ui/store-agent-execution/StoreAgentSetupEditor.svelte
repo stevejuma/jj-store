@@ -40,7 +40,21 @@
           avatar: setup?.avatar ?? session?.avatar ?? "",
           description: setup?.description ?? "",
           instructions: setup?.instructions ?? "",
-          runner: setup?.runner ?? session?.runner ?? "codex",
+          runner:
+            setup?.runner ??
+            session?.runner ??
+            manager.settings.value?.runner ??
+            "codex",
+          options: structuredClone(
+            $state.snapshot(
+              setup?.options ?? {
+                inherit_defaults: !setup && !session,
+                provider: null,
+                endpoint: null,
+                environment: {},
+              },
+            ),
+          ),
           preferences: {
             ...(setup?.preferences ??
               session?.preferences ?? {
@@ -54,11 +68,17 @@
       return manager.setupDrafts[draftKey];
     }),
   );
+  const catalogAgent = $derived(
+    manager.value?.setups.find(
+      (saved) => saved.id === draft.id && saved.runner === draft.runner,
+    )?.id,
+  );
+  const catalogKey = $derived(manager.catalogs.key(draft.runner, catalogAgent));
   const catalog = $derived(
     harnessCatalog(
       manager.value?.sessions ?? [],
       draft.runner,
-      manager.catalogs.values[draft.runner]?.facts,
+      manager.catalogs.values[catalogKey]?.facts,
     ),
   );
   $effect(() => {
@@ -68,7 +88,8 @@
       manager.value.runners.some((r) => r.id === runner && r.available);
     if (open && available)
       untrack(() => {
-        if (!catalog.session) void manager.catalogs.load(runner);
+        if (catalogAgent || !catalog.session)
+          void manager.catalogs.load(runner, false, catalogAgent);
       });
   });
   const facts = $derived(catalog.facts);
@@ -81,7 +102,9 @@
       const { facts } = harnessCatalog(
         manager.value?.sessions ?? [],
         runner.id,
-        manager.catalogs.values[runner.id]?.facts,
+        manager.catalogs.values[
+          runner.id === draft.runner ? catalogKey : runner.id
+        ]?.facts,
       );
       const options = runtimeChoices(facts, "model");
       return [
@@ -131,8 +154,22 @@
   const modes = $derived(
     runtimeChoices(facts, "mode").map((o) => ({ value: o.id, name: o.name })),
   );
+  let secretDrafts = $state(
+    untrack(() => (manager.settings.setupSecretDrafts[draftKey] ??= {})),
+  );
+  let savingSecrets = $state(false);
   async function save(event: SubmitEvent) {
     event.preventDefault();
+    if (savingSecrets || manager.busy) return;
+    savingSecrets = true;
+    try {
+      await manager.settings.saveSecrets(secretDrafts);
+    } catch (cause) {
+      manager.error = cause instanceof Error ? cause.message : String(cause);
+      return;
+    } finally {
+      savingSecrets = false;
+    }
     const acknowledgedRevision = await manager.saveSetup(
       {
         ...draft,
@@ -173,6 +210,7 @@
     }
     if (!manager.pending && !manager.error) {
       delete manager.setupDrafts[draftKey];
+      delete manager.settings.setupSecretDrafts[draftKey];
       delete manager.setupDraftRevisions[draftKey];
       open = false;
     }
@@ -180,16 +218,18 @@
 </script>
 
 <CommunityAgentEditorDialog
+  keychainSupported={manager.settings.value?.keychain_supported ?? false}
+  bind:secrets={secretDrafts}
   runtimeNotice={session
     ? "Save changes the agent defaults for future chats. Model, thinking and execution mode also apply to this connected session when using its current harness. Its captured instructions and workspace stay unchanged."
-    : manager.catalogs.errors[draft.runner]
-      ? manager.catalogs.errors[draft.runner]
-      : manager.catalogs.loading[draft.runner] && !hasCatalog
-        ? "Loading models and thinking choices from the installed harness…"
-        : !hasCatalog
-          ? "No model or thinking choices have been advertised for this harness. Saved preferences remain until you change them."
-          : catalog.remembered
-            ? "Showing choices from this harness's last session. Availability is checked again when a new session connects. Saved preferences remain until you change them."
+    : catalog.remembered && hasCatalog
+      ? `Showing choices from this harness's last session. Availability is checked again when a new session connects. Saved preferences remain until you change them. ${manager.catalogs.errors[catalogKey] ?? ""}`
+      : manager.catalogs.errors[catalogKey]
+        ? `No model or thinking choices have been advertised for this harness. Saved preferences remain until you change them. ${manager.catalogs.errors[catalogKey]}`
+        : manager.catalogs.loading[catalogKey] && !hasCatalog
+          ? "Loading models and thinking choices from the installed harness…"
+          : !hasCatalog
+            ? "No model or thinking choices have been advertised for this harness. Saved preferences remain until you change them."
             : catalog.session
               ? "Model and thinking choices come from the connected harness. Saved preferences remain until you change them."
               : "Model and thinking choices come from the installed harness. Availability is checked again when a chat connects."}
@@ -208,14 +248,14 @@
   bind:open
   bind:draft
   editing={!!setup}
-  pending={manager.busy || !!manager.pending}
+  pending={savingSecrets || manager.busy || !!manager.pending}
   rows={modelRows}
   {thinking}
   {modes}
   onModel={selectModel}
   onSave={save}
-  modelsLoading={manager.catalogs.loading[draft.runner]}
-  onRetryModels={manager.catalogs.errors[draft.runner]
-    ? () => void manager.catalogs.load(draft.runner, true)
+  modelsLoading={manager.catalogs.loading[catalogKey]}
+  onRetryModels={manager.catalogs.errors[catalogKey]
+    ? () => void manager.catalogs.load(draft.runner, true, catalogAgent)
     : undefined}
 />

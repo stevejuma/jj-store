@@ -33,3 +33,6 @@
 
 spec/.generated/
 .qmd/index.sqlite*
+
+/runtime/local-agent/target/
+/runtime/compute/target/

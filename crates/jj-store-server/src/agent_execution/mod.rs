@@ -2,6 +2,8 @@
 mod avatar;
 mod catalog;
 mod commands;
+mod compute;
+mod configuration;
 mod conversation_frames;
 mod conversation_home;
 mod conversation_links;
@@ -14,8 +16,11 @@ mod feedback;
 mod fleet;
 mod journal;
 mod launch;
+mod local_agent;
 mod publication;
 mod runtime;
+mod secrets;
+mod sent_context;
 mod targets;
 mod tooling;
 use jj_store_model::{OperationId, PrincipalId, RepositoryId, RequestId};
@@ -56,6 +61,7 @@ struct Inner {
     state: Mutex<State>,
     runtimes: Mutex<BTreeMap<String, mpsc::Sender<Value>>>,
     fleet: Mutex<BTreeMap<String, fleet::Worker>>,
+    compute: tokio::sync::Mutex<compute::Runtime>,
     catalogs: tokio::sync::Mutex<catalog::Cache>,
     catalog_active: std::sync::atomic::AtomicBool,
     runtime_tasks: Mutex<BTreeMap<String, tokio::task::AbortHandle>>,
@@ -99,6 +105,7 @@ impl Supervisor {
             state: Mutex::new(state),
             runtimes: Mutex::new(BTreeMap::new()),
             fleet: Mutex::new(BTreeMap::new()),
+            compute: tokio::sync::Mutex::new(Default::default()),
             catalogs: tokio::sync::Mutex::new(Default::default()),
             catalog_active: std::sync::atomic::AtomicBool::new(false),
             runtime_tasks: Mutex::new(BTreeMap::new()),
@@ -236,7 +243,9 @@ impl Supervisor {
             let intent = s.intents.get_mut(&request).ok_or(Error::Invalid)?;
             intent.outcome.state = state.into();
             intent.outcome.error = error.map(str::to_owned);
-            Ok(intent.outcome.clone())
+            let outcome = intent.outcome.clone();
+            sent_context::outcome(s, request, state)?;
+            Ok(outcome)
         })
     }
     fn saved(&self, id: &str) -> Result<SavedSession> {

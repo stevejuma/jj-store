@@ -1,13 +1,64 @@
 use super::*;
 #[async_trait::async_trait]
 impl Manager for Supervisor {
+    async fn compute_status(
+        &self,
+        actor: PrincipalId,
+    ) -> Result<jj_store_service::agent_execution::compute::Status> {
+        self.actor(actor)?;
+        self.compute_status_view().await
+    }
+    async fn compute_command(
+        &self,
+        actor: PrincipalId,
+        command: jj_store_service::agent_execution::compute::Command,
+    ) -> Result<Outcome> {
+        self.compute_control(actor, command).await
+    }
+
+    async fn settings(&self, actor: PrincipalId) -> Result<settings::Settings> {
+        self.actor(actor)?;
+        self.read(|s| {
+            let mut settings = s.settings.clone();
+            settings.keychain_supported = cfg!(target_os = "macos");
+            Ok(settings)
+        })
+    }
+    async fn save_settings(
+        &self,
+        actor: PrincipalId,
+        command: settings::SettingsCommand,
+    ) -> Result<settings::Settings> {
+        self.save_configuration(actor, command).await
+    }
+    async fn secret(
+        &self,
+        actor: PrincipalId,
+        command: settings::SecretCommand,
+    ) -> Result<settings::SecretStatus> {
+        self.actor(actor)?;
+        secrets::write(&self.0.resources.root, command)
+    }
     async fn catalog(
         &self,
         actor: PrincipalId,
         runner: String,
     ) -> Result<jj_store_service::agent_execution::catalog::Catalog> {
         self.actor(actor)?;
-        self.model_catalog(runner).await
+        self.model_catalog(runner, None).await
+    }
+    async fn catalog_for_setup(
+        &self,
+        actor: PrincipalId,
+        runner: String,
+        setup_id: String,
+    ) -> Result<jj_store_service::agent_execution::catalog::Catalog> {
+        self.actor(actor)?;
+        let setup = self.effective_setup(&setup_id)?;
+        if setup.runner != runner {
+            return Err(Error::Stale);
+        }
+        self.model_catalog(runner, Some(setup)).await
     }
     async fn send_conversation(
         &self,
@@ -115,16 +166,19 @@ impl Manager for Supervisor {
                 || setup.description.chars().count() > 280
                 || setup.description.contains('\0')
                 || setup.instructions.len() > 32768
-                || !matches!(setup.runner.as_str(), "codex" | "cursor")
+                || !matches!(setup.runner.as_str(), "codex" | "cursor" | "local")
             {
                 return Err(Error::Invalid);
             }
             preferences(&setup.preferences)?;
+            configuration::validate(&setup.options)?;
             let sanitizer =
                 runtime::sanitizer(self, &self.0.resources.root.join("workspaces")).await?;
             let avatar = setup.avatar.clone();
             let mut authored = setup.clone();
             authored.avatar.clear();
+            let options = authored.options.clone();
+            authored.options = Default::default();
             command.setup = Some(
                 serde_json::from_value(runtime::safe(
                     &sanitizer,
@@ -132,7 +186,9 @@ impl Manager for Supervisor {
                 )?)
                 .map_err(|_| Error::Invalid)?,
             );
-            command.setup.as_mut().ok_or(Error::Invalid)?.avatar = avatar;
+            let saved = command.setup.as_mut().ok_or(Error::Invalid)?;
+            saved.avatar = avatar;
+            saved.options = options;
         }
         let removed = command.remove.clone();
         self.update(|s| {
@@ -365,6 +421,13 @@ impl Manager for Supervisor {
                 .to_owned();
             // Dispatch exactly the sanitized frame retained with the original intent.
             frame = runtime::safe(&sanitizer, frame)?;
+            let mut recorded = frame.clone();
+            recorded["userText"] = json!(original);
+            recorded["sentContext"] = runtime::safe(
+                &sanitizer,
+                sent_context::capture(&saved, &original, &batch.text, carries_initial_context),
+            )?;
+            recorded["sentContext"]["wireText"] = recorded["text"].clone();
             self.update(|s| {
                 delivery::prepare(
                     s,
@@ -373,7 +436,7 @@ impl Manager for Supervisor {
                     digest,
                     original,
                     batch,
-                    frame.clone(),
+                    recorded.clone(),
                     carries_initial_context,
                 )
             })?;
@@ -535,6 +598,12 @@ impl Manager for Supervisor {
         self.0
             .stopping
             .store(true, std::sync::atomic::Ordering::Release);
+        {
+            let compute = self.0.compute.lock().await;
+            if let Some(stop) = &compute.stop {
+                stop.send_replace(true);
+            }
+        }
         let installer = self
             .0
             .installer_task
@@ -577,10 +646,18 @@ impl Manager for Supervisor {
             loop {
                 if self
                     .0
-                    .runtimes
+                    .compute
                     .lock()
-                    .map_err(|_| Error::Unavailable)?
-                    .is_empty()
+                    .await
+                    .sender
+                    .as_ref()
+                    .is_none_or(|s| s.is_closed())
+                    && self
+                        .0
+                        .runtimes
+                        .lock()
+                        .map_err(|_| Error::Unavailable)?
+                        .is_empty()
                     && self
                         .0
                         .fleet

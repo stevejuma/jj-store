@@ -229,3 +229,32 @@ fn cancelled_initial_prompt_does_not_lose_continuation_context_to_a_queued_turn(
     .unwrap();
     assert!(!needs_initial_context(&state, &id).unwrap());
 }
+
+#[test]
+fn context_delivery_tracks_acknowledged_start_and_unknown_restart_without_reconstructing() {
+    let root = tempfile::tempdir().unwrap();
+    let (mut state, id) = fixture(root.path());
+    let pending = prepare_one(&mut state, &id, 20);
+    state.sessions.get_mut(&id).unwrap().events[0].payload["sentContext"] = json!({"version":1,"delivery":"prepared","blocks":[{"title":"Captured","text":"Original context"}]});
+    sent_context::outcome(&mut state, pending, "queued").unwrap();
+    assert_eq!(
+        state.sessions[&id].events.last().unwrap().payload["sentContext"]["delivery"],
+        "queued"
+    );
+    journal::persist(root.path(), &state).unwrap();
+    let mut restored = journal::read(root.path()).unwrap();
+    let captured = &restored.sessions[&id].events.last().unwrap().payload["sentContext"];
+    assert_eq!(captured["delivery"], "unknown");
+    assert_eq!(captured["blocks"][0]["text"], "Original context");
+    observe(
+        &mut restored,
+        &id,
+        &json!({"type":"started","requestId":pending}),
+    )
+    .unwrap();
+    sent_context::outcome(&mut restored, pending, "outcome_unknown").unwrap();
+    assert_eq!(
+        restored.sessions[&id].events.last().unwrap().payload["sentContext"]["delivery"],
+        "sent"
+    );
+}

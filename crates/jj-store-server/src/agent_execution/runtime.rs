@@ -57,7 +57,23 @@ impl Supervisor {
         }
         let paths = std::env::join_paths(self.tooling_paths()?).map_err(|_| Error::Unavailable)?;
         let saved = self.saved(id)?;
+        let setup = Setup {
+            id: saved.view.setup_id.clone().unwrap_or_default(),
+            name: saved.view.title.clone(),
+            avatar: saved.view.avatar.clone(),
+            description: String::new(),
+            instructions: saved.instructions.clone(),
+            runner: saved.view.runner.clone(),
+            preferences: saved.view.preferences.clone(),
+            options: saved.options.clone(),
+        };
+        let mut command = Command::new(&self.0.resources.executable);
+        command.arg("serve");
+        self.launch_environment(&mut command, &setup)?;
+        self.local_launch(&mut command, &setup, true).await?;
+        self.register_launch_secrets(&command, &setup)?;
         let sanitizer = sanitizer(self, &saved.workspace.path).await?;
+
         let mut runtimes = self.0.runtimes.lock().map_err(|_| Error::Unavailable)?;
         if !runtimes.is_empty()
             || self
@@ -67,11 +83,9 @@ impl Supervisor {
         {
             return Err(Error::Busy);
         }
-        let mut command = Command::new(&self.0.resources.executable);
         command
             .env("PATH", paths)
             .args([
-                "serve",
                 "--max-turn-duration",
                 "3600",
                 "--idle-timeout",
@@ -140,6 +154,15 @@ impl Supervisor {
                         intent.outcome.state = "outcome_unknown".into();
                         intent.outcome.error = Some("process_stopped_no_replay".into());
                     }
+                }
+                let uncertain: Vec<_> = s
+                    .intents
+                    .iter()
+                    .filter(|(_, i)| i.outcome.state == "outcome_unknown")
+                    .map(|(request, _)| *request)
+                    .collect();
+                for request in uncertain {
+                    sent_context::outcome(s, request, "outcome_unknown")?;
                 }
                 Ok(())
             });

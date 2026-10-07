@@ -247,3 +247,14 @@ Discovery shares the four-process limit, rejects permission/activity traffic,
 closes and reaps its child before completing, and stores sanitized choices in
 memory only. Foreground shutdown waits for active discovery cleanup as well as
 live workers.
+
+## Local inference ownership
+
+The installation supervises the separate compute helper and maintained local ACP
+agent. MeshLLM owns native inference, while the app owns model receipts,
+resource limits and explicit paired-machine admission. The coding helper runs on
+the requesting machine under ACP permission decisions. These runtime
+dependencies do not enter storage, WAL or repository publication authority.
+Installation settings and credential references remain outside repository
+checkouts. Exact context snapshots publish through the existing sanitized
+AgentStore messages and receipts.

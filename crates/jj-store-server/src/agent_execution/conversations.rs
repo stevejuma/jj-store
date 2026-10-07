@@ -157,7 +157,12 @@ impl Supervisor {
             command
                 .agent_ids
                 .iter()
-                .map(|id| s.setups.get(id).cloned().ok_or(Error::Stale))
+                .map(|id| {
+                    s.setups
+                        .get(id)
+                        .map(|setup| configuration::resolve(setup, &s.settings))
+                        .ok_or(Error::Stale)
+                })
                 .collect::<Result<Vec<_>>>()
         })?;
         self.remember(command.request_id, digest, None)?;
@@ -272,6 +277,7 @@ impl Supervisor {
                     last_error: None,
                 };
                 let saved = SavedSession {
+                    options: setup.options.clone(),
                     view,
                     workspace,
                     profile: profile.clone(),

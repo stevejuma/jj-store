@@ -47,3 +47,17 @@ test("mixed, unknown, empty and malformed OpenCode parts remain visible", () => 
     );
   assert.equal(message("{invalid JSON").content, "```text\n{invalid JSON\n```");
 });
+
+test("controller context envelope renders human text and preserves its historical snapshot", () => {
+  const raw = JSON.stringify({
+    schema: "jj-store.sent-context.v1",
+    text: "Fix this file",
+    context: {
+      version: 1,
+      blocks: [{ title: "Original context", text: "Pinned revision" }],
+      delivery: "sent",
+    },
+  });
+  assert.equal(message(raw, "owned_controller").content, "Fix this file");
+  assert.match(message(raw, "codex").content, /Original context/);
+});

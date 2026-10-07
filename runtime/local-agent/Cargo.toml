@@ -1,0 +1,19 @@
+[workspace]
+members = ["vendor/buzz-agent", "tools"]
+resolver = "2"
+
+[package]
+name = "jj-store-local-agent"
+version = "0.1.0"
+edition = "2024"
+license = "Apache-2.0"
+publish = false
+
+[dependencies]
+buzz-agent = { path = "vendor/buzz-agent" }
+
+[profile.dev]
+debug = 0
+
+[profile.test]
+debug = 0

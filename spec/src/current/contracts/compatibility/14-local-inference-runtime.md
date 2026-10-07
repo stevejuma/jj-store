@@ -1,0 +1,29 @@
+# Local inference runtime compatibility
+
+M25 pins Buzz agent source to ef2aa1ae38fadcc0bc22b8bf6ed96b35933146be and
+MeshLLM SDK/host runtime to 9f192c9d821991ba43d79bb15fd2f2f12e597571. The owned
+wrapper advertises permission-gated `ask` mode. Trusted stdio MCP coding tools
+are configured by the controlling application; warm initialization opens no tool
+session. Version/ABI/checksum validation is required for native inference
+artifacts. Third-party notices and source pins ship with the helpers.
+
+MacOS ARM64 and Linux CPU acceptance are separate gates. Compilation and fixture
+providers do not qualify a model, installed permission exchange or distribution.
+Public discovery and automatic provider fallback are disabled. The loopback
+OpenAI gateway requires a private process token; paired QUIC admission uses
+exact machine identities. A peer receives inference only. Sharing-off/revocation
+closes its admitted transport without stopping local inference. Trusted
+connection tasks, request sizes, response sizes, duration and concurrency remain
+bounded.
+
+Downloaded and imported model paths are recorded in private managed storage.
+Start requires an installed path and performs no implicit weight download.
+Imports copy explicit GGUF files; removals touch managed weights only.
+
+The gateway preserves the selected logical model identity. Native startup uses
+the installed non-symlink path with local-required source policy and disabled
+telemetry/blobstore plugins. The initial context limit is 8,192 tokens with two
+native slots, independent of a model's advertised maximum context. Managed
+local/paired agents default to an 8,192-token context budget and a 2,048-token
+response budget. Explicit Advanced environment overrides/unsets retain their
+precedence; external provider agents retain provider defaults.

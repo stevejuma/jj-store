@@ -101,3 +101,14 @@ sends a message. Attach registered repositories, select one or more saved agents
 with @, write a message and press Send. Automatically mention agents is opt-in
 and retains exact recipients for replies; remove a tag or unpin it to stop
 including that agent. ACP avatars show the current worker state across the app.
+
+## Local compute and agent defaults
+
+Compute settings provide explicit native runtime preparation, GGUF downloads or
+imports, model start/stop, managed-weight removal, resource limits and trusted
+machine pairing/sharing. Agent settings add global defaults, automatic-mention
+preferences, macOS desktop keep-awake, and collapsed Advanced environment
+configuration in both defaults and Add/Edit agent. Harness sections are
+collapsed on initial load. See
+[agent configuration and compute](agent-execution.md#compute-defaults-and-captured-context)
+for precedence, credentials, pairing and context disclosure.

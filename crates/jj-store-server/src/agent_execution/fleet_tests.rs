@@ -6,6 +6,8 @@ async fn stop_signal_is_delivered_when_the_command_queue_is_full() {
     assert_eq!(sender.capacity(), 0);
     let (stop, mut stopping) = tokio::sync::watch::channel(false);
     let mut worker = Worker {
+        configuration: String::new(),
+        inference_host: None,
         sender,
         stop,
         state: "idle".into(),

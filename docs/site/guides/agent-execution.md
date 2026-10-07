@@ -195,3 +195,49 @@ native WorkStore-home profile. Native code repositories still require
 collaboration replication qualification. The reply composer explains unavailable
 writes and retains your draft. Reading existing feedback and provider-side
 prompt context does not bypass these gates.
+
+## Compute, defaults and captured context
+
+Settings → Agents places Conversations, Preferences and Agent defaults above
+Agent runtimes. The automatic-mention default seeds conversations which have no
+explicit preference. Advanced in defaults and Add/Edit agent manages ordinary
+values, server environment references, write-only device Keychain secrets and
+explicit unset overrides. Agent values override global environment settings.
+Existing agents retain harness defaults; newly created agents may inherit the
+compatible application preferences. Running workers show pending configuration
+until explicitly restarted. Model catalogs use the saved effective launch
+settings.
+
+Settings → Compute manages one explicitly downloaded/imported GGUF model, native
+runtime preparation, loading progress, memory limits and private machine
+pairing. Start uses recorded installed weights and does not download them. Local
+agent provides an ACP model/tool loop through the bundled coding helper. Every
+coding tool requires permission. Local agents may use this machine, a paired
+inference host or an explicitly configured OpenAI compatible endpoint. No
+provider falls back to cloud inference automatically.
+
+Add each machine's invitation to the other and verify both identities. Enable
+Share this machine on the inference host. Pairing grants inference only; files
+and tools remain on the requesting machine. Disabling sharing or unpairing
+closes admitted remote connections while local inference remains available.
+Direct addresses use a persisted UDP port; optional HTTPS transport relays apply
+after Stop compute and restart. Public discovery and default relays are
+disabled.
+
+Desktop distributions bundle ACP, the local agent, coding tools and compute
+helper with checksums verified before launch. Prepare runtime verifies the
+distribution's pinned artifact directory or explicitly downloads one. Weights
+remain separate downloads/imports. Headless operators supply the stable 32-byte
+hexadecimal machine identity through `JJ_STORE_COMPUTE_IDENTITY` in process
+configuration; macOS uses the installation-scoped Keychain.
+
+Keep awake is disabled initially and supported by macOS desktop. Actual agent
+activity renews a bounded one-hour idle-sleep assertion. Polling and reconnects
+do not extend it; stopping agents or exiting the app releases the assertion.
+
+Expand Sent context below a user message to inspect its captured instructions,
+page/repository identities, bounded file excerpts, project/task descriptions,
+reply context and exact sanitized wire text. Rich previews use captured content
+and versions rather than fetching current data. Prepared, queued, sent, failed
+and unknown delivery are distinct; historical messages without snapshots are not
+reconstructed. Adapter-internal context is outside this disclosure.

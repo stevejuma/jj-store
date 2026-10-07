@@ -11,12 +11,15 @@
   import CommunityAgentEditorThinkingField from "./CommunityAgentEditorThinkingField.svelte";
   import CommunityAgentEditorModeField from "./CommunityAgentEditorModeField.svelte";
   import { avatarPreview } from "../community-avatar-picker/legacy-avatar.js";
+  import StoreAgentAdvanced from "../store-agent-execution/StoreAgentAdvanced.svelte";
   import type { AgentSetup } from "../../controller/agent-execution-types.js";
   import type { EditorModelRow } from "../../community/agent-editor-model-rows.js";
   import "./agent-editor.css";
   let {
     open = $bindable(false),
     draft = $bindable(),
+    secrets = $bindable({}),
+    keychainSupported = false,
     editing = false,
     conflict = false,
     latest,
@@ -34,6 +37,8 @@
   }: {
     open?: boolean;
     draft: AgentSetup;
+    secrets?: Record<string, string>;
+    keychainSupported?: boolean;
     editing?: boolean;
     conflict?: boolean;
     latest?: AgentSetup;
@@ -220,6 +225,12 @@
             </dl>
           {/if}
         </div>
+        <StoreAgentAdvanced
+          bind:draft
+          bind:secrets
+          {pending}
+          {keychainSupported}
+        />
         {#if saveUnavailable}<p role="status">{saveUnavailable}</p>{/if}
         {#if conflict}
           <Field.Field>

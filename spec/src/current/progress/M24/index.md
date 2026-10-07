@@ -35,7 +35,6 @@ and status text, and smaller descriptions. Its presentation checks and local
 workspace integration preserve the M24 qualification scope; the fleet workspace
 remains available for follow-up work.
 <!-- generated-navigation -->
-
 ## Pages
 
 - [history](history/index.md)

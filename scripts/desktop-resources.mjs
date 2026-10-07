@@ -1,4 +1,5 @@
 import { cp, mkdir, readFile, rm, stat } from "node:fs/promises";
+import { constants } from "node:fs";
 import { resolve, join } from "node:path";
 import { helpAssets } from "./docs/assets.mjs";
 export async function stageDesktopResources({
@@ -42,7 +43,9 @@ export async function stageDesktopResources({
   await rm(destination, { recursive: true, force: true });
   await mkdir(join(destination, "web"), { recursive: true });
   for (const [source, name] of binaries)
-    await cp(source, join(destination, name));
+    await cp(source, join(destination, name), {
+      mode: constants.COPYFILE_FICLONE,
+    });
   for (const file of files) {
     await mkdir(resolve(destination, "web", file, ".."), { recursive: true });
     await cp(join(web, file), join(destination, "web", file));

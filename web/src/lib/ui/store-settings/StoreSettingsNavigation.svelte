@@ -26,6 +26,7 @@
     { id: "appearance", label: "Appearance", icon: PaletteIcon },
     { id: "service", label: "Local service", icon: ServerIcon },
     { id: "agents", label: "Agents", icon: BotIcon },
+    { id: "compute", label: "Compute", icon: ServerIcon },
     { id: "repository", label: "Repository", icon: DatabaseIcon },
     { id: "search", label: "Search", icon: SearchIcon },
     { id: "storage", label: "Storage", icon: DatabaseIcon },

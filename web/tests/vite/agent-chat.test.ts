@@ -202,3 +202,63 @@ test("workspace choices use exact target pins and unresolved Send freezes select
     manager.destroy();
   }
 });
+
+test("captured context retains bounded pinned file text and project content", () => {
+  const state = {
+    route: {
+      page: "files",
+      repository: "code",
+      path: "readme.md",
+      commitId: "revision",
+    },
+    status: { files: "ready" },
+    snapshot: { id: "revision" },
+    blob: { path: "readme.md", contents: "🐈".repeat(5000) },
+  };
+  const controller = { state } as unknown as StoreController;
+  const context = JSON.parse(chatContext(controller).origin.context);
+  expect(
+    new TextEncoder().encode(context.file.content).length,
+  ).toBeLessThanOrEqual(8192);
+  expect(context.file.content).not.toContain("�");
+  expect(context.file.truncated).toBe(true);
+  state.snapshot.id = "old-revision";
+  expect(
+    JSON.parse(chatContext(controller).origin.context).file,
+  ).toBeUndefined();
+});
+
+test("captured task context preserves full native version integers", () => {
+  const controller = {
+    state: {
+      route: {
+        page: "projects",
+        repository: "home",
+        projectId: "project",
+        taskId: "task",
+      },
+    },
+    work: {
+      state: {
+        project: {
+          id: "project",
+          title: "Project",
+          body: "Description",
+          version: 9007199254740993n,
+        },
+        task: {
+          id: "task",
+          title: "Task",
+          body: "Task details",
+          version: 9007199254740995n,
+        },
+      },
+    },
+  } as unknown as StoreController;
+  expect(chatContext(controller).origin.context).toContain(
+    '"version": 9007199254740993',
+  );
+  expect(chatContext(controller).origin.context).toContain(
+    '"version": 9007199254740995',
+  );
+});

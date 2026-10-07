@@ -4,6 +4,7 @@ Browse the child pages below.
 <!-- generated-navigation -->
 ## Pages
 
+- [E-COMPUTE-001](E-COMPUTE-001/index.md)
 - [E-EXEC-010](E-EXEC-010/index.md)
 - [E-EXEC-011](E-EXEC-011/index.md)
 - [E-EXEC-012](E-EXEC-012/index.md)

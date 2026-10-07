@@ -23,13 +23,14 @@ fn show(app: &tauri::AppHandle) {
 }
 pub fn run() {
     let app = tauri::Builder::default()
-        .invoke_handler(tauri::generate_handler![crate::native_glass::set_glass_background, commands::terminal_targets, commands::terminal_list, commands::terminal_open, commands::terminal_attach, commands::terminal_close, commands::terminal_input, commands::terminal_resize, commands::terminal_scroll, commands::terminal_focus, commands::terminal_ack, commands::terminal_viewport_ready, commands::terminal_detach])
+        .invoke_handler(tauri::generate_handler![crate::agent_power::agent_power, crate::native_glass::set_glass_background, commands::terminal_targets, commands::terminal_list, commands::terminal_open, commands::terminal_attach, commands::terminal_close, commands::terminal_input, commands::terminal_resize, commands::terminal_scroll, commands::terminal_focus, commands::terminal_ack, commands::terminal_viewport_ready, commands::terminal_detach])
         .plugin(tauri_plugin_single_instance::init(|app, _, _| show(app)))
         .plugin(tauri_plugin_window_state::Builder::default().with_state_flags(StateFlags::all() & !StateFlags::VISIBLE).build())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
         .manage(RuntimeState(Mutex::new(None)))
         .manage(TerminalHost::default())
+        .manage(crate::agent_power::AgentPower::default())
         .setup(|app| {
             let handle = app.handle().clone();
             let show_item = MenuItem::with_id(app, "show", "Show jj-store", true, None::<&str>)?;
@@ -89,6 +90,7 @@ pub fn run() {
             }
         }
         RunEvent::ExitRequested { .. } | RunEvent::Exit => {
+            handle.state::<crate::agent_power::AgentPower>().release();
             if let Err(error) = handle.state::<TerminalHost>().runtime.shutdown() {
                 eprintln!("Desktop terminal shutdown: {error}");
             }

@@ -71,3 +71,11 @@ normalizer preserves app session/turn/tool identities and one final assistant
 message. Reconnect/restart retries exact publication intents, never prompts.
 Privacy path rebinding reuses the immutable compiled scanner. Managed execution
 workspaces are excluded from automatic transcript capture to avoid duplicates.
+
+Resolved agent credentials are registered as exact in-memory redactions before
+any journal or repository capture, and survive workspace rebinding. Keychain and
+sensitive environment references require values of at least eight bytes.
+Ordinary short environment values remain usable. Credential values never enter
+saved configuration or diagnostic responses. Captured context envelopes retain
+sanitized historical content and delivery status through canonical AgentStore
+publication.

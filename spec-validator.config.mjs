@@ -111,6 +111,14 @@ export default defineConfig({
           ],
         },
         {
+          pattern: "^docs/local-compute\\.md$",
+          chapterPatterns: [
+            "^spec/src/current/contracts/documentation/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+            "^spec/src/current/contracts/collaboration/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+            "^spec/src/current/contracts/compatibility/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
+          ],
+        },
+        {
           pattern: "^crates/jj-store-jj/(?:src|tests)/local_",
           chapterPatterns: [
             "^spec/src/current/contracts/local-jj/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",

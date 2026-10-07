@@ -11,7 +11,7 @@ impl Supervisor {
         }
         if command.version != 1
             || !valid_commit(&command.commit)
-            || !matches!(command.runner.as_str(), "codex" | "cursor")
+            || !matches!(command.runner.as_str(), "codex" | "cursor" | "local")
             || command
                 .context
                 .as_ref()
@@ -65,7 +65,12 @@ impl Supervisor {
             command
                 .setup_id
                 .as_ref()
-                .map(|id| s.setups.get(id).cloned().ok_or(Error::Stale))
+                .map(|id| {
+                    s.setups
+                        .get(id)
+                        .map(|setup| configuration::resolve(setup, &s.settings))
+                        .ok_or(Error::Stale)
+                })
                 .transpose()
         })?;
         if setup.as_ref().is_some_and(|s| s.runner != command.runner) {
@@ -130,6 +135,10 @@ impl Supervisor {
             view,
             workspace: planned,
             profile: target.profile,
+            options: setup
+                .as_ref()
+                .map(|s| s.options.clone())
+                .unwrap_or_default(),
             instructions: setup.map_or(String::new(), |s| s.instructions),
             context,
             events: Vec::new(),

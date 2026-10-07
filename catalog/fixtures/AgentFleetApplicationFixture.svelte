@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { AgentSettingsFixture } from "./agent-settings-fixture.svelte.js";
   import { onDestroy, untrack } from "svelte";
   import StoreApplication from "../../web/src/lib/ui/store-application/StoreApplication.svelte";
   import { agentsRoute } from "../../web/src/lib/controller/agents-route-codec.js";
@@ -43,17 +44,26 @@
       avatar: index ? "🦉" : "🤖",
       description: "",
       instructions: "",
+      options: {
+        inherit_defaults: false,
+        provider: null,
+        endpoint: null,
+        environment: {},
+      },
       runner: "codex",
       preferences: { model: null, effort: null, mode: "ask" },
     })),
   };
   const events: Record<string, AgentEvent[]> = {};
+  const defaults = new AgentSettingsFixture();
   const manager = untrack(
     () =>
       new AgentExecution(
         () => true,
         async (input, init) => {
           const path = String(input);
+          const settings = defaults.respond(path, init);
+          if (settings) return settings;
           if (path.includes("/catalog"))
             return modelFailure
               ? new Response(
@@ -186,6 +196,8 @@
                 enabled: body.start,
                 generation: 1,
                 error: null,
+                restart_required: false,
+                inference_host: null,
               },
             ];
             return json({

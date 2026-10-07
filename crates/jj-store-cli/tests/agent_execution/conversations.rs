@@ -23,6 +23,7 @@ async fn repository_free_chat_reuses_isolated_bindings_and_never_replays_after_r
                     request_id: RequestId::new([130 + i as u8; 16]),
                     expected_revision: revision,
                     setup: Some(Setup {
+                        options: Default::default(),
                         id: name.into(),
                         name: name.into(),
                         avatar: "🤖".into(),

@@ -12,6 +12,7 @@
   import StoreStorageSettings from "./StoreStorageSettings.svelte";
   import StoreSyncSettings from "./StoreSyncSettings.svelte";
   import StoreSearchSettings from "./StoreSearchSettings.svelte";
+  import StoreComputeSettings from "./StoreComputeSettings.svelte";
   import StoreAgentSettings from "./StoreAgentSettings.svelte";
   import StoreServiceSettings from "./StoreServiceSettings.svelte";
   import type { StoreSettingsSection } from "./model.js";
@@ -70,6 +71,7 @@
         message={repositoryError}
       />
       <StoreAgentSettings
+        manager={controller.execution}
         management={controller.capture}
         runtimes={controller.execution?.tooling}
         onRepository={(id) => void openCaptureRepository(id)}
@@ -80,6 +82,8 @@
           controller.state.repositories.find((r) => r.id === id)?.name ??
           "Previously bound repository"}
       />
+    {:else if section === "compute"}
+      <StoreComputeSettings management={controller.execution?.compute} />
     {:else if section === "repository"}
       <StoreRepositorySettings {controller} {onClose} />
     {:else if section === "storage"}

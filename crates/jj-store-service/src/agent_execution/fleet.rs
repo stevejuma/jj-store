@@ -18,4 +18,8 @@ pub struct LiveAgent {
     pub enabled: bool,
     pub generation: u64,
     pub error: Option<String>,
+    #[serde(default)]
+    pub restart_required: bool,
+    #[serde(default)]
+    pub inference_host: Option<String>,
 }

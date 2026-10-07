@@ -1,5 +1,6 @@
 //! Desktop process ownership, independent of repository and storage authority.
 #![deny(unsafe_code)]
+mod agent_resources;
 pub mod installation;
 pub mod process;
 pub mod readiness;
@@ -21,3 +22,6 @@ mod native_glass;
 mod macos_chrome;
 
 pub type Result<T> = std::result::Result<T, String>;
+
+#[cfg(feature = "native")]
+pub mod agent_power;

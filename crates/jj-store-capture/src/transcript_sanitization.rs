@@ -89,6 +89,25 @@ impl TranscriptSanitizer {
             replacements,
         })
     }
+    /// Add exact device-resolved credentials before any journal/publication capture.
+    pub fn for_secrets(&self, secrets: &[String]) -> CaptureResult<Self> {
+        let mut result = self.clone();
+        for secret in secrets {
+            if secret.len() < 8 || secret.len() > 4096 {
+                return Err("invalid credential redaction length".into());
+            }
+            if !result.replacements.iter().any(|(old, _)| old == secret) {
+                result.replacements.push((secret.clone(), "$SECRET"));
+            }
+        }
+        if result.replacements.len() > 4096 {
+            return Err("credential redaction limit".into());
+        }
+        result
+            .replacements
+            .sort_by_key(|(value, _)| std::cmp::Reverse(value.len()));
+        Ok(result)
+    }
     pub fn sanitize(&self, mut value: Value) -> Option<SanitizedPayloadV1> {
         scrub(&mut value, &self.replacements)?;
         crate::agent_sanitization::scan_json(value, &self.scanner)

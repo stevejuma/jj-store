@@ -25,3 +25,10 @@ spec/archive/
 spec/src/history/
 spec/.generated/
 .qmd/index.sqlite*
+
+# Pinned upstream test corpus has its own byte-exact generator.
+runtime/local-agent/scripts/normative-corpus.json
+# Retain the other pinned upstream data and documentation verbatim.
+runtime/local-agent/scripts/model-capabilities.json
+runtime/local-agent/vendor/buzz-agent/README.md
+runtime/local-agent/vendor/buzz-agent/DATABRICKS_REUSE.md

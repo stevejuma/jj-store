@@ -1,7 +1,9 @@
+import { AgentSettingsFixture } from "./agent-settings-fixture.svelte.js";
 import type { AgentStatus } from "../../web/src/lib/controller/agent-execution-types.js";
 import { fixtureJsonResponse as json } from "./agent-execution-session.js";
 /** Setup CAS and warm-only control receipts shared by the execution stories. */
 export class AgentExecutionConfigurationFixture {
+  defaults = new AgentSettingsFixture();
   controls = $state<Record<string, unknown>[]>([]);
   constructor(
     readonly get: () => AgentStatus,
@@ -9,6 +11,8 @@ export class AgentExecutionConfigurationFixture {
     private staleSave: boolean,
   ) {}
   respond(path: string, init?: RequestInit) {
+    const defaults = this.defaults.respond(path, init);
+    if (defaults) return defaults;
     if (!path.endsWith("/control") && !path.endsWith("/setups")) return;
     const body = JSON.parse(String(init?.body)),
       status = this.get();
@@ -21,6 +25,8 @@ export class AgentExecutionConfigurationFixture {
           enabled: body.start,
           generation: 1,
           error: null,
+          restart_required: false,
+          inference_host: null,
         },
       ];
       return json({

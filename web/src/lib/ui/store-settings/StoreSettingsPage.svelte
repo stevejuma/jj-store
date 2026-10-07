@@ -38,18 +38,20 @@
         ? "Local service"
         : section === "agents"
           ? "Agents"
-          : section === "repository"
-            ? "Repository"
-            : section === "storage"
-              ? "Storage"
-              : section === "sync"
-                ? "Sync"
-                : "Search",
+          : section === "compute"
+            ? "Compute"
+            : section === "repository"
+              ? "Repository"
+              : section === "storage"
+                ? "Storage"
+                : section === "sync"
+                  ? "Sync"
+                  : "Search",
   );
   const PageIcon = $derived(
     section === "appearance"
       ? PaletteIcon
-      : section === "service"
+      : section === "service" || section === "compute"
         ? ServerIcon
         : section === "agents"
           ? BotIcon

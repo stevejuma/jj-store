@@ -1,4 +1,6 @@
 <script module lang="ts">
+  import { inCapturePanel, expandCodex } from "./capture-panel-play.js";
+  import { unknownConfigurationSave } from "./capture-configuration-play.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within } from "storybook/test";
   import {
@@ -27,17 +29,17 @@
 <Story
   name="Loading keeps controls visible and shows settings skeletons"
   args={{ delayedObservations: true }}
-  play={loadingCaptureSettings}
+  play={inCapturePanel(loadingCaptureSettings)}
 />
 <Story
   name="Busy observations stay loading without an unavailable notification"
   args={{ busyObservations: true }}
-  play={busyCaptureSettings}
+  play={inCapturePanel(busyCaptureSettings)}
 />
 <Story
   name="Operational errors use dismissed scoped notifications"
   args={{ feedbackControls: true }}
-  play={async ({ canvasElement }) => {
+  play={inCapturePanel(async ({ canvasElement }) => {
     const c = within(canvasElement);
     const page = within(canvasElement.ownerDocument.body);
     await expect(
@@ -74,6 +76,7 @@
       c.getByRole("button", { name: "Toggle capture page" }),
     );
     await expect(page.queryByRole("alert")).toBeNull();
+    await userEvent.click(c.getByRole("tab", { name: "Capture" }));
     await userEvent.click(
       c.getByRole("button", { name: "Recover capture observations" }),
     );
@@ -96,12 +99,12 @@
     await expect(
       c.getByRole("textbox", { name: "Previous import request ID" }),
     ).toHaveValue("ef".repeat(16));
-  }}
+  })}
 />
 
 <Story
   name="Coverage pause resume rescan and import"
-  play={async ({ canvasElement }) => {
+  play={inCapturePanel(async ({ canvasElement }) => {
     const c = within(canvasElement);
     await expect(
       c.getByRole("button", { name: "Refresh capture" }),
@@ -133,12 +136,12 @@
       c.getByRole("button", { name: "Refresh import status" }),
     );
     await expect(c.getByText("History acceptance")).toBeVisible();
-  }}
+  })}
 />
 <Story
   name="Unknown control keeps original request"
   args={{ unknown: true }}
-  play={async ({ canvasElement }) => {
+  play={inCapturePanel(async ({ canvasElement }) => {
     const c = within(canvasElement);
     await userEvent.click(c.getByRole("button", { name: "Refresh capture" }));
     await userEvent.click(c.getByRole("tab", { name: "Capture" }));
@@ -165,12 +168,12 @@
     await expect(
       c.queryByText("Capture outcome unknown"),
     ).not.toBeInTheDocument();
-  }}
+  })}
 />
 <Story
   name="Unknown import receipt inspection"
   args={{ importUnknown: true }}
-  play={async ({ canvasElement }) => {
+  play={inCapturePanel(async ({ canvasElement }) => {
     const c = within(canvasElement);
     await userEvent.click(c.getByRole("button", { name: "Refresh capture" }));
     await userEvent.click(c.getByRole("tab", { name: "Sources" }));
@@ -184,12 +187,12 @@
       c.queryByText("Capture outcome unknown"),
     ).not.toBeInTheDocument();
     await expect(c.getByText("completed · Boundary available")).toBeVisible();
-  }}
+  })}
 />
 <Story
   name="Disabled"
   args={{ enabled: false }}
-  play={async ({ canvasElement }) => {
+  play={inCapturePanel(async ({ canvasElement }) => {
     const c = within(canvasElement);
     await userEvent.click(c.getByRole("button", { name: "Refresh capture" }));
     await expect(
@@ -198,12 +201,12 @@
     await expect(
       c.getByRole("button", { name: "Pause capture" }),
     ).toBeDisabled();
-  }}
+  })}
 />
 <Story
   name="Unsupported"
   args={{ supported: false }}
-  play={async ({ canvasElement }) => {
+  play={inCapturePanel(async ({ canvasElement }) => {
     const c = within(canvasElement);
     await expect(
       c.getByText("Capture management is not available for this connection."),
@@ -211,12 +214,12 @@
     await expect(
       c.queryByRole("button", { name: "Refresh capture" }),
     ).not.toBeInTheDocument();
-  }}
+  })}
 />
 <Story
   name="Degraded capacity and missing receipt"
   args={{ degraded: true }}
-  play={async ({ canvasElement }) => {
+  play={inCapturePanel(async ({ canvasElement }) => {
     const c = within(canvasElement);
     await userEvent.click(c.getByRole("button", { name: "Refresh capture" }));
     await userEvent.click(c.getByRole("tab", { name: "Diagnostics" }));
@@ -235,12 +238,12 @@
     await expect(
       c.getByText(/This does not prove rejection or completion/),
     ).toBeVisible();
-  }}
+  })}
 />
 
 <Story
   name="Automatic load and retained request draft"
-  play={async ({ canvasElement }) => {
+  play={inCapturePanel(async ({ canvasElement }) => {
     const c = within(canvasElement);
     await userEvent.click(c.getByRole("tab", { name: "Sources" }));
     await expect(await c.findByText("Codex CLI source 1")).toBeVisible();
@@ -253,17 +256,17 @@
     await expect(
       c.getByRole("textbox", { name: "Previous import request ID" }),
     ).toHaveValue("ef".repeat(16));
-  }}
+  })}
 />
 
 <Story
   name="Shared settings rows and action columns"
-  play={captureSettingsLayout}
+  play={inCapturePanel(captureSettingsLayout)}
 />
 
 <Story
   name="Configured CLI root directories"
-  play={async ({ canvasElement }) => {
+  play={inCapturePanel(async ({ canvasElement }) => {
     const c = within(canvasElement);
     await expect(
       await c.findByText("/Users/capture/.codex/sessions", { exact: true }),
@@ -273,12 +276,12 @@
     });
     await expect(paths.closest("dl")).toHaveClass("store-settings__rows");
     await expect(paths.closest("code")).not.toBeNull();
-  }}
+  })}
 />
 
 <Story
   name="Tabs retain drafts and separate diagnostics"
-  play={async ({ canvasElement }) => {
+  play={inCapturePanel(async ({ canvasElement }) => {
     const c = within(canvasElement);
     await expect(c.getByRole("tab", { name: "Capture" })).toHaveAttribute(
       "data-state",
@@ -299,24 +302,26 @@
     await expect(
       c.getByRole("textbox", { name: "Previous import request ID" }),
     ).toHaveValue("ef".repeat(16));
-  }}
+  })}
 />
 
 <Story
   name="Edit disabled local capture configuration"
   args={{ enabled: false }}
-  play={async ({ canvasElement }) => {
+  play={inCapturePanel(async ({ canvasElement }) => {
     const c = within(canvasElement);
     await userEvent.click(c.getByRole("tab", { name: "Configuration" }));
     const enabled = await c.findByRole("switch", {
       name: "Enable automatic capture",
     });
     await userEvent.click(enabled);
+    await expandCodex(c);
     const roots = c.getByRole("textbox", { name: "Codex CLI folders" });
     await userEvent.type(roots, "/tmp/agent-settings/sessions");
     await userEvent.click(c.getByRole("tab", { name: "Diagnostics" }));
     await userEvent.click(c.getByRole("button", { name: "Refresh capture" }));
     await userEvent.click(c.getByRole("tab", { name: "Configuration" }));
+    await expandCodex(c);
     await expect(
       c.getByRole("textbox", { name: "Codex CLI folders" }),
     ).toHaveValue("/tmp/agent-settings/sessions");
@@ -331,12 +336,12 @@
       .getByRole("button", { name: "Cancel changes" })
       .closest(".store-settings__actions")!;
     await expect(getComputedStyle(actions).flexDirection).toBe("column");
-  }}
+  })}
 />
 <Story
   name="Stale configuration keeps the draft"
   args={{ configurationFailure: "stale" }}
-  play={async ({ canvasElement }) => {
+  play={inCapturePanel(async ({ canvasElement }) => {
     const c = within(canvasElement);
     const page = within(canvasElement.ownerDocument.body);
     await userEvent.click(c.getByRole("tab", { name: "Configuration" }));
@@ -357,56 +362,43 @@
     await expect(
       c.getByRole("switch", { name: "Enable automatic capture" }),
     ).not.toBeChecked();
-  }}
+  })}
 />
 <Story
   name="Unknown save resolves after observation"
   args={{ configurationFailure: "unknown" }}
-  play={async ({ canvasElement }) => {
-    const c = within(canvasElement);
-    await userEvent.click(c.getByRole("tab", { name: "Configuration" }));
-    await userEvent.click(
-      await c.findByRole("switch", { name: "Enable automatic capture" }),
-    );
-    await userEvent.click(
-      c.getByRole("button", { name: "Save configuration" }),
-    );
-    await expect(c.getByText(/Save outcome unknown\. Refresh/)).toBeVisible();
-    await userEvent.click(c.getByRole("button", { name: "Refresh capture" }));
-    await expect(c.queryByText(/Save outcome unknown\. Refresh/)).toBeNull();
-    await expect(c.getByText("Enabled · Restart required")).toBeVisible();
-  }}
+  play={inCapturePanel(unknownConfigurationSave)}
 />
 
 <Story
   name="Codex configuration disclosure retains nested drafts"
-  play={codexConfigurationGroup}
+  play={inCapturePanel(codexConfigurationGroup)}
 />
 <Story
   name="Sources table filters harnesses with stable selectors and counts"
   args={{ multipleHarnesses: true }}
-  play={filteredCaptureSources}
+  play={inCapturePanel(filteredCaptureSources)}
 />
 
 <Story
   name="Source avatars external filters icon import and observed footer"
   args={{ multipleHarnesses: true }}
-  play={sourceTableIdentification}
+  play={inCapturePanel(sourceTableIdentification)}
 />
 
 <Story
   name="Refreshing sources shows a footer spinner while retaining rows"
   args={{ delayedObservations: true }}
-  play={sourceRefreshSpinner}
+  play={inCapturePanel(sourceRefreshSpinner)}
 />
 
 <Story
   name="Source repository navigation preserves an unsaved configuration draft"
-  play={sourceRepositoryDraftGuard}
+  play={inCapturePanel(sourceRepositoryDraftGuard)}
 />
 
 <Story
   name="Source status command searches toggles and combines multiple selections"
   args={{ multipleHarnesses: true }}
-  play={sourceStatusCommand}
+  play={inCapturePanel(sourceStatusCommand)}
 />

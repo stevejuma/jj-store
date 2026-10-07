@@ -2202,7 +2202,7 @@
     },
     {
       "local": "web/src/lib/ui/community-agent-editor/CommunityAgentEditorDialog.svelte",
-      "reason": "Copied form composition with local configuration bindings; Community relay/persona/participant policy omitted.",
+      "reason": "Copied form composition with local configuration bindings; Community relay/persona/participant policy omitted. M25 adds owned Advanced provider/environment configuration, extracted under store-agent-execution; no additional Community dependency.",
       "sources": [
         {
           "path": "src/components/community-agent-editor/CommunityAgentEditorDialog.svelte",

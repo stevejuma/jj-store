@@ -199,7 +199,7 @@ async fn installed_fleet_warms_general_chat_then_reuses_an_attached_workspace() 
     .unwrap();
     let publication = supervisor.start_publication();
     let revision = supervisor.status(actor).await.unwrap().revision;
-    supervisor.save_setup(actor, SetupCommand { version: 1, request_id: RequestId::new([171;16]), expected_revision: revision, setup: Some(Setup { id: "real-fleet".into(), name: "Real fleet".into(), avatar: "🤖".into(), description: String::new(), runner: "codex".into(), instructions: "Follow the explicit user message. Keep all file edits within attached isolated repository directories.".into(), preferences: Preferences { model: None, effort: None, mode: Some("read-only".into()) } }), remove: None }).await.unwrap();
+    supervisor.save_setup(actor, SetupCommand { version: 1, request_id: RequestId::new([171;16]), expected_revision: revision, setup: Some(Setup { options: Default::default(), id: "real-fleet".into(), name: "Real fleet".into(), avatar: "🤖".into(), description: String::new(), runner: "codex".into(), instructions: "Follow the explicit user message. Keep all file edits within attached isolated repository directories.".into(), preferences: Preferences { model: None, effort: None, mode: Some("read-only".into()) } }), remove: None }).await.unwrap();
     supervisor
         .control_agent(
             actor,

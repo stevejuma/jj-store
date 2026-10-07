@@ -19,7 +19,7 @@
     harness?: "codex" | "cursor" | "open_code";
   } = $props();
   const settings = $derived(management.state.settings);
-  let open = $state(true);
+  let open = $state(false);
   const name = $derived(
     harness === "open_code"
       ? "OpenCode"

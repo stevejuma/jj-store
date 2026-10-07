@@ -18,3 +18,4 @@ Read the owning topic and requirement before implementation.
 - [Application freshness compatibility](12-application-freshness-compatibility.md)
 - [Additive ordinary Stacks topology](13-additive-ordinary-stacks-topology.md)
 - [Interactive agent execution qualification profile](13-interactive-agent-execution.md)
+- [Local inference runtime compatibility](14-local-inference-runtime.md)

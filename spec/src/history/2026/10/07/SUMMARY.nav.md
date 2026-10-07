@@ -1,3 +1,5 @@
+- [E-COMPUTE-001](E-COMPUTE-001/index.md)
+  {{#include E-COMPUTE-001/SUMMARY.nav.md}}
 - [E-EXEC-010](E-EXEC-010/index.md)
   {{#include E-EXEC-010/SUMMARY.nav.md}}
 - [E-EXEC-011](E-EXEC-011/index.md)

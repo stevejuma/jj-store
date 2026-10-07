@@ -45,6 +45,8 @@ pub struct Setup {
     pub instructions: String,
     pub runner: String,
     pub preferences: Preferences,
+    #[serde(default)]
+    pub options: settings::RuntimeOptions,
 }
 #[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
@@ -282,6 +284,41 @@ pub trait Manager: Send + Sync {
     ) -> Result<Outcome> {
         Err(Error::Unavailable)
     }
+    async fn catalog_for_setup(
+        &self,
+        _actor: PrincipalId,
+        _runner: String,
+        _setup_id: String,
+    ) -> Result<catalog::Catalog> {
+        Err(Error::Unavailable)
+    }
+    async fn compute_status(&self, _actor: PrincipalId) -> Result<compute::Status> {
+        Err(Error::Unavailable)
+    }
+    async fn compute_command(
+        &self,
+        _actor: PrincipalId,
+        _command: compute::Command,
+    ) -> Result<Outcome> {
+        Err(Error::Unavailable)
+    }
+    async fn settings(&self, _actor: PrincipalId) -> Result<settings::Settings> {
+        Err(Error::Unavailable)
+    }
+    async fn save_settings(
+        &self,
+        _actor: PrincipalId,
+        _command: settings::SettingsCommand,
+    ) -> Result<settings::Settings> {
+        Err(Error::Unavailable)
+    }
+    async fn secret(
+        &self,
+        _actor: PrincipalId,
+        _command: settings::SecretCommand,
+    ) -> Result<settings::SecretStatus> {
+        Err(Error::Unavailable)
+    }
     async fn status(&self, actor: PrincipalId) -> Result<Status>;
     async fn targets(
         &self,
@@ -313,7 +350,9 @@ pub fn native_commit(commit: &str) -> Result<CommitId> {
     commit.parse().map_err(|_| Error::Invalid)
 }
 
+pub mod compute;
 pub mod context;
+pub mod settings;
 pub mod tooling;
 
 /// Repository-selected messages and ordinary discussion revisions, never journal authority.

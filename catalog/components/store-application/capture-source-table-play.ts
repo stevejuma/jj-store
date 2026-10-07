@@ -1,4 +1,5 @@
 import { expect, userEvent, within, waitFor } from "storybook/test";
+import { expandCodex } from "./capture-panel-play.js";
 
 export async function sourceTableIdentification({
   canvasElement,
@@ -100,6 +101,7 @@ export async function sourceRepositoryDraftGuard({
 }) {
   const c = within(canvasElement);
   await userEvent.click(c.getByRole("tab", { name: "Configuration" }));
+  await expandCodex(c);
   const roots = await c.findByRole("textbox", { name: "Codex CLI folders" });
   await userEvent.type(roots, "/tmp/retained-capture-draft");
   await userEvent.click(c.getByRole("tab", { name: "Sources" }));
@@ -109,6 +111,7 @@ export async function sourceRepositoryDraftGuard({
   await userEvent.click(link);
   await expect(c.queryByLabelText("Opened capture repository")).toBeNull();
   await userEvent.click(c.getByRole("tab", { name: "Configuration" }));
+  await expandCodex(c);
   await expect(
     c.getByRole("textbox", { name: "Codex CLI folders" }),
   ).toHaveValue("/tmp/retained-capture-draft");

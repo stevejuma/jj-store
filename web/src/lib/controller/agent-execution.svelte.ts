@@ -1,17 +1,23 @@
+import { disposeAgentResources } from "./agent-resource-disposal.js";
 import {
   readAgentExecutionStatus,
   agentControlBody,
+  agentSetupBody,
   agentLaunchBody,
 } from "./agent-execution-status.js";
 import {
   isAgentCommandRefusal,
   agentCommandError,
+  retainUnknownAgentOutcome,
 } from "./agent-execution-errors.js";
 import { openAgentActivity } from "./agent-activity-session.js";
 import * as launch from "./agent-execution-launch-context.js";
 import { AgentDiscussions } from "./agent-discussions.svelte.js";
 import { AgentChat } from "./agent-chat.svelte.js";
 import { AgentModelCatalog } from "./agent-model-catalog.svelte.js";
+import { syncAgentPower } from "./agent-power.js";
+import { AgentCompute } from "./agent-compute.svelte.js";
+import { AgentSettings } from "./agent-settings.svelte.js";
 import { AgentRuntimes } from "./agent-runtimes.svelte.js";
 import {
   consumeAgentEvents,
@@ -69,6 +75,8 @@ export class AgentExecution {
   readonly chat: AgentChat;
   readonly catalogs: AgentModelCatalog;
   readonly tooling: AgentRuntimes;
+  readonly settings: AgentSettings;
+  readonly compute: AgentCompute;
   constructor(
     readonly available: () => boolean,
     fetcher?: typeof fetch,
@@ -77,6 +85,8 @@ export class AgentExecution {
   ) {
     this.client = new LocalClient("", fetcher);
     this.chat = new AgentChat(this);
+    this.settings = new AgentSettings(this.client);
+    this.compute = new AgentCompute(this.client);
     this.catalogs = new AgentModelCatalog(this.client);
     this.tooling = new AgentRuntimes(available, fetcher);
     this.discussions = new AgentDiscussions(
@@ -114,17 +124,20 @@ export class AgentExecution {
   async refresh() {
     if (!this.#alive || !this.available() || this.#refreshing) return;
     this.#refreshing = true;
+    void this.settings.refresh();
     try {
       const [status, targets, targetError] = await readAgentExecutionStatus(
         this.client,
       );
       if (!this.#alive) return;
       this.value = status;
+      void syncAgentPower(status, this.settings.value?.keep_awake === true);
       this.targets = targets;
       this.targetError = targetError;
       if (this.pending) await this.checkOutcome();
       this.connectionError = "";
     } catch (cause) {
+      void syncAgentPower(null, false);
       if (this.#alive)
         this.connectionError =
           cause instanceof Error
@@ -198,11 +211,7 @@ export class AgentExecution {
     await this.send(retained.path, retained.body, retained.draft);
   }
   retainAsUnresolved() {
-    if (this.outcome?.state === "outcome_unknown") {
-      this.pending = null;
-      this.error =
-        "The interrupted request remains in session history. Review the workspace before explicitly continuing.";
-    }
+    retainUnknownAgentOutcome(this);
   }
   private async send(
     path: string,
@@ -220,6 +229,7 @@ export class AgentExecution {
       if (path === "agents/setups") {
         this.value = await this.client.request<AgentStatus>(path, body);
         this.pending = null;
+        this.catalogs.invalidate();
         return this.value.revision;
       } else {
         const outcome = await this.client.request<AgentOutcome>(path, body);
@@ -264,13 +274,10 @@ export class AgentExecution {
     remove?: string,
     revision?: number | bigint,
   ) {
-    return this.send("agents/setups", {
-      version: 1,
-      request_id: newId(),
-      expected_revision: revision ?? this.value?.revision ?? 0,
-      setup: setup ?? null,
-      remove: remove ?? null,
-    });
+    return this.send(
+      "agents/setups",
+      agentSetupBody(setup, remove, revision ?? this.value?.revision ?? 0),
+    );
   }
   async command(action: AgentAction, draft?: string) {
     await this.commandSession(this.selected, action, draft);
@@ -286,16 +293,9 @@ export class AgentExecution {
     return request_id;
   }
   destroy() {
-    this.chat.destroy();
-    this.catalogs.destroy();
-    this.tooling.destroy();
-    this.discussions.destroy();
+    disposeAgentResources(this);
     this.#alive = false;
     clearTimeout(this.#timer);
     this.#stream?.abort();
-    this.client.close();
-    this.drafts = {};
-    this.setupDrafts = {};
-    this.pending = null;
   }
 }

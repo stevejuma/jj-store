@@ -48,3 +48,26 @@ test("failed model reads require explicit retry and then recover", async () => {
     client.close();
   }
 });
+
+test("saved agents discover with their launch settings and keep separate caches", async () => {
+  const fetcher = vi.fn(async (url: unknown) =>
+    Response.json({ runner: "local", facts: { source: String(url) } }),
+  );
+  const client = new LocalClient("", fetcher),
+    catalog = new AgentModelCatalog(client);
+  try {
+    await catalog.load("local", false, "desktop");
+    await catalog.load("local", false, "paired");
+    await catalog.load("local", false, "desktop");
+    expect(fetcher).toHaveBeenCalledTimes(2);
+    expect(catalog.values["local:desktop"].facts).toEqual({
+      source: "/v1/local/agents/catalog?runner=local&setup=desktop",
+    });
+    expect(catalog.values["local:paired"].facts).toEqual({
+      source: "/v1/local/agents/catalog?runner=local&setup=paired",
+    });
+  } finally {
+    catalog.destroy();
+    client.close();
+  }
+});

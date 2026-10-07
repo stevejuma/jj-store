@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-agent-power"
+description = "Enables the agent_power command without any pre-configured scope."
+commands.allow = ["agent_power"]
+
+[[permission]]
+identifier = "deny-agent-power"
+description = "Denies the agent_power command without any pre-configured scope."
+commands.deny = ["agent_power"]

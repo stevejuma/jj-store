@@ -25881,6 +25881,1361 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
 }
 ```
 
+## GET /v1/local/compute
+
+LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.
+
+```text
+{
+  "operationId": "local_compute_status",
+  "tags": [
+    "local"
+  ],
+  "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+  "parameters": [],
+  "responses": {
+    "200": {
+      "description": "Authorized result at the reported snapshot.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ComputeStatus"
+          }
+        }
+      }
+    },
+    "400": {
+      "description": "Invalid request, unknown query field or invalid cursor.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "401": {
+      "description": "Missing repository Bearer credential.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "403": {
+      "description": "Access denied, including revoked credentials or disallowed Origin.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "404": {
+      "description": "Object not committed in the selected snapshot or unknown route.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "405": {
+      "description": "Unsupported method.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "408": {
+      "description": "Native query canceled.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "409": {
+      "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "410": {
+      "description": "Index task expired or was lost on server restart.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "413": {
+      "description": "Request or response resource limit exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "415": {
+      "description": "Unsupported request media type or content encoding.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "503": {
+      "description": "Busy, unavailable, corrupt or incomplete history.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "504": {
+      "description": "Request or response deadline exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    }
+  },
+  "x-jj-store-query-schema": {
+    "type": "object",
+    "additionalProperties": false
+  },
+  "security": [
+    {}
+  ]
+}
+```
+
+## HEAD /v1/local/compute
+
+LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.
+
+```text
+{
+  "operationId": "local_compute_status_head",
+  "tags": [
+    "local"
+  ],
+  "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+  "parameters": [],
+  "responses": {
+    "200": {
+      "description": "Authorized result at the reported snapshot."
+    },
+    "400": {
+      "description": "Invalid request, unknown query field or invalid cursor."
+    },
+    "401": {
+      "description": "Missing repository Bearer credential."
+    },
+    "403": {
+      "description": "Access denied, including revoked credentials or disallowed Origin."
+    },
+    "404": {
+      "description": "Object not committed in the selected snapshot or unknown route."
+    },
+    "405": {
+      "description": "Unsupported method."
+    },
+    "408": {
+      "description": "Native query canceled."
+    },
+    "409": {
+      "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index."
+    },
+    "410": {
+      "description": "Index task expired or was lost on server restart."
+    },
+    "413": {
+      "description": "Request or response resource limit exceeded."
+    },
+    "415": {
+      "description": "Unsupported request media type or content encoding."
+    },
+    "503": {
+      "description": "Busy, unavailable, corrupt or incomplete history."
+    },
+    "504": {
+      "description": "Request or response deadline exceeded."
+    }
+  },
+  "x-jj-store-query-schema": {
+    "type": "object",
+    "additionalProperties": false
+  },
+  "security": [
+    {}
+  ]
+}
+```
+
+## POST /v1/local/compute
+
+LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.
+
+```text
+{
+  "operationId": "local_compute_command",
+  "tags": [
+    "local"
+  ],
+  "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+  "parameters": [],
+  "responses": {
+    "200": {
+      "description": "Authorized result at the reported snapshot.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/AgentExecutionOutcome"
+          }
+        }
+      }
+    },
+    "400": {
+      "description": "Invalid request, unknown query field or invalid cursor.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "401": {
+      "description": "Missing repository Bearer credential.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "403": {
+      "description": "Access denied, including revoked credentials or disallowed Origin.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "404": {
+      "description": "Object not committed in the selected snapshot or unknown route.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "405": {
+      "description": "Unsupported method.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "408": {
+      "description": "Native query canceled.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "409": {
+      "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "410": {
+      "description": "Index task expired or was lost on server restart.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "413": {
+      "description": "Request or response resource limit exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "415": {
+      "description": "Unsupported request media type or content encoding.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "503": {
+      "description": "Busy, unavailable, corrupt or incomplete history.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "504": {
+      "description": "Request or response deadline exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    }
+  },
+  "x-jj-store-query-schema": {
+    "type": "object",
+    "additionalProperties": false
+  },
+  "security": [
+    {}
+  ],
+  "requestBody": {
+    "required": true,
+    "content": {
+      "application/json": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "integer",
+              "format": "uint32",
+              "minimum": 0
+            },
+            "request_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{32}$",
+              "minLength": 32,
+              "maxLength": 32
+            },
+            "expected_revision": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0
+            },
+            "action": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "settings": {
+                      "type": "object",
+                      "properties": {
+                        "revision": {
+                          "type": "integer",
+                          "format": "uint64",
+                          "minimum": 0,
+                          "default": 0
+                        },
+                        "model": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "default": null
+                        },
+                        "memory_gb": {
+                          "type": [
+                            "integer",
+                            "null"
+                          ],
+                          "format": "uint64",
+                          "minimum": 0,
+                          "default": null
+                        },
+                        "sharing": {
+                          "type": "boolean",
+                          "default": false
+                        },
+                        "peers": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "object",
+                            "properties": {
+                              "name": {
+                                "type": "string"
+                              },
+                              "invitation": true
+                            },
+                            "additionalProperties": false,
+                            "required": [
+                              "name",
+                              "invitation"
+                            ]
+                          },
+                          "default": {}
+                        },
+                        "relay_urls": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          },
+                          "default": []
+                        },
+                        "target_peer": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "default": null
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "action": {
+                      "type": "string",
+                      "const": "configure"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "action",
+                    "settings"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "action": {
+                      "type": "string",
+                      "const": "prepare"
+                    }
+                  },
+                  "required": [
+                    "action"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "action": {
+                      "type": "string",
+                      "const": "download"
+                    }
+                  },
+                  "required": [
+                    "action"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "path": {
+                      "type": "string"
+                    },
+                    "action": {
+                      "type": "string",
+                      "const": "import"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "action",
+                    "path"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "model": {
+                      "type": "string"
+                    },
+                    "action": {
+                      "type": "string",
+                      "const": "remove"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "action",
+                    "model"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "action": {
+                      "type": "string",
+                      "const": "start"
+                    }
+                  },
+                  "required": [
+                    "action"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "action": {
+                      "type": "string",
+                      "const": "stop"
+                    }
+                  },
+                  "required": [
+                    "action"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "name": {
+                      "type": "string"
+                    },
+                    "invitation": true,
+                    "action": {
+                      "type": "string",
+                      "const": "pair"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "action",
+                    "name",
+                    "invitation"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "identity": {
+                      "type": "string"
+                    },
+                    "action": {
+                      "type": "string",
+                      "const": "revoke"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "action",
+                    "identity"
+                  ]
+                }
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "version",
+            "request_id",
+            "expected_revision",
+            "action"
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
+## GET /v1/local/agents/settings
+
+LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.
+
+```text
+{
+  "operationId": "local_agents_settings",
+  "tags": [
+    "local"
+  ],
+  "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+  "parameters": [],
+  "responses": {
+    "200": {
+      "description": "Authorized result at the reported snapshot.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/AgentSettings"
+          }
+        }
+      }
+    },
+    "400": {
+      "description": "Invalid request, unknown query field or invalid cursor.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "401": {
+      "description": "Missing repository Bearer credential.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "403": {
+      "description": "Access denied, including revoked credentials or disallowed Origin.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "404": {
+      "description": "Object not committed in the selected snapshot or unknown route.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "405": {
+      "description": "Unsupported method.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "408": {
+      "description": "Native query canceled.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "409": {
+      "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "410": {
+      "description": "Index task expired or was lost on server restart.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "413": {
+      "description": "Request or response resource limit exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "415": {
+      "description": "Unsupported request media type or content encoding.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "503": {
+      "description": "Busy, unavailable, corrupt or incomplete history.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "504": {
+      "description": "Request or response deadline exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    }
+  },
+  "x-jj-store-query-schema": {
+    "type": "object",
+    "additionalProperties": false
+  },
+  "security": [
+    {}
+  ]
+}
+```
+
+## HEAD /v1/local/agents/settings
+
+LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.
+
+```text
+{
+  "operationId": "local_agents_settings_head",
+  "tags": [
+    "local"
+  ],
+  "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+  "parameters": [],
+  "responses": {
+    "200": {
+      "description": "Authorized result at the reported snapshot."
+    },
+    "400": {
+      "description": "Invalid request, unknown query field or invalid cursor."
+    },
+    "401": {
+      "description": "Missing repository Bearer credential."
+    },
+    "403": {
+      "description": "Access denied, including revoked credentials or disallowed Origin."
+    },
+    "404": {
+      "description": "Object not committed in the selected snapshot or unknown route."
+    },
+    "405": {
+      "description": "Unsupported method."
+    },
+    "408": {
+      "description": "Native query canceled."
+    },
+    "409": {
+      "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index."
+    },
+    "410": {
+      "description": "Index task expired or was lost on server restart."
+    },
+    "413": {
+      "description": "Request or response resource limit exceeded."
+    },
+    "415": {
+      "description": "Unsupported request media type or content encoding."
+    },
+    "503": {
+      "description": "Busy, unavailable, corrupt or incomplete history."
+    },
+    "504": {
+      "description": "Request or response deadline exceeded."
+    }
+  },
+  "x-jj-store-query-schema": {
+    "type": "object",
+    "additionalProperties": false
+  },
+  "security": [
+    {}
+  ]
+}
+```
+
+## POST /v1/local/agents/settings
+
+LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.
+
+```text
+{
+  "operationId": "local_agents_settings_save",
+  "tags": [
+    "local"
+  ],
+  "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+  "parameters": [],
+  "responses": {
+    "200": {
+      "description": "Authorized result at the reported snapshot.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/AgentSettings"
+          }
+        }
+      }
+    },
+    "400": {
+      "description": "Invalid request, unknown query field or invalid cursor.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "401": {
+      "description": "Missing repository Bearer credential.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "403": {
+      "description": "Access denied, including revoked credentials or disallowed Origin.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "404": {
+      "description": "Object not committed in the selected snapshot or unknown route.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "405": {
+      "description": "Unsupported method.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "408": {
+      "description": "Native query canceled.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "409": {
+      "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "410": {
+      "description": "Index task expired or was lost on server restart.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "413": {
+      "description": "Request or response resource limit exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "415": {
+      "description": "Unsupported request media type or content encoding.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "503": {
+      "description": "Busy, unavailable, corrupt or incomplete history.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "504": {
+      "description": "Request or response deadline exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    }
+  },
+  "x-jj-store-query-schema": {
+    "type": "object",
+    "additionalProperties": false
+  },
+  "security": [
+    {}
+  ],
+  "requestBody": {
+    "required": true,
+    "content": {
+      "application/json": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "integer",
+              "format": "uint32",
+              "minimum": 0
+            },
+            "request_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{32}$",
+              "minLength": 32,
+              "maxLength": 32
+            },
+            "expected_revision": {
+              "type": "integer",
+              "format": "uint64",
+              "minimum": 0
+            },
+            "settings": {
+              "type": "object",
+              "properties": {
+                "revision": {
+                  "type": "integer",
+                  "format": "uint64",
+                  "minimum": 0,
+                  "default": 0
+                },
+                "runner": {
+                  "type": "string",
+                  "default": "codex"
+                },
+                "preferences": {
+                  "type": "object",
+                  "properties": {
+                    "model": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "effort": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "mode": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "additionalProperties": false,
+                  "default": {
+                    "model": null,
+                    "effort": null,
+                    "mode": null
+                  }
+                },
+                "options": {
+                  "type": "object",
+                  "properties": {
+                    "inherit_defaults": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "provider": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "default": null
+                    },
+                    "endpoint": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "default": null
+                    },
+                    "environment": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "oneOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "source": {
+                                "type": "string",
+                                "const": "literal"
+                              },
+                              "value": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "source",
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "source": {
+                                "type": "string",
+                                "const": "environment"
+                              },
+                              "value": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "source",
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "source": {
+                                "type": "string",
+                                "const": "keychain"
+                              },
+                              "value": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "source",
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "source": {
+                                "type": "string",
+                                "const": "unset"
+                              }
+                            },
+                            "required": [
+                              "source"
+                            ],
+                            "additionalProperties": false
+                          }
+                        ]
+                      },
+                      "default": {}
+                    }
+                  },
+                  "additionalProperties": false,
+                  "default": {
+                    "inherit_defaults": false,
+                    "provider": null,
+                    "endpoint": null,
+                    "environment": {}
+                  }
+                },
+                "automatically_mention": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "keep_awake": {
+                  "type": "boolean",
+                  "default": false
+                },
+                "keychain_supported": {
+                  "type": "boolean",
+                  "default": false
+                }
+              },
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "version",
+            "request_id",
+            "expected_revision",
+            "settings"
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
+## POST /v1/local/agents/secrets
+
+LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.
+
+```text
+{
+  "operationId": "local_agents_secret",
+  "tags": [
+    "local"
+  ],
+  "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+  "parameters": [],
+  "responses": {
+    "200": {
+      "description": "Authorized result at the reported snapshot.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/AgentSecretStatus"
+          }
+        }
+      }
+    },
+    "400": {
+      "description": "Invalid request, unknown query field or invalid cursor.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "401": {
+      "description": "Missing repository Bearer credential.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "403": {
+      "description": "Access denied, including revoked credentials or disallowed Origin.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "404": {
+      "description": "Object not committed in the selected snapshot or unknown route.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "405": {
+      "description": "Unsupported method.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "408": {
+      "description": "Native query canceled.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "409": {
+      "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "410": {
+      "description": "Index task expired or was lost on server restart.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "413": {
+      "description": "Request or response resource limit exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "415": {
+      "description": "Unsupported request media type or content encoding.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "503": {
+      "description": "Busy, unavailable, corrupt or incomplete history.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "504": {
+      "description": "Request or response deadline exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    }
+  },
+  "x-jj-store-query-schema": {
+    "type": "object",
+    "additionalProperties": false
+  },
+  "security": [
+    {}
+  ],
+  "requestBody": {
+    "required": true,
+    "content": {
+      "application/json": {
+        "schema": {
+          "description": "Write-only secret input. Never retained in an installation journal.",
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "value": {
+              "type": [
+                "string",
+                "null"
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "id"
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
 ## GET /v1/local/agents/catalog
 
 LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.
@@ -25897,6 +27252,16 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
       "name": "runner",
       "in": "query",
       "required": true,
+      "schema": {
+        "type": "string"
+      },
+      "style": "form",
+      "explode": true
+    },
+    {
+      "name": "setup",
+      "in": "query",
+      "required": false,
       "schema": {
         "type": "string"
       },
@@ -26042,6 +27407,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
     "properties": {
       "runner": {
         "type": "string"
+      },
+      "setup": {
+        "type": [
+          "string",
+          "null"
+        ]
       }
     },
     "required": [
@@ -26070,6 +27441,16 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
       "name": "runner",
       "in": "query",
       "required": true,
+      "schema": {
+        "type": "string"
+      },
+      "style": "form",
+      "explode": true
+    },
+    {
+      "name": "setup",
+      "in": "query",
+      "required": false,
       "schema": {
         "type": "string"
       },
@@ -26124,6 +27505,12 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
     "properties": {
       "runner": {
         "type": "string"
+      },
+      "setup": {
+        "type": [
+          "string",
+          "null"
+        ]
       }
     },
     "required": [
@@ -27523,6 +28910,108 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                     }
                   },
                   "additionalProperties": false
+                },
+                "options": {
+                  "type": "object",
+                  "properties": {
+                    "inherit_defaults": {
+                      "type": "boolean",
+                      "default": false
+                    },
+                    "provider": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "default": null
+                    },
+                    "endpoint": {
+                      "type": [
+                        "string",
+                        "null"
+                      ],
+                      "default": null
+                    },
+                    "environment": {
+                      "type": "object",
+                      "additionalProperties": {
+                        "oneOf": [
+                          {
+                            "type": "object",
+                            "properties": {
+                              "source": {
+                                "type": "string",
+                                "const": "literal"
+                              },
+                              "value": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "source",
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "source": {
+                                "type": "string",
+                                "const": "environment"
+                              },
+                              "value": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "source",
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "source": {
+                                "type": "string",
+                                "const": "keychain"
+                              },
+                              "value": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "source",
+                              "value"
+                            ],
+                            "additionalProperties": false
+                          },
+                          {
+                            "type": "object",
+                            "properties": {
+                              "source": {
+                                "type": "string",
+                                "const": "unset"
+                              }
+                            },
+                            "required": [
+                              "source"
+                            ],
+                            "additionalProperties": false
+                          }
+                        ]
+                      },
+                      "default": {}
+                    }
+                  },
+                  "additionalProperties": false,
+                  "default": {
+                    "inherit_defaults": false,
+                    "provider": null,
+                    "endpoint": null,
+                    "environment": {}
+                  }
                 }
               },
               "additionalProperties": false,

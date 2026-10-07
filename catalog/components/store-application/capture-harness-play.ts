@@ -8,6 +8,14 @@ export async function codexConfigurationGroup({
   const c = within(canvasElement);
   await userEvent.click(c.getByRole("tab", { name: "Configuration" }));
   const group = await c.findByRole("button", { name: "Codex configuration" });
+  for (const name of ["Codex", "Cursor", "OpenCode"])
+    await expect(
+      c.getByRole("button", { name: `${name} configuration` }),
+    ).toHaveAttribute("aria-expanded", "false");
+  await expect(
+    c.queryByRole("textbox", { name: "Codex CLI folders" }),
+  ).toBeNull();
+  await userEvent.click(group);
   await expect(group).toHaveAttribute("aria-expanded", "true");
   await expect(
     group.querySelector('img[src="/agent-icons/codex.svg"]'),

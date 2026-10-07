@@ -7,8 +7,10 @@ permission choices, follow-ups, cancellation, unknown outcomes, capability-gated
 resume, labelled context continuation and safe retained-workspace cleanup.
 
 The manual describes trusted executable configuration and installed adapter
-authentication separately. Browser bodies cannot configure executables or
-credentials. Source-derived CLI/API/environment references and source review
+authentication separately. Browser bodies cannot configure executables. Ordinary
+setup requests contain opaque credential references; M25 additionally permits
+explicit write-only device Keychain input, with browser drafts held only in
+memory. Source-derived CLI/API/environment references and source review
 fingerprints cover the new interfaces. Browser and desktop Help bundle the same
 guide; bundled harness availability alone does not qualify a live adapter or a
 signed desktop release. Fixture permission proof stays distinct from installed
@@ -26,3 +28,10 @@ opt-in reply recipients, scoped drafts and global ACP avatar status. Regenerate
 the installation API reference and review changed source fingerprints. Real
 native, installed adapter and cold browser gates remain independently recorded
 in E-FLEET-001; documentation review never substitutes for them.
+
+M25's local-compute runbook describes device defaults, environment precedence,
+Keychain/operator references, explicit native-runtime and model preparation,
+trusted pairing, inference-only sharing, bundled helper staging and historical
+context inspection. Fixture, real-model and platform distribution evidence must
+remain distinct. Headless identity examples name environment references rather
+than putting a credential in a command, URL, checkout or transcript.

@@ -12,15 +12,46 @@ impl Drop for Reservation<'_> {
     }
 }
 impl Supervisor {
-    pub(super) async fn model_catalog(&self, runner: String) -> Result<Catalog> {
-        if !matches!(runner.as_str(), "codex" | "cursor") {
+    pub(super) async fn model_catalog(
+        &self,
+        runner: String,
+        setup: Option<Setup>,
+    ) -> Result<Catalog> {
+        if !matches!(runner.as_str(), "codex" | "cursor" | "local") {
             return Err(Error::Invalid);
         }
+        let setup = if let Some(setup) = setup {
+            setup
+        } else {
+            self.read(|s| {
+                Ok(configuration::resolve(
+                    &Setup {
+                        id: "catalog".into(),
+                        name: "Catalog".into(),
+                        avatar: String::new(),
+                        description: String::new(),
+                        instructions: String::new(),
+                        runner: runner.clone(),
+                        preferences: Preferences {
+                            model: None,
+                            effort: None,
+                            mode: None,
+                        },
+                        options: settings::RuntimeOptions {
+                            inherit_defaults: true,
+                            ..Default::default()
+                        },
+                    },
+                    &s.settings,
+                ))
+            })?
+        };
+        let key = self.read(|s| configuration::launch_digest(&setup, s))?;
         let mut cache = self.0.catalogs.lock().await;
         if self.0.stopping.load(Ordering::Acquire) {
             return Err(Error::Unavailable);
         }
-        if let Some((at, value)) = cache.get(&runner)
+        if let Some((at, value)) = cache.get(&key)
             && at.elapsed() < Duration::from_secs(300)
         {
             return Ok(value.clone());
@@ -41,13 +72,17 @@ impl Supervisor {
         let _reservation = Reservation(&self.0.catalog_active);
         let path = self.0.resources.root.join("catalog");
         journal::private_directory(&path)?;
-        let sanitizer = runtime::sanitizer(self, &path).await?;
         let paths = std::env::join_paths(self.tooling_paths()?).map_err(|_| Error::Unavailable)?;
         let mut command = Command::new(&self.0.resources.executable);
+        command.arg("serve");
+        self.launch_environment(&mut command, &setup)?;
+        self.local_launch(&mut command, &setup, false).await?;
+        self.register_launch_secrets(&command, &setup)?;
+        let sanitizer = runtime::sanitizer(self, &path).await?;
+
         command
             .env("PATH", paths)
             .args([
-                "serve",
                 "--control-version",
                 "2",
                 "--runner",
@@ -112,7 +147,7 @@ impl Supervisor {
             runner: runner.clone(),
             facts: result?,
         };
-        cache.insert(runner, (tokio::time::Instant::now(), value.clone()));
+        cache.insert(key, (tokio::time::Instant::now(), value.clone()));
         Ok(value)
     }
 }

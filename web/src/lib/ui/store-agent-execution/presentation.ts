@@ -70,7 +70,8 @@ export function activityRows(events: readonly AgentEvent[]): ActivityRow[] {
             ? Number(event.observed_at_millis)
             : undefined),
       });
-    if (type === "prompt") row(`${request}/user`, "user", text(value.text));
+    if (type === "prompt" || type === "context_delivery")
+      row(`${request}/user`, "user", text(value.userText) || text(value.text));
     if (type === "activity" && update.sessionUpdate === "agent_message_chunk") {
       const id = `${request}/assistant`,
         previous = rows.get(id);

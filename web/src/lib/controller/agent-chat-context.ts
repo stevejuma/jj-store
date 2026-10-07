@@ -1,3 +1,4 @@
+import { pretty } from "../api/client.js";
 import type { StoreController } from "./contracts.js";
 import type { ChatOrigin, ChatAttachment } from "./agent-chat.svelte.js";
 import type { AgentExecution } from "./agent-execution.svelte.js";
@@ -21,6 +22,13 @@ export function originAgentIds(
     ),
   ];
 }
+function excerpt(value: string, limit: number) {
+  const bytes = new TextEncoder().encode(value);
+  if (bytes.length <= limit) return value;
+  let end = limit;
+  while (end > 0 && (bytes[end] & 0xc0) === 0x80) end--;
+  return new TextDecoder().decode(bytes.slice(0, end));
+}
 /** Visible selections are context; only registered code repositories become attachments. */
 export function chatContext(controller: StoreController, parent?: string) {
   const r = controller.state.route;
@@ -40,24 +48,57 @@ export function chatContext(controller: StoreController, parent?: string) {
   const reply = parent
     ? controller.threads?.projection.messages.find((m) => m.id === parent)
     : undefined;
+  const work = controller.projects?.detail?.state ?? controller.work?.state;
+  const projectContent =
+    work?.project && work.project.id === r.projectId ? work.project : undefined;
+  const taskContent =
+    work?.task && work.task.id === r.taskId ? work.task : undefined;
   const origin: ChatOrigin = {
     scope,
     home,
     thread: r.threadId ?? null,
     agent_target: null,
-    context: JSON.stringify({
+    context: pretty({
       repository: r.repository || undefined,
       project: r.projectId,
       task: r.taskId,
+      project_content: projectContent
+        ? {
+            title: excerpt(projectContent.title, 512),
+            body: excerpt(projectContent.body, 4096),
+            version: projectContent.version,
+          }
+        : undefined,
+      task_content: taskContent
+        ? {
+            title: excerpt(taskContent.title, 512),
+            body: excerpt(taskContent.body, 4096),
+            version: taskContent.version,
+          }
+        : undefined,
       thread: r.threadId,
       path: r.path,
-      revision: r.commitId,
+      revision: r.commitId ?? controller.state.snapshot?.id,
       operation: r.snapshotOperationId,
+      file:
+        r.page === "files" &&
+        r.path &&
+        controller.state.blob?.path === r.path &&
+        controller.state.status.files === "ready" &&
+        (!r.commitId || controller.state.snapshot?.id === r.commitId) &&
+        typeof controller.state.blob.contents === "string"
+          ? {
+              content: excerpt(controller.state.blob.contents, 8192),
+              truncated:
+                new TextEncoder().encode(controller.state.blob.contents)
+                  .length > 8192,
+            }
+          : undefined,
       reply: parent
         ? {
             message: parent,
             target: controller.threads?.projection.targets[parent],
-            content: reply?.content.slice(0, 8192),
+            content: reply ? excerpt(reply.content, 4096) : undefined,
           }
         : undefined,
     }),

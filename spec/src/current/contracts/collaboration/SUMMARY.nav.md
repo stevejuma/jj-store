@@ -40,4 +40,5 @@
 - [Editable local capture configuration](38-editable-local-capture-configuration.md)
 - [Cursor and OpenCode local capture extension](39-cursor-and-opencode-local-capture-extension.md)
 - [Cursor transcript hook handoff and shared file reader](40-cursor-transcript-hook-handoff-and-shared-file-reader.md)
+- [Local compute and agent configuration](40-local-compute-and-agent-configuration.md)
 - [Freshness producer ownership](41-freshness-producer-ownership.md)

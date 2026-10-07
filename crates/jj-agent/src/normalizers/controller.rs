@@ -70,8 +70,12 @@ pub(crate) fn normalize(
                     },
                 ));
         }
-        if kind == "prompt" {
+        if matches!(kind, "prompt" | "context_delivery") {
             if let Some(text) = string(&value, &["text"]) {
+                let rich = value
+                    .get("sentContext")
+                    .filter(|context| context["version"] == 1);
+                let content = rich.map(|context| serde_json::json!({"schema":"jj-store.sent-context.v1","text":value["userText"],"context":context}).to_string());
                 message(
                     output,
                     batch,
@@ -80,7 +84,7 @@ pub(crate) fn normalize(
                     &turn_key,
                     "user",
                     MessageRole::User,
-                    text,
+                    content.as_deref().unwrap_or(text),
                     sequence,
                 )?;
             }
@@ -166,7 +170,14 @@ fn message(
             turn_id: Some(turn_id),
             message_id: id,
             role,
-            content: text_payload(text)?,
+            content: if role == MessageRole::User
+                && serde_json::from_str::<serde_json::Value>(text)
+                    .is_ok_and(|v| v["schema"] == "jj-store.sent-context.v1")
+            {
+                SanitizedPayloadV1::new(SanitizedMediaType::Json, text.as_bytes())?
+            } else {
+                text_payload(text)?
+            },
         },
     ));
     Ok(())

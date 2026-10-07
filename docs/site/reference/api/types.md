@@ -20737,6 +20737,455 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 }
 ```
 
+## ComputeStatus
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "hardware": true,
+    "supported": {
+      "type": "boolean"
+    },
+    "state": {
+      "type": "string"
+    },
+    "settings": {
+      "$ref": "#/components/schemas/ComputeSettings"
+    },
+    "models": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ComputeModel"
+      }
+    },
+    "runtime_prepared": {
+      "type": "boolean"
+    },
+    "invitation": true,
+    "identity": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "progress": true,
+    "error": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "operation": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/AgentExecutionOutcome"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "hardware",
+    "supported",
+    "state",
+    "settings",
+    "models",
+    "runtime_prepared",
+    "invitation",
+    "identity",
+    "progress",
+    "error",
+    "operation"
+  ]
+}
+```
+
+## ComputeSettings
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "revision": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0,
+      "default": 0
+    },
+    "model": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "default": null
+    },
+    "memory_gb": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "format": "uint64",
+      "minimum": 0,
+      "default": null
+    },
+    "sharing": {
+      "type": "boolean",
+      "default": false
+    },
+    "peers": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/components/schemas/ComputePeer"
+      },
+      "default": {}
+    },
+    "relay_urls": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "target_peer": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "default": null
+    }
+  },
+  "required": [
+    "revision",
+    "model",
+    "memory_gb",
+    "sharing",
+    "peers",
+    "relay_urls",
+    "target_peer"
+  ]
+}
+```
+
+## ComputePeer
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "invitation": true
+  },
+  "required": [
+    "name",
+    "invitation"
+  ]
+}
+```
+
+## ComputeModel
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "installed": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "installed"
+  ]
+}
+```
+
+## AgentExecutionOutcome
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "request_id": {
+      "$ref": "#/components/schemas/RequestId"
+    },
+    "session_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "state": {
+      "type": "string"
+    },
+    "error": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "version",
+    "request_id",
+    "session_id",
+    "state",
+    "error"
+  ]
+}
+```
+
+## AgentSettings
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "revision": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0,
+      "default": 0
+    },
+    "runner": {
+      "type": "string",
+      "default": "codex"
+    },
+    "preferences": {
+      "default": {
+        "model": null,
+        "effort": null,
+        "mode": null
+      },
+      "allOf": [
+        {
+          "$ref": "#/components/schemas/AgentExecutionPreferences"
+        }
+      ]
+    },
+    "options": {
+      "default": {
+        "inherit_defaults": false,
+        "provider": null,
+        "endpoint": null,
+        "environment": {}
+      },
+      "allOf": [
+        {
+          "$ref": "#/components/schemas/AgentRuntimeOptions"
+        }
+      ]
+    },
+    "automatically_mention": {
+      "type": "boolean",
+      "default": false
+    },
+    "keep_awake": {
+      "type": "boolean",
+      "default": false
+    },
+    "keychain_supported": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "required": [
+    "revision",
+    "runner",
+    "preferences",
+    "options",
+    "automatically_mention",
+    "keep_awake",
+    "keychain_supported"
+  ]
+}
+```
+
+## AgentExecutionPreferences
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "model": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "effort": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "mode": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "model",
+    "effort",
+    "mode"
+  ]
+}
+```
+
+## AgentRuntimeOptions
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "inherit_defaults": {
+      "type": "boolean",
+      "default": false
+    },
+    "provider": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "default": null
+    },
+    "endpoint": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "default": null
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/components/schemas/AgentEnvironmentValue"
+      },
+      "default": {}
+    }
+  },
+  "required": [
+    "inherit_defaults",
+    "provider",
+    "endpoint",
+    "environment"
+  ]
+}
+```
+
+## AgentEnvironmentValue
+
+```text
+{
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string",
+          "const": "literal"
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "source",
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string",
+          "const": "environment"
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "source",
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string",
+          "const": "keychain"
+        },
+        "value": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "source",
+        "value"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "source": {
+          "type": "string",
+          "const": "unset"
+        }
+      },
+      "required": [
+        "source"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}
+```
+
+## AgentSecretStatus
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "keychain_supported": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "keychain_supported"
+  ]
+}
+```
+
 ## AgentExecutionCatalog
 
 ```text
@@ -20848,6 +21297,19 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     },
     "preferences": {
       "$ref": "#/components/schemas/AgentExecutionPreferences"
+    },
+    "options": {
+      "default": {
+        "inherit_defaults": false,
+        "provider": null,
+        "endpoint": null,
+        "environment": {}
+      },
+      "allOf": [
+        {
+          "$ref": "#/components/schemas/AgentRuntimeOptions"
+        }
+      ]
     }
   },
   "required": [
@@ -20857,41 +21319,8 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "description",
     "instructions",
     "runner",
-    "preferences"
-  ]
-}
-```
-
-## AgentExecutionPreferences
-
-```text
-{
-  "type": "object",
-  "additionalProperties": false,
-  "properties": {
-    "model": {
-      "type": [
-        "string",
-        "null"
-      ]
-    },
-    "effort": {
-      "type": [
-        "string",
-        "null"
-      ]
-    },
-    "mode": {
-      "type": [
-        "string",
-        "null"
-      ]
-    }
-  },
-  "required": [
-    "model",
-    "effort",
-    "mode"
+    "preferences",
+    "options"
   ]
 }
 ```
@@ -21164,6 +21593,17 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         "string",
         "null"
       ]
+    },
+    "restart_required": {
+      "type": "boolean",
+      "default": false
+    },
+    "inference_host": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "default": null
     }
   },
   "required": [
@@ -21171,7 +21611,9 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "state",
     "enabled",
     "generation",
-    "error"
+    "error",
+    "restart_required",
+    "inference_host"
   ]
 }
 ```
@@ -21525,47 +21967,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "request_id",
     "conversation_id",
     "agents"
-  ]
-}
-```
-
-## AgentExecutionOutcome
-
-```text
-{
-  "type": "object",
-  "additionalProperties": false,
-  "properties": {
-    "version": {
-      "type": "integer",
-      "format": "uint32",
-      "minimum": 0
-    },
-    "request_id": {
-      "$ref": "#/components/schemas/RequestId"
-    },
-    "session_id": {
-      "type": [
-        "string",
-        "null"
-      ]
-    },
-    "state": {
-      "type": "string"
-    },
-    "error": {
-      "type": [
-        "string",
-        "null"
-      ]
-    }
-  },
-  "required": [
-    "version",
-    "request_id",
-    "session_id",
-    "state",
-    "error"
   ]
 }
 ```

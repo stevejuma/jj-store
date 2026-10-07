@@ -1,3 +1,4 @@
+import { useAgentExecution } from "../store-agent-execution/context.js";
 import { untrack } from "svelte";
 import {
   agentMentionToken,
@@ -11,11 +12,13 @@ import type { CommunityMemberModel } from "../community-workspace/model.js";
 /** Community-style opt-in pins, scoped to exact local agent identities. */
 export function createComposerAgentAudience(input: {
   scope(): string | undefined;
+  defaultEnabled?(): boolean;
   initial(): readonly string[];
   members(): readonly CommunityMemberModel[];
   value(): string;
   setValue(value: string): void;
 }) {
+  const settings = useAgentExecution()?.settings;
   let enabled = $state(false),
     pinned = $state<string[]>([]);
   let loaded = "",
@@ -37,11 +40,16 @@ export function createComposerAgentAudience(input: {
   };
   $effect(() => {
     const scope = input.scope();
+    const defaultEnabled =
+      input.defaultEnabled?.() ??
+      settings?.value?.automatically_mention ??
+      false;
+    const marker = `${scope}:${defaultEnabled}`;
     untrack(() => {
-      if (scope === loaded) return;
-      loaded = scope ?? "";
+      if (marker === loaded) return;
+      loaded = marker;
       const saved = scope
-        ? readAgentAudience(scope, storage())
+        ? readAgentAudience(scope, storage(), defaultEnabled)
         : { enabled: false, ids: [] };
       enabled = saved.enabled;
       pinned = saved.ids;

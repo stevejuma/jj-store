@@ -38,3 +38,4 @@ Read the owning topic and requirement before implementation.
 - [Event-driven freshness migration](32-event-driven-freshness-migration.md)
 - [Complete native stack discovery and boundaries](33-complete-native-stack-discovery-and-boundaries.md)
 - [Interactive agent execution](34-interactive-agent-sessions.md)
+- [Compute, agent defaults and sent context](35-compute-defaults-and-sent-context.md)

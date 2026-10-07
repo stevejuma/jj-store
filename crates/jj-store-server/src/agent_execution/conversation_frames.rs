@@ -333,6 +333,15 @@ impl Supervisor {
                     intent.outcome.error = Some("process_stopped_no_replay".into());
                 }
             }
+            let uncertain: Vec<_> = s
+                .intents
+                .iter()
+                .filter(|(_, i)| i.outcome.state == "outcome_unknown")
+                .map(|(request, _)| *request)
+                .collect();
+            for request in uncertain {
+                sent_context::outcome(s, request, "outcome_unknown")?;
+            }
             Ok(())
         })
     }

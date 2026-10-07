@@ -11,6 +11,7 @@ mod stream;
 #[serde(deny_unknown_fields)]
 struct CatalogQuery {
     runner: String,
+    setup: Option<String>,
 }
 #[derive(Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
@@ -31,6 +32,11 @@ struct EventsQuery {
 }
 macro_rules! endpoints {
     ($register:ident) => { $register! {
+        (get, "/local/compute", compute_status, "local_compute_status", routes::Empty, routes::Empty, agents::compute::Status),
+        (post, "/local/compute", compute_command, "local_compute_command", routes::Empty, agents::compute::Command, agents::Outcome),
+        (get, "/local/agents/settings", settings, "local_agents_settings", routes::Empty, routes::Empty, agents::settings::Settings),
+        (post, "/local/agents/settings", save_settings, "local_agents_settings_save", routes::Empty, agents::settings::SettingsCommand, agents::settings::Settings),
+        (post, "/local/agents/secrets", secret, "local_agents_secret", routes::Empty, agents::settings::SecretCommand, agents::settings::SecretStatus),
         (get, "/local/agents/catalog", catalog, "local_agents_catalog", CatalogQuery, routes::Empty, agents::catalog::Catalog),
         (get, "/local/agents", status, "local_agents_status", routes::Empty, routes::Empty, agents::Status),
         (get, "/local/agents/runtimes", runtimes, "local_agents_runtimes", routes::Empty, routes::Empty, agents::tooling::Status),
@@ -208,5 +214,31 @@ async fn catalog(
 ) -> Result<Response> {
     let q = routes::input(query)?;
     let (m, actor) = manager(&state)?;
-    state.json(&m.catalog(actor, q.runner).await.map_err(failure)?)
+    let value = if let Some(setup) = q.setup {
+        m.catalog_for_setup(actor, q.runner, setup).await
+    } else {
+        m.catalog(actor, q.runner).await
+    };
+    state.json(&value.map_err(failure)?)
+}
+
+mutation!(
+    save_settings,
+    agents::settings::SettingsCommand,
+    save_settings
+);
+mutation!(secret, agents::settings::SecretCommand, secret);
+async fn settings(
+    axum::extract::State(state): axum::extract::State<Arc<crate::State>>,
+) -> Result<Json<agents::settings::Settings>> {
+    let (manager, actor) = manager(&state)?;
+    Ok(Json(manager.settings(actor).await.map_err(failure)?))
+}
+
+mutation!(compute_command, agents::compute::Command, compute_command);
+async fn compute_status(
+    axum::extract::State(state): axum::extract::State<Arc<crate::State>>,
+) -> Result<Json<agents::compute::Status>> {
+    let (manager, actor) = manager(&state)?;
+    Ok(Json(manager.compute_status(actor).await.map_err(failure)?))
 }

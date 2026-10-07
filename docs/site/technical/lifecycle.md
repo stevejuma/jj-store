@@ -180,3 +180,12 @@ agents begin disabled. Surplus idle workers retire after ten minutes. Shutdown
 uses a dedicated signal even when a command queue is full. An immediate Start
 awaits the stopping generation before creating another. Restart retains exact
 conversations and interrupted history without replaying a prompt.
+
+Full compute distributions include ACP, local-agent, coding-tool and compute
+helpers. The desktop verifies regular resource paths, source pins and
+executable/ native-runtime checksums before spawning. Helpers share the owned
+server lifetime. The macOS desktop releases its bounded agent sleep assertion on
+stop or native Exit; status polling and reconnection cannot renew its inactivity
+deadline. Native runtime/model downloads require explicit actions unless pinned
+runtime artifacts are embedded. macOS and Linux packaged acceptance remain
+separate qualification.
