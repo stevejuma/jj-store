@@ -15,6 +15,13 @@ pub struct FrozenComment {
     #[serde(default)]
     pub surrounding: String,
 }
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct SubmittedBatch {
+    pub thread_id: ThreadId,
+    pub batch: CollabObjectRef,
+    pub request_id: jj_store_model::RequestId,
+}
 
 pub async fn collect_submission(
     reader: &dyn ReactionTargetRead,
@@ -32,10 +39,20 @@ pub async fn collect_submission(
     if link.thread_id != thread_id || !link.active {
         return Err(Error::Invalid);
     }
-    let ThreadLinkTargetV1::CommentBatch { comments, .. } = link.target else {
+    let ThreadLinkTargetV1::CommentBatch {
+        comments,
+        request_id,
+        ..
+    } = link.target
+    else {
         return Err(Error::Invalid);
     };
     let mut result = ContextBatch::default();
+    result.submission = Some(SubmittedBatch {
+        thread_id,
+        batch,
+        request_id,
+    });
     let mut bytes = 0usize;
     for target in comments {
         resolve_reaction_target(reader, &target)

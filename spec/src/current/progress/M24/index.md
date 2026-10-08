@@ -233,6 +233,13 @@ restart links. Native/local batch regressions, protocol and context tests retain
 their exact scope; this is not real-provider or cold-browser qualification.
 Renderer parity, independent delivery recovery and full native/local browser
 acceptance remain open. M24 stays In progress; visual baselines are unapproved.
+E-CHAT-LIVE-004 extends recorded detail reads with exact feedback and tool
+targets, retains edited submitted revisions and canonical batch identities, and
+keeps comments-only reply parents. Native recorded-read, local
+managed/standalone restart and tombstone, legacy compatibility and model
+regressions pass. This backend slice leaves browser renderer parity,
+delivery-fault acceptance and cold browser qualification open. M24 stays In
+progress; visual baselines are unapproved.
 <!-- generated-navigation -->
 ## Pages
 

@@ -12,6 +12,10 @@ pub struct LocalBrowserAgentPage {
 }
 #[derive(Clone, Debug, Serialize, JsonSchema)]
 pub struct LocalBrowserAgentDetail {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub conversation_feedback: Option<crate::agent_execution::Feedback>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub conversation_unavailable: Option<String>,
     pub version: u32,
     pub snapshot: LocalAgentSnapshot,
     pub session: presentation::AgentSessionSummary,

@@ -371,6 +371,36 @@ async fn session_detail_resolves_bounded_messages_and_final_tool_snapshots() {
     assert!(tool.input.is_some());
     assert!(tool.output.is_some());
     assert_eq!(tool.observed_paths, ["<workspace>/src/lib.rs"]);
+    let target = tool.reaction_target.as_ref().expect("exact tool target");
+    assert!(matches!(
+        target,
+        jj_collab::ReactionTargetV1::ToolOutput { .. }
+    ));
+    let feedback = detail
+        .conversation_feedback
+        .as_ref()
+        .expect("recorded discussions");
+    assert!(detail.conversation_unavailable.is_none());
+    assert!(
+        feedback
+            .messages
+            .iter()
+            .any(|message| &message.target == target)
+    );
+    for item in &detail.activity {
+        if let AgentActivity::Message {
+            reaction_target: Some(target),
+            ..
+        } = item
+        {
+            assert!(
+                feedback
+                    .messages
+                    .iter()
+                    .any(|message| &message.target == target)
+            );
+        }
+    }
 }
 
 #[tokio::test]

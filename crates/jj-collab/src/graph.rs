@@ -221,7 +221,10 @@ impl CollabGraphV1 {
             }
             CollabObjectV1::ThreadLink(link) => {
                 if let ThreadLinkTargetV1::CommentBatch {
-                    comments, message, ..
+                    comments,
+                    message,
+                    reply_to,
+                    ..
                 } = &link.target
                 {
                     for target in comments {
@@ -240,6 +243,14 @@ impl CollabGraphV1 {
                             {
                                 return Err(Error::Invalid("batch comment identity"));
                             }
+                        }
+                    }
+                    if let Some(reference) = reply_to {
+                        let CollabObjectV1::HumanMessageRevision(m) = self.get(*reference)? else {
+                            return Err(Error::Invalid("batch reply kind"));
+                        };
+                        if m.thread_id != link.thread_id || m.body.is_none() {
+                            return Err(Error::Invalid("batch reply identity"));
                         }
                     }
                     if let Some(reference) = message {

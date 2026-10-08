@@ -86,7 +86,24 @@ impl LocalRepository {
                 .await
                 .map_err(map)?,
         );
+        let selected = self.selected_metadata(commit)?;
+        let threads = self.thread_store_at(Some(&selected)).await?;
+        let feedback =
+            crate::agent_feedback::recorded(&store, &threads.state, &threads.graph, &activity)
+                .await;
+        let (conversation_feedback, conversation_unavailable) = match feedback {
+            Ok(value) => (Some(value), None),
+            Err(_) => (
+                None,
+                Some(
+                    "Comments and reply links are unavailable at this selection. Refresh to retry."
+                        .into(),
+                ),
+            ),
+        };
         let detail = LocalBrowserAgentDetail {
+            conversation_feedback,
+            conversation_unavailable,
             version: 1,
             snapshot: store.snapshot.clone(),
             session: summary,

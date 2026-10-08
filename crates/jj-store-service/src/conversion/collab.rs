@@ -93,10 +93,16 @@ fn translate(
                     );
                 }
                 ThreadLinkTargetV1::CommentBatch {
-                    comments, message, ..
+                    comments,
+                    message,
+                    reply_to,
+                    ..
                 } => {
                     for reference in comments {
                         target(reference, c, a, r)?;
+                    }
+                    if let Some(reference) = reply_to {
+                        remap(reference)?;
                     }
                     if let Some(reference) = message {
                         remap(reference)?;

@@ -88,6 +88,8 @@ pub struct AgentCodeAssociation {
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, JsonSchema)]
 pub struct AgentToolActivity {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reaction_target: Option<jj_collab::ReactionTargetV1>,
     pub tool_call_id: ToolCallId,
     pub snapshot_id: AgentObjectId,
     pub turn_id: Option<TurnId>,
@@ -247,6 +249,10 @@ pub struct AgentRelationPage {
 
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, JsonSchema)]
 pub struct AgentSessionDetail {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub conversation_feedback: Option<crate::agent_execution::Feedback>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub conversation_unavailable: Option<String>,
     pub version: u32,
     pub snapshot: AgentReadSnapshot,
     pub session: AgentSessionSummary,
@@ -302,6 +308,8 @@ pub(super) fn detail(
     content: AgentSessionDetailContent,
 ) -> AgentSessionDetail {
     AgentSessionDetail {
+        conversation_feedback: None,
+        conversation_unavailable: None,
         version: 1,
         snapshot,
         session: summary(reference, &session, content.timing),

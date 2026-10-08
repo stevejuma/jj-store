@@ -194,6 +194,8 @@ pub enum ThreadLinkTargetV1 {
         request_id: jj_store_model::RequestId,
         comments: Vec<ReactionTargetV1>,
         message: Option<CollabObjectRef>,
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        reply_to: Option<CollabObjectRef>,
     },
     CaptureGap {
         source_state: AgentObjectRef,
@@ -241,7 +243,10 @@ impl ThreadLinkV1 {
         match &self.target {
             ThreadLinkTargetV1::CommentReply { reply } => reply.validate()?,
             ThreadLinkTargetV1::CommentBatch {
-                comments, message, ..
+                comments,
+                message,
+                reply_to,
+                ..
             } => {
                 if comments.len() > 128 {
                     return Err(Error::Limit);
@@ -252,6 +257,9 @@ impl ThreadLinkV1 {
                     if !seen.insert(target.exact_key()?) {
                         return Err(Error::Invalid("repeated batch comment"));
                     }
+                }
+                if let Some(r) = reply_to {
+                    expect(*r, CollabObjectKind::HumanMessageRevision)?;
                 }
                 if let Some(r) = message {
                     expect(*r, CollabObjectKind::HumanMessageRevision)?;

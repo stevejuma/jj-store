@@ -69,7 +69,7 @@ impl AgentSessionPager {
         let (activity, activity_truncated) = load_activity(&pin.store, &snapshot, &code).await?;
         let timing = super::agent_session_timing::resolve(&pin.store, &snapshot).await?;
         authorize_epoch(&session, pin.snapshot.epoch).await?;
-        Ok(models::detail(
+        let mut detail = models::detail(
             pin.snapshot,
             reference,
             snapshot,
@@ -81,7 +81,32 @@ impl AgentSessionPager {
                 code,
                 code_truncated,
             },
-        ))
+        );
+        let feedback = async {
+            let read = crate::collab_reads::PinnedCollabRead::open(
+                session.clone(),
+                Arc::new(crate::collab_reads::RepositoryMemberReactionActors),
+            )
+            .await
+            .map_err(|_| crate::agent_execution::Error::Unavailable)?;
+            if read.snapshot().agent_root != Some(detail.snapshot.agent_root) {
+                return Err(crate::agent_execution::Error::Stale);
+            }
+            read.recorded_feedback(session.clone(), &detail.activity)
+                .await
+        }
+        .await;
+        match feedback {
+            Ok(value) => detail.conversation_feedback = Some(value),
+            Err(_) => {
+                detail.conversation_unavailable = Some(
+                    "Comments and reply links are unavailable at this selection. Refresh to retry."
+                        .into(),
+                )
+            }
+        }
+        authorize_epoch(&session, detail.snapshot.epoch).await?;
+        Ok(detail)
     }
 }
 
@@ -362,6 +387,20 @@ async fn tool_activity(
         .saturating_add(output.as_ref().map_or(0, |value| value.content.len()));
     Ok((
         AgentToolActivity {
+            reaction_target: Some(if let Some(content) = tool.output {
+                jj_collab::ReactionTargetV1::ToolOutput {
+                    session_id: tool.session_id,
+                    tool_id: tool.tool_call_id,
+                    snapshot: reference,
+                    content,
+                }
+            } else {
+                jj_collab::ReactionTargetV1::ToolInvocation {
+                    session_id: tool.session_id,
+                    tool_id: tool.tool_call_id,
+                    snapshot: reference,
+                }
+            }),
             tool_call_id: tool.tool_call_id,
             snapshot_id: reference.id,
             turn_id: tool.turn_id,

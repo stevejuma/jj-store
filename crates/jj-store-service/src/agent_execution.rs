@@ -374,7 +374,7 @@ pub mod settings;
 pub mod tooling;
 
 /// Repository-selected messages and ordinary discussion revisions, never journal authority.
-#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[schemars(rename = "AgentExecutionFeedback")]
 pub struct Feedback {
     pub messages: Vec<FeedbackMessage>,
@@ -389,7 +389,7 @@ impl Feedback {
         crate::agent_feedback::context(self)
     }
 }
-#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[schemars(rename = "AgentExecutionFeedbackMessage")]
 pub struct FeedbackMessage {
     pub row_id: String,
@@ -401,9 +401,13 @@ pub struct FeedbackMessage {
     #[serde(default)]
     pub answers: Vec<jj_collab::CommentReplyLinkV1>,
 }
-#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[schemars(rename = "AgentExecutionFeedbackReply")]
 pub struct FeedbackReply {
+    #[serde(default)]
+    pub historical: bool,
+    #[serde(default)]
+    pub batches: Vec<RequestId>,
     pub thread_id: jj_collab::ThreadId,
     pub revision: jj_collab::CollabObjectRef,
     pub message: jj_collab::HumanMessageRevisionV1,
@@ -425,7 +429,7 @@ pub mod providers;
 
 pub mod context_submission;
 
-#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[schemars(rename = "AgentExecutionFeedbackTextPart")]
 pub struct FeedbackTextPart {
     pub part: Option<String>,

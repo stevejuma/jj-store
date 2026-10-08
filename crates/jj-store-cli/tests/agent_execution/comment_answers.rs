@@ -5,6 +5,8 @@ use jj_collab::{
 };
 use jj_store_service::agent_execution::conversations as chat;
 use serde_json::json;
+#[path = "comment_answers/history.rs"]
+mod history;
 
 #[tokio::test]
 async fn comments_only_batches_link_multiple_answers_in_one_turn_and_survive_restart() {
@@ -275,6 +277,23 @@ async fn exercise_comments(managed: bool) {
             .len(),
         3
     );
+    assert_eq!(
+        prompt.payload["sentContext"]["commentSubmission"]["request_id"],
+        json!(result.comment_publication.as_ref().unwrap().request_id)
+    );
+    assert_eq!(
+        prompt.payload["sentContext"]["commentSubmission"]["thread_id"],
+        json!(thread)
+    );
+    history::edit_submitted_comment(
+        &local,
+        &supervisor,
+        actor,
+        &session,
+        &replied,
+        result.comment_publication.as_ref().unwrap().request_id,
+    )
+    .await;
     let last = page.events.last().unwrap().sequence;
     let duplicate = send_batch(&supervisor, actor, &send, standalone.as_deref()).await;
     assert_eq!(
@@ -307,6 +326,7 @@ async fn exercise_comments(managed: bool) {
     let duplicate = send_batch(&reopened, actor, &send, standalone.as_deref()).await;
     assert_eq!(duplicate.agents[0].state, "completed");
     assert_eq!(duplicate.comment_publication.unwrap().state, "published");
+    history::tombstone_submitted_comment(&local, &reopened, actor, &session, &feedback).await;
     reopened.shutdown().await.unwrap();
 }
 

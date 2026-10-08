@@ -1,5 +1,30 @@
 use super::*;
 impl PinnedCollabRead {
+    pub(crate) async fn recorded_feedback(
+        &self,
+        session: Arc<NativeSession>,
+        activity: &[crate::collaboration::AgentActivity],
+    ) -> crate::agent_execution::Result<crate::agent_execution::Feedback> {
+        use crate::agent_execution::Error;
+        self.authorize(&session).await.map_err(|_| Error::Denied)?;
+        let agents = self.agents.as_ref().ok_or(Error::Unavailable)?;
+        let reader = session
+            .coordinator
+            .selected_agent_reader(agents)
+            .map_err(|_| Error::Unavailable)?;
+        let mut result = crate::agent_feedback::recorded(
+            &reader,
+            &self.thread.state,
+            &self.thread.graph,
+            activity,
+        )
+        .await?;
+        if !self.feedback_writable {
+            result.write_unavailable=Some("Conversation comments are unavailable until collaboration replication is qualified.".into());
+        }
+        self.authorize(&session).await.map_err(|_| Error::Denied)?;
+        Ok(result)
+    }
     pub async fn agent_feedback(
         &self,
         session: Arc<NativeSession>,

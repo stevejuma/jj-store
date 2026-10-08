@@ -21,8 +21,6 @@ pub(crate) async fn project(
     if rows.len() > 256 || state.messages.len() > 4096 || state.threads.len() > 4096 {
         return Err(Error::Limit);
     }
-    let reader = CollabTargetReaderV1::new(agents.repository(), None, Some(agents), None)
-        .map_err(|_| Error::Unavailable)?;
     let mut targets = std::collections::BTreeMap::new();
     let mut reads = 0;
     for session_id in rows
@@ -122,24 +120,90 @@ pub(crate) async fn project(
             }
         }
     }
+    let rows = rows
+        .iter()
+        .filter_map(|(id, session, subject)| {
+            targets
+                .get(&(*session, *subject))
+                .map(|target| (id.clone(), target.clone()))
+        })
+        .collect::<Vec<_>>();
+    project_targets(agents, state, graph, &rows).await
+}
+
+pub(crate) async fn recorded(
+    agents: &dyn AgentSnapshotRead,
+    state: &ThreadStateV1,
+    graph: &CollabGraphV1,
+    activity: &[crate::collaboration::AgentActivity],
+) -> Result<Feedback> {
+    use crate::collaboration::AgentActivity;
+    let rows = activity
+        .iter()
+        .filter_map(|entry| match entry {
+            AgentActivity::Message {
+                message_id,
+                reaction_target: Some(target),
+                ..
+            } => Some((message_id.to_string(), target.clone())),
+            AgentActivity::Tool { tool, .. } => tool
+                .reaction_target
+                .clone()
+                .map(|target| (tool.tool_call_id.to_string(), target)),
+            _ => None,
+        })
+        .collect::<Vec<_>>();
+    project_targets(agents, state, graph, &rows).await
+}
+async fn project_targets(
+    agents: &dyn AgentSnapshotRead,
+    state: &ThreadStateV1,
+    graph: &CollabGraphV1,
+    rows: &[(String, ReactionTargetV1)],
+) -> Result<Feedback> {
+    if rows.len() > 4096 || state.messages.len() > 4096 || state.threads.len() > 4096 {
+        return Err(Error::Limit);
+    }
+    let reader = CollabTargetReaderV1::new(agents.repository(), None, Some(agents), None)
+        .map_err(|_| Error::Unavailable)?;
     let mut answer_links = Vec::new();
+    let mut submitted =
+        std::collections::BTreeMap::<CollabObjectRef, Vec<jj_store_model::RequestId>>::new();
     for reference in state.links.values() {
         let CollabObjectV1::ThreadLink(link) = graph.get(*reference).map_err(|_| Error::Invalid)?
         else {
             return Err(Error::Invalid);
         };
         if link.active {
+            if let ThreadLinkTargetV1::CommentBatch {
+                comments,
+                request_id,
+                ..
+            } = &link.target
+            {
+                for comment in comments {
+                    if let ReactionTargetV1::HumanMessage { revision, .. } = comment {
+                        submitted.entry(*revision).or_default().push(*request_id);
+                    }
+                }
+            }
             if let ThreadLinkTargetV1::CommentReply { reply } = &link.target {
                 answer_links.push(reply.clone());
             }
         }
     }
+    let comment_revisions: std::collections::BTreeSet<_> = state
+        .messages
+        .values()
+        .chain(submitted.keys())
+        .copied()
+        .collect();
+    if comment_revisions.len() > 4096 {
+        return Err(Error::Limit);
+    }
     let mut messages = Vec::new();
-    for (row_id, session_id, subject) in rows {
-        let target = targets.get(&(*session_id, *subject)).cloned();
-        let Some(target) = target else {
-            continue;
-        };
+    for (row_id, target) in rows {
+        let target = target.clone();
         resolve_reaction_target(&reader, &target)
             .await
             .map_err(|_| Error::Unavailable)?;
@@ -161,14 +225,20 @@ pub(crate) async fn project(
             }
         }
         let mut replies = Vec::new();
-        for reference in state.messages.values() {
+        for reference in &comment_revisions {
             let CollabObjectV1::HumanMessageRevision(message) =
                 graph.get(*reference).map_err(|_| Error::Invalid)?
             else {
                 return Err(Error::Invalid);
             };
+            let current = state.messages.get(&message.message_id);
+            // Historical sent revisions remain readable only while their current
+            // message is visible. A tombstone must not resurrect prior bodies.
+            if !current.is_some_and(|r| matches!(graph.get(*r), Ok(CollabObjectV1::HumanMessageRevision(m)) if m.body.is_some())) { continue; }
             if threads.contains(&message.thread_id) && message.body.is_some() {
                 replies.push(FeedbackReply {
+                    historical: current != Some(reference),
+                    batches: submitted.get(reference).cloned().unwrap_or_default(),
                     thread_id: message.thread_id,
                     revision: *reference,
                     message: message.clone(),
@@ -213,6 +283,9 @@ pub fn context(feedback: &Feedback) -> Result<String> {
     let mut bytes = 0;
     for message in &feedback.messages {
         for reply in &message.replies {
+            if reply.historical {
+                continue;
+            }
             let Some(body) = &reply.message.body else {
                 continue;
             };

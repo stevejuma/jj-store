@@ -44,9 +44,6 @@ impl ConversationSubmissionV1 {
         }
         if let Some(reply) = self.reply_to {
             expect(reply, CollabObjectKind::HumanMessageRevision)?;
-            if self.text.is_none() {
-                return Err(Error::Invalid("reply without message"));
-            }
         }
         let mut ids = BTreeSet::new();
         let mut observations = BTreeMap::new();
@@ -128,6 +125,14 @@ impl ThreadStateV1 {
             ThreadStatusV1::Archived | ThreadStatusV1::Tombstoned
         ) {
             return Err(Error::Invalid("closed conversation"));
+        }
+        if let Some(reference) = submission.reply_to {
+            let CollabObjectV1::HumanMessageRevision(message) = graph.get(reference)? else {
+                return Err(Error::Invalid("submission reply kind"));
+            };
+            if message.thread_id != submission.thread_id || message.body.is_none() {
+                return Err(Error::Invalid("submission reply identity"));
+            }
         }
         for c in &submission.comments {
             if self.threads.get(&c.thread_id).copied() != c.expected_thread
@@ -231,6 +236,7 @@ impl ThreadStateV1 {
                 link_id: ThreadLinkId::new(*request.as_bytes()),
                 target: ThreadLinkTargetV1::CommentBatch {
                     request_id: request,
+                    reply_to: submission.reply_to,
                     comments,
                     message,
                 },

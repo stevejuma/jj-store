@@ -19,6 +19,8 @@ pub struct ReplyRevision {
 pub struct ContextBatch {
     pub revisions: BTreeSet<ReplyRevision>,
     pub text: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub submission: Option<super::context_submission::SubmittedBatch>,
     #[serde(default)]
     pub comments: Vec<super::context_submission::FrozenComment>,
     #[serde(default)]
@@ -159,6 +161,7 @@ pub(crate) async fn collect(
 
 impl ContextBatch {
     pub fn include_submission(&mut self, submitted: &Self) {
+        self.submission = submitted.submission.clone();
         self.revisions.extend(submitted.revisions.iter().cloned());
         self.comments = submitted.comments.clone();
         // The frozen submitted revision wins over its automatically collected

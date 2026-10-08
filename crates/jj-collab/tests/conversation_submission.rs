@@ -108,6 +108,7 @@ fn comments_only_and_mixed_sends_publish_one_batch_with_multiple_same_anchor_com
             request_id,
             comments,
             message,
+            ..
         } = &link.target
         else {
             panic!()
@@ -217,4 +218,87 @@ fn ordinary_reply_batch_keeps_its_exact_parent_and_refuses_foreign_parents() {
             .is_err()
     );
     assert_eq!(graph.objects, before);
+}
+
+#[test]
+fn comment_only_submission_retains_its_reply_parent_without_a_dummy_message() {
+    let (state, mut graph, mut submission) = fixture();
+    let parent = *state.messages.values().next().unwrap();
+    submission.reply_to = Some(parent);
+    let (root, result) = state
+        .submit_conversation(&submission, actor(), RequestId::new([8; 16]), 3, &mut graph)
+        .unwrap();
+    let next = ThreadStateV1::read(root, &graph).unwrap();
+    assert_eq!(next.messages.len(), state.messages.len() + 1);
+    let CollabObjectV1::ThreadLink(link) = graph.get(result.link.unwrap()).unwrap() else {
+        panic!()
+    };
+    assert!(
+        matches!(link.target,ThreadLinkTargetV1::CommentBatch { reply_to:Some(r),message:None,.. } if r==parent)
+    );
+    assert!(
+        CollabObjectV1::ThreadLink(link.clone())
+            .dependencies()
+            .unwrap()
+            .contains(&parent)
+    );
+}
+
+#[test]
+fn legacy_whole_message_discussion_continues_without_fabricating_a_range() {
+    let (state, mut graph, mut submission) = fixture();
+    let target = ReactionTargetV1::AgentMessage {
+        session_id: jj_agent::AgentSessionId::new([61; 16]),
+        message_id: jj_agent::MessageId::new([62; 16]),
+        event_id: jj_agent::AgentEventId::new([63; 16]),
+        batch: jj_agent::AgentObjectRef {
+            kind: jj_agent::AgentObjectKind::EventBatch,
+            id: jj_agent::AgentObjectId::new([64; 32]),
+        },
+        content: jj_agent::AgentObjectRef {
+            kind: jj_agent::AgentObjectKind::Content,
+            id: jj_agent::AgentObjectId::new([65; 32]),
+        },
+    };
+    let (root, discussion) = state
+        .apply(
+            &ThreadCommandV1::CreateAgentDiscussion {
+                thread_id: submission.comments[0].thread_id,
+                title: "Legacy discussion".into(),
+                target: target.clone(),
+            },
+            actor(),
+            RequestId::new([60; 16]),
+            3,
+            &mut graph,
+        )
+        .unwrap();
+    submission.comments[0].source = ConversationSourceV1 {
+        target,
+        part: None,
+        selection: None,
+        quote: String::new(),
+    };
+    submission.comments[0].expected_thread = Some(discussion.version);
+    let (root, _) = ThreadStateV1::read(root, &graph)
+        .unwrap()
+        .submit_conversation(
+            &submission,
+            actor(),
+            RequestId::new([61; 16]),
+            4,
+            &mut graph,
+        )
+        .unwrap();
+    let state = ThreadStateV1::read(root, &graph).unwrap();
+    let CollabObjectV1::ThreadVersion(thread) =
+        graph.get(state.threads[&discussion.thread_id]).unwrap()
+    else {
+        panic!()
+    };
+    assert!(thread.comment_source.is_none());
+    assert_eq!(
+        thread.agent_message.as_ref(),
+        Some(&submission.comments[0].source.target)
+    );
 }

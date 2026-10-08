@@ -98,3 +98,18 @@ KiB budget. Explicit submitted comments merge with other eligible undelivered
 discussion revisions; they do not replace that context. The parser accepts at
 most 4 MiB, 256 candidates and 128 complete reply blocks, parsing literal-code
 ranges once. These limits refuse or bound work without modifying captures.
+
+Submitted batch links retain an optional exact reply parent even when no
+ordinary message was authored. Read projections include the current comment
+revision and submitted historical revisions while the current comment remains
+visible. A tombstone hides every revision from active conversation feedback.
+Only current revisions enter incremental prompt context; an older answer remains
+associated with its submitted revision. Retained Sent context carries the
+canonical batch request and parent thread identity separately from each
+recipient's send request.
+
+Recorded native and local agent details expose the same exact discussion and
+answer projection as live participation. Tool rows carry a committed invocation
+or output target. Permission refusals and bounded-reader failures remain
+explicit unavailable metadata; they do not turn a transcript read into an
+implicit write.

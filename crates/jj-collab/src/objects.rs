@@ -134,10 +134,14 @@ impl CollabObjectV1 {
                     dependencies.extend(binding.observed_assignment);
                 }
                 if let ThreadLinkTargetV1::CommentBatch {
-                    comments, message, ..
+                    comments,
+                    message,
+                    reply_to,
+                    ..
                 } = &v.target
                 {
                     dependencies.extend(message);
+                    dependencies.extend(reply_to);
                     dependencies.extend(comments.iter().flat_map(|c| c.collab_dependencies()));
                 }
                 if let ThreadLinkTargetV1::CommentReply { reply } = &v.target {

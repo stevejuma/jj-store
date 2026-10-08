@@ -157,6 +157,10 @@ impl Supervisor {
         let mut captured = sent_context::capture(&document, &original, &context);
         captured["commentReplyProtocol"] =
             serde_json::to_value(reply_protocol(batch)?).map_err(|_| Error::Invalid)?;
+        if let Some(submission) = &batch.submission {
+            captured["commentSubmission"] =
+                serde_json::to_value(submission).map_err(|_| Error::Invalid)?;
+        }
         Ok(
             json!({"version":2,"type":"prompt","requestId":command.request_id.to_string(),"text":original,"context":context,"maxDurationMs":max_duration_ms,"userText":original,"sentContext":captured}),
         )

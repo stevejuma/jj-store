@@ -41,6 +41,8 @@ fn prompt_feedback_is_exact_bounded_and_omits_tombstones() {
             text_parts: vec![],
             answers: vec![],
             replies: vec![FeedbackReply {
+                historical: false,
+                batches: vec![],
                 thread_id,
                 revision,
                 message,
@@ -55,6 +57,9 @@ fn prompt_feedback_is_exact_bounded_and_omits_tombstones() {
     assert!(prepared.contains(&revision.id.to_string()));
     assert!(prepared.contains("original_message"));
     assert_eq!(context(&feedback).unwrap(), prepared);
+    feedback.messages[0].replies[0].historical = true;
+    assert_eq!(context(&feedback).unwrap(), "");
+    feedback.messages[0].replies[0].historical = false;
     feedback.messages[0].replies[0].message.body = None;
     assert_eq!(context(&feedback).unwrap(), "");
     feedback.messages[0].replies[0].message.body = Some("x".repeat(32769));

@@ -3428,6 +3428,9 @@ export interface components {
     /** @enum {string} */
     CompletenessV1: "complete" | "partial" | "unknown";
     AgentSessionDetail: {
+      conversation_feedback?:
+        components["schemas"]["AgentExecutionFeedback"] | null;
+      conversation_unavailable?: string | null;
       /** Format: uint32 */
       version: number;
       snapshot: components["schemas"]["AgentReadSnapshot"];
@@ -3441,90 +3444,23 @@ export interface components {
       code: components["schemas"]["AgentCodeAssociation"][];
       code_truncated: boolean;
     };
-    AgentTranscriptDescriptor: {
-      transcript_id: components["schemas"]["AgentObjectId"];
-      source_instance_id: components["schemas"]["SourceInstanceId"];
-      /** Format: uint64 */
-      source_generation: number;
-      source_format: string;
-      decoder_version: string;
-      sanitizer_version: string;
-      representation: components["schemas"]["SanitizedRepresentation"];
-      /** Format: uint64 */
-      logical_byte_length: number;
-      /** Format: uint64 */
-      record_count: number;
-      /** Format: uint32 */
-      gaps: number;
+    /** @description Repository-selected messages and ordinary discussion revisions, never journal authority. */
+    AgentExecutionFeedback: {
+      messages: components["schemas"]["AgentExecutionFeedbackMessage"][];
+      profile?: string | null;
+      /** @description Current browser feedback write capability; does not suppress readable history. */
+      write_unavailable?: string | null;
     };
-    SourceInstanceId: string;
-    /** @enum {string} */
-    SanitizedRepresentation: "sanitized_native" | "canonical_producer";
-    AgentToolLink: {
-      tool_call_id: components["schemas"]["ToolCallId"];
-      snapshot_id: components["schemas"]["AgentObjectId"];
+    AgentExecutionFeedbackMessage: {
+      row_id: string;
+      target: components["schemas"]["ReactionTargetV1"];
+      threads: components["schemas"]["ThreadId"][];
+      replies: components["schemas"]["AgentExecutionFeedbackReply"][];
+      /** @default [] */
+      text_parts: components["schemas"]["AgentExecutionFeedbackTextPart"][];
+      /** @default [] */
+      answers: components["schemas"]["CommentReplyLinkV1"][];
     };
-    ToolCallId: string;
-    AgentActivity:
-      | {
-          /** Format: uint64 */
-          sequence: number;
-          event_id: components["schemas"]["AgentEventId"];
-          state: components["schemas"]["SessionState"];
-          /** @constant */
-          type: "session_state";
-        }
-      | {
-          reaction_target?: components["schemas"]["ReactionTargetV1"] | null;
-          /** Format: uint64 */
-          sequence: number;
-          event_id: components["schemas"]["AgentEventId"];
-          turn_id: components["schemas"]["TurnId"] | null;
-          message_id: components["schemas"]["MessageId"];
-          /** Format: int64 */
-          occurred_at_millis?: number | null;
-          role: components["schemas"]["MessageRole"];
-          content: components["schemas"]["AgentContent"];
-          /** @constant */
-          type: "message";
-        }
-      | {
-          /** Format: uint64 */
-          sequence: number;
-          event_id: components["schemas"]["AgentEventId"];
-          tool: components["schemas"]["AgentToolActivity"];
-          /** @constant */
-          type: "tool";
-        }
-      | {
-          /** Format: uint64 */
-          sequence: number;
-          event_id: components["schemas"]["AgentEventId"];
-          tool_call_id: components["schemas"]["ToolCallId"] | null;
-          state: components["schemas"]["PermissionState"];
-          /** @constant */
-          type: "permission";
-        }
-      | {
-          /** Format: uint64 */
-          sequence: number;
-          event_id: components["schemas"]["AgentEventId"];
-          path: string;
-          /** @constant */
-          type: "file_observed";
-        }
-      | {
-          /** Format: uint64 */
-          sequence: number;
-          event_id: components["schemas"]["AgentEventId"];
-          /** Format: uint64 */
-          missing_from: number;
-          /** Format: uint64 */
-          missing_to: number;
-          /** @constant */
-          type: "capture_gap";
-        };
-    AgentEventId: string;
     /** @description Identity, immutable content and validation witnesses are explicit, never a UI position. */
     ReactionTargetV1:
       | {
@@ -3610,6 +3546,7 @@ export interface components {
       | "image_asset";
     CollabObjectId: string;
     MessageId: string;
+    AgentEventId: string;
     AgentObjectRef: {
       kind: components["schemas"]["AgentObjectKind"];
       id: components["schemas"]["AgentObjectId"];
@@ -3635,6 +3572,7 @@ export interface components {
       | "source_state"
       | "projection_catalog"
       | "catalog_conflict";
+    ToolCallId: string;
     ReviewThreadId: string;
     CommentId: string;
     ReviewObjectRef: {
@@ -3656,6 +3594,143 @@ export interface components {
     TaskId: string;
     WorkCommentId: string;
     AgentCheckpointId: string;
+    AgentExecutionFeedbackReply: {
+      /** @default false */
+      historical: boolean;
+      /** @default [] */
+      batches: components["schemas"]["RequestId"][];
+      thread_id: components["schemas"]["ThreadId"];
+      revision: components["schemas"]["CollabObjectRef"];
+      message: components["schemas"]["HumanMessageRevisionV1"];
+      /** @default null */
+      thread_revision: components["schemas"]["CollabObjectRef"] | null;
+      /** @default null */
+      source: components["schemas"]["ConversationSourceV1"] | null;
+      /** @default [] */
+      answers: components["schemas"]["CommentReplyLinkV1"][];
+    };
+    HumanMessageRevisionV1: {
+      /** Format: uint32 */
+      schema_version: number;
+      message_id: components["schemas"]["HumanMessageId"];
+      thread_id: components["schemas"]["ThreadId"];
+      actor: components["schemas"]["PrincipalId"];
+      /** Format: int64 */
+      accepted_at_millis: number;
+      previous: components["schemas"]["CollabObjectRef"] | null;
+      reply_to?: components["schemas"]["CollabObjectRef"] | null;
+      body: string | null;
+    };
+    ConversationSourceV1: {
+      target: components["schemas"]["ReactionTargetV1"];
+      /** @description JSON pointer to an exact string in captured JSON; None selects plain text. */
+      part: string | null;
+      selection: components["schemas"]["TextSelectionV1"] | null;
+      /** @description Retained display evidence, validated against the selected bytes. */
+      quote: string;
+    };
+    TextSelectionV1: {
+      encoding: components["schemas"]["TextEncoding"];
+      start_byte: components["schemas"]["ByteOffset"];
+      end_byte: components["schemas"]["ByteOffset"];
+      selected_sha256: components["schemas"]["ReviewDigest"];
+    };
+    /** @enum {string} */
+    TextEncoding: "utf8";
+    ByteOffset: string;
+    ReviewDigest: string;
+    CommentReplyLinkV1: {
+      /** @description Exact user message capture containing a successful context delivery. */
+      prompt: components["schemas"]["ReactionTargetV1"];
+      answer: components["schemas"]["ConversationSourceV1"];
+      comments: components["schemas"]["ReactionTargetV1"][];
+    };
+    AgentExecutionFeedbackTextPart: {
+      part: string | null;
+      text: string;
+    };
+    AgentTranscriptDescriptor: {
+      transcript_id: components["schemas"]["AgentObjectId"];
+      source_instance_id: components["schemas"]["SourceInstanceId"];
+      /** Format: uint64 */
+      source_generation: number;
+      source_format: string;
+      decoder_version: string;
+      sanitizer_version: string;
+      representation: components["schemas"]["SanitizedRepresentation"];
+      /** Format: uint64 */
+      logical_byte_length: number;
+      /** Format: uint64 */
+      record_count: number;
+      /** Format: uint32 */
+      gaps: number;
+    };
+    SourceInstanceId: string;
+    /** @enum {string} */
+    SanitizedRepresentation: "sanitized_native" | "canonical_producer";
+    AgentToolLink: {
+      tool_call_id: components["schemas"]["ToolCallId"];
+      snapshot_id: components["schemas"]["AgentObjectId"];
+    };
+    AgentActivity:
+      | {
+          /** Format: uint64 */
+          sequence: number;
+          event_id: components["schemas"]["AgentEventId"];
+          state: components["schemas"]["SessionState"];
+          /** @constant */
+          type: "session_state";
+        }
+      | {
+          reaction_target?: components["schemas"]["ReactionTargetV1"] | null;
+          /** Format: uint64 */
+          sequence: number;
+          event_id: components["schemas"]["AgentEventId"];
+          turn_id: components["schemas"]["TurnId"] | null;
+          message_id: components["schemas"]["MessageId"];
+          /** Format: int64 */
+          occurred_at_millis?: number | null;
+          role: components["schemas"]["MessageRole"];
+          content: components["schemas"]["AgentContent"];
+          /** @constant */
+          type: "message";
+        }
+      | {
+          /** Format: uint64 */
+          sequence: number;
+          event_id: components["schemas"]["AgentEventId"];
+          tool: components["schemas"]["AgentToolActivity"];
+          /** @constant */
+          type: "tool";
+        }
+      | {
+          /** Format: uint64 */
+          sequence: number;
+          event_id: components["schemas"]["AgentEventId"];
+          tool_call_id: components["schemas"]["ToolCallId"] | null;
+          state: components["schemas"]["PermissionState"];
+          /** @constant */
+          type: "permission";
+        }
+      | {
+          /** Format: uint64 */
+          sequence: number;
+          event_id: components["schemas"]["AgentEventId"];
+          path: string;
+          /** @constant */
+          type: "file_observed";
+        }
+      | {
+          /** Format: uint64 */
+          sequence: number;
+          event_id: components["schemas"]["AgentEventId"];
+          /** Format: uint64 */
+          missing_from: number;
+          /** Format: uint64 */
+          missing_to: number;
+          /** @constant */
+          type: "capture_gap";
+        };
     TurnId: string;
     /** @enum {string} */
     MessageRole: "user" | "assistant" | "system" | "tool";
@@ -3666,6 +3741,7 @@ export interface components {
     /** @enum {string} */
     SanitizedMediaType: "json" | "text";
     AgentToolActivity: {
+      reaction_target?: components["schemas"]["ReactionTargetV1"] | null;
       tool_call_id: components["schemas"]["ToolCallId"];
       snapshot_id: components["schemas"]["AgentObjectId"];
       turn_id: components["schemas"]["TurnId"] | null;
@@ -3975,16 +4051,6 @@ export interface components {
       | "gitlink"
       | "conflict_term"
       | "conflict_artifact";
-    TextSelectionV1: {
-      encoding: components["schemas"]["TextEncoding"];
-      start_byte: components["schemas"]["ByteOffset"];
-      end_byte: components["schemas"]["ByteOffset"];
-      selected_sha256: components["schemas"]["ReviewDigest"];
-    };
-    /** @enum {string} */
-    TextEncoding: "utf8";
-    ByteOffset: string;
-    ReviewDigest: string;
     DiffContextV1: {
       before_operation_id: components["schemas"]["OperationId"];
       before_commit_id: components["schemas"]["CommitId"];
@@ -4416,14 +4482,6 @@ export interface components {
           id: components["schemas"]["GitSha1Id"];
         };
     GitSha1Id: string;
-    ConversationSourceV1: {
-      target: components["schemas"]["ReactionTargetV1"];
-      /** @description JSON pointer to an exact string in captured JSON; None selects plain text. */
-      part: string | null;
-      selection: components["schemas"]["TextSelectionV1"] | null;
-      /** @description Retained display evidence, validated against the selected bytes. */
-      quote: string;
-    };
     ThreadDirectoryMetadata: {
       /** Format: uint32 */
       message_count: number;
@@ -4463,6 +4521,7 @@ export interface components {
           request_id: components["schemas"]["RequestId"];
           comments: components["schemas"]["ReactionTargetV1"][];
           message: components["schemas"]["CollabObjectRef"] | null;
+          reply_to?: components["schemas"]["CollabObjectRef"] | null;
           /** @constant */
           type: "comment_batch";
         }
@@ -4493,29 +4552,11 @@ export interface components {
           /** @constant */
           type: "review";
         };
-    CommentReplyLinkV1: {
-      /** @description Exact user message capture containing a successful context delivery. */
-      prompt: components["schemas"]["ReactionTargetV1"];
-      answer: components["schemas"]["ConversationSourceV1"];
-      comments: components["schemas"]["ReactionTargetV1"][];
-    };
     /** @description Capture adapters may bind explicitly. Absence is the supported unlinked state. */
     ThreadBindingV1: {
       thread_id: components["schemas"]["ThreadId"];
       observed_thread: components["schemas"]["CollabObjectRef"];
       observed_assignment: components["schemas"]["CollabObjectRef"] | null;
-    };
-    HumanMessageRevisionV1: {
-      /** Format: uint32 */
-      schema_version: number;
-      message_id: components["schemas"]["HumanMessageId"];
-      thread_id: components["schemas"]["ThreadId"];
-      actor: components["schemas"]["PrincipalId"];
-      /** Format: int64 */
-      accepted_at_millis: number;
-      previous: components["schemas"]["CollabObjectRef"] | null;
-      reply_to?: components["schemas"]["CollabObjectRef"] | null;
-      body: string | null;
     };
     ThreadEventV1: {
       /** Format: uint32 */
@@ -6795,6 +6836,9 @@ export interface components {
     };
     AgentCatalogKey: string;
     LocalBrowserAgentDetail: {
+      conversation_feedback?:
+        components["schemas"]["AgentExecutionFeedback"] | null;
+      conversation_unavailable?: string | null;
       /** Format: uint32 */
       version: number;
       snapshot: components["schemas"]["LocalAgentSnapshot"];
@@ -7833,38 +7877,6 @@ export interface components {
       /** @default null */
       comment_publication:
         components["schemas"]["AgentCommentPublication"] | null;
-    };
-    /** @description Repository-selected messages and ordinary discussion revisions, never journal authority. */
-    AgentExecutionFeedback: {
-      messages: components["schemas"]["AgentExecutionFeedbackMessage"][];
-      profile?: string | null;
-      /** @description Current browser feedback write capability; does not suppress readable history. */
-      write_unavailable?: string | null;
-    };
-    AgentExecutionFeedbackMessage: {
-      row_id: string;
-      target: components["schemas"]["ReactionTargetV1"];
-      threads: components["schemas"]["ThreadId"][];
-      replies: components["schemas"]["AgentExecutionFeedbackReply"][];
-      /** @default [] */
-      text_parts: components["schemas"]["AgentExecutionFeedbackTextPart"][];
-      /** @default [] */
-      answers: components["schemas"]["CommentReplyLinkV1"][];
-    };
-    AgentExecutionFeedbackReply: {
-      thread_id: components["schemas"]["ThreadId"];
-      revision: components["schemas"]["CollabObjectRef"];
-      message: components["schemas"]["HumanMessageRevisionV1"];
-      /** @default null */
-      thread_revision: components["schemas"]["CollabObjectRef"] | null;
-      /** @default null */
-      source: components["schemas"]["ConversationSourceV1"] | null;
-      /** @default [] */
-      answers: components["schemas"]["CommentReplyLinkV1"][];
-    };
-    AgentExecutionFeedbackTextPart: {
-      part: string | null;
-      text: string;
     };
     AgentExecutionEventPage: {
       /** Format: uint32 */
@@ -18257,6 +18269,21 @@ export interface operations {
                           }
                       )[];
                       message?: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "thread_version"
+                          | "thread_event"
+                          | "human_message_revision"
+                          | "thread_link"
+                          | "reaction"
+                          | "reaction_retraction"
+                          | "reaction_slot"
+                          | "custom_emoji_version"
+                          | "image_asset";
+                        id: string;
+                      } | null;
+                      reply_to?: {
                         /** @enum {string} */
                         kind:
                           | "index_page"
@@ -39635,6 +39662,21 @@ export interface operations {
                                 }
                             )[];
                             message?: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "thread_version"
+                                | "thread_event"
+                                | "human_message_revision"
+                                | "thread_link"
+                                | "reaction"
+                                | "reaction_retraction"
+                                | "reaction_slot"
+                                | "custom_emoji_version"
+                                | "image_asset";
+                              id: string;
+                            } | null;
+                            reply_to?: {
                               /** @enum {string} */
                               kind:
                                 | "index_page"
