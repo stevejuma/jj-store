@@ -112,6 +112,10 @@ carry the same authored text and sent-context envelope. Additional internal
 section revision metadata is additive; old snapshots remain readable and are
 never rewritten from current workspace state.
 
+Removing the reader section's surrounding focus outline leaves JST-API-001
+unchanged: it changes only local CSS, retaining selection, discussion and
+submission behavior without a request or persisted-format change.
+
 The standalone commentable chat-body catalog prototype leaves JST-API-001
 unchanged. Immutable fixture props and local discussion callbacks introduce no
 request, endpoint, schema, receipt, authorization or AgentStore mutation.

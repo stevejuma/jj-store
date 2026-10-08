@@ -71,8 +71,10 @@ read sidebar's header; both reference headers use the same shell height without
 additional vertical sidebar padding. Patches and command output remain in
 document flow. Multi-file captures give every file a separate disclosure with
 retained comments/drafts; the first file starts open. Tool rows align to the
-left and reserve clearance for keyboard/selected focus borders. Raw JSON uses a
-named icon button at the right of each tool header, revealed on hover or
+left with consistent spacing. Focused or selected text readers have no
+surrounding section outline; the caret and exact-range highlights indicate
+selection. Keyboard focus indicators remain on buttons and links. Raw JSON uses
+a named icon button at the right of each tool header, revealed on hover or
 keyboard focus and kept visible on touch devices. Read panels repeat the icon in
 their header for mobile access. The avatar is 24px with an 8px text gap and a
 shared first-line alignment. A compact right-edge rail represents conversation
@@ -127,15 +129,15 @@ discussion are revealed so comments stay reachable.
 
 Returned XML-like agent context uses the existing prompt-element renderer and
 whole-section comment anchors, rather than displaying its tags as prose.
-Adjacent rendered blocks reserve clearance for the reader's offset focus
-outline, including prose followed by a shaded code block. This spacing remains
-stable during focus changes and preserves the first block's avatar alignment.
-Thought, handoff and file titles share compact tool typography and transparent
-hover surfaces. The reference subtitle is omitted. Hover/focus actions have a
-subtle background, border and distinct Comment hover state; message actions
-reuse the shared reaction picker and bar. The caller owns reaction models and
-their toggle callback. Catalog reactions are memory-only and survive body
-remounts; this introduces no reaction publication or backend mutation.
+Adjacent rendered blocks retain their existing spacing, including prose followed
+by a shaded code block. This spacing remains stable during focus changes and
+preserves the first block's avatar alignment. Thought, handoff and file titles
+share compact tool typography and transparent hover surfaces. The reference
+subtitle is omitted. Hover/focus actions have a subtle background, border and
+distinct Comment hover state; message actions reuse the shared reaction picker
+and bar. The caller owns reaction models and their toggle callback. Catalog
+reactions are memory-only and survive body remounts; this introduces no reaction
+publication or backend mutation.
 
 ## Implementation approach
 

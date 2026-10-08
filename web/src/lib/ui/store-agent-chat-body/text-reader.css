@@ -196,11 +196,6 @@
 .chat-text-reader .cm-content:not([data-comment-editor] *):focus-visible {
   outline: none;
 }
-.chat-text-block:focus-within {
-  outline: 1px solid var(--ring);
-  outline-offset: 4px;
-  border-radius: var(--radius);
-}
 @media (hover: none) {
   .chat-text-actions {
     opacity: 1;

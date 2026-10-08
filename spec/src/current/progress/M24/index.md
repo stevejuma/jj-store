@@ -187,6 +187,11 @@ and harness avatars. Menu changes retain drafts; simulated replies preserve
 their send-time identity. This presentation review keeps M24 In progress and
 does not change live adapter, permissions, desktop, native IME or visual gates.
 
+E-CHAT-BODY-010 removes the surrounding focus outline from text sections while
+retaining carets, selection/comment highlights, control focus indicators and
+spacing. This styling review leaves M24 In progress and its independent gates
+unchanged.
+
 <!-- generated-navigation -->
 
 ## Pages
