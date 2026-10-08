@@ -27,12 +27,14 @@ impl Supervisor {
                     let diagnostic = format!("chat_{stage}_failed_no_prompt");
                     self.finish(request, "failed", Some(&diagnostic))?;
                     return Ok(dto::SendOutcome {
+                        comment_publication: self.comment_publication(command.request_id)?,
                         request_id: request,
                         conversation_id: command.conversation_id,
                         agents: command
                             .agent_ids
                             .iter()
                             .map(|id| Outcome {
+                                comment_publication: None,
                                 version: 1,
                                 request_id: RequestId::new(publication::identity(&format!(
                                     "chat-send/{request}/{id}"
@@ -60,7 +62,7 @@ impl Supervisor {
             || command.agent_ids.is_empty()
             || command.agent_ids.len() > 4
             || command.attachments.len() > 8
-            || command.text.trim().is_empty()
+            || (command.text.trim().is_empty() && command.comments.is_none())
             || command.text.len() > 256 * 1024
             || command.text.contains('\0')
             || !(1..=3600000).contains(&command.max_duration_ms)
@@ -68,6 +70,12 @@ impl Supervisor {
             || command.origin.context.len() > 32768
         {
             return Err(Error::Invalid);
+        }
+        if let Some(comments) = &command.comments {
+            comments.validate().map_err(|_| Error::Invalid)?;
+            if comments.text.is_some() || comments.message_id.is_some() {
+                return Err(Error::Invalid);
+            }
         }
         let ids = command
             .agent_ids
@@ -117,6 +125,13 @@ impl Supervisor {
         let digest = journal::digest(&command)?;
         let guard = self.0.mutation.lock().await;
         if let Some(parent) = self.duplicate(command.request_id, &digest)? {
+            if let Some(saved) =
+                self.read(|s| Ok(s.comment_submissions.get(&command.request_id).cloned()))?
+            {
+                // An explicit retry may recover publication receipts; it never
+                // dispatches already admitted participants a second time.
+                let _ = self.publish_chat_comments(&command, &saved.profile).await;
+            }
             let agents = command
                 .agent_ids
                 .iter()
@@ -130,6 +145,7 @@ impl Supervisor {
                             .get(&child)
                             .map(|i| i.outcome.clone())
                             .unwrap_or(Outcome {
+                                comment_publication: None,
                                 version: 1,
                                 request_id: child,
                                 session_id: None,
@@ -148,6 +164,7 @@ impl Supervisor {
                 })
                 .collect::<Result<Vec<_>>>()?;
             return Ok(dto::SendOutcome {
+                comment_publication: self.comment_publication(command.request_id)?,
                 request_id: command.request_id,
                 conversation_id: command.conversation_id,
                 agents,
@@ -339,11 +356,13 @@ impl Supervisor {
                     Some("chat_preparation_failed_no_prompt"),
                 )?;
                 return Ok(dto::SendOutcome {
+                    comment_publication: self.comment_publication(command.request_id)?,
                     request_id: command.request_id,
                     conversation_id: command.conversation_id,
                     agents: participants
                         .iter()
                         .map(|(setup, id)| Outcome {
+                            comment_publication: None,
                             version: 1,
                             request_id: RequestId::new(publication::identity(&format!(
                                 "chat-send/{}/{}",
@@ -361,6 +380,7 @@ impl Supervisor {
         self.publish().await?;
         self.prepare_origin_discussion(&command.conversation_id, &profile)
             .await?;
+        let comment_context = self.publish_chat_comments(&command, &profile).await?;
         for (_, id) in &participants {
             self.link_origin(id).await?;
         }
@@ -376,11 +396,15 @@ impl Supervisor {
                 request_id: child,
                 session_id: id.clone(),
                 action: Action::Prompt {
+                    comments: None,
                     text: command.text.clone(),
                     max_duration_ms: command.max_duration_ms,
                 },
             };
-            match self.prepare_chat_prompt(&action).await {
+            match self
+                .prepare_chat_prompt(&action, comment_context.as_ref())
+                .await
+            {
                 Ok(frame) => prepared.push((action, frame)),
                 Err(error) => {
                     for (action, _) in &prepared {
@@ -409,6 +433,7 @@ impl Supervisor {
         }
         self.finish(command.request_id, "accepted", None)?;
         Ok(dto::SendOutcome {
+            comment_publication: self.comment_publication(command.request_id)?,
             request_id: command.request_id,
             conversation_id: command.conversation_id,
             agents,

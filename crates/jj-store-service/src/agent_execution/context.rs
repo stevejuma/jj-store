@@ -20,6 +20,8 @@ pub struct ContextBatch {
     pub revisions: BTreeSet<ReplyRevision>,
     pub text: String,
     #[serde(default)]
+    pub comments: Vec<super::context_submission::FrozenComment>,
+    #[serde(default)]
     pub replies: Vec<ContextReply>,
 }
 
@@ -29,6 +31,8 @@ pub struct ContextReply {
     pub reply: ReplyRevision,
     pub actor: jj_store_model::PrincipalId,
     pub body: String,
+    #[serde(default)]
+    pub source: Option<ConversationSourceV1>,
     pub reply_to: Option<CollabObjectRef>,
     pub original_message: Option<ReactionTargetV1>,
     pub thread_revision: CollabObjectRef,
@@ -133,6 +137,7 @@ pub(crate) async fn collect(
             reply: identity,
             actor: message.actor,
             body: body.clone(),
+            source: thread.comment_source.clone(),
             reply_to: message.reply_to,
             original_message: original_message.clone(),
             thread_revision: *thread_revision,
@@ -150,4 +155,38 @@ pub(crate) async fn collect(
         }
     }
     Ok(batch)
+}
+
+impl ContextBatch {
+    pub fn include_submission(&mut self, submitted: &Self) {
+        self.revisions.extend(submitted.revisions.iter().cloned());
+        self.comments = submitted.comments.clone();
+        // The frozen submitted revision wins over its automatically collected
+        // copy. Other undelivered discussion context must remain in this prompt.
+        self.replies
+            .retain(|reply| !submitted.revisions.contains(&reply.reply));
+    }
+    pub fn protocol(&self) -> Result<CommentReplyProtocolV1> {
+        let mut references = BTreeMap::new();
+        for comment in &self.comments {
+            references.insert(comment.reference.comment.clone(), comment.reference.clone());
+        }
+        for reply in &self.replies {
+            let reference = CommentReplyReferenceV1::new(ReactionTargetV1::HumanMessage {
+                thread_id: reply.reply.thread,
+                message_id: reply.reply.message,
+                revision: reply.reply.revision,
+            })
+            .map_err(|_| Error::Invalid)?;
+            references
+                .entry(reference.comment.clone())
+                .or_insert(reference);
+        }
+        let protocol = CommentReplyProtocolV1 {
+            version: 1,
+            references: references.into_values().collect(),
+        };
+        protocol.validate().map_err(|_| Error::FeedbackLimit)?;
+        Ok(protocol)
+    }
 }

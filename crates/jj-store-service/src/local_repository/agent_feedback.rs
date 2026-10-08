@@ -72,3 +72,44 @@ impl LocalRepository {
         Ok(result)
     }
 }
+
+impl LocalRepository {
+    pub async fn conversation_submission_context(
+        &self,
+        thread: jj_collab::ThreadId,
+        batch: jj_collab::CollabObjectRef,
+    ) -> crate::agent_execution::Result<crate::agent_execution::context::ContextBatch> {
+        use crate::agent_execution::Error;
+        use jj_store_wal::publication::CollabTargetReaderV1;
+        let actor = self.ensure_actor().map_err(|_| Error::Denied)?;
+        let pin = self.metadata.read().map_err(|_| Error::Unavailable)?;
+        let repository = pin.as_ref().ok_or(Error::Unavailable)?.repository();
+        let threads = self
+            .thread_store_at(pin.as_ref())
+            .await
+            .map_err(|_| Error::Unavailable)?;
+        let agents = self
+            .agent_store_at(pin.as_ref(), repository)
+            .await
+            .map_err(|_| Error::Unavailable)?;
+        let reviews = self
+            .review_store_at(pin.as_ref(), repository)
+            .await
+            .map_err(|_| Error::Unavailable)?;
+        let reader = CollabTargetReaderV1::new(
+            repository,
+            Some((threads.state.root.clone(), &threads.graph)),
+            Some(&agents),
+            Some(&reviews),
+        )
+        .map_err(|_| Error::Unavailable)?;
+        let result = crate::agent_execution::context_submission::collect_submission(
+            &reader, repository, thread, batch,
+        )
+        .await?;
+        if self.ensure_actor().map_err(|_| Error::Denied)? != actor {
+            return Err(Error::Denied);
+        }
+        Ok(result)
+    }
+}

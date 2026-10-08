@@ -21,6 +21,7 @@ impl Supervisor {
         let sessions = self.read(|s| Ok(s.sessions.values().cloned().collect::<Vec<_>>()))?;
         for saved in sessions {
             if saved.view.published_sequence == saved.view.last_sequence {
+                self.publish_comment_answers_status(&saved.view.id).await?;
                 continue;
             }
             if self
@@ -35,6 +36,9 @@ impl Supervisor {
                 continue;
             }
             let result = self.publish_session(&saved).await;
+            if result.is_ok() {
+                self.publish_comment_answers_status(&saved.view.id).await?;
+            }
             if result.is_err() {
                 self.update(|s| {
                     let saved = s.sessions.get_mut(&saved.view.id).ok_or(Error::Invalid)?;
@@ -51,6 +55,20 @@ impl Supervisor {
             }
         }
         Ok(())
+    }
+    async fn publish_comment_answers_status(&self, id: &str) -> Result<()> {
+        let result = self.publish_comment_answers(id).await;
+        self.update(|s| {
+            let saved = s.sessions.get_mut(id).ok_or(Error::Invalid)?;
+            if result.is_err() && saved.view.last_error.is_none() {
+                saved.view.last_error = Some("comment_reply_publication_pending".into());
+            } else if result.is_ok()
+                && saved.view.last_error.as_deref() == Some("comment_reply_publication_pending")
+            {
+                saved.view.last_error = None;
+            }
+            Ok(())
+        })
     }
     async fn publish_session(&self, saved: &SavedSession) -> Result<()> {
         let root = self.0.resources.root.join("spools").join(&saved.view.id);

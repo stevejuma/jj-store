@@ -2,6 +2,8 @@
 mod avatar;
 mod catalog;
 mod commands;
+mod comment_answers;
+mod comment_submissions;
 mod compute;
 mod configuration;
 mod conversation_frames;
@@ -269,6 +271,7 @@ impl Supervisor {
                 return Err(Error::Limit);
             }
             let outcome = Outcome {
+                comment_publication: None,
                 version: 1,
                 request_id: request,
                 session_id: session,

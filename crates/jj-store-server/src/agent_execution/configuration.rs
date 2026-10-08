@@ -245,6 +245,7 @@ impl Supervisor {
                     digest,
                     prompt: None,
                     outcome: Outcome {
+                        comment_publication: None,
                         version: 1,
                         request_id: command.request_id,
                         session_id: None,

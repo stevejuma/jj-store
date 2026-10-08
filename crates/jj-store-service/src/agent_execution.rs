@@ -181,6 +181,8 @@ pub enum Action {
         preferences: Preferences,
     },
     Prompt {
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        comments: Option<Box<jj_collab::ConversationSubmissionV1>>,
         text: String,
         max_duration_ms: u64,
     },
@@ -209,6 +211,8 @@ pub struct Command {
 #[serde(deny_unknown_fields)]
 #[schemars(rename = "AgentExecutionOutcome")]
 pub struct Outcome {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub comment_publication: Option<conversations::CommentPublication>,
     pub version: u32,
     pub request_id: RequestId,
     pub session_id: Option<String>,
@@ -392,6 +396,10 @@ pub struct FeedbackMessage {
     pub target: jj_collab::ReactionTargetV1,
     pub threads: Vec<jj_collab::ThreadId>,
     pub replies: Vec<FeedbackReply>,
+    #[serde(default)]
+    pub text_parts: Vec<FeedbackTextPart>,
+    #[serde(default)]
+    pub answers: Vec<jj_collab::CommentReplyLinkV1>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[schemars(rename = "AgentExecutionFeedbackReply")]
@@ -399,6 +407,12 @@ pub struct FeedbackReply {
     pub thread_id: jj_collab::ThreadId,
     pub revision: jj_collab::CollabObjectRef,
     pub message: jj_collab::HumanMessageRevisionV1,
+    #[serde(default)]
+    pub thread_revision: Option<jj_collab::CollabObjectRef>,
+    #[serde(default)]
+    pub source: Option<jj_collab::ConversationSourceV1>,
+    #[serde(default)]
+    pub answers: Vec<jj_collab::CommentReplyLinkV1>,
 }
 
 pub mod fleet;
@@ -408,3 +422,12 @@ pub mod conversations;
 pub mod catalog;
 
 pub mod providers;
+
+pub mod context_submission;
+
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
+#[schemars(rename = "AgentExecutionFeedbackTextPart")]
+pub struct FeedbackTextPart {
+    pub part: Option<String>,
+    pub text: String,
+}

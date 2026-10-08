@@ -100,6 +100,7 @@ pub(super) fn prepare(
         Intent {
             digest,
             outcome: Outcome {
+                comment_publication: None,
                 version: 1,
                 request_id: request,
                 session_id: Some(id.into()),

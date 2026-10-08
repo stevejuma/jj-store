@@ -185,3 +185,16 @@ read Thread versions and CommentBatch link targets expose immutable source and
 submission identities. Old command variants and absent-field bytes remain
 readable. Submission bodies cap comment count at 128 and combined draft/comment
 quote bytes at 32 KiB, independently of the ordinary message limit.
+
+Managed conversation Send and standalone Prompt admit optional frozen comment
+submissions. Prompt text may be empty when a nonempty valid submission exists.
+Execution outcome reads expose optional comment publication state separately
+from dispatch state, including when prompt preparation failed before admission.
+The same authorization applies to receipt inspection. Omitted optional Prompt
+fields preserve earlier request digests. Ordinary Thread submissions retain an
+optional exact reply parent; agent prompts cannot duplicate ordinary text.
+
+Feedback exposes exact captured string parts, discussion revisions and selected
+CommentReply links. These are publication-selected facts, not browser-inferred
+answers. Failed or unknown answer publication remains visible as pending
+execution status and retries the original link request.

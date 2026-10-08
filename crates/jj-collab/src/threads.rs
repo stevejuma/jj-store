@@ -187,6 +187,9 @@ impl HumanMessageRevisionV1 {
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(tag = "type", rename_all = "snake_case", deny_unknown_fields)]
 pub enum ThreadLinkTargetV1 {
+    CommentReply {
+        reply: CommentReplyLinkV1,
+    },
     CommentBatch {
         request_id: jj_store_model::RequestId,
         comments: Vec<ReactionTargetV1>,
@@ -236,6 +239,7 @@ impl ThreadLinkV1 {
             return Err(Error::Invalid("new inactive Thread link"));
         }
         match &self.target {
+            ThreadLinkTargetV1::CommentReply { reply } => reply.validate()?,
             ThreadLinkTargetV1::CommentBatch {
                 comments, message, ..
             } => {

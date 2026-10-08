@@ -52,6 +52,7 @@ fn fixture() -> (ThreadStateV1, CollabGraphV1, ConversationSubmissionV1) {
         quote: "Hello".into(),
     };
     let submission = ConversationSubmissionV1 {
+        reply_to: None,
         thread_id: parent.thread_id,
         expected_thread: message.version,
         message_id: None,
@@ -186,4 +187,34 @@ fn edits_require_exact_revisions_and_original_author() {
             .submit_conversation(&edit, actor(), RequestId::new([5; 16]), 5, &mut graph)
             .is_err()
     );
+}
+
+#[test]
+fn ordinary_reply_batch_keeps_its_exact_parent_and_refuses_foreign_parents() {
+    let (state, mut graph, mut submission) = fixture();
+    let parent = state.messages[&HumanMessageId::new([1; 16])];
+    submission.text = Some("A reply with comments".into());
+    submission.message_id = Some(HumanMessageId::new([4; 16]));
+    submission.reply_to = Some(parent);
+    let (root, result) = state
+        .submit_conversation(&submission, actor(), RequestId::new([4; 16]), 4, &mut graph)
+        .unwrap();
+    let next = ThreadStateV1::read(root, &graph).unwrap();
+    let CollabObjectV1::HumanMessageRevision(message) = graph
+        .get(next.messages[&HumanMessageId::new([4; 16])])
+        .unwrap()
+    else {
+        panic!()
+    };
+    assert_eq!(message.reply_to, Some(parent));
+    submission.expected_thread = result.version;
+    submission.message_id = Some(HumanMessageId::new([5; 16]));
+    submission.reply_to = Some(next.messages[&HumanMessageId::new([2; 16])]);
+    submission.comments.clear();
+    let before = graph.objects.clone();
+    assert!(
+        next.submit_conversation(&submission, actor(), RequestId::new([5; 16]), 5, &mut graph)
+            .is_err()
+    );
+    assert_eq!(graph.objects, before);
 }

@@ -42,6 +42,8 @@ pub struct Send {
     pub agent_ids: Vec<String>,
     pub attachments: Vec<Attachment>,
     pub text: String,
+    #[serde(default)]
+    pub comments: Option<Box<jj_collab::ConversationSubmissionV1>>,
     pub max_duration_ms: u64,
 }
 #[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
@@ -51,6 +53,8 @@ pub struct SendOutcome {
     pub request_id: RequestId,
     pub conversation_id: String,
     pub agents: Vec<Outcome>,
+    #[serde(default)]
+    pub comment_publication: Option<CommentPublication>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
@@ -64,4 +68,13 @@ pub struct Binding {
     pub base_commit: String,
     pub operation: OperationId,
     pub commit: String,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+#[schemars(rename = "AgentCommentPublication")]
+pub struct CommentPublication {
+    pub request_id: RequestId,
+    pub state: String,
+    pub batch: Option<jj_collab::CollabObjectRef>,
 }

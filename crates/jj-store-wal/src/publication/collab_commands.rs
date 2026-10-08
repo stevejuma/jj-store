@@ -309,6 +309,13 @@ impl Coordinator {
             for source in command.conversation_sources() {
                 jj_collab::resolve_conversation_source(&reader, source).await?;
             }
+            if let ThreadCommandV1::Link {
+                target: ThreadLinkTargetV1::CommentReply { reply },
+                ..
+            } = command
+            {
+                jj_collab::resolve_comment_reply(&reader, reply).await?;
+            }
             for target in command.comment_references() {
                 resolve_reaction_target(&reader, target).await?;
             }
@@ -336,7 +343,7 @@ impl Coordinator {
             return Ok(());
         };
         match target {
-            ThreadLinkTargetV1::CommentBatch { .. } => {}
+            ThreadLinkTargetV1::CommentBatch { .. } | ThreadLinkTargetV1::CommentReply { .. } => {}
             ThreadLinkTargetV1::CaptureGap {
                 source_state,
                 event_batch,

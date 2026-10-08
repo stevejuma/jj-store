@@ -79,3 +79,22 @@ source/discussion/message preconditions. Providers resolve every external source
 and existing reference against their one captured native/local selection. JSON
 captured text requires an explicit string pointer; plain content uses no
 pointer. Parent batch records retain exact submitted comment revisions.
+
+CommentReply links retain the exact delivered user capture, the completed
+assistant capture and selected answer bytes, and the immutable comment
+references. Both publication providers validate membership, user/assistant
+roles, matching participation/turn, owned-controller delivery evidence and the
+parsed answer range. The same validation applies to raw Link commands. Version-1
+protocol tokens derive from typed discussion IDs and exact comment-revision
+keys; captured content cannot supply its own trusted token mapping. Literal
+Markdown code and incomplete or malformed blocks stay ordinary content.
+Conversion refuses answer-link rewriting until its captured-context identity
+mapping is qualified; no token or immutable prompt body is silently rewritten.
+
+Captured/authored strings are sanitized independently from trusted protocol
+references. The frozen context includes the exact quote and up to 512 UTF-8
+bytes on either side, adjusted to character boundaries, within its aggregate 32
+KiB budget. Explicit submitted comments merge with other eligible undelivered
+discussion revisions; they do not replace that context. The parser accepts at
+most 4 MiB, 256 candidates and 128 complete reply blocks, parsing literal-code
+ranges once. These limits refuse or bound work without modifying captures.

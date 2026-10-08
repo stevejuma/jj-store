@@ -4,6 +4,7 @@ use crate::agent_execution::{Error, Feedback, FeedbackMessage, FeedbackReply, Re
 use jj_collab::*;
 use jj_store_wal::publication::*;
 use jj_store_wal::publication::{AgentSnapshotRead, CollabTargetReaderV1};
+mod source_parts;
 #[cfg(test)]
 mod tests;
 
@@ -121,6 +122,18 @@ pub(crate) async fn project(
             }
         }
     }
+    let mut answer_links = Vec::new();
+    for reference in state.links.values() {
+        let CollabObjectV1::ThreadLink(link) = graph.get(*reference).map_err(|_| Error::Invalid)?
+        else {
+            return Err(Error::Invalid);
+        };
+        if link.active {
+            if let ThreadLinkTargetV1::CommentReply { reply } = &link.target {
+                answer_links.push(reply.clone());
+            }
+        }
+    }
     let mut messages = Vec::new();
     for (row_id, session_id, subject) in rows {
         let target = targets.get(&(*session_id, *subject)).cloned();
@@ -159,12 +172,21 @@ pub(crate) async fn project(
                     thread_id: message.thread_id,
                     revision: *reference,
                     message: message.clone(),
+                    thread_revision: state.threads.get(&message.thread_id).copied(),
+                    source: state.threads.get(&message.thread_id).and_then(|r|graph.get(*r).ok()).and_then(|o| if let CollabObjectV1::ThreadVersion(thread)=o {thread.comment_source.clone()} else {None}),
+                    answers: answer_links.iter().filter(|reply| reply.comments.iter().any(|target| matches!(target, ReactionTargetV1::HumanMessage { revision, .. } if revision == reference))).cloned().collect(),
                 });
             }
         }
         replies.sort_by_key(|r| (r.message.accepted_at_millis, r.message.message_id));
         messages.push(FeedbackMessage {
             row_id: row_id.clone(),
+            text_parts: source_parts::parts(agents, &target).await?,
+            answers: answer_links
+                .iter()
+                .filter(|reply| reply.answer.target.exact_key().ok() == Some(exact))
+                .cloned()
+                .collect(),
             target,
             threads,
             replies,

@@ -66,10 +66,35 @@ pub(super) fn readable(value: &Value, depth: usize) -> String {
 }
 
 pub(super) fn discussion(batch: &context::ContextBatch) -> String {
-    if batch.replies.is_empty() {
-        return batch.text.clone();
+    let mut sections = Vec::new();
+    if !batch.comments.is_empty() {
+        sections.push(batch
+            .comments
+            .iter()
+            .map(|comment| {
+                format!(
+                    "## Discussion {}\n\nComment: {}\n\n{}\n\nSource: {}\n\nSurrounding captured context:\n\n{}",
+                    comment.reference.discussion,
+                    comment.reference.comment,
+                    comment.body,
+                    comment
+                        .source
+                        .as_ref()
+                        .map(|s| s.quote.as_str())
+                        .unwrap_or("Whole section"),
+                    comment.surrounding
+                )
+            })
+            .collect::<Vec<_>>()
+            .join("\n\n"));
     }
-    batch.replies.iter().map(|reply| {
+    if batch.replies.is_empty() {
+        if sections.is_empty() {
+            return batch.text.clone();
+        }
+        return sections.join("\n\n");
+    }
+    sections.push(batch.replies.iter().map(|reply| {
         let mut text = format!("## {}\n\nRepository: {}\n\nThread: {}\n\nMessage: {}\n\nRevision: {}\n\nActor: {}\n\nThread revision: {}",
             reply.thread_title, reply.reply.repository, reply.reply.thread, reply.reply.message,
             reply.reply.revision.id, reply.actor, reply.thread_revision.id);
@@ -77,7 +102,11 @@ pub(super) fn discussion(batch: &context::ContextBatch) -> String {
         if let Some(target) = &reply.original_message {
             text.push_str(&format!("\n\n### Original target\n\n{}", readable(&serde_json::to_value(target).unwrap_or_default(), 4)));
         }
+        if let Some(source) = &reply.source {
+            text.push_str(&format!("\n\n### Exact source\n\n{}\n\n{}", serde_json::to_string(source).unwrap_or_default(), source.quote));
+        }
         text.push_str(&format!("\n\n### Reply\n\n{}", reply.body));
         text
-    }).collect::<Vec<_>>().join("\n\n")
+    }).collect::<Vec<_>>().join("\n\n"));
+    sections.join("\n\n")
 }

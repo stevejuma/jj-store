@@ -9,6 +9,18 @@ impl Supervisor {
         if conversation.discussion_thread.is_some() {
             return Ok(());
         }
+        if let Some(thread) = conversation.origin.thread {
+            self.home_thread_revision(conversation.home, profile, thread)
+                .await?;
+            self.update(|s| {
+                s.conversations
+                    .get_mut(id)
+                    .ok_or(Error::Stale)?
+                    .discussion_thread = Some(thread);
+                Ok(())
+            })?;
+            return Ok(());
+        }
         let thread = publication::identity(&format!("conversation-thread/{id}"));
         let request = Request {
             version: 1,

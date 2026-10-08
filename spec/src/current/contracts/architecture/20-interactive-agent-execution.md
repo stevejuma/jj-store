@@ -34,9 +34,17 @@ M24 adds
 under JST-COLLAB-034 through JST-COLLAB-036. Existing M23 qualification remains
 unchanged.
 
-The server owns Markdown context assembly and its bounded parser dependency. One
-sanitized document supplies ACP wire context and the retained UI inspector;
-service reply selection remains independent of presentation and controller
-runtimes. Coordination checkouts are separate from code attachments and code
-change summaries. The ACP protocol and storage/model/WAL boundaries are
-unchanged.
+The server owns Markdown context assembly. The shared collaboration model owns
+the bounded Markdown-aware answer protocol parser so native and local
+publication perform the same validation. One sanitized document supplies ACP
+wire context and the retained UI inspector; service reply selection remains
+independent of presentation and controller runtimes. Coordination checkouts are
+separate from code attachments and code change summaries. The ACP protocol and
+storage/model/WAL boundaries are unchanged.
+
+Frozen comment publication precedes prompt preparation and dispatch. The
+supervisor journals publication requests, selected batches and pending exact
+answer links. Only a definitive stale refusal followed by a NotKnown receipt
+read permits a new answer-link attempt with an updated thread precondition; the
+logical link and answer range stay unchanged. Unknown outcomes never change the
+request. This journal does not replace native or companion authority.

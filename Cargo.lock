@@ -3880,6 +3880,7 @@ dependencies = [
  "jj-review",
  "jj-store-model",
  "jj-work",
+ "pulldown-cmark",
  "schemars",
  "serde",
  "serde_json",

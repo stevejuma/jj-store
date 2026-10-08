@@ -43,6 +43,7 @@ async fn repository_free_chat_reuses_isolated_bindings_and_never_replays_after_r
             .unwrap();
     }
     let send = chat::Send {
+        comments: None,
         version: 1,
         request_id: RequestId::new([140; 16]),
         conversation_id: "a1".repeat(16),

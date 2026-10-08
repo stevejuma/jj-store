@@ -108,7 +108,7 @@ async fn installed_codex_and_cursor_edit_isolated_workspaces_and_publish_history
         })
         .await;
         let request = RequestId::new([4; 16]);
-        supervisor.command(actor,Command {version:1,request_id:request,session_id:id.clone(),action:Action::Prompt {text:"Create the file agent-acceptance.txt in this workspace with exactly the text ACP integration accepted followed by a newline. Use your file editing tool. Do not change any other file and do not commit. Reply briefly when complete.".into(),max_duration_ms:180000}}).await.unwrap();
+        supervisor.command(actor,Command {version:1,request_id:request,session_id:id.clone(),action:Action::Prompt {comments:None,text:"Create the file agent-acceptance.txt in this workspace with exactly the text ACP integration accepted followed by a newline. Use your file editing tool. Do not change any other file and do not commit. Reply briefly when complete.".into(),max_duration_ms:180000}}).await.unwrap();
         let mut after = 0;
         let mut permission_count = 0;
         let mut decision_count = 0;
@@ -220,6 +220,7 @@ async fn installed_fleet_warms_general_chat_then_reuses_an_attached_workspace() 
     .await;
     assert!(warm.sessions.is_empty());
     let mut send = chat::Send {
+        comments: None,
         version: 1,
         request_id: RequestId::new([173; 16]),
         conversation_id: "ac".repeat(16),

@@ -87,6 +87,11 @@ fn translate(
                 remap(p)?
             }
             match &mut v.target {
+                ThreadLinkTargetV1::CommentReply { .. } => {
+                    return Err(
+                        "Conversation answer links require qualified conversion evidence".into(),
+                    );
+                }
                 ThreadLinkTargetV1::CommentBatch {
                     comments, message, ..
                 } => {

@@ -140,6 +140,9 @@ impl CollabObjectV1 {
                     dependencies.extend(message);
                     dependencies.extend(comments.iter().flat_map(|c| c.collab_dependencies()));
                 }
+                if let ThreadLinkTargetV1::CommentReply { reply } = &v.target {
+                    dependencies.extend(reply.targets().flat_map(|t| t.collab_dependencies()));
+                }
                 dependencies.into_iter().collect()
             }
             Self::Reaction(v) => v
@@ -193,6 +196,10 @@ impl CollabObjectV1 {
                     ..
                 } => BTreeSet::from([*source_state, *event_batch]),
                 ThreadLinkTargetV1::Session { snapshot, .. } => BTreeSet::from([*snapshot]),
+                ThreadLinkTargetV1::CommentReply { reply } => reply
+                    .targets()
+                    .flat_map(|t| t.agent_dependencies())
+                    .collect(),
                 ThreadLinkTargetV1::Code { evidence, .. } => evidence.iter().copied().collect(),
                 _ => BTreeSet::new(),
             },
@@ -211,6 +218,10 @@ impl CollabObjectV1 {
                 .unwrap_or_default(),
             Self::ThreadLink(v) => match &v.target {
                 ThreadLinkTargetV1::Review { snapshot, .. } => BTreeSet::from([*snapshot]),
+                ThreadLinkTargetV1::CommentReply { reply } => reply
+                    .targets()
+                    .flat_map(|t| t.review_dependencies())
+                    .collect(),
                 ThreadLinkTargetV1::CommentBatch { comments, .. } => comments
                     .iter()
                     .flat_map(|c| c.review_dependencies())

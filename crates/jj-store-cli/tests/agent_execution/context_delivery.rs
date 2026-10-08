@@ -107,6 +107,7 @@ async fn markdown_deltas_and_bound_task_cli_survive_loaded_and_fresh_sessions() 
             .unwrap();
     }
     let mut command = chat::Send {
+        comments: None,
         version: 1,
         request_id: RequestId::new([153; 16]),
         conversation_id: "c1".repeat(16),

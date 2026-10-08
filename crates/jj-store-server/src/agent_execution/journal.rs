@@ -83,6 +83,10 @@ pub(super) struct State {
         BTreeMap<String, jj_store_service::agent_execution::conversations::Conversation>,
     #[serde(default)]
     pub personal_home: Option<super::conversation_home::Home>,
+    #[serde(default)]
+    pub comment_submissions: BTreeMap<RequestId, super::comment_submissions::SavedSubmission>,
+    #[serde(default)]
+    pub answer_links: BTreeMap<String, super::comment_answers::SavedAnswerLink>,
 }
 pub(super) fn read(root: &Path) -> Result<State> {
     let path = root.join("state.json");
@@ -104,7 +108,10 @@ pub(super) fn read(root: &Path) -> Result<State> {
         return Err(Error::Limit);
     }
     let mut state: State = serde_json::from_slice(&bytes).map_err(|_| Error::Unavailable)?;
-    if state.runtime_installs.len() > 128 {
+    if state.runtime_installs.len() > 128
+        || state.comment_submissions.len() > 4096
+        || state.answer_links.len() > 4096
+    {
         return Err(Error::Limit);
     }
     if let Some(selected) = &state.runtime_selection

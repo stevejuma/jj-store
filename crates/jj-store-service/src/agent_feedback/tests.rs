@@ -38,10 +38,15 @@ fn prompt_feedback_is_exact_bounded_and_omits_tombstones() {
             row_id: "prompt/assistant".into(),
             target: target.clone(),
             threads: vec![thread_id],
+            text_parts: vec![],
+            answers: vec![],
             replies: vec![FeedbackReply {
                 thread_id,
                 revision,
                 message,
+                thread_revision: None,
+                source: None,
+                answers: vec![],
             }],
         }],
     };

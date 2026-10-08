@@ -24,6 +24,8 @@ pub struct ConversationSubmissionV1 {
     /// Ordinary thread messages only; agent prompt text remains in AgentStore.
     pub message_id: Option<HumanMessageId>,
     pub text: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub reply_to: Option<CollabObjectRef>,
     pub comments: Vec<ConversationCommentDraftV1>,
     pub references: Vec<ReactionTargetV1>,
 }
@@ -39,6 +41,12 @@ impl ConversationSubmissionV1 {
             || (self.text.is_none() && self.comments.is_empty() && self.references.is_empty())
         {
             return Err(Error::Invalid("conversation submission"));
+        }
+        if let Some(reply) = self.reply_to {
+            expect(reply, CollabObjectKind::HumanMessageRevision)?;
+            if self.text.is_none() {
+                return Err(Error::Invalid("reply without message"));
+            }
         }
         let mut ids = BTreeSet::new();
         let mut observations = BTreeMap::new();
@@ -131,7 +139,11 @@ impl ThreadStateV1 {
                 let CollabObjectV1::ThreadVersion(thread) = graph.get(reference)? else {
                     return Err(Error::Invalid("discussion kind"));
                 };
-                if thread.comment_source.as_ref() != Some(&c.source) {
+                let legacy_whole = thread.comment_source.is_none()
+                    && c.source.selection.is_none()
+                    && c.source.part.is_none()
+                    && thread.agent_message.as_ref() == Some(&c.source.target);
+                if thread.comment_source.as_ref() != Some(&c.source) && !legacy_whole {
                     return Err(Error::Invalid("discussion source changed"));
                 }
             }
@@ -201,7 +213,7 @@ impl ThreadStateV1 {
                         expected_thread,
                         message_id,
                         expected_revision: None,
-                        reply_to: None,
+                        reply_to: submission.reply_to,
                         body: Some(text.clone()),
                     },
                     &mut staged,
@@ -246,6 +258,10 @@ impl ThreadCommandV1 {
                 target: ThreadLinkTargetV1::CommentBatch { comments, .. },
                 ..
             } => comments.iter().collect(),
+            Self::Link {
+                target: ThreadLinkTargetV1::CommentReply { reply },
+                ..
+            } => reply.comments.iter().collect(),
             _ => vec![],
         }
     }

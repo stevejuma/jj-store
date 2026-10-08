@@ -1,7 +1,11 @@
 //! Reserve every exact context batch before dispatching any participant prompt.
 use super::*;
 impl Supervisor {
-    pub(super) async fn prepare_chat_prompt(&self, command: &Command) -> Result<Value> {
+    pub(super) async fn prepare_chat_prompt(
+        &self,
+        command: &Command,
+        submitted: Option<&context::ContextBatch>,
+    ) -> Result<Value> {
         let _guard = self.0.mutation.lock().await;
         let id = &command.session_id;
         let saved = self.saved(id)?;
@@ -24,6 +28,9 @@ impl Supervisor {
                 Error::Denied => Error::Denied,
                 _ => Error::FeedbackUnavailable,
             })?;
+        if let Some(submitted) = submitted {
+            batch.include_submission(submitted);
+        }
         if first {
             batch
                 .revisions

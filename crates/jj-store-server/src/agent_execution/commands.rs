@@ -250,6 +250,7 @@ impl Manager for Supervisor {
                     digest,
                     prompt: None,
                     outcome: Outcome {
+                        comment_publication: None,
                         version: 1,
                         request_id: command.request_id,
                         session_id: None,
@@ -294,8 +295,9 @@ impl Manager for Supervisor {
             Action::Prompt {
                 text,
                 max_duration_ms,
+                comments,
             } => {
-                if text.trim().is_empty()
+                if (text.trim().is_empty() && comments.is_none())
                     || text.len() > 256 * 1024
                     || text.contains('\0')
                     || !(1..=3600000).contains(max_duration_ms)
@@ -313,6 +315,17 @@ impl Manager for Supervisor {
                             Error::Denied => Error::Denied,
                             _ => Error::FeedbackUnavailable,
                         })?;
+                if let Some(submission) = comments {
+                    let submitted = self
+                        .publish_prompt_comments(
+                            command.request_id,
+                            saved.view.repository,
+                            &saved.profile,
+                            submission,
+                        )
+                        .await?;
+                    feedback.include_submission(&submitted);
+                }
                 if first {
                     feedback
                         .revisions
@@ -537,13 +550,14 @@ impl Manager for Supervisor {
     }
     async fn outcome(&self, actor: PrincipalId, request: RequestId) -> Result<Outcome> {
         self.actor(actor)?;
-        let outcome = self.read(|s| {
+        let mut outcome = self.read(|s| {
             s.intents
                 .get(&request)
                 .map(|i| i.outcome.clone())
                 .map_or_else(
                     || {
                         Ok(Outcome {
+                            comment_publication: None,
                             version: 1,
                             request_id: request,
                             session_id: None,
@@ -559,6 +573,11 @@ impl Manager for Supervisor {
         {
             self.authorized(saved.view.repository, &saved.profile, false)
                 .await?;
+        }
+        if let Some(submission) = self.read(|s| Ok(s.comment_submissions.get(&request).cloned()))? {
+            self.authorized(submission.repository, &submission.profile, false)
+                .await?;
+            outcome.comment_publication = self.comment_publication(request)?;
         }
         Ok(outcome)
     }

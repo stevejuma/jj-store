@@ -225,6 +225,14 @@ E-CHAT-LIVE-002 qualifies exact conversation source selectors and atomic
 comment-batch publication through focused native/local receipt and restart
 tests. Managed dispatch, validated answer publication and renderer parity remain
 open; M24 stays In progress and visual baselines remain unapproved.
+
+E-CHAT-LIVE-003 records frozen submission dispatch and durable answer-link
+publication. Focused managed and standalone controlled-harness tests cover
+comments-only sends, shared and separate answers in one turn, duplicates and
+restart links. Native/local batch regressions, protocol and context tests retain
+their exact scope; this is not real-provider or cold-browser qualification.
+Renderer parity, independent delivery recovery and full native/local browser
+acceptance remain open. M24 stays In progress; visual baselines are unapproved.
 <!-- generated-navigation -->
 ## Pages
 

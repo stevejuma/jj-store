@@ -77,6 +77,15 @@ pub async fn resolve_conversation_source(
     if source.selection.is_none() {
         return Ok(());
     }
+    let text = conversation_source_text(reader, source).await?;
+    source.validate_text(&text)
+}
+
+/// Exact immutable text, reused for bounded prompt context after source validation.
+pub async fn conversation_source_text(
+    reader: &dyn ReactionTargetRead,
+    source: &ConversationSourceV1,
+) -> Result<String> {
     let text = match &source.target {
         ReactionTargetV1::HumanMessage { revision, .. } => {
             if source.part.is_some() {
@@ -149,7 +158,7 @@ pub async fn resolve_conversation_source(
         }
         _ => return Err(Error::Invalid("conversation text target")),
     };
-    source.validate_text(&text)
+    Ok(text)
 }
 
 pub fn captured_text(payload: &SanitizedPayloadV1, part: Option<&str>) -> Result<String> {

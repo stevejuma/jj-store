@@ -931,3 +931,153 @@ fn conversation_captured_json_requires_an_explicit_string_part() {
         assert!(captured_text(&payload, part).is_err());
     }
 }
+
+#[tokio::test]
+async fn comment_answers_require_delivered_revision_and_exact_controller_capture() {
+    fn capture(reader: &mut Reader, value: serde_json::Value, sequence: u64) -> ReactionTargetV1 {
+        let evidence = a::SanitizedObservationBatchV1 {
+            schema_version: 1,
+            batch_id: a::CaptureBatchId::new([sequence as u8; 16]),
+            integration: a::IntegrationId::OwnedController,
+            source_instance_id: a::SourceInstanceId::new([91; 16]),
+            sanitizer_version: "fixture-v1".into(),
+            representation: a::SanitizedRepresentation::SanitizedNative,
+            observations: vec![a::SanitizedObservationV1 {
+                observation_id: a::ObservationId::new([sequence as u8; 16]),
+                source_sequence: sequence,
+                occurred_at_millis: Some(1),
+                source_kind: a::SourceKind::Controller,
+                source_trust: a::SourceTrust::AuthenticatedController,
+                payload: a::SanitizedPayloadV1::new(
+                    a::SanitizedMediaType::Json,
+                    &serde_json::to_vec(&value).unwrap(),
+                )
+                .unwrap(),
+            }],
+        };
+        let normalized =
+            a::normalize_batch(&a::NormalizerProfileV1::acp_controller_v2(), &evidence).unwrap();
+        let message = normalized
+            .records
+            .into_iter()
+            .find_map(|r| {
+                if let a::NormalizedActivityRecordV1::Message(m) = r {
+                    Some(m)
+                } else {
+                    None
+                }
+            })
+            .unwrap();
+        let evidence = reader.agent(a::AgentObjectV1::ObservationBatch(evidence));
+        let content = reader.agent(a::AgentObjectV1::Content(a::AgentContentV1 {
+            schema_version: 1,
+            payload: message.content,
+        }));
+        let event_id = a::AgentEventId::new([sequence as u8; 16]);
+        let batch = reader.agent(a::AgentObjectV1::EventBatch(a::AgentEventBatchV1 {
+            schema_version: 1,
+            normalizer_version: "fixture-v1".into(),
+            evidence,
+            events: vec![a::AgentEventV1::MessageCompleted {
+                event_id,
+                session_id: message.session_id,
+                turn_id: message.turn_id,
+                message_id: message.message_id,
+                role: message.role,
+                content,
+            }],
+        }));
+        let mut batches = reader
+            .sessions
+            .get(&message.session_id)
+            .and_then(|r| reader.agents.get(r))
+            .and_then(|o| {
+                if let a::AgentObjectV1::SessionSnapshot(s) = o {
+                    Some(s.event_batches.clone())
+                } else {
+                    None
+                }
+            })
+            .unwrap_or_default();
+        batches.push(batch);
+        let selected = reader.agent(a::AgentObjectV1::SessionSnapshot(
+            a::AgentSessionSnapshotV1 {
+                schema_version: 1,
+                session_id: message.session_id,
+                integration: a::IntegrationId::OwnedController,
+                state: a::SessionState::Ended,
+                parent_session_id: None,
+                evidence: vec![],
+                event_batches: batches,
+                transcripts: vec![],
+                tools: BTreeMap::new(),
+                coverage: coverage(),
+            },
+        ));
+        reader.sessions.insert(message.session_id, selected);
+        ReactionTargetV1::AgentMessage {
+            session_id: message.session_id,
+            message_id: message.message_id,
+            event_id,
+            batch,
+            content,
+        }
+    }
+    let mut reader = Reader::default();
+    reader.thread(ThreadStatusV1::Active);
+    let revision = reader.message(None, Some("Please explain 🦀"));
+    reader.messages.insert((tid(), mid()), revision);
+    let reference = CommentReplyReferenceV1::new(ReactionTargetV1::HumanMessage {
+        thread_id: tid(),
+        message_id: mid(),
+        revision,
+    })
+    .unwrap();
+    let protocol = CommentReplyProtocolV1 {
+        version: 1,
+        references: vec![reference.clone()],
+    };
+    let prompt_value = serde_json::json!({"type":"context_delivery","controllerSessionId":"agent","requestId":"r","text":"","userText":"","sentContext":{"version":1,"delivery":"sent","commentReplyProtocol":protocol}});
+    let prompt = capture(&mut reader, prompt_value.clone(), 1);
+    let text = format!(
+        "Before\n<comment-reply discussion=\"{}\" comments=\"{}\">\nAnswer 🦀\n</comment-reply>\nAfter",
+        reference.discussion, reference.comment
+    );
+    let answer = capture(
+        &mut reader,
+        serde_json::json!({"type":"record","controllerSessionId":"agent","requestId":"r","assistantText":text}),
+        2,
+    );
+    let parsed = parse_comment_replies(&text).remove(0);
+    let link = parsed.link(prompt, answer, &protocol, &text).unwrap();
+    resolve_comment_reply(&reader, &link).await.unwrap();
+    let changed = reader.message(Some(revision), Some("Edited question"));
+    reader.messages.insert((tid(), mid()), changed);
+    // Earlier revisions remain linked to their own answers after an edit.
+    resolve_comment_reply(&reader, &link).await.unwrap();
+    let mut foreign = link.clone();
+    foreign.comments[0] = ReactionTargetV1::HumanMessage {
+        thread_id: tid(),
+        message_id: mid(),
+        revision: changed,
+    };
+    assert!(resolve_comment_reply(&reader, &foreign).await.is_err());
+    let mut undelivered = prompt_value;
+    undelivered["sentContext"]["delivery"] = serde_json::json!("prepared");
+    let mut wrong = link.clone();
+    wrong.prompt = capture(&mut reader, undelivered, 3);
+    assert!(resolve_comment_reply(&reader, &wrong).await.is_err());
+    wrong = link.clone();
+    wrong.answer.target = capture(
+        &mut reader,
+        serde_json::json!({"type":"record","controllerSessionId":"agent","requestId":"different-turn","assistantText":text}),
+        4,
+    );
+    assert!(resolve_comment_reply(&reader, &wrong).await.is_err());
+    wrong = link.clone();
+    let selection = wrong.answer.selection.as_mut().unwrap();
+    selection.start_byte = r::ByteOffset::new(selection.start_byte.get() + 1);
+    wrong.answer.quote.remove(0);
+    selection.selected_sha256 = r::ReviewDigest::sha256(wrong.answer.quote.as_bytes());
+    assert!(resolve_comment_reply(&reader, &wrong).await.is_err());
+}

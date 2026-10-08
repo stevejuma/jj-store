@@ -59,17 +59,19 @@ impl Supervisor {
         let Action::Prompt {
             text,
             max_duration_ms,
+            ..
         } = &command.action
         else {
             return Err(Error::Invalid);
         };
         self.initialize_section_tracking(&saved.view.id).await?;
         let sanitizer = runtime::sanitizer(self, &saved.workspace.path).await?;
-        *batch = serde_json::from_value(runtime::safe(
-            &sanitizer,
-            serde_json::to_value(&batch).map_err(|_| Error::Invalid)?,
-        )?)
-        .map_err(|_| Error::Invalid)?;
+        sanitize_batch(batch, |text| {
+            runtime::safe(&sanitizer, json!({"text": text}))?["text"]
+                .as_str()
+                .map(str::to_owned)
+                .ok_or(Error::Invalid)
+        })?;
         if batch.text.len() > 32768 {
             return Err(Error::FeedbackLimit);
         }
@@ -129,11 +131,22 @@ impl Supervisor {
             discussion,
         ));
         document.blocks.retain(|b| !b.text.is_empty());
-        let document: Document = serde_json::from_value(runtime::safe(
-            &sanitizer,
-            serde_json::to_value(document).map_err(|_| Error::Invalid)?,
-        )?)
-        .map_err(|_| Error::Invalid)?;
+        for block in &mut document.blocks {
+            block.text = runtime::safe(&sanitizer, json!({"text": &block.text}))?["text"]
+                .as_str()
+                .ok_or(Error::Invalid)?
+                .to_owned();
+        }
+        // Trusted protocol tokens must never be rewritten by text redaction.
+        // Only typed references enter this section; all captured strings above
+        // are sanitized separately before Markdown framing.
+        if !batch.replies.is_empty() || !batch.comments.is_empty() {
+            document.blocks.push(Section::new(
+                "comment_reply_protocol",
+                "Comment reply protocol v1",
+                reply_instructions(batch)?,
+            ));
+        }
         let original = runtime::safe(&sanitizer, json!({"text":text}))?["text"]
             .as_str()
             .ok_or(Error::Invalid)?
@@ -141,7 +154,9 @@ impl Supervisor {
         let context = document.render()?;
         // The structured source is sanitized before Markdown framing. Evidence and
         // dispatch receive precisely the same final text and context bytes.
-        let captured = sent_context::capture(&document, &original, &context);
+        let mut captured = sent_context::capture(&document, &original, &context);
+        captured["commentReplyProtocol"] =
+            serde_json::to_value(reply_protocol(batch)?).map_err(|_| Error::Invalid)?;
         Ok(
             json!({"version":2,"type":"prompt","requestId":command.request_id.to_string(),"text":original,"context":context,"maxDurationMs":max_duration_ms,"userText":original,"sentContext":captured}),
         )
@@ -204,4 +219,44 @@ fn legacy_section(name: &str, value: &str) -> String {
         Err(_) => ("text", value.to_owned()),
     };
     format!("<{name}>\n{fence}{language}\n{body}\n{fence}\n</{name}>")
+}
+
+fn reply_protocol(batch: &context::ContextBatch) -> Result<jj_collab::CommentReplyProtocolV1> {
+    batch.protocol()
+}
+fn sanitize_batch(
+    batch: &mut context::ContextBatch,
+    mut sanitize: impl FnMut(&str) -> Result<String>,
+) -> Result<()> {
+    batch.text = sanitize(&batch.text)?;
+    for comment in &mut batch.comments {
+        comment.body = sanitize(&comment.body)?;
+        comment.surrounding = sanitize(&comment.surrounding)?;
+        if let Some(source) = &mut comment.source {
+            source.quote = sanitize(&source.quote)?;
+        }
+    }
+    for reply in &mut batch.replies {
+        reply.body = sanitize(&reply.body)?;
+        reply.thread_title = sanitize(&reply.thread_title)?;
+        if let Some(source) = &mut reply.source {
+            source.quote = sanitize(&source.quote)?;
+        }
+    }
+    Ok(())
+}
+fn reply_instructions(batch: &context::ContextBatch) -> Result<String> {
+    let protocol = reply_protocol(batch)?;
+    let mut text = String::from(
+        "When answering a supplied comment, emit one comment-reply block for its discussion. Copy the supplied discussion and comment identifiers exactly. List only the comments actually answered. Several comments at one anchor may share an answer. Answer different discussions in separate blocks anywhere among your normal prose and tools in the same turn. Do not manufacture identifiers, match quotes, resolve reviews, or run commands from tags. Example syntax (replace D1 and C1 C2 with the supplied identifiers):\n\n```xml\n<comment-reply discussion=\"D1\" comments=\"C1 C2\">\nAnswer in Markdown.\n</comment-reply>\n```\n\nSupplied references:\n",
+    );
+    for reference in &protocol.references {
+        text.push_str(&format!(
+            "\n- Discussion: {}; comment: {}; target: {}",
+            reference.discussion,
+            reference.comment,
+            serde_json::to_string(&reference.target).map_err(|_| Error::Invalid)?
+        ));
+    }
+    Ok(text)
 }

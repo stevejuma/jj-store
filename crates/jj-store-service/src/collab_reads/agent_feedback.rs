@@ -67,3 +67,47 @@ impl PinnedCollabRead {
         Ok(result)
     }
 }
+
+impl PinnedCollabRead {
+    pub async fn conversation_submission_context(
+        &self,
+        session: Arc<NativeSession>,
+        thread: ThreadId,
+        batch: CollabObjectRef,
+    ) -> crate::agent_execution::Result<crate::agent_execution::context::ContextBatch> {
+        use crate::agent_execution::Error;
+        self.authorize(&session).await.map_err(|_| Error::Denied)?;
+        let agents = self
+            .agents
+            .as_ref()
+            .map(|s| session.coordinator.selected_agent_reader(s))
+            .transpose()
+            .map_err(|_| Error::Unavailable)?;
+        let reviews = self
+            .reviews
+            .as_ref()
+            .map(|s| session.coordinator.selected_review_reader(s))
+            .transpose()
+            .map_err(|_| Error::Unavailable)?;
+        let reader = CollabTargetReaderV1::new(
+            self.snapshot.repo_id,
+            Some((self.thread.state.root.clone(), &self.thread.graph)),
+            agents
+                .as_ref()
+                .map(|s| s as &dyn wal::publication::AgentSnapshotRead),
+            reviews
+                .as_ref()
+                .map(|s| s as &dyn wal::publication::ReviewSnapshotRead),
+        )
+        .map_err(|_| Error::Unavailable)?;
+        let result = crate::agent_execution::context_submission::collect_submission(
+            &reader,
+            self.snapshot.repo_id,
+            thread,
+            batch,
+        )
+        .await?;
+        self.authorize(&session).await.map_err(|_| Error::Denied)?;
+        Ok(result)
+    }
+}

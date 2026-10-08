@@ -1,4 +1,6 @@
 //! Real JJ workspaces and LocalAgentStore; controlled harness is fixture evidence.
+#[path = "agent_execution/comment_answers.rs"]
+mod comment_answers;
 #[path = "agent_execution/context_delivery.rs"]
 mod context_delivery;
 #[path = "agent_execution/conversations.rs"]
@@ -198,6 +200,7 @@ async fn lifecycle_deduplicates_permissions_publishes_and_resumes_without_prompt
         request_id: RequestId::new([4; 16]),
         session_id: id.clone(),
         action: Action::Prompt {
+            comments: None,
             text: "permission".into(),
             max_duration_ms: 10000,
         },
@@ -206,6 +209,7 @@ async fn lifecycle_deduplicates_permissions_publishes_and_resumes_without_prompt
     supervisor.command(actor, prompt.clone()).await.unwrap();
     let conflicting = Command {
         action: Action::Prompt {
+            comments: None,
             text: "changed".into(),
             max_duration_ms: 10000,
         },
@@ -286,6 +290,7 @@ async fn lifecycle_deduplicates_permissions_publishes_and_resumes_without_prompt
                 request_id: RequestId::new([7; 16]),
                 session_id: id.clone(),
                 action: Action::Prompt {
+                    comments: None,
                     text: "edit".into(),
                     max_duration_ms: 10000,
                 },

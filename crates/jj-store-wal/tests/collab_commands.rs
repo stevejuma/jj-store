@@ -791,6 +791,7 @@ async fn conversation_submission_is_atomic_receipt_backed_and_rejects_forged_ran
         quote: "🦀".into(),
     };
     let mut submission = ConversationSubmissionV1 {
+        reply_to: None,
         thread_id: parent.thread_id,
         expected_thread: original.version,
         message_id: None,
