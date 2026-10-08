@@ -58,3 +58,24 @@ ordinary ThreadStore revisions with an exact AgentMessage baseline. Saving them
 is separate from execution. The next explicit Send includes committed visible
 replies as bounded follow-up context; reads, reactions and reply saves do not
 start or resume a harness. See [Agent sessions](../guides/agent-execution.md).
+
+## Inline conversation comments
+
+Document and Classic conversations share comments on exact committed human,
+agent and tool content. Text selections use UTF-8 byte offsets and a selected
+content hash; unsupported or unpublished content explains why selection comments
+are unavailable. Existing whole-message discussions remain readable. Review
+comments continue to belong to ReviewStore.
+
+Comments appear beside their source and in the pending group above the composer.
+Send submits that group with any authored text; comments alone are sufficient.
+Drafts survive navigation and view changes within the current application
+session. They are not saved to browser storage. Comments sent earlier retain
+their exact revision, so editing one does not transfer its old answer to the new
+text.
+
+Agents may answer multiple discussions within one turn. A versioned protocol
+uses supplied discussion and comment references, and the service validates exact
+answer ranges against delivered context before publishing links. A green
+double-check becomes Go to reply only when a validated destination exists.
+Several destinations offer a chooser; invalid tags remain readable text.

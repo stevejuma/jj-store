@@ -276,6 +276,7 @@ export function createProductionStoreActions(options: {
       }
     },
     selectDirectory: options.reader.selectDirectory,
+    refreshAgentConversation: options.reader.refreshAgentConversation,
     async selectAgentSession(id) {
       options.invalidate();
       await options.reader.selectAgentSession(id);

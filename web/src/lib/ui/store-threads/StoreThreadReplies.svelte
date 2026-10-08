@@ -1,14 +1,14 @@
 <script lang="ts">
+  import StoreThreadConversation from "./StoreThreadConversation.svelte";
   import { agentMember } from "../community-agents/model.js";
-  import { originAgentIds } from "../../controller/agent-chat-context.js";
-  import { sendDiscussionMessage } from "../../controller/agent-discussion-dispatch.js";
+
   import type { StoreController } from "../../controller/contracts.js";
-  import CommunityThreadPanel from "../community-thread-panel/CommunityThreadPanel.svelte";
+
   import type {
     CommunityMemberModel,
     CommunityMessageModel,
   } from "../../community/workspace-model.js";
-  import StoreMessageReactions from "./StoreMessageReactions.svelte";
+
   import type { ThreadsController } from "../../controller/thread-types.js";
   import { replyRoot, threadDescendants } from "./thread-view.js";
   let {
@@ -39,69 +39,21 @@
   });
 </script>
 
-<CommunityThreadPanel
-  thread={{ rootMessageId: conversationRoot, messages }}
+<StoreThreadConversation
+  {threads}
+  {controller}
+  {messages}
   members={[
     ...members,
     ...(controller?.execution?.value?.setups ?? []).map(agentMember),
   ]}
-  audienceKey={controller
-    ? JSON.stringify([
-        controller.state.member.id,
-        controller.state.route.repository,
-        controller.state.route.threadId,
-        conversationRoot,
-      ])
-    : undefined}
-  {currentMemberId}
-  initialAgentIds={controller
-    ? originAgentIds(
-        controller.execution,
-        `thread:${controller.state.route.repository}:${controller.state.route.threadId}`,
-        controller.state.route.repository,
-      )
-    : undefined}
-  {disabled}
-  focusMessageId={rootId}
-  history={{
-    key: conversationRoot,
-    hasNewer: false,
-    complete: !threads.hasOlder,
-    hasOlder: threads.hasOlder,
-    loading: threads.status === "refreshing",
+  user={members.find((m) => m.id === currentMemberId) ?? {
+    id: currentMemberId ?? "user",
+    name: "You",
+    handle: "",
+    initials: "YO",
   }}
-  onLoadOlder={threads.older}
-  disabledReason="Sending replies is unavailable."
-  onSendReply={disabled
-    ? undefined
-    : (parent, text) =>
-        controller
-          ? sendDiscussionMessage(controller, text, parent)
-          : threads.send(text, parent)}
-  onReply={disabled ? undefined : threads.selectReply}
-  communityEmojis={threads.emojis}
-  onToggleReaction={disabled
-    ? undefined
-    : (id, emoji, custom) =>
-        threads
-          .toggle(threads.projection.targets[id]!, emoji, custom, true)
-          .catch(() => {})}
-  onAddReaction={disabled
-    ? undefined
-    : (id, emoji, custom) =>
-        threads
-          .toggle(threads.projection.targets[id]!, emoji, custom)
-          .catch(() => {})}
-  onSaveMessageEdit={disabled
-    ? undefined
-    : (id, text) => threads.send(text, undefined, id)}
->
-  {#snippet messageMetadata(message)}
-    {#if threads.projection.targets[message.id]}<StoreMessageReactions
-        {threads}
-        target={threads.projection.targets[message.id]!}
-        {disabled}
-        showControls={false}
-      />{/if}
-  {/snippet}
-</CommunityThreadPanel>
+  {disabled}
+  parent={rootId}
+  onReply={threads.selectReply}
+/>

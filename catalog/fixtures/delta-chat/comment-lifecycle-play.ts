@@ -66,7 +66,7 @@ export const commentLifecycle = async ({
     within(sourceArea).getByRole("button", { name: "Go to reply" }),
   );
   await expect(
-    c.getByRole("article", { name: "Simulated agent reply" }).closest("li"),
+    c.getByRole("textbox", { name: "Simulated reply" }).closest("li"),
   ).toHaveFocus();
   await userEvent.click(
     within(sourceArea).getByRole("button", { name: "Reply" }),

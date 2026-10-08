@@ -1,3 +1,4 @@
+import * as submission from "./comment-submission.js";
 import { tick } from "svelte";
 import type {
   ChatBodyBlock,
@@ -6,6 +7,7 @@ import type {
   ChatCommentThread,
   ChatComment,
   ChatPromptSubmission,
+  ChatSubmissionResult,
 } from "./model.js";
 import { anchorKey, commentAnchor, validAnchor } from "./anchors.js";
 import {
@@ -32,12 +34,18 @@ export class ChatBodyComments {
   message = $state("");
   sending = $state(false);
   error = $state("");
+  retainedSubmission = $state<ChatPromptSubmission>();
+  submissionResult = $state<ChatSubmissionResult>();
+  unresolvedHistory = $state<
+    { submission: ChatPromptSubmission; result?: ChatSubmissionResult }[]
+  >([]);
   disclosures = $state<Record<string, boolean>>({});
   rawTools = $state<Record<string, boolean>>({});
   bookmarkedTurns = $state<Record<string, boolean>>({});
   highlightedThread = $state<string>();
   root: HTMLElement | null = null;
   focusMessage?: () => void;
+  selections = new Map<string, { anchor: number; head: number }>();
   readers = new Map<
     string,
     (anchor: ChatCommentAnchor, scroll?: boolean) => void
@@ -56,7 +64,11 @@ export class ChatBodyComments {
       thread.comments
         .filter(
           (c) =>
-            (c.status === "draft" || c.status === "sending") && !!c.text.trim(),
+            (c.status === "draft" || c.status === "sending") &&
+            !!c.text.trim() &&
+            !this.unresolvedHistory.some((h) =>
+              h.submission.comments.some((e) => e.commentId === c.id),
+            ),
         )
         .map((comment) => ({ thread, comment })),
     );
@@ -71,6 +83,7 @@ export class ChatBodyComments {
     return (
       !!this.props().onSend &&
       !this.sending &&
+      !this.retainedSubmission &&
       (!!this.message.trim() || this.pending.length > 0)
     );
   }
@@ -102,14 +115,19 @@ export class ChatBodyComments {
     initial = "",
     threadId?: string,
   ) {
-    if (this.sending) return;
+    if (
+      this.sending ||
+      this.props().canComment === false ||
+      block.commentable === false
+    )
+      return;
     const anchor = commentAnchor(block, selection);
     let thread = this.threads.find((t) =>
       threadId ? t.id === threadId : anchorKey(t.anchor) === anchorKey(anchor),
     );
     if (!thread) {
       thread = {
-        id: crypto.randomUUID(),
+        id: crypto.randomUUID().replaceAll("-", ""),
         anchor,
         label: block.label,
         sourceKind: block.kind,
@@ -126,7 +144,7 @@ export class ChatBodyComments {
     initial = "",
     newEntry = false,
   ) {
-    if (this.sending) return;
+    if (this.sending || this.props().canComment === false) return;
     let comment = newEntry
       ? undefined
       : thread.comments
@@ -134,7 +152,7 @@ export class ChatBodyComments {
           .at(-1);
     if (!comment) {
       thread.comments.push({
-        id: crypto.randomUUID(),
+        id: crypto.randomUUID().replaceAll("-", ""),
         author: this.author,
         text: "",
         status: "draft",
@@ -150,6 +168,34 @@ export class ChatBodyComments {
       commentId: comment.id,
       location,
     };
+  }
+  editSent(thread: ChatCommentThread, original: ChatComment) {
+    if (
+      this.sending ||
+      original.historical ||
+      original.author.id !== this.author.id ||
+      !original.revision
+    )
+      return;
+    const pending = thread.comments.find(
+      (c) =>
+        c.status === "draft" &&
+        c.messageId === (original.messageId ?? original.id),
+    );
+    if (pending) {
+      this.activate(thread, pending, "inline");
+      return;
+    }
+    const draft: ChatComment = {
+      id: crypto.randomUUID().replaceAll("-", ""),
+      messageId: original.messageId ?? original.id,
+      revision: original.revision,
+      author: original.author,
+      text: original.text,
+      status: "draft",
+    };
+    thread.comments.push(draft);
+    this.activate(thread, thread.comments.at(-1)!, "inline");
   }
   activate(
     thread: ChatCommentThread,
@@ -192,47 +238,23 @@ export class ChatBodyComments {
           this.readers.get(active.anchor.blockId)?.(active.anchor);
       });
   }
-  async send() {
-    if (!this.canSend) return false;
-    const submission: ChatPromptSubmission = {
-      id: crypto.randomUUID(),
-      text: this.message,
-      comments: this.pending.map(({ thread, comment }) => ({
-        threadId: thread.id,
-        commentId: comment.id,
-        anchor: { ...thread.anchor },
-        author: { ...comment.author },
-        text: comment.text,
-      })),
-    };
-    this.sending = true;
-    this.error = "";
-    for (const c of submission.comments)
-      this.findComment(c.commentId)!.status = "sending";
-    try {
-      await this.props().onSend!(submission);
-      for (const c of submission.comments) {
-        const comment = this.findComment(c.commentId)!;
-        comment.status = "sent";
-        comment.batchId = submission.id;
-      }
-      if (this.message === submission.text) this.message = "";
-      this.active = undefined;
-      this.sending = false;
-      await tick();
-      this.focusMessage?.();
-      return true;
-    } catch (cause) {
-      for (const c of submission.comments)
-        this.findComment(c.commentId)!.status = "draft";
-      this.error =
-        cause instanceof Error
-          ? cause.message
-          : "The message could not be sent. Try again.";
-      return false;
-    } finally {
-      this.sending = false;
-    }
+  send() {
+    return submission.send(this);
+  }
+  markPublished(value: ChatPromptSubmission, batchId?: string) {
+    submission.markPublished(this, value, batchId);
+  }
+  confirmPublication(id: string, clearMessage = false, batchId?: string) {
+    submission.confirmPublication(this, id, clearMessage, batchId);
+  }
+  recover(id: string, result: ChatSubmissionResult) {
+    submission.recover(this, id, result);
+  }
+  keepUnresolved() {
+    submission.keepUnresolved(this);
+  }
+  refusePublication(id: string, error: string) {
+    submission.refusePublication(this, id, error);
   }
   recordReply(
     threadId: string,
@@ -240,34 +262,40 @@ export class ChatBodyComments {
     reply: ChatComment,
     itemId: string,
   ) {
-    const thread = this.threads.find((t) => t.id === threadId);
-    const ids = typeof commentIds === "string" ? [commentIds] : commentIds;
-    const comments = thread?.comments.filter(
-      (c) => ids.includes(c.id) && c.status === "sent",
-    );
-    if (
-      !thread ||
-      !comments?.length ||
-      thread.comments.some((c) => c.id === reply.id)
-    )
-      return;
-    for (const comment of comments) {
-      comment.status = "replied";
-      comment.replyItemId = itemId;
-    }
-    thread.comments.push({ ...reply, replyTo: comments[0].id });
+    submission.recordReply(this, threadId, commentIds, reply, itemId);
   }
   async goToSource(thread: ChatCommentThread, opener: HTMLElement) {
-    await revealCommentSource(this, thread, opener);
+    try {
+      return await revealCommentSource(this, thread, opener);
+    } catch (cause) {
+      this.error =
+        cause instanceof Error ? cause.message : "The source is unavailable.";
+    }
   }
   async goToMessage(thread: ChatCommentThread, comment: ChatComment) {
-    await revealCommentMessage(this, thread, comment);
+    try {
+      await revealCommentMessage(this, thread, comment);
+    } catch (cause) {
+      this.error =
+        cause instanceof Error
+          ? cause.message
+          : "The submitted message is unavailable.";
+    }
   }
-  goToReply(itemId: string) {
+  async goToReply(itemId: string) {
+    try {
+      await this.props().onNavigateReply?.(itemId);
+    } catch (cause) {
+      this.error =
+        cause instanceof Error ? cause.message : "The reply is unavailable.";
+      return;
+    }
+    await tick();
     const item = Array.from(
       this.root?.querySelectorAll<HTMLElement>("[data-chat-item]") ?? [],
     ).find((node) => node.dataset.chatItem === itemId);
     item?.scrollIntoView({ block: "center" });
     item?.focus({ preventScroll: true });
+    return !!item;
   }
 }

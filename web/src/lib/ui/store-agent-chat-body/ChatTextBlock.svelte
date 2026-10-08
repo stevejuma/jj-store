@@ -28,8 +28,10 @@
   let view = $state<EditorView>();
   const contexts = getAllContexts();
   const replyPrefix = new Compartment();
+  const reader = new Compartment();
+  let configured = "";
   const extensions = untrack(() => [
-    readingExtensions(block, comments, contexts),
+    reader.of(readingExtensions(block, comments, contexts)),
     replyPrefix.of(reply ? replyIndicator : []),
   ]);
   onMount(() => {
@@ -51,6 +53,52 @@
       comments.readers.delete(block.id);
       view = undefined;
     };
+  });
+  $effect(() => {
+    const signature = JSON.stringify([
+      block.id,
+      block.revision,
+      block.text,
+      block.path,
+      block.kind,
+      block.lineNumbered,
+      block.wholeSection,
+      block.commentable,
+    ]);
+    if (view && signature !== configured) {
+      configured = signature;
+      const previous = view.state.doc.toString(),
+        next = block.text;
+      let from = 0,
+        end = previous.length,
+        nextEnd = next.length;
+      while (from < end && from < nextEnd && previous[from] === next[from])
+        from++;
+      while (
+        end > from &&
+        nextEnd > from &&
+        previous[end - 1] === next[nextEnd - 1]
+      ) {
+        end--;
+        nextEnd--;
+      }
+      // Only host-owned immutable capture updates bypass the edit-rejection filter.
+      // A minimal replacement preserves cursor positions and existing widgets.
+      view.dispatch({
+        changes:
+          previous === next
+            ? undefined
+            : { from, to: end, insert: next.slice(from, nextEnd) },
+        effects: reader.reconfigure(
+          readingExtensions(
+            untrack(() => block),
+            comments,
+            contexts,
+          ),
+        ),
+        filter: false,
+      });
+    }
   });
   $effect(() => {
     view?.dispatch({

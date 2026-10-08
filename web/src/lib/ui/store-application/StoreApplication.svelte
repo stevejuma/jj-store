@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { provideConversationInspection } from "../../conversations/inspection.svelte.js";
   import { provideTerminalControls } from "../../terminal/controls.svelte.js";
   provideTerminalControls();
   import StoreIndexPreparationNotice from "./StoreIndexPreparationNotice.svelte";
@@ -79,6 +80,7 @@
   );
   onDestroy(() => void shell.dispose());
   const detailsRail = shell.getPanel(repositoryDetailsPanelId)!;
+  provideConversationInspection(shell);
   const threadPanel = ownThreadPanel(() => controller, shell, appearance);
   provideDiscussionFocus();
   const workspaceGuard = $state({ editing: false });
@@ -125,8 +127,6 @@
     return () => controller.actions.setRefreshPaused?.("settings", false);
   });
   let settingsSection = $state<StoreSettingsSection>("service");
-  const canNavigateBack = $derived(controller.state.canNavigateBack);
-  const canNavigateForward = $derived(controller.state.canNavigateForward);
   const compact = $derived(
     shell.mobile.resolvedMode === "desktop" &&
       shell.left.collapsed &&
@@ -166,6 +166,7 @@
 </script>
 
 {#snippet agents()}{#if controller.execution}<StoreAgentExecutionHost
+      {controller}
       manager={controller.execution}
       repositories={controller.state.repositories}
       route={current}
@@ -197,8 +198,8 @@
   controller={shell}
   {displayMode}
   {desktopChrome}
-  canNavigateBack={canNavigateBack && !editorOpen}
-  canNavigateForward={canNavigateForward && !editorOpen}
+  canNavigateBack={controller.state.canNavigateBack && !editorOpen}
+  canNavigateForward={controller.state.canNavigateForward && !editorOpen}
   onNavigateBack={() => navigate(-1)}
   onNavigateForward={() => navigate(1)}
 >
@@ -264,8 +265,8 @@
     {closeSettings}
     conflictOpen={editorOpen}
     {workspaceBlocked}
-    {canNavigateBack}
-    {canNavigateForward}
+    canNavigateBack={controller.state.canNavigateBack}
+    canNavigateForward={controller.state.canNavigateForward}
     {navigate}
     {detailsRail}
     {selectPage}

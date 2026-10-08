@@ -2671,6 +2671,22 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 {
   "type": "object",
   "properties": {
+    "conversation_feedback": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/AgentExecutionFeedback"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "conversation_unavailable": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
     "version": {
       "type": "integer",
       "format": "uint32",
@@ -2741,348 +2757,86 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 }
 ```
 
-## AgentTranscriptDescriptor
+## AgentExecutionFeedback
 
 ```text
 {
   "type": "object",
   "properties": {
-    "transcript_id": {
-      "$ref": "#/components/schemas/AgentObjectId"
+    "messages": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/AgentExecutionFeedbackMessage"
+      }
     },
-    "source_instance_id": {
-      "$ref": "#/components/schemas/SourceInstanceId"
+    "profile": {
+      "type": [
+        "string",
+        "null"
+      ]
     },
-    "source_generation": {
-      "type": "integer",
-      "format": "uint64",
-      "minimum": 0
-    },
-    "source_format": {
-      "type": "string"
-    },
-    "decoder_version": {
-      "type": "string"
-    },
-    "sanitizer_version": {
-      "type": "string"
-    },
-    "representation": {
-      "$ref": "#/components/schemas/SanitizedRepresentation"
-    },
-    "logical_byte_length": {
-      "type": "integer",
-      "format": "uint64",
-      "minimum": 0
-    },
-    "record_count": {
-      "type": "integer",
-      "format": "uint64",
-      "minimum": 0
-    },
-    "gaps": {
-      "type": "integer",
-      "format": "uint32",
-      "minimum": 0
+    "write_unavailable": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Current browser feedback write capability; does not suppress readable history."
     }
   },
   "required": [
-    "transcript_id",
-    "source_instance_id",
-    "source_generation",
-    "source_format",
-    "decoder_version",
-    "sanitizer_version",
-    "representation",
-    "logical_byte_length",
-    "record_count",
-    "gaps"
-  ]
+    "messages"
+  ],
+  "description": "Repository-selected messages and ordinary discussion revisions, never journal authority."
 }
 ```
 
-## SourceInstanceId
-
-```text
-{
-  "type": "string",
-  "pattern": "^[0-9a-f]{32}$",
-  "minLength": 32,
-  "maxLength": 32
-}
-```
-
-## SanitizedRepresentation
-
-```text
-{
-  "type": "string",
-  "enum": [
-    "sanitized_native",
-    "canonical_producer"
-  ]
-}
-```
-
-## AgentToolLink
+## AgentExecutionFeedbackMessage
 
 ```text
 {
   "type": "object",
   "properties": {
-    "tool_call_id": {
-      "$ref": "#/components/schemas/ToolCallId"
+    "row_id": {
+      "type": "string"
     },
-    "snapshot_id": {
-      "$ref": "#/components/schemas/AgentObjectId"
+    "target": {
+      "$ref": "#/components/schemas/ReactionTargetV1"
+    },
+    "threads": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ThreadId"
+      }
+    },
+    "replies": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/AgentExecutionFeedbackReply"
+      }
+    },
+    "text_parts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/AgentExecutionFeedbackTextPart"
+      },
+      "default": []
+    },
+    "answers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/CommentReplyLinkV1"
+      },
+      "default": []
     }
   },
   "required": [
-    "tool_call_id",
-    "snapshot_id"
+    "row_id",
+    "target",
+    "threads",
+    "replies",
+    "text_parts",
+    "answers"
   ]
-}
-```
-
-## ToolCallId
-
-```text
-{
-  "type": "string",
-  "pattern": "^[0-9a-f]{32}$",
-  "minLength": 32,
-  "maxLength": 32
-}
-```
-
-## AgentActivity
-
-```text
-{
-  "oneOf": [
-    {
-      "type": "object",
-      "properties": {
-        "sequence": {
-          "type": "integer",
-          "format": "uint64",
-          "minimum": 0
-        },
-        "event_id": {
-          "$ref": "#/components/schemas/AgentEventId"
-        },
-        "state": {
-          "$ref": "#/components/schemas/SessionState"
-        },
-        "type": {
-          "type": "string",
-          "const": "session_state"
-        }
-      },
-      "required": [
-        "type",
-        "sequence",
-        "event_id",
-        "state"
-      ]
-    },
-    {
-      "type": "object",
-      "properties": {
-        "reaction_target": {
-          "anyOf": [
-            {
-              "$ref": "#/components/schemas/ReactionTargetV1"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "sequence": {
-          "type": "integer",
-          "format": "uint64",
-          "minimum": 0
-        },
-        "event_id": {
-          "$ref": "#/components/schemas/AgentEventId"
-        },
-        "turn_id": {
-          "anyOf": [
-            {
-              "$ref": "#/components/schemas/TurnId"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "message_id": {
-          "$ref": "#/components/schemas/MessageId"
-        },
-        "occurred_at_millis": {
-          "type": [
-            "integer",
-            "null"
-          ],
-          "format": "int64"
-        },
-        "role": {
-          "$ref": "#/components/schemas/MessageRole"
-        },
-        "content": {
-          "$ref": "#/components/schemas/AgentContent"
-        },
-        "type": {
-          "type": "string",
-          "const": "message"
-        }
-      },
-      "required": [
-        "type",
-        "sequence",
-        "event_id",
-        "turn_id",
-        "message_id",
-        "role",
-        "content"
-      ]
-    },
-    {
-      "type": "object",
-      "properties": {
-        "sequence": {
-          "type": "integer",
-          "format": "uint64",
-          "minimum": 0
-        },
-        "event_id": {
-          "$ref": "#/components/schemas/AgentEventId"
-        },
-        "tool": {
-          "$ref": "#/components/schemas/AgentToolActivity"
-        },
-        "type": {
-          "type": "string",
-          "const": "tool"
-        }
-      },
-      "required": [
-        "type",
-        "sequence",
-        "event_id",
-        "tool"
-      ]
-    },
-    {
-      "type": "object",
-      "properties": {
-        "sequence": {
-          "type": "integer",
-          "format": "uint64",
-          "minimum": 0
-        },
-        "event_id": {
-          "$ref": "#/components/schemas/AgentEventId"
-        },
-        "tool_call_id": {
-          "anyOf": [
-            {
-              "$ref": "#/components/schemas/ToolCallId"
-            },
-            {
-              "type": "null"
-            }
-          ]
-        },
-        "state": {
-          "$ref": "#/components/schemas/PermissionState"
-        },
-        "type": {
-          "type": "string",
-          "const": "permission"
-        }
-      },
-      "required": [
-        "type",
-        "sequence",
-        "event_id",
-        "tool_call_id",
-        "state"
-      ]
-    },
-    {
-      "type": "object",
-      "properties": {
-        "sequence": {
-          "type": "integer",
-          "format": "uint64",
-          "minimum": 0
-        },
-        "event_id": {
-          "$ref": "#/components/schemas/AgentEventId"
-        },
-        "path": {
-          "type": "string"
-        },
-        "type": {
-          "type": "string",
-          "const": "file_observed"
-        }
-      },
-      "required": [
-        "type",
-        "sequence",
-        "event_id",
-        "path"
-      ]
-    },
-    {
-      "type": "object",
-      "properties": {
-        "sequence": {
-          "type": "integer",
-          "format": "uint64",
-          "minimum": 0
-        },
-        "event_id": {
-          "$ref": "#/components/schemas/AgentEventId"
-        },
-        "missing_from": {
-          "type": "integer",
-          "format": "uint64",
-          "minimum": 0
-        },
-        "missing_to": {
-          "type": "integer",
-          "format": "uint64",
-          "minimum": 0
-        },
-        "type": {
-          "type": "string",
-          "const": "capture_gap"
-        }
-      },
-      "required": [
-        "type",
-        "sequence",
-        "event_id",
-        "missing_from",
-        "missing_to"
-      ]
-    }
-  ]
-}
-```
-
-## AgentEventId
-
-```text
-{
-  "type": "string",
-  "pattern": "^[0-9a-f]{32}$",
-  "minLength": 32,
-  "maxLength": 32
 }
 ```
 
@@ -3404,6 +3158,17 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 }
 ```
 
+## AgentEventId
+
+```text
+{
+  "type": "string",
+  "pattern": "^[0-9a-f]{32}$",
+  "minLength": 32,
+  "maxLength": 32
+}
+```
+
 ## AgentObjectRef
 
 ```text
@@ -3451,6 +3216,17 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "projection_catalog",
     "catalog_conflict"
   ]
+}
+```
+
+## ToolCallId
+
+```text
+{
+  "type": "string",
+  "pattern": "^[0-9a-f]{32}$",
+  "minLength": 32,
+  "maxLength": 32
 }
 ```
 
@@ -3560,6 +3336,619 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 }
 ```
 
+## AgentExecutionFeedbackReply
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "historical": {
+      "type": "boolean",
+      "default": false
+    },
+    "batches": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/RequestId"
+      },
+      "default": []
+    },
+    "thread_id": {
+      "$ref": "#/components/schemas/ThreadId"
+    },
+    "revision": {
+      "$ref": "#/components/schemas/CollabObjectRef"
+    },
+    "message": {
+      "$ref": "#/components/schemas/HumanMessageRevisionV1"
+    },
+    "thread_revision": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/CollabObjectRef"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "source": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/ConversationSourceV1"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "answers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/CommentReplyLinkV1"
+      },
+      "default": []
+    }
+  },
+  "required": [
+    "historical",
+    "batches",
+    "thread_id",
+    "revision",
+    "message",
+    "thread_revision",
+    "source",
+    "answers"
+  ]
+}
+```
+
+## HumanMessageRevisionV1
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "message_id": {
+      "$ref": "#/components/schemas/HumanMessageId"
+    },
+    "thread_id": {
+      "$ref": "#/components/schemas/ThreadId"
+    },
+    "actor": {
+      "$ref": "#/components/schemas/PrincipalId"
+    },
+    "accepted_at_millis": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "previous": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/CollabObjectRef"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "reply_to": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/CollabObjectRef"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "body": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "schema_version",
+    "message_id",
+    "thread_id",
+    "actor",
+    "accepted_at_millis",
+    "previous",
+    "body"
+  ]
+}
+```
+
+## ConversationSourceV1
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "target": {
+      "$ref": "#/components/schemas/ReactionTargetV1"
+    },
+    "part": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "JSON pointer to an exact string in captured JSON; None selects plain text."
+    },
+    "selection": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/TextSelectionV1"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "quote": {
+      "type": "string",
+      "description": "Retained display evidence, validated against the selected bytes."
+    }
+  },
+  "required": [
+    "target",
+    "part",
+    "selection",
+    "quote"
+  ]
+}
+```
+
+## TextSelectionV1
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "encoding": {
+      "$ref": "#/components/schemas/TextEncoding"
+    },
+    "start_byte": {
+      "$ref": "#/components/schemas/ByteOffset"
+    },
+    "end_byte": {
+      "$ref": "#/components/schemas/ByteOffset"
+    },
+    "selected_sha256": {
+      "$ref": "#/components/schemas/ReviewDigest"
+    }
+  },
+  "required": [
+    "encoding",
+    "start_byte",
+    "end_byte",
+    "selected_sha256"
+  ]
+}
+```
+
+## TextEncoding
+
+```text
+{
+  "type": "string",
+  "enum": [
+    "utf8"
+  ]
+}
+```
+
+## ByteOffset
+
+```text
+{
+  "type": "string",
+  "pattern": "^(0|[1-9][0-9]*)$"
+}
+```
+
+## ReviewDigest
+
+```text
+{
+  "type": "string",
+  "pattern": "^[0-9a-f]{64}$",
+  "minLength": 64,
+  "maxLength": 64
+}
+```
+
+## CommentReplyLinkV1
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "prompt": {
+      "description": "Exact user message capture containing a successful context delivery.",
+      "allOf": [
+        {
+          "$ref": "#/components/schemas/ReactionTargetV1"
+        }
+      ]
+    },
+    "answer": {
+      "$ref": "#/components/schemas/ConversationSourceV1"
+    },
+    "comments": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ReactionTargetV1"
+      }
+    }
+  },
+  "required": [
+    "prompt",
+    "answer",
+    "comments"
+  ]
+}
+```
+
+## AgentExecutionFeedbackTextPart
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "part": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "text": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "part",
+    "text"
+  ]
+}
+```
+
+## AgentTranscriptDescriptor
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "transcript_id": {
+      "$ref": "#/components/schemas/AgentObjectId"
+    },
+    "source_instance_id": {
+      "$ref": "#/components/schemas/SourceInstanceId"
+    },
+    "source_generation": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "source_format": {
+      "type": "string"
+    },
+    "decoder_version": {
+      "type": "string"
+    },
+    "sanitizer_version": {
+      "type": "string"
+    },
+    "representation": {
+      "$ref": "#/components/schemas/SanitizedRepresentation"
+    },
+    "logical_byte_length": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "record_count": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "gaps": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    }
+  },
+  "required": [
+    "transcript_id",
+    "source_instance_id",
+    "source_generation",
+    "source_format",
+    "decoder_version",
+    "sanitizer_version",
+    "representation",
+    "logical_byte_length",
+    "record_count",
+    "gaps"
+  ]
+}
+```
+
+## SourceInstanceId
+
+```text
+{
+  "type": "string",
+  "pattern": "^[0-9a-f]{32}$",
+  "minLength": 32,
+  "maxLength": 32
+}
+```
+
+## SanitizedRepresentation
+
+```text
+{
+  "type": "string",
+  "enum": [
+    "sanitized_native",
+    "canonical_producer"
+  ]
+}
+```
+
+## AgentToolLink
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "tool_call_id": {
+      "$ref": "#/components/schemas/ToolCallId"
+    },
+    "snapshot_id": {
+      "$ref": "#/components/schemas/AgentObjectId"
+    }
+  },
+  "required": [
+    "tool_call_id",
+    "snapshot_id"
+  ]
+}
+```
+
+## AgentActivity
+
+```text
+{
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "sequence": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        },
+        "event_id": {
+          "$ref": "#/components/schemas/AgentEventId"
+        },
+        "state": {
+          "$ref": "#/components/schemas/SessionState"
+        },
+        "type": {
+          "type": "string",
+          "const": "session_state"
+        }
+      },
+      "required": [
+        "type",
+        "sequence",
+        "event_id",
+        "state"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "reaction_target": {
+          "anyOf": [
+            {
+              "$ref": "#/components/schemas/ReactionTargetV1"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "sequence": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        },
+        "event_id": {
+          "$ref": "#/components/schemas/AgentEventId"
+        },
+        "turn_id": {
+          "anyOf": [
+            {
+              "$ref": "#/components/schemas/TurnId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "message_id": {
+          "$ref": "#/components/schemas/MessageId"
+        },
+        "occurred_at_millis": {
+          "type": [
+            "integer",
+            "null"
+          ],
+          "format": "int64"
+        },
+        "role": {
+          "$ref": "#/components/schemas/MessageRole"
+        },
+        "content": {
+          "$ref": "#/components/schemas/AgentContent"
+        },
+        "type": {
+          "type": "string",
+          "const": "message"
+        }
+      },
+      "required": [
+        "type",
+        "sequence",
+        "event_id",
+        "turn_id",
+        "message_id",
+        "role",
+        "content"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "sequence": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        },
+        "event_id": {
+          "$ref": "#/components/schemas/AgentEventId"
+        },
+        "tool": {
+          "$ref": "#/components/schemas/AgentToolActivity"
+        },
+        "type": {
+          "type": "string",
+          "const": "tool"
+        }
+      },
+      "required": [
+        "type",
+        "sequence",
+        "event_id",
+        "tool"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "sequence": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        },
+        "event_id": {
+          "$ref": "#/components/schemas/AgentEventId"
+        },
+        "tool_call_id": {
+          "anyOf": [
+            {
+              "$ref": "#/components/schemas/ToolCallId"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "state": {
+          "$ref": "#/components/schemas/PermissionState"
+        },
+        "type": {
+          "type": "string",
+          "const": "permission"
+        }
+      },
+      "required": [
+        "type",
+        "sequence",
+        "event_id",
+        "tool_call_id",
+        "state"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "sequence": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        },
+        "event_id": {
+          "$ref": "#/components/schemas/AgentEventId"
+        },
+        "path": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "const": "file_observed"
+        }
+      },
+      "required": [
+        "type",
+        "sequence",
+        "event_id",
+        "path"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "sequence": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        },
+        "event_id": {
+          "$ref": "#/components/schemas/AgentEventId"
+        },
+        "missing_from": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        },
+        "missing_to": {
+          "type": "integer",
+          "format": "uint64",
+          "minimum": 0
+        },
+        "type": {
+          "type": "string",
+          "const": "capture_gap"
+        }
+      },
+      "required": [
+        "type",
+        "sequence",
+        "event_id",
+        "missing_from",
+        "missing_to"
+      ]
+    }
+  ]
+}
+```
+
 ## TurnId
 
 ```text
@@ -3623,6 +4012,16 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 {
   "type": "object",
   "properties": {
+    "reaction_target": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/ReactionTargetV1"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
     "tool_call_id": {
       "$ref": "#/components/schemas/ToolCallId"
     },
@@ -4908,66 +5307,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "conflict_term",
     "conflict_artifact"
   ]
-}
-```
-
-## TextSelectionV1
-
-```text
-{
-  "type": "object",
-  "additionalProperties": false,
-  "properties": {
-    "encoding": {
-      "$ref": "#/components/schemas/TextEncoding"
-    },
-    "start_byte": {
-      "$ref": "#/components/schemas/ByteOffset"
-    },
-    "end_byte": {
-      "$ref": "#/components/schemas/ByteOffset"
-    },
-    "selected_sha256": {
-      "$ref": "#/components/schemas/ReviewDigest"
-    }
-  },
-  "required": [
-    "encoding",
-    "start_byte",
-    "end_byte",
-    "selected_sha256"
-  ]
-}
-```
-
-## TextEncoding
-
-```text
-{
-  "type": "string",
-  "enum": [
-    "utf8"
-  ]
-}
-```
-
-## ByteOffset
-
-```text
-{
-  "type": "string",
-  "pattern": "^(0|[1-9][0-9]*)$"
-}
-```
-
-## ReviewDigest
-
-```text
-{
-  "type": "string",
-  "pattern": "^[0-9a-f]{64}$",
-  "minLength": 64,
-  "maxLength": 64
 }
 ```
 
@@ -6759,6 +7098,16 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
           "type": "null"
         }
       ]
+    },
+    "comment_source": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/ConversationSourceV1"
+        },
+        {
+          "type": "null"
+        }
+      ]
     }
   },
   "required": [
@@ -7163,6 +7512,68 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "reply": {
+          "$ref": "#/components/schemas/CommentReplyLinkV1"
+        },
+        "type": {
+          "type": "string",
+          "const": "comment_reply"
+        }
+      },
+      "required": [
+        "type",
+        "reply"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "request_id": {
+          "$ref": "#/components/schemas/RequestId"
+        },
+        "comments": {
+          "type": "array",
+          "items": {
+            "$ref": "#/components/schemas/ReactionTargetV1"
+          }
+        },
+        "message": {
+          "anyOf": [
+            {
+              "$ref": "#/components/schemas/CollabObjectRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "reply_to": {
+          "anyOf": [
+            {
+              "$ref": "#/components/schemas/CollabObjectRef"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "type": {
+          "type": "string",
+          "const": "comment_batch"
+        }
+      },
+      "required": [
+        "type",
+        "request_id",
+        "comments",
+        "message"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
         "source_state": {
           "$ref": "#/components/schemas/AgentObjectRef"
         },
@@ -7296,70 +7707,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "observed_assignment"
   ],
   "description": "Capture adapters may bind explicitly. Absence is the supported unlinked state."
-}
-```
-
-## HumanMessageRevisionV1
-
-```text
-{
-  "type": "object",
-  "additionalProperties": false,
-  "properties": {
-    "schema_version": {
-      "type": "integer",
-      "format": "uint32",
-      "minimum": 0
-    },
-    "message_id": {
-      "$ref": "#/components/schemas/HumanMessageId"
-    },
-    "thread_id": {
-      "$ref": "#/components/schemas/ThreadId"
-    },
-    "actor": {
-      "$ref": "#/components/schemas/PrincipalId"
-    },
-    "accepted_at_millis": {
-      "type": "integer",
-      "format": "int64"
-    },
-    "previous": {
-      "anyOf": [
-        {
-          "$ref": "#/components/schemas/CollabObjectRef"
-        },
-        {
-          "type": "null"
-        }
-      ]
-    },
-    "reply_to": {
-      "anyOf": [
-        {
-          "$ref": "#/components/schemas/CollabObjectRef"
-        },
-        {
-          "type": "null"
-        }
-      ]
-    },
-    "body": {
-      "type": [
-        "string",
-        "null"
-      ]
-    }
-  },
-  "required": [
-    "schema_version",
-    "message_id",
-    "thread_id",
-    "actor",
-    "accepted_at_millis",
-    "previous",
-    "body"
-  ]
 }
 ```
 
@@ -17598,6 +17945,22 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 {
   "type": "object",
   "properties": {
+    "conversation_feedback": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/AgentExecutionFeedback"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "conversation_unavailable": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
     "version": {
       "type": "integer",
       "format": "uint32",
@@ -20927,6 +21290,16 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
   "type": "object",
   "additionalProperties": false,
   "properties": {
+    "comment_publication": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/AgentCommentPublication"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
     "version": {
       "type": "integer",
       "format": "uint32",
@@ -20957,6 +21330,38 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "session_id",
     "state",
     "error"
+  ]
+}
+```
+
+## AgentCommentPublication
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "request_id": {
+      "$ref": "#/components/schemas/RequestId"
+    },
+    "state": {
+      "type": "string"
+    },
+    "batch": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/CollabObjectRef"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "request_id",
+    "state",
+    "batch"
   ]
 }
 ```
@@ -22069,103 +22474,24 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "items": {
         "$ref": "#/components/schemas/AgentExecutionOutcome"
       }
+    },
+    "comment_publication": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/AgentCommentPublication"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
     }
   },
   "required": [
     "request_id",
     "conversation_id",
-    "agents"
-  ]
-}
-```
-
-## AgentExecutionFeedback
-
-```text
-{
-  "type": "object",
-  "properties": {
-    "messages": {
-      "type": "array",
-      "items": {
-        "$ref": "#/components/schemas/AgentExecutionFeedbackMessage"
-      }
-    },
-    "profile": {
-      "type": [
-        "string",
-        "null"
-      ]
-    },
-    "write_unavailable": {
-      "type": [
-        "string",
-        "null"
-      ],
-      "description": "Current browser feedback write capability; does not suppress readable history."
-    }
-  },
-  "required": [
-    "messages"
-  ],
-  "description": "Repository-selected messages and ordinary discussion revisions, never journal authority."
-}
-```
-
-## AgentExecutionFeedbackMessage
-
-```text
-{
-  "type": "object",
-  "properties": {
-    "row_id": {
-      "type": "string"
-    },
-    "target": {
-      "$ref": "#/components/schemas/ReactionTargetV1"
-    },
-    "threads": {
-      "type": "array",
-      "items": {
-        "$ref": "#/components/schemas/ThreadId"
-      }
-    },
-    "replies": {
-      "type": "array",
-      "items": {
-        "$ref": "#/components/schemas/AgentExecutionFeedbackReply"
-      }
-    }
-  },
-  "required": [
-    "row_id",
-    "target",
-    "threads",
-    "replies"
-  ]
-}
-```
-
-## AgentExecutionFeedbackReply
-
-```text
-{
-  "type": "object",
-  "properties": {
-    "thread_id": {
-      "$ref": "#/components/schemas/ThreadId"
-    },
-    "revision": {
-      "$ref": "#/components/schemas/CollabObjectRef"
-    },
-    "message": {
-      "$ref": "#/components/schemas/HumanMessageRevisionV1"
-    }
-  },
-  "required": [
-    "thread_id",
-    "revision",
-    "message"
+    "agents",
+    "comment_publication"
   ]
 }
 ```

@@ -126,3 +126,13 @@ choices. Save provider changes, then explicitly restart the agent. Harness
 sections are collapsed on initial load. See
 [agent configuration and compute](agent-execution.md#compute-defaults-and-captured-context)
 for precedence, credentials, pairing and context disclosure.
+
+## Conversation appearance
+
+Choose **Appearance → Conversation view → Document / Classic** for live and
+recorded agents, Threads and thread replies. Document is the default when no
+choice is saved. The device preference synchronizes across tabs and is
+independent of Focus/Split placement. Both views retain selection comments,
+reactions and reply navigation. Specialized task and review panels keep their
+own presentation. Enter inserts a new line; Send or Cmd/Ctrl+Enter submits the
+entire pending prompt.

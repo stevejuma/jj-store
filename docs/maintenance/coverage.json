@@ -12,8 +12,8 @@
       "docs/site/concepts/snapshots.md"
     ],
     "review": {
-      "reason": "Reviewed additive exact AgentMessage discussion validation and retained external dependencies; manifest CAS, WAL receipts and reducer/publication authority unchanged",
-      "fingerprint": "9e30afe53800e73e988252cbc33cb400bbee77efa06f018b1983fc7311c35b07"
+      "reason": "Reviewed atomic comment-batch publication and exact receipt recovery under unchanged native manifest authority.",
+      "fingerprint": "8a8403d3bd957cec6436514db5eba53c727373a156fcee3cd81d386514126520"
     }
   },
   {
@@ -30,8 +30,8 @@
       "docs/site/concepts/collaboration.md"
     ],
     "review": {
-      "reason": "Reviewed separate authored text and XML content blocks, captured wire context, exact tool feedback targets and unchanged native ThreadStore/AgentStore authority; documented fleet limits and shared lifecycle/tool presentation without closing independent adapter gates.",
-      "fingerprint": "47af375b510232c1b0914df7a0540c255fe4114796bd1e7e694ef5c695ddd232"
+      "reason": "Documented exact conversation source selectors, submitted revisions and validated answer links in ThreadStore.",
+      "fingerprint": "40dcd4c3a8912b21b3e2d272aae68f74a0f56895d09738d7c1defa4a59bec300"
     }
   },
   {
@@ -65,8 +65,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed typed internal reply context and exact reservation/start bookkeeping; service documentation confirms unchanged authorization and receipt contracts. Reviewed provider-aware jj-agent launch, draft catalog previews, secret custody and shared bordered Settings forms; documented selected trusted shared compute and explicit restart. Native repository authority and platform qualification remain unchanged. Reviewed combined provider and context integration with unchanged authority and credential boundaries.",
-      "fingerprint": "3a431ce0768ae6a5243f04c9ad681f7aa89c801d94767e708d5434bbc1d36f57"
+      "reason": "Reviewed native/local comment submission, bounded feedback and exact answer validation; updated architectural ownership.",
+      "fingerprint": "8f2990bf0d2270dd88b9ebd02cfcc554337641b9a2de0a0d4fe85b2c80bc16a5"
     }
   },
   {
@@ -96,8 +96,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed final formatted Markdown context with direct-session selected operation/base commit, bounded authored history, exact-start journals and bound bundled CLI coordination; transport and storage contracts unchanged. Reviewed JJ Agent display label, provider catalog supervision and native-provider launch with unchanged installation authority. Reviewed combined provider and context integration with unchanged authority and credential boundaries.",
-      "fingerprint": "b803547f5b1e6a03d8f93537916ea090e17ddc691c9ef184b8cef5c84fd954b1"
+      "reason": "Reviewed sanitized prompt context serialization and retained batch identities; described the transport protocol without changing server admission.",
+      "fingerprint": "5803d2853252ef24d24ad9b8ea004216700a5b8189f73d9301eb8bccf4ed6679"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed combined agent context and provider integration; the default provider option now names actual inherited configuration independently of explicit draft selection.",
-      "fingerprint": "8bff6f8928cc8b17d1077ce8920a511c4c260b174e3b59b5d056ebee33cc7d3d"
+      "reason": "Document and Classic share durable conversation adapters, session drafts, linked agent controls, reactions, exact navigation and advertised runtime configuration; settings and architecture pages describe ownership and limitations.",
+      "fingerprint": "af195f89d23c318c9eec9f101eb88345be153058c228c58199fd9a6811565b33"
     }
   },
   {
@@ -154,8 +154,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Reviewed task CLI argument rename to --target-repository and generated help; global -R selects the metadata checkout. HTTP and ACP shapes are unchanged. Reviewed provider-aware jj-agent launch, draft catalog previews, secret custody and shared bordered Settings forms; documented selected trusted shared compute and explicit restart. Native repository authority and platform qualification remain unchanged. Reviewed combined provider and context integration with unchanged authority and credential boundaries.",
-      "fingerprint": "9bfaf1f31baf196cc4c3500ebae67e3175a596e5c930178695a861bfc4e8a66f"
+      "reason": "Regenerated API references for exact comment submissions, recorded feedback and durable answer links; documented typed protocol.",
+      "fingerprint": "cfe219a24275904b1c78c78f5db652365f81e2de18f8ce86e70ab8f7446d4d29"
     }
   },
   {

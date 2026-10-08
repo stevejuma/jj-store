@@ -6,6 +6,7 @@
     ConversationDensity,
     LinkStyle,
     ThreadLayout,
+    ConversationView,
   } from "../../appearance/preferences.js";
   import CommunityMarkdownContent from "../community-markdown-content/CommunityMarkdownContent.svelte";
   import AppearanceChoice from "./AppearanceChoice.svelte";
@@ -18,6 +19,21 @@
 <section class="appearance-group" aria-label="Preferences">
   <h2>Preferences</h2>
   <div class="appearance-card">
+    <AppearanceRow
+      title="Conversation view"
+      description="Document or Classic for agent conversations, threads and replies"
+    >
+      <AppearanceChoice
+        label="Conversation view"
+        value={store.saved.conversationView}
+        options={[
+          { value: "document", label: "Document" },
+          { value: "classic", label: "Classic" },
+        ]}
+        onChange={(v) =>
+          store.update({ conversationView: v as ConversationView })}
+      />
+    </AppearanceRow>
     <AppearanceRow
       title="Font size"
       description="Applies across conversations and interface text"

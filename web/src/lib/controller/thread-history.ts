@@ -59,3 +59,22 @@ export function replyContextLoaded(
   }
   return !id;
 }
+
+export async function loadReplyHistory(
+  state: () => { loaded: boolean; cursor: string | null; valid: boolean },
+  load: () => Promise<void>,
+) {
+  for (let page = 0; page < 20; page++) {
+    const before = state();
+    if (!before.valid || before.loaded) return;
+    if (!before.cursor) break;
+    await load();
+    const after = state();
+    if (!after.valid || after.cursor === before.cursor) return;
+  }
+  const after = state();
+  if (after.valid && !after.loaded)
+    return after.cursor
+      ? "Message is outside loaded history. Load older messages to continue."
+      : "This message is unavailable in the current thread.";
+}

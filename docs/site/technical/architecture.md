@@ -269,3 +269,11 @@ AgentStore messages and receipts.
 Agent prompt preparation retains typed committed reply records and a sanitized
 Markdown context document. Section/reply reservations acknowledge only an exact
 started request; native and local mutation/receipt authority remains unchanged.
+
+Conversation presentation uses shared source adapters and session-owned draft
+state. Ordered assistant segments preserve observed tool boundaries; old
+captures without order evidence do not acquire invented offsets. ThreadStore
+owns comment submissions and validated answer links. The browser can display
+protocol blocks, but only publication-selected links mark comments answered.
+Recorded detail reads expose the same bounded, authorized feedback as live
+participation.

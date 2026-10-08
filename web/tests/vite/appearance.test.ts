@@ -185,3 +185,22 @@ describe("local link cards", () => {
     expect(tree.children![2]!.children![0]!.tagName).toBe("a");
   });
 });
+
+it("defaults missing conversation view to Document and keeps placement independent", () => {
+  expect(parseAppearance(null).conversationView).toBe("document");
+  expect(parseAppearance('{"version":1,"threads":"focus"}')).toMatchObject({
+    conversationView: "document",
+    threads: "focus",
+  });
+  expect(
+    parseAppearance('{"version":1,"conversationView":"unknown"}')
+      .conversationView,
+  ).toBe("document");
+  const storage = createMemoryStoryStorage(),
+    store = createAppearanceStore(storage);
+  store.update({ conversationView: "classic", threads: "focus" });
+  expect(createAppearanceStore(storage).saved).toMatchObject({
+    conversationView: "classic",
+    threads: "focus",
+  });
+});

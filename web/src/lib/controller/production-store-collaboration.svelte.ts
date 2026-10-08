@@ -31,7 +31,7 @@ interface Context {
 export function createProductionStoreCollaboration(context: Context) {
   const { data, history } = context;
   let reviewGeneration = 0;
-  const { loadAgents, loadTranscript, loadAgent } =
+  const { loadAgents, loadTranscript, loadAgent, refreshAgentConversation } =
     createProductionAgentLoaders(context);
 
   async function loadReviews(more = false) {
@@ -236,6 +236,7 @@ export function createProductionStoreCollaboration(context: Context) {
   return {
     refreshCollaborationContext: () =>
       refreshCollaborationContext(history.route, loadContext),
+    refreshAgentConversation,
     loadAgents,
     loadTranscript,
     loadAgent,

@@ -11,7 +11,10 @@
       ? state.threads.flatMap((thread) =>
           thread.comments
             .filter(
-              (comment) => comment.batchId === batchId && !comment.replyTo,
+              (comment) =>
+                (comment.batchId === batchId ||
+                  comment.batchIds?.includes(batchId)) &&
+                !comment.replyTo,
             )
             .map((comment) => ({ thread, comment })),
         )

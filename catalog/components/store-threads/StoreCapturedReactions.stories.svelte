@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { page } from "vitest/browser";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import Fixture from "../../fixtures/StoreCapturedReactionsFixture.svelte";
@@ -11,18 +12,24 @@
     const c = within(canvasElement),
       body = within(document.body);
     const message = (await c.findAllByRole("article"))[0]!;
-    await userEvent.hover(message);
+    await page
+      .elementLocator(message.querySelector(".chat-text-block") ?? message)
+      .hover();
     const actions = within(message).getByRole("group", {
       name: /^Actions for/,
     });
-    const add = within(message).getByRole("button", { name: "Add reaction" });
+    const add = within(message).getByRole("button", {
+      name: /^Add reaction(?: to|$)/,
+    });
     await expect(actions.contains(add)).toBe(true);
     await waitFor(() =>
       expect(getComputedStyle(actions).pointerEvents).toBe("auto"),
     );
     await userEvent.click(add);
     await userEvent.unhover(message);
-    await expect(actions).toHaveAttribute("data-menu-open");
+    await expect(
+      await body.findByRole("button", { name: ":lapis:" }),
+    ).toBeVisible();
     await userEvent.click(await body.findByRole("button", { name: ":lapis:" }));
     await expect(
       await within(message).findByRole("button", {
@@ -52,9 +59,13 @@
   async function readOnly({ canvasElement }: { canvasElement: HTMLElement }) {
     const c = within(canvasElement);
     for (const message of await c.findAllByRole("article")) {
-      await userEvent.hover(message);
+      await page
+        .elementLocator(message.querySelector(".chat-text-block") ?? message)
+        .hover();
       await expect(
-        within(message).queryByRole("button", { name: "Add reaction" }),
+        within(message).queryByRole("button", {
+          name: /^Add reaction(?: to|$)/,
+        }),
       ).toBeNull();
     }
   }

@@ -81,7 +81,7 @@
       await c.findByRole("textbox", { name: "Markdown editor" }),
       "Retain uncertain message",
     );
-    await userEvent.click(c.getByRole("button", { name: "Send" }));
+    await userEvent.click(c.getByRole("button", { name: "Send message" }));
     const strip = await waitFor(() => {
       const node = canvasElement.querySelector<HTMLElement>(
         '[data-ui-component="community-agent-composer-activity"]',
@@ -158,7 +158,7 @@
     );
     const draft = await c.findByRole("textbox", { name: "Markdown editor" });
     await userEvent.type(draft, "Keep this unsent prompt");
-    await userEvent.click(c.getByRole("button", { name: "Send" }));
+    await userEvent.click(c.getByRole("button", { name: "Send message" }));
     const action = await page.findByRole("button", {
       name: "Review workspace",
     });

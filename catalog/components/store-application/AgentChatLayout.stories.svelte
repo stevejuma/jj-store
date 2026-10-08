@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { page as browser } from "vitest/browser";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import Fixture from "../../fixtures/AgentExecutionFixture.svelte";
@@ -20,22 +21,23 @@
     );
     await c.findByText("Ready to help.");
     const layout = canvasElement.querySelector<HTMLElement>(
-      '[data-ui-component="ai-chat-layout"]',
+      ".chat-body-reading-surface",
     )!;
     const viewport = layout.querySelector<HTMLElement>(
       '[data-ui-part="scroll-area-viewport"]',
     )!;
-    const dock = layout.querySelector<HTMLElement>(
-      '[data-ui-part="composer-dock"]',
-    )!;
+    const dock = layout.querySelector<HTMLElement>(".chat-body-footer")!;
     const assertUncovered = () => {
       expect(viewport.getBoundingClientRect().bottom).toBeLessThanOrEqual(
         dock.getBoundingClientRect().top + 1,
       );
       expect(
-        c.getByText("Ready to help.").getBoundingClientRect().bottom,
+        c
+          .getByRole("textbox", { name: "Markdown editor" })
+          .getBoundingClientRect().bottom,
       ).toBeLessThanOrEqual(viewport.getBoundingClientRect().bottom + 1);
     };
+    await userEvent.click(c.getByRole("button", { name: "Jump to end" }));
     await waitFor(assertUncovered);
     const draft = c.getByRole("textbox", { name: "Markdown editor" });
     await userEvent.type(
@@ -47,7 +49,7 @@
     viewport.dispatchEvent(new WheelEvent("wheel", { deltaY: -1200 }));
     viewport.scrollTop = 0;
     viewport.dispatchEvent(new Event("scroll"));
-    const latest = await c.findByRole("button", { name: "Scroll to latest" });
+    const latest = await c.findByRole("button", { name: "Jump to end" });
     await waitFor(() => expect(latest).toBeVisible());
     latest.focus();
     await userEvent.keyboard("{Enter}");
@@ -74,28 +76,28 @@
     );
     const first = await c.findByRole("article", { name: "Message from You" });
     const viewport = canvasElement.querySelector<HTMLElement>(
-      '[data-ui-component="ai-chat-layout"] [data-ui-part="scroll-area-viewport"]',
+      '.chat-body-reading-surface [data-ui-part="scroll-area-viewport"]',
     )!;
     viewport.scrollTop = 0;
     viewport.dispatchEvent(new Event("scroll"));
-    await userEvent.hover(first);
-    const actions = first.querySelector<HTMLElement>(
-      '[data-ui-part="message-actions"]',
-    )!;
+    await browser
+      .getByRole("textbox", { name: "Your message", exact: true })
+      .hover();
+    const actions = first.querySelector<HTMLElement>(".chat-text-actions")!;
     await waitFor(() => {
       expect(
-        within(first).getByRole("button", { name: "Reply" }),
+        within(first).getByRole("button", { name: "Comment on Your message" }),
       ).toBeVisible();
       expect(actions.getBoundingClientRect().top).toBeGreaterThanOrEqual(
         viewport.getBoundingClientRect().top,
       );
     });
-    const area = canvasElement.querySelector('[data-ui-part="message-area"]')!;
+    const area = canvasElement.querySelector(".chat-document")!;
     await expect(
       Number.parseFloat(getComputedStyle(area).paddingTop),
     ).toBeGreaterThanOrEqual(12);
     await expect(
-      within(first).getByRole("button", { name: "Reply" }),
+      within(first).getByRole("button", { name: "Comment on Your message" }),
     ).toBeVisible();
   }}
 />

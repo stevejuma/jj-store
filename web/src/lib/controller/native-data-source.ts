@@ -4,14 +4,7 @@ import type {
   RepositoryProfile,
 } from "./repository-profile.js";
 import type * as Browse from "./repository-read-types.js";
-import type {
-  Envelope,
-  Exact,
-  Graph,
-  Head,
-  Model,
-  Task,
-} from "../api/client.js";
+import type { Exact, Head, Model, Task } from "../api/client.js";
 import type { operations } from "../api/generated.js";
 import type {
   StoreMutationOutcome,
@@ -177,7 +170,7 @@ export interface StoreDataSource {
   search(query: SearchQuery): Promise<Model<"SearchPage">>;
   searchStatus(fresh?: boolean): Promise<Model<"SearchStatus">>;
   agentSessions(cursor?: string): Promise<Browse.AgentPage>;
-  agentSession(id: string): Promise<Browse.AgentDetail>;
+  agentSession(id: string, fresh?: boolean): Promise<Browse.AgentDetail>;
   agentRelations(
     subject: { commit: string } | { operation: string },
     cursor?: string,

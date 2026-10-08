@@ -59,3 +59,12 @@ Checkpoints retain newer tails, durable receipts and evolution dependencies.
 Empty local caches may be rebuilt from acknowledged object-store authority.
 Search freshness is separate: a mutation may be durable while its index still
 catches up. See [reads and refresh](reads.md).
+
+## Conversation submissions
+
+A comment submission publishes its new ThreadStore discussions, exact comment
+revisions and batch record together. A comments-only submission needs no dummy
+human message. Native manifest selection and the local companion reference each
+retain their existing receipt authority. Agent dispatch follows publication and
+context preparation; publication, delivery to each agent and a linked answer are
+separate outcomes. Retry uses the original request and frozen payload.

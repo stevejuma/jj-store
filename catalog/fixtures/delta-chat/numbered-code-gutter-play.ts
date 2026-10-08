@@ -64,11 +64,23 @@ export async function numberedCodeGutter({
   const view = EditorView.findFromDOM(source)!;
   const original = view.state.doc.toString();
   expect(original).toMatch(/^\s+1\t# Bedtime/);
-  expect(gutter!.querySelector('[data-captured-line="68"]')).not.toBeNull();
+  view.dispatch({
+    effects: EditorView.scrollIntoView(view.state.doc.line(68).from, {
+      y: "center",
+    }),
+  });
+  await waitFor(() =>
+    expect(gutter!.querySelector('[data-captured-line="68"]')).not.toBeNull(),
+  );
   expect(gutter!.querySelector('[data-captured-line="30"]')).toBeNull();
   await userEvent.click(
     c.getByRole("button", { name: "Show 55 more lines in README.md" }),
   );
+  view.dispatch({
+    effects: EditorView.scrollIntoView(view.state.doc.line(30).from, {
+      y: "center",
+    }),
+  });
   await waitFor(() =>
     expect(gutter!.querySelector('[data-captured-line="30"]')).not.toBeNull(),
   );

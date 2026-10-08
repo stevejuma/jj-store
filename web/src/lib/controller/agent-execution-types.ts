@@ -1,13 +1,15 @@
-import type { Model } from "../api/client.js";
+import type { Exact, Model } from "../api/client.js";
 import type { operations } from "../api/generated.js";
 export type AgentSetup = Model<"AgentExecutionSetup">;
 export type AgentTarget = Model<"AgentExecutionTarget">;
 export type AgentSession = Model<"AgentExecutionSession">;
 export type AgentEvent = Model<"AgentExecutionEvent">;
 export type AgentStatus = Model<"AgentExecutionStatus">;
-export type AgentAction = NonNullable<
-  operations["local_agents_command"]["requestBody"]
->["content"]["application/json"]["action"];
+export type AgentAction = Exact<
+  NonNullable<
+    operations["local_agents_command"]["requestBody"]
+  >["content"]["application/json"]["action"]
+>;
 export type AgentOutcome = Model<"AgentExecutionOutcome">;
 export interface AgentLaunchContext {
   repository?: string;

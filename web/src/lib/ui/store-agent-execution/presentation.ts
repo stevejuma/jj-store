@@ -8,7 +8,13 @@ import {
   communityMessageDay,
   communityMessageDayLabel,
 } from "../community-conversation/conversation-day.js";
+import { orderedAssistantRows } from "../../conversations/ordered-activity.js";
 export type ActivityRow = {
+  sourceRowId?: string;
+  sourcePart?: string | null;
+  sourceFrom?: number;
+  sourceTo?: number;
+  orderingKnown?: boolean;
   id: string;
   kind:
     | "user"
@@ -24,7 +30,7 @@ export type ActivityRow = {
   sequence: number;
   observedAtMillis?: number;
 };
-function openingReplay(value: Record<string, unknown>) {
+export function openingReplay(value: Record<string, unknown>) {
   const session = text(value.controllerSessionId);
   return (
     value.type === "activity" &&
@@ -116,7 +122,7 @@ export function activityRows(events: readonly AgentEvent[]): ActivityRow[] {
     if (type === "record")
       row(`${request}/record`, "record", text(object(value.record).status));
   }
-  return [...rows.values()];
+  return orderedAssistantRows(events, [...rows.values()]);
 }
 /** Use the thread chat's day presentation, with honest groups for legacy data. */
 export function activityDayDividers(rows: readonly ActivityRow[]) {

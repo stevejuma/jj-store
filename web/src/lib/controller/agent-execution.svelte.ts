@@ -1,3 +1,4 @@
+import { ConversationSessions } from "../conversations/session.svelte.js";
 import { disposeAgentResources } from "./agent-resource-disposal.js";
 import {
   agentControlBody,
@@ -36,6 +37,7 @@ import type {
 const newId = () => crypto.randomUUID().replaceAll("-", "");
 /** Installation owner retains drafts and exact pending identities across navigation. */
 export class AgentExecution {
+  readonly conversations = new ConversationSessions();
   open = $state(false);
   onNavigate?: (view: AgentView, id?: string, relatedId?: string) => void;
   setupId = $state("");
@@ -255,9 +257,14 @@ export class AgentExecution {
   async command(action: AgentAction, draft?: string) {
     await this.commandSession(this.selected, action, draft);
   }
-  async commandSession(id: string, action: AgentAction, draft?: string) {
+  async commandSession(
+    id: string,
+    action: AgentAction,
+    draft?: string,
+    requestId?: string,
+  ) {
     if (!id || this.busy || this.pending || !this.available()) return;
-    const request_id = newId();
+    const request_id = requestId ?? newId();
     await this.send(
       "agents/command",
       { version: 1, request_id, session_id: id, action },
@@ -266,6 +273,7 @@ export class AgentExecution {
     return request_id;
   }
   destroy() {
+    this.conversations.clear();
     this.#alive = false;
     this.updates.destroy();
     disposeAgentResources(this);

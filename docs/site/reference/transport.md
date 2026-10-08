@@ -225,3 +225,18 @@ available. The empty-body `POST /v1/local/compute/pick` opens a fixed GGUF
 dialog on the service machine and returns only an optional versioned path. It
 saves no configuration or model weights. Cancellation and picker failures
 preserve the draft; Import is a separate durable command.
+
+## Conversation comments and answer context
+
+ThreadStore submissions carry an exact parent revision, optional authored
+message, bounded comment drafts or immutable references, and a stable request
+identity. Managed Send and standalone Prompt accept these batches, including
+comments-only prompts. Their outcome reports comment publication separately from
+per-agent delivery. The retained Sent inspector exposes the sanitized versioned
+comment-reply instructions and frozen batch references actually delivered.
+
+Assistant output may contain `<comment-reply discussion="D1" comments="C1 C2">`
+blocks among ordinary prose and tools. Only exact references from delivered
+context and verified captured answer ranges can produce durable ThreadStore
+links. Literal code, malformed tags and foreign references remain ordinary
+content; tags never execute commands or resolve reviews.

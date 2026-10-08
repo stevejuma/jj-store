@@ -16,11 +16,13 @@ import {
 } from "../community/agent-mentions.js";
 import type { StoreController } from "./contracts.js";
 import {
+  attach,
+  removeAttachment,
   selectRepository,
   selectWorkspace,
   validateWorkspaces,
 } from "./agent-chat-selections.js";
-import { chatContext } from "./agent-chat-context.js";
+import { chatContext, sameChatOrigin } from "./agent-chat-context.js";
 const newId = () => crypto.randomUUID().replaceAll("-", "");
 /** App-lifetime scoped drafts and exact requests, independent of the selected inbox session. */
 export class AgentChat {
@@ -33,6 +35,10 @@ export class AgentChat {
   streamError = $state("");
   pending = $state<Chat.ChatSend | null>(null);
   outcomes = $state<AgentOutcome[]>([]);
+  receipts = $state<Record<string, Model<"AgentConversationOutcome">>>({});
+  publications = $state<
+    Record<string, Model<"AgentConversationOutcome">["comment_publication"]>
+  >({});
   #updates: ReturnType<typeof watchAgentChanges>;
   #alive = true;
   #refreshing = false;
@@ -85,18 +91,12 @@ export class AgentChat {
     const saved =
       !fresh &&
       this.manager.value?.conversations
-        ?.filter(
-          (c) =>
-            c.origin.scope === origin.scope && c.origin.home === origin.home,
-        )
+        ?.filter((c) => sameChatOrigin(c.origin, origin))
         .at(-1);
     const retained =
       !fresh &&
       Object.values(this.drafts)
-        .filter(
-          (d) =>
-            d.origin.scope === origin.scope && d.origin.home === origin.home,
-        )
+        .filter((d) => sameChatOrigin(d.origin, origin))
         .at(-1);
     const id = retained ? retained.id : saved ? saved.id : newId();
     this.drafts[id] ??= {
@@ -151,32 +151,18 @@ export class AgentChat {
       else this.#watching.delete(key);
     };
   }
-  attach(repository: string) {
-    if (
-      this.draft &&
-      !this.busy &&
-      !this.pending &&
-      !this.draft.attachments.some((a) => a.repository === repository) &&
-      this.draft.attachments.length < 8
-    )
-      this.draft.attachments.push({
-        repository,
-        target_id: null,
-        operation: null,
-        commit: null,
-      });
-  }
-  removeAttachment(repository: string) {
-    if (this.draft && !this.busy && !this.pending)
-      this.draft.attachments = this.draft.attachments.filter(
-        (a) => a.repository !== repository,
-      );
-  }
+  attach = (repository: string) => attach(this, repository);
+  removeAttachment = (repository: string) => removeAttachment(this, repository);
   selectRepository = (previous: string, repository: string) =>
     selectRepository(this, previous, repository);
   selectWorkspace = (repository: string, targetId: string) =>
     selectWorkspace(this, repository, targetId);
-  async send(content: string, agentIds: readonly string[]) {
+  async send(
+    content: string,
+    agentIds: readonly string[],
+    comments?: NonNullable<Chat.ChatSend["comments"]>,
+    requestId?: string,
+  ) {
     if (this.busy || this.pending || !this.draft)
       throw new Error("Resolve the pending request before sending again.");
     if (!agentIds.length) throw new Error("Use @ to choose an agent.");
@@ -192,11 +178,13 @@ export class AgentChat {
         content,
       )
       .trim();
-    if (!text) throw new Error("Write a message after the agent tags.");
+    if (!text && !comments)
+      throw new Error("Write a message after the agent tags.");
     validateWorkspaces(this);
     const body: Chat.ChatSend = {
       version: 1,
-      request_id: newId(),
+      request_id: requestId ?? newId(),
+      comments,
       conversation_id: this.selected,
       origin: this.draft.origin,
       attachments: [...this.draft.attachments],
@@ -217,7 +205,9 @@ export class AgentChat {
       const outcome = await this.manager.client.request<
         Model<"AgentConversationOutcome">
       >("agents/chat", body);
+      this.receipts[body.request_id] = outcome;
       this.outcomes = outcome.agents;
+      this.publications[body.request_id] = outcome.comment_publication;
       if (
         outcome.agents.some((a) =>
           ["outcome_unknown", "not_known"].includes(a.state),
@@ -227,15 +217,16 @@ export class AgentChat {
           "The outcome is unknown. Review the saved work before explicitly continuing.";
         throw new Error(this.error);
       }
-      this.pending = null;
       const refused = outcome.agents.find(
         (a) =>
           a.error || ["failed", "cancelled", "timed_out"].includes(a.state),
       );
       if (refused)
         throw new Error(refused.error ?? "The prompt was not accepted.");
+      this.pending = null;
       await this.manager.updates.status();
       await this.refresh();
+      return outcome;
     } catch (cause) {
       if (isAgentCommandRefusal(cause)) this.pending = null;
       this.error =

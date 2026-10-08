@@ -42,3 +42,25 @@ export function validateWorkspaces(chat: AgentChat) {
       "Choose a workspace for each repository with multiple workspaces.",
     );
 }
+
+export function attach(chat: AgentChat, repository: string) {
+  if (
+    chat.draft &&
+    !chat.busy &&
+    !chat.pending &&
+    !chat.draft.attachments.some((a) => a.repository === repository) &&
+    chat.draft.attachments.length < 8
+  )
+    chat.draft.attachments.push({
+      repository,
+      target_id: null,
+      operation: null,
+      commit: null,
+    });
+}
+export function removeAttachment(chat: AgentChat, repository: string) {
+  if (chat.draft && !chat.busy && !chat.pending)
+    chat.draft.attachments = chat.draft.attachments.filter(
+      (a) => a.repository !== repository,
+    );
+}

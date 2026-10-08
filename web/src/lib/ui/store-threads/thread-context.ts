@@ -85,7 +85,8 @@ export function activityLinks(
     .filter((l) => l.active)
     .flatMap((l) => {
       const target = l.target;
-      if (target.type === "comment_batch") return [];
+      if (target.type === "comment_batch" || target.type === "comment_reply")
+        return [];
       if (target.type === "code") return baselineLinks(target.anchor, route);
       if (target.type === "capture_gap") {
         const hash = storeRouteToHash({

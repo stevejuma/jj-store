@@ -7,7 +7,10 @@ import {
 } from "@lapismd/mira/codemirror";
 
 /** Fixed reading decorations: selection never reveals Markdown source markers. */
-export function readingDecorations(text: string): {
+export function readingDecorations(
+  text: string,
+  ignored: readonly { from: number; to: number }[] = [],
+): {
   decorations: DecorationSet;
   hidden: DecorationSet;
 } {
@@ -15,6 +18,8 @@ export function readingDecorations(text: string): {
   const hidden: { from: number; to: number }[] = [];
   markdownLanguage.parser.parse(text).iterate({
     enter(node) {
+      if (ignored.some((r) => node.from >= r.from && node.to <= r.to))
+        return false;
       const name = node.name;
       if (
         [

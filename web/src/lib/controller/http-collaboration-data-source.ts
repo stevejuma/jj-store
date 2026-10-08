@@ -36,7 +36,15 @@ export class HttpCollaborationDataSource {
     );
   }
 
-  agentSession(id: string) {
+  async agentSession(id: string, fresh = false) {
+    if (fresh)
+      await this.queryClient.invalidateQueries({
+        queryKey: storeQueryKeys.resource(this.scope, "agent-session", null, {
+          id,
+        }),
+        exact: true,
+        refetchType: "none",
+      });
     return this.query<Model<"AgentSessionDetail">>(
       "agent-session",
       { id },

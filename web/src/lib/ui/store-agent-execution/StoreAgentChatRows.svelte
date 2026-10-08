@@ -27,12 +27,14 @@
     user = { id: "user", name: "You", handle: "", initials: "YO" },
     restoredReply = "",
     queued = new Set<string>(),
+    showDayDividers = true,
   }: {
     manager: AgentExecution;
     rows: readonly (ActivityRow & { session: AgentSession; key: string })[];
     user?: CommunityMemberModel;
     restoredReply?: string;
     queued?: ReadonlySet<string>;
+    showDayDividers?: boolean;
   } = $props();
   const days = $derived(
     activityDayDividers(rows.map((row) => ({ ...row, id: row.key }))),
@@ -42,7 +44,7 @@
 
 {#each groups as entry (entry.key)}
   {@const row = entry.row}
-  {#if days.has(row.key)}<SystemMessage variant="divider"
+  {#if showDayDividers && days.has(row.key)}<SystemMessage variant="divider"
       >{days.get(row.key)}</SystemMessage
     >{/if}
   {@const timing = agentMessageTimestamp(row.observedAtMillis)}

@@ -1,22 +1,62 @@
 <script lang="ts">
-  import { onDestroy } from "svelte";
+  import { createStandaloneSender } from "../../conversations/standalone-send.svelte.js";
+
+  import StoreConversationRecovery from "../store-agent-chat/StoreConversationRecovery.svelte";
+  import { untrack } from "svelte";
   import * as Empty from "@lapismd/design-core/shadcn/empty";
-  import MessageIcon from "@lucide/svelte/icons/messages-square";
+
   import CommunitySkeleton from "../community-skeleton/CommunitySkeleton.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import CommunityAgentActivityFeed from "../community-agent-activity/CommunityAgentActivityFeed.svelte";
+  import StoreConversationRuntime from "../store-agent-chat/StoreConversationRuntime.svelte";
+  import StoreLiveConversation from "../store-agent-chat/StoreLiveConversation.svelte";
+  import ChatMessageFooter from "../store-agent-chat-body/ChatMessageFooter.svelte";
+
   import StoreAgentRequestRecovery from "./StoreAgentRequestRecovery.svelte";
-  import StoreAgentTranscript from "./StoreAgentTranscript.svelte";
+
   import CommunityChatComposer from "../community-chat-composer/CommunityChatComposer.svelte";
   import { activityRows, runtimeChoices } from "./presentation.js";
-  import { runtimeMatches, waitForRuntime } from "./runtime-preparation.js";
+  import { runtimeMatches } from "./runtime-preparation.js";
   import { conversationError } from "./conversation-error.js";
   import type { AgentExecution } from "../../controller/agent-execution.svelte.js";
   import { object, text } from "../../controller/agent-execution-types.js";
   import { completedAgentChanges } from "../../controller/agent-workspace-changes.js";
   import StoreAgentChangesPanel from "../store-agent-chat/StoreAgentChangesPanel.svelte";
-  let { manager }: { manager: AgentExecution } = $props();
+  import type { StoreController } from "../../controller/contracts.js";
+  let {
+    manager,
+    controller,
+  }: { manager: AgentExecution; controller?: StoreController } = $props();
   const session = $derived(manager.session);
+  const conversation = $derived(
+    manager.conversations.get(`session:${session?.id}`),
+  );
+  const user = $derived({
+    id: session ? manager.discussions.actor(session.repository) : "user",
+    name: "You",
+    handle: "",
+    initials: "YO",
+  });
+  $effect(() => {
+    const current = conversation,
+      id = session?.id;
+    untrack(() => {
+      if (id && !current.initialized) {
+        current.comments.message = manager.drafts[id] ?? "";
+        current.initialized = true;
+      }
+    });
+  });
+  $effect(() => {
+    const id = session?.id,
+      message = conversation.comments.message;
+    if (id) manager.drafts[id] = message;
+  });
+
+  $effect(() => {
+    const current = session;
+    if (current)
+      return manager.discussions.watch(current.id, current.repository);
+  });
   const facts = $derived(object(session?.capabilities));
   const rows = $derived(activityRows(manager.events));
   const changes = $derived(
@@ -44,79 +84,39 @@
   const ready = $derived(
     facts.modeReady === true && runtimeMatches(session, preferences),
   );
-  let preparationError = $state("");
+  const sender = createStandaloneSender(() => ({
+    manager,
+    session,
+    conversation,
+    preferences,
+    idle,
+    ready,
+    canConfigure,
+  }));
+  const send = sender.send;
   const error = $derived(
     session &&
       ((manager.errorSessionId === session.id && manager.error) ||
-        preparationError ||
+        sender.error ||
         conversationError(session, manager.events)),
   );
-  let preparing = $state(false);
-  let mounted = true;
-  onDestroy(() => {
-    mounted = false;
-  });
-  async function send() {
-    const id = manager.selected,
-      draft = manager.drafts[id],
-      wanted = preferences && { ...preferences };
-    if (
-      !draft?.trim() ||
-      !idle ||
-      (!ready && !canConfigure) ||
-      manager.pending ||
-      manager.busy ||
-      preparing
-    )
-      return;
-    preparing = true;
-    preparationError = "";
-    try {
-      if (!ready && wanted) {
-        const request = await manager.commandSession(id, {
-          action: "configure",
-          preferences: wanted,
-        });
-        if (
-          !(await waitForRuntime(manager, id, request, wanted, () => mounted))
-        ) {
-          if (mounted && manager.selected === id)
-            preparationError =
-              "Runtime configuration was not confirmed. Your draft is retained. Check the pending request outcome before continuing.";
-          return;
-        }
-      }
-      if (
-        !mounted ||
-        manager.selected !== id ||
-        !manager.session?.connected ||
-        manager.pending ||
-        manager.error ||
-        !runtimeMatches(manager.session, wanted) ||
-        !["idle", "running"].includes(manager.session.state) ||
-        object(manager.session.capabilities).modeReady !== true
-      )
-        return;
-      await manager.commandSession(
-        id,
-        { action: "prompt", text: draft, max_duration_ms: 900000 },
-        id,
-      );
-    } finally {
-      preparing = false;
-    }
-  }
 </script>
 
 {#if session}
   <div class="agent-conversation">
-    <CommunityAgentActivityFeed
-      conversationKey={session.id}
-      latestMessageId={rows.at(-1)?.id}
-      working={session.state === "running"}
-      empty={!rows.length && !manager.eventsLoading}
+    <StoreLiveConversation
+      {controller}
+      {manager}
+      {conversation}
+      {user}
+      onSend={send}
+      rows={rows.map((row) => ({
+        ...row,
+        session: session!,
+        key: `${session!.id}:${row.id}`,
+      }))}
     >
-      {#snippet messageComposer()}
+      {#snippet composer()}
         {#each changes as selection (`${selection.repository}:${selection.operation}:${selection.commit}`)}
           <StoreAgentChangesPanel
             {selection}
@@ -128,24 +128,34 @@
           aria-label="Send agent prompt"
           onsubmit={(event) => {
             event.preventDefault();
-            void send();
+            void conversation.comments.send();
           }}
           onkeydowncapture={(event) => {
-            if (event.key === "Enter" && (event.metaKey || event.ctrlKey)) {
+            if (
+              !event.isComposing &&
+              event.key === "Enter" &&
+              (event.metaKey || event.ctrlKey)
+            ) {
               event.preventDefault();
               event.stopPropagation();
-              void send();
+              void conversation.comments.send();
             }
           }}
         >
           <CommunityChatComposer
             mode="chat"
+            enterInsertsNewline
+            showSubmitButton={false}
+            allowEmpty={conversation.comments.pending.length > 0}
             clearOnSubmit={false}
             submitLabel={session.state === "running"
               ? "Queue follow-up"
               : "Send"}
             onSubmit={idle && (ready || canConfigure) && !manager.eventsLoading
-              ? send
+              ? async () => {
+                  if (!(await conversation.comments.send()))
+                    throw new Error(conversation.comments.error);
+                }
               : undefined}
             composerStatus={manager.pending
               ? undefined
@@ -173,13 +183,11 @@
                         }
                       : undefined}
             ariaLabel="Message to agent"
-            placeholder={session.state === "running"
-              ? "Queue a follow-up…"
-              : "Message the agent…"}
-            bind:value={manager.drafts[session.id]}
+            placeholder=""
+            bind:value={conversation.comments.message}
             disabled={manager.busy ||
               !!manager.pending ||
-              preparing ||
+              sender.preparing ||
               manager.eventsLoading}
           >
             {#snippet additionalActions()}
@@ -200,23 +208,30 @@
           </CommunityChatComposer>
         </form>
         <StoreAgentRequestRecovery {manager} {session} />
+        <StoreConversationRecovery {conversation} {manager} standalone />
       {/snippet}
-      {#if manager.eventsLoading}<CommunitySkeleton
-          layout="messages"
-          count={5}
-          padded
-          label="Loading session history"
-        />
-      {:else if !rows.length}<Empty.Root
-          ><Empty.Header
-            ><Empty.Media variant="icon"
-              ><MessageIcon aria-hidden="true" /></Empty.Media
-            ><Empty.Title>Start the conversation</Empty.Title><Empty.Description
-              >Send a message to {session.title} to begin.</Empty.Description
-            ></Empty.Header
-          ></Empty.Root
-        >{/if}
-      {#if !manager.eventsLoading}<StoreAgentTranscript {manager} />{/if}
-    </CommunityAgentActivityFeed>
+      {#snippet beforeItems()}
+        {#if manager.eventsLoading}<CommunitySkeleton
+            layout="messages"
+            count={5}
+            padded
+            label="Loading session history"
+          />{/if}
+      {/snippet}
+      {#snippet footer()}<ChatMessageFooter
+          canSend={idle &&
+            (ready || canConfigure) &&
+            !sender.preparing &&
+            !manager.busy &&
+            !manager.pending &&
+            conversation.comments.canSend}
+          onSend={() => void conversation.comments.send()}
+          error={manager.pending || error ? "" : conversation.comments.error}
+          >{#snippet controls()}<StoreConversationRuntime
+              {manager}
+              {session}
+            />{/snippet}</ChatMessageFooter
+        >{/snippet}
+    </StoreLiveConversation>
   </div>
 {/if}

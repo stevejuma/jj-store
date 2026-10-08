@@ -25,6 +25,7 @@
   {#if reactionTarget && state.props().onReact}
     <CommunityReactions
       mode="picker"
+      communityEmojis={state.props().communityEmojis ?? []}
       pickerLabel={`Add reaction to ${block.label}`}
       presets={state.props().reactionOptions ?? []}
       onSelect={(emoji, custom) =>
@@ -35,6 +36,12 @@
     variant="ghost"
     size="sm"
     aria-label={`Comment on ${block.label}`}
+    disabled={block.commentable === false || state.props().canComment === false}
+    title={state.props().canComment === false
+      ? (state.props().commentUnavailable ?? "Commenting is unavailable")
+      : block.commentable === false
+        ? "Waiting for an exact published source"
+        : undefined}
     onclick={onComment}><MessageCircleIcon size={14} /> Comment</Button
   >
 </div>

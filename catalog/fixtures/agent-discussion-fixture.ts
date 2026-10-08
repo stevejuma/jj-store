@@ -69,6 +69,12 @@ export function agentDiscussionFixture(
               if (event.message && event.value.event.type === "message")
                 replies.push({
                   thread_id: id,
+                  thread_revision: (await transport.thread(id)).thread
+                    .reference,
+                  source: null,
+                  historical: false,
+                  batches: [],
+                  answers: [],
                   message: event.message,
                   revision: event.value.event.revision,
                 });
@@ -80,6 +86,17 @@ export function agentDiscussionFixture(
             latest.set(reply.message.message_id, reply);
         messages.push({
           ...row,
+          text_parts: [
+            {
+              part: null,
+              text: row.row_id.endsWith("/user")
+                ? "Show the retained time"
+                : row.row_id.endsWith("/assistant")
+                  ? "Ready to help."
+                  : "README.md",
+            },
+          ],
+          answers: [],
           threads: ids,
           replies: [...latest.values()]
             .filter((r) => r.message.body !== null)

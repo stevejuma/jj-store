@@ -68,3 +68,24 @@ answer enables the green double-check button; hover/focus changes its icon and
 shows Go to reply. Multiple destinations expose an agent/turn chooser. Links do
 not resolve reviews or mutate comment bodies. Reply state belongs to the exact
 comment revision, not whatever text is currently selected after an edit.
+
+## Implementation review
+
+E-CHAT-LIVE-005 implements the shared conversation projection for live sessions,
+managed participations, recorded captures, ordinary threads and reply bodies.
+The Document default and Classic setting use the same session-owned drafts and
+receipt recovery. Linked participations keep their own repository feedback
+reader, cancellation, Sent inspector, working state and saved-change controls.
+Recorded views observe new addressed participations within the same body.
+
+Exact range comments require a selected committed text part. Streaming and
+unmapped raw JSON remain readable without invented selectable sources. Original
+capture strings remain unchanged when numbered gutters, Markdown decorations or
+middle folds hide presentation characters. Navigation retains a pending exact
+destination until the mounted reader or reply node is revealed.
+
+The affected Storybook family and focused controllers verify presentation and
+state; a controlled ACP fixture separately qualifies cold publication and
+restart. Neither proves model compliance or native IME behavior. The execution
+and collaboration chapters own delivery, permission and authorization gates; M24
+remains In progress and visual baselines remain unapproved.

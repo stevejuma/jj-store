@@ -9,6 +9,7 @@ export type ColorMode = "system" | "light" | "dark";
 export type FontSize = "smaller" | "default" | "larger";
 export type ConversationDensity = "compact" | "comfortable" | "spacious";
 export type LinkStyle = "compact" | "rich";
+export type ConversationView = "document" | "classic";
 export type ThreadLayout = "focus" | "split";
 export interface AppearancePreferences {
   version: 1;
@@ -22,6 +23,7 @@ export interface AppearancePreferences {
   density: ConversationDensity;
   links: LinkStyle;
   threads: ThreadLayout;
+  conversationView: ConversationView;
 }
 export const appearanceStorageKey = "jj-store.appearance.v1";
 export const defaultAppearance: AppearancePreferences = {
@@ -36,6 +38,7 @@ export const defaultAppearance: AppearancePreferences = {
   density: "comfortable",
   links: "compact",
   threads: "split",
+  conversationView: "document",
 };
 export function parseAppearance(raw: string | null): AppearancePreferences {
   try {
@@ -78,6 +81,11 @@ export function parseAppearance(raw: string | null): AppearancePreferences {
       ),
       links: pick(value.links, ["compact", "rich"], "compact"),
       threads: pick(value.threads, ["focus", "split"], "split"),
+      conversationView: pick(
+        value.conversationView,
+        ["document", "classic"],
+        "document",
+      ),
     };
   } catch {
     return { ...defaultAppearance };

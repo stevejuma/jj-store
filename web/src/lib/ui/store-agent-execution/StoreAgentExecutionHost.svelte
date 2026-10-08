@@ -2,7 +2,10 @@
   import { onDestroy, untrack } from "svelte";
   import { AppShell } from "@lapismd/design-core/shell";
   import { ConfirmDialog } from "@lapismd/design-core/forms/dialog";
-  import type { StoreRoute } from "../../controller/contracts.js";
+  import type {
+    StoreController,
+    StoreRoute,
+  } from "../../controller/contracts.js";
   import type { AgentExecution } from "../../controller/agent-execution.svelte.js";
   import type { AgentSetup } from "../../controller/agent-execution-types.js";
   import CommunityAgents from "../community-agents/CommunityAgents.svelte";
@@ -19,12 +22,14 @@
   import "./agent-execution.css";
   let {
     manager,
+    controller,
     route,
     onReview,
     layoutStorage,
     repositories = [],
   }: {
     manager: AgentExecution;
+    controller?: StoreController;
     route: StoreRoute;
     onReview?: (repository: string, commit: string, operation: string) => void;
     layoutStorage?: Storage;
@@ -174,6 +179,7 @@
       </p>
     {:else if route.agentView === "new"}<StoreAgentLauncher {manager} />
     {:else if manager.session && manager.session.id === route.executionSessionId}<StoreAgentConversation
+        {controller}
         {manager}
       />
     {:else if !manager.value}<CommunitySkeleton

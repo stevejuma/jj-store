@@ -246,8 +246,8 @@ export class HttpStoreDataSource
   agentSessions(cursor?: string) {
     return this.#collaboration.agentSessions(cursor);
   }
-  agentSession(id: string) {
-    return this.#collaboration.agentSession(id);
+  agentSession(id: string, fresh = false) {
+    return this.#collaboration.agentSession(id, fresh);
   }
   agentRelations(
     subject: { commit: string } | { operation: string },

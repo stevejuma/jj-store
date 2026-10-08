@@ -26,6 +26,8 @@ export interface ComposerProps {
   ariaLabel?: string;
   submitLabel?: string;
   mode?: "chat" | "form";
+  allowEmpty?: boolean;
+  enterInsertsNewline?: boolean;
   showSubmitButton?: boolean;
   clearOnSubmit?: boolean;
   additionalActions?: Snippet;

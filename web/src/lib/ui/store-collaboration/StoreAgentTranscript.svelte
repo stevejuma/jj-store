@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreRecordedConversation from "./StoreRecordedConversation.svelte";
   import { useAppearance } from "../../appearance/store.svelte.js";
   const appearance = useAppearance();
   import * as Chat from "@lapismd/design-core/ai/chat";
@@ -66,94 +67,112 @@
   }
 </script>
 
-<Chat.MessageList
-  density={appearance?.density ?? "compact"}
-  isEmpty={activity.length === 0}
-  aria-label="Agent conversation activity"
->
-  <CommunityProjectsVirtualRows
-    rows={timeline}
-    getKey={(entry) => `${entry.type}:${entry.sequence}`}
-    estimateSize={(entry) => (entry?.type === "tools" ? 42 : 118)}
+{#if controller.threads}
+  <StoreRecordedConversation
+    {controller}
+    {activity}
+    {sessionId}
+    {integration}
+    {agent}
+    {member}
+    {interactive}
+  />
+{:else}
+  <Chat.MessageList
+    density={appearance?.density ?? "compact"}
+    isEmpty={activity.length === 0}
+    aria-label="Agent conversation activity"
   >
-    {#snippet row(entry)}
-      {#if entry.type === "message"}
-        {@const author =
-          entry.role === "assistant" || entry.role === "tool" ? agent : member}
-        <CommunityMessage
-          promptElements
-          message={message(entry)}
-          {author}
-          {members}
-          highlighted={entry.role === "user"}
-          onToggleReaction={canReact &&
-          controller.threads &&
-          entry.reaction_target
-            ? (_id, emoji, custom) => {
-                if (!reactionDisabled)
-                  void controller
-                    .threads!.toggle(
-                      entry.reaction_target!,
-                      emoji,
-                      custom,
-                      true,
-                    )
-                    .catch(() => {});
-              }
-            : undefined}
-          >{#snippet content()}<StoreAgentPromptContent
-              content={agentMessageContent(entry.content, integration)}
-              sentContext={entry.role === "user"
-                ? agentSentContext(entry.content, integration)
-                : undefined}
-              {members}
-            />{/snippet}
-          {#snippet supplement()}<StoreMessageActions
-              {reactionDisabled}
-              communityEmojis={controller.threads?.emojis ?? []}
-              onReact={canReact && controller.threads && entry.reaction_target
-                ? (emoji, custom) => {
-                    if (!reactionDisabled)
-                      void controller
-                        .threads!.toggle(entry.reaction_target!, emoji, custom)
-                        .catch(() => {});
-                  }
-                : undefined}
-              authorName={author.name}
-              items={[
-                { label: "Copy message", value: entry.content.content },
-                { label: "Copy message ID", value: entry.message_id },
-                { label: "Copy turn ID", value: entry.turn_id },
-                { label: "Copy session ID", value: sessionId },
-                { label: "Copy sequence", value: String(entry.sequence) },
-              ]}
-            />{/snippet}
-          {#snippet metadataSupplement()}{#if controller.threads && entry.reaction_target}<StoreMessageReactions
-                threads={controller.threads}
-                target={entry.reaction_target}
-                showControls={false}
-              />{/if}{/snippet}</CommunityMessage
-        >
-      {:else if entry.type === "tools"}
-        <div class="store-agent-transcript__tools">
-          <StoreAgentTools
-            items={entry.items}
-            {patches}
-            {controller}
-            interactive={interactive &&
-              controller.state.repository.profile !== "git_sha1_jj045"}
-          />
-        </div>
-      {:else if entry.type === "capture_gap"}
-        <Chat.SystemMessage>
-          Capture gap from {entry.missing_from} to {entry.missing_to}
-        </Chat.SystemMessage>
-      {:else if entry.type === "permission" && entry.state !== "not_observed"}
-        <Chat.SystemMessage>Tool permission {entry.state}</Chat.SystemMessage>
-      {/if}
-    {/snippet}
-  </CommunityProjectsVirtualRows>
-</Chat.MessageList>
+    <CommunityProjectsVirtualRows
+      rows={timeline}
+      getKey={(entry) => `${entry.type}:${entry.sequence}`}
+      estimateSize={(entry) => (entry?.type === "tools" ? 42 : 118)}
+    >
+      {#snippet row(entry)}
+        {#if entry.type === "message"}
+          {@const author =
+            entry.role === "assistant" || entry.role === "tool"
+              ? agent
+              : member}
+          <CommunityMessage
+            promptElements
+            message={message(entry)}
+            {author}
+            {members}
+            highlighted={entry.role === "user"}
+            onToggleReaction={canReact &&
+            controller.threads &&
+            entry.reaction_target
+              ? (_id, emoji, custom) => {
+                  if (!reactionDisabled)
+                    void controller
+                      .threads!.toggle(
+                        entry.reaction_target!,
+                        emoji,
+                        custom,
+                        true,
+                      )
+                      .catch(() => {});
+                }
+              : undefined}
+            >{#snippet content()}<StoreAgentPromptContent
+                content={agentMessageContent(entry.content, integration)}
+                sentContext={entry.role === "user"
+                  ? agentSentContext(entry.content, integration)
+                  : undefined}
+                {members}
+              />{/snippet}
+            {#snippet supplement()}<StoreMessageActions
+                {reactionDisabled}
+                communityEmojis={controller.threads?.emojis ?? []}
+                onReact={canReact && controller.threads && entry.reaction_target
+                  ? (emoji, custom) => {
+                      if (!reactionDisabled)
+                        void controller
+                          .threads!.toggle(
+                            entry.reaction_target!,
+                            emoji,
+                            custom,
+                          )
+                          .catch(() => {});
+                    }
+                  : undefined}
+                authorName={author.name}
+                items={[
+                  { label: "Copy message", value: entry.content.content },
+                  { label: "Copy message ID", value: entry.message_id },
+                  { label: "Copy turn ID", value: entry.turn_id },
+                  { label: "Copy session ID", value: sessionId },
+                  { label: "Copy sequence", value: String(entry.sequence) },
+                ]}
+              />{/snippet}
+            {#snippet metadataSupplement()}{#if controller.threads && entry.reaction_target}<StoreMessageReactions
+                  threads={controller.threads}
+                  target={entry.reaction_target}
+                  showControls={false}
+                />{/if}{/snippet}</CommunityMessage
+          >
+        {:else if entry.type === "tools"}
+          <div class="store-agent-transcript__tools">
+            <StoreAgentTools
+              items={entry.items}
+              {patches}
+              {controller}
+              interactive={interactive &&
+                controller.state.repository.profile !== "git_sha1_jj045"}
+            />
+          </div>
+        {:else if entry.type === "capture_gap"}
+          <Chat.SystemMessage>
+            Capture gap from {entry.missing_from} to {entry.missing_to}
+          </Chat.SystemMessage>
+        {:else if entry.type === "permission" && entry.state !== "not_observed"}
+          <Chat.SystemMessage>Tool permission {entry.state}</Chat.SystemMessage>
+        {/if}
+      {/snippet}
+    </CommunityProjectsVirtualRows>
+  </Chat.MessageList>
+{/if}
 
 <style>
   .store-agent-transcript__tools {

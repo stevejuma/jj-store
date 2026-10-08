@@ -1,10 +1,8 @@
 <script lang="ts">
-  import "@lapismd/mira/styles.css";
-  import "./composer-0.css";
-  import "./composer-1.css";
-  import "../community-composer-status.css";
+  import "./composer.css";
   import {
     composerSubmission,
+    composerSubmissionError,
     editLastComposerMessage,
   } from "./composer-submission.js";
   import { createComposerAgentAudience } from "./composer-agent-audience.svelte.js";
@@ -57,6 +55,8 @@
     ariaLabel = "Message composer",
     submitLabel,
     mode = "chat",
+    allowEmpty = false,
+    enterInsertsNewline = false,
     showSubmitButton = mode === "chat",
     clearOnSubmit = true,
     additionalActions,
@@ -132,7 +132,7 @@
     view?.focus();
   }
   async function submit() {
-    if (blocked || !onSubmit || !value.trim()) return;
+    if (blocked || !onSubmit || (!allowEmpty && !value.trim())) return;
     submitting = true;
     error = "";
     const submitted = value;
@@ -144,8 +144,7 @@
       autocomplete.clear();
     } catch (cause) {
       if (!active) return;
-      error =
-        cause instanceof Error ? cause.message : "Message could not be sent";
+      error = composerSubmissionError(cause);
     } finally {
       if (active) submitting = false;
     }
@@ -173,7 +172,8 @@
     },
     onAutocompleteAccept: () => selectAutocomplete(selectedIndex),
     onAutocompleteDismiss: autocomplete.clear,
-    submitOnEnter: () => mode === "chat" && showSubmitButton,
+    submitOnEnter: () =>
+      !enterInsertsNewline && mode === "chat" && showSubmitButton,
     onSubmit: () => void submit(),
     onEditLast: () => editLastComposerMessage(onEditLastMessage),
     onCancelEdit: () => onCancelContext?.(),
@@ -225,7 +225,7 @@
     statusPosition="top"
     aria-label={ariaLabel}
     title={disabled ? disabledReason : undefined}
-    onSubmit={() => showSubmitButton && void submit()}
+    onSubmit={() => void submit()}
   >
     {#snippet drawer()}
       {#if context?.kind === "reply" || context?.kind === "transcript-reply"}<CommunityReplyContext
@@ -293,7 +293,7 @@
           data-ui-part="send-button"
           aria-label={submitLabel ??
             (context?.kind === "edit" ? "Save message" : "Send message")}
-          disabled={blocked || !onSubmit || !value.trim()}
+          disabled={blocked || !onSubmit || (!allowEmpty && !value.trim())}
           onclick={submit}><ArrowUpIcon aria-hidden="true" /></Button
         >
       {/if}{/snippet}

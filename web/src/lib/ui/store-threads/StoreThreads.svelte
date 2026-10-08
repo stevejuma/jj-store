@@ -1,11 +1,10 @@
 <script lang="ts">
+  import StoreThreadConversation from "./StoreThreadConversation.svelte";
   import { agentMember } from "../community-agents/model.js";
-  import StoreLinkedAgentConversation from "../store-agent-chat/StoreLinkedAgentConversation.svelte";
-  import { originAgentIds } from "../../controller/agent-chat-context.js";
-  import { sendDiscussionMessage } from "../../controller/agent-discussion-dispatch.js";
+
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import "./store-threads.css";
-  import CommunityWorkspaceSurface from "../community-workspace/CommunityWorkspaceSurface.svelte";
+
   import CommunitySkeleton from "../community-skeleton/CommunitySkeleton.svelte";
   import ForumTopicList from "../forum-topic-list/ForumTopicList.svelte";
   import type { CommunityWorkspaceModel } from "../../community/workspace-model.js";
@@ -14,7 +13,7 @@
   import * as Alert from "@lapismd/design-core/shadcn/alert";
   import { untrack } from "svelte";
   import type { StoreController } from "../../controller/contracts.js";
-  import StoreMessageReactions from "./StoreMessageReactions.svelte";
+
   import StoreThreadHeader from "./StoreThreadHeader.svelte";
   import { useThreadPanel } from "./thread-panel.svelte.js";
   import {
@@ -23,7 +22,7 @@
     threadWritable,
   } from "./thread-view.js";
   import { principalMember } from "../../collaboration/presentation.js";
-  import { storeRouteToHash } from "../../controller/store-route-codec.js";
+
   let { controller }: { controller: StoreController } = $props();
   let query = $state("");
   const searchRepository = $derived(controller.state.route.repository);
@@ -137,66 +136,17 @@
       />
     {:else if threads.detail && projection}
       <div class="store-threads__conversation">
-        <CommunityWorkspaceSurface
-          {model}
-          audienceKey={JSON.stringify([
-            controller.state.member.id,
-            controller.state.route.repository,
-            room.id,
-          ])}
-          initialAgentIds={originAgentIds(
-            controller.execution,
-            `thread:${controller.state.route.repository}:${room.id}`,
-            controller.state.route.repository,
-          )}
-          communityEmojis={threads.emojis}
-          readOnly={disabled}
-          readOnlyReason="This thread is read only or has an action awaiting confirmation."
-          history={{
-            hasOlder: threads.hasOlder,
-            loading: threads.status === "refreshing",
-          }}
-          onLoadOlder={threads.older}
-          handlers={{
-            onAddReaction: (id, emoji, custom) =>
-              threads
-                .toggle(projection.targets[id]!, emoji, custom)
-                .catch(() => {}),
-            onToggleReaction: (id, emoji, custom) =>
-              threads
-                .toggle(projection.targets[id]!, emoji, custom, true)
-                .catch(() => {}),
-            onSendMessage: (_, text) => sendDiscussionMessage(controller, text),
-            onOpenThread: reply,
-            onReply: reply,
-            onSaveMessageEdit: (id, text) => threads.send(text, undefined, id),
-            onCopyMessageLink: (id) => {
-              const hash = storeRouteToHash({
-                ...controller.state.route,
-                replyId: id,
-              });
-              if (hash)
-                void navigator.clipboard.writeText(
-                  new URL(hash, window.location.href).href,
-                );
-            },
-          }}
-        >
-          {#snippet messageMetadata(
-            message,
-          )}{#if projection.targets[message.id]}<StoreMessageReactions
-                {threads}
-                target={projection.targets[message.id]!}
-                {disabled}
-                showControls={false}
-              />{/if}{/snippet}
-        </CommunityWorkspaceSurface>
-        {#if controller.execution}<StoreLinkedAgentConversation
-            manager={controller.execution}
-            scope={`thread:${controller.state.route.repository}:${room.id}`}
-            home={controller.state.route.repository}
-            member={controller.state.member}
-          />{/if}
+        <StoreThreadConversation
+          {controller}
+          {threads}
+          messages={model.messages}
+          {members}
+          user={members.find(
+            (m) => m.id === controller.state.repository.principal,
+          ) ?? controller.state.member}
+          {disabled}
+          onReply={reply}
+        />
       </div>
     {:else}<ScrollArea
         bind:viewportRef={forumViewport}

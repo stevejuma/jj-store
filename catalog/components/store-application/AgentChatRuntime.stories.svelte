@@ -23,7 +23,7 @@
     );
     const draft = await c.findByRole("textbox", { name: "Markdown editor" });
     await userEvent.type(draft, "Use my configured agent");
-    await userEvent.click(c.getByRole("button", { name: "Send" }));
+    await userEvent.click(c.getByRole("button", { name: "Send message" }));
     await waitFor(() =>
       expect(
         JSON.parse(c.getByLabelText("Session commands").textContent ?? "[]"),
@@ -107,7 +107,7 @@
     );
     const draft = await c.findByRole("textbox", { name: "Markdown editor" });
     await userEvent.type(draft, "Keep uncertain prompt");
-    await userEvent.click(c.getByRole("button", { name: "Send" }));
+    await userEvent.click(c.getByRole("button", { name: "Send message" }));
     await c.findByText(/Outcome unknown/);
     await expect(draft).toHaveTextContent("Keep uncertain prompt");
     await expect(
@@ -133,7 +133,9 @@
     await expect(
       c.queryByText(/Choose an execution mode in Session options/),
     ).not.toBeInTheDocument();
-    await expect(c.getByRole("button", { name: "Send" })).toBeDisabled();
+    await expect(
+      c.getByRole("button", { name: "Send message" }),
+    ).toBeDisabled();
     await expect(draft).toHaveTextContent("Keep this for resume");
     await expect(
       c.queryByLabelText("Session commands"),
@@ -157,7 +159,7 @@
       await c.findByRole("textbox", { name: "Markdown editor" }),
       "Retain through preparation",
     );
-    await userEvent.click(c.getByRole("button", { name: "Send" }));
+    await userEvent.click(c.getByRole("button", { name: "Send message" }));
     await c.findByRole("button", { name: "Resolve fixture configuration" });
     await userEvent.click(
       c.getByRole("button", { name: "Manage fixture agents" }),

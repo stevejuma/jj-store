@@ -86,7 +86,9 @@ export async function commentQueueAcceptance(page, base) {
   await expect(jump.locator(".chat-comment-jump-icon")).toBeVisible();
   await jump.click();
   await expect(
-    page.getByRole("article", { name: "Simulated agent reply" }).locator(".."),
+    page
+      .getByRole("textbox", { name: "Simulated reply" })
+      .locator("xpath=ancestor::li[1]"),
   ).toBeFocused();
   const replyMarker = page.locator(".chat-reply-indicator");
   await expect(replyMarker).toHaveCount(1);

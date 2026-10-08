@@ -122,3 +122,23 @@ export function chatContext(controller: StoreController, parent?: string) {
     : [];
   return { origin, attachments };
 }
+
+/** Reply context is part of a conversation's identity, never inferred from text. */
+export function originReplyParent(origin: ChatOrigin): string | null {
+  if (!origin.thread) return null;
+  try {
+    const value = JSON.parse(origin.context);
+    return typeof value?.reply?.message === "string"
+      ? value.reply.message
+      : null;
+  } catch {
+    return null;
+  }
+}
+export function sameChatOrigin(a: ChatOrigin, b: ChatOrigin) {
+  return (
+    a.scope === b.scope &&
+    a.home === b.home &&
+    originReplyParent(a) === originReplyParent(b)
+  );
+}

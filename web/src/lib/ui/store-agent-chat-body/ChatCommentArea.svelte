@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Button } from "@lapismd/design-core/shadcn/button";
   import CornerUpLeftIcon from "@lucide/svelte/icons/corner-up-left";
+  import PencilIcon from "@lucide/svelte/icons/pencil";
   import XIcon from "@lucide/svelte/icons/x";
   import MessageSquarePlusIcon from "@lucide/svelte/icons/message-square-plus";
   import CornerDownRightIcon from "@lucide/svelte/icons/corner-down-right";
@@ -25,7 +26,14 @@
   const comments = $derived.by(() => {
     const entries =
       thread?.comments.filter(
-        (c) => !c.replyTo && (!commentIds || commentIds.includes(c.id)),
+        (c) =>
+          !c.replyTo &&
+          (!commentIds
+            ? !c.historical
+            : commentIds.includes(c.id) ||
+              (!!c.messageId &&
+                !!c.revision &&
+                commentIds.includes(`${c.messageId}:${c.revision.id}`))),
       ) ?? [];
     return placement === "summary"
       ? entries.filter((c) => c.text.trim()).slice(-1)
@@ -124,12 +132,24 @@
               <Button
                 variant="ghost"
                 size="icon-xs"
-                disabled={!available}
+                disabled={!available &&
+                  !(thread.source && state.props().onNavigateSource)}
                 aria-label={`Go to source: ${thread.label}`}
                 title="Go to source"
                 onclick={(event) =>
                   state.goToSource(thread!, event.currentTarget)}
                 ><CornerUpLeftIcon /></Button
+              >
+            {/if}
+            {#if placement === "inline" && !comment.historical && comment.revision && comment.author.id === state.author.id && (comment.status === "sent" || comment.status === "replied")}
+              <Button
+                variant="ghost"
+                size="icon-xs"
+                disabled={state.sending || !available}
+                aria-label="Edit comment"
+                title="Edit comment"
+                onclick={() => state.editSent(thread!, comment)}
+                ><PencilIcon /></Button
               >
             {/if}
             {#if comment.status === "draft"}

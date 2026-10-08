@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { page } from "vitest/browser";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import Fixture from "../../fixtures/StoreThreadsFixture.svelte";
@@ -134,10 +135,9 @@
     await expect(
       await within(settings).findByText("archived", { exact: true }),
     ).toBeVisible();
-    await expect(c.getByRole("textbox")).toHaveAttribute(
-      "contenteditable",
-      "false",
-    );
+    await expect(
+      c.getByRole("textbox", { name: "Markdown editor" }),
+    ).toHaveAttribute("contenteditable", "false");
     await userEvent.click(
       within(settings).getByRole("button", { name: "Restore thread" }),
     );
@@ -163,7 +163,7 @@
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
     await expect(await c.findByText("Welcome to the channel")).toBeVisible();
-    const input = c.getByRole("textbox");
+    const input = c.getByRole("textbox", { name: "Markdown editor" });
     await userEvent.click(input);
     await userEvent.type(input, "/threads/general");
     await userEvent.click(await c.findByRole("option", { name: /general/ }));
@@ -202,12 +202,18 @@
       body = within(document.body);
     const text = await c.findByText("Welcome to the channel");
     const message = text.closest("[data-message-id]") as HTMLElement;
-    await userEvent.hover(message);
+    await page
+      .elementLocator(message.querySelector(".chat-text-block") ?? message)
+      .hover();
     await waitFor(() =>
-      expect(message).toHaveAttribute("data-actions-visible"),
+      expect(
+        within(message as HTMLElement).getAllByRole("button", {
+          name: /Reply in thread|View replies|Add reaction/,
+        })[0]!,
+      ).toBeVisible(),
     );
     await expect(
-      within(message).queryByRole("button", { name: "Add reaction" }),
+      within(message).queryByRole("button", { name: /^Add reaction(?: to|$)/ }),
     ).toBeNull();
     await expect(
       within(message).queryByRole("button", { name: "Reply in thread" }),
@@ -217,12 +223,11 @@
     );
     const replies = c.getByRole("complementary", { name: "Thread replies" });
     await expect(
-      within(replies).queryByRole("button", { name: "Add reaction" }),
+      within(replies).queryByRole("button", { name: /^Add reaction(?: to|$)/ }),
     ).toBeNull();
-    await expect(within(replies).getByRole("textbox")).toHaveAttribute(
-      "contenteditable",
-      "false",
-    );
+    await expect(
+      within(replies).getByRole("textbox", { name: "Markdown editor" }),
+    ).toHaveAttribute("contenteditable", "false");
     await userEvent.click(c.getByRole("button", { name: "Thread settings" }));
     await expect(body.queryByRole("menu")).toBeNull();
     await expect(c.queryByRole("button", { name: "Remove thread" })).toBeNull();

@@ -1,5 +1,7 @@
 <!-- @community-copy src/components/community-application/CommunityApplication.svelte -->
 <script lang="ts">
+  import { useConversationInspection } from "../../conversations/inspection.svelte.js";
+  import ChatToolPanel from "../store-agent-chat-body/ChatToolPanel.svelte";
   import {
     AppShell,
     type AppShellController,
@@ -34,6 +36,7 @@
     shell: AppShellController;
     onSelectPage: StoreController["actions"]["selectPage"];
   } = $props();
+  const inspection = useConversationInspection();
   const chatOpen = $derived(controller.execution?.chat.open === true);
   const appearance = useAppearance();
   const agentFocused = $derived(appearance?.live.threads === "focus");
@@ -162,7 +165,7 @@
   }
 </script>
 
-{#if !chatOpen && current.page === "threads" && controller.threads?.detail && !threadFocused}
+{#if !inspection?.current && !chatOpen && current.page === "threads" && controller.threads?.detail && !threadFocused}
   <AppShell.Sidebar
     side="right"
     constraintPriority={0}
@@ -175,7 +178,7 @@
     <StoreThreadSidebar {controller} />
   </AppShell.Sidebar>
 {/if}
-{#if !chatOpen && stackSettingsKey && stackWorkspace}
+{#if !inspection?.current && !chatOpen && stackSettingsKey && stackWorkspace}
   <AppShell.Sidebar
     side="right"
     constraintPriority={0}
@@ -204,8 +207,8 @@
   />
 {/snippet}
 <!-- Controlled open clears the mobile sheet before its teleported content is removed. -->
-{#if !chatOpen}{@render agentResponse(true)}{/if}
-{#if !chatOpen && agentKey && !agentFocused}
+{#if !inspection?.current && !chatOpen}{@render agentResponse(true)}{/if}
+{#if !inspection?.current && !chatOpen && agentKey && !agentFocused}
   <AppShell.Sidebar
     side="right"
     constraintPriority={0}
@@ -220,7 +223,7 @@
   </AppShell.Sidebar>
 {/if}
 
-{#if chatOpen && controller.execution}<AppShell.Sidebar
+{#if !inspection?.current && chatOpen && controller.execution}<AppShell.Sidebar
     side="right"
     constraintPriority={0}
     constrainedPresentation="replace-main"
@@ -260,3 +263,17 @@
     {/if}
   </AppShell.Sidebar.Body>
 </AppShell.Sidebar>
+
+{#if inspection?.current}<AppShell.Sidebar
+    side="right"
+    label="Read tool details"
+    resizeLabel="Resize read tool details"
+    constrainedPresentation="replace-main"
+    closeable
+  >
+    <ChatToolPanel
+      tool={inspection.current.tool}
+      state={inspection.current.state}
+      onClose={() => void inspection.close()}
+    />
+  </AppShell.Sidebar>{/if}

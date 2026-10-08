@@ -124,7 +124,7 @@
     );
     const draft = await c.findByRole("textbox", { name: "Markdown editor" });
     await userEvent.type(draft, "Keep this draft");
-    await userEvent.click(c.getByRole("button", { name: "Send" }));
+    await userEvent.click(c.getByRole("button", { name: "Send message" }));
     await within(document.body).findByRole("button", {
       name: "Review workspace",
     });

@@ -76,5 +76,27 @@ export function createProductionAgentLoaders(context: {
     }
   }
 
-  return { loadAgents, loadTranscript, loadAgent };
+  let refreshing = false;
+  async function refreshAgentConversation() {
+    const selected = data.agentSession;
+    if (!selected || refreshing) return;
+    const source = context.source(),
+      ticket = context.version();
+    refreshing = true;
+    try {
+      // Update metadata selection independently of the explicitly pinned code view.
+      await source.snapshot(true);
+      const next = await source.agentSession(selected.session.session_id, true);
+      if (
+        context.current(ticket, source) &&
+        data.agentSession?.session.session_id === selected.session.session_id
+      )
+        data.agentSession = next;
+    } catch (cause) {
+      if (context.current(ticket, source)) context.report(cause);
+    } finally {
+      refreshing = false;
+    }
+  }
+  return { loadAgents, loadTranscript, loadAgent, refreshAgentConversation };
 }

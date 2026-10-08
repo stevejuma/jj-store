@@ -239,8 +239,19 @@ keeps comments-only reply parents. Native recorded-read, local
 managed/standalone restart and tombstone, legacy compatibility and model
 regressions pass. This backend slice leaves browser renderer parity,
 delivery-fault acceptance and cold browser qualification open. M24 stays In
-progress; visual baselines are unapproved.
+progress; visual baselines are unapproved. E-CHAT-LIVE-005 connects Document and
+Classic to shared live, recorded, thread and reply state, with default
+preferences, exact source maps, immutable answer segments and retained
+submission recovery. The affected 96-story interaction/accessibility family,
+focused state/controller tests, web/catalog types and ownership pass. The
+unchanged main-workspace development acceptance script exceeds the architecture
+line cap; this existing check remains reported separately. Cold native/local
+comment publication, lost-acknowledgement recovery and restart navigation are
+tracked in the following acceptance slice. M24 stays In progress; native IME,
+real-provider compliance, independent adapter/platform gates and visual approval
+remain separate.
 <!-- generated-navigation -->
+
 ## Pages
 
 - [history](history/index.md)

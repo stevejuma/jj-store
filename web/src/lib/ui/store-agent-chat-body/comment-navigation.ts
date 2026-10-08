@@ -42,7 +42,10 @@ export async function revealCommentSource(
   const source = commentSources(state.props().items).find((s) =>
     validAnchor(s.block, thread.anchor),
   );
-  if (!source) return;
+  if (!source) {
+    await state.props().onNavigateSource?.(thread);
+    return;
+  }
   for (const id of source.disclosures) state.disclosures[id] = true;
   state.disclosures[middleFoldKey(source.block)] = true;
   if (source.tool) {
@@ -54,7 +57,9 @@ export async function revealCommentSource(
   await tick();
   // Reader registration follows the component mount tick.
   await tick();
-  state.readers.get(source.block.id)?.(thread.anchor, true);
+  const reader = state.readers.get(source.block.id);
+  reader?.(thread.anchor, true);
+  return !!reader;
 }
 
 export async function revealCommentMessage(

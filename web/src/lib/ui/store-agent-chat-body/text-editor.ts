@@ -4,6 +4,7 @@ import {
   capturedCodeLanguage,
   numberedCodeHighlights,
 } from "./captured-code.js";
+import { inlineReferences } from "./inline-references.js";
 import { readingDecorations } from "./markdown-decorations.js";
 import { commentDecorations } from "./comment-widgets.js";
 import { middleDecorations } from "./middle-fold.js";
@@ -19,8 +20,18 @@ export function readingExtensions(
   comments: ChatBodyComments,
   contexts: Map<unknown, unknown>,
 ) {
+  const references =
+    block.kind === "markdown"
+      ? inlineReferences(block.text, comments, contexts)
+      : [];
   const reading =
-    block.kind === "markdown" ? readingDecorations(block.text) : undefined;
+    block.kind === "markdown"
+      ? readingDecorations(block.text, references)
+      : undefined;
+  const referenceDecorations = Decoration.set(
+    references.map((r) => r.decoration),
+    true,
+  );
   const open = (view: EditorView, initial = "") => {
     comments.open(block, view.state.selection.main, initial);
     return true;
@@ -57,6 +68,8 @@ export function readingExtensions(
     block.kind === "markdown"
       ? [
           EditorView.decorations.of(reading!.decorations),
+          EditorView.decorations.of(referenceDecorations),
+          EditorView.atomicRanges.of(() => referenceDecorations),
           EditorView.atomicRanges.of(() => reading!.hidden),
         ]
       : block.lineNumbered

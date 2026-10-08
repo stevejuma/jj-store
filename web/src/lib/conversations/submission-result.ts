@@ -1,0 +1,35 @@
+import type { Model } from "../api/client.js";
+import type { ChatSubmissionResult } from "../ui/store-agent-chat-body/model.js";
+/** Publication does not imply delivery. Rechecks use the original receipt IDs. */
+export function conversationSubmissionResult(
+  receipt: Model<"AgentConversationOutcome">,
+  names: ReadonlyMap<string, string> = new Map(),
+): ChatSubmissionResult {
+  const delivery = receipt.agents.map((a) => ({
+    id: a.request_id,
+    label: names.get(a.session_id ?? "") ?? a.session_id ?? a.request_id,
+    state: a.state,
+    error: a.error,
+  }));
+  const accepted = delivery.every((a) =>
+    ["queued", "started", "running", "completed"].includes(a.state),
+  );
+  const publication = receipt.comment_publication?.state;
+  return {
+    publication:
+      publication === "published"
+        ? "published"
+        : publication === "refused"
+          ? "refused"
+          : accepted
+            ? "published"
+            : "unknown",
+    batchId: receipt.comment_publication?.request_id,
+    delivery,
+    recoveryRequired: !accepted,
+    error: accepted
+      ? undefined
+      : (delivery.find((a) => a.error)?.error ??
+        "Delivery is awaiting confirmation. Check the retained request."),
+  };
+}

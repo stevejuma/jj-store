@@ -367,3 +367,57 @@ test("context delivery updates one authored row without replacing its recorded c
     delivery: "sent",
   });
 });
+
+test("partial delivery keeps the original managed send and per-recipient receipts for explicit checks", async () => {
+  const calls: unknown[] = [];
+  const receipt = {
+    request_id: "a".repeat(32),
+    conversation_id: "c".repeat(32),
+    comment_publication: { state: "published", request_id: "b".repeat(32) },
+    agents: [
+      {
+        version: 1,
+        request_id: "d".repeat(32),
+        session_id: "first",
+        state: "completed",
+        error: null,
+      },
+      {
+        version: 1,
+        request_id: "e".repeat(32),
+        session_id: "second",
+        state: "failed",
+        error: "dispatch_not_sent",
+      },
+    ],
+  };
+  const manager = new AgentExecution(
+    () => true,
+    async (_url, init) => {
+      calls.push(JSON.parse(String(init?.body)));
+      return Response.json(receipt);
+    },
+  );
+  manager.value = status();
+  try {
+    manager.chat.showGeneral();
+    await expect(
+      manager.chat.send(
+        "Work",
+        ["exact-Helper"],
+        undefined,
+        receipt.request_id,
+      ),
+    ).rejects.toThrow("dispatch_not_sent");
+    const original = JSON.parse(JSON.stringify(manager.chat.pending));
+    expect(original.request_id).toBe(receipt.request_id);
+    await expect(manager.chat.send("Work", ["exact-Helper"])).rejects.toThrow(
+      /pending/,
+    );
+    await expect(manager.chat.retry()).rejects.toThrow("dispatch_not_sent");
+    expect(calls).toEqual([original, original]);
+    expect(manager.chat.receipts[receipt.request_id].agents).toHaveLength(2);
+  } finally {
+    manager.destroy();
+  }
+});

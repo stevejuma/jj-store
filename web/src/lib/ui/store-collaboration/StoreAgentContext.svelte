@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreRecordedConversation from "./StoreRecordedConversation.svelte";
   import * as Empty from "@lapismd/design-core/shadcn/empty";
   import BotIcon from "@lucide/svelte/icons/bot";
   import ExternalLinkIcon from "@lucide/svelte/icons/external-link";
@@ -152,6 +153,16 @@
           kind: state.member.kind === "agent" ? "agent" : undefined,
         }}
         patches={state.detail?.patches}
+      />
+    {:else if state.agentTranscript.length && controller.threads}
+      <StoreRecordedConversation
+        {controller}
+        activity={[]}
+        sessionId={selected.session.session_id}
+        integration={selected.session.integration}
+        {agent}
+        member={state.member}
+        legacy={state.agentTranscript}
       />
     {:else if state.agentTranscript.length}
       <div

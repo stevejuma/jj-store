@@ -105,6 +105,7 @@ export type StoreControllerActions = {
   selectEvolution(id: string | null): void | Promise<void>;
   selectFile(path: string | null): void | Promise<void>;
   selectDirectory(path: string): void | Promise<void>;
+  refreshAgentConversation?(): Promise<void>;
   selectAgentSession(id: string | null): void | Promise<void>;
   selectReviewThread(id: string | null): void | Promise<void>;
   createRepositoryReview?(text: string): Promise<void>;

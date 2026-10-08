@@ -1,10 +1,18 @@
+import { createThreadDirectory } from "./thread-directory.svelte.js";
+import { createConversationDiscussionReader } from "../conversations/discussion-reader.svelte.js";
+import { createThreadConversations } from "./thread-conversations.svelte.js";
+
 import { refreshCommittedThreadAction } from "./thread-committed-refresh.js";
 import { createThreadCommands } from "./thread-commands.js";
 import { createCollabActions } from "./collab-actions.svelte.js";
-import { retainThreadHistory, replyContextLoaded } from "./thread-history.js";
+import {
+  retainThreadHistory,
+  replyContextLoaded,
+  loadReplyHistory,
+} from "./thread-history.js";
 import { createThreadPost } from "./thread-post.svelte.js";
 import { createMessageReactions } from "./message-reactions.svelte.js";
-import { ApiError, type Model } from "../api/client.js";
+import { type Model } from "../api/client.js";
 import { channelMessages } from "../collaboration/thread-presentation.js";
 import {
   threadSnapshotKey,
@@ -21,16 +29,22 @@ export function createThreadsController(options: {
   select: (id: string | null) => void;
   selectReply?: (id: string | null) => void;
 }) {
+  const conversationHost = createThreadConversations(options, (request) =>
+    actions.execute("threads", request),
+  );
+  const discussionRead = createConversationDiscussionReader();
   let generation = 0;
   let committedRequestId = $state("");
-  let threads = $state<Model<"ThreadSummaryV1">[]>([]);
+  const directory = createThreadDirectory({
+    source: options.source,
+    generation: () => generation,
+    valid,
+    status: (value) => (status = value),
+  });
   let detail = $state<ThreadDetail>();
   let events = $state<Model<"ThreadEventItemV1">[]>([]);
-  let listCursor = $state<string | null>(null),
-    eventCursor = $state<string | null>(null);
-  let directoryLoading = $state(false),
-    conversationLoading = $state(false);
-  let directoryError = $state("");
+  let eventCursor = $state<string | null>(null);
+  let conversationLoading = $state(false);
   let status = $state("idle"),
     error = $state("");
   const actions = createCollabActions({
@@ -72,42 +86,21 @@ export function createThreadsController(options: {
   }
   function clear(preservePending = false) {
     generation++;
-    directoryLoading = conversationLoading = false;
+    directory.loading = conversationLoading = false;
     actions.reset(preservePending);
-    threads = [];
+    directory.clear();
     detail = undefined;
     events = [];
-    listCursor = null;
     eventCursor = null;
     status = "idle";
-    directoryError = error = "";
+    error = "";
     richReactions.clear();
-    if (!preservePending) post.clear();
-  }
-  async function list(more = false) {
-    const transport = options.source(),
-      ticket = generation;
-    directoryLoading = true;
-    status = threads.length ? "refreshing" : "loading";
-    try {
-      const p = await transport.list(
-        more ? (listCursor ?? undefined) : undefined,
-      );
-      if (!valid(ticket, transport)) return;
-      if (p.items.type !== "threads") throw new ApiError("invalid_thread_page");
-      threads = more ? [...threads, ...p.items.threads] : p.items.threads;
-      listCursor = p.next_cursor;
-      status = "ready";
-      directoryError = "";
-    } catch (e) {
-      if (valid(ticket, transport)) {
-        status = "failed";
-        directoryError = String(e instanceof Error ? e.message : e);
-      }
-    } finally {
-      if (valid(ticket, transport)) directoryLoading = false;
+    if (!preservePending) {
+      post.clear();
     }
+    discussionRead.clear();
   }
+  const list = directory.list;
   async function read(id: string, more = false) {
     const transport = options.source(),
       ticket = generation;
@@ -133,6 +126,12 @@ export function createThreadsController(options: {
       detail = d;
       events = more ? [...events, ...loaded.events] : loaded.events;
       eventCursor = loaded.cursor;
+      await discussionRead.load(
+        transport,
+        events,
+        threadSnapshotKey(d.snapshot),
+        () => valid(ticket, transport) && options.route().threadId === id,
+      );
       status = "ready";
       error = "";
     } catch (e) {
@@ -147,35 +146,20 @@ export function createThreadsController(options: {
   async function focusReply(id: string) {
     const target = options.route().replyId,
       ticket = generation;
-    for (
-      let page = 0;
-      target &&
-      !replyContextLoaded(projection.messages, target) &&
-      eventCursor &&
-      page < 20;
-      page++
-    ) {
-      const previous = eventCursor;
-      await read(id, true);
-      if (
-        ticket !== generation ||
-        status === "failed" ||
-        previous === eventCursor
-      )
-        return;
-    }
-    if (
-      target &&
-      !replyContextLoaded(projection.messages, target) &&
-      ticket === generation
-    )
-      error = eventCursor
-        ? "Message is outside loaded history. Load older messages to continue."
-        : "This message is unavailable in the current thread.";
+    if (!target) return;
+    const message = await loadReplyHistory(
+      () => ({
+        loaded: replyContextLoaded(projection.messages, target),
+        cursor: eventCursor,
+        valid: ticket === generation && status !== "failed",
+      }),
+      () => read(id, true),
+    );
+    if (message) error = message;
   }
   async function restore() {
     generation++;
-    directoryLoading = conversationLoading = false;
+    directory.loading = conversationLoading = false;
     if (detail?.thread.value.thread_id !== options.route().threadId) {
       detail = undefined;
       events = [];
@@ -190,7 +174,7 @@ export function createThreadsController(options: {
   }
   async function open(id: string | null) {
     generation++;
-    directoryLoading = conversationLoading = false;
+    directory.loading = conversationLoading = false;
     detail = undefined;
     events = [];
     eventCursor = null;
@@ -217,6 +201,23 @@ export function createThreadsController(options: {
   });
   return {
     ...commands,
+    conversations: conversationHost.conversations,
+    get conversationReads() {
+      return conversationHost.conversationReads;
+    },
+    get conversationScope() {
+      return conversationHost.conversationScope;
+    },
+    loadConversation: conversationHost.loadConversation,
+    submitConversation: conversationHost.submitConversation,
+    readConversation: conversationHost.readConversation,
+    ensureConversation: conversationHost.ensureConversation,
+    get discussions() {
+      return discussionRead.discussions;
+    },
+    get discussionError() {
+      return discussionRead.error;
+    },
     get committedRequestId() {
       return committedRequestId;
     },
@@ -224,7 +225,7 @@ export function createThreadsController(options: {
       return post.postedThreadId;
     },
     get threads() {
-      return threads;
+      return directory.threads;
     },
     get detail() {
       return detail;
@@ -236,10 +237,10 @@ export function createThreadsController(options: {
       return projection;
     },
     get status() {
-      return directoryError || error || status === "failed"
+      return directory.error || error || status === "failed"
         ? "failed"
-        : directoryLoading || conversationLoading
-          ? detail || threads.length
+        : directory.loading || conversationLoading
+          ? detail || directory.threads.length
             ? "refreshing"
             : "loading"
           : status;
@@ -248,7 +249,7 @@ export function createThreadsController(options: {
       return (
         (actions.errorKind === "reactions" ? "" : actions.error) ||
         error ||
-        directoryError
+        directory.error
       );
     },
     get busy() {
@@ -258,7 +259,7 @@ export function createThreadsController(options: {
       return actions.pending;
     },
     get hasMore() {
-      return !!listCursor;
+      return directory.hasMore;
     },
     get hasOlder() {
       return !!eventCursor;

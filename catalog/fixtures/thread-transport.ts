@@ -1,3 +1,4 @@
+import { applyThreadSubmission } from "./thread-submission.js";
 import type { Model } from "../../web/src/lib/controller/thread-types.js";
 import type {
   ReactionItems,
@@ -178,6 +179,18 @@ export function createThreadTransport(
             });
           }
         }
+        if (c.type === "submit")
+          applyThreadSubmission(
+            c.submission,
+            request as ThreadRequest,
+            threads,
+            history,
+            addThread,
+            addMessage,
+            ref,
+            () => ++seq,
+            () => seq,
+          );
         if (c.type === "rename" || c.type === "lifecycle") {
           const thread = threads.get(c.thread_id)!;
           threads.set(c.thread_id, {

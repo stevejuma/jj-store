@@ -8,6 +8,7 @@ export function rawToolBlock(tool: ChatBodyTool): ChatBodyBlock {
     kind: "code",
     label: `Raw captured data for ${tool.title}`,
     path: "tool.json",
+    commentable: tool.commentable,
     text: JSON.stringify(tool.raw, null, 2) ?? "null",
   };
 }

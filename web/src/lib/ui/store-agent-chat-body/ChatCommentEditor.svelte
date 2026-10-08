@@ -20,18 +20,26 @@
   let editor: MiraCodeEditorHandle;
   const extensions = [
     chatCaret,
+    EditorView.updateListener.of((update) => {
+      if (update.view.hasFocus && (update.selectionSet || update.docChanged)) {
+        const { anchor, head } = update.state.selection.main;
+        state.selections.set(`${comment.id}:${location}`, { anchor, head });
+      }
+    }),
     Prec.highest(
       keymap.of([
         {
           key: "Ctrl-Enter",
-          run: () => {
+          run: (view) => {
+            if (view.composing) return false;
             void state.send();
             return true;
           },
         },
         {
           key: "Mod-Enter",
-          run: () => {
+          run: (view) => {
+            if (view.composing) return false;
             void state.send();
             return true;
           },
@@ -57,7 +65,15 @@
       void tick().then(() => {
         const view = editor?.getView();
         if (!view || view.hasFocus) return;
-        view.dispatch({ selection: { anchor: view.state.doc.length } });
+        const selection = state.selections.get(`${comment.id}:${location}`);
+        view.dispatch({
+          selection: selection
+            ? {
+                anchor: Math.min(selection.anchor, view.state.doc.length),
+                head: Math.min(selection.head, view.state.doc.length),
+              }
+            : { anchor: view.state.doc.length },
+        });
         view.focus();
       });
   });

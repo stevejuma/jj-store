@@ -92,6 +92,14 @@ export function createCommunityComposerExtension(
       }),
       Prec.highest(
         keymap.of([
+          ...["Ctrl-Enter", "Meta-Enter"].map((key) => ({
+            key,
+            run(view: EditorView) {
+              if (view.composing || options.disabled()) return false;
+              options.onSubmit();
+              return true;
+            },
+          })),
           {
             key: "Enter",
             run(view) {
