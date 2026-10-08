@@ -61,8 +61,16 @@ label with an 8px gap; controls fit their text rather than stretching the icon
 to the row edge. Tool and file titles use the proportional UI font at 0.875rem,
 distinct from captured code typography. Expanded tool/file content has no
 surrounding frame. Code and patch readers have a muted background inside their
-own rounded content region. Captures over 32 lines initially retain 12 leading
-and 8 trailing lines, with a Show N more lines control replacing the middle.
+own rounded content region. Added and removed patch lines have full-line diff
+backgrounds and retain their prefix/gutter distinction. File headers stay
+neutral; triple-prefix content inside a hunk remains a changed line. Turn-card
+totals use the same classification as the reader and count captured changes,
+without inventing preimages or net totals. Successful tool titles start at the
+same text edge as group/file titles, with no leading success icon or horizontal
+inset; completion remains described to assistive technology. Errors and running
+tools retain visible status icons. Vertical spacing and offset focus rings keep
+controls distinguishable. Captures over 32 lines initially retain 12 leading and
+8 trailing lines, with a Show N more lines control replacing the middle.
 Revealing is local and retained across disclosure/body remounts. The complete
 immutable document and its UTF-16 anchor offsets remain unchanged. Hidden lines
 containing an active or submitted discussion are revealed so comments stay

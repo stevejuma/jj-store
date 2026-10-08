@@ -37,7 +37,7 @@ describe("Delta reference mapping", () => {
     expect(turns[0].prompt).toContain("Would like to extend");
     expect(turns[0].summary).toContain("Block screen only");
     expect(turns[0].createdAt).toBeGreaterThan(0);
-    expect(turns[0].additions).toBeGreaterThan(0);
+    expect(turns[0]).toMatchObject({ additions: 175, deletions: 31 });
     expect(turns[0].firstItemId).toBe("delta-0");
   });
   test("converts Unicode byte offsets and rejects offsets inside characters", () => {

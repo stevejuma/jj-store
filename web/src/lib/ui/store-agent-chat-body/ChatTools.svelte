@@ -2,7 +2,6 @@
   import * as Collapsible from "@lapismd/design-core/shadcn/collapsible";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
-  import CircleCheckIcon from "@lucide/svelte/icons/circle-check";
   import CircleAlertIcon from "@lucide/svelte/icons/circle-alert";
   import LoaderCircleIcon from "@lucide/svelte/icons/loader-circle";
   import ChatRawToggle from "./ChatRawToggle.svelte";
@@ -22,9 +21,19 @@
     onInspectTool?: ChatBodyProps["onInspectTool"];
   } = $props();
   const calls = $derived(item.tools ?? []);
+  const componentId = $props.id();
+  const statusId = (tool: ChatBodyTool) =>
+    `${componentId}-status-${encodeURIComponent(tool.id)}`;
   function expanded(id: string, fallback = false) {
     return state.disclosures[id] ?? fallback;
   }
+  const statusLabel = (tool: ChatBodyTool) =>
+    ({
+      complete: "Complete",
+      error: "Error",
+      running: "Running",
+      unknown: "Status unavailable",
+    })[tool.status];
   function toggleRaw(tool: ChatBodyTool, opener: HTMLElement) {
     state.rawTools[tool.id] = !state.rawTools[tool.id];
     if (tool.detailPlacement === "sidebar" && onInspectTool)
@@ -43,19 +52,19 @@
 
 {#snippet call(tool: ChatBodyTool)}
   <div class="chat-tool-item">
+    <span class="sr-only" id={statusId(tool)}>{statusLabel(tool)}</span>
     {#if tool.detailPlacement === "sidebar" && onInspectTool}
       <div class="chat-tool-heading">
         <Button
           variant="ghost"
           class="chat-tool-trigger"
           aria-label={`Show details for ${tool.title}`}
+          aria-describedby={statusId(tool)}
           onclick={(event) => onInspectTool?.(tool, event.currentTarget)}
         >
           {#if tool.status === "error"}<CircleAlertIcon
               size={14}
             />{:else if tool.status === "running"}<LoaderCircleIcon
-              size={14}
-            />{:else if tool.status === "complete"}<CircleCheckIcon
               size={14}
             />{/if}<span>{tool.title}</span><ChevronRightIcon size={14} />
         </Button>
@@ -70,21 +79,11 @@
           <Collapsible.Trigger
             class="chat-tool-trigger"
             aria-label={`${expanded(tool.id, item.defaultExpanded && calls.length === 1) ? "Hide" : "Show"} details for ${tool.title}`}
+            aria-describedby={statusId(tool)}
           >
             {#if tool.status === "error"}<CircleAlertIcon size={14} />
             {:else if tool.status === "running"}<LoaderCircleIcon size={14} />
-            {:else if tool.status === "complete"}<CircleCheckIcon
-                size={14}
-              />{/if}
-            <span class="sr-only"
-              >{tool.status === "complete"
-                ? "Complete"
-                : tool.status === "error"
-                  ? "Error"
-                  : tool.status === "running"
-                    ? "Running"
-                    : "Status unavailable"}</span
-            >
+            {/if}
             <span>{tool.title}</span>
             <ChevronRightIcon
               size={14}
@@ -138,10 +137,10 @@
 
 <style>
   .chat-tool-item {
-    padding: 0.25rem;
+    padding-block: 0.25rem;
   }
   :global(.chat-tool-summary) {
-    margin: 0.25rem;
+    margin-block: 0.25rem;
   }
   .chat-tool-heading {
     display: flex;

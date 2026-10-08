@@ -154,9 +154,17 @@
   border-bottom: 2px solid var(--primary);
 }
 .chat-text-reader .chat-patch-addition {
-  box-shadow: inset 3px 0 #15803d;
+  background: var(
+    --ui-diff-added-background,
+    color-mix(in srgb, var(--success, #16a34a) 16%, transparent)
+  );
+  box-shadow: inset 3px 0 var(--ui-diff-stat-added, var(--success, #16a34a));
 }
 .chat-text-reader .chat-patch-deletion {
+  background: var(
+    --ui-diff-removed-background,
+    color-mix(in srgb, var(--destructive) 14%, transparent)
+  );
   box-shadow: inset 3px 0 var(--destructive);
 }
 .chat-text-reader .chat-patch-hunk {

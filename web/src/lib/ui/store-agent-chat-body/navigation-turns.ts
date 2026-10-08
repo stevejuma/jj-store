@@ -1,4 +1,5 @@
 import type { ChatBodyItem, ChatBodyTurn } from "./model.js";
+import { patchLines } from "./patch-lines.js";
 export interface ChatNavigationTurn extends ChatBodyTurn {
   firstItemId: string;
   toolCount: number;
@@ -37,19 +38,15 @@ export function navigationTurns(
     const patches = tools.flatMap((tool) =>
       tool.blocks.filter((block) => block.kind === "patch"),
     );
-    const lines = patches.flatMap((block) => block.text.split("\n"));
+    const lines = patches.flatMap((block) => patchLines(block.text));
     return {
       ...turn,
       firstItemId: content[0].id,
       toolCount: tools.length,
       changedFiles: new Set(patches.map((block) => block.path).filter(Boolean))
         .size,
-      additions: lines.filter(
-        (line) => line.startsWith("+") && !line.startsWith("+++"),
-      ).length,
-      deletions: lines.filter(
-        (line) => line.startsWith("-") && !line.startsWith("---"),
-      ).length,
+      additions: lines.filter((line) => line.kind === "addition").length,
+      deletions: lines.filter((line) => line.kind === "deletion").length,
     };
   });
 }

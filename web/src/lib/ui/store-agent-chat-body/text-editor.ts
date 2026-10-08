@@ -6,6 +6,7 @@ import { repositoryEditorLanguage } from "../community-projects/repository-edito
 import { readingDecorations } from "./markdown-decorations.js";
 import { commentDecorations } from "./comment-widgets.js";
 import { middleDecorations } from "./middle-fold.js";
+import { patchLines } from "./patch-lines.js";
 import type { ChatBodyBlock } from "./model.js";
 import type { ChatBodyComments } from "./comments.svelte.js";
 
@@ -131,25 +132,13 @@ export function readingExtensions(
   ];
 }
 function patchDecorations(text: string) {
-  const ranges = [];
-  let offset = 0;
-  for (const line of text.split("\n")) {
-    const variant = line.startsWith("+")
-      ? "addition"
-      : line.startsWith("-")
-        ? "deletion"
-        : line.startsWith("@@")
-          ? "hunk"
-          : "context";
-    ranges.push(
-      Decoration.line({
-        attributes: {
-          class: `chat-patch-${variant}`,
-          "data-patch-kind": variant,
-        },
-      }).range(offset),
-    );
-    offset += line.length + 1;
-  }
+  const ranges = patchLines(text).map(({ from, kind }) =>
+    Decoration.line({
+      attributes: {
+        class: `chat-patch-${kind}`,
+        "data-patch-kind": kind,
+      },
+    }).range(from),
+  );
   return EditorView.decorations.of(Decoration.set(ranges, true));
 }

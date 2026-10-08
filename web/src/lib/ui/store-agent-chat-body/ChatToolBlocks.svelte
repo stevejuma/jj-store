@@ -56,7 +56,7 @@
   .chat-tool-files {
     display: grid;
     gap: 0.5rem;
-    padding: 0.25rem;
+    padding-block: 0.25rem;
   }
   .chat-tool-file {
     border-radius: var(--radius);
@@ -99,6 +99,6 @@
     outline-offset: 2px;
   }
   .chat-tool-file-content {
-    margin: 0.5rem 0.25rem;
+    margin-block: 0.5rem;
   }
 </style>

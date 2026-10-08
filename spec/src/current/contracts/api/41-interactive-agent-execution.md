@@ -122,4 +122,8 @@ backgrounds change only retained presentation; they never truncate or modify
 captured events. XML context rendering and caller-owned local reaction callbacks
 add no HTTP, ACP, AgentStore or ReviewStore mutation contract. The optional
 document-tail draft/footer submits only through a UI caller callback; the
-catalog never sends an agent prompt or writes repository state.
+catalog never sends an agent prompt or writes repository state. The
+screenshot-based final review preserves this unchanged JST-API-001 boundary:
+tool alignment, patch-line colors and captured-line classification affect only
+display props and local navigation totals, with no request or persisted-format
+change.
