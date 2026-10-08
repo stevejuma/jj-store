@@ -111,6 +111,9 @@ paired host and advertised models; missing setup and authentication remain
 contextual. Advanced retains inheritance, environment and credential references.
 Closing or cancelling never saves secrets.
 
+The default provider option names the actual inherited application or harness
+provider independently of the draft's explicit provider selection.
+
 The Harness dropdown shows the owned icon for every option and the selected
 value. The bundled local harness display label is JJ Agent; its local runner
 identity and executable names are unchanged. Icons are decorative and accessible

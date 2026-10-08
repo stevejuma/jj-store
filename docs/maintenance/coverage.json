@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed the single context inspector above authored messages, empty-state omission, legacy captures and retained disclosure during delivery updates. Reviewed rounded Add/Edit Advanced group and the shared disclosure focus treatment: rounded corners follow expanded state, inset keyboard outline avoids clipping, drafts and focus remain retained. Reviewed combined provider and context integration with unchanged authority and credential boundaries.",
-      "fingerprint": "3ebd3254de8ffcbec3c29fc1bf6cf5c7d2548c9fa52061e639bf936ca96a801e"
+      "reason": "Reviewed combined agent context and provider integration; the default provider option now names actual inherited configuration independently of explicit draft selection.",
+      "fingerprint": "8bff6f8928cc8b17d1077ce8920a511c4c260b174e3b59b5d056ebee33cc7d3d"
     }
   },
   {

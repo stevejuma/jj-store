@@ -38,14 +38,19 @@
     manager.value?.runners.find((r) => r.id === draft.runner),
   );
   const providers = $derived(runner?.providers ?? []);
-  const effectiveProvider = $derived(
+  const defaultProviderId = $derived(
     canonicalProvider(
-      draft.options.provider ??
-        (draft.options.inherit_defaults &&
+      draft.options.inherit_defaults &&
         manager.settings.value?.runner === draft.runner
-          ? manager.settings.value.options.provider
-          : null),
+        ? manager.settings.value.options.provider
+        : null,
     ),
+  );
+  const effectiveProvider = $derived(
+    canonicalProvider(draft.options.provider ?? defaultProviderId),
+  );
+  const defaultProvider = $derived(
+    providers.find((p) => p.id === defaultProviderId),
   );
   const provider = $derived(providers.find((p) => p.id === effectiveProvider));
   const result = $derived(manager.catalogs.values[scope]);
@@ -160,7 +165,7 @@
           options={[
             {
               value: null,
-              label: `${draft.options.inherit_defaults ? "Application" : "Harness"} default (${provider?.label ?? "This machine"})`,
+              label: `${draft.options.inherit_defaults ? "Application" : "Harness"} default (${defaultProvider?.label ?? "This machine"})`,
             },
             ...providers.map((p) => ({ value: p.id, label: p.label })),
           ]}

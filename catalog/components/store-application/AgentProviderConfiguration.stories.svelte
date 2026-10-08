@@ -82,6 +82,11 @@
       "Provider helper",
     );
     await select("LLM provider", "Anthropic");
+    await userEvent.click(p.getByLabelText("LLM provider", { exact: true }));
+    await p.findByRole("option", {
+      name: "Application default (This machine)",
+    });
+    await userEvent.keyboard("{Escape}");
     await waitFor(() =>
       expect(c.getByLabelText("Catalog preview requests")).toHaveTextContent(
         '"provider":"anthropic"',

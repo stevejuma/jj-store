@@ -47,3 +47,8 @@ Catalog results distinguish ready, empty, authentication-required and
 unavailable. Provider, endpoint, effective credentials, defaults and
 compute-host generations isolate caches; obsolete responses never replace a
 newer draft catalog.
+
+The browser projects the inherited provider label from saved application or
+harness defaults independently of an explicit unsaved provider selection. This
+uses existing runner metadata, settings and preview requests; it introduces no
+schema, authorization or persistence change.

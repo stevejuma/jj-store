@@ -117,11 +117,12 @@ keep-awake, and collapsed Advanced environment configuration in both defaults
 and Add/Edit agent. Choose JJ Agent to reveal a separate LLM provider selector:
 This machine, JJ Store shared compute, Anthropic, OpenAI, OpenAI-compatible,
 OpenRouter, Databricks or Databricks v2. Shared compute uses the selected
-trusted host in Compute → Sharing. Provider endpoint and model discovery use the
-draft; Advanced holds credential references. Discovery never saves or starts a
-chat. Unknown saved models remain visible; Retry models and exact custom
-external IDs are available. Changing provider clears incompatible choices. Save
-provider changes, then explicitly restart the agent. Harness sections are
-collapsed on initial load. See
+trusted host in Compute → Sharing. The default option identifies the inherited
+provider, even while another provider is selected. Provider endpoint and model
+discovery use the draft; Advanced holds credential references. Discovery never
+saves or starts a chat. Unknown saved models remain visible; Retry models and
+exact custom external IDs are available. Changing provider clears incompatible
+choices. Save provider changes, then explicitly restart the agent. Harness
+sections are collapsed on initial load. See
 [agent configuration and compute](agent-execution.md#compute-defaults-and-captured-context)
 for precedence, credentials, pairing and context disclosure.

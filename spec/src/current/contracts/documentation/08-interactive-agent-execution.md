@@ -72,7 +72,8 @@ provider-specific credentials/endpoints, unsaved no-prompt model preview, exact
 custom IDs, explicit restart and JJ Store shared compute's selected trusted
 host. It distinguishes existing authentication from new OAuth UI and
 real-provider qualification from controlled catalog fixtures under
-JST-DOC-001/JST-DOC-002.
+JST-DOC-001/JST-DOC-002. The default provider label identifies the inherited
+configuration independently of the explicit draft choice.
 
 The execution guide documents native Markdown context, one inspector above each
 message, bootstrap versus incremental delivery and restored/fresh adapter
