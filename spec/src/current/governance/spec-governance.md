@@ -94,3 +94,10 @@ owned service/helper code and shared Settings rows. Attribution retains the
 pinned Buzz paths/license; no Buzz checkout dependency or public shared pool is
 introduced. Provider fixtures, browser forms and live authentication gates are
 recorded separately.
+
+E-CHAT-BODY-001 governs the isolated commentable chat-body prototype. Its Delta
+fixture projection script retains captured display text and tool data,
+normalizes device paths, recalculates UTF-8 anchors and removes runtime/provider
+metadata. The raw export stays ignored. Cold browser acceptance owns an
+ephemeral loopback Storybook process and browser; it does not restart the app's
+development services.

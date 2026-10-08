@@ -1,3 +1,5 @@
+- [E-CHAT-BODY-001](E-CHAT-BODY-001/index.md)
+  {{#include E-CHAT-BODY-001/SUMMARY.nav.md}}
 - [E-COMPUTE-002](E-COMPUTE-002/index.md)
   {{#include E-COMPUTE-002/SUMMARY.nav.md}}
 - [E-COMPUTE-003](E-COMPUTE-003/index.md)

@@ -1,8 +1,8 @@
 # M24 reusable ACP agents and contextual conversations
 
-| ID  | Status      | Depends | Requirements                                 | Gate                                                                                                                          | Next                                                                                                               | Evidence                  |
-| --- | ----------- | ------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ | ------------------------- |
-| M24 | In progress | M23     | JST-COLLAB-034,JST-COLLAB-035,JST-COLLAB-036 | Warm fleet, personal metadata homes, isolated multiple repository bindings, canonical discussion links and cold contextual UI | Qualify additional version-3 adapters and live permissions/cancellation; retain independent desktop/platform gates | E-FLEET-001,E-COMPUTE-004 |
+| ID  | Status      | Depends | Requirements                                 | Gate                                                                                                                          | Next                                                                                                               | Evidence                                  |
+| --- | ----------- | ------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ | ----------------------------------------- |
+| M24 | In progress | M23     | JST-COLLAB-034,JST-COLLAB-035,JST-COLLAB-036 | Warm fleet, personal metadata homes, isolated multiple repository bindings, canonical discussion links and cold contextual UI | Qualify additional version-3 adapters and live permissions/cancellation; retain independent desktop/platform gates | E-FLEET-001,E-COMPUTE-004,E-CHAT-BODY-001 |
 
 M23 remains qualified for its prior version-2 profile. M24 source, fixture and
 installed version-3 results are reviewed independently; no fixture closes a real
@@ -113,8 +113,16 @@ verified bundled CLI guidance and metadata-home coordination checkouts, and
 consolidates the retained transcript inspector above authored text. The review
 retains M24 In progress and its independent real-adapter, live-permission and
 platform gates; fixture/cold-browser evidence does not close those gates.
-<!-- generated-navigation -->
 
+## Commentable chat body prototype — 2026-10-08
+
+E-CHAT-BODY-001 records the standalone catalog prototype and the sanitized Delta
+main-thread comparison fixture. Block-local selections, immutable captured
+content and inline memory-only discussions have their own focused acceptance.
+The prototype does not replace live chats, publish comments or dispatch agents.
+M24 remains In progress; adapter, live permission/cancellation, desktop and
+platform gates retain their existing scope. Visual comparison remains pending.
+<!-- generated-navigation -->
 ## Pages
 
 - [history](history/index.md)

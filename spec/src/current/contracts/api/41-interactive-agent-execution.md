@@ -111,3 +111,9 @@ ACP request shapes unchanged. Existing prompt and context-delivery payloads
 carry the same authored text and sent-context envelope. Additional internal
 section revision metadata is additive; old snapshots remain readable and are
 never rewritten from current workspace state.
+
+The standalone commentable chat-body catalog prototype leaves JST-API-001
+unchanged. Immutable fixture props and local discussion callbacks introduce no
+request, endpoint, schema, receipt, authorization or AgentStore mutation.
+Opening captured tool details never reads the current filesystem or executes a
+tool.
