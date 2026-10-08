@@ -107,6 +107,7 @@ export function deltaChatItems(fixture: DeltaChatFixture): ChatBodyItem[] {
             path,
           ),
         );
+        if (record.name === "read_file") blocks[0].lineNumbered = true;
       }
       const tool: ChatBodyTool = {
         id: record.id,

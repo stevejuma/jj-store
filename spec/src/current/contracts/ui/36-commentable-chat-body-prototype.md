@@ -58,23 +58,31 @@ end and shows a compact Jump to End hint. Cmd/Ctrl+Down works while focus is in
 the navigation. Tool headers remain transparent during hover, with no internal
 padding. All section and file disclosure chevrons sit immediately after the
 label with an 8px gap; controls fit their text rather than stretching the icon
-to the row edge. Tool and file titles use the proportional UI font at 0.875rem,
+to the row edge. Their small rounded icon region alone gains a muted background
+on pointer hover or keyboard focus; the surrounding header stays transparent.
+The icon region remains part of the same named disclosure button, with no extra
+tab stop. Tool and file titles use the proportional UI font at 0.875rem,
 distinct from captured code typography. Expanded tool/file content has no
 surrounding frame. Code and patch readers have a muted background inside their
-own rounded content region. Added and removed patch lines have full-line diff
-backgrounds and retain their prefix/gutter distinction. File headers stay
-neutral; triple-prefix content inside a hunk remains a changed line. Turn-card
-totals use the same classification as the reader and count captured changes,
-without inventing preimages or net totals. Successful tool titles start at the
-same text edge as group/file titles, with no leading success icon or horizontal
-inset; completion remains described to assistive technology. Errors and running
-tools retain visible status icons. Vertical spacing and offset focus rings keep
-controls distinguishable. Captures over 32 lines initially retain 12 leading and
-8 trailing lines, with a Show N more lines control replacing the middle.
-Revealing is local and retained across disclosure/body remounts. The complete
-immutable document and its UTF-16 anchor offsets remain unchanged. Hidden lines
-containing an active or submitted discussion are revealed so comments stay
-reachable.
+own rounded content region. File heading corners inherit that content radius
+without clipping hover controls or comments. Known numbered captures retain
+their number/tab prefixes in the immutable document. Syntax tokens are parsed
+from file contents without those prefixes, then mapped back to exact captured
+UTF-16 spans, split at each line so prefixes stay neutral. The display model
+marks this captured format explicitly; ordinary code and raw JSON do not infer
+numbering. Added and removed patch lines have full-line diff backgrounds and
+retain their prefix/gutter distinction. File headers stay neutral; triple-prefix
+content inside a hunk remains a changed line. Turn-card totals use the same
+classification as the reader and count captured changes, without inventing
+preimages or net totals. Successful tool titles start at the same text edge as
+group/file titles, with no leading success icon or horizontal inset; completion
+remains described to assistive technology. Errors and running tools retain
+visible status icons. Vertical spacing and offset focus rings keep controls
+distinguishable. Captures over 32 lines initially retain 12 leading and 8
+trailing lines, with a Show N more lines control replacing the middle. Revealing
+is local and retained across disclosure/body remounts. The complete immutable
+document and its UTF-16 anchor offsets remain unchanged. Hidden lines containing
+an active or submitted discussion are revealed so comments stay reachable.
 
 Returned XML-like agent context uses the existing prompt-element renderer and
 whole-section comment anchors, rather than displaying its tags as prose.

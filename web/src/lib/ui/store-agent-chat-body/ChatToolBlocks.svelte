@@ -1,6 +1,6 @@
 <script lang="ts">
   import * as Collapsible from "@lapismd/design-core/shadcn/collapsible";
-  import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
+  import ChatDisclosureIcon from "./ChatDisclosureIcon.svelte";
   import ChatContent from "./ChatContent.svelte";
   import type { ChatBodyBlock, ChatBodyProps } from "./model.js";
   import type { ChatBodyComments } from "./comments.svelte.js";
@@ -31,10 +31,7 @@
             aria-label={`${open(block, index) ? "Hide" : "Show"} captured file ${block.path ?? block.label}`}
           >
             <span>{block.path ?? block.label}</span>
-            <ChevronRightIcon
-              size={14}
-              class={open(block, index) ? "chat-file-open" : ""}
-            />
+            <ChatDisclosureIcon />
           </Collapsible.Trigger>
           <Collapsible.Content>
             <div class="chat-tool-file-content">
@@ -90,9 +87,6 @@
   }
   :global(.chat-file-trigger svg) {
     flex-shrink: 0;
-  }
-  :global(.chat-file-open) {
-    rotate: 90deg;
   }
   :global(.chat-file-trigger:focus-visible) {
     outline: 2px solid var(--ring);

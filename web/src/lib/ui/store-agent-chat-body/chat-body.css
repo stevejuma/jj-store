@@ -85,9 +85,6 @@
 .chat-context-trigger:focus-visible {
   outline: 2px solid var(--ring);
 }
-.chat-context-trigger[data-state="open"] svg {
-  rotate: 90deg;
-}
 .chat-empty,
 .chat-stale {
   padding: 1.5rem;

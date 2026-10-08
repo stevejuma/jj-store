@@ -12,6 +12,8 @@ export interface ChatBodyBlock {
   label: string;
   text: string;
   path?: string;
+  /** Captured read output includes line-number/tab prefixes in its exact text. */
+  lineNumbered?: boolean;
 }
 export interface ChatBodyTool {
   id: string;

@@ -1,7 +1,7 @@
 <script lang="ts">
   import * as Collapsible from "@lapismd/design-core/shadcn/collapsible";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
+  import ChatDisclosureIcon from "./ChatDisclosureIcon.svelte";
   import CircleAlertIcon from "@lucide/svelte/icons/circle-alert";
   import LoaderCircleIcon from "@lucide/svelte/icons/loader-circle";
   import ChatRawToggle from "./ChatRawToggle.svelte";
@@ -66,7 +66,7 @@
               size={14}
             />{:else if tool.status === "running"}<LoaderCircleIcon
               size={14}
-            />{/if}<span>{tool.title}</span><ChevronRightIcon size={14} />
+            />{/if}<span>{tool.title}</span><ChatDisclosureIcon />
         </Button>
         {@render rawToggle(tool)}
       </div>
@@ -85,15 +85,7 @@
             {:else if tool.status === "running"}<LoaderCircleIcon size={14} />
             {/if}
             <span>{tool.title}</span>
-            <ChevronRightIcon
-              size={14}
-              class={expanded(
-                tool.id,
-                item.defaultExpanded && calls.length === 1,
-              )
-                ? "chat-chevron-open"
-                : ""}
-            />
+            <ChatDisclosureIcon />
           </Collapsible.Trigger>
           {@render rawToggle(tool)}
         </div>
@@ -120,12 +112,7 @@
       class="chat-tool-trigger chat-tool-summary"
       aria-label={`${expanded(item.id, item.defaultExpanded) ? "Collapse" : "Expand"} ${item.label}`}
     >
-      <span>{item.label}</span><ChevronRightIcon
-        size={14}
-        class={expanded(item.id, item.defaultExpanded)
-          ? "chat-chevron-open"
-          : ""}
-      />
+      <span>{item.label}</span><ChatDisclosureIcon />
     </Collapsible.Trigger>
     <Collapsible.Content
       >{#each calls as tool (tool.id)}{@render call(
@@ -183,9 +170,6 @@
   }
   :global(.chat-tool-trigger svg) {
     flex-shrink: 0;
-  }
-  :global(.chat-chevron-open) {
-    rotate: 90deg;
   }
   :global(.chat-tool-detail) {
     padding-block: 0.25rem 0.75rem;

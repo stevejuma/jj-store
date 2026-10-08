@@ -21,6 +21,8 @@
   font-family: var(--font-mono, monospace);
   font-size: 0.8rem;
   overflow-wrap: anywhere;
+  border-start-start-radius: inherit;
+  border-start-end-radius: inherit;
 }
 .chat-text-actions {
   position: absolute;

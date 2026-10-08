@@ -127,4 +127,7 @@ screenshot-based final review preserves this unchanged JST-API-001 boundary:
 tool alignment, patch-line colors and captured-line classification affect only
 display props and local navigation totals, with no request or persisted-format
 change. Adjacent-block focus-outline clearance is a layout-only refinement under
-this same unchanged JST-API-001 boundary.
+this same unchanged JST-API-001 boundary. Icon hover regions, rounded file
+headings and highlighting numbered captures preserve that boundary. The optional
+display-only numbering marker adds no HTTP/ACP field; retained source text,
+anchors and native formats stay unchanged.

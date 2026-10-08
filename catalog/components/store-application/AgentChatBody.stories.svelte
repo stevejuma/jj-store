@@ -81,6 +81,18 @@
     await expect(
       await reader(canvasElement, "Sources/BedtimeCore/Schedule.swift"),
     ).toHaveTextContent("import Foundation");
+    await userEvent.click(
+      c.getByRole("button", { name: "Show details for Read README.md" }),
+    );
+    const readme = await reader(canvasElement, "README.md");
+    const heading = () =>
+      Array.from(readme.querySelectorAll<HTMLElement>(".cm-heading")).find(
+        (node) => node.textContent?.includes("Bedtime"),
+      );
+    await waitFor(() => expect(heading()).toHaveTextContent("Bedtime"));
+    expect(getComputedStyle(heading()!).color).not.toBe(
+      getComputedStyle(readme).color,
+    );
   }}>{#snippet children()}<Fixture />{/snippet}</Story
 >
 

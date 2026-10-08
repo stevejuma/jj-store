@@ -1,8 +1,9 @@
 import { EditorState, Prec, StateEffect, StateField } from "@codemirror/state";
 import { Decoration, EditorView, keymap } from "@codemirror/view";
-import { StreamLanguage } from "@codemirror/language";
-import { swift } from "@codemirror/legacy-modes/mode/swift";
-import { repositoryEditorLanguage } from "../community-projects/repository-editor-language.js";
+import {
+  capturedCodeLanguage,
+  numberedCodeHighlights,
+} from "./captured-code.js";
 import { readingDecorations } from "./markdown-decorations.js";
 import { commentDecorations } from "./comment-widgets.js";
 import { middleDecorations } from "./middle-fold.js";
@@ -55,9 +56,17 @@ export function readingExtensions(
           EditorView.decorations.of(reading!.decorations),
           EditorView.atomicRanges.of(() => reading!.hidden),
         ]
-      : block.path?.endsWith(".swift")
-        ? StreamLanguage.define(swift)
-        : repositoryEditorLanguage(block.path ?? "output.txt").extension,
+      : block.lineNumbered
+        ? EditorView.decorations.of(
+            Decoration.set(
+              numberedCodeHighlights(block.text, block.path).map(
+                ({ from, to, classes }) =>
+                  Decoration.mark({ class: classes }).range(from, to),
+              ),
+              true,
+            ),
+          )
+        : capturedCodeLanguage(block.path),
     block.kind === "patch" ? patchDecorations(block.text) : [],
     annotations,
     folds,

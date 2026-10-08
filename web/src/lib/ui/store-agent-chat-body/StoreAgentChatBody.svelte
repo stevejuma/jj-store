@@ -2,7 +2,7 @@
   import { tick, untrack } from "svelte";
   import "./chat-body.css";
   import * as Collapsible from "@lapismd/design-core/shadcn/collapsible";
-  import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
+  import ChatDisclosureIcon from "./ChatDisclosureIcon.svelte";
   import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
   import CommunityMarkdownContent from "../community-markdown-content/CommunityMarkdownContent.svelte";
   import CommunityReactions from "../community-reactions/CommunityReactions.svelte";
@@ -137,8 +137,7 @@
                     (comments.disclosures[item.id] = open)}
                 >
                   <Collapsible.Trigger class="chat-context-trigger"
-                    ><span>{item.label}</span><ChevronRightIcon
-                      size={14}
+                    ><span>{item.label}</span><ChatDisclosureIcon
                     /></Collapsible.Trigger
                   >
                   <Collapsible.Content
