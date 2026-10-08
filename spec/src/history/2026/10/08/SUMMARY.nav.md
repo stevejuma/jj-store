@@ -16,3 +16,5 @@
   {{#include E-FLEET-008/SUMMARY.nav.md}}
 - [E-GOV-004](E-GOV-004/index.md)
   {{#include E-GOV-004/SUMMARY.nav.md}}
+- [E-GOV-005](E-GOV-005/index.md)
+  {{#include E-GOV-005/SUMMARY.nav.md}}

@@ -15,6 +15,17 @@ second inventory of registered workspaces and linked checkouts under `~/code`
 and `~/.codex/worktrees` finds only main/default. Bootstrap and all product
 milestone statuses and gate selections remain unchanged. This is maintenance
 evidence, not additional product qualification.
+
+## Repository test audit — 2026-10-08
+
+E-GOV-005 records the requested full test audit and development-server restart
+with the existing fixture preserved. Rust, script, Storybook and browser
+failures remain explicit alongside passing lanes, controlled reruns and
+unavailable qualification prerequisites. This audit changes no product or test
+behavior. Bootstrap and all product milestone statuses and original gate
+selections remain unchanged; passing subsets do not qualify failing or skipped
+gates. The next action is to triage the named failures at their owning
+boundaries and rerun those lanes after fixes.
 <!-- generated-navigation -->
 
 ## Pages
