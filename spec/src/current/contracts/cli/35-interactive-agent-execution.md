@@ -58,3 +58,9 @@ M24 adds
 [reusable agent conversations](../collaboration/37-reusable-agent-conversations.md)
 under JST-COLLAB-034 through JST-COLLAB-036. Existing M23 qualification remains
 unchanged.
+
+The supervisor publishes semantic installation freshness after privacy
+preparation, visible journal settlement and worker transitions. Repeated private
+bookkeeping with unchanged visible state stays quiet. This event integration
+preserves JST-CLI-004 executable selection, saved Start/Stop state, explicit
+Send and bounded shutdown; no CLI mutation or prompt replay is introduced.

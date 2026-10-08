@@ -8,6 +8,13 @@ fallback and their original repository subscriptions. The server adds notify 8.2
 as a host-only filesystem hint dependency. It enters no storage, model or WAL
 authority, and committed metadata checks remain required after any hint.
 
+The version-1 application event domain enum adds `agent_execution` and
+`agent_settings` for LocalTrusted Admin subscriptions. Generated OpenAPI,
+TypeScript and actual HTTP/SSE captures qualify this additive boundary. Agent
+journal/setup formats and native/companion publication bytes are unchanged;
+clients without the shared feed retain bounded outage fallback. Cold event
+acceptance remains separate from JST-COMPAT-003 release/platform qualification.
+
 The version-1 LocalTrusted read schema gains an additive typed stack-history
 request/response variant. Git SHA-1 heads and optional boundaries remain
 explicit; operation/binding pins and opaque cursor admission are unchanged.

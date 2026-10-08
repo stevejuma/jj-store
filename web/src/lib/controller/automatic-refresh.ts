@@ -54,14 +54,15 @@ export function createAutomaticRefresh(options: {
     const ticket = epoch;
     try {
       if (visible() && options.active() && !pauses.size) {
-        if (!pending && fallback()) {
+        const polling = !pending && fallback();
+        if (polling) {
           const changed = await options.poll();
           if (ticket === epoch) pending ||= changed;
         }
         const before = requests;
         if (ticket === epoch && pending && !options.signal.aborted) {
           const accepted = await options.refresh();
-          if (accepted) attempts = 0;
+          if (accepted && (!polling || !fallback())) attempts = 0;
           if (ticket === epoch) pending = !accepted || before !== requests;
         }
       }

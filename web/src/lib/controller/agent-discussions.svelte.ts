@@ -101,7 +101,8 @@ export class AgentDiscussions {
     };
   }
   async load(id: string) {
-    if (!this.#alive || this.#loading.has(id)) return;
+    if (!this.#alive) return true;
+    if (this.#loading.has(id)) return false;
     this.#loading.add(id);
     try {
       const value = await this.client.request<Feedback>(
@@ -149,12 +150,14 @@ export class AgentDiscussions {
       if (!this.#alive) return;
       this.values = { ...this.values, [id]: value };
       this.errors = { ...this.errors, [id]: "" };
+      return true;
     } catch (cause) {
       if (!this.#alive) return;
       this.errors = {
         ...this.errors,
         [id]: cause instanceof Error ? cause.message : String(cause),
       };
+      return false;
     } finally {
       this.#loading.delete(id);
     }

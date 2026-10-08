@@ -20,6 +20,8 @@ pub enum Domain {
     Code,
     Threads,
     Agents,
+    AgentExecution,
+    AgentSettings,
     Reviews,
     Work,
     Storage,

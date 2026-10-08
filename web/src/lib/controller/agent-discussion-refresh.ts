@@ -2,7 +2,7 @@ import { createAutomaticRefresh } from "./automatic-refresh.js";
 import type { ApplicationFreshness } from "./application-freshness.js";
 /** Discussion freshness never depends on runner status, targets or negotiation. */
 export function watchAgentDiscussion(
-  load: () => Promise<void>,
+  load: () => Promise<boolean | void>,
   repository: string,
   freshness?: ApplicationFreshness,
 ) {
@@ -10,19 +10,16 @@ export function watchAgentDiscussion(
   const refresh = createAutomaticRefresh({
     active: () => true,
     signal: lifetime.signal,
-    interval: 2000,
+    fallback: () => !freshness?.healthy,
     poll: async () => true,
     refresh: async () => {
-      await load();
-      return true;
+      return (await load()) !== false;
     },
     report: () => {},
   });
-  let status = freshness?.status;
   const unlisten = freshness?.listen((notice) => {
     if (
       notice.reset ||
-      (notice.status === "live" && status !== "live") ||
       notice.changes.some(
         (change) =>
           change.repository === repository &&
@@ -32,7 +29,7 @@ export function watchAgentDiscussion(
       )
     )
       refresh.request();
-    status = notice.status;
+    refresh.reschedule();
   });
   const reconnect = () => refresh.request();
   if (typeof window !== "undefined")

@@ -9,6 +9,7 @@
   import * as discussion from "./agent-discussion-fixture.js";
   import AgentExecutionCommandOutput from "./AgentExecutionCommandOutput.svelte";
   import { commandReceipts } from "./agent-command-receipts.js";
+  import { agentFreshnessFixture } from "./agent-freshness.js";
   import { revisionFixture } from "./agent-execution-revisions.js";
   import {
     fixtureJsonResponse as json,
@@ -139,8 +140,13 @@
         staleSave,
       ),
   );
+  const feed = untrack(() => agentFreshnessFixture());
   const receipts = untrack(() =>
-    commandReceipts(() => fixtureStatus.sessions[0], uncertainConfiguration),
+    commandReceipts(
+      () => fixtureStatus.sessions[0],
+      uncertainConfiguration,
+      feed.changed,
+    ),
   );
   const revisions = untrack(() =>
     revisionFixture(repository, operation, revisionIndexRequired),
@@ -221,6 +227,7 @@
           return json(fixtureStatus);
         },
         () => "22".repeat(16),
+        feed.freshness,
       ),
   );
   provideAgentExecution(() => manager);
@@ -235,6 +242,8 @@
   });
   onDestroy(() => {
     manager.destroy();
+    receipts.destroy();
+    feed.freshness.destroy();
     void shell.dispose();
   });
 </script>

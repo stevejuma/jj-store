@@ -1,5 +1,12 @@
-import type { Exact, Model } from "../api/client.js";
-import type { operations } from "../api/generated.js";
+import type { ApplicationFreshness } from "./application-freshness.js";
+import { watchAgentChanges } from "./agent-freshness.js";
+import type { Model } from "../api/client.js";
+import type * as Chat from "./agent-chat-types.js";
+export type {
+  ChatOrigin,
+  ChatSend,
+  ChatAttachment,
+} from "./agent-chat-types.js";
 import type { AgentExecution } from "./agent-execution.svelte.js";
 import type { AgentEvent, AgentOutcome } from "./agent-execution-types.js";
 import { isAgentCommandRefusal } from "./agent-execution-errors.js";
@@ -14,34 +21,39 @@ import {
   validateWorkspaces,
 } from "./agent-chat-selections.js";
 import { chatContext } from "./agent-chat-context.js";
-export type ChatOrigin = Model<"AgentConversationOrigin">;
-export type ChatSend = Exact<
-  operations["local_agents_chat"]["requestBody"]["content"]["application/json"]
->;
-export type ChatAttachment = ChatSend["attachments"][number];
 const newId = () => crypto.randomUUID().replaceAll("-", "");
-type Draft = {
-  id: string;
-  origin: ChatOrigin;
-  text: string;
-  attachments: ChatAttachment[];
-};
 /** App-lifetime scoped drafts and exact requests, independent of the selected inbox session. */
 export class AgentChat {
   open = $state(false);
   selected = $state("");
-  drafts = $state<Record<string, Draft>>({});
+  drafts = $state<Record<string, Chat.ChatDraft>>({});
   events = $state<Record<string, AgentEvent[]>>({});
   busy = $state(false);
   error = $state("");
   streamError = $state("");
-  pending = $state<ChatSend | null>(null);
+  pending = $state<Chat.ChatSend | null>(null);
   outcomes = $state<AgentOutcome[]>([]);
-  #timer?: ReturnType<typeof setTimeout>;
+  #updates: ReturnType<typeof watchAgentChanges>;
   #alive = true;
   #refreshing = false;
   #watching = new Map<string, number>();
-  constructor(readonly manager: AgentExecution) {}
+  constructor(
+    readonly manager: AgentExecution,
+    freshness?: ApplicationFreshness,
+  ) {
+    this.#updates = watchAgentChanges(freshness, {
+      active: () =>
+        this.#alive &&
+        manager.available() &&
+        (this.open || this.#watching.size > 0),
+      // Status reads adopt session membership before invalidating this reader.
+      matches: () => false,
+      refresh: () => this.refresh(),
+    });
+  }
+  invalidate() {
+    if (this.open || this.#watching.size) this.#updates.request();
+  }
   get draft() {
     return this.drafts[this.selected];
   }
@@ -65,8 +77,8 @@ export class AgentChat {
       : undefined;
   }
   show(
-    origin: ChatOrigin,
-    attachments: ChatAttachment[] = [],
+    origin: Chat.ChatOrigin,
+    attachments: Chat.ChatAttachment[] = [],
     agentId?: string,
     fresh = false,
   ) {
@@ -128,7 +140,6 @@ export class AgentChat {
   }
   close() {
     this.open = false;
-    if (!this.#watching.size) clearTimeout(this.#timer);
   }
   watch(scope: string, home: string | null) {
     const key = JSON.stringify([scope, home]);
@@ -183,7 +194,7 @@ export class AgentChat {
       .trim();
     if (!text) throw new Error("Write a message after the agent tags.");
     validateWorkspaces(this);
-    const body: ChatSend = {
+    const body: Chat.ChatSend = {
       version: 1,
       request_id: newId(),
       conversation_id: this.selected,
@@ -199,7 +210,7 @@ export class AgentChat {
   async retry() {
     if (this.pending && !this.busy) await this.dispatch(this.pending);
   }
-  async dispatch(body: ChatSend) {
+  async dispatch(body: Chat.ChatSend) {
     this.busy = true;
     this.error = "";
     try {
@@ -223,7 +234,7 @@ export class AgentChat {
       );
       if (refused)
         throw new Error(refused.error ?? "The prompt was not accepted.");
-      await this.manager.refresh();
+      await this.manager.updates.status();
       await this.refresh();
     } catch (cause) {
       if (isAgentCommandRefusal(cause)) this.pending = null;
@@ -240,12 +251,8 @@ export class AgentChat {
       "The interrupted request is retained in history. Send a new message only after reviewing the work.";
   }
   async refresh() {
-    if (
-      (!this.open && !this.#watching.size) ||
-      !this.#alive ||
-      this.#refreshing
-    )
-      return;
+    if ((!this.open && !this.#watching.size) || !this.#alive) return true;
+    if (this.#refreshing) return false;
     this.#refreshing = true;
     try {
       const watched = new Set(
@@ -264,7 +271,7 @@ export class AgentChat {
           const page = await this.manager.client.request<
             Model<"AgentExecutionEventPage">
           >(`agents/events?session=${session.id}&after=${after}`);
-          if (!this.#alive) return;
+          if (!this.#alive) return true;
           this.events[session.id] = [
             ...(this.events[session.id] ?? []),
             ...page.events,
@@ -275,17 +282,18 @@ export class AgentChat {
         void this.manager.discussions.load(session.id);
       }
       this.streamError = "";
+      return true;
     } catch {
       this.streamError = "Chat updates are unavailable. Reconnecting…";
+      this.invalidate();
+      return false;
     } finally {
       this.#refreshing = false;
-      clearTimeout(this.#timer);
-      if ((this.open || this.#watching.size) && this.#alive)
-        this.#timer = setTimeout(() => void this.refresh(), 1000);
     }
   }
   destroy() {
     this.#alive = false;
+    this.#updates.stop();
     this.#watching.clear();
     this.close();
     this.drafts = {};

@@ -302,7 +302,7 @@ test("cold chats show live avatars, composer reconnect warnings and exact saved 
     "Chat updates are unavailable. Reconnecting…",
     { exact: true },
   );
-  await expect(warning).toBeVisible();
+  await expect(warning).toBeVisible({ timeout: 6000 });
   await expect(
     page
       .locator('[data-ui-component="ai-chat-composer"]')
@@ -312,7 +312,8 @@ test("cold chats show live avatars, composer reconnect warnings and exact saved 
   ).toBeVisible();
   await editor.pressSequentially("Keep my draft");
   unavailable = false;
-  await expect(warning).toHaveCount(0);
+  // This legacy-feed fixture uses bounded 5/10-second outage recovery.
+  await expect(warning).toHaveCount(0, { timeout: 12000 });
   await expect(editor).toContainText("Keep my draft");
   expect(pathReads).toBe(1);
   await page.screenshot({

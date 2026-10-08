@@ -5889,6 +5889,8 @@ export interface components {
       | "code"
       | "threads"
       | "agents"
+      | "agent_execution"
+      | "agent_settings"
       | "reviews"
       | "work"
       | "storage"

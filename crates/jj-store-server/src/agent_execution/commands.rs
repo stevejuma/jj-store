@@ -580,6 +580,9 @@ impl Manager for Supervisor {
     fn subscribe(&self) -> broadcast::Receiver<u64> {
         self.0.changed.subscribe()
     }
+    fn freshness(&self) -> Option<broadcast::Receiver<jj_store_service::freshness::Change>> {
+        Some(self.0.freshness.subscribe())
+    }
     async fn shutdown(&self) -> Result<()> {
         let _shutdown = self.0.shutdown.lock().await;
         if let Some(success) = *self

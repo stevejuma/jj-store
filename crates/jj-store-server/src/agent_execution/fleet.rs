@@ -164,7 +164,11 @@ impl Supervisor {
             .map_err(|_| Error::Unavailable)?
             .get_mut(id)
         {
+            let changed = worker.state != "stopping";
             worker.request_stop();
+            if changed {
+                self.execution_changed();
+            }
         }
         let ids = self.read(|s| {
             Ok(s.sessions
@@ -384,7 +388,7 @@ impl Supervisor {
             .lock()
             .map_err(|_| Error::Unavailable)?
             .insert(task_id, task.abort_handle());
-        let _ = self.0.changed.send(0);
+        self.execution_changed();
         Ok(())
     }
     async fn run_worker(
@@ -464,9 +468,12 @@ impl Supervisor {
             if worker.state == "stopping" && state == "idle" {
                 return;
             }
+            if worker.state == state && worker.error.as_deref() == error {
+                return;
+            }
             worker.state = state.into();
             worker.error = error.map(str::to_owned);
+            self.execution_changed();
         }
-        let _ = self.0.changed.send(0);
     }
 }

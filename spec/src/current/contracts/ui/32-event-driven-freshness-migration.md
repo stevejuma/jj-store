@@ -28,6 +28,17 @@ serial jittered 5/10/20/30-second fallback, paused while hidden and removed on
 recovery; preparation status alone uses its bounded 500ms-5s outage fallback.
 Terminal event/ACK transport is separate.
 
+Agent execution status, settings and workspace targets have separate dirty
+readers on the same application feed. One initial capture establishes their
+state; execution notices refresh status, settings notices refresh defaults, and
+workspace/discovery/code changes refresh targets. Runtime updates invalidate
+visible contextual conversation history after adopting current participation.
+Embedded agent directories and open chats own no regular polling loop. Recorded
+discussion readers use repository notices. Failed reads retain dirtiness, and
+unavailable feeds alone enable the bounded outage fallback above. Unchanged
+renewal is read-free; reset recaptures state without clearing drafts, selections
+or exact pending command identities. Reads and reconnects never dispatch work.
+
 Unrelated notices MUST NOT postpone an already queued event read. Deferred or
 failed healthy reads retain dirtiness and retry serially with bounded 500ms-5s
 backoff only while that dirtiness remains; successful reads stop the timer.

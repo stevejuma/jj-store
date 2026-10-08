@@ -14,6 +14,7 @@ mod delivery;
 pub mod driver;
 mod feedback;
 mod fleet;
+mod freshness;
 mod journal;
 mod launch;
 mod local_agent;
@@ -75,6 +76,7 @@ struct Inner {
     publication: tokio::sync::Mutex<()>,
     conversation_dispatch: tokio::sync::Mutex<()>,
     changed: broadcast::Sender<u64>,
+    freshness: jj_store_service::freshness::Signals,
     stopping: std::sync::atomic::AtomicBool,
     sanitizer: Mutex<Option<jj_store_capture::transcript_sanitization::TranscriptSanitizer>>,
     privacy_failed: std::sync::atomic::AtomicBool,
@@ -119,6 +121,7 @@ impl Supervisor {
             publication: tokio::sync::Mutex::new(()),
             conversation_dispatch: tokio::sync::Mutex::new(()),
             changed,
+            freshness: Default::default(),
             stopping: std::sync::atomic::AtomicBool::new(false),
             sanitizer: Mutex::new(None),
             privacy_failed: std::sync::atomic::AtomicBool::new(false),
@@ -163,7 +166,7 @@ impl Supervisor {
                         .store(true, std::sync::atomic::Ordering::Release);
                 }
             }
-            let _ = this.0.changed.send(0);
+            this.execution_changed();
         });
     }
     pub fn ready(&self) -> bool {
@@ -199,10 +202,27 @@ impl Supervisor {
         let mut state = self.0.state.lock().map_err(|_| Error::Unavailable)?;
         let mut candidate = state.clone();
         let result = f(&mut candidate)?;
+        let execution_changed =
+            freshness::execution_witness(&candidate)? != freshness::execution_witness(&state)?;
+        let settings_changed = candidate.settings.revision != state.settings.revision;
         candidate.revision = candidate.revision.checked_add(1).ok_or(Error::Limit)?;
         journal::persist(&self.0.resources.root, &candidate)?;
         *state = candidate;
         let _ = self.0.changed.send(state.revision);
+        if execution_changed {
+            self.0.freshness.notify(
+                None,
+                jj_store_service::freshness::Domain::AgentExecution,
+                None,
+            );
+        }
+        if settings_changed {
+            self.0.freshness.notify(
+                None,
+                jj_store_service::freshness::Domain::AgentSettings,
+                None,
+            );
+        }
         Ok(result)
     }
     fn duplicate(&self, request: RequestId, digest: &str) -> Result<Option<Outcome>> {

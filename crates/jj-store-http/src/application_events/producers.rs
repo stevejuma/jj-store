@@ -23,6 +23,7 @@ pub(super) fn start(state: &Arc<State>) -> tokio::task::JoinHandle<()> {
     add!(local_settings);
     add!(local_workspaces);
     add!(local_repositories);
+    add!(local_agents);
     let weak = Arc::downgrade(state);
     tokio::spawn(async move {
         loop {

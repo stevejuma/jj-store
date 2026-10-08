@@ -188,7 +188,9 @@
       busy={threads.busy}
       composerStatus={status ? { type: "warning", message: status } : undefined}
       onRetryComposerStatus={discussions.errors[sessionId]
-        ? () => discussions.load(sessionId)
+        ? async () => {
+            await discussions.load(sessionId);
+          }
         : undefined}
       onSubmit={feedback && !unavailable && !blocked
         ? async (submission) => {

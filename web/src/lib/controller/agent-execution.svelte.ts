@@ -1,6 +1,5 @@
 import { disposeAgentResources } from "./agent-resource-disposal.js";
 import {
-  readAgentExecutionStatus,
   agentControlBody,
   agentSetupBody,
   agentLaunchBody,
@@ -15,7 +14,7 @@ import * as launch from "./agent-execution-launch-context.js";
 import { AgentDiscussions } from "./agent-discussions.svelte.js";
 import { AgentChat } from "./agent-chat.svelte.js";
 import { AgentModelCatalog } from "./agent-model-catalog.svelte.js";
-import { syncAgentPower } from "./agent-power.js";
+import { AgentExecutionRefresh } from "./agent-execution-refresh.js";
 import { AgentCompute } from "./agent-compute.svelte.js";
 import { AgentSettings } from "./agent-settings.svelte.js";
 import { AgentRuntimes } from "./agent-runtimes.svelte.js";
@@ -67,9 +66,8 @@ export class AgentExecution {
   } | null>(null);
   outcome = $state<AgentOutcome | null>(null);
   #alive = true;
-  #refreshing = false;
   #stream?: AbortController;
-  #timer?: ReturnType<typeof setTimeout>;
+  readonly updates: AgentExecutionRefresh;
   readonly client: LocalClient;
   readonly discussions: AgentDiscussions;
   readonly chat: AgentChat;
@@ -84,11 +82,12 @@ export class AgentExecution {
     freshness?: import("./application-freshness.js").ApplicationFreshness,
   ) {
     this.client = new LocalClient("", fetcher);
-    this.chat = new AgentChat(this);
+    this.chat = new AgentChat(this, freshness);
     this.settings = new AgentSettings(this.client);
     this.compute = new AgentCompute(this.client);
     this.catalogs = new AgentModelCatalog(this.client);
     this.tooling = new AgentRuntimes(available, fetcher);
+    this.updates = new AgentExecutionRefresh(this, freshness);
     this.discussions = new AgentDiscussions(
       this.client,
       () => this.value?.sessions ?? [],
@@ -121,34 +120,8 @@ export class AgentExecution {
     this.open = false;
     this.#stream?.abort();
   }
-  async refresh() {
-    if (!this.#alive || !this.available() || this.#refreshing) return;
-    this.#refreshing = true;
-    void this.settings.refresh();
-    try {
-      const [status, targets, targetError] = await readAgentExecutionStatus(
-        this.client,
-      );
-      if (!this.#alive) return;
-      this.value = status;
-      void syncAgentPower(status, this.settings.value?.keep_awake === true);
-      this.targets = targets;
-      this.targetError = targetError;
-      if (this.pending) await this.checkOutcome();
-      this.connectionError = "";
-    } catch (cause) {
-      void syncAgentPower(null, false);
-      if (this.#alive)
-        this.connectionError =
-          cause instanceof Error
-            ? cause.message
-            : "Agent execution unavailable";
-    } finally {
-      this.#refreshing = false;
-      clearTimeout(this.#timer);
-      if (this.#alive && this.available())
-        this.#timer = setTimeout(() => void this.refresh(), 2000);
-    }
+  refresh() {
+    return this.updates.refresh();
   }
   async select(id: string) {
     this.#stream?.abort();
@@ -255,7 +228,7 @@ export class AgentExecution {
         this.error = `${cause instanceof Error ? cause.message : "Request failed"}. The request identity is retained; check its outcome.`;
     } finally {
       this.busy = false;
-      await this.refresh();
+      await this.updates.status();
     }
   }
   async launch(
@@ -293,9 +266,9 @@ export class AgentExecution {
     return request_id;
   }
   destroy() {
-    disposeAgentResources(this);
     this.#alive = false;
-    clearTimeout(this.#timer);
+    this.updates.destroy();
+    disposeAgentResources(this);
     this.#stream?.abort();
   }
 }

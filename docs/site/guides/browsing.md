@@ -19,6 +19,11 @@ views refresh after saves and relevant committed events; unavailable feeds use
 bounded fallback; explicit historical selections stay historical. To see newly
 published code, return to a current selection deliberately.
 
+The Agents directory, defaults and open chats follow the same event feed.
+Healthy idle pages make no periodic agent data requests. Changes from another
+tab appear automatically; reconnect and bounded failed-read retries preserve
+drafts and exact pending requests.
+
 ## Inspect files
 
 Files provides directory navigation, content previews and applicable source/edit

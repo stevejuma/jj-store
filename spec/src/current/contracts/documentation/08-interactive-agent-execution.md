@@ -51,3 +51,8 @@ warnings and completed snapshot file panels shared with the inbox. It identifies
 bounded and unavailable text previews, exact saved comparisons and the lack of a
 qualified session-specific Undo. These presentation/read controls do not expand
 execution authority, rewrite saved history or qualify an inverse mutation.
+
+The manual documents installation-local execution/settings notices, independent
+target invalidation and quiet healthy Agents/chat views. Reconnect and bounded
+failed-read recovery preserve drafts and pending identities. Source review and
+generated public domain references remain distinct from cold event acceptance.

@@ -230,3 +230,123 @@ async fn application_stream_has_independent_finite_delivery_admission_and_contra
         std::fs::write(path, serde_json::to_vec(&samples).unwrap()).unwrap();
     }
 }
+
+struct AgentChanges {
+    notices: jj_store_service::freshness::Signals,
+}
+#[async_trait::async_trait]
+impl jj_store_service::agent_execution::Manager for AgentChanges {
+    async fn status(
+        &self,
+        _: m::PrincipalId,
+    ) -> jj_store_service::agent_execution::Result<jj_store_service::agent_execution::Status> {
+        unreachable!("notices must not poll status")
+    }
+    async fn targets(
+        &self,
+        _: m::PrincipalId,
+        _: Option<m::RepositoryId>,
+    ) -> jj_store_service::agent_execution::Result<Vec<jj_store_service::agent_execution::Target>>
+    {
+        unreachable!()
+    }
+    async fn save_setup(
+        &self,
+        _: m::PrincipalId,
+        _: jj_store_service::agent_execution::SetupCommand,
+    ) -> jj_store_service::agent_execution::Result<jj_store_service::agent_execution::Status> {
+        unreachable!()
+    }
+    async fn launch(
+        &self,
+        _: m::PrincipalId,
+        _: jj_store_service::agent_execution::Launch,
+    ) -> jj_store_service::agent_execution::Result<jj_store_service::agent_execution::Outcome> {
+        unreachable!()
+    }
+    async fn command(
+        &self,
+        _: m::PrincipalId,
+        _: jj_store_service::agent_execution::Command,
+    ) -> jj_store_service::agent_execution::Result<jj_store_service::agent_execution::Outcome> {
+        unreachable!()
+    }
+    async fn outcome(
+        &self,
+        _: m::PrincipalId,
+        _: m::RequestId,
+    ) -> jj_store_service::agent_execution::Result<jj_store_service::agent_execution::Outcome> {
+        unreachable!()
+    }
+    async fn events(
+        &self,
+        _: m::PrincipalId,
+        _: String,
+        _: u64,
+    ) -> jj_store_service::agent_execution::Result<jj_store_service::agent_execution::EventPage>
+    {
+        unreachable!()
+    }
+    fn subscribe(&self) -> tokio::sync::broadcast::Receiver<u64> {
+        unreachable!("shared feed uses scoped notices")
+    }
+    fn freshness(&self) -> Option<tokio::sync::broadcast::Receiver<Change>> {
+        Some(self.notices.subscribe())
+    }
+    async fn shutdown(&self) -> jj_store_service::agent_execution::Result<()> {
+        Ok(())
+    }
+}
+#[tokio::test]
+async fn agent_owner_notices_join_shared_feed_without_reads_and_remain_local_admin_only() {
+    for permission in [Permission::Admin, Permission::Read] {
+        let root = tempfile::tempdir().unwrap();
+        let notices = jj_store_service::freshness::Signals::default();
+        let api = HttpApi::with_search(
+            None,
+            root.path().into(),
+            Config {
+                access: Access::LocalTrusted {
+                    principal: m::PrincipalId::new([1; 16]),
+                    permission,
+                },
+                registry: Some(Arc::new(Registry::default())),
+                local_agents: Some(Arc::new(AgentChanges {
+                    notices: notices.clone(),
+                })),
+                ..Default::default()
+            },
+            BTreeMap::new(),
+        )
+        .unwrap();
+        let mut body = open(api.0.clone(), None).await.into_body();
+        let initial = cursor(&frame(&mut body).await);
+        notices.notify(None, Domain::AgentExecution, None);
+        notices.notify(None, Domain::AgentSettings, None);
+        if permission == Permission::Admin {
+            for domain in ["agent_execution", "agent_settings"] {
+                let next = tokio::time::timeout(Duration::from_secs(1), frame(&mut body))
+                    .await
+                    .unwrap();
+                assert!(next.contains(domain), "{next}");
+                assert!(!next.contains("setups"));
+            }
+            assert!(
+                tokio::time::timeout(Duration::from_millis(40), frame(&mut body))
+                    .await
+                    .is_err()
+            );
+            drop(body);
+            let mut replay = open(api.0.clone(), Some(initial)).await.into_body();
+            assert!(frame(&mut replay).await.contains("agent_execution"));
+            assert!(frame(&mut replay).await.contains("agent_settings"));
+            assert!(frame(&mut replay).await.contains("ready"));
+        } else {
+            assert!(
+                tokio::time::timeout(Duration::from_millis(60), frame(&mut body))
+                    .await
+                    .is_err()
+            );
+        }
+    }
+}

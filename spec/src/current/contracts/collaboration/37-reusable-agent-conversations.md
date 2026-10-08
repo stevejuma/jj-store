@@ -109,6 +109,15 @@ live status requires an exact saved setup association. Unassigned legacy records
 are never guessed. Indicators have shape/text and accessible labels, tooltips,
 keyboard support and reduced-motion behavior.
 
+The app-lifetime runtime subscription consumes installation `agent_execution`
+notices on the shared application feed. Defaults use separate `agent_settings`
+notices; target discovery follows repository/workspace changes. Healthy idle
+agents and contextual chat perform no periodic status/settings/target/history
+reads. Initial capture, semantic events, explicit actions and continuity
+recovery drive coalesced reads, preserving drafts and exact unresolved requests.
+Internal publication retries with unchanged visible state cannot create a
+refresh loop.
+
 Real adapter, cold browser, restart and multi-repository qualification remain
 independent acceptance gates. Fixture success does not close them.
 

@@ -84,6 +84,15 @@ running service. The prior implicit shell-export dependency caused the reported
 unavailable state; the ignored staged helper was also outdated. This repair
 leaves M24 In progress and preserves saved-agent Start/Stop state, explicit
 Send, authorization and the independent adapter, permission and desktop gates.
+
+## Agent event freshness review — 2026-10-08
+
+E-FLEET-010 connects supervisor execution/defaults notices to the shared
+application feed and removes healthy-idle directory/chat/discussion polling.
+Independent readers retain bounded outage and failed-read recovery, drafts and
+exact requests. This review leaves M24 In progress and does not expand adapter,
+live-permission, desktop or platform qualification. The earlier repository audit
+failures remain separately recorded in E-GOV-005 and E-GOV-006.
 <!-- generated-navigation -->
 
 ## Pages

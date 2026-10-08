@@ -336,6 +336,9 @@ pub trait Manager: Send + Sync {
         Err(Error::Unavailable)
     }
     fn subscribe(&self) -> tokio::sync::broadcast::Receiver<u64>;
+    fn freshness(&self) -> Option<tokio::sync::broadcast::Receiver<crate::freshness::Change>> {
+        None
+    }
     async fn shutdown(&self) -> Result<()>;
 }
 /// Compose providers without exposing their concrete process implementation.

@@ -13,23 +13,31 @@ export class AgentSettings {
   busy = $state(false);
   error = $state("");
   pending = $state<Record<string, unknown> | null>(null);
-  #reading = false;
+  #reading?: Promise<boolean>;
+  #alive = true;
   constructor(readonly client: LocalClient) {}
   dispose() {
+    this.#alive = false;
     this.draft = null;
     this.secretDrafts = {};
     this.setupSecretDrafts = {};
   }
-  async refresh() {
-    if (this.#reading) return;
-    this.#reading = true;
+  refresh(): Promise<boolean> {
+    if (!this.#alive) return Promise.resolve(true);
+    return (this.#reading ??= this.read().finally(() => {
+      this.#reading = undefined;
+    }));
+  }
+  private async read() {
     try {
-      this.value =
+      const value =
         await this.client.request<AgentSettingsValue>("agents/settings");
+      if (this.#alive) this.value = value;
+      return true;
     } catch (cause) {
-      this.error = cause instanceof Error ? cause.message : String(cause);
-    } finally {
-      this.#reading = false;
+      if (this.#alive)
+        this.error = cause instanceof Error ? cause.message : String(cause);
+      return false;
     }
   }
   async saveSecrets(values: Record<string, string>) {

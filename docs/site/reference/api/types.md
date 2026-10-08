@@ -13699,6 +13699,8 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "code",
     "threads",
     "agents",
+    "agent_execution",
+    "agent_settings",
     "reviews",
     "work",
     "storage",

@@ -128,6 +128,12 @@ accessed. Serial bounded fallback runs only when the feed is unavailable and
 pauses while hidden. Historical code pins, unsaved drafts and unknown command
 identities survive ordinary refresh.
 
+LocalTrusted Admin subscriptions also receive body-free `agent_execution` and
+`agent_settings` notices. These invalidate status and defaults separately;
+repository/workspace changes invalidate execution targets. No prompts, settings
+values or credentials are carried in the feed. Repeated internal journal writes
+with unchanged visible state produce no notice.
+
 Use lossless JSON handling for integers beyond JavaScript's safe number range.
 Identity widths and tagged variants are part of the schema. Uploaded bodies,
 query work and page output have explicit caps; exceeding one is not a reason to

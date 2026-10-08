@@ -17,8 +17,6 @@
   );
   onMount(() => {
     void manager?.refresh();
-    const timer = setInterval(() => void manager?.refresh(), 5000);
-    return () => clearInterval(timer);
   });
 </script>
 

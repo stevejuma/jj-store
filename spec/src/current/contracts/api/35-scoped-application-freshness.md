@@ -25,6 +25,16 @@ Shared refcounted metadata monitors and filesystem hints validate committed
 changes within five seconds under qualified healthy load. Idle monitors retire
 after a bounded grace period.
 
+Installation-local `agent_execution` and `agent_settings` notices join the
+shared feed for LocalTrusted Admin only. Supervisor settlement, runtime
+preparation and worker transitions invalidate execution; committed defaults
+changes also invalidate agent settings. Repeated journal/publication bookkeeping
+with the same visible state emits no new notice. These process-local hints carry
+no prompt, settings body, credentials or repository authority. Lost producer
+notices use the existing full continuity reset. Workspace/discovery/code notices
+invalidate agent target selections independently; activity does not invalidate
+targets.
+
 Local differently embedded references MUST prove the source is an ancestor of
 the explicit outer selection using bounded operation metadata. Indexed cold
 recovery reports the source in `local_snapshot.operation`; success keeps the

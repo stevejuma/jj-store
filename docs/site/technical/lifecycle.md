@@ -171,6 +171,11 @@ events retain their device observation time through restart and publication,
 carrying it into the existing captured occurred_at_millis field. Legacy untimed
 events stay unknown; publication and refresh do not invent times.
 
+Runtime preparation, worker transitions and visible journal changes publish
+installation freshness notices to the application's shared feed. Defaults have a
+separate notice. Unchanged publication retry bookkeeping stays quiet; producer
+overflow or process restart resets continuity before clients recapture state.
+
 ## Reusable ACP worker lifetime
 
 Start warms the saved agent in place without a session or prompt. Stop retains

@@ -10,6 +10,8 @@ const domains: readonly string[] = [
   "code",
   "threads",
   "agents",
+  "agent_execution",
+  "agent_settings",
   "reviews",
   "work",
   "storage",
