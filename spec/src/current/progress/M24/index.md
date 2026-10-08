@@ -64,6 +64,12 @@ Compute workspace, retaining XML prompt blocks and captured Sent context
 together. The user requested local main integration with the recorded source
 gaps retained. M24 remains In progress; temporary-workspace deletion awaits
 separate confirmation.
+
+E-FLEET-007 records the verified application change in the default workspace,
+preserving the integrated Compute ancestry and main fixture. The temporary
+agent-fleet workspace and its private backup remain retained until the user
+confirms retirement. M24's independent gates and In progress status are
+unchanged.
 <!-- generated-navigation -->
 
 ## Pages

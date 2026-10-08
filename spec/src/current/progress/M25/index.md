@@ -14,6 +14,11 @@ status assertion failure remains a separate recorded gap. E-COMPUTE-005 records
 integration of all local-compute commits into the default workspace, focused
 main qualification and recoverable temporary-workspace retirement. M25 remains
 In progress with the same distribution gates.
+
+E-FLEET-006/007 retain the separate XML and captured Sent context paths while
+rebasing and integrating the shared agent chats into the default workspace.
+Focused verification is recorded separately from the open source and packaged
+distribution gates; this integration leaves M25 In progress.
 <!-- generated-navigation -->
 
 ## Pages
