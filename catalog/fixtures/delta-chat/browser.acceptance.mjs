@@ -11,6 +11,7 @@ import { commentQueueAcceptance } from "./comment-queue-native.mjs";
 import { nextMessageAcceptance } from "./next-message-native.mjs";
 import { readPanelResizeAcceptance } from "./read-panel-resize-native.mjs";
 import { numberedCodeGutterAcceptance } from "./numbered-code-gutter-native.mjs";
+import { footerRuntimeAcceptance } from "./footer-runtime-native.mjs";
 
 mkdirSync(".local", { recursive: true });
 const reservation = createServer();
@@ -213,6 +214,7 @@ try {
   ).toBeVisible({ timeout: 60000 });
   await page.screenshot({ path: ".local/chat-body-preview.png" });
   await numberedCodeGutterAcceptance(page);
+  await footerRuntimeAcceptance(page, base);
   expect(errors).toEqual([]);
   console.log(
     "PASS cold native pointer/keyboard input, immutability, focus, custom sections, scroll, resize, teardown, mobile read pane and turn navigation",

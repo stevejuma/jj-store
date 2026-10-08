@@ -3,19 +3,23 @@ import type {
   ChatPromptSubmission,
 } from "../../../web/src/lib/ui/store-agent-chat-body/model.js";
 import type { ChatBodyComments } from "../../../web/src/lib/ui/store-agent-chat-body/comments.svelte.js";
+import { demoAgent, type DemoRuntime } from "./runtime.svelte.js";
+export { demoAgent } from "./runtime.svelte.js";
 export const demoSender = {
   id: "demo-user",
   name: "You",
   handle: "",
   initials: "YO",
 };
-export const demoAgent = {
-  id: "demo-agent",
-  name: "Demo agent",
-  handle: "",
-  initials: "AI",
-};
 export class DemoNextMessage {
+  constructor(
+    private runtime = () => ({
+      agent: demoAgent,
+      model: "gpt-6.1-sol",
+      thinking: "medium",
+    }),
+  ) {}
+  private runtimes = new Map<string, ReturnType<DemoRuntime["snapshot"]>>();
   messages = $state<ChatBodyItem[]>([]);
   failNext = $state(false);
   submissions = $state<ChatPromptSubmission[]>([]);
@@ -29,6 +33,8 @@ export class DemoNextMessage {
     }
     this.submissions.push(submission);
     const { id, text, comments } = submission;
+    const runtime = this.runtime();
+    this.runtimes.set(id, runtime);
     this.messages.push({
       id,
       kind: "message",
@@ -39,6 +45,8 @@ export class DemoNextMessage {
       turn: {
         id: `turn:${id}`,
         author: "You",
+        agentName: runtime.agent.name,
+        modelLabel: runtime.model,
         prompt: text || `${comments.length} comments`,
         summary: "Local demo message; awaiting simulated replies.",
       },
@@ -57,6 +65,7 @@ export class DemoNextMessage {
   }
   completeReplies(state: ChatBodyComments) {
     for (const submission of this.submissions) {
+      const runtime = this.runtimes.get(submission.id) ?? this.runtime();
       for (const comment of submission.comments) {
         if (state.findComment(comment.commentId)?.status !== "sent") continue;
         const id = `demo-reply:${comment.commentId}`;
@@ -66,7 +75,7 @@ export class DemoNextMessage {
           comment.commentId,
           {
             id,
-            author: demoAgent,
+            author: runtime.agent,
             text,
             status: "sent",
           },
@@ -85,7 +94,7 @@ export class DemoNextMessage {
             id,
             kind: "message",
             role: "assistant",
-            author: demoAgent,
+            author: runtime.agent,
             label: "Simulated agent reply",
             turn: {
               id: `turn:${submission.id}`,

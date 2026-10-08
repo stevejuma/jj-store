@@ -10,8 +10,8 @@ import { markdownBlocks } from "../../../web/src/lib/ui/store-agent-chat-body/ma
 import type { Span, DeltaChatFixture } from "./model.js";
 export type { DeltaChatFixture } from "./model.js";
 import { assignDeltaTurns } from "./turns.js";
+import { demoAgent as agent } from "./runtime.svelte.js";
 const user = { id: "demo-user", name: "You", handle: "", initials: "YO" };
-const agent = { id: "demo-agent", name: "Codex", handle: "", initials: "AI" };
 
 export function deltaChatItems(fixture: DeltaChatFixture): ChatBodyItem[] {
   if (fixture.version !== 1 && fixture.version !== 2)

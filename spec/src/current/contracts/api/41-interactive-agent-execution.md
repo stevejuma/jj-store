@@ -145,3 +145,8 @@ headings retain this unchanged JST-API-001 boundary (E-CHAT-BODY-008). Pane
 widths live only in the UI. Captured-number gutter projection leaves source text
 and anchors intact. Neither introduces a request, dispatch, credential or
 persisted-format change.
+
+Footer runtime selectors and harness avatars preserve JST-API-001 unchanged
+(E-CHAT-BODY-009): their choices and selections are host-owned display props.
+The catalog retains simulated send-time runtime identity only in memory, with no
+live catalog, settings API or ACP dispatch.

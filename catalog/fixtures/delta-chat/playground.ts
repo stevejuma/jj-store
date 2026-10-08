@@ -3,12 +3,7 @@ import type {
   ChatBodyItem,
 } from "../../../web/src/lib/ui/store-agent-chat-body/model.js";
 import { markdownBlocks } from "../../../web/src/lib/ui/store-agent-chat-body/markdown-blocks.js";
-const agent = {
-  id: "demo-agent",
-  name: "Demo agent",
-  handle: "",
-  initials: "AI",
-};
+import { demoAgent as agent } from "./runtime.svelte.js";
 const demoTurn = {
   id: "demo-turn",
   author: "You",

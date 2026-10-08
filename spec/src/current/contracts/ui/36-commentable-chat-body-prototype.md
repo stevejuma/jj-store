@@ -164,6 +164,21 @@ accumulated nested trailing padding. Jump to End focuses this draft when
 present. Optional composer/footer slots keep the body independent of host draft
 state and live conversation contracts.
 
+The fixed footer provides compact agent, thinking and model menus followed by an
+icon-only Send button with an accessible name and shortcut hint. Model and
+thinking labels remain visible at ordinary widths; narrow footers retain their
+icons, accessible names and menu access without horizontal overflow. Agent/model
+menus use an 18rem width and thinking a 14rem width, bounded by the viewport
+with edge clearance instead of inheriting their compact trigger widths. All
+choices remain readable without horizontal scrolling. The host owns available
+choices and selections; the shared footer emits callbacks. The catalog supplies
+synthetic choices and retains them across body remounts without resetting
+message or comment drafts. Each simulated delivery retains its selected
+harness/model, so later selection changes do not rewrite reply identity.
+Captured Codex messages and simulated replies use the existing bundled harness
+avatars through the owned member-avatar component. These selectors introduce no
+live catalog reads, settings writes or agent dispatch.
+
 1. Project the captured Delta JSON into catalog data and convert byte anchors
    explicitly. Map it to an owned display model without changing AgentStore
    persistence or flattening separate assistant segments into one message.

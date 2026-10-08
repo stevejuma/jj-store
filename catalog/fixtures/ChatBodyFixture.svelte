@@ -21,6 +21,8 @@
   } from "./delta-chat/next-message.svelte.js";
   import ChatNextMessage from "../../web/src/lib/ui/store-agent-chat-body/ChatNextMessage.svelte";
   import ChatMessageFooter from "../../web/src/lib/ui/store-agent-chat-body/ChatMessageFooter.svelte";
+  import ChatRuntimeControls from "../../web/src/lib/ui/store-agent-chat-body/ChatRuntimeControls.svelte";
+  import { DemoRuntime, demoAgents } from "./delta-chat/runtime.svelte.js";
   import {
     playgroundItems,
     appendedItem,
@@ -39,7 +41,8 @@
   const referenceItems = deltaChatItems(reference);
   const commentItems = deltaChatItems(helloWorld);
   const reactions = new DemoReactions();
-  const nextMessage = new DemoNextMessage();
+  const runtime = new DemoRuntime();
+  const nextMessage = new DemoNextMessage(() => runtime.snapshot());
   const composing = $derived(showComposer ?? scenario !== "empty");
   let draftEditor = $state<{ focus: () => void }>();
   async function sendMessage() {
@@ -144,7 +147,19 @@
     canSend={commentState.canSend}
     onSend={sendMessage}
     error={commentState.error}
-  />{/snippet}
+    >{#snippet controls()}<ChatRuntimeControls
+        agents={demoAgents}
+        agent={runtime.agent}
+        models={runtime.models}
+        model={runtime.model}
+        thinkingOptions={runtime.thinkingOptions}
+        thinking={runtime.thinking}
+        disabled={commentState.sending}
+        onAgentChange={(id) => (runtime.agentId = id)}
+        onModelChange={(value) => (runtime.model = value)}
+        onThinkingChange={(value) => (runtime.thinking = value)}
+      />{/snippet}</ChatMessageFooter
+  >{/snippet}
 
 {#snippet customBlock(
   block: import("../../web/src/lib/ui/store-agent-chat-body/model.js").ChatBodyBlock,

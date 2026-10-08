@@ -29,6 +29,7 @@
   import { toolSpacing } from "../../fixtures/delta-chat/spacing-play.js";
   import { readPanelResize } from "../../fixtures/delta-chat/read-panel-resize-play.js";
   import { numberedCodeGutter } from "../../fixtures/delta-chat/numbered-code-gutter-play.js";
+  import { footerRuntime } from "../../fixtures/delta-chat/footer-runtime-play.js";
   import {
     groupedCommentEntries,
     commentRail,
@@ -50,6 +51,10 @@
     },
   });
 </script>
+
+<Story asChild name="Footer runtime controls" play={footerRuntime}>
+  {#snippet children()}<Fixture scenario="playground" />{/snippet}
+</Story>
 
 <Story asChild name="Captured line number gutter" play={numberedCodeGutter}>
   {#snippet children()}<Fixture />{/snippet}

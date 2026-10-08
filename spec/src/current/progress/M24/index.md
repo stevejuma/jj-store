@@ -182,6 +182,11 @@ M24 In progress. Live integration, native IME and visual baseline approval
 remain separate gates. The unchanged development acceptance-script line-limit
 failure remains recorded.
 
+E-CHAT-BODY-009 adds local footer agent/model/thinking selectors, icon-only Send
+and harness avatars. Menu changes retain drafts; simulated replies preserve
+their send-time identity. This presentation review keeps M24 In progress and
+does not change live adapter, permissions, desktop, native IME or visual gates.
+
 <!-- generated-navigation -->
 
 ## Pages
