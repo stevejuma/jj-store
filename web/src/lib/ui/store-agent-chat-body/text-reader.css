@@ -74,7 +74,6 @@
 }
 .chat-text-reader .cm-content {
   padding: 0;
-  caret-color: var(--foreground);
   cursor: text;
 }
 .chat-text-reader .cm-line {
@@ -180,9 +179,6 @@
 }
 .chat-text-reader .cm-selectionBackground {
   background: color-mix(in srgb, var(--primary) 22%, transparent) !important;
-}
-.chat-text-reader .cm-cursor {
-  border-left-color: var(--foreground);
 }
 .chat-text-reader .cm-content:focus-visible {
   outline: none;

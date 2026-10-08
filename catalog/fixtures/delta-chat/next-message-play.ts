@@ -6,6 +6,15 @@ export async function nextMessagePlay({
 }) {
   const c = within(canvasElement),
     draft = await c.findByRole("textbox", { name: "Next message" });
+  const body = c.getByRole("region", { name: "Agent chat body" });
+  const viewport = body.querySelector<HTMLElement>(
+    '[data-ui-part="scroll-area-viewport"]',
+  );
+  await expect(viewport).not.toBeNull();
+  const frame = canvasElement.querySelector(".chat-body-fixture")!;
+  expect(frame.getBoundingClientRect().left).toBe(0);
+  expect(frame.getBoundingClientRect().top).toBe(0);
+  expect(frame.getBoundingClientRect().height).toBe(window.innerHeight);
   const send = c.getByRole("button", { name: "Send message" });
   await expect(send).toBeDisabled();
   await userEvent.click(c.getByRole("button", { name: "Jump to end" }));
@@ -19,8 +28,10 @@ export async function nextMessagePlay({
   const footer = c
     .getByRole("group", { name: "Message actions" })
     .getBoundingClientRect().top;
-  const body = c.getByRole("region", { name: "Agent chat body" });
-  body.scrollTop = 0;
+  expect(viewport!.scrollTop).toBeGreaterThan(0);
+  viewport!.scrollTop = 0;
+  await waitFor(() => expect(viewport!.scrollTop).toBe(0));
+  await expect(draft).toHaveTextContent("Second line");
   expect(
     c.getByRole("group", { name: "Message actions" }).getBoundingClientRect()
       .top,

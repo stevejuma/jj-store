@@ -130,4 +130,6 @@ change. Adjacent-block focus-outline clearance is a layout-only refinement under
 this same unchanged JST-API-001 boundary. Icon hover regions, rounded file
 headings and highlighting numbered captures preserve that boundary. The optional
 display-only numbering marker adds no HTTP/ACP field; retained source text,
-anchors and native formats stay unchanged.
+anchors and native formats stay unchanged. ScrollArea viewport ownership,
+full-frame catalog layout and caret/draft styling also leave JST-API-001
+unchanged; they add no request, persistence or dispatch.

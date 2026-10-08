@@ -2,6 +2,7 @@
   import { tick, untrack } from "svelte";
   import "./chat-body.css";
   import * as Collapsible from "@lapismd/design-core/shadcn/collapsible";
+  import { ScrollArea } from "@lapismd/design-core/shadcn/scroll-area";
   import ChatDisclosureIcon from "./ChatDisclosureIcon.svelte";
   import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
   import CommunityMarkdownContent from "../community-markdown-content/CommunityMarkdownContent.svelte";
@@ -41,7 +42,7 @@
       onReact,
       label,
     }));
-  let root = $state<HTMLElement>();
+  let root = $state<HTMLElement | null>(null);
   let previousLast = "";
   const blocks = $derived(
     items.flatMap((item) => [
@@ -89,11 +90,11 @@
 
 <div class="chat-body-reading-surface">
   <div class="chat-body-scroll-region">
-    <section
+    <ScrollArea
       class="store-agent-chat-body"
-      bind:this={root}
+      bind:viewportRef={root}
+      role="region"
       aria-label={label}
-      data-ui-component="store-agent-chat-body"
       data-comment-target={comments.active?.anchor.blockId}
       data-composing={!!composer}
     >
@@ -186,8 +187,8 @@
       {#if composer}<div class="chat-document-composer">
           {@render composer()}
         </div>{/if}
-    </section>
-    <ChatNavigation {items} {root} {comments} />
+    </ScrollArea>
+    <ChatNavigation {items} root={root ?? undefined} {comments} />
   </div>
   {#if footer}<div class="chat-body-footer">{@render footer()}</div>{/if}
 </div>

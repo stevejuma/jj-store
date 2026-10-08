@@ -8,6 +8,7 @@ import { readingDecorations } from "./markdown-decorations.js";
 import { commentDecorations } from "./comment-widgets.js";
 import { middleDecorations } from "./middle-fold.js";
 import { patchLines } from "./patch-lines.js";
+import { chatCaret } from "./chat-caret.js";
 import type { ChatBodyBlock } from "./model.js";
 import type { ChatBodyComments } from "./comments.svelte.js";
 
@@ -44,6 +45,7 @@ export function readingExtensions(
     ],
   });
   return [
+    chatCaret,
     // Input is routed into comments; the retained document rejects every edit.
     Prec.highest(EditorView.editable.of(true)),
     EditorState.transactionFilter.of((tr) => (tr.docChanged ? [] : tr)),

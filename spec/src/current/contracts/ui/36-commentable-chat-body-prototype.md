@@ -100,11 +100,18 @@ remounts; this introduces no reaction publication or backend mutation.
 
 The reference has an editable next-message row at the document end, with the
 same small avatar and a generous blank draft region. Actions remain fixed at the
-bottom of the body. Enter inserts a newline; Send or Cmd/Ctrl+Enter submits
-through a caller-owned callback. The catalog only appends a local user message
-and clears its draft; it never dispatches an agent. Jump to End focuses this
-draft when present. Optional composer/footer slots keep the body independent of
-host draft state and live conversation contracts.
+bottom of the body. The body uses the public Design Core shadcn ScrollArea;
+navigation and append retention bind to its actual viewport. Shell and footer
+remain fixed while the document scrolls. These application stories opt into the
+catalog's full-viewport shell layout with no outer frame padding or page scroll.
+Reading carets are thicker and slightly taller, using the theme's muted grey;
+the next-message caret shares that shape and uses the primary accent. The draft
+has no placeholder, and its first line centers vertically with the small avatar.
+Enter inserts a newline; Send or Cmd/Ctrl+Enter submits through a caller-owned
+callback. The catalog only appends a local user message and clears its draft; it
+never dispatches an agent. Jump to End focuses this draft when present. Optional
+composer/footer slots keep the body independent of host draft state and live
+conversation contracts.
 
 1. Project the captured Delta JSON into catalog data and convert byte anchors
    explicitly. Map it to an owned display model without changing AgentStore

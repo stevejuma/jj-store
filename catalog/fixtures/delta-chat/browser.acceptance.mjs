@@ -68,7 +68,9 @@ try {
     name: "Assistant explanation",
     exact: true,
   });
-  const body = page.getByRole("region", { name: "Agent chat body" });
+  const body = page
+    .getByRole("region", { name: "Agent chat body" })
+    .locator('[data-ui-part="scroll-area-viewport"]');
   const composer = () =>
     page.getByRole("form", { name: "Inline comment composer" });
   const draft = () =>

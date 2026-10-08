@@ -3,6 +3,7 @@
   import { keymap } from "@codemirror/view";
   import { Prec } from "@codemirror/state";
   import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
+  import { chatCaret } from "./chat-caret.js";
   import type { CommunityMemberModel } from "../community-workspace/model.js";
   let {
     value = $bindable(""),
@@ -15,6 +16,7 @@
   } = $props();
   let editor: MiraCodeEditorHandle;
   const extensions = [
+    chatCaret,
     Prec.highest(
       keymap.of([
         {
@@ -48,7 +50,6 @@
       bind:value
       {extensions}
       ariaLabel="Next message"
-      placeholder="Write the next message…"
       variant="document"
       surface="frameless"
       height="content"
@@ -66,10 +67,13 @@
     gap: 0.5rem;
   }
   .chat-next-avatar {
-    padding-top: 0.25rem;
+    padding-top: 0.125rem;
   }
   .chat-next-editor {
     min-width: 0;
+    --chat-caret-color: var(--primary);
+    --mira-font-size: 1rem;
+    --mira-line-height: 1.75;
     --file-margins-x: 0px;
     --file-margins-y: 0px;
     --file-line-width: 100%;

@@ -23,6 +23,7 @@
     args: { items: [], onAddComment: () => {}, onReply: () => {} },
     parameters: {
       layout: "fullscreen",
+      jjStoreShell: true,
       docs: {
         source: {
           language: "svelte",
