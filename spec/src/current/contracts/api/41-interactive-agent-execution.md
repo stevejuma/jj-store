@@ -139,3 +139,9 @@ boundary: their typed submission snapshots and sent/replied states are UI
 presentation contracts only. Catalog acceptance and reply completion are
 simulated in memory, with no HTTP/ACP dispatch, durable comment authority or
 persisted-format change (E-CHAT-BODY-007; JST-API-001 unchanged).
+
+Resizable full-height captured-read sidebars and simplified catalog/read
+headings retain this unchanged JST-API-001 boundary (E-CHAT-BODY-008). Pane
+widths live only in the UI. Captured-number gutter projection leaves source text
+and anchors intact. Neither introduces a request, dispatch, credential or
+persisted-format change.

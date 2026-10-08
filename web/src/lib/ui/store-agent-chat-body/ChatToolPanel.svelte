@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { AppShell } from "@lapismd/design-core/shell";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import XIcon from "@lucide/svelte/icons/x";
   import ChatRawToggle from "./ChatRawToggle.svelte";
@@ -20,23 +21,23 @@
   } = $props();
 </script>
 
-<div class="chat-tool-panel">
-  <header>
-    <div><span>Captured read</span><strong>{tool.title}</strong></div>
-    <div class="chat-tool-panel-actions">
-      <ChatRawToggle
-        raw={state.rawTools[tool.id] ?? false}
-        label={`Show ${state.rawTools[tool.id] ? "rich" : "raw"} output in read sidebar for ${tool.title}`}
-        onToggle={() => (state.rawTools[tool.id] = !state.rawTools[tool.id])}
-      />
-      <Button
-        variant="ghost"
-        size="icon-sm"
-        aria-label="Close read tool details"
-        onclick={onClose}><XIcon size={16} /></Button
-      >
-    </div>
-  </header>
+<AppShell.Sidebar.Header class="chat-tool-panel-header">
+  <strong>{tool.title}</strong>
+  <div class="chat-tool-panel-actions">
+    <ChatRawToggle
+      raw={state.rawTools[tool.id] ?? false}
+      label={`Show ${state.rawTools[tool.id] ? "rich" : "raw"} output in read sidebar for ${tool.title}`}
+      onToggle={() => (state.rawTools[tool.id] = !state.rawTools[tool.id])}
+    />
+    <Button
+      variant="ghost"
+      size="icon-sm"
+      aria-label="Close read tool details"
+      onclick={onClose}><XIcon size={16} /></Button
+    >
+  </div>
+</AppShell.Sidebar.Header>
+<AppShell.Sidebar.Body>
   <div class="chat-tool-panel-content">
     <ChatToolBlocks
       blocks={state.rawTools[tool.id] ? [rawToolBlock(tool)] : tool.blocks}
@@ -48,34 +49,17 @@
       blocks={state.rawTools[tool.id] ? tool.blocks : [rawToolBlock(tool)]}
     />
   </div>
-</div>
+</AppShell.Sidebar.Body>
 
 <style>
-  .chat-tool-panel {
-    min-width: 0;
-    color: var(--foreground);
-    background: var(--background);
-  }
-  header {
-    position: sticky;
-    top: 0;
-    z-index: 2;
+  :global(.chat-tool-panel-header) {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
-    padding: 0.75rem;
+    padding-inline: 0.75rem;
     gap: 0.5rem;
     border-bottom: 1px solid var(--border);
     background: var(--background);
-  }
-  header > div:first-child {
-    display: grid;
-    gap: 0.2rem;
-    min-width: 0;
-  }
-  header span {
-    font-size: 0.75rem;
-    color: var(--muted-foreground);
   }
   .chat-tool-panel-actions {
     display: flex;
@@ -83,6 +67,7 @@
     gap: 0.25rem;
   }
   strong {
+    min-width: 0;
     font-size: 0.85rem;
     overflow-wrap: anywhere;
   }

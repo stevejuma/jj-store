@@ -82,6 +82,19 @@
 .chat-text-block[data-kind="code"] .cm-content:not([data-comment-editor] *) {
   padding: 0.75rem;
 }
+.chat-text-reader .cm-gutters:has(.chat-capture-gutter) {
+  background: transparent;
+  border: 0;
+}
+.chat-capture-gutter {
+  padding-inline-start: 0.75rem;
+  color: var(--muted-foreground);
+  user-select: none;
+}
+.chat-capture-gutter .cm-gutterElement {
+  min-width: 2ch;
+  text-align: right;
+}
 .chat-text-block[data-kind="patch"] .cm-line:not([data-comment-editor] *) {
   padding-inline: 0.75rem;
 }

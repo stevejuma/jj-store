@@ -9,6 +9,8 @@ import { messageActionAcceptance } from "./message-action-native.mjs";
 import { readerInputAcceptance } from "./reader-input-native.mjs";
 import { commentQueueAcceptance } from "./comment-queue-native.mjs";
 import { nextMessageAcceptance } from "./next-message-native.mjs";
+import { readPanelResizeAcceptance } from "./read-panel-resize-native.mjs";
+import { numberedCodeGutterAcceptance } from "./numbered-code-gutter-native.mjs";
 
 mkdirSync(".local", { recursive: true });
 const reservation = createServer();
@@ -199,6 +201,7 @@ try {
   await messageActionAcceptance(page, base);
   await nextMessageAcceptance(page, base);
   await commentQueueAcceptance(page, base);
+  await readPanelResizeAcceptance(page, base);
   await page.goto(
     `${base}/iframe.html?id=jj-store-commentable-agent-chat-body--delta-main-thread-reference&viewMode=story`,
   );
@@ -209,6 +212,7 @@ try {
     }),
   ).toBeVisible({ timeout: 60000 });
   await page.screenshot({ path: ".local/chat-body-preview.png" });
+  await numberedCodeGutterAcceptance(page);
   expect(errors).toEqual([]);
   console.log(
     "PASS cold native pointer/keyboard input, immutability, focus, custom sections, scroll, resize, teardown, mobile read pane and turn navigation",

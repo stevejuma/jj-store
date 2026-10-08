@@ -171,6 +171,17 @@ delivered entries use green double-check icons, and inline entries navigate to
 their queued or sent message. The right rail previews delivered comment turns
 and the pending queue with comment text, authors, counts and available metadata.
 
+E-CHAT-BODY-008 uses the same owned application shell and full-height right
+sidebar as thread replies, including built-in pointer/keyboard resizing,
+retained widths, joined edges and mobile/constrained presentation. Reference
+header dividers align; the redundant captured-read label and doubled title
+border are removed. Captured line numbers render in a separate CodeMirror gutter
+while syntax, folds, immutable text and exact comment anchors stay intact.
+Focused geometry, interaction/accessibility, unit and cold browser checks keep
+M24 In progress. Live integration, native IME and visual baseline approval
+remain separate gates. The unchanged development acceptance-script line-limit
+failure remains recorded.
+
 <!-- generated-navigation -->
 
 ## Pages

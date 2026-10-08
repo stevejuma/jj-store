@@ -1,5 +1,6 @@
 <script lang="ts">
   import "./delta-chat/fixture.css";
+  import CommunityAppShell from "../../web/src/lib/ui/community-app-shell/CommunityAppShell.svelte";
   import { AppShell, AppShellController } from "@lapismd/design-core/shell";
   import { tick, onDestroy, untrack } from "svelte";
   import ChatToolPanel from "../../web/src/lib/ui/store-agent-chat-body/ChatToolPanel.svelte";
@@ -78,7 +79,13 @@
               ],
   );
   const items = $derived([...capturedItems, ...nextMessage.messages]);
-  const shell = new AppShellController({ leftClosed: true, rightClosed: true });
+  const shell = new AppShellController({
+    leftClosed: true,
+    rightClosed: true,
+    rightWidth: 416,
+    sidebarMinWidth: 280,
+    sidebarMaxWidth: 720,
+  });
   onDestroy(() => {
     void shell.dispose();
   });
@@ -111,12 +118,14 @@
   async function inspectTool(tool: ChatBodyTool, opener: HTMLElement) {
     selectedToolId = tool.id;
     toolOpener = opener;
+    shell.right.expand();
     await tick();
     if (shell.mobile.resolvedMode === "mobile")
-      shell.mobile.show("right", "chat-read-tool", opener);
+      shell.mobile.show("right", "right", opener);
   }
   async function closeTool() {
     if (shell.mobile.resolvedMode === "mobile") shell.mobile.showMain();
+    shell.right.setClosed(true);
     selectedToolId = undefined;
     await tick();
     toolOpener?.focus({ preventScroll: true });
@@ -160,14 +169,13 @@
 {/snippet}
 
 <div class="chat-body-fixture" data-narrow={narrow}>
-  <AppShell.Root
+  <CommunityAppShell
     controller={shell}
     mobileBreakpoint={600}
-    desktopMinMainWidth={0}
-    style="height: 100%"
+    desktopMinMainWidth={360}
   >
     <AppShell.Main>
-      <AppShell.Toolbar>
+      <AppShell.Toolbar style="border-block-end: 1px solid var(--border)">
         <div class="chat-body-fixture-header">
           <div>
             <h1>
@@ -216,11 +224,7 @@
             </div>{/if}
         </div>
       </AppShell.Toolbar>
-      <AppShell.Body
-        layout="regions"
-        label="Chat workspace"
-        style="--ui-shell-body-sidebar-width: min(26rem, 42vw)"
-      >
+      <AppShell.Body layout="regions" label="Chat workspace">
         <AppShell.Body.Content label="Conversation document">
           <div class="chat-body-fixture-body">
             {#if mounted}<StoreAgentChatBody
@@ -236,20 +240,22 @@
               />{/if}
           </div>
         </AppShell.Body.Content>
-        {#if selectedTool}<AppShell.Body.Sidebar
-            side="right"
-            panelId="chat-read-tool"
-            label="Read tool details"
-            mobileLabel="Captured read"
-          >
-            <ChatToolPanel
-              tool={selectedTool}
-              state={commentState}
-              onClose={closeTool}
-              {customBlock}
-            />
-          </AppShell.Body.Sidebar>{/if}
       </AppShell.Body>
     </AppShell.Main>
-  </AppShell.Root>
+    {#if selectedTool}<AppShell.Sidebar
+        side="right"
+        label="Read tool details"
+        mobileLabel="Captured read"
+        resizeLabel="Resize read tool details"
+        constrainedPresentation="replace-main"
+        closeable
+      >
+        <ChatToolPanel
+          tool={selectedTool}
+          state={commentState}
+          onClose={closeTool}
+          {customBlock}
+        />
+      </AppShell.Sidebar>{/if}
+  </CommunityAppShell>
 </div>

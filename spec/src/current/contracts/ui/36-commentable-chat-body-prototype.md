@@ -55,19 +55,29 @@ Unicode mapping, focus, teardown, themes and narrow presentation require focused
 interaction/accessibility evidence and a cold Storybook run. Human comparison
 stays visual-pending; no visual baselines are approved.
 
-The catalog composition uses the public AppShell body regions. Captured read
-results open in its right body sidebar, keeping their raw/rich state and inline
-comments independently of tool-group disclosure. Closing the pane restores the
-opener; narrow layouts use the shell's mobile body panel. Patches and command
-output remain in document flow. Multi-file captures give every file a separate
-disclosure with retained comments/drafts; the first file starts open. Tool rows
-align to the left and reserve clearance for keyboard/selected focus borders. Raw
-JSON uses a named icon button at the right of each tool header, revealed on
-hover or keyboard focus and kept visible on touch devices. Read panels repeat
-the icon in their header for mobile access. The avatar is 24px with an 8px text
-gap and a shared first-line alignment. A compact right-edge rail represents
-conversation turns, grouping a user prompt with its assistant messages and tool
-flow. Hover/focus shows one turn card with the prompt preview, Turn Summary,
+The catalog composition uses the owned CommunityAppShell wrapper and public
+AppShell regions, with the same joined edges as Threads. Captured reads open in
+its full-height right sidebar beside the conversation toolbar and body, using
+the same owned chrome and replace-main behavior as thread replies. The shell
+owns resizing: pointer drag, Left/Right in 16px steps (32px with Shift), and
+Home/End for 280px/720px bounds. Width is retained across captured-file changes,
+close/reopen and mobile transitions within the fixture lifetime. The shell
+protects 360px for the conversation; constrained desktop layouts replace the
+main region, and mobile uses the shell's right panel without a resize handle. A
+fixed sidebar heading shows the tool title and actions above its own ScrollArea.
+Closing restores the opener. Resizing keeps raw/rich state, comments and active
+editors. The fixture title has one full-width bottom divider, aligned with the
+read sidebar's header; both reference headers use the same shell height without
+additional vertical sidebar padding. Patches and command output remain in
+document flow. Multi-file captures give every file a separate disclosure with
+retained comments/drafts; the first file starts open. Tool rows align to the
+left and reserve clearance for keyboard/selected focus borders. Raw JSON uses a
+named icon button at the right of each tool header, revealed on hover or
+keyboard focus and kept visible on touch devices. Read panels repeat the icon in
+their header for mobile access. The avatar is 24px with an 8px text gap and a
+shared first-line alignment. A compact right-edge rail represents conversation
+turns, grouping a user prompt with its assistant messages and tool flow.
+Hover/focus shows one turn card with the prompt preview, Turn Summary,
 author/available agent-model metadata, captured patch-line counts and recorded
 time. Summary text is the captured final response's first paragraph; it is not a
 newly generated agent summary. The current reference has one exchange, so it has
@@ -92,7 +102,12 @@ code typography. Expanded tool/file content has no surrounding frame. Code and
 patch readers have a muted background inside their own rounded content region.
 File heading corners inherit that content radius without clipping hover controls
 or comments. Known numbered captures retain their number/tab prefixes in the
-immutable document. Syntax tokens are parsed from file contents without those
+immutable document. Prefixes are hidden from the text display and rendered in a
+separate CodeMirror gutter using their recorded labels, including gaps. Wrapped
+content keeps its own left edge; middle folds preserve the original trailing
+line labels, and comment widgets receive no line labels. Atomic display ranges
+keep caret navigation outside the hidden prefixes. Exact UTF-16 comment anchors
+remain unchanged. Syntax tokens are parsed from file contents without those
 prefixes, then mapped back to exact captured UTF-16 spans, split at each line so
 prefixes stay neutral. The display model marks this captured format explicitly;
 ordinary code and raw JSON do not infer numbering. Added and removed patch lines

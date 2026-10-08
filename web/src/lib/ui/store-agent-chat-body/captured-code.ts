@@ -11,11 +11,29 @@ export function capturedCodeLanguage(path?: string): Extension {
     : repositoryEditorLanguage(path ?? "output.txt").extension;
 }
 
+/** Prefix ranges stay in captured UTF-16 coordinates, including empty lines. */
+export function capturedLinePrefixes(text: string) {
+  let offset = 0;
+  return text.split("\n").flatMap((row) => {
+    const from = offset;
+    offset += row.length + 1;
+    const match = /^\s*(\d+)\t/.exec(row);
+    return match
+      ? [{ from, to: from + match[0].length, number: match[1] }]
+      : [];
+  });
+}
+
 /** Parse a numbered read's contents, then map tokens into its unchanged capture. */
 export function numberedCodeHighlights(text: string, path?: string) {
   const rows = text.split("\n");
-  const prefixes = rows.map((row) => /^\s*\d+\t/.exec(row)?.[0].length ?? 0);
   const original = Text.of(rows);
+  const captures = new Map(
+    capturedLinePrefixes(text).map((row) => [row.from, row.to - row.from]),
+  );
+  const prefixes = rows.map(
+    (_, i) => captures.get(original.line(i + 1).from) ?? 0,
+  );
   const projected = Text.of(rows.map((row, i) => row.slice(prefixes[i])));
   const grammar = EditorState.create({
     doc: projected,

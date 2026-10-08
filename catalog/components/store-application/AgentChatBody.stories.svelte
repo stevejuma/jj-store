@@ -27,6 +27,8 @@
     deltaCommentReference,
   } from "../../fixtures/delta-chat/comment-navigation-play.js";
   import { toolSpacing } from "../../fixtures/delta-chat/spacing-play.js";
+  import { readPanelResize } from "../../fixtures/delta-chat/read-panel-resize-play.js";
+  import { numberedCodeGutter } from "../../fixtures/delta-chat/numbered-code-gutter-play.js";
   import {
     groupedCommentEntries,
     commentRail,
@@ -48,6 +50,14 @@
     },
   });
 </script>
+
+<Story asChild name="Captured line number gutter" play={numberedCodeGutter}>
+  {#snippet children()}<Fixture />{/snippet}
+</Story>
+
+<Story asChild name="Resizable read sidebar" play={readPanelResize}>
+  {#snippet children()}<Fixture scenario="playground" />{/snippet}
+</Story>
 
 <Story
   asChild

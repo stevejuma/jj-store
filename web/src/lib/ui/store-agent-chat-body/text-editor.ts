@@ -9,6 +9,7 @@ import { commentDecorations } from "./comment-widgets.js";
 import { middleDecorations } from "./middle-fold.js";
 import { patchLines } from "./patch-lines.js";
 import { chatCaret } from "./chat-caret.js";
+import { numberedCodeGutter } from "./numbered-code-gutter.js";
 import type { ChatBodyBlock } from "./model.js";
 import type { ChatBodyComments } from "./comments.svelte.js";
 
@@ -70,6 +71,7 @@ export function readingExtensions(
           )
         : capturedCodeLanguage(block.path),
     block.kind === "patch" ? patchDecorations(block.text) : [],
+    block.lineNumbered ? numberedCodeGutter(block.text) : [],
     annotations,
     folds,
     Prec.highest(

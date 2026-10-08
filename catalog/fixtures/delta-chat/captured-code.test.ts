@@ -1,5 +1,21 @@
 import { expect, test } from "vitest";
-import { numberedCodeHighlights } from "../../../web/src/lib/ui/store-agent-chat-body/captured-code.js";
+import {
+  capturedLinePrefixes,
+  numberedCodeHighlights,
+} from "../../../web/src/lib/ui/store-agent-chat-body/captured-code.js";
+
+test("maps captured gutter labels without renumbering gaps or shifting Unicode offsets", () => {
+  const text = "  9\t👩🏽‍💻 café\n 10\t\nUnnumbered note\n 90\tlast";
+  const prefixes = capturedLinePrefixes(text);
+  expect(prefixes.map((row) => row.number)).toEqual(["9", "10", "90"]);
+  expect(prefixes.map(({ from, to }) => text.slice(from, to))).toEqual([
+    "  9\t",
+    " 10\t",
+    " 90\t",
+  ]);
+  expect(prefixes.at(-1)!.to).toBe(text.indexOf("last"));
+  expect(capturedLinePrefixes("123 plain prose\n\tindented code")).toEqual([]);
+});
 
 test("highlights numbered Markdown without changing captured source or prefixes", () => {
   const text =
