@@ -1,0 +1,118 @@
+.chat-body-reading-surface {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  height: 100%;
+  min-height: 0;
+  min-width: 0;
+  position: relative;
+}
+.chat-body-scroll-region {
+  position: relative;
+  min-height: 0;
+  height: 100%;
+}
+.store-agent-chat-body[data-composing="true"] .chat-document {
+  padding-block-end: 0.5rem;
+}
+.chat-document-composer {
+  max-width: 62rem;
+  margin: 0 auto;
+  padding: 0.25rem 2.75rem 1rem 1rem;
+}
+.chat-body-footer {
+  background: var(--background);
+  border-top: 1px solid var(--border);
+}
+.store-agent-chat-body {
+  height: 100%;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-sans, system-ui);
+  font-size: 1rem;
+}
+.chat-document {
+  list-style: none;
+  margin: 0 auto;
+  padding: 1.25rem 2.75rem 4rem 1rem;
+  max-width: 62rem;
+}
+.chat-document > li {
+  margin-block-end: 1.1rem;
+}
+.chat-document > li[data-kind="reasoning"] {
+  margin-block-end: 0.5rem;
+}
+.chat-message {
+  display: grid;
+  grid-template-columns: 1.5rem minmax(0, 1fr);
+  gap: 0.5rem;
+}
+.chat-message-avatar {
+  padding-block-start: 0.25rem;
+}
+.chat-message-content {
+  min-width: 0;
+}
+.chat-document-inset {
+  margin-inline-start: 2rem;
+  min-width: 0;
+}
+.chat-context-trigger {
+  display: inline-flex;
+  width: fit-content;
+  max-width: 100%;
+  gap: 0.5rem;
+  align-items: center;
+  border: 0;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--muted-foreground);
+  cursor: pointer;
+  padding: 0;
+  min-height: 28px;
+  font-family: var(--font-sans, system-ui);
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: start;
+}
+.chat-context-trigger:hover {
+  background: transparent;
+}
+.chat-context-trigger:focus-visible {
+  outline: 2px solid var(--ring);
+}
+.chat-context-trigger[data-state="open"] svg {
+  rotate: 90deg;
+}
+.chat-empty,
+.chat-stale {
+  padding: 1.5rem;
+}
+.chat-stale {
+  border: 1px solid var(--border);
+  margin: 1rem;
+  border-radius: var(--radius);
+}
+.store-agent-chat-body .sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+}
+@media (max-width: 600px) {
+  .chat-document {
+    padding: 1rem 2.25rem 3rem 0.75rem;
+  }
+  .chat-message {
+    grid-template-columns: 1.5rem minmax(0, 1fr);
+    gap: 0.5rem;
+  }
+  .chat-document-inset {
+    margin-inline-start: 2rem;
+  }
+}

@@ -13,6 +13,14 @@
   } from "../../web/src/lib/ui/store-agent-chat-body/model.js";
   import reference from "./delta-chat/reference.json";
   import { deltaChatItems } from "./delta-chat/adapter.js";
+  import { largeCaptureItems } from "./delta-chat/large-captures.js";
+  import { DemoReactions } from "./delta-chat/local-reactions.svelte.js";
+  import {
+    DemoNextMessage,
+    demoSender,
+  } from "./delta-chat/next-message.svelte.js";
+  import ChatNextMessage from "../../web/src/lib/ui/store-agent-chat-body/ChatNextMessage.svelte";
+  import ChatMessageFooter from "../../web/src/lib/ui/store-agent-chat-body/ChatMessageFooter.svelte";
   import {
     playgroundItems,
     appendedItem,
@@ -21,39 +29,53 @@
   let {
     scenario = "reference",
     narrow = false,
+    showComposer,
   }: {
-    scenario?: "reference" | "playground" | "failure" | "empty";
+    scenario?: "reference" | "playground" | "failure" | "empty" | "large";
     narrow?: boolean;
+    showComposer?: boolean;
   } = $props();
   const referenceItems = deltaChatItems(reference);
+  const reactions = new DemoReactions();
+  const nextMessage = new DemoNextMessage();
+  const composing = $derived(showComposer ?? scenario === "reference");
+  let draftEditor = $state<{ focus: () => void }>();
+  async function sendMessage() {
+    nextMessage.send();
+    await tick();
+    draftEditor?.focus();
+  }
   let threads = $state<ChatCommentThread[]>([]);
   let appended = $state(false);
   let changed = $state(false);
   let mounted = $state(true);
   let serial = 0;
   let inspected = $state(false);
-  const items = $derived(
+  const capturedItems = $derived(
     scenario === "reference"
       ? referenceItems
-      : scenario === "empty"
-        ? []
-        : [
-            ...playgroundItems.map((item) =>
-              changed && item.id === "prose"
-                ? {
-                    ...item,
-                    blocks: item.blocks.map((block) => ({
-                      ...block,
-                      revision: "demo-2",
-                      text: "This is a different captured revision.",
-                    })),
-                  }
-                : item,
-            ),
-            ...(scenario === "failure" ? [failedItem] : []),
-            ...(appended ? [appendedItem] : []),
-          ],
+      : scenario === "large"
+        ? largeCaptureItems
+        : scenario === "empty"
+          ? []
+          : [
+              ...playgroundItems.map((item) =>
+                changed && item.id === "prose"
+                  ? {
+                      ...item,
+                      blocks: item.blocks.map((block) => ({
+                        ...block,
+                        revision: "demo-2",
+                        text: "This is a different captured revision.",
+                      })),
+                    }
+                  : item,
+              ),
+              ...(scenario === "failure" ? [failedItem] : []),
+              ...(appended ? [appendedItem] : []),
+            ],
   );
+  const items = $derived([...capturedItems, ...nextMessage.messages]);
   function add(anchor: ChatCommentAnchor, text: string) {
     const id = `comment-${++serial}`;
     threads = [
@@ -83,6 +105,9 @@
     threads,
     onAddComment: add,
     onReply: reply,
+    reactions: reactions.values,
+    onReact: reactions.toggle,
+    reactionOptions: ["👍", "❤️", "✅"],
   }));
   let selectedToolId = $state<string>();
   let toolOpener: HTMLElement | undefined;
@@ -105,6 +130,17 @@
     toolOpener?.focus({ preventScroll: true });
   }
 </script>
+
+{#snippet nextDraft()}<ChatNextMessage
+    bind:this={draftEditor}
+    bind:value={nextMessage.value}
+    member={demoSender}
+    onSubmit={sendMessage}
+  />{/snippet}
+{#snippet nextActions()}<ChatMessageFooter
+    canSend={!!nextMessage.value.trim()}
+    onSend={sendMessage}
+  />{/snippet}
 
 {#snippet customBlock(
   block: import("../../web/src/lib/ui/store-agent-chat-body/model.js").ChatBodyBlock,
@@ -144,11 +180,9 @@
                 ? reference.source.title
                 : "Commentable chat body"}
             </h1>
-            <p>
-              {scenario === "reference"
-                ? "Delta reference · main thread"
-                : "Synthetic interaction examples"}
-            </p>
+            {#if scenario !== "reference"}<p>
+                Synthetic interaction examples
+              </p>{/if}
           </div>
           {#if scenario !== "reference" && scenario !== "empty"}<div
               class="chat-body-fixture-controls"
@@ -185,6 +219,11 @@
                 {threads}
                 onAddComment={add}
                 onReply={reply}
+                reactions={reactions.values}
+                onReact={reactions.toggle}
+                composer={composing ? nextDraft : undefined}
+                footer={composing ? nextActions : undefined}
+                reactionOptions={["👍", "❤️", "✅"]}
                 {customBlock}
                 {commentState}
                 onInspectTool={inspectTool}
@@ -224,7 +263,7 @@
   }
 
   .chat-body-fixture {
-    height: min(900px, 100vh);
+    height: 100vh;
     display: flex;
     flex-direction: column;
     background: var(--background);

@@ -26,6 +26,9 @@ describe("Delta reference mapping", () => {
     ).toBe(true);
     expect(JSON.stringify(reference)).not.toContain("stevejuma");
     expect(items.some((i) => i.kind === "handoff")).toBe(true);
+    expect(items.find((i) => i.kind === "handoff")!.blocks[0].kind).toBe(
+      "context",
+    );
   });
   test("maps the full prompt/response and 30 tools into one actual conversation turn", () => {
     const turns = navigationTurns(deltaChatItems(reference));
@@ -84,6 +87,9 @@ describe("immutable comment anchors", () => {
     expect(validAnchor(block, anchor)).toBe(true);
     expect(validAnchor({ ...block, revision: "v2" }, anchor)).toBe(false);
     expect(validAnchor({ ...block, text: "Different" }, anchor)).toBe(false);
+    expect(
+      commentAnchor({ ...block, kind: "context" }, { from: 2, to: 5 }).quote,
+    ).toBe(block.text);
   });
   test("separates selectable fenced code and Mira-rendered complex blocks", () => {
     const blocks = markdownBlocks(

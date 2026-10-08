@@ -132,6 +132,20 @@ export const playgroundItems: ChatBodyItem[] = [
       ),
     ],
   },
+  {
+    id: "demo-context",
+    turn: demoTurn,
+    kind: "handoff",
+    label: "Agent response · Synthetic review",
+    blocks: [
+      block(
+        "demo-context/xml",
+        "context",
+        "Returned synthetic response",
+        '<subagent-completion from="Demo review" status="completed">\nNo regressions found.\n\n**Policy:** Captured demo only.\n</subagent-completion>',
+      ),
+    ],
+  },
 ];
 export const appendedItem: ChatBodyItem = {
   id: "appended",

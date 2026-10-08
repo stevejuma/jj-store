@@ -14,7 +14,7 @@ export function commentAnchor(
 ): ChatCommentAnchor {
   let from = Math.max(0, Math.min(selection.from, block.text.length));
   let to = Math.max(from, Math.min(selection.to, block.text.length));
-  if (block.kind === "custom") {
+  if (block.kind === "custom" || block.kind === "context") {
     from = 0;
     to = block.text.length;
   } else if (from === to) {

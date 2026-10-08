@@ -1,12 +1,14 @@
 import type { ChatBodyComments } from "./comments.svelte.js";
 import type { Snippet } from "svelte";
+import type { CommunityReactionModel } from "../../community/workspace-model.js";
+import type { CommunityCustomEmoji } from "../../community/contracts.js";
 import type { CommunityMemberModel } from "../community-workspace/model.js";
 
 /** Immutable captured content; IDs and revisions belong to the caller. */
 export interface ChatBodyBlock {
   id: string;
   revision: string;
-  kind: "markdown" | "code" | "patch" | "custom";
+  kind: "markdown" | "code" | "patch" | "custom" | "context";
   label: string;
   text: string;
   path?: string;
@@ -63,6 +65,15 @@ export interface ChatBodyProps {
   threads?: readonly ChatCommentThread[];
   onAddComment: (anchor: ChatCommentAnchor, text: string) => void;
   onReply: (threadId: string, text: string) => void;
+  reactions?: Readonly<Record<string, readonly CommunityReactionModel[]>>;
+  reactionOptions?: readonly string[];
+  onReact?: (
+    messageId: string,
+    emoji: string,
+    custom?: CommunityCustomEmoji,
+  ) => void;
+  composer?: Snippet;
+  footer?: Snippet;
   label?: string;
   customBlock?: Snippet<[ChatBodyBlock]>;
   commentState?: ChatBodyComments;

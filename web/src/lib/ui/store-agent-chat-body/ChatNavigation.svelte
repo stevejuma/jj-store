@@ -4,6 +4,7 @@
   import type { ChatBodyComments } from "./comments.svelte.js";
   import { navigationTurns } from "./navigation-turns.js";
   import ChatTurnCard from "./ChatTurnCard.svelte";
+  import ChatEndHint from "./ChatEndHint.svelte";
   let {
     items,
     root,
@@ -17,6 +18,8 @@
     previewId = $state("");
   let hovered = $state(false),
     focused = $state(false);
+  let previewEnd = $state(false),
+    atEnd = $state(false);
   let container = $state<HTMLElement>(),
     availableHeight = $state(500);
   const turns = $derived(navigationTurns(items));
@@ -56,6 +59,7 @@
     let frame = 0;
     const update = () => {
       availableHeight = node.clientHeight;
+      atEnd = node.scrollHeight - node.clientHeight - node.scrollTop <= 8;
       const top = node.getBoundingClientRect().top;
       let id = sections[0]?.id ?? "";
       for (const turn of sections) {
@@ -100,7 +104,9 @@
         close();
         container
           .querySelector<HTMLButtonElement>(
-            `[data-turn-id="${CSS.escape(preview?.id ?? "")}"]`,
+            previewEnd
+              ? ".chat-end-marker"
+              : `[data-turn-id="${CSS.escape(preview?.id ?? "")}"]`,
           )
           ?.focus();
         focused = false;
@@ -130,8 +136,18 @@
         ];
       if (next) navigate(next.id, next.firstItemId);
     };
+    const keydown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key === "ArrowDown") {
+        event.preventDefault();
+        jumpToEnd();
+      }
+    };
     node.addEventListener("wheel", wheel, { passive: false });
-    return () => node.removeEventListener("wheel", wheel);
+    node.addEventListener("keydown", keydown);
+    return () => {
+      node.removeEventListener("wheel", wheel);
+      node.removeEventListener("keydown", keydown);
+    };
   });
   function navigate(id: string, first: string) {
     const node = target(first);
@@ -148,6 +164,20 @@
     });
     node.focus({ preventScroll: true });
     active = id;
+    close();
+  }
+  function jumpToEnd() {
+    if (!root) return;
+    root.scrollTo({
+      top: root.scrollHeight,
+      behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "instant"
+        : "smooth",
+    });
+    const draft = root.querySelector<HTMLElement>(
+      "[data-chat-next-message] [role='textbox']",
+    );
+    (draft ?? target(items.at(-1)?.id ?? ""))?.focus({ preventScroll: true });
     close();
   }
 </script>
@@ -171,9 +201,15 @@
         type="button"
         data-turn-id={turn.id}
         aria-label={`Preview turn ${index + 1}`}
-        aria-current={active === turn.id ? "location" : undefined}
-        onpointerenter={() => (previewId = turn.id)}
-        onfocus={() => (previewId = turn.id)}
+        aria-current={!atEnd && active === turn.id ? "location" : undefined}
+        onpointerenter={() => {
+          previewId = turn.id;
+          previewEnd = false;
+        }}
+        onfocus={() => {
+          previewId = turn.id;
+          previewEnd = false;
+        }}
         onclick={(event) => {
           if (event.metaKey || event.ctrlKey) bookmark(turn.id);
           else navigate(turn.id, turn.firstItemId);
@@ -185,7 +221,19 @@
         ></span>
       </button>
     {/each}
-    {#if open && preview}
+    <button
+      class="chat-turn-marker chat-end-marker"
+      type="button"
+      aria-label="Jump to end"
+      aria-keyshortcuts="Meta+ArrowDown Control+ArrowDown"
+      aria-current={atEnd ? "location" : undefined}
+      onpointerenter={() => (previewEnd = true)}
+      onfocus={() => (previewEnd = true)}
+      onclick={jumpToEnd}><span aria-hidden="true"></span></button
+    >
+    {#if open && previewEnd}
+      <ChatEndHint />
+    {:else if open && preview}
       <ChatTurnCard
         turn={preview}
         index={previewIndex}
@@ -233,8 +281,11 @@
     background: var(--primary);
     opacity: 1;
   }
-  .chat-turn-marker:hover,
   .chat-turn-marker:focus-visible {
     outline: 2px solid var(--ring);
+  }
+  .chat-end-marker span,
+  .chat-end-marker[aria-current] span {
+    background: var(--primary);
   }
 </style>

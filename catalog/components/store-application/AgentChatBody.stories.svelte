@@ -13,6 +13,9 @@
     shellAndTurnNavigation,
   } from "../../fixtures/delta-chat/acceptance-plays.js";
   import { chatBodyExample } from "../../fixtures/delta-chat/example-source.js";
+  import { largeCaptures } from "../../fixtures/delta-chat/large-capture-play.js";
+  import { messageActions } from "../../fixtures/delta-chat/message-action-play.js";
+  import { nextMessagePlay } from "../../fixtures/delta-chat/next-message-play.js";
   const { Story } = defineMeta({
     title: "JJ Store/Commentable agent chat body",
     component: StoreAgentChatBody,
@@ -32,6 +35,19 @@
 
 <Story asChild name="Interaction playground">
   {#snippet children()}<Fixture scenario="playground" />{/snippet}
+</Story>
+<Story
+  asChild
+  name="Inline next message and fixed send actions"
+  play={nextMessagePlay}
+>
+  {#snippet children()}<Fixture scenario="playground" showComposer />{/snippet}
+</Story>
+<Story asChild name="Message reactions and XML context" play={messageActions}>
+  {#snippet children()}<Fixture scenario="playground" />{/snippet}
+</Story>
+<Story asChild name="Large code and diff middle folding" play={largeCaptures}>
+  {#snippet children()}<Fixture scenario="large" />{/snippet}
 </Story>
 
 <Story

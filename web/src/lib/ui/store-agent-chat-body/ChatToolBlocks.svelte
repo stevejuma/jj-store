@@ -62,28 +62,34 @@
     border-radius: var(--radius);
   }
   :global(.chat-file-trigger) {
-    display: flex;
+    display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    width: 100%;
+    width: fit-content;
+    max-width: 100%;
     padding: 0;
     min-height: 28px;
     border: 0;
     border-radius: var(--radius);
     background: transparent;
-    color: var(--foreground);
+    color: var(--muted-foreground);
     cursor: pointer;
-    font-family: var(--font-mono, monospace);
-    font-size: 0.8rem;
+    font-family: var(--font-sans, system-ui);
+    font-size: 0.875rem;
+    font-weight: 400;
+    line-height: 1.5;
     text-align: left;
   }
   :global(.chat-file-trigger span) {
     overflow-wrap: anywhere;
     min-width: 0;
   }
+  :global(.chat-file-trigger:hover) {
+    background: transparent;
+    color: var(--foreground);
+  }
   :global(.chat-file-trigger svg) {
     flex-shrink: 0;
-    margin-inline-start: auto;
   }
   :global(.chat-file-open) {
     rotate: 90deg;

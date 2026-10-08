@@ -4,6 +4,9 @@ import { chromium, expect } from "@playwright/test";
 import { spawn } from "node:child_process";
 import { createServer } from "node:net";
 import { mkdirSync, openSync, closeSync } from "node:fs";
+import { largeCaptureAcceptance } from "./large-capture-native.mjs";
+import { messageActionAcceptance } from "./message-action-native.mjs";
+import { nextMessageAcceptance } from "./next-message-native.mjs";
 
 mkdirSync(".local", { recursive: true });
 const reservation = createServer();
@@ -196,6 +199,13 @@ try {
     "Hide captured file example.ts",
   ]) {
     const header = page.getByRole("button", { name: label });
+    const gap = await header.evaluate(
+      (node) =>
+        node.querySelector("svg:last-child").getBoundingClientRect().left -
+        node.querySelector("span:not(.sr-only)").getBoundingClientRect().right,
+    );
+    expect(gap).toBeGreaterThanOrEqual(7);
+    expect(gap).toBeLessThanOrEqual(9);
     await expect(header).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
     await header.hover();
     await expect(header).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
@@ -241,7 +251,39 @@ try {
   await expect(summary).toContainText("Turn Summary");
   await summary.getByRole("button", { name: "Scroll to turn 1" }).click();
   await expect(page.locator('[data-chat-item="prose"]')).toBeFocused();
+  const end = page.getByRole("button", { name: "Jump to end" });
+  await end.hover();
+  await expect(end).toHaveCSS("outline-style", "none");
+  await expect(page.getByRole("tooltip")).toContainText("Jump to End");
+  await end.click();
+  await expect
+    .poll(() =>
+      body.evaluate(
+        (node) => node.scrollHeight - node.clientHeight - node.scrollTop,
+      ),
+    )
+    .toBeLessThanOrEqual(8);
+  await expect(page.locator('[data-chat-item="appended"]')).toBeFocused();
+  const marker = page.getByRole("button", { name: "Preview turn 1" });
+  await marker.click();
+  await expect.poll(() => body.evaluate((node) => node.scrollTop)).toBe(0);
+  await marker.focus();
+  await page.keyboard.press("Tab");
+  const keyboardMarker = page.getByRole("button", { name: "Preview turn 2" });
+  await expect(keyboardMarker).toBeFocused();
+  await expect(keyboardMarker).toHaveCSS("outline-style", "solid");
+  await page.keyboard.press(mac ? "Meta+ArrowDown" : "Control+ArrowDown");
+  await expect
+    .poll(() =>
+      body.evaluate(
+        (node) => node.scrollHeight - node.clientHeight - node.scrollTop,
+      ),
+    )
+    .toBeLessThanOrEqual(8);
   await page.setViewportSize({ width: 1440, height: 900 });
+  await largeCaptureAcceptance(page, base);
+  await messageActionAcceptance(page, base);
+  await nextMessageAcceptance(page, base);
   await page.goto(
     `${base}/iframe.html?id=jj-store-commentable-agent-chat-body--delta-main-thread-reference&viewMode=story`,
   );

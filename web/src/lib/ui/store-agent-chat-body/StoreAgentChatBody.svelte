@@ -1,9 +1,11 @@
 <script lang="ts">
   import { tick, untrack } from "svelte";
+  import "./chat-body.css";
   import * as Collapsible from "@lapismd/design-core/shadcn/collapsible";
   import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
   import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
   import CommunityMarkdownContent from "../community-markdown-content/CommunityMarkdownContent.svelte";
+  import CommunityReactions from "../community-reactions/CommunityReactions.svelte";
   import ChatNavigation from "./ChatNavigation.svelte";
   import ChatCommentArea from "./ChatCommentArea.svelte";
   import ChatContent from "./ChatContent.svelte";
@@ -17,6 +19,11 @@
     threads = [],
     onAddComment,
     onReply,
+    reactions = {},
+    reactionOptions,
+    onReact,
+    composer,
+    footer,
     label = "Agent chat body",
     customBlock,
     commentState,
@@ -29,6 +36,9 @@
       threads,
       onAddComment,
       onReply,
+      reactions,
+      reactionOptions,
+      onReact,
       label,
     }));
   let root = $state<HTMLElement>();
@@ -78,181 +88,107 @@
 </script>
 
 <div class="chat-body-reading-surface">
-  <section
-    class="store-agent-chat-body"
-    bind:this={root}
-    aria-label={label}
-    data-ui-component="store-agent-chat-body"
-    data-comment-target={comments.active?.anchor.blockId}
-  >
-    <ol class="chat-document">
-      {#each items as item (item.id)}
-        <li data-chat-item={item.id} data-kind={item.kind} tabindex="-1">
-          {#if item.kind === "message"}
-            <article class="chat-message" aria-label={item.label}>
-              <div class="chat-message-avatar">
-                {#if item.author}<CommunityMemberAvatar
-                    member={item.author}
-                    size="xsmall"
-                    decorative
-                  />{/if}
-              </div>
-              <div class="chat-message-content">
-                <span class="sr-only">{item.author?.name ?? item.role}</span
-                ><ChatContent
-                  blocks={item.blocks}
-                  state={comments}
-                  {customBlock}
-                />
-              </div>
-            </article>
-          {:else if item.kind === "tools"}<div class="chat-document-inset">
-              <ChatTools
-                {item}
-                state={comments}
-                {customBlock}
-                {onInspectTool}
-              />
-            </div>
-          {:else}
-            <div class="chat-document-inset">
-              <Collapsible.Root
-                open={comments.disclosures[item.id] ??
-                  item.defaultExpanded ??
-                  false}
-                onOpenChange={(open) => (comments.disclosures[item.id] = open)}
-              >
-                <Collapsible.Trigger class="chat-context-trigger"
-                  >{item.label}<ChevronRightIcon
-                    size={14}
-                  /></Collapsible.Trigger
-                >
-                <Collapsible.Content
+  <div class="chat-body-scroll-region">
+    <section
+      class="store-agent-chat-body"
+      bind:this={root}
+      aria-label={label}
+      data-ui-component="store-agent-chat-body"
+      data-comment-target={comments.active?.anchor.blockId}
+      data-composing={!!composer}
+    >
+      <ol class="chat-document">
+        {#each items as item (item.id)}
+          <li data-chat-item={item.id} data-kind={item.kind} tabindex="-1">
+            {#if item.kind === "message"}
+              <article class="chat-message" aria-label={item.label}>
+                <div class="chat-message-avatar">
+                  {#if item.author}<CommunityMemberAvatar
+                      member={item.author}
+                      size="xsmall"
+                      decorative
+                    />{/if}
+                </div>
+                <div class="chat-message-content">
+                  <span class="sr-only">{item.author?.name ?? item.role}</span
                   ><ChatContent
                     blocks={item.blocks}
                     state={comments}
+                    reactionTarget={item.id}
                     {customBlock}
-                  /></Collapsible.Content
+                  />
+                </div>
+              </article>
+            {:else if item.kind === "tools"}<div class="chat-document-inset">
+                <ChatTools
+                  {item}
+                  state={comments}
+                  {customBlock}
+                  {onInspectTool}
+                />
+              </div>
+            {:else}
+              <div class="chat-document-inset">
+                <Collapsible.Root
+                  open={comments.disclosures[item.id] ??
+                    item.defaultExpanded ??
+                    false}
+                  onOpenChange={(open) =>
+                    (comments.disclosures[item.id] = open)}
                 >
-              </Collapsible.Root>
-            </div>
-          {/if}
-        </li>
-      {/each}
-    </ol>
-    {#if !items.length}<p class="chat-empty">No captured messages.</p>{/if}
-    {#if stale.length || unavailableDraft}<aside
-        class="chat-stale"
-        aria-label="Comments on unavailable content"
-      >
-        <p>
-          The original content for these comments is unavailable or has changed.
-        </p>
-        {#if unavailableDraft}<ChatCommentArea
-            state={comments}
-            block={unavailableDraft}
-          />{/if}
-        {#each stale as thread (thread.id)}<blockquote>
-            {thread.anchor.quote}
-          </blockquote>
-          {#each thread.comments as comment (comment.id)}<CommunityMarkdownContent
-              content={comment.text}
-            />{/each}
+                  <Collapsible.Trigger class="chat-context-trigger"
+                    ><span>{item.label}</span><ChevronRightIcon
+                      size={14}
+                    /></Collapsible.Trigger
+                  >
+                  <Collapsible.Content
+                    ><ChatContent
+                      blocks={item.blocks}
+                      state={comments}
+                      reactionTarget={item.id}
+                      {customBlock}
+                    /></Collapsible.Content
+                  >
+                </Collapsible.Root>
+              </div>
+            {/if}
+            {#if reactions[item.id]?.length}<div class="chat-document-inset">
+                <CommunityReactions
+                  mode="bar"
+                  reactions={[...reactions[item.id]]}
+                  label={`Reactions to ${item.label}`}
+                  onToggle={(emoji) => onReact?.(item.id, emoji)}
+                />
+              </div>{/if}
+          </li>
         {/each}
-      </aside>{/if}
-  </section>
-  <ChatNavigation {items} {root} {comments} />
+      </ol>
+      {#if !items.length}<p class="chat-empty">No captured messages.</p>{/if}
+      {#if stale.length || unavailableDraft}<aside
+          class="chat-stale"
+          aria-label="Comments on unavailable content"
+        >
+          <p>
+            The original content for these comments is unavailable or has
+            changed.
+          </p>
+          {#if unavailableDraft}<ChatCommentArea
+              state={comments}
+              block={unavailableDraft}
+            />{/if}
+          {#each stale as thread (thread.id)}<blockquote>
+              {thread.anchor.quote}
+            </blockquote>
+            {#each thread.comments as comment (comment.id)}<CommunityMarkdownContent
+                content={comment.text}
+              />{/each}
+          {/each}
+        </aside>{/if}
+      {#if composer}<div class="chat-document-composer">
+          {@render composer()}
+        </div>{/if}
+    </section>
+    <ChatNavigation {items} {root} {comments} />
+  </div>
+  {#if footer}<div class="chat-body-footer">{@render footer()}</div>{/if}
 </div>
-
-<style>
-  .chat-body-reading-surface {
-    height: 100%;
-    min-height: 0;
-    min-width: 0;
-    position: relative;
-  }
-  .store-agent-chat-body {
-    height: 100%;
-    min-height: 0;
-    overflow: auto;
-    overscroll-behavior: contain;
-    color: var(--foreground);
-    background: var(--background);
-    font-family: var(--font-sans, system-ui);
-    font-size: 1rem;
-  }
-  .chat-document {
-    list-style: none;
-    margin: 0 auto;
-    padding: 1.25rem 2.75rem 4rem 1rem;
-    max-width: 62rem;
-  }
-  .chat-document > li {
-    margin-block-end: 1.1rem;
-  }
-  .chat-message {
-    display: grid;
-    grid-template-columns: 1.5rem minmax(0, 1fr);
-    gap: 0.5rem;
-  }
-  .chat-message-avatar {
-    padding-block-start: 0.25rem;
-  }
-  .chat-message-content {
-    min-width: 0;
-  }
-  .chat-document-inset {
-    margin-inline-start: 2rem;
-    min-width: 0;
-  }
-  :global(.chat-context-trigger) {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-    border: 0;
-    border-radius: var(--radius);
-    background: transparent;
-    color: var(--muted-foreground);
-    cursor: pointer;
-    padding: 0.4rem;
-    font: inherit;
-    text-align: start;
-  }
-  :global(.chat-context-trigger:hover) {
-    background: var(--muted);
-  }
-  :global(.chat-context-trigger:focus-visible) {
-    outline: 2px solid var(--ring);
-  }
-  :global(.chat-context-trigger[data-state="open"] svg) {
-    rotate: 90deg;
-  }
-  .chat-empty,
-  .chat-stale {
-    padding: 1.5rem;
-  }
-  .chat-stale {
-    border: 1px solid var(--border);
-    margin: 1rem;
-    border-radius: var(--radius);
-  }
-  .sr-only {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip-path: inset(50%);
-  }
-  @media (max-width: 600px) {
-    .chat-document {
-      padding: 1rem 2.25rem 3rem 0.75rem;
-    }
-    .chat-message {
-      grid-template-columns: 1.5rem minmax(0, 1fr);
-      gap: 0.5rem;
-    }
-    .chat-document-inset {
-      margin-inline-start: 2rem;
-    }
-  }
-</style>

@@ -27,3 +27,11 @@ export async function addComment(canvasElement: HTMLElement) {
     ).toBeNull(),
   );
 }
+export function expectAdjacentChevron(header: HTMLElement) {
+  const label = header.querySelector("span:not(.sr-only)")!;
+  const chevron = header.querySelector("svg:last-child")!;
+  const gap =
+    chevron.getBoundingClientRect().left - label.getBoundingClientRect().right;
+  expect(gap).toBeGreaterThanOrEqual(7);
+  expect(gap).toBeLessThanOrEqual(9);
+}

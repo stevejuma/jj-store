@@ -52,11 +52,40 @@ time. Summary text is the captured final response's first paragraph; it is not a
 newly generated agent summary. The current reference has one exchange, so it has
 one marker. Session-only bookmarks, Cmd/Ctrl-click and Alt-wheel navigation
 preserve discussion state. Dense markers have an equivalent large navigation
-target in the keyboard-accessible card. Tool headers remain transparent during
-hover, with no internal padding and trailing chevrons; expanded tool/file
-content has no surrounding frame.
+target in the keyboard-accessible card. Rail markers have no hover outline;
+keyboard focus remains visible. A final distinct marker jumps to the document
+end and shows a compact Jump to End hint. Cmd/Ctrl+Down works while focus is in
+the navigation. Tool headers remain transparent during hover, with no internal
+padding. All section and file disclosure chevrons sit immediately after the
+label with an 8px gap; controls fit their text rather than stretching the icon
+to the row edge. Tool and file titles use the proportional UI font at 0.875rem,
+distinct from captured code typography. Expanded tool/file content has no
+surrounding frame. Code and patch readers have a muted background inside their
+own rounded content region. Captures over 32 lines initially retain 12 leading
+and 8 trailing lines, with a Show N more lines control replacing the middle.
+Revealing is local and retained across disclosure/body remounts. The complete
+immutable document and its UTF-16 anchor offsets remain unchanged. Hidden lines
+containing an active or submitted discussion are revealed so comments stay
+reachable.
+
+Returned XML-like agent context uses the existing prompt-element renderer and
+whole-section comment anchors, rather than displaying its tags as prose.
+Thought, handoff and file titles share compact tool typography and transparent
+hover surfaces. The reference subtitle is omitted. Hover/focus actions have a
+subtle background, border and distinct Comment hover state; message actions
+reuse the shared reaction picker and bar. The caller owns reaction models and
+their toggle callback. Catalog reactions are memory-only and survive body
+remounts; this introduces no reaction publication or backend mutation.
 
 ## Implementation approach
+
+The reference has an editable next-message row at the document end, with the
+same small avatar and a generous blank draft region. Actions remain fixed at the
+bottom of the body. Enter inserts a newline; Send or Cmd/Ctrl+Enter submits
+through a caller-owned callback. The catalog only appends a local user message
+and clears its draft; it never dispatches an agent. Jump to End focuses this
+draft when present. Optional composer/footer slots keep the body independent of
+host draft state and live conversation contracts.
 
 1. Project the captured Delta JSON into catalog data and convert byte anchors
    explicitly. Map it to an owned display model without changing AgentStore

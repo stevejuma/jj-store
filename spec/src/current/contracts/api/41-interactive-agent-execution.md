@@ -116,4 +116,10 @@ The standalone commentable chat-body catalog prototype leaves JST-API-001
 unchanged. Immutable fixture props and local discussion callbacks introduce no
 request, endpoint, schema, receipt, authorization or AgentStore mutation.
 Opening captured tool details never reads the current filesystem or executes a
-tool.
+tool. Disclosure alignment, tool-title typography and end-navigation refinements
+preserve this same unchanged JST-API-001 boundary. Middle folding and code
+backgrounds change only retained presentation; they never truncate or modify
+captured events. XML context rendering and caller-owned local reaction callbacks
+add no HTTP, ACP, AgentStore or ReviewStore mutation contract. The optional
+document-tail draft/footer submits only through a UI caller callback; the
+catalog never sends an agent prompt or writes repository state.

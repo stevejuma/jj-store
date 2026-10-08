@@ -5,6 +5,7 @@ import { swift } from "@codemirror/legacy-modes/mode/swift";
 import { repositoryEditorLanguage } from "../community-projects/repository-editor-language.js";
 import { readingDecorations } from "./markdown-decorations.js";
 import { commentDecorations } from "./comment-widgets.js";
+import { middleDecorations } from "./middle-fold.js";
 import type { ChatBodyBlock } from "./model.js";
 import type { ChatBodyComments } from "./comments.svelte.js";
 
@@ -29,6 +30,17 @@ export function readingExtensions(
     provide: (field) => EditorView.decorations.from(field),
   });
   let composing = false;
+  const folds = StateField.define({
+    create: () => middleDecorations(block, comments),
+    update: (value, tr) =>
+      tr.effects.some((e) => e.is(refreshComments))
+        ? middleDecorations(block, comments)
+        : value,
+    provide: (field) => [
+      EditorView.decorations.from(field),
+      EditorView.atomicRanges.of((view) => view.state.field(field)),
+    ],
+  });
   return [
     // Input is routed into comments; the retained document rejects every edit.
     Prec.highest(EditorView.editable.of(true)),
@@ -47,6 +59,7 @@ export function readingExtensions(
         : repositoryEditorLanguage(block.path ?? "output.txt").extension,
     block.kind === "patch" ? patchDecorations(block.text) : [],
     annotations,
+    folds,
     Prec.highest(
       keymap.of([
         { key: "Ctrl-Alt-m", run: (view) => open(view) },
@@ -56,7 +69,10 @@ export function readingExtensions(
     EditorView.domEventHandlers({
       keydown(event, view) {
         const element = event.target instanceof Element ? event.target : null;
-        if (element?.closest("[data-chat-comment-area]")) return false;
+        if (
+          element?.closest("[data-chat-comment-area], [data-chat-fold-control]")
+        )
+          return false;
         const link = element?.closest<HTMLElement>("[data-chat-link]");
         if (link && event.key === "Enter") {
           window.open(link.dataset.chatLink, "_blank", "noopener,noreferrer");

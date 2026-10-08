@@ -178,7 +178,7 @@ export function deltaChatItems(fixture: DeltaChatFixture): ChatBodyItem[] {
               `${record.id}/text`,
               handoff ? "Returned agent response" : "External change context",
               slice(record.layout?.result_range) || content,
-              handoff ? "markdown" : "code",
+              handoff ? "context" : "code",
             ),
           ],
         },

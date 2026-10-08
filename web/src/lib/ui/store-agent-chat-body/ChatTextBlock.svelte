@@ -1,22 +1,24 @@
 <script lang="ts">
   import { getAllContexts, onMount, tick, untrack } from "svelte";
   import { MiraCodeEditor, type MiraCodeEditorHandle } from "@lapismd/mira";
-  import { Button } from "@lapismd/design-core/shadcn/button";
-  import MessageCircleIcon from "@lucide/svelte/icons/message-circle";
+  import ChatHoverActions from "./ChatHoverActions.svelte";
   import type { EditorView } from "@codemirror/view";
   import { readingExtensions, refreshComments } from "./text-editor.js";
   import type { ChatBodyBlock } from "./model.js";
   import type { ChatBodyComments } from "./comments.svelte.js";
   import { validAnchor } from "./anchors.js";
+  import { middleFoldKey } from "./middle-fold.js";
   import "./text-reader.css";
   let {
     block,
     state: comments,
     showHeader = true,
+    reactionTarget,
   }: {
     block: ChatBodyBlock;
     state: ChatBodyComments;
     showHeader?: boolean;
+    reactionTarget?: string;
   } = $props();
   let editor: MiraCodeEditorHandle;
   let view = $state<EditorView>();
@@ -46,6 +48,7 @@
   $effect(() => {
     comments.active;
     comments.threads;
+    comments.disclosures[middleFoldKey(block)];
     view?.dispatch({ effects: refreshComments.of(null) });
   });
   function comment() {
@@ -77,14 +80,10 @@
       minHeight="0"
     />
   </div>
-  <div class="chat-text-actions">
-    <Button
-      variant="ghost"
-      size="sm"
-      aria-label={`Comment on ${block.label}`}
-      onclick={comment}
-    >
-      <MessageCircleIcon size={14} /> Comment
-    </Button>
-  </div>
+  <ChatHoverActions
+    {block}
+    state={comments}
+    {reactionTarget}
+    onComment={comment}
+  />
 </section>

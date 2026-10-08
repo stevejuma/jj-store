@@ -1,5 +1,10 @@
 import { expect, userEvent, waitFor, within } from "storybook/test";
-import { reader, draft, addComment } from "./acceptance-helpers.js";
+import {
+  reader,
+  draft,
+  addComment,
+  expectAdjacentChevron,
+} from "./acceptance-helpers.js";
 export const patchFilesCollapse = async ({
   canvasElement,
 }: {
@@ -60,6 +65,8 @@ export const patchFilesCollapse = async ({
   const next = c.getByRole("button", {
     name: "Hide captured file example.test.ts",
   });
+  expectAdjacentChevron(file);
+  expectAdjacentChevron(next);
   expect(
     next.getBoundingClientRect().top -
       file.closest(".chat-tool-file")!.getBoundingClientRect().bottom,
@@ -95,6 +102,11 @@ export const shellAndTurnNavigation = async ({
   const opener = c.getByRole("button", {
     name: "Show details for Read example.ts",
   });
+  for (const header of canvasElement.querySelectorAll<HTMLElement>(
+    ".chat-tool-trigger,.chat-file-trigger,.chat-context-trigger",
+  )) {
+    if (header.getBoundingClientRect().width) expectAdjacentChevron(header);
+  }
   await userEvent.click(opener);
   const pane = await c.findByRole("complementary", {
     name: "Read tool details",
@@ -138,6 +150,15 @@ export const shellAndTurnNavigation = async ({
   await userEvent.click(
     within(summary).getByRole("button", { name: "Scroll to turn 1" }),
   );
-  await expect(marker).toHaveAttribute("aria-current", "location");
-  await userEvent.hover(marker);
+  await waitFor(() =>
+    expect(marker).toHaveAttribute("aria-current", "location"),
+  );
+  const end = c.getByRole("button", { name: "Jump to end" });
+  await userEvent.hover(end);
+  await expect(c.getByRole("tooltip")).toHaveTextContent("Jump to End");
+  await userEvent.click(end);
+  await waitFor(() => expect(end).toHaveAttribute("aria-current", "location"));
+  await expect(
+    c.getByRole("article", { name: "Appended response" }).closest("li"),
+  ).toHaveFocus();
 };
