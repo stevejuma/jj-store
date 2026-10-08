@@ -3,6 +3,11 @@
   min-width: 0;
   margin-block: 0.25rem;
 }
+/* Reserve space for the 1px focus outline and its 4px offset between readers. */
+.chat-text-block + :is(.chat-text-block, .chat-custom),
+.chat-custom + .chat-text-block {
+  margin-block-start: 0.5rem;
+}
 .chat-text-block[data-kind="code"],
 .chat-text-block[data-kind="patch"] {
   background: var(--muted);

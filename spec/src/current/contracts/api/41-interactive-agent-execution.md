@@ -126,4 +126,5 @@ catalog never sends an agent prompt or writes repository state. The
 screenshot-based final review preserves this unchanged JST-API-001 boundary:
 tool alignment, patch-line colors and captured-line classification affect only
 display props and local navigation totals, with no request or persisted-format
-change.
+change. Adjacent-block focus-outline clearance is a layout-only refinement under
+this same unchanged JST-API-001 boundary.

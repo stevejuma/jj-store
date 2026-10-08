@@ -78,6 +78,9 @@ reachable.
 
 Returned XML-like agent context uses the existing prompt-element renderer and
 whole-section comment anchors, rather than displaying its tags as prose.
+Adjacent rendered blocks reserve clearance for the reader's offset focus
+outline, including prose followed by a shaded code block. This spacing remains
+stable during focus changes and preserves the first block's avatar alignment.
 Thought, handoff and file titles share compact tool typography and transparent
 hover surfaces. The reference subtitle is omitted. Hover/focus actions have a
 subtle background, border and distinct Comment hover state; message actions
