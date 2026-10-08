@@ -11,6 +11,81 @@
 </script>
 
 <Story
+  name="Agent Advanced uses Lucide and keeps unsaved environment input"
+  args={{ directory: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement),
+      page = within(document.body);
+    await userEvent.click(await c.findByRole("button", { name: "Add agent" }));
+    const editor = within(
+      await page.findByRole("dialog", { name: "Add agent" }),
+    );
+    const advanced = editor.getByRole("button", {
+      name: "Advanced",
+    });
+    await expect(
+      advanced.querySelector("svg.lucide-chevron-right"),
+    ).not.toBeNull();
+    await expect(advanced).toHaveAttribute("aria-expanded", "false");
+    advanced.focus();
+    await userEvent.keyboard("{Enter}");
+    const name = editor.getByRole("textbox", {
+      name: "Environment variable name",
+    });
+    await userEvent.type(name, "AGENT_DRAFT");
+    await userEvent.click(advanced);
+    await expect(name).not.toBeVisible();
+    await userEvent.click(advanced);
+    await expect(name).toHaveValue("AGENT_DRAFT");
+    await expect(c.getByLabelText("Agent fleet requests")).toHaveTextContent(
+      "[]",
+    );
+    await userEvent.click(editor.getByRole("button", { name: "Cancel" }));
+  }}
+/>
+
+<Story
+  name="Global defaults Advanced retains environment draft without saving"
+  args={{ directory: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement),
+      page = within(document.body);
+    await c.findByText("Helper", { exact: true });
+    await userEvent.click(
+      c.getByRole("button", { name: "Open profile menu for Maya Chen" }),
+    );
+    await userEvent.click(
+      await page.findByRole("menuitem", { name: "Settings" }),
+    );
+    await c.findByRole("heading", { name: "Local service", level: 1 });
+    await userEvent.click(
+      within(
+        c.getByRole("navigation", { name: "Settings navigation" }),
+      ).getByRole("button", { name: "Agents" }),
+    );
+    const advanced = await c.findByRole("button", {
+      name: "Advanced",
+    });
+    await expect(
+      advanced.querySelector("svg.lucide-chevron-right"),
+    ).not.toBeNull();
+    await expect(advanced).toHaveAttribute("aria-expanded", "false");
+    advanced.focus();
+    await userEvent.keyboard("{Enter}");
+    const name = c.getByRole("textbox", { name: "Environment variable name" });
+    await userEvent.type(name, "GLOBAL_DRAFT");
+    advanced.focus();
+    await userEvent.keyboard(" ");
+    await expect(name).not.toBeVisible();
+    await userEvent.keyboard("{Enter}");
+    await expect(name).toHaveValue("GLOBAL_DRAFT");
+    await expect(c.getByLabelText("Agent fleet requests")).toHaveTextContent(
+      "[]",
+    );
+  }}
+/>
+
+<Story
   name="Contextual sidebar and persistent agent tags"
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);

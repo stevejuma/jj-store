@@ -5,6 +5,7 @@ Generated from evidence task references and historical mappings. This history is
 | Evidence | Date | Original result | Later context |
 | --- | --- | --- | --- |
 | [E-COMPUTE-001](../../../../../history/2026/10/07/E-COMPUTE-001/index.md) | 2026-10-07 | pending | Original outcome |
+| [E-COMPUTE-002](../../../../../history/2026/10/08/E-COMPUTE-002/index.md) | 2026-10-08 | pass | Original outcome |
 <!-- generated-navigation -->
 ## Pages
 

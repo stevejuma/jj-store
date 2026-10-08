@@ -12,3 +12,5 @@
   {{#include 06/SUMMARY.nav.md}}
 - [07](07/index.md)
   {{#include 07/SUMMARY.nav.md}}
+- [08](08/index.md)
+  {{#include 08/SUMMARY.nav.md}}

@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Corrected Compute heading and matching navigation icon; agent defaults, Advanced environments, initial Harness collapse and captured context remain as documented.",
-      "fingerprint": "2ab437e63274a8db6b2e96f5383c9e8cccb9c6aa544afc7b3c164483db9e6ab7"
+      "reason": "Aligned Compute with standard compact Settings sections, divided rows, stacked actions and Models/Resources/Sharing tabs; Advanced uses Lucide while retaining drafts. Runtime and credential contracts unchanged.",
+      "fingerprint": "81147c496c84d84bcc5f4b5939db90b6e7647aec3a129b64da8d709d9139e272"
     }
   },
   {

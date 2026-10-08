@@ -6,9 +6,12 @@
   import StoreComputeSettings from "../../web/src/lib/ui/store-settings/StoreComputeSettings.svelte";
   import StoreAgentSentContext from "../../web/src/lib/ui/store-agent-execution/StoreAgentSentContext.svelte";
   import { stringify } from "lossless-json";
-  let { context = false }: { context?: boolean } = $props();
+  let {
+    context = false,
+    paired = false,
+  }: { context?: boolean; paired?: boolean } = $props();
   let commands = $state<Record<string, unknown>[]>([]);
-  let status: ComputeValue = {
+  let status: ComputeValue = untrack(() => ({
     hardware: {
       os: "macOS",
       architecture: "arm64",
@@ -23,17 +26,26 @@
       model: "fixture-gguf",
       memory_gb: 4,
       sharing: false,
-      peers: {},
+      peers: paired
+        ? {
+            ["ab".repeat(32)]: {
+              name: "Trusted inference machine",
+              invitation: { id: "ab".repeat(32), direct_addresses: [] },
+            },
+          }
+        : {},
       relay_urls: [],
       target_peer: null,
     },
     models: [{ id: "fixture-gguf", name: "Fixture GGUF", installed: false }],
-    identity: null,
-    invitation: null,
+    identity: paired ? "cd".repeat(32) : null,
+    invitation: paired
+      ? { id: "cd".repeat(32), direct_addresses: ["127.0.0.1:32100"] }
+      : null,
     progress: null,
     error: null,
     operation: null,
-  };
+  }));
   const client = untrack(
     () =>
       new LocalClient("", async (_input, init) => {

@@ -104,11 +104,13 @@ including that agent. ACP avatars show the current worker state across the app.
 
 ## Local compute and agent defaults
 
-Compute settings provide explicit native runtime preparation, GGUF downloads or
-imports, model start/stop, managed-weight removal, resource limits and trusted
-machine pairing/sharing. Agent settings add global defaults, automatic-mention
-preferences, macOS desktop keep-awake, and collapsed Advanced environment
-configuration in both defaults and Add/Edit agent. Harness sections are
-collapsed on initial load. See
+Compute settings separates Models, Resources and Sharing into tabs. Models
+contains runtime preparation, GGUF downloads/imports, start/stop and
+managed-weight removal; Resources contains hardware and memory limits; Sharing
+contains trusted machine pairing and relay configuration. Drafts remain intact
+across tabs, and Save compute settings is available from each tab. Agent
+settings add global defaults, automatic-mention preferences, macOS desktop
+keep-awake, and collapsed Advanced environment configuration in both defaults
+and Add/Edit agent. Harness sections are collapsed on initial load. See
 [agent configuration and compute](agent-execution.md#compute-defaults-and-captured-context)
 for precedence, credentials, pairing and context disclosure.

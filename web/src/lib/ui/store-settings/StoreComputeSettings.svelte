@@ -1,7 +1,8 @@
 <script lang="ts">
   import { untrack } from "svelte";
-  import * as Field from "@lapismd/design-core/shadcn/field";
   import { Button } from "@lapismd/design-core/shadcn/button";
+  import * as Tabs from "@lapismd/design-core/shadcn/tabs";
+  import * as Field from "@lapismd/design-core/shadcn/field";
   import { Input } from "@lapismd/design-core/shadcn/input";
   import StoreWorkField from "../store-work/StoreWorkField.svelte";
   import StoreSettingsPage from "./StoreSettingsPage.svelte";
@@ -11,14 +12,13 @@
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import type { AgentCompute } from "../../controller/agent-compute.svelte.js";
   import type { Model } from "../../api/client.js";
-  import { object } from "../../controller/agent-execution-types.js";
   let { management }: { management?: AgentCompute } = $props();
   let draft = $state<Model<"ComputeSettings"> | null>(
     untrack(() => management?.draft ?? null),
   );
+  let active = $state("models");
   const id = $props.id();
   const status = $derived(management?.value);
-  const progress = $derived(object(status?.progress));
   const blocked = $derived(management?.busy || !!management?.pending);
   $effect(() => {
     if (management) {
@@ -52,6 +52,12 @@
 
 <StoreSettingsPage
   section="compute"
+  bind:value={active}
+  tabs={[
+    { value: "models", label: "Models" },
+    { value: "resources", label: "Resources" },
+    { value: "sharing", label: "Sharing" },
+  ]}
   onRefresh={async () => {
     await management?.refresh();
   }}
@@ -63,123 +69,80 @@
     title="Compute needs attention"
     message={management?.error || status?.error || ""}
   />
-  {#if !status?.supported}<p>
+  {#if status?.supported === false}
+    <p class="store-settings__empty">
       The compute runtime must be included with this local installation.
-    </p>{/if}
+    </p>
+  {/if}
   {#if status && draft}
-    <StoreComputeHardware value={status.hardware} />
-    <h2>Local models</h2>
-    <Field.Group class="community-settings__option-group">
-      <StoreWorkField
-        label="Model"
-        id={`${id}-model`}
-        description="Download weights explicitly, then start the model on this machine."
+    <Tabs.Content value="models">
+      <StoreComputeModels
+        {management}
+        {status}
+        {blocked}
+        bind:draft
+        onConfigure={configure}
+      />
+    </Tabs.Content>
+    <Tabs.Content value="resources">
+      <StoreComputeHardware value={status.hardware} />
+      <section
+        class="store-settings__section"
+        aria-labelledby={`${id}-resources`}
       >
-        <select
-          id={`${id}-model`}
-          bind:value={draft.model}
-          disabled={blocked || status.state === "serving"}
-        >
-          <option value={null}>Choose a model</option
-          >{#each status.models as model (model.id)}<option value={model.id}
-              >{model.name}{model.installed ? " · Installed" : ""}</option
-            >{/each}
-        </select>
-      </StoreWorkField>
-      <StoreWorkField
-        label="Custom model"
-        id={`${id}-custom`}
-        description="Hugging Face GGUF model reference, such as repository:quantization."
-      >
-        <Input
-          id={`${id}-custom`}
-          value={draft.model ?? ""}
-          disabled={blocked || status.state === "serving"}
-          oninput={(event) => {
-            draft!.model = event.currentTarget.value || null;
-          }}
-        />
-      </StoreWorkField>
-      <StoreWorkField label="Status"
-        ><span role="status">{status.state}</span></StoreWorkField
-      >
-      {#if status.progress}<p role="status">
-          {String(progress.stage ?? "Downloading")}
-          {progress.total_bytes
-            ? `${Math.round((Number(progress.downloaded_bytes ?? 0) / Number(progress.total_bytes)) * 100)}%`
-            : ""}
-        </p>{/if}
+        <header class="store-settings__section-heading">
+          <h2 id={`${id}-resources`}>Resource limits</h2>
+        </header>
+        <div class="store-settings__rows">
+          <Field.Group class="store-settings__editable-rows">
+            <StoreWorkField
+              class="store-settings__option-row"
+              label="Maximum memory / VRAM"
+              id={`${id}-memory`}
+              description="GB. One loaded model and two concurrent inference requests per host."
+            >
+              <Input
+                id={`${id}-memory`}
+                type="number"
+                min={1}
+                max={1024}
+                value={draft.memory_gb ?? ""}
+                disabled={blocked || status.state === "serving"}
+                oninput={(event) => {
+                  draft!.memory_gb = event.currentTarget.value
+                    ? Number(event.currentTarget.value)
+                    : null;
+                }}
+              />
+            </StoreWorkField>
+          </Field.Group>
+        </div>
+      </section>
+    </Tabs.Content>
+    <Tabs.Content value="sharing">
+      <StoreComputePeers
+        {management}
+        {status}
+        {blocked}
+        bind:draft
+        onConfigure={configure}
+      />
+    </Tabs.Content>
+    <section class="store-settings__section" aria-label="Compute configuration">
       <div class="store-settings__action-row">
-        <p>
-          Native runtime {status.runtime_prepared
-            ? "prepared"
-            : "requires preparation"}.
-        </p>
-        <Button
-          disabled={blocked || !status.supported}
-          onclick={() => management?.command({ action: "prepare" })}
-          >Prepare runtime</Button
-        >
+        <div>
+          <strong>Save compute configuration</strong>
+          <p>
+            Save resource limits and peer selection. Local models never fall
+            back to cloud inference.
+          </p>
+        </div>
+        <div class="store-settings__actions">
+          <Button disabled={blocked} onclick={configure}
+            >Save compute settings</Button
+          >
+        </div>
       </div>
-      <div class="store-settings__action-row">
-        <p>Model downloads stay on this machine.</p>
-        <Button
-          variant="outline"
-          disabled={blocked || !draft.model || status.state === "serving"}
-          onclick={async () => {
-            if (await configure())
-              await management?.command({ action: "download" });
-          }}>Download model</Button
-        >
-        <Button
-          disabled={blocked ||
-            !status.runtime_prepared ||
-            !status.models.some(
-              (model) => model.id === draft!.model && model.installed,
-            ) ||
-            status.state === "serving"}
-          onclick={async () => {
-            if (await configure())
-              await management?.command({ action: "start" });
-          }}>Start model</Button
-        >
-        <Button
-          variant="outline"
-          disabled={management?.busy || status.state === "off"}
-          onclick={() => management?.command({ action: "stop" })}
-          >Stop compute</Button
-        >
-      </div>
-    </Field.Group>
-    <StoreComputeModels {management} {status} {blocked} />
-    <h2>Resource limits</h2>
-    <Field.Group class="community-settings__option-group"
-      ><StoreWorkField
-        label="Maximum memory / VRAM"
-        id={`${id}-memory`}
-        description="GB. One loaded model and two concurrent inference requests per host."
-      >
-        <Input
-          id={`${id}-memory`}
-          type="number"
-          min={1}
-          max={1024}
-          value={draft.memory_gb ?? ""}
-          disabled={blocked || status.state === "serving"}
-          oninput={(event) => {
-            draft!.memory_gb = event.currentTarget.value
-              ? Number(event.currentTarget.value)
-              : null;
-          }}
-        />
-      </StoreWorkField></Field.Group
-    >
-    <StoreComputePeers
-      {management}
-      {status}
-      {blocked}
-      bind:draft
-      onConfigure={configure}
-    />
+    </section>
   {/if}
 </StoreSettingsPage>

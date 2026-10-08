@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreSettingsDisclosure from "../store-settings/StoreSettingsDisclosure.svelte";
   import StoreWorkField from "../store-work/StoreWorkField.svelte";
   import * as Field from "@lapismd/design-core/shadcn/field";
   import { Input } from "@lapismd/design-core/shadcn/input";
@@ -19,8 +20,7 @@
   const id = $props.id();
 </script>
 
-<details>
-  <summary>Advanced</summary>
+<StoreSettingsDisclosure>
   {#if draft.options}
     <Field.Group class="community-settings__option-group">
       <StoreWorkField label="Inherit application defaults" id={`${id}-inherit`}>
@@ -81,4 +81,4 @@
       disabled={pending}
     />
   {/if}
-</details>
+</StoreSettingsDisclosure>

@@ -22,6 +22,19 @@ The Compute page heading and icon match its navigation entry. Transient errors
 use application notifications; validation and exact recovery remain beside
 controls.
 
+Compute uses the standard named Settings sections, compact section headings, one
+outer border per divided row group, label/description and control columns, and
+separate description-left rows with vertically stacked equal-width actions.
+Models (initially selected) contains preparation, downloads, import and
+start/stop; Resources contains hardware and memory limits; Sharing contains
+pairing, inference-host selection and relay settings. The shared save action and
+all drafts remain available across these tabs, without changing the route.
+Hardware and runtime observations use the shared read-only rows. Long machine
+identities and invitations remain bounded on narrow screens. Advanced in
+Compute, agent defaults and Add/Edit agent uses a Lucide chevron with explicit
+expanded state and keyboard activation; closing it preserves unsaved field
+drafts.
+
 Outgoing messages expose a collapsed Sent context control. Rich captured
 repository/project/file/revision/review/discussion content and a raw payload
 inspection remain accessible by keyboard. Queued, sent, failed and unknown

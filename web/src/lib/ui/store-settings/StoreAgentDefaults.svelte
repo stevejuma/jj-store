@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreSettingsDisclosure from "./StoreSettingsDisclosure.svelte";
   import { isMacDesktopWindow } from "../../desktop-chrome.js";
   import { untrack } from "svelte";
   import * as Field from "@lapismd/design-core/shadcn/field";
@@ -158,8 +159,7 @@
             >{/each}</select
         ></StoreWorkField
       >{/if}
-    <details>
-      <summary>Advanced</summary>
+    <StoreSettingsDisclosure>
       <h3>Environment variables</h3>
       <StoreAgentEnvironmentEditor
         keychainSupported={manager.settings.value?.keychain_supported ?? false}
@@ -167,7 +167,7 @@
         bind:secrets
         disabled={busy}
       />
-    </details>
+    </StoreSettingsDisclosure>
     <div class="store-settings__action-row">
       <p>Saved changes take effect on the next start.</p>
       <Button

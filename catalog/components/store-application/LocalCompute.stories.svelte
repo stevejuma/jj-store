@@ -2,12 +2,168 @@
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import Fixture from "../../fixtures/LocalComputeFixture.svelte";
+  import { page } from "vitest/browser";
   const { Story } = defineMeta({
     title: "JJ Store/Local compute",
     component: Fixture,
     tags: ["visual-pending"],
   });
 </script>
+
+<Story
+  name="Logical tabs retain all drafts and save resource settings"
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    const models = c.getByRole("tab", { name: "Models" });
+    await expect(models).toHaveAttribute("aria-selected", "true");
+    await userEvent.type(
+      await c.findByLabelText("Import GGUF"),
+      "/models/draft.gguf",
+    );
+    await userEvent.click(c.getByRole("tab", { name: "Resources" }));
+    await expect(c.getByRole("tabpanel", { name: "Resources" })).toBeVisible();
+    await expect(c.queryByRole("heading", { name: "Local models" })).toBeNull();
+    const memory = c.getByLabelText("Maximum memory / VRAM");
+    await userEvent.clear(memory);
+    await userEvent.type(memory, "6");
+    await userEvent.click(c.getByRole("tab", { name: "Sharing" }));
+    await userEvent.type(c.getByLabelText("Machine name"), "Pairing draft");
+    await userEvent.click(models);
+    await expect(c.getByLabelText("Import GGUF")).toHaveValue(
+      "/models/draft.gguf",
+    );
+    await userEvent.click(c.getByRole("tab", { name: "Sharing" }));
+    await expect(c.getByLabelText("Machine name")).toHaveValue("Pairing draft");
+    await userEvent.click(c.getByRole("tab", { name: "Resources" }));
+    await expect(memory).toHaveValue(6);
+    await expect(
+      JSON.parse(c.getByLabelText("Compute commands").textContent ?? "[]"),
+    ).toEqual([]);
+    await userEvent.click(
+      c.getByRole("button", { name: "Save compute settings" }),
+    );
+    await waitFor(() =>
+      expect(
+        JSON.parse(c.getByLabelText("Compute commands").textContent ?? "[]"),
+      ).toMatchObject([
+        { action: { action: "configure", settings: { memory_gb: 6 } } },
+      ]),
+    );
+    models.focus();
+    await userEvent.keyboard("{ArrowRight}{Enter}");
+    await expect(c.getByRole("tab", { name: "Resources" })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+  }}
+/>
+
+<Story
+  name="Narrow settings retain bounded identities and stacked actions"
+  args={{ paired: true }}
+  play={async ({ canvasElement }) => {
+    await page.viewport(390, 844);
+    try {
+      const c = within(canvasElement);
+      await userEvent.click(await c.findByRole("tab", { name: "Sharing" }));
+      await c.findByRole("button", { name: "Unpair" });
+      await expect(
+        c.getByLabelText("Machine invitation", {
+          selector: "textarea[readonly]",
+        }),
+      ).toBeVisible();
+      await expect(
+        c.getByRole("button", { name: /^Copy full Machine identity/ }),
+      ).toBeVisible();
+      await expect(
+        canvasElement.ownerDocument.documentElement.scrollWidth,
+      ).toBeLessThanOrEqual(390);
+      for (const row of canvasElement.querySelectorAll(
+        ".store-settings__action-row",
+      )) {
+        if (row.closest("[hidden]")) continue;
+        await expect(getComputedStyle(row).flexDirection).toBe("column");
+        const buttons = within(row as HTMLElement).getAllByRole("button");
+        for (const button of buttons)
+          await expect(Math.round(button.getBoundingClientRect().width)).toBe(
+            Math.round(buttons[0].getBoundingClientRect().width),
+          );
+      }
+    } finally {
+      await page.viewport(1280, 800);
+    }
+  }}
+/>
+
+<Story
+  name="Compact settings sections and one border per group"
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    const title = c.getByRole("heading", { name: "Compute", level: 1 });
+    for (const [tab, name] of [
+      ["Resources", "This machine"],
+      ["Models", "Local models"],
+      ["Resources", "Resource limits"],
+      ["Sharing", "Shared compute"],
+    ]) {
+      await userEvent.click(c.getByRole("tab", { name: tab }));
+      const heading = await c.findByRole("heading", { name, level: 2 });
+      await expect(
+        parseFloat(getComputedStyle(heading).fontSize),
+      ).toBeLessThanOrEqual(parseFloat(getComputedStyle(title).fontSize));
+      await expect(c.getByRole("region", { name })).toBeVisible();
+    }
+    await userEvent.click(c.getByRole("tab", { name: "Models" }));
+    const group = c
+      .getByLabelText("Model")
+      .closest('[data-slot="field-group"]')!;
+    await expect(getComputedStyle(group).borderLeftWidth).toBe("0px");
+    await expect(getComputedStyle(group).borderRightWidth).toBe("0px");
+    await expect(getComputedStyle(group).borderBottomWidth).toBe("0px");
+    await expect(getComputedStyle(group.parentElement!).borderLeftWidth).toBe(
+      "1px",
+    );
+    for (const row of canvasElement.querySelectorAll(
+      ".store-settings__action-row",
+    )) {
+      if (row.closest("[hidden]")) continue;
+      await expect(
+        row.parentElement!.closest(".store-settings__rows"),
+      ).toBeNull();
+      const actions = row.querySelector(".store-settings__actions")!;
+      await expect(actions).not.toBeNull();
+      await expect(getComputedStyle(actions).flexDirection).toBe("column");
+    }
+  }}
+/>
+
+<Story
+  name="Lucide Advanced disclosure preserves relay draft with keyboard"
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await userEvent.click(await c.findByRole("tab", { name: "Sharing" }));
+    const label = await c.findByText("Advanced", { exact: true });
+    await expect(
+      label.parentElement!.querySelector("svg.lucide-chevron-right"),
+    ).not.toBeNull();
+    const trigger = c.getByRole("button", { name: "Advanced" });
+    await expect(trigger).toHaveAttribute("aria-expanded", "false");
+    trigger.focus();
+    await userEvent.keyboard("{Enter}");
+    await expect(trigger).toHaveAttribute("aria-expanded", "true");
+    const relay = c.getByLabelText("Encrypted relay URLs");
+    await userEvent.type(relay, "https://relay.example.test/");
+    trigger.focus();
+    await userEvent.keyboard(" ");
+    await expect(relay).not.toBeVisible();
+    await userEvent.keyboard("{Enter}");
+    await expect(relay).toHaveValue("https://relay.example.test/");
+    await expect(trigger).toHaveFocus();
+    await expect(
+      JSON.parse(c.getByLabelText("Compute commands").textContent ?? "[]"),
+    ).toEqual([]);
+  }}
+/>
 
 <Story
   name="Explicit preparation download start and stop"
