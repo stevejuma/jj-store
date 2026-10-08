@@ -62,3 +62,7 @@ saved preference, updated immediately from either Settings or the composer.
 Conversation recipient pins and explicit drafts survive disabling it. Unrelated
 configuration remains an explicit Save defaults action. All Settings dropdowns
 use the shared shadcn controls with keyboard access and labelled defaults.
+
+The guide describes the one-line unresolved-request activity strip, actionable
+recovery toast, dismissal retention and exact-request submission guard. Review
+workspace opens the original session without replaying its prompt.

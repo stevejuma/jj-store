@@ -92,9 +92,15 @@ before choosing this action and saving again. Existing sessions keep their
 original configuration after an agent is edited or deleted. After a lost
 response, Check outcome queries the original request. An unknown outcome keeps
 the request unresolved and the workspace available; review it before explicitly
-continuing. Server restart never resubmits prompts. Sanitized history publishes
-through AgentStore, and the published counter distinguishes durable observations
-from activity still awaiting publication.
+continuing. The activity strip stays on one line; details and recovery actions
+appear in a toast. **Review workspace** keeps the unresolved outcome in history
+and opens the original session without resending the prompt. A confirmed missing
+request instead offers **Submit retained request**, using its original identity.
+Dismissing the toast keeps your pending request and draft, and the same notice
+does not reappear on refresh or navigation. The same recovery action remains
+available in **Session options**. Server restart never resubmits prompts.
+Sanitized history publishes through AgentStore, and the published counter
+distinguishes durable observations from activity still awaiting publication.
 
 Workspace, Agent settings and Actions have the existing Settings section titles.
 Review changes and Clean up workspace are grouped after the agent runtime rows.

@@ -24,10 +24,15 @@ alone never resolves them. Unsupported capabilities keep their contextual Empty
 explanation, independently from recoverable read errors.
 
 Field/query validation, content empty states, stale drafts and exact mutation
-request recovery remain contextual. Reaction metadata retains its existing
-placement. General request failures and confirmations use toasts without
-duplicating inline announcements. Actions retain exact command identity and
-never change repository state merely because a toast is dismissed.
+request recovery remain contextual, except agent execution request recovery: its
+exact-request action and explanation use a scoped condition toast so the agent
+activity strip stays on one line. Dismissing that toast retains the request and
+draft; refresh and navigation do not replay the dismissed episode. Recovery
+actions verify the original request and outcome before acting, and become inert
+while dispatching or after the request changes or resolves. Reaction metadata
+retains its existing placement. General request failures and confirmations use
+toasts without duplicating inline announcements. Actions retain exact command
+identity and never change repository state merely because a toast is dismissed.
 
 The application clears protected notification state on session changes and
 teardown. New notification records are independent of transport and DOM;

@@ -166,14 +166,25 @@ prompting, retaining its captured session identity and message. Failed/unknown
 configuration, disconnection, navigation or bounded readiness timeout retains
 the draft and sends no prompt.
 
-Resume and current-session command failures use the Community composer's error
-status, retaining its editable draft and history. They are not duplicated in the
-conversation body or a toast while that chat is selected. Disconnected history
-prefers its latest retained safe ACP error code over a generic process outcome;
-successful reconnection clears the historical failure presentation. Provider
-errors remain within the existing sanitized ACP boundary. Recovery requires an
-explicit resume or new session with saved context; no automatic fallback or
-prompt replay occurs.
+Unresolved execution requests show one non-wrapping activity line. Their error
+details and explicit recovery action live in an application condition toast,
+without a duplicate composer error or a button below the activity row. Review
+workspace keeps the outcome unresolved in history and opens its exact session;
+only a confirmed not-known outcome offers Submit retained request. Dismissal
+does not retry, clear the pending request or change the draft. Refresh and
+navigation do not replay a dismissed unchanged episode. A new request can
+produce a new toast; a resolved or replaced request retires the old action.
+Session options keeps the same guarded recovery action available after
+dismissal.
+
+Other resume and current-session command failures use the Community composer's
+error status, retaining its editable draft and history. They are not duplicated
+in the conversation body or a toast while that chat is selected. Disconnected
+history prefers its latest retained safe ACP error code over a generic process
+outcome; successful reconnection clears the historical failure presentation.
+Provider errors remain within the existing sanitized ACP boundary. Recovery
+requires an explicit resume or new session with saved context; no automatic
+fallback or prompt replay occurs.
 
 Agent draft and session chats reuse Community's conversation row layout: an
 independent scrolling message area above a bottom composer row. Composer growth

@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { Button } from "@lapismd/design-core/shadcn/button";
   import CommunityAgentComposerActivity from "../community-agent-composer-activity/CommunityAgentComposerActivity.svelte";
   import { agentMember } from "../community-agents/model.js";
   import type { AgentSession } from "../../controller/agent-execution-types.js";
@@ -18,7 +17,11 @@
       manager.value?.setups.find((s) => s.id === pending?.body.setup_id),
   );
   const state = $derived(
-    pending ? (manager.outcome?.state ?? "checking") : "running",
+    pending
+      ? manager.outcome?.request_id === pending.body.request_id
+        ? (manager.outcome?.state ?? "checking")
+        : "checking"
+      : "running",
   );
   const working = $derived(session?.connected && session.state === "running");
   const label = $derived(
@@ -50,14 +53,3 @@
       state === "dispatching" ||
       state === "checking"}
   />{/if}
-{#if manager.pending && manager.outcome?.state === "not_known"}<Button
-    variant="outline"
-    disabled={manager.busy}
-    onclick={() => manager.retryRetainedRequest()}
-    >Submit retained request</Button
-  >{/if}
-{#if manager.pending && manager.outcome?.state === "outcome_unknown"}<Button
-    variant="outline"
-    onclick={() => manager.retainAsUnresolved()}
-    >Keep unresolved request and review workspace</Button
-  >{/if}

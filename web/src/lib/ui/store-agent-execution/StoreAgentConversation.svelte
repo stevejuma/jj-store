@@ -147,29 +147,31 @@
             onSubmit={idle && (ready || canConfigure) && !manager.eventsLoading
               ? send
               : undefined}
-            composerStatus={error
-              ? { type: "error", message: error }
-              : manager.activityError
-                ? { type: "warning", message: manager.activityError }
-                : !idle
-                  ? {
-                      type: "warning",
-                      message:
-                        session.state === "preparing" ||
-                        session.state === "opening"
-                          ? "Connecting the agent. Your draft is retained."
-                          : object(facts.initialize).loadSession === true &&
-                              session.state !== "cleaned"
-                            ? "Resume this session from Session options to continue. Your draft is retained."
-                            : "Start a new session with saved context from Session options to continue. Your draft is retained.",
-                    }
-                  : !ready && !canConfigure
+            composerStatus={manager.pending
+              ? undefined
+              : error
+                ? { type: "error", message: error }
+                : manager.activityError
+                  ? { type: "warning", message: manager.activityError }
+                  : !idle
                     ? {
                         type: "warning",
                         message:
-                          "Choose an execution mode in Session options → Workspace and runtime → Edit execution mode before sending.",
+                          session.state === "preparing" ||
+                          session.state === "opening"
+                            ? "Connecting the agent. Your draft is retained."
+                            : object(facts.initialize).loadSession === true &&
+                                session.state !== "cleaned"
+                              ? "Resume this session from Session options to continue. Your draft is retained."
+                              : "Start a new session with saved context from Session options to continue. Your draft is retained.",
                       }
-                    : undefined}
+                    : !ready && !canConfigure
+                      ? {
+                          type: "warning",
+                          message:
+                            "Choose an execution mode in Session options → Workspace and runtime → Edit execution mode before sending.",
+                        }
+                      : undefined}
             ariaLabel="Message to agent"
             placeholder={session.state === "running"
               ? "Queue a follow-up…"

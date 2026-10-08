@@ -93,6 +93,17 @@ Independent readers retain bounded outage and failed-read recovery, drafts and
 exact requests. This review leaves M24 In progress and does not expand adapter,
 live-permission, desktop or platform qualification. The earlier repository audit
 failures remain separately recorded in E-GOV-005 and E-GOV-006.
+
+## Agent recovery toast review — 2026-10-08
+
+E-FLEET-011 moves exact-request recovery actions and details into a dismissible
+toast while keeping unresolved activity on one line. Session options retains the
+guarded action after dismissal; navigation, refresh and review do not replay the
+prompt. Focused unit and cold browser acceptance cover request identity,
+keyboard access, narrow widths and draft retention. M24 remains In progress;
+independent adapter, live-permission and desktop gates and the earlier broad
+audit failures remain open. The existing development acceptance-script line
+limit is unchanged.
 <!-- generated-navigation -->
 
 ## Pages

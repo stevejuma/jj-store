@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed shared saved automatic mentions, exact recovery without sending, retained defaults and secret drafts, and shadcn Settings choices against the updated Settings guide and production sources.",
-      "fingerprint": "c7a88371e226cdc2dd38f154dda1f8da024fbc48150704fa13ca5d3fe3617f05"
+      "reason": "Reviewed exact-request recovery toasts, single-line activity, dismissal retention and Session options recovery without prompt replay.",
+      "fingerprint": "2c8642299477c1785a5ee88d48f69d24597529efa919b0eb149bce19e8a11643"
     }
   },
   {

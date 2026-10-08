@@ -15,6 +15,13 @@ concurrent setup edit rejects the stale precondition and retains the browser
 draft. Older private execution journals seed the independent setup revision from
 their retained installation revision when opened.
 
+Agent recovery toast presentation leaves JST-API-001 unchanged: the browser
+matches the pending request to its exact outcome before offering recovery.
+Dismissal, navigation and workspace review send no agent command. Only explicit
+submission of a confirmed not-known request reuses its original body and ID; an
+unknown outcome is never treated as proof that a prompt was not dispatched. No
+new endpoint, request field, receipt format or authorization path is added.
+
 Status session views expose optional original setup_id and a read-only connected
 boolean. Legacy journals without setup_id load as unassigned; editing/deleting a
 setup does not alter existing session snapshots. Connected is projected from a

@@ -1,6 +1,7 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
+  import { page as browser } from "vitest/browser";
   import { agentMessageTimestamp } from "../../../web/src/lib/collaboration/presentation.js";
   import Fixture from "../../fixtures/AgentExecutionFixture.svelte";
   const { Story } = defineMeta({
@@ -69,7 +70,7 @@
 />
 
 <Story
-  name="Uncertain request uses the Community activity strip and retains exact recovery"
+  name="Uncertain request keeps one status line with dismissible toast recovery"
   args={{ fail: true }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
@@ -91,17 +92,98 @@
     await expect(within(strip).getByRole("status")).toHaveTextContent(
       "Outcome unknown",
     );
-    await expect(
-      c.getByRole("button", {
-        name: "Keep unresolved request and review workspace",
-      }),
-    ).toBeVisible();
+    const page = within(document.body);
+    const action = await page.findByRole("button", {
+      name: "Review workspace",
+    });
+    await expect(action.closest('[data-ui-part="toast"]')).not.toBeNull();
+    await expect(c.queryByRole("alert")).not.toBeInTheDocument();
+    await expect(strip.querySelector("button")).toBeNull();
+    const row = strip.querySelector('[data-ui-part="reasoning-label"]')!;
+    const range = document.createRange();
+    range.selectNodeContents(row);
+    await expect(range.getClientRects()).toHaveLength(1);
+    const height = strip.getBoundingClientRect().height;
+    await browser.viewport(390, 844);
+    try {
+      await waitFor(() => {
+        expect(range.getClientRects()).toHaveLength(1);
+        expect(strip.getBoundingClientRect().height).toBe(height);
+      });
+    } finally {
+      await browser.viewport(1280, 800);
+    }
     await expect(
       c.getByRole("textbox", { name: "Markdown editor" }),
     ).toHaveTextContent("Retain uncertain message");
     await expect(
       c.queryByText(/^Request .*Draft and request identity retained\./),
     ).not.toBeInTheDocument();
+    await userEvent.click(
+      page.getByRole("button", { name: "Dismiss Agent request unresolved" }),
+    );
+    await userEvent.click(
+      c.getByRole("button", { name: "Manage fixture agents" }),
+    );
+    await userEvent.click(
+      c.getByRole("button", { name: "Open fixture conversation" }),
+    );
+    await c.findByText("Outcome unknown", { exact: true });
+    await expect(
+      page.queryByRole("button", { name: "Review workspace" }),
+    ).not.toBeInTheDocument();
+    await expect(
+      c.getByRole("textbox", { name: "Markdown editor" }),
+    ).toHaveTextContent("Retain uncertain message");
+    await userEvent.click(c.getByRole("button", { name: "Session options" }));
+    await expect(
+      await page.findByRole("menuitem", { name: "Review workspace" }),
+    ).toBeEnabled();
+    await userEvent.keyboard("{Escape}");
+  }}
+/>
+
+<Story
+  name="Keyboard toast recovery retains the draft and never repeats configuration or prompt"
+  args={{
+    agentModeReady: false,
+    uncertainConfiguration: true,
+    sessionPreferences: { model: null, effort: null, mode: null },
+  }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement),
+      page = within(document.body);
+    await userEvent.click(
+      c.getByRole("button", { name: "Open fixture conversation" }),
+    );
+    const draft = await c.findByRole("textbox", { name: "Markdown editor" });
+    await userEvent.type(draft, "Keep this unsent prompt");
+    await userEvent.click(c.getByRole("button", { name: "Send" }));
+    const action = await page.findByRole("button", {
+      name: "Review workspace",
+    });
+    const commands = c.getByLabelText("Session commands").textContent;
+    await expect(JSON.parse(commands ?? "[]")).toHaveLength(1);
+    action.focus();
+    await expect(action).toHaveFocus();
+    await userEvent.keyboard("{Enter}");
+    await waitFor(() =>
+      expect(
+        page.queryByRole("button", { name: "Review workspace" }),
+      ).not.toBeInTheDocument(),
+    );
+    await expect(c.getByLabelText("Session commands")).toHaveTextContent(
+      commands!,
+    );
+    await expect(
+      c.getByRole("textbox", { name: "Markdown editor" }),
+    ).toHaveTextContent("Keep this unsent prompt");
+    await expect(
+      c.queryByText("Outcome unknown", { exact: true }),
+    ).not.toBeInTheDocument();
+    await expect(c.getByRole("alert")).toHaveTextContent(
+      "remains in session history",
+    );
   }}
 />
 

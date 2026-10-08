@@ -8,6 +8,8 @@
   import PlusIcon from "@lucide/svelte/icons/plus";
   import MessagesIcon from "@lucide/svelte/icons/messages-square";
   import SettingsIcon from "@lucide/svelte/icons/settings-2";
+  import RecoveryIcon from "@lucide/svelte/icons/circle-alert";
+  import { requestRecoveryNotice } from "./request-recovery-notice.js";
   import type { AgentExecution } from "../../controller/agent-execution.svelte.js";
   import {
     object,
@@ -25,6 +27,7 @@
     onRuntime: () => void;
   } = $props();
   const blocked = $derived(manager.busy || !!manager.pending);
+  const recovery = $derived(requestRecoveryNotice(manager)?.action);
 </script>
 
 <DropdownMenu.Root>
@@ -42,6 +45,13 @@
     style="width: min(18rem, calc(100vw - 2rem)); min-width: min(18rem, calc(100vw - 2rem));"
   >
     <DropdownMenu.Group>
+      {#if recovery}<DropdownMenu.Item
+          disabled={manager.busy}
+          onSelect={recovery.run}
+          ><RecoveryIcon
+            aria-hidden="true"
+          />{recovery.label}</DropdownMenu.Item
+        >{/if}
       {#if session}<DropdownMenu.Item onSelect={onRuntime}
           ><SettingsIcon aria-hidden="true" />Workspace and runtime</DropdownMenu.Item
         >{/if}

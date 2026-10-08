@@ -41,6 +41,7 @@
     display: flex;
     align-items: center;
     min-width: 0;
+    white-space: nowrap;
     padding-inline: 0.25rem;
     color: var(--muted-foreground);
     font-size: var(--community-text-secondary);
