@@ -26,6 +26,12 @@ behavior. Bootstrap and all product milestone statuses and original gate
 selections remain unchanged; passing subsets do not qualify failing or skipped
 gates. The next action is to triage the named failures at their owning
 boundaries and rerun those lanes after fixes.
+
+E-GOV-006 closes the three browser execution gaps left by the audit wrapper:
+both automatic-update cases pass, while the task Activity/composer geometry
+assertion fails reproducibly. The isolated native fixtures were cleaned. This
+addendum preserves the original audit and changes no milestone status or gate;
+all other audit failures and external prerequisites remain explicit.
 <!-- generated-navigation -->
 
 ## Pages

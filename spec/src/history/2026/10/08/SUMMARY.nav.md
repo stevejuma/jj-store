@@ -20,3 +20,5 @@
   {{#include E-GOV-004/SUMMARY.nav.md}}
 - [E-GOV-005](E-GOV-005/index.md)
   {{#include E-GOV-005/SUMMARY.nav.md}}
+- [E-GOV-006](E-GOV-006/index.md)
+  {{#include E-GOV-006/SUMMARY.nav.md}}
