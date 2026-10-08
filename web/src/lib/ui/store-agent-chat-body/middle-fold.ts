@@ -1,9 +1,13 @@
 import { Text } from "@codemirror/state";
 import { Decoration, WidgetType, type EditorView } from "@codemirror/view";
+import { mount, unmount } from "svelte";
+import ChevronDownIcon from "@lucide/svelte/icons/chevron-down";
+import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
 import type { ChatBodyBlock } from "./model.js";
 import type { ChatBodyComments } from "./comments.svelte.js";
 import { validAnchor } from "./anchors.js";
 type FoldState = Pick<ChatBodyComments, "disclosures" | "threads" | "active">;
+const icons = new WeakMap<HTMLElement, ReturnType<typeof mount>>();
 
 export const middleFoldKey = (block: ChatBodyBlock) =>
   `middle:${block.id}:${block.revision}`;
@@ -22,6 +26,7 @@ class MiddleFoldWidget extends WidgetType {
     readonly block: ChatBodyBlock,
     readonly comments: FoldState,
     readonly range: NonNullable<ReturnType<typeof middleRange>>,
+    readonly expanded: boolean,
   ) {
     super();
   }
@@ -29,7 +34,8 @@ class MiddleFoldWidget extends WidgetType {
     return (
       this.block.id === other.block.id &&
       this.block.revision === other.block.revision &&
-      this.comments === other.comments
+      this.comments === other.comments &&
+      this.expanded === other.expanded
     );
   }
   get estimatedHeight() {
@@ -42,14 +48,30 @@ class MiddleFoldWidget extends WidgetType {
     const button = document.createElement("button");
     button.type = "button";
     button.dataset.chatFoldControl = "";
-    button.textContent = `Show ${this.range.lines} more lines ›`;
+    button.textContent = this.expanded
+      ? "Show less"
+      : `Show ${this.range.lines} more lines`;
+    icons.set(
+      row,
+      mount(this.expanded ? ChevronDownIcon : ChevronRightIcon, {
+        target: button,
+        props: { size: 16, "aria-hidden": true },
+      }),
+    );
+    button.setAttribute("aria-expanded", String(this.expanded));
     button.setAttribute(
       "aria-label",
-      `Show ${this.range.lines} more lines in ${this.block.label}`,
+      this.expanded
+        ? `Show less in ${this.block.label}`
+        : `Show ${this.range.lines} more lines in ${this.block.label}`,
     );
     button.addEventListener("click", () => {
-      this.comments.disclosures[middleFoldKey(this.block)] = true;
-      view.dispatch({ selection: { anchor: this.range.from } });
+      this.comments.disclosures[middleFoldKey(this.block)] = !this.expanded;
+      view.dispatch({
+        selection: {
+          anchor: this.expanded ? this.range.from - 1 : this.range.from,
+        },
+      });
       view.focus();
     });
     row.append(button, document.createElement("span"));
@@ -58,11 +80,15 @@ class MiddleFoldWidget extends WidgetType {
   ignoreEvent() {
     return true;
   }
+  destroy(dom: HTMLElement) {
+    const icon = icons.get(dom);
+    if (icon) void unmount(icon);
+    icons.delete(dom);
+  }
 }
 export function middleDecorations(block: ChatBodyBlock, comments: FoldState) {
   const range = middleRange(block);
-  if (!range || comments.disclosures[middleFoldKey(block)])
-    return Decoration.none;
+  if (!range) return Decoration.none;
   const anchors = [
     ...comments.threads.map((thread) => thread.anchor),
     ...(comments.active ? [comments.active.anchor] : []),
@@ -76,10 +102,11 @@ export function middleDecorations(block: ChatBodyBlock, comments: FoldState) {
     )
   )
     return Decoration.none;
+  const expanded = !!comments.disclosures[middleFoldKey(block)];
+  const widget = new MiddleFoldWidget(block, comments, range, expanded);
   return Decoration.set([
-    Decoration.replace({
-      block: true,
-      widget: new MiddleFoldWidget(block, comments, range),
-    }).range(range.from, range.to),
+    expanded
+      ? Decoration.widget({ block: true, side: -1, widget }).range(range.from)
+      : Decoration.replace({ block: true, widget }).range(range.from, range.to),
   ]);
 }

@@ -139,10 +139,14 @@ icon or horizontal inset; completion remains described to assistive technology.
 Errors and running tools retain visible status icons. Vertical spacing and
 offset focus rings keep controls distinguishable. Captures over 32 lines
 initially retain 12 leading and 8 trailing lines, with a Show N more lines
-control replacing the middle. Revealing is local and retained across
-disclosure/body remounts. The complete immutable document and its UTF-16 anchor
-offsets remain unchanged. Hidden lines containing an active or submitted
-discussion are revealed so comments stay reachable.
+control replacing the middle. Expanding keeps the same control at the start of
+the revealed range as Show less with a downward Lucide chevron, allowing pointer
+or keyboard collapse back to the original leading/trailing lines. Both states
+are local and retained across disclosure/body remounts. The complete immutable
+document and its UTF-16 anchor offsets remain unchanged. Hidden lines containing
+an active or submitted discussion are revealed so comments stay reachable. The
+fold toggle uses 16px decorative Lucide chevrons beside its label and a
+theme-derived hover background; its keyboard focus ring remains visible.
 
 Returned XML-like agent context uses the existing prompt-element renderer and
 whole-section comment anchors, rather than displaying its tags as prose.

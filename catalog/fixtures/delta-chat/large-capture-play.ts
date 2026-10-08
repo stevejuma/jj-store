@@ -23,6 +23,21 @@ export async function largeCaptures({
   );
   await waitFor(() => expect(code).toHaveTextContent("line30 = 30"));
   await expect(patch).not.toHaveTextContent("line30 = 30");
+  await userEvent.click(
+    c.getByRole("button", { name: "Show less in Large captured code" }),
+  );
+  await waitFor(() => expect(code).not.toHaveTextContent("line30 = 30"));
+  await expect(code).toHaveTextContent("line60 = 60");
+  for (const label of ["Large captured patch", "Large captured code"]) {
+    await userEvent.click(
+      c.getByRole("button", { name: `Show 40 more lines in ${label}` }),
+    );
+  }
+  await expect(patch).toHaveTextContent("line30 = 30");
+  await userEvent.click(
+    c.getByRole("button", { name: "Show less in Large captured patch" }),
+  );
+  await waitFor(() => expect(patch).not.toHaveTextContent("line30 = 30"));
   code.focus();
   await userEvent.keyboard("Review middle");
   await expect(

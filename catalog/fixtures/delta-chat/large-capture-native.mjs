@@ -21,6 +21,23 @@ export async function largeCaptureAcceptance(page, base) {
     .focus();
   await page.keyboard.press("Space");
   await expect(code).toContainText("line30 = 30");
+  const less = page.getByRole("button", {
+    name: "Show less in Large captured code",
+  });
+  await expect(less).toHaveAttribute("aria-expanded", "true");
+  await less.focus();
+  await page.keyboard.press("Enter");
+  await expect(code).not.toContainText("line30 = 30");
+  await expect(code).toContainText("line60 = 60");
+  await page.getByRole("button", { name: "Hide body" }).click();
+  await page.getByRole("button", { name: "Show body" }).click();
+  const more = page.getByRole("button", {
+    name: "Show 40 more lines in Large captured code",
+  });
+  await expect(more).toHaveAttribute("aria-expanded", "false");
+  await more.focus();
+  await page.keyboard.press("Space");
+  await expect(code).toContainText("line30 = 30");
   await expect(
     page.locator('[data-location="inline"][data-editing="true"]'),
   ).toHaveCount(0);

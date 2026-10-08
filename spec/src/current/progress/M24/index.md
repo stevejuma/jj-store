@@ -200,6 +200,11 @@ discussions. Captured data remains untouched. This catalog review leaves M24 In
 progress and its independent live, native IME, desktop and visual gates
 unchanged.
 
+E-CHAT-BODY-012 retains a Show less control after expanding captured code or
+diffs, with reversible local state, keyboard access and remount retention.
+Commented ranges remain visible. This presentation review leaves M24 In progress
+and independent live, native IME, desktop and visual gates unchanged.
+
 <!-- generated-navigation -->
 
 ## Pages

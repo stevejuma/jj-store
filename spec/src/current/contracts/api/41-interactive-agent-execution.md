@@ -159,3 +159,7 @@ Seeded reference discussions preserve JST-API-001 unchanged (E-CHAT-BODY-011).
 The catalog layers labelled sent comments and simulated linked replies over
 captured content in memory, without submitting a prompt or storing discussions.
 Quote typography and compact repeated reply context remain presentation-only.
+
+Reversible captured-code middle folds preserve JST-API-001 unchanged
+(E-CHAT-BODY-012). Show more/less changes only revision-keyed local disclosure
+state; immutable captured text, comment anchors and API/dispatch stay unchanged.
