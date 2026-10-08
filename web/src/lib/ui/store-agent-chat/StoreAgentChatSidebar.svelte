@@ -196,6 +196,9 @@
 </AppShell.Sidebar.Body>
 
 <style>
+  :global(.agent-chat-heading[data-ui-part="sidebar-header"]) {
+    border-bottom: 0;
+  }
   :global(.agent-chat-heading[data-ui-part="sidebar-header"]),
   .agent-chat-participant,
   .agent-chat-recovery {

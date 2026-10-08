@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onDestroy, untrack } from "svelte";
+  import type { AgentExecution } from "../../web/src/lib/controller/agent-execution.svelte.js";
   import StoreRepositoryApplication from "../../web/src/lib/ui/store-application/StoreRepositoryApplication.svelte";
   import { createProjectsHub } from "../../web/src/lib/controller/production-projects-hub.svelte.js";
   import { initialStoreRoute } from "../../web/src/lib/controller/store-route-history.svelte.js";
@@ -36,6 +37,7 @@
     variedProjectMetadata = false,
     longTaskDetail = false,
     repositoryProjects = false,
+    execution,
   }: {
     layoutStorage?: Storage;
     detail?: boolean;
@@ -55,6 +57,7 @@
     variedProjectMetadata?: boolean;
     longTaskDetail?: boolean;
     repositoryProjects?: boolean;
+    execution?: AgentExecution;
   } = $props();
   let refreshPending = $state(false);
   let finishRefresh: (() => void) | undefined;
@@ -216,6 +219,9 @@
   const controller: StoreController = {
     ...base,
     projects: hub,
+    get execution() {
+      return execution;
+    },
     get state() {
       return {
         ...base.state,

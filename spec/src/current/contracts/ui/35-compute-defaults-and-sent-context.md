@@ -32,6 +32,22 @@ The Compute page heading and icon match its navigation entry. Transient errors
 use application notifications; validation and exact recovery remain beside
 controls.
 
+The Model field uses a Popover-hosted Command View with search, keyboard
+selection, a selected check and focus return. An owned catalog extends service
+installed/current identities with the Buzz/mesh-llm curated and advanced GGUF
+references. Each choice and the selected trigger show estimated weight size,
+Fits well/Tight fit/Trade-off/Too large or Fit unknown, plus Recommended and
+Installed where applicable. Model descriptions explain the intended use.
+Recommendation tiers follow Buzz when they fit comfortably, falling back to a
+smaller comfortable choice. Estimates use 70% of observed service-machine RAM,
+capped by the unsaved memory limit, with Buzz's 60%/90%/110% fit thresholds.
+This is advisory RAM headroom, not a measured GPU/free-memory guarantee; the
+menu explains runtime/context overhead. Missing hardware or unknown imported
+sizes remain unknown, and unknown hardware offers no recommendation. Selection
+preserves exact custom/imported IDs, changes only the draft and never downloads,
+configures or starts compute. Serving/pending controls remain disabled and
+narrow menus stay within the viewport. Weights still require explicit download.
+
 Compute uses the standard named Settings sections, compact section headings, one
 outer border per divided row group, label/description and control columns, and
 description-left rows with vertically stacked equal-width actions. Model run and

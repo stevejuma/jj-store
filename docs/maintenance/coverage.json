@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed joined Settings tables, defaults-last headings, shared model catalogs/picker, fixed wrapping Compute actions and syntax-highlighted invitations; draft and recovery semantics retained.",
-      "fingerprint": "a3f2cf0cce1d9452d3e44c65d961d2c78d1500fd3bf0eef2c8ec9438e837f0f2"
+      "reason": "Reviewed Compute command menu, Files layout and consistent icon agent actions across repository and Projects/task headers with retained context; API schema unchanged",
+      "fingerprint": "aaa47093e19470a5ecfa1c19f8d28b9480cdde4010eb4e570812ba63d3514852"
     }
   },
   {

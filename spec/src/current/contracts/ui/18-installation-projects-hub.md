@@ -236,3 +236,10 @@ notices.
 
 Repository directory loading also reflects its visible-row metadata reads,
 retaining their viewport observation leases and any already loaded rows.
+
+All Projects hub and selected-project tabs use an icon-only New agent session
+action with a shadcn tooltip in their title row. Agents places Manage agents
+beside it with the same treatment and omits duplicate body actions. Task detail
+uses the same icon launcher in its header. Launch retains the exact existing
+project/task/repository context and performs the existing explicit launch flow;
+this presentation never warms, dispatches or creates a workspace by itself.

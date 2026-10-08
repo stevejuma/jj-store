@@ -22,3 +22,8 @@ one GGUF file on the service machine; cancellation returns no path. Busy,
 timeout, invalid output and unavailable host are distinct failures. Requests
 cannot supply scripts, dialog prompts or filters. Selection changes only the
 browser draft; the existing explicit Import command owns copying and validation.
+
+The hardware-aware model picker is an owned browser projection over existing
+ComputeStatus hardware/installed-model facts and the settings draft. Its local
+catalog and advisory RAM estimates add no API/schema or execution authority.
+Unknown hardware, model sizes and installed state are never fabricated.

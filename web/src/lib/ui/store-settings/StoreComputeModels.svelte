@@ -5,6 +5,7 @@
   import StoreWorkField from "../store-work/StoreWorkField.svelte";
   import StoreReadOnlyRow from "./StoreReadOnlyRow.svelte";
   import StoreModelFilePicker from "./StoreModelFilePicker.svelte";
+  import StoreComputeModelPicker from "./StoreComputeModelPicker.svelte";
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import { object } from "../../controller/agent-execution-types.js";
   import type { Model } from "../../api/client.js";
@@ -60,18 +61,14 @@
         id={`${id}-model`}
         description="Download weights explicitly, then start the model on this machine."
       >
-        <select
+        <StoreComputeModelPicker
           id={`${id}-model`}
           bind:value={draft.model}
+          models={status.models}
+          hardware={status.hardware}
+          memoryLimit={draft.memory_gb}
           disabled={blocked || status.state === "serving"}
-        >
-          <option value={null}>Choose a model</option>
-          {#each status.models as model (model.id)}
-            <option value={model.id}
-              >{model.name}{model.installed ? " · Installed" : ""}</option
-            >
-          {/each}
-        </select>
+        />
       </StoreWorkField>
       <StoreWorkField
         class="store-settings__option-row"

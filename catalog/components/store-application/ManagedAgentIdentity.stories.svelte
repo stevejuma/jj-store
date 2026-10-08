@@ -11,6 +11,28 @@
 </script>
 
 <Story
+  name="Repository agent actions live in the Workspace title row with tooltips"
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement),
+      portal = within(document.body);
+    const header = canvasElement.querySelector<HTMLElement>(
+      'header[aria-label="Workspace section header"]',
+    )!;
+    await expect(header.querySelector("svg.lucide-folder-root")).not.toBeNull();
+    for (const name of ["New agent session", "Manage agents"]) {
+      const action = c.getByRole("button", { name });
+      await expect(header).toContainElement(action);
+      await expect(action.textContent?.trim()).toBe("");
+      await userEvent.hover(action);
+      await expect(await portal.findByRole("tooltip")).toHaveTextContent(name);
+      await userEvent.unhover(action);
+      await userEvent.keyboard("{Escape}");
+    }
+    await expect(c.getByLabelText("Execution commands")).toHaveTextContent("0");
+  }}
+/>
+
+<Story
   name="Recorded identity, last activity and selected response survive deleted setup"
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);

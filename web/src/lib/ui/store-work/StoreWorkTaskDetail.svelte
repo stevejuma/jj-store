@@ -20,7 +20,8 @@
   import type { WorkController } from "../../controller/work-types.js";
   import StoreWorkComments from "./StoreWorkComments.svelte";
   import StoreWorkTaskStateIcon from "./StoreWorkTaskStateIcon.svelte";
-  import StoreAgentLaunchButton from "../store-agent-execution/StoreAgentLaunchButton.svelte";
+  import StoreAgentHeaderActions from "../store-agent-execution/StoreAgentHeaderActions.svelte";
+  import type { AgentExecution } from "../../controller/agent-execution.svelte.js";
   import { taskStateLabel } from "./work-presentation.js";
   import "./community-work-tasks.css";
   import "./task-detail-layout.css";
@@ -33,6 +34,7 @@
     onEdit,
     onSubtask,
     onClose,
+    manager,
     onSelectTask,
     onOpenRepository,
     onRefresh,
@@ -47,6 +49,7 @@
     onEdit: () => void;
     onSubtask?: () => void;
     onClose: () => void;
+    manager?: AgentExecution;
     onSelectTask: (id: string) => void;
     onOpenRepository?: (id: string) => void | Promise<void>;
     onRefresh?: () => void | Promise<void>;
@@ -100,7 +103,9 @@
           disabled={busy || work.state.loading}
           onclick={onRefresh}><RefreshIcon aria-hidden="true" /></Button
         >{/if}
-      <StoreAgentLaunchButton
+      <StoreAgentHeaderActions
+        {manager}
+        showManage={false}
         context={{
           repository: task.repository || undefined,
           text: `Task: ${task.title}\nTask ID: ${task.id}\nProject ID: ${task.project}\n${task.body}`,

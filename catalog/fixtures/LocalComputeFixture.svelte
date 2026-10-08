@@ -10,10 +10,20 @@
     context = false,
     paired = false,
     picker = "selected",
+    memoryBytes = 17179869184,
+    memoryLimit = 4,
+    selectedModel = "fixture-gguf",
+    installedModel = false,
+    serving = false,
   }: {
     context?: boolean;
     paired?: boolean;
     picker?: "selected" | "cancelled" | "error";
+    memoryBytes?: number | null;
+    memoryLimit?: number | null;
+    selectedModel?: string;
+    installedModel?: boolean;
+    serving?: boolean;
   } = $props();
   let commands = $state<Record<string, unknown>[]>([]);
   let status: ComputeValue = untrack(() => ({
@@ -21,16 +31,16 @@
       os: "macOS",
       architecture: "arm64",
       cpu_threads: 8,
-      memory_bytes: 17179869184,
+      memory_bytes: memoryBytes,
     },
     supported: true,
     model_file_picker: true,
-    state: "off",
+    state: serving ? "serving" : "off",
     runtime_prepared: false,
     settings: {
       revision: 0,
-      model: "fixture-gguf",
-      memory_gb: 4,
+      model: selectedModel,
+      memory_gb: memoryLimit,
       sharing: false,
       peers: paired
         ? {
@@ -43,7 +53,14 @@
       relay_urls: [],
       target_peer: null,
     },
-    models: [{ id: "fixture-gguf", name: "Fixture GGUF", installed: false }],
+    models: [
+      { id: "fixture-gguf", name: "Fixture GGUF", installed: false },
+      {
+        id: "unsloth/gemma-4-E4B-it-GGUF:Q4_K_M",
+        name: "Gemma 4 E4B",
+        installed: installedModel,
+      },
+    ],
     identity: paired ? "cd".repeat(32) : null,
     invitation: paired
       ? { id: "cd".repeat(32), direct_addresses: ["127.0.0.1:32100"] }

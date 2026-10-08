@@ -198,6 +198,13 @@ prompt context does not bypass these gates.
 
 ## Compute, defaults and captured context
 
+Compute's Model picker searches local-model choices with estimated weight size,
+machine fit, recommended choices and installed status. Fit reserves 30% of host
+RAM and respects your draft memory limit; it does not measure GPU capacity or
+guarantee inference will fit. Unknown hardware or imported sizes stay unknown.
+Choosing a model only updates the draft; Download model and Start model remain
+explicit actions.
+
 Settings → Agents places Conversations and Preferences above Agent runtimes,
 with Agent defaults last. Defaults use the same searchable harness/model picker
 as Add/Edit agent, including session-advertised and discovered models. The

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import StoreAgentLaunchButton from "../store-agent-execution/StoreAgentLaunchButton.svelte";
+  import StoreAgentHeaderActions from "../store-agent-execution/StoreAgentHeaderActions.svelte";
   import StoreWorkLayoutControls from "./StoreWorkLayoutControls.svelte";
   import StoreProjectsAddMenu from "./StoreProjectsAddMenu.svelte";
   import RefreshIcon from "@lucide/svelte/icons/refresh-cw";
@@ -37,8 +37,9 @@
 </script>
 
 <div class="community-projects__surface-actions">
-  <StoreAgentLaunchButton
+  <StoreAgentHeaderActions
     manager={controller.execution}
+    showManage={tab === "agents"}
     context={{
       text: project
         ? `Project: ${project.title}\nProject ID: ${project.id}\n${project.body}`

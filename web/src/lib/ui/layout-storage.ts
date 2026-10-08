@@ -117,7 +117,7 @@ export function clampFileTreeWidth(width: number): number {
 }
 
 function defaultFileTreeLayout(): RepositoryFileTreeLayout {
-  return { open: true, width: repositoryFileTreeDefaultWidth };
+  return { open: false, width: repositoryFileTreeDefaultWidth };
 }
 
 function readSidebarLayout(

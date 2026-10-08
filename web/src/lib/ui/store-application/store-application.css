@@ -65,7 +65,9 @@
 
 .store-application__body-regions[data-page="files"] {
   box-sizing: border-box;
-  padding: 0.75rem 1rem 1rem;
+  padding: 0;
+  border-top: 1px solid var(--border);
+  margin-top: 0.5rem;
 }
 
 .store-application__tabs {

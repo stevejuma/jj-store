@@ -277,19 +277,14 @@
   play={async ({ canvasElement }) => {
     await expectSkeleton(
       canvasElement,
-      "Loading repository file tree",
-      "file-tree",
-    );
-    await expectSkeleton(
-      canvasElement,
       "Loading repository files",
       "directory",
     );
     await expect(
-      within(canvasElement).getByRole("complementary", {
+      within(canvasElement).queryByRole("complementary", {
         name: "Repository file tree",
       }),
-    ).toBeVisible();
+    ).not.toBeInTheDocument();
   }}
 />
 

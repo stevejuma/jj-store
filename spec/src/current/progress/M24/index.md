@@ -1,8 +1,8 @@
 # M24 reusable ACP agents and contextual conversations
 
-| ID  | Status      | Depends | Requirements                                 | Gate                                                                                                                          | Next                                                                                                               | Evidence    |
-| --- | ----------- | ------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ | ----------- |
-| M24 | In progress | M23     | JST-COLLAB-034,JST-COLLAB-035,JST-COLLAB-036 | Warm fleet, personal metadata homes, isolated multiple repository bindings, canonical discussion links and cold contextual UI | Qualify additional version-3 adapters and live permissions/cancellation; retain independent desktop/platform gates | E-FLEET-001 |
+| ID  | Status      | Depends | Requirements                                 | Gate                                                                                                                          | Next                                                                                                               | Evidence                  |
+| --- | ----------- | ------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ | ------------------------- |
+| M24 | In progress | M23     | JST-COLLAB-034,JST-COLLAB-035,JST-COLLAB-036 | Warm fleet, personal metadata homes, isolated multiple repository bindings, canonical discussion links and cold contextual UI | Qualify additional version-3 adapters and live permissions/cancellation; retain independent desktop/platform gates | E-FLEET-001,E-COMPUTE-004 |
 
 M23 remains qualified for its prior version-2 profile. M24 source, fixture and
 installed version-3 results are reviewed independently; no fixture closes a real
@@ -33,7 +33,11 @@ review leaves M24's status and independent qualification gates unchanged.
 E-FLEET-003 aligns runtime rows with a separate avatar column, grouped identity
 and status text, and smaller descriptions. Its presentation checks and local
 workspace integration preserve the M24 qualification scope; the fleet workspace
-remains available for follow-up work.
+remains available for follow-up work. E-COMPUTE-004 records the focused
+model-picker, repository header, Files layout and chat-border follow-up.
+Existing status and independent qualification gates remain unchanged; visual
+baselines are unapproved. The unchanged-parent Op Log status assertion failure
+remains a separate recorded gap.
 <!-- generated-navigation -->
 ## Pages
 

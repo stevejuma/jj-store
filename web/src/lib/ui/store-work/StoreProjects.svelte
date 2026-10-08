@@ -201,6 +201,7 @@
                 onVisible={hub.repositories.watch}
               />{/key}
           {:else if task}{#key task.id}<StoreWorkTaskDetail
+                manager={controller.execution}
                 bind:viewportRef={element}
                 {work}
                 repositories={controller.state.repositories}

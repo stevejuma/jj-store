@@ -258,7 +258,9 @@
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
     await userEvent.click(await c.findByRole("tab", { name: "Sharing" }));
-    const label = await c.findByText("Advanced", { exact: true });
+    const label = c
+      .getByRole("button", { name: "Advanced" })
+      .querySelector("span")!;
     await expect(
       label.parentElement!.querySelector("svg.lucide-chevron-right"),
     ).not.toBeNull();

@@ -73,3 +73,9 @@ The jj-agent artwork reuses the app's maintained desktop logo with local asset
 attribution; it introduces no Community or external asset dependency. Native
 GGUF selection and runtime naming are qualified separately from unchanged
 storage, credential and platform distribution authority.
+
+The Compute model menu maintains Buzz's recommendation/fit reference and a
+source-pinned mesh-llm weight catalog as owned UI data. Their source paths,
+revisions and Apache-2.0 attribution are recorded in `docs/ui-provenance.json`.
+No runtime, build or type import from either checkout is introduced. Advisory
+RAM fit remains separate from measured inference/platform qualification.

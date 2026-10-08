@@ -162,8 +162,8 @@ breadcrumb is rendered in the body below these tabs only while Overview is
 active, immediately above its file content. The breadcrumb has no bottom border,
 is rooted at the current repository and retains directory and selected-file
 navigation. Branches, Commits, Op Log, Agents and Reviews do not render it.
-Overview's file-body region has a compact inset around the file tree and content
-surface. This padding belongs only to Overview and does not change other pages.
+Overview's file-body region has no padding, a top divider and a half-rem top
+margin. This treatment belongs only to Overview and does not change other pages.
 App navigation, Settings and Projects tab strips, repository section headers,
 breadcrumbs and detail Back controls use a compact leading inset of at most
 0.5rem. Section-header outer margins use the same inset; header spacing does not
@@ -183,7 +183,11 @@ overlapping the revision, time or snapshot controls. At phone widths the
 message, verb and revision ID are hidden; author, relative time, commit details
 and snapshot selection remain available in wrapping rows. The table
 column-header row uses a neighboring theme grey distinct from the summary row.
-Root directory views show a GitHub-style README, CODE_OF_CONDUCT, CONTRIBUTING,
+The file-tree sidebar starts collapsed when no valid device layout is saved. An
+explicit saved open/closed preference and width still restore; malformed or
+unavailable layout storage uses the collapsed default. The existing summary and
+selected-file toggles reopen the full file tree without changing selection. Root
+directory views show a GitHub-style README, CODE_OF_CONDUCT, CONTRIBUTING,
 LICENSE/LICENCE and SECURITY preview card only when those files exist in the
 selected fixture snapshot. README is ordered first regardless of API order. The
 tabs use the friendly labels `README`, `Code of conduct`, `Contributing`,

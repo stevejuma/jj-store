@@ -1,5 +1,6 @@
 <script lang="ts">
-  import PanelsTopLeftIcon from "@lucide/svelte/icons/panels-top-left";
+  import FolderRootIcon from "@lucide/svelte/icons/folder-root";
+  import StoreAgentHeaderActions from "../store-agent-execution/StoreAgentHeaderActions.svelte";
   import StoreWorkspacePicker from "./StoreWorkspacePicker.svelte";
   import StoreComparisonParentPicker from "./StoreComparisonParentPicker.svelte";
   import type { StoreController } from "../../controller/contracts.js";
@@ -14,10 +15,16 @@
   aria-label="Workspace section header"
 >
   <div>
-    <PanelsTopLeftIcon aria-hidden="true" />
+    <FolderRootIcon aria-hidden="true" />
     <h1 class="store-application__title">Workspace</h1>
   </div>
   <div class="store-application__section-controls">
+    {#if controller.state.route.page === "agents"}
+      <StoreAgentHeaderActions
+        manager={controller.execution}
+        context={{ repository: controller.state.repository.id }}
+      />
+    {/if}
     {#if controller.state.comparisonParents.length}
       <StoreComparisonParentPicker
         parents={controller.state.comparisonParents}

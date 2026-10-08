@@ -53,7 +53,7 @@ test("file-tree layout restores only a valid versioned width and open state", ()
   ]) {
     storage.setItem(repositoryFileTreeStorageKey, value);
     assert.deepEqual(loadRepositoryFileTreeLayout(storage), {
-      open: true,
+      open: false,
       width: 256,
     });
   }
@@ -105,10 +105,27 @@ test("storage failures fall back without leaking layout errors into rendering", 
 
   assert.equal(resolveLayoutStorage(unavailable), unavailable);
   assert.deepEqual(loadRepositoryFileTreeLayout(unavailable), {
-    open: true,
+    open: false,
     width: 256,
   });
   assert.doesNotThrow(() =>
     saveRepositoryFileTreeLayout(unavailable, { open: false, width: 320 }),
   );
+});
+
+test("new file-tree layouts start collapsed and retain an explicit open preference", () => {
+  const storage = createMemoryLayoutStorage();
+  assert.deepEqual(loadRepositoryFileTreeLayout(undefined), {
+    open: false,
+    width: 256,
+  });
+  assert.deepEqual(loadRepositoryFileTreeLayout(storage), {
+    open: false,
+    width: 256,
+  });
+  saveRepositoryFileTreeLayout(storage, { open: true, width: 312 });
+  assert.deepEqual(loadRepositoryFileTreeLayout(storage), {
+    open: true,
+    width: 312,
+  });
 });

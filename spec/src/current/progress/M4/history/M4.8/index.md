@@ -14,6 +14,7 @@ Generated from evidence task references and historical mappings. This history is
 | [E-UI-026](../../../../../history/2026/09/30/E-UI-026/index.md) | 2026-09-30 | pending | Original outcome |
 | [E-UI-027](../../../../../history/2026/09/30/E-UI-027/index.md) | 2026-09-30 | pending | Original outcome |
 | [E-UI-028](../../../../../history/2026/09/30/E-UI-028/index.md) | 2026-09-30 | pending | Original outcome |
+| [E-COMPUTE-004](../../../../../history/2026/10/08/E-COMPUTE-004/index.md) | 2026-10-08 | pass | Original outcome |
 <!-- generated-navigation -->
 ## Pages
 

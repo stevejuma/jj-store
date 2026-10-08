@@ -40,3 +40,8 @@ shared defaults model selector and service-machine GGUF Browse followed by
 explicit Import. Installation API/type references are regenerated for picker
 capability and optional-path results; the model/credential/pairing boundaries
 and independent M25 platform gates remain explicit.
+
+The guide identifies Compute model size/fit labels as RAM-based estimates,
+retains unknown metadata, and distinguishes draft selection from explicit
+download/start. Source review does not claim GPU-fit or real-model
+qualification.

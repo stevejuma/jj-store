@@ -202,6 +202,7 @@
       ".agent-chat-heading",
     );
     await expect(header).not.toBeNull();
+    await expect(getComputedStyle(header!).borderBottomWidth).toBe("0px");
     await expect(within(header!).getAllByRole("button")).toHaveLength(1);
     await expect(
       within(header!).getByRole("button", { name: /^Close$/ }),
