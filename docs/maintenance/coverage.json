@@ -65,8 +65,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Documented supervised compute helper admission, effective agent configuration, exact receipts and separate repository authority.",
-      "fingerprint": "a8790e2734cd7bed9cd10cb0d8ec982312e362e2d7fed8ce7ba91022b7a1e3c1"
+      "reason": "Reviewed additive fixed native GGUF picker contracts and capability; repository mutations and publication authority unchanged.",
+      "fingerprint": "715baf10610ec0283bcfc3d05e8ade5608380ae4b00cc6f158cd69aed3a169de"
     }
   },
   {
@@ -96,8 +96,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed managed context/output budgets and explicit Advanced environment precedence alongside protected launch configuration.",
-      "fingerprint": "d442ffb2c7274479d3eb4ab068fa6f17a0511a73283679ee312b749ba6949f7d"
+      "reason": "Reviewed jj-agent packaged companion readiness with stable local runner identity and existing launch/receipt semantics.",
+      "fingerprint": "76525accb638eaa39a521613e64ba81b5d1d87456fb18a0036903e7adabba746"
     }
   },
   {
@@ -109,8 +109,8 @@
       "docs/site/getting-started/work.md"
     ],
     "review": {
-      "reason": "Reviewed explicit paired ACP version 3 and paired custom JJ provisioning through fixed internal commands; installed executables remain untouched.",
-      "fingerprint": "bc583a24617aee5fc378db8f95722996223ef417f81f133301d72ebfd5aeac9c"
+      "reason": "Reviewed fixed GGUF native dialog sharing bounded single-flight cancellation/reaping; registered CLI commands and installed tools unchanged.",
+      "fingerprint": "8d118ae6b0f0e6821617fd2f07b92c2d6bdf1095ff09805ff8f24997e01012e2"
     }
   },
   {
@@ -122,8 +122,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Documented admin-only conditional compute and defaults APIs, write-only device secrets and private inference admission.",
-      "fingerprint": "4710d8ddb9670df230c95789c52ba0c27395bb6fb90414b3be216e4babce49f2"
+      "reason": "Documented Admin-only empty-input GGUF draft selection and Compute capability under existing API admission.",
+      "fingerprint": "48cf3a3ca93da48ead722c7e3926d926a5bec498396ddf23303bbd908a83acb1"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Aligned Compute with standard compact Settings sections, divided rows, stacked actions and Models/Resources/Sharing tabs; Advanced uses Lucide while retaining drafts. Runtime and credential contracts unchanged.",
-      "fingerprint": "81147c496c84d84bcc5f4b5939db90b6e7647aec3a129b64da8d709d9139e272"
+      "reason": "Reviewed joined Settings tables, defaults-last headings, shared model catalogs/picker, fixed wrapping Compute actions and syntax-highlighted invitations; draft and recovery semantics retained.",
+      "fingerprint": "a3f2cf0cce1d9452d3e44c65d961d2c78d1500fd3bf0eef2c8ec9438e837f0f2"
     }
   },
   {
@@ -154,8 +154,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Documented additive compute and agent configuration request schemas, setup-aware catalogs and independent operation receipts.",
-      "fingerprint": "f5837033bd802f84e94f93862c0ff959fe067a2b7a95df756e48b0aa7e45c03e"
+      "reason": "Regenerated installation API and type references for native model selection and Compute picker availability.",
+      "fingerprint": "f24eca1af031471de0779d6609c65c4449bbd0b730039f08ca55a3be706fa092"
     }
   },
   {

@@ -36,72 +36,62 @@
   }
 </script>
 
-<div class="store-settings__rows">
-  <Field.Group class="store-settings__editable-rows">
-    {#if section === "service"}
-      {#each serviceFields as field}
-        <Field.Field
-          orientation="responsive"
-          class="store-settings__option-row"
-        >
-          <Field.Content
-            ><Field.Label for={`service-${field.key}`}
-              >{field.label}</Field.Label
-            >
-            <Field.Description
-              >Running: {management.state.value?.effective.service[
-                field.key
-              ].toLocaleString("en-GB")}</Field.Description
-            >
-          </Field.Content>
-          <Input
-            class="store-settings__input"
-            id={`service-${field.key}`}
-            type="number"
-            min={field.min}
-            max={field.max}
-            step="1"
-            required
-            {disabled}
-            value={String(service[field.key])}
-            oninput={(event) =>
-              management.configure("service", {
-                ...copy(service),
-                [field.key]: Number(event.currentTarget.value),
-              })}
-          />
-        </Field.Field>
-      {/each}
-    {:else}
-      {#each [{ key: "bookmarks", label: "Protected bookmarks", help: "One exact bookmark name per line." }, { key: "commits", label: "Protected commits", help: "One full 128-character commit ID per line." }] as field}
-        <Field.Field
-          orientation="responsive"
-          class="store-settings__option-row"
-        >
-          <Field.Content
-            ><Field.Label for={`protection-${field.key}`}
-              >{field.label}</Field.Label
-            >
-            <Field.Description
-              >{field.help} Applies to every native repository on this installation.</Field.Description
-            >
-          </Field.Content>
-          <Textarea
-            class="store-settings__input"
-            id={`protection-${field.key}`}
-            rows={4}
-            maxlength={60000}
-            {disabled}
-            spellcheck={false}
-            value={texts[field.key as "bookmarks" | "commits"]}
-            oninput={(event) =>
-              rules(
-                field.key as "bookmarks" | "commits",
-                event.currentTarget.value,
-              )}
-          />
-        </Field.Field>
-      {/each}
-    {/if}
-  </Field.Group>
-</div>
+<Field.Group class="store-settings__editable-rows">
+  {#if section === "service"}
+    {#each serviceFields as field}
+      <Field.Field orientation="responsive" class="store-settings__option-row">
+        <Field.Content
+          ><Field.Label for={`service-${field.key}`}>{field.label}</Field.Label>
+          <Field.Description
+            >Running: {management.state.value?.effective.service[
+              field.key
+            ].toLocaleString("en-GB")}</Field.Description
+          >
+        </Field.Content>
+        <Input
+          class="store-settings__input"
+          id={`service-${field.key}`}
+          type="number"
+          min={field.min}
+          max={field.max}
+          step="1"
+          required
+          {disabled}
+          value={String(service[field.key])}
+          oninput={(event) =>
+            management.configure("service", {
+              ...copy(service),
+              [field.key]: Number(event.currentTarget.value),
+            })}
+        />
+      </Field.Field>
+    {/each}
+  {:else}
+    {#each [{ key: "bookmarks", label: "Protected bookmarks", help: "One exact bookmark name per line." }, { key: "commits", label: "Protected commits", help: "One full 128-character commit ID per line." }] as field}
+      <Field.Field orientation="responsive" class="store-settings__option-row">
+        <Field.Content
+          ><Field.Label for={`protection-${field.key}`}
+            >{field.label}</Field.Label
+          >
+          <Field.Description
+            >{field.help} Applies to every native repository on this installation.</Field.Description
+          >
+        </Field.Content>
+        <Textarea
+          class="store-settings__input"
+          id={`protection-${field.key}`}
+          rows={4}
+          maxlength={60000}
+          {disabled}
+          spellcheck={false}
+          value={texts[field.key as "bookmarks" | "commits"]}
+          oninput={(event) =>
+            rules(
+              field.key as "bookmarks" | "commits",
+              event.currentTarget.value,
+            )}
+        />
+      </Field.Field>
+    {/each}
+  {/if}
+</Field.Group>

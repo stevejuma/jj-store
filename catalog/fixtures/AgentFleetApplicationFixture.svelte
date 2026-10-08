@@ -20,21 +20,39 @@
     directory = false,
     multipleWorkspaces = false,
     modelFailure = false,
+    catalogSession,
   }: {
     general?: boolean;
     directory?: boolean;
     multipleWorkspaces?: boolean;
     modelFailure?: boolean;
+    catalogSession?: "live" | "remembered";
   } = $props();
   const base = untrack(() =>
     createInMemoryStoreController(directory ? "agents" : "branches"),
   );
   let requests = $state<Record<string, unknown>[]>([]);
-  let status: AgentStatus = {
+  let catalogRequests = $state(0);
+  let status: AgentStatus = untrack(() => ({
     version: 1,
     runtime: "ready",
     revision: 0,
-    sessions: [],
+    sessions: catalogSession
+      ? [
+          fixtureSession({
+            repository: "aa".repeat(16),
+            operation: "11".repeat(64),
+            commit: "22".repeat(20),
+            status: catalogSession === "live" ? "Idle" : "Offline",
+            permission: false,
+            workspacePath: "/device/chat",
+            lastActivityAt: 1,
+            preferences: { model: null, effort: null, mode: null },
+            advertisedModels: true,
+            modeReady: true,
+          }),
+        ]
+      : [],
     runners: fixtureRunners,
     conversations: [],
     live_agents: [],
@@ -53,7 +71,7 @@
       runner: "codex",
       preferences: { model: null, effort: null, mode: "ask" },
     })),
-  };
+  }));
   const events: Record<string, AgentEvent[]> = {};
   const defaults = new AgentSettingsFixture();
   const manager = untrack(
@@ -64,7 +82,8 @@
           const path = String(input);
           const settings = defaults.respond(path, init);
           if (settings) return settings;
-          if (path.includes("/catalog"))
+          if (path.includes("/catalog")) {
+            catalogRequests++;
             return modelFailure
               ? new Response(
                   JSON.stringify({ code: "agent_execution_unavailable" }),
@@ -74,7 +93,9 @@
                   },
                 )
               : json({
-                  runner: "codex",
+                  runner: new URL(path, "http://localhost").searchParams.get(
+                    "runner",
+                  ),
                   facts: {
                     models: {
                       availableModels: [
@@ -89,6 +110,7 @@
                     ],
                   },
                 });
+          }
           if (path.includes("/targets"))
             return json(
               multipleWorkspaces
@@ -228,3 +250,4 @@
 
 <StoreApplication {controller} layoutStorage={storage} initiallyCollapsed />
 <output aria-label="Agent fleet requests">{JSON.stringify(requests)}</output>
+<output aria-label="Model catalog requests">{catalogRequests}</output>

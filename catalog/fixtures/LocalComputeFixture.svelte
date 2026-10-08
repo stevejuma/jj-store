@@ -9,7 +9,12 @@
   let {
     context = false,
     paired = false,
-  }: { context?: boolean; paired?: boolean } = $props();
+    picker = "selected",
+  }: {
+    context?: boolean;
+    paired?: boolean;
+    picker?: "selected" | "cancelled" | "error";
+  } = $props();
   let commands = $state<Record<string, unknown>[]>([]);
   let status: ComputeValue = untrack(() => ({
     hardware: {
@@ -19,6 +24,7 @@
       memory_bytes: 17179869184,
     },
     supported: true,
+    model_file_picker: true,
     state: "off",
     runtime_prepared: false,
     settings: {
@@ -49,6 +55,17 @@
   const client = untrack(
     () =>
       new LocalClient("", async (_input, init) => {
+        if (String(_input).endsWith("/compute/pick")) {
+          if (picker === "error")
+            return Response.json(
+              { code: "model_file_picker_unavailable" },
+              { status: 503 },
+            );
+          return Response.json({
+            version: 1,
+            path: picker === "cancelled" ? null : "/models/My model.gguf",
+          });
+        }
         if (init?.body) {
           const body = JSON.parse(String(init.body));
           commands = [...commands, body];

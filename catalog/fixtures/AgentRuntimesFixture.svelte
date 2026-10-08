@@ -77,6 +77,19 @@
         target_version: null,
         target_cli_version: null,
       },
+      {
+        id: "local",
+        label: "jj-agent",
+        state: "ready",
+        adapter_version: null,
+        cli_version: null,
+        managed: true,
+        action: null,
+        detail: "Bundled ACP agent and coding tools, adapted from buzz-agent.",
+        guide_url: "/help/guides/agent-execution/",
+        target_version: null,
+        target_cli_version: null,
+      },
     ],
   }));
   const management = new AgentRuntimes(() => true, undefined, {

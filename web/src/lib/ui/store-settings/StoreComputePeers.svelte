@@ -4,6 +4,7 @@
   import { Input } from "@lapismd/design-core/shadcn/input";
   import { Textarea } from "@lapismd/design-core/shadcn/textarea";
   import { Switch } from "@lapismd/design-core/shadcn/switch";
+  import { CodeBlock } from "@lapismd/design-core/shadcn/code-block";
   import StoreSettingsDisclosure from "./StoreSettingsDisclosure.svelte";
   import StoreReadOnlyRow from "./StoreReadOnlyRow.svelte";
   import StoreWorkField from "../store-work/StoreWorkField.svelte";
@@ -99,14 +100,17 @@
           <StoreWorkField
             class="store-settings__option-row"
             label="Machine invitation"
-            id={`${id}-own-invite`}
             description="On each machine, add the other machine’s invitation and verify its identity."
           >
-            <Textarea
-              id={`${id}-own-invite`}
-              readonly
-              value={JSON.stringify(status.invitation)}
-              rows={3}
+            <CodeBlock
+              aria-label="Machine invitation"
+              code={JSON.stringify(status.invitation, null, 2)}
+              language="json"
+              title="Machine invitation"
+              size="sm"
+              width="100%"
+              isWrapped
+              maxHeight="16rem"
             />
           </StoreWorkField>
         {/if}

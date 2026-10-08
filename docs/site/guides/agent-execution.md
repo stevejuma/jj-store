@@ -198,23 +198,27 @@ prompt context does not bypass these gates.
 
 ## Compute, defaults and captured context
 
-Settings → Agents places Conversations, Preferences and Agent defaults above
-Agent runtimes. The automatic-mention default seeds conversations which have no
-explicit preference. Advanced in defaults and Add/Edit agent manages ordinary
-values, server environment references, write-only device Keychain secrets and
-explicit unset overrides. Agent values override global environment settings.
-Existing agents retain harness defaults; newly created agents may inherit the
-compatible application preferences. Running workers show pending configuration
-until explicitly restarted. Model catalogs use the saved effective launch
-settings.
+Settings → Agents places Conversations and Preferences above Agent runtimes,
+with Agent defaults last. Defaults use the same searchable harness/model picker
+as Add/Edit agent, including session-advertised and discovered models. The
+automatic-mention default seeds conversations which have no explicit preference.
+Advanced in defaults and Add/Edit agent manages ordinary values, server
+environment references, write-only device Keychain secrets and explicit unset
+overrides. Agent values override global environment settings. Existing agents
+retain harness defaults; newly created agents may inherit the compatible
+application preferences. Running workers show pending configuration until
+explicitly restarted. Model catalogs use the saved effective launch settings.
 
 Settings → Compute manages one explicitly downloaded/imported GGUF model, native
 runtime preparation, loading progress, memory limits and private machine
-pairing. Start uses recorded installed weights and does not download them. Local
-agent provides an ACP model/tool loop through the bundled coding helper. Every
-coding tool requires permission. Local agents may use this machine, a paired
-inference host or an explicitly configured OpenAI compatible endpoint. No
-provider falls back to cloud inference automatically.
+pairing. Browse beside Import GGUF selects a local weights file on the service
+machine when its native file picker is available. Selection fills the draft;
+Import model copies the weights. Manual absolute paths remain available. Start
+uses recorded installed weights and does not download them. Local jj-agent
+provides an ACP model/tool loop through the bundled coding helper. Every coding
+tool requires permission. Local agents may use this machine, a paired inference
+host or an explicitly configured OpenAI compatible endpoint. No provider falls
+back to cloud inference automatically.
 
 Add each machine's invitation to the other and verify both identities. Enable
 Share this machine on the inference host. Pairing grants inference only; files
@@ -223,6 +227,10 @@ closes admitted remote connections while local inference remains available.
 Direct addresses use a persisted UDP port; optional HTTPS transport relays apply
 after Stop compute and restart. Public discovery and default relays are
 disabled.
+
+The bundled Buzz-derived local harness is named jj-agent and uses the jj-store
+app logo. Its runtime shows Ready only when both the agent and coding tools are
+installed.
 
 Desktop distributions bundle ACP, the local agent, coding tools and compute
 helper with checksums verified before launch. Prepare runtime verifies the

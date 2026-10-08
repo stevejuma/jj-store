@@ -10,6 +10,7 @@
     runtimeAgent,
     model,
     onSelect,
+    onHarnessChange,
   }: {
     id: string;
     pending?: boolean;
@@ -17,6 +18,7 @@
     runtimeAgent: string;
     model: string;
     onSelect: (row: EditorModelRow) => void;
+    onHarnessChange?: (runner: string) => void;
   } = $props();
 
   const selected = $derived(
@@ -38,6 +40,7 @@
     {runtimeAgent}
     {model}
     {onSelect}
+    {onHarnessChange}
   />
   {#if selected}
     <Field.Description>Selected model: {selected.name}</Field.Description>

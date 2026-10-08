@@ -1,5 +1,31 @@
 use super::*;
 
+#[tokio::test]
+async fn model_file_selection_preserves_spaces_cancels_and_refuses_other_formats() {
+    let picker = NativePicker::default();
+    let selected = picker
+        .run(
+            fixture("printf '/a folder/model weights.GGUF\\n'"),
+            Duration::from_secs(2),
+        )
+        .await
+        .unwrap();
+    assert_eq!(
+        model_selection(selected).unwrap().path.as_deref(),
+        Some("/a folder/model weights.GGUF")
+    );
+    let cancelled = picker
+        .run(fixture("printf '\\n'"), Duration::from_secs(2))
+        .await
+        .unwrap();
+    assert!(model_selection(cancelled).unwrap().path.is_none());
+    assert_eq!(
+        model_selection(selection(b"/a/model.bin\n").unwrap()).unwrap_err(),
+        PickerError::Invalid
+    );
+    assert!(picker.model_files_supported());
+}
+
 fn fixture(script: &str) -> Command {
     let mut command = Command::new("/bin/sh");
     command.args(["-c", script]);

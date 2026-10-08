@@ -34,4 +34,9 @@ Keychain/operator references, explicit native-runtime and model preparation,
 trusted pairing, inference-only sharing, bundled helper staging and historical
 context inspection. Fixture, real-model and platform distribution evidence must
 remain distinct. Headless identity examples name environment references rather
-than putting a credential in a command, URL, checkout or transcript.
+than putting a credential in a command, URL, checkout or transcript. The guide
+names the bundled harness jj-agent, describes runtime companion readiness, the
+shared defaults model selector and service-machine GGUF Browse followed by
+explicit Import. Installation API/type references are regenerated for picker
+capability and optional-path results; the model/credential/pairing boundaries
+and independent M25 platform gates remain explicit.

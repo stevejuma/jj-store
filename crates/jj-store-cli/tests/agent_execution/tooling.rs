@@ -15,7 +15,50 @@ async fn runtime_receipts_recover_without_execution_or_automatic_install_replay(
             .iter()
             .map(|r| r.id.as_str())
             .collect::<Vec<_>>(),
-        vec!["codex", "cursor"]
+        vec!["codex", "cursor", "local"]
+    );
+    let local = inventory.runtimes.iter().find(|r| r.id == "local").unwrap();
+    assert_eq!(local.label, "jj-agent");
+    assert_eq!(local.state, "bundle_needed");
+    assert!(local.action.is_none());
+    let bin = resources.executable.parent().unwrap();
+    for name in ["jj-store-local-agent", "jj-store-agent-tools"] {
+        fs::write(bin.join(name), "fixture companion").unwrap();
+    }
+    let bundled = supervisor.runtime_status(actor).await.unwrap();
+    assert_eq!(
+        bundled
+            .runtimes
+            .iter()
+            .find(|r| r.id == "local")
+            .unwrap()
+            .state,
+        "ready"
+    );
+    assert_eq!(
+        supervisor
+            .status(actor)
+            .await
+            .unwrap()
+            .runners
+            .iter()
+            .find(|r| r.id == "local")
+            .unwrap()
+            .label,
+        "jj-agent"
+    );
+    fs::remove_file(bin.join("jj-store-agent-tools")).unwrap();
+    assert_eq!(
+        supervisor
+            .runtime_status(actor)
+            .await
+            .unwrap()
+            .runtimes
+            .iter()
+            .find(|r| r.id == "local")
+            .unwrap()
+            .state,
+        "bundle_needed"
     );
     assert!(inventory.pending.is_none());
     assert!(matches!(

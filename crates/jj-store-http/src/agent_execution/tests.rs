@@ -9,6 +9,22 @@ struct Manager {
 }
 #[async_trait::async_trait]
 impl agents::Manager for Manager {
+    async fn compute_status(&self, _: m::PrincipalId) -> agents::Result<agents::compute::Status> {
+        Ok(agents::compute::Status {
+            hardware: serde_json::json!({}),
+            supported: true,
+            model_file_picker: false,
+            state: "off".into(),
+            settings: Default::default(),
+            models: vec![],
+            runtime_prepared: false,
+            invitation: None,
+            identity: None,
+            progress: None,
+            error: None,
+            operation: None,
+        })
+    }
     async fn catalog(
         &self,
         actor: m::PrincipalId,
@@ -286,6 +302,13 @@ async fn feedback_is_read_only_local_admin_and_rejects_unbound_queries() {
     }
 }
 fn api(root: &std::path::Path, access: Access) -> HttpApi {
+    api_with_picker(root, access, None)
+}
+fn api_with_picker(
+    root: &std::path::Path,
+    access: Access,
+    picker: Option<Arc<dyn jj_store_service::local_management::FolderPicker>>,
+) -> HttpApi {
     let (changes, _) = tokio::sync::broadcast::channel(32);
     HttpApi::with_search(
         None,
@@ -293,6 +316,7 @@ fn api(root: &std::path::Path, access: Access) -> HttpApi {
         Config {
             access,
             local_agents: Some(Arc::new(Manager { changes })),
+            local_folder_picker: picker,
             event_concurrency: 1,
             ..Default::default()
         },
@@ -517,4 +541,138 @@ async fn model_catalog_is_typed_local_admin_discovery() {
             StatusCode::BAD_REQUEST
         );
     }
+}
+
+struct ModelPicker(std::sync::atomic::AtomicUsize);
+#[async_trait::async_trait]
+impl jj_store_service::local_management::FolderPicker for ModelPicker {
+    async fn pick(
+        &self,
+    ) -> std::result::Result<
+        jj_store_service::local_management::FolderSelection,
+        jj_store_service::local_management::PickerError,
+    > {
+        panic!("model selection must not open the folder dialog")
+    }
+    fn model_files_supported(&self) -> bool {
+        true
+    }
+    async fn pick_model_file(
+        &self,
+    ) -> std::result::Result<
+        jj_store_service::local_management::ModelFileSelection,
+        jj_store_service::local_management::PickerError,
+    > {
+        use jj_store_service::local_management::{ModelFileSelection, PickerError};
+        match self.0.fetch_add(1, std::sync::atomic::Ordering::SeqCst) {
+            0 => Ok(ModelFileSelection {
+                version: 1,
+                path: Some("/models/My weights.gguf".into()),
+            }),
+            1 => Ok(ModelFileSelection {
+                version: 1,
+                path: None,
+            }),
+            2 => Err(PickerError::Busy),
+            3 => Err(PickerError::Timeout),
+            4 => Err(PickerError::Invalid),
+            _ => Err(PickerError::Unavailable),
+        }
+    }
+}
+#[tokio::test]
+async fn model_file_picker_requires_local_admin_and_fixed_inputs_without_importing() {
+    let root = tempfile::tempdir().unwrap();
+    let picker = Arc::new(ModelPicker(std::sync::atomic::AtomicUsize::new(0)));
+    let admin = Access::LocalTrusted {
+        principal: m::PrincipalId::new([1; 16]),
+        permission: Permission::Admin,
+    };
+    for access in [
+        Access::Authenticated,
+        Access::LocalTrusted {
+            principal: m::PrincipalId::new([1; 16]),
+            permission: Permission::Read,
+        },
+    ] {
+        let response = api_with_picker(root.path(), access, Some(picker.clone()))
+            .router()
+            .oneshot(request(
+                "/v1/local/compute/pick",
+                Some(serde_json::json!({})),
+            ))
+            .await
+            .unwrap();
+        assert_eq!(response.status(), StatusCode::FORBIDDEN);
+    }
+    let app = api_with_picker(root.path(), admin.clone(), Some(picker.clone()));
+    for path in [
+        "/v1/local/compute/pick?filter=anything",
+        "/v1/local/compute/pick",
+    ] {
+        let body = if path.contains('?') {
+            serde_json::json!({})
+        } else {
+            serde_json::json!({"script":"untrusted"})
+        };
+        let response = app
+            .router()
+            .oneshot(request(path, Some(body)))
+            .await
+            .unwrap();
+        assert_eq!(response.status(), StatusCode::BAD_REQUEST);
+    }
+    assert_eq!(picker.0.load(std::sync::atomic::Ordering::SeqCst), 0);
+    let response = app
+        .router()
+        .oneshot(request("/v1/local/compute", None))
+        .await
+        .unwrap();
+    let status: serde_json::Value =
+        serde_json::from_slice(&to_bytes(response.into_body(), 4096).await.unwrap()).unwrap();
+    assert_eq!(status["model_file_picker"], true);
+    for (expected, code) in [
+        (StatusCode::OK, None),
+        (StatusCode::OK, None),
+        (StatusCode::CONFLICT, Some("model_file_picker_busy")),
+        (
+            StatusCode::REQUEST_TIMEOUT,
+            Some("model_file_picker_timeout"),
+        ),
+        (
+            StatusCode::BAD_GATEWAY,
+            Some("model_file_picker_invalid_output"),
+        ),
+        (
+            StatusCode::SERVICE_UNAVAILABLE,
+            Some("model_file_picker_unavailable"),
+        ),
+    ] {
+        let response = app
+            .router()
+            .oneshot(request(
+                "/v1/local/compute/pick",
+                Some(serde_json::json!({})),
+            ))
+            .await
+            .unwrap();
+        assert_eq!(response.status(), expected);
+        let value: serde_json::Value =
+            serde_json::from_slice(&to_bytes(response.into_body(), 4096).await.unwrap()).unwrap();
+        if let Some(code) = code {
+            assert_eq!(value["code"], code);
+        } else {
+            assert_eq!(value["version"], 1);
+            assert!(value["path"].is_null() || value["path"] == "/models/My weights.gguf");
+        }
+    }
+    let unavailable = api(root.path(), admin)
+        .router()
+        .oneshot(request(
+            "/v1/local/compute/pick",
+            Some(serde_json::json!({})),
+        ))
+        .await
+        .unwrap();
+    assert_eq!(unavailable.status(), StatusCode::SERVICE_UNAVAILABLE);
 }

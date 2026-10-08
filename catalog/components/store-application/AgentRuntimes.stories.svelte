@@ -48,6 +48,23 @@
 </script>
 
 <Story
+  name="Bundled jj-agent uses app artwork without an installer"
+  args={{ scenario: "ready" }}
+  play={async ({ canvasElement }) => {
+    const c = await open(canvasElement);
+    const label = c.getByText("jj-agent", { exact: true });
+    const row = label.closest<HTMLElement>('[data-slot="field"]')!;
+    await expect(
+      row.querySelector('img[src="/agent-icons/jj-store.svg"]'),
+    ).not.toBeNull();
+    await expect(within(row).getByText("Ready", { exact: true })).toBeVisible();
+    await expect(
+      within(row).queryByRole("button", { name: /Install|Update/ }),
+    ).toBeNull();
+  }}
+/>
+
+<Story
   name="Install is explicit and retains settings navigation"
   play={async ({ canvasElement }) => {
     const c = await open(canvasElement);
@@ -130,7 +147,7 @@
     await userEvent.click(
       c.getByRole("button", { name: "Fail runtime checks" }),
     );
-    await waitFor(() => expect(c.getAllByText("Unknown")).toHaveLength(2));
+    await waitFor(() => expect(c.getAllByText("Unknown")).toHaveLength(3));
     await expect(c.getByText("Codex")).toBeVisible();
     await expect(
       c.getByLabelText("Installation command count"),
@@ -138,7 +155,7 @@
     await userEvent.click(
       c.getByRole("button", { name: "Recover runtime checks" }),
     );
-    await waitFor(() => expect(c.getAllByText("Ready")).toHaveLength(2));
+    await waitFor(() => expect(c.getAllByText("Ready")).toHaveLength(3));
   }}
 />
 <Story

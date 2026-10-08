@@ -13,7 +13,7 @@ impl Supervisor {
         let executable =
             self.companion("jj-store-local-agent", "JJ_STORE_LOCAL_AGENT_EXECUTABLE")?;
         let catalog = self.0.resources.root.join("local-runner.json");
-        let value = json!({"runners":[{"id":"local","label":"Local agent","command":executable,"args":[],"env":{}}]});
+        let value = json!({"runners":[{"id":"local","label":"jj-agent","command":executable,"args":[],"env":{}}]});
         private_json(&catalog, &value)?;
         command.arg("--catalog").arg(catalog);
         command.env("BUZZ_AGENT_PROVIDER","openai").env("BUZZ_AGENT_REQUIRE_REPLY","0").env("OPENAI_COMPAT_API","chat")

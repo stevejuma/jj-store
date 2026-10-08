@@ -12,6 +12,9 @@ export class AgentCompute {
   pending = $state<Record<string, unknown> | null>(null);
   busy = $state(false);
   error = $state("");
+  modelPicking = $state(false);
+  modelPickerError = $state("");
+  #picker?: AbortController;
   #timer?: ReturnType<typeof setTimeout>;
   #active = false;
   constructor(readonly client: LocalClient) {}
@@ -21,7 +24,54 @@ export class AgentCompute {
   }
   stop() {
     this.#active = false;
+    this.#picker?.abort();
+    this.#picker = undefined;
+    this.modelPicking = false;
     clearTimeout(this.#timer);
+  }
+  async pickModelFile() {
+    if (
+      !this.#active ||
+      !this.value?.model_file_picker ||
+      this.modelPicking ||
+      this.busy ||
+      this.pending ||
+      this.value.state === "serving"
+    )
+      return null;
+    const request = new AbortController();
+    this.#picker = request;
+    this.modelPicking = true;
+    this.modelPickerError = "";
+    try {
+      const selected = await this.client.request<Model<"ModelFileSelection">>(
+        "compute/pick",
+        {},
+        request.signal,
+      );
+      if (request.signal.aborted || this.#picker !== request) return null;
+      if (
+        selected.version !== 1 ||
+        (selected.path !== null &&
+          (typeof selected.path !== "string" ||
+            !selected.path.startsWith("/") ||
+            selected.path.includes("\0") ||
+            new TextEncoder().encode(selected.path).length > 4096 ||
+            !selected.path.toLowerCase().endsWith(".gguf")))
+      )
+        throw new Error("Invalid model path");
+      return selected.path;
+    } catch {
+      if (!request.signal.aborted && this.#picker === request)
+        this.modelPickerError =
+          "Could not open the model file picker. Enter an absolute GGUF path or try Browse again.";
+      return null;
+    } finally {
+      if (this.#picker === request) {
+        this.#picker = undefined;
+        this.modelPicking = false;
+      }
+    }
   }
   async refresh() {
     try {

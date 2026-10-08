@@ -9,6 +9,7 @@
   import CommunityChatComposer from "../community-chat-composer/CommunityChatComposer.svelte";
   import CommunityAgentEditorModelField from "./CommunityAgentEditorModelField.svelte";
   import CommunityAgentEditorThinkingField from "./CommunityAgentEditorThinkingField.svelte";
+  import CommunityAgentEditorSavedPreferences from "./CommunityAgentEditorSavedPreferences.svelte";
   import CommunityAgentEditorModeField from "./CommunityAgentEditorModeField.svelte";
   import { avatarPreview } from "../community-avatar-picker/legacy-avatar.js";
   import StoreAgentAdvanced from "../store-agent-execution/StoreAgentAdvanced.svelte";
@@ -33,6 +34,7 @@
     thinking,
     modes,
     onModel,
+    onHarnessChange,
     onSave,
   }: {
     open?: boolean;
@@ -52,6 +54,7 @@
     thinking: readonly { value: string; name: string }[];
     modes: readonly { value: string; name: string }[];
     onModel: (row: EditorModelRow) => void;
+    onHarnessChange?: (runner: string) => void;
     onSave: (event: SubmitEvent) => Promise<void>;
   } = $props();
   const editorId = $props.id();
@@ -175,6 +178,7 @@
               runtimeAgent={draft.runner}
               model={draft.preferences.model ?? ""}
               onSelect={onModel}
+              {onHarnessChange}
             />
             {#if thinking.length}
               <CommunityAgentEditorThinkingField
@@ -208,22 +212,9 @@
               prompt.</Field.Description
             >
           {/if}
-          {#if draft.preferences.model || draft.preferences.effort || draft.preferences.mode}
-            <dl class="agent-editor__runtime-defaults">
-              {#each Object.entries(draft.preferences) as [name, value] (name)}
-                <div>
-                  <dt>
-                    {name === "effort"
-                      ? "Thinking"
-                      : name === "mode"
-                        ? "Execution mode"
-                        : "Model"}
-                  </dt>
-                  <dd>{value || "Harness default"}</dd>
-                </div>
-              {/each}
-            </dl>
-          {/if}
+          <CommunityAgentEditorSavedPreferences
+            preferences={draft.preferences}
+          />
         </div>
         <StoreAgentAdvanced
           bind:draft

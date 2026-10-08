@@ -15,6 +15,7 @@
     runtimeAgent,
     model,
     onSelect,
+    onHarnessChange,
   }: {
     id: string;
     pending?: boolean;
@@ -22,6 +23,7 @@
     runtimeAgent: string;
     model: string;
     onSelect: (row: EditorModelRow) => void;
+    onHarnessChange?: (runner: string) => void;
   } = $props();
 
   let chosenTab = $state("");
@@ -49,7 +51,10 @@
         label="Harness"
         {tabs}
         value={harnessTab}
-        onValueChange={(next) => (chosenTab = next)}
+        onValueChange={(next) => {
+          chosenTab = next;
+          onHarnessChange?.(next);
+        }}
       >
         {#snippet start({ tab })}
           <CommunityAgentEditorHarnessIcon runtimeAgent={tab.id} />

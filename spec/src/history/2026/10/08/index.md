@@ -5,3 +5,4 @@ Browse the child pages below.
 ## Pages
 
 - [E-COMPUTE-002](E-COMPUTE-002/index.md)
+- [E-COMPUTE-003](E-COMPUTE-003/index.md)

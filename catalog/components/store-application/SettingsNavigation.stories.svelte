@@ -23,6 +23,41 @@
 </script>
 
 <Story
+  name="Consistent title and body spacing across Settings pages"
+  play={async ({ canvasElement }) => {
+    await openSettings(canvasElement);
+    const c = within(canvasElement);
+    const sections = within(
+      c.getByRole("navigation", { name: "Settings navigation" }),
+    );
+    for (const name of [
+      "Appearance",
+      "Local service",
+      "Agents",
+      "Compute",
+      "Repository",
+      "Search",
+      "Storage",
+      "Sync",
+    ]) {
+      await userEvent.click(sections.getByRole("button", { name }));
+      const title = c.getByRole("heading", { name, level: 1 });
+      const content = canvasElement.querySelector(".store-settings")!;
+      await expect(getComputedStyle(content).paddingTop).toBe("16px");
+      const navigation = c.getByRole("navigation", {
+        name: "Settings page navigation",
+      });
+      const firstTab = within(navigation).queryAllByRole("tab")[0];
+      if (firstTab)
+        await expect(
+          firstTab.getBoundingClientRect().left -
+            title.getBoundingClientRect().right,
+        ).toBeGreaterThanOrEqual(20);
+    }
+  }}
+/>
+
+<Story
   name="Repository context"
   play={async ({ canvasElement }) => {
     await openSettings(canvasElement);
@@ -86,7 +121,7 @@
       ).toHaveTextContent("Refresh status"),
     );
     const content = canvasElement.querySelector(".store-settings")!;
-    await expect(getComputedStyle(content).paddingTop).toBe("0px");
+    await expect(getComputedStyle(content).paddingTop).toBe("16px");
   }}
 />
 
@@ -106,7 +141,11 @@
     await expect(
       theme.getBoundingClientRect().top -
         navigation.getBoundingClientRect().bottom,
-    ).toBeLessThan(8);
+    ).toBeGreaterThanOrEqual(16);
+    await expect(
+      theme.getBoundingClientRect().top -
+        navigation.getBoundingClientRect().bottom,
+    ).toBeLessThan(24);
   }}
 />
 
@@ -125,6 +164,11 @@
     await expect(
       c.queryByRole("combobox", { name: "Settings repository" }),
     ).toBeNull();
+    await expect(c.getByRole("tab", { name: "Runtimes" })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    await userEvent.click(c.getByRole("tab", { name: "Capture" }));
     await expect(
       c.getByText("Capture management is not available for this connection."),
     ).toBeVisible();

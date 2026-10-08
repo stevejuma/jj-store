@@ -47,7 +47,7 @@
   }
 </script>
 
-<dl class="store-settings__rows">
+<dl class="store-settings__summary-rows">
   <div>
     <dt>Repository</dt>
     <dd>
@@ -65,85 +65,77 @@
   </div>
 </dl>
 {#if entry}
-  <div class="store-settings__rows">
-    <Field.Group class="store-settings__editable-rows">
-      {#each [{ key: "upstream", label: "Upstream origin", help: "HTTPS origin, including a port if needed." }, { key: "token_environment", label: "Token environment variable", help: "A unique JJ_STORE_REPLICATION_TOKEN_ name; never paste a token." }, { key: "ca_certificate", label: "CA certificate path", help: "Optional absolute path to a custom CA certificate." }] as field}
-        <Field.Field
-          orientation="responsive"
-          class="store-settings__option-row"
-        >
-          <Field.Content
-            ><Field.Label for={`sync-${field.key}`}>{field.label}</Field.Label
-            ><Field.Description>{field.help}</Field.Description></Field.Content
-          >
-          <Input
-            class="store-settings__input"
-            id={`sync-${field.key}`}
-            disabled={blocked}
-            value={entry[
-              field.key as "upstream" | "token_environment" | "ca_certificate"
-            ] ?? ""}
-            oninput={(event) =>
-              update({
-                [field.key]:
-                  event.currentTarget.value ||
-                  (field.key === "ca_certificate" ? null : ""),
-              })}
-          />
-        </Field.Field>
-      {/each}
-      <Field.Field orientation="horizontal" class="store-settings__option-row">
+  <Field.Group class="store-settings__editable-rows">
+    {#each [{ key: "upstream", label: "Upstream origin", help: "HTTPS origin, including a port if needed." }, { key: "token_environment", label: "Token environment variable", help: "A unique JJ_STORE_REPLICATION_TOKEN_ name; never paste a token." }, { key: "ca_certificate", label: "CA certificate path", help: "Optional absolute path to a custom CA certificate." }] as field}
+      <Field.Field orientation="responsive" class="store-settings__option-row">
         <Field.Content
-          ><Field.Label for="sync-insecure">Allow loopback HTTP</Field.Label
-          ><Field.Description
-            >Only literal loopback addresses may use HTTP.</Field.Description
-          ></Field.Content
+          ><Field.Label for={`sync-${field.key}`}>{field.label}</Field.Label
+          ><Field.Description>{field.help}</Field.Description></Field.Content
         >
-        <Switch
-          id="sync-insecure"
-          checked={entry.insecure_loopback}
+        <Input
+          class="store-settings__input"
+          id={`sync-${field.key}`}
           disabled={blocked}
-          onCheckedChange={(insecure_loopback) => update({ insecure_loopback })}
+          value={entry[
+            field.key as "upstream" | "token_environment" | "ca_certificate"
+          ] ?? ""}
+          oninput={(event) =>
+            update({
+              [field.key]:
+                event.currentTarget.value ||
+                (field.key === "ca_certificate" ? null : ""),
+            })}
         />
       </Field.Field>
-      {#each syncFields as field}
-        <Field.Field
-          orientation="responsive"
-          class="store-settings__option-row"
-        >
-          <Field.Content
-            ><Field.Label for={`sync-${field.key}`}>{field.label}</Field.Label>
-            <Field.Description
-              >Running: {management.state.value?.effective.sync
-                .find((e) => e.repository === repository)
-                ?.limits[field.key].toLocaleString("en-GB") ??
-                "No running upstream"}</Field.Description
-            >
-          </Field.Content>
-          <Input
-            class="store-settings__input"
-            id={`sync-${field.key}`}
-            type="number"
-            min={field.min}
-            max={field.max}
-            step="1"
-            required
-            disabled={blocked}
-            value={String(entry.limits[field.key])}
-            oninput={(event) =>
-              update({
-                limits: {
-                  ...copy(entry.limits),
-                  [field.key]: Number(event.currentTarget.value),
-                },
-              })}
-          />
-        </Field.Field>
-      {/each}
-    </Field.Group>
-  </div>
+    {/each}
+    <Field.Field orientation="horizontal" class="store-settings__option-row">
+      <Field.Content
+        ><Field.Label for="sync-insecure">Allow loopback HTTP</Field.Label
+        ><Field.Description
+          >Only literal loopback addresses may use HTTP.</Field.Description
+        ></Field.Content
+      >
+      <Switch
+        id="sync-insecure"
+        checked={entry.insecure_loopback}
+        disabled={blocked}
+        onCheckedChange={(insecure_loopback) => update({ insecure_loopback })}
+      />
+    </Field.Field>
+    {#each syncFields as field}
+      <Field.Field orientation="responsive" class="store-settings__option-row">
+        <Field.Content
+          ><Field.Label for={`sync-${field.key}`}>{field.label}</Field.Label>
+          <Field.Description
+            >Running: {management.state.value?.effective.sync
+              .find((e) => e.repository === repository)
+              ?.limits[field.key].toLocaleString("en-GB") ??
+              "No running upstream"}</Field.Description
+          >
+        </Field.Content>
+        <Input
+          class="store-settings__input"
+          id={`sync-${field.key}`}
+          type="number"
+          min={field.min}
+          max={field.max}
+          step="1"
+          required
+          disabled={blocked}
+          value={String(entry.limits[field.key])}
+          oninput={(event) =>
+            update({
+              limits: {
+                ...copy(entry.limits),
+                [field.key]: Number(event.currentTarget.value),
+              },
+            })}
+        />
+      </Field.Field>
+    {/each}
+  </Field.Group>
 {/if}
-<div class="store-settings__action-row">
+<div class="store-settings__action-row store-settings__action-row--joined">
   <div>
     <strong>{entry ? "Remove upstream" : "Configure an upstream"}</strong>
     <p>Saved changes apply at the next startup. Saving contacts no peer.</p>

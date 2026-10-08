@@ -42,8 +42,8 @@
 
 .store-settings__rows
   > div:not([data-slot="field-group"]):not(.store-readonly-row):not(
-    .store-capture-harness
-  ),
+    .store-settings__action-row--joined
+  ):not(.store-capture-harness),
 .store-settings__summary-rows > div {
   display: grid;
   min-width: 0;
@@ -130,10 +130,36 @@
 .store-settings__action-row > .store-settings__actions {
   max-width: 55%;
 }
+
+.store-settings__rows > .store-settings__action-row--joined {
+  border: 0;
+  border-block-start: 1px solid var(--border);
+  border-radius: 0;
+}
+
+.store-settings__action-row--full-width {
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.store-settings__action-row--full-width > .store-settings__actions {
+  width: 100%;
+  max-width: none;
+}
+.store-settings__actions--wrapping {
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+.store-settings__actions--wrapping > button {
+  flex: 0 0 10rem;
+  max-width: 100%;
+}
 .store-settings__summary-rows {
   margin: 0;
 }
 .store-settings__summary-rows + .store-settings__editable-rows,
+.store-settings__summary-rows + .store-settings__summary-rows,
 .store-settings__editable-rows > [data-slot="field"] + [data-slot="field"] {
   border-block-start: 1px solid var(--border);
 }
@@ -168,8 +194,8 @@
 @media (max-width: 40rem) {
   .store-settings__rows
     > div:not([data-slot="field-group"]):not(.store-readonly-row):not(
-      .store-capture-harness
-    ),
+      .store-settings__action-row--joined
+    ):not(.store-capture-harness),
   .store-settings__summary-rows > div {
     grid-template-columns: minmax(0, 1fr);
     gap: 0.3rem;

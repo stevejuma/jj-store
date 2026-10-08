@@ -5,7 +5,7 @@
   import type { EditorModelRow } from "../../community/agent-editor-model-rows.js";
   import { runtimeChoices } from "./presentation.js";
   import { waitForRuntime } from "./runtime-preparation.js";
-  import { harnessCatalog } from "./harness-catalog.js";
+  import { harnessCatalog, harnessModelRows } from "./harness-catalog.js";
   import type { AgentExecution } from "../../controller/agent-execution.svelte.js";
   import type {
     AgentSetup,
@@ -98,46 +98,14 @@
       runtimeChoices(facts, "thought_level").length,
   );
   const modelRows = $derived(
-    (manager.value?.runners ?? []).flatMap((runner) => {
-      const { facts } = harnessCatalog(
-        manager.value?.sessions ?? [],
-        runner.id,
-        manager.catalogs.values[
-          runner.id === draft.runner ? catalogKey : runner.id
-        ]?.facts,
-      );
-      const options = runtimeChoices(facts, "model");
-      return [
-        {
-          runtimeAgent: runner.id,
-          harnessLabel: runner.label,
-          model: "",
-          name: "Harness default",
-          keywords: [runner.id],
-        },
-        ...options.map((option) => ({
-          runtimeAgent: runner.id,
-          harnessLabel: runner.label,
-          model: option.id,
-          name: option.name,
-          keywords: [option.id],
-        })),
-        ...(runner.id === draft.runner &&
-        draft.preferences.model &&
-        !options.some((o) => o.id === draft.preferences.model)
-          ? [
-              {
-                runtimeAgent: runner.id,
-                harnessLabel: runner.label,
-                model: draft.preferences.model,
-                name: `${draft.preferences.model} (saved preference)`,
-                disabled: true,
-                keywords: [draft.preferences.model],
-              },
-            ]
-          : []),
-      ];
-    }),
+    harnessModelRows(
+      manager.value,
+      (runner) =>
+        manager.catalogs.values[runner === draft.runner ? catalogKey : runner]
+          ?.facts,
+      draft.runner,
+      draft.preferences.model,
+    ),
   );
   function selectModel(row: EditorModelRow) {
     if (row.runtimeAgent !== draft.runner)
@@ -253,6 +221,17 @@
   {thinking}
   {modes}
   onModel={selectModel}
+  onHarnessChange={(runner) => {
+    if (
+      manager.value?.runtime === "ready" &&
+      manager.value.runners.some((r) => r.id === runner && r.available)
+    )
+      void manager.catalogs.load(
+        runner,
+        false,
+        runner === draft.runner ? catalogAgent : undefined,
+      );
+  }}
   onSave={save}
   modelsLoading={manager.catalogs.loading[catalogKey]}
   onRetryModels={manager.catalogs.errors[catalogKey]

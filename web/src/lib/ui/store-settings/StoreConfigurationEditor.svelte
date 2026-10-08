@@ -38,12 +38,14 @@
 </script>
 
 <section class="store-settings__section" aria-labelledby={`config-${section}`}>
-  <header>
-    <h2 id={`config-${section}`}>{title}</h2>
-    <p>
-      Local administrator settings. Changes apply after server restart; in the
-      desktop app, Quit and reopen.
-    </p>
+  <header class="store-settings__section-heading">
+    <div>
+      <h2 id={`config-${section}`}>{title}</h2>
+      <p>
+        Local administrator settings. Changes apply after server restart; in the
+        desktop app, Quit and reopen.
+      </p>
+    </div>
   </header>
   {#if !management?.available()}<p>
       Configuration editing requires a local service with administrator access.
@@ -65,62 +67,67 @@
       message={edit?.message}
     />
     {#if edit?.draft}
-      <dl class="store-settings__rows">
-        <div>
-          <dt>Saved and running</dt>
-          <dd>
-            <span role="status">
-              {pending
-                ? "Saved changes need a server restart."
-                : "Saved settings match the running configuration."}
-            </span>
-          </dd>
-        </div>
-      </dl>
       <form
         onsubmit={(event) => {
           event.preventDefault();
           void management.save(section);
         }}
       >
-        {#if section === "sync"}<StoreSyncConfiguration
-            {management}
-            {repository}
-            {repositoryName}
-          />{:else}<StoreConfigurationFields {management} {section} />{/if}
-        {#if edit.validation}<p role="alert">{edit.validation}</p>{/if}
-        {#if edit.conflict}<p role="status">
-            The saved file changed while you were editing. Your draft is
-            retained. Review the latest saved values before replacing the draft.
-          </p>{/if}
-        {#if edit.unknown}<p role="status">
-            The save response was not confirmed. Refresh to inspect the saved
-            configuration before another save.
-          </p>{/if}
-        <div class="store-settings__action-row">
-          <div>
-            <strong>Save configuration</strong>
-            <p>Current workers keep their running settings until restart.</p>
-          </div>
-          <div class="store-settings__actions">
-            <Button
-              type="submit"
-              disabled={busy ||
-                !edit.dirty ||
-                edit.conflict ||
-                Boolean(edit.unknown)}>Save settings</Button
-            >
-            <Button
-              type="button"
-              variant="outline"
-              disabled={busy ||
-                !edit.dirty ||
-                (Boolean(edit.unknown) && !edit.unknownObserved)}
-              onclick={() => management.cancel(section)}
-              >{edit.conflict || edit.unknown
-                ? "Use latest saved settings"
-                : "Cancel changes"}</Button
-            >
+        <div class="store-settings__rows">
+          <dl class="store-settings__summary-rows">
+            <div>
+              <dt>Saved and running</dt>
+              <dd>
+                <span role="status">
+                  {pending
+                    ? "Saved changes need a server restart."
+                    : "Saved settings match the running configuration."}
+                </span>
+              </dd>
+            </div>
+          </dl>
+          {#if section === "sync"}<StoreSyncConfiguration
+              {management}
+              {repository}
+              {repositoryName}
+            />{:else}<StoreConfigurationFields {management} {section} />{/if}
+          {#if edit.validation}<p role="alert">{edit.validation}</p>{/if}
+          {#if edit.conflict}<p role="status">
+              The saved file changed while you were editing. Your draft is
+              retained. Review the latest saved values before replacing the
+              draft.
+            </p>{/if}
+          {#if edit.unknown}<p role="status">
+              The save response was not confirmed. Refresh to inspect the saved
+              configuration before another save.
+            </p>{/if}
+          <div
+            class="store-settings__action-row store-settings__action-row--joined"
+          >
+            <div>
+              <strong>Save configuration</strong>
+              <p>Current workers keep their running settings until restart.</p>
+            </div>
+            <div class="store-settings__actions">
+              <Button
+                type="submit"
+                disabled={busy ||
+                  !edit.dirty ||
+                  edit.conflict ||
+                  Boolean(edit.unknown)}>Save settings</Button
+              >
+              <Button
+                type="button"
+                variant="outline"
+                disabled={busy ||
+                  !edit.dirty ||
+                  (Boolean(edit.unknown) && !edit.unknownObserved)}
+                onclick={() => management.cancel(section)}
+                >{edit.conflict || edit.unknown
+                  ? "Use latest saved settings"
+                  : "Cancel changes"}</Button
+              >
+            </div>
           </div>
         </div>
       </form>

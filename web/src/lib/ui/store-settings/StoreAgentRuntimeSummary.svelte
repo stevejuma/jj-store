@@ -9,6 +9,7 @@
     $props();
   const labels: Record<string, string> = {
     ready: "Ready",
+    bundle_needed: "Bundle needed",
     cli_missing: "CLI needed",
     adapter_needed: "Adapter needed",
     update_available: "Update available",
@@ -26,7 +27,10 @@
       handle: runtime.id,
       initials: runtime.label.slice(0, 2),
       kind: "agent",
-      avatarUrl: agentAvatarUrl(runtime.id === "cursor" ? "cursor" : "codex"),
+      avatarUrl:
+        runtime.id === "local"
+          ? "/agent-icons/jj-store.svg"
+          : agentAvatarUrl(runtime.id === "cursor" ? "cursor" : "codex"),
     }}
     size="small"
     decorative

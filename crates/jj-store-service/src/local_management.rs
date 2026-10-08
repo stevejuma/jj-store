@@ -13,6 +13,13 @@ pub struct FolderSelection {
     pub path: Option<String>,
 }
 
+#[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+pub struct ModelFileSelection {
+    pub version: u32,
+    pub path: Option<String>,
+}
+
 #[derive(Clone, Copy, Debug, PartialEq, Eq, thiserror::Error)]
 pub enum PickerError {
     #[error("folder picker is unavailable")]
@@ -29,6 +36,13 @@ pub enum PickerError {
 pub trait FolderPicker: Send + Sync {
     /// Explicit OS interaction only; selection never saves or verifies a link.
     async fn pick(&self) -> Result<FolderSelection, PickerError>;
+    fn model_files_supported(&self) -> bool {
+        false
+    }
+    /// Fixed GGUF dialog only; selection is a draft, never an import command.
+    async fn pick_model_file(&self) -> Result<ModelFileSelection, PickerError> {
+        Err(PickerError::Unavailable)
+    }
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]

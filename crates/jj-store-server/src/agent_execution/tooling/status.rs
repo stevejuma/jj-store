@@ -93,6 +93,10 @@ impl Supervisor {
             Some(ref p) => paths::probe(p, &paths).await,
             None => None,
         };
+        let local_ready = self
+            .runners()?
+            .iter()
+            .any(|r| r.id == "local" && r.available);
         Ok(dto::Status {
             version:1, node_version, npm_available, install_supported:supported && prerequisites && !live && pending.is_none(),
             install_unavailable: if !supported { Some("Managed installation is available on macOS and Linux.".into()) }
@@ -108,6 +112,11 @@ impl Supervisor {
                 adapter_version:None,cli_version:cursor_version,managed:false,action:None,
                 detail:"Cursor supplies its own ACP runtime. Install or update using Cursor's guide, then run cursor-agent login.".into(),
                 guide_url:"https://cursor.com/docs/cli/installation".into(),target_version:None,target_cli_version:None,
+            },dto::Runtime {
+                id:"local".into(),label:"jj-agent".into(),state:if local_ready {"ready"} else {"bundle_needed"}.into(),
+                adapter_version:None,cli_version:None,managed:true,action:None,
+                detail:if local_ready {"Bundled ACP agent and coding tools, adapted from buzz-agent. Choose a local model, paired compute or an OpenAI compatible provider."} else {"The bundled ACP agent or coding-tool helper is missing. Use a complete jj-store distribution or configure the trusted companion executable paths."}.into(),
+                guide_url:"/help/guides/agent-execution/".into(),target_version:None,target_cli_version:None,
             }],
         })
     }

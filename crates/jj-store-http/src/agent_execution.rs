@@ -34,6 +34,7 @@ macro_rules! endpoints {
     ($register:ident) => { $register! {
         (get, "/local/compute", compute_status, "local_compute_status", routes::Empty, routes::Empty, agents::compute::Status),
         (post, "/local/compute", compute_command, "local_compute_command", routes::Empty, agents::compute::Command, agents::Outcome),
+        (post, "/local/compute/pick", pick_model_file, "local_compute_pick", routes::Empty, routes::Empty, jj_store_service::local_management::ModelFileSelection),
         (get, "/local/agents/settings", settings, "local_agents_settings", routes::Empty, routes::Empty, agents::settings::Settings),
         (post, "/local/agents/settings", save_settings, "local_agents_settings_save", routes::Empty, agents::settings::SettingsCommand, agents::settings::Settings),
         (post, "/local/agents/secrets", secret, "local_agents_secret", routes::Empty, agents::settings::SecretCommand, agents::settings::SecretStatus),
@@ -240,5 +241,46 @@ async fn compute_status(
     axum::extract::State(state): axum::extract::State<Arc<crate::State>>,
 ) -> Result<Json<agents::compute::Status>> {
     let (manager, actor) = manager(&state)?;
-    Ok(Json(manager.compute_status(actor).await.map_err(failure)?))
+    let mut value = manager.compute_status(actor).await.map_err(failure)?;
+    value.model_file_picker = state
+        .config
+        .local_folder_picker
+        .as_ref()
+        .is_some_and(|picker| picker.model_files_supported());
+    Ok(Json(value))
+}
+
+async fn pick_model_file(
+    axum::extract::State(state): axum::extract::State<Arc<crate::State>>,
+    query: routes::Input<routes::Empty>,
+    request: std::result::Result<Json<routes::Empty>, JsonRejection>,
+) -> Result<Json<jj_store_service::local_management::ModelFileSelection>> {
+    manager(&state)?;
+    routes::input(query)?;
+    body(request)?;
+    let picker = state
+        .config
+        .local_folder_picker
+        .as_ref()
+        .filter(|picker| picker.model_files_supported())
+        .ok_or_else(|| {
+            Error::new(
+                StatusCode::SERVICE_UNAVAILABLE,
+                "model_file_picker_unavailable",
+            )
+        })?;
+    let selection = picker.pick_model_file().await.map_err(|error| {
+        use jj_store_service::local_management::PickerError;
+        let (status, code) = match error {
+            PickerError::Unavailable => (
+                StatusCode::SERVICE_UNAVAILABLE,
+                "model_file_picker_unavailable",
+            ),
+            PickerError::Busy => (StatusCode::CONFLICT, "model_file_picker_busy"),
+            PickerError::Timeout => (StatusCode::REQUEST_TIMEOUT, "model_file_picker_timeout"),
+            PickerError::Invalid => (StatusCode::BAD_GATEWAY, "model_file_picker_invalid_output"),
+        };
+        Error::new(status, code)
+    })?;
+    Ok(Json(selection))
 }

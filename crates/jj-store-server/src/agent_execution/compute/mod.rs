@@ -53,6 +53,7 @@ impl Supervisor {
         }
         Ok(dto::Status {
             hardware: hardware::facts(),
+            model_file_picker: false, // The HTTP host owns OS picker composition.
             supported: self
                 .companion("jj-store-compute", "JJ_STORE_COMPUTE_EXECUTABLE")
                 .is_ok(),

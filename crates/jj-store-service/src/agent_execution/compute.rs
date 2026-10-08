@@ -32,6 +32,8 @@ pub struct Model {
 pub struct Status {
     pub hardware: serde_json::Value,
     pub supported: bool,
+    #[serde(default)]
+    pub model_file_picker: bool,
     pub state: String,
     pub settings: Settings,
     pub models: Vec<Model>,

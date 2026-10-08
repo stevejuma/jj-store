@@ -48,42 +48,13 @@
     if (active) void management?.refresh();
   }}
 />
-{#if !management || !management.available()}
-  <StoreSettingsEmpty
-    Icon={DownloadIcon}
-    title="Agent runtimes unavailable"
-    description="Connect to a local service with administrator access to manage agent runtimes on this device."
-  />
-{:else}
-  <StoreNotice
-    noticeKey="agent-runtime-read"
-    title="Could not check agent runtimes"
-    message={management.error}
-  />
-  <StoreNotice
-    noticeKey="agent-runtime-command"
-    title="Runtime installation failed"
-    message={management.pending ? "" : management.commandError}
-  />
-  <StoreNotice
-    noticeKey={`agent-runtime-completed-${management.outcome?.request_id ?? ""}`}
-    title="Runtime installed"
-    message={management.outcome?.state === "completed"
-      ? "Codex tooling is ready for a new connection."
-      : ""}
-    severity="info"
-    lifetime="timed"
-  />
-  <section
-    class="store-settings__section"
-    aria-labelledby="agent-runtimes-title"
-  >
-    <header class="store-settings__section-heading">
-      <div>
-        <h2 id="agent-runtimes-title">Agent runtimes</h2>
-        <p>Choose which agent tools jj-store can use on this device.</p>
-      </div>
-      <Button
+<section class="store-settings__section" aria-labelledby="agent-runtimes-title">
+  <header class="store-settings__section-heading">
+    <div>
+      <h2 id="agent-runtimes-title">Agent runtimes</h2>
+      <p>Choose which agent tools jj-store can use on this device.</p>
+    </div>
+    {#if management?.available()}<Button
         variant="outline"
         size="sm"
         onclick={() => void management?.refresh()}
@@ -91,7 +62,34 @@
       >
         <RefreshCwIcon data-icon="inline-start" />Check again
       </Button>
-    </header>
+    {/if}
+  </header>
+  {#if !management || !management.available()}
+    <StoreSettingsEmpty
+      Icon={DownloadIcon}
+      title="Agent runtimes unavailable"
+      description="Connect to a local service with administrator access to manage agent runtimes on this device."
+    />
+  {:else}
+    <StoreNotice
+      noticeKey="agent-runtime-read"
+      title="Could not check agent runtimes"
+      message={management.error}
+    />
+    <StoreNotice
+      noticeKey="agent-runtime-command"
+      title="Runtime installation failed"
+      message={management.pending ? "" : management.commandError}
+    />
+    <StoreNotice
+      noticeKey={`agent-runtime-completed-${management.outcome?.request_id ?? ""}`}
+      title="Runtime installed"
+      message={management.outcome?.state === "completed"
+        ? "Codex tooling is ready for a new connection."
+        : ""}
+      severity="info"
+      lifetime="timed"
+    />
     {#if value}
       <div class="store-settings__rows">
         <Field.Group class="store-settings__editable-rows">
@@ -225,30 +223,30 @@
         </Field.Group>
       </div>
     {/if}
-  </section>
-  <Dialog.Root bind:open={confirm}>
-    <Dialog.Content>
-      <Dialog.Header
-        ><Dialog.Title>{actionLabel} Codex runtime?</Dialog.Title>
-        <Dialog.Description
-          >Download Codex ACP {selected?.target_version} and Codex CLI {selected?.target_cli_version}
-          into jj-store's private device tooling directory. Existing global tools
-          and chats are preserved. This does not authenticate or connect an agent.</Dialog.Description
-        >
-      </Dialog.Header>
-      <Dialog.Footer
-        ><Button variant="outline" onclick={() => (confirm = false)}
-          >Cancel</Button
-        >
-        <Button
-          disabled={blocked}
-          onclick={() => {
-            confirm = false;
-            if (selected) void management?.install(selected);
-          }}
-          ><DownloadIcon data-icon="inline-start" />{actionLabel} runtime</Button
-        >
-      </Dialog.Footer>
-    </Dialog.Content>
-  </Dialog.Root>
-{/if}
+    <Dialog.Root bind:open={confirm}>
+      <Dialog.Content>
+        <Dialog.Header
+          ><Dialog.Title>{actionLabel} Codex runtime?</Dialog.Title>
+          <Dialog.Description
+            >Download Codex ACP {selected?.target_version} and Codex CLI {selected?.target_cli_version}
+            into jj-store's private device tooling directory. Existing global tools
+            and chats are preserved. This does not authenticate or connect an agent.</Dialog.Description
+          >
+        </Dialog.Header>
+        <Dialog.Footer
+          ><Button variant="outline" onclick={() => (confirm = false)}
+            >Cancel</Button
+          >
+          <Button
+            disabled={blocked}
+            onclick={() => {
+              confirm = false;
+              if (selected) void management?.install(selected);
+            }}
+            ><DownloadIcon data-icon="inline-start" />{actionLabel} runtime</Button
+          >
+        </Dialog.Footer>
+      </Dialog.Content>
+    </Dialog.Root>
+  {/if}
+</section>

@@ -135,7 +135,7 @@
   .store-settings {
     width: 100%;
     min-width: 0;
-    padding: 0 1rem 4rem;
+    padding: 1rem 1rem 4rem;
     box-sizing: border-box;
   }
   .store-settings :global(.store-settings__section:first-child) {
@@ -147,6 +147,7 @@
     align-items: center;
     gap: 0.4rem;
     margin: 0;
+    margin-inline-end: 1rem;
     font-size: var(--community-text-body);
     font-weight: 600;
     white-space: nowrap;

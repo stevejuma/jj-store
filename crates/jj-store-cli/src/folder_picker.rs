@@ -1,6 +1,6 @@
 //! Fixed native dialog adapter. No request data is ever used as a command.
 use jj_store_service::local_management::{
-    FolderPicker, FolderSelection, MAX_PATH_BYTES, PickerError,
+    FolderPicker, FolderSelection, MAX_PATH_BYTES, ModelFileSelection, PickerError,
 };
 use std::{path::Path, process::Stdio, sync::Arc, time::Duration};
 use tokio::{
@@ -11,6 +11,11 @@ use tokio::{
 
 const SCRIPT: &str = r#"try
     return POSIX path of (choose folder with prompt "Select a local workspace folder")
+on error number -128
+    return ""
+end try"#;
+const MODEL_SCRIPT: &str = r#"try
+    return POSIX path of (choose file with prompt "Select GGUF model weights" of type {"gguf"} multiple selections allowed false)
 on error number -128
     return ""
 end try"#;
@@ -35,6 +40,29 @@ impl FolderPicker for NativePicker {
         command.args(["-e", SCRIPT]);
         self.run(command, Duration::from_secs(25)).await
     }
+    fn model_files_supported(&self) -> bool {
+        true
+    }
+    async fn pick_model_file(&self) -> Result<ModelFileSelection, PickerError> {
+        let mut command = Command::new("/usr/bin/osascript");
+        command.args(["-e", MODEL_SCRIPT]);
+        let result = self.run(command, Duration::from_secs(25)).await?;
+        model_selection(result)
+    }
+}
+
+fn model_selection(result: FolderSelection) -> Result<ModelFileSelection, PickerError> {
+    if result
+        .path
+        .as_ref()
+        .is_some_and(|path| !path.to_ascii_lowercase().ends_with(".gguf"))
+    {
+        return Err(PickerError::Invalid);
+    }
+    Ok(ModelFileSelection {
+        version: result.version,
+        path: result.path,
+    })
 }
 
 impl NativePicker {

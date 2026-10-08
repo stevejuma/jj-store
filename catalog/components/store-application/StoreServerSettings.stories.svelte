@@ -7,7 +7,55 @@
     component: ServerSettingsFixture,
     tags: ["visual-pending"],
   });
+  async function joinedTable({
+    canvasElement,
+  }: {
+    canvasElement: HTMLElement;
+  }) {
+    const c = within(canvasElement);
+    const save = await c.findByRole("button", { name: "Save settings" });
+    if (c.queryByRole("button", { name: "Add upstream" }))
+      await userEvent.click(c.getByRole("button", { name: "Add upstream" }));
+    const form = save.closest("form")!;
+    const rows = form.querySelectorAll(".store-settings__rows");
+    await expect(rows).toHaveLength(1);
+    await expect(rows[0]).toContainElement(c.getByText("Saved and running"));
+    await expect(rows[0]).toContainElement(save);
+    for (const action of form.querySelectorAll(".store-settings__action-row")) {
+      await expect(action.parentElement).toBe(rows[0]);
+      const style = getComputedStyle(action);
+      await expect(style.borderTopWidth).toBe("1px");
+      await expect(style.borderRightWidth).toBe("0px");
+      await expect(style.borderBottomWidth).toBe("0px");
+      await expect(style.borderLeftWidth).toBe("0px");
+      await expect(style.borderRadius).toBe("0px");
+    }
+    if (c.queryByRole("textbox", { name: "Upstream origin" })) {
+      await expect(rows[0]).toContainElement(
+        c.getByText("Credential reference"),
+      );
+      await expect(rows[0]).toContainElement(
+        c.getByRole("textbox", { name: "Upstream origin" }),
+      );
+    }
+  }
 </script>
+
+<Story
+  name="Joined service configuration table"
+  args={{ section: "service" }}
+  play={joinedTable}
+/>
+<Story
+  name="Joined protection configuration table"
+  args={{ section: "protection" }}
+  play={joinedTable}
+/>
+<Story
+  name="Joined sync configuration table"
+  args={{ section: "sync" }}
+  play={joinedTable}
+/>
 
 <Story
   name="Service limits"

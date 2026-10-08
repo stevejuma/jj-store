@@ -213,3 +213,9 @@ operation response is checked through its original agent outcome receipt; it
 does not authorize repeating downloads or inference. Private loopback inference
 requires a process token, and paired transport requires mutual machine
 admission. No compute operation grants repository or tool access.
+
+LocalTrusted Admin Compute status advertises native model-file selection when
+available. The empty-body `POST /v1/local/compute/pick` opens a fixed GGUF
+dialog on the service machine and returns only an optional versioned path. It
+saves no configuration or model weights. Cancellation and picker failures
+preserve the draft; Import is a separate durable command.

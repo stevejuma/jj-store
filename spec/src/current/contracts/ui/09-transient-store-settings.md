@@ -35,14 +35,15 @@ Settings opens from the existing profile menu and replaces the repository
 navigation and body with a jj-store-owned settings sidebar and selected section.
 The sidebar contains Appearance, Local service, Agents, Repository, Search,
 Storage and Sync. The content navigation begins with its section icon and single
-page title, followed by section tabs when present. It has no return button; Back
-to jj-store remains in the settings sidebar, including the mobile navigation
-stage. Appearance begins with Theme directly below navigation, without an
-introductory description or duplicate page heading. Repository tabs, header
-actions and the details sidebar are absent until Back to jj-store restores the
-same repository route and resumes queued updates. Settings never writes its
-destination or section to the hash, browser history or storage. A fresh
-component starts on Local service; section selection lasts only for that
+page title, followed by section tabs when present. All Settings pages add a
+one-rem gap after the title and one-rem top padding before body content. It has
+no return button; Back to jj-store remains in the settings sidebar, including
+the mobile navigation stage. Appearance begins with Theme after the shared body
+padding, without an introductory description or duplicate page heading.
+Repository tabs, header actions and the details sidebar are absent until Back to
+jj-store restores the same repository route and resumes queued updates. Settings
+never writes its destination or section to the hash, browser history or storage.
+A fresh component starts on Local service; section selection lasts only for that
 component lifetime. Mobile selection returns to the content stage and retains a
 control that reopens settings navigation. On desktop, collapsing the settings
 sidebar retains Back, Local service, Agents, Repository and Search as labelled

@@ -18,7 +18,13 @@ bounded.
 
 Downloaded and imported model paths are recorded in private managed storage.
 Start requires an installed path and performs no implicit weight download.
-Imports copy explicit GGUF files; removals touch managed weights only.
+Imports copy explicit GGUF files; removals touch managed weights only. Native
+model-file selection is an additive installation capability and fixed
+empty-input HTTP route. Hosts without a composed dialog default to false and
+retain manual path import. Version-1 optional-path results distinguish selection
+from cancellation; selection never changes a model or repository format. The
+jj-agent display name and app artwork preserve the saved `local` runner
+identity, private companion executable names, source pins and ABI artifacts.
 
 The gateway preserves the selected logical model identity. Native startup uses
 the installed non-symlink path with local-required source policy and disabled

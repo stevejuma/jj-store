@@ -71,7 +71,7 @@ impl Supervisor {
         Ok([
             ("codex", "Codex", "codex-acp"),
             ("cursor", "Cursor", "cursor-agent"),
-            ("local", "Local agent", "jj-store-local-agent"),
+            ("local", "jj-agent", "jj-store-local-agent"),
         ]
         .into_iter()
         .map(|(id, label, bin)| {

@@ -44,14 +44,16 @@
   refreshLabel="Refresh capture"
   refreshDisabled={management?.state.busy ?? false}
 >
-  <Tabs.Content value="runtimes"
-    ><StoreAgentDefaults {manager} />
-    <h2>Agent runtimes</h2>
-    <StoreAgentRuntimes
-      management={runtimes}
-      active={tab === "runtimes"}
-    /></Tabs.Content
-  >
+  <Tabs.Content value="runtimes">
+    <div class="store-agent-settings-runtimes">
+      <StoreAgentDefaults {manager}>
+        {#snippet runtimeSection()}<StoreAgentRuntimes
+            management={runtimes}
+            active={tab === "runtimes"}
+          />{/snippet}
+      </StoreAgentDefaults>
+    </div>
+  </Tabs.Content>
   {#if tab !== "runtimes"}
     <StoreCaptureSettings
       {management}
@@ -62,3 +64,9 @@
     />
   {/if}
 </StoreSettingsPage>
+
+<style>
+  .store-agent-settings-runtimes :global(.store-settings__section-heading) {
+    padding-block: 0.5rem;
+  }
+</style>

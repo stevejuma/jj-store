@@ -18,8 +18,10 @@
       const group = await c.findByRole("button", {
         name: `${name} configuration`,
       });
-      await expect(group).toHaveAttribute("aria-expanded", "true");
+      await expect(group).toHaveAttribute("aria-expanded", "false");
       await expect(group.querySelector("img")).not.toBeNull();
+      await userEvent.click(group);
+      await expect(group).toHaveAttribute("aria-expanded", "true");
     }
     await userEvent.click(
       c.getByRole("switch", { name: "Cursor Desktop capture" }),

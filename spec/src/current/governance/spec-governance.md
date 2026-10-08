@@ -65,3 +65,11 @@ never tracked source or packaged credentials.
 The local-compute runbook maps to documentation, collaboration and desktop
 chapters. Its configuration, custody and staging examples remain executable
 contracts, with platform distribution gates recorded in M25.
+
+M25 Settings refinements extract the copied agent editor's unchanged saved
+preference summary into an owned presentation component. Its original path,
+source revision and Apache-2.0 attribution remain in `docs/ui-provenance.json`.
+The jj-agent artwork reuses the app's maintained desktop logo with local asset
+attribution; it introduces no Community or external asset dependency. Native
+GGUF selection and runtime naming are qualified separately from unchanged
+storage, credential and platform distribution authority.

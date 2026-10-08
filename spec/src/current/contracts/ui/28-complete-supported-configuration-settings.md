@@ -14,5 +14,8 @@ repository navigation; stale observations cannot silently rebase a draft and
 unknown saves cannot be blindly replayed. Operational feedback uses JST-UI-019
 notifications under a stable installation scope; repository navigation cannot
 replay an unchanged dismissed condition. All forms use the shared Settings
-row/column structure and stacked action column. Editors are installation-owned
-and unavailable on authenticated/non-Admin connections.
+row/column structure and stacked action column. Saved/running observations,
+informational rows, editable fields and save/cancel commands share one outer
+table per editor. Sync add/remove upstream commands join that same table. Action
+footers have only a top separator, without their own rounded border. Editors are
+installation-owned and unavailable on authenticated/non-Admin connections.

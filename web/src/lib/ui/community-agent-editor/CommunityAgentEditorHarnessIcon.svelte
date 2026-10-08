@@ -20,4 +20,17 @@
   );
 </script>
 
-<Icon class={className} aria-hidden="true" />
+{#if runtimeAgent === "local"}<img
+    src="/agent-icons/jj-store.svg"
+    class={`agent-editor__jj-agent-icon ${className}`}
+    alt=""
+    aria-hidden="true"
+  />{:else}<Icon class={className} aria-hidden="true" />{/if}
+
+<style>
+  .agent-editor__jj-agent-icon {
+    width: 1em;
+    height: 1em;
+    object-fit: contain;
+  }
+</style>

@@ -2213,6 +2213,18 @@
       ]
     },
     {
+      "local": "web/src/lib/ui/community-agent-editor/CommunityAgentEditorSavedPreferences.svelte",
+      "reason": "Extracted the maintained dialog preference summary without changing its presentation or local contracts.",
+      "sources": [
+        {
+          "path": "src/components/community-agent-editor/CommunityAgentEditorDialog.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0",
+          "attribution": "Copyright LapisMD contributors. Apache-2.0; maintained by jj-store."
+        }
+      ]
+    },
+    {
       "local": "web/src/lib/ui/community-agent-profile/CommunityAgentProfile.svelte",
       "reason": "Copied Community agent profile header, actions, Info and Runtime; local configuration/session adapters replace Nostr channels/memories.",
       "sources": [

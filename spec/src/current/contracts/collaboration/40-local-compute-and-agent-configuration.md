@@ -25,7 +25,10 @@ access. Public discovery and automatic cloud fallback remain disabled. Runtime
 artifacts are version/ABI/checksum pinned; model downloads and starts are
 explicit. One loaded model and bounded concurrency/resource use are initially
 supported. Full desktop and server distributions bundle internal helpers; model
-weights remain separate explicit downloads or imports.
+weights remain separate explicit downloads or imports. The bundled Buzz-derived
+local harness is presented as jj-agent. Runtime status requires both its fixed
+companion executable and the owned coding-tool helper; its saved `local` runner
+identity is retained without journal migration.
 
 Each new outgoing message retains its exact sanitized application context,
 separate from the human text, in a versioned structured payload. Delivery status

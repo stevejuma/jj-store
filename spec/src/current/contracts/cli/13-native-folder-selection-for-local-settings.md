@@ -6,6 +6,10 @@ asynchronous, single flight, limited to 4096 path bytes and 25 seconds, and
 cleans up children on timeout or caller cancellation. Other platforms advertise
 no picker; missing helpers or headless sessions return unavailable and leave
 manual path entry usable. No installed binary or service is changed by picking.
+The same host adapter offers a fixed single-file GGUF dialog for Compute when
+composed. It shares the folder dialog’s single-flight permit, bounds, deadline
+and cancellation/reaping owner. Cancel returns no path; other formats are
+refused. Selecting model weights fills a browser draft and never imports them.
 
 The LocalTrusted admin server composes a browser Sync manager over the same
 replication controls used by the CLI/RPC. It starts no additional worker and

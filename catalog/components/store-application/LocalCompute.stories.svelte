@@ -11,6 +11,112 @@
 </script>
 
 <Story
+  name="Browse GGUF selects a file before explicit import"
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await userEvent.click(await c.findByRole("button", { name: "Browse…" }));
+    await expect(c.getByLabelText("Import GGUF")).toHaveValue(
+      "/models/My model.gguf",
+    );
+    await expect(c.getByLabelText("Compute commands")).toHaveTextContent("[]");
+    await userEvent.click(c.getByRole("button", { name: "Import model" }));
+    await waitFor(() =>
+      expect(
+        JSON.parse(c.getByLabelText("Compute commands").textContent ?? "[]")[0]
+          .action,
+      ).toEqual({ action: "import", path: "/models/My model.gguf" }),
+    );
+  }}
+/>
+<Story
+  name="Cancelled GGUF browse preserves manual path"
+  args={{ picker: "cancelled" }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await userEvent.type(
+      await c.findByLabelText("Import GGUF"),
+      "/models/keep.gguf",
+    );
+    await userEvent.click(c.getByRole("button", { name: "Browse…" }));
+    await expect(c.getByLabelText("Import GGUF")).toHaveValue(
+      "/models/keep.gguf",
+    );
+    await expect(c.getByLabelText("Compute commands")).toHaveTextContent("[]");
+  }}
+/>
+
+<Story
+  name="Joined model commands below description in a fixed width wrapping row"
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await c.findByLabelText("Model");
+    for (const [field, label] of [
+      ["Model", "Run a local model"],
+      ["Import GGUF", "Import model weights"],
+    ]) {
+      const rows = c
+        .getByLabelText(field)
+        .closest<HTMLElement>(".store-settings__rows")!;
+      const action = c
+        .getByText(label, { selector: "strong" })
+        .closest<HTMLElement>(".store-settings__action-row")!;
+      await expect(rows).toContainElement(action);
+      await expect(getComputedStyle(action).borderLeftWidth).toBe("0px");
+      await expect(getComputedStyle(action).borderRightWidth).toBe("0px");
+      await expect(getComputedStyle(action).borderRadius).toBe("0px");
+      await expect(getComputedStyle(action).borderTopWidth).toBe("1px");
+    }
+    for (const width of [1280, 390]) {
+      await page.viewport(width, 844);
+      try {
+        const title = c.getByRole("heading", { name: "Compute", level: 1 });
+        await expect(
+          c.getByRole("tab", { name: "Models" }).getBoundingClientRect().left -
+            title.getBoundingClientRect().right,
+        ).toBeGreaterThanOrEqual(20);
+        await expect(
+          getComputedStyle(canvasElement.querySelector(".store-settings")!)
+            .paddingTop,
+        ).toBe("16px");
+        const run = c
+          .getByRole("button", { name: "Prepare runtime" })
+          .closest(".store-settings__action-row")!;
+        const description = run.querySelector("p")!;
+        const actions = run.querySelector(".store-settings__actions")!;
+        await expect(
+          actions.getBoundingClientRect().top -
+            description.getBoundingClientRect().bottom,
+        ).toBeGreaterThanOrEqual(12);
+        const actionWidth = actions.getBoundingClientRect().width;
+        await expect(actionWidth).toBeGreaterThan(
+          run.getBoundingClientRect().width - 40,
+        );
+        const buttons = within(actions as HTMLElement).getAllByRole("button");
+        await expect(getComputedStyle(actions).flexDirection).toBe("row");
+        await expect(getComputedStyle(actions).flexWrap).toBe("wrap");
+        for (const button of buttons)
+          await expect(Math.round(button.getBoundingClientRect().width)).toBe(
+            160,
+          );
+        if (width === 1280)
+          await expect(buttons[3].getBoundingClientRect().top).toBe(
+            buttons[0].getBoundingClientRect().top,
+          );
+        else
+          await expect(buttons[3].getBoundingClientRect().top).toBeGreaterThan(
+            buttons[0].getBoundingClientRect().top,
+          );
+        await expect(
+          canvasElement.ownerDocument.documentElement.scrollWidth,
+        ).toBeLessThanOrEqual(width);
+      } finally {
+        await page.viewport(1280, 800);
+      }
+    }
+  }}
+/>
+
+<Story
   name="Logical tabs retain all drafts and save resource settings"
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
@@ -69,7 +175,7 @@
       await c.findByRole("button", { name: "Unpair" });
       await expect(
         c.getByLabelText("Machine invitation", {
-          selector: "textarea[readonly]",
+          selector: "pre",
         }),
       ).toBeVisible();
       await expect(
@@ -127,12 +233,22 @@
       ".store-settings__action-row",
     )) {
       if (row.closest("[hidden]")) continue;
-      await expect(
-        row.parentElement!.closest(".store-settings__rows"),
-      ).toBeNull();
+      if (row.classList.contains("store-settings__action-row--joined")) {
+        await expect(getComputedStyle(row).borderLeftWidth).toBe("0px");
+        await expect(getComputedStyle(row).borderRightWidth).toBe("0px");
+        await expect(getComputedStyle(row).borderBottomWidth).toBe("0px");
+      } else {
+        await expect(
+          row.parentElement!.closest(".store-settings__rows"),
+        ).toBeNull();
+      }
       const actions = row.querySelector(".store-settings__actions")!;
       await expect(actions).not.toBeNull();
-      await expect(getComputedStyle(actions).flexDirection).toBe("column");
+      await expect(getComputedStyle(actions).flexDirection).toBe(
+        actions.classList.contains("store-settings__actions--wrapping")
+          ? "row"
+          : "column",
+      );
     }
   }}
 />

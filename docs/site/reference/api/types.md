@@ -20747,6 +20747,10 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "supported": {
       "type": "boolean"
     },
+    "model_file_picker": {
+      "type": "boolean",
+      "default": false
+    },
     "state": {
       "type": "string"
     },
@@ -20790,6 +20794,7 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
   "required": [
     "hardware",
     "supported",
+    "model_file_picker",
     "state",
     "settings",
     "models",
@@ -20950,6 +20955,32 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "session_id",
     "state",
     "error"
+  ]
+}
+```
+
+## ModelFileSelection
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "path": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "version",
+    "path"
   ]
 }
 ```
