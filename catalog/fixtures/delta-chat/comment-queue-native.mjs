@@ -61,7 +61,7 @@ export async function commentQueueAcceptance(page, base) {
     page.getByRole("textbox", { name: "Local message", exact: true }),
   ).toHaveText("Message with comments");
   await expect(
-    page.getByRole("img", { name: "Replied", exact: true }),
+    page.getByRole("button", { name: "Go to reply", exact: true }),
   ).toHaveCount(0);
   await page.getByRole("button", { name: "Simulate replies" }).click();
   const original = page
@@ -75,7 +75,16 @@ export async function commentQueueAcceptance(page, base) {
   await expect(
     original.getByRole("button", { name: "Reply", exact: true }),
   ).toHaveText("");
-  await original.getByRole("button", { name: "View reply" }).click();
+  await expect(original.getByRole("article")).toHaveCount(1);
+  await expect(original).not.toContainText("Simulated reply:");
+  const jump = original.getByRole("button", { name: "Go to reply" });
+  await expect(jump.locator(".chat-comment-delivered-icon")).toBeVisible();
+  await expect(jump.locator(".chat-comment-jump-icon")).toBeHidden();
+  await jump.hover();
+  await expect(page.getByRole("tooltip")).toHaveText("Go to reply");
+  await expect(jump.locator(".chat-comment-delivered-icon")).toBeHidden();
+  await expect(jump.locator(".chat-comment-jump-icon")).toBeVisible();
+  await jump.click();
   await expect(
     page.getByRole("article", { name: "Simulated agent reply" }).locator(".."),
   ).toBeFocused();
@@ -84,7 +93,9 @@ export async function commentQueueAcceptance(page, base) {
     .getByRole("button", { name: "Go to source: Assistant explanation" })
     .click();
   await expect(source).toBeFocused();
-  await expect(original.getByRole("img", { name: "Replied" })).toBeVisible();
+  await expect(
+    original.getByRole("button", { name: "Go to reply" }),
+  ).toBeVisible();
   console.log(
     "PASS shared queue editing/caret retention, mixed prompt, failed send, focus and source/reply navigation",
   );
@@ -113,6 +124,16 @@ export async function commentQueueAcceptance(page, base) {
     ).toBeFocused();
     await queue.getByRole("button", { name: "Remove pending comment" }).tap();
     await expect(queue).toHaveCount(0);
+    await touch
+      .locator('[data-chat-item="reply-0"] [data-placement="reply"]')
+      .getByRole("button", { name: /Go to source/ })
+      .tap();
+    const replyJump = touch
+      .locator('[data-placement="inline"]')
+      .getByRole("button", { name: "Go to reply" })
+      .first();
+    await replyJump.tap();
+    await expect(touch.locator('[data-chat-item="reply-0"]')).toBeFocused();
     console.log(
       "PASS touch comment actions are visible and navigate/remove pending comments",
     );

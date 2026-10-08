@@ -205,6 +205,12 @@ diffs, with reversible local state, keyboard access and remount retention.
 Commented ranges remain visible. This presentation review leaves M24 In progress
 and independent live, native IME, desktop and visual gates unchanged.
 
+E-CHAT-BODY-013 keeps comment answers in the agent transcript with persistent
+quoted context, shared replies for a batch's same-anchor comments and exact
+reply destinations. Linked green double ticks become hover/focus navigation
+buttons with Go to reply tooltips. This UI-only review retains M24 In progress;
+live integration, native IME, desktop and visual gates remain independent.
+
 <!-- generated-navigation -->
 
 ## Pages

@@ -66,13 +66,21 @@ export class DemoNextMessage {
   completeReplies(state: ChatBodyComments) {
     for (const submission of this.submissions) {
       const runtime = this.runtimes.get(submission.id) ?? this.runtime();
+      const groups = new Map<string, (typeof submission.comments)[number][]>();
       for (const comment of submission.comments) {
         if (state.findComment(comment.commentId)?.status !== "sent") continue;
+        const group = groups.get(comment.threadId) ?? [];
+        group.push(comment);
+        groups.set(comment.threadId, group);
+      }
+      for (const comments of groups.values()) {
+        const comment = comments[0];
+        const commentIds = comments.map((entry) => entry.commentId);
         const id = `demo-reply:${comment.commentId}`;
-        const text = `Simulated reply: I received your comment about “${comment.anchor.quote.slice(0, 100)}”. No agent was contacted.`;
+        const text = `Simulated reply: I received your ${comments.length === 1 ? "comment" : "comments"} about “${comment.anchor.quote.slice(0, 100)}”. No agent was contacted.`;
         state.recordReply(
           comment.threadId,
-          comment.commentId,
+          commentIds,
           {
             id,
             author: runtime.agent,
@@ -105,7 +113,7 @@ export class DemoNextMessage {
             },
             replyContext: {
               threadId: comment.threadId,
-              commentIds: [comment.commentId],
+              commentIds,
             },
             blocks: [
               {

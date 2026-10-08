@@ -28,19 +28,22 @@ ordinary editing resumes the latest pending entry. All entries at one anchor
 share a single bordered container. Reply and add-another actions use named icons
 inside the comment row, revealed on hover/focus and available on touch.
 Delivered comments show a green Lucide double-check icon with an accessible Sent
-label; linked responses use the Replied label and expose View reply. Inline
-entries also link to their exact pending editor or delivered message, opening
-its batch and focusing it. Sent and replied states remain distinct. Collapsed
-files, tools and sections retain their discussions below the nearest visible
-collapsed header. Source/reply navigation opens necessary disclosures, read
-panels and middle folds before focusing the exact target. Source links are
-available on hover, keyboard focus and touch. Unavailable anchors retain their
-quote and explanation without retargeting. Returning focus, tool
-collapse/reopen, resize and appended content preserve exact anchors, drafts and
-submitted local threads. Comment targets retain stable block identity, content
-revision and selected context. Changed content must not silently retarget a
-comment. Comment state belongs to the host, independently of mounted editors or
-disclosure panels.
+label. Once linked to a reply, the double-check becomes a button named Go to
+reply, with Replied as its accessible description. Hover or keyboard focus
+replaces the ticks with a navigation arrow and reveals a Go to reply tooltip.
+Click, Enter or touch focuses the exact reply section. Unanswered sent comments
+retain a status icon without a navigation action. Inline entries also link to
+their exact pending editor or delivered message, opening its batch and focusing
+it. Sent and replied states remain distinct. Collapsed files, tools and sections
+retain their discussions below the nearest visible collapsed header.
+Source/reply navigation opens necessary disclosures, read panels and middle
+folds before focusing the exact target. Source links are available on hover,
+keyboard focus and touch. Unavailable anchors retain their quote and explanation
+without retargeting. Returning focus, tool collapse/reopen, resize and appended
+content preserve exact anchors, drafts and submitted local threads. Comment
+targets retain stable block identity, content revision and selected context.
+Changed content must not silently retarget a comment. Comment state belongs to
+the host, independently of mounted editors or disclosure panels.
 
 The main Delta thread “Add configurable screen lock overlay” supplies the
 comparison fixture. A sanitized JSON projection retains source ordering, visible
@@ -59,12 +62,17 @@ the turn rail use the same shared host state. The initial queue stays empty.
 Captured-code quotes in comment cards inherit the normal chat font and the
 Markdown renderer's font-size and line-height tokens, matching rendered comment
 bodies while retaining source whitespace and highlighting. Source readers keep
-their code typography. When a reply's comments are already visible in its
-expanded preceding user batch, its context becomes a compact comment count and
-source link instead of duplicating the discussion. Collapsing the batch restores
-the quoted reply context. Replies in later turns and unavailable anchors retain
-their full context; distinct comments at the same anchor remain grouped and
-intact.
+their code typography. Each transcript reply keeps its shaded source quote and
+the specific user comments it answers immediately before the normal agent
+output, independently of the preceding sent batch's disclosure state. Agent
+answers remain stored in the discussion but render only in the transcript, not
+again under the source. Several reply sections and tools can share one assistant
+turn; each source comment links to its exact reply item through stable
+discussion/comment IDs. One reply may answer several comments at the same
+anchor. The catalog simulator groups comments by discussion within their
+submitted batch, retaining distinct comments and their shared answer
+destination. Later submissions remain separate. Unavailable sources preserve
+their quote and explanation.
 
 Pointer, keyboard, input composition, immutable content, collapse/reopen,
 Unicode mapping, focus, teardown, themes and narrow presentation require focused

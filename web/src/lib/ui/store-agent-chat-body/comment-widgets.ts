@@ -34,10 +34,12 @@ class CommentWidget extends WidgetType {
     const thread = this.state.threads.find((t) => t.id === this.threadId);
     return (
       32 +
-      (thread?.comments.reduce(
-        (height, c) => height + estimateMarkdownBlockHeight(c.text) + 32,
-        0,
-      ) ?? 48)
+      (thread?.comments
+        .filter((comment) => !comment.replyTo)
+        .reduce(
+          (height, c) => height + estimateMarkdownBlockHeight(c.text) + 32,
+          0,
+        ) ?? 48)
     );
   }
   toDOM(view: EditorView) {

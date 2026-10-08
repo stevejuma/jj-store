@@ -45,7 +45,7 @@ export const commentLifecycle = async ({
       name: "Comment by You",
     }),
   ).toHaveTextContent("Please clarify more");
-  await expect(c.queryByRole("button", { name: "View reply" })).toBeNull();
+  await expect(c.queryByRole("button", { name: "Go to reply" })).toBeNull();
   await userEvent.click(
     c.getByRole("button", { name: "Expand 1 sent comments" }),
   );
@@ -60,10 +60,10 @@ export const commentLifecycle = async ({
     '[data-placement="inline"]',
   )! as HTMLElement;
   await expect(
-    within(sourceArea).getByRole("img", { name: "Replied" }),
+    within(sourceArea).getByRole("button", { name: "Go to reply" }),
   ).toBeVisible();
   await userEvent.click(
-    within(sourceArea).getByRole("button", { name: "View reply" }),
+    within(sourceArea).getByRole("button", { name: "Go to reply" }),
   );
   await expect(
     c.getByRole("article", { name: "Simulated agent reply" }).closest("li"),

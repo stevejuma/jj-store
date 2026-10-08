@@ -1,13 +1,12 @@
 <script lang="ts">
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import CheckCheckIcon from "@lucide/svelte/icons/check-check";
   import CornerUpLeftIcon from "@lucide/svelte/icons/corner-up-left";
-  import ArrowDownRightIcon from "@lucide/svelte/icons/arrow-down-right";
   import XIcon from "@lucide/svelte/icons/x";
   import MessageSquarePlusIcon from "@lucide/svelte/icons/message-square-plus";
   import CornerDownRightIcon from "@lucide/svelte/icons/corner-down-right";
   import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
   import CommunityMarkdownContent from "../community-markdown-content/CommunityMarkdownContent.svelte";
+  import ChatCommentDelivery from "./ChatCommentDelivery.svelte";
   import ChatCommentEditor from "./ChatCommentEditor.svelte";
   import type { ChatBodyComments } from "./comments.svelte.js";
   import "./comment-card.css";
@@ -26,10 +25,10 @@
   const comments = $derived.by(() => {
     const entries =
       thread?.comments.filter(
-        (c) => !commentIds || commentIds.includes(c.id),
+        (c) => !c.replyTo && (!commentIds || commentIds.includes(c.id)),
       ) ?? [];
     return placement === "summary"
-      ? entries.filter((c) => !c.replyTo && c.text.trim()).slice(-1)
+      ? entries.filter((c) => c.text.trim()).slice(-1)
       : entries;
   });
   const source = $derived(
@@ -142,16 +141,6 @@
                 onclick={() => state.remove(comment.id)}><XIcon /></Button
               >
             {/if}
-            {#if comment.status === "replied" && comment.replyItemId}
-              <Button
-                variant="ghost"
-                size="icon-xs"
-                aria-label="View reply"
-                title="View reply"
-                onclick={() => state.goToReply(comment.replyItemId!)}
-                ><ArrowDownRightIcon /></Button
-              >
-            {/if}
             {#if (placement === "inline" || placement === "summary") && comment.id === comments.at(-1)?.id}
               <Button
                 variant="ghost"
@@ -164,19 +153,7 @@
               >
             {/if}
           </div>
-          {#if comment.status === "sent" || (comment.status === "replied" && comment.replyItemId)}
-            <span
-              class="chat-comment-complete"
-              role="img"
-              aria-label={comment.status === "replied" ? "Replied" : "Sent"}
-              title={comment.status === "replied" ? "Replied" : "Sent"}
-              ><CheckCheckIcon size={16} /></span
-            >
-          {:else if comment.status === "sending"}<span
-              class="chat-comment-status"
-              role="status">Sending</span
-            >
-          {/if}
+          <ChatCommentDelivery {state} {comment} />
         </article>
       {/each}
     </div>

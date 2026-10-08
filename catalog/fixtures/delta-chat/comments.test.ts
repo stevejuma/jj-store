@@ -5,7 +5,11 @@ import type {
   ChatPromptSubmission,
 } from "../../../web/src/lib/ui/store-agent-chat-body/model.js";
 import { commentSources } from "../../../web/src/lib/ui/store-agent-chat-body/comment-navigation.js";
-import { demoSender, demoAgent } from "./next-message.svelte.js";
+import {
+  DemoNextMessage,
+  demoSender,
+  demoAgent,
+} from "./next-message.svelte.js";
 const block = {
   id: "prose",
   revision: "1",
@@ -155,4 +159,40 @@ test("explicit new comments share an anchor while ordinary editing resumes the l
   ]);
   state.open(block, caret);
   expect(state.active?.commentId).toBe(thread.comments[1].id);
+});
+
+test("one submitted batch groups same-anchor comments into linked sections within one turn", async () => {
+  const demo = new DemoNextMessage();
+  const state = new ChatBodyComments(() => ({
+    items: [...items, ...demo.messages],
+    onSend: (submission) => demo.accept(submission),
+  }));
+  state.open(block, caret, "First question");
+  state.begin(state.threads[0], "inline", "Second question", true);
+  state.open(block, { from: 25, to: 25 }, "Another anchor");
+  await state.send();
+  demo.completeReplies(state);
+  const replies = demo.messages.filter((item) => item.replyContext);
+  expect(replies).toHaveLength(2);
+  expect(new Set(demo.messages.map((item) => item.turn?.id)).size).toBe(1);
+  expect(replies.map((item) => item.replyContext?.commentIds.length)).toEqual([
+    2, 1,
+  ]);
+  for (const reply of replies) {
+    for (const id of reply.replyContext!.commentIds)
+      expect(state.findComment(id)).toMatchObject({
+        status: "replied",
+        replyItemId: reply.id,
+      });
+  }
+  expect(state.threads[0].comments.filter((c) => c.replyTo)).toHaveLength(1);
+  demo.completeReplies(state);
+  expect(demo.messages).toHaveLength(3);
+  state.open(block, caret, "Later follow up");
+  await state.send();
+  demo.completeReplies(state);
+  expect(demo.messages.filter((item) => item.replyContext)).toHaveLength(3);
+  expect(new Set(demo.messages.map((item) => item.turn?.id)).size).toBe(2);
+  expect(state.threads[0].comments[0].replyItemId).toBe(replies[0].id);
+  expect(demo.messages.at(-1)?.replyContext?.commentIds).toHaveLength(1);
 });

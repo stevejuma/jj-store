@@ -236,22 +236,26 @@ export class ChatBodyComments {
   }
   recordReply(
     threadId: string,
-    commentId: string,
+    commentIds: string | readonly string[],
     reply: ChatComment,
     itemId: string,
   ) {
     const thread = this.threads.find((t) => t.id === threadId);
-    const comment = thread?.comments.find((c) => c.id === commentId);
+    const ids = typeof commentIds === "string" ? [commentIds] : commentIds;
+    const comments = thread?.comments.filter(
+      (c) => ids.includes(c.id) && c.status === "sent",
+    );
     if (
       !thread ||
-      !comment ||
-      comment.status !== "sent" ||
+      !comments?.length ||
       thread.comments.some((c) => c.id === reply.id)
     )
       return;
-    comment.status = "replied";
-    comment.replyItemId = itemId;
-    thread.comments.push({ ...reply, replyTo: commentId });
+    for (const comment of comments) {
+      comment.status = "replied";
+      comment.replyItemId = itemId;
+    }
+    thread.comments.push({ ...reply, replyTo: comments[0].id });
   }
   async goToSource(thread: ChatCommentThread, opener: HTMLElement) {
     await revealCommentSource(this, thread, opener);

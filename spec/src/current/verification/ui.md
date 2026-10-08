@@ -15,3 +15,6 @@
 
 JST-UI-001 reversible captured-code and diff middle folds:
 [E-CHAT-BODY-012](../../history/2026/10/08/E-CHAT-BODY-012/index.md).
+
+JST-UI-001 transcript reply context and double-check navigation:
+[E-CHAT-BODY-013](../../history/2026/10/08/E-CHAT-BODY-013/index.md).

@@ -69,3 +69,24 @@ test("navigation previews delivered and pending comment batches without duplicat
     pending: true,
   });
 });
+
+test("two captured replies keep separate destinations and intervening tools in one turn", () => {
+  const items = deltaChatItems(fixture);
+  const threads = deltaChatThreads(fixture, items);
+  const replies = items.filter((item) => item.replyContext).slice(1);
+  expect(replies).toHaveLength(2);
+  expect(replies[0].turn?.id).toBe(replies[1].turn?.id);
+  expect(replies[0].id).not.toBe(replies[1].id);
+  for (const reply of replies) {
+    const thread = threads.find((t) => t.id === reply.replyContext!.threadId)!;
+    expect(
+      thread.comments.find((c) => c.id === reply.replyContext!.commentIds[0])
+        ?.replyItemId,
+    ).toBe(reply.id);
+  }
+  const turn = items.filter((item) => item.turn?.id === replies[0].turn?.id);
+  expect(turn.some((item) => item.kind === "tools")).toBe(true);
+  expect(turn.findIndex((item) => item.kind === "tools")).toBeLessThan(
+    turn.findIndex((item) => item.id === replies[0].id),
+  );
+});

@@ -36,7 +36,7 @@ export async function referenceDiscussionLinks(canvasElement: HTMLElement) {
   }
   await waitFor(() => expect(cards[2]).toHaveFocus());
   await userEvent.click(
-    within(cards[0]).getByRole("button", { name: "View reply" }),
+    within(cards[0]).getByRole("button", { name: "Go to reply" }),
   );
   const reply = canvasElement.querySelector<HTMLElement>(
     '[data-chat-item="demo-review:action/reply"]',
@@ -44,25 +44,23 @@ export async function referenceDiscussionLinks(canvasElement: HTMLElement) {
   await expect(reply).toHaveFocus();
   expect(reply).toHaveTextContent("Simulated reply:");
   expect(
-    within(reply).queryAllByRole("article", { name: "Comment by You" }),
-  ).toHaveLength(0);
-  expect(reply).toHaveTextContent("Reply to 2 comments");
+    within(reply).getAllByRole("article", { name: "Comment by You" }),
+  ).toHaveLength(2);
+  expect(reply.querySelector(".chat-comment-quote")).toHaveTextContent(
+    "case screenBlock",
+  );
   await userEvent.click(
     c.getByRole("button", { name: "Collapse 4 sent comments" }),
   );
-  await waitFor(() =>
-    expect(
-      within(reply).getAllByRole("article", { name: "Comment by You" }),
-    ).toHaveLength(2),
-  );
+  expect(
+    within(reply).getAllByRole("article", { name: "Comment by You" }),
+  ).toHaveLength(2);
   await userEvent.click(
     c.getByRole("button", { name: "Expand 4 sent comments" }),
   );
-  await waitFor(() =>
-    expect(
-      within(reply).queryAllByRole("article", { name: "Comment by You" }),
-    ).toHaveLength(0),
-  );
+  expect(
+    within(reply).getAllByRole("article", { name: "Comment by You" }),
+  ).toHaveLength(2);
   await userEvent.click(
     within(reply).getAllByRole("button", { name: /Go to source/ })[0],
   );
@@ -80,8 +78,32 @@ export async function referenceDiscussionLinks(canvasElement: HTMLElement) {
     within(discussion).getAllByRole("article", { name: "Comment by You" }),
   ).toHaveLength(2);
   expect(
-    within(discussion).getAllByRole("img", { name: "Replied" }),
+    within(discussion).getAllByRole("button", { name: "Go to reply" }),
   ).toHaveLength(2);
+  expect(within(discussion).getAllByRole("article")).toHaveLength(2);
+  expect(discussion).not.toHaveTextContent("Simulated reply:");
+  const jump = within(discussion).getAllByRole("button", {
+    name: "Go to reply",
+  })[1];
+  within(discussion)
+    .getByRole("button", { name: /^Reply$/ })
+    .focus();
+  await userEvent.tab();
+  await expect(jump).toHaveFocus();
+  await waitFor(() =>
+    expect(within(document.body).getByRole("tooltip")).toHaveTextContent(
+      "Go to reply",
+    ),
+  );
+  expect(
+    getComputedStyle(jump.querySelector(".chat-comment-delivered-icon")!)
+      .display,
+  ).toBe("none");
+  expect(
+    getComputedStyle(jump.querySelector(".chat-comment-jump-icon")!).display,
+  ).not.toBe("none");
+  await userEvent.keyboard("{Enter}");
+  await expect(reply).toHaveFocus();
   // Restore the captured-read view with its seeded inline discussion visible.
   within(pane).getByRole("textbox", { name: "README.md" }).focus();
   await waitFor(() =>

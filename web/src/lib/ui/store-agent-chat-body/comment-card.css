@@ -91,3 +91,18 @@
   margin: 0;
   display: inline;
 }
+
+.chat-comment-delivered-icon {
+  display: inline-flex;
+  color: var(--ui-diff-stat-added, var(--success, #16a34a));
+}
+.chat-comment-jump-icon {
+  display: none;
+}
+.chat-comment-reply-action:is(:hover, :focus-visible)
+  .chat-comment-delivered-icon {
+  display: none;
+}
+.chat-comment-reply-action:is(:hover, :focus-visible) .chat-comment-jump-icon {
+  display: inline-flex;
+}

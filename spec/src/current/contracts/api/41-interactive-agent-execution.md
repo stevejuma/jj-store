@@ -163,3 +163,8 @@ Quote typography and compact repeated reply context remain presentation-only.
 Reversible captured-code middle folds preserve JST-API-001 unchanged
 (E-CHAT-BODY-012). Show more/less changes only revision-keyed local disclosure
 state; immutable captured text, comment anchors and API/dispatch stay unchanged.
+
+Transcript reply sections and double-check navigation preserve JST-API-001
+unchanged (E-CHAT-BODY-013). Stable comment IDs and grouped simulated replies
+remain UI-only; this slice adds no live prompt protocol, parser, dispatch or
+persisted format.
