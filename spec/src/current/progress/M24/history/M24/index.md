@@ -12,7 +12,8 @@ not a completion gate selection.
 | [E-COMPUTE-004](../../../../../history/2026/10/08/E-COMPUTE-004/index.md) | 2026-10-08 | pass            | Original outcome |
 | [E-FLEET-005](../../../../../history/2026/10/08/E-FLEET-005/index.md)     | 2026-10-08 | pending         | Original outcome |
 | [E-FLEET-006](../../../../../history/2026/10/08/E-FLEET-006/index.md)     | 2026-10-08 | pass            | Original outcome |
-| [E-FLEET-007](../../../../../history/2026/10/08/E-FLEET-007/index.md)     | 2026-10-08 | pending         | Original outcome |
+| [E-FLEET-007](../../../../../history/2026/10/08/E-FLEET-007/index.md)     | 2026-10-08 | pass            | Original outcome |
+| [E-FLEET-008](../../../../../history/2026/10/08/E-FLEET-008/index.md)     | 2026-10-08 | pass            | Original outcome |
 
 <!-- generated-navigation -->
 

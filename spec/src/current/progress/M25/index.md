@@ -19,6 +19,10 @@ E-FLEET-006/007 retain the separate XML and captured Sent context paths while
 rebasing and integrating the shared agent chats into the default workspace.
 Focused verification is recorded separately from the open source and packaged
 distribution gates; this integration leaves M25 In progress.
+
+E-FLEET-008 completes the confirmed agent-fleet workspace retirement after main
+integration, preserving the main fixture, runtime resources and UI. No source or
+distribution qualification gate changes.
 <!-- generated-navigation -->
 
 ## Pages

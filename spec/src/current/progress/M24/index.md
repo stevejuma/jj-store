@@ -70,6 +70,11 @@ preserving the integrated Compute ancestry and main fixture. The temporary
 agent-fleet workspace and its private backup remain retained until the user
 confirms retirement. M24's independent gates and In progress status are
 unchanged.
+
+E-FLEET-008 records the user's confirmed agent-fleet retirement. Its workspace
+registration is removed and checkout retained in Trash, with verified local data
+backed up under main. The clean default workspace and its existing UI remain
+available; M24's independent gates remain unchanged.
 <!-- generated-navigation -->
 
 ## Pages
