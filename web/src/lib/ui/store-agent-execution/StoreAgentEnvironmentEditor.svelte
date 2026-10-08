@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreSettingsSelect from "../store-settings/StoreSettingsSelect.svelte";
   import { Input } from "@lapismd/design-core/shadcn/input";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as Field from "@lapismd/design-core/shadcn/field";
@@ -44,19 +45,22 @@
   {#each Object.entries(value) as [key, entry] (key)}
     <Field.Field>
       <Field.Label for={`${id}-${key}`}>{key}</Field.Label>
-      <select
+      <StoreSettingsSelect
         aria-label={`Source for ${key}`}
         value={entry.source}
         {disabled}
-        onchange={(event) => source(key, event.currentTarget.value)}
-      >
-        <option value="literal">Value</option><option value="environment"
-          >Server environment reference</option
-        >
-        <option value="keychain" disabled={!keychainSupported}
-          >Secret in device Keychain</option
-        ><option value="unset">Unset inherited variable</option>
-      </select>
+        onValueChange={(next) => source(key, next)}
+        options={[
+          { value: "literal", label: "Value" },
+          { value: "environment", label: "Server environment reference" },
+          {
+            value: "keychain",
+            label: "Secret in device Keychain",
+            disabled: !keychainSupported,
+          },
+          { value: "unset", label: "Unset inherited variable" },
+        ]}
+      />
       {#if entry.source === "keychain"}
         <Input
           id={`${id}-${key}`}

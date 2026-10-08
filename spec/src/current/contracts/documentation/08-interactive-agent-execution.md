@@ -56,3 +56,9 @@ The manual documents installation-local execution/settings notices, independent
 target invalidation and quiet healthy Agents/chat views. Reconnect and bounded
 failed-read recovery preserve drafts and pending identities. Source review and
 generated public domain references remain distinct from cold event acceptance.
+
+The Settings guide explains that automatic mentions are one installation-wide
+saved preference, updated immediately from either Settings or the composer.
+Conversation recipient pins and explicit drafts survive disabling it. Unrelated
+configuration remains an explicit Save defaults action. All Settings dropdowns
+use the shared shadcn controls with keyboard access and labelled defaults.

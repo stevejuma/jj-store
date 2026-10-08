@@ -1,4 +1,6 @@
 <script lang="ts">
+  import StoreAgentMentionPreference from "./StoreAgentMentionPreference.svelte";
+  import StoreSettingsSelect from "./StoreSettingsSelect.svelte";
   import StoreSettingsDisclosure from "./StoreSettingsDisclosure.svelte";
   import { isMacDesktopWindow } from "../../desktop-chrome.js";
   import { untrack, type Snippet } from "svelte";
@@ -80,27 +82,7 @@
 </script>
 
 {#if manager && draft}
-  <section
-    class="store-settings__section"
-    aria-labelledby={`${id}-conversations`}
-  >
-    <header class="store-settings__section-heading">
-      <h2 id={`${id}-conversations`}>Conversations</h2>
-    </header>
-    <Field.Group class="community-settings__option-group">
-      <StoreWorkField
-        label="Automatically mention agents"
-        id={`${id}-mention`}
-        description="Address selected agents in thread replies. Existing conversation preferences are retained."
-      >
-        <Switch
-          id={`${id}-mention`}
-          bind:checked={draft.automatically_mention}
-          disabled={busy}
-        />
-      </StoreWorkField>
-    </Field.Group>
-  </section>
+  <StoreAgentMentionPreference settings={manager.settings} />
   <section
     class="store-settings__section"
     aria-labelledby={`${id}-preferences`}
@@ -184,15 +166,17 @@
       <Field.Group class="store-settings__editable-rows">
         {#if draft.runner === "local"}
           <StoreWorkField label="Provider" id={`${id}-provider`}>
-            <select
+            <StoreSettingsSelect
               id={`${id}-provider`}
               bind:value={draft.options.provider}
               disabled={busy}
-            >
-              <option value="local">This machine</option><option value="paired"
-                >Paired compute</option
-              ><option value="openai">OpenAI compatible endpoint</option>
-            </select>
+              options={[
+                { value: null, label: "Harness default" },
+                { value: "local", label: "This machine" },
+                { value: "paired", label: "Paired compute" },
+                { value: "openai", label: "OpenAI compatible endpoint" },
+              ]}
+            />
           </StoreWorkField>
         {/if}
         {#if draft.runner === "local" && draft.options.provider === "openai"}
@@ -214,35 +198,32 @@
             label="Thinking"
             id={`${id}-effort`}
           >
-            <select
+            <StoreSettingsSelect
               id={`${id}-effort`}
-              value={draft.preferences.effort ?? ""}
+              bind:value={draft.preferences.effort}
               disabled={busy}
-              onchange={(event) => {
-                draft!.preferences.effort = event.currentTarget.value || null;
-              }}
-            >
-              <option value="">Harness default</option
-              >{#each thinking as option (option.id)}<option value={option.id}
-                  >{option.name}</option
-                >{/each}
-            </select>
+              options={[
+                { value: null, label: "Harness default" },
+                ...thinking.map((option) => ({
+                  value: option.id,
+                  label: option.name,
+                })),
+              ]}
+            />
           </StoreWorkField>{/if}
         {#if modes.length}<StoreWorkField
             label="Execution mode"
             id={`${id}-mode`}
-            ><select
+          >
+            <StoreSettingsSelect
               id={`${id}-mode`}
-              value={draft.preferences.mode ?? ""}
+              bind:value={draft.preferences.mode}
               disabled={busy}
-              onchange={(event) => {
-                draft!.preferences.mode = event.currentTarget.value || null;
-              }}
-              ><option value="">Harness default</option
-              >{#each modes as mode (mode.id)}<option value={mode.id}
-                  >{mode.name}</option
-                >{/each}</select
-            ></StoreWorkField
+              options={[
+                { value: null, label: "Harness default" },
+                ...modes.map((mode) => ({ value: mode.id, label: mode.name })),
+              ]}
+            /></StoreWorkField
           >{/if}
         <StoreSettingsDisclosure>
           <h3>Environment variables</h3>

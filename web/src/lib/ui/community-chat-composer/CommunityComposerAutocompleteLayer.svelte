@@ -14,6 +14,7 @@
     disabled = false,
     showAutoMention = false,
     autoMentionEnabled = false,
+    autoMentionDisabled = false,
     lockedAgentPubkeys = [],
     listRef = $bindable(null),
     onSelect,
@@ -27,6 +28,7 @@
     disabled?: boolean;
     showAutoMention?: boolean;
     autoMentionEnabled?: boolean;
+    autoMentionDisabled?: boolean;
     lockedAgentPubkeys?: readonly string[];
     listRef?: HTMLDivElement | null;
     onSelect: (index: number) => void;
@@ -52,6 +54,7 @@
     {showAutoMention}
     {disabled}
     {autoMentionEnabled}
+    {autoMentionDisabled}
     {lockedAgentPubkeys}
     bind:listRef
     {onSelect}

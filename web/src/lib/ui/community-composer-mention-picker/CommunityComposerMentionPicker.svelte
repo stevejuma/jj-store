@@ -20,6 +20,7 @@
     disabled = false,
     showAutoMention = false,
     autoMentionEnabled = false,
+    autoMentionDisabled = false,
     lockedAgentPubkeys = [],
     listRef = $bindable(null),
     onSelect,
@@ -33,6 +34,7 @@
     disabled?: boolean;
     showAutoMention?: boolean;
     autoMentionEnabled?: boolean;
+    autoMentionDisabled?: boolean;
     lockedAgentPubkeys?: readonly string[];
     listRef?: HTMLDivElement | null;
     onSelect: (index: number) => void;
@@ -78,10 +80,12 @@
       </label>
       <Switch
         id={switchId}
-        {disabled}
-        checked={autoMentionEnabled}
+        disabled={disabled || autoMentionDisabled}
+        bind:checked={
+          () => autoMentionEnabled,
+          (checked) => onAutoMentionChange(checked === true)
+        }
         aria-label="Automatically mention agents"
-        onCheckedChange={(checked) => onAutoMentionChange(checked === true)}
       />
     </div>
   {/if}
@@ -165,7 +169,7 @@
               {@const pinned = locked.has(item.member.id)}
               <Button
                 type="button"
-                {disabled}
+                disabled={disabled || autoMentionDisabled}
                 variant="ghost"
                 size="icon-xs"
                 aria-label={pinned

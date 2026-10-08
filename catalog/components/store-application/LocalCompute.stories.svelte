@@ -343,3 +343,50 @@
     ).toBeVisible();
   }}
 />
+
+<Story
+  name="Inference host dropdown retains peer and local default selections"
+  args={{ paired: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement),
+      menu = within(document.body);
+    await userEvent.click(await c.findByRole("tab", { name: "Sharing" }));
+    const host = c.getByLabelText("Inference host");
+    await expect(host).toHaveAttribute("data-ui-part", "select-trigger");
+    host.focus();
+    await userEvent.keyboard("{Enter}");
+    await userEvent.click(
+      await menu.findByRole("option", { name: "Trusted inference machine" }),
+    );
+    await waitFor(() =>
+      expect(getComputedStyle(host).pointerEvents).not.toBe("none"),
+    );
+    await expect(host).toHaveTextContent("Trusted inference machine");
+    await expect(c.getByLabelText("Compute commands")).toHaveTextContent("[]");
+    await userEvent.click(
+      c.getByRole("button", { name: "Save compute settings" }),
+    );
+    await waitFor(() =>
+      expect(
+        JSON.parse(c.getByLabelText("Compute commands").textContent ?? "[]")[0]
+          .action.settings.target_peer,
+      ).toBe("ab".repeat(32)),
+    );
+    await userEvent.click(host);
+    await userEvent.click(
+      await menu.findByRole("option", { name: "This machine" }),
+    );
+    await waitFor(() =>
+      expect(getComputedStyle(host).pointerEvents).not.toBe("none"),
+    );
+    await userEvent.click(
+      c.getByRole("button", { name: "Save compute settings" }),
+    );
+    await waitFor(() =>
+      expect(
+        JSON.parse(c.getByLabelText("Compute commands").textContent ?? "[]")[1]
+          .action.settings.target_peer,
+      ).toBeNull(),
+    );
+  }}
+/>

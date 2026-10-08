@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed Agents, contextual chat and recorded discussions using scoped events, independent target invalidation and bounded outage/failed-read recovery; extracted shared chat types preserve existing imports and browsing behavior.",
-      "fingerprint": "bdb227f4f38cffcd8b9b647c8da133f8c36cbc81e660a64707c7e42daffa1bb7"
+      "reason": "Reviewed shared saved automatic mentions, exact recovery without sending, retained defaults and secret drafts, and shadcn Settings choices against the updated Settings guide and production sources.",
+      "fingerprint": "c7a88371e226cdc2dd38f154dda1f8da024fbc48150704fa13ca5d3fe3617f05"
     }
   },
   {

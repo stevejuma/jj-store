@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreSettingsSelect from "../store-settings/StoreSettingsSelect.svelte";
   import StoreSettingsDisclosure from "../store-settings/StoreSettingsDisclosure.svelte";
   import StoreWorkField from "../store-work/StoreWorkField.svelte";
   import * as Field from "@lapismd/design-core/shadcn/field";
@@ -32,18 +33,17 @@
       </StoreWorkField>
       {#if draft.runner === "local"}
         <StoreWorkField label="Inference provider" id={`${id}-provider`}>
-          <select
+          <StoreSettingsSelect
             id={`${id}-provider`}
             bind:value={draft.options.provider}
             disabled={pending}
-          >
-            <option value={null}>Application default</option><option
-              value="local">This machine</option
-            >
-            <option value="paired">Paired compute</option><option value="openai"
-              >OpenAI compatible endpoint</option
-            >
-          </select>
+            options={[
+              { value: null, label: "Application default" },
+              { value: "local", label: "This machine" },
+              { value: "paired", label: "Paired compute" },
+              { value: "openai", label: "OpenAI compatible endpoint" },
+            ]}
+          />
         </StoreWorkField>
         {#if draft.options.provider === "openai"}
           <StoreWorkField label="Provider endpoint" id={`${id}-endpoint`}>

@@ -12,10 +12,17 @@ overrides. The model discovery status uses a divided action row with its
 description left and explicit retry right. The defaults save row joins its field
 table with only a top separator. The picker fills the field-table width without
 a visible label; its search input remains accessibly named. Automatically
-mention agents seeds conversations without an explicit preference and preserves
-existing pins/preferences. Keep awake is device-owned, initially disabled and
-expires after one hour without real agent activity; status polling does not
-extend it. Unsupported hosts explain capability unavailability.
+mention agents is one saved installation-wide preference shared by Settings and
+every composer agent picker. Either switch saves immediately using the existing
+conditional settings command, without saving other defaults or secret drafts.
+Saved values and settings events update both surfaces; legacy conversation flags
+cannot override them. Recipient pins remain conversation-scoped. Disabling
+suspends automatic insertion while retaining pins and explicit draft mentions.
+Failed saves keep the authoritative value and exact retry identity visible;
+retrying a preference never sends a message. Keep awake is device-owned,
+initially disabled and expires after one hour without real agent activity;
+status polling does not extend it. Unsupported hosts explain capability
+unavailability.
 
 Global defaults and Add/Edit agent expose collapsed Advanced environment rows
 with literal values, external environment references, OS credential references
@@ -87,3 +94,9 @@ app logo in runtime and harness choices. Its internal `local` identity and
 private executable names remain stable. Runtime Ready requires both the packaged
 agent and owned coding-tool helper; missing bundles show unavailable guidance
 and never offer the Codex installer.
+
+Every Settings page, including Advanced and Add/Edit agent options, uses the
+released Design Core shadcn Select for finite dropdown choices and the existing
+Popover/Command composition for searchable choices. Native select controls are
+not presented. Labels, keyboard navigation, focus return, disabled options,
+null/default values and unsaved selections remain supported.

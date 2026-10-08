@@ -5,6 +5,7 @@
   import { Textarea } from "@lapismd/design-core/shadcn/textarea";
   import { Switch } from "@lapismd/design-core/shadcn/switch";
   import { CodeBlock } from "@lapismd/design-core/shadcn/code-block";
+  import StoreSettingsSelect from "./StoreSettingsSelect.svelte";
   import StoreSettingsDisclosure from "./StoreSettingsDisclosure.svelte";
   import StoreReadOnlyRow from "./StoreReadOnlyRow.svelte";
   import StoreWorkField from "../store-work/StoreWorkField.svelte";
@@ -85,16 +86,18 @@
           label="Inference host"
           id={`${id}-host`}
         >
-          <select
+          <StoreSettingsSelect
             id={`${id}-host`}
             bind:value={draft.target_peer}
             disabled={blocked}
-          >
-            <option value={null}>This machine</option>
-            {#each Object.entries(draft.peers) as [identity, peer] (identity)}
-              <option value={identity}>{peer.name}</option>
-            {/each}
-          </select>
+            options={[
+              { value: null, label: "This machine" },
+              ...Object.entries(draft.peers).map(([value, peer]) => ({
+                value,
+                label: peer.name,
+              })),
+            ]}
+          />
         </StoreWorkField>
         {#if status.invitation}
           <StoreWorkField

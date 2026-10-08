@@ -9,7 +9,7 @@ import {
   writeAgentAudience,
 } from "../../community/agent-audience.js";
 import type { CommunityMemberModel } from "../community-workspace/model.js";
-/** Community-style opt-in pins, scoped to exact local agent identities. */
+/** Shared automatic-mention preference with conversation-scoped recipient pins. */
 export function createComposerAgentAudience(input: {
   scope(): string | undefined;
   defaultEnabled?(): boolean;
@@ -19,8 +19,15 @@ export function createComposerAgentAudience(input: {
   setValue(value: string): void;
 }) {
   const settings = useAgentExecution()?.settings;
-  let enabled = $state(false),
+  let fallbackEnabled = $state(false),
     pinned = $state<string[]>([]);
+  let error = $state("");
+  let requested = false;
+  const enabled = $derived(
+    settings
+      ? (settings.value?.automatically_mention ?? false)
+      : fallbackEnabled,
+  );
   let loaded = "",
     previous: string[] = [];
   const storage = () => {
@@ -36,7 +43,8 @@ export function createComposerAgentAudience(input: {
       .slice(0, 4);
   const persist = () => {
     const scope = input.scope();
-    if (scope) writeAgentAudience(scope, enabled, pinned, storage());
+    if (scope)
+      writeAgentAudience(scope, settings ? true : enabled, pinned, storage());
   };
   $effect(() => {
     const scope = input.scope();
@@ -51,8 +59,15 @@ export function createComposerAgentAudience(input: {
       const saved = scope
         ? readAgentAudience(scope, storage(), defaultEnabled)
         : { enabled: false, ids: [] };
-      enabled = saved.enabled;
+      fallbackEnabled = saved.enabled;
       pinned = saved.ids;
+      if (settings && enabled)
+        pinned = [
+          ...new Set([
+            ...pinned,
+            ...known([...input.initial(), ...mentionedAgentIds(input.value())]),
+          ]),
+        ].slice(0, 4);
       if (enabled) {
         const present = mentionedAgentIds(input.value());
         input.setValue(
@@ -67,6 +82,7 @@ export function createComposerAgentAudience(input: {
         );
       }
       previous = mentionedAgentIds(input.value());
+      if (settings && enabled) persist();
     });
   });
   $effect(() => {
@@ -95,11 +111,62 @@ export function createComposerAgentAudience(input: {
     );
     persist();
   }
+  async function toggle(next: boolean) {
+    requested = next;
+    error = "";
+    if (settings) {
+      const accepted = settings.pending
+        ? await settings.retry()
+        : await settings.setAutomaticallyMention(next);
+      if (!accepted) {
+        error =
+          settings.error ||
+          "Agent preference could not be saved. Try again in Settings → Agents.";
+        return false;
+      }
+      return true;
+    }
+    fallbackEnabled = next;
+    pinned = next
+      ? known([
+          ...new Set([...input.initial(), ...mentionedAgentIds(input.value())]),
+        ])
+      : [];
+    if (next) {
+      const present = mentionedAgentIds(input.value());
+      input.setValue(
+        [
+          ...pinned
+            .filter((id) => !present.includes(id))
+            .map(agentMentionToken),
+          input.value(),
+        ]
+          .filter(Boolean)
+          .join(" "),
+      );
+      previous = mentionedAgentIds(input.value());
+    }
+    persist();
+    return true;
+  }
   return {
+    get error() {
+      return error;
+    },
+    get busy() {
+      return (
+        !!settings && (!settings.value || settings.busy || !!settings.pending)
+      );
+    },
+    retry: () => toggle(requested),
+    clearError: () => {
+      error = "";
+    },
     get available() {
       return !!input.scope() && input.members().some((m) => !!m.acpAgentId);
     },
     get lockedMemberIds() {
+      if (!enabled) return [];
       return input
         .members()
         .filter((m) => m.acpAgentId && pinned.includes(m.acpAgentId))
@@ -118,32 +185,7 @@ export function createComposerAgentAudience(input: {
           )[0]
         : undefined;
     },
-    toggle(next: boolean) {
-      enabled = next;
-      pinned = next
-        ? known([
-            ...new Set([
-              ...input.initial(),
-              ...mentionedAgentIds(input.value()),
-            ]),
-          ])
-        : [];
-      if (next) {
-        const present = mentionedAgentIds(input.value());
-        input.setValue(
-          [
-            ...pinned
-              .filter((id) => !present.includes(id))
-              .map(agentMentionToken),
-            input.value(),
-          ]
-            .filter(Boolean)
-            .join(" "),
-        );
-        previous = mentionedAgentIds(input.value());
-      }
-      persist();
-    },
+    toggle,
     unpin,
     dismissMember(id: string) {
       const agentId = input.members().find((m) => m.id === id)?.acpAgentId;
@@ -153,14 +195,15 @@ export function createComposerAgentAudience(input: {
       if (!input.scope()) return;
       const agentId = input.members().find((m) => m.id === id)?.acpAgentId;
       if (!agentId) return;
-      if (pinned.includes(agentId)) return unpin(agentId);
-      const updated = known([...pinned, agentId]);
+      if (enabled && pinned.includes(agentId)) return unpin(agentId);
+      const updated = known([...new Set([...pinned, agentId])]);
       if (!updated.includes(agentId)) return;
-      enabled = true;
       pinned = updated;
+      // Selecting a recipient edits the draft even if saving the preference fails.
       if (!mentionedAgentIds(input.value()).includes(agentId))
         input.setValue(`${agentMentionToken(agentId)} ${input.value()}`);
       persist();
+      void toggle(true);
     },
     restore(submitted: string) {
       if (!enabled) {

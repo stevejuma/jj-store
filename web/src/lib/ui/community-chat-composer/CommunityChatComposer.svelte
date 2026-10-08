@@ -86,9 +86,6 @@
       catalogReader?.catalog() ?? emptyComposerSlashSession(),
     ),
   );
-  const status = $derived<ComposerStatus | undefined>(
-    error ? { type: "error", message: error } : composerStatus,
-  );
   const blocked = $derived(disabled || busy || submitting);
   const autocomplete = createComposerAutocomplete({
     props: () => ({ members, rooms, communityEmojis }),
@@ -100,7 +97,6 @@
       selectedIndex = 0;
     },
   });
-  const clearAutocomplete = autocomplete.clear;
   const audience = createComposerAgentAudience({
     scope: () => audienceKey,
     initial: () => initialAgentIds,
@@ -108,10 +104,14 @@
     value: () => value,
     setValue: (next) => (value = next),
   });
+  const issue = $derived(error || audience.error);
+  const status = $derived<ComposerStatus | undefined>(
+    issue ? { type: "error", message: issue } : composerStatus,
+  );
   let active = true;
   onDestroy(() => {
     active = false;
-    clearAutocomplete();
+    autocomplete.clear();
   });
   function selectAutocomplete(index: number) {
     if (!view || !query || !items[index]) return false;
@@ -120,7 +120,7 @@
       query,
       view,
     });
-    if (!selected?.keepOpen) clearAutocomplete();
+    if (!selected?.keepOpen) autocomplete.clear();
     view.focus();
     return !!selected;
   }
@@ -141,7 +141,7 @@
       if (!active) return;
       if (clearOnSubmit && value === submitted)
         value = audience.restore(submitted);
-      clearAutocomplete();
+      autocomplete.clear();
     } catch (cause) {
       if (!active) return;
       error =
@@ -172,7 +172,7 @@
       selectedIndex = (selectedIndex + direction + items.length) % items.length;
     },
     onAutocompleteAccept: () => selectAutocomplete(selectedIndex),
-    onAutocompleteDismiss: clearAutocomplete,
+    onAutocompleteDismiss: autocomplete.clear,
     submitOnEnter: () => mode === "chat" && showSubmitButton,
     onSubmit: () => void submit(),
     onEditLast: () => editLastComposerMessage(onEditLastMessage),
@@ -204,6 +204,7 @@
       {items}
       {selectedIndex}
       disabled={blocked}
+      autoMentionDisabled={audience.busy}
       showAutoMention={query.kind === "member" && audience.available}
       autoMentionEnabled={audience.enabled}
       lockedAgentPubkeys={audience.lockedMemberIds}
@@ -224,9 +225,7 @@
     statusPosition="top"
     aria-label={ariaLabel}
     title={disabled ? disabledReason : undefined}
-    onSubmit={() => {
-      if (showSubmitButton) void submit();
-    }}
+    onSubmit={() => showSubmitButton && void submit()}
   >
     {#snippet drawer()}
       {#if context?.kind === "reply" || context?.kind === "transcript-reply"}<CommunityReplyContext
@@ -237,12 +236,12 @@
           label={context.label}
           onCancel={onCancelContext}
         />{/if}
-      {#if status && (error || onRetryComposerStatus || onDismissComposerStatus)}<CommunityComposerStatusActions
-          {error}
+      {#if status && (issue || onRetryComposerStatus || onDismissComposerStatus)}<CommunityComposerStatusActions
+          error={issue}
           onRetry={onRetryComposerStatus}
           onDismiss={onDismissComposerStatus}
-          onRetryError={submit}
-          onClearError={() => (error = "")}
+          onRetryError={error ? submit : audience.retry}
+          onClearError={() => (error ? (error = "") : audience.clearError())}
         />{/if}
     {/snippet}
     {#snippet input()}<div class="community-chat-composer__editor-wrap">

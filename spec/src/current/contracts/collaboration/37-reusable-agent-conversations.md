@@ -97,7 +97,12 @@ Pins are scoped by device, actor, home and conversation, persist across
 successful sends/reopening, and can be removed explicitly. Origin discussion
 recipients seed the audience. The device-local personal-home alias scopes pins
 before and after lazy provisioning without resetting the opt-in. Disabling the
-preference clears pins. Editing ordinary text never dispatches agents.
+shared installation preference suspends automatic insertion but retains scoped
+pins and explicit draft tokens. Settings and picker switches save the same value
+immediately; pinning a recipient also enables it through the same conditional
+settings command. Preference saves never dispatch prompts or save unrelated
+configuration drafts. Legacy per-conversation flags no longer override the saved
+preference. Editing ordinary text never dispatches agents.
 
 Every exactly associated ACP avatar shows runtime state from one app-lifetime
 subscription: Starting, Idle, Queued, Working, Needs attention, Stopping,

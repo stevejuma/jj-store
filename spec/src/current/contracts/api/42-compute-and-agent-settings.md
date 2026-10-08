@@ -27,3 +27,11 @@ The hardware-aware model picker is an owned browser projection over existing
 ComputeStatus hardware/installed-model facts and the settings draft. Its local
 catalog and advisory RAM estimates add no API/schema or execution authority.
 Unknown hardware, model sizes and installed state are never fabricated.
+
+The Settings and composer automatic-mention switches share the existing
+conditional agent settings API. A preference-only save copies the authoritative
+settings and changes only `automatically_mention`; it never includes unsaved
+model/environment drafts or secret inputs. Unknown outcomes retain the exact
+request for retry, and stale revision refusal cannot silently overwrite another
+editor. No API schema, authorization, persistence format or event changes are
+introduced by this shared browser preference.
