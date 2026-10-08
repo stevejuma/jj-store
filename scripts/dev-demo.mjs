@@ -19,6 +19,7 @@ import { registerDemoLocalFolder } from "./dev-demo-local-folder.mjs";
 import { linkDemoFolder } from "./dev-demo-folder.mjs";
 import { seedSampleWork } from "./dev-demo-work-run.mjs";
 import { seedWork } from "./dev-demo-work.mjs";
+import { developmentAgentEnvironment } from "./dev-agent-runtime.mjs";
 import {
   configureSearch,
   repositoryPosition,
@@ -159,6 +160,11 @@ async function initializeFixture(origin, logHandle) {
 }
 
 async function restart({ reset = false } = {}) {
+  await run("cargo", ["build", "-p", "jj-store-cli", "--bins", "--locked"]);
+  Object.assign(
+    developmentEnvironment,
+    await developmentAgentEnvironment(repositoryRoot),
+  );
   await stopPrevious({
     owner: repositoryRoot,
     runtimeFile: layout.runtimeFile,
@@ -169,7 +175,6 @@ async function restart({ reset = false } = {}) {
   await run("pnpm", ["web:build"]);
   if (!process.env.JJ_STORE_DEV_RUSTFS_RUNTIME)
     await run("pnpm", ["build:embedded-rustfs"]);
-  await run("cargo", ["build", "-p", "jj-store-cli", "--bins", "--locked"]);
   const origin = `http://127.0.0.1:${serverPort}/`;
   let fixture = await loadFixture(layout);
   let references;

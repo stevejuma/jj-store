@@ -75,6 +75,15 @@ E-FLEET-008 records the user's confirmed agent-fleet retirement. Its workspace
 registration is removed and checkout retained in Trash, with verified local data
 backed up under main. The clean default workspace and its existing UI remain
 available; M24's independent gates remain unchanged.
+
+## Development agent availability review — 2026-10-08
+
+E-FLEET-009 records default bundled ACP selection for full, HMR and backend-only
+development restarts. Missing or pre-version-3 resources fail before replacing a
+running service. The prior implicit shell-export dependency caused the reported
+unavailable state; the ignored staged helper was also outdated. This repair
+leaves M24 In progress and preserves saved-agent Start/Stop state, explicit
+Send, authorization and the independent adapter, permission and desktop gates.
 <!-- generated-navigation -->
 
 ## Pages

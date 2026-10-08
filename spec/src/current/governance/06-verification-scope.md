@@ -195,6 +195,17 @@ HMR, backend restart and state preservation; built-bundle CSP qualification is
 retained separately. No development workflow publishes a package or replaces the
 installed CLI.
 
+Development startup supplies the bundled `desktop/resources/jj-acp` and the
+custom `jj` paired with the selected backend by default. The full restart builds
+its development binaries before preflight so clean checkouts remain supported.
+Full, HMR and backend-only restarts resolve these resources on every invocation,
+preserving explicit trusted environment overrides. Preflight rejects missing,
+non-regular, non-executable or pre-version-3 ACP resources before stopping an
+existing service. This inspection never launches an adapter or sends a prompt.
+The shared launcher regression includes a cold API capability/status check
+before and after backend-only and full restarts, without inherited ACP
+configuration.
+
 The HMR preflight also validates the generated Help bundle before replacing a
 process. Missing or invalid Help fails with `pnpm docs:build` guidance. Vite
 reloads Help on manifest publication events, preserving the last validated

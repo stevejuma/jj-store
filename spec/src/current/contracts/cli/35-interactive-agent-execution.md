@@ -6,6 +6,18 @@ and workspace provider. The LocalTrusted service supervises ACP v2 sessions and
 drains them before storage shutdown. Native and local workspace execution retain
 separate acceptance gates.
 
+The application development launchers select `desktop/resources/jj-acp` by
+default, matching the desktop's bundled-resource startup. `dev:restart`,
+`dev:ui` and `dev:backend:restart` supply the selected ACP path and paired
+custom `jj` on every launch; availability must not depend on a prior shell
+export. Explicit trusted executable overrides retain precedence. Before
+replacing a running development service, preflight requires regular executable
+files and ACP help advertising control version 3. Missing or stale resources
+fail with staging guidance instead of silently starting without agent
+management. The inspection only requests help; provider authentication,
+saved-agent Start/Stop state and explicit Send semantics remain unchanged. Bare
+server invocations retain explicit operator environment configuration.
+
 `JJ_STORE_AGENT_JJ_EXECUTABLE` optionally selects the paired custom `jj`; the
 default is the `jj` beside the server binary. The hidden `jj agent-workspace`
 command takes full operation and revision IDs, an owned name and an absolute

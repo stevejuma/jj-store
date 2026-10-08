@@ -186,6 +186,14 @@ successful state change or a distinct request establishes a new episode.
 
 ## Local execution
 
+Development launchers enable agent management using the bundled
+`desktop/resources/jj-acp` and paired custom `jj` by default on every restart.
+Missing or stale ACP resources fail preflight before stopping a running service.
+Stage control-version-3 resources with
+`pnpm desktop:prepare -- --acp-executable /absolute/path/to/jj-acp` when needed.
+Explicit `JJ_STORE_ACP_EXECUTABLE` and `JJ_STORE_AGENT_JJ_EXECUTABLE` overrides
+remain supported; ordinary restarts require no shell exports.
+
 For UI work, use `pnpm dev:ui`: it reuses the existing native executable and
 complete development fixture, serves the current workspace through Vite HMR at
 `http://127.0.0.1:7460/`, and proxies `/v1` to the backend on port 7462. UI

@@ -12,6 +12,7 @@ import {
 } from "./dev-demo-processes.mjs";
 import { waitForSearch } from "./dev-demo-search.mjs";
 import { assertPortAvailable, start, ready } from "./dev-ui-services.mjs";
+import { developmentAgentEnvironment } from "./dev-agent-runtime.mjs";
 import {
   uiDevelopmentSettings,
   rewriteUiBackendConfiguration,
@@ -102,6 +103,11 @@ export async function prepareUiDevelopment(
     serverConfig,
     configuration: rewriteUiBackendConfiguration(source, settings),
     previous,
+    agentEnvironment: await developmentAgentEnvironment(
+      repositoryRoot,
+      environment,
+      executable,
+    ),
   };
 }
 
@@ -193,7 +199,7 @@ export async function runUiDevelopment(
       ["run", "--config", serverConfig, "--format=json"],
       repositoryRoot,
       layout,
-      environment,
+      { ...environment, ...prepared.agentEnvironment },
       layout.logPath,
     );
     if (!backendOnly)

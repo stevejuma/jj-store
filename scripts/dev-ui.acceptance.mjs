@@ -71,6 +71,15 @@ try {
     );
     return response.json();
   };
+  const agentsAvailable = async () => {
+    assert.equal(
+      (await api("bootstrap")).capabilities.local_agent_execution,
+      true,
+    );
+    const status = await api("local/agents");
+    assert.ok(Array.isArray(status.setups));
+  };
+  await agentsAvailable();
   const html = await (await fetch(runtime.origin)).text();
   assert.ok(
     html.includes("/@vite/client"),
@@ -206,6 +215,7 @@ try {
   assert.deepEqual(await api(`repos/${repositoryId}/snapshot`), snapshot);
   phase = "backend restart";
   const restarted = await runUiDevelopment(root, environment, true);
+  await agentsAvailable();
   assert.equal(restarted.uiPid, runtime.uiPid);
   assert.notEqual(restarted.serverPid, runtime.serverPid);
   assert.deepEqual(await identity(), initialIdentity);
@@ -233,6 +243,7 @@ try {
         hmr: ["Svelte", "TypeScript", "CSS"],
         documentReloads: 0,
         backendRestart: "Vite PID retained",
+        agentExecution: "bundled runtime available before and after restart",
         originGuards: "wrong Origin and Host rejected",
         stop: "both processes stopped, fixture retained",
         runtimeRoot: layout.runtimeRoot,
@@ -248,6 +259,7 @@ try {
       env: environment,
     });
     console.log(result.stdout);
+    await agentsAvailable();
     assert.throws(() => process.kill(active.uiPid, 0), { code: "ESRCH" });
     assert.throws(() => process.kill(active.serverPid, 0), { code: "ESRCH" });
     const built = await readFile(join(root, "web/dist/index.html"));

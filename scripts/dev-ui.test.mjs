@@ -14,6 +14,13 @@ import { prepareUiDevelopment, runUiDevelopment } from "./dev-ui.mjs";
 import { developmentLayout, writeFixture } from "./dev-demo-state.mjs";
 
 async function documentation(root) {
+  const resources = join(root, "desktop/resources");
+  await mkdir(resources, { recursive: true });
+  await writeFile(
+    join(resources, "jj-acp"),
+    "#!/bin/sh\nprintf '%s\\n' '--control-version <1|2|3>'\n",
+    { mode: 0o755 },
+  );
   const docs = join(root, "docs/build");
   await mkdir(docs, { recursive: true });
   await writeFile(join(docs, "index.html"), "<h1>Help</h1>");
@@ -139,8 +146,21 @@ test("an occupied backend port leaves the current service and runtime marker int
       JJ_STORE_DEV_PORT: String(uiPort),
       JJ_STORE_DEV_BACKEND_PORT: String(backendPort),
       JJ_STORE_DEV_SERVER: process.execPath,
+      JJ_STORE_AGENT_JJ_EXECUTABLE: process.execPath,
     }),
     { code: "EADDRINUSE" },
+  );
+  assert.doesNotThrow(() => process.kill(running.pid, 0));
+  assert.equal(await readFile(layout.runtimeFile, "utf8"), marker);
+  await rm(join(root, "desktop/resources/jj-acp"));
+  await assert.rejects(
+    runUiDevelopment(root, {
+      JJ_STORE_DEV_PORT: String(uiPort),
+      JJ_STORE_DEV_BACKEND_PORT: String(backendPort),
+      JJ_STORE_DEV_SERVER: process.execPath,
+      JJ_STORE_AGENT_JJ_EXECUTABLE: process.execPath,
+    }),
+    /Missing regular agent runtime executable/u,
   );
   assert.doesNotThrow(() => process.kill(running.pid, 0));
   assert.equal(await readFile(layout.runtimeFile, "utf8"), marker);
@@ -159,6 +179,7 @@ test("matching HMR backend restart retains app-saved configuration and refuses a
   await writeFixture(layout, fixture);
   const initial = await prepareUiDevelopment(root, {
     JJ_STORE_DEV_SERVER: process.execPath,
+    JJ_STORE_AGENT_JJ_EXECUTABLE: process.execPath,
   });
   await writeFile(
     initial.serverConfig,
@@ -176,12 +197,16 @@ test("matching HMR backend restart retains app-saved configuration and refuses a
   );
   const saved = await prepareUiDevelopment(root, {
     JJ_STORE_DEV_SERVER: process.execPath,
+    JJ_STORE_AGENT_JJ_EXECUTABLE: process.execPath,
   });
   assert.match(saved.configuration, /enabled = true/u);
   assert.match(await readFile(layout.serverConfig, "utf8"), /enabled = false/u);
   await rm(initial.serverConfig);
   await assert.rejects(
-    prepareUiDevelopment(root, { JJ_STORE_DEV_SERVER: process.execPath }),
+    prepareUiDevelopment(root, {
+      JJ_STORE_DEV_SERVER: process.execPath,
+      JJ_STORE_AGENT_JJ_EXECUTABLE: process.execPath,
+    }),
     { code: "ENOENT" },
   );
 });
@@ -233,6 +258,7 @@ test("missing or invalid Help leaves running services and runtime markers intact
     JJ_STORE_DEV_PORT: String(uiPort),
     JJ_STORE_DEV_BACKEND_PORT: String(backendPort),
     JJ_STORE_DEV_SERVER: process.execPath,
+    JJ_STORE_AGENT_JJ_EXECUTABLE: process.execPath,
   };
   for (const invalid of ["missing", "unsafe", "duplicate", "incomplete"]) {
     if (invalid !== "missing") {
