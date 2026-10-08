@@ -185,14 +185,14 @@
       page.getByRole("button", { name: "Use #30a46c background" }),
     );
     await userEvent.keyboard("{Escape}");
-    await userEvent.click(editor.getByRole("tab", { name: "Cursor" }));
-    await userEvent.click(
-      editor.getByRole("option", { name: /Harness default/ }),
-    );
-    await expect(editor.getByRole("tab", { name: "Cursor" })).toHaveAttribute(
-      "aria-selected",
-      "true",
-    );
+    await userEvent.click(editor.getByLabelText("Harness", { exact: true }));
+    await userEvent.click(page.getByRole("option", { name: "Cursor" }));
+    await expect(
+      editor.getByLabelText("Harness", { exact: true }),
+    ).toHaveTextContent("Cursor");
+    await expect(
+      editor.getByRole("combobox", { name: "Model" }),
+    ).toHaveTextContent("Harness default");
     await expect(editor.queryByLabelText("Runner")).not.toBeInTheDocument();
     await userEvent.click(editor.getByRole("button", { name: "Save agent" }));
     const card = (await c.findByRole("button", { name: "View Cursor helper" }))
@@ -211,10 +211,9 @@
     await userEvent.click(
       c.getByRole("button", { name: "Edit Cursor helper" }),
     );
-    await expect(page.getByRole("tab", { name: "Cursor" })).toHaveAttribute(
-      "aria-selected",
-      "true",
-    );
+    await expect(
+      page.getByLabelText("Harness", { exact: true }),
+    ).toHaveTextContent("Cursor");
     await userEvent.click(page.getByRole("button", { name: "Cancel" }));
     await waitFor(() =>
       expect(document.body).not.toHaveStyle({ pointerEvents: "none" }),

@@ -258,13 +258,14 @@
     const editor = within(
       await page.findByRole("dialog", { name: "Add agent" }),
     );
+    await userEvent.click(editor.getByRole("combobox", { name: "Model" }));
     await userEvent.click(
-      await editor.findByRole("option", { name: /Fixture model/ }),
+      await page.findByRole("option", { name: /Fixture model/ }),
     );
     await expect(
-      editor.getByText("Selected model: Fixture model"),
-    ).toBeVisible();
-    await expect(editor.getByLabelText("Thinking")).toBeVisible();
+      editor.getByRole("combobox", { name: "Model" }),
+    ).toHaveTextContent("Fixture model");
+    await expect(await editor.findByLabelText("Thinking")).toBeVisible();
     await expect(c.getByLabelText("Agent fleet requests")).toHaveTextContent(
       "[]",
     );

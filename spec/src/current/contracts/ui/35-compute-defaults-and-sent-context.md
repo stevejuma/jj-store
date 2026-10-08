@@ -3,26 +3,25 @@
 JST-UI-012 extends Agents settings with Conversations, Preferences, Agent
 runtimes and Agent defaults in that order; Runtimes is initially selected. Each
 named section uses the shared compact heading with half-rem vertical padding.
-Agent defaults uses the Add/Edit agent searchable harness/model picker,
-including live or remembered session capabilities and installed-harness
-discovery. Discovery starts only when the runtime and selected harness are
-available; loading, unavailable choices and an explicit retry preserve saved
-preferences. Choosing another harness clears incompatible model/effort/mode
-overrides. The model discovery status uses a divided action row with its
-description left and explicit retry right. The defaults save row joins its field
-table with only a top separator. The picker fills the field-table width without
-a visible label; its search input remains accessibly named. Automatically
-mention agents is one saved installation-wide preference shared by Settings and
-every composer agent picker. Either switch saves immediately using the existing
-conditional settings command, without saving other defaults or secret drafts.
-Saved values and settings events update both surfaces; legacy conversation flags
-cannot override them. Recipient pins remain conversation-scoped. Disabling
-suspends automatic insertion while retaining pins and explicit draft mentions.
-Failed saves keep the authoritative value and exact retry identity visible;
-retrying a preference never sends a message. Keep awake is device-owned,
-initially disabled and expires after one hour without real agent activity;
-status polling does not extend it. Unsupported hosts explain capability
-unavailability.
+Agent defaults uses the Add/Edit agent bordered configuration rows, including
+live or remembered session capabilities and installed-harness discovery.
+Discovery starts only when the runtime and selected harness are available;
+loading, unavailable choices and an explicit retry preserve saved preferences.
+Choosing another harness clears incompatible model/effort/mode overrides. The
+model discovery status uses a divided action row with its description left and
+explicit retry right. The defaults save row joins its field table with only a
+top separator. Harness, provider and model controls retain visible labels and
+accessibly named search. Automatically mention agents is one saved
+installation-wide preference shared by Settings and every composer agent picker.
+Either switch saves immediately using the existing conditional settings command,
+without saving other defaults or secret drafts. Saved values and settings events
+update both surfaces; legacy conversation flags cannot override them. Recipient
+pins remain conversation-scoped. Disabling suspends automatic insertion while
+retaining pins and explicit draft mentions. Failed saves keep the authoritative
+value and exact retry identity visible; retrying a preference never sends a
+message. Keep awake is device-owned, initially disabled and expires after one
+hour without real agent activity; status polling does not extend it. Unsupported
+hosts explain capability unavailability.
 
 Global defaults and Add/Edit agent expose collapsed Advanced environment rows
 with literal values, external environment references, OS credential references
@@ -89,7 +88,7 @@ service machine and fills the draft without importing. Cancellation, failed
 dialogs and late responses after closure preserve the prior draft. Repeated
 Browse/import actions are disabled while picking. Manual absolute path entry
 remains available on unsupported hosts. Picker errors use shared notifications.
-The bundled Buzz-derived ACP harness is displayed as jj-agent with the jj-store
+The bundled Buzz-derived ACP harness is displayed as JJ Agent with the jj-store
 app logo in runtime and harness choices. Its internal `local` identity and
 private executable names remain stable. Runtime Ready requires both the packaged
 agent and owned coding-tool helper; missing bundles show unavailable guidance
@@ -100,3 +99,25 @@ released Design Core shadcn Select for finite dropdown choices and the existing
 Popover/Command composition for searchable choices. Native select controls are
 not presented. Labels, keyboard navigation, focus return, disabled options,
 null/default values and unsaved selections remain supported.
+
+Add/Edit agent and Agent defaults share Harness, LLM provider, Model, Thinking
+and Execution mode configuration. Provider choices are service-owned
+capabilities. All fields after the harness picker use the bordered Settings
+groups and divided label/control rows. Explicit harness/provider/endpoint
+changes reset incompatible model/effort choices; asynchronous catalogs retain
+saved unknowns and drafts. The current unsaved configuration drives discovery,
+with bounded retry/status rows. JJ Store shared compute shows the selected
+paired host and advertised models; missing setup and authentication remain
+contextual. Advanced retains inheritance, environment and credential references.
+Closing or cancelling never saves secrets.
+
+The Harness dropdown shows the owned icon for every option and the selected
+value. The bundled local harness display label is JJ Agent; its local runner
+identity and executable names are unchanged. Icons are decorative and accessible
+names remain the harness labels.
+
+Add/Edit Advanced has one rounded Settings group boundary enclosing both its
+collapsed trigger and expanded content. Collapsing retains the border, keyboard
+focus and unsaved environment/credential drafts. Disclosure hover and
+keyboard-focus treatments follow the rounded group corners; keyboard focus
+remains visible inside the boundary without a clipped outer ring.

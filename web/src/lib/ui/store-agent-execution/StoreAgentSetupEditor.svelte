@@ -2,10 +2,9 @@
   // Adapted CommunityAgentEditorDialog: local saved agent, no relay/provisioning state.
   import { untrack } from "svelte";
   import CommunityAgentEditorDialog from "../community-agent-editor/CommunityAgentEditorDialog.svelte";
-  import type { EditorModelRow } from "../../community/agent-editor-model-rows.js";
-  import { runtimeChoices } from "./presentation.js";
   import { waitForRuntime } from "./runtime-preparation.js";
-  import { harnessCatalog, harnessModelRows } from "./harness-catalog.js";
+  import StoreAgentConfiguration from "./StoreAgentConfiguration.svelte";
+  import { sameLaunchOptions } from "../../controller/agent-configuration.js";
   import type { AgentExecution } from "../../controller/agent-execution.svelte.js";
   import type {
     AgentSetup,
@@ -68,59 +67,8 @@
       return manager.setupDrafts[draftKey];
     }),
   );
-  const catalogAgent = $derived(
-    manager.value?.setups.find(
-      (saved) => saved.id === draft.id && saved.runner === draft.runner,
-    )?.id,
-  );
-  const catalogKey = $derived(manager.catalogs.key(draft.runner, catalogAgent));
-  const catalog = $derived(
-    harnessCatalog(
-      manager.value?.sessions ?? [],
-      draft.runner,
-      manager.catalogs.values[catalogKey]?.facts,
-    ),
-  );
-  $effect(() => {
-    const runner = draft.runner;
-    const available =
-      manager.value?.runtime === "ready" &&
-      manager.value.runners.some((r) => r.id === runner && r.available);
-    if (open && available)
-      untrack(() => {
-        if (catalogAgent || !catalog.session)
-          void manager.catalogs.load(runner, false, catalogAgent);
-      });
-  });
-  const facts = $derived(catalog.facts);
-  const hasCatalog = $derived(
-    runtimeChoices(facts, "model").length ||
-      runtimeChoices(facts, "thought_level").length,
-  );
-  const modelRows = $derived(
-    harnessModelRows(
-      manager.value,
-      (runner) =>
-        manager.catalogs.values[runner === draft.runner ? catalogKey : runner]
-          ?.facts,
-      draft.runner,
-      draft.preferences.model,
-    ),
-  );
-  function selectModel(row: EditorModelRow) {
-    if (row.runtimeAgent !== draft.runner)
-      draft.preferences = { model: null, effort: null, mode: null };
-    draft.runner = row.runtimeAgent;
-    draft.preferences.model = row.model || null;
-  }
-  const thinking = $derived(
-    runtimeChoices(facts, "thought_level").map((o) => ({
-      value: o.id,
-      name: o.name,
-    })),
-  );
-  const modes = $derived(
-    runtimeChoices(facts, "mode").map((o) => ({ value: o.id, name: o.name })),
+  const initialConfiguration = untrack(() =>
+    structuredClone($state.snapshot(draft)),
   );
   let secretDrafts = $state(
     untrack(() => (manager.settings.setupSecretDrafts[draftKey] ??= {})),
@@ -129,6 +77,9 @@
   async function save(event: SubmitEvent) {
     event.preventDefault();
     if (savingSecrets || manager.busy) return;
+    const launchPending =
+      manager.value?.live_agents?.find((live) => live.agent_id === draft.id)
+        ?.restart_required ?? false;
     savingSecrets = true;
     try {
       await manager.settings.saveSecrets(secretDrafts);
@@ -158,6 +109,8 @@
     if (
       current?.connected &&
       ["idle", "running"].includes(current.state) &&
+      !launchPending &&
+      sameLaunchOptions(draft, initialConfiguration) &&
       draft.runner === current.runner &&
       draft.preferences.mode
     ) {
@@ -188,19 +141,6 @@
 <CommunityAgentEditorDialog
   keychainSupported={manager.settings.value?.keychain_supported ?? false}
   bind:secrets={secretDrafts}
-  runtimeNotice={session
-    ? "Save changes the agent defaults for future chats. Model, thinking and execution mode also apply to this connected session when using its current harness. Its captured instructions and workspace stay unchanged."
-    : catalog.remembered && hasCatalog
-      ? `Showing choices from this harness's last session. Availability is checked again when a new session connects. Saved preferences remain until you change them. ${manager.catalogs.errors[catalogKey] ?? ""}`
-      : manager.catalogs.errors[catalogKey]
-        ? `No model or thinking choices have been advertised for this harness. Saved preferences remain until you change them. ${manager.catalogs.errors[catalogKey]}`
-        : manager.catalogs.loading[catalogKey] && !hasCatalog
-          ? "Loading models and thinking choices from the installed harness…"
-          : !hasCatalog
-            ? "No model or thinking choices have been advertised for this harness. Saved preferences remain until you change them."
-            : catalog.session
-              ? "Model and thinking choices come from the connected harness. Saved preferences remain until you change them."
-              : "Model and thinking choices come from the installed harness. Availability is checked again when a chat connects."}
   saveUnavailable={manager.value?.runtime === "preparing"
     ? "Preparing agent configuration. Save becomes available when preparation completes."
     : manager.value?.runtime === "unavailable"
@@ -217,24 +157,20 @@
   bind:draft
   editing={!!setup}
   pending={savingSecrets || manager.busy || !!manager.pending}
-  rows={modelRows}
-  {thinking}
-  {modes}
-  onModel={selectModel}
-  onHarnessChange={(runner) => {
-    if (
-      manager.value?.runtime === "ready" &&
-      manager.value.runners.some((r) => r.id === runner && r.available)
-    )
-      void manager.catalogs.load(
-        runner,
-        false,
-        runner === draft.runner ? catalogAgent : undefined,
-      );
-  }}
   onSave={save}
-  modelsLoading={manager.catalogs.loading[catalogKey]}
-  onRetryModels={manager.catalogs.errors[catalogKey]
-    ? () => void manager.catalogs.load(draft.runner, true, catalogAgent)
-    : undefined}
-/>
+>
+  {#snippet configuration()}
+    {#if session}<p>
+        Save changes the agent defaults for future chats. Provider and
+        environment changes require an explicit restart.
+      </p>{/if}
+    <StoreAgentConfiguration
+      {manager}
+      bind:draft
+      secrets={secretDrafts}
+      pending={savingSecrets || manager.busy || !!manager.pending}
+      active={open}
+      scope={`editor:${draftKey}`}
+    />
+  {/snippet}
+</CommunityAgentEditorDialog>

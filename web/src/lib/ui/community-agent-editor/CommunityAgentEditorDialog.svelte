@@ -3,18 +3,13 @@
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as Dialog from "@lapismd/design-core/shadcn/dialog";
   import * as Field from "@lapismd/design-core/shadcn/field";
-  import * as Tabs from "@lapismd/design-core/shadcn/tabs";
   import { Input } from "@lapismd/design-core/shadcn/input";
   import CommunityAvatarPicker from "../community-avatar-picker/CommunityAvatarPicker.svelte";
   import CommunityChatComposer from "../community-chat-composer/CommunityChatComposer.svelte";
-  import CommunityAgentEditorModelField from "./CommunityAgentEditorModelField.svelte";
-  import CommunityAgentEditorThinkingField from "./CommunityAgentEditorThinkingField.svelte";
-  import CommunityAgentEditorSavedPreferences from "./CommunityAgentEditorSavedPreferences.svelte";
-  import CommunityAgentEditorModeField from "./CommunityAgentEditorModeField.svelte";
   import { avatarPreview } from "../community-avatar-picker/legacy-avatar.js";
   import StoreAgentAdvanced from "../store-agent-execution/StoreAgentAdvanced.svelte";
   import type { AgentSetup } from "../../controller/agent-execution-types.js";
-  import type { EditorModelRow } from "../../community/agent-editor-model-rows.js";
+  import type { Snippet } from "svelte";
   import "./agent-editor.css";
   let {
     open = $bindable(false),
@@ -27,14 +22,7 @@
     onUseLatest,
     pending = false,
     saveUnavailable = "",
-    onRetryModels,
-    modelsLoading = false,
-    runtimeNotice = "Model and thinking choices come from a connected harness. Saved preferences remain until you change them.",
-    rows,
-    thinking,
-    modes,
-    onModel,
-    onHarnessChange,
+    configuration,
     onSave,
   }: {
     open?: boolean;
@@ -47,14 +35,7 @@
     onUseLatest?: () => void;
     pending?: boolean;
     saveUnavailable?: string;
-    runtimeNotice?: string;
-    onRetryModels?: () => void;
-    modelsLoading?: boolean;
-    rows: readonly EditorModelRow[];
-    thinking: readonly { value: string; name: string }[];
-    modes: readonly { value: string; name: string }[];
-    onModel: (row: EditorModelRow) => void;
-    onHarnessChange?: (runner: string) => void;
+    configuration: Snippet;
     onSave: (event: SubmitEvent) => Promise<void>;
   } = $props();
   const editorId = $props.id();
@@ -65,7 +46,6 @@
         ? "Keep instructions within 32 KiB."
         : "",
   );
-  let runtimeConfigMode = $state("custom");
 </script>
 
 <Dialog.Root bind:open>
@@ -141,80 +121,7 @@
         </Field.Field>
         <div class="agent-editor__runtime-editor">
           <h3>AI configuration</h3>
-          <Tabs.Root
-            value={runtimeConfigMode}
-            onValueChange={(value) => {
-              runtimeConfigMode = value;
-              if (value === "defaults")
-                draft.preferences = { model: null, effort: null, mode: null };
-            }}
-          >
-            <Tabs.List class="agent-editor__runtime-mode">
-              <Tabs.Trigger value="defaults">Use harness defaults</Tabs.Trigger>
-              <Tabs.Trigger value="custom"
-                >Customize for this agent</Tabs.Trigger
-              >
-            </Tabs.List>
-          </Tabs.Root>
-          {#if runtimeConfigMode === "defaults"}
-            <dl class="agent-editor__runtime-defaults">
-              <div>
-                <dt>Harness</dt>
-                <dd>
-                  {rows.find((r) => r.runtimeAgent === draft.runner)
-                    ?.harnessLabel ?? draft.runner}
-                </dd>
-              </div>
-              <div>
-                <dt>Model</dt>
-                <dd>Harness default</dd>
-              </div>
-            </dl>
-          {:else}
-            <CommunityAgentEditorModelField
-              id={`${editorId}-runtime-model`}
-              {pending}
-              {rows}
-              runtimeAgent={draft.runner}
-              model={draft.preferences.model ?? ""}
-              onSelect={onModel}
-              {onHarnessChange}
-            />
-            {#if thinking.length}
-              <CommunityAgentEditorThinkingField
-                id={`${editorId}-runtime-thinking`}
-                {pending}
-                thinking={draft.preferences.effort ?? ""}
-                options={thinking}
-                onValueChange={(value) => (draft.preferences.effort = value)}
-              />
-            {/if}
-          {/if}
-          <Field.Description>{runtimeNotice}</Field.Description>
-          {#if onRetryModels}<Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={modelsLoading}
-              onclick={onRetryModels}>Retry models</Button
-            >{/if}
-          {#if modes.length}
-            <CommunityAgentEditorModeField
-              id={`${editorId}-mode`}
-              {pending}
-              value={draft.preferences.mode ?? ""}
-              options={modes}
-              onValueChange={(value) => (draft.preferences.mode = value)}
-            />
-          {:else}
-            <Field.Description
-              >Choose an execution mode after connecting, before sending a
-              prompt.</Field.Description
-            >
-          {/if}
-          <CommunityAgentEditorSavedPreferences
-            preferences={draft.preferences}
-          />
+          {@render configuration()}
         </div>
         <StoreAgentAdvanced
           bind:draft

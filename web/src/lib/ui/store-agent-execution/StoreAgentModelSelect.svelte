@@ -1,0 +1,140 @@
+<script lang="ts">
+  import { tick } from "svelte";
+  import * as Popover from "@lapismd/design-core/shadcn/popover";
+  import * as CommandView from "@lapismd/design-core/shadcn/command-view";
+  import { Button } from "@lapismd/design-core/shadcn/button";
+  import { Input } from "@lapismd/design-core/shadcn/input";
+  import Check from "@lucide/svelte/icons/check";
+  import ChevronsUpDown from "@lucide/svelte/icons/chevrons-up-down";
+  let {
+    id,
+    value = $bindable(null),
+    options,
+    disabled = false,
+    allowCustom = false,
+    defaultLabel = "Harness default",
+    onChange,
+  }: {
+    id: string;
+    value: string | null | undefined;
+    options: readonly { id: string; name: string }[];
+    disabled?: boolean;
+    allowCustom?: boolean;
+    defaultLabel?: string;
+    onChange?: () => void;
+  } = $props();
+  let open = $state(false);
+  let custom = $state(false);
+  const label = $derived(
+    options.find((o) => o.id === value)?.name ??
+      (value ? `${value} (saved preference)` : defaultLabel),
+  );
+  let trigger: HTMLButtonElement | null = $state(null);
+  async function select(next: string | null) {
+    value = next;
+    custom = false;
+    open = false;
+    onChange?.();
+    await tick();
+    trigger?.focus();
+  }
+</script>
+
+<Popover.Root bind:open>
+  <Popover.Trigger>
+    {#snippet child({ props })}
+      <Button
+        {...props}
+        {id}
+        bind:ref={trigger}
+        variant="outline"
+        {disabled}
+        role="combobox"
+        aria-label="Model"
+        aria-expanded={open}
+        class="store-agent-model-trigger"
+      >
+        <span>{label}</span><ChevronsUpDown aria-hidden="true" />
+      </Button>
+    {/snippet}
+  </Popover.Trigger>
+  <Popover.Content class="store-agent-model-menu" align="start">
+    <CommandView.Root label="Search models" loop>
+      <CommandView.Input
+        aria-label="Search models"
+        placeholder="Search models…"
+      />
+      <CommandView.List>
+        <CommandView.Empty>No matching models.</CommandView.Empty>
+        <CommandView.Group heading="Models">
+          <CommandView.Item value={defaultLabel} onSelect={() => select(null)}
+            ><CommandView.ItemLabel>{defaultLabel}</CommandView.ItemLabel
+            >{#if !value}<Check aria-label="Selected" />{/if}</CommandView.Item
+          >
+          {#each options as option (option.id)}
+            <CommandView.Item
+              value={`${option.name} ${option.id}`}
+              onSelect={() => select(option.id)}
+              ><CommandView.ItemLabel>{option.name}</CommandView.ItemLabel
+              >{#if value === option.id}<Check
+                  aria-label="Selected"
+                />{/if}</CommandView.Item
+            >
+          {/each}
+          {#if value && !options.some((o) => o.id === value)}
+            <CommandView.Item {value} disabled
+              ><CommandView.ItemLabel
+                >{value} (saved preference)</CommandView.ItemLabel
+              ></CommandView.Item
+            >
+          {/if}
+          {#if allowCustom}<CommandView.Item
+              value="Custom model ID"
+              onSelect={() => {
+                custom = true;
+                open = false;
+              }}
+              ><CommandView.ItemLabel>Custom model ID…</CommandView.ItemLabel
+              ></CommandView.Item
+            >{/if}
+        </CommandView.Group>
+      </CommandView.List>
+    </CommandView.Root>
+  </Popover.Content>
+</Popover.Root>
+{#if custom}
+  <Input
+    aria-label="Custom model ID"
+    value={value ?? ""}
+    {disabled}
+    oninput={(event) => {
+      value = event.currentTarget.value || null;
+      onChange?.();
+    }}
+  />
+  <Button
+    type="button"
+    variant="ghost"
+    size="sm"
+    onclick={() => (custom = false)}>Done</Button
+  >
+{/if}
+
+<style>
+  :global(.store-agent-model-trigger) {
+    width: 100%;
+    min-width: 0;
+    justify-content: space-between;
+    white-space: normal;
+  }
+  :global(.store-agent-model-trigger span) {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    text-align: left;
+  }
+  :global(.store-agent-model-menu) {
+    width: min(30rem, calc(100vw - 2rem));
+    max-width: calc(100vw - 2rem);
+    padding: 0;
+  }
+</style>

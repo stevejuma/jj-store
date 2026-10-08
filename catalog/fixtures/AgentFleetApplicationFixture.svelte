@@ -105,9 +105,11 @@
                   },
                 )
               : json({
-                  runner: new URL(path, "http://localhost").searchParams.get(
-                    "runner",
-                  ),
+                  runner: init?.body
+                    ? JSON.parse(String(init.body)).runner
+                    : new URL(path, "http://localhost").searchParams.get(
+                        "runner",
+                      ),
                   facts: {
                     models: {
                       availableModels: [

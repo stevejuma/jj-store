@@ -22,9 +22,9 @@ Imports copy explicit GGUF files; removals touch managed weights only. Native
 model-file selection is an additive installation capability and fixed
 empty-input HTTP route. Hosts without a composed dialog default to false and
 retain manual path import. Version-1 optional-path results distinguish selection
-from cancellation; selection never changes a model or repository format. The
-jj-agent display name and app artwork preserve the saved `local` runner
-identity, private companion executable names, source pins and ABI artifacts.
+from cancellation; selection never changes a model or repository format. The JJ
+Agent display name and app artwork preserve the saved `local` runner identity,
+private companion executable names, source pins and ABI artifacts.
 
 The gateway preserves the selected logical model identity. Native startup uses
 the installed non-symlink path with local-required source policy and disabled
@@ -33,3 +33,12 @@ native slots, independent of a model's advertised maximum context. Managed
 local/paired agents default to an 8,192-token context budget and a 2,048-token
 response budget. Explicit Advanced environment overrides/unsets retain their
 precedence; external provider agents retain provider defaults.
+
+Provider discovery adds an owned helper command with ready/empty/authentication
+and unavailable statuses. Legacy `local`, `paired` and compatible `openai`
+configuration retains its meaning; first-party OpenAI uses `openai-api`. Public
+runner provider metadata and draft preview input are additive. There is no
+repository format migration. Native JJ identities and existing compute ABI/pins
+are unchanged under JST-COMPAT-001/JST-COMPAT-003/JST-COMPAT-005. Fixture
+provider responses do not qualify authenticated cloud endpoints or packaged
+platforms.

@@ -28,8 +28,13 @@
         c.getByRole("navigation", { name: "Settings navigation" }),
       ).getByRole("button", { name: "Agents" }),
     );
-    await userEvent.click(await c.findByRole("option", { name: /Codex Fast/ }));
-    await expect(c.getByText("Selected model: Codex Fast")).toBeVisible();
+    await userEvent.click(c.getByRole("combobox", { name: "Model" }));
+    await userEvent.click(
+      await page.findByRole("option", { name: /Codex Fast/ }),
+    );
+    await expect(c.getByRole("combobox", { name: "Model" })).toHaveTextContent(
+      "Codex Fast",
+    );
     await c.findByText(/Models could not be loaded/);
     const retry = c.getByRole("button", { name: "Retry models" });
     const row = retry.closest<HTMLElement>(".store-settings__action-row")!;
@@ -48,7 +53,9 @@
         Number(c.getByLabelText("Model catalog requests").textContent),
       ).toBeGreaterThan(count),
     );
-    await expect(c.getByText("Selected model: Codex Fast")).toBeVisible();
+    await expect(c.getByRole("combobox", { name: "Model" })).toHaveTextContent(
+      "Codex Fast",
+    );
     await expect(c.getByLabelText("Agent fleet requests")).toHaveTextContent(
       "[]",
     );
@@ -109,28 +116,21 @@
     await expect(
       defaults.queryByText("Harness and model", { exact: true }),
     ).toBeNull();
-    const search = defaults.getByRole("combobox", { name: "Search models" });
-    const picker = search.closest<HTMLElement>(
-      '[data-ui-part="agent-editor-model-picker"]',
-    )!;
-    await expect(picker.getBoundingClientRect().width).toBeGreaterThan(
-      picker.closest(".store-settings__rows")!.getBoundingClientRect().width -
-        40,
-    );
-    await userEvent.click(
-      await defaults.findByRole("option", { name: /Fixture model/ }),
-    );
+    const model = defaults.getByRole("combobox", { name: "Model" });
     await expect(
-      defaults.getByText("Selected model: Fixture model"),
-    ).toBeVisible();
-    await expect(defaults.getByLabelText("Thinking")).toBeVisible();
+      model.closest(".community-settings__option-row"),
+    ).not.toBeNull();
+    await userEvent.click(model);
     await userEvent.type(
-      defaults.getByRole("combobox", { name: "Search models" }),
+      page.getByRole("combobox", { name: "Search models" }),
       "fixture",
     );
-    await expect(
-      defaults.getByRole("option", { name: /Fixture model/ }),
-    ).toBeVisible();
+    await userEvent.click(
+      await page.findByRole("option", { name: /Fixture model/ }),
+    );
+    await expect(model).toHaveTextContent("Fixture model");
+    await expect(model).toHaveFocus();
+    await expect(await defaults.findByLabelText("Thinking")).toBeVisible();
     const save = defaults.getByRole("button", { name: "Save defaults" });
     const action = save.closest<HTMLElement>(".store-settings__action-row")!;
     await expect(action.parentElement).toHaveClass("store-settings__rows");
@@ -151,9 +151,11 @@
         c.getByRole("navigation", { name: "Settings navigation" }),
       ).getByRole("button", { name: "Agents" }),
     );
-    await expect(
-      await c.findByText("Selected model: Fixture model"),
-    ).toBeVisible();
+    await waitFor(() =>
+      expect(c.getByRole("combobox", { name: "Model" })).toHaveTextContent(
+        "Fixture model",
+      ),
+    );
     await expect(c.getByLabelText("Agent fleet requests")).toHaveTextContent(
       "[]",
     );

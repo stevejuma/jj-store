@@ -35,7 +35,7 @@ trusted pairing, inference-only sharing, bundled helper staging and historical
 context inspection. Fixture, real-model and platform distribution evidence must
 remain distinct. Headless identity examples name environment references rather
 than putting a credential in a command, URL, checkout or transcript. The guide
-names the bundled harness jj-agent, describes runtime companion readiness, the
+names the bundled harness JJ Agent, describes runtime companion readiness, the
 shared defaults model selector and service-machine GGUF Browse followed by
 explicit Import. Installation API/type references are regenerated for picker
 capability and optional-path results; the model/credential/pairing boundaries
@@ -66,6 +66,13 @@ use the shared shadcn controls with keyboard access and labelled defaults.
 The guide describes the one-line unresolved-request activity strip, actionable
 recovery toast, dismissal retention and exact-request submission guard. Review
 workspace opens the original session without replaying its prompt.
+
+The configuration guide documents the separate JJ Agent LLM provider picker,
+provider-specific credentials/endpoints, unsaved no-prompt model preview, exact
+custom IDs, explicit restart and JJ Store shared compute's selected trusted
+host. It distinguishes existing authentication from new OAuth UI and
+real-provider qualification from controlled catalog fixtures under
+JST-DOC-001/JST-DOC-002.
 
 The execution guide documents native Markdown context, one inspector above each
 message, bootstrap versus incremental delivery and restored/fresh adapter

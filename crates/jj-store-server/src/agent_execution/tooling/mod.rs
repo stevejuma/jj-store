@@ -71,7 +71,7 @@ impl Supervisor {
         Ok([
             ("codex", "Codex", "codex-acp"),
             ("cursor", "Cursor", "cursor-agent"),
-            ("local", "jj-agent", "jj-store-local-agent"),
+            ("local", "JJ Agent", "jj-store-local-agent"),
         ]
         .into_iter()
         .map(|(id, label, bin)| {
@@ -85,6 +85,11 @@ impl Supervisor {
                 paths::resolve(&paths, bin).is_some()
             };
             Runner {
+                providers: if id == "local" {
+                    providers::catalog()
+                } else {
+                    vec![]
+                },
                 id: id.into(),
                 label: label.into(),
                 available,

@@ -30,8 +30,11 @@
         /Showing choices from this harness's last session/,
       ),
     ).toBeVisible();
-    await userEvent.click(editor.getByRole("option", { name: /Codex Fast/ }));
-    await expect(editor.getByText("Selected model: Codex Fast")).toBeVisible();
+    await userEvent.click(editor.getByRole("combobox", { name: "Model" }));
+    await userEvent.click(page.getByRole("option", { name: /Codex Fast/ }));
+    await expect(
+      editor.getByRole("combobox", { name: "Model" }),
+    ).toHaveTextContent("Codex Fast");
     await userEvent.click(editor.getByRole("button", { name: "Save agent" }));
     await expect(
       await within(c.getByRole("region", { name: "Your agents" })).findByText(
@@ -65,11 +68,13 @@
         /No model or thinking choices have been advertised/,
       ),
     ).toBeVisible();
+    await userEvent.click(editor.getByRole("combobox", { name: "Model" }));
     await expect(
-      editor.getByRole("option", {
+      page.getByRole("option", {
         name: /remembered-model \(saved preference\)/,
       }),
     ).toHaveAttribute("aria-disabled", "true");
+    await userEvent.keyboard("{Escape}");
     await userEvent.click(editor.getByRole("button", { name: "Save agent" }));
     await expect(
       await within(c.getByRole("region", { name: "Your agents" })).findByText(

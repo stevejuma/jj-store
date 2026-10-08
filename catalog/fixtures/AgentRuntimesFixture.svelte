@@ -79,7 +79,7 @@
       },
       {
         id: "local",
-        label: "jj-agent",
+        label: "JJ Agent",
         state: "ready",
         adapter_version: null,
         cli_version: null,

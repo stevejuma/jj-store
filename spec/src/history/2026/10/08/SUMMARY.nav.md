@@ -8,6 +8,8 @@
   {{#include E-COMPUTE-005/SUMMARY.nav.md}}
 - [E-COMPUTE-006](E-COMPUTE-006/index.md)
   {{#include E-COMPUTE-006/SUMMARY.nav.md}}
+- [E-COMPUTE-007](E-COMPUTE-007/index.md)
+  {{#include E-COMPUTE-007/SUMMARY.nav.md}}
 - [E-FLEET-005](E-FLEET-005/index.md)
   {{#include E-FLEET-005/SUMMARY.nav.md}}
 - [E-FLEET-006](E-FLEET-006/index.md)

@@ -17,6 +17,15 @@ impl Supervisor {
         runner: String,
         setup: Option<Setup>,
     ) -> Result<Catalog> {
+        self.model_catalog_preview(runner, setup, &BTreeMap::new())
+            .await
+    }
+    pub(super) async fn model_catalog_preview(
+        &self,
+        runner: String,
+        setup: Option<Setup>,
+        secrets: &BTreeMap<String, String>,
+    ) -> Result<Catalog> {
         if !matches!(runner.as_str(), "codex" | "cursor" | "local") {
             return Err(Error::Invalid);
         }
@@ -46,7 +55,13 @@ impl Supervisor {
                 ))
             })?
         };
-        let key = self.read(|s| configuration::launch_digest(&setup, s))?;
+        if runner == "local" {
+            return self.provider_catalog(&setup, secrets).await;
+        }
+        let key = journal::digest(&(
+            self.read(|s| configuration::launch_digest(&setup, s))?,
+            secrets,
+        ))?;
         let mut cache = self.0.catalogs.lock().await;
         if self.0.stopping.load(Ordering::Acquire) {
             return Err(Error::Unavailable);
@@ -75,7 +90,7 @@ impl Supervisor {
         let paths = std::env::join_paths(self.tooling_paths()?).map_err(|_| Error::Unavailable)?;
         let mut command = Command::new(&self.0.resources.executable);
         command.arg("serve");
-        self.launch_environment(&mut command, &setup)?;
+        self.launch_environment_preview(&mut command, &setup, secrets)?;
         self.local_launch(&mut command, &setup, false).await?;
         self.register_launch_secrets(&command, &setup)?;
         let sanitizer = runtime::sanitizer(self, &path).await?;
@@ -144,6 +159,7 @@ impl Supervisor {
         }).await.map_err(|_| Error::Unavailable).and_then(|v| v);
         child.stop().await;
         let value = Catalog {
+            status: None,
             runner: runner.clone(),
             facts: result?,
         };

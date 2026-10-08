@@ -88,3 +88,9 @@ E-FLEET-012 qualifies Markdown context with focused controller/service/CLI
 tests, all directly affected transcript story families, and an isolated native
 real-RustFS cold acceptance harness using a deterministic ACP fixture. The new
 harness never consumes provider credentials or qualifies a real adapter.
+
+M25 provider configuration maintains Buzz's provider/catalog reference under
+owned service/helper code and shared Settings rows. Attribution retains the
+pinned Buzz paths/license; no Buzz checkout dependency or public shared pool is
+introduced. Provider fixtures, browser forms and live authentication gates are
+recorded separately.

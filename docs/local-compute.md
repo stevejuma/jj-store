@@ -34,10 +34,23 @@ concurrent inference requests are supported initially. Managed agents default to
 an 8,192-token context budget and a 2,048-token response budget; Advanced
 environment rows can override these limits.
 
-In Add/Edit agent, choose Local agent. Advanced selects This machine, Paired
-compute or an explicit OpenAI compatible endpoint. Remote endpoints need their
-credential environment reference in Advanced. No provider falls back to cloud
-inference automatically.
+In Add/Edit agent or Agent defaults, choose JJ Agent, then LLM provider. Choices
+include This machine, JJ Store shared compute, Anthropic, OpenAI,
+OpenAI-compatible, OpenRouter, Databricks and Databricks v2. Shared compute uses
+the trusted host selected in Compute → Sharing. The same bordered Settings rows
+contain the provider, endpoint, searchable model and execution mode.
+
+External providers use credential references in Advanced. The form shows the
+provider's environment variable name. Databricks also accepts its existing agent
+sign-in cache; discovery never starts sign-in. No new OAuth flow is provided.
+Model discovery uses the unsaved provider/endpoint/environment configuration and
+transient secret inputs without saving them, starting a chat or sending a
+prompt. Empty, unavailable and authentication-required catalogs retain the saved
+choice; Retry models repeats discovery. External providers also permit an exact
+custom model ID. Changing provider or endpoint clears incompatible model/effort
+choices. Thinking appears only when advertised. No provider falls back to cloud
+inference automatically. Existing saved `openai` means a compatible endpoint;
+new first-party OpenAI configurations use `openai-api`.
 
 ## Pair trusted machines
 
@@ -45,7 +58,7 @@ Start/prepare compute on each machine to obtain its invitation and identity. Add
 each invitation on the other machine and verify the identity. Enable Share this
 machine on the inference host. Pairing grants inference access only; repository
 files and tool execution remain on the requesting machine. Select a paired
-Inference host and use Paired compute in the agent configuration.
+Inference host and choose JJ Store shared compute in the agent configuration.
 
 Direct addresses use a persisted UDP port. Optional HTTPS transport relays are
 explicit; changing them takes effect after Stop compute and the next start.

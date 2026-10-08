@@ -10,9 +10,9 @@ readable through HTTP. Secret custody remains outside ACP, repository metadata
 and browser persistence.
 
 Catalog discovery may select an exact saved setup identity. It uses that setup’s
-effective provider/environment; unsaved agents use global defaults until saved.
-The cache follows effective configuration and compute generations. Probing opens
-no coding tools and sends no message.
+effective provider/environment; unsaved agents may preview their draft
+configuration. The cache follows effective configuration and compute
+generations. Probing opens no coding tools and sends no message.
 
 Compute status advertises `model_file_picker` only when the host composes a
 native GGUF file picker. `POST /v1/local/compute/pick` accepts empty JSON and
@@ -35,3 +35,15 @@ model/environment drafts or secret inputs. Unknown outcomes retain the exact
 request for retry, and stale revision refusal cannot silently overwrite another
 editor. No API schema, authorization, persistence format or event changes are
 introduced by this shared browser preference.
+
+## Provider-aware previews
+
+JST-API-001 includes POST /v1/local/agents/catalog for version-1 draft runtime
+configuration and optional write-only transient secret drafts. The LocalTrusted
+Admin boundary is identical to saved discovery. Previews never save settings,
+credentials, conversations or workspaces, and accept no executable or prompt.
+Runner metadata owns provider labels, required fields and credential guidance.
+Catalog results distinguish ready, empty, authentication-required and
+unavailable. Provider, endpoint, effective credentials, defaults and
+compute-host generations isolate caches; obsolete responses never replace a
+newer draft catalog.

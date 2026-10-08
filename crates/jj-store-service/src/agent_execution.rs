@@ -64,6 +64,8 @@ pub struct SetupCommand {
 #[serde(deny_unknown_fields)]
 #[schemars(rename = "AgentExecutionRunner")]
 pub struct Runner {
+    #[serde(default)]
+    pub providers: Vec<providers::Provider>,
     pub id: String,
     pub label: String,
     pub available: bool,
@@ -252,6 +254,13 @@ pub trait WorkspaceDriver: Send + Sync {
 /// Optional LocalTrusted runtime; repository and actor checks remain host-owned.
 #[async_trait::async_trait]
 pub trait Manager: Send + Sync {
+    async fn catalog_preview(
+        &self,
+        _actor: PrincipalId,
+        _preview: catalog::Preview,
+    ) -> Result<catalog::Catalog> {
+        Err(Error::Unavailable)
+    }
     async fn catalog(&self, _actor: PrincipalId, _runner: String) -> Result<catalog::Catalog> {
         Err(Error::Unavailable)
     }
@@ -397,3 +406,5 @@ pub mod fleet;
 pub mod conversations;
 
 pub mod catalog;
+
+pub mod providers;

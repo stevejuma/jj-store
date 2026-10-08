@@ -3079,5 +3079,24 @@
         "reason": "Reference layout of searchable options with size, fit, recommended and installed metadata, implemented with public Design Core Command View and Popover."
       }
     ]
+  },
+  "agentProviderConfiguration": {
+    "reference": "Buzz provider selection and no-prompt model discovery",
+    "license": "Apache-2.0",
+    "licenseFile": "docs/licenses/buzz-Apache-2.0.txt",
+    "revision": "ef2aa1ae38fadcc0bc22b8bf6ed96b35933146be",
+    "sources": [
+      "desktop/src/features/agents/ui/agentConfigOptions.tsx",
+      "desktop/src-tauri/src/commands/agent_models.rs",
+      "desktop/src-tauri/src/commands/agent_models_openrouter.rs"
+    ],
+    "local": [
+      "crates/jj-store-service/src/agent_execution/providers.rs",
+      "runtime/local-agent/src/provider_catalog.rs",
+      "web/src/lib/ui/store-agent-execution/StoreAgentConfiguration.svelte",
+      "web/src/lib/ui/store-agent-execution/StoreAgentHarnessSelect.svelte",
+      "web/src/lib/ui/store-agent-execution/StoreAgentModelSelect.svelte"
+    ],
+    "reason": "Owned provider metadata and native catalog protocols; JJ Store shared compute uses existing trusted pairing. Presentation composes existing owned Settings rows and Design Core primitives."
   }
 }

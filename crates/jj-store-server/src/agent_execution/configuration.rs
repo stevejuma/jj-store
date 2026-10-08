@@ -6,7 +6,7 @@ pub(super) fn validate(options: &RuntimeOptions) -> Result<()> {
     if options
         .provider
         .as_ref()
-        .is_some_and(|p| !matches!(p.as_str(), "local" | "paired" | "openai"))
+        .is_some_and(|p| providers::get(Some(p)).is_none())
     {
         return Err(Error::Invalid);
     }
@@ -105,16 +105,28 @@ fn env_name(name: &str) -> bool {
 pub(super) fn resolve(setup: &Setup, defaults: &Settings) -> Setup {
     let mut effective = setup.clone();
     if setup.options.inherit_defaults && setup.runner == defaults.runner {
-        effective.preferences.model = setup
-            .preferences
-            .model
-            .clone()
-            .or_else(|| defaults.preferences.model.clone());
-        effective.preferences.effort = setup
-            .preferences
-            .effort
-            .clone()
-            .or_else(|| defaults.preferences.effort.clone());
+        let same_provider = setup.runner != "local"
+            || setup.options.provider.as_deref().is_none_or(|p| {
+                providers::canonical(Some(p))
+                    == providers::canonical(defaults.options.provider.as_deref())
+            });
+        let same_endpoint = setup
+            .options
+            .endpoint
+            .as_ref()
+            .is_none_or(|endpoint| Some(endpoint) == defaults.options.endpoint.as_ref());
+        if same_provider && same_endpoint {
+            effective.preferences.model = setup
+                .preferences
+                .model
+                .clone()
+                .or_else(|| defaults.preferences.model.clone());
+            effective.preferences.effort = setup
+                .preferences
+                .effort
+                .clone()
+                .or_else(|| defaults.preferences.effort.clone());
+        }
         effective.preferences.mode = setup
             .preferences
             .mode
@@ -125,11 +137,13 @@ pub(super) fn resolve(setup: &Setup, defaults: &Settings) -> Setup {
             .provider
             .clone()
             .or_else(|| defaults.options.provider.clone());
-        effective.options.endpoint = setup
-            .options
-            .endpoint
-            .clone()
-            .or_else(|| defaults.options.endpoint.clone());
+        if same_provider {
+            effective.options.endpoint = setup
+                .options
+                .endpoint
+                .clone()
+                .or_else(|| defaults.options.endpoint.clone());
+        }
     }
     if effective.runner == "local" && effective.preferences.mode.is_none() {
         effective.preferences.mode = Some("ask".into());
@@ -146,7 +160,14 @@ pub(super) fn inference_host(setup: &Setup, state: &State) -> Option<String> {
         return None;
     }
     match setup.options.provider.as_deref() {
-        Some("openai") => setup.options.endpoint.clone(),
+        Some(p) if !providers::managed(Some(p)) => providers::get(Some(p)).map(|provider| {
+            setup
+                .options
+                .endpoint
+                .clone()
+                .or(provider.default_endpoint)
+                .unwrap_or(provider.label)
+        }),
         Some("paired") => Some(
             state
                 .compute
@@ -171,7 +192,7 @@ pub(super) fn inference_host(setup: &Setup, state: &State) -> Option<String> {
     }
 }
 pub(super) fn launch_digest(setup: &Setup, state: &State) -> Result<String> {
-    if setup.runner != "local" || setup.options.provider.as_deref() == Some("openai") {
+    if setup.runner != "local" || !providers::managed(setup.options.provider.as_deref()) {
         return journal::digest(setup);
     }
     journal::digest(
@@ -243,6 +264,14 @@ impl Supervisor {
         command: &mut tokio::process::Command,
         setup: &Setup,
     ) -> Result<()> {
+        self.launch_environment_preview(command, setup, &BTreeMap::new())
+    }
+    pub(super) fn launch_environment_preview(
+        &self,
+        command: &mut tokio::process::Command,
+        setup: &Setup,
+        secrets: &BTreeMap<String, String>,
+    ) -> Result<()> {
         command.env_clear();
         for name in [
             "HOME",
@@ -265,9 +294,10 @@ impl Supervisor {
                 EnvironmentValue::Environment(reference) => {
                     Some(std::env::var(reference).map_err(|_| Error::Unavailable)?)
                 }
-                EnvironmentValue::Keychain(reference) => {
-                    Some(secrets::get(&self.0.resources.root, reference)?)
-                }
+                EnvironmentValue::Keychain(reference) => Some(match secrets.get(reference) {
+                    Some(value) => value.clone(),
+                    None => secrets::get(&self.0.resources.root, reference)?,
+                }),
                 EnvironmentValue::Unset => None,
             };
             if let Some(value) = resolved {

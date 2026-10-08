@@ -48,11 +48,11 @@
 </script>
 
 <Story
-  name="Bundled jj-agent uses app artwork without an installer"
+  name="Bundled JJ Agent uses app artwork without an installer"
   args={{ scenario: "ready" }}
   play={async ({ canvasElement }) => {
     const c = await open(canvasElement);
-    const label = c.getByText("jj-agent", { exact: true });
+    const label = c.getByText("JJ Agent", { exact: true });
     const row = label.closest<HTMLElement>('[data-slot="field"]')!;
     await expect(
       row.querySelector('img[src="/agent-icons/jj-store.svg"]'),

@@ -5,6 +5,10 @@ export class AgentModelCatalog {
   values = $state<Record<string, Model<"AgentExecutionCatalog">>>({});
   errors = $state<Record<string, string>>({});
   loading = $state<Record<string, boolean>>({});
+  #previews = new Map<
+    string,
+    { signature: string; controller: AbortController }
+  >();
   #alive = true;
   #epoch = 0;
   #loadedAt = new Map<string, number>();
@@ -13,6 +17,8 @@ export class AgentModelCatalog {
     return setup ? `${runner}:${setup}` : runner;
   }
   invalidate() {
+    for (const preview of this.#previews.values()) preview.controller.abort();
+    this.#previews.clear();
     this.#epoch++;
     this.values = {};
     this.errors = {};
@@ -50,7 +56,67 @@ export class AgentModelCatalog {
       if (this.#alive && epoch === this.#epoch) this.loading[key] = false;
     }
   }
+  async preview(
+    scope: string,
+    draft: import("./agent-configuration.js").AgentConfiguration,
+    secrets: Record<string, string>,
+    generation: string,
+    retry = false,
+  ) {
+    const used = new Set(
+      Object.values(draft.options.environment ?? {}).flatMap((entry) =>
+        entry.source === "keychain" ? [entry.value] : [],
+      ),
+    );
+    const body: import("../api/generated.js").operations["local_agents_catalog_preview"]["requestBody"]["content"]["application/json"] =
+      {
+        version: 1,
+        runner: draft.runner,
+        preferences: structuredClone(draft.preferences),
+        options: structuredClone(draft.options),
+        secrets: Object.fromEntries(
+          Object.entries(secrets).filter(
+            ([id, value]) => used.has(id) && !!value,
+          ),
+        ),
+      };
+    const signature = JSON.stringify([body, generation]);
+    const previous = this.#previews.get(scope);
+    if (!this.#alive || (!retry && previous?.signature === signature)) return;
+    previous?.controller.abort();
+    const controller = new AbortController();
+    this.#previews.set(scope, { signature, controller });
+    delete this.values[scope];
+    this.errors[scope] = "";
+    this.loading[scope] = true;
+    try {
+      const result = await this.client.request<Model<"AgentExecutionCatalog">>(
+        "agents/catalog",
+        body,
+        controller.signal,
+      );
+      if (result.runner !== draft.runner) throw new Error("Mismatched catalog");
+      if (!controller.signal.aborted && this.#alive)
+        this.values[scope] = result;
+    } catch {
+      if (!controller.signal.aborted && this.#alive)
+        this.errors[scope] =
+          "Models could not be loaded. Check the provider configuration and try again.";
+    } finally {
+      if (!controller.signal.aborted && this.#alive)
+        this.loading[scope] = false;
+    }
+  }
+  cancelPreview(scope: string) {
+    this.#previews.get(scope)?.controller.abort();
+    this.#previews.delete(scope);
+    delete this.values[scope];
+    delete this.errors[scope];
+    delete this.loading[scope];
+  }
   destroy() {
+    for (const preview of this.#previews.values()) preview.controller.abort();
+    this.#previews.clear();
     this.#alive = false;
   }
 }

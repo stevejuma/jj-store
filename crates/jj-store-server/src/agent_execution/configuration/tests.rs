@@ -113,3 +113,40 @@ fn bundled_cli_path_cannot_be_supplied_by_a_setup() {
     );
     assert!(matches!(validate(&options), Err(Error::Invalid)));
 }
+
+#[test]
+fn provider_catalog_accepts_buzz_providers_and_preserves_legacy_compatible_endpoint() {
+    for provider in [
+        "local",
+        "paired",
+        "anthropic",
+        "openai-api",
+        "openai",
+        "openai-compat",
+        "openrouter",
+        "databricks",
+        "databricks_v2",
+    ] {
+        let mut options = RuntimeOptions::default();
+        options.provider = Some(provider.into());
+        assert!(validate(&options).is_ok(), "{provider}");
+    }
+}
+
+#[test]
+fn provider_changes_do_not_inherit_foreign_models_endpoints_or_effort() {
+    let mut defaults = Settings::default();
+    defaults.runner = "local".into();
+    defaults.options.provider = Some("openai".into());
+    defaults.options.endpoint = Some("https://old.example/v1".into());
+    defaults.preferences.model = Some("old-model".into());
+    defaults.preferences.effort = Some("high".into());
+    let mut agent = setup();
+    agent.runner = "local".into();
+    agent.options.inherit_defaults = true;
+    agent.options.provider = Some("anthropic".into());
+    let resolved = resolve(&agent, &defaults);
+    assert_eq!(resolved.preferences.model, None);
+    assert_eq!(resolved.preferences.effort, None);
+    assert_eq!(resolved.options.endpoint, None);
+}

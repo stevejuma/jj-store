@@ -38,6 +38,7 @@ macro_rules! endpoints {
         (get, "/local/agents/settings", settings, "local_agents_settings", routes::Empty, routes::Empty, agents::settings::Settings),
         (post, "/local/agents/settings", save_settings, "local_agents_settings_save", routes::Empty, agents::settings::SettingsCommand, agents::settings::Settings),
         (post, "/local/agents/secrets", secret, "local_agents_secret", routes::Empty, agents::settings::SecretCommand, agents::settings::SecretStatus),
+        (post, "/local/agents/catalog", catalog_preview, "local_agents_catalog_preview", routes::Empty, agents::catalog::Preview, agents::catalog::Catalog),
         (get, "/local/agents/catalog", catalog, "local_agents_catalog", CatalogQuery, routes::Empty, agents::catalog::Catalog),
         (get, "/local/agents", status, "local_agents_status", routes::Empty, routes::Empty, agents::Status),
         (get, "/local/agents/runtimes", runtimes, "local_agents_runtimes", routes::Empty, routes::Empty, agents::tooling::Status),
@@ -283,4 +284,13 @@ async fn pick_model_file(
         Error::new(status, code)
     })?;
     Ok(Json(selection))
+}
+
+async fn catalog_preview(
+    ExtractState(state): ExtractState<Arc<State>>,
+    body: std::result::Result<Json<agents::catalog::Preview>, JsonRejection>,
+) -> Result<Response> {
+    let (m, actor) = manager(&state)?;
+    let Json(preview) = body.map_err(|_| Error::invalid())?;
+    state.json(&m.catalog_preview(actor, preview).await.map_err(failure)?)
 }

@@ -12,3 +12,9 @@ import, durable command creation or repository mutation. Existing explicit
 compute Import retains its conditional revision and original request identity.
 The interface shares the native folder dialog's bounded
 single-flight/cancellation owner.
+
+Draft catalog preview is an installation-local read with bounded typed runtime
+options and write-only transient secret inputs. Service-owned provider
+descriptors contain no credentials or executable selections. Preview does not
+create a receipt, mutate settings, store secrets or publish repository state;
+repository mutation authority remains unchanged.

@@ -19,6 +19,8 @@ mod freshness;
 mod journal;
 mod launch;
 mod local_agent;
+mod provider_catalog;
+mod provider_launch;
 
 mod prompt_context;
 mod publication;

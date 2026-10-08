@@ -44400,6 +44400,230 @@
       }
     },
     "/v1/local/agents/catalog": {
+      "post": {
+        "operationId": "local_agents_catalog_preview",
+        "tags": ["local"],
+        "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Authorized result at the reported snapshot.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentExecutionCatalog"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request, unknown query field or invalid cursor.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing repository Bearer credential.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied, including revoked credentials or disallowed Origin.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "404": {
+            "description": "Object not committed in the selected snapshot or unknown route.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "405": {
+            "description": "Unsupported method.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "408": {
+            "description": "Native query canceled.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "409": {
+            "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "410": {
+            "description": "Index task expired or was lost on server restart.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "413": {
+            "description": "Request or response resource limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "503": {
+            "description": "Busy, unavailable, corrupt or incomplete history.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "504": {
+            "description": "Request or response deadline exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          }
+        },
+        "x-jj-store-query-schema": {
+          "type": "object",
+          "additionalProperties": false
+        },
+        "security": [{}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "description": "Preview-only secret values never enter the installation journal or responses.",
+                "type": "object",
+                "properties": {
+                  "version": {
+                    "type": "integer",
+                    "format": "uint32",
+                    "minimum": 0
+                  },
+                  "runner": { "type": "string" },
+                  "preferences": {
+                    "type": "object",
+                    "properties": {
+                      "model": { "type": ["string", "null"] },
+                      "effort": { "type": ["string", "null"] },
+                      "mode": { "type": ["string", "null"] }
+                    },
+                    "additionalProperties": false
+                  },
+                  "options": {
+                    "type": "object",
+                    "properties": {
+                      "inherit_defaults": {
+                        "type": "boolean",
+                        "default": false
+                      },
+                      "provider": {
+                        "type": ["string", "null"],
+                        "default": null
+                      },
+                      "endpoint": {
+                        "type": ["string", "null"],
+                        "default": null
+                      },
+                      "environment": {
+                        "type": "object",
+                        "additionalProperties": {
+                          "oneOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "source": {
+                                  "type": "string",
+                                  "const": "literal"
+                                },
+                                "value": { "type": "string" }
+                              },
+                              "required": ["source", "value"],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "source": {
+                                  "type": "string",
+                                  "const": "environment"
+                                },
+                                "value": { "type": "string" }
+                              },
+                              "required": ["source", "value"],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "source": {
+                                  "type": "string",
+                                  "const": "keychain"
+                                },
+                                "value": { "type": "string" }
+                              },
+                              "required": ["source", "value"],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "source": { "type": "string", "const": "unset" }
+                              },
+                              "required": ["source"],
+                              "additionalProperties": false
+                            }
+                          ]
+                        },
+                        "default": {}
+                      }
+                    },
+                    "additionalProperties": false
+                  },
+                  "secrets": {
+                    "type": "object",
+                    "additionalProperties": { "type": "string" },
+                    "default": {}
+                  }
+                },
+                "additionalProperties": false,
+                "required": ["version", "runner", "preferences", "options"]
+              }
+            }
+          }
+        }
+      },
       "get": {
         "operationId": "local_agents_catalog",
         "tags": ["local"],
@@ -59597,8 +59821,12 @@
       },
       "AgentExecutionCatalog": {
         "type": "object",
-        "properties": { "runner": { "type": "string" }, "facts": true },
-        "required": ["runner", "facts"]
+        "properties": {
+          "status": { "type": ["string", "null"], "default": null },
+          "runner": { "type": "string" },
+          "facts": true
+        },
+        "required": ["status", "runner", "facts"]
       },
       "AgentExecutionStatus": {
         "type": "object",
@@ -59802,13 +60030,53 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
+          "providers": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AgentProvider" },
+            "default": []
+          },
           "id": { "type": "string" },
           "label": { "type": "string" },
           "available": { "type": "boolean" },
           "qualified": { "type": "boolean" },
           "install_hint": { "type": ["string", "null"] }
         },
-        "required": ["id", "label", "available", "qualified", "install_hint"]
+        "required": [
+          "providers",
+          "id",
+          "label",
+          "available",
+          "qualified",
+          "install_hint"
+        ]
+      },
+      "AgentProvider": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "runtime_provider": { "type": "string" },
+          "endpoint_env": { "type": "string" },
+          "default_endpoint": { "type": ["string", "null"] },
+          "endpoint_required": { "type": "boolean" },
+          "credential_env": { "type": ["string", "null"] },
+          "model_required": { "type": "boolean" },
+          "managed": { "type": "boolean" },
+          "guidance": { "type": "string" }
+        },
+        "required": [
+          "id",
+          "label",
+          "runtime_provider",
+          "endpoint_env",
+          "default_endpoint",
+          "endpoint_required",
+          "credential_env",
+          "model_required",
+          "managed",
+          "guidance"
+        ]
       },
       "AgentFleetStatus": {
         "type": "object",

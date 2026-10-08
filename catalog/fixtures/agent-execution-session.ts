@@ -80,6 +80,7 @@ export const fixtureRunners = [
     available: true,
     qualified: false,
     install_hint: null,
+    providers: [],
   },
   {
     id: "codex",
@@ -87,6 +88,7 @@ export const fixtureRunners = [
     available: true,
     qualified: false,
     install_hint: null,
+    providers: [],
   },
 ];
 

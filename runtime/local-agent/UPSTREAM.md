@@ -23,3 +23,14 @@ directory. The subprocess fixture serves model discovery separately from
 scripted completion responses, preserving the permission and cancellation
 assertions. Catalog discovery is enabled by the owned local-agent entrypoint;
 the vendored upstream entrypoint retains its configured-model behavior.
+
+The owned `--models` entrypoint additionally discovers Anthropic (paginated),
+OpenAI/compatible, OpenRouter (tool-capable only), and Databricks/v2 catalogs.
+It resolves the vendored provider configuration and existing authentication,
+never interactive sign-in. The helper has a 20-second deadline and bounded
+model/output validation; the parent supervises cancellation and process reaping.
+It advertises the existing Ask mode only. Empty catalogs remain empty, including
+Databricks v2's otherwise curated fallback. The vendor pin is unchanged.
+Provider/menu behavior references Buzz
+`desktop/src/features/agents/ui/agentConfigOptions.tsx` and
+`desktop/src-tauri/src/commands/agent_models{,_openrouter}.rs` at the same pin.

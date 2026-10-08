@@ -234,7 +234,7 @@ runtime preparation, loading progress, memory limits and private machine
 pairing. Browse beside Import GGUF selects a local weights file on the service
 machine when its native file picker is available. Selection fills the draft;
 Import model copies the weights. Manual absolute paths remain available. Start
-uses recorded installed weights and does not download them. Local jj-agent
+uses recorded installed weights and does not download them. Local JJ Agent
 provides an ACP model/tool loop through the bundled coding helper. Every coding
 tool requires permission. Local agents may use this machine, a paired inference
 host or an explicitly configured OpenAI compatible endpoint. No provider falls
@@ -248,7 +248,7 @@ Direct addresses use a persisted UDP port; optional HTTPS transport relays apply
 after Stop compute and restart. Public discovery and default relays are
 disabled.
 
-The bundled Buzz-derived local harness is named jj-agent and uses the jj-store
+The bundled Buzz-derived local harness is named JJ Agent and uses the jj-store
 app logo. Its runtime shows Ready only when both the agent and coding tools are
 installed.
 

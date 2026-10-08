@@ -21225,12 +21225,20 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 {
   "type": "object",
   "properties": {
+    "status": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "default": null
+    },
     "runner": {
       "type": "string"
     },
     "facts": true
   },
   "required": [
+    "status",
     "runner",
     "facts"
   ]
@@ -21571,6 +21579,13 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
   "type": "object",
   "additionalProperties": false,
   "properties": {
+    "providers": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/AgentProvider"
+      },
+      "default": []
+    },
     "id": {
       "type": "string"
     },
@@ -21591,11 +21606,71 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     }
   },
   "required": [
+    "providers",
     "id",
     "label",
     "available",
     "qualified",
     "install_hint"
+  ]
+}
+```
+
+## AgentProvider
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "label": {
+      "type": "string"
+    },
+    "runtime_provider": {
+      "type": "string"
+    },
+    "endpoint_env": {
+      "type": "string"
+    },
+    "default_endpoint": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "endpoint_required": {
+      "type": "boolean"
+    },
+    "credential_env": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "model_required": {
+      "type": "boolean"
+    },
+    "managed": {
+      "type": "boolean"
+    },
+    "guidance": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "label",
+    "runtime_provider",
+    "endpoint_env",
+    "default_endpoint",
+    "endpoint_required",
+    "credential_env",
+    "model_required",
+    "managed",
+    "guidance"
   ]
 }
 ```

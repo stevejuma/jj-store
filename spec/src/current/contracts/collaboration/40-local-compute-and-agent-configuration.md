@@ -26,7 +26,7 @@ artifacts are version/ABI/checksum pinned; model downloads and starts are
 explicit. One loaded model and bounded concurrency/resource use are initially
 supported. Full desktop and server distributions bundle internal helpers; model
 weights remain separate explicit downloads or imports. The bundled Buzz-derived
-local harness is presented as jj-agent. Runtime status requires both its fixed
+local harness is presented as JJ Agent. Runtime status requires both its fixed
 companion executable and the owned coding-tool helper; its saved `local` runner
 identity is retained without journal migration.
 
@@ -43,3 +43,18 @@ capture. Credential values require at least eight bytes; shorter values are
 refused rather than corrupting structural identities through substring
 redaction. The scanner continues to sanitize before any journal/publication
 write.
+
+## Provider selection
+
+JST-COLLAB-034 through JST-COLLAB-036 support Anthropic, OpenAI, compatible
+endpoints, OpenRouter, Databricks and Databricks v2 through the bundled JJ
+Agent. Local and paired compute retain their authority and explicit lifecycle.
+The paired choice is presented as JJ Store shared compute and uses the
+installation's selected trusted host. Existing `openai` configurations remain
+compatible-endpoint configurations; `openai-api` identifies first-party OpenAI.
+Provider-specific model, effort and endpoint inheritance requires matching
+provider/endpoint context. Catalog discovery uses the same resolved launch
+configuration, performs no prompt, tool execution or interactive sign-in, and
+reports failures without invented models. Provider changes take effect only on
+explicit restart, never by applying a foreign model to a running session.
+Credentials retain their existing custody/redaction.

@@ -65,8 +65,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed typed internal reply context and exact reservation/start bookkeeping; service documentation confirms unchanged authorization and receipt contracts.",
-      "fingerprint": "7ac08cc502234befb50d414ac9cf0de0c44e07f175494623ef206d2f9b74a4b6"
+      "reason": "Reviewed typed internal reply context and exact reservation/start bookkeeping; service documentation confirms unchanged authorization and receipt contracts. Reviewed provider-aware jj-agent launch, draft catalog previews, secret custody and shared bordered Settings forms; documented selected trusted shared compute and explicit restart. Native repository authority and platform qualification remain unchanged. Reviewed combined provider and context integration with unchanged authority and credential boundaries.",
+      "fingerprint": "3a431ce0768ae6a5243f04c9ad681f7aa89c801d94767e708d5434bbc1d36f57"
     }
   },
   {
@@ -96,8 +96,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed final formatted Markdown context with direct-session selected operation/base commit, bounded authored history, exact-start journals and bound bundled CLI coordination; transport and storage contracts unchanged.",
-      "fingerprint": "02ea8cc8a8eaf53c2dec6cd49a3b00f2e96b57dfcaabed139760282b80eea858"
+      "reason": "Reviewed final formatted Markdown context with direct-session selected operation/base commit, bounded authored history, exact-start journals and bound bundled CLI coordination; transport and storage contracts unchanged. Reviewed JJ Agent display label, provider catalog supervision and native-provider launch with unchanged installation authority. Reviewed combined provider and context integration with unchanged authority and credential boundaries.",
+      "fingerprint": "b803547f5b1e6a03d8f93537916ea090e17ddc691c9ef184b8cef5c84fd954b1"
     }
   },
   {
@@ -122,8 +122,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed agent manager producer registration, replay, overflow reset and LocalTrusted Admin visibility; transport manual documents additive execution/settings domains.",
-      "fingerprint": "462e1aa86904b9d5f6a1386c8726980eb7d5f33640b93898b06b294774c2f0e5"
+      "reason": "Reviewed provider-aware jj-agent launch, draft catalog previews, secret custody and shared bordered Settings forms; documented selected trusted shared compute and explicit restart. Native repository authority and platform qualification remain unchanged.",
+      "fingerprint": "cdeffc2eae836ffdaf6cf2e0fe6793646ac10d27b4e809270793dcb86becb844"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed the single context inspector above authored messages, empty-state omission, legacy captures and retained disclosure during delivery updates.",
-      "fingerprint": "8213e9e362df45ad09748cbf3b03dcf2893c9d9acd1c986937c56ceda54895de"
+      "reason": "Reviewed the single context inspector above authored messages, empty-state omission, legacy captures and retained disclosure during delivery updates. Reviewed rounded Add/Edit Advanced group and the shared disclosure focus treatment: rounded corners follow expanded state, inset keyboard outline avoids clipping, drafts and focus remain retained. Reviewed combined provider and context integration with unchanged authority and credential boundaries.",
+      "fingerprint": "3ebd3254de8ffcbec3c29fc1bf6cf5c7d2548c9fa52061e639bf936ca96a801e"
     }
   },
   {
@@ -154,8 +154,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Reviewed task CLI argument rename to --target-repository and generated help; global -R selects the metadata checkout. HTTP and ACP shapes are unchanged.",
-      "fingerprint": "7624f2d190e2e9214c2faf15621a3e4d7e001e79cb29140e881e020b4dae6c67"
+      "reason": "Reviewed task CLI argument rename to --target-repository and generated help; global -R selects the metadata checkout. HTTP and ACP shapes are unchanged. Reviewed provider-aware jj-agent launch, draft catalog previews, secret custody and shared bordered Settings forms; documented selected trusted shared compute and explicit restart. Native repository authority and platform qualification remain unchanged. Reviewed combined provider and context integration with unchanged authority and credential boundaries.",
+      "fingerprint": "9bfaf1f31baf196cc4c3500ebae67e3175a596e5c930178695a861bfc4e8a66f"
     }
   },
   {
@@ -175,8 +175,8 @@
       "docs/site/reference/security.md"
     ],
     "review": {
-      "reason": "Reviewed local-only native startup, managed agent budgets, private pairing, source pins and independent copy-on-write staging with checksum verification.",
-      "fingerprint": "4826f3735219c0ceb0becb230f9616fd6381e98a4d9769ee852bcee2ff93026d"
+      "reason": "Reviewed bounded provider discovery and provider-specific runtime environment with existing authentication, pins and permission-gated Ask mode.",
+      "fingerprint": "065ce9509a054770298d55571aba51cdab09291acb663cd7d455831060e755de"
     }
   }
 ]

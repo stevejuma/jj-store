@@ -25,6 +25,21 @@ impl agents::Manager for Manager {
             operation: None,
         })
     }
+    async fn catalog_preview(
+        &self,
+        actor: m::PrincipalId,
+        preview: agents::catalog::Preview,
+    ) -> agents::Result<agents::catalog::Catalog> {
+        assert_eq!(actor, m::PrincipalId::new([1; 16]));
+        if preview.version != 1 || preview.runner != "local" {
+            return Err(agents::Error::Invalid);
+        }
+        Ok(agents::catalog::Catalog {
+            runner: preview.runner,
+            status: Some("ready".into()),
+            facts: serde_json::json!({"models":{"availableModels":[{"modelId":"draft-model"}]}}),
+        })
+    }
     async fn catalog(
         &self,
         actor: m::PrincipalId,
@@ -35,6 +50,7 @@ impl agents::Manager for Manager {
             return Err(agents::Error::Invalid);
         }
         Ok(agents::catalog::Catalog {
+            status: None,
             runner,
             facts: serde_json::json!({"models":{"availableModels":[{"modelId":"fixture-model","name":"Fixture model"}]}}),
         })
@@ -675,4 +691,52 @@ async fn model_file_picker_requires_local_admin_and_fixed_inputs_without_importi
         .await
         .unwrap();
     assert_eq!(unavailable.status(), StatusCode::SERVICE_UNAVAILABLE);
+}
+
+#[tokio::test]
+async fn draft_catalog_is_local_admin_only_and_does_not_echo_secrets() {
+    let root = tempfile::tempdir().unwrap();
+    let body = serde_json::json!({"version":1,"runner":"local","preferences":{},"options":{"provider":"anthropic"},"secrets":{"fixture-reference":"transient-secret"}});
+    let admin = api(
+        root.path(),
+        Access::LocalTrusted {
+            principal: m::PrincipalId::new([1; 16]),
+            permission: Permission::Admin,
+        },
+    );
+    let response = admin
+        .router()
+        .oneshot(request("/v1/local/agents/catalog", Some(body.clone())))
+        .await
+        .unwrap();
+    assert_eq!(response.status(), StatusCode::OK);
+    let bytes = to_bytes(response.into_body(), 4096).await.unwrap();
+    assert!(!String::from_utf8_lossy(&bytes).contains("transient-secret"));
+    let mut invalid = body.clone();
+    invalid["prompt"] = serde_json::json!("never execute");
+    assert_eq!(
+        admin
+            .router()
+            .oneshot(request("/v1/local/agents/catalog", Some(invalid)))
+            .await
+            .unwrap()
+            .status(),
+        StatusCode::BAD_REQUEST
+    );
+    let reader = api(
+        root.path(),
+        Access::LocalTrusted {
+            principal: m::PrincipalId::new([1; 16]),
+            permission: Permission::Read,
+        },
+    );
+    assert_eq!(
+        reader
+            .router()
+            .oneshot(request("/v1/local/agents/catalog", Some(body)))
+            .await
+            .unwrap()
+            .status(),
+        StatusCode::FORBIDDEN
+    );
 }

@@ -39,6 +39,36 @@ impl Manager for Supervisor {
         self.actor(actor)?;
         secrets::write(&self.0.resources.root, command)
     }
+    async fn catalog_preview(
+        &self,
+        actor: PrincipalId,
+        preview: jj_store_service::agent_execution::catalog::Preview,
+    ) -> Result<jj_store_service::agent_execution::catalog::Catalog> {
+        self.actor(actor)?;
+        if preview.version != 1 {
+            return Err(Error::Invalid);
+        }
+        configuration::validate(&preview.options)?;
+        preferences(&preview.preferences)?;
+        if preview.secrets.len() > 64 || preview.secrets.iter().any(|(id, value)| value.len() < 8 || value.len() > 4096 || value.contains('\0') || !preview.options.environment.values().any(|v| matches!(v, settings::EnvironmentValue::Keychain(reference) if reference == id))) { return Err(Error::Invalid); }
+        let setup = self.read(|s| {
+            Ok(configuration::resolve(
+                &Setup {
+                    id: "catalog".into(),
+                    name: "Catalog".into(),
+                    avatar: String::new(),
+                    description: String::new(),
+                    instructions: String::new(),
+                    runner: preview.runner.clone(),
+                    preferences: preview.preferences,
+                    options: preview.options,
+                },
+                &s.settings,
+            ))
+        })?;
+        self.model_catalog_preview(preview.runner, Some(setup), &preview.secrets)
+            .await
+    }
     async fn catalog(
         &self,
         actor: PrincipalId,

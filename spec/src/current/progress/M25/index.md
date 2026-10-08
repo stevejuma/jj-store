@@ -1,8 +1,8 @@
 # M25 local compute, agent configuration and sent context
 
-| ID  | Status      | Depends | Requirements                                                        | Gate                                                                                                                           | Next                                                       | Evidence                                                                            |
-| --- | ----------- | ------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| M25 | In progress | M24     | JST-COLLAB-034,JST-COLLAB-035,JST-COLLAB-036,JST-UI-012,JST-API-001 | Defaults/environment, rich sent context, real local ACP coding tools, private paired inference, cold packaged macOS/Linux runs | Qualify signed macOS/WKWebView and Linux CPU distributions | E-COMPUTE-001,E-COMPUTE-002,E-COMPUTE-003,E-COMPUTE-004,E-COMPUTE-005,E-COMPUTE-006 |
+| ID  | Status      | Depends | Requirements                                                        | Gate                                                                                                                           | Next                                                       | Evidence                                                                                          |
+| --- | ----------- | ------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| M25 | In progress | M24     | JST-COLLAB-034,JST-COLLAB-035,JST-COLLAB-036,JST-UI-012,JST-API-001 | Defaults/environment, rich sent context, real local ACP coding tools, private paired inference, cold packaged macOS/Linux runs | Qualify signed macOS/WKWebView and Linux CPU distributions | E-COMPUTE-001,E-COMPUTE-002,E-COMPUTE-003,E-COMPUTE-004,E-COMPUTE-005,E-COMPUTE-006,E-COMPUTE-007 |
 
 M24's independent adapter, installed live permission/cancellation and desktop
 qualification gates remain unchanged. M25 source/fixture passes do not qualify
@@ -28,6 +28,11 @@ Settings dropdowns with released shadcn controls. M25 remains In progress;
 distribution and independent M24 gates are unchanged. Exact recovery, retained
 drafts and keyboard behavior are recorded separately from the existing broad
 audit and visual qualification gaps.
+
+E-COMPUTE-007 adds provider-aware JJ Agent drafts and shared bordered Settings
+rows. Controlled provider catalogs and cold browser evidence remain separate
+from authenticated provider, real paired inference and distribution gates. M25
+stays In progress; M24 gates and native authority are unchanged.
 
 ## Markdown context review — 2026-10-08
 

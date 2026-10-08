@@ -74,3 +74,9 @@ project/task examples target it and review/code examples target code
 attachments. Native reuse verifies the exact repository and LocalTrusted socket
 binding. No new CLI subcommand, installed-tool replacement or implicit user task
 write is introduced; JST-CLI-004 retains existing command and receipt authority.
+
+The bundled `jj-store-local-agent --models` companion returns a bounded JSON
+catalog without opening an ACP session or running coding tools. The service
+selects the executable, uses the same resolved provider environment as launch,
+reserves a process slot and reaps it on cancellation/shutdown. The browser never
+selects an executable. JST-CLI-004 explicit lifecycle and custody remain intact.

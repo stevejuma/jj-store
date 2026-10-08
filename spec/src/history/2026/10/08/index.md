@@ -9,6 +9,7 @@ Browse the child pages below.
 - [E-COMPUTE-004](E-COMPUTE-004/index.md)
 - [E-COMPUTE-005](E-COMPUTE-005/index.md)
 - [E-COMPUTE-006](E-COMPUTE-006/index.md)
+- [E-COMPUTE-007](E-COMPUTE-007/index.md)
 - [E-FLEET-005](E-FLEET-005/index.md)
 - [E-FLEET-006](E-FLEET-006/index.md)
 - [E-FLEET-007](E-FLEET-007/index.md)

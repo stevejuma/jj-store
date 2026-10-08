@@ -36,11 +36,21 @@
     min-width: 0;
   }
   :global(.store-settings-disclosure__trigger) {
-    --ui-button-radius: 0;
+    --ui-button-radius: calc(var(--radius) + 0.25rem - 1px);
     width: 100%;
     height: auto;
     justify-content: space-between;
     padding: 0.85rem 1rem;
+  }
+  :global(.store-settings-disclosure__trigger[aria-expanded="true"]) {
+    border-end-start-radius: 0;
+    border-end-end-radius: 0;
+  }
+  :global(.store-settings-disclosure__trigger:focus-visible) {
+    border-color: transparent;
+    box-shadow: none;
+    outline: 2px solid var(--ring);
+    outline-offset: -3px;
   }
   :global(.store-settings-disclosure__trigger[aria-expanded="true"] > svg) {
     transform: rotate(90deg);
