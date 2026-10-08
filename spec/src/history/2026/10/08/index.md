@@ -18,6 +18,7 @@ Browse the child pages below.
 - [E-CHAT-BODY-012](E-CHAT-BODY-012/index.md)
 - [E-CHAT-BODY-013](E-CHAT-BODY-013/index.md)
 - [E-CHAT-BODY-014](E-CHAT-BODY-014/index.md)
+- [E-CHAT-LIVE-001](E-CHAT-LIVE-001/index.md)
 - [E-COMPUTE-002](E-COMPUTE-002/index.md)
 - [E-COMPUTE-003](E-COMPUTE-003/index.md)
 - [E-COMPUTE-004](E-COMPUTE-004/index.md)

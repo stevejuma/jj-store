@@ -40,3 +40,4 @@ Read the owning topic and requirement before implementation.
 - [Interactive agent execution](34-interactive-agent-sessions.md)
 - [Compute, agent defaults and sent context](35-compute-defaults-and-sent-context.md)
 - [Commentable chat body prototype](36-commentable-chat-body-prototype.md)
+- [Document conversations](37-document-conversations.md)

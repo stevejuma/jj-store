@@ -216,8 +216,12 @@ with unchanged source text, exact anchors and retained reader lifecycle. M24
 remains In progress and independent live, native IME, desktop and visual gates
 remain unchanged.
 
+E-CHAT-LIVE-001 records main integration and the live document-conversation
+contract. The default Document/Classic preference, durable
+selectors/submissions, agent reply protocol and renderer parity require
+implementation and isolated native/local acceptance. M24 stays In progress;
+prototype simulations and visual-pending stories do not qualify these gates.
 <!-- generated-navigation -->
-
 ## Pages
 
 - [history](history/index.md)

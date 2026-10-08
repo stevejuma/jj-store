@@ -189,3 +189,8 @@ substitutions; runnable examples use the executable variable and relative
 verified directories. Task and review writes require the user's task scope,
 exact versions and stable request IDs; uncertain outcomes use existing receipt
 lookup, never blind retry.
+
+[Conversation comment submissions](41-conversation-comment-submissions.md)
+extend explicit Send with exact range comments and validated answer links,
+without changing canonical transcript ownership or automatic-dispatch
+restrictions.

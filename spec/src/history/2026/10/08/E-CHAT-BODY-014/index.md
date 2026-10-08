@@ -317,4 +317,7 @@ reason: M24 remains In progress. Visual baselines remain unapproved and
 
 ```
 <!-- /evidence-field -->
+<!-- generated-navigation -->
+## Pages
+
 

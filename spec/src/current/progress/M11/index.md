@@ -16,7 +16,6 @@ bundled CLI in a dedicated metadata-home checkout. Task create/edit use
 `--repository` can select that checkout. M11.2 remains Done; M11 remains In
 progress, with M11.4 qualification and visual gates unchanged.
 <!-- generated-navigation -->
-
 ## Pages
 
 - [history](history/index.md)

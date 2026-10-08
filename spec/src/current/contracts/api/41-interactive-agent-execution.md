@@ -171,3 +171,9 @@ persisted format.
 
 The decorative agent-reply prefix (E-CHAT-BODY-014) also leaves JST-API-001
 unchanged: it is a display-only widget with no source-text or dispatch changes.
+
+The live document-conversation extension is governed by
+[Conversation submissions](../collaboration/41-conversation-comment-submissions.md).
+Bounded typed submissions and exact source/answer links must preserve request
+receipts, independent recipient outcomes and pinned authorized reads.
+Qualification is recorded separately from the UI prototype.

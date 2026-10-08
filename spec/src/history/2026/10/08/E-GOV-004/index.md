@@ -353,4 +353,7 @@ reason: Bootstrap remains Done with its original gate evidence. All product
 
 ```
 <!-- /evidence-field -->
+<!-- generated-navigation -->
+## Pages
+
 

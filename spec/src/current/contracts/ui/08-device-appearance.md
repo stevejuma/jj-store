@@ -81,3 +81,7 @@ changing the user's selected accent or device preferences. Original retains the
 pre-Appearance Design Core semantic palette and its native accent in light and
 dark modes, including System pairing, scoped gallery previews and persisted
 restoration. Choosing it retains the saved accent for other themes.
+
+Conversation renderer selection is governed by
+[Document conversations](37-document-conversations.md). It is device-wide and
+independent of Focus/Split placement; missing preferences select Document.

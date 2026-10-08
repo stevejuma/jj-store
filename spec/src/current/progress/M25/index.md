@@ -51,7 +51,6 @@ In progress; real-provider and platform qualification gates are unchanged. Final
 review also corrects the default provider label to describe the actual inherited
 configuration, with a failing-then-passing browser regression.
 <!-- generated-navigation -->
-
 ## Pages
 
 - [history](history/index.md)
