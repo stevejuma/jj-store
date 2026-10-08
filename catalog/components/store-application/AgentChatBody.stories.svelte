@@ -30,6 +30,7 @@
   import { readPanelResize } from "../../fixtures/delta-chat/read-panel-resize-play.js";
   import { numberedCodeGutter } from "../../fixtures/delta-chat/numbered-code-gutter-play.js";
   import { footerRuntime } from "../../fixtures/delta-chat/footer-runtime-play.js";
+  import { referenceDiscussionLinks } from "../../fixtures/delta-chat/reference-discussion-play.js";
   import {
     groupedCommentEntries,
     commentRail,
@@ -140,6 +141,7 @@
     expect(getComputedStyle(heading()!).color).not.toBe(
       getComputedStyle(readme).color,
     );
+    await referenceDiscussionLinks(canvasElement);
   }}>{#snippet children()}<Fixture />{/snippet}</Story
 >
 

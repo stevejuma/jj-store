@@ -206,6 +206,9 @@ try {
   await page.goto(
     `${base}/iframe.html?id=jj-store-commentable-agent-chat-body--delta-main-thread-reference&viewMode=story`,
   );
+  await expect(page.locator('[data-chat-reference-ready="true"]')).toBeVisible({
+    timeout: 60000,
+  });
   await expect(
     page.getByRole("textbox", {
       name: "Captured patch · Sources/BedtimeCore/Schedule.swift",

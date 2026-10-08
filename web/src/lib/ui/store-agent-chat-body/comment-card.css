@@ -12,6 +12,8 @@
 }
 .chat-comment-quote {
   margin: 0 0 0.5rem;
+  font-size: var(--mira-markdown-font-size, var(--mira-font-size, 1rem));
+  line-height: var(--mira-markdown-line-height, 1.5);
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   max-height: 8rem;
@@ -21,6 +23,9 @@
   color: inherit;
   background: color-mix(in srgb, var(--primary) 15%, transparent);
   border-radius: 3px;
+}
+.chat-comment-quote > code {
+  font: inherit;
 }
 .chat-comment-list {
   display: grid;

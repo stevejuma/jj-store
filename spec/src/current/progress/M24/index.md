@@ -192,6 +192,14 @@ retaining carets, selection/comment highlights, control focus indicators and
 spacing. This styling review leaves M24 In progress and its independent gates
 unchanged.
 
+E-CHAT-BODY-011 makes the main Delta reference representative with labelled demo
+sent/replied discussions, a delivered comments-only turn and exact linked source
+navigation. Comment-card source quotes match the rendered comment font and size.
+Expanded sent batches use compact reply source links to avoid repeated
+discussions. Captured data remains untouched. This catalog review leaves M24 In
+progress and its independent live, native IME, desktop and visual gates
+unchanged.
+
 <!-- generated-navigation -->
 
 ## Pages

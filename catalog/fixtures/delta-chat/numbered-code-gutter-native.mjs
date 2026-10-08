@@ -41,6 +41,13 @@ export async function numberedCodeGutterAcceptance(page) {
   expect(positions.length).toBeGreaterThan(1);
   for (const x of positions) expect(x).toBeCloseTo(positions[0], 0);
   await expect(editor.locator('[data-captured-line="30"]')).toHaveCount(0);
+  // At the narrow width, the seeded inline discussion pushes the middle fold
+  // outside CodeMirror's rendered viewport. Scroll the sidebar to reveal it.
+  await pane
+    .locator('[data-ui-part="scroll-area-viewport"]')
+    .evaluate((node) => {
+      node.scrollTop = node.scrollHeight;
+    });
   await pane
     .getByRole("button", { name: "Show 55 more lines in README.md" })
     .click();

@@ -18,6 +18,8 @@
   {{#include E-CHAT-BODY-009/SUMMARY.nav.md}}
 - [E-CHAT-BODY-010](E-CHAT-BODY-010/index.md)
   {{#include E-CHAT-BODY-010/SUMMARY.nav.md}}
+- [E-CHAT-BODY-011](E-CHAT-BODY-011/index.md)
+  {{#include E-CHAT-BODY-011/SUMMARY.nav.md}}
 - [E-COMPUTE-002](E-COMPUTE-002/index.md)
   {{#include E-COMPUTE-002/SUMMARY.nav.md}}
 - [E-COMPUTE-003](E-COMPUTE-003/index.md)

@@ -11,6 +11,7 @@
   import type { ChatBodyTool } from "../../web/src/lib/ui/store-agent-chat-body/model.js";
   import helloWorld from "./delta-chat/hello-world.json";
   import { deltaChatThreads } from "./delta-chat/discussions.js";
+  import { referenceDiscussions } from "./delta-chat/reference-discussions.js";
   import reference from "./delta-chat/reference.json";
   import { deltaChatItems } from "./delta-chat/adapter.js";
   import { largeCaptureItems } from "./delta-chat/large-captures.js";
@@ -38,7 +39,7 @@
     narrow?: boolean;
     showComposer?: boolean;
   } = $props();
-  const referenceItems = deltaChatItems(reference);
+  const referenceDemo = referenceDiscussions(deltaChatItems(reference));
   const commentItems = deltaChatItems(helloWorld);
   const reactions = new DemoReactions();
   const runtime = new DemoRuntime();
@@ -59,7 +60,7 @@
     scenario === "comments"
       ? commentItems
       : scenario === "reference"
-        ? referenceItems
+        ? referenceDemo.items
         : scenario === "large"
           ? largeCaptureItems
           : scenario === "empty"
@@ -102,7 +103,11 @@
       reactionOptions: ["👍", "❤️", "✅"],
     }),
     untrack(() =>
-      scenario === "comments" ? deltaChatThreads(helloWorld, commentItems) : [],
+      scenario === "comments"
+        ? deltaChatThreads(helloWorld, commentItems)
+        : scenario === "reference"
+          ? referenceDemo.threads
+          : [],
     ),
   );
   untrack(() => {

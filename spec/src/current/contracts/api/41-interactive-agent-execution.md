@@ -154,3 +154,8 @@ Footer runtime selectors and harness avatars preserve JST-API-001 unchanged
 (E-CHAT-BODY-009): their choices and selections are host-owned display props.
 The catalog retains simulated send-time runtime identity only in memory, with no
 live catalog, settings API or ACP dispatch.
+
+Seeded reference discussions preserve JST-API-001 unchanged (E-CHAT-BODY-011).
+The catalog layers labelled sent comments and simulated linked replies over
+captured content in memory, without submitting a prompt or storing discussions.
+Quote typography and compact repeated reply context remain presentation-only.

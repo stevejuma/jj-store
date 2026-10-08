@@ -50,6 +50,22 @@ within a turn. Missing preimages, line numbers or status remain unknown; opening
 details never reads files or executes tools. The untouched export remains
 ignored. Synthetic comments/failures/streaming are labelled.
 
+The main reference also layers clearly labelled demo discussions over exact
+patch, captured-read and summary anchors without changing the captured JSON.
+Four delivered comments include two entries at one anchor, a sent discussion
+awaiting a reply and two linked simulated agent replies. A comments-only user
+turn retains the delivery batch above the input; source/message/reply links and
+the turn rail use the same shared host state. The initial queue stays empty.
+Captured-code quotes in comment cards inherit the normal chat font and the
+Markdown renderer's font-size and line-height tokens, matching rendered comment
+bodies while retaining source whitespace and highlighting. Source readers keep
+their code typography. When a reply's comments are already visible in its
+expanded preceding user batch, its context becomes a compact comment count and
+source link instead of duplicating the discussion. Collapsing the batch restores
+the quoted reply context. Replies in later turns and unavailable anchors retain
+their full context; distinct comments at the same anchor remain grouped and
+intact.
+
 Pointer, keyboard, input composition, immutable content, collapse/reopen,
 Unicode mapping, focus, teardown, themes and narrow presentation require focused
 interaction/accessibility evidence and a cold Storybook run. Human comparison
@@ -82,38 +98,39 @@ turns, grouping a user prompt with its assistant messages and tool flow.
 Hover/focus shows one turn card with the prompt preview, Turn Summary,
 author/available agent-model metadata, captured patch-line counts and recorded
 time. Summary text is the captured final response's first paragraph; it is not a
-newly generated agent summary. The current reference has one exchange, so it has
-one marker. Comment-only turns use Comment/Comments previews with the actual
-comment text, author, available agent/model/time metadata and comment count.
-Mixed turns include their comments alongside the message summary. Pending
-comments have a separate marker before Jump to End, with the same preview and
-navigation into the shared queue. These markers participate in session-only
-bookmarks, Cmd/Ctrl-click and Alt-wheel navigation, which preserve discussion
-state. Dense markers have an equivalent large navigation target in the
-keyboard-accessible card. Rail markers have no hover outline; keyboard focus
-remains visible. A final distinct marker jumps to the document end and shows a
-compact Jump to End hint. Cmd/Ctrl+Down works while focus is in the navigation.
-Tool headers remain transparent during hover, with no internal padding. All
-section and file disclosure chevrons sit immediately after the label with an 8px
-gap; controls fit their text rather than stretching the icon to the row edge.
-Their small rounded icon region alone gains a muted background on pointer hover
-or keyboard focus; the surrounding header stays transparent. The icon region
-remains part of the same named disclosure button, with no extra tab stop. Tool
-and file titles use the proportional UI font at 0.875rem, distinct from captured
-code typography. Expanded tool/file content has no surrounding frame. Code and
-patch readers have a muted background inside their own rounded content region.
-File heading corners inherit that content radius without clipping hover controls
-or comments. Known numbered captures retain their number/tab prefixes in the
-immutable document. Prefixes are hidden from the text display and rendered in a
-separate CodeMirror gutter using their recorded labels, including gaps. Wrapped
-content keeps its own left edge; middle folds preserve the original trailing
-line labels, and comment widgets receive no line labels. Atomic display ranges
-keep caret navigation outside the hidden prefixes. Exact UTF-16 comment anchors
-remain unchanged. Syntax tokens are parsed from file contents without those
-prefixes, then mapped back to exact captured UTF-16 spans, split at each line so
-prefixes stay neutral. The display model marks this captured format explicitly;
-ordinary code and raw JSON do not infer numbering. Added and removed patch lines
-have full-line diff backgrounds and retain their prefix/gutter distinction. File
+newly generated agent summary. The captured reference has one exchange; the
+labelled demo review adds a separate comment-only turn and marker. Comment-only
+turns use Comment/Comments previews with the actual comment text, author,
+available agent/model/time metadata and comment count. Mixed turns include their
+comments alongside the message summary. Pending comments have a separate marker
+before Jump to End, with the same preview and navigation into the shared queue.
+These markers participate in session-only bookmarks, Cmd/Ctrl-click and
+Alt-wheel navigation, which preserve discussion state. Dense markers have an
+equivalent large navigation target in the keyboard-accessible card. Rail markers
+have no hover outline; keyboard focus remains visible. A final distinct marker
+jumps to the document end and shows a compact Jump to End hint. Cmd/Ctrl+Down
+works while focus is in the navigation. Tool headers remain transparent during
+hover, with no internal padding. All section and file disclosure chevrons sit
+immediately after the label with an 8px gap; controls fit their text rather than
+stretching the icon to the row edge. Their small rounded icon region alone gains
+a muted background on pointer hover or keyboard focus; the surrounding header
+stays transparent. The icon region remains part of the same named disclosure
+button, with no extra tab stop. Tool and file titles use the proportional UI
+font at 0.875rem, distinct from captured code typography. Expanded tool/file
+content has no surrounding frame. Code and patch readers have a muted background
+inside their own rounded content region. File heading corners inherit that
+content radius without clipping hover controls or comments. Known numbered
+captures retain their number/tab prefixes in the immutable document. Prefixes
+are hidden from the text display and rendered in a separate CodeMirror gutter
+using their recorded labels, including gaps. Wrapped content keeps its own left
+edge; middle folds preserve the original trailing line labels, and comment
+widgets receive no line labels. Atomic display ranges keep caret navigation
+outside the hidden prefixes. Exact UTF-16 comment anchors remain unchanged.
+Syntax tokens are parsed from file contents without those prefixes, then mapped
+back to exact captured UTF-16 spans, split at each line so prefixes stay
+neutral. The display model marks this captured format explicitly; ordinary code
+and raw JSON do not infer numbering. Added and removed patch lines have
+full-line diff backgrounds and retain their prefix/gutter distinction. File
 headers stay neutral; triple-prefix content inside a hunk remains a changed
 line. Turn-card totals use the same classification as the reader and count
 captured changes, without inventing preimages or net totals. Successful tool

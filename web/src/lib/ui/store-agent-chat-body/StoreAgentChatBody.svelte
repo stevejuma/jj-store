@@ -10,6 +10,7 @@
   import CommunityReactions from "../community-reactions/CommunityReactions.svelte";
   import ChatNavigation from "./ChatNavigation.svelte";
   import ChatCommentArea from "./ChatCommentArea.svelte";
+  import ChatReplyContext from "./ChatReplyContext.svelte";
   import ChatContent from "./ChatContent.svelte";
   import ChatTools from "./ChatTools.svelte";
   import { ChatBodyComments } from "./comments.svelte.js";
@@ -100,12 +101,7 @@
             {#if item.replyContext}<div
                 class="chat-document-inset chat-reply-context"
               >
-                <ChatCommentArea
-                  state={comments}
-                  threadId={item.replyContext.threadId}
-                  commentIds={item.replyContext.commentIds}
-                  placement="reply"
-                />
+                <ChatReplyContext state={comments} {item} />
               </div>{/if}
             {#if item.kind === "message" && item.blocks.length}
               <article class="chat-message" aria-label={item.label}>
