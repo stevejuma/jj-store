@@ -51,10 +51,15 @@ pub struct ThreadVersionV1 {
     pub baseline: Option<ThreadCodeAnchorV1>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub agent_message: Option<ReactionTargetV1>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub comment_source: Option<ConversationSourceV1>,
 }
 impl ThreadVersionV1 {
     pub fn validate(&self) -> Result<()> {
         schema(self.schema_version)?;
+        if let Some(source) = &self.comment_source {
+            source.validate()?;
+        }
         if let Some(target) = &self.agent_message {
             validate_agent_discussion(target)?;
         }
@@ -182,6 +187,11 @@ impl HumanMessageRevisionV1 {
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(tag = "type", rename_all = "snake_case", deny_unknown_fields)]
 pub enum ThreadLinkTargetV1 {
+    CommentBatch {
+        request_id: jj_store_model::RequestId,
+        comments: Vec<ReactionTargetV1>,
+        message: Option<CollabObjectRef>,
+    },
     CaptureGap {
         source_state: AgentObjectRef,
         event_batch: AgentObjectRef,
@@ -226,6 +236,23 @@ impl ThreadLinkV1 {
             return Err(Error::Invalid("new inactive Thread link"));
         }
         match &self.target {
+            ThreadLinkTargetV1::CommentBatch {
+                comments, message, ..
+            } => {
+                if comments.len() > 128 {
+                    return Err(Error::Limit);
+                }
+                let mut seen = std::collections::BTreeSet::new();
+                for target in comments {
+                    validate_comment_reference(target)?;
+                    if !seen.insert(target.exact_key()?) {
+                        return Err(Error::Invalid("repeated batch comment"));
+                    }
+                }
+                if let Some(r) = message {
+                    expect(*r, CollabObjectKind::HumanMessageRevision)?;
+                }
+            }
             ThreadLinkTargetV1::CaptureGap {
                 source_state,
                 event_batch,

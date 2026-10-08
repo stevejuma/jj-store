@@ -44,6 +44,22 @@ impl LocalRepository {
                             CollabTargetReaderV1::new(repository, None, Some(&agents), None)?;
                         resolve_reaction_target(&reader, target).await?;
                     }
+                    if !command.conversation_sources().is_empty()
+                        || !command.comment_references().is_empty()
+                    {
+                        let reader = CollabTargetReaderV1::new(
+                            repository,
+                            Some((threads.state.root.clone(), &threads.graph)),
+                            Some(&agents),
+                            Some(&reviews),
+                        )?;
+                        for source in command.conversation_sources() {
+                            resolve_conversation_source(&reader, source).await?;
+                        }
+                        for target in command.comment_references() {
+                            resolve_reaction_target(&reader, target).await?;
+                        }
+                    }
                     validate_link(command, &agents, &reviews).await?;
                     let (root, result) = threads.state.apply(
                         command,
@@ -186,6 +202,7 @@ async fn validate_link(
         return Ok(());
     };
     match target {
+        ThreadLinkTargetV1::CommentBatch { .. } => {}
         ThreadLinkTargetV1::CaptureGap {
             source_state,
             event_batch,

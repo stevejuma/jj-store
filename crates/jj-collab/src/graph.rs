@@ -54,6 +54,7 @@ impl CollabGraphV1 {
     }
     fn audit_object(&self, object: &CollabObjectV1) -> Result<()> {
         let target = match object {
+            CollabObjectV1::ThreadVersion(v) => v.comment_source.as_ref().map(|s| &s.target),
             CollabObjectV1::Reaction(v) => Some(&v.target),
             CollabObjectV1::ReactionRetraction(v) => Some(&v.target),
             CollabObjectV1::ReactionSlot(v) => Some(&v.target),
@@ -164,6 +165,8 @@ impl CollabGraphV1 {
                         if old.thread_id != thread.thread_id
                             || event.previous != Some(old.event)
                             || old.baseline != thread.baseline
+                            || old.agent_message != thread.agent_message
+                            || old.comment_source != thread.comment_source
                         {
                             return Err(Error::Invalid("Thread history identity"));
                         }
@@ -217,6 +220,38 @@ impl CollabGraphV1 {
                 }
             }
             CollabObjectV1::ThreadLink(link) => {
+                if let ThreadLinkTargetV1::CommentBatch {
+                    comments, message, ..
+                } = &link.target
+                {
+                    for target in comments {
+                        if let ReactionTargetV1::HumanMessage {
+                            thread_id,
+                            message_id,
+                            revision,
+                        } = target
+                        {
+                            let CollabObjectV1::HumanMessageRevision(m) = self.get(*revision)?
+                            else {
+                                return Err(Error::Invalid("batch comment kind"));
+                            };
+                            if (m.thread_id, m.message_id) != (*thread_id, *message_id)
+                                || m.body.is_none()
+                            {
+                                return Err(Error::Invalid("batch comment identity"));
+                            }
+                        }
+                    }
+                    if let Some(reference) = message {
+                        let CollabObjectV1::HumanMessageRevision(m) = self.get(*reference)? else {
+                            return Err(Error::Invalid("batch message kind"));
+                        };
+                        if m.thread_id != link.thread_id || m.body.is_none() {
+                            return Err(Error::Invalid("batch message identity"));
+                        }
+                    }
+                }
+
                 if let Some(prior) = link.previous {
                     let CollabObjectV1::ThreadLink(old) = self.get(prior)? else {
                         return Err(Error::Invalid("Thread link history"));

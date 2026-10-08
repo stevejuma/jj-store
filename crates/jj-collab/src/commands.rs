@@ -8,6 +8,14 @@ use std::collections::BTreeMap;
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(tag = "type", rename_all = "snake_case", deny_unknown_fields)]
 pub enum ThreadCommandV1 {
+    Submit {
+        submission: Box<ConversationSubmissionV1>,
+    },
+    CreateCommentDiscussion {
+        thread_id: ThreadId,
+        title: String,
+        source: ConversationSourceV1,
+    },
     CreateAgentDiscussion {
         thread_id: ThreadId,
         title: String,
@@ -53,8 +61,10 @@ pub enum ThreadCommandV1 {
 impl ThreadCommandV1 {
     pub fn thread_id(&self) -> ThreadId {
         match self {
+            Self::Submit { submission } => submission.thread_id,
             Self::Create { thread_id, .. }
             | Self::CreateAgentDiscussion { thread_id, .. }
+            | Self::CreateCommentDiscussion { thread_id, .. }
             | Self::Rename { thread_id, .. }
             | Self::Lifecycle { thread_id, .. }
             | Self::Message { thread_id, .. }
@@ -64,6 +74,13 @@ impl ThreadCommandV1 {
     }
     pub fn validate(&self) -> Result<()> {
         match self {
+            Self::Submit { submission } => submission.validate()?,
+            Self::CreateCommentDiscussion { title, source, .. } => {
+                if !label(title, 1024) {
+                    return Err(Error::Invalid("discussion title"));
+                }
+                source.validate()?;
+            }
             Self::CreateAgentDiscussion { title, target, .. } => {
                 if !label(title, 1024) {
                     return Err(Error::Invalid("Thread title"));
@@ -253,11 +270,17 @@ impl ThreadStateV1 {
         graph: &mut CollabGraphV1,
     ) -> Result<(ThreadRootV1, ThreadCommandResultV1)> {
         command.validate()?;
+        if let ThreadCommandV1::Submit { submission } = command {
+            return self.submit_conversation(submission, actor, request, at, graph);
+        }
         let thread_id = command.thread_id();
         let mut root = self.root.clone();
         let old = self.threads.get(&thread_id).copied();
         let expected = match command {
-            ThreadCommandV1::Create { .. } | ThreadCommandV1::CreateAgentDiscussion { .. } => None,
+            ThreadCommandV1::Submit { .. } => unreachable!(),
+            ThreadCommandV1::Create { .. }
+            | ThreadCommandV1::CreateAgentDiscussion { .. }
+            | ThreadCommandV1::CreateCommentDiscussion { .. } => None,
             ThreadCommandV1::Rename { expected, .. }
             | ThreadCommandV1::Lifecycle { expected, .. } => Some(*expected),
             ThreadCommandV1::Message {
@@ -276,7 +299,19 @@ impl ThreadStateV1 {
         let mut message = None;
         let mut link = None;
         let mut reassigned_from = None;
+        let comment_source = match command {
+            ThreadCommandV1::CreateCommentDiscussion { source, .. } => Some(source.clone()),
+            _ => old.and_then(|r| match graph.get(r).ok()? {
+                CollabObjectV1::ThreadVersion(v) => v.comment_source.clone(),
+                _ => None,
+            }),
+        };
         let agent_message = match command {
+            ThreadCommandV1::CreateCommentDiscussion { source, .. }
+                if validate_agent_discussion(&source.target).is_ok() =>
+            {
+                Some(source.target.clone())
+            }
             ThreadCommandV1::CreateAgentDiscussion { target, .. } => Some(target.clone()),
             _ => old.and_then(|r| match graph.get(r).ok()? {
                 CollabObjectV1::ThreadVersion(v) => v.agent_message.clone(),
@@ -284,7 +319,8 @@ impl ThreadStateV1 {
             }),
         };
         let (title, status, baseline, event_kind) = match command {
-            ThreadCommandV1::CreateAgentDiscussion { title, .. } => (
+            ThreadCommandV1::CreateAgentDiscussion { title, .. }
+            | ThreadCommandV1::CreateCommentDiscussion { title, .. } => (
                 title.clone(),
                 ThreadStatusV1::Created,
                 None,
@@ -592,6 +628,7 @@ impl ThreadStateV1 {
             event,
             baseline,
             agent_message,
+            comment_source,
         }))?;
         root.threads = graph.catalog_update(
             root.threads,

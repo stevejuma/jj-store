@@ -221,6 +221,10 @@ contract. The default Document/Classic preference, durable
 selectors/submissions, agent reply protocol and renderer parity require
 implementation and isolated native/local acceptance. M24 stays In progress;
 prototype simulations and visual-pending stories do not qualify these gates.
+E-CHAT-LIVE-002 qualifies exact conversation source selectors and atomic
+comment-batch publication through focused native/local receipt and restart
+tests. Managed dispatch, validated answer publication and renderer parity remain
+open; M24 stays In progress and visual baselines remain unapproved.
 <!-- generated-navigation -->
 ## Pages
 

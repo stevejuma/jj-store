@@ -177,3 +177,11 @@ The live document-conversation extension is governed by
 Bounded typed submissions and exact source/answer links must preserve request
 receipts, independent recipient outcomes and pinned authorized reads.
 Qualification is recorded separately from the UI prototype.
+
+Thread commands add create_comment_discussion and submit. Existing native/local
+command routes and original request/status receipts carry these bounded typed
+intents; no actor is accepted from the browser. Optional source selectors on
+read Thread versions and CommentBatch link targets expose immutable source and
+submission identities. Old command variants and absent-field bytes remain
+readable. Submission bodies cap comment count at 128 and combined draft/comment
+quote bytes at 32 KiB, independently of the ordinary message limit.

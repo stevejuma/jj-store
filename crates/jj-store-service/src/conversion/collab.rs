@@ -53,6 +53,9 @@ fn translate(
             return Err("conversion rebuilds collaboration catalogs".into());
         }
         CollabObjectV1::ThreadVersion(v) => {
+            if let Some(source) = &mut v.comment_source {
+                target(&mut source.target, c, a, r)?;
+            }
             if let Some(t) = &mut v.agent_message {
                 target(t, c, a, r)?;
             }
@@ -84,6 +87,16 @@ fn translate(
                 remap(p)?
             }
             match &mut v.target {
+                ThreadLinkTargetV1::CommentBatch {
+                    comments, message, ..
+                } => {
+                    for reference in comments {
+                        target(reference, c, a, r)?;
+                    }
+                    if let Some(reference) = message {
+                        remap(reference)?;
+                    }
+                }
                 ThreadLinkTargetV1::CaptureGap {
                     source_state,
                     event_batch,

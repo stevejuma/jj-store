@@ -141,6 +141,7 @@ impl Reader {
             .graph
             .stage(CollabObjectV1::ThreadVersion(ThreadVersionV1 {
                 agent_message: None,
+                comment_source: None,
                 schema_version: 1,
                 thread_id: tid(),
                 title: "Tests".into(),
@@ -871,4 +872,62 @@ async fn work_comment_requires_exact_visible_identity_task_and_version() {
         serde_json::to_string(&ReactionTargetV1::Thread { thread_id: tid() }).unwrap(),
         r#"{"type":"thread","thread_id":"01010101010101010101010101010101"}"#
     );
+}
+
+#[tokio::test]
+async fn conversation_ranges_pin_revision_unicode_and_exact_quote() {
+    let mut reader = Reader::default();
+    reader.thread(ThreadStatusV1::Active);
+    let old = reader.message(None, Some("a🦀 café\nnext"));
+    let current = reader.message(Some(old), Some("edited"));
+    reader.messages.insert((tid(), mid()), current);
+    let source = ConversationSourceV1 {
+        target: ReactionTargetV1::HumanMessage {
+            thread_id: tid(),
+            message_id: mid(),
+            revision: old,
+        },
+        part: None,
+        selection: Some(r::TextSelectionV1 {
+            encoding: r::TextEncoding::Utf8,
+            start_byte: r::ByteOffset::new(1),
+            end_byte: r::ByteOffset::new(5),
+            selected_sha256: r::ReviewDigest::sha256("🦀".as_bytes()),
+        }),
+        quote: "🦀".into(),
+    };
+    resolve_conversation_source(&reader, &source).await.unwrap();
+    let mut wrong = source.clone();
+    wrong.quote = "crab".into();
+    assert!(resolve_conversation_source(&reader, &wrong).await.is_err());
+    wrong = source.clone();
+    wrong.selection.as_mut().unwrap().start_byte = r::ByteOffset::new(2);
+    assert!(resolve_conversation_source(&reader, &wrong).await.is_err());
+    wrong = source.clone();
+    if let ReactionTargetV1::HumanMessage { revision, .. } = &mut wrong.target {
+        *revision = current;
+    }
+    assert!(resolve_conversation_source(&reader, &wrong).await.is_err());
+    reader.messages.remove(&(tid(), mid()));
+    assert!(resolve_conversation_source(&reader, &source).await.is_err());
+}
+
+#[test]
+fn conversation_captured_json_requires_an_explicit_string_part() {
+    let payload = a::SanitizedPayloadV1::new(
+        a::SanitizedMediaType::Json,
+        br#"{"rawOutput":"1\tHello","content":[{"text":"World"}]}"#,
+    )
+    .unwrap();
+    assert_eq!(
+        captured_text(&payload, Some("/rawOutput")).unwrap(),
+        "1\tHello"
+    );
+    assert_eq!(
+        captured_text(&payload, Some("/content/0/text")).unwrap(),
+        "World"
+    );
+    for part in [None, Some("/content"), Some("/missing")] {
+        assert!(captured_text(&payload, part).is_err());
+    }
 }

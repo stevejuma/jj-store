@@ -757,3 +757,103 @@ async fn disjoint_actor_cas_race_reapplies_original_intent_and_retains_both_slot
     }
     c.recover(100).await.unwrap();
 }
+
+#[tokio::test]
+async fn conversation_submission_is_atomic_receipt_backed_and_rejects_forged_ranges() {
+    let (storage, guard, c) = fixture().await;
+    let parent = thread_result(&publish(&c, &thread(80)).await);
+    let original = thread_result(
+        &publish(
+            &c,
+            &message(
+                81,
+                &parent,
+                HumanMessageId::new([81; 16]),
+                None,
+                Some("hello 🦀"),
+            ),
+        )
+        .await,
+    );
+    let source = ConversationSourceV1 {
+        target: ReactionTargetV1::HumanMessage {
+            thread_id: parent.thread_id,
+            message_id: HumanMessageId::new([81; 16]),
+            revision: original.message.unwrap(),
+        },
+        part: None,
+        selection: Some(jj_review::TextSelectionV1 {
+            encoding: jj_review::TextEncoding::Utf8,
+            start_byte: jj_review::ByteOffset::new(6),
+            end_byte: jj_review::ByteOffset::new(10),
+            selected_sha256: jj_review::ReviewDigest::sha256("🦀".as_bytes()),
+        }),
+        quote: "🦀".into(),
+    };
+    let mut submission = ConversationSubmissionV1 {
+        thread_id: parent.thread_id,
+        expected_thread: original.version,
+        message_id: None,
+        text: None,
+        comments: vec![ConversationCommentDraftV1 {
+            thread_id: ThreadId::new([82; 16]),
+            expected_thread: None,
+            source,
+            message_id: HumanMessageId::new([82; 16]),
+            expected_revision: None,
+            reply_to: None,
+            body: "Explain this".into(),
+        }],
+        references: vec![],
+    };
+    let mut forged = submission.clone();
+    forged.comments[0].source.quote = "false".into();
+    assert!(
+        c.publish_collab_command(&command_request(
+            82,
+            CollabCommandV1::Thread {
+                intent: ThreadCommandV1::Submit {
+                    submission: Box::new(forged)
+                }
+            }
+        ))
+        .await
+        .is_err()
+    );
+    let request = command_request(
+        83,
+        CollabCommandV1::Thread {
+            intent: ThreadCommandV1::Submit {
+                submission: Box::new(submission.clone()),
+            },
+        },
+    );
+    let committed = publish(&c, &request).await;
+    let cold = coordinator(storage, guard);
+    let replay = publish(&cold, &request).await;
+    assert_eq!(replay, committed);
+    let pin = cold.read().await.unwrap();
+    let store = cold
+        .native_thread_store(pin.manifest().thread_root.unwrap())
+        .await
+        .unwrap();
+    assert_eq!(store.state.threads.len(), 2);
+    assert_eq!(store.state.messages.len(), 2);
+    let batch = thread_result(&committed).link.unwrap();
+    assert!(
+        matches!(&store.graph.get(batch).unwrap(),CollabObjectV1::ThreadLink(ThreadLinkV1 {target:ThreadLinkTargetV1::CommentBatch {comments,..},..}) if comments.len()==1)
+    );
+    submission.comments[0].body = "changed request".into();
+    assert!(
+        cold.publish_collab_command(&command_request(
+            83,
+            CollabCommandV1::Thread {
+                intent: ThreadCommandV1::Submit {
+                    submission: Box::new(submission)
+                }
+            }
+        ))
+        .await
+        .is_err()
+    );
+}

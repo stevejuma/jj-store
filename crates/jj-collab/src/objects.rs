@@ -107,7 +107,16 @@ impl CollabObjectV1 {
         self.validate()?;
         let refs = match self {
             Self::IndexPage(v) => v.dependencies(),
-            Self::ThreadVersion(v) => v.previous.into_iter().chain([v.event]).collect(),
+            Self::ThreadVersion(v) => v
+                .previous
+                .into_iter()
+                .chain([v.event])
+                .chain(
+                    v.comment_source
+                        .iter()
+                        .flat_map(|s| s.target.collab_dependencies()),
+                )
+                .collect(),
             Self::ThreadEvent(v) => v
                 .previous
                 .into_iter()
@@ -123,6 +132,13 @@ impl CollabObjectV1 {
                 if let ThreadLinkTargetV1::CaptureGap { binding, .. } = &v.target {
                     dependencies.insert(binding.observed_thread);
                     dependencies.extend(binding.observed_assignment);
+                }
+                if let ThreadLinkTargetV1::CommentBatch {
+                    comments, message, ..
+                } = &v.target
+                {
+                    dependencies.extend(message);
+                    dependencies.extend(comments.iter().flat_map(|c| c.collab_dependencies()));
                 }
                 dependencies.into_iter().collect()
             }
@@ -161,7 +177,15 @@ impl CollabObjectV1 {
                 .agent_message
                 .as_ref()
                 .map(|t| t.agent_dependencies())
-                .unwrap_or_default(),
+                .unwrap_or_default()
+                .union(
+                    &v.comment_source
+                        .as_ref()
+                        .map(|s| s.target.agent_dependencies())
+                        .unwrap_or_default(),
+                )
+                .copied()
+                .collect(),
             Self::ThreadLink(v) => match &v.target {
                 ThreadLinkTargetV1::CaptureGap {
                     source_state,
@@ -180,8 +204,17 @@ impl CollabObjectV1 {
     }
     pub fn review_dependencies(&self) -> BTreeSet<ReviewObjectRef> {
         match self {
+            Self::ThreadVersion(v) => v
+                .comment_source
+                .as_ref()
+                .map(|s| s.target.review_dependencies())
+                .unwrap_or_default(),
             Self::ThreadLink(v) => match &v.target {
                 ThreadLinkTargetV1::Review { snapshot, .. } => BTreeSet::from([*snapshot]),
+                ThreadLinkTargetV1::CommentBatch { comments, .. } => comments
+                    .iter()
+                    .flat_map(|c| c.review_dependencies())
+                    .collect(),
                 _ => BTreeSet::new(),
             },
             Self::Reaction(v) => v.target.review_dependencies(),

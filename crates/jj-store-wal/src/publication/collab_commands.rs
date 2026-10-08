@@ -289,6 +289,30 @@ impl Coordinator {
         base: &ManifestSnapshot,
         command: &ThreadCommandV1,
     ) -> std::result::Result<(), CollabCommandError> {
+        if !command.conversation_sources().is_empty() || !command.comment_references().is_empty() {
+            let selected = self.collab_domain_state(base, Domain::Thread).await?;
+            let threads = self.native_thread_store(selected.root).await?;
+            let agents = match base.manifest.agent_root {
+                Some(root) => Some(self.agent_store(root).await?),
+                None => None,
+            };
+            let reviews = match base.manifest.review_root {
+                Some(root) => Some(self.review_store(root).await?),
+                None => None,
+            };
+            let reader = CollabTargetReaderV1::new(
+                self.records.repository,
+                Some((threads.state.root, &threads.graph)),
+                agents.as_ref().map(|s| s as &dyn AgentSnapshotRead),
+                reviews.as_ref().map(|s| s as &dyn ReviewSnapshotRead),
+            )?;
+            for source in command.conversation_sources() {
+                jj_collab::resolve_conversation_source(&reader, source).await?;
+            }
+            for target in command.comment_references() {
+                resolve_reaction_target(&reader, target).await?;
+            }
+        }
         if let ThreadCommandV1::CreateAgentDiscussion { target, .. } = command {
             let agents = self
                 .agent_store(
@@ -312,6 +336,7 @@ impl Coordinator {
             return Ok(());
         };
         match target {
+            ThreadLinkTargetV1::CommentBatch { .. } => {}
             ThreadLinkTargetV1::CaptureGap {
                 source_state,
                 event_batch,

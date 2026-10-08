@@ -1099,3 +1099,89 @@ async fn local_work_comment_reactions_share_companion_pin_and_survive_gc_and_reo
         LocalError::NotFound
     );
 }
+
+#[tokio::test]
+async fn local_conversation_batch_survives_reopen_with_exact_ranges_and_receipt() {
+    let (root, repo) = fixture();
+    let parent = thread_result(receipt(
+        repo.apply_collab_command(&thread(80)).await.unwrap(),
+    ));
+    let original = thread_result(receipt(
+        repo.apply_collab_command(&request(
+            81,
+            LocalCollabCommand::Thread {
+                intent: ThreadCommandV1::Message {
+                    thread_id: parent.thread_id,
+                    expected_thread: parent.version,
+                    message_id: HumanMessageId::new([81; 16]),
+                    expected_revision: None,
+                    reply_to: None,
+                    body: Some("hello 🦀".into()),
+                },
+            },
+        ))
+        .await
+        .unwrap(),
+    ));
+    let source = ConversationSourceV1 {
+        target: ReactionTargetV1::HumanMessage {
+            thread_id: parent.thread_id,
+            message_id: HumanMessageId::new([81; 16]),
+            revision: original.message.unwrap(),
+        },
+        part: None,
+        selection: Some(jj_review::TextSelectionV1 {
+            encoding: jj_review::TextEncoding::Utf8,
+            start_byte: jj_review::ByteOffset::new(6),
+            end_byte: jj_review::ByteOffset::new(10),
+            selected_sha256: jj_review::ReviewDigest::sha256("🦀".as_bytes()),
+        }),
+        quote: "🦀".into(),
+    };
+    let submission = ConversationSubmissionV1 {
+        thread_id: parent.thread_id,
+        expected_thread: original.version,
+        message_id: Some(HumanMessageId::new([83; 16])),
+        text: Some("Please review".into()),
+        comments: vec![ConversationCommentDraftV1 {
+            thread_id: ThreadId::new([82; 16]),
+            expected_thread: None,
+            source,
+            message_id: HumanMessageId::new([82; 16]),
+            expected_revision: None,
+            reply_to: None,
+            body: "Explain this".into(),
+        }],
+        references: vec![],
+    };
+    let command = request(
+        82,
+        LocalCollabCommand::Thread {
+            intent: ThreadCommandV1::Submit {
+                submission: Box::new(submission),
+            },
+        },
+    );
+    let committed = receipt(repo.apply_collab_command(&command).await.unwrap());
+    let cold = reopen(&root.path().join("repo"));
+    let replay = receipt(cold.apply_collab_command(&command).await.unwrap());
+    assert_eq!(
+        serde_json::to_value(&replay).unwrap(),
+        serde_json::to_value(&committed).unwrap()
+    );
+    let before = cold.metadata_store().read().unwrap().unwrap().commit();
+    let mut forged = command.clone();
+    forged.request_id = m::RequestId::new([84; 16]);
+    let LocalCollabCommand::Thread {
+        intent: ThreadCommandV1::Submit { submission },
+    } = &mut forged.command
+    else {
+        panic!()
+    };
+    submission.comments[0].source.quote = "not the source".into();
+    assert!(cold.apply_collab_command(&forged).await.is_err());
+    assert_eq!(
+        cold.metadata_store().read().unwrap().unwrap().commit(),
+        before
+    );
+}

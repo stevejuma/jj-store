@@ -69,3 +69,13 @@ cannot mark a comment replied. Malformed, unknown or unauthorized blocks remain
 ordinary readable output without quote-based repair. Multiple legitimate answers
 remain distinct. No tag executes a command, grants access or resolves a review.
 Historical records are not reinterpreted using current prompt context.
+
+The first model slice uses an optional ConversationSourceV1 on ThreadVersionV1,
+with absent fields omitted so legacy canonical encodings remain identical.
+CreateCommentDiscussion admits the new source; Submit projects its bounded
+comments, optional ordinary message and CommentBatch link under one receipt. The
+shared projector stages on a private graph and refuses the entire batch on stale
+source/discussion/message preconditions. Providers resolve every external source
+and existing reference against their one captured native/local selection. JSON
+captured text requires an explicit string pointer; plain content uses no
+pointer. Parent batch records retain exact submitted comment revisions.
