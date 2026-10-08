@@ -1,5 +1,6 @@
 <script lang="ts">
   import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
+  import MessageCircleIcon from "@lucide/svelte/icons/message-circle";
   import type { ChatNavigationTurn } from "./navigation-turns.js";
   let {
     turn: preview,
@@ -17,31 +18,54 @@
     onBookmark: () => void;
   } = $props();
   function dateLabel(time: number) {
-    const days = Math.floor(Math.max(0, Date.now() - time) / 86400000);
-    return `${new Intl.RelativeTimeFormat(undefined, { numeric: "auto" }).format(-days, "day")} (${new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" }).format(time)})`;
+    const seconds = Math.floor(Math.max(0, Date.now() - time) / 1000);
+    const unit =
+      seconds < 60
+        ? "second"
+        : seconds < 3600
+          ? "minute"
+          : seconds < 86400
+            ? "hour"
+            : "day";
+    const duration =
+      unit === "second"
+        ? seconds
+        : Math.floor(
+            seconds / (unit === "minute" ? 60 : unit === "hour" ? 3600 : 86400),
+          );
+    return `${new Intl.RelativeTimeFormat(undefined, { numeric: "auto" }).format(-duration, unit)} (${new Intl.DateTimeFormat(undefined, { dateStyle: "medium", timeStyle: "short" }).format(time)})`;
   }
 </script>
 
 <section
   class="chat-turn-popover"
   role="group"
-  aria-label="Turn summary"
+  aria-label={preview.commentsOnly ? "Comment summary" : "Turn summary"}
   style:max-height={`${maxHeight}px`}
 >
   <button
     class="chat-turn-content"
     type="button"
-    aria-label={`Scroll to turn ${previewIndex + 1}`}
+    aria-label={preview.pending
+      ? "Go to pending comments"
+      : `Scroll to turn ${previewIndex + 1}`}
     onclick={onNavigate}
   >
     <span class="chat-turn-prompt">{preview.prompt}</span>
-    <span class="chat-turn-summary-heading">Turn Summary</span>
-    <span class="chat-turn-summary">{preview.summary}</span>
+    {#if !preview.commentsOnly}
+      <span class="chat-turn-summary-heading">Turn Summary</span>
+      <span class="chat-turn-summary">{preview.summary}</span>
+      {#if preview.comments.length}<span class="chat-turn-summary"
+          >Comments: {preview.comments
+            .map(({ comment }) => comment.text)
+            .join("; ")}</span
+        >{/if}
+    {/if}
   </button>
   <div class="chat-turn-metadata">
     <div class="chat-turn-author">
       <CommunityMemberAvatar
-        member={{
+        member={preview.comments[0]?.comment.author ?? {
           id: `turn:${preview.author}`,
           name: preview.author,
           handle: "",
@@ -53,6 +77,15 @@
     </div>
     {#if preview.agentName || preview.modelLabel}<div>
         ⌘ <span>{preview.modelLabel ?? preview.agentName}</span>
+      </div>{/if}
+    {#if preview.comments.length}<div>
+        <MessageCircleIcon size={16} aria-hidden="true" />
+        <span
+          >{preview.comments.length}
+          {preview.comments.length === 1
+            ? "comment"
+            : "comments"}{preview.pending ? " · Pending" : ""}</span
+        >
       </div>{/if}
     {#if preview.additions || preview.deletions}<div
         aria-label={`${preview.additions} captured lines added, ${preview.deletions} captured lines removed`}
@@ -72,7 +105,9 @@
   <footer>
     <button
       type="button"
-      aria-label={`Bookmark turn ${previewIndex + 1}`}
+      aria-label={preview.pending
+        ? "Bookmark pending comments"
+        : `Bookmark turn ${previewIndex + 1}`}
       aria-pressed={bookmarked}
       onclick={onBookmark}
       >{bookmarked ? "★" : "☆"} ⌘ / Ctrl + click to bookmark</button

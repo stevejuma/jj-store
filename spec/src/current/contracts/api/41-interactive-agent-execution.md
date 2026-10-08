@@ -133,3 +133,9 @@ display-only numbering marker adds no HTTP/ACP field; retained source text,
 anchors and native formats stay unchanged. ScrollArea viewport ownership,
 full-frame catalog layout and caret/draft styling also leave JST-API-001
 unchanged; they add no request, persistence or dispatch.
+
+Queued comment batches, linked replies and source navigation also preserve this
+boundary: their typed submission snapshots and sent/replied states are UI
+presentation contracts only. Catalog acceptance and reply completion are
+simulated in memory, with no HTTP/ACP dispatch, durable comment authority or
+persisted-format change (E-CHAT-BODY-007; JST-API-001 unchanged).

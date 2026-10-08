@@ -1,4 +1,5 @@
 <script lang="ts">
+  import "./navigation.css";
   import { onDestroy } from "svelte";
   import type { ChatBodyItem } from "./model.js";
   import type { ChatBodyComments } from "./comments.svelte.js";
@@ -22,7 +23,7 @@
     atEnd = $state(false);
   let container = $state<HTMLElement>(),
     availableHeight = $state(500);
-  const turns = $derived(navigationTurns(items));
+  const turns = $derived(navigationTurns(items, comments.threads));
   const preview = $derived(
     turns.find((turn) => turn.id === previewId) ??
       turns.find((turn) => turn.id === active) ??
@@ -33,7 +34,11 @@
   );
   const open = $derived(hovered || focused);
   const target = (id: string) =>
-    root?.querySelector<HTMLElement>(`[data-chat-item="${CSS.escape(id)}"]`);
+    root?.querySelector<HTMLElement>(
+      id === "pending-comments"
+        ? "[data-chat-pending]"
+        : `[data-chat-item="${CSS.escape(id)}"]`,
+    );
   let pointerExit: ReturnType<typeof setTimeout> | undefined;
   function enter() {
     clearTimeout(pointerExit);
@@ -150,6 +155,17 @@
     };
   });
   function navigate(id: string, first: string) {
+    const turn = turns.find((entry) => entry.id === id);
+    if (turn?.commentsOnly) {
+      const entry = turn.comments[0];
+      const thread = comments.threads.find(
+        (entryThread) => entryThread.id === entry?.threadId,
+      );
+      if (thread && entry) void comments.goToMessage(thread, entry.comment);
+      active = id;
+      close();
+      return;
+    }
     const node = target(first);
     if (!node || !root) return;
     root.scrollTo({
@@ -200,7 +216,9 @@
         class="chat-turn-marker"
         type="button"
         data-turn-id={turn.id}
-        aria-label={`Preview turn ${index + 1}`}
+        aria-label={turn.pending
+          ? "Preview pending comments"
+          : `Preview turn ${index + 1}`}
         aria-current={!atEnd && active === turn.id ? "location" : undefined}
         onpointerenter={() => {
           previewId = turn.id;
@@ -245,47 +263,3 @@
     {/if}
   </div>
 {/if}
-
-<style>
-  .chat-navigation {
-    position: absolute;
-    right: 0.3rem;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 5;
-  }
-  .chat-turn-marker {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    height: 10px;
-    width: 28px;
-    padding: 0 6px;
-    border: 0;
-    border-radius: 3px;
-    background: transparent;
-    cursor: pointer;
-  }
-  .chat-turn-marker span {
-    height: 2px;
-    width: 16px;
-    background: var(--muted-foreground);
-    opacity: 0.5;
-    border-radius: 2px;
-  }
-  .chat-turn-marker[aria-current] span {
-    background: var(--foreground);
-    opacity: 1;
-  }
-  .chat-turn-marker span[data-bookmarked="true"] {
-    background: var(--primary);
-    opacity: 1;
-  }
-  .chat-turn-marker:focus-visible {
-    outline: 2px solid var(--ring);
-  }
-  .chat-end-marker span,
-  .chat-end-marker[aria-current] span {
-    background: var(--primary);
-  }
-</style>

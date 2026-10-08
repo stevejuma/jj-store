@@ -1,0 +1,52 @@
+.chat-custom-example p {
+  margin-block: 0 0.75rem;
+  font-weight: 600;
+}
+.chat-custom-example dl {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.25rem 1rem;
+}
+.chat-custom-example dd {
+  margin: 0;
+}
+
+.chat-body-fixture {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--background);
+  color: var(--foreground);
+}
+.chat-body-fixture[data-narrow="true"] {
+  width: min(100%, 390px);
+  margin-inline: auto;
+}
+.chat-body-fixture-header {
+  display: flex;
+  padding: 0.5rem 1rem;
+  gap: 1rem;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+.chat-body-fixture-header h1 {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+.chat-body-fixture-header p {
+  margin: 0.25rem 0 0;
+  font-size: 0.8rem;
+  color: var(--muted-foreground);
+}
+.chat-body-fixture-controls {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.chat-body-fixture-body {
+  position: absolute;
+  inset: 0;
+}

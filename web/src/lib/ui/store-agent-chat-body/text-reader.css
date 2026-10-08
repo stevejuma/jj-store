@@ -1,12 +1,7 @@
 .chat-text-block {
   position: relative;
   min-width: 0;
-  margin-block: 0.25rem;
-}
-/* Reserve space for the 1px focus outline and its 4px offset between readers. */
-.chat-text-block + :is(.chat-text-block, .chat-custom),
-.chat-custom + .chat-text-block {
-  margin-block-start: 0.5rem;
+  margin: 0;
 }
 .chat-text-block[data-kind="code"],
 .chat-text-block[data-kind="patch"] {
@@ -52,7 +47,7 @@
   background: var(--background);
   box-shadow: inset 0 0 0 1px var(--border);
 }
-.chat-text-reader .cm-editor {
+.chat-text-reader .cm-editor:not([data-comment-editor] *) {
   background: transparent;
   color: var(--foreground);
   outline: none;
@@ -67,29 +62,30 @@
   --mira-code-editor-min-height: 0;
   --mira-code-editor-padding: 0;
 }
-.chat-text-reader .cm-scroller {
+.chat-text-reader .cm-scroller:not([data-comment-editor] *) {
   overflow: visible;
   font-family: var(--font-sans, system-ui);
   line-height: 1.65;
 }
-.chat-text-reader .cm-content {
+.chat-text-reader .cm-content:not([data-comment-editor] *) {
   padding: 0;
   cursor: text;
 }
-.chat-text-reader .cm-line {
+.chat-text-reader .cm-line:not([data-comment-editor] *) {
   padding: 0;
 }
-.chat-text-block:is([data-kind="code"], [data-kind="patch"]) .cm-scroller {
+.chat-text-block:is([data-kind="code"], [data-kind="patch"])
+  .cm-scroller:not([data-comment-editor] *) {
   font-family: var(--font-mono, monospace);
   font-size: 0.85rem;
 }
-.chat-text-block[data-kind="code"] .cm-content {
+.chat-text-block[data-kind="code"] .cm-content:not([data-comment-editor] *) {
   padding: 0.75rem;
 }
-.chat-text-block[data-kind="patch"] .cm-line {
+.chat-text-block[data-kind="patch"] .cm-line:not([data-comment-editor] *) {
   padding-inline: 0.75rem;
 }
-.chat-text-block[data-kind="patch"] .cm-content {
+.chat-text-block[data-kind="patch"] .cm-content:not([data-comment-editor] *) {
   padding-block: 0.5rem;
 }
 .chat-middle-fold {
@@ -156,7 +152,11 @@
   outline: 2px solid var(--ring);
 }
 .chat-text-reader .chat-comment-highlight {
+  color: var(--foreground);
   background: color-mix(in srgb, var(--primary) 18%, transparent);
+}
+.chat-text-reader .chat-comment-highlight-active {
+  background: color-mix(in srgb, var(--primary) 26%, transparent);
   border-bottom: 2px solid var(--primary);
 }
 .chat-text-reader .chat-patch-addition {
@@ -180,7 +180,7 @@
 .chat-text-reader .cm-selectionBackground {
   background: color-mix(in srgb, var(--primary) 22%, transparent) !important;
 }
-.chat-text-reader .cm-content:focus-visible {
+.chat-text-reader .cm-content:not([data-comment-editor] *):focus-visible {
   outline: none;
 }
 .chat-text-block:focus-within {

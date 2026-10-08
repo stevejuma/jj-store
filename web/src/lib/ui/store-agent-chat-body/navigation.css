@@ -1,0 +1,41 @@
+.chat-navigation {
+  position: absolute;
+  right: 0.3rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+}
+.chat-turn-marker {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  height: 10px;
+  width: 28px;
+  padding: 0 6px;
+  border: 0;
+  border-radius: 3px;
+  background: transparent;
+  cursor: pointer;
+}
+.chat-turn-marker span {
+  height: 2px;
+  width: 16px;
+  background: var(--muted-foreground);
+  opacity: 0.5;
+  border-radius: 2px;
+}
+.chat-turn-marker[aria-current] span {
+  background: var(--foreground);
+  opacity: 1;
+}
+.chat-turn-marker span[data-bookmarked="true"] {
+  background: var(--primary);
+  opacity: 1;
+}
+.chat-turn-marker:focus-visible {
+  outline: 2px solid var(--ring);
+}
+.chat-end-marker span,
+.chat-end-marker[aria-current] span {
+  background: var(--primary);
+}

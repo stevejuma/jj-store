@@ -9,10 +9,14 @@
     value = $bindable(""),
     member,
     onSubmit,
+    disabled = false,
+    hideAvatar = false,
   }: {
     value?: string;
     member: CommunityMemberModel;
     onSubmit: () => void;
+    disabled?: boolean;
+    hideAvatar?: boolean;
   } = $props();
   let editor: MiraCodeEditorHandle;
   const extensions = [
@@ -42,12 +46,17 @@
   data-chat-next-message
 >
   <div class="chat-next-avatar">
-    <CommunityMemberAvatar {member} size="xsmall" decorative />
+    {#if !hideAvatar}<CommunityMemberAvatar
+        {member}
+        size="xsmall"
+        decorative
+      />{/if}
   </div>
   <div class="chat-next-editor">
     <MiraCodeEditor
       bind:this={editor}
       bind:value
+      readonly={disabled}
       {extensions}
       ariaLabel="Next message"
       variant="document"

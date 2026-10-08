@@ -8,6 +8,7 @@ export function markdownBlocks(
   label: string,
   text: string,
 ): ChatBodyBlock[] {
+  if (!text.trim()) return [];
   const result: ChatBodyBlock[] = [];
   const cursor = markdownLanguage.parser.parse(text).cursor();
   if (!cursor.firstChild())
@@ -22,6 +23,10 @@ export function markdownBlocks(
         label,
         text: source,
         kind: "markdown",
+        sourceFrom:
+          start +
+          text.slice(start, end).length -
+          text.slice(start, end).trimStart().length,
       });
   };
   do {
@@ -54,6 +59,7 @@ export function markdownBlocks(
           : `${label} rendered section`,
         kind: fenced && match ? "code" : "custom",
         text: match?.[3] ?? source,
+        sourceFrom: cursor.from + (match ? source.indexOf("\n") + 1 : 0),
         path: fenced ? `captured.${extension || "txt"}` : undefined,
       });
       start = cursor.to;

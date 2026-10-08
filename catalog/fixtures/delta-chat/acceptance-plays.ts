@@ -4,6 +4,7 @@ import {
   draft,
   addComment,
   expectAdjacentChevron,
+  inlineComments,
 } from "./acceptance-helpers.js";
 export const patchFilesCollapse = async ({
   canvasElement,
@@ -57,7 +58,9 @@ export const patchFilesCollapse = async ({
     c.getByRole("button", { name: "Show captured file example.ts" }),
   );
   await expect(
-    await c.findByRole("article", { name: "Comment by You" }),
+    await inlineComments(canvasElement).findByRole("article", {
+      name: "Comment by You",
+    }),
   ).toHaveTextContent("Keep this file draft");
   const file = c.getByRole("button", {
     name: "Hide captured file example.ts",
@@ -158,7 +161,5 @@ export const shellAndTurnNavigation = async ({
   await expect(c.getByRole("tooltip")).toHaveTextContent("Jump to End");
   await userEvent.click(end);
   await waitFor(() => expect(end).toHaveAttribute("aria-current", "location"));
-  await expect(
-    c.getByRole("article", { name: "Appended response" }).closest("li"),
-  ).toHaveFocus();
+  await expect(c.getByRole("textbox", { name: "Next message" })).toHaveFocus();
 };

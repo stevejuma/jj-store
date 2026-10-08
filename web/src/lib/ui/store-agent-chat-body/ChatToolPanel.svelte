@@ -2,6 +2,7 @@
   import { Button } from "@lapismd/design-core/shadcn/button";
   import XIcon from "@lucide/svelte/icons/x";
   import ChatRawToggle from "./ChatRawToggle.svelte";
+  import ChatCollapsedComments from "./ChatCollapsedComments.svelte";
   import ChatToolBlocks from "./ChatToolBlocks.svelte";
   import { rawToolBlock } from "./tool-blocks.js";
   import type { ChatBodyTool, ChatBodyProps } from "./model.js";
@@ -41,6 +42,10 @@
       blocks={state.rawTools[tool.id] ? [rawToolBlock(tool)] : tool.blocks}
       {state}
       {customBlock}
+    />
+    <ChatCollapsedComments
+      {state}
+      blocks={state.rawTools[tool.id] ? tool.blocks : [rawToolBlock(tool)]}
     />
   </div>
 </div>

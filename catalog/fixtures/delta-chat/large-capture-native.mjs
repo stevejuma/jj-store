@@ -22,17 +22,19 @@ export async function largeCaptureAcceptance(page, base) {
   await page.keyboard.press("Space");
   await expect(code).toContainText("line30 = 30");
   await expect(
-    page.getByRole("form", { name: "Inline comment composer" }),
+    page.locator('[data-location="inline"][data-editing="true"]'),
   ).toHaveCount(0);
   await page.keyboard.type("Check hidden line");
-  const composer = page.getByRole("form", { name: "Inline comment composer" });
-  await expect(composer.locator("blockquote")).toHaveText(
-    "export const line13 = 13;",
+  const composer = page.locator(
+    '[data-location="inline"][data-editing="true"]',
   );
   await expect(
-    composer.getByRole("textbox", { name: "Markdown editor" }),
-  ).toHaveText("Check hidden line");
-  await page.getByRole("button", { name: "Add comment" }).click();
+    page
+      .getByRole("group", { name: "Pending comments", exact: true })
+      .locator("blockquote"),
+  ).toHaveText("export const line13 = 13;");
+  await expect(composer.getByRole("textbox")).toHaveText("Check hidden line");
+  await page.getByRole("button", { name: "Send message" }).click();
   await page.getByRole("button", { name: "Hide body" }).click();
   await page.getByRole("button", { name: "Show body" }).click();
   await expect(code).toContainText("line30 = 30");

@@ -1,16 +1,15 @@
 <script lang="ts">
+  import "./delta-chat/fixture.css";
   import { AppShell, AppShellController } from "@lapismd/design-core/shell";
-  import { tick, onDestroy } from "svelte";
+  import { tick, onDestroy, untrack } from "svelte";
   import ChatToolPanel from "../../web/src/lib/ui/store-agent-chat-body/ChatToolPanel.svelte";
   import { ChatBodyComments } from "../../web/src/lib/ui/store-agent-chat-body/comments.svelte.js";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import CommunityMarkdownContent from "../../web/src/lib/ui/community-markdown-content/CommunityMarkdownContent.svelte";
   import StoreAgentChatBody from "../../web/src/lib/ui/store-agent-chat-body/StoreAgentChatBody.svelte";
-  import type {
-    ChatCommentAnchor,
-    ChatCommentThread,
-    ChatBodyTool,
-  } from "../../web/src/lib/ui/store-agent-chat-body/model.js";
+  import type { ChatBodyTool } from "../../web/src/lib/ui/store-agent-chat-body/model.js";
+  import helloWorld from "./delta-chat/hello-world.json";
+  import { deltaChatThreads } from "./delta-chat/discussions.js";
   import reference from "./delta-chat/reference.json";
   import { deltaChatItems } from "./delta-chat/adapter.js";
   import { largeCaptureItems } from "./delta-chat/large-captures.js";
@@ -31,84 +30,77 @@
     narrow = false,
     showComposer,
   }: {
-    scenario?: "reference" | "playground" | "failure" | "empty" | "large";
+    scenario?:
+      "reference" | "playground" | "failure" | "empty" | "large" | "comments";
     narrow?: boolean;
     showComposer?: boolean;
   } = $props();
   const referenceItems = deltaChatItems(reference);
+  const commentItems = deltaChatItems(helloWorld);
   const reactions = new DemoReactions();
   const nextMessage = new DemoNextMessage();
-  const composing = $derived(showComposer ?? scenario === "reference");
+  const composing = $derived(showComposer ?? scenario !== "empty");
   let draftEditor = $state<{ focus: () => void }>();
   async function sendMessage() {
-    nextMessage.send();
-    await tick();
-    draftEditor?.focus();
+    if (await commentState.send()) {
+      await tick();
+      draftEditor?.focus();
+    }
   }
-  let threads = $state<ChatCommentThread[]>([]);
   let appended = $state(false);
   let changed = $state(false);
   let mounted = $state(true);
-  let serial = 0;
   let inspected = $state(false);
   const capturedItems = $derived(
-    scenario === "reference"
-      ? referenceItems
-      : scenario === "large"
-        ? largeCaptureItems
-        : scenario === "empty"
-          ? []
-          : [
-              ...playgroundItems.map((item) =>
-                changed && item.id === "prose"
-                  ? {
-                      ...item,
-                      blocks: item.blocks.map((block) => ({
-                        ...block,
-                        revision: "demo-2",
-                        text: "This is a different captured revision.",
-                      })),
-                    }
-                  : item,
-              ),
-              ...(scenario === "failure" ? [failedItem] : []),
-              ...(appended ? [appendedItem] : []),
-            ],
+    scenario === "comments"
+      ? commentItems
+      : scenario === "reference"
+        ? referenceItems
+        : scenario === "large"
+          ? largeCaptureItems
+          : scenario === "empty"
+            ? []
+            : [
+                ...playgroundItems.map((item) =>
+                  changed && item.id === "prose"
+                    ? {
+                        ...item,
+                        blocks: item.blocks.map((block) => ({
+                          ...block,
+                          revision: "demo-2",
+                          text: "This is a different captured revision.",
+                        })),
+                      }
+                    : item,
+                ),
+                ...(scenario === "failure" ? [failedItem] : []),
+                ...(appended ? [appendedItem] : []),
+              ],
   );
   const items = $derived([...capturedItems, ...nextMessage.messages]);
-  function add(anchor: ChatCommentAnchor, text: string) {
-    const id = `comment-${++serial}`;
-    threads = [
-      ...threads,
-      { id, anchor, comments: [{ id, author: "You", text }] },
-    ];
-  }
-  function reply(threadId: string, text: string) {
-    threads = threads.map((thread) =>
-      thread.id === threadId
-        ? {
-            ...thread,
-            comments: [
-              ...thread.comments,
-              { id: `comment-${++serial}`, author: "You", text },
-            ],
-          }
-        : thread,
-    );
-  }
   const shell = new AppShellController({ leftClosed: true, rightClosed: true });
   onDestroy(() => {
     void shell.dispose();
   });
-  const commentState = new ChatBodyComments(() => ({
-    items,
-    threads,
-    onAddComment: add,
-    onReply: reply,
-    reactions: reactions.values,
-    onReact: reactions.toggle,
-    reactionOptions: ["👍", "❤️", "✅"],
-  }));
+  const commentState = new ChatBodyComments(
+    () => ({
+      items,
+      author: demoSender,
+      onSend: (submission) => nextMessage.accept(submission),
+      onInspectTool: inspectTool,
+      onReact: reactions.toggle,
+      reactionOptions: ["👍", "❤️", "✅"],
+    }),
+    untrack(() =>
+      scenario === "comments" ? deltaChatThreads(helloWorld, commentItems) : [],
+    ),
+  );
+  untrack(() => {
+    if (scenario === "comments") commentState.message = helloWorld.draftText;
+  });
+  $effect(() => {
+    commentState.focusMessage = () => draftEditor?.focus();
+  });
   let selectedToolId = $state<string>();
   let toolOpener: HTMLElement | undefined;
   const selectedTool = $derived(
@@ -133,13 +125,16 @@
 
 {#snippet nextDraft()}<ChatNextMessage
     bind:this={draftEditor}
-    bind:value={nextMessage.value}
+    bind:value={commentState.message}
     member={demoSender}
+    disabled={commentState.sending}
+    hideAvatar={commentState.pending.length > 0}
     onSubmit={sendMessage}
   />{/snippet}
 {#snippet nextActions()}<ChatMessageFooter
-    canSend={!!nextMessage.value.trim()}
+    canSend={commentState.canSend}
     onSend={sendMessage}
+    error={commentState.error}
   />{/snippet}
 
 {#snippet customBlock(
@@ -176,9 +171,11 @@
         <div class="chat-body-fixture-header">
           <div>
             <h1>
-              {scenario === "reference"
-                ? reference.source.title
-                : "Commentable chat body"}
+              {scenario === "comments"
+                ? helloWorld.source.title
+                : scenario === "reference"
+                  ? reference.source.title
+                  : "Commentable chat body"}
             </h1>
             {#if scenario !== "reference"}<p>
                 Synthetic interaction examples
@@ -204,6 +201,18 @@
                 onclick={() => (mounted = !mounted)}
                 >{mounted ? "Hide body" : "Show body"}</Button
               >
+              <Button
+                variant="outline"
+                size="sm"
+                onclick={() => nextMessage.completeReplies(commentState)}
+                >Simulate replies</Button
+              >
+              <Button
+                variant="outline"
+                size="sm"
+                onclick={() => (nextMessage.failNext = true)}
+                >Fail next send</Button
+              >
             </div>{/if}
         </div>
       </AppShell.Toolbar>
@@ -216,9 +225,6 @@
           <div class="chat-body-fixture-body">
             {#if mounted}<StoreAgentChatBody
                 {items}
-                {threads}
-                onAddComment={add}
-                onReply={reply}
                 reactions={reactions.values}
                 onReact={reactions.toggle}
                 composer={composing ? nextDraft : undefined}
@@ -247,58 +253,3 @@
     </AppShell.Main>
   </AppShell.Root>
 </div>
-
-<style>
-  .chat-custom-example p {
-    margin-block: 0 0.75rem;
-    font-weight: 600;
-  }
-  .chat-custom-example dl {
-    display: grid;
-    grid-template-columns: auto 1fr;
-    gap: 0.25rem 1rem;
-  }
-  .chat-custom-example dd {
-    margin: 0;
-  }
-
-  .chat-body-fixture {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    background: var(--background);
-    color: var(--foreground);
-  }
-  .chat-body-fixture[data-narrow="true"] {
-    width: min(100%, 390px);
-    margin-inline: auto;
-  }
-  .chat-body-fixture-header {
-    display: flex;
-    padding: 0.5rem 1rem;
-    gap: 1rem;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--border);
-    flex-wrap: wrap;
-  }
-  .chat-body-fixture-header h1 {
-    margin: 0;
-    font-size: 0.85rem;
-    font-weight: 600;
-  }
-  .chat-body-fixture-header p {
-    margin: 0.25rem 0 0;
-    font-size: 0.8rem;
-    color: var(--muted-foreground);
-  }
-  .chat-body-fixture-controls {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-  }
-  .chat-body-fixture-body {
-    position: absolute;
-    inset: 0;
-  }
-</style>

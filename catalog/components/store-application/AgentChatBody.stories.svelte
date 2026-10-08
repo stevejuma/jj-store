@@ -7,6 +7,7 @@
     reader,
     draft,
     addComment,
+    inlineComments,
   } from "../../fixtures/delta-chat/acceptance-helpers.js";
   import {
     patchFilesCollapse,
@@ -16,11 +17,25 @@
   import { largeCaptures } from "../../fixtures/delta-chat/large-capture-play.js";
   import { messageActions } from "../../fixtures/delta-chat/message-action-play.js";
   import { nextMessagePlay } from "../../fixtures/delta-chat/next-message-play.js";
+  import {
+    commentLifecycle,
+    unavailableDraft,
+    retainedDraft,
+  } from "../../fixtures/delta-chat/comment-lifecycle-play.js";
+  import {
+    collapsedComments,
+    deltaCommentReference,
+  } from "../../fixtures/delta-chat/comment-navigation-play.js";
+  import { toolSpacing } from "../../fixtures/delta-chat/spacing-play.js";
+  import {
+    groupedCommentEntries,
+    commentRail,
+  } from "../../fixtures/delta-chat/comment-followup-play.js";
   const { Story } = defineMeta({
     title: "JJ Store/Commentable agent chat body",
     component: StoreAgentChatBody,
     tags: ["visual-pending"],
-    args: { items: [], onAddComment: () => {}, onReply: () => {} },
+    args: { items: [] },
     parameters: {
       layout: "fullscreen",
       jjStoreShell: true,
@@ -34,6 +49,22 @@
   });
 </script>
 
+<Story
+  asChild
+  name="Grouped comments and message links"
+  play={groupedCommentEntries}
+>
+  {#snippet children()}<Fixture scenario="playground" />{/snippet}
+</Story>
+<Story asChild name="Comment navigation previews" play={commentRail}>
+  {#snippet children()}<Fixture scenario="comments" />{/snippet}
+</Story>
+<Story asChild name="Delta comments reference" play={deltaCommentReference}>
+  {#snippet children()}<Fixture scenario="comments" />{/snippet}
+</Story>
+<Story asChild name="Consistent tool flow spacing" play={toolSpacing}>
+  {#snippet children()}<Fixture scenario="playground" />{/snippet}
+</Story>
 <Story asChild name="Interaction playground">
   {#snippet children()}<Fixture scenario="playground" />{/snippet}
 </Story>
@@ -100,192 +131,29 @@
 <Story
   asChild
   name="Typing anchors a discussion and preserves the captured text"
-  play={async ({ canvasElement }) => {
-    const c = within(canvasElement),
-      source = await reader(canvasElement);
-    const original = source.textContent;
-    await userEvent.click(source);
-    await userEvent.keyboard("Please clarify");
-    const editor = await draft(canvasElement);
-    await waitFor(() => expect(editor).toHaveTextContent("Please clarify"));
-    expect(source.textContent).toContain("stable identities");
-    await expect(
-      canvasElement.querySelector(".chat-comment-highlight"),
-    ).not.toBeNull();
-    await userEvent.keyboard("{Enter}More detail");
-    await expect(editor).toHaveTextContent("More detail");
-    await addComment(canvasElement);
-    await expect(
-      await c.findByRole("article", { name: "Comment by You" }),
-    ).toHaveTextContent("Please clarify");
-    await expect(source).toHaveTextContent("stable identities");
-    await userEvent.click(c.getByRole("button", { name: "Reply" }));
-    await userEvent.type(await draft(canvasElement), "Here is a reply");
-    await userEvent.click(c.getByRole("button", { name: "Add reply" }));
-    expect(c.getAllByRole("article", { name: "Comment by You" })).toHaveLength(
-      2,
-    );
-    await userEvent.click(c.getByRole("button", { name: "Append response" }));
-    await expect(
-      c.getByRole("article", { name: "Appended response" }),
-    ).toBeInTheDocument();
-    await userEvent.click(c.getByRole("button", { name: "Replace content" }));
-    await expect(
-      c.getByRole("complementary", { name: "Comments on unavailable content" }),
-    ).toHaveTextContent("Please clarify");
-    expect(original).toContain("stable identities");
-  }}>{#snippet children()}<Fixture scenario="playground" />{/snippet}</Story
+  play={commentLifecycle}
+  >{#snippet children()}<Fixture scenario="playground" />{/snippet}</Story
 >
 
 <Story
   asChild
   name="Keyboard selection paste and Escape retain an exact draft"
-  play={async ({ canvasElement }) => {
-    const c = within(canvasElement),
-      source = await reader(canvasElement);
-    source.focus();
-    // Native pointer/keyboard selection is covered by browser.acceptance.mjs.
-    const text = source.querySelector(".chat-strong")!.firstChild!;
-    const range = document.createRange();
-    range.selectNodeContents(text);
-    window.getSelection()!.removeAllRanges();
-    window.getSelection()!.addRange(range);
-    source.dispatchEvent(new Event("selectionchange", { bubbles: true }));
-    await new Promise((resolve) => requestAnimationFrame(resolve));
-    await userEvent.keyboard("{Control>}{Alt>}m{/Alt}{/Control}");
-    const editor = await draft(canvasElement);
-    await userEvent.type(editor, "Retained draft");
-    await userEvent.keyboard("{Escape}");
-    await waitFor(() =>
-      expect(
-        c.queryByRole("form", { name: "Inline comment composer" }),
-      ).toBeNull(),
-    );
-    await userEvent.click(
-      c.getByRole("button", {
-        name: "Comment on Assistant explanation",
-      }),
-    );
-    await expect(await draft(canvasElement)).toHaveTextContent(
-      "Retained draft",
-    );
-    await userEvent.click(c.getByRole("button", { name: "Cancel" }));
-    source.focus();
-    await userEvent.paste("Pasted comment");
-    await expect(await draft(canvasElement)).toHaveTextContent(
-      "Pasted comment",
-    );
-    await userEvent.keyboard("{Control>}{Enter}{/Control}");
-    await expect(
-      await c.findByRole("article", { name: "Comment by You" }),
-    ).toHaveTextContent("Pasted comment");
-  }}>{#snippet children()}<Fixture scenario="playground" />{/snippet}</Story
+  play={retainedDraft}
+  >{#snippet children()}<Fixture scenario="playground" />{/snippet}</Story
 >
 
 <Story
   asChild
   name="Changed content retains an open draft"
-  play={async ({ canvasElement }) => {
-    const c = within(canvasElement);
-    await userEvent.click(await reader(canvasElement));
-    await userEvent.keyboard("Keep this draft");
-    await expect(await draft(canvasElement)).toHaveTextContent(
-      "Keep this draft",
-    );
-    await userEvent.click(c.getByRole("button", { name: "Replace content" }));
-    await expect(
-      c.getByRole("complementary", { name: "Comments on unavailable content" }),
-    ).toHaveTextContent("has changed");
-    await expect(await draft(canvasElement)).toHaveTextContent(
-      "Keep this draft",
-    );
-    await userEvent.click(c.getByRole("button", { name: "Cancel" }));
-    await expect(
-      c.queryByRole("form", { name: "Inline comment composer" }),
-    ).toBeNull();
-  }}>{#snippet children()}<Fixture scenario="playground" />{/snippet}</Story
+  play={unavailableDraft}
+  >{#snippet children()}<Fixture scenario="playground" />{/snippet}</Story
 >
 
 <Story
   asChild
   name="Tool comments survive rich raw switching and disclosure"
-  play={async ({ canvasElement }) => {
-    const c = within(canvasElement);
-    await userEvent.click(
-      c.getByRole("button", { name: "Expand Read a file, ran a command" }),
-    );
-    await userEvent.click(
-      c.getByRole("button", { name: "Show details for Read example.ts" }),
-    );
-    await userEvent.click(
-      c.getByRole("button", { name: "Comment on Captured example.ts" }),
-    );
-    await userEvent.type(
-      await draft(canvasElement, "Captured example.ts"),
-      "Check this constant",
-    );
-    await userEvent.keyboard("{Escape}");
-    await userEvent.click(
-      c.getByRole("button", { name: "Close read tool details" }),
-    );
-    await userEvent.click(
-      c.getByRole("button", { name: "Show details for Read example.ts" }),
-    );
-    await userEvent.click(
-      c.getByRole("button", { name: "Comment on Captured example.ts" }),
-    );
-    await expect(
-      await draft(canvasElement, "Captured example.ts"),
-    ).toHaveTextContent("Check this constant");
-    await addComment(canvasElement);
-    await userEvent.click(
-      c.getByRole("button", { name: "Show raw output for Read example.ts" }),
-    );
-    await expect(
-      await reader(canvasElement, "Raw captured data for Read example.ts"),
-    ).toHaveTextContent("export const answer");
-    await userEvent.click(
-      c.getByRole("button", {
-        name: "Comment on Raw captured data for Read example.ts",
-      }),
-    );
-    await userEvent.type(
-      await draft(canvasElement, "Raw captured data for Read example.ts"),
-      "Captured raw context",
-    );
-    await addComment(canvasElement);
-    await expect(
-      c.queryByRole("complementary", {
-        name: "Comments on unavailable content",
-      }),
-    ).toBeNull();
-    await userEvent.click(
-      c.getByRole("button", { name: "Show rich output for Read example.ts" }),
-    );
-    await expect(
-      await c.findByRole("article", { name: "Comment by You" }),
-    ).toHaveTextContent("Check this constant");
-    await userEvent.click(
-      c.getByRole("button", { name: "Collapse Read a file, ran a command" }),
-    );
-    await userEvent.click(
-      c.getByRole("button", { name: "Expand Read a file, ran a command" }),
-    );
-    await expect(
-      await c.findByRole("article", { name: "Comment by You" }),
-    ).toHaveTextContent("Check this constant");
-    await userEvent.click(
-      c.getByRole("button", { name: "Comment on Decision table" }),
-    );
-    await userEvent.type(
-      await draft(canvasElement, "Decision table"),
-      "Whole section comment",
-    );
-    await addComment(canvasElement);
-    expect(c.getAllByRole("article", { name: "Comment by You" })).toHaveLength(
-      2,
-    );
-  }}>{#snippet children()}<Fixture scenario="playground" />{/snippet}</Story
+  play={collapsedComments}
+  >{#snippet children()}<Fixture scenario="playground" />{/snippet}</Story
 >
 
 <Story
@@ -305,6 +173,15 @@
       await draft(canvasElement, "Captured patch example.ts"),
     ).toHaveTextContent("日本語");
     await expect(source).toHaveTextContent("-export const answer = 41;");
+    const commentEditor = await draft(
+      canvasElement,
+      "Captured patch example.ts",
+    );
+    const nextEditor = c.getByRole("textbox", { name: "Next message" });
+    expect(getComputedStyle(commentEditor).fontFamily).toBe(
+      getComputedStyle(nextEditor).fontFamily,
+    );
+    expect(getComputedStyle(commentEditor).paddingLeft).toBe("0px");
     await addComment(canvasElement);
     await userEvent.click(c.getByRole("button", { name: "Hide body" }));
     await expect(
@@ -312,7 +189,9 @@
     ).toBeNull();
     await userEvent.click(c.getByRole("button", { name: "Show body" }));
     await expect(
-      await c.findByRole("article", { name: "Comment by You" }),
+      await inlineComments(canvasElement).findByRole("article", {
+        name: "Comment by You",
+      }),
     ).toHaveTextContent("日本語");
   }}>{#snippet children()}<Fixture scenario="playground" />{/snippet}</Story
 >

@@ -1,6 +1,7 @@
 <script lang="ts">
   import * as Collapsible from "@lapismd/design-core/shadcn/collapsible";
   import ChatDisclosureIcon from "./ChatDisclosureIcon.svelte";
+  import ChatCollapsedComments from "./ChatCollapsedComments.svelte";
   import ChatContent from "./ChatContent.svelte";
   import type { ChatBodyBlock, ChatBodyProps } from "./model.js";
   import type { ChatBodyComments } from "./comments.svelte.js";
@@ -34,15 +35,19 @@
             <ChatDisclosureIcon />
           </Collapsible.Trigger>
           <Collapsible.Content>
-            <div class="chat-tool-file-content">
-              <ChatContent
-                blocks={[block]}
-                {state}
-                {customBlock}
-                showHeaders={false}
-              />
-            </div>
+            {#if open(block, index)}<div class="chat-tool-file-content">
+                <ChatContent
+                  blocks={[block]}
+                  {state}
+                  {customBlock}
+                  showHeaders={false}
+                />
+              </div>{/if}
           </Collapsible.Content>
+          {#if !open(block, index)}<ChatCollapsedComments
+              {state}
+              blocks={[block]}
+            />{/if}
         </div>
       </Collapsible.Root>
     {/each}
@@ -53,7 +58,7 @@
   .chat-tool-files {
     display: grid;
     gap: 0.5rem;
-    padding-block: 0.25rem;
+    padding: 0;
   }
   .chat-tool-file {
     border-radius: var(--radius);
@@ -93,6 +98,6 @@
     outline-offset: 2px;
   }
   .chat-tool-file-content {
-    margin-block: 0.5rem;
+    padding-block-start: 0.5rem;
   }
 </style>

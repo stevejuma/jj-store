@@ -31,10 +31,11 @@
     void tick().then(() => {
       if (disposed) return;
       view = editor.getView() ?? undefined;
-      comments.readers.set(block.id, (anchor) => {
+      comments.readers.set(block.id, (anchor, scroll = false) => {
         if (validAnchor(block, anchor))
           view?.dispatch({
             selection: { anchor: anchor.from, head: anchor.to },
+            scrollIntoView: scroll,
           });
         editor.focus();
       });
@@ -47,7 +48,8 @@
   });
   $effect(() => {
     comments.active;
-    comments.threads;
+    comments.visibleThreads;
+    comments.highlightedThread;
     comments.disclosures[middleFoldKey(block)];
     view?.dispatch({ effects: refreshComments.of(null) });
   });
@@ -74,7 +76,7 @@
       readonly
       lineNumbers={false}
       ariaLabel={block.label}
-      variant={block.kind === "markdown" ? "document" : "code"}
+      variant="document"
       surface="frameless"
       height="content"
       minHeight="0"

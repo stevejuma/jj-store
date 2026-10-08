@@ -7,37 +7,14 @@ import { byteSlice } from "./offsets.js";
 import { capturedPatchBlocks } from "./patches.js";
 import { markdownBlocks } from "../../../web/src/lib/ui/store-agent-chat-body/markdown-blocks.js";
 
-interface Span {
-  start: number;
-  end: number;
-}
-interface DeltaRecord {
-  start: number;
-  end?: number;
-  id: string;
-  kind: string;
-  name?: string;
-  input?: string;
-  output?: string;
-  status?: string;
-  title?: string;
-  createdAt?: number;
-  titleEnd?: number;
-  contentEnd?: number;
-  layout?: Record<string, Span>;
-}
-export interface DeltaChatFixture {
-  version: number;
-  source: { title: string; sha256: string };
-  buffer: string;
-  records: readonly DeltaRecord[];
-  draftStart: number;
-}
+import type { Span, DeltaChatFixture } from "./model.js";
+export type { DeltaChatFixture } from "./model.js";
+import { assignDeltaTurns } from "./turns.js";
 const user = { id: "demo-user", name: "You", handle: "", initials: "YO" };
 const agent = { id: "demo-agent", name: "Codex", handle: "", initials: "AI" };
 
 export function deltaChatItems(fixture: DeltaChatFixture): ChatBodyItem[] {
-  if (fixture.version !== 1)
+  if (fixture.version !== 1 && fixture.version !== 2)
     throw new Error("Unsupported Delta comparison fixture");
   const revision = fixture.source.sha256;
   const slice = (span?: Span) =>
@@ -70,15 +47,34 @@ export function deltaChatItems(fixture: DeltaChatFixture): ChatBodyItem[] {
           role: "user",
           author: user,
           label: "Message from You",
+          commentBatchId: record.commentBatchId,
           blocks: markdownBlocks(
             `${record.id}/text`,
             revision,
             "User message",
-            content,
+            record.text ?? content,
           ),
         },
       });
-    else if (record.kind === "ToolUse") {
+    else if (record.kind === "Reply") {
+      nodes.push({
+        start: record.start,
+        item: {
+          id: record.id,
+          kind: "message",
+          role: "assistant",
+          author: agent,
+          label: "Recorded agent reply",
+          replyContext: record.replyContext,
+          blocks: markdownBlocks(
+            `${record.id}/text`,
+            revision,
+            "Agent reply",
+            record.text ?? "",
+          ),
+        },
+      });
+    } else if (record.kind === "ToolUse") {
       let input: Record<string, unknown> = {};
       try {
         const parsed: unknown = JSON.parse(record.input ?? "{}");
@@ -229,31 +225,5 @@ export function deltaChatItems(fixture: DeltaChatFixture): ChatBodyItem[] {
       previous.tools = [...(previous.tools ?? []), ...(node.item.tools ?? [])];
     } else result.push(node.item);
   }
-  const userMessage = result.find((item) => item.role === "user");
-  const lastMessage = result.filter((item) => item.role === "assistant").at(-1);
-  const turnId =
-    fixture.records.find((record) => record.kind === "AssistantTurn")?.id ??
-    userMessage?.id ??
-    "captured-turn";
-  const summary = (
-    lastMessage?.blocks[0]?.text.split(/\n\s*\n/)[0] ?? fixture.source.title
-  )
-    .replace(/[*`_]/g, "")
-    .replace(/\s+/g, " ")
-    .slice(0, 280);
-  const turn = {
-    id: turnId,
-    author: "You",
-    agentName: "Codex",
-    summary,
-    prompt:
-      userMessage?.blocks.map((block) => block.text).join("\n\n") ??
-      fixture.source.title,
-    createdAt: fixture.records.find((record) => record.kind === "User")
-      ?.createdAt,
-  };
-  // This captured main thread has one exchange. Assistant display segments and
-  // tool groups share its actual AssistantTurn identity rather than becoming turns.
-  for (const item of result) item.turn = turn;
-  return result;
+  return assignDeltaTurns(result, fixture);
 }

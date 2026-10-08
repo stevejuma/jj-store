@@ -1,8 +1,8 @@
 # M24 reusable ACP agents and contextual conversations
 
-| ID  | Status      | Depends | Requirements                                 | Gate                                                                                                                          | Next                                                                                                               | Evidence                                                                                                                  |
-| --- | ----------- | ------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------- |
-| M24 | In progress | M23     | JST-COLLAB-034,JST-COLLAB-035,JST-COLLAB-036 | Warm fleet, personal metadata homes, isolated multiple repository bindings, canonical discussion links and cold contextual UI | Qualify additional version-3 adapters and live permissions/cancellation; retain independent desktop/platform gates | E-FLEET-001,E-COMPUTE-004,E-CHAT-BODY-001,E-CHAT-BODY-002,E-CHAT-BODY-003,E-CHAT-BODY-004,E-CHAT-BODY-005,E-CHAT-BODY-006 |
+| ID  | Status      | Depends | Requirements                                 | Gate                                                                                                                          | Next                                                                                                               | Evidence                                                                                                                                  |
+| --- | ----------- | ------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| M24 | In progress | M23     | JST-COLLAB-034,JST-COLLAB-035,JST-COLLAB-036 | Warm fleet, personal metadata homes, isolated multiple repository bindings, canonical discussion links and cold contextual UI | Qualify additional version-3 adapters and live permissions/cancellation; retain independent desktop/platform gates | E-FLEET-001,E-COMPUTE-004,E-CHAT-BODY-001,E-CHAT-BODY-002,E-CHAT-BODY-003,E-CHAT-BODY-004,E-CHAT-BODY-005,E-CHAT-BODY-006,E-CHAT-BODY-007 |
 
 M23 remains qualified for its prior version-2 profile. M24 source, fixture and
 installed version-3 results are reviewed independently; no fixture closes a real
@@ -152,7 +152,25 @@ interaction and cold browser acceptance. Thicker reading carets use theme grey;
 the blank draft uses the primary caret and centers its first line with the
 avatar. This isolated presentation review leaves M24 In progress and its
 independent visual/native IME, adapter, permission/cancellation, desktop and
-platform gates unchanged.
+platform gates unchanged. E-CHAT-BODY-007 adds one host-owned inline/pending
+comment state, exact source anchors, structured comment-only or mixed sends,
+retained failed drafts and historical delivery batches with linked replies.
+Collapsed tools/files retain reachable discussions, and source links reveal the
+sidebar, raw view or folded range as needed. The sanitized Hello World reference
+complements Bedtime; replies and dispatch remain catalog simulations. Tool flows
+use consistent 8px gaps and messages use 16px; comment cards have balanced
+insets and left-aligned quotes. Focused state/adapter, interaction/accessibility
+and cold browser checks cover the prototype without changing M24's In progress
+status or closing live, visual/native IME, adapter, permission/cancellation,
+desktop or platform gates. The pre-existing development acceptance-script
+line-limit failure remains open.
+
+The same slice incorporates the follow-up screenshots: multiple comments at one
+anchor share one container with explicit add-another and hover-only reply icons,
+delivered entries use green double-check icons, and inline entries navigate to
+their queued or sent message. The right rail previews delivered comment turns
+and the pending queue with comment text, authors, counts and available metadata.
+
 <!-- generated-navigation -->
 
 ## Pages

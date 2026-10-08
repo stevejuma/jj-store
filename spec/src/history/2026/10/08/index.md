@@ -10,6 +10,7 @@ Browse the child pages below.
 - [E-CHAT-BODY-004](E-CHAT-BODY-004/index.md)
 - [E-CHAT-BODY-005](E-CHAT-BODY-005/index.md)
 - [E-CHAT-BODY-006](E-CHAT-BODY-006/index.md)
+- [E-CHAT-BODY-007](E-CHAT-BODY-007/index.md)
 - [E-COMPUTE-002](E-COMPUTE-002/index.md)
 - [E-COMPUTE-003](E-COMPUTE-003/index.md)
 - [E-COMPUTE-004](E-COMPUTE-004/index.md)

@@ -1,10 +1,15 @@
 <script lang="ts">
   import { Button } from "@lapismd/design-core/shadcn/button";
   import ArrowUpIcon from "@lucide/svelte/icons/arrow-up";
-  let { canSend, onSend }: { canSend: boolean; onSend: () => void } = $props();
+  let {
+    canSend,
+    onSend,
+    error = "",
+  }: { canSend: boolean; onSend: () => void; error?: string } = $props();
 </script>
 
 <div class="chat-message-footer" role="group" aria-label="Message actions">
+  {#if error}<p role="alert">{error}</p>{/if}
   <span>⌘ / Ctrl + Enter</span>
   <Button
     size="sm"

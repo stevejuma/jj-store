@@ -6,7 +6,7 @@ import {
   type EditorView,
 } from "@codemirror/view";
 import { estimateMarkdownBlockHeight } from "@lapismd/mira/codemirror";
-import type { ChatBodyBlock, ChatCommentAnchor } from "./model.js";
+import type { ChatBodyBlock } from "./model.js";
 import type { ChatBodyComments } from "./comments.svelte.js";
 import ChatCommentArea from "./ChatCommentArea.svelte";
 import { validAnchor } from "./anchors.js";
@@ -18,7 +18,7 @@ class CommentWidget extends WidgetType {
     readonly state: ChatBodyComments,
     readonly block: ChatBodyBlock,
     readonly contexts: Map<unknown, unknown>,
-    readonly threadId?: string,
+    readonly threadId: string,
   ) {
     super();
   }
@@ -31,16 +31,23 @@ class CommentWidget extends WidgetType {
     );
   }
   get estimatedHeight() {
-    return estimateMarkdownBlockHeight(this.block.text.slice(0, 200)) + 180;
+    const thread = this.state.threads.find((t) => t.id === this.threadId);
+    return (
+      32 +
+      (thread?.comments.reduce(
+        (height, c) => height + estimateMarkdownBlockHeight(c.text) + 32,
+        0,
+      ) ?? 48)
+    );
   }
   toDOM(view: EditorView) {
     const target = document.createElement("div");
     target.contentEditable = "false";
-    target.style.paddingBlock = "0.75rem";
+    target.className = "chat-comment-widget";
     const instance = mount(ChatCommentArea, {
       target,
       context: this.contexts,
-      props: { state: this.state, block: this.block, threadId: this.threadId },
+      props: { state: this.state, threadId: this.threadId },
     });
     mounts.set(target, instance);
     const observer = new ResizeObserver(() => view.requestMeasure());
@@ -68,13 +75,9 @@ export function commentDecorations(
   state: ChatBodyComments,
   contexts: Map<unknown, unknown>,
 ): DecorationSet {
-  const anchors: { anchor: ChatCommentAnchor; threadId?: string }[] =
-    state.threads
-      .filter((t) => validAnchor(block, t.anchor))
-      .map((t) => ({ anchor: t.anchor, threadId: t.id }));
-  const active = state.active;
-  if (active && validAnchor(block, active.anchor) && !active.threadId)
-    anchors.push({ anchor: active.anchor });
+  const anchors = state.visibleThreads
+    .filter((t) => validAnchor(block, t.anchor))
+    .map((t) => ({ anchor: t.anchor, threadId: t.id }));
   const ranges = anchors.map(({ anchor, threadId }) => {
     const newline = block.text.indexOf("\n", anchor.to);
     const position = newline < 0 ? block.text.length : newline;
@@ -84,17 +87,13 @@ export function commentDecorations(
       widget: new CommentWidget(state, block, contexts, threadId),
     }).range(position);
   });
-  if (
-    active &&
-    validAnchor(block, active.anchor) &&
-    active.anchor.to > active.anchor.from
-  ) {
-    ranges.push(
-      Decoration.mark({ class: "chat-comment-highlight" }).range(
-        active.anchor.from,
-        active.anchor.to,
-      ),
-    );
+  for (const { anchor, threadId } of anchors) {
+    if (anchor.to > anchor.from)
+      ranges.push(
+        Decoration.mark({
+          class: `chat-comment-highlight${state.active?.threadId === threadId || state.highlightedThread === threadId ? " chat-comment-highlight-active" : ""}`,
+        }).range(anchor.from, anchor.to),
+      );
   }
   return Decoration.set(ranges, true);
 }

@@ -101,3 +101,9 @@ normalizes device paths, recalculates UTF-8 anchors and removes runtime/provider
 metadata. The raw export stays ignored. Cold browser acceptance owns an
 ephemeral loopback Storybook process and browser; it does not restart the app's
 development services.
+
+E-CHAT-BODY-007 extends the catalog projection with reviewed source mappings for
+Delta comments whose export omits resolved offsets. The allowlisted Hello World
+fixture retains delivery/reply boundaries and validates source quotes without
+interpreting CRDT fragments or introducing a Delta runtime dependency. Simulated
+sends and replies remain catalog-owned; UI state does not publish agent events.

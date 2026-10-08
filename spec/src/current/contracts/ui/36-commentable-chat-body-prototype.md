@@ -13,13 +13,34 @@ keyboard shortcut provide equivalent access. With no selection, comments target
 a prose paragraph, code/patch line or entire custom section. Selections cannot
 cross content blocks in this prototype.
 
-Active threads appear below the anchor. Enter inserts a newline and
-Cmd/Ctrl+Enter submits. Escape closes and retains the draft; explicit Cancel
-discards it. Returning focus, tool collapse/reopen, resize and appended content
-preserve exact anchors, drafts and submitted local threads. Comment targets
-retain stable block identity, content revision and selected context. Changed
-content must not silently retarget a comment. Comment state belongs to the host,
-independently of mounted editors or disclosure panels.
+Discussions appear below the anchor and remain highlighted. Typing immediately
+queues a nonempty draft, synchronized between its inline editor and a
+collapsible avatar/count group above the next-message input. That group shows
+shaded source quotes containing compact avatar/comment cards. Enter inserts a
+newline; Cmd/Ctrl+Enter from any composer sends the message and all queued
+comments as one host-owned batch. Escape closes editing and retains the draft;
+Remove explicitly discards it. Comments-only sends are valid. Failed sends
+preserve text and comments; successful sends retain immutable historical batch
+summaries. Same-author input on the same exact anchor resumes its pending entry,
+or appends a new entry to the existing discussion after delivery. An explicit
+Add another comment action adds a separate pending entry at the same anchor;
+ordinary editing resumes the latest pending entry. All entries at one anchor
+share a single bordered container. Reply and add-another actions use named icons
+inside the comment row, revealed on hover/focus and available on touch.
+Delivered comments show a green Lucide double-check icon with an accessible Sent
+label; linked responses use the Replied label and expose View reply. Inline
+entries also link to their exact pending editor or delivered message, opening
+its batch and focusing it. Sent and replied states remain distinct. Collapsed
+files, tools and sections retain their discussions below the nearest visible
+collapsed header. Source/reply navigation opens necessary disclosures, read
+panels and middle folds before focusing the exact target. Source links are
+available on hover, keyboard focus and touch. Unavailable anchors retain their
+quote and explanation without retargeting. Returning focus, tool
+collapse/reopen, resize and appended content preserve exact anchors, drafts and
+submitted local threads. Comment targets retain stable block identity, content
+revision and selected context. Changed content must not silently retarget a
+comment. Comment state belongs to the host, independently of mounted editors or
+disclosure panels.
 
 The main Delta thread “Add configurable screen lock overlay” supplies the
 comparison fixture. A sanitized JSON projection retains source ordering, visible
@@ -50,39 +71,44 @@ flow. Hover/focus shows one turn card with the prompt preview, Turn Summary,
 author/available agent-model metadata, captured patch-line counts and recorded
 time. Summary text is the captured final response's first paragraph; it is not a
 newly generated agent summary. The current reference has one exchange, so it has
-one marker. Session-only bookmarks, Cmd/Ctrl-click and Alt-wheel navigation
-preserve discussion state. Dense markers have an equivalent large navigation
-target in the keyboard-accessible card. Rail markers have no hover outline;
-keyboard focus remains visible. A final distinct marker jumps to the document
-end and shows a compact Jump to End hint. Cmd/Ctrl+Down works while focus is in
-the navigation. Tool headers remain transparent during hover, with no internal
-padding. All section and file disclosure chevrons sit immediately after the
-label with an 8px gap; controls fit their text rather than stretching the icon
-to the row edge. Their small rounded icon region alone gains a muted background
-on pointer hover or keyboard focus; the surrounding header stays transparent.
-The icon region remains part of the same named disclosure button, with no extra
-tab stop. Tool and file titles use the proportional UI font at 0.875rem,
-distinct from captured code typography. Expanded tool/file content has no
-surrounding frame. Code and patch readers have a muted background inside their
-own rounded content region. File heading corners inherit that content radius
-without clipping hover controls or comments. Known numbered captures retain
-their number/tab prefixes in the immutable document. Syntax tokens are parsed
-from file contents without those prefixes, then mapped back to exact captured
-UTF-16 spans, split at each line so prefixes stay neutral. The display model
-marks this captured format explicitly; ordinary code and raw JSON do not infer
-numbering. Added and removed patch lines have full-line diff backgrounds and
-retain their prefix/gutter distinction. File headers stay neutral; triple-prefix
-content inside a hunk remains a changed line. Turn-card totals use the same
-classification as the reader and count captured changes, without inventing
-preimages or net totals. Successful tool titles start at the same text edge as
-group/file titles, with no leading success icon or horizontal inset; completion
-remains described to assistive technology. Errors and running tools retain
-visible status icons. Vertical spacing and offset focus rings keep controls
-distinguishable. Captures over 32 lines initially retain 12 leading and 8
-trailing lines, with a Show N more lines control replacing the middle. Revealing
-is local and retained across disclosure/body remounts. The complete immutable
-document and its UTF-16 anchor offsets remain unchanged. Hidden lines containing
-an active or submitted discussion are revealed so comments stay reachable.
+one marker. Comment-only turns use Comment/Comments previews with the actual
+comment text, author, available agent/model/time metadata and comment count.
+Mixed turns include their comments alongside the message summary. Pending
+comments have a separate marker before Jump to End, with the same preview and
+navigation into the shared queue. These markers participate in session-only
+bookmarks, Cmd/Ctrl-click and Alt-wheel navigation, which preserve discussion
+state. Dense markers have an equivalent large navigation target in the
+keyboard-accessible card. Rail markers have no hover outline; keyboard focus
+remains visible. A final distinct marker jumps to the document end and shows a
+compact Jump to End hint. Cmd/Ctrl+Down works while focus is in the navigation.
+Tool headers remain transparent during hover, with no internal padding. All
+section and file disclosure chevrons sit immediately after the label with an 8px
+gap; controls fit their text rather than stretching the icon to the row edge.
+Their small rounded icon region alone gains a muted background on pointer hover
+or keyboard focus; the surrounding header stays transparent. The icon region
+remains part of the same named disclosure button, with no extra tab stop. Tool
+and file titles use the proportional UI font at 0.875rem, distinct from captured
+code typography. Expanded tool/file content has no surrounding frame. Code and
+patch readers have a muted background inside their own rounded content region.
+File heading corners inherit that content radius without clipping hover controls
+or comments. Known numbered captures retain their number/tab prefixes in the
+immutable document. Syntax tokens are parsed from file contents without those
+prefixes, then mapped back to exact captured UTF-16 spans, split at each line so
+prefixes stay neutral. The display model marks this captured format explicitly;
+ordinary code and raw JSON do not infer numbering. Added and removed patch lines
+have full-line diff backgrounds and retain their prefix/gutter distinction. File
+headers stay neutral; triple-prefix content inside a hunk remains a changed
+line. Turn-card totals use the same classification as the reader and count
+captured changes, without inventing preimages or net totals. Successful tool
+titles start at the same text edge as group/file titles, with no leading success
+icon or horizontal inset; completion remains described to assistive technology.
+Errors and running tools retain visible status icons. Vertical spacing and
+offset focus rings keep controls distinguishable. Captures over 32 lines
+initially retain 12 leading and 8 trailing lines, with a Show N more lines
+control replacing the middle. Revealing is local and retained across
+disclosure/body remounts. The complete immutable document and its UTF-16 anchor
+offsets remain unchanged. Hidden lines containing an active or submitted
+discussion are revealed so comments stay reachable.
 
 Returned XML-like agent context uses the existing prompt-element renderer and
 whole-section comment anchors, rather than displaying its tags as prose.
@@ -108,10 +134,20 @@ Reading carets are thicker and slightly taller, using the theme's muted grey;
 the next-message caret shares that shape and uses the primary accent. The draft
 has no placeholder, and its first line centers vertically with the small avatar.
 Enter inserts a newline; Send or Cmd/Ctrl+Enter submits through a caller-owned
-callback. The catalog only appends a local user message and clears its draft; it
-never dispatches an agent. Jump to End focuses this draft when present. Optional
-composer/footer slots keep the body independent of host draft state and live
-conversation contracts.
+callback. The catalog simulates submission and explicitly labelled replies
+locally; it never dispatches an agent. One shared host-owned comment controller
+retains stable author IDs, drafts, delivery batches and reply destinations. A
+structured send callback receives message text and exact comment snapshots. The
+Hello World comparison fixture adds recorded delivered/replied discussions and a
+pending comment alongside the tool-rich Bedtime fixture. Explicit verified
+source maps are used where the Delta export lacks resolved offsets; CRDT
+fragments are not interpreted as document offsets. Quote and comment Markdown
+fill the card from its start edge. Comment action icons share the avatar/text
+row height so top and bottom card insets stay balanced. Tool flows use 8px
+sibling/header-content gaps and messages/turns use 16px gaps, without
+accumulated nested trailing padding. Jump to End focuses this draft when
+present. Optional composer/footer slots keep the body independent of host draft
+state and live conversation contracts.
 
 1. Project the captured Delta JSON into catalog data and convert byte anchors
    explicitly. Map it to an owned display model without changing AgentStore

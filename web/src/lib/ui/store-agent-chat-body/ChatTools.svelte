@@ -5,6 +5,7 @@
   import CircleAlertIcon from "@lucide/svelte/icons/circle-alert";
   import LoaderCircleIcon from "@lucide/svelte/icons/loader-circle";
   import ChatRawToggle from "./ChatRawToggle.svelte";
+  import ChatCollapsedComments from "./ChatCollapsedComments.svelte";
   import ChatToolBlocks from "./ChatToolBlocks.svelte";
   import type { ChatBodyItem, ChatBodyTool, ChatBodyProps } from "./model.js";
   import { rawToolBlock } from "./tool-blocks.js";
@@ -70,6 +71,10 @@
         </Button>
         {@render rawToggle(tool)}
       </div>
+      <ChatCollapsedComments
+        {state}
+        blocks={[...tool.blocks, rawToolBlock(tool)]}
+      />
     {:else}
       <Collapsible.Root
         open={expanded(tool.id, item.defaultExpanded && calls.length === 1)}
@@ -90,15 +95,27 @@
           {@render rawToggle(tool)}
         </div>
         <Collapsible.Content class="chat-tool-detail" aria-label={tool.title}>
-          <ChatToolBlocks
-            blocks={state.rawTools[tool.id]
-              ? [rawToolBlock(tool)]
-              : tool.blocks}
-            {state}
-            {customBlock}
-          />
+          {#if expanded(tool.id, item.defaultExpanded && calls.length === 1)}<ChatToolBlocks
+              blocks={state.rawTools[tool.id]
+                ? [rawToolBlock(tool)]
+                : tool.blocks}
+              {state}
+              {customBlock}
+            />
+          {/if}
         </Collapsible.Content>
       </Collapsible.Root>
+      {#if !expanded(tool.id, item.defaultExpanded && calls.length === 1)}
+        <ChatCollapsedComments
+          {state}
+          blocks={[...tool.blocks, rawToolBlock(tool)]}
+        />
+      {:else}
+        <ChatCollapsedComments
+          {state}
+          blocks={state.rawTools[tool.id] ? tool.blocks : [rawToolBlock(tool)]}
+        />
+      {/if}
     {/if}
   </div>
 {/snippet}
@@ -114,20 +131,24 @@
     >
       <span>{item.label}</span><ChatDisclosureIcon />
     </Collapsible.Trigger>
-    <Collapsible.Content
-      >{#each calls as tool (tool.id)}{@render call(
-          tool,
-        )}{/each}</Collapsible.Content
+    <Collapsible.Content class="chat-tool-group-content"
+      >{#if expanded(item.id, item.defaultExpanded)}{#each calls as tool (tool.id)}{@render call(
+            tool,
+          )}{/each}{/if}</Collapsible.Content
     >
   </Collapsible.Root>
+  {#if !expanded(item.id, item.defaultExpanded)}<ChatCollapsedComments
+      {state}
+      blocks={calls.flatMap((t) => [...t.blocks, rawToolBlock(t)])}
+    />{/if}
 {:else if calls[0]}{@render call(calls[0])}{/if}
 
 <style>
   .chat-tool-item {
-    padding-block: 0.25rem;
+    padding: 0;
   }
   :global(.chat-tool-summary) {
-    margin-block: 0.25rem;
+    margin: 0;
   }
   .chat-tool-heading {
     display: flex;
@@ -172,7 +193,7 @@
     flex-shrink: 0;
   }
   :global(.chat-tool-detail) {
-    padding-block: 0.25rem 0.75rem;
+    padding-block-start: 0.5rem;
   }
   .sr-only {
     position: absolute;
@@ -180,5 +201,10 @@
     height: 1px;
     overflow: hidden;
     clip-path: inset(50%);
+  }
+  :global(.chat-tool-group-content:not([hidden])) {
+    display: grid;
+    gap: 0.5rem;
+    padding-block-start: 0.5rem;
   }
 </style>

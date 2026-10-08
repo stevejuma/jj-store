@@ -14,6 +14,8 @@ export interface ChatBodyBlock {
   path?: string;
   /** Captured read output includes line-number/tab prefixes in its exact text. */
   lineNumbered?: boolean;
+  /** UTF-16 start within the input supplied to markdownBlocks, before trimming. */
+  sourceFrom?: number;
 }
 export interface ChatBodyTool {
   id: string;
@@ -43,6 +45,8 @@ export interface ChatBodyItem {
   blocks: readonly ChatBodyBlock[];
   tools?: readonly ChatBodyTool[];
   defaultExpanded?: boolean;
+  commentBatchId?: string;
+  replyContext?: { threadId: string; commentIds: readonly string[] };
 }
 /** UTF-16 offsets into one exact block; custom blocks use the entire range. */
 export interface ChatCommentAnchor {
@@ -54,19 +58,43 @@ export interface ChatCommentAnchor {
 }
 export interface ChatComment {
   id: string;
-  author: string;
+  author: CommunityMemberModel;
   text: string;
+  status: "draft" | "sending" | "sent" | "replied";
+  batchId?: string;
+  replyItemId?: string;
+  replyTo?: string;
+  createdAt?: number;
 }
 export interface ChatCommentThread {
   id: string;
   anchor: ChatCommentAnchor;
-  comments: readonly ChatComment[];
+  label: string;
+  sourceKind?: ChatBodyBlock["kind"];
+  comments: ChatComment[];
 }
-export interface ChatBodyProps {
+export interface ChatPromptComment {
+  threadId: string;
+  commentId: string;
+  anchor: ChatCommentAnchor;
+  author: CommunityMemberModel;
+  text: string;
+}
+export interface ChatPromptSubmission {
+  id: string;
+  text: string;
+  comments: readonly ChatPromptComment[];
+}
+export interface ChatCommentHost {
   items: readonly ChatBodyItem[];
-  threads?: readonly ChatCommentThread[];
-  onAddComment: (anchor: ChatCommentAnchor, text: string) => void;
-  onReply: (threadId: string, text: string) => void;
+  author?: CommunityMemberModel;
+  onSend?: (submission: ChatPromptSubmission) => void | Promise<void>;
+  onInspectTool?: (
+    tool: ChatBodyTool,
+    opener: HTMLElement,
+  ) => void | Promise<void>;
+}
+export interface ChatBodyProps extends ChatCommentHost {
   reactions?: Readonly<Record<string, readonly CommunityReactionModel[]>>;
   reactionOptions?: readonly string[];
   onReact?: (
@@ -79,5 +107,4 @@ export interface ChatBodyProps {
   label?: string;
   customBlock?: Snippet<[ChatBodyBlock]>;
   commentState?: ChatBodyComments;
-  onInspectTool?: (tool: ChatBodyTool, opener: HTMLElement) => void;
 }

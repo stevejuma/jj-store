@@ -1,0 +1,88 @@
+.chat-comment-area {
+  min-width: 0;
+  white-space: normal;
+  font-family: var(--font-sans, system-ui);
+  color: var(--foreground);
+}
+.chat-comment-context {
+  padding: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--muted);
+}
+.chat-comment-quote {
+  margin: 0 0 0.5rem;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 8rem;
+  overflow: auto;
+}
+.chat-comment-quote :is(p, code) {
+  color: inherit;
+  background: color-mix(in srgb, var(--primary) 15%, transparent);
+  border-radius: 3px;
+}
+.chat-comment-list {
+  display: grid;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border: 1px solid var(--border);
+  border-inline-start: 2px solid var(--primary);
+  border-radius: var(--radius);
+  background: var(--background);
+}
+.chat-comment-card {
+  position: relative;
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-start;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+.chat-comment-content {
+  flex: 1;
+  min-width: 0;
+}
+.chat-comment-content p {
+  margin-block: 0;
+}
+.chat-comment-links {
+  display: flex;
+  gap: 0.125rem;
+  opacity: 0;
+}
+.chat-comment-card:hover .chat-comment-links,
+.chat-comment-card:focus-within .chat-comment-links {
+  opacity: 1;
+}
+.chat-comment-complete {
+  color: var(--ui-diff-stat-added, var(--success, #16a34a));
+  display: inline-flex;
+  align-items: center;
+  height: 1.5rem;
+}
+.chat-comment-card:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+.chat-comment-status,
+.chat-comment-unavailable {
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+.chat-comment-status {
+  padding-block: 0.25rem;
+}
+.chat-comment-widget {
+  padding-block: 0.5rem;
+}
+@media (hover: none) {
+  .chat-comment-links {
+    opacity: 1;
+  }
+}
+
+.chat-comment-quote p {
+  margin: 0;
+  display: inline;
+}

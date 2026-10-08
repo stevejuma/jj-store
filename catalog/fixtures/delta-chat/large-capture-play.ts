@@ -30,7 +30,7 @@ export async function largeCaptures({
   ).toHaveTextContent("Review middle");
   await expect(
     c
-      .getByRole("form", { name: "Inline comment composer" })
+      .getByRole("group", { name: "Pending comments" })
       .querySelector("blockquote"),
   ).toHaveTextContent("export const line13 = 13;");
   await addComment(canvasElement);

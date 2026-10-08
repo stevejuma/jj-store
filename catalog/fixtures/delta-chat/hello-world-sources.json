@@ -1,0 +1,45 @@
+{
+  "method": "Explicit selections verified against the Delta UI, provided pending screenshot and delta thread request quote contexts; fragment offsets are not document offsets.",
+  "selections": [
+    {
+      "commentId": "17cc6aeafa6649c4bb3e7cb508dd9fd9",
+      "text": "show me contents of this file",
+      "target": {
+        "recordId": "delta-3",
+        "from": 0,
+        "to": 10,
+        "quote": ".gitignore"
+      }
+    },
+    {
+      "commentId": "9494ee9725df4fd587a9735a772c0f3f",
+      "text": "what are the cargo dependencies",
+      "target": {
+        "recordId": "delta-3",
+        "from": 22,
+        "to": 32,
+        "quote": "Cargo.toml"
+      }
+    },
+    {
+      "commentId": "70d3a9ba901046ce9cb002b162d210f7",
+      "text": "how many files in src?",
+      "target": {
+        "recordId": "delta-3",
+        "from": 33,
+        "to": 37,
+        "quote": "src/"
+      }
+    },
+    {
+      "commentId": "45f34abe2b8f47759d6fb2e9481b624c",
+      "text": "is this correct?",
+      "target": {
+        "recordId": "reply-0",
+        "from": 54,
+        "to": 109,
+        "quote": "This ignores Rust’s build output directory, `target`."
+      }
+    }
+  ]
+}

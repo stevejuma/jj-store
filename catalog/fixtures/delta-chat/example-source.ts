@@ -1,14 +1,16 @@
 export const chatBodyExample = `<script lang="ts">
   import StoreAgentChatBody from './StoreAgentChatBody.svelte';
-  import type { ChatBodyItem, ChatCommentAnchor, ChatCommentThread } from './model';
-  let items: ChatBodyItem[] = [];
-  let threads = $state<ChatCommentThread[]>([]);
-  function add(anchor: ChatCommentAnchor, text: string) {
-    const id = crypto.randomUUID();
-    threads = [...threads, { id, anchor, comments: [{ id, author: 'You', text }] }];
+  import ChatNextMessage from './ChatNextMessage.svelte';
+  import ChatMessageFooter from './ChatMessageFooter.svelte';
+  import { ChatBodyComments } from './comments.svelte';
+  import type { ChatBodyItem, ChatPromptSubmission } from './model';
+  let items = $state<ChatBodyItem[]>([]);
+  const author = { id: 'me', name: 'You', handle: '', initials: 'YO' };
+  async function send(submission: ChatPromptSubmission) {
+    // Host accepts this exact text/comments snapshot, or throws to retain drafts.
   }
-  function reply(id: string, text: string) {
-    threads = threads.map(t => t.id === id ? { ...t, comments: [...t.comments, { id: crypto.randomUUID(), author: 'You', text }] } : t);
-  }
+  const comments = new ChatBodyComments(() => ({ items, author, onSend: send }));
 </script>
-<StoreAgentChatBody {items} {threads} onAddComment={add} onReply={reply} />`;
+{#snippet composer()}<ChatNextMessage bind:value={comments.message} member={author} onSubmit={() => comments.send()} />{/snippet}
+{#snippet footer()}<ChatMessageFooter canSend={comments.canSend} onSend={() => comments.send()} error={comments.error} />{/snippet}
+<StoreAgentChatBody {items} commentState={comments} {composer} {footer} />`;

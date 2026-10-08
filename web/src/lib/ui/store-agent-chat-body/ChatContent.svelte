@@ -22,45 +22,47 @@
   } = $props();
 </script>
 
-{#each blocks as block (block.id)}
-  {#key `${block.id}:${block.revision}`}
-    {#if block.kind === "custom" || block.kind === "context"}
-      <section
-        class="chat-custom"
-        data-kind={block.kind}
-        role="group"
-        aria-label={block.label}
-        use:customInteraction={{ block, state }}
-        data-highlighted={state.active?.anchor.blockId === block.id}
-      >
-        {#if block.kind === "context"}<CommunityMarkdownContent
-            content={block.text}
-            promptElements
-            fullWidth
+<div class="chat-content-flow">
+  {#each blocks as block (block.id)}
+    {#key `${block.id}:${block.revision}`}
+      {#if block.kind === "custom" || block.kind === "context"}
+        <section
+          class="chat-custom"
+          data-kind={block.kind}
+          role="group"
+          aria-label={block.label}
+          use:customInteraction={{ block, state }}
+          data-highlighted={state.forBlocks([block]).length > 0}
+        >
+          {#if block.kind === "context"}<CommunityMarkdownContent
+              content={block.text}
+              promptElements
+              fullWidth
+            />
+          {:else if customBlock}{@render customBlock(block)}
+          {:else}<CommunityMarkdownContent
+              content={block.text}
+              fullWidth
+            />{/if}
+          <ChatHoverActions
+            {block}
+            {state}
+            {reactionTarget}
+            onComment={() => state.open(block, { from: 0, to: 0 })}
           />
-        {:else if customBlock}{@render customBlock(block)}
-        {:else}<CommunityMarkdownContent content={block.text} fullWidth />{/if}
-        <ChatHoverActions
+          {#each state.visibleThreads.filter( (t) => validAnchor(block, t.anchor) ) as thread (thread.id)}
+            <ChatCommentArea {state} threadId={thread.id} />
+          {/each}
+        </section>
+      {:else}<ChatTextBlock
           {block}
           {state}
           {reactionTarget}
-          onComment={() => state.open(block, { from: 0, to: 0 })}
-        />
-        {#each state.threads.filter( (t) => validAnchor(block, t.anchor) ) as thread (thread.id)}
-          <ChatCommentArea {state} {block} threadId={thread.id} />
-        {/each}
-        {#if state.active?.anchor.blockId === block.id && !state.active.threadId}
-          <ChatCommentArea {state} {block} />
-        {/if}
-      </section>
-    {:else}<ChatTextBlock
-        {block}
-        {state}
-        {reactionTarget}
-        showHeader={showHeaders}
-      />{/if}
-  {/key}
-{/each}
+          showHeader={showHeaders}
+        />{/if}
+    {/key}
+  {/each}
+</div>
 
 <style>
   .chat-custom {
@@ -78,5 +80,10 @@
     border-color: var(--primary);
     border-inline-start-width: 3px;
     background: color-mix(in srgb, var(--primary) 10%, transparent);
+  }
+  .chat-content-flow {
+    display: grid;
+    gap: 0.5rem;
+    min-width: 0;
   }
 </style>

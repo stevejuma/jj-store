@@ -37,7 +37,10 @@ export function customInteraction(
   };
   node.addEventListener("keydown", keydown);
   node.addEventListener("paste", paste);
-  state.readers.set(block.id, () => node.focus());
+  state.readers.set(block.id, (_anchor, scroll = false) => {
+    if (scroll) node.scrollIntoView({ block: "center" });
+    node.focus({ preventScroll: true });
+  });
   return {
     destroy() {
       node.removeEventListener("keydown", keydown);

@@ -9,23 +9,28 @@ export async function draft(
   canvasElement: HTMLElement,
   label = "Assistant explanation",
 ) {
-  const composer = await within(canvasElement).findByRole("group", {
-    name: `Comment on ${label}`,
+  let editor: HTMLElement | undefined;
+  await waitFor(() => {
+    editor = Array.from(
+      canvasElement.querySelectorAll<HTMLElement>(
+        '[data-location="inline"] [role="textbox"]',
+      ),
+    ).find((node) => node.getAttribute("aria-label") === `Comment on ${label}`);
+    expect(editor).toBeDefined();
+    expect(editor).toHaveFocus();
   });
-  const editor = await within(composer).findByRole("textbox", {
-    name: "Markdown editor",
-  });
-  await waitFor(() => expect(editor).toHaveFocus());
-  return editor;
+  return editor!;
 }
 export async function addComment(canvasElement: HTMLElement) {
-  const c = within(canvasElement);
-  await userEvent.click(c.getByRole("button", { name: "Add comment" }));
-  await waitFor(() =>
-    expect(
-      c.queryByRole("form", { name: "Inline comment composer" }),
-    ).toBeNull(),
+  await userEvent.click(
+    within(canvasElement).getByRole("button", { name: "Send message" }),
   );
+  await waitFor(() =>
+    expect(canvasElement.querySelector("[data-comment-editor]")).toBeNull(),
+  );
+}
+export function inlineComments(canvasElement: HTMLElement) {
+  return within(canvasElement.querySelector(".chat-document")! as HTMLElement);
 }
 export function expectAdjacentChevron(header: HTMLElement) {
   const label = header.querySelector("span:not(.sr-only)")!;

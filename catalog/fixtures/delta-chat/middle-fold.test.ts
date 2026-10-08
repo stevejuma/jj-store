@@ -43,7 +43,7 @@ test("reveals a folded discussion while stale anchors cannot reveal a new revisi
   });
   const comments = {
     disclosures: {},
-    threads: [{ id: "thread", anchor, comments: [] }],
+    threads: [{ id: "thread", label: "Code", anchor, comments: [] }],
     active: undefined,
   };
   expect(middleDecorations(block, comments).size).toBe(0);

@@ -6,6 +6,8 @@ import { createServer } from "node:net";
 import { mkdirSync, openSync, closeSync } from "node:fs";
 import { largeCaptureAcceptance } from "./large-capture-native.mjs";
 import { messageActionAcceptance } from "./message-action-native.mjs";
+import { readerInputAcceptance } from "./reader-input-native.mjs";
+import { commentQueueAcceptance } from "./comment-queue-native.mjs";
 import { nextMessageAcceptance } from "./next-message-native.mjs";
 
 mkdirSync(".local", { recursive: true });
@@ -71,103 +73,8 @@ try {
   const body = page
     .getByRole("region", { name: "Agent chat body" })
     .locator('[data-ui-part="scroll-area-viewport"]');
-  const composer = () =>
-    page.getByRole("form", { name: "Inline comment composer" });
-  const draft = () =>
-    composer().getByRole("textbox", { name: "Markdown editor" });
-  const quote = () => composer().locator("blockquote");
-  const capturedText = () =>
-    source.locator(":scope > .cm-line").allTextContents();
-  await expect(source).toBeVisible({ timeout: 60000 });
-  await page.evaluate(() => document.fonts.ready);
-  const original = await capturedText();
+  await readerInputAcceptance(page, source);
   const mac = process.platform === "darwin";
-  const start = mac ? "Meta+ArrowUp" : "Control+Home";
-  const lineStart = mac ? "Meta+ArrowLeft" : "Home";
-  const selectLine = mac ? "Meta+Shift+ArrowRight" : "Shift+End";
-
-  // Actual pointer selection, including selection across styled inline text.
-  const strong = source.locator(".chat-strong");
-  const box = await strong.boundingBox();
-  await page.mouse.move(box.x + 1, box.y + box.height / 2);
-  await page.mouse.down();
-  await page.mouse.move(box.x + box.width + 0.25, box.y + box.height / 2, {
-    steps: 10,
-  });
-  await page.mouse.up();
-  await expect
-    .poll(() => page.evaluate(() => window.getSelection().toString()))
-    .toBe("stable identities");
-  await page.keyboard.press("Control+Alt+m");
-  await expect(quote()).toHaveText("stable identities");
-  await page.keyboard.type("Pointer draft");
-  await expect(draft()).toHaveText("Pointer draft");
-  await page.keyboard.press("Escape");
-  await expect(composer()).toHaveCount(0);
-  await expect(source).toBeFocused();
-  await page
-    .getByRole("button", {
-      name: "Comment on Assistant explanation",
-      exact: true,
-    })
-    .click();
-  await expect(draft()).toHaveText("Pointer draft");
-  await composer().getByRole("button", { name: "Cancel", exact: true }).click();
-  await expect(source).toBeFocused();
-
-  // Native navigation and selection, deletion and undo cannot change captured text.
-  await page.keyboard.press(start);
-  await page.keyboard.press("ArrowDown");
-  await page.keyboard.press("ArrowDown");
-  await page.keyboard.press(lineStart);
-  await page.keyboard.press(selectLine);
-  const selected = await page.evaluate(() => window.getSelection().toString());
-  expect(selected).toContain("stable identities");
-  await page.keyboard.press("Backspace");
-  await page.keyboard.press(mac ? "Meta+z" : "Control+z");
-  await expect.poll(capturedText).toEqual(original);
-  await page.keyboard.press(start);
-  await page.keyboard.press(selectLine);
-  await page.keyboard.press("Meta+Alt+m");
-  await expect(quote()).toHaveText("## A small change");
-  await page.keyboard.type("Keyboard draft");
-  await page.keyboard.press("Control+Enter");
-  await expect(
-    page.getByRole("article", { name: "Comment by You" }),
-  ).toHaveText(/Keyboard draft/);
-  await expect.poll(capturedText).toEqual(original);
-
-  // First native character transfers once and leaves the next character after it.
-  await source.focus();
-  await page.keyboard.type("First input");
-  await expect(draft()).toHaveText("First input");
-  await page.keyboard.press("Enter");
-  await page.keyboard.type("Second line");
-  await expect(draft().locator(":scope > .cm-line")).toHaveText([
-    "First input",
-    "Second line",
-  ]);
-  await page.keyboard.press("Escape");
-  await expect(source).toBeFocused();
-
-  // Custom rendered views use a whole-section target and return focus.
-  const custom = page.getByRole("group", {
-    name: "Decision table",
-    exact: true,
-  });
-  await custom.focus();
-  await custom.getByRole("button", { name: "Inspect decision" }).click();
-  await expect(
-    custom.getByRole("button", { name: "Inspect decision" }),
-  ).toHaveAttribute("aria-pressed", "true");
-  await expect(composer()).toHaveCount(0);
-  await custom.focus();
-  await page.keyboard.type("Whole view");
-  await expect(quote()).toHaveText(/\| Topic \| Choice \|/);
-  await expect(draft()).toHaveText("Whole view");
-  await page.keyboard.press("Escape");
-  await expect(custom).toBeFocused();
-
   // Appends retain a reader's scrolled position; resize preserves submitted threads.
   await body.evaluate((node) => {
     node.scrollTop = 30;
@@ -232,7 +139,10 @@ try {
   await page.getByRole("button", { name: "Hide body" }).click();
   await page.getByRole("button", { name: "Show body" }).click();
   await expect(
-    page.getByRole("article", { name: "Comment by You" }),
+    page
+      .locator('[data-placement="inline"]')
+      .getByRole("article", { name: "Comment by You" })
+      .filter({ hasText: "Keyboard draft" }),
   ).toHaveText(/Keyboard draft/);
   await page
     .getByRole("button", { name: "Expand Read a file, ran a command" })
@@ -265,7 +175,9 @@ try {
       ),
     )
     .toBeLessThanOrEqual(8);
-  await expect(page.locator('[data-chat-item="appended"]')).toBeFocused();
+  await expect(
+    page.getByRole("textbox", { name: "Next message", exact: true }),
+  ).toBeFocused();
   const marker = page.getByRole("button", { name: "Preview turn 1" });
   await marker.click();
   await expect.poll(() => body.evaluate((node) => node.scrollTop)).toBe(0);
@@ -286,12 +198,13 @@ try {
   await largeCaptureAcceptance(page, base);
   await messageActionAcceptance(page, base);
   await nextMessageAcceptance(page, base);
+  await commentQueueAcceptance(page, base);
   await page.goto(
     `${base}/iframe.html?id=jj-store-commentable-agent-chat-body--delta-main-thread-reference&viewMode=story`,
   );
   await expect(
     page.getByRole("textbox", {
-      name: "Sources/BedtimeCore/Schedule.swift",
+      name: "Captured patch · Sources/BedtimeCore/Schedule.swift",
       exact: true,
     }),
   ).toBeVisible({ timeout: 60000 });

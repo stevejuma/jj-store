@@ -5,21 +5,21 @@
   import { ScrollArea } from "@lapismd/design-core/shadcn/scroll-area";
   import ChatDisclosureIcon from "./ChatDisclosureIcon.svelte";
   import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
-  import CommunityMarkdownContent from "../community-markdown-content/CommunityMarkdownContent.svelte";
+  import ChatCommentBatch from "./ChatCommentBatch.svelte";
+  import ChatCollapsedComments from "./ChatCollapsedComments.svelte";
   import CommunityReactions from "../community-reactions/CommunityReactions.svelte";
   import ChatNavigation from "./ChatNavigation.svelte";
   import ChatCommentArea from "./ChatCommentArea.svelte";
   import ChatContent from "./ChatContent.svelte";
   import ChatTools from "./ChatTools.svelte";
   import { ChatBodyComments } from "./comments.svelte.js";
-  import type { ChatBodyProps, ChatBodyBlock } from "./model.js";
+  import type { ChatBodyProps } from "./model.js";
   import { rawToolBlock } from "./tool-blocks.js";
   import { validAnchor } from "./anchors.js";
   let {
     items,
-    threads = [],
-    onAddComment,
-    onReply,
+    author,
+    onSend,
     reactions = {},
     reactionOptions,
     onReact,
@@ -34,13 +34,11 @@
     untrack(() => commentState) ??
     new ChatBodyComments(() => ({
       items,
-      threads,
-      onAddComment,
-      onReply,
-      reactions,
-      reactionOptions,
+      author,
+      onSend,
+      onInspectTool,
       onReact,
-      label,
+      reactionOptions,
     }));
   let root = $state<HTMLElement | null>(null);
   let previousLast = "";
@@ -54,20 +52,14 @@
     ]),
   );
   const stale = $derived(
-    threads.filter(
+    comments.visibleThreads.filter(
       (thread) => !blocks.some((block) => validAnchor(block, thread.anchor)),
     ),
   );
-  const unavailableDraft = $derived.by((): ChatBodyBlock | undefined => {
-    const active = comments.active;
-    if (!active || blocks.some((block) => validAnchor(block, active.anchor)))
-      return;
-    return {
-      id: active.anchor.blockId,
-      revision: active.anchor.revision,
-      label: active.label,
-      kind: "custom",
-      text: active.anchor.quote,
+  $effect(() => {
+    comments.root = root;
+    return () => {
+      if (comments.root === root) comments.root = null;
     };
   });
   $effect.pre(() => {
@@ -101,7 +93,21 @@
       <ol class="chat-document">
         {#each items as item (item.id)}
           <li data-chat-item={item.id} data-kind={item.kind} tabindex="-1">
-            {#if item.kind === "message"}
+            {#if item.commentBatchId}<ChatCommentBatch
+                state={comments}
+                batchId={item.commentBatchId}
+              />{/if}
+            {#if item.replyContext}<div
+                class="chat-document-inset chat-reply-context"
+              >
+                <ChatCommentArea
+                  state={comments}
+                  threadId={item.replyContext.threadId}
+                  commentIds={item.replyContext.commentIds}
+                  placement="reply"
+                />
+              </div>{/if}
+            {#if item.kind === "message" && item.blocks.length}
               <article class="chat-message" aria-label={item.label}>
                 <div class="chat-message-avatar">
                   {#if item.author}<CommunityMemberAvatar
@@ -128,7 +134,7 @@
                   {onInspectTool}
                 />
               </div>
-            {:else}
+            {:else if item.kind !== "message"}
               <div class="chat-document-inset">
                 <Collapsible.Root
                   open={comments.disclosures[item.id] ??
@@ -142,14 +148,18 @@
                     /></Collapsible.Trigger
                   >
                   <Collapsible.Content
-                    ><ChatContent
-                      blocks={item.blocks}
-                      state={comments}
-                      reactionTarget={item.id}
-                      {customBlock}
-                    /></Collapsible.Content
+                    >{#if comments.disclosures[item.id] ?? item.defaultExpanded ?? false}<ChatContent
+                        blocks={item.blocks}
+                        state={comments}
+                        reactionTarget={item.id}
+                        {customBlock}
+                      />{/if}</Collapsible.Content
                   >
                 </Collapsible.Root>
+                {#if !(comments.disclosures[item.id] ?? item.defaultExpanded ?? false)}<ChatCollapsedComments
+                    state={comments}
+                    blocks={item.blocks}
+                  />{/if}
               </div>
             {/if}
             {#if reactions[item.id]?.length}<div class="chat-document-inset">
@@ -164,27 +174,18 @@
         {/each}
       </ol>
       {#if !items.length}<p class="chat-empty">No captured messages.</p>{/if}
-      {#if stale.length || unavailableDraft}<aside
+      {#if stale.length}<aside
           class="chat-stale"
           aria-label="Comments on unavailable content"
         >
-          <p>
-            The original content for these comments is unavailable or has
-            changed.
-          </p>
-          {#if unavailableDraft}<ChatCommentArea
+          {#each stale as thread (thread.id)}<ChatCommentArea
               state={comments}
-              block={unavailableDraft}
-            />{/if}
-          {#each stale as thread (thread.id)}<blockquote>
-              {thread.anchor.quote}
-            </blockquote>
-            {#each thread.comments as comment (comment.id)}<CommunityMarkdownContent
-                content={comment.text}
-              />{/each}
-          {/each}
+              threadId={thread.id}
+              placement="history"
+            />{/each}
         </aside>{/if}
       {#if composer}<div class="chat-document-composer">
+          <ChatCommentBatch state={comments} />
           {@render composer()}
         </div>{/if}
     </ScrollArea>

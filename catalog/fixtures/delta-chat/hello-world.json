@@ -1,0 +1,374 @@
+{
+  "version": 2,
+  "source": {
+    "application": "Delta 0.1.0",
+    "title": "Acknowledge hello world",
+    "captureDate": "2026-10-08",
+    "method": "delta thread data (UI copy unavailable during capture)",
+    "sha256": "e8e2e218dafbaa4599eb1013fef86ff4d14450de1729433444b2d906fd18e6e8",
+    "offsetEncoding": "utf-8-bytes",
+    "scope": "main thread only; no live replay or child-thread import",
+    "commentMapping": "Explicit selections verified against the Delta UI, provided pending screenshot and delta thread request quote contexts; fragment offsets are not document offsets."
+  },
+  "buffer": "\nis there a license in this repo?\n\n\n\nExternal changes: .delta/\n\n<external-edits worktree=\"jj-hello-world\">\n<skipped-untracked-directory path=\".delta\"/>\n</external-edits>\n\n\nListed a directory, ran a search\nList directory jj-hello-world\n\n.gitignore\nCargo.lock\nCargo.toml\nsrc/\n\n\n\nGrep license|copyright|SPDX\n\nNo matches found.\n\nNo—there’s no license file in the repo, and I found no license declaration, copyright notice, or SPDX identifier in the project files.\n\nWithout an explicit license, others generally don’t have permission to reuse, modify, or redistribute the code.\n\n\n1 comment\n\n\n\n\nRead .gitignore\n\n\n<comment-reply>\n<quote>.gitignore</quote>\nThe file contains one line:\n\n```gitignore\ntarget\n```\n\nThis ignores Rust’s build output directory, `target`.\n</comment-reply>\n\n\n2 comments\n\n\n\nRead a file, listed a directory\nRead Cargo.toml\n\n\n\n\nList directory src\n\nmain.rs\n\n<comment-reply>\n<quote>Cargo.toml</quote>\nThere are **no declared dependencies** in `Cargo.toml`. It only contains package metadata: name `hello-world`, version `0.1.0`, and Rust edition `2021`.\n</comment-reply>\n\n<comment-reply>\n<quote>src/</quote>\nThere is **1 file** in `src/`: `main.rs`.\n</comment-reply>\n\n\n1 comment\nNormal chat input\n",
+  "records": [
+    {
+      "id": "delta-0",
+      "kind": "User",
+      "start": 1,
+      "end": 33,
+      "createdAt": 1791486792372,
+      "text": "is there a license in this repo?"
+    },
+    {
+      "id": "delta-1",
+      "kind": "AssistantTurn",
+      "start": 35,
+      "createdAt": 1791486792384
+    },
+    {
+      "id": "delta-2",
+      "kind": "ExternalEdits",
+      "start": 35,
+      "layout": {
+        "range": {
+          "start": 35,
+          "end": 171
+        },
+        "meta_range": {
+          "start": 37,
+          "end": 63
+        },
+        "result_range": {
+          "start": 64,
+          "end": 170
+        },
+        "action_group_title_range": {
+          "start": 36,
+          "end": 37
+        }
+      },
+      "end": 171
+    },
+    {
+      "id": "delta-3",
+      "kind": "ToolUse",
+      "start": 171,
+      "layout": {
+        "range": {
+          "start": 171,
+          "end": 275
+        },
+        "meta_range": {
+          "start": 205,
+          "end": 235
+        },
+        "result_range": {
+          "start": 236,
+          "end": 274
+        },
+        "action_group_title_range": {
+          "start": 172,
+          "end": 205
+        }
+      },
+      "end": 275,
+      "name": "list_directory",
+      "input": "{}",
+      "output": ".gitignore\nCargo.lock\nCargo.toml\nsrc/",
+      "status": "Succeeded"
+    },
+    {
+      "id": "delta-4",
+      "kind": "ToolUse",
+      "start": 275,
+      "layout": {
+        "range": {
+          "start": 275,
+          "end": 325
+        },
+        "meta_range": {
+          "start": 277,
+          "end": 305
+        },
+        "result_range": {
+          "start": 306,
+          "end": 324
+        },
+        "action_group_title_range": {
+          "start": 276,
+          "end": 277
+        }
+      },
+      "end": 325,
+      "name": "grep",
+      "input": "{\"pattern\":\"license|copyright|SPDX\",\"case_sensitive\":false,\"max_matches\":50}",
+      "output": "No matches found.",
+      "status": "Succeeded"
+    },
+    {
+      "id": "delta-5",
+      "kind": "User",
+      "start": 581,
+      "end": 591,
+      "createdAt": 1791486830660,
+      "text": "",
+      "commentBatchId": "delta-5"
+    },
+    {
+      "id": "comment-summary-0",
+      "kind": "CommentSummary",
+      "start": 581,
+      "end": 591
+    },
+    {
+      "id": "delta-6",
+      "kind": "AssistantTurn",
+      "start": 593,
+      "createdAt": 1791486830662
+    },
+    {
+      "id": "delta-7",
+      "kind": "ToolUse",
+      "start": 593,
+      "layout": {
+        "range": {
+          "start": 593,
+          "end": 613
+        },
+        "meta_range": {
+          "start": 595,
+          "end": 611
+        },
+        "result_range": {
+          "start": 612,
+          "end": 612
+        },
+        "action_group_title_range": {
+          "start": 594,
+          "end": 595
+        }
+      },
+      "end": 613,
+      "name": "read_file",
+      "input": "{\"path\":\".gitignore\"}",
+      "output": "     1\ttarget\n",
+      "status": "Succeeded"
+    },
+    {
+      "id": "reply-0",
+      "kind": "Reply",
+      "start": 613,
+      "end": 781,
+      "text": "The file contains one line:\n\n```gitignore\ntarget\n```\n\nThis ignores Rust’s build output directory, `target`.",
+      "replyContext": {
+        "threadId": "discussion-0",
+        "commentIds": ["discussion-0/user"]
+      }
+    },
+    {
+      "id": "delta-8",
+      "kind": "User",
+      "start": 784,
+      "end": 795,
+      "createdAt": 1791486971406,
+      "text": "",
+      "commentBatchId": "delta-8"
+    },
+    {
+      "id": "comment-summary-1",
+      "kind": "CommentSummary",
+      "start": 784,
+      "end": 795
+    },
+    {
+      "id": "delta-9",
+      "kind": "AssistantTurn",
+      "start": 797,
+      "createdAt": 1791486971407
+    },
+    {
+      "id": "delta-10",
+      "kind": "ToolUse",
+      "start": 797,
+      "layout": {
+        "range": {
+          "start": 797,
+          "end": 848
+        },
+        "meta_range": {
+          "start": 830,
+          "end": 846
+        },
+        "result_range": {
+          "start": 847,
+          "end": 847
+        },
+        "action_group_title_range": {
+          "start": 798,
+          "end": 830
+        }
+      },
+      "end": 848,
+      "name": "read_file",
+      "input": "{\"path\":\"Cargo.toml\"}",
+      "output": "     1\t[package]\n     2\tname = \"hello-world\"\n     3\tversion = \"0.1.0\"\n     4\tedition = \"2021\"\n",
+      "status": "Succeeded"
+    },
+    {
+      "id": "delta-11",
+      "kind": "ToolUse",
+      "start": 848,
+      "layout": {
+        "range": {
+          "start": 848,
+          "end": 879
+        },
+        "meta_range": {
+          "start": 850,
+          "end": 869
+        },
+        "result_range": {
+          "start": 870,
+          "end": 878
+        },
+        "action_group_title_range": {
+          "start": 849,
+          "end": 850
+        }
+      },
+      "end": 879,
+      "name": "list_directory",
+      "input": "{\"path\":\"src\"}",
+      "output": "main.rs",
+      "status": "Succeeded"
+    },
+    {
+      "id": "reply-1",
+      "kind": "Reply",
+      "start": 879,
+      "end": 1090,
+      "text": "There are **no declared dependencies** in `Cargo.toml`. It only contains package metadata: name `hello-world`, version `0.1.0`, and Rust edition `2021`.",
+      "replyContext": {
+        "threadId": "discussion-1",
+        "commentIds": ["discussion-1/user"]
+      }
+    },
+    {
+      "id": "reply-2",
+      "kind": "Reply",
+      "start": 1092,
+      "end": 1186,
+      "text": "There is **1 file** in `src/`: `main.rs`.",
+      "replyContext": {
+        "threadId": "discussion-2",
+        "commentIds": ["discussion-2/user"]
+      }
+    },
+    {
+      "id": "comment-summary-2",
+      "kind": "CommentSummary",
+      "start": 1189,
+      "end": 1199
+    }
+  ],
+  "draftStart": 1189,
+  "discussions": [
+    {
+      "id": "discussion-0",
+      "target": {
+        "recordId": "delta-3",
+        "from": 0,
+        "to": 10,
+        "quote": ".gitignore"
+      },
+      "comments": [
+        {
+          "id": "discussion-0/user",
+          "author": "user",
+          "text": "show me contents of this file",
+          "status": "replied",
+          "batchId": "delta-5",
+          "replyItemId": "reply-0"
+        },
+        {
+          "id": "discussion-0/agent",
+          "author": "agent",
+          "text": "The file contains one line:\n\n```gitignore\ntarget\n```\n\nThis ignores Rust’s build output directory, `target`.",
+          "status": "sent",
+          "replyTo": "discussion-0/user"
+        }
+      ]
+    },
+    {
+      "id": "discussion-1",
+      "target": {
+        "recordId": "delta-3",
+        "from": 22,
+        "to": 32,
+        "quote": "Cargo.toml"
+      },
+      "comments": [
+        {
+          "id": "discussion-1/user",
+          "author": "user",
+          "text": "what are the cargo dependencies",
+          "status": "replied",
+          "batchId": "delta-8",
+          "replyItemId": "reply-1"
+        },
+        {
+          "id": "discussion-1/agent",
+          "author": "agent",
+          "text": "There are **no declared dependencies** in `Cargo.toml`. It only contains package metadata: name `hello-world`, version `0.1.0`, and Rust edition `2021`.",
+          "status": "sent",
+          "replyTo": "discussion-1/user"
+        }
+      ]
+    },
+    {
+      "id": "discussion-2",
+      "target": {
+        "recordId": "delta-3",
+        "from": 33,
+        "to": 37,
+        "quote": "src/"
+      },
+      "comments": [
+        {
+          "id": "discussion-2/user",
+          "author": "user",
+          "text": "how many files in src?",
+          "status": "replied",
+          "batchId": "delta-8",
+          "replyItemId": "reply-2"
+        },
+        {
+          "id": "discussion-2/agent",
+          "author": "agent",
+          "text": "There is **1 file** in `src/`: `main.rs`.",
+          "status": "sent",
+          "replyTo": "discussion-2/user"
+        }
+      ]
+    },
+    {
+      "id": "discussion-3",
+      "target": {
+        "recordId": "reply-0",
+        "from": 54,
+        "to": 109,
+        "quote": "This ignores Rust’s build output directory, `target`."
+      },
+      "comments": [
+        {
+          "id": "discussion-3/user",
+          "author": "user",
+          "text": "is this correct?",
+          "status": "draft"
+        }
+      ]
+    }
+  ],
+  "draftText": "Normal chat input"
+}
