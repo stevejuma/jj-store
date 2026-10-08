@@ -14,6 +14,8 @@ pub(super) struct PromptDelivery {
     pub generation: u64,
     #[serde(default)]
     pub carries_initial_context: bool,
+    #[serde(default)]
+    pub sections: BTreeMap<String, String>,
 }
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "snake_case")]
@@ -110,6 +112,8 @@ pub(super) fn prepare(
                 state: DeliveryState::Reserved,
                 generation,
                 carries_initial_context,
+                sections: serde_json::from_value(frame["sentContext"]["sectionRevisions"].clone())
+                    .unwrap_or_default(),
             }),
         },
     );
@@ -155,6 +159,9 @@ pub(super) fn observe(state: &mut State, id: &str, event: &Value) -> Result<()> 
         return Ok(());
     };
     if event["type"] == "started" {
+        if prompt.state == DeliveryState::Delivered {
+            return Ok(());
+        }
         // This transition is persisted in the same update as the start event.
         prompt.state = DeliveryState::Delivered;
         let saved = state.sessions.get_mut(id).ok_or(Error::Invalid)?;
@@ -162,6 +169,7 @@ pub(super) fn observe(state: &mut State, id: &str, event: &Value) -> Result<()> 
             if prompt.carries_initial_context {
                 saved.initial_context_delivered = true;
             }
+            saved.delivered_sections.extend(prompt.sections.clone());
             saved
                 .delivered_replies
                 .extend(prompt.batch.revisions.iter().cloned());
@@ -199,45 +207,49 @@ pub(super) fn observe(state: &mut State, id: &str, event: &Value) -> Result<()> 
     Ok(())
 }
 
-pub(super) fn continuation(state: &mut State, id: &str) -> Result<()> {
-    let saved = state.sessions.get(id).ok_or(Error::Invalid)?;
-    let mut lines = Vec::new();
-    let mut bytes = "Saved context from prior session (new adapter session):\n".len();
-    let mut included = BTreeSet::new();
-    // Whole newest records only: never truncate a structured feedback batch.
-    for event in saved
-        .events
-        .iter()
-        .rev()
-        .filter(|e| matches!(e.payload["type"].as_str(), Some("prompt" | "record")))
-    {
-        let line = event.payload.to_string();
-        if bytes + line.len() + 1 > 32768 {
-            break;
+pub(super) fn section_revisions(state: &State, id: &str) -> BTreeMap<String, String> {
+    let Some(saved) = state.sessions.get(id) else {
+        return BTreeMap::new();
+    };
+    let mut revisions = saved.delivered_sections.clone();
+    // Preserve preparation order, rather than ordering random request IDs.
+    for event in &saved.events {
+        if event.payload["type"] != "prompt" {
+            continue;
         }
-        bytes += line.len() + 1;
-        if event.payload["type"] == "prompt"
-            && let Some(request) = event.payload["requestId"]
-                .as_str()
-                .and_then(|v| v.parse::<RequestId>().ok())
-            && let Some(prompt) = state.intents.get(&request).and_then(|i| i.prompt.as_ref())
+        let prompt = event.payload["requestId"]
+            .as_str()
+            .and_then(|s| s.parse::<RequestId>().ok())
+            .and_then(|r| state.intents.get(&r))
+            .and_then(|i| i.prompt.as_ref());
+        if let Some(prompt) = prompt
+            && prompt.generation == saved.context_generation
+            && prompt.state == DeliveryState::Reserved
         {
-            included.extend(prompt.batch.revisions.iter().cloned());
+            revisions.extend(prompt.sections.clone());
         }
-        lines.push(line);
     }
-    lines.reverse();
+    revisions
+}
+
+pub(super) fn continuation(state: &mut State, id: &str) -> Result<()> {
+    let retained = prompt_context::retained(state, id);
     let saved = state.sessions.get_mut(id).ok_or(Error::Invalid)?;
-    saved.context = Some(format!(
-        "Saved context from prior session (new adapter session):\n{}",
-        lines.join("\n")
-    ));
+    saved.continuation = retained;
+    if saved
+        .context
+        .as_deref()
+        .is_some_and(|c| c.starts_with("Saved context from prior session (new adapter session):\n"))
+    {
+        saved.context = None; // Retire legacy generated history, not captured evidence.
+    }
     saved.view.adapter_session_id = None;
     saved.context_generation = saved
         .context_generation
         .checked_add(1)
         .ok_or(Error::Limit)?;
-    saved.context_replies = included;
+    saved.context_replies.clear();
+    saved.delivered_sections.clear();
     saved.delivered_replies.clear();
     saved.initial_context_delivered = false;
     Ok(())

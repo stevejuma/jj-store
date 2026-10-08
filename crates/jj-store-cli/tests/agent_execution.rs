@@ -1,4 +1,6 @@
 //! Real JJ workspaces and LocalAgentStore; controlled harness is fixture evidence.
+#[path = "agent_execution/context_delivery.rs"]
+mod context_delivery;
 #[path = "agent_execution/conversations.rs"]
 mod conversations;
 #[path = "agent_execution/fleet.rs"]
@@ -88,6 +90,7 @@ impl Fixture {
             actor,
             root: root.path().join("execution"),
             executable,
+            jj_executable: env!("CARGO_BIN_EXE_jj").into(),
             driver: Arc::new(Driver(jj_store_jj::agent_workspaces::Provider {
                 executable: env!("CARGO_BIN_EXE_jj").into(),
             })),

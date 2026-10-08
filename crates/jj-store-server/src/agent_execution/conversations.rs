@@ -283,6 +283,9 @@ impl Supervisor {
                     profile: profile.clone(),
                     instructions: setup.instructions.clone(),
                     context: None,
+                    continuation: String::new(),
+                    delivered_sections: BTreeMap::new(),
+                    coordination: None,
                     events: vec![],
                     workspace_ready: false,
                     pending_capture_end: None,
@@ -302,6 +305,14 @@ impl Supervisor {
                     Ok(())
                 })?;
                 journal::private_directory(&path)?;
+            }
+            if let Err(error) = self.prepare_coordination(&id).await {
+                self.finish(
+                    command.request_id,
+                    "failed",
+                    Some("coordination_preparation_failed_no_prompt"),
+                )?;
+                return Err(error);
             }
             self.prepare_bindings(&id, &targets, &command.origin)
                 .await?;
@@ -485,6 +496,7 @@ impl Supervisor {
         targets: &[Target],
         origin: &dto::Origin,
     ) -> Result<()> {
+        self.initialize_section_tracking(id).await?;
         for target in targets {
             let saved = self.saved(id)?;
             if saved.code_workspaces.contains_key(&target.repository) {
@@ -534,16 +546,13 @@ impl Supervisor {
         }
         let saved = self.saved(id)?;
         let bindings=saved.view.repository_bindings.iter().map(|b|json!({"repository":b.repository,"directory":format!("repositories/{}",b.repository),"operation":b.operation,"commit":b.commit})).collect::<Vec<_>>();
-        let context = json!({"origin":origin,"repositories":bindings}).to_string();
+        let sanitizer = runtime::sanitizer(self, &saved.workspace.path).await?;
+        let context = runtime::safe(&sanitizer, json!({"origin":origin,"repositories":bindings}))?
+            .to_string();
         self.update(|s| {
             let saved = s.sessions.get_mut(id).ok_or(Error::Invalid)?;
             if saved.context.as_deref() != Some(&context) {
                 saved.context = Some(context);
-                saved.initial_context_delivered = false;
-                saved.context_generation = saved
-                    .context_generation
-                    .checked_add(1)
-                    .ok_or(Error::Limit)?;
             }
             Ok(())
         })?;

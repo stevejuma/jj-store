@@ -22,6 +22,8 @@
   {{#include E-FLEET-010/SUMMARY.nav.md}}
 - [E-FLEET-011](E-FLEET-011/index.md)
   {{#include E-FLEET-011/SUMMARY.nav.md}}
+- [E-FLEET-012](E-FLEET-012/index.md)
+  {{#include E-FLEET-012/SUMMARY.nav.md}}
 - [E-GOV-004](E-GOV-004/index.md)
   {{#include E-GOV-004/SUMMARY.nav.md}}
 - [E-GOV-005](E-GOV-005/index.md)

@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed personal companion initialization, fixed registered native attachment provisioning and independent isolated snapshots; source working files remain protected.",
-      "fingerprint": "cde69ec6b3bac525484c1761da5ed252c7d8cdf20eb0c2abce61727223eb69e9"
+      "reason": "Reviewed metadata-home coordination checkouts and repository/socket proof on reused native attachments; existing local companion formats remain unchanged.",
+      "fingerprint": "9eb265b270f274021acfe4a49416a5f6da3ac2a917527d96834a9baba0a2eabf"
     }
   },
   {
@@ -65,8 +65,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed separate agent execution/settings freshness sources and existing read authorization; transport manual documents body-free LocalTrusted Admin notices without repository authority changes.",
-      "fingerprint": "dbe5bdec27894d31428aeccca7384889d10fcd08f34aac4c1e51a22db0560fda"
+      "reason": "Reviewed typed internal reply context and exact reservation/start bookkeeping; service documentation confirms unchanged authorization and receipt contracts.",
+      "fingerprint": "7ac08cc502234befb50d414ac9cf0de0c44e07f175494623ef206d2f9b74a4b6"
     }
   },
   {
@@ -96,8 +96,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed semantic supervisor witnesses, worker/privacy transitions and no-op suppression; lifecycle manual documents shared notifications and continuity reset without replaying prompts.",
-      "fingerprint": "436818163370ef62d90e53f1be84daca6dc9f73e72eb9cb6e4368ab2c0669dd9"
+      "reason": "Reviewed final formatted Markdown context with direct-session selected operation/base commit, bounded authored history, exact-start journals and bound bundled CLI coordination; transport and storage contracts unchanged.",
+      "fingerprint": "02ea8cc8a8eaf53c2dec6cd49a3b00f2e96b57dfcaabed139760282b80eea858"
     }
   },
   {
@@ -109,8 +109,8 @@
       "docs/site/getting-started/work.md"
     ],
     "review": {
-      "reason": "Reviewed fixed GGUF native dialog sharing bounded single-flight cancellation/reaping; registered CLI commands and installed tools unchanged.",
-      "fingerprint": "8d118ae6b0f0e6821617fd2f07b92c2d6bdf1095ff09805ff8f24997e01012e2"
+      "reason": "Task create/edit now use --target-repository for linked code, leaving global -R for the home checkout; reviewed help descriptions, exact versions and receipt examples.",
+      "fingerprint": "d2b7accc9b327026913a4b55b8cf96b2525ab35dd106e3b8e47fd9b2343fc741"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed exact-request recovery toasts, single-line activity, dismissal retention and Session options recovery without prompt replay.",
-      "fingerprint": "2c8642299477c1785a5ee88d48f69d24597529efa919b0eb149bce19e8a11643"
+      "reason": "Reviewed the single context inspector above authored messages, empty-state omission, legacy captures and retained disclosure during delivery updates.",
+      "fingerprint": "8213e9e362df45ad09748cbf3b03dcf2893c9d9acd1c986937c56ceda54895de"
     }
   },
   {
@@ -154,8 +154,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Regenerated public API type reference for additive agent_execution and agent_settings application event domains; existing payload and authorization boundaries remain unchanged.",
-      "fingerprint": "f7892d32827e05dfc1ec9a31d500cdcd5be45a66b267dcf498705166074a6855"
+      "reason": "Reviewed task CLI argument rename to --target-repository and generated help; global -R selects the metadata checkout. HTTP and ACP shapes are unchanged.",
+      "fingerprint": "7624f2d190e2e9214c2faf15621a3e4d7e001e79cb29140e881e020b4dae6c67"
     }
   },
   {

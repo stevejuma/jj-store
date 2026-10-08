@@ -36,6 +36,11 @@ and pinned page cursors survive process restart. JJ workspaces sharing one
 repository also share metadata and the device actor. Native version-1 responses
 and native authentication remain unchanged.
 
+Task create/edit use `--target-repository <repository-id>` for the linked code
+repository. JJ's global `-R` / `--repository` selects the physical metadata-home
+checkout. The former task-specific `--repository` spelling collided with that
+global option and is replaced by `--target-repository`.
+
 
 ```text
 Usage: jj task [OPTIONS] [COMMAND]
@@ -127,9 +132,10 @@ Usage: jj task create [OPTIONS] --request-id <REQUEST_ID> --project <PROJECT> --
 | `--expected-project-version <EXPECTED_PROJECT_VERSION>` | Exact observed project version; protects task placement and project relationships. Required. |  |
 | `--title <TITLE>` | Complete intended title, subject to the domain's validation and size limits. Required. |  |
 | `--body <BODY>` | Complete intended Markdown body. Edits replace the body rather than applying a text patch. | Default:  |
-| `--repository <REPOSITORY>` | Stable linked code repository identity. A metadata link does not grant access to that repository. |  |
+| `--target-repository <TARGET_REPOSITORY>` | Linked code repository ID; -R selects the metadata-home checkout |  |
 | `--parent <PARENT>` | Parent task identity. Omission on a complete task edit clears the parent relationship. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `-R, --repository <REPOSITORY>` | Path to repository to operate on  By default, Jujutsu searches for the closest .jj/ directory in an ancestor of the current working directory. Inherited by subcommands. |  |
 | `--ignore-working-copy <IGNORE_WORKING_COPY>` | Don't snapshot the working copy, and don't update it  By default, Jujutsu snapshots the working copy at the beginning of every command. The working copy is also updated at the end of the command, if the command modified the working-copy commit (`@`). If you want to avoid snapshotting the working copy and instead see a possibly stale working-copy commit, you can use `--ignore-working-copy`. This may be useful e.g. in a command prompt, especially if you have another process that commits the working copy.  Loading the repository at a specific operation with `--at-operation` implies `--ignore-working-copy`. Inherited by subcommands. | Default: false; Values: true, false |
 | `--no-integrate-operation <NO_INTEGRATE_OPERATION>` | Run the command as usual but don't integrate any operations  When this option is given, the operations will still be created as usual but they will not be integrated to the operation log. The working copy will also not be updated.  The command will print the resulting operation ID. You can pass that to e.g. `jj --at-op` to inspect the resulting repo state, or you can pass it to `jj op restore` to restore the repo to that state. You can also pass the ID to `jj op integrate` to integrate the operation.  Note that this does *not* prevent side effects outside the repo. For example, `jj git push --no-integrate-operation` will still perform the push. Inherited by subcommands. | Default: false; Values: true, false |
 | `--ignore-immutable <IGNORE_IMMUTABLE>` | Allow rewriting immutable commits  By default, Jujutsu prevents rewriting commits in the configured set of immutable commits. This option disables that check and lets you rewrite any commit but the root commit.  This option only affects the check. It does not affect the `immutable_heads()` revset or the `immutable` template keyword. Inherited by subcommands. | Default: false; Values: true, false |
@@ -159,9 +165,10 @@ Usage: jj task edit [OPTIONS] --request-id <REQUEST_ID> --expected-version <EXPE
 | `--title <TITLE>` | Complete intended title, subject to the domain's validation and size limits. Required. |  |
 | `--body <BODY>` | Complete intended Markdown body. Edits replace the body rather than applying a text patch. Required. |  |
 | `--state <STATE>` | Complete intended task state. These values describe work tracking, not code or agent execution state. Required. | Values: open, in-progress, blocked, done |
-| `--repository <REPOSITORY>` | Stable linked code repository identity. A metadata link does not grant access to that repository. |  |
+| `--target-repository <TARGET_REPOSITORY>` | Linked code repository ID; -R selects the metadata-home checkout |  |
 | `--parent <PARENT>` | Parent task identity. Omission on a complete task edit clears the parent relationship. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `-R, --repository <REPOSITORY>` | Path to repository to operate on  By default, Jujutsu searches for the closest .jj/ directory in an ancestor of the current working directory. Inherited by subcommands. |  |
 | `--ignore-working-copy <IGNORE_WORKING_COPY>` | Don't snapshot the working copy, and don't update it  By default, Jujutsu snapshots the working copy at the beginning of every command. The working copy is also updated at the end of the command, if the command modified the working-copy commit (`@`). If you want to avoid snapshotting the working copy and instead see a possibly stale working-copy commit, you can use `--ignore-working-copy`. This may be useful e.g. in a command prompt, especially if you have another process that commits the working copy.  Loading the repository at a specific operation with `--at-operation` implies `--ignore-working-copy`. Inherited by subcommands. | Default: false; Values: true, false |
 | `--no-integrate-operation <NO_INTEGRATE_OPERATION>` | Run the command as usual but don't integrate any operations  When this option is given, the operations will still be created as usual but they will not be integrated to the operation log. The working copy will also not be updated.  The command will print the resulting operation ID. You can pass that to e.g. `jj --at-op` to inspect the resulting repo state, or you can pass it to `jj op restore` to restore the repo to that state. You can also pass the ID to `jj op integrate` to integrate the operation.  Note that this does *not* prevent side effects outside the repo. For example, `jj git push --no-integrate-operation` will still perform the push. Inherited by subcommands. | Default: false; Values: true, false |
 | `--ignore-immutable <IGNORE_IMMUTABLE>` | Allow rewriting immutable commits  By default, Jujutsu prevents rewriting commits in the configured set of immutable commits. This option disables that check and lets you rewrite any commit but the root commit.  This option only affects the check. It does not affect the `immutable_heads()` revset or the `immutable` template keyword. Inherited by subcommands. | Default: false; Values: true, false |

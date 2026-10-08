@@ -265,3 +265,7 @@ dependencies do not enter storage, WAL or repository publication authority.
 Installation settings and credential references remain outside repository
 checkouts. Exact context snapshots publish through the existing sanitized
 AgentStore messages and receipts.
+
+Agent prompt preparation retains typed committed reply records and a sanitized
+Markdown context document. Section/reply reservations acknowledge only an exact
+started request; native and local mutation/receipt authority remains unchanged.

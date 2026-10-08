@@ -46,3 +46,8 @@ replication is not yet qualified. If code repositories need native upstream
 sync, use a separate metadata home and link those code repositories. Local
 Git-backed homes use the companion ref and can run server-free CLI commands, but
 ordinary Git push does not synchronize that collaboration history automatically.
+
+Task create/edit use `--target-repository <repository-id>` for the linked code
+repository. JJ's global `-R` / `--repository` selects the physical metadata-home
+checkout. The former task-specific `--repository` spelling collided with that
+global option and is replaced by `--target-repository`.

@@ -1,50 +1,158 @@
-//! Prepared context is retained independently of authored prompt bytes.
+//! One sanitized context document supplies both the wire and retained inspector.
 use super::*;
+use serde::{Deserialize, Serialize};
+mod cli;
+mod history;
+mod markdown;
+mod origin;
+mod tracking;
+pub(super) use history::retained;
 
-pub(super) fn prepared(saved: &SavedSession, feedback: &str, first: bool) -> Result<String> {
-    let history = commands::retained_context(saved);
-    let mut sections = Vec::new();
-    if first {
-        sections.push(section("instructions", &saved.instructions));
-        sections.push(section(
-            "repository_context",
-            saved.context.as_deref().unwrap_or(""),
-        ));
-        sections.push(section("conversation_history", &history));
+#[derive(Clone, Serialize, Deserialize)]
+pub(super) struct Section {
+    pub kind: String,
+    pub title: String,
+    pub text: String,
+}
+impl Section {
+    fn new(kind: &str, title: &str, text: String) -> Self {
+        Self {
+            kind: kind.into(),
+            title: title.into(),
+            text,
+        }
     }
-    sections.push(section("discussion_context", feedback));
-    let body = sections
-        .into_iter()
-        .filter(|s| !s.is_empty())
-        .collect::<Vec<_>>()
-        .join("\n");
-    let context = if body.is_empty() {
-        String::new()
-    } else {
-        format!("<agent_context>\n{body}\n</agent_context>")
-    };
-    if context.len() > 512 * 1024 {
-        return Err(Error::FeedbackLimit);
+}
+#[derive(Default, Serialize, Deserialize)]
+pub(super) struct Document {
+    pub blocks: Vec<Section>,
+    pub revisions: BTreeMap<String, String>,
+}
+impl Document {
+    fn render(&self) -> Result<String> {
+        let body = self
+            .blocks
+            .iter()
+            .map(|b| section(&b.kind, &b.text))
+            .collect::<Vec<_>>()
+            .join("\n\n");
+        let rendered = if body.is_empty() {
+            String::new()
+        } else {
+            format!("<agent_context>\n\n{body}\n\n</agent_context>")
+        };
+        if rendered.len() > 512 * 1024 {
+            return Err(Error::FeedbackLimit);
+        }
+        Ok(rendered)
     }
-    Ok(context)
 }
 
-// Fenced data prevents captured XML/Markdown from closing the context section.
-// The fence is longer than every run in the body; no authored bytes are lost.
+impl Supervisor {
+    pub(super) async fn prompt_frame(
+        &self,
+        saved: &SavedSession,
+        command: &Command,
+        batch: &mut context::ContextBatch,
+        first: bool,
+    ) -> Result<Value> {
+        let Action::Prompt {
+            text,
+            max_duration_ms,
+        } = &command.action
+        else {
+            return Err(Error::Invalid);
+        };
+        self.initialize_section_tracking(&saved.view.id).await?;
+        let sanitizer = runtime::sanitizer(self, &saved.workspace.path).await?;
+        *batch = serde_json::from_value(runtime::safe(
+            &sanitizer,
+            serde_json::to_value(&batch).map_err(|_| Error::Invalid)?,
+        )?)
+        .map_err(|_| Error::Invalid)?;
+        if batch.text.len() > 32768 {
+            return Err(Error::FeedbackLimit);
+        }
+        let mut document = Document::default();
+        if first {
+            document.blocks.push(Section::new(
+                "instructions",
+                "Agent instructions",
+                saved.instructions.clone(),
+            ));
+            document.blocks.push(Section::new(
+                "cli",
+                "Bundled JJ CLI",
+                cli::guidance(saved, &self.0.resources.jj_executable),
+            ));
+            let mut workspace = format!(
+                "Working directory: {}\n\nMetadata home: {}",
+                saved.workspace.path.display(),
+                saved.view.repository
+            );
+            if saved.view.conversation_id.is_none() {
+                workspace.push_str(&format!(
+                    "\n\nSelected operation: {}\n\nBase commit: {}",
+                    saved.view.operation, saved.view.base_commit
+                ));
+            }
+            workspace.push_str("\n\nCode edits belong in the listed code directories. Coordination metadata uses its own checkout.");
+            document
+                .blocks
+                .push(Section::new("workspace", "Workspace", workspace));
+            document.blocks.push(Section::new(
+                "conversation_history",
+                "Retained conversation",
+                saved.continuation.clone(),
+            ));
+        }
+        let known = self.read(|s| Ok(delivery::section_revisions(s, &saved.view.id)))?;
+        for block in origin::sections(saved) {
+            let block: Section = serde_json::from_value(runtime::safe(
+                &sanitizer,
+                serde_json::to_value(block).map_err(|_| Error::Invalid)?,
+            )?)
+            .map_err(|_| Error::Invalid)?;
+            let revision = journal::digest(&block)?;
+            if first || known.get(&block.kind) != Some(&revision) {
+                document.revisions.insert(block.kind.clone(), revision);
+                document.blocks.push(block);
+            }
+        }
+        let discussion = origin::discussion(batch);
+        if discussion.len() > 32768 {
+            return Err(Error::FeedbackLimit);
+        }
+        document.blocks.push(Section::new(
+            "discussion_context",
+            "Discussion replies",
+            discussion,
+        ));
+        document.blocks.retain(|b| !b.text.is_empty());
+        let document: Document = serde_json::from_value(runtime::safe(
+            &sanitizer,
+            serde_json::to_value(document).map_err(|_| Error::Invalid)?,
+        )?)
+        .map_err(|_| Error::Invalid)?;
+        let original = runtime::safe(&sanitizer, json!({"text":text}))?["text"]
+            .as_str()
+            .ok_or(Error::Invalid)?
+            .to_owned();
+        let context = document.render()?;
+        // The structured source is sanitized before Markdown framing. Evidence and
+        // dispatch receive precisely the same final text and context bytes.
+        let captured = sent_context::capture(&document, &original, &context);
+        Ok(
+            json!({"version":2,"type":"prompt","requestId":command.request_id.to_string(),"text":original,"context":context,"maxDurationMs":max_duration_ms,"userText":original,"sentContext":captured}),
+        )
+    }
+}
+
 pub(super) fn section(name: &str, value: &str) -> String {
     if value.is_empty() {
         return String::new();
     }
-    let longest = value.split(|c| c != '`').map(str::len).max().unwrap_or(0);
-    let fence = "`".repeat(longest.max(2) + 1);
-    let (language, body) = match serde_json::from_str::<Value>(value) {
-        Ok(value) => (
-            "json",
-            serde_json::to_string_pretty(&value).unwrap_or_default(),
-        ),
-        Err(_) => ("text", value.to_owned()),
-    };
-    format!("<{name}>\n{fence}{language}\n{body}\n{fence}\n</{name}>")
+    format!("<{name}>\n\n{}\n\n</{name}>", markdown::body(value))
 }
 
 /// Older frames retained a prepared prefix in text. Project only an exact
@@ -73,10 +181,27 @@ pub(super) fn presentation(event: &mut Event, state: &State) {
     if !prefix.trim().is_empty() {
         event.payload["context"] = json!(format!(
             "<agent_context>\n{}\n</agent_context>",
-            section("captured_context", &prefix)
+            legacy_section("captured_context", &prefix)
         ));
     }
 }
 
 #[cfg(test)]
 mod tests;
+
+// Immutable legacy captures keep their original bytes inside an inert fence.
+fn legacy_section(name: &str, value: &str) -> String {
+    if value.is_empty() {
+        return String::new();
+    }
+    let longest = value.split(|c| c != '`').map(str::len).max().unwrap_or(0);
+    let fence = "`".repeat(longest.max(2) + 1);
+    let (language, body) = match serde_json::from_str::<Value>(value) {
+        Ok(value) => (
+            "json",
+            serde_json::to_string_pretty(&value).unwrap_or_default(),
+        ),
+        Err(_) => ("text", value.to_owned()),
+    };
+    format!("<{name}>\n{fence}{language}\n{body}\n{fence}\n</{name}>")
+}

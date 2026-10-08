@@ -103,3 +103,13 @@ fn ordinary_environment_references_are_not_credential_redactions() {
         Some(&EnvironmentValue::Keychain("provider".into()))
     ));
 }
+
+#[test]
+fn bundled_cli_path_cannot_be_supplied_by_a_setup() {
+    let mut options = RuntimeOptions::default();
+    options.environment.insert(
+        "JJ_STORE_AGENT_JJ_EXECUTABLE".into(),
+        EnvironmentValue::Literal("/incorrect/jj".into()),
+    );
+    assert!(matches!(validate(&options), Err(Error::Invalid)));
+}

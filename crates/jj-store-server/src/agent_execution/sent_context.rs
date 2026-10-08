@@ -1,23 +1,7 @@
 //! Exact sanitized application context captured before dispatch, independent of the UI.
 use super::*;
-pub(super) fn capture(saved: &SavedSession, original: &str, feedback: &str, first: bool) -> Value {
-    let mut blocks = Vec::new();
-    if first {
-        if !saved.instructions.is_empty() {
-            blocks.push(json!({"kind":"instructions","title":"Agent instructions","text":saved.instructions}));
-        }
-        if let Some(context) = &saved.context {
-            blocks.push(json!({"kind":"origin","title":"Page and repository context","text":context,"data":serde_json::from_str::<Value>(context).ok()}));
-        }
-        let retained = commands::retained_context(saved);
-        if !retained.is_empty() {
-            blocks.push(json!({"kind":"continuation","title":"Retained conversation context","text":retained}));
-        }
-    }
-    if !feedback.is_empty() {
-        blocks.push(json!({"kind":"discussion","title":"Discussion replies","text":feedback}));
-    }
-    json!({"version":1,"message":original,"blocks":blocks,"delivery":"prepared"})
+pub(super) fn capture(document: &prompt_context::Document, original: &str, context: &str) -> Value {
+    json!({"version":1,"message":original,"blocks":document.blocks,"sectionRevisions":document.revisions,"delivery":"prepared","wireText":original,"wireContext":context})
 }
 
 pub(super) fn outcome(state: &mut State, request: RequestId, status: &str) -> Result<()> {

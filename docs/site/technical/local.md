@@ -697,3 +697,7 @@ registered folders use an isolated JJ workspace. Each conversation, agent and
 repository retains its own binding. Selected operations and revisions stay
 distinct from the latest isolated snapshot. Dirty source files remain untouched;
 no automatic merge, push or cleanup occurs.
+
+Agent coordination uses a separate checkout bound to the conversation metadata
+home. Native materialization reuse checks both repository ID and LocalTrusted
+socket; local companion checkouts retain the same repository-owned metadata.

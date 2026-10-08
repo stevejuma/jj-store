@@ -64,3 +64,13 @@ preparation, visible journal settlement and worker transitions. Repeated private
 bookkeeping with unchanged visible state stays quiet. This event integration
 preserves JST-CLI-004 executable selection, saved Start/Stop state, explicit
 Send and bounded shutdown; no CLI mutation or prompt replay is introduced.
+
+The supervisor validates the paired `jj` file and executable bit, then exports
+`JJ_STORE_AGENT_JJ_EXECUTABLE` to every harness. Setup environment fields cannot
+override controller-owned names. Bootstrap Markdown identifies the privacy-safe
+path and uses a quoted environment-variable invocation. Before contextual Send,
+a dedicated `coordination` checkout binds the conversation metadata home; CLI
+project/task examples target it and review/code examples target code
+attachments. Native reuse verifies the exact repository and LocalTrusted socket
+binding. No new CLI subcommand, installed-tool replacement or implicit user task
+write is introduced; JST-CLI-004 retains existing command and receipt authority.

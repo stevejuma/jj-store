@@ -342,3 +342,9 @@ renderer before the authored message. Raw bootstrap JSON cannot be concatenated
 into authored text. Retained legacy prompts may expose an exact original from
 the delivery intent and its captured prefix as separate XML context; immutable
 published messages and observation payloads are not rewritten.
+
+Each authored message has at most one collapsed application-context inspector,
+placed before its text across live inbox, contextual chat and recorded history.
+It displays exact retained Markdown, delivery state and optional raw payload;
+empty context produces no inspector. Delivery updates preserve the message's
+identity, time and disclosure state. No duplicate context footer is rendered.

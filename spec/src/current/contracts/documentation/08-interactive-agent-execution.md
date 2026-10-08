@@ -66,3 +66,9 @@ use the shared shadcn controls with keyboard access and labelled defaults.
 The guide describes the one-line unresolved-request activity strip, actionable
 recovery toast, dismissal retention and exact-request submission guard. Review
 workspace opens the original session without replaying its prompt.
+
+The execution guide documents native Markdown context, one inspector above each
+message, bootstrap versus incremental delivery and restored/fresh adapter
+behavior. It identifies the bundled custom `jj`, its reserved executable
+variable and the separate metadata-home coordination checkout. Task/review
+workflows retain user scope, exact version preconditions and receipt recovery.

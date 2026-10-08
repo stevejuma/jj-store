@@ -29,3 +29,8 @@ responses use version 2 and explicit Git metadata identifiers. Request receipts
 and pinned page cursors survive process restart. JJ workspaces sharing one
 repository also share metadata and the device actor. Native version-1 responses
 and native authentication remain unchanged.
+
+Task create/edit use `--target-repository <repository-id>` for the linked code
+repository. JJ's global `-R` / `--repository` selects the physical metadata-home
+checkout. The former task-specific `--repository` spelling collided with that
+global option and is replaced by `--target-repository`.

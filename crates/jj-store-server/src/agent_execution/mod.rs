@@ -10,6 +10,7 @@ mod conversation_links;
 mod conversation_origin;
 mod conversation_prompts;
 mod conversations;
+mod coordination;
 mod delivery;
 pub mod driver;
 mod feedback;
@@ -49,6 +50,7 @@ pub struct Resources {
     pub actor: PrincipalId,
     pub root: PathBuf,
     pub executable: PathBuf,
+    pub jj_executable: PathBuf,
     pub driver: Arc<dyn WorkspaceDriver>,
     pub folders: Option<Arc<dyn LocalRepositories>>,
     pub workspaces: Option<Arc<dyn WorkspaceManager>>,
@@ -91,6 +93,28 @@ impl Supervisor {
             .map_err(|_| Error::Unavailable)?;
         if !resources.executable.is_file() {
             return Err(Error::Unavailable);
+        }
+        resources.jj_executable = resources
+            .jj_executable
+            .canonicalize()
+            .map_err(|_| Error::Unavailable)?;
+        if !resources.jj_executable.is_file() {
+            return Err(Error::Unavailable);
+        }
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt as _;
+            if resources
+                .jj_executable
+                .metadata()
+                .map_err(|_| Error::Unavailable)?
+                .permissions()
+                .mode()
+                & 0o111
+                == 0
+            {
+                return Err(Error::Unavailable);
+            }
         }
         journal::private_directory(&resources.root)?;
         journal::private_directory(&resources.root.join("workspaces"))?;

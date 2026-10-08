@@ -282,6 +282,11 @@ impl Supervisor {
                 command.env(name, value);
             }
         }
+        // This capability is controller-owned, even if a setup names the same variable.
+        command.env(
+            "JJ_STORE_AGENT_JJ_EXECUTABLE",
+            &self.0.resources.jj_executable,
+        );
         Ok(())
     }
     pub(super) fn register_launch_secrets(

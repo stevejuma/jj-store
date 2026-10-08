@@ -227,6 +227,7 @@ pub(super) async fn prepare(
                 actor: *principal,
                 root: state.join("agent-execution"),
                 executable: executable.into(),
+                jj_executable: jj.clone(),
                 driver: Arc::new(crate::agent_execution::driver::Driver(
                     jj_store_jj::agent_workspaces::Provider { executable: jj },
                 )),

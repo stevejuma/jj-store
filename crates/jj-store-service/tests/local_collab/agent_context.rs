@@ -105,6 +105,8 @@ async fn incremental_context_tracks_primary_thread_edits_nested_replies_and_snap
         .await
         .unwrap();
     assert_eq!(first.revisions.len(), 1);
+    assert_eq!(first.replies.len(), 1);
+    assert!(first.revisions.contains(&first.replies[0].reply));
     assert!(first.text.contains("From repository thread screen"));
     assert!(!first.text.contains("Unrelated"));
     assert!(

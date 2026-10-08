@@ -233,3 +233,7 @@ session preparation page or existing session workspace. Editing uses the
 Community avatar and harness/model form. See
 [Interactive agent sessions](agent-execution.md) for live status, saved
 preferences and recovery from a concurrent save.
+
+Agent messages show one collapsed context inspector above the authored text. It
+retains Markdown and exact raw context with delivery status. Messages without
+additional context have no inspector; historical captures use their saved data.

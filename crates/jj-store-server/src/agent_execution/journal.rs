@@ -12,6 +12,12 @@ pub(super) struct SavedSession {
     #[serde(default)]
     pub options: settings::RuntimeOptions,
     pub context: Option<String>,
+    #[serde(default)]
+    pub continuation: String,
+    #[serde(default)]
+    pub delivered_sections: BTreeMap<String, String>,
+    #[serde(default)]
+    pub coordination: Option<Workspace>,
     pub events: Vec<Event>,
     #[serde(default)]
     pub workspace_ready: bool,

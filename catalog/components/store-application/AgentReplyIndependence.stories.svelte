@@ -148,6 +148,9 @@
       ),
     ).toBe(true);
     await userEvent.click(
+      await c.findByText("Prepared context", { exact: true }),
+    );
+    await userEvent.click(
       await c.findByRole("button", { name: "<agent_context>" }),
     );
     await userEvent.click(

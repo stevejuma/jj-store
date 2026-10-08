@@ -79,3 +79,9 @@ workers retain their launch environment until explicitly restarted. The
 controller supplies managed local/paired inference endpoints and private process
 tokens. No raw credential belongs in an executable path, command argument,
 repository file or browser persistence.
+
+The agent supervisor exports its verified paired custom CLI as
+`JJ_STORE_AGENT_JJ_EXECUTABLE` to harness processes. Agent setup environment
+values cannot override this reserved variable. Prompt examples quote the
+variable to support executable paths containing spaces and privacy-safe
+transcript paths.

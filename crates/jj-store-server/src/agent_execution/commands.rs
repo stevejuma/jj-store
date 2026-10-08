@@ -290,10 +290,8 @@ impl Manager for Supervisor {
                 }
                 self.authorized(saved.view.repository, &saved.profile, true)
                     .await?;
-                let context = prompt_context::prepared(&saved, &feedback.text, first)?;
                 frame["type"] = json!("prompt");
                 frame["text"] = json!(text);
-                frame["context"] = json!(context);
                 context_batch = Some(feedback);
                 frame["maxDurationMs"] = json!(max_duration_ms);
             }
@@ -393,33 +391,22 @@ impl Manager for Supervisor {
             }
         }
         if let Some(mut batch) = context_batch {
-            let sanitizer = runtime::sanitizer(self, &saved.workspace.path).await?;
-            let original = if let Action::Prompt { text, .. } = &command.action {
-                text
-            } else {
-                return Err(Error::Invalid);
-            };
-            batch.text = runtime::safe(&sanitizer, json!({"text":batch.text}))?["text"]
+            let recorded = self
+                .prompt_frame(&saved, &command, &mut batch, carries_initial_context)
+                .await?;
+            let original = recorded["userText"]
                 .as_str()
                 .ok_or(Error::Invalid)?
                 .to_owned();
-            if batch.text.len() > 32768 {
-                return Err(Error::FeedbackLimit);
-            }
-            let original = runtime::safe(&sanitizer, json!({"text":original}))?["text"]
-                .as_str()
+            frame = recorded.clone();
+            frame
+                .as_object_mut()
                 .ok_or(Error::Invalid)?
-                .to_owned();
-            // Dispatch exactly the sanitized frame retained with the original intent.
-            frame = runtime::safe(&sanitizer, frame)?;
-            let mut recorded = frame.clone();
-            recorded["userText"] = json!(original);
-            recorded["sentContext"] = runtime::safe(
-                &sanitizer,
-                sent_context::capture(&saved, &original, &batch.text, carries_initial_context),
-            )?;
-            recorded["sentContext"]["wireText"] = recorded["text"].clone();
-            recorded["sentContext"]["wireContext"] = recorded["context"].clone();
+                .remove("userText");
+            frame
+                .as_object_mut()
+                .ok_or(Error::Invalid)?
+                .remove("sentContext");
             self.update(|s| {
                 delivery::prepare(
                     s,
@@ -743,44 +730,5 @@ mod tests {
         let restored: Session =
             serde_json::from_value(serde_json::to_value(&session).unwrap()).unwrap();
         assert_eq!(restored.setup_id.as_deref(), Some("helper"));
-    }
-}
-
-pub(super) fn retained_context(saved: &SavedSession) -> String {
-    if saved.view.conversation_id.is_none()
-        || !saved
-            .events
-            .iter()
-            .any(|e| e.payload["type"] == "continuation")
-    {
-        return String::new();
-    }
-    let mut bytes = 0;
-    let mut messages = saved
-        .events
-        .iter()
-        .rev()
-        .filter_map(|e| {
-            let (role, text) = match e.payload["type"].as_str() {
-                Some("prompt") => ("user", e.payload["text"].as_str()?),
-                Some("record") => ("assistant", e.payload["assistantText"].as_str()?),
-                _ => return None,
-            };
-            if text.len() > 16384 || bytes + text.len() > 16384 {
-                return None;
-            }
-            bytes += text.len();
-            Some(json!({"role":role,"text":text}).to_string())
-        })
-        .take(20)
-        .collect::<Vec<_>>();
-    messages.reverse();
-    if messages.is_empty() {
-        String::new()
-    } else {
-        format!(
-            "Retained conversation history (continuation):\n{}\nEnd retained history.",
-            messages.join("\n")
-        )
     }
 }

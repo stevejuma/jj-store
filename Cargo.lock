@@ -4245,6 +4245,7 @@ dependencies = [
  "jj-store-wal",
  "notify",
  "percent-encoding",
+ "pulldown-cmark",
  "reqwest",
  "rustix",
  "security-framework 3.7.0",

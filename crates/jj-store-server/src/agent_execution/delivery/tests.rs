@@ -35,7 +35,7 @@ fn prepare_one(state: &mut State, id: &str, n: u8) -> RequestId {
     let request = RequestId::new([n; 16]);
     let carries = needs_initial_context(state, id).unwrap();
     prepare(state, id, request, format!("digest-{n}"), "Original prompt".into(),
-        ContextBatch { revisions:BTreeSet::from([revision(n)]), text: format!("Feedback {n}") },
+        ContextBatch { revisions:BTreeSet::from([revision(n)]), text: format!("Feedback {n}"), ..Default::default() },
         json!({"type":"prompt","requestId":request.to_string(),"text":format!("Feedback {n}\nOriginal prompt")}), carries).unwrap();
     request
 }
@@ -153,21 +153,31 @@ fn continuation_tracks_only_structured_feedback_in_whole_retained_records() {
     append(
         &mut state,
         &id,
-        json!({"type":"record","requestId":a,"assistantText":"x".repeat(32768)}),
+        json!({"type":"record","requestId":a,"assistantText":"Answer **one**"}),
     )
     .unwrap();
-    let b = prepare_one(&mut state, &id, 11);
-    observe(&mut state, &id, &json!({"type":"started","requestId":b})).unwrap();
     continuation(&mut state, &id).unwrap();
-    assert_eq!(
-        state.sessions[&id].context_replies,
-        BTreeSet::from([revision(11)])
-    );
-    assert!(state.sessions[&id].view.adapter_session_id.is_none());
-    let context = state.sessions[&id].context.as_ref().unwrap();
-    assert!(context.contains("Feedback 11"));
-    assert!(!context.contains("Feedback 10"));
-    assert!(context.len() <= 32768);
+    let saved = &state.sessions[&id];
+    assert!(saved.context_replies.is_empty());
+    assert!(saved.view.adapter_session_id.is_none());
+    assert!(saved.continuation.contains("Original prompt"));
+    assert!(saved.continuation.contains("Answer **one**"));
+    assert!(!saved.continuation.contains("Feedback 10"));
+    assert!(!saved.continuation.contains("requestId"));
+    assert!(saved.continuation.len() <= 16384);
+    for _ in 0..21 {
+        append(
+            &mut state,
+            &id,
+            json!({"type":"record","assistantText":"Retained answer"}),
+        )
+        .unwrap();
+    }
+    continuation(&mut state, &id).unwrap();
+    let history = &state.sessions[&id].continuation;
+    assert!(history.starts_with("_Earlier conversation was omitted"));
+    assert_eq!(history.matches("### Assistant").count(), 20);
+    assert!(history.len() <= 16384);
 }
 
 #[test]
@@ -257,4 +267,61 @@ fn context_delivery_tracks_acknowledged_start_and_unknown_restart_without_recons
         restored.sessions[&id].events.last().unwrap().payload["sentContext"]["delivery"],
         "sent"
     );
+}
+
+#[test]
+fn section_deltas_reserve_in_order_acknowledge_release_and_survive_restart() {
+    let root = tempfile::tempdir().unwrap();
+    let (mut state, id) = fixture(root.path());
+    fn reserve(state: &mut State, id: &str, n: u8, revision: &str) -> RequestId {
+        let request = RequestId::new([n; 16]);
+        prepare(
+            state,
+            id,
+            request,
+            format!("digest-{n}"),
+            "Message".into(),
+            ContextBatch::default(),
+            json!({"type":"prompt", "requestId":request, "text":"Message", "context":"context",
+                "sentContext":{"version":1,"sectionRevisions":{"origin":revision}}}),
+            false,
+        )
+        .unwrap();
+        request
+    }
+    let first = reserve(&mut state, &id, 40, "one");
+    assert_eq!(section_revisions(&state, &id)["origin"], "one");
+    assert!(state.sessions[&id].delivered_sections.is_empty());
+    let second = reserve(&mut state, &id, 30, "two"); // UUID order is not turn order.
+    assert_eq!(section_revisions(&state, &id)["origin"], "two");
+    observe(
+        &mut state,
+        &id,
+        &json!({"type":"started","requestId":first}),
+    )
+    .unwrap();
+    assert_eq!(state.sessions[&id].delivered_sections["origin"], "one");
+    assert_eq!(section_revisions(&state, &id)["origin"], "two");
+    let count = state.sessions[&id].events.len();
+    observe(
+        &mut state,
+        &id,
+        &json!({"type":"started","requestId":first}),
+    )
+    .unwrap();
+    assert_eq!(state.sessions[&id].events.len(), count);
+    journal::persist(root.path(), &state).unwrap();
+    state = journal::read(root.path()).unwrap();
+    assert_eq!(section_revisions(&state, &id)["origin"], "two");
+    assert_eq!(state.intents[&second].outcome.state, "outcome_unknown");
+    observe(
+        &mut state,
+        &id,
+        &json!({"type":"error","requestId":second,"code":"dispatch_not_sent"}),
+    )
+    .unwrap();
+    assert_eq!(section_revisions(&state, &id)["origin"], "one");
+    continuation(&mut state, &id).unwrap();
+    assert!(section_revisions(&state, &id).is_empty());
+    assert!(needs_initial_context(&state, &id).unwrap());
 }

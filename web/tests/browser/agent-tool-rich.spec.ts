@@ -265,6 +265,14 @@ test("cold ACP tools show highlighted captured files and independent raw JSON vi
   await expect(
     page.locator('time[datetime="2026-10-06T21:59:59.000Z"]'),
   ).toBeVisible();
+  await expect(
+    page.locator('[data-ui-component="agent-sent-context"]'),
+  ).toHaveCount(1);
+  await page.getByText("Prepared context", { exact: true }).focus();
+  await page.keyboard.press("Enter");
+  await expect(
+    page.locator('[data-ui-component="agent-sent-context"]'),
+  ).toHaveAttribute("open", "");
   await page
     .getByRole("button", { name: "<agent_context>", exact: true })
     .click();

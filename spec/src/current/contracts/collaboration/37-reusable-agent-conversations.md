@@ -164,3 +164,28 @@ any structured content so recorded read/command views can display original
 bytes. Existing content-only observations keep their representation. Native
 aliases, normalizer profile identity and publication receipts remain unchanged;
 older observations and snapshots are never rewritten.
+
+## Markdown context and coordination CLI
+
+JST-COLLAB-034 through JST-COLLAB-036 use semantic XML sections containing
+native Markdown, separate from authored text. One sanitized typed document
+produces both retained evidence and ACP context. Captured markup cannot create
+application sections; literal code remains code. Continuations contain bounded
+authored messages and assistant replies, never nested injected context.
+
+Bootstrap delivery belongs to the adapter session, independently of origin and
+repository section revisions. Only changed sections and new/edited committed
+human replies accompany subsequent explicit Sends. Reservations, exact started
+acknowledgement, proven non-delivery release and unknown-outcome retention apply
+to both section revisions and replies. Loaded sessions retain progress; fresh
+adapters receive bootstrap and bounded continuation. Old evidence is immutable.
+
+The controller supplies its verified paired custom `jj` executable through a
+reserved environment variable. It provisions and verifies a separate
+coordination checkout for the metadata home before contextual dispatch, using
+existing native attachment or local workspace authority. This is not a code
+attachment or code change. Paths in evidence retain transcript privacy
+substitutions; runnable examples use the executable variable and relative
+verified directories. Task and review writes require the user's task scope,
+exact versions and stable request IDs; uncertain outcomes use existing receipt
+lookup, never blind retry.

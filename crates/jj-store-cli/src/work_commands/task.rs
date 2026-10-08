@@ -17,8 +17,9 @@ pub struct TaskFields {
     body: String,
     #[arg(long, value_enum)]
     state: State,
+    /// Linked code repository ID; -R selects the metadata-home checkout
     #[arg(long)]
-    repository: Option<RepositoryId>,
+    target_repository: Option<RepositoryId>,
     #[arg(long)]
     parent: Option<TaskId>,
 }
@@ -72,8 +73,9 @@ pub enum TaskCommand {
         title: String,
         #[arg(long, default_value = "")]
         body: String,
+        /// Linked code repository ID; -R selects the metadata-home checkout
         #[arg(long)]
-        repository: Option<RepositoryId>,
+        target_repository: Option<RepositoryId>,
         #[arg(long)]
         parent: Option<TaskId>,
     },
@@ -188,7 +190,7 @@ pub async fn run_task(
             expected_project_version,
             title,
             body,
-            repository,
+            target_repository,
             parent,
         } => (
             request_id,
@@ -198,7 +200,7 @@ pub async fn run_task(
                 expected_project_version,
                 title,
                 body,
-                repository,
+                repository: target_repository,
                 parent,
             },
         ),
@@ -217,7 +219,7 @@ pub async fn run_task(
                 title: fields.title,
                 body: fields.body,
                 state: fields.state.value(),
-                repository: fields.repository,
+                repository: fields.target_repository,
                 parent: fields.parent,
             },
         ),

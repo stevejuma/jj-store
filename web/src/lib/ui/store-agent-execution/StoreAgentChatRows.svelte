@@ -83,7 +83,14 @@
       openReply={restoredReply === row.key}
     >
       {#snippet content()}
-        <StoreAgentPromptContent {row} members={[author]} />
+        <StoreAgentPromptContent
+          content={row.text}
+          context={row.kind === "user" && typeof row.value.context === "string"
+            ? row.value.context
+            : ""}
+          sentContext={row.kind === "user" ? row.value.sentContext : undefined}
+          members={[author]}
+        />
       {/snippet}
       {#if row.kind === "user" && queued.has(row.request) && row.session.connected}<Button
           type="button"

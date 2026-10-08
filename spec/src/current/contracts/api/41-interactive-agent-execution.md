@@ -105,3 +105,9 @@ Admin and exposes only sanitized advertised configuration choices. Unknown
 harnesses and extra directory/prompt/actor inputs are refused. The bounded
 no-prompt discovery, ephemeral adapter negotiation, process-slot admission,
 cleanup and memory-only cache are governed by the M24 conversation chapter.
+
+Markdown context and its single retained inspector leave JST-API-001 HTTP and
+ACP request shapes unchanged. Existing prompt and context-delivery payloads
+carry the same authored text and sent-context envelope. Additional internal
+section revision metadata is additive; old snapshots remain readable and are
+never rewritten from current workspace state.

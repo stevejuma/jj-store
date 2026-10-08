@@ -19,6 +19,20 @@ pub struct ReplyRevision {
 pub struct ContextBatch {
     pub revisions: BTreeSet<ReplyRevision>,
     pub text: String,
+    #[serde(default)]
+    pub replies: Vec<ContextReply>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct ContextReply {
+    pub reply: ReplyRevision,
+    pub actor: jj_store_model::PrincipalId,
+    pub body: String,
+    pub reply_to: Option<CollabObjectRef>,
+    pub original_message: Option<ReactionTargetV1>,
+    pub thread_revision: CollabObjectRef,
+    pub thread_title: String,
 }
 
 pub(crate) async fn collect(
@@ -115,6 +129,15 @@ pub(crate) async fn collect(
         if batch.revisions.len() > 128 || bytes > 32768 {
             return Err(Error::Limit);
         }
+        batch.replies.push(ContextReply {
+            reply: identity,
+            actor: message.actor,
+            body: body.clone(),
+            reply_to: message.reply_to,
+            original_message: original_message.clone(),
+            thread_revision: *thread_revision,
+            thread_title: thread.title.clone(),
+        });
         lines.push(line);
     }
     if !lines.is_empty() {

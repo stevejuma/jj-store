@@ -39,3 +39,8 @@ shared read-worker admission. A retry retains the exact operation, companion
 selection and query, including its continuation; it never captures a newer
 snapshot. Only read operations retry automatically. Registration and domain
 commands retain their explicit receipt and unknown-outcome handling.
+
+M24 coordination CLI access uses an isolated workspace of the existing metadata
+home, preserving the same local companion authority. Task reads/writes use the
+existing local WorkStore CLI and receipt contracts; no new companion format,
+code authority or automatic repository initialization is introduced.

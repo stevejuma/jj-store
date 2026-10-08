@@ -83,3 +83,8 @@ RAM fit remains separate from measured inference/platform qualification.
 M24 rich tool presentation copies retained-value adapters and Community detail
 helpers into owned production files, with pinned attribution. Shared live chat
 rows retain the existing Community message composition and XML prompt renderer.
+
+E-FLEET-012 qualifies Markdown context with focused controller/service/CLI
+tests, all directly affected transcript story families, and an isolated native
+real-RustFS cold acceptance harness using a deterministic ACP fixture. The new
+harness never consumes provider credentials or qualifies a real adapter.

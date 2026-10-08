@@ -11,7 +11,7 @@
   import StoreAgentTools from "./StoreAgentTools.svelte";
   import { agentMessageTimestamp } from "../../collaboration/presentation.js";
   import { agentTimeline } from "../../collaboration/agent-timeline.js";
-  import StoreAgentSentContext from "../store-agent-execution/StoreAgentSentContext.svelte";
+  import StoreAgentPromptContent from "../store-agent-execution/StoreAgentPromptContent.svelte";
   import {
     agentSentContext,
     agentMessageContent,
@@ -101,7 +101,14 @@
                     .catch(() => {});
               }
             : undefined}
-          >{#snippet supplement()}<StoreMessageActions
+          >{#snippet content()}<StoreAgentPromptContent
+              content={agentMessageContent(entry.content, integration)}
+              sentContext={entry.role === "user"
+                ? agentSentContext(entry.content, integration)
+                : undefined}
+              {members}
+            />{/snippet}
+          {#snippet supplement()}<StoreMessageActions
               {reactionDisabled}
               communityEmojis={controller.threads?.emojis ?? []}
               onReact={canReact && controller.threads && entry.reaction_target
@@ -121,9 +128,7 @@
                 { label: "Copy sequence", value: String(entry.sequence) },
               ]}
             />{/snippet}
-          {#snippet metadataSupplement()}<StoreAgentSentContext
-              value={agentSentContext(entry.content, integration)}
-            />{#if controller.threads && entry.reaction_target}<StoreMessageReactions
+          {#snippet metadataSupplement()}{#if controller.threads && entry.reaction_target}<StoreMessageReactions
                 threads={controller.threads}
                 target={entry.reaction_target}
                 showControls={false}

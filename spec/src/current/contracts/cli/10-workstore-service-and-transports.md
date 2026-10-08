@@ -24,3 +24,8 @@ construction and representative sanitizer/review work are recorded as
 512-MiB resident-memory gates and reports actual measurements on rejection.
 Search cache-loss rebuild timing remains a separate storage/search
 qualification.
+
+Task create/edit use `--target-repository <repository-id>` for the linked code
+repository. JJ's global `-R` / `--repository` selects the physical metadata-home
+checkout. The former task-specific `--repository` spelling collided with that
+global option and is replaced by `--target-repository`.

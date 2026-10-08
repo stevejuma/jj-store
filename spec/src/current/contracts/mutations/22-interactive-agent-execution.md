@@ -28,3 +28,12 @@ M24 adds
 [reusable agent conversations](../collaboration/37-reusable-agent-conversations.md)
 under JST-COLLAB-034 through JST-COLLAB-036. Existing M23 qualification remains
 unchanged.
+
+Prompt preparation now carries typed committed reply records alongside the
+legacy bounded text field. This internal, backward-compatible device-journal
+addition does not change JST-MUT-001 request, receipt or authorization
+contracts. Context section revisions share reserved/delivered/released semantics
+with exact reply revisions. Only the matching started observation acknowledges
+delivery; unknown outcomes remain reserved without replay. Native and local
+metadata CLI work uses existing WorkStore commands, versions and stable request
+identities.

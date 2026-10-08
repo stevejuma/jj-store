@@ -104,6 +104,15 @@ keyboard access, narrow widths and draft retention. M24 remains In progress;
 independent adapter, live-permission and desktop gates and the earlier broad
 audit failures remain open. The existing development acceptance-script line
 limit is unchanged.
+
+## Markdown agent context review — 2026-10-08
+
+E-FLEET-012 replaces JSON prompt dumps with bounded Markdown semantic sections,
+separates bootstrap from incremental origin/repository/reply delivery, provides
+verified bundled CLI guidance and metadata-home coordination checkouts, and
+consolidates the retained transcript inspector above authored text. The review
+retains M24 In progress and its independent real-adapter, live-permission and
+platform gates; fixture/cold-browser evidence does not close those gates.
 <!-- generated-navigation -->
 
 ## Pages

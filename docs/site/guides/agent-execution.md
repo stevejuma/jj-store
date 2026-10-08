@@ -263,20 +263,39 @@ Keep awake is disabled initially and supported by macOS desktop. Actual agent
 activity renews a bounded one-hour idle-sleep assertion. Polling and reconnects
 do not extend it; stopping agents or exiting the app releases the assertion.
 
-Expand Sent context below a user message to inspect its captured instructions,
-page/repository identities, bounded file excerpts, project/task descriptions,
-reply context and exact sanitized text/context blocks. Rich previews use
-captured content and versions rather than fetching current data. Prepared,
-queued, sent, failed and unknown delivery are distinct; historical messages
-without snapshots are not reconstructed. Adapter-internal context is outside
-this disclosure.
+Expand the single context inspector above a user message to inspect its captured
+instructions, page/repository identities, bounded file excerpts, project/task
+descriptions, reply context and exact sanitized text/context blocks. Rich
+previews use captured content and versions rather than fetching current data.
+Prepared, queued, sent, failed and unknown delivery are distinct; historical
+messages without snapshots are not reconstructed. Adapter-internal context is
+outside this disclosure.
 
 Authored text and bootstrap/repository/discussion context are retained
-separately. Context appears as bounded XML sections in the chat and travels in
-the same ACP turn as a separate content block: an embedded resource when the
-adapter advertises support, otherwise a separate ordered text block. Sent
-context retains the exact sanitized wire text and XML; delivery updates preserve
-the original message identity and recorded time. No context-only prompt is sent.
+separately. Context uses bounded XML-like sections containing Markdown and
+travels in the same ACP turn as a separate content block: an embedded resource
+when the adapter advertises support, otherwise a separate ordered text block.
+Sent context retains the exact sanitized wire text and XML; delivery updates
+preserve the original message identity and recorded time. No context-only prompt
+is sent.
+
+Standing instructions, workspace orientation and bundled CLI guidance are sent
+once per adapter session. Later explicit Sends include only changed page or
+attachment context and newly committed or edited discussion replies. Restoring
+an adapter retains delivery progress; an explicit fresh continuation includes
+bootstrap and bounded authored history. Queued or uncertain requests are never
+silently replayed.
+
+The controller exports the actual bundled custom `jj` path as
+`JJ_STORE_AGENT_JJ_EXECUTABLE`. Use `"$JJ_STORE_AGENT_JJ_EXECUTABLE" --help`;
+`jj-store` is the server. Contextual chats have a verified `coordination`
+checkout for their metadata home. Project and task commands use
+`-R ./coordination`; code and review commands use the named
+`repositories/<repository-id>` checkout. Do not initialize a project home inside
+a code attachment. The context includes help and workflow examples; writes still
+require the user's task scope, exact current versions and a stable request ID.
+Query the appropriate command receipt after an uncertain outcome before deciding
+whether to retry.
 
 Open a tool row to see its captured file contents, edit diff, command output or
 search matches. File contents use syntax highlighting when a recorded path

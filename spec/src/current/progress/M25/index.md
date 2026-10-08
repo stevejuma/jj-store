@@ -28,6 +28,14 @@ Settings dropdowns with released shadcn controls. M25 remains In progress;
 distribution and independent M24 gates are unchanged. Exact recovery, retained
 drafts and keyboard behavior are recorded separately from the existing broad
 audit and visual qualification gaps.
+
+## Markdown context review — 2026-10-08
+
+E-FLEET-012 consolidates shared captured context above authored messages and
+provides privacy-safe bundled CLI guidance with an actual metadata-home
+checkout. Cold fixture and built-browser evidence retain M25 In progress; signed
+macOS, WKWebView, Linux CPU distribution and independent M24 adapter gates stay
+open.
 <!-- generated-navigation -->
 
 ## Pages

@@ -342,3 +342,46 @@
     await expect(canvasElement.querySelector("time")).toBeNull();
   }}
 />
+
+<Story
+  name="Recorded owned prompt has one context inspector before authored text"
+  args={{
+    integration: "owned_controller",
+    mediaType: "json",
+    content: JSON.stringify({
+      schema: "jj-store.sent-context.v1",
+      text: "Authored request stays separate.",
+      context: {
+        version: 1,
+        delivery: "sent",
+        wireContext:
+          "<agent_context>\n\n<origin>\n\n## Recorded context\n\n**Captured Markdown**\n\n</origin>\n\n</agent_context>",
+        blocks: [],
+      },
+    }),
+  }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    const inspector = canvasElement.querySelector<HTMLDetailsElement>(
+      '[data-ui-component="agent-sent-context"]',
+    )!;
+    expect(
+      canvasElement.querySelectorAll(
+        '[data-ui-component="agent-sent-context"]',
+      ),
+    ).toHaveLength(1);
+    expect(inspector.open).toBe(false);
+    expect(
+      inspector.compareDocumentPosition(
+        c.getByText("Authored request stays separate."),
+      ) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).not.toBe(0);
+    await userEvent.click(c.getByText("Sent context", { exact: true }));
+    await userEvent.click(c.getByRole("button", { name: "<agent_context>" }));
+    await userEvent.click(c.getByRole("button", { name: "<origin>" }));
+    await expect(
+      c.getByRole("heading", { name: "Recorded context" }),
+    ).toBeVisible();
+    expect(c.getByText("Captured Markdown").tagName).toBe("STRONG");
+  }}
+/>

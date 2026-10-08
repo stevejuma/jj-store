@@ -202,3 +202,9 @@ stop or native Exit; status polling and reconnection cannot renew its inactivity
 deadline. Native runtime/model downloads require explicit actions unless pinned
 runtime artifacts are embedded. macOS and Linux packaged acceptance remain
 separate qualification.
+
+Agent bootstrap belongs to an adapter session. Loaded sessions retain context
+delivery progress; fresh continuations retain bounded authored history without
+nesting old injected context. Coordination checkouts are verified before Send
+and remain separate from code snapshots. No startup automatically replays a
+prompt.

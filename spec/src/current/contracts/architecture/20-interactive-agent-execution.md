@@ -33,3 +33,10 @@ M24 adds
 [reusable agent conversations](../collaboration/37-reusable-agent-conversations.md)
 under JST-COLLAB-034 through JST-COLLAB-036. Existing M23 qualification remains
 unchanged.
+
+The server owns Markdown context assembly and its bounded parser dependency. One
+sanitized document supplies ACP wire context and the retained UI inspector;
+service reply selection remains independent of presentation and controller
+runtimes. Coordination checkouts are separate from code attachments and code
+change summaries. The ACP protocol and storage/model/WAL boundaries are
+unchanged.

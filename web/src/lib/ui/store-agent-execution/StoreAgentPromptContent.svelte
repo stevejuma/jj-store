@@ -1,19 +1,24 @@
 <script lang="ts">
   import CommunityMarkdownContent from "../community-markdown-content/CommunityMarkdownContent.svelte";
   import type { CommunityMemberModel } from "../community-workspace/model.js";
-  import type { ActivityRow } from "./presentation.js";
-  import { text } from "../../controller/agent-execution-types.js";
+  import StoreAgentSentContext from "./StoreAgentSentContext.svelte";
   let {
-    row,
+    content,
+    context = "",
+    sentContext,
     members = [],
-  }: { row: ActivityRow; members?: readonly CommunityMemberModel[] } = $props();
-  const context = $derived(row.kind === "user" ? text(row.value.context) : "");
+  }: {
+    content: string;
+    context?: string;
+    sentContext?: unknown;
+    members?: readonly CommunityMemberModel[];
+  } = $props();
 </script>
 
-{#if context}<CommunityMarkdownContent content={context} promptElements />{/if}
+<StoreAgentSentContext value={sentContext} fallback={context} />
 <CommunityMarkdownContent
   class="community-message__content"
-  content={row.text}
+  {content}
   promptElements
   {members}
 />

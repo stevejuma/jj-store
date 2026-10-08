@@ -20,7 +20,7 @@ impl Provider {
         socket: &Path,
     ) -> Result<Selection> {
         if path.join(".jj").exists() {
-            return self.inspect(path).await;
+            return self.inspect_materialization(repository, path, socket).await;
         }
         let parent = path.parent().ok_or("invalid_destination")?;
         let state = parent.join(format!("attachment-{repository}"));
@@ -42,7 +42,25 @@ impl Provider {
             ],
         )
         .await?;
-        self.inspect(path).await
+        self.inspect_materialization(repository, path, socket).await
+    }
+    async fn inspect_materialization(
+        &self,
+        repository: jj_store_model::RepositoryId,
+        path: &Path,
+        socket: &Path,
+    ) -> Result<Selection> {
+        let selected = self.inspect(path).await?;
+        let connection = regular(&selected.metadata.join("store-connection.json"), 65536)?;
+        let connection: serde_json::Value =
+            serde_json::from_slice(&connection).map_err(|_| "invalid_connection")?;
+        if connection["format"] != 2
+            || connection["repository"] != repository.to_string()
+            || connection["unix_socket"].as_str() != socket.to_str()
+        {
+            return Err("workspace_changed");
+        }
+        Ok(selected)
     }
     async fn provision(&self, parent: &Path, args: &[&str]) -> Result<()> {
         let mut command = tokio::process::Command::new(&self.executable);

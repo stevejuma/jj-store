@@ -7,6 +7,7 @@ pub(super) struct Stream {
 }
 impl Supervisor {
     pub(super) async fn open_participation(&self, setup: &Setup, id: &str) -> Result<()> {
+        self.prepare_coordination(id).await?;
         if self.saved(id)?.view.state == "running" {
             return Ok(());
         }
