@@ -43,6 +43,15 @@ export async function referenceDiscussionLinks(canvasElement: HTMLElement) {
   )!;
   await expect(reply).toHaveFocus();
   expect(reply).toHaveTextContent("Simulated reply:");
+  expect(reply.querySelectorAll(".chat-reply-indicator")).toHaveLength(1);
+  expect(
+    reply.querySelector(".chat-reply-indicator .lucide-corner-up-left"),
+  ).not.toBeNull();
+  const ordinary = canvasElement.querySelector(
+    '[data-chat-item="assistant-63803"]',
+  )!;
+  expect(ordinary).not.toBeNull();
+  expect(ordinary.querySelector(".chat-reply-indicator")).toBeNull();
   expect(
     within(reply).getAllByRole("article", { name: "Comment by You" }),
   ).toHaveLength(2);

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { getAllContexts, onMount, tick, untrack } from "svelte";
   import { MiraCodeEditor, type MiraCodeEditorHandle } from "@lapismd/mira";
+  import { Compartment } from "@codemirror/state";
   import ChatHoverActions from "./ChatHoverActions.svelte";
   import type { EditorView } from "@codemirror/view";
   import { readingExtensions, refreshComments } from "./text-editor.js";
@@ -8,24 +9,29 @@
   import type { ChatBodyComments } from "./comments.svelte.js";
   import { validAnchor } from "./anchors.js";
   import { middleFoldKey } from "./middle-fold.js";
+  import { replyIndicator } from "./reply-indicator.js";
   import "./text-reader.css";
   let {
     block,
     state: comments,
     showHeader = true,
     reactionTarget,
+    reply = false,
   }: {
     block: ChatBodyBlock;
     state: ChatBodyComments;
     showHeader?: boolean;
     reactionTarget?: string;
+    reply?: boolean;
   } = $props();
   let editor: MiraCodeEditorHandle;
   let view = $state<EditorView>();
   const contexts = getAllContexts();
-  const extensions = untrack(() =>
+  const replyPrefix = new Compartment();
+  const extensions = untrack(() => [
     readingExtensions(block, comments, contexts),
-  );
+    replyPrefix.of(reply ? replyIndicator : []),
+  ]);
   onMount(() => {
     let disposed = false;
     void tick().then(() => {
@@ -45,6 +51,11 @@
       comments.readers.delete(block.id);
       view = undefined;
     };
+  });
+  $effect(() => {
+    view?.dispatch({
+      effects: replyPrefix.reconfigure(reply ? replyIndicator : []),
+    });
   });
   $effect(() => {
     comments.active;

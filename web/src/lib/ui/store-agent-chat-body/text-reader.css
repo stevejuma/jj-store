@@ -137,6 +137,15 @@
 .chat-text-reader .chat-strong {
   font-weight: 650;
 }
+.chat-reply-indicator {
+  display: inline-flex;
+  width: 1rem;
+  height: 1rem;
+  margin-inline-end: 0.5rem;
+  vertical-align: -0.125em;
+  color: var(--muted-foreground);
+  user-select: none;
+}
 .chat-text-reader .chat-emphasis {
   font-style: italic;
 }

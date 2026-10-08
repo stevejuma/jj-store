@@ -106,6 +106,16 @@ export const deltaCommentReference = async ({
   await expect(pending).toHaveTextContent(
     "This ignores Rust’s build output directory",
   );
+  for (const id of ["reply-0", "reply-1", "reply-2"]) {
+    const reply = canvasElement.querySelector(`[data-chat-item="${id}"]`)!;
+    await waitFor(() =>
+      expect(reply.querySelectorAll(".chat-reply-indicator")).toHaveLength(1),
+    );
+    expect(
+      reply.querySelector(".cm-line .chat-reply-indicator"),
+    ).not.toBeNull();
+  }
+
   await expect(within(pending).getByRole("textbox")).toHaveTextContent(
     "is this correct?",
   );

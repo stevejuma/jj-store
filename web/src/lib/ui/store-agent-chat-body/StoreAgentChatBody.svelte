@@ -118,6 +118,7 @@
                     blocks={item.blocks}
                     state={comments}
                     reactionTarget={item.id}
+                    reply={item.role === "assistant" && !!item.replyContext}
                     {customBlock}
                   />
                 </div>

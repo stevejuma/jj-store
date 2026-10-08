@@ -88,6 +88,28 @@ export async function commentQueueAcceptance(page, base) {
   await expect(
     page.getByRole("article", { name: "Simulated agent reply" }).locator(".."),
   ).toBeFocused();
+  const replyMarker = page.locator(".chat-reply-indicator");
+  await expect(replyMarker).toHaveCount(1);
+  await expect(replyMarker).toHaveCSS("width", "16px");
+  await expect(replyMarker).toHaveAttribute("aria-hidden", "true");
+  const placement = await replyMarker.evaluate((marker) => {
+    const line = marker.closest(".cm-line");
+    const walker = document.createTreeWalker(line, NodeFilter.SHOW_TEXT);
+    let text;
+    while ((text = walker.nextNode()) && !text.textContent.trim()) {}
+    const range = document.createRange();
+    range.setStart(text, 0);
+    range.setEnd(text, 1);
+    return {
+      icon: marker.getBoundingClientRect().right,
+      text: range.getBoundingClientRect().left,
+    };
+  });
+  expect(placement.text - placement.icon).toBeGreaterThanOrEqual(7);
+  expect(placement.text - placement.icon).toBeLessThanOrEqual(9);
+  await page.getByRole("button", { name: "Hide body" }).click();
+  await page.getByRole("button", { name: "Show body" }).click();
+  await expect(replyMarker).toHaveCount(1);
   await page
     .locator('[data-placement="reply"]')
     .getByRole("button", { name: "Go to source: Assistant explanation" })

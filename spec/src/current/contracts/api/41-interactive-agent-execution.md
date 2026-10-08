@@ -168,3 +168,6 @@ Transcript reply sections and double-check navigation preserve JST-API-001
 unchanged (E-CHAT-BODY-013). Stable comment IDs and grouped simulated replies
 remain UI-only; this slice adds no live prompt protocol, parser, dispatch or
 persisted format.
+
+The decorative agent-reply prefix (E-CHAT-BODY-014) also leaves JST-API-001
+unchanged: it is a display-only widget with no source-text or dispatch changes.

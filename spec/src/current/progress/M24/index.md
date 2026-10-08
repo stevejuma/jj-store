@@ -211,6 +211,11 @@ reply destinations. Linked green double ticks become hover/focus navigation
 buttons with Go to reply tooltips. This UI-only review retains M24 In progress;
 live integration, native IME, desktop and visual gates remain independent.
 
+E-CHAT-BODY-014 adds the screenshot's muted inline arrow to agent reply answers,
+with unchanged source text, exact anchors and retained reader lifecycle. M24
+remains In progress and independent live, native IME, desktop and visual gates
+remain unchanged.
+
 <!-- generated-navigation -->
 
 ## Pages

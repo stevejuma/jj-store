@@ -13,17 +13,19 @@
     customBlock,
     showHeaders = true,
     reactionTarget,
+    reply = false,
   }: {
     blocks: readonly ChatBodyBlock[];
     state: ChatBodyComments;
     customBlock?: ChatBodyProps["customBlock"];
     showHeaders?: boolean;
     reactionTarget?: string;
+    reply?: boolean;
   } = $props();
 </script>
 
 <div class="chat-content-flow">
-  {#each blocks as block (block.id)}
+  {#each blocks as block, index (block.id)}
     {#key `${block.id}:${block.revision}`}
       {#if block.kind === "custom" || block.kind === "context"}
         <section
@@ -58,6 +60,7 @@
           {block}
           {state}
           {reactionTarget}
+          reply={reply && index === 0}
           showHeader={showHeaders}
         />{/if}
     {/key}

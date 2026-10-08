@@ -72,7 +72,11 @@ discussion/comment IDs. One reply may answer several comments at the same
 anchor. The catalog simulator groups comments by discussion within their
 submitted batch, retaining distinct comments and their shared answer
 destination. Later submissions remain separate. Unavailable sources preserve
-their quote and explanation.
+their quote and explanation. Agent reply answers start with a muted 16px Lucide
+CornerUpLeft indicator on their first content line, before the answer text with
+an 8px gap. It appears once per reply section, not on ordinary messages or
+quoted context. This decorative inline widget preserves wrapping, immutable
+source text and exact comment offsets, and is cleaned up with its reader.
 
 Pointer, keyboard, input composition, immutable content, collapse/reopen,
 Unicode mapping, focus, teardown, themes and narrow presentation require focused
