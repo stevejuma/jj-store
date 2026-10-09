@@ -246,6 +246,7 @@
 
 {#if inspection?.file}<AppShell.Sidebar
     side="right"
+    sidebarController={inspection.workspaceInspector}
     label="Workspace file"
     resizeLabel="Resize workspace file"
     constrainedPresentation="replace-main"
@@ -274,7 +275,7 @@
 {#if inspection?.workspace}
   <StoreWorkspaceFiles
     browser={inspection.workspace}
-    sidebarController={detailsRail}
+    sidebarController={inspection.workspaceRail}
   />
 {:else if !current.agentsHub}<AppShell.Sidebar
     side="right"

@@ -229,43 +229,6 @@
   padding: clamp(1.5rem, 4vw, 3rem);
 }
 
-.community-projects__files-loading-code {
-  display: grid;
-  min-height: 24rem;
-  align-content: start;
-  gap: 0.65rem;
-  padding: 1rem 0.75rem;
-}
-
-.community-projects__files-loading-code > div {
-  display: grid;
-  grid-template-columns: 1.5rem minmax(0, 1fr);
-  gap: 0.8rem;
-}
-
-.community-projects__files-loading-code > div > *:first-child {
-  width: 1rem;
-  height: 0.7rem;
-}
-
-.community-projects__files-loading-code > div > *:last-child {
-  width: min(42rem, 82%);
-  height: 0.7rem;
-}
-
-.community-projects__files-loading-code > div:nth-child(3n) > *:last-child {
-  width: min(30rem, 58%);
-}
-
-.community-projects__blob-skeleton {
-  display: grid;
-  width: 100%;
-  min-height: 28rem;
-  box-sizing: border-box;
-  align-content: start;
-  gap: 0.8rem;
-  padding: clamp(1.5rem, 4vw, 3rem);
-}
 .community-projects__file-panel-stack {
   display: flex;
   min-width: 0;

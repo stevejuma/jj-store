@@ -288,3 +288,9 @@ Empty lists are omitted for encoding compatibility. Deferred outcomes report
 pending publication independently of queued delivery. Generic collaboration
 commands refuse unresolved file drafts; only the authorized controller can
 capture and replace them with receipt-backed repository-qualified references.
+
+
+E-CHAT-WORKSPACE-005 confirms JST-API-001 unchanged: inbox-only panel ownership,
+separate shell layout identities and loading placeholders do not alter workspace
+inspection requests, source identities, authorization, publication or generated
+transport contracts. The existing session-bound read API remains the authority.

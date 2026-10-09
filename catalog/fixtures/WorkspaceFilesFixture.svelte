@@ -14,7 +14,13 @@
   import { createMemoryStoryStorage } from "./memory-storage.js";
   import type { WorkspaceBrowser } from "../../web/src/lib/conversations/workspace-browser.svelte.js";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  let { controlReads = false }: { controlReads?: boolean } = $props();
+  let {
+    controlReads = false,
+    routeNavigation = false,
+  }: {
+    controlReads?: boolean;
+    routeNavigation?: boolean;
+  } = $props();
   let holdNextRead = $state(false);
   let releaseRead = $state<(() => void) | undefined>();
   const base = createInMemoryStoreController("agents"),
@@ -139,6 +145,27 @@
   onDestroy(() => manager.destroy());
 </script>
 
+{#if routeNavigation}
+  <nav aria-label="Fixture pages">
+    <Button
+      onclick={() => (route = agentsRoute("session", status.sessions[0].id))}
+      >Fixture inbox</Button
+    >
+    <Button
+      onclick={() =>
+        (route = { ...base.state.route, page: "projects", agentsHub: false })}
+      >Fixture projects</Button
+    >
+    <Button
+      onclick={() =>
+        (route = { ...base.state.route, page: "files", agentsHub: false })}
+      >Fixture repository</Button
+    >
+    <Button onclick={() => (route = agentsRoute("session", "ff".repeat(16)))}
+      >Fixture other session</Button
+    >
+  </nav>
+{/if}
 {#if controlReads}
   {#if releaseRead}<Button onclick={() => releaseRead?.()}
       >Complete workspace read</Button

@@ -77,7 +77,7 @@
   }
 </script>
 
-{#if browser?.binding}
+{#if browser?.binding && inspection?.workspaceEnabled}
   <Popover.Root bind:open>
     <Popover.Trigger
       >{#snippet child({ props })}<Button

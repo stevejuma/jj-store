@@ -126,4 +126,8 @@ verification
 - crates/jj-collab/src/workspace_comments.rs#draft_paths_revisions_and_diff_sides_are_explicit
 - crates/jj-store-server/src/agent_execution/workspace_sources.rs#captured_bytes_require_exact_unicode_boundaries_and_full_source_hash
 <!-- /evidence-field -->
+<!-- generated-navigation -->
+## Pages
 
+- [E-CHAT-WORKSPACE-004 details 2](details-02.md)
+- [E-CHAT-WORKSPACE-004 details 3](details-03.md)

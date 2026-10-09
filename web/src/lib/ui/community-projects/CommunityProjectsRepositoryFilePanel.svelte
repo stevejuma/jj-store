@@ -9,7 +9,7 @@
   import { CodeBlock } from "@lapismd/design-core/shadcn/code-block";
   import * as Empty from "@lapismd/design-core/shadcn/empty";
   import { ScrollArea } from "@lapismd/design-core/shadcn/scroll-area";
-  import { Skeleton } from "@lapismd/design-core/shadcn/skeleton";
+  import RepositoryFileLoading from "./RepositoryFileLoading.svelte";
   import FileIcon from "@lucide/svelte/icons/file";
 
   import type {
@@ -141,29 +141,7 @@
   >
     <div class="community-projects__file-panel-stack">
       {#if loading && !blob}
-        <div
-          class="community-projects__blob-skeleton"
-          role="status"
-          aria-label={`Loading ${selectedPath}`}
-        >
-          {#if isMarkdown}
-            <Skeleton class="community-projects__markdown-skeleton-title" />
-            <Skeleton class="community-projects__markdown-skeleton-copy" />
-            <Skeleton class="community-projects__markdown-skeleton-copy" />
-            <Skeleton class="community-projects__markdown-skeleton-heading" />
-            <Skeleton class="community-projects__markdown-skeleton-copy" />
-            <Skeleton class="community-projects__markdown-skeleton-code" />
-          {:else}
-            <div class="community-projects__files-loading-code">
-              {#each [0, 1, 2, 3, 4, 5, 6] as row (row)}
-                <div>
-                  <Skeleton />
-                  <Skeleton />
-                </div>
-              {/each}
-            </div>
-          {/if}
-        </div>
+        <RepositoryFileLoading path={selectedPath} {isMarkdown} />
       {:else if blob}
         <CommunityProjectsRepositoryFilePanelHeader
           {blob}

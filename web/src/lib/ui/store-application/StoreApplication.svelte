@@ -47,6 +47,7 @@
   import StoreSettingsNavigation from "../store-settings/StoreSettingsNavigation.svelte";
   import type { StoreSettingsSection } from "../store-settings/model.js";
   import StoreApplicationHeaderActions from "./StoreApplicationHeaderActions.svelte";
+  import StoreWorkspaceToggle from "../store-agent-workspace/StoreWorkspaceToggle.svelte";
   import { provideDiscussionFocus } from "../store-discussion/discussion-focus.svelte.js";
   import StoreFocusedDiscussion from "../store-discussion/StoreFocusedDiscussion.svelte";
   import StoreStackWorkspaceConflict from "../store-stack-workspace/StoreStackWorkspaceConflict.svelte";
@@ -80,7 +81,12 @@
   );
   onDestroy(() => void shell.dispose());
   const detailsRail = shell.getPanel(repositoryDetailsPanelId)!;
-  provideConversationInspection(shell);
+  provideConversationInspection(shell, () => {
+    const route = controller.state.route;
+    return route.agentsHub && route.agentView === "session"
+      ? (route.executionSessionId ?? null)
+      : null;
+  });
   const threadPanel = ownThreadPanel(() => controller, shell, appearance);
   provideDiscussionFocus();
   const workspaceGuard = $state({ editing: false });
@@ -211,7 +217,8 @@
       />{:else if !settingsOpen && current.page === "threads"}<StoreThreadsBreadcrumb
         {controller}
       />{/if}{/snippet}
-  {#snippet headerEnd()}{#if !settingsOpen && (!current.agentsHub || controller.execution?.chat.open)}<StoreApplicationHeaderActions
+  {#snippet headerEnd()}{#if !settingsOpen && current.agentsHub && (current.agentView === "session" || current.agentView === "sessions")}<StoreWorkspaceToggle
+      />{:else if !settingsOpen && (!current.agentsHub || controller.execution?.chat.open)}<StoreApplicationHeaderActions
         {controller}
         disabled={editorOpen}
         detailsOpen={!detailsRail.closed}

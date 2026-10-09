@@ -171,3 +171,159 @@
     );
   }}
 />
+
+<Story
+  name="Workspace panels stay in their owning inbox and preserve other rails"
+  args={{ routeNavigation: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    const originalRail = () =>
+      c.getByRole("complementary", {
+        name: "Repository details",
+        hidden: true,
+      });
+    const appearance = (el: HTMLElement) => {
+      const style = getComputedStyle(el);
+      return {
+        background: style.backgroundColor,
+        margin: style.marginInlineEnd,
+        radius: style.borderStartEndRadius,
+        width: el.getBoundingClientRect().width,
+      };
+    };
+    await userEvent.click(c.getByRole("button", { name: "Fixture projects" }));
+    await expect(
+      c.getByRole("button", { name: "Toggle details" }),
+    ).toHaveAttribute("aria-expanded", "false");
+    await userEvent.click(c.getByRole("button", { name: "Toggle details" }));
+    await waitFor(() => expect(originalRail()).toBeVisible());
+    const before = appearance(originalRail());
+    await expect(originalRail()).toHaveAttribute("data-variant", "rail");
+    await userEvent.click(c.getByRole("button", { name: "Fixture inbox" }));
+    await userEvent.click(await c.findByRole("button", { name: /Workspace:/ }));
+    await userEvent.click(
+      await within(document.body).findByRole("button", { name: "View files" }),
+    );
+    const files = within(
+      await c.findByRole("complementary", { name: "Workspace files" }),
+    );
+    await userEvent.click(
+      await files.findByRole("button", { name: "src/unchanged.ts" }),
+    );
+    await within(
+      await c.findByRole("complementary", { name: "Workspace file" }),
+    ).findByRole("textbox", { name: "src/unchanged.ts" });
+    for (const destination of ["Fixture projects", "Fixture repository"]) {
+      await userEvent.click(c.getByRole("button", { name: destination }));
+      await waitFor(() => expect(originalRail()).toBeVisible());
+      await expect(
+        c.queryByRole("complementary", {
+          name: "Workspace files",
+          hidden: true,
+        }),
+      ).not.toBeInTheDocument();
+      await expect(
+        c.queryByRole("complementary", {
+          name: "Workspace file",
+          hidden: true,
+        }),
+      ).not.toBeInTheDocument();
+      await expect(originalRail()).toHaveAttribute("data-variant", "rail");
+      await expect(appearance(originalRail())).toEqual(before);
+      await expect(
+        c.getByRole("button", { name: "Toggle details" }),
+      ).toHaveAttribute("aria-expanded", "true");
+    }
+    await userEvent.click(c.getByRole("button", { name: "Toggle details" }));
+    await userEvent.click(c.getByRole("button", { name: "Fixture inbox" }));
+    await expect(
+      await c.findByRole("complementary", { name: "Workspace files" }),
+    ).toBeVisible();
+    await expect(
+      await within(
+        await c.findByRole("complementary", { name: "Workspace file" }),
+      ).findByRole("textbox", { name: "src/unchanged.ts" }),
+    ).toHaveTextContent("unchanged = true");
+    await userEvent.click(
+      c.getByRole("button", { name: "Fixture other session" }),
+    );
+    await expect(
+      c.queryByRole("complementary", { name: "Workspace files", hidden: true }),
+    ).not.toBeInTheDocument();
+    await expect(
+      c.queryByRole("complementary", { name: "Workspace file", hidden: true }),
+    ).not.toBeInTheDocument();
+    await userEvent.click(c.getByRole("button", { name: "Fixture projects" }));
+    await expect(
+      c.getByRole("button", { name: "Toggle details" }),
+    ).toHaveAttribute("aria-expanded", "false");
+  }}
+/>
+
+<Story
+  name="Inbox header toggles workspace files and file loads show skeletons"
+  args={{ controlReads: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    const toggle = await c.findByRole("button", {
+      name: "Toggle workspace files",
+    });
+    await waitFor(() => expect(toggle).toBeEnabled());
+    await expect(toggle).toHaveAttribute("aria-expanded", "false");
+    await userEvent.click(toggle);
+    const rail = within(
+      await c.findByRole("complementary", { name: "Workspace files" }),
+    );
+    await rail.findByRole("button", { name: "src/unchanged.ts" });
+    await waitFor(() =>
+      expect(
+        rail.getByRole("button", { name: "Refresh workspace files" }),
+      ).toBeEnabled(),
+    );
+    await expect(toggle).toHaveAttribute("aria-expanded", "true");
+    await userEvent.click(toggle);
+    await expect(toggle).toHaveAttribute("aria-expanded", "false");
+    await expect(
+      c.queryByRole("complementary", { name: "Workspace files" }),
+    ).not.toBeInTheDocument();
+    await userEvent.click(toggle);
+    await waitFor(() =>
+      expect(
+        rail.getByRole("button", { name: "Refresh workspace files" }),
+      ).toBeEnabled(),
+    );
+    await userEvent.click(
+      c.getByRole("button", { name: "Hold next workspace read" }),
+    );
+    await userEvent.click(
+      rail.getByRole("button", { name: "src/unchanged.ts" }),
+    );
+    const inspector = within(
+      await c.findByRole("complementary", { name: "Workspace file" }),
+    );
+    const loading = await inspector.findByRole("status", {
+      name: "Loading src/unchanged.ts",
+    });
+    const placeholders = [
+      ...loading.querySelectorAll('[data-ui-component="skeleton"]'),
+    ];
+    await expect(placeholders.length).toBeGreaterThan(3);
+    for (const placeholder of placeholders)
+      await expect(placeholder.getBoundingClientRect().height).toBeGreaterThan(
+        0,
+      );
+    await expect(
+      inspector.queryByText("Loading file…"),
+    ).not.toBeInTheDocument();
+    await expect(inspector.getByText("src/unchanged.ts")).toBeVisible();
+    await userEvent.click(
+      c.getByRole("button", { name: "Complete workspace read" }),
+    );
+    await expect(
+      await inspector.findByRole("textbox", { name: "src/unchanged.ts" }),
+    ).toHaveTextContent("unchanged = true");
+    await expect(
+      inspector.queryByRole("status", { name: "Loading src/unchanged.ts" }),
+    ).not.toBeInTheDocument();
+  }}
+/>

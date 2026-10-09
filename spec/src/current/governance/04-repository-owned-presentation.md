@@ -19,3 +19,10 @@ the Command View keyboard cursor and the selected native bookmark are separate
 presentation states. Browser evidence checks their surfaces against Op Log
 across the complete theme catalog; focused menu/card stories retain blocking
 interaction, accessibility and runtime diagnostics.
+
+
+E-CHAT-WORKSPACE-005 extracts the repository file loading skeleton for reuse by
+inbox workspace inspection. Its original file-panel and stylesheet revisions and
+Apache-2.0 attribution are retained in `docs/ui-provenance.json`. JST-GOV-008 is
+unchanged: the shared implementation remains locally owned and uses released
+Design Core Skeleton primitives, without a Community checkout dependency.

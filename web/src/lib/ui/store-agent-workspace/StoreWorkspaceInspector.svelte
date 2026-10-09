@@ -8,11 +8,16 @@
     FileDiff,
     type FileDiffLineContext,
   } from "@lapismd/design-core/diff";
+  import RepositoryFileLoading from "../community-projects/RepositoryFileLoading.svelte";
+  import { isMarkdownRepositoryPath } from "../community-projects/repository-browser.js";
   import ChatContent from "../store-agent-chat-body/ChatContent.svelte";
   import type { WorkspaceBrowser } from "../../conversations/workspace-browser.svelte.js";
   let { browser, onClose }: { browser: WorkspaceBrowser; onClose: () => void } =
     $props();
   const file = $derived(browser.file?.file);
+  const path = $derived(
+    browser.fileLoading ? browser.listing.selected : file?.path,
+  );
   const changed = $derived(!!browser.file?.comparison);
   const comments = $derived(browser.conversation.comments);
   const blocks = $derived(browser.blocks);
@@ -36,9 +41,7 @@
 </script>
 
 <AppShell.Sidebar.Header>
-  <strong class="truncate" title={file?.path}
-    >{file?.path ?? "Workspace file"}</strong
-  >
+  <strong class="truncate" title={path}>{path ?? "Workspace file"}</strong>
   <Button
     variant="ghost"
     size="icon-sm"
@@ -48,7 +51,10 @@
 </AppShell.Sidebar.Header>
 <AppShell.Sidebar.Body>
   <div class="workspace-file-content">
-    {#if browser.fileLoading}<p role="status">Loading file…</p>
+    {#if browser.fileLoading}<RepositoryFileLoading
+        path={path ?? "workspace file"}
+        isMarkdown={isMarkdownRepositoryPath(path ?? "")}
+      />
     {:else if browser.fileError || file?.unavailable}<p role="status">
         {browser.fileError || file?.unavailable}
       </p>

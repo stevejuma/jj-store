@@ -151,6 +151,18 @@ files. An inspection selector changes only the viewed binding; it never rebinds
 an agent or changes a checkout. Footer controls wrap at constrained widths while
 keeping Send accessible and the full truncated repository label available.
 
+The inbox agent session owns the workspace rail and file inspector. They mount
+only for that session, retaining its selections and drafts while away. Opening,
+closing or resizing them must not change the original repository/project rail
+or body detail layout; their shell controllers have independent identities.
+Other routes keep their original rails, contents and appearance. The workspace
+footer entry is currently scoped to inbox agent sessions. The inbox header also
+provides its own far-right toggle, available before opening the footer popover.
+It toggles the workspace rail without changing the body inspector or the original
+repository rail. File loading uses the shared repository reader skeleton with an
+accessible loading label, keeping the requested path visible in the inspector
+header; it does not show a text-only loading row.
+
 The conversation workspace rail uses the standard body-sidebar surface, with
 Files and Changes tabs in its header and a straight adjoining body edge while
 inline. Tabs reuse Projects navigation pills; Refresh stays at the header’s
@@ -164,7 +176,7 @@ Unsupported comparisons and incomplete totals retain their explanations. Bounded
 asynchronous reads discard obsolete results and never publish or snapshot
 repository state.
 
-Standalone sessions mount the same inspection panels as contextual chats. An
+Standalone sessions mount the workspace inspection panels. An
 unselected agent profile must not reserve the body inspector's shell panel identity.
 Selecting a file opens the shared full-height, resizable body inspector. Changes
 offers highlighted unified/split diffs and explicit before/after selection

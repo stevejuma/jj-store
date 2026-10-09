@@ -346,6 +346,13 @@ publication before prompt dispatch. M24 remains In progress. Controlled local
 Unicode, stale-source, grouped publication, exact answer and restart checks pass;
 native/multi-agent, retained turn-boundary and browser gates remain open. Visual
 baselines remain unapproved.
+E-CHAT-WORKSPACE-005 scopes the Files/Changes rail and workspace file inspector
+to their owning inbox session, with independent shell panel identities. The
+inbox header gains its own toggle, and file reads share the repository loading
+skeleton. Five focused stories pass; two older repository body inset checks fail
+identically on the prior revision and remain recorded for separate review. M24
+remains In progress for the outstanding shared reader, retained history and cold
+native/local gates. Visual baselines remain unapproved.
 <!-- generated-navigation -->
 ## Pages
 
