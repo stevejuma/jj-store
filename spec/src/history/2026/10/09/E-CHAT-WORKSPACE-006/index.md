@@ -55,4 +55,8 @@ verification
 
 []
 <!-- /evidence-field -->
+<!-- generated-navigation -->
+## Pages
 
+- [E-CHAT-WORKSPACE-006 details 2](details-02.md)
+- [E-CHAT-WORKSPACE-006 details 3](details-03.md)

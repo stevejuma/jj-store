@@ -215,3 +215,20 @@
     opacity: 1;
   }
 }
+
+/* Workspace source retains exact comment anchors with a plain numbered reader. */
+.chat-text-block[data-file-view] {
+  background: transparent;
+  border-radius: 0;
+}
+.chat-text-block[data-file-view] .cm-content:not([data-comment-editor] *) {
+  padding: 0 0.5rem;
+}
+.chat-text-block[data-file-view] .cm-gutters {
+  border: 0;
+}
+
+/* Exact-source highlights own contrast, including nested syntax tokens. */
+.chat-text-block[data-file-view] .chat-comment-highlight span {
+  color: inherit;
+}

@@ -17,9 +17,13 @@
   let {
     controlReads = false,
     routeNavigation = false,
+    missingBase = false,
+    baseName = "main",
   }: {
     controlReads?: boolean;
     routeNavigation?: boolean;
+    missingBase?: boolean;
+    baseName?: string;
   } = $props();
   let holdNextRead = $state(false);
   let releaseRead = $state<(() => void) | undefined>();
@@ -76,7 +80,7 @@
           operation,
           commit,
           selection: "fixture-selection",
-          references: [{ name: "main", commit, remote: null }],
+          references: [{ name: baseName, commit, remote: null }],
           comparison: changed
             ? {
                 range:
@@ -89,7 +93,12 @@
                 after_commit: commit,
                 current_files: true,
                 request_id: null,
-                unavailable: null,
+                unavailable:
+                  missingBase &&
+                  request.query.view === "changes" &&
+                  !request.query.base
+                    ? "Choose a comparison base. No default branch is configured."
+                    : null,
               }
             : null,
           incomplete: null,

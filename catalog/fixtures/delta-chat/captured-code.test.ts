@@ -1,6 +1,11 @@
 import { expect, test } from "vitest";
+import { EditorState } from "@codemirror/state";
+import { language } from "@codemirror/language";
+import { highlightTree } from "@lezer/highlight";
+import { miraClassHighlighter } from "@lapismd/mira/codemirror";
 import {
   capturedLinePrefixes,
+  fileCodeLanguage,
   numberedCodeHighlights,
 } from "../../../web/src/lib/ui/store-agent-chat-body/captured-code.js";
 
@@ -55,6 +60,44 @@ test("leaves unknown formats plain and supports unnumbered lines in a capture", 
       (r) =>
         text.slice(r.from, r.to).includes("bold") &&
         r.classes.includes("cm-strong"),
+    ),
+  ).toBe(true);
+});
+
+test("highlights workspace source languages without shifting source coordinates", () => {
+  const tokens = (text: string, path: string) => {
+    const grammar = EditorState.create({
+      doc: text,
+      extensions: fileCodeLanguage(path),
+    }).facet(language)!;
+    const ranges: { from: number; to: number; classes: string }[] = [];
+    highlightTree(
+      grammar.parser.parse(text),
+      miraClassHighlighter,
+      (from, to, classes) => ranges.push({ from, to, classes }),
+    );
+    return ranges;
+  };
+  for (const [path, text, keyword] of [
+    ["example.ts", "export const greeting = 'café 🦀';", "export"],
+    ["example.js", "const value = 42;", "const"],
+    ["example.py", "def greet(): return 'café'", "def"],
+    ["Example.java", "public class Example {}", "public"],
+  ]) {
+    const ranges = tokens(text, path);
+    expect(
+      ranges
+        .filter((r) => r.classes.includes("cm-keyword"))
+        .map((r) => text.slice(r.from, r.to)),
+      path,
+    ).toContainEqual(expect.stringContaining(keyword));
+  }
+  const json = '{"greeting":"café 🦀"}';
+  expect(
+    tokens(json, "example.json").some(
+      (r) =>
+        r.classes.includes("cm-string") &&
+        json.slice(r.from, r.to).includes("café 🦀"),
     ),
   ).toBe(true);
 });

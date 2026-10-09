@@ -11,6 +11,8 @@
   import { Skeleton } from "@lapismd/design-core/shadcn/skeleton";
   import "../store-work/community-work-layout.css";
   import RefreshIcon from "@lucide/svelte/icons/refresh-cw";
+  import GitBranchIcon from "@lucide/svelte/icons/git-branch";
+  import ComparisonIcon from "@lucide/svelte/icons/arrow-left-right";
   import FolderIcon from "@lucide/svelte/icons/folder";
   import * as Empty from "@lapismd/design-core/shadcn/empty";
   import CommunityProjectsRepositoryFileTree from "../community-projects/CommunityProjectsRepositoryFileTree.svelte";
@@ -57,6 +59,20 @@
     }, 15000);
     return () => clearInterval(timer);
   });
+  const needsBase = $derived(
+    browser.range === "branch" &&
+      !browser.base &&
+      listing.value?.comparison?.unavailable ===
+        "Choose a comparison base. No default branch is configured.",
+  );
+  const baseLabel = $derived(
+    browser.base
+      ? (listing.value?.references.find((r) => r.commit === browser.base)
+          ?.name ?? browser.base.slice(0, 8))
+      : needsBase
+        ? "Choose branch"
+        : "Configured branch",
+  );
   const ranges: { value: Model<"ComparisonRange">; label: string }[] = [
     { value: "branch", label: "Branch" },
     { value: "since_last_commit", label: "Since last commit" },
@@ -115,9 +131,14 @@
                   onValueChange={(value) =>
                     void browser.compare(value as Model<"ComparisonRange">)}
                 >
-                  <Select.Trigger aria-label="Comparison range"
-                    >{ranges.find((r) => r.value === browser.range)
-                      ?.label}</Select.Trigger
+                  <Select.Trigger
+                    size="sm"
+                    aria-label="Comparison range"
+                    title={ranges.find((r) => r.value === browser.range)?.label}
+                    ><ComparisonIcon aria-hidden="true" /><span class="truncate"
+                      >{ranges.find((r) => r.value === browser.range)
+                        ?.label}</span
+                    ></Select.Trigger
                   >
                   <Select.Content
                     ><Select.Group
@@ -137,12 +158,14 @@
                         value === "default" ? null : value,
                       )}
                   >
-                    <Select.Trigger aria-label="Comparison base"
-                      >{browser.base
-                        ? (listing.value?.references.find(
-                            (r) => r.commit === browser.base,
-                          )?.name ?? browser.base.slice(0, 8))
-                        : "Configured branch"}</Select.Trigger
+                    <Select.Trigger
+                      size="sm"
+                      class="workspace-files-base"
+                      aria-label="Comparison base"
+                      title={baseLabel}
+                      ><GitBranchIcon aria-hidden="true" /><span
+                        class="truncate">{baseLabel}</span
+                      ></Select.Trigger
                     >
                     <Select.Content
                       ><Select.Group
@@ -160,7 +183,7 @@
             {#if listing.error}<p class="workspace-files-status" role="status">
                 {listing.error}
               </p>{/if}
-            {#if listing.value?.comparison?.unavailable}<p
+            {#if listing.value?.comparison?.unavailable && !needsBase}<p
                 class="workspace-files-status"
                 role="status"
               >
@@ -197,7 +220,7 @@
                     style="height: 2rem"
                   />{/each}
               </div>
-            {:else}
+            {:else if !needsBase}
               <CommunityProjectsRepositoryFileTree
                 files={listing.value?.files ?? []}
                 mode={browser.mode}
@@ -221,6 +244,20 @@
   .workspace-files-refresh {
     margin-inline-start: auto;
     flex: none;
+  }
+  .workspace-files-comparison {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+  .workspace-files-comparison :global([data-slot="select-trigger"]) {
+    min-width: 0;
+    max-width: 100%;
+  }
+  .workspace-files-comparison :global(.workspace-files-base) {
+    flex: 1 1 5rem;
+    overflow: hidden;
   }
   .workspace-files-content {
     min-width: 0;

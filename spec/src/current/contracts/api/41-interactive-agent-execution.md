@@ -298,3 +298,7 @@ transport contracts. The existing session-bound read API remains the authority.
 E-CHAT-WORKSPACE-006 confirms JST-API-001 unchanged: workspace panel border,
 inset and corner corrections retain the same authorized inspection requests,
 immutable sources and publication contracts. No transport generation is needed.
+
+E-CHAT-WORKSPACE-007 confirms JST-API-001 unchanged: numbered, highlighted file
+readers and compact comparison controls retain exact source bytes, the existing
+base selector and authorized read requests. No publication or transport changes.

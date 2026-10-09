@@ -17,12 +17,14 @@
     showHeader = true,
     reactionTarget,
     reply = false,
+    fileView = false,
   }: {
     block: ChatBodyBlock;
     state: ChatBodyComments;
     showHeader?: boolean;
     reactionTarget?: string;
     reply?: boolean;
+    fileView?: boolean;
   } = $props();
   let editor: MiraCodeEditorHandle;
   let view = $state<EditorView>();
@@ -31,7 +33,7 @@
   const reader = new Compartment();
   let configured = "";
   const extensions = untrack(() => [
-    reader.of(readingExtensions(block, comments, contexts)),
+    reader.of(readingExtensions(block, comments, contexts, fileView)),
     replyPrefix.of(reply ? replyIndicator : []),
   ]);
   onMount(() => {
@@ -64,6 +66,7 @@
       block.lineNumbered,
       block.wholeSection,
       block.commentable,
+      fileView,
     ]);
     if (view && signature !== configured) {
       configured = signature;
@@ -94,6 +97,7 @@
             untrack(() => block),
             comments,
             contexts,
+            fileView,
           ),
         ),
         filter: false,
@@ -121,6 +125,7 @@
   class="chat-text-block"
   role="group"
   data-kind={block.kind}
+  data-file-view={fileView || undefined}
   data-block-id={block.id}
   aria-label={`${block.label} content`}
 >
@@ -133,9 +138,9 @@
       value={block.text}
       {extensions}
       readonly
-      lineNumbers={false}
+      lineNumbers={fileView}
       ariaLabel={block.label}
-      variant="document"
+      variant={fileView ? "code" : "document"}
       surface="frameless"
       height="content"
       minHeight="0"

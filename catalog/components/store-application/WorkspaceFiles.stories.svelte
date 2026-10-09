@@ -3,6 +3,8 @@
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import { page as browser } from "vitest/browser";
   import Fixture from "../../fixtures/WorkspaceFilesFixture.svelte";
+  const longBranch =
+    "feature/retain-exact-workspace-source-and-conversation-reply-identities";
   const { Story } = defineMeta({
     title: "JJ Store/Conversation workspace files",
     component: Fixture,
@@ -293,12 +295,16 @@
         rail.getByRole("button", { name: "Refresh workspace files" }),
       ).toBeEnabled(),
     );
+    const reopened = within(
+      await c.findByRole("complementary", { name: "Workspace files" }),
+    );
+    const file = await reopened.findByRole("button", {
+      name: "src/unchanged.ts",
+    });
     await userEvent.click(
       c.getByRole("button", { name: "Hold next workspace read" }),
     );
-    await userEvent.click(
-      rail.getByRole("button", { name: "src/unchanged.ts" }),
-    );
+    await userEvent.click(file);
     const inspector = within(
       await c.findByRole("complementary", { name: "Workspace file" }),
     );
@@ -359,7 +365,7 @@
             panel.getBoundingClientRect().right,
         ) <= 1,
     }).toEqual({
-      headerBorder: "0px",
+      headerBorder: "1px",
       startsAtPanelEdge: true,
       endsAtPanelEdge: true,
     });
@@ -416,5 +422,154 @@
     } finally {
       await browser.viewport(1280, 800);
     }
+  }}
+/>
+
+<Story
+  name="Workspace source reader has syntax and gutters without extra comment chrome"
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await userEvent.click(
+      await c.findByRole("button", { name: "Toggle workspace files" }),
+    );
+    const rail = within(
+      await c.findByRole("complementary", { name: "Workspace files" }),
+    );
+    await userEvent.click(
+      await rail.findByRole("button", { name: "README.md" }),
+    );
+    const panel = await c.findByRole("complementary", {
+      name: "Workspace file",
+    });
+    const inspector = within(panel);
+    await inspector.findByRole("textbox", { name: "README.md" });
+    await expect({
+      headerBorder: getComputedStyle(
+        panel.querySelector('[data-ui-part="sidebar-header"]')!,
+      ).borderBottomWidth,
+      lineNumbers: !!panel.querySelector(".cm-lineNumbers"),
+      heading: !!panel.querySelector(".cm-heading"),
+      background: getComputedStyle(panel.querySelector(".chat-text-block")!)
+        .backgroundColor,
+      extraCommentRow: !!inspector.queryByRole("button", {
+        name: "Comment on file",
+      }),
+    }).toEqual({
+      headerBorder: "1px",
+      lineNumbers: true,
+      heading: true,
+      background: "rgba(0, 0, 0, 0)",
+      extraCommentRow: false,
+    });
+    await userEvent.click(rail.getByRole("button", { name: "src/example.ts" }));
+    const source = await inspector.findByRole("textbox", {
+      name: "src/example.ts",
+    });
+    await waitFor(() =>
+      expect(panel.querySelector(".cm-keyword")).not.toBeNull(),
+    );
+    await expect(panel.querySelector(".cm-string")).toHaveTextContent(
+      "café 🦀",
+    );
+    source.focus();
+    await userEvent.keyboard("{Control>}a{/Control}");
+    await userEvent.click(
+      inspector.getByRole("button", {
+        name: "Comment on src/example.ts",
+      }),
+    );
+    const editor = await inspector.findByRole("textbox", {
+      name: "Comment on src/example.ts",
+    });
+    await userEvent.click(editor);
+    await userEvent.keyboard("Keep this Unicode greeting.");
+    await expect(source).toHaveTextContent(
+      "export const greeting = 'café 🦀';",
+    );
+    await expect(
+      inspector.getByRole("textbox", { name: "Comment on src/example.ts" }),
+    ).toHaveTextContent("Keep this Unicode greeting.");
+  }}
+/>
+
+<Story
+  name="Workspace comparisons use compact adjacent controls and an explicit base placeholder"
+  args={{ missingBase: true, baseName: longBranch }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await userEvent.click(
+      await c.findByRole("button", { name: "Toggle workspace files" }),
+    );
+    const panel = await c.findByRole("complementary", {
+      name: "Workspace files",
+    });
+    const rail = within(panel);
+    await userEvent.click(rail.getByRole("tab", { name: "Changes" }));
+    const range = await rail.findByRole("button", { name: "Comparison range" });
+    const base = await rail.findByRole("button", { name: "Comparison base" });
+    await waitFor(() =>
+      expect(
+        rail.queryByRole("status", { name: "Loading workspace files" }),
+      ).not.toBeInTheDocument(),
+    );
+    await expect(
+      rail.queryByText(
+        "Choose a comparison base. No default branch is configured.",
+      ),
+    ).not.toBeInTheDocument();
+    await expect(base).toHaveTextContent("Choose branch");
+    await expect(range).toHaveAttribute("data-size", "sm");
+    await expect(base).toHaveAttribute("data-size", "sm");
+    await expect(
+      Math.abs(
+        range.getBoundingClientRect().top - base.getBoundingClientRect().top,
+      ),
+    ).toBeLessThanOrEqual(1);
+    await expect(base.getBoundingClientRect().left).toBeGreaterThan(
+      range.getBoundingClientRect().right,
+    );
+    await expect(base.getBoundingClientRect().right).toBeLessThanOrEqual(
+      panel.getBoundingClientRect().right,
+    );
+    await userEvent.click(base);
+    await userEvent.click(
+      await within(document.body).findByRole("option", {
+        name: longBranch,
+      }),
+    );
+    await expect(base).toHaveTextContent(longBranch);
+    await expect(base).toHaveAttribute("title", longBranch);
+    const label = base.querySelector<HTMLElement>(".truncate")!;
+    await expect(getComputedStyle(label).textOverflow).toBe("ellipsis");
+    await expect(label.scrollWidth).toBeGreaterThan(label.clientWidth);
+    await expect(
+      range.querySelector(".lucide-arrow-left-right"),
+    ).not.toBeNull();
+    await expect(base.querySelector(".lucide-git-branch")).not.toBeNull();
+    const resize = c.getByRole("slider", { name: "Resize workspace files" });
+    resize.focus();
+    await userEvent.keyboard("{Home}");
+    await waitFor(() =>
+      expect(
+        Math.abs(
+          base.getBoundingClientRect().top - range.getBoundingClientRect().top,
+        ),
+      ).toBeLessThanOrEqual(1),
+    );
+    await expect(base.getBoundingClientRect().right).toBeLessThanOrEqual(
+      panel.getBoundingClientRect().right,
+    );
+    await expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(
+      window.innerWidth + 1,
+    );
+    resize.focus();
+    await userEvent.keyboard("{End}");
+    await waitFor(() =>
+      expect(
+        Math.abs(
+          base.getBoundingClientRect().top - range.getBoundingClientRect().top,
+        ),
+      ).toBeLessThanOrEqual(1),
+    );
   }}
 />

@@ -359,6 +359,13 @@ as well as inline layouts. Six focused interaction/accessibility stories and liv
 geometry checks pass; resize exercises still emit the recorded ResizeObserver
 warning. M24 remains In progress, the wider workspace qualification gaps remain
 open, and visual baselines stay unapproved.
+E-CHAT-WORKSPACE-007 adds numbered, highlighted workspace sources without the
+extra comment row or gray background. Both panel header borders remain per the
+user correction. Compact icon selectors truncate labels before wrapping; the
+base selector carries the missing-default prompt. Exact Unicode comment input,
+31 reader/panel interaction stories and language tests pass. M24 remains In
+progress with runtime resize diagnostics and wider workspace qualification still
+open; visual baselines stay unapproved.
 <!-- generated-navigation -->
 ## Pages
 

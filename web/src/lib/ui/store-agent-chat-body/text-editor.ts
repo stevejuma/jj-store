@@ -2,6 +2,7 @@ import { EditorState, Prec, StateEffect, StateField } from "@codemirror/state";
 import { Decoration, EditorView, keymap } from "@codemirror/view";
 import {
   capturedCodeLanguage,
+  fileCodeLanguage,
   numberedCodeHighlights,
 } from "./captured-code.js";
 import { inlineReferences } from "./inline-references.js";
@@ -19,6 +20,7 @@ export function readingExtensions(
   block: ChatBodyBlock,
   comments: ChatBodyComments,
   contexts: Map<unknown, unknown>,
+  fileView = false,
 ) {
   const references =
     block.kind === "markdown"
@@ -82,7 +84,9 @@ export function readingExtensions(
               true,
             ),
           )
-        : capturedCodeLanguage(block.path),
+        : fileView
+          ? fileCodeLanguage(block.path)
+          : capturedCodeLanguage(block.path),
     block.kind === "patch" ? patchDecorations(block.text) : [],
     block.lineNumbered ? numberedCodeGutter(block.text) : [],
     annotations,

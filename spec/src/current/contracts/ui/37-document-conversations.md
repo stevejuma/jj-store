@@ -164,11 +164,20 @@ accessible loading label, keeping the requested path visible in the inspector
 header; it does not show a text-only loading row.
 
 The conversation workspace rail uses the standard body-sidebar surface, with
-Files and Changes tabs in its borderless header. The adjoining inspector edge
+Files and Changes tabs in its header, with the standard bottom divider retained
+beneath both the tabs and the file inspector title. The adjoining inspector edge
 is straight in both inline and constrained replace-main layouts while the rail
 is visible. The file-list toolbar divider spans the rail width; the tree owns
 its row insets without extra parent padding. Tabs reuse Projects navigation
-pills; Refresh stays at the header’s trailing edge. File readers have padded content. Refreshing a listing retains its
+pills; Refresh stays at the header’s trailing edge. File readers have padded, transparent content with syntax highlighting and a
+separate line-number gutter. Source bytes and exact comment selections remain
+unchanged; the hover/keyboard comment action replaces a separate Comment on file
+row. Comparison controls use compact adjacent selectors with Lucide icons. They
+prefer one row, including at the rail’s minimum width, shrinking labels before
+wrapping when still less space is available. Long labels truncate within each
+control and retain their full hover titles. Choose branch appears on
+the base selector when no default exists instead of repeating that description
+below it. Other unavailability reasons remain visible. Refreshing a listing retains its
 rows and reports busy state in the header, without an appended loading-more row. Other repository rails retain their existing presentation. It reuses
 the owned file tree and public listing controls. Current files include tracked and nonignored untracked
 paths. Comparison selection defaults to Branch; missing verified bases require

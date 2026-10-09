@@ -10,7 +10,7 @@
   } from "@lapismd/design-core/diff";
   import RepositoryFileLoading from "../community-projects/RepositoryFileLoading.svelte";
   import { isMarkdownRepositoryPath } from "../community-projects/repository-browser.js";
-  import ChatContent from "../store-agent-chat-body/ChatContent.svelte";
+  import ChatTextBlock from "../store-agent-chat-body/ChatTextBlock.svelte";
   import type { WorkspaceBrowser } from "../../conversations/workspace-browser.svelte.js";
   let { browser, onClose }: { browser: WorkspaceBrowser; onClose: () => void } =
     $props();
@@ -59,20 +59,8 @@
         {browser.fileError || file?.unavailable}
       </p>
     {:else if file}
-      <div class="workspace-inspector-controls">
-        {#if blocks.after || blocks.before}<Button
-            variant="ghost"
-            size="sm"
-            onclick={() => {
-              const block = selectedBlock ?? blocks.after ?? blocks.before;
-              if (block) {
-                browser.presentation =
-                  block === blocks.before ? "before" : "after";
-                comments.open(block, { from: 0, to: block.text.length });
-              }
-            }}><MessageSquarePlus />Comment on file</Button
-          >{/if}
-        {#if changed}
+      {#if changed}
+        <div class="workspace-inspector-controls">
           <ToggleGroup.Root
             type="single"
             bind:value={browser.presentation}
@@ -92,8 +80,8 @@
               ><ToggleGroup.Item value="split">Split</ToggleGroup.Item
               ></ToggleGroup.Root
             >{/if}
-        {/if}
-      </div>
+        </div>
+      {/if}
       {#if changed && browser.presentation === "diff"}
         <FileDiff
           path={file.path}
@@ -110,10 +98,11 @@
             >{/snippet}
         </FileDiff>
       {:else if selectedBlock}
-        <ChatContent
-          blocks={[selectedBlock]}
+        <ChatTextBlock
+          block={selectedBlock}
           state={comments}
-          showHeaders={false}
+          showHeader={false}
+          fileView
         />
       {/if}
     {/if}

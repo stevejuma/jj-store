@@ -1,5 +1,12 @@
 import { EditorState, Text, type Extension } from "@codemirror/state";
 import { language, StreamLanguage } from "@codemirror/language";
+import {
+  javascript,
+  typescript,
+  json,
+} from "@codemirror/legacy-modes/mode/javascript";
+import { python } from "@codemirror/legacy-modes/mode/python";
+import { java } from "@codemirror/legacy-modes/mode/clike";
 import { swift } from "@codemirror/legacy-modes/mode/swift";
 import { highlightTree } from "@lezer/highlight";
 import { miraClassHighlighter } from "@lapismd/mira/codemirror";
@@ -9,6 +16,23 @@ export function capturedCodeLanguage(path?: string): Extension {
   return path?.toLowerCase().endsWith(".swift")
     ? StreamLanguage.define(swift)
     : repositoryEditorLanguage(path ?? "output.txt").extension;
+}
+
+export function fileCodeLanguage(path?: string): Extension {
+  if (path?.toLowerCase().endsWith(".swift"))
+    return StreamLanguage.define(swift);
+  const language = repositoryEditorLanguage(path ?? "output.txt");
+  // The repository's editable CodeEditor provides these built-in grammars.
+  // Mira readers supply their own extensions, including these existing modes.
+  if (language.id === "typescript" || language.id === "tsx")
+    return StreamLanguage.define(typescript);
+  if (language.id === "javascript" || language.id === "jsx")
+    return StreamLanguage.define(javascript);
+  if (language.id === "json") return StreamLanguage.define(json);
+  if (language.id === "python") return StreamLanguage.define(python);
+  if (language.id === "java" || path?.toLowerCase().endsWith(".java"))
+    return StreamLanguage.define(java);
+  return language.extension;
 }
 
 /** Prefix ranges stay in captured UTF-16 coordinates, including empty lines. */
