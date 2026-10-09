@@ -53,6 +53,8 @@ export function sessionItems(
           : undefined,
       status: sessionStatus(session, unknown),
       repository: {
+        id: session.repository,
+        name: repositoryName,
         href: `#/repos/${encodeURIComponent(session.repository)}/files?${query}`,
         label: `Open ${repositoryName}`,
       },

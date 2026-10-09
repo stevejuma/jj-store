@@ -306,6 +306,13 @@ keyboard/accessibility and historical-value checks pass; live inspection makes
 no configuration or execution changes. The ownership audit also records two
 previously undeclared locally authored composer helpers. M24 stays In progress;
 independent qualification and visual-baseline gates remain unchanged.
+
+E-CHAT-LIVE-013 groups session chats beneath expandable repository rows, keeps
+exact per-chat repository links and makes long repository names truncate within
+the resized sidebar. Focused interaction/accessibility, adapter/grouping, type
+and ownership checks pass; live inspection retains the selected chat and uses no
+execution or configuration commands. M24 remains In progress, independent
+qualification gates remain open and visual baselines remain unapproved.
 <!-- generated-navigation -->
 
 ## Pages

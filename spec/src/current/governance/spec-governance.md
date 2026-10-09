@@ -120,3 +120,10 @@ JST-GOV-002/008 remain unchanged: these declarations identify locally authored
 code, retain all copied source/license attribution and introduce no external
 Community dependency or ownership exception. Sent-context and runtime layout
 changes remain governed by the UI chapter and focused evidence.
+
+E-CHAT-LIVE-013 adapts the maintained Community navigation disclosure pattern
+for repository groups in the owned session inbox. The new presentation component
+retains pinned Svelte/CSS source attribution in docs/ui-provenance.json; native
+session/repository identities and grouping remain application-owned. JST-GOV-008
+ownership boundaries remain unchanged and no Community checkout dependency is
+introduced.

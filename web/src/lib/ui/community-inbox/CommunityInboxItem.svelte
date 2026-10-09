@@ -37,7 +37,7 @@
   >
     <CommunityMemberAvatar
       member={item.author}
-      size="small"
+      size="xsmall"
       shape="rounded"
       showPresence={item.status !== "Draft"}
       {presence}
@@ -47,17 +47,19 @@
       <span class="lc-community-inbox__item-heading"
         ><strong>{item.author.name}</strong></span
       >
-      <span class="lc-community-inbox__context">{item.context}</span>
-      {#if item.lastActivityAt !== undefined}<span
-          class="lc-community-inbox__context"
-        >
-          <CommunityRelativeTime
-            timestamp={item.lastActivityAt}
-            ariaLabel={`Last activity: ${formatCommunityFullDate(item.lastActivityAt)}`}
-          />
-        </span>
-      {:else if item.excerpt}<span class="lc-community-inbox__excerpt"
-          >{item.excerpt}</span
+      <span class="lc-community-inbox__item-detail">
+        <span class="lc-community-inbox__context">{item.context}</span>
+        {#if item.lastActivityAt !== undefined}<span
+            class="lc-community-inbox__time"
+          >
+            <CommunityRelativeTime
+              timestamp={item.lastActivityAt}
+              ariaLabel={`Last activity: ${formatCommunityFullDate(item.lastActivityAt)}`}
+            />
+          </span>{/if}
+      </span>
+      {#if item.lastActivityAt === undefined && item.excerpt}<span
+          class="lc-community-inbox__excerpt">{item.excerpt}</span
         >{/if}
     </span>
   </Button>

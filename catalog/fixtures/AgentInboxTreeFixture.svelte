@@ -1,0 +1,107 @@
+<script lang="ts">
+  import { AppShell } from "@lapismd/design-core/shell";
+  import { Button } from "@lapismd/design-core/shadcn/button";
+  import { Input } from "@lapismd/design-core/shadcn/input";
+  import CommunityAppShell from "../../web/src/lib/ui/community-app-shell/CommunityAppShell.svelte";
+  import CommunityInbox from "../../web/src/lib/ui/community-inbox/CommunityInbox.svelte";
+  import { createStoreShell } from "../../web/src/lib/ui/store-application/create-store-shell.js";
+  import { createMemoryStoryStorage } from "./memory-storage.js";
+  let { repositoryName = "Sample repository" }: { repositoryName?: string } =
+    $props();
+  const shell = createStoreShell(createMemoryStoryStorage(), false);
+  let active = $state("first"),
+    draft = $state("Retained conversation draft"),
+    refreshed = $state(false),
+    sessionsVisible = $state(true);
+  const author = (name: string) => ({
+    id: name,
+    name,
+    initials: "AG",
+    handle: "",
+    avatar: "🤖",
+  });
+  const repository = (id: string) => ({
+    id,
+    name: refreshed && id === "repo-a" ? "Renamed repository" : repositoryName,
+    label: "Open Sample repository",
+    href: `#/repos/${id}/files?at_op=original-${id}`,
+  });
+  const items = $derived([
+    {
+      id: "first",
+      author: author("First chat"),
+      context: "Codex",
+      status: "Offline",
+      repository: repository("repo-a"),
+      lastActivityAt: 1_800_000_000,
+    },
+    {
+      id: "second",
+      author: author("Second chat"),
+      context: "Cursor",
+      status: "Online",
+      repository: {
+        ...repository("repo-a"),
+        href: "#/repos/repo-a/files?at_op=other-operation&workspace=retained-workspace",
+      },
+    },
+    {
+      id: "other",
+      author: author("Other repository chat"),
+      context: "Codex",
+      status: "Offline",
+      repository: repository("repo-b"),
+    },
+    {
+      id: "draft",
+      author: author("New chat"),
+      context: "Choose a repository",
+      status: "Draft",
+    },
+  ]);
+</script>
+
+<CommunityAppShell
+  controller={shell}
+  displayMode="desktop"
+  style="height: 100dvh"
+>
+  <AppShell.Main>
+    <CommunityInbox
+      items={sessionsVisible ? (refreshed ? [...items].reverse() : items) : []}
+      activeId={active}
+      layoutStorage={createMemoryStoryStorage()}
+      onSelect={(id) => (active = id)}
+      onBack={() => {}}
+      onNew={() => (active = "draft")}
+      threadTitle="Selected chat"
+    >
+      <div class="fixture-content">
+        <p>Selected session: {active}</p>
+        <Input aria-label="Conversation draft" bind:value={draft} />
+        <Button onclick={() => (refreshed = !refreshed)}
+          >Refresh and rename repository</Button
+        >
+        <Button onclick={() => (sessionsVisible = !sessionsVisible)}
+          >{sessionsVisible
+            ? "Hide loaded sessions"
+            : "Restore loaded sessions"}</Button
+        >
+        <Button onclick={() => (active = "other")}
+          >Select other repository externally</Button
+        >
+        <Button onclick={() => (active = "first")}
+          >Select first chat externally</Button
+        >
+      </div>
+    </CommunityInbox>
+  </AppShell.Main>
+</CommunityAppShell>
+
+<style>
+  .fixture-content {
+    display: grid;
+    gap: 1rem;
+    padding: 1rem;
+  }
+</style>

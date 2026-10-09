@@ -259,7 +259,22 @@ progress.
 Pending-reply status and original-message context retain readable contrast while
 composer submission is disabled, using Community's interactive status drawer.
 
-Inbox session rows show Community avatar presence and an icon-only, tooltipped
+The Session chats sidebar groups loaded chats by exact repository ID using the
+application navigation's expandable repository rows. Distinct repositories with
+the same name remain separate; unknown names retain the existing ID-based label.
+Groups start expanded and retain their disclosure state through refresh, rename,
+reordering and chat-list hide/show. A newly selected or deep-linked chat reveals
+its group; collapsing the current group does not change selection or discard its
+draft. Chats appear as compact indented children with their avatar, presence,
+name, context and retained activity time. Drafts without a repository remain in
+an explicit No repository group. Grouping uses only loaded authorized data and
+preserves service order within each group; it never queries or changes bindings.
+Repository disclosure controls support pointer, Enter/Space and visible focus.
+Repository names truncate with an ellipsis within the available row width and
+reveal more text as the sidebar grows; the full name remains available on hover
+and in the accessible disclosure label.
+
+Inbox session rows retain Community avatar presence and an icon-only, tooltipped
 link to that chat's exact repository and retained operation in place of the
 status tag. The repository link is independent of the chat selection control.
 The chat column reuses Community's bounded pointer/keyboard resize behavior,

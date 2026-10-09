@@ -231,3 +231,9 @@ JST-API-001 unchanged: resting background, full-width captured Markdown and
 trailing menu placement affect presentation only. Inspection preserves captured
 values and delivery state; menu movement does not alter installation commands,
 request identities, authorization or persisted formats.
+
+Repository-grouped session navigation (E-CHAT-LIVE-013) leaves JST-API-001
+unchanged. Repository IDs and names are local presentation fields derived from
+the existing admitted session and repository catalog. Grouping, disclosure and
+selection retain exact per-chat workspace/operation links, without a new read,
+execution command, binding change or persisted-format change.

@@ -136,6 +136,8 @@ test("inbox repository links name the repository and round trip exact workspace 
     { id: repository, name: "Local repository" },
   ])[0]!;
   assert.equal(item.repository.label, "Open Local repository");
+  assert.equal(item.repository.id, repository);
+  assert.equal(item.repository.name, "Local repository");
   const result = storeRouteFromHash(item.repository.href);
   assert.equal(result.kind, "route");
   if (result.kind === "route") {

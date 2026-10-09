@@ -2555,6 +2555,22 @@
           "license": "Apache-2.0"
         }
       ]
+    },
+    {
+      "local": "web/src/lib/ui/community-inbox/CommunityInboxSessions.svelte",
+      "reason": "Expandable repository groups and child indentation adapted from the maintained Community navigation; exact grouping identities remain app-owned.",
+      "sources": [
+        {
+          "path": "src/components/community-navigation/CommunityNavigation.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        },
+        {
+          "path": "src/components/community-navigation/CommunityNavigation.css",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
     }
   ],
   "owned": [
