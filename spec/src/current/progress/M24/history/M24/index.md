@@ -51,6 +51,7 @@ Generated from evidence task references and historical mappings. This history is
 | [E-CHAT-WORKSPACE-003](../../../../../history/2026/10/09/E-CHAT-WORKSPACE-003/index.md) | 2026-10-09 | pending | Original outcome |
 | [E-CHAT-WORKSPACE-004](../../../../../history/2026/10/09/E-CHAT-WORKSPACE-004/index.md) | 2026-10-09 | pending | Original outcome |
 | [E-CHAT-WORKSPACE-005](../../../../../history/2026/10/09/E-CHAT-WORKSPACE-005/index.md) | 2026-10-09 | pending | Original outcome |
+| [E-CHAT-WORKSPACE-006](../../../../../history/2026/10/09/E-CHAT-WORKSPACE-006/index.md) | 2026-10-09 | pending | Original outcome |
 <!-- generated-navigation -->
 ## Pages
 

@@ -1,6 +1,7 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
+  import { page as browser } from "vitest/browser";
   import Fixture from "../../fixtures/WorkspaceFilesFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Conversation workspace files",
@@ -325,5 +326,95 @@
     await expect(
       inspector.queryByRole("status", { name: "Loading src/unchanged.ts" }),
     ).not.toBeInTheDocument();
+  }}
+/>
+
+<Story
+  name="Workspace rail header and file divider span the panel"
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await userEvent.click(
+      await c.findByRole("button", { name: "Toggle workspace files" }),
+    );
+    const panel = await c.findByRole("complementary", {
+      name: "Workspace files",
+    });
+    await within(panel).findByRole("button", { name: "README.md" });
+    const header = panel.querySelector<HTMLElement>(
+      '[data-ui-part="sidebar-header"]',
+    )!;
+    const toolbar = panel.querySelector<HTMLElement>(
+      ".community-projects__file-tree-actions",
+    )!;
+    await expect({
+      headerBorder: getComputedStyle(header).borderBottomWidth,
+      startsAtPanelEdge:
+        Math.abs(
+          toolbar.getBoundingClientRect().left -
+            panel.getBoundingClientRect().left,
+        ) <= 1,
+      endsAtPanelEdge:
+        Math.abs(
+          toolbar.getBoundingClientRect().right -
+            panel.getBoundingClientRect().right,
+        ) <= 1,
+    }).toEqual({
+      headerBorder: "0px",
+      startsAtPanelEdge: true,
+      endsAtPanelEdge: true,
+    });
+    await expect(getComputedStyle(toolbar).borderBottomWidth).toBe("1px");
+  }}
+/>
+
+<Story
+  name="Workspace inspector joins the rail at wide and constrained widths"
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    try {
+      await browser.viewport(1800, 988);
+      await userEvent.click(
+        await c.findByRole("button", { name: "Toggle workspace files" }),
+      );
+      const panel = await c.findByRole("complementary", {
+        name: "Workspace files",
+      });
+      await userEvent.click(
+        await within(panel).findByRole("button", { name: "README.md" }),
+      );
+      const inspector = await c.findByRole("complementary", {
+        name: "Workspace file",
+      });
+      await within(inspector).findByRole("textbox", { name: "README.md" });
+      for (const [width, presentation] of [
+        [1800, "inline"],
+        [1070, "replace-main"],
+      ] as const) {
+        await browser.viewport(width, 988);
+        await waitFor(() =>
+          expect(inspector).toHaveAttribute("data-presentation", presentation),
+        );
+        await expect(panel).toHaveAttribute("data-presentation", "inline");
+        await waitFor(() =>
+          expect(
+            Math.abs(
+              inspector.getBoundingClientRect().right -
+                panel.getBoundingClientRect().left,
+            ),
+          ).toBeLessThanOrEqual(1),
+        );
+        await expect(getComputedStyle(inspector).borderStartEndRadius).toBe(
+          "0px",
+        );
+        await expect(getComputedStyle(inspector).borderEndEndRadius).toBe(
+          "0px",
+        );
+        await expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(
+          window.innerWidth + 1,
+        );
+      }
+    } finally {
+      await browser.viewport(1280, 800);
+    }
   }}
 />

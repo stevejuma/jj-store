@@ -36,7 +36,9 @@
 }
 
 .community-app-shell__surface
-  [data-ui-part="sidebar"][data-side="right"]:not([data-variant="rail"])
+  [data-ui-part="sidebar"][data-side="right"]:not([data-variant="rail"]):not(
+    [data-conversation-workspace]
+  )
   > [data-ui-part="sidebar-header"]:not(.lc-channel-settings__header):not(
     .store-agent-details-header
   ):not(.agent-chat-heading) {
@@ -50,12 +52,13 @@
   display: inline-flex;
 }
 
-/* A conversation inspector joins its workspace file rail as one surface. */
+/* Both inspector presentations join the visible workspace rail as one surface. */
 .community-app-shell__surface
   > .ui-minimal-app-shell__composition
-  > .ui-minimal-app-shell__sidebar[data-side="right"][data-presentation="inline"]:not(
-    [data-variant="rail"]
-  ):has(
+  > .ui-minimal-app-shell__sidebar[data-side="right"]:is(
+    [data-presentation="inline"],
+    [data-presentation="replace-main"]
+  ):not([data-variant="rail"]):has(
     ~ [data-conversation-workspace][data-presentation="inline"]:not([hidden])
   ) {
   margin-inline-end: 0;

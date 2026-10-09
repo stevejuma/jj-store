@@ -353,6 +353,12 @@ skeleton. Five focused stories pass; two older repository body inset checks fail
 identically on the prior revision and remain recorded for separate review. M24
 remains In progress for the outstanding shared reader, retained history and cold
 native/local gates. Visual baselines remain unapproved.
+E-CHAT-WORKSPACE-006 removes the inbox workspace tab-header border and extra
+file-tree wrapper inset, and squares the adjoining inspector edge in constrained
+as well as inline layouts. Six focused interaction/accessibility stories and live
+geometry checks pass; resize exercises still emit the recorded ResizeObserver
+warning. M24 remains In progress, the wider workspace qualification gaps remain
+open, and visual baselines stay unapproved.
 <!-- generated-navigation -->
 ## Pages
 

@@ -294,3 +294,7 @@ E-CHAT-WORKSPACE-005 confirms JST-API-001 unchanged: inbox-only panel ownership,
 separate shell layout identities and loading placeholders do not alter workspace
 inspection requests, source identities, authorization, publication or generated
 transport contracts. The existing session-bound read API remains the authority.
+
+E-CHAT-WORKSPACE-006 confirms JST-API-001 unchanged: workspace panel border,
+inset and corner corrections retain the same authorized inspection requests,
+immutable sources and publication contracts. No transport generation is needed.

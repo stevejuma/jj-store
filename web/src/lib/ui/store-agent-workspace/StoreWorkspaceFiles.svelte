@@ -108,58 +108,68 @@
         <Tabs.Content value={browser.tab} aria-busy={listing.loading}>
           <div class="workspace-files-content">
             {#if browser.tab === "changes"}
-              <Select.Root
-                type="single"
-                value={browser.range}
-                onValueChange={(value) =>
-                  void browser.compare(value as Model<"ComparisonRange">)}
-              >
-                <Select.Trigger aria-label="Comparison range"
-                  >{ranges.find((r) => r.value === browser.range)
-                    ?.label}</Select.Trigger
-                >
-                <Select.Content
-                  ><Select.Group
-                    >{#each ranges as range}<Select.Item value={range.value}
-                        >{range.label}</Select.Item
-                      >{/each}</Select.Group
-                  ></Select.Content
-                >
-              </Select.Root>
-              {#if browser.range === "branch"}
+              <div class="workspace-files-comparison">
                 <Select.Root
                   type="single"
-                  value={browser.base ?? "default"}
+                  value={browser.range}
                   onValueChange={(value) =>
-                    void browser.compare(
-                      "branch",
-                      value === "default" ? null : value,
-                    )}
+                    void browser.compare(value as Model<"ComparisonRange">)}
                 >
-                  <Select.Trigger aria-label="Comparison base"
-                    >{browser.base
-                      ? (listing.value?.references.find(
-                          (r) => r.commit === browser.base,
-                        )?.name ?? browser.base.slice(0, 8))
-                      : "Configured branch"}</Select.Trigger
+                  <Select.Trigger aria-label="Comparison range"
+                    >{ranges.find((r) => r.value === browser.range)
+                      ?.label}</Select.Trigger
                   >
                   <Select.Content
                     ><Select.Group
-                      ><Select.Item value="default"
-                        >Configured branch</Select.Item
-                      >{#each Array.from(new Map((listing.value?.references ?? []).map( (r) => [r.commit, r] )).values()) as ref (ref.name)}<Select.Item
-                          value={ref.commit}>{ref.name}</Select.Item
+                      >{#each ranges as range}<Select.Item value={range.value}
+                          >{range.label}</Select.Item
                         >{/each}</Select.Group
                     ></Select.Content
                   >
                 </Select.Root>
-              {/if}
+                {#if browser.range === "branch"}
+                  <Select.Root
+                    type="single"
+                    value={browser.base ?? "default"}
+                    onValueChange={(value) =>
+                      void browser.compare(
+                        "branch",
+                        value === "default" ? null : value,
+                      )}
+                  >
+                    <Select.Trigger aria-label="Comparison base"
+                      >{browser.base
+                        ? (listing.value?.references.find(
+                            (r) => r.commit === browser.base,
+                          )?.name ?? browser.base.slice(0, 8))
+                        : "Configured branch"}</Select.Trigger
+                    >
+                    <Select.Content
+                      ><Select.Group
+                        ><Select.Item value="default"
+                          >Configured branch</Select.Item
+                        >{#each Array.from(new Map((listing.value?.references ?? []).map( (r) => [r.commit, r] )).values()) as ref (ref.name)}<Select.Item
+                            value={ref.commit}>{ref.name}</Select.Item
+                          >{/each}</Select.Group
+                      ></Select.Content
+                    >
+                  </Select.Root>
+                {/if}
+              </div>
             {/if}
-            {#if listing.error}<p role="status">{listing.error}</p>{/if}
-            {#if listing.value?.comparison?.unavailable}<p role="status">
+            {#if listing.error}<p class="workspace-files-status" role="status">
+                {listing.error}
+              </p>{/if}
+            {#if listing.value?.comparison?.unavailable}<p
+                class="workspace-files-status"
+                role="status"
+              >
                 {listing.value.comparison.unavailable}
               </p>{/if}
-            {#if listing.value?.incomplete}<p role="status">
+            {#if listing.value?.incomplete}<p
+                class="workspace-files-status"
+                role="status"
+              >
                 {listing.value.incomplete}
               </p>{/if}
             {#if !listing.loading && !listing.error && !listing.value?.files.length && !listing.value?.comparison?.unavailable}
@@ -213,8 +223,12 @@
     flex: none;
   }
   .workspace-files-content {
-    padding: 0.5rem;
     min-width: 0;
+  }
+  .workspace-files-comparison,
+  .workspace-files-status,
+  .workspace-files-skeleton {
+    padding: 0.5rem;
   }
   .workspace-files-skeleton {
     display: flex;
