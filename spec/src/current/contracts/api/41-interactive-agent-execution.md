@@ -326,3 +326,7 @@ E-UI-MENU-001 confirms JST-API-001 unchanged: normal-weight menu titles and
 connection-screen Help alignment change presentation only. Menu selections,
 workspace inspection, connection admission and Help reads retain their existing
 request and authorization contracts; no transport generation is required.
+
+E-CHAT-FOOTER-001 confirms JST-API-001 unchanged: preserving formatting toolbar
+space and wrapping footer controls changes only layout. Composer state, Send,
+runtime selections and workspace inspection use their existing requests.

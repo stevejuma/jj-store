@@ -155,6 +155,12 @@ only the viewed binding; it never rebinds an agent or changes a checkout. Footer
 controls wrap at constrained widths while keeping Send accessible and the full
 truncated repository label available.
 
+The collapsed formatting toolbar keeps its intrinsic width; repository and
+runtime controls wrap before they can obscure its buttons. Expanded formatting
+owns the full first row and puts the repository, runtime and Send controls on
+following rows. Within that first row, formatting actions retain horizontal
+scrolling and keyboard access when the panel is narrower than the action set.
+
 Opening the footer menu performs no workspace read: its actions and copy values
 come from the session's verified binding projection. Listings and bounded file
 contents are cached in session memory by binding, tab, comparison and path.

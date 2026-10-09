@@ -47,7 +47,13 @@
     container: chat-footer / inline-size;
   }
   .chat-message-footer__actions {
-    flex: 1;
+    flex: 1 0 auto;
     min-width: 0;
+    max-width: 100%;
+  }
+  .chat-message-footer__actions:has(
+    :global([data-ui-part="composer-toolbar"][data-formatting-open])
+  ) {
+    flex-basis: 100%;
   }
 </style>

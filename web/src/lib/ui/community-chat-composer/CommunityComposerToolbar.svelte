@@ -49,6 +49,7 @@
   role="toolbar"
   aria-label="Message formatting and actions"
   data-ui-part="composer-toolbar"
+  data-formatting-open={formattingOpen ? "" : undefined}
 >
   {#if formattingOpen}
     <Button

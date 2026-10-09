@@ -386,6 +386,12 @@ identity consistent. Focused interaction/accessibility and live computed-style
 checks retain existing menu behavior. M24 stays In progress; ResizeObserver
 diagnostics and independent workspace qualification remain open. Visual
 baselines remain unapproved.
+E-CHAT-FOOTER-001 protects the collapsed formatting toolbar from shrinking and
+gives expanded formatting a full row above repository/runtime/Send controls.
+The reproduced clipping regression passes at narrow and wide widths, including
+keyboard access, with live inbox panel geometry verified. M24 remains In
+progress; independent workspace qualification, existing resize diagnostics and
+unapproved visual baselines remain unchanged.
 <!-- generated-navigation -->
 ## Pages
 

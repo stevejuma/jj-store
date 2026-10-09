@@ -1,3 +1,5 @@
+- [E-CHAT-FOOTER-001](E-CHAT-FOOTER-001/index.md)
+  {{#include E-CHAT-FOOTER-001/SUMMARY.nav.md}}
 - [E-CHAT-LIVE-003](E-CHAT-LIVE-003/index.md)
   {{#include E-CHAT-LIVE-003/SUMMARY.nav.md}}
 - [E-CHAT-LIVE-004](E-CHAT-LIVE-004/index.md)
