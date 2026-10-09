@@ -18,11 +18,13 @@
     controlReads = false,
     routeNavigation = false,
     missingBase = false,
+    multipleBindings = false,
     baseName = "main",
   }: {
     controlReads?: boolean;
     routeNavigation?: boolean;
     missingBase?: boolean;
+    multipleBindings?: boolean;
     baseName?: string;
   } = $props();
   let holdNextRead = $state(false);
@@ -46,6 +48,21 @@
     agentModeReady: true,
     advertisedModels: true,
   });
+  if (untrack(() => multipleBindings)) {
+    status.sessions[0].repository_bindings = [
+      [repository, "/fixture/repository/agent-workspace"],
+      ["bb".repeat(16), "/fixture/second/other-workspace"],
+    ].map(([repository, workspace]) => ({
+      repository,
+      workspace,
+      target_id: "fixture",
+      profile: "local_jj_git",
+      selected_operation: operation,
+      base_commit: commit,
+      operation,
+      commit,
+    }));
+  }
   let route = $state(agentsRoute("session", status.sessions[0].id));
   const settings = new AgentSettingsFixture();
   const paths = ["README.md", "src/example.ts", "src/unchanged.ts"];
@@ -74,9 +91,15 @@
         return json({
           version: 1,
           session: request.session,
-          repository,
-          workspace: status.sessions[0].workspace_name,
-          location: status.sessions[0].workspace,
+          repository: request.repository,
+          workspace:
+            request.repository === repository
+              ? status.sessions[0].workspace_name
+              : "other-workspace",
+          location:
+            request.repository === repository
+              ? status.sessions[0].workspace
+              : "/fixture/second/other-workspace",
           operation,
           commit,
           selection: "fixture-selection",

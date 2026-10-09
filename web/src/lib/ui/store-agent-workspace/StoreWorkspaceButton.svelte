@@ -2,9 +2,8 @@
   import { ownNotifications } from "../../notifications/notification-context.svelte.js";
   import { onMount, untrack } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import * as Popover from "@lapismd/design-core/shadcn/popover";
-  import * as Select from "@lapismd/design-core/shadcn/select";
-  import FolderIcon from "@lucide/svelte/icons/folder";
+  import * as Menu from "@lapismd/design-core/shadcn/dropdown-menu";
+  import FolderGitIcon from "@lucide/svelte/icons/folder-git-2";
   import FilesIcon from "@lucide/svelte/icons/files";
   import CopyIcon from "@lucide/svelte/icons/copy";
   import GitBranchIcon from "@lucide/svelte/icons/git-branch";
@@ -78,78 +77,101 @@
 </script>
 
 {#if browser?.binding && inspection?.workspaceEnabled}
-  <Popover.Root bind:open>
-    <Popover.Trigger
-      >{#snippet child({ props })}<Button
+  <Menu.Root bind:open>
+    <Menu.Trigger>
+      {#snippet child({ props })}
+        <Button
           {...props}
-          variant="secondary"
-          size="sm"
+          variant="ghost"
+          size="xs"
           class="workspace-trigger"
           title={label}
           aria-label={`Workspace: ${label}`}
-          ><FolderIcon /><span class="truncate">{label}</span></Button
-        >{/snippet}</Popover.Trigger
-    >
-    <Popover.Content
+          ><FolderGitIcon data-icon="inline-start" aria-hidden="true" /><span
+            class="truncate">{label}</span
+          ></Button
+        >
+      {/snippet}
+    </Menu.Trigger>
+    <Menu.Content
       align="start"
       side="top"
-      class="w-80 max-w-[calc(100vw-2rem)]"
+      aria-label="Workspace"
+      class="w-64 max-w-[calc(100vw-2rem)]"
     >
-      <div class="workspace-popover">
-        <strong>Workspace</strong>
+      <Menu.Group>
+        <Menu.Label>Workspace</Menu.Label>
         {#if browser.bindings.length > 1}
-          <Select.Root
-            type="single"
-            value={browser.bindingKey}
-            onValueChange={(value) => void browser.selectBinding(value)}
-          >
-            <Select.Trigger aria-label="Inspect workspace"
-              ><span class="truncate"
-                >{browser.binding.repositoryName} / {browser.binding.workspace} ·
-                {browser.binding.agent}</span
-              ></Select.Trigger
+          <Menu.Sub>
+            <Menu.SubTrigger
+              ><FolderGitIcon aria-hidden="true" />Inspect workspace</Menu.SubTrigger
             >
-            <Select.Content
-              ><Select.Group
-                >{#each browser.bindings as b (browser.key(b))}<Select.Item
-                    value={browser.key(b)}
-                    >{b.repositoryName} / {b.workspace} · {b.agent}</Select.Item
-                  >{/each}</Select.Group
-              ></Select.Content
+            <Menu.SubContent
+              aria-label="Inspect workspace"
+              class="max-w-[calc(100vw-2rem)]"
             >
-          </Select.Root>
+              <Menu.RadioGroup
+                value={browser.bindingKey}
+                onValueChange={(value) => void browser.selectBinding(value)}
+              >
+                {#each browser.bindings as b (browser.key(b))}
+                  <Menu.RadioItem value={browser.key(b)}>
+                    <span
+                      class="truncate"
+                      title={`${b.repositoryName} / ${b.workspace} · ${b.agent}`}
+                    >
+                      {b.repositoryName} / {b.workspace} · {b.agent}
+                    </span>
+                  </Menu.RadioItem>
+                {/each}
+              </Menu.RadioGroup>
+            </Menu.SubContent>
+          </Menu.Sub>
         {/if}
         {#if browser.details && browser.details.repository === browser.binding.repository && browser.details.session === browser.binding.session}
-          <p class="workspace-location">{browser.details.location}</p>
-          {#if branch}<p><GitBranchIcon size={14} />{branch}</p>{/if}
-          <Button
-            variant="ghost"
-            size="sm"
-            onclick={() => {
-              open = false;
-              inspection?.showWorkspace(browser);
-            }}><FilesIcon />View files</Button
-          >
-          <Button
-            variant="ghost"
-            size="sm"
-            onclick={() =>
-              void copy(browser.details!.location, "Workspace path")}
-            ><CopyIcon />Copy workspace path</Button
-          >
-          {#if branch}<Button
-              variant="ghost"
-              size="sm"
-              onclick={() => void copy(branch, "Branch name")}
-              ><CopyIcon />Copy branch name</Button
+          {#if branch}<Menu.Label
+              ><span class="workspace-branch"
+                ><GitBranchIcon size={14} aria-hidden="true" /><span
+                  class="truncate"
+                  title={branch}>{branch}</span
+                ></span
+              ></Menu.Label
             >{/if}
-        {:else}<p role="status">
-            {browser.listing.error || "Loading workspace…"}
-          </p>{/if}
-        {#if copied}<span role="status">{copied}</span>{/if}
-      </div>
-    </Popover.Content>
-  </Popover.Root>
+          <Menu.Item onSelect={() => inspection?.showWorkspace(browser)}>
+            <FilesIcon aria-hidden="true" />View files
+          </Menu.Item>
+          <Menu.Sub>
+            <Menu.SubTrigger
+              ><CopyIcon aria-hidden="true" />Copy</Menu.SubTrigger
+            >
+            <Menu.SubContent aria-label="Copy" class="w-48">
+              <Menu.Group>
+                <Menu.Item
+                  onSelect={() =>
+                    void copy(browser.details!.location, "Project path")}
+                >
+                  <FolderGitIcon aria-hidden="true" />Project path
+                </Menu.Item>
+                <Menu.Item
+                  onSelect={() =>
+                    void copy(browser.details!.workspace, "Workspace name")}
+                >
+                  <CopyIcon aria-hidden="true" />Workspace name
+                </Menu.Item>
+              </Menu.Group>
+            </Menu.SubContent>
+          </Menu.Sub>
+        {:else}
+          <Menu.Label
+            ><span role="status"
+              >{browser.listing.error || "Loading workspace…"}</span
+            ></Menu.Label
+          >
+        {/if}
+      </Menu.Group>
+    </Menu.Content>
+  </Menu.Root>
+  <span class="sr-only" role="status" aria-live="polite">{copied}</span>
 {/if}
 
 <style>
@@ -157,21 +179,10 @@
     min-width: 0;
     max-width: min(18rem, 100%);
   }
-  .workspace-popover {
+  .workspace-branch {
     display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    min-width: 0;
-  }
-  .workspace-location {
-    overflow-wrap: anywhere;
-    color: var(--muted-foreground);
-  }
-  p {
-    margin: 0;
-    font-size: 0.8125rem;
-    display: flex;
-    gap: 0.375rem;
     align-items: center;
+    gap: 0.375rem;
+    min-width: 0;
   }
 </style>

@@ -146,8 +146,12 @@ records the real sample and Unicode/empty-output source mapping regressions.
 ## Workspace files from the conversation footer
 
 The footer identifies the inspected agent, repository and verified workspace.
-Its popover offers the full location, known branch facts, copy actions and View
-files. An inspection selector changes only the viewed binding; it never rebinds
+Its compact footer button uses a Git folder icon, smaller text and themed hover
+feedback. The menu aligns with its leading edge and its rows align left. It
+shows known branch facts and View files, with a Copy submenu for Project path
+(the inspected directory verified by the server) and the exact Workspace name.
+The filesystem path is not displayed in the menu. An inspection selector changes
+only the viewed binding; it never rebinds
 an agent or changes a checkout. Footer controls wrap at constrained widths while
 keeping Send accessible and the full truncated repository label available.
 

@@ -1,10 +1,20 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
-  import { expect, userEvent, within, waitFor } from "storybook/test";
-  import { page as browser } from "vitest/browser";
+  import { expect, fn, userEvent, within, waitFor } from "storybook/test";
+  import { page as browser, userEvent as browserEvent } from "vitest/browser";
   import Fixture from "../../fixtures/WorkspaceFilesFixture.svelte";
   const longBranch =
     "feature/retain-exact-workspace-source-and-conversation-reply-identities";
+  async function viewFiles() {
+    const page = within(document.body);
+    await userEvent.click(
+      await page.findByRole("menuitem", { name: "View files" }),
+    );
+    await waitFor(() => {
+      expect(page.queryByRole("menu", { name: "Workspace" })).toBeNull();
+      expect(getComputedStyle(document.body).pointerEvents).not.toBe("none");
+    });
+  }
   const { Story } = defineMeta({
     title: "JJ Store/Conversation workspace files",
     component: Fixture,
@@ -19,12 +29,7 @@
     const c = within(canvasElement),
       page = within(document.body);
     await userEvent.click(await c.findByRole("button", { name: /Workspace:/ }));
-    await expect(
-      await within(document.querySelector(".workspace-popover")!).findByText(
-        "/fixture/repository/agent-workspace",
-      ),
-    ).toBeVisible();
-    await userEvent.click(page.getByRole("button", { name: "View files" }));
+    await viewFiles();
     const panel = await c.findByRole("complementary", {
       name: "Workspace files",
     });
@@ -137,9 +142,7 @@
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
     await userEvent.click(await c.findByRole("button", { name: /Workspace:/ }));
-    await userEvent.click(
-      await within(document.body).findByRole("button", { name: "View files" }),
-    );
+    await viewFiles();
     const panel = within(
       await c.findByRole("complementary", { name: "Workspace files" }),
     );
@@ -204,9 +207,7 @@
     await expect(originalRail()).toHaveAttribute("data-variant", "rail");
     await userEvent.click(c.getByRole("button", { name: "Fixture inbox" }));
     await userEvent.click(await c.findByRole("button", { name: /Workspace:/ }));
-    await userEvent.click(
-      await within(document.body).findByRole("button", { name: "View files" }),
-    );
+    await viewFiles();
     const files = within(
       await c.findByRole("complementary", { name: "Workspace files" }),
     );
@@ -571,5 +572,118 @@
         ),
       ).toBeLessThanOrEqual(1),
     );
+  }}
+/>
+
+<Story
+  name="Workspace footer offers compact left aligned actions and a copy submenu"
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement),
+      page = within(document.body);
+    const trigger = await c.findByRole("button", { name: /Workspace:/ });
+    const write = fn();
+    const descriptor = Object.getOwnPropertyDescriptor(navigator, "clipboard");
+    Object.defineProperty(navigator, "clipboard", {
+      configurable: true,
+      value: { writeText: write },
+    });
+    try {
+      await expect(parseFloat(getComputedStyle(trigger).fontSize)).toBeLessThan(
+        14,
+      );
+      const rest = getComputedStyle(trigger).backgroundColor;
+      await browser.getByRole("button", { name: /Workspace:/ }).hover();
+      await waitFor(() =>
+        expect(getComputedStyle(trigger).backgroundColor).not.toBe(rest),
+      );
+      await browserEvent.click(trigger);
+      const view = await page.findByRole("menuitem", { name: "View files" });
+      const menu = page.getByRole("menu", { name: "Workspace" });
+      await expect(
+        within(menu).queryByText("/fixture/repository/agent-workspace"),
+      ).toBeNull();
+      await expect(
+        Math.abs(
+          menu.getBoundingClientRect().left -
+            trigger.getBoundingClientRect().left,
+        ),
+      ).toBeLessThanOrEqual(1);
+      await expect(getComputedStyle(view).justifyContent).not.toBe("center");
+      await browserEvent.click(page.getByRole("menuitem", { name: "Copy" }));
+      await browserEvent.click(
+        await page.findByRole("menuitem", { name: "Project path" }),
+      );
+      await waitFor(() =>
+        expect(write).toHaveBeenCalledWith(
+          "/fixture/repository/agent-workspace",
+        ),
+      );
+      await waitFor(() =>
+        expect(page.queryByRole("menu", { name: "Workspace" })).toBeNull(),
+      );
+      await waitFor(() =>
+        expect(getComputedStyle(trigger).pointerEvents).not.toBe("none"),
+      );
+      await browserEvent.click(trigger);
+      const copy = await page.findByRole("menuitem", { name: "Copy" });
+      copy.focus();
+      await browserEvent.keyboard("{ArrowRight}");
+      const name = await page.findByRole("menuitem", {
+        name: "Workspace name",
+      });
+      await waitFor(() =>
+        expect(
+          page.getByRole("menuitem", { name: "Project path" }),
+        ).toHaveFocus(),
+      );
+      await browserEvent.keyboard("{ArrowDown}");
+      await waitFor(() => expect(name).toHaveFocus());
+      await browserEvent.keyboard("{Enter}");
+      await waitFor(() => expect(write).toHaveBeenCalledTimes(2));
+      await expect(write).toHaveBeenLastCalledWith("agent-" + "44".repeat(16));
+      await waitFor(() => expect(trigger).toHaveFocus());
+    } finally {
+      if (descriptor) Object.defineProperty(navigator, "clipboard", descriptor);
+      else Reflect.deleteProperty(navigator, "clipboard");
+    }
+  }}
+/>
+
+<Story
+  name="Workspace menu keeps multi repository inspection scoped to the selection"
+  args={{ multipleBindings: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement),
+      page = within(document.body);
+    const trigger = await c.findByRole("button", { name: /Workspace:/ });
+    await browserEvent.click(trigger);
+    const select = await page.findByRole("menuitem", {
+      name: "Inspect workspace",
+    });
+    select.focus();
+    await browserEvent.keyboard("{ArrowRight}");
+    const option = await page.findByRole("menuitemradio", {
+      name: /other-workspace/,
+    });
+    await waitFor(() =>
+      expect(
+        page.getByRole("menuitemradio", { name: /agent-workspace/ }),
+      ).toHaveFocus(),
+    );
+    await browserEvent.keyboard("{ArrowDown}");
+    await waitFor(() => expect(option).toHaveFocus());
+    await browserEvent.keyboard("{Enter}");
+    await waitFor(() => expect(trigger).toHaveTextContent("other-workspace"));
+    await waitFor(() =>
+      expect(getComputedStyle(trigger).pointerEvents).not.toBe("none"),
+    );
+    await browserEvent.click(trigger);
+    await viewFiles();
+    await expect(
+      await c.findByRole("complementary", { name: "Workspace files" }),
+    ).toBeVisible();
+    await expect(
+      await c.findByRole("button", { name: "src/unchanged.ts" }),
+    ).toBeVisible();
   }}
 />

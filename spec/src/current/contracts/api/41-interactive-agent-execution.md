@@ -302,3 +302,8 @@ immutable sources and publication contracts. No transport generation is needed.
 E-CHAT-WORKSPACE-007 confirms JST-API-001 unchanged: numbered, highlighted file
 readers and compact comparison controls retain exact source bytes, the existing
 base selector and authorized read requests. No publication or transport changes.
+
+E-CHAT-WORKSPACE-008 confirms JST-API-001 unchanged: the compact footer menu
+copies the existing verified inspection location and workspace name. Menu
+alignment, hover and copy grouping add no API, authorization, storage, publication,
+checkout or agent-binding behavior.

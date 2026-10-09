@@ -366,6 +366,13 @@ base selector carries the missing-default prompt. Exact Unicode comment input,
 31 reader/panel interaction stories and language tests pass. M24 remains In
 progress with runtime resize diagnostics and wider workspace qualification still
 open; visual baselines stay unapproved.
+E-CHAT-WORKSPACE-008 refines the footer into a compact Git folder button and a
+left-aligned action menu, retaining View files and multi-binding inspection.
+Copy groups the verified project path and workspace name without displaying the
+filesystem path. Ten interaction/accessibility stories, UI type checks and fresh
+live menu inspection pass. M24 remains In progress: this slice does not close
+retained-source, cold publication/recovery or runtime resize qualification. M13.3
+and unapproved visual baselines are unchanged.
 <!-- generated-navigation -->
 ## Pages
 
