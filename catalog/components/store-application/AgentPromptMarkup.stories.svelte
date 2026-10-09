@@ -362,7 +362,7 @@
   }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
-    const inspector = canvasElement.querySelector<HTMLDetailsElement>(
+    const inspector = canvasElement.querySelector<HTMLElement>(
       '[data-ui-component="agent-sent-context"]',
     )!;
     expect(
@@ -370,7 +370,10 @@
         '[data-ui-component="agent-sent-context"]',
       ),
     ).toHaveLength(1);
-    expect(inspector.open).toBe(false);
+    expect(c.getByRole("button", { name: "Sent context" })).toHaveAttribute(
+      "aria-expanded",
+      "false",
+    );
     expect(
       inspector.compareDocumentPosition(
         c.getByText("Authored request stays separate."),

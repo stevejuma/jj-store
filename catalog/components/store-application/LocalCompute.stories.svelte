@@ -337,10 +337,10 @@
     await expect(c.getByText("Historical", { exact: true }).tagName).toBe(
       "STRONG",
     );
-    await userEvent.click(c.getByText("Raw context payload", { exact: true }));
+    await userEvent.click(c.getByRole("button", { name: "Show raw context" }));
     await expect(
-      c.getByText(/9007199254740993/, { selector: "pre" }),
-    ).toBeVisible();
+      c.getByRole("region", { name: "Raw context" }),
+    ).toHaveTextContent("9007199254740993");
   }}
 />
 

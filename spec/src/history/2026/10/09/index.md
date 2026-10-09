@@ -9,3 +9,4 @@ Browse the child pages below.
 - [E-CHAT-LIVE-005](E-CHAT-LIVE-005/index.md)
 - [E-CHAT-LIVE-006](E-CHAT-LIVE-006/index.md)
 - [E-CHAT-LIVE-007](E-CHAT-LIVE-007/index.md)
+- [E-CHAT-LIVE-008](E-CHAT-LIVE-008/index.md)

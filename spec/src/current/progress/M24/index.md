@@ -276,7 +276,12 @@ paired jj-acp source repair permits empty authored text with prepared context;
 its rebuilt helper is staged only in the ignored validation runtime. M24 remains
 In progress; independent live permissions/cancellation, other adapters, native
 IME, desktop and visual gates remain open. The pre-existing development
-acceptance-script architecture-size failure is unchanged.
+acceptance-script architecture-size failure is unchanged. E-CHAT-LIVE-008
+refines the shared Sent context inspector with a compact themed button, trailing
+Lucide chevron and one rendered/JSON view toggle. Keyboard activation, exact
+historical numbers and inner disclosure state remain intact. This UI review
+keeps M24 In progress and all independent live, platform, native IME and
+visual-baseline gates unchanged.
 <!-- generated-navigation -->
 
 ## Pages

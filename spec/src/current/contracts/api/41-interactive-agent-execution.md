@@ -204,3 +204,8 @@ admission response in dispatching state is not an agent acknowledgement. The UI
 may use matching captured events to trigger the existing exact child-outcome
 GET; mismatched request/session identities cannot settle a pending submission.
 This read introduces no endpoint or redispatch and preserves unknown outcomes.
+
+E-CHAT-LIVE-008 retains JST-API-001 Sent-context contracts: the compact
+disclosure and rendered/JSON toggle change only presentation. Captured sanitized
+values, delivery labels, retained revisions and lossless numeric serialization
+are unchanged; inspection creates no request or execution.

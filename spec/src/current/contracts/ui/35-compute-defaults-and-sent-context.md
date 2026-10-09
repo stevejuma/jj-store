@@ -72,11 +72,17 @@ input. Advanced in Compute, agent defaults and Add/Edit agent uses a Lucide
 chevron with explicit expanded state and keyboard activation; closing it
 preserves unsaved field drafts.
 
-Outgoing messages expose a collapsed Sent context control. Rich captured
-repository/project/file/revision/review/discussion content and a raw payload
-inspection remain accessible by keyboard. Queued, sent, failed and unknown
-delivery are distinguished. Multiple recipients retain separate context; old
-messages never fabricate missing snapshots.
+Outgoing messages expose a collapsed Sent context control: a compact ghost
+button with the theme's neutral hover treatment and a trailing Lucide chevron.
+An adjacent icon-only toggle switches the same panel between rendered captured
+repository/project/file/revision/review/discussion content and
+syntax-highlighted JSON. There is no second raw-payload disclosure. The toggle
+is exposed on hover, keyboard focus or touch, and stays visible while raw mode
+is active. Both modes retain exact captured values, keyboard access and inner
+rendered disclosures across mode changes, outer collapse and delivery
+acknowledgement. Queued, sent, failed and unknown delivery are distinguished.
+Multiple recipients retain separate context; old messages never fabricate
+missing snapshots.
 
 The shared agent chat row preserves this disclosure alongside separately
 rendered XML context. Delivery updates enrich its captured state while retaining
