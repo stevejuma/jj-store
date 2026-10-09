@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Document and Classic share durable conversation adapters, session drafts, linked agent controls, reactions, exact navigation and advertised runtime configuration; settings and architecture pages describe ownership and limitations.",
-      "fingerprint": "af195f89d23c318c9eec9f101eb88345be153058c228c58199fd9a6811565b33"
+      "reason": "Reviewed local repository thread navigation and companion snapshot ownership alongside Document and Classic comments. Comment actions appear immediately on focus/hover to preserve contrast; draft and publication authority remain unchanged.",
+      "fingerprint": "39fbeb2cb7ce3435085efd12a1c9f6ffa7f0a2f5aa4fbe5bad556d71554a8ef0"
     }
   },
   {

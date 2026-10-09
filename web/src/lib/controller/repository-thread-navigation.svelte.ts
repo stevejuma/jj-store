@@ -2,19 +2,29 @@ import { ApiError, Client, type Model } from "../api/client.js";
 import { HttpThreadsDataSource } from "./http-threads-data-source.js";
 import type { StoreRepositorySummary } from "./contracts.js";
 import { createStoreQueryClient } from "./store-query-client.js";
+import { LocalInboxThreads } from "./local-inbox-threads.js";
+import {
+  threadSnapshotKey,
+  type ThreadPage,
+  type ThreadSnapshot,
+} from "./thread-types.js";
 
 export interface RepositoryThreadEntry {
   threads: readonly Model<"ThreadSummaryV1">[];
   cursor: string | null;
   loading: boolean;
   error: string;
-  snapshot?: Model<"CollabReadSnapshotV1">;
+  snapshot?: ThreadSnapshot;
 }
 export type RepositoryThreadNavigation = ReturnType<
   typeof createRepositoryThreadNavigation
 >;
 export function supportsRepositoryThreads(repo: StoreRepositorySummary) {
-  return (repo.profile ?? "native") === "native" && !!repo.permission;
+  return (
+    ["native", "git_sha1_jj045"].includes(repo.profile ?? "native") &&
+    !!repo.permission &&
+    !["unavailable", "identity_changed"].includes(repo.availability ?? "")
+  );
 }
 
 export function createProductionRepositoryThreadNavigation(
@@ -27,17 +37,18 @@ export function createProductionRepositoryThreadNavigation(
     repositories,
     credential,
     source(repository) {
+      // A sidebar refresh must not invalidate the active conversation's pin.
+      if (
+        repositories().find((r) => r.id === repository)?.profile ===
+        "git_sha1_jj045"
+      )
+        return new LocalInboxThreads(repository, fetcher);
       if (shared) {
         const repo = repositories().find((r) => r.id === repository);
         if (!repo) throw new ApiError("access_denied");
         const source = shared.acquire(repo, credential());
         return {
-          list: async (cursor?: string) => {
-            const page = await source.threads!.list(cursor);
-            if ("metadata_commit" in page.snapshot)
-              throw new ApiError("unexpected_repository_profile");
-            return { ...page, snapshot: page.snapshot };
-          },
+          list: (cursor?: string) => source.threads!.list(cursor),
           close: () => source.close(),
         };
       }
@@ -67,7 +78,7 @@ export function createRepositoryThreadNavigation(context: {
   repositories(): readonly StoreRepositorySummary[];
   credential(): string | null;
   source(repository: string): {
-    list(cursor?: string): Promise<Model<"CollabPage">>;
+    list(cursor?: string): Promise<ThreadPage>;
     close(): void;
   };
 }) {
@@ -119,8 +130,11 @@ export function createRepositoryThreadNavigation(context: {
             result.snapshot.repo_id !== repository ||
             result.items.type !== "threads" ||
             (snapshot &&
-              (result.snapshot.thread_root !== snapshot.thread_root ||
-                result.snapshot.epoch !== snapshot.epoch))
+              (threadSnapshotKey(result.snapshot) !==
+                threadSnapshotKey(snapshot) ||
+                ("epoch" in result.snapshot &&
+                  (!("epoch" in snapshot) ||
+                    result.snapshot.epoch !== snapshot.epoch))))
           )
             throw new ApiError("invalid_thread_page");
           snapshot = result.snapshot;

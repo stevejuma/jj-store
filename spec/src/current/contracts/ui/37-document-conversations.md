@@ -89,3 +89,13 @@ state; a controlled ACP fixture separately qualifies cold publication and
 restart. Neither proves model compliance or native IME behavior. The execution
 and collaboration chapters own delivery, permission and authorization gates; M24
 remains In progress and visual baselines remain unapproved.
+
+Qualified local repository threads expose the existing companion ThreadStore
+transport through the repository view and sidebar. Local and native pagination
+retain their own snapshot identities and reject changed pins; navigation never
+fallbacks to another repository for an explicitly selected owner.
+
+E-CHAT-LIVE-006 records the isolated native/local built-browser flows and cold
+restart. Comment actions appear immediately on focus/hover, avoiding an
+intermediate low-contrast opacity state. Native capability refusals remain
+explicit; qualification uses a supported disposable WorkStore home.

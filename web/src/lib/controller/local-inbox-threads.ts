@@ -18,8 +18,11 @@ export class LocalInboxThreads implements ThreadTransport {
   actor = "";
   #selection?: Promise<Model<"LocalInboxSelection">>;
   #epoch = 0;
-  constructor(repository: string, fetcher?: typeof fetch) {
-    this.client = new LocalClient(repository, fetcher);
+  constructor(repository: string | LocalClient, fetcher?: typeof fetch) {
+    this.client =
+      typeof repository === "string"
+        ? new LocalClient(repository, fetcher)
+        : repository;
   }
   async prepare() {
     await this.selection();

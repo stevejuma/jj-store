@@ -166,17 +166,19 @@ their independent actions.
 The left sidebar includes a primary Projects destination and expandable project
 rows with active linked repositories underneath. Project destinations, project
 rows and the collapsed project-section trigger use Lucide Folder Kanban;
-repository entries and their group retain Folder Git. Native Threads appear only
-as indented children of their owning repository in the Repositories group; their
-child action is labeled Browse threads and there is no separate Threads section.
-A Messages Square icon-only Browse threads action on that group opens the
-connected native repository, or an authorized native repository when no native
-context is selected. Collapsed navigation keeps this action in the Repositories
-Command View. Independent bounded repository thread lists retain their owner,
-pagination and permission boundary without selecting a repository or changing
-the main page. Local folder entries do not advertise unsupported Threads. Thread
-children open their exact native repository and stable thread. Browse Threads
-and selected threads show the repository/Threads breadcrumb in the same desktop
+repository entries and their group retain Folder Git. Native and qualified local
+Threads appear only as indented children of their owning repository in the
+Repositories group; their child action is labeled Browse threads and there is no
+separate Threads section. A Messages Square icon-only Browse threads action on
+that group opens the connected supported repository, or an authorized supported
+repository when no context is selected. Collapsed navigation keeps this action
+in the Repositories Command View. Independent bounded repository thread lists
+retain their owner, pagination and permission boundary without selecting a
+repository or changing the main page. Unavailable or identity-changed local
+folders do not advertise Threads. Local entries use the companion ThreadStore
+transport and pin, never native publication or snapshot fields. Thread children
+open their exact owning repository and stable thread. Browse Threads and
+selected threads show the repository/Threads breadcrumb in the same desktop
 header and mobile toolbar positions as Projects, with native route links and
 retained code selections. The collapsed Projects Command View lists project rows
 without flattening their linked repositories into options; project search,

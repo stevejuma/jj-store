@@ -237,3 +237,8 @@ preferences and recovery from a concurrent save.
 Agent messages show one collapsed context inspector above the authored text. It
 retains Markdown and exact raw context with delivery status. Messages without
 additional context have no inspector; historical captures use their saved data.
+
+Use **Browse threads** under a native or registered local repository to open its
+conversations. Both support Document and Classic views and inline comments; the
+selected repository owns the messages and submissions. Unavailable local folders
+retain their unavailable state until access is restored.

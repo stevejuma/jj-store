@@ -9,6 +9,7 @@ import {
   type Model,
 } from "../api/client.js";
 import { LocalClient } from "../api/local-client.js";
+import { LocalInboxThreads } from "./local-inbox-threads.js";
 import { createStoreQueryClient } from "./store-query-client.js";
 import {
   validateLocalHead,
@@ -27,6 +28,7 @@ type DataByKind = {
 export class HttpLocalQuery {
   readonly profile = "git_sha1_jj045" as const;
   protected readonly client: LocalClient;
+  readonly threads: LocalInboxThreads;
   readonly #reads: import("@tanstack/svelte-query").QueryClient;
   protected head: LocalHead | null = null;
   #capture = 0;
@@ -39,6 +41,7 @@ export class HttpLocalQuery {
     private readonly session: string = crypto.randomUUID(),
   ) {
     this.client = new LocalClient(repository, fetcher);
+    this.threads = new LocalInboxThreads(this.client);
     this.#reads = reads ?? createStoreQueryClient();
   }
   #blameScope = "";
@@ -220,6 +223,7 @@ export class HttpLocalQuery {
     };
   }
   close() {
+    this.threads.close();
     this.#capture++;
     this.client.close();
 

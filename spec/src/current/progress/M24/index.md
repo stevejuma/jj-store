@@ -249,7 +249,19 @@ line cap; this existing check remains reported separately. Cold native/local
 comment publication, lost-acknowledgement recovery and restart navigation are
 tracked in the following acceptance slice. M24 stays In progress; native IME,
 real-provider compliance, independent adapter/platform gates and visual approval
-remain separate.
+remain separate. E-CHAT-LIVE-006 qualifies isolated built native and local
+browser publication, three comments with two linked answers in one assistant
+turn, ordinary human comments-only submission, duplicate receipts, lost
+acknowledgement and unavailable receipt recovery, and exact source/reply
+navigation after server restart. Local repository thread routes now expose the
+existing companion transport; sidebar pages keep independent pins and reject
+changed pagination snapshots. Both profiles pass Axe with zero ResizeObserver
+warnings on these flows. The new cold thread assertion exposed a transient
+contrast failure during comment action opacity animation; instant action
+visibility fixes it and the affected 96-story family passes again. This
+controlled ACP fixture does not prove real model compliance or native IME. M24
+remains In progress, independent gates and the pre-existing architecture-size
+warning remain open, and visual baselines remain unapproved.
 <!-- generated-navigation -->
 
 ## Pages

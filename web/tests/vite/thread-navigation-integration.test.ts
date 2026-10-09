@@ -77,6 +77,10 @@ test("Browse threads from a local folder chooses an authorized native repository
 test("unsupported and unauthorized owners never connect or open a thread", async () => {
   const f = fixture();
   f.data.repositories[1] = { ...f.data.repositories[1]!, permission: null };
+  f.data.repositories[2] = {
+    ...f.data.repositories[2]!,
+    availability: "unavailable",
+  };
   for (const id of [local, other, "missing"])
     await expect(f.integration.openThreads(ids.thread, id)).rejects.toThrow();
   expect(f.connectRepository).not.toHaveBeenCalled();
@@ -102,4 +106,16 @@ test("a late repository connection cannot open a child after navigation changes"
   await selecting;
   expect(open).not.toHaveBeenCalled();
   expect(f.history.route.page).toBe("projects");
+});
+
+test("local thread navigation binds its own authorized repository without falling back to native", async () => {
+  const f = fixture();
+  await f.integration.openThreads(ids.thread, local);
+  expect(f.connectRepository).toHaveBeenCalledExactlyOnceWith(local, null);
+  expect(f.history.route).toMatchObject({
+    repository: local,
+    page: "threads",
+    threadId: ids.thread,
+  });
+  expect(f.integration.threads.detail?.thread.value.thread_id).toBe(ids.thread);
 });

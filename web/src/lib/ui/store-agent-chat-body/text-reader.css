@@ -33,7 +33,6 @@
   display: flex;
   justify-content: flex-end;
   opacity: 0;
-  transition: opacity 100ms;
 }
 .chat-text-block:hover .chat-text-actions,
 .chat-text-block:focus-within .chat-text-actions,

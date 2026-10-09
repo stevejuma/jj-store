@@ -1,4 +1,5 @@
 import { ApiError } from "../api/client.js";
+import { supportsRepositoryThreads } from "./repository-thread-navigation.svelte.js";
 import { createThreadsController } from "./production-threads.svelte.js";
 import { initialStoreRoute } from "./store-route-history.svelte.js";
 import type { createStoreRouteHistory } from "./store-route-history.svelte.js";
@@ -35,16 +36,12 @@ export function createThreadsIntegration(options: {
         threadId,
       }),
   });
-  const nativeHome = () =>
-    data.repositories.find(
-      (repository) =>
-        (repository.profile ?? "native") === "native" && repository.permission,
-    );
+  const threadHome = () => data.repositories.find(supportsRepositoryThreads);
   return {
     threads,
     available() {
       const source = options.source();
-      return source ? !!source.threads : !!nativeHome();
+      return source ? !!source.threads : !!threadHome();
     },
     async restore() {
       if (history.route.page !== "threads" || !options.source()) return false;
@@ -70,12 +67,10 @@ export function createThreadsIntegration(options: {
     async openThreads(id: string | null = null, repository?: string) {
       const active = options.source();
       const target =
-        repository ?? (active?.threads ? active.repository : nativeHome()?.id);
+        repository ?? (active?.threads ? active.repository : threadHome()?.id);
       const repo = data.repositories.find(
         (candidate) =>
-          candidate.id === target &&
-          (candidate.profile ?? "native") === "native" &&
-          candidate.permission,
+          candidate.id === target && supportsRepositoryThreads(candidate),
       );
       if (!repo) throw new ApiError("threads_unavailable");
       if (active?.repository !== repo.id || !active.threads) {

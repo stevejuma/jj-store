@@ -103,3 +103,22 @@ test("local inbox rejects foreign pins and invalid retained image bytes", async 
   });
   source.close();
 });
+
+test("local repository conversations expose the companion transport and close its reads", async () => {
+  const { HttpLocalStoreDataSource } =
+    await import("../../src/lib/controller/http-local-store-data-source.js");
+  const source = new HttpLocalStoreDataSource(repository, (async (input) =>
+    String(input).endsWith("/snapshot")
+      ? json({ snapshot, actor })
+      : json({
+          data: { snapshot, items: { type: "threads", threads: [] } },
+          next_cursor: null,
+        })) as typeof fetch);
+  expect(source.threads).toBeDefined();
+  await expect(source.threads!.list()).resolves.toMatchObject({
+    snapshot,
+    items: { type: "threads" },
+  });
+  source.close();
+  await expect(source.threads!.list()).rejects.toThrow();
+});

@@ -47,6 +47,7 @@ test("independent repository pages retain their owner and loaded window through 
       name: "Local",
       profile: "git_sha1_jj045",
       permission: "admin",
+      availability: "unavailable",
     },
   ];
   const close = vi.fn();
@@ -142,4 +143,54 @@ test("foreign repository pages and access-denied refreshes fail closed", async (
   denied = true;
   await navigation.load(true);
   expect(navigation.entries[repo]!.error).toBe("access denied");
+});
+
+test("local sidebar pages use companion pins and reject pagination across changed revisions", async () => {
+  const fixture = createThreadTransport(),
+    first = await fixture.transport.list();
+  const repository = THREAD_IDS.repo;
+  let pin = "33".repeat(20);
+  const snapshot = () => ({
+    profile: "local_jj_git" as const,
+    repo_id: repository,
+    metadata_commit: pin,
+    state_version: 4,
+  });
+  const fetcher = vi.fn(
+    async (input: RequestInfo | URL) =>
+      new Response(
+        pretty(
+          String(input).endsWith("/snapshot")
+            ? { snapshot: snapshot(), actor: THREAD_IDS.actor }
+            : { data: { ...first, snapshot: snapshot() }, next_cursor: "next" },
+        ),
+        { headers: { "content-type": "application/json" } },
+      ),
+  );
+  const navigation = createProductionRepositoryThreadNavigation(
+    () => [
+      {
+        id: repository,
+        name: "Local",
+        profile: "git_sha1_jj045",
+        permission: "admin",
+      },
+    ],
+    () => null,
+    fetcher,
+  );
+  await navigation.load();
+  expect(navigation.entries[repository]!.threads).toHaveLength(1);
+  expect(navigation.entries[repository]!.snapshot).toMatchObject({
+    metadata_commit: pin,
+  });
+  pin = "44".repeat(20);
+  await navigation.more(repository);
+  expect(navigation.entries[repository]!.error).toBe("invalid thread page");
+  expect(
+    fetcher.mock.calls.every(([url]) =>
+      String(url).startsWith(`/v1/local/repos/${repository}/collaboration/`),
+    ),
+  ).toBe(true);
+  navigation.clear();
 });
