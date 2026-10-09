@@ -240,3 +240,12 @@ blocks among ordinary prose and tools. Only exact references from delivered
 context and verified captured answer ranges can produce durable ThreadStore
 links. Literal code, malformed tags and foreign references remain ordinary
 content; tags never execute commands or resolve reviews.
+
+File review references additionally identify their code repository, review
+thread, comment and immutable revision. Each repository remains independently
+authorized. The versioned workspace inspection POST names an execution session,
+verified binding and relative path; it does not accept arbitrary filesystem
+roots. Bounded listings, source fingerprints, comparison boundaries and opaque
+continuations describe the exact read. Unsupported baselines remain explicit.
+See the generated [installation API](api/installation.md) and
+[collaboration API](api/collaboration.md) for request and response types.

@@ -12,11 +12,18 @@ Use the repository review list/detail in the browser, or `jj review list` and
 local Git-backed access uses the companion provider without a server. Reads do
 not initialize missing companion identity.
 
-Local repository discussions can initialize metadata on their first write.
-Portable local code/agent anchors require separate qualification and are not
-silently replaced by repository-level anchors. A disabled control therefore
-means a different capability is required, not that you should manufacture an
-anchor from display text.
+Local repository discussions can initialize metadata on their first write. Local
+file reviews support exact retained code evidence through the qualified
+companion provider. Comments on unchanged workspace files are supported when the
+provider can retain their source. Portable agent anchors and the native portable
+carrier remain separately gated. Unsupported anchors are not silently replaced
+by repository-level anchors or manufactured from display text.
+
+In an agent chat, file comments join the pending group and are published on
+Send. ReviewStore owns the comments; ThreadStore holds repository-qualified
+references to their exact revisions. Original-context reads use retained source
+evidence rather than the current file. Changed or unavailable selections keep
+their drafts; an answer link does not resolve a review automatically.
 
 ## Edit with exact versions
 

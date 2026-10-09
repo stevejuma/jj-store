@@ -1,5 +1,40 @@
 # Interactive agent sessions
 
+## Document conversations and workspace files
+
+Document is the default conversation view; Appearance can switch to Classic.
+Write the next prompt in the document's inline input. The footer retains
+formatting, agent, model, thinking and Send controls. Drafts and pending
+comments survive view changes during the application session, without browser
+persistence. Expand Sent context to inspect its rendered content or
+syntax-highlighted raw payload. This is the captured context, not reconstructed
+current state.
+
+The repository/workspace button opens **View files** and a **Copy** submenu for
+the project path and workspace name. With multiple bindings, choose which agent
+workspace to inspect; this does not rebind an agent or switch its checkout. View
+files opens a **Files / Changes** rail. Selecting a path opens the resizable
+file inspector. Files includes unchanged tracked and nonignored untracked files;
+unsupported, binary or oversized content retains its availability explanation.
+
+Changes defaults to **Branch**, against the common ancestor with the configured
+target. Choose a base explicitly when none is verified. **Since last commit**
+includes current unsnapshotted edits against the verified parent. **Last turn**
+uses exact recorded before/after snapshots of the latest completed turn; older
+turns without start evidence cannot supply that comparison. Browsing does not
+snapshot or publish files. Clean observations are cached until relevant events
+or explicit refresh invalidate them.
+
+Comment on an exact supported file selection using its inline comment action.
+File comments join conversation comments in the same pending group and Send.
+Send validates and retains the source before publishing review references;
+changed or unavailable sources keep their drafts for explicit reselection.
+Queued comments are validated when their prompt can dispatch. Publication,
+delivery and a linked answer are separate states; retain an uncertain request
+instead of creating a replacement. Local retained-file support is a narrow
+qualification and does not qualify portable agent anchors or every native,
+multi-agent, cleanup and recovery flow. See [reviews](reviews.md).
+
 Saved agents are reusable across general chats, repositories, projects and
 discussions. Start warms an agent in place without creating a session or sending
 instructions. New chat opens a general draft. Stop agent preserves history and

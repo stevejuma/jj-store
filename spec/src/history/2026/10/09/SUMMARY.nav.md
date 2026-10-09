@@ -28,6 +28,8 @@
   {{#include E-CHAT-LIVE-014/SUMMARY.nav.md}}
 - [E-CHAT-LIVE-015](E-CHAT-LIVE-015/index.md)
   {{#include E-CHAT-LIVE-015/SUMMARY.nav.md}}
+- [E-CHAT-MAIN-001](E-CHAT-MAIN-001/index.md)
+  {{#include E-CHAT-MAIN-001/SUMMARY.nav.md}}
 - [E-CHAT-WORKSPACE-001](E-CHAT-WORKSPACE-001/index.md)
   {{#include E-CHAT-WORKSPACE-001/SUMMARY.nav.md}}
 - [E-CHAT-WORKSPACE-002](E-CHAT-WORKSPACE-002/index.md)

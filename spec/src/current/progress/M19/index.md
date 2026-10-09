@@ -7,6 +7,10 @@ E-UI-MENU-001 aligns connection-screen Help at the trailing card inset with a
 fixed compact width. Normal and narrow geometry plus keyboard open/Escape/focus
 restoration pass. M19 remains Partial; bundled documentation and packaged
 WKWebView release qualification are not changed by this presentation slice.
+E-CHAT-MAIN-001 refreshes the generated API manual and source reviews for the
+landed conversation/workspace stack. Strict build, links, anchors and bounded
+asset closure pass before the main-workspace server handoff. M19 remains Partial;
+packaged documentation and platform release gates are unchanged.
 <!-- generated-navigation -->
 ## Pages
 

@@ -12,8 +12,8 @@
       "docs/site/concepts/snapshots.md"
     ],
     "review": {
-      "reason": "Reviewed atomic comment-batch publication and exact receipt recovery under unchanged native manifest authority.",
-      "fingerprint": "8a8403d3bd957cec6436514db5eba53c727373a156fcee3cd81d386514126520"
+      "reason": "Reviewed frozen comment batches and repository-qualified file review publication; documented independent child receipts and unchanged manifest/companion authority.",
+      "fingerprint": "32cf6ee307b36d9407914b8a2ab4f999a3c18cb97894f07379d8f3da9c330bbf"
     }
   },
   {
@@ -30,8 +30,8 @@
       "docs/site/concepts/collaboration.md"
     ],
     "review": {
-      "reason": "Documented exact conversation source selectors, submitted revisions and validated answer links in ThreadStore.",
-      "fingerprint": "40dcd4c3a8912b21b3e2d272aae68f74a0f56895d09738d7c1defa4a59bec300"
+      "reason": "Reviewed exact conversation sources, repository-qualified review revisions and answer links; documented narrow retained local file anchors without qualifying portable agent anchors.",
+      "fingerprint": "91f1a3eac280e043b67f633a27bd3f672f8a6713aca4f56a3dbfedb7f7c95ed1"
     }
   },
   {
@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed metadata-home coordination checkouts and repository/socket proof on reused native attachments; existing local companion formats remain unchanged.",
-      "fingerprint": "9eb265b270f274021acfe4a49416a5f6da3ac2a917527d96834a9baba0a2eabf"
+      "reason": "Reviewed verified workspace inspection and retained code evidence; documented WithEvidence companion CAS and original-source reads with separate M13.3 gates.",
+      "fingerprint": "e82f7d5caa7f3a6a7c6b86bbbc1d274e531ebd89377def59e9ad381347ec49a8"
     }
   },
   {
@@ -65,8 +65,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed native/local comment submission, bounded feedback and exact answer validation; updated architectural ownership.",
-      "fingerprint": "8f2990bf0d2270dd88b9ebd02cfcc554337641b9a2de0a0d4fe85b2c80bc16a5"
+      "reason": "Reviewed session-bound workspace readers and qualified review references; documented independent repository access and unchanged service/provider publication ownership.",
+      "fingerprint": "5f2d5ed3c2eabd2c2fdb8dd426ee0bfe988a21a9c69080664140cce88c22edb4"
     }
   },
   {
@@ -96,8 +96,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed sanitized prompt context serialization and retained batch identities; described the transport protocol without changing server admission.",
-      "fingerprint": "5803d2853252ef24d24ad9b8ea004216700a5b8189f73d9301eb8bccf4ed6679"
+      "reason": "Reviewed deferred workspace submissions and retained turn boundaries in the supervisor; documented source validation, journal receipts and no replay of successful deliveries.",
+      "fingerprint": "1869ec2497af5caa01151c63f2d2be7410404774c8d1bf77685cdeb6b2f40f1e"
     }
   },
   {
@@ -122,8 +122,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed provider-aware jj-agent launch, draft catalog previews, secret custody and shared bordered Settings forms; documented selected trusted shared compute and explicit restart. Native repository authority and platform qualification remain unchanged.",
-      "fingerprint": "cdeffc2eae836ffdaf6cf2e0fe6793646ac10d27b4e809270793dcb86becb844"
+      "reason": "Reviewed registered session-bound workspace inspection and comment submission routes; generated API references and documented exact binding/path requests and independent code authorization.",
+      "fingerprint": "1028085e9ed175d987cbcdca9b42189d410aa3927ffee522f81b0200bd3dacc0"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed local repository thread navigation and companion snapshot ownership alongside Document and Classic comments. Comment actions appear immediately on focus/hover to preserve contrast; draft and publication authority remain unchanged.",
-      "fingerprint": "39fbeb2cb7ce3435085efd12a1c9f6ffa7f0a2f5aa4fbe5bad556d71554a8ef0"
+      "reason": "Reviewed Document inline input, shared comment queue, cached Files/Changes inspection, footer controls and lighter menu headings; linked browser guide to exact comparison and retained-source behavior.",
+      "fingerprint": "012ea3320f04ef3851992b54b37696becc4c4b3a13d8c750895bcbc383f99ba8"
     }
   },
   {
@@ -154,8 +154,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Regenerated API references for exact comment submissions, recorded feedback and durable answer links; documented typed protocol.",
-      "fingerprint": "cfe219a24275904b1c78c78f5db652365f81e2de18f8ce86e70ab8f7446d4d29"
+      "reason": "Regenerated installation, collaboration and public type API references from the landed schemas; documented qualified review references and session-bound inspection without arbitrary filesystem roots.",
+      "fingerprint": "cee7ead89995edaead2320540639fef2259b1aea20eb840f63796e832891c5b7"
     }
   },
   {

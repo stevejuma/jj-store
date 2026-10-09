@@ -277,3 +277,10 @@ owns comment submissions and validated answer links. The browser can display
 protocol blocks, but only publication-selected links mark comments answered.
 Recorded detail reads expose the same bounded, authorized feedback as live
 participation.
+
+Workspace inspection is a separate session-bound read of the verified code
+binding. The server resolves the owned checkout, applies repository access and
+bounded readers, and emits scoped freshness events. The browser retains clean
+observations in session memory without making them repository authority. File
+comments remain ReviewStore-owned and conversation batches reference exact
+repository-qualified revisions; native and local publication stay independent.

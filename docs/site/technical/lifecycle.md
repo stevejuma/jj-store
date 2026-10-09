@@ -208,3 +208,10 @@ delivery progress; fresh continuations retain bounded authored history without
 nesting old injected context. Coordination checkouts are verified before Send
 and remain separate from code snapshots. No startup automatically replays a
 prompt.
+
+Workspace submissions retain frozen file selections, child publication receipts
+and per-agent delivery state in the execution journal. Queued file comments are
+validated when eligible to dispatch; unavailable or changed sources cannot be
+silently relocated. Pre-dispatch and completion snapshots establish exact turn
+boundaries when available. Restart recovery consults retained receipts rather
+than replaying successful prompt deliveries.

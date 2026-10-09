@@ -80,3 +80,11 @@ message, bootstrap versus incremental delivery and restored/fresh adapter
 behavior. It identifies the bundled custom `jj`, its reserved executable
 variable and the separate metadata-home coordination checkout. Task/review
 workflows retain user scope, exact version preconditions and receipt recovery.
+
+E-CHAT-MAIN-001 refreshes the generated installation, collaboration and type
+references while landing the document-conversation stack. The manual describes
+the inline prompt, shared file-comment queue, workspace rail and exact
+comparison boundaries, with narrow local retained-file support and independent
+publication, delivery and answer state. This fulfills JST-DOC-001/002 without
+expanding M24 or M13.3 qualification; source review and a successful Help build
+do not close native, multi-agent, recovery or visual gates.

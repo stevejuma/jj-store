@@ -400,11 +400,16 @@ portable repository records. Ordinary Git/JJ network commands do not transfer
 the owned companion ref. Do not assume a normal code push backs up
 collaboration.
 
-Repository-wide review persistence is available. Portable code/agent anchors,
-indexed local search, recoverable browser code commands and broader cold
-full-flow qualification have separate gates. The UI and CLI must reject
-unsupported targets rather than manufacture a repository anchor. Consult the
-[current capability table](../reference/capabilities.md) for the exact boundary.
+Repository-wide review persistence and narrowly qualified retained file reviews
+are available. A typed WithEvidence command selects the review and its complete
+Git evidence closure in one companion CAS. Original file reads require that
+selected evidence and never substitute current checkout bytes. Ordinary Git GC
+retains the selected closure. This does not qualify portable agent anchors or
+the native portable carrier. Indexed local search, recoverable browser code
+commands and broader cold full-flow qualification retain separate gates. The UI
+and CLI must reject unsupported targets rather than manufacture a repository
+anchor. Consult the [current capability table](../reference/capabilities.md) for
+the exact boundary.
 
 ## Independent conversion
 

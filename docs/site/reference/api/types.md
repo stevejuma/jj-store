@@ -3020,6 +3020,36 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "repository": {
+          "$ref": "#/components/schemas/RepositoryId"
+        },
+        "thread_id": {
+          "$ref": "#/components/schemas/ReviewThreadId"
+        },
+        "comment_id": {
+          "$ref": "#/components/schemas/CommentId"
+        },
+        "revision": {
+          "$ref": "#/components/schemas/ReviewObjectRef"
+        },
+        "type": {
+          "type": "string",
+          "const": "repository_review_comment"
+        }
+      },
+      "required": [
+        "type",
+        "repository",
+        "thread_id",
+        "comment_id",
+        "revision"
+      ],
+      "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph."
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
         "task_id": {
           "$ref": "#/components/schemas/TaskId"
         },
@@ -5084,6 +5114,38 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "properties": {
         "target": {
           "type": "string",
+          "const": "portable_code_text"
+        },
+        "value": {
+          "$ref": "#/components/schemas/PortableCodeTextV2"
+        }
+      },
+      "required": [
+        "target",
+        "value"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "target": {
+          "type": "string",
+          "const": "portable_code_artifact"
+        },
+        "value": {
+          "$ref": "#/components/schemas/PortableCodeArtifactV2"
+        }
+      },
+      "required": [
+        "target",
+        "value"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "target": {
+          "type": "string",
           "const": "code_artifact"
         },
         "value": {
@@ -5384,20 +5446,81 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 }
 ```
 
-## CodeArtifactAnchorV1
+## PortableCodeTextV2
 
 ```text
 {
   "type": "object",
   "additionalProperties": false,
   "properties": {
-    "operation_id": {
-      "$ref": "#/components/schemas/OperationId"
+    "artifact": {
+      "$ref": "#/components/schemas/PortableCodeArtifactV2"
     },
-    "commit_id": {
-      "$ref": "#/components/schemas/CommitId"
+    "text": {
+      "$ref": "#/components/schemas/TextSelectionV1"
     },
-    "change_id": {
+    "diff_context": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/PortableDiffContextV2"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "artifact",
+    "text",
+    "diff_context"
+  ]
+}
+```
+
+## PortableCodeArtifactV2
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "revision": {
+      "$ref": "#/components/schemas/PortableRevisionV2"
+    },
+    "path": {
+      "type": "string"
+    },
+    "object": {
+      "$ref": "#/components/schemas/CodeObjectIdV1"
+    },
+    "value_kind": {
+      "$ref": "#/components/schemas/CodeValueKind"
+    }
+  },
+  "required": [
+    "revision",
+    "path",
+    "object",
+    "value_kind"
+  ]
+}
+```
+
+## PortableRevisionV2
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "evidence": {
+      "$ref": "#/components/schemas/CodeEvidenceRefV1"
+    },
+    "commit": {
+      "$ref": "#/components/schemas/CodeCommitIdV1"
+    },
+    "change": {
       "anyOf": [
         {
           "$ref": "#/components/schemas/ChangeId"
@@ -5406,24 +5529,153 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
           "type": "null"
         }
       ]
-    },
-    "path": {
-      "type": "string"
-    },
-    "object": {
-      "$ref": "#/components/schemas/ObjectKey"
-    },
-    "value_kind": {
-      "$ref": "#/components/schemas/CodeValueKind"
     }
   },
   "required": [
-    "operation_id",
-    "commit_id",
-    "change_id",
-    "path",
-    "object",
-    "value_kind"
+    "evidence",
+    "commit",
+    "change"
+  ]
+}
+```
+
+## CodeEvidenceRefV1
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "repository": {
+      "$ref": "#/components/schemas/RepositoryId"
+    },
+    "profile": {
+      "$ref": "#/components/schemas/CodeProfileV1"
+    },
+    "operation": {
+      "$ref": "#/components/schemas/OperationId"
+    },
+    "capsule": {
+      "$ref": "#/components/schemas/CodeCapsuleId"
+    }
+  },
+  "required": [
+    "repository",
+    "profile",
+    "operation",
+    "capsule"
+  ]
+}
+```
+
+## CodeCapsuleId
+
+```text
+{
+  "type": "string",
+  "pattern": "^[0-9a-f]{64}$",
+  "minLength": 64,
+  "maxLength": 64
+}
+```
+
+## CodeCommitIdV1
+
+```text
+{
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "profile": {
+          "type": "string",
+          "const": "native_v1"
+        },
+        "id": {
+          "$ref": "#/components/schemas/CommitId"
+        }
+      },
+      "required": [
+        "profile",
+        "id"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "profile": {
+          "type": "string",
+          "const": "git_sha1_jj045"
+        },
+        "id": {
+          "$ref": "#/components/schemas/GitSha1Id"
+        }
+      },
+      "required": [
+        "profile",
+        "id"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}
+```
+
+## GitSha1Id
+
+```text
+{
+  "type": "string",
+  "pattern": "^[0-9a-f]{40}$",
+  "minLength": 40,
+  "maxLength": 40
+}
+```
+
+## CodeObjectIdV1
+
+```text
+{
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "object": {
+          "$ref": "#/components/schemas/ObjectKey"
+        },
+        "profile": {
+          "type": "string",
+          "const": "native_v1"
+        }
+      },
+      "required": [
+        "profile",
+        "object"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "$ref": "#/components/schemas/GitObjectKindV1"
+        },
+        "id": {
+          "$ref": "#/components/schemas/GitSha1Id"
+        },
+        "profile": {
+          "type": "string",
+          "const": "git_sha1_jj045"
+        }
+      },
+      "required": [
+        "profile",
+        "kind",
+        "id"
+      ]
+    }
   ]
 }
 ```
@@ -5597,6 +5849,102 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
   "pattern": "^[0-9a-f]{128}$",
   "minLength": 128,
   "maxLength": 128
+}
+```
+
+## GitObjectKindV1
+
+```text
+{
+  "type": "string",
+  "enum": [
+    "commit",
+    "tree",
+    "blob"
+  ]
+}
+```
+
+## PortableDiffContextV2
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "before": {
+      "$ref": "#/components/schemas/PortableRevisionV2"
+    },
+    "before_path": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "after": {
+      "$ref": "#/components/schemas/PortableRevisionV2"
+    },
+    "after_path": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "side": {
+      "$ref": "#/components/schemas/DiffSide"
+    }
+  },
+  "required": [
+    "before",
+    "before_path",
+    "after",
+    "after_path",
+    "side"
+  ]
+}
+```
+
+## CodeArtifactAnchorV1
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "operation_id": {
+      "$ref": "#/components/schemas/OperationId"
+    },
+    "commit_id": {
+      "$ref": "#/components/schemas/CommitId"
+    },
+    "change_id": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/ChangeId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "path": {
+      "type": "string"
+    },
+    "object": {
+      "$ref": "#/components/schemas/ObjectKey"
+    },
+    "value_kind": {
+      "$ref": "#/components/schemas/CodeValueKind"
+    }
+  },
+  "required": [
+    "operation_id",
+    "commit_id",
+    "change_id",
+    "path",
+    "object",
+    "value_kind"
+  ]
 }
 ```
 
@@ -7241,46 +7589,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 }
 ```
 
-## CodeEvidenceRefV1
-
-```text
-{
-  "type": "object",
-  "additionalProperties": false,
-  "properties": {
-    "repository": {
-      "$ref": "#/components/schemas/RepositoryId"
-    },
-    "profile": {
-      "$ref": "#/components/schemas/CodeProfileV1"
-    },
-    "operation": {
-      "$ref": "#/components/schemas/OperationId"
-    },
-    "capsule": {
-      "$ref": "#/components/schemas/CodeCapsuleId"
-    }
-  },
-  "required": [
-    "repository",
-    "profile",
-    "operation",
-    "capsule"
-  ]
-}
-```
-
-## CodeCapsuleId
-
-```text
-{
-  "type": "string",
-  "pattern": "^[0-9a-f]{64}$",
-  "minLength": 64,
-  "maxLength": 64
-}
-```
-
 ## CodeCommitEvidenceV2
 
 ```text
@@ -7299,60 +7607,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "evidence",
     "commit"
   ]
-}
-```
-
-## CodeCommitIdV1
-
-```text
-{
-  "oneOf": [
-    {
-      "type": "object",
-      "properties": {
-        "profile": {
-          "type": "string",
-          "const": "native_v1"
-        },
-        "id": {
-          "$ref": "#/components/schemas/CommitId"
-        }
-      },
-      "required": [
-        "profile",
-        "id"
-      ],
-      "additionalProperties": false
-    },
-    {
-      "type": "object",
-      "properties": {
-        "profile": {
-          "type": "string",
-          "const": "git_sha1_jj045"
-        },
-        "id": {
-          "$ref": "#/components/schemas/GitSha1Id"
-        }
-      },
-      "required": [
-        "profile",
-        "id"
-      ],
-      "additionalProperties": false
-    }
-  ]
-}
-```
-
-## GitSha1Id
-
-```text
-{
-  "type": "string",
-  "pattern": "^[0-9a-f]{40}$",
-  "minLength": 40,
-  "maxLength": 40
 }
 ```
 
@@ -21102,6 +21356,277 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 }
 ```
 
+## AgentWorkspaceInspection
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "session": {
+      "type": "string"
+    },
+    "repository": {
+      "$ref": "#/components/schemas/RepositoryId"
+    },
+    "workspace": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "operation": {
+      "$ref": "#/components/schemas/OperationId"
+    },
+    "commit": {
+      "type": "string"
+    },
+    "selection": {
+      "type": "string"
+    },
+    "references": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/WorkspaceReference"
+      }
+    },
+    "comparison": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/AgentWorkspaceComparison"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "incomplete": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/AgentWorkspaceFileEntry"
+      }
+    },
+    "next": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "file": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/AgentWorkspaceFileContent"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "version",
+    "session",
+    "repository",
+    "workspace",
+    "location",
+    "operation",
+    "commit",
+    "selection",
+    "references",
+    "comparison",
+    "incomplete",
+    "files",
+    "next",
+    "file"
+  ]
+}
+```
+
+## WorkspaceReference
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "commit": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "name",
+    "commit"
+  ]
+}
+```
+
+## AgentWorkspaceComparison
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "range": {
+      "$ref": "#/components/schemas/ComparisonRange"
+    },
+    "before_operation": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/OperationId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "before_commit": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "after_operation": {
+      "$ref": "#/components/schemas/OperationId"
+    },
+    "after_commit": {
+      "type": "string"
+    },
+    "current_files": {
+      "type": "boolean"
+    },
+    "request_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "unavailable": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "range",
+    "before_operation",
+    "before_commit",
+    "after_operation",
+    "after_commit",
+    "current_files",
+    "request_id",
+    "unavailable"
+  ]
+}
+```
+
+## ComparisonRange
+
+```text
+{
+  "type": "string",
+  "enum": [
+    "since_last_commit",
+    "last_turn",
+    "branch"
+  ]
+}
+```
+
+## AgentWorkspaceFileEntry
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "path": {
+      "type": "string"
+    },
+    "kind": {
+      "type": "string"
+    },
+    "bytes": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "fingerprint": {
+      "type": "string"
+    },
+    "status": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "path",
+    "kind",
+    "bytes",
+    "fingerprint",
+    "status"
+  ]
+}
+```
+
+## AgentWorkspaceFileContent
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "path": {
+      "type": "string"
+    },
+    "fingerprint": {
+      "type": "string"
+    },
+    "contents": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "before": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "unavailable": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "path",
+    "fingerprint",
+    "contents",
+    "before",
+    "unavailable"
+  ]
+}
+```
+
 ## ComputeStatus
 
 ```text
@@ -21950,6 +22475,13 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     },
     "workspace": {
       "type": "string"
+    },
+    "workspace_name": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Derived from the retained owned workspace, never from a path basename."
     },
     "selected_operation": {
       "$ref": "#/components/schemas/OperationId"

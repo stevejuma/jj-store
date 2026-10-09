@@ -68,3 +68,10 @@ human message. Native manifest selection and the local companion reference each
 retain their existing receipt authority. Agent dispatch follows publication and
 context preparation; publication, delivery to each agent and a linked answer are
 separate outcomes. Retry uses the original request and frozen payload.
+
+File comments publish retained evidence and ReviewStore records through each
+code repository's existing authority before the ThreadStore batch references
+them. Each step retains its own request and receipt; a mixed-repository Send is
+not an atomic transaction across repositories. Successful child publications and
+deliveries are not repeated after partial failure. Exact delivered comment
+revisions and captured answer ranges are required for durable reply links.

@@ -242,3 +242,9 @@ Use **Browse threads** under a native or registered local repository to open its
 conversations. Both support Document and Classic views and inline comments; the
 selected repository owns the messages and submissions. Unavailable local folders
 retain their unavailable state until access is restored.
+
+Agent inbox chats also provide a footer workspace menu and a Files/Changes rail
+for the inspected agent checkout. File selection opens its body inspector; these
+panels leave ordinary repository and project rails unchanged. See
+[workspace files in conversations](agent-execution.md#document-conversations-and-workspace-files)
+for current-file reads, comparison ranges and queued file comments.

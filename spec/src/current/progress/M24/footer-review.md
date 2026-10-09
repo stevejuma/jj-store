@@ -17,3 +17,10 @@ E-UI-MENU-002 uses secondary-sized, regular-weight muted headings in footer
 menus and shared popovers. Live typography and existing menu interactions retain
 their behavior. M24 remains In progress; workspace qualification and visual
 baselines remain open.
+
+E-CHAT-MAIN-001 lands the 42-change chat-body stack through 7ea50d09 in the main
+workspace without conflicts. The main-built backend and Vite replace the
+chat-body processes while retaining the fixture and exact saved configuration.
+The refreshed manual records workspace inspection and local file-review limits.
+M24 and M13.3 qualification remain unchanged; this handoff is not release or
+full-flow acceptance, and visual baselines remain unapproved.

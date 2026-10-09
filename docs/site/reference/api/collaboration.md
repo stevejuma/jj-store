@@ -3690,6 +3690,943 @@ Requires current repository write permission. The authenticated session supplies
                               "properties": {
                                 "target": {
                                   "type": "string",
+                                  "const": "portable_code_text"
+                                },
+                                "value": {
+                                  "type": "object",
+                                  "properties": {
+                                    "artifact": {
+                                      "type": "object",
+                                      "properties": {
+                                        "revision": {
+                                          "type": "object",
+                                          "properties": {
+                                            "evidence": {
+                                              "type": "object",
+                                              "properties": {
+                                                "repository": {
+                                                  "type": "string",
+                                                  "pattern": "^[0-9a-f]{32}$",
+                                                  "minLength": 32,
+                                                  "maxLength": 32
+                                                },
+                                                "profile": {
+                                                  "type": "string",
+                                                  "enum": [
+                                                    "native_v1",
+                                                    "git_sha1_jj045"
+                                                  ]
+                                                },
+                                                "operation": {
+                                                  "type": "string",
+                                                  "pattern": "^[0-9a-f]{128}$",
+                                                  "minLength": 128,
+                                                  "maxLength": 128
+                                                },
+                                                "capsule": {
+                                                  "type": "string",
+                                                  "pattern": "^[0-9a-f]{64}$",
+                                                  "minLength": 64,
+                                                  "maxLength": 64
+                                                }
+                                              },
+                                              "additionalProperties": false,
+                                              "required": [
+                                                "repository",
+                                                "profile",
+                                                "operation",
+                                                "capsule"
+                                              ]
+                                            },
+                                            "commit": {
+                                              "oneOf": [
+                                                {
+                                                  "type": "object",
+                                                  "properties": {
+                                                    "profile": {
+                                                      "type": "string",
+                                                      "const": "native_v1"
+                                                    },
+                                                    "id": {
+                                                      "type": "string",
+                                                      "pattern": "^[0-9a-f]{128}$",
+                                                      "minLength": 128,
+                                                      "maxLength": 128
+                                                    }
+                                                  },
+                                                  "required": [
+                                                    "profile",
+                                                    "id"
+                                                  ],
+                                                  "additionalProperties": false
+                                                },
+                                                {
+                                                  "type": "object",
+                                                  "properties": {
+                                                    "profile": {
+                                                      "type": "string",
+                                                      "const": "git_sha1_jj045"
+                                                    },
+                                                    "id": {
+                                                      "type": "string",
+                                                      "pattern": "^[0-9a-f]{40}$",
+                                                      "minLength": 40,
+                                                      "maxLength": 40
+                                                    }
+                                                  },
+                                                  "required": [
+                                                    "profile",
+                                                    "id"
+                                                  ],
+                                                  "additionalProperties": false
+                                                }
+                                              ]
+                                            },
+                                            "change": {
+                                              "type": [
+                                                "string",
+                                                "null"
+                                              ],
+                                              "pattern": "^[0-9a-f]{32}$",
+                                              "minLength": 32,
+                                              "maxLength": 32
+                                            }
+                                          },
+                                          "additionalProperties": false,
+                                          "required": [
+                                            "evidence",
+                                            "commit"
+                                          ]
+                                        },
+                                        "path": {
+                                          "type": "string"
+                                        },
+                                        "object": {
+                                          "oneOf": [
+                                            {
+                                              "type": "object",
+                                              "properties": {
+                                                "object": {
+                                                  "oneOf": [
+                                                    {
+                                                      "type": "object",
+                                                      "properties": {
+                                                        "kind": {
+                                                          "type": "string",
+                                                          "const": "commit"
+                                                        },
+                                                        "id": {
+                                                          "type": "string",
+                                                          "pattern": "^[0-9a-f]{128}$",
+                                                          "minLength": 128,
+                                                          "maxLength": 128
+                                                        }
+                                                      },
+                                                      "required": [
+                                                        "kind",
+                                                        "id"
+                                                      ],
+                                                      "additionalProperties": false
+                                                    },
+                                                    {
+                                                      "type": "object",
+                                                      "properties": {
+                                                        "kind": {
+                                                          "type": "string",
+                                                          "const": "tree"
+                                                        },
+                                                        "id": {
+                                                          "type": "string",
+                                                          "pattern": "^[0-9a-f]{128}$",
+                                                          "minLength": 128,
+                                                          "maxLength": 128
+                                                        }
+                                                      },
+                                                      "required": [
+                                                        "kind",
+                                                        "id"
+                                                      ],
+                                                      "additionalProperties": false
+                                                    },
+                                                    {
+                                                      "type": "object",
+                                                      "properties": {
+                                                        "kind": {
+                                                          "type": "string",
+                                                          "const": "file"
+                                                        },
+                                                        "id": {
+                                                          "type": "string",
+                                                          "pattern": "^[0-9a-f]{128}$",
+                                                          "minLength": 128,
+                                                          "maxLength": 128
+                                                        }
+                                                      },
+                                                      "required": [
+                                                        "kind",
+                                                        "id"
+                                                      ],
+                                                      "additionalProperties": false
+                                                    },
+                                                    {
+                                                      "type": "object",
+                                                      "properties": {
+                                                        "kind": {
+                                                          "type": "string",
+                                                          "const": "symlink"
+                                                        },
+                                                        "id": {
+                                                          "type": "string",
+                                                          "pattern": "^[0-9a-f]{128}$",
+                                                          "minLength": 128,
+                                                          "maxLength": 128
+                                                        }
+                                                      },
+                                                      "required": [
+                                                        "kind",
+                                                        "id"
+                                                      ],
+                                                      "additionalProperties": false
+                                                    },
+                                                    {
+                                                      "type": "object",
+                                                      "properties": {
+                                                        "kind": {
+                                                          "type": "string",
+                                                          "const": "copy"
+                                                        },
+                                                        "id": {
+                                                          "type": "string",
+                                                          "pattern": "^[0-9a-f]{128}$",
+                                                          "minLength": 128,
+                                                          "maxLength": 128
+                                                        }
+                                                      },
+                                                      "required": [
+                                                        "kind",
+                                                        "id"
+                                                      ],
+                                                      "additionalProperties": false
+                                                    },
+                                                    {
+                                                      "type": "object",
+                                                      "properties": {
+                                                        "kind": {
+                                                          "type": "string",
+                                                          "const": "view"
+                                                        },
+                                                        "id": {
+                                                          "type": "string",
+                                                          "pattern": "^[0-9a-f]{128}$",
+                                                          "minLength": 128,
+                                                          "maxLength": 128
+                                                        }
+                                                      },
+                                                      "required": [
+                                                        "kind",
+                                                        "id"
+                                                      ],
+                                                      "additionalProperties": false
+                                                    },
+                                                    {
+                                                      "type": "object",
+                                                      "properties": {
+                                                        "kind": {
+                                                          "type": "string",
+                                                          "const": "operation"
+                                                        },
+                                                        "id": {
+                                                          "type": "string",
+                                                          "pattern": "^[0-9a-f]{128}$",
+                                                          "minLength": 128,
+                                                          "maxLength": 128
+                                                        }
+                                                      },
+                                                      "required": [
+                                                        "kind",
+                                                        "id"
+                                                      ],
+                                                      "additionalProperties": false
+                                                    }
+                                                  ]
+                                                },
+                                                "profile": {
+                                                  "type": "string",
+                                                  "const": "native_v1"
+                                                }
+                                              },
+                                              "additionalProperties": false,
+                                              "required": [
+                                                "profile",
+                                                "object"
+                                              ]
+                                            },
+                                            {
+                                              "type": "object",
+                                              "properties": {
+                                                "kind": {
+                                                  "type": "string",
+                                                  "enum": [
+                                                    "commit",
+                                                    "tree",
+                                                    "blob"
+                                                  ]
+                                                },
+                                                "id": {
+                                                  "type": "string",
+                                                  "pattern": "^[0-9a-f]{40}$",
+                                                  "minLength": 40,
+                                                  "maxLength": 40
+                                                },
+                                                "profile": {
+                                                  "type": "string",
+                                                  "const": "git_sha1_jj045"
+                                                }
+                                              },
+                                              "additionalProperties": false,
+                                              "required": [
+                                                "profile",
+                                                "kind",
+                                                "id"
+                                              ]
+                                            }
+                                          ]
+                                        },
+                                        "value_kind": {
+                                          "type": "string",
+                                          "enum": [
+                                            "file",
+                                            "binary_file",
+                                            "empty_file",
+                                            "symlink",
+                                            "gitlink",
+                                            "conflict_term",
+                                            "conflict_artifact"
+                                          ]
+                                        }
+                                      },
+                                      "additionalProperties": false,
+                                      "required": [
+                                        "revision",
+                                        "path",
+                                        "object",
+                                        "value_kind"
+                                      ]
+                                    },
+                                    "text": {
+                                      "type": "object",
+                                      "properties": {
+                                        "encoding": {
+                                          "type": "string",
+                                          "enum": [
+                                            "utf8"
+                                          ]
+                                        },
+                                        "start_byte": {
+                                          "type": "string",
+                                          "pattern": "^(0|[1-9][0-9]*)$"
+                                        },
+                                        "end_byte": {
+                                          "type": "string",
+                                          "pattern": "^(0|[1-9][0-9]*)$"
+                                        },
+                                        "selected_sha256": {
+                                          "type": "string",
+                                          "pattern": "^[0-9a-f]{64}$",
+                                          "minLength": 64,
+                                          "maxLength": 64
+                                        }
+                                      },
+                                      "additionalProperties": false,
+                                      "required": [
+                                        "encoding",
+                                        "start_byte",
+                                        "end_byte",
+                                        "selected_sha256"
+                                      ]
+                                    },
+                                    "diff_context": {
+                                      "type": [
+                                        "object",
+                                        "null"
+                                      ],
+                                      "properties": {
+                                        "before": {
+                                          "type": "object",
+                                          "properties": {
+                                            "evidence": {
+                                              "type": "object",
+                                              "properties": {
+                                                "repository": {
+                                                  "type": "string",
+                                                  "pattern": "^[0-9a-f]{32}$",
+                                                  "minLength": 32,
+                                                  "maxLength": 32
+                                                },
+                                                "profile": {
+                                                  "type": "string",
+                                                  "enum": [
+                                                    "native_v1",
+                                                    "git_sha1_jj045"
+                                                  ]
+                                                },
+                                                "operation": {
+                                                  "type": "string",
+                                                  "pattern": "^[0-9a-f]{128}$",
+                                                  "minLength": 128,
+                                                  "maxLength": 128
+                                                },
+                                                "capsule": {
+                                                  "type": "string",
+                                                  "pattern": "^[0-9a-f]{64}$",
+                                                  "minLength": 64,
+                                                  "maxLength": 64
+                                                }
+                                              },
+                                              "additionalProperties": false,
+                                              "required": [
+                                                "repository",
+                                                "profile",
+                                                "operation",
+                                                "capsule"
+                                              ]
+                                            },
+                                            "commit": {
+                                              "oneOf": [
+                                                {
+                                                  "type": "object",
+                                                  "properties": {
+                                                    "profile": {
+                                                      "type": "string",
+                                                      "const": "native_v1"
+                                                    },
+                                                    "id": {
+                                                      "type": "string",
+                                                      "pattern": "^[0-9a-f]{128}$",
+                                                      "minLength": 128,
+                                                      "maxLength": 128
+                                                    }
+                                                  },
+                                                  "required": [
+                                                    "profile",
+                                                    "id"
+                                                  ],
+                                                  "additionalProperties": false
+                                                },
+                                                {
+                                                  "type": "object",
+                                                  "properties": {
+                                                    "profile": {
+                                                      "type": "string",
+                                                      "const": "git_sha1_jj045"
+                                                    },
+                                                    "id": {
+                                                      "type": "string",
+                                                      "pattern": "^[0-9a-f]{40}$",
+                                                      "minLength": 40,
+                                                      "maxLength": 40
+                                                    }
+                                                  },
+                                                  "required": [
+                                                    "profile",
+                                                    "id"
+                                                  ],
+                                                  "additionalProperties": false
+                                                }
+                                              ]
+                                            },
+                                            "change": {
+                                              "type": [
+                                                "string",
+                                                "null"
+                                              ],
+                                              "pattern": "^[0-9a-f]{32}$",
+                                              "minLength": 32,
+                                              "maxLength": 32
+                                            }
+                                          },
+                                          "additionalProperties": false,
+                                          "required": [
+                                            "evidence",
+                                            "commit"
+                                          ]
+                                        },
+                                        "before_path": {
+                                          "type": [
+                                            "string",
+                                            "null"
+                                          ]
+                                        },
+                                        "after": {
+                                          "type": "object",
+                                          "properties": {
+                                            "evidence": {
+                                              "type": "object",
+                                              "properties": {
+                                                "repository": {
+                                                  "type": "string",
+                                                  "pattern": "^[0-9a-f]{32}$",
+                                                  "minLength": 32,
+                                                  "maxLength": 32
+                                                },
+                                                "profile": {
+                                                  "type": "string",
+                                                  "enum": [
+                                                    "native_v1",
+                                                    "git_sha1_jj045"
+                                                  ]
+                                                },
+                                                "operation": {
+                                                  "type": "string",
+                                                  "pattern": "^[0-9a-f]{128}$",
+                                                  "minLength": 128,
+                                                  "maxLength": 128
+                                                },
+                                                "capsule": {
+                                                  "type": "string",
+                                                  "pattern": "^[0-9a-f]{64}$",
+                                                  "minLength": 64,
+                                                  "maxLength": 64
+                                                }
+                                              },
+                                              "additionalProperties": false,
+                                              "required": [
+                                                "repository",
+                                                "profile",
+                                                "operation",
+                                                "capsule"
+                                              ]
+                                            },
+                                            "commit": {
+                                              "oneOf": [
+                                                {
+                                                  "type": "object",
+                                                  "properties": {
+                                                    "profile": {
+                                                      "type": "string",
+                                                      "const": "native_v1"
+                                                    },
+                                                    "id": {
+                                                      "type": "string",
+                                                      "pattern": "^[0-9a-f]{128}$",
+                                                      "minLength": 128,
+                                                      "maxLength": 128
+                                                    }
+                                                  },
+                                                  "required": [
+                                                    "profile",
+                                                    "id"
+                                                  ],
+                                                  "additionalProperties": false
+                                                },
+                                                {
+                                                  "type": "object",
+                                                  "properties": {
+                                                    "profile": {
+                                                      "type": "string",
+                                                      "const": "git_sha1_jj045"
+                                                    },
+                                                    "id": {
+                                                      "type": "string",
+                                                      "pattern": "^[0-9a-f]{40}$",
+                                                      "minLength": 40,
+                                                      "maxLength": 40
+                                                    }
+                                                  },
+                                                  "required": [
+                                                    "profile",
+                                                    "id"
+                                                  ],
+                                                  "additionalProperties": false
+                                                }
+                                              ]
+                                            },
+                                            "change": {
+                                              "type": [
+                                                "string",
+                                                "null"
+                                              ],
+                                              "pattern": "^[0-9a-f]{32}$",
+                                              "minLength": 32,
+                                              "maxLength": 32
+                                            }
+                                          },
+                                          "additionalProperties": false,
+                                          "required": [
+                                            "evidence",
+                                            "commit"
+                                          ]
+                                        },
+                                        "after_path": {
+                                          "type": [
+                                            "string",
+                                            "null"
+                                          ]
+                                        },
+                                        "side": {
+                                          "type": "string",
+                                          "enum": [
+                                            "before",
+                                            "after"
+                                          ]
+                                        }
+                                      },
+                                      "additionalProperties": false,
+                                      "required": [
+                                        "before",
+                                        "after",
+                                        "side"
+                                      ]
+                                    }
+                                  },
+                                  "additionalProperties": false,
+                                  "required": [
+                                    "artifact",
+                                    "text"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "target",
+                                "value"
+                              ]
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "target": {
+                                  "type": "string",
+                                  "const": "portable_code_artifact"
+                                },
+                                "value": {
+                                  "type": "object",
+                                  "properties": {
+                                    "revision": {
+                                      "type": "object",
+                                      "properties": {
+                                        "evidence": {
+                                          "type": "object",
+                                          "properties": {
+                                            "repository": {
+                                              "type": "string",
+                                              "pattern": "^[0-9a-f]{32}$",
+                                              "minLength": 32,
+                                              "maxLength": 32
+                                            },
+                                            "profile": {
+                                              "type": "string",
+                                              "enum": [
+                                                "native_v1",
+                                                "git_sha1_jj045"
+                                              ]
+                                            },
+                                            "operation": {
+                                              "type": "string",
+                                              "pattern": "^[0-9a-f]{128}$",
+                                              "minLength": 128,
+                                              "maxLength": 128
+                                            },
+                                            "capsule": {
+                                              "type": "string",
+                                              "pattern": "^[0-9a-f]{64}$",
+                                              "minLength": 64,
+                                              "maxLength": 64
+                                            }
+                                          },
+                                          "additionalProperties": false,
+                                          "required": [
+                                            "repository",
+                                            "profile",
+                                            "operation",
+                                            "capsule"
+                                          ]
+                                        },
+                                        "commit": {
+                                          "oneOf": [
+                                            {
+                                              "type": "object",
+                                              "properties": {
+                                                "profile": {
+                                                  "type": "string",
+                                                  "const": "native_v1"
+                                                },
+                                                "id": {
+                                                  "type": "string",
+                                                  "pattern": "^[0-9a-f]{128}$",
+                                                  "minLength": 128,
+                                                  "maxLength": 128
+                                                }
+                                              },
+                                              "required": [
+                                                "profile",
+                                                "id"
+                                              ],
+                                              "additionalProperties": false
+                                            },
+                                            {
+                                              "type": "object",
+                                              "properties": {
+                                                "profile": {
+                                                  "type": "string",
+                                                  "const": "git_sha1_jj045"
+                                                },
+                                                "id": {
+                                                  "type": "string",
+                                                  "pattern": "^[0-9a-f]{40}$",
+                                                  "minLength": 40,
+                                                  "maxLength": 40
+                                                }
+                                              },
+                                              "required": [
+                                                "profile",
+                                                "id"
+                                              ],
+                                              "additionalProperties": false
+                                            }
+                                          ]
+                                        },
+                                        "change": {
+                                          "type": [
+                                            "string",
+                                            "null"
+                                          ],
+                                          "pattern": "^[0-9a-f]{32}$",
+                                          "minLength": 32,
+                                          "maxLength": 32
+                                        }
+                                      },
+                                      "additionalProperties": false,
+                                      "required": [
+                                        "evidence",
+                                        "commit"
+                                      ]
+                                    },
+                                    "path": {
+                                      "type": "string"
+                                    },
+                                    "object": {
+                                      "oneOf": [
+                                        {
+                                          "type": "object",
+                                          "properties": {
+                                            "object": {
+                                              "oneOf": [
+                                                {
+                                                  "type": "object",
+                                                  "properties": {
+                                                    "kind": {
+                                                      "type": "string",
+                                                      "const": "commit"
+                                                    },
+                                                    "id": {
+                                                      "type": "string",
+                                                      "pattern": "^[0-9a-f]{128}$",
+                                                      "minLength": 128,
+                                                      "maxLength": 128
+                                                    }
+                                                  },
+                                                  "required": [
+                                                    "kind",
+                                                    "id"
+                                                  ],
+                                                  "additionalProperties": false
+                                                },
+                                                {
+                                                  "type": "object",
+                                                  "properties": {
+                                                    "kind": {
+                                                      "type": "string",
+                                                      "const": "tree"
+                                                    },
+                                                    "id": {
+                                                      "type": "string",
+                                                      "pattern": "^[0-9a-f]{128}$",
+                                                      "minLength": 128,
+                                                      "maxLength": 128
+                                                    }
+                                                  },
+                                                  "required": [
+                                                    "kind",
+                                                    "id"
+                                                  ],
+                                                  "additionalProperties": false
+                                                },
+                                                {
+                                                  "type": "object",
+                                                  "properties": {
+                                                    "kind": {
+                                                      "type": "string",
+                                                      "const": "file"
+                                                    },
+                                                    "id": {
+                                                      "type": "string",
+                                                      "pattern": "^[0-9a-f]{128}$",
+                                                      "minLength": 128,
+                                                      "maxLength": 128
+                                                    }
+                                                  },
+                                                  "required": [
+                                                    "kind",
+                                                    "id"
+                                                  ],
+                                                  "additionalProperties": false
+                                                },
+                                                {
+                                                  "type": "object",
+                                                  "properties": {
+                                                    "kind": {
+                                                      "type": "string",
+                                                      "const": "symlink"
+                                                    },
+                                                    "id": {
+                                                      "type": "string",
+                                                      "pattern": "^[0-9a-f]{128}$",
+                                                      "minLength": 128,
+                                                      "maxLength": 128
+                                                    }
+                                                  },
+                                                  "required": [
+                                                    "kind",
+                                                    "id"
+                                                  ],
+                                                  "additionalProperties": false
+                                                },
+                                                {
+                                                  "type": "object",
+                                                  "properties": {
+                                                    "kind": {
+                                                      "type": "string",
+                                                      "const": "copy"
+                                                    },
+                                                    "id": {
+                                                      "type": "string",
+                                                      "pattern": "^[0-9a-f]{128}$",
+                                                      "minLength": 128,
+                                                      "maxLength": 128
+                                                    }
+                                                  },
+                                                  "required": [
+                                                    "kind",
+                                                    "id"
+                                                  ],
+                                                  "additionalProperties": false
+                                                },
+                                                {
+                                                  "type": "object",
+                                                  "properties": {
+                                                    "kind": {
+                                                      "type": "string",
+                                                      "const": "view"
+                                                    },
+                                                    "id": {
+                                                      "type": "string",
+                                                      "pattern": "^[0-9a-f]{128}$",
+                                                      "minLength": 128,
+                                                      "maxLength": 128
+                                                    }
+                                                  },
+                                                  "required": [
+                                                    "kind",
+                                                    "id"
+                                                  ],
+                                                  "additionalProperties": false
+                                                },
+                                                {
+                                                  "type": "object",
+                                                  "properties": {
+                                                    "kind": {
+                                                      "type": "string",
+                                                      "const": "operation"
+                                                    },
+                                                    "id": {
+                                                      "type": "string",
+                                                      "pattern": "^[0-9a-f]{128}$",
+                                                      "minLength": 128,
+                                                      "maxLength": 128
+                                                    }
+                                                  },
+                                                  "required": [
+                                                    "kind",
+                                                    "id"
+                                                  ],
+                                                  "additionalProperties": false
+                                                }
+                                              ]
+                                            },
+                                            "profile": {
+                                              "type": "string",
+                                              "const": "native_v1"
+                                            }
+                                          },
+                                          "additionalProperties": false,
+                                          "required": [
+                                            "profile",
+                                            "object"
+                                          ]
+                                        },
+                                        {
+                                          "type": "object",
+                                          "properties": {
+                                            "kind": {
+                                              "type": "string",
+                                              "enum": [
+                                                "commit",
+                                                "tree",
+                                                "blob"
+                                              ]
+                                            },
+                                            "id": {
+                                              "type": "string",
+                                              "pattern": "^[0-9a-f]{40}$",
+                                              "minLength": 40,
+                                              "maxLength": 40
+                                            },
+                                            "profile": {
+                                              "type": "string",
+                                              "const": "git_sha1_jj045"
+                                            }
+                                          },
+                                          "additionalProperties": false,
+                                          "required": [
+                                            "profile",
+                                            "kind",
+                                            "id"
+                                          ]
+                                        }
+                                      ]
+                                    },
+                                    "value_kind": {
+                                      "type": "string",
+                                      "enum": [
+                                        "file",
+                                        "binary_file",
+                                        "empty_file",
+                                        "symlink",
+                                        "gitlink",
+                                        "conflict_term",
+                                        "conflict_artifact"
+                                      ]
+                                    }
+                                  },
+                                  "additionalProperties": false,
+                                  "required": [
+                                    "revision",
+                                    "path",
+                                    "object",
+                                    "value_kind"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "target",
+                                "value"
+                              ]
+                            },
+                            {
+                              "type": "object",
+                              "properties": {
+                                "target": {
+                                  "type": "string",
                                   "const": "code_artifact"
                                 },
                                 "value": {
@@ -7376,6 +8313,72 @@ Current repository permission is checked for every request. Commands and status 
                                         ]
                                       },
                                       {
+                                        "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                                        "type": "object",
+                                        "properties": {
+                                          "repository": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "thread_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "comment_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "revision": {
+                                            "type": "object",
+                                            "properties": {
+                                              "kind": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "index_page",
+                                                  "anchor",
+                                                  "comment_body",
+                                                  "comment_revision",
+                                                  "thread_event",
+                                                  "event_page",
+                                                  "thread_snapshot",
+                                                  "relation_page",
+                                                  "status_page"
+                                                ]
+                                              },
+                                              "id": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{64}$",
+                                                "minLength": 64,
+                                                "maxLength": 64
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": [
+                                              "kind",
+                                              "id"
+                                            ]
+                                          },
+                                          "type": {
+                                            "type": "string",
+                                            "const": "repository_review_comment"
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "type",
+                                          "repository",
+                                          "thread_id",
+                                          "comment_id",
+                                          "revision"
+                                        ]
+                                      },
+                                      {
                                         "type": "object",
                                         "properties": {
                                           "task_id": {
@@ -8074,6 +9077,72 @@ Current repository permission is checked for every request. Commands and status 
                                 ]
                               },
                               {
+                                "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                                "type": "object",
+                                "properties": {
+                                  "repository": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "thread_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "comment_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "revision": {
+                                    "type": "object",
+                                    "properties": {
+                                      "kind": {
+                                        "type": "string",
+                                        "enum": [
+                                          "index_page",
+                                          "anchor",
+                                          "comment_body",
+                                          "comment_revision",
+                                          "thread_event",
+                                          "event_page",
+                                          "thread_snapshot",
+                                          "relation_page",
+                                          "status_page"
+                                        ]
+                                      },
+                                      "id": {
+                                        "type": "string",
+                                        "pattern": "^[0-9a-f]{64}$",
+                                        "minLength": 64,
+                                        "maxLength": 64
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": [
+                                      "kind",
+                                      "id"
+                                    ]
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "const": "repository_review_comment"
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": [
+                                  "type",
+                                  "repository",
+                                  "thread_id",
+                                  "comment_id",
+                                  "revision"
+                                ]
+                              },
+                              {
                                 "type": "object",
                                 "properties": {
                                   "task_id": {
@@ -8174,6 +9243,793 @@ Current repository permission is checked for every request. Commands and status 
                                   "version"
                                 ]
                               }
+                            ]
+                          }
+                        },
+                        "workspace_comments": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "pattern": "^[0-9a-f]{32}$",
+                                "minLength": 32,
+                                "maxLength": 32
+                              },
+                              "source": {
+                                "type": "object",
+                                "properties": {
+                                  "session": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "repository": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "workspace": {
+                                    "type": "string"
+                                  },
+                                  "path": {
+                                    "type": "string"
+                                  },
+                                  "operation": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{128}$",
+                                    "minLength": 128,
+                                    "maxLength": 128
+                                  },
+                                  "commit": {
+                                    "type": "string"
+                                  },
+                                  "content_sha256": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{64}$",
+                                    "minLength": 64,
+                                    "maxLength": 64
+                                  },
+                                  "current_fingerprint": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  },
+                                  "selection": {
+                                    "type": [
+                                      "object",
+                                      "null"
+                                    ],
+                                    "properties": {
+                                      "encoding": {
+                                        "type": "string",
+                                        "enum": [
+                                          "utf8"
+                                        ]
+                                      },
+                                      "start_byte": {
+                                        "type": "string",
+                                        "pattern": "^(0|[1-9][0-9]*)$"
+                                      },
+                                      "end_byte": {
+                                        "type": "string",
+                                        "pattern": "^(0|[1-9][0-9]*)$"
+                                      },
+                                      "selected_sha256": {
+                                        "type": "string",
+                                        "pattern": "^[0-9a-f]{64}$",
+                                        "minLength": 64,
+                                        "maxLength": 64
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": [
+                                      "encoding",
+                                      "start_byte",
+                                      "end_byte",
+                                      "selected_sha256"
+                                    ]
+                                  },
+                                  "diff": {
+                                    "type": [
+                                      "object",
+                                      "null"
+                                    ],
+                                    "properties": {
+                                      "before_operation": {
+                                        "type": "string",
+                                        "pattern": "^[0-9a-f]{128}$",
+                                        "minLength": 128,
+                                        "maxLength": 128
+                                      },
+                                      "before_commit": {
+                                        "type": "string"
+                                      },
+                                      "after_operation": {
+                                        "type": "string",
+                                        "pattern": "^[0-9a-f]{128}$",
+                                        "minLength": 128,
+                                        "maxLength": 128
+                                      },
+                                      "after_commit": {
+                                        "type": "string"
+                                      },
+                                      "side": {
+                                        "type": "string",
+                                        "enum": [
+                                          "before",
+                                          "after"
+                                        ]
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": [
+                                      "before_operation",
+                                      "before_commit",
+                                      "after_operation",
+                                      "after_commit",
+                                      "side"
+                                    ]
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": [
+                                  "session",
+                                  "repository",
+                                  "workspace",
+                                  "path",
+                                  "operation",
+                                  "commit",
+                                  "content_sha256"
+                                ]
+                              },
+                              "body": {
+                                "type": "string"
+                              },
+                              "previous": {
+                                "description": "Existing exact revision; append to its discussion, or edit it explicitly.",
+                                "anyOf": [
+                                  {
+                                    "description": "Identity, immutable content and validation witnesses are explicit, never a UI position.",
+                                    "oneOf": [
+                                      {
+                                        "type": "object",
+                                        "properties": {
+                                          "thread_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "type": {
+                                            "type": "string",
+                                            "const": "thread"
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "type",
+                                          "thread_id"
+                                        ]
+                                      },
+                                      {
+                                        "type": "object",
+                                        "properties": {
+                                          "thread_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "message_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "revision": {
+                                            "type": "object",
+                                            "properties": {
+                                              "kind": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "index_page",
+                                                  "thread_version",
+                                                  "thread_event",
+                                                  "human_message_revision",
+                                                  "thread_link",
+                                                  "reaction",
+                                                  "reaction_retraction",
+                                                  "reaction_slot",
+                                                  "custom_emoji_version",
+                                                  "image_asset"
+                                                ]
+                                              },
+                                              "id": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{64}$",
+                                                "minLength": 64,
+                                                "maxLength": 64
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": [
+                                              "kind",
+                                              "id"
+                                            ]
+                                          },
+                                          "type": {
+                                            "type": "string",
+                                            "const": "human_message"
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "type",
+                                          "thread_id",
+                                          "message_id",
+                                          "revision"
+                                        ]
+                                      },
+                                      {
+                                        "type": "object",
+                                        "properties": {
+                                          "session_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "message_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "event_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "batch": {
+                                            "type": "object",
+                                            "properties": {
+                                              "kind": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "index_page",
+                                                  "session_snapshot",
+                                                  "turn_snapshot",
+                                                  "message_snapshot",
+                                                  "tool_snapshot",
+                                                  "intent",
+                                                  "observation_batch",
+                                                  "event_batch",
+                                                  "transcript_manifest",
+                                                  "transcript_page",
+                                                  "transcript_chunk",
+                                                  "content",
+                                                  "checkpoint_version",
+                                                  "association",
+                                                  "alias",
+                                                  "relation_page",
+                                                  "source_state",
+                                                  "projection_catalog",
+                                                  "catalog_conflict"
+                                                ]
+                                              },
+                                              "id": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{64}$",
+                                                "minLength": 64,
+                                                "maxLength": 64
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": [
+                                              "kind",
+                                              "id"
+                                            ]
+                                          },
+                                          "content": {
+                                            "type": "object",
+                                            "properties": {
+                                              "kind": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "index_page",
+                                                  "session_snapshot",
+                                                  "turn_snapshot",
+                                                  "message_snapshot",
+                                                  "tool_snapshot",
+                                                  "intent",
+                                                  "observation_batch",
+                                                  "event_batch",
+                                                  "transcript_manifest",
+                                                  "transcript_page",
+                                                  "transcript_chunk",
+                                                  "content",
+                                                  "checkpoint_version",
+                                                  "association",
+                                                  "alias",
+                                                  "relation_page",
+                                                  "source_state",
+                                                  "projection_catalog",
+                                                  "catalog_conflict"
+                                                ]
+                                              },
+                                              "id": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{64}$",
+                                                "minLength": 64,
+                                                "maxLength": 64
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": [
+                                              "kind",
+                                              "id"
+                                            ]
+                                          },
+                                          "type": {
+                                            "type": "string",
+                                            "const": "agent_message"
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "type",
+                                          "session_id",
+                                          "message_id",
+                                          "event_id",
+                                          "batch",
+                                          "content"
+                                        ]
+                                      },
+                                      {
+                                        "type": "object",
+                                        "properties": {
+                                          "session_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "tool_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "snapshot": {
+                                            "type": "object",
+                                            "properties": {
+                                              "kind": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "index_page",
+                                                  "session_snapshot",
+                                                  "turn_snapshot",
+                                                  "message_snapshot",
+                                                  "tool_snapshot",
+                                                  "intent",
+                                                  "observation_batch",
+                                                  "event_batch",
+                                                  "transcript_manifest",
+                                                  "transcript_page",
+                                                  "transcript_chunk",
+                                                  "content",
+                                                  "checkpoint_version",
+                                                  "association",
+                                                  "alias",
+                                                  "relation_page",
+                                                  "source_state",
+                                                  "projection_catalog",
+                                                  "catalog_conflict"
+                                                ]
+                                              },
+                                              "id": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{64}$",
+                                                "minLength": 64,
+                                                "maxLength": 64
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": [
+                                              "kind",
+                                              "id"
+                                            ]
+                                          },
+                                          "type": {
+                                            "type": "string",
+                                            "const": "tool_invocation"
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "type",
+                                          "session_id",
+                                          "tool_id",
+                                          "snapshot"
+                                        ]
+                                      },
+                                      {
+                                        "type": "object",
+                                        "properties": {
+                                          "session_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "tool_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "snapshot": {
+                                            "type": "object",
+                                            "properties": {
+                                              "kind": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "index_page",
+                                                  "session_snapshot",
+                                                  "turn_snapshot",
+                                                  "message_snapshot",
+                                                  "tool_snapshot",
+                                                  "intent",
+                                                  "observation_batch",
+                                                  "event_batch",
+                                                  "transcript_manifest",
+                                                  "transcript_page",
+                                                  "transcript_chunk",
+                                                  "content",
+                                                  "checkpoint_version",
+                                                  "association",
+                                                  "alias",
+                                                  "relation_page",
+                                                  "source_state",
+                                                  "projection_catalog",
+                                                  "catalog_conflict"
+                                                ]
+                                              },
+                                              "id": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{64}$",
+                                                "minLength": 64,
+                                                "maxLength": 64
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": [
+                                              "kind",
+                                              "id"
+                                            ]
+                                          },
+                                          "content": {
+                                            "type": "object",
+                                            "properties": {
+                                              "kind": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "index_page",
+                                                  "session_snapshot",
+                                                  "turn_snapshot",
+                                                  "message_snapshot",
+                                                  "tool_snapshot",
+                                                  "intent",
+                                                  "observation_batch",
+                                                  "event_batch",
+                                                  "transcript_manifest",
+                                                  "transcript_page",
+                                                  "transcript_chunk",
+                                                  "content",
+                                                  "checkpoint_version",
+                                                  "association",
+                                                  "alias",
+                                                  "relation_page",
+                                                  "source_state",
+                                                  "projection_catalog",
+                                                  "catalog_conflict"
+                                                ]
+                                              },
+                                              "id": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{64}$",
+                                                "minLength": 64,
+                                                "maxLength": 64
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": [
+                                              "kind",
+                                              "id"
+                                            ]
+                                          },
+                                          "type": {
+                                            "type": "string",
+                                            "const": "tool_output"
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "type",
+                                          "session_id",
+                                          "tool_id",
+                                          "snapshot",
+                                          "content"
+                                        ]
+                                      },
+                                      {
+                                        "type": "object",
+                                        "properties": {
+                                          "thread_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "type": {
+                                            "type": "string",
+                                            "const": "review_thread"
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "type",
+                                          "thread_id"
+                                        ]
+                                      },
+                                      {
+                                        "type": "object",
+                                        "properties": {
+                                          "thread_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "comment_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "revision": {
+                                            "type": "object",
+                                            "properties": {
+                                              "kind": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "index_page",
+                                                  "anchor",
+                                                  "comment_body",
+                                                  "comment_revision",
+                                                  "thread_event",
+                                                  "event_page",
+                                                  "thread_snapshot",
+                                                  "relation_page",
+                                                  "status_page"
+                                                ]
+                                              },
+                                              "id": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{64}$",
+                                                "minLength": 64,
+                                                "maxLength": 64
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": [
+                                              "kind",
+                                              "id"
+                                            ]
+                                          },
+                                          "type": {
+                                            "type": "string",
+                                            "const": "review_comment"
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "type",
+                                          "thread_id",
+                                          "comment_id",
+                                          "revision"
+                                        ]
+                                      },
+                                      {
+                                        "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                                        "type": "object",
+                                        "properties": {
+                                          "repository": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "thread_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "comment_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "revision": {
+                                            "type": "object",
+                                            "properties": {
+                                              "kind": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "index_page",
+                                                  "anchor",
+                                                  "comment_body",
+                                                  "comment_revision",
+                                                  "thread_event",
+                                                  "event_page",
+                                                  "thread_snapshot",
+                                                  "relation_page",
+                                                  "status_page"
+                                                ]
+                                              },
+                                              "id": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{64}$",
+                                                "minLength": 64,
+                                                "maxLength": 64
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": [
+                                              "kind",
+                                              "id"
+                                            ]
+                                          },
+                                          "type": {
+                                            "type": "string",
+                                            "const": "repository_review_comment"
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "type",
+                                          "repository",
+                                          "thread_id",
+                                          "comment_id",
+                                          "revision"
+                                        ]
+                                      },
+                                      {
+                                        "type": "object",
+                                        "properties": {
+                                          "task_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "comment_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "version": {
+                                            "type": "integer",
+                                            "format": "uint64",
+                                            "minimum": 0
+                                          },
+                                          "type": {
+                                            "type": "string",
+                                            "const": "work_comment"
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "type",
+                                          "task_id",
+                                          "comment_id",
+                                          "version"
+                                        ]
+                                      },
+                                      {
+                                        "type": "object",
+                                        "properties": {
+                                          "session_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "checkpoint_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "version": {
+                                            "type": "object",
+                                            "properties": {
+                                              "kind": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "index_page",
+                                                  "session_snapshot",
+                                                  "turn_snapshot",
+                                                  "message_snapshot",
+                                                  "tool_snapshot",
+                                                  "intent",
+                                                  "observation_batch",
+                                                  "event_batch",
+                                                  "transcript_manifest",
+                                                  "transcript_page",
+                                                  "transcript_chunk",
+                                                  "content",
+                                                  "checkpoint_version",
+                                                  "association",
+                                                  "alias",
+                                                  "relation_page",
+                                                  "source_state",
+                                                  "projection_catalog",
+                                                  "catalog_conflict"
+                                                ]
+                                              },
+                                              "id": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{64}$",
+                                                "minLength": 64,
+                                                "maxLength": 64
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": [
+                                              "kind",
+                                              "id"
+                                            ]
+                                          },
+                                          "type": {
+                                            "type": "string",
+                                            "const": "agent_checkpoint"
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "type",
+                                          "session_id",
+                                          "checkpoint_id",
+                                          "version"
+                                        ]
+                                      }
+                                    ]
+                                  },
+                                  {
+                                    "type": "null"
+                                  }
+                                ]
+                              },
+                              "edit": {
+                                "type": "boolean",
+                                "default": false
+                              }
+                            },
+                            "additionalProperties": false,
+                            "required": [
+                              "id",
+                              "source",
+                              "body"
                             ]
                           }
                         }
@@ -8660,6 +10516,72 @@ Current repository permission is checked for every request. Commands and status 
                               "additionalProperties": false,
                               "required": [
                                 "type",
+                                "thread_id",
+                                "comment_id",
+                                "revision"
+                              ]
+                            },
+                            {
+                              "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                              "type": "object",
+                              "properties": {
+                                "repository": {
+                                  "type": "string",
+                                  "pattern": "^[0-9a-f]{32}$",
+                                  "minLength": 32,
+                                  "maxLength": 32
+                                },
+                                "thread_id": {
+                                  "type": "string",
+                                  "pattern": "^[0-9a-f]{32}$",
+                                  "minLength": 32,
+                                  "maxLength": 32
+                                },
+                                "comment_id": {
+                                  "type": "string",
+                                  "pattern": "^[0-9a-f]{32}$",
+                                  "minLength": 32,
+                                  "maxLength": 32
+                                },
+                                "revision": {
+                                  "type": "object",
+                                  "properties": {
+                                    "kind": {
+                                      "type": "string",
+                                      "enum": [
+                                        "index_page",
+                                        "anchor",
+                                        "comment_body",
+                                        "comment_revision",
+                                        "thread_event",
+                                        "event_page",
+                                        "thread_snapshot",
+                                        "relation_page",
+                                        "status_page"
+                                      ]
+                                    },
+                                    "id": {
+                                      "type": "string",
+                                      "pattern": "^[0-9a-f]{64}$",
+                                      "minLength": 64,
+                                      "maxLength": 64
+                                    }
+                                  },
+                                  "additionalProperties": false,
+                                  "required": [
+                                    "kind",
+                                    "id"
+                                  ]
+                                },
+                                "type": {
+                                  "type": "string",
+                                  "const": "repository_review_comment"
+                                }
+                              },
+                              "additionalProperties": false,
+                              "required": [
+                                "type",
+                                "repository",
                                 "thread_id",
                                 "comment_id",
                                 "revision"
@@ -9294,6 +11216,72 @@ Current repository permission is checked for every request. Commands and status 
                           "additionalProperties": false,
                           "required": [
                             "type",
+                            "thread_id",
+                            "comment_id",
+                            "revision"
+                          ]
+                        },
+                        {
+                          "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                          "type": "object",
+                          "properties": {
+                            "repository": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            },
+                            "thread_id": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            },
+                            "comment_id": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            },
+                            "revision": {
+                              "type": "object",
+                              "properties": {
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "index_page",
+                                    "anchor",
+                                    "comment_body",
+                                    "comment_revision",
+                                    "thread_event",
+                                    "event_page",
+                                    "thread_snapshot",
+                                    "relation_page",
+                                    "status_page"
+                                  ]
+                                },
+                                "id": {
+                                  "type": "string",
+                                  "pattern": "^[0-9a-f]{64}$",
+                                  "minLength": 64,
+                                  "maxLength": 64
+                                }
+                              },
+                              "additionalProperties": false,
+                              "required": [
+                                "kind",
+                                "id"
+                              ]
+                            },
+                            "type": {
+                              "type": "string",
+                              "const": "repository_review_comment"
+                            }
+                          },
+                          "additionalProperties": false,
+                          "required": [
+                            "type",
+                            "repository",
                             "thread_id",
                             "comment_id",
                             "revision"
@@ -10415,6 +12403,72 @@ Current repository permission is checked for every request. Commands and status 
                                       ]
                                     },
                                     {
+                                      "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                                      "type": "object",
+                                      "properties": {
+                                        "repository": {
+                                          "type": "string",
+                                          "pattern": "^[0-9a-f]{32}$",
+                                          "minLength": 32,
+                                          "maxLength": 32
+                                        },
+                                        "thread_id": {
+                                          "type": "string",
+                                          "pattern": "^[0-9a-f]{32}$",
+                                          "minLength": 32,
+                                          "maxLength": 32
+                                        },
+                                        "comment_id": {
+                                          "type": "string",
+                                          "pattern": "^[0-9a-f]{32}$",
+                                          "minLength": 32,
+                                          "maxLength": 32
+                                        },
+                                        "revision": {
+                                          "type": "object",
+                                          "properties": {
+                                            "kind": {
+                                              "type": "string",
+                                              "enum": [
+                                                "index_page",
+                                                "anchor",
+                                                "comment_body",
+                                                "comment_revision",
+                                                "thread_event",
+                                                "event_page",
+                                                "thread_snapshot",
+                                                "relation_page",
+                                                "status_page"
+                                              ]
+                                            },
+                                            "id": {
+                                              "type": "string",
+                                              "pattern": "^[0-9a-f]{64}$",
+                                              "minLength": 64,
+                                              "maxLength": 64
+                                            }
+                                          },
+                                          "additionalProperties": false,
+                                          "required": [
+                                            "kind",
+                                            "id"
+                                          ]
+                                        },
+                                        "type": {
+                                          "type": "string",
+                                          "const": "repository_review_comment"
+                                        }
+                                      },
+                                      "additionalProperties": false,
+                                      "required": [
+                                        "type",
+                                        "repository",
+                                        "thread_id",
+                                        "comment_id",
+                                        "revision"
+                                      ]
+                                    },
+                                    {
                                       "type": "object",
                                       "properties": {
                                         "task_id": {
@@ -10968,6 +13022,72 @@ Current repository permission is checked for every request. Commands and status 
                                           "additionalProperties": false,
                                           "required": [
                                             "type",
+                                            "thread_id",
+                                            "comment_id",
+                                            "revision"
+                                          ]
+                                        },
+                                        {
+                                          "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                                          "type": "object",
+                                          "properties": {
+                                            "repository": {
+                                              "type": "string",
+                                              "pattern": "^[0-9a-f]{32}$",
+                                              "minLength": 32,
+                                              "maxLength": 32
+                                            },
+                                            "thread_id": {
+                                              "type": "string",
+                                              "pattern": "^[0-9a-f]{32}$",
+                                              "minLength": 32,
+                                              "maxLength": 32
+                                            },
+                                            "comment_id": {
+                                              "type": "string",
+                                              "pattern": "^[0-9a-f]{32}$",
+                                              "minLength": 32,
+                                              "maxLength": 32
+                                            },
+                                            "revision": {
+                                              "type": "object",
+                                              "properties": {
+                                                "kind": {
+                                                  "type": "string",
+                                                  "enum": [
+                                                    "index_page",
+                                                    "anchor",
+                                                    "comment_body",
+                                                    "comment_revision",
+                                                    "thread_event",
+                                                    "event_page",
+                                                    "thread_snapshot",
+                                                    "relation_page",
+                                                    "status_page"
+                                                  ]
+                                                },
+                                                "id": {
+                                                  "type": "string",
+                                                  "pattern": "^[0-9a-f]{64}$",
+                                                  "minLength": 64,
+                                                  "maxLength": 64
+                                                }
+                                              },
+                                              "additionalProperties": false,
+                                              "required": [
+                                                "kind",
+                                                "id"
+                                              ]
+                                            },
+                                            "type": {
+                                              "type": "string",
+                                              "const": "repository_review_comment"
+                                            }
+                                          },
+                                          "additionalProperties": false,
+                                          "required": [
+                                            "type",
+                                            "repository",
                                             "thread_id",
                                             "comment_id",
                                             "revision"
@@ -11585,6 +13705,72 @@ Current repository permission is checked for every request. Commands and status 
                                         ]
                                       },
                                       {
+                                        "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                                        "type": "object",
+                                        "properties": {
+                                          "repository": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "thread_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "comment_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "revision": {
+                                            "type": "object",
+                                            "properties": {
+                                              "kind": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "index_page",
+                                                  "anchor",
+                                                  "comment_body",
+                                                  "comment_revision",
+                                                  "thread_event",
+                                                  "event_page",
+                                                  "thread_snapshot",
+                                                  "relation_page",
+                                                  "status_page"
+                                                ]
+                                              },
+                                              "id": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{64}$",
+                                                "minLength": 64,
+                                                "maxLength": 64
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": [
+                                              "kind",
+                                              "id"
+                                            ]
+                                          },
+                                          "type": {
+                                            "type": "string",
+                                            "const": "repository_review_comment"
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "type",
+                                          "repository",
+                                          "thread_id",
+                                          "comment_id",
+                                          "revision"
+                                        ]
+                                      },
+                                      {
                                         "type": "object",
                                         "properties": {
                                           "task_id": {
@@ -12166,6 +14352,72 @@ Current repository permission is checked for every request. Commands and status 
                                     "additionalProperties": false,
                                     "required": [
                                       "type",
+                                      "thread_id",
+                                      "comment_id",
+                                      "revision"
+                                    ]
+                                  },
+                                  {
+                                    "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                                    "type": "object",
+                                    "properties": {
+                                      "repository": {
+                                        "type": "string",
+                                        "pattern": "^[0-9a-f]{32}$",
+                                        "minLength": 32,
+                                        "maxLength": 32
+                                      },
+                                      "thread_id": {
+                                        "type": "string",
+                                        "pattern": "^[0-9a-f]{32}$",
+                                        "minLength": 32,
+                                        "maxLength": 32
+                                      },
+                                      "comment_id": {
+                                        "type": "string",
+                                        "pattern": "^[0-9a-f]{32}$",
+                                        "minLength": 32,
+                                        "maxLength": 32
+                                      },
+                                      "revision": {
+                                        "type": "object",
+                                        "properties": {
+                                          "kind": {
+                                            "type": "string",
+                                            "enum": [
+                                              "index_page",
+                                              "anchor",
+                                              "comment_body",
+                                              "comment_revision",
+                                              "thread_event",
+                                              "event_page",
+                                              "thread_snapshot",
+                                              "relation_page",
+                                              "status_page"
+                                            ]
+                                          },
+                                          "id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{64}$",
+                                            "minLength": 64,
+                                            "maxLength": 64
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "kind",
+                                          "id"
+                                        ]
+                                      },
+                                      "type": {
+                                        "type": "string",
+                                        "const": "repository_review_comment"
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": [
+                                      "type",
+                                      "repository",
                                       "thread_id",
                                       "comment_id",
                                       "revision"
@@ -13957,6 +16209,72 @@ Current repository permission is checked for every request. Commands and status 
                   ]
                 },
                 {
+                  "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                  "type": "object",
+                  "properties": {
+                    "repository": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{32}$",
+                      "minLength": 32,
+                      "maxLength": 32
+                    },
+                    "thread_id": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{32}$",
+                      "minLength": 32,
+                      "maxLength": 32
+                    },
+                    "comment_id": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{32}$",
+                      "minLength": 32,
+                      "maxLength": 32
+                    },
+                    "revision": {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "index_page",
+                            "anchor",
+                            "comment_body",
+                            "comment_revision",
+                            "thread_event",
+                            "event_page",
+                            "thread_snapshot",
+                            "relation_page",
+                            "status_page"
+                          ]
+                        },
+                        "id": {
+                          "type": "string",
+                          "pattern": "^[0-9a-f]{64}$",
+                          "minLength": 64,
+                          "maxLength": 64
+                        }
+                      },
+                      "additionalProperties": false,
+                      "required": [
+                        "kind",
+                        "id"
+                      ]
+                    },
+                    "type": {
+                      "type": "string",
+                      "const": "repository_review_comment"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "type",
+                    "repository",
+                    "thread_id",
+                    "comment_id",
+                    "revision"
+                  ]
+                },
+                {
                   "type": "object",
                   "properties": {
                     "task_id": {
@@ -14724,6 +17042,72 @@ Current repository permission is checked for every request. Commands and status 
                           ]
                         },
                         {
+                          "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                          "type": "object",
+                          "properties": {
+                            "repository": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            },
+                            "thread_id": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            },
+                            "comment_id": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            },
+                            "revision": {
+                              "type": "object",
+                              "properties": {
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "index_page",
+                                    "anchor",
+                                    "comment_body",
+                                    "comment_revision",
+                                    "thread_event",
+                                    "event_page",
+                                    "thread_snapshot",
+                                    "relation_page",
+                                    "status_page"
+                                  ]
+                                },
+                                "id": {
+                                  "type": "string",
+                                  "pattern": "^[0-9a-f]{64}$",
+                                  "minLength": 64,
+                                  "maxLength": 64
+                                }
+                              },
+                              "additionalProperties": false,
+                              "required": [
+                                "kind",
+                                "id"
+                              ]
+                            },
+                            "type": {
+                              "type": "string",
+                              "const": "repository_review_comment"
+                            }
+                          },
+                          "additionalProperties": false,
+                          "required": [
+                            "type",
+                            "repository",
+                            "thread_id",
+                            "comment_id",
+                            "revision"
+                          ]
+                        },
+                        {
                           "type": "object",
                           "properties": {
                             "task_id": {
@@ -15430,6 +17814,72 @@ Current repository permission is checked for every request. Commands and status 
                           ]
                         },
                         {
+                          "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                          "type": "object",
+                          "properties": {
+                            "repository": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            },
+                            "thread_id": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            },
+                            "comment_id": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            },
+                            "revision": {
+                              "type": "object",
+                              "properties": {
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "index_page",
+                                    "anchor",
+                                    "comment_body",
+                                    "comment_revision",
+                                    "thread_event",
+                                    "event_page",
+                                    "thread_snapshot",
+                                    "relation_page",
+                                    "status_page"
+                                  ]
+                                },
+                                "id": {
+                                  "type": "string",
+                                  "pattern": "^[0-9a-f]{64}$",
+                                  "minLength": 64,
+                                  "maxLength": 64
+                                }
+                              },
+                              "additionalProperties": false,
+                              "required": [
+                                "kind",
+                                "id"
+                              ]
+                            },
+                            "type": {
+                              "type": "string",
+                              "const": "repository_review_comment"
+                            }
+                          },
+                          "additionalProperties": false,
+                          "required": [
+                            "type",
+                            "repository",
+                            "thread_id",
+                            "comment_id",
+                            "revision"
+                          ]
+                        },
+                        {
                           "type": "object",
                           "properties": {
                             "task_id": {
@@ -16030,6 +18480,72 @@ Current repository permission is checked for every request. Commands and status 
                           "additionalProperties": false,
                           "required": [
                             "type",
+                            "thread_id",
+                            "comment_id",
+                            "revision"
+                          ]
+                        },
+                        {
+                          "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                          "type": "object",
+                          "properties": {
+                            "repository": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            },
+                            "thread_id": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            },
+                            "comment_id": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            },
+                            "revision": {
+                              "type": "object",
+                              "properties": {
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "index_page",
+                                    "anchor",
+                                    "comment_body",
+                                    "comment_revision",
+                                    "thread_event",
+                                    "event_page",
+                                    "thread_snapshot",
+                                    "relation_page",
+                                    "status_page"
+                                  ]
+                                },
+                                "id": {
+                                  "type": "string",
+                                  "pattern": "^[0-9a-f]{64}$",
+                                  "minLength": 64,
+                                  "maxLength": 64
+                                }
+                              },
+                              "additionalProperties": false,
+                              "required": [
+                                "kind",
+                                "id"
+                              ]
+                            },
+                            "type": {
+                              "type": "string",
+                              "const": "repository_review_comment"
+                            }
+                          },
+                          "additionalProperties": false,
+                          "required": [
+                            "type",
+                            "repository",
                             "thread_id",
                             "comment_id",
                             "revision"
