@@ -65,3 +65,13 @@ resolves the exact immutable review revision and original evidence with separate
 code-repository authorization. Generic calls without this capability refuse the
 reference. Receipt replay is stable; cached prompt source context still requires
 current source permission. No home command mutates the foreign ReviewStore.
+
+File draft publication is deferred until the queued prompt is eligible. A shared
+workspace-dispatch guard covers capture and the gap before the started
+acknowledgement. Busy sources leave the prompt queued and cancellation remains
+available. All current fingerprints are checked before the first snapshot; every
+captured file is checked again before any review publication. Each draft has a
+stable review receipt, and partial publication retains its exact frozen
+commands. An explicit retry can finish publication from completed captures; it
+never replays admitted prompts or repeats a snapshot whose physical outcome is
+unknown.

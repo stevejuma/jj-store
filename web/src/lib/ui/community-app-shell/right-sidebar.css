@@ -49,3 +49,16 @@
   --ui-button-foreground: var(--sidebar-foreground, var(--foreground));
   display: inline-flex;
 }
+
+/* A conversation inspector joins its workspace file rail as one surface. */
+.community-app-shell__surface
+  > .ui-minimal-app-shell__composition
+  > .ui-minimal-app-shell__sidebar[data-side="right"][data-presentation="inline"]:not(
+    [data-variant="rail"]
+  ):has(
+    ~ [data-conversation-workspace][data-presentation="inline"]:not([hidden])
+  ) {
+  margin-inline-end: 0;
+  border-start-end-radius: 0;
+  border-end-end-radius: 0;
+}

@@ -52,6 +52,7 @@ fn fixture() -> (ThreadStateV1, CollabGraphV1, ConversationSubmissionV1) {
         quote: "Hello".into(),
     };
     let submission = ConversationSubmissionV1 {
+        workspace_comments: vec![],
         reply_to: None,
         thread_id: parent.thread_id,
         expected_thread: message.version,

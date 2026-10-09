@@ -125,8 +125,19 @@ impl Supervisor {
         let digest = journal::digest(&command)?;
         let guard = self.0.mutation.lock().await;
         if let Some(parent) = self.duplicate(command.request_id, &digest)? {
-            if let Some(saved) =
-                self.read(|s| Ok(s.comment_submissions.get(&command.request_id).cloned()))?
+            if command
+                .comments
+                .as_ref()
+                .is_some_and(|s| !s.workspace_comments.is_empty())
+            {
+                let _ = self.recover_file_publication(command.request_id).await;
+            }
+            if command
+                .comments
+                .as_ref()
+                .is_none_or(|s| s.workspace_comments.is_empty())
+                && let Some(saved) =
+                    self.read(|s| Ok(s.comment_submissions.get(&command.request_id).cloned()))?
             {
                 // An explicit retry may recover publication receipts; it never
                 // dispatches already admitted participants a second time.
@@ -380,7 +391,22 @@ impl Supervisor {
         self.publish().await?;
         self.prepare_origin_discussion(&command.conversation_id, &profile)
             .await?;
-        let comment_context = self.publish_chat_comments(&command, &profile).await?;
+        let deferred = command
+            .comments
+            .as_ref()
+            .filter(|c| !c.workspace_comments.is_empty());
+        if let Some(submission) = deferred {
+            if Some(submission.thread_id)
+                != self.read(|s| Ok(s.conversations[&command.conversation_id].discussion_thread))?
+            {
+                return Err(Error::Invalid);
+            }
+        }
+        let comment_context = if deferred.is_some() {
+            None
+        } else {
+            self.publish_chat_comments(&command, &profile).await?
+        };
         for (_, id) in &participants {
             self.link_origin(id).await?;
         }
@@ -401,10 +427,13 @@ impl Supervisor {
                     max_duration_ms: command.max_duration_ms,
                 },
             };
-            match self
-                .prepare_chat_prompt(&action, comment_context.as_ref())
-                .await
-            {
+            let preparation = if let Some(submission) = deferred {
+                self.queue_file_prompt(&action, command.request_id, home, &profile, submission)
+            } else {
+                self.prepare_chat_prompt(&action, comment_context.as_ref())
+                    .await
+            };
+            match preparation {
                 Ok(frame) => prepared.push((action, frame)),
                 Err(error) => {
                     for (action, _) in &prepared {

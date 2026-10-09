@@ -32,7 +32,11 @@ mod secrets;
 mod sent_context;
 mod targets;
 mod tooling;
+mod workspace_deferred;
+mod workspace_freeze;
 mod workspace_inspection;
+mod workspace_publication;
+mod workspace_sources;
 mod workspace_turns;
 use jj_store_model::{OperationId, PrincipalId, RepositoryId, RequestId};
 use jj_store_service::{
@@ -82,6 +86,8 @@ struct Inner {
     shutdown: tokio::sync::Mutex<()>,
     shutdown_finished: Mutex<Option<bool>>,
     mutation: tokio::sync::Mutex<()>,
+    workspace_gate: tokio::sync::Mutex<()>,
+    workspace_activity: Mutex<BTreeMap<String, RequestId>>,
     inspection_slots: tokio::sync::Semaphore,
     publication: tokio::sync::Mutex<()>,
     conversation_dispatch: tokio::sync::Mutex<()>,
@@ -150,6 +156,8 @@ impl Supervisor {
             shutdown: tokio::sync::Mutex::new(()),
             shutdown_finished: Mutex::new(None),
             mutation: tokio::sync::Mutex::new(()),
+            workspace_gate: tokio::sync::Mutex::new(()),
+            workspace_activity: Mutex::new(BTreeMap::new()),
             inspection_slots: tokio::sync::Semaphore::new(2),
             publication: tokio::sync::Mutex::new(()),
             conversation_dispatch: tokio::sync::Mutex::new(()),

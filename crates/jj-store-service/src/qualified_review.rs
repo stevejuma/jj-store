@@ -6,6 +6,7 @@ use jj_store_wal::publication::{CollabTargetReaderV1, Domain, ReviewSnapshotRead
 
 pub struct ReviewCommentSource {
     pub revision: TargetRevisionV1,
+    pub workflow_version: u64,
     pub body: String,
     pub anchor_ref: ReviewObjectRef,
     pub anchor: ArtifactAnchorV1,
@@ -41,13 +42,13 @@ pub async fn selected_comment(
         .review_selection(*thread_id)
         .await?
         .ok_or(Error::TargetUnavailable)?;
-    let anchor_ref = match reader
+    let (anchor_ref, workflow_version) = match reader
         .review_object(selected)
         .await?
         .ok_or(Error::TargetUnavailable)?
     {
-        ReviewObjectV1::ThreadSnapshot(v) => v.original_anchor,
-        ReviewObjectV1::ThreadMerge(v) => v.original_anchor,
+        ReviewObjectV1::ThreadSnapshot(v) => (v.original_anchor, v.workflow_version),
+        ReviewObjectV1::ThreadMerge(v) => (v.original_anchor, v.workflow_version),
         _ => return Err(Error::TargetUnavailable),
     };
     let Some(ReviewObjectV1::Anchor(anchor)) = reader.review_object(anchor_ref).await? else {
@@ -70,6 +71,7 @@ pub async fn selected_comment(
         revision: resolved.revision,
         body: body.text,
         anchor_ref,
+        workflow_version,
         anchor: *anchor,
     })
 }

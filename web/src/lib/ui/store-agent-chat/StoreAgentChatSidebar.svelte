@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreWorkspaceButton from "../store-agent-workspace/StoreWorkspaceButton.svelte";
   import type { Snippet } from "svelte";
   let inputActions = $state<Snippet>();
   import { submitManagedConversation } from "../../conversations/managed-send.js";
@@ -241,6 +242,12 @@
             onSend={() => void conversation.comments.send()}
             error={conversation.comments.error}
           >
+            {#snippet workspace()}{#key conversation}<StoreWorkspaceButton
+                  {manager}
+                  {controller}
+                  {conversation}
+                  sessions={chat.sessions}
+                />{/key}{/snippet}
             {#snippet controls()}<StoreConversationRuntime
                 {manager}
                 session={selectedSession}

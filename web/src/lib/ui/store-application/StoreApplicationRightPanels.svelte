@@ -1,6 +1,8 @@
 <!-- @community-copy src/components/community-application/CommunityApplication.svelte -->
 <script lang="ts">
   import { useConversationInspection } from "../../conversations/inspection.svelte.js";
+  import StoreWorkspaceFiles from "../store-agent-workspace/StoreWorkspaceFiles.svelte";
+  import StoreWorkspaceInspector from "../store-agent-workspace/StoreWorkspaceInspector.svelte";
   import ChatToolPanel from "../store-agent-chat-body/ChatToolPanel.svelte";
   import {
     AppShell,
@@ -54,7 +56,9 @@
     current.page === "projects" && current.workTab === "agents",
   );
   const agentKey = $derived(
-    (current.page === "agents" || projectAgent) && current.agentSessionId
+    !current.agentsHub &&
+      (current.page === "agents" || projectAgent) &&
+      current.agentSessionId
       ? `${current.repository}:${current.workAgentRepository ?? ""}:${current.agentSessionId}`
       : null,
   );
@@ -165,7 +169,7 @@
   }
 </script>
 
-{#if !inspection?.current && !chatOpen && current.page === "threads" && controller.threads?.detail && !threadFocused}
+{#if !inspection?.current && !inspection?.file && !chatOpen && current.page === "threads" && controller.threads?.detail && !threadFocused}
   <AppShell.Sidebar
     side="right"
     constraintPriority={0}
@@ -178,7 +182,7 @@
     <StoreThreadSidebar {controller} />
   </AppShell.Sidebar>
 {/if}
-{#if !inspection?.current && !chatOpen && stackSettingsKey && stackWorkspace}
+{#if !inspection?.current && !inspection?.file && !chatOpen && stackSettingsKey && stackWorkspace}
   <AppShell.Sidebar
     side="right"
     constraintPriority={0}
@@ -207,8 +211,10 @@
   />
 {/snippet}
 <!-- Controlled open clears the mobile sheet before its teleported content is removed. -->
-{#if !inspection?.current && !chatOpen}{@render agentResponse(true)}{/if}
-{#if !inspection?.current && !chatOpen && agentKey && !agentFocused}
+{#if !current.agentsHub && !inspection?.current && !inspection?.file && !chatOpen}{@render agentResponse(
+    true,
+  )}{/if}
+{#if !inspection?.current && !inspection?.file && !chatOpen && agentKey && !agentFocused}
   <AppShell.Sidebar
     side="right"
     constraintPriority={0}
@@ -223,7 +229,7 @@
   </AppShell.Sidebar>
 {/if}
 
-{#if !inspection?.current && chatOpen && controller.execution}<AppShell.Sidebar
+{#if !inspection?.current && !inspection?.file && chatOpen && controller.execution}<AppShell.Sidebar
     side="right"
     constraintPriority={0}
     constrainedPresentation="replace-main"
@@ -238,31 +244,18 @@
     /></AppShell.Sidebar
   >{/if}
 
-<AppShell.Sidebar
-  side="right"
-  sidebarController={detailsRail}
-  constraintPriority={100}
-  variant="rail"
-  class="community-application__project-overview-sidebar"
-  label="Repository details"
-  resizeLabel="Resize repository details"
-  closeable
->
-  <AppShell.Sidebar.Body>
-    {#if current.page === "projects" && controller.projects && !isRepositoryProjects(current)}
-      <StoreProjectsRail {controller} />
-    {:else if isStacksRoute(current) && stackWorkspace?.snapshot?.repository === current.repository}
-      <StoreStackWorkspaceDetails {controller} workspace={stackWorkspace} />
-    {:else}
-      <StoreRepositoryDetails {controller} />
-      {#if !isStacksRoute(current)}<StoreRepositoryNavigation
-          page={current.page}
-          onSelect={onSelectPage}
-        />
-        <StoreRepositoryContextActions {controller} />{/if}
-    {/if}
-  </AppShell.Sidebar.Body>
-</AppShell.Sidebar>
+{#if inspection?.file}<AppShell.Sidebar
+    side="right"
+    label="Workspace file"
+    resizeLabel="Resize workspace file"
+    constrainedPresentation="replace-main"
+    closeable
+  >
+    <StoreWorkspaceInspector
+      browser={inspection.file}
+      onClose={() => void inspection.close()}
+    />
+  </AppShell.Sidebar>{/if}
 
 {#if inspection?.current}<AppShell.Sidebar
     side="right"
@@ -276,4 +269,35 @@
       state={inspection.current.state}
       onClose={() => void inspection.close()}
     />
+  </AppShell.Sidebar>{/if}
+
+{#if inspection?.workspace}
+  <StoreWorkspaceFiles
+    browser={inspection.workspace}
+    sidebarController={detailsRail}
+  />
+{:else if !current.agentsHub}<AppShell.Sidebar
+    side="right"
+    sidebarController={detailsRail}
+    constraintPriority={100}
+    variant="rail"
+    class="community-application__project-overview-sidebar"
+    label="Repository details"
+    resizeLabel="Resize repository details"
+    closeable
+  >
+    <AppShell.Sidebar.Body>
+      {#if current.page === "projects" && controller.projects && !isRepositoryProjects(current)}
+        <StoreProjectsRail {controller} />
+      {:else if isStacksRoute(current) && stackWorkspace?.snapshot?.repository === current.repository}
+        <StoreStackWorkspaceDetails {controller} workspace={stackWorkspace} />
+      {:else}
+        <StoreRepositoryDetails {controller} />
+        {#if !isStacksRoute(current)}<StoreRepositoryNavigation
+            page={current.page}
+            onSelect={onSelectPage}
+          />
+          <StoreRepositoryContextActions {controller} />{/if}
+      {/if}
+    </AppShell.Sidebar.Body>
   </AppShell.Sidebar>{/if}

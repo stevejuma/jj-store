@@ -136,3 +136,10 @@ Git GC cannot substitute another source. Thread/reaction references retain the
 same evidence closure without acquiring authority over the originating reviews.
 This narrow file gate does not qualify portable agent reviews or a native
 portable carrier.
+
+The workspace Send controller freezes authorized local capsule/file selections
+before invoking the qualified WithEvidence provider. Current observations must
+match both the pre-snapshot fingerprint and captured bytes; UTF-8 ranges retain
+the selected-content hash. Continuations read retained ReviewStore evidence, not
+a possibly removed checkout. This M13.3 slice does not complete cold multi-agent
+acceptance or durable turn-boundary inventory qualification.

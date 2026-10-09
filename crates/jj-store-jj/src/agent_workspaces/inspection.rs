@@ -26,3 +26,27 @@ pub fn safe_path(path: &str) -> bool {
                 && !p.eq_ignore_ascii_case(".git")
         })
 }
+
+/// Capture immutable code evidence from an authorized operation, without snapshotting.
+pub async fn evidence(
+    metadata: &std::path::Path,
+    repository: jj_store_model::RepositoryId,
+    operation: jj_store_model::OperationId,
+) -> crate::local_metadata::Result<crate::local_evidence::GitEvidenceCapsuleV1> {
+    let metadata = metadata.to_owned();
+    tokio::task::spawn_blocking(move || {
+        let settings = jj_lib::settings::UserSettings::from_config(
+            jj_lib::config::StackedConfig::with_defaults(),
+        )
+        .map_err(|_| crate::local_metadata::Error::Invalid("settings"))?;
+        tokio::runtime::Builder::new_current_thread()
+            .enable_all()
+            .build()
+            .map_err(crate::local_metadata::Error::other)?
+            .block_on(crate::local_evidence::inspect(
+                &settings, &metadata, repository, operation,
+            ))
+    })
+    .await
+    .map_err(crate::local_metadata::Error::other)?
+}

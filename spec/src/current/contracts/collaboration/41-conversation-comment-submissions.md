@@ -139,3 +139,14 @@ and discussion, preventing cross-repository ID collisions. The original
 delivered context and completed answer-range proof remain required for every
 reply link. Conversion refuses this carrier until qualified identity remapping
 is available.
+
+Workspace drafts are additive, omitted when empty, and cannot be projected by
+ordinary ThreadStore commands. The execution controller freezes each bounded
+source observation and stable draft identity when its queued prompt is eligible.
+It checks every current fingerprint before snapshotting, verifies captured bytes
+and UTF-8 selections afterward, then publishes per-repository reviews before the
+home batch. Retrying a frozen draft reuses its exact command and receipt. A
+changed source requires explicit reselection; a snapshot with unknown outcome is
+retained and never repeated implicitly. Existing review continuations use
+retained original evidence, including after workspace cleanup. No quote matching
+is permitted.

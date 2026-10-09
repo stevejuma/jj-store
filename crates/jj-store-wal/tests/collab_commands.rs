@@ -791,6 +791,7 @@ async fn conversation_submission_is_atomic_receipt_backed_and_rejects_forged_ran
         quote: "🦀".into(),
     };
     let mut submission = ConversationSubmissionV1 {
+        workspace_comments: vec![],
         reply_to: None,
         thread_id: parent.thread_id,
         expected_thread: original.version,
@@ -917,6 +918,7 @@ async fn qualified_reviews_require_an_explicit_reader_without_foreign_dependenci
         CollabCommandV1::Thread {
             intent: ThreadCommandV1::Submit {
                 submission: Box::new(ConversationSubmissionV1 {
+                    workspace_comments: vec![],
                     thread_id: parent.thread_id,
                     expected_thread: parent.version,
                     message_id: None,

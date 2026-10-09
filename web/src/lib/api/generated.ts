@@ -17061,6 +17061,291 @@ export interface operations {
                         type: "agent_checkpoint";
                       }
                   )[];
+                  workspace_comments?: {
+                    id: string;
+                    source: {
+                      session: string;
+                      repository: string;
+                      workspace: string;
+                      path: string;
+                      operation: string;
+                      commit: string;
+                      content_sha256: string;
+                      current_fingerprint?: string | null;
+                      selection?: {
+                        /** @enum {string} */
+                        encoding: "utf8";
+                        start_byte: string;
+                        end_byte: string;
+                        selected_sha256: string;
+                      } | null;
+                      diff?: {
+                        before_operation: string;
+                        before_commit: string;
+                        after_operation: string;
+                        after_commit: string;
+                        /** @enum {string} */
+                        side: "before" | "after";
+                      } | null;
+                    };
+                    body: string;
+                    /** @description Existing exact revision; append to its discussion, or edit it explicitly. */
+                    previous?:
+                      | (
+                          | {
+                              thread_id: string;
+                              /** @constant */
+                              type: "thread";
+                            }
+                          | {
+                              thread_id: string;
+                              message_id: string;
+                              revision: {
+                                /** @enum {string} */
+                                kind:
+                                  | "index_page"
+                                  | "thread_version"
+                                  | "thread_event"
+                                  | "human_message_revision"
+                                  | "thread_link"
+                                  | "reaction"
+                                  | "reaction_retraction"
+                                  | "reaction_slot"
+                                  | "custom_emoji_version"
+                                  | "image_asset";
+                                id: string;
+                              };
+                              /** @constant */
+                              type: "human_message";
+                            }
+                          | {
+                              session_id: string;
+                              message_id: string;
+                              event_id: string;
+                              batch: {
+                                /** @enum {string} */
+                                kind:
+                                  | "index_page"
+                                  | "session_snapshot"
+                                  | "turn_snapshot"
+                                  | "message_snapshot"
+                                  | "tool_snapshot"
+                                  | "intent"
+                                  | "observation_batch"
+                                  | "event_batch"
+                                  | "transcript_manifest"
+                                  | "transcript_page"
+                                  | "transcript_chunk"
+                                  | "content"
+                                  | "checkpoint_version"
+                                  | "association"
+                                  | "alias"
+                                  | "relation_page"
+                                  | "source_state"
+                                  | "projection_catalog"
+                                  | "catalog_conflict";
+                                id: string;
+                              };
+                              content: {
+                                /** @enum {string} */
+                                kind:
+                                  | "index_page"
+                                  | "session_snapshot"
+                                  | "turn_snapshot"
+                                  | "message_snapshot"
+                                  | "tool_snapshot"
+                                  | "intent"
+                                  | "observation_batch"
+                                  | "event_batch"
+                                  | "transcript_manifest"
+                                  | "transcript_page"
+                                  | "transcript_chunk"
+                                  | "content"
+                                  | "checkpoint_version"
+                                  | "association"
+                                  | "alias"
+                                  | "relation_page"
+                                  | "source_state"
+                                  | "projection_catalog"
+                                  | "catalog_conflict";
+                                id: string;
+                              };
+                              /** @constant */
+                              type: "agent_message";
+                            }
+                          | {
+                              session_id: string;
+                              tool_id: string;
+                              snapshot: {
+                                /** @enum {string} */
+                                kind:
+                                  | "index_page"
+                                  | "session_snapshot"
+                                  | "turn_snapshot"
+                                  | "message_snapshot"
+                                  | "tool_snapshot"
+                                  | "intent"
+                                  | "observation_batch"
+                                  | "event_batch"
+                                  | "transcript_manifest"
+                                  | "transcript_page"
+                                  | "transcript_chunk"
+                                  | "content"
+                                  | "checkpoint_version"
+                                  | "association"
+                                  | "alias"
+                                  | "relation_page"
+                                  | "source_state"
+                                  | "projection_catalog"
+                                  | "catalog_conflict";
+                                id: string;
+                              };
+                              /** @constant */
+                              type: "tool_invocation";
+                            }
+                          | {
+                              session_id: string;
+                              tool_id: string;
+                              snapshot: {
+                                /** @enum {string} */
+                                kind:
+                                  | "index_page"
+                                  | "session_snapshot"
+                                  | "turn_snapshot"
+                                  | "message_snapshot"
+                                  | "tool_snapshot"
+                                  | "intent"
+                                  | "observation_batch"
+                                  | "event_batch"
+                                  | "transcript_manifest"
+                                  | "transcript_page"
+                                  | "transcript_chunk"
+                                  | "content"
+                                  | "checkpoint_version"
+                                  | "association"
+                                  | "alias"
+                                  | "relation_page"
+                                  | "source_state"
+                                  | "projection_catalog"
+                                  | "catalog_conflict";
+                                id: string;
+                              };
+                              content: {
+                                /** @enum {string} */
+                                kind:
+                                  | "index_page"
+                                  | "session_snapshot"
+                                  | "turn_snapshot"
+                                  | "message_snapshot"
+                                  | "tool_snapshot"
+                                  | "intent"
+                                  | "observation_batch"
+                                  | "event_batch"
+                                  | "transcript_manifest"
+                                  | "transcript_page"
+                                  | "transcript_chunk"
+                                  | "content"
+                                  | "checkpoint_version"
+                                  | "association"
+                                  | "alias"
+                                  | "relation_page"
+                                  | "source_state"
+                                  | "projection_catalog"
+                                  | "catalog_conflict";
+                                id: string;
+                              };
+                              /** @constant */
+                              type: "tool_output";
+                            }
+                          | {
+                              thread_id: string;
+                              /** @constant */
+                              type: "review_thread";
+                            }
+                          | {
+                              thread_id: string;
+                              comment_id: string;
+                              revision: {
+                                /** @enum {string} */
+                                kind:
+                                  | "index_page"
+                                  | "anchor"
+                                  | "comment_body"
+                                  | "comment_revision"
+                                  | "thread_event"
+                                  | "event_page"
+                                  | "thread_snapshot"
+                                  | "relation_page"
+                                  | "status_page";
+                                id: string;
+                              };
+                              /** @constant */
+                              type: "review_comment";
+                            }
+                          | {
+                              repository: string;
+                              thread_id: string;
+                              comment_id: string;
+                              revision: {
+                                /** @enum {string} */
+                                kind:
+                                  | "index_page"
+                                  | "anchor"
+                                  | "comment_body"
+                                  | "comment_revision"
+                                  | "thread_event"
+                                  | "event_page"
+                                  | "thread_snapshot"
+                                  | "relation_page"
+                                  | "status_page";
+                                id: string;
+                              };
+                              /** @constant */
+                              type: "repository_review_comment";
+                            }
+                          | {
+                              task_id: string;
+                              comment_id: string;
+                              /** Format: uint64 */
+                              version: number;
+                              /** @constant */
+                              type: "work_comment";
+                            }
+                          | {
+                              session_id: string;
+                              checkpoint_id: string;
+                              version: {
+                                /** @enum {string} */
+                                kind:
+                                  | "index_page"
+                                  | "session_snapshot"
+                                  | "turn_snapshot"
+                                  | "message_snapshot"
+                                  | "tool_snapshot"
+                                  | "intent"
+                                  | "observation_batch"
+                                  | "event_batch"
+                                  | "transcript_manifest"
+                                  | "transcript_page"
+                                  | "transcript_chunk"
+                                  | "content"
+                                  | "checkpoint_version"
+                                  | "association"
+                                  | "alias"
+                                  | "relation_page"
+                                  | "source_state"
+                                  | "projection_catalog"
+                                  | "catalog_conflict";
+                                id: string;
+                              };
+                              /** @constant */
+                              type: "agent_checkpoint";
+                            }
+                        )
+                      | null;
+                    /** @default false */
+                    edit?: boolean;
+                  }[];
                 };
                 /** @constant */
                 type: "submit";
@@ -38950,6 +39235,291 @@ export interface operations {
                               type: "agent_checkpoint";
                             }
                         )[];
+                        workspace_comments?: {
+                          id: string;
+                          source: {
+                            session: string;
+                            repository: string;
+                            workspace: string;
+                            path: string;
+                            operation: string;
+                            commit: string;
+                            content_sha256: string;
+                            current_fingerprint?: string | null;
+                            selection?: {
+                              /** @enum {string} */
+                              encoding: "utf8";
+                              start_byte: string;
+                              end_byte: string;
+                              selected_sha256: string;
+                            } | null;
+                            diff?: {
+                              before_operation: string;
+                              before_commit: string;
+                              after_operation: string;
+                              after_commit: string;
+                              /** @enum {string} */
+                              side: "before" | "after";
+                            } | null;
+                          };
+                          body: string;
+                          /** @description Existing exact revision; append to its discussion, or edit it explicitly. */
+                          previous?:
+                            | (
+                                | {
+                                    thread_id: string;
+                                    /** @constant */
+                                    type: "thread";
+                                  }
+                                | {
+                                    thread_id: string;
+                                    message_id: string;
+                                    revision: {
+                                      /** @enum {string} */
+                                      kind:
+                                        | "index_page"
+                                        | "thread_version"
+                                        | "thread_event"
+                                        | "human_message_revision"
+                                        | "thread_link"
+                                        | "reaction"
+                                        | "reaction_retraction"
+                                        | "reaction_slot"
+                                        | "custom_emoji_version"
+                                        | "image_asset";
+                                      id: string;
+                                    };
+                                    /** @constant */
+                                    type: "human_message";
+                                  }
+                                | {
+                                    session_id: string;
+                                    message_id: string;
+                                    event_id: string;
+                                    batch: {
+                                      /** @enum {string} */
+                                      kind:
+                                        | "index_page"
+                                        | "session_snapshot"
+                                        | "turn_snapshot"
+                                        | "message_snapshot"
+                                        | "tool_snapshot"
+                                        | "intent"
+                                        | "observation_batch"
+                                        | "event_batch"
+                                        | "transcript_manifest"
+                                        | "transcript_page"
+                                        | "transcript_chunk"
+                                        | "content"
+                                        | "checkpoint_version"
+                                        | "association"
+                                        | "alias"
+                                        | "relation_page"
+                                        | "source_state"
+                                        | "projection_catalog"
+                                        | "catalog_conflict";
+                                      id: string;
+                                    };
+                                    content: {
+                                      /** @enum {string} */
+                                      kind:
+                                        | "index_page"
+                                        | "session_snapshot"
+                                        | "turn_snapshot"
+                                        | "message_snapshot"
+                                        | "tool_snapshot"
+                                        | "intent"
+                                        | "observation_batch"
+                                        | "event_batch"
+                                        | "transcript_manifest"
+                                        | "transcript_page"
+                                        | "transcript_chunk"
+                                        | "content"
+                                        | "checkpoint_version"
+                                        | "association"
+                                        | "alias"
+                                        | "relation_page"
+                                        | "source_state"
+                                        | "projection_catalog"
+                                        | "catalog_conflict";
+                                      id: string;
+                                    };
+                                    /** @constant */
+                                    type: "agent_message";
+                                  }
+                                | {
+                                    session_id: string;
+                                    tool_id: string;
+                                    snapshot: {
+                                      /** @enum {string} */
+                                      kind:
+                                        | "index_page"
+                                        | "session_snapshot"
+                                        | "turn_snapshot"
+                                        | "message_snapshot"
+                                        | "tool_snapshot"
+                                        | "intent"
+                                        | "observation_batch"
+                                        | "event_batch"
+                                        | "transcript_manifest"
+                                        | "transcript_page"
+                                        | "transcript_chunk"
+                                        | "content"
+                                        | "checkpoint_version"
+                                        | "association"
+                                        | "alias"
+                                        | "relation_page"
+                                        | "source_state"
+                                        | "projection_catalog"
+                                        | "catalog_conflict";
+                                      id: string;
+                                    };
+                                    /** @constant */
+                                    type: "tool_invocation";
+                                  }
+                                | {
+                                    session_id: string;
+                                    tool_id: string;
+                                    snapshot: {
+                                      /** @enum {string} */
+                                      kind:
+                                        | "index_page"
+                                        | "session_snapshot"
+                                        | "turn_snapshot"
+                                        | "message_snapshot"
+                                        | "tool_snapshot"
+                                        | "intent"
+                                        | "observation_batch"
+                                        | "event_batch"
+                                        | "transcript_manifest"
+                                        | "transcript_page"
+                                        | "transcript_chunk"
+                                        | "content"
+                                        | "checkpoint_version"
+                                        | "association"
+                                        | "alias"
+                                        | "relation_page"
+                                        | "source_state"
+                                        | "projection_catalog"
+                                        | "catalog_conflict";
+                                      id: string;
+                                    };
+                                    content: {
+                                      /** @enum {string} */
+                                      kind:
+                                        | "index_page"
+                                        | "session_snapshot"
+                                        | "turn_snapshot"
+                                        | "message_snapshot"
+                                        | "tool_snapshot"
+                                        | "intent"
+                                        | "observation_batch"
+                                        | "event_batch"
+                                        | "transcript_manifest"
+                                        | "transcript_page"
+                                        | "transcript_chunk"
+                                        | "content"
+                                        | "checkpoint_version"
+                                        | "association"
+                                        | "alias"
+                                        | "relation_page"
+                                        | "source_state"
+                                        | "projection_catalog"
+                                        | "catalog_conflict";
+                                      id: string;
+                                    };
+                                    /** @constant */
+                                    type: "tool_output";
+                                  }
+                                | {
+                                    thread_id: string;
+                                    /** @constant */
+                                    type: "review_thread";
+                                  }
+                                | {
+                                    thread_id: string;
+                                    comment_id: string;
+                                    revision: {
+                                      /** @enum {string} */
+                                      kind:
+                                        | "index_page"
+                                        | "anchor"
+                                        | "comment_body"
+                                        | "comment_revision"
+                                        | "thread_event"
+                                        | "event_page"
+                                        | "thread_snapshot"
+                                        | "relation_page"
+                                        | "status_page";
+                                      id: string;
+                                    };
+                                    /** @constant */
+                                    type: "review_comment";
+                                  }
+                                | {
+                                    repository: string;
+                                    thread_id: string;
+                                    comment_id: string;
+                                    revision: {
+                                      /** @enum {string} */
+                                      kind:
+                                        | "index_page"
+                                        | "anchor"
+                                        | "comment_body"
+                                        | "comment_revision"
+                                        | "thread_event"
+                                        | "event_page"
+                                        | "thread_snapshot"
+                                        | "relation_page"
+                                        | "status_page";
+                                      id: string;
+                                    };
+                                    /** @constant */
+                                    type: "repository_review_comment";
+                                  }
+                                | {
+                                    task_id: string;
+                                    comment_id: string;
+                                    /** Format: uint64 */
+                                    version: number;
+                                    /** @constant */
+                                    type: "work_comment";
+                                  }
+                                | {
+                                    session_id: string;
+                                    checkpoint_id: string;
+                                    version: {
+                                      /** @enum {string} */
+                                      kind:
+                                        | "index_page"
+                                        | "session_snapshot"
+                                        | "turn_snapshot"
+                                        | "message_snapshot"
+                                        | "tool_snapshot"
+                                        | "intent"
+                                        | "observation_batch"
+                                        | "event_batch"
+                                        | "transcript_manifest"
+                                        | "transcript_page"
+                                        | "transcript_chunk"
+                                        | "content"
+                                        | "checkpoint_version"
+                                        | "association"
+                                        | "alias"
+                                        | "relation_page"
+                                        | "source_state"
+                                        | "projection_catalog"
+                                        | "catalog_conflict";
+                                      id: string;
+                                    };
+                                    /** @constant */
+                                    type: "agent_checkpoint";
+                                  }
+                              )
+                            | null;
+                          /** @default false */
+                          edit?: boolean;
+                        }[];
                       };
                       /** @constant */
                       type: "submit";
@@ -50289,6 +50859,291 @@ export interface operations {
                   type: "agent_checkpoint";
                 }
             )[];
+            workspace_comments?: {
+              id: string;
+              source: {
+                session: string;
+                repository: string;
+                workspace: string;
+                path: string;
+                operation: string;
+                commit: string;
+                content_sha256: string;
+                current_fingerprint?: string | null;
+                selection?: {
+                  /** @enum {string} */
+                  encoding: "utf8";
+                  start_byte: string;
+                  end_byte: string;
+                  selected_sha256: string;
+                } | null;
+                diff?: {
+                  before_operation: string;
+                  before_commit: string;
+                  after_operation: string;
+                  after_commit: string;
+                  /** @enum {string} */
+                  side: "before" | "after";
+                } | null;
+              };
+              body: string;
+              /** @description Existing exact revision; append to its discussion, or edit it explicitly. */
+              previous?:
+                | (
+                    | {
+                        thread_id: string;
+                        /** @constant */
+                        type: "thread";
+                      }
+                    | {
+                        thread_id: string;
+                        message_id: string;
+                        revision: {
+                          /** @enum {string} */
+                          kind:
+                            | "index_page"
+                            | "thread_version"
+                            | "thread_event"
+                            | "human_message_revision"
+                            | "thread_link"
+                            | "reaction"
+                            | "reaction_retraction"
+                            | "reaction_slot"
+                            | "custom_emoji_version"
+                            | "image_asset";
+                          id: string;
+                        };
+                        /** @constant */
+                        type: "human_message";
+                      }
+                    | {
+                        session_id: string;
+                        message_id: string;
+                        event_id: string;
+                        batch: {
+                          /** @enum {string} */
+                          kind:
+                            | "index_page"
+                            | "session_snapshot"
+                            | "turn_snapshot"
+                            | "message_snapshot"
+                            | "tool_snapshot"
+                            | "intent"
+                            | "observation_batch"
+                            | "event_batch"
+                            | "transcript_manifest"
+                            | "transcript_page"
+                            | "transcript_chunk"
+                            | "content"
+                            | "checkpoint_version"
+                            | "association"
+                            | "alias"
+                            | "relation_page"
+                            | "source_state"
+                            | "projection_catalog"
+                            | "catalog_conflict";
+                          id: string;
+                        };
+                        content: {
+                          /** @enum {string} */
+                          kind:
+                            | "index_page"
+                            | "session_snapshot"
+                            | "turn_snapshot"
+                            | "message_snapshot"
+                            | "tool_snapshot"
+                            | "intent"
+                            | "observation_batch"
+                            | "event_batch"
+                            | "transcript_manifest"
+                            | "transcript_page"
+                            | "transcript_chunk"
+                            | "content"
+                            | "checkpoint_version"
+                            | "association"
+                            | "alias"
+                            | "relation_page"
+                            | "source_state"
+                            | "projection_catalog"
+                            | "catalog_conflict";
+                          id: string;
+                        };
+                        /** @constant */
+                        type: "agent_message";
+                      }
+                    | {
+                        session_id: string;
+                        tool_id: string;
+                        snapshot: {
+                          /** @enum {string} */
+                          kind:
+                            | "index_page"
+                            | "session_snapshot"
+                            | "turn_snapshot"
+                            | "message_snapshot"
+                            | "tool_snapshot"
+                            | "intent"
+                            | "observation_batch"
+                            | "event_batch"
+                            | "transcript_manifest"
+                            | "transcript_page"
+                            | "transcript_chunk"
+                            | "content"
+                            | "checkpoint_version"
+                            | "association"
+                            | "alias"
+                            | "relation_page"
+                            | "source_state"
+                            | "projection_catalog"
+                            | "catalog_conflict";
+                          id: string;
+                        };
+                        /** @constant */
+                        type: "tool_invocation";
+                      }
+                    | {
+                        session_id: string;
+                        tool_id: string;
+                        snapshot: {
+                          /** @enum {string} */
+                          kind:
+                            | "index_page"
+                            | "session_snapshot"
+                            | "turn_snapshot"
+                            | "message_snapshot"
+                            | "tool_snapshot"
+                            | "intent"
+                            | "observation_batch"
+                            | "event_batch"
+                            | "transcript_manifest"
+                            | "transcript_page"
+                            | "transcript_chunk"
+                            | "content"
+                            | "checkpoint_version"
+                            | "association"
+                            | "alias"
+                            | "relation_page"
+                            | "source_state"
+                            | "projection_catalog"
+                            | "catalog_conflict";
+                          id: string;
+                        };
+                        content: {
+                          /** @enum {string} */
+                          kind:
+                            | "index_page"
+                            | "session_snapshot"
+                            | "turn_snapshot"
+                            | "message_snapshot"
+                            | "tool_snapshot"
+                            | "intent"
+                            | "observation_batch"
+                            | "event_batch"
+                            | "transcript_manifest"
+                            | "transcript_page"
+                            | "transcript_chunk"
+                            | "content"
+                            | "checkpoint_version"
+                            | "association"
+                            | "alias"
+                            | "relation_page"
+                            | "source_state"
+                            | "projection_catalog"
+                            | "catalog_conflict";
+                          id: string;
+                        };
+                        /** @constant */
+                        type: "tool_output";
+                      }
+                    | {
+                        thread_id: string;
+                        /** @constant */
+                        type: "review_thread";
+                      }
+                    | {
+                        thread_id: string;
+                        comment_id: string;
+                        revision: {
+                          /** @enum {string} */
+                          kind:
+                            | "index_page"
+                            | "anchor"
+                            | "comment_body"
+                            | "comment_revision"
+                            | "thread_event"
+                            | "event_page"
+                            | "thread_snapshot"
+                            | "relation_page"
+                            | "status_page";
+                          id: string;
+                        };
+                        /** @constant */
+                        type: "review_comment";
+                      }
+                    | {
+                        repository: string;
+                        thread_id: string;
+                        comment_id: string;
+                        revision: {
+                          /** @enum {string} */
+                          kind:
+                            | "index_page"
+                            | "anchor"
+                            | "comment_body"
+                            | "comment_revision"
+                            | "thread_event"
+                            | "event_page"
+                            | "thread_snapshot"
+                            | "relation_page"
+                            | "status_page";
+                          id: string;
+                        };
+                        /** @constant */
+                        type: "repository_review_comment";
+                      }
+                    | {
+                        task_id: string;
+                        comment_id: string;
+                        /** Format: uint64 */
+                        version: number;
+                        /** @constant */
+                        type: "work_comment";
+                      }
+                    | {
+                        session_id: string;
+                        checkpoint_id: string;
+                        version: {
+                          /** @enum {string} */
+                          kind:
+                            | "index_page"
+                            | "session_snapshot"
+                            | "turn_snapshot"
+                            | "message_snapshot"
+                            | "tool_snapshot"
+                            | "intent"
+                            | "observation_batch"
+                            | "event_batch"
+                            | "transcript_manifest"
+                            | "transcript_page"
+                            | "transcript_chunk"
+                            | "content"
+                            | "checkpoint_version"
+                            | "association"
+                            | "alias"
+                            | "relation_page"
+                            | "source_state"
+                            | "projection_catalog"
+                            | "catalog_conflict";
+                          id: string;
+                        };
+                        /** @constant */
+                        type: "agent_checkpoint";
+                      }
+                  )
+                | null;
+              /** @default false */
+              edit?: boolean;
+            }[];
           } | null;
           /** Format: uint64 */
           max_duration_ms: number;
@@ -51321,6 +52176,291 @@ export interface operations {
                         type: "agent_checkpoint";
                       }
                   )[];
+                  workspace_comments?: {
+                    id: string;
+                    source: {
+                      session: string;
+                      repository: string;
+                      workspace: string;
+                      path: string;
+                      operation: string;
+                      commit: string;
+                      content_sha256: string;
+                      current_fingerprint?: string | null;
+                      selection?: {
+                        /** @enum {string} */
+                        encoding: "utf8";
+                        start_byte: string;
+                        end_byte: string;
+                        selected_sha256: string;
+                      } | null;
+                      diff?: {
+                        before_operation: string;
+                        before_commit: string;
+                        after_operation: string;
+                        after_commit: string;
+                        /** @enum {string} */
+                        side: "before" | "after";
+                      } | null;
+                    };
+                    body: string;
+                    /** @description Existing exact revision; append to its discussion, or edit it explicitly. */
+                    previous?:
+                      | (
+                          | {
+                              thread_id: string;
+                              /** @constant */
+                              type: "thread";
+                            }
+                          | {
+                              thread_id: string;
+                              message_id: string;
+                              revision: {
+                                /** @enum {string} */
+                                kind:
+                                  | "index_page"
+                                  | "thread_version"
+                                  | "thread_event"
+                                  | "human_message_revision"
+                                  | "thread_link"
+                                  | "reaction"
+                                  | "reaction_retraction"
+                                  | "reaction_slot"
+                                  | "custom_emoji_version"
+                                  | "image_asset";
+                                id: string;
+                              };
+                              /** @constant */
+                              type: "human_message";
+                            }
+                          | {
+                              session_id: string;
+                              message_id: string;
+                              event_id: string;
+                              batch: {
+                                /** @enum {string} */
+                                kind:
+                                  | "index_page"
+                                  | "session_snapshot"
+                                  | "turn_snapshot"
+                                  | "message_snapshot"
+                                  | "tool_snapshot"
+                                  | "intent"
+                                  | "observation_batch"
+                                  | "event_batch"
+                                  | "transcript_manifest"
+                                  | "transcript_page"
+                                  | "transcript_chunk"
+                                  | "content"
+                                  | "checkpoint_version"
+                                  | "association"
+                                  | "alias"
+                                  | "relation_page"
+                                  | "source_state"
+                                  | "projection_catalog"
+                                  | "catalog_conflict";
+                                id: string;
+                              };
+                              content: {
+                                /** @enum {string} */
+                                kind:
+                                  | "index_page"
+                                  | "session_snapshot"
+                                  | "turn_snapshot"
+                                  | "message_snapshot"
+                                  | "tool_snapshot"
+                                  | "intent"
+                                  | "observation_batch"
+                                  | "event_batch"
+                                  | "transcript_manifest"
+                                  | "transcript_page"
+                                  | "transcript_chunk"
+                                  | "content"
+                                  | "checkpoint_version"
+                                  | "association"
+                                  | "alias"
+                                  | "relation_page"
+                                  | "source_state"
+                                  | "projection_catalog"
+                                  | "catalog_conflict";
+                                id: string;
+                              };
+                              /** @constant */
+                              type: "agent_message";
+                            }
+                          | {
+                              session_id: string;
+                              tool_id: string;
+                              snapshot: {
+                                /** @enum {string} */
+                                kind:
+                                  | "index_page"
+                                  | "session_snapshot"
+                                  | "turn_snapshot"
+                                  | "message_snapshot"
+                                  | "tool_snapshot"
+                                  | "intent"
+                                  | "observation_batch"
+                                  | "event_batch"
+                                  | "transcript_manifest"
+                                  | "transcript_page"
+                                  | "transcript_chunk"
+                                  | "content"
+                                  | "checkpoint_version"
+                                  | "association"
+                                  | "alias"
+                                  | "relation_page"
+                                  | "source_state"
+                                  | "projection_catalog"
+                                  | "catalog_conflict";
+                                id: string;
+                              };
+                              /** @constant */
+                              type: "tool_invocation";
+                            }
+                          | {
+                              session_id: string;
+                              tool_id: string;
+                              snapshot: {
+                                /** @enum {string} */
+                                kind:
+                                  | "index_page"
+                                  | "session_snapshot"
+                                  | "turn_snapshot"
+                                  | "message_snapshot"
+                                  | "tool_snapshot"
+                                  | "intent"
+                                  | "observation_batch"
+                                  | "event_batch"
+                                  | "transcript_manifest"
+                                  | "transcript_page"
+                                  | "transcript_chunk"
+                                  | "content"
+                                  | "checkpoint_version"
+                                  | "association"
+                                  | "alias"
+                                  | "relation_page"
+                                  | "source_state"
+                                  | "projection_catalog"
+                                  | "catalog_conflict";
+                                id: string;
+                              };
+                              content: {
+                                /** @enum {string} */
+                                kind:
+                                  | "index_page"
+                                  | "session_snapshot"
+                                  | "turn_snapshot"
+                                  | "message_snapshot"
+                                  | "tool_snapshot"
+                                  | "intent"
+                                  | "observation_batch"
+                                  | "event_batch"
+                                  | "transcript_manifest"
+                                  | "transcript_page"
+                                  | "transcript_chunk"
+                                  | "content"
+                                  | "checkpoint_version"
+                                  | "association"
+                                  | "alias"
+                                  | "relation_page"
+                                  | "source_state"
+                                  | "projection_catalog"
+                                  | "catalog_conflict";
+                                id: string;
+                              };
+                              /** @constant */
+                              type: "tool_output";
+                            }
+                          | {
+                              thread_id: string;
+                              /** @constant */
+                              type: "review_thread";
+                            }
+                          | {
+                              thread_id: string;
+                              comment_id: string;
+                              revision: {
+                                /** @enum {string} */
+                                kind:
+                                  | "index_page"
+                                  | "anchor"
+                                  | "comment_body"
+                                  | "comment_revision"
+                                  | "thread_event"
+                                  | "event_page"
+                                  | "thread_snapshot"
+                                  | "relation_page"
+                                  | "status_page";
+                                id: string;
+                              };
+                              /** @constant */
+                              type: "review_comment";
+                            }
+                          | {
+                              repository: string;
+                              thread_id: string;
+                              comment_id: string;
+                              revision: {
+                                /** @enum {string} */
+                                kind:
+                                  | "index_page"
+                                  | "anchor"
+                                  | "comment_body"
+                                  | "comment_revision"
+                                  | "thread_event"
+                                  | "event_page"
+                                  | "thread_snapshot"
+                                  | "relation_page"
+                                  | "status_page";
+                                id: string;
+                              };
+                              /** @constant */
+                              type: "repository_review_comment";
+                            }
+                          | {
+                              task_id: string;
+                              comment_id: string;
+                              /** Format: uint64 */
+                              version: number;
+                              /** @constant */
+                              type: "work_comment";
+                            }
+                          | {
+                              session_id: string;
+                              checkpoint_id: string;
+                              version: {
+                                /** @enum {string} */
+                                kind:
+                                  | "index_page"
+                                  | "session_snapshot"
+                                  | "turn_snapshot"
+                                  | "message_snapshot"
+                                  | "tool_snapshot"
+                                  | "intent"
+                                  | "observation_batch"
+                                  | "event_batch"
+                                  | "transcript_manifest"
+                                  | "transcript_page"
+                                  | "transcript_chunk"
+                                  | "content"
+                                  | "checkpoint_version"
+                                  | "association"
+                                  | "alias"
+                                  | "relation_page"
+                                  | "source_state"
+                                  | "projection_catalog"
+                                  | "catalog_conflict";
+                                id: string;
+                              };
+                              /** @constant */
+                              type: "agent_checkpoint";
+                            }
+                        )
+                      | null;
+                    /** @default false */
+                    edit?: boolean;
+                  }[];
                 } | null;
                 text: string;
                 /** Format: uint64 */

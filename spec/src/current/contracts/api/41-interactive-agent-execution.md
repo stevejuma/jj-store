@@ -281,3 +281,10 @@ collaboration endpoints cannot accept foreign reviews by accepting copied
 bodies. Frozen context includes the exact original file anchor and bounded
 source text. Receipt replay preserves publication identity, while preparing or
 reading source context still requires current code-repository permission.
+
+Workspace-bearing submissions add bounded `workspace_comments` with stable draft
+IDs, session/repository bindings, exact observed revisions and fingerprints.
+Empty lists are omitted for encoding compatibility. Deferred outcomes report
+pending publication independently of queued delivery. Generic collaboration
+commands refuse unresolved file drafts; only the authorized controller can
+capture and replace them with receipt-backed repository-qualified references.

@@ -63,3 +63,6 @@ pub(crate) fn schema(version: u32) -> Result<()> {
         Err(Error::Invalid("schema version"))
     }
 }
+
+mod workspace_comments;
+pub use workspace_comments::*;

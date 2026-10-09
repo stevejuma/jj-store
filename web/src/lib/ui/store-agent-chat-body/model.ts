@@ -117,6 +117,7 @@ export interface ChatSubmissionResult {
   error?: string;
 }
 export interface ChatCommentHost {
+  externalBlocks?: readonly ChatBodyBlock[];
   canComment?: boolean;
   commentUnavailable?: string;
   items: readonly ChatBodyItem[];

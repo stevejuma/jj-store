@@ -142,3 +142,47 @@ Older terminal-only captures may display retained journal command/output as a
 whole-section projection; they must not manufacture text ranges into the
 terminal reference. Raw JSON remains independently reachable. E-CHAT-LIVE-009
 records the real sample and Unicode/empty-output source mapping regressions.
+
+## Workspace files from the conversation footer
+
+The footer identifies the inspected agent, repository and verified workspace.
+Its popover offers the full location, known branch facts, copy actions and View
+files. An inspection selector changes only the viewed binding; it never rebinds
+an agent or changes a checkout. Footer controls wrap at constrained widths while
+keeping Send accessible and the full truncated repository label available.
+
+The conversation workspace rail uses the standard body-sidebar surface, with
+Files and Changes tabs in its header and a straight adjoining body edge while
+inline. Tabs reuse Projects navigation pills; Refresh stays at the header’s
+trailing edge. File readers have padded content. Refreshing a listing retains its
+rows and reports busy state in the header, without an appended loading-more row. Other repository rails retain their existing presentation. It reuses
+the owned file tree and public listing controls. Current files include tracked and nonignored untracked
+paths. Comparison selection defaults to Branch; missing verified bases require
+an explicit base selection. Since last commit includes unsnapshotted edits. Last
+turn uses exact completed before/after boundaries and excludes subsequent edits.
+Unsupported comparisons and incomplete totals retain their explanations. Bounded
+asynchronous reads discard obsolete results and never publish or snapshot
+repository state.
+
+Standalone sessions mount the same inspection panels as contextual chats. An
+unselected agent profile must not reserve the body inspector's shell panel identity.
+Selecting a file opens the shared full-height, resizable body inspector. Changes
+offers highlighted unified/split diffs and explicit before/after selection
+views. Selections retain exact UTF-8 ranges and source fingerprints; file drafts
+join the same pending queue and Send in both conversation renderers. The
+application owns selection, disclosure, scroll and draft state across panel and
+renderer changes. Historical source navigation opens the owning repository and
+retained revision, diff side and range, rather than selecting current bytes by
+matching quotes.
+
+File discussions remain ReviewStore-owned. A historical batch holds qualified
+references; read projections resolve those references through independent code
+repository authorization. Published source/reply navigation must survive reload,
+workspace cleanup and retained-source reads after GC. Pending source validation,
+partial publication and unknown outcomes must preserve their exact requests and
+drafts. Browser rendering never marks a file discussion answered on its own.
+
+E-CHAT-WORKSPACE-004 records the initial file draft and UI integration.
+Historical review projection, retained navigation and cold interaction
+acceptance remain subsequent gates; M24 and M13.3 stay In progress and visual
+baselines unapproved.

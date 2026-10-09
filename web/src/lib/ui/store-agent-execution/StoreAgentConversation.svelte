@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreWorkspaceButton from "../store-agent-workspace/StoreWorkspaceButton.svelte";
   import type { Snippet } from "svelte";
   let inputActions = $state<Snippet>();
   import { createStandaloneSender } from "../../conversations/standalone-send.svelte.js";
@@ -226,7 +227,13 @@
             conversation.comments.canSend}
           onSend={() => void conversation.comments.send()}
           error={manager.pending || error ? "" : conversation.comments.error}
-          >{#snippet controls()}<StoreConversationRuntime
+          >{#snippet workspace()}{#key conversation}<StoreWorkspaceButton
+                {manager}
+                {controller}
+                {conversation}
+                sessions={[session]}
+              />{/key}{/snippet}
+          {#snippet controls()}<StoreConversationRuntime
               {manager}
               {session}
             />{/snippet}</ChatMessageFooter

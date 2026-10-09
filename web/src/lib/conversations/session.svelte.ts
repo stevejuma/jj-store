@@ -1,3 +1,10 @@
+import type { WorkspaceFileSource } from "./workspace-types.js";
+import { middleFoldKey } from "../ui/store-agent-chat-body/middle-fold.js";
+import { tick } from "svelte";
+import { SvelteMap } from "svelte/reactivity";
+import { bytesToHex } from "@noble/hashes/utils.js";
+import { sha256 } from "@noble/hashes/sha2.js";
+import type { ChatBodyBlock } from "../ui/store-agent-chat-body/model.js";
 import { ChatBodyComments } from "../ui/store-agent-chat-body/comments.svelte.js";
 import type {
   ChatBodyProps,
@@ -17,6 +24,10 @@ export class ConversationSession {
     targets: new Map(),
   });
   host = $state<Partial<ChatBodyProps>>({});
+  readonly workspaceSources = new SvelteMap<
+    string,
+    { block: ChatBodyBlock; source: WorkspaceFileSource; reveal: () => void }
+  >();
   initialized = false;
   editing = $state<{
     id: string;
@@ -27,6 +38,18 @@ export class ConversationSession {
   readonly comments = new ChatBodyComments(() => ({
     ...this.host,
     items: this.projection.items,
+    externalBlocks: [...this.workspaceSources.values()].map((v) => v.block),
+    onNavigateSource: async (thread) => {
+      const file = this.workspaceSources.get(thread.anchor.blockId);
+      if (file) {
+        file.reveal();
+        this.comments.disclosures[`file:${file.block.id}`] = true;
+        this.comments.disclosures[middleFoldKey(file.block)] = true;
+        await tick();
+        await tick();
+        this.comments.readers.get(file.block.id)?.(thread.anchor, true);
+      } else await this.host.onNavigateSource?.(thread);
+    },
   }));
   adopt(projection: ConversationProjection) {
     this.projection = projection;
@@ -99,32 +122,80 @@ export class ConversationSession {
       message_id: ordinary && submission.text.trim() ? submission.id : null,
       text: ordinary && submission.text.trim() ? submission.text : null,
       references: [],
-      comments: submission.comments.map((entry) => {
-        const block = blocks.find((b) => b.id === entry.anchor.blockId),
-          source = this.projection.sources.get(entry.anchor.blockId);
-        const thread = this.comments.threads.find(
-          (t) => t.id === entry.threadId,
-        );
-        if (!block || !source || !thread || !validAnchor(block, entry.anchor))
-          throw new Error(
-            "The exact published source is unavailable. Your draft is retained.",
+      workspace_comments: submission.comments
+        .filter((e) => this.workspaceSources.has(e.anchor.blockId))
+        .map((entry) => {
+          const file = this.workspaceSources.get(entry.anchor.blockId)!;
+          if (!validAnchor(file.block, entry.anchor))
+            throw new Error(
+              "The workspace selection changed. Your draft is retained.",
+            );
+          const bytes = new TextEncoder();
+          // Avoid an invalid UTF-16 split before converting exact editor offsets.
+          const quote = file.block.text.slice(
+            entry.anchor.from,
+            entry.anchor.to,
           );
-        const selector =
-          thread.source ?? exactSource(block, entry.anchor, source);
-        return {
-          thread_id: entry.threadId,
-          expected_thread: thread.revision ?? null,
-          source: selector,
-          message_id:
-            thread.comments.find((c) => c.id === entry.commentId)?.messageId ??
-            entry.commentId,
-          expected_revision:
-            thread.comments.find((c) => c.id === entry.commentId)?.revision ??
-            null,
-          reply_to: null,
-          body: entry.text,
-        };
-      }),
+          if (
+            new TextDecoder("utf-8", { fatal: true }).decode(
+              bytes.encode(quote),
+            ) !== quote
+          )
+            throw new Error("Select complete characters.");
+          return {
+            id: entry.commentId,
+            body: entry.text,
+            previous: null,
+            edit: false,
+            source: {
+              ...file.source,
+              selection:
+                entry.anchor.from === entry.anchor.to
+                  ? null
+                  : {
+                      encoding: "utf8" as const,
+                      start_byte: String(
+                        bytes.encode(
+                          file.block.text.slice(0, entry.anchor.from),
+                        ).length,
+                      ),
+                      end_byte: String(
+                        bytes.encode(file.block.text.slice(0, entry.anchor.to))
+                          .length,
+                      ),
+                      selected_sha256: bytesToHex(sha256(bytes.encode(quote))),
+                    },
+            },
+          };
+        }),
+      comments: submission.comments
+        .filter((e) => !this.workspaceSources.has(e.anchor.blockId))
+        .map((entry) => {
+          const block = blocks.find((b) => b.id === entry.anchor.blockId),
+            source = this.projection.sources.get(entry.anchor.blockId);
+          const thread = this.comments.threads.find(
+            (t) => t.id === entry.threadId,
+          );
+          if (!block || !source || !thread || !validAnchor(block, entry.anchor))
+            throw new Error(
+              "The exact published source is unavailable. Your draft is retained.",
+            );
+          const selector =
+            thread.source ?? exactSource(block, entry.anchor, source);
+          return {
+            thread_id: entry.threadId,
+            expected_thread: thread.revision ?? null,
+            source: selector,
+            message_id:
+              thread.comments.find((c) => c.id === entry.commentId)
+                ?.messageId ?? entry.commentId,
+            expected_revision:
+              thread.comments.find((c) => c.id === entry.commentId)?.revision ??
+              null,
+            reply_to: null,
+            body: entry.text,
+          };
+        }),
     };
   }
 }

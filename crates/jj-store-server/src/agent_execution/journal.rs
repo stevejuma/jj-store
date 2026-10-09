@@ -86,6 +86,12 @@ pub(super) struct State {
     #[serde(default)]
     pub comment_submissions: BTreeMap<RequestId, super::comment_submissions::SavedSubmission>,
     #[serde(default)]
+    pub workspace_submissions: BTreeMap<RequestId, super::workspace_freeze::WorkspaceSubmission>,
+    #[serde(default)]
+    pub file_publications: BTreeMap<RequestId, super::workspace_publication::FilePublication>,
+    #[serde(default)]
+    pub deferred_file_prompts: BTreeMap<RequestId, super::workspace_deferred::DeferredFilePrompt>,
+    #[serde(default)]
     pub answer_links: BTreeMap<String, super::comment_answers::SavedAnswerLink>,
 }
 pub(super) fn read(root: &Path) -> Result<State> {
@@ -108,7 +114,10 @@ pub(super) fn read(root: &Path) -> Result<State> {
         return Err(Error::Limit);
     }
     let mut state: State = serde_json::from_slice(&bytes).map_err(|_| Error::Unavailable)?;
-    if state.runtime_installs.len() > 128
+    if state.workspace_submissions.len() > 4096
+        || state.file_publications.len() > 4096
+        || state.deferred_file_prompts.len() > 4096
+        || state.runtime_installs.len() > 128
         || state.comment_submissions.len() > 4096
         || state.answer_links.len() > 4096
     {

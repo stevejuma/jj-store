@@ -341,6 +341,11 @@ E-CHAT-WORKSPACE-003 adds independently authorized repository-qualified review
 references, retained source context and exact delivered-answer proof. M24 remains
 In progress: file-draft capture, queued dispatch, shared inspector UI and cold
 browser acceptance are not yet complete. Visual baselines remain unapproved.
+E-CHAT-WORKSPACE-004 adds deferred file-draft capture and receipt-backed review
+publication before prompt dispatch. M24 remains In progress. Controlled local
+Unicode, stale-source, grouped publication, exact answer and restart checks pass;
+native/multi-agent, retained turn-boundary and browser gates remain open. Visual
+baselines remain unapproved.
 <!-- generated-navigation -->
 ## Pages
 

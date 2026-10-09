@@ -201,7 +201,10 @@ impl Supervisor {
         })
     }
 }
-fn binding(saved: &SavedSession, repository: RepositoryId) -> Result<(&Workspace, &str)> {
+pub(super) fn binding(
+    saved: &SavedSession,
+    repository: RepositoryId,
+) -> Result<(&Workspace, &str)> {
     if let Some(proof) = saved.code_workspaces.get(&repository) {
         let binding = saved
             .view

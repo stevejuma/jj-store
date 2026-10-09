@@ -197,9 +197,29 @@ impl Supervisor {
         let close_deadline = tokio::time::sleep(Duration::from_secs(3600));
         tokio::pin!(close_deadline);
         let mut prompts = super::workspace_turns::PromptQueue::default();
+        let mut workspace_lease = None;
+        let mut retry_at = tokio::time::Instant::now();
         loop {
-            if !closing && let Some(mut frame) = prompts.next() {
-                if self.capture_turn_start(&frame).await.is_err() {
+            if !prompts.is_active() {
+                workspace_lease.take();
+            }
+            if !closing
+                && tokio::time::Instant::now() >= retry_at
+                && let Some(mut frame) = prompts.next()
+            {
+                let result = self.workspace_dispatch(frame.clone()).await;
+                if matches!(result, Err(Error::Busy)) {
+                    prompts.defer(frame);
+                    retry_at = tokio::time::Instant::now() + Duration::from_millis(100);
+                } else if let Ok((prepared, lease)) = result {
+                    workspace_lease = Some(lease);
+                    frame = prepared;
+                    frame
+                        .as_object_mut()
+                        .ok_or(Error::Invalid)?
+                        .remove("sessionId");
+                    write(&mut stdin, frame).await?;
+                } else {
                     let request = frame["requestId"].as_str().ok_or(Error::Invalid)?;
                     let failure = json!({"type":"error","sessionId":id,"requestId":request,"code":"dispatch_not_sent"});
                     self.update(|s| delivery::observe(s, id, &failure))?;
@@ -211,13 +231,9 @@ impl Supervisor {
                     prompts.completed(&failure);
                     continue;
                 }
-                frame
-                    .as_object_mut()
-                    .ok_or(Error::Invalid)?
-                    .remove("sessionId");
-                write(&mut stdin, frame).await?;
             }
             tokio::select! {
+                _ = tokio::time::sleep_until(retry_at), if !closing && !prompts.is_active() && prompts.has_pending() => {},
                 _ = &mut startup, if !opened => return Err(Error::Unavailable),
                 _ = &mut close_deadline, if closing => return Err(Error::Unavailable),
                 frame = commands.recv(), if !closing => {

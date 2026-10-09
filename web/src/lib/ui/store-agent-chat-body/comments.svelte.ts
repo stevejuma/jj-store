@@ -100,9 +100,10 @@ export class ChatBodyComments {
     return this.threads.flatMap((t) => t.comments).find((c) => c.id === id);
   }
   isAvailable(thread: ChatCommentThread) {
-    return commentSources(this.props().items).some((s) =>
-      validAnchor(s.block, thread.anchor),
-    );
+    return [
+      ...commentSources(this.props().items).map((s) => s.block),
+      ...(this.props().externalBlocks ?? []),
+    ].some((block) => validAnchor(block, thread.anchor));
   }
   forBlocks(blocks: readonly ChatBodyBlock[]) {
     return this.visibleThreads.filter((t) =>

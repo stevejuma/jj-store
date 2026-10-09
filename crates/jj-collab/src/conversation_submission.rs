@@ -28,17 +28,22 @@ pub struct ConversationSubmissionV1 {
     pub reply_to: Option<CollabObjectRef>,
     pub comments: Vec<ConversationCommentDraftV1>,
     pub references: Vec<ReactionTargetV1>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub workspace_comments: Vec<WorkspaceCommentDraftV1>,
 }
 impl ConversationSubmissionV1 {
     pub fn validate(&self) -> Result<()> {
         expect(self.expected_thread, CollabObjectKind::ThreadVersion)?;
-        if self.comments.len() + self.references.len() > 128
+        if self.comments.len() + self.references.len() + self.workspace_comments.len() > 128
             || self
                 .text
                 .as_ref()
                 .is_some_and(|s| s.trim().is_empty() || s.len() > 256 * 1024 || s.contains('\0'))
             || self.text.is_some() != self.message_id.is_some()
-            || (self.text.is_none() && self.comments.is_empty() && self.references.is_empty())
+            || (self.text.is_none()
+                && self.comments.is_empty()
+                && self.references.is_empty()
+                && self.workspace_comments.is_empty())
         {
             return Err(Error::Invalid("conversation submission"));
         }
@@ -84,6 +89,14 @@ impl ConversationSubmissionV1 {
                 return Err(Error::Invalid("new discussion history"));
             }
         }
+        let mut drafts = BTreeSet::new();
+        for draft in &self.workspace_comments {
+            draft.validate()?;
+            size = size.checked_add(draft.body.len()).ok_or(Error::Limit)?;
+            if size > 32768 || !drafts.insert(draft.id) {
+                return Err(Error::Limit);
+            }
+        }
         let mut refs = BTreeSet::new();
         for target in &self.references {
             validate_comment_reference(target)?;
@@ -116,6 +129,11 @@ impl ThreadStateV1 {
         graph: &mut CollabGraphV1,
     ) -> Result<(ThreadRootV1, ThreadCommandResultV1)> {
         submission.validate()?;
+        if !submission.workspace_comments.is_empty() {
+            return Err(Error::Invalid(
+                "workspace drafts require authorized capture",
+            ));
+        }
         if self.threads.get(&submission.thread_id) != Some(&submission.expected_thread) {
             return Err(Error::Stale);
         }

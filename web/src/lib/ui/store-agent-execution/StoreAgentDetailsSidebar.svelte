@@ -77,61 +77,60 @@
   }
 </script>
 
-<AppShell.Sidebar
-  side="right"
-  constraintPriority={0}
-  constrainedPresentation="replace-main"
-  label="Agent details sidebar"
-  mobileLabel="Agent details"
-  resizeLabel="Resize agent details sidebar"
-  closeable
-  hidden={!agent}
->
-  {#if agent}
-    <AppShell.Sidebar.Header class="store-agent-details-header"
-      ><strong>Agent details</strong><AppShell.Sidebar.Close
-        label="Close agent details"
-        onclick={close}
-      /></AppShell.Sidebar.Header
-    >
-    <AppShell.Sidebar.Body>
-      {#if manager.value?.live_agents?.find((live) => live.agent_id === agent.id)?.inference_host}<p
-          class="store-agent-inference-host"
-        >
-          Inference host: {manager.value?.live_agents?.find(
-            (live) => live.agent_id === agent.id,
-          )?.inference_host}
-        </p>{/if}
-      {#if manager.value?.live_agents?.find((live) => live.agent_id === agent.id)?.restart_required}
-        <p>Configuration changed. Restart required.</p>
-        <Button
-          variant="outline"
-          disabled={manager.busy || !!manager.pending}
-          onclick={async () => {
-            await manager.stopAgent(agent.id);
-            if (!manager.pending && !manager.error)
-              await manager.startAgent(agent.id);
-          }}>Restart agent</Button
-        >
-      {/if}
-      {#key agent.id}<CommunityAgentProfile
-          {agent}
-          status={manager.value}
-          unknown={!!manager.connectionError}
-          pending={manager.busy || !!manager.pending}
-          onEdit={() => (manager.editRequested = agent)}
-          onStart={() => void manager.startAgent(agent.id)}
-          onChat={() => manager.newChat(agent.id)}
-          onSessions={() => manager.viewSessions(agent.id)}
-          onActivity={() => manager.viewActivity(agent.id)}
-          onStop={(id) => void manager.stopAgent(id)}
-          onCopy={() => {
-            void copy(agent.id);
-          }}
-        />{/key}
-    </AppShell.Sidebar.Body>
-  {/if}
-</AppShell.Sidebar>
+{#if agent}<AppShell.Sidebar
+    side="right"
+    constraintPriority={0}
+    constrainedPresentation="replace-main"
+    label="Agent details sidebar"
+    mobileLabel="Agent details"
+    resizeLabel="Resize agent details sidebar"
+    closeable
+  >
+    {#if agent}
+      <AppShell.Sidebar.Header class="store-agent-details-header"
+        ><strong>Agent details</strong><AppShell.Sidebar.Close
+          label="Close agent details"
+          onclick={close}
+        /></AppShell.Sidebar.Header
+      >
+      <AppShell.Sidebar.Body>
+        {#if manager.value?.live_agents?.find((live) => live.agent_id === agent.id)?.inference_host}<p
+            class="store-agent-inference-host"
+          >
+            Inference host: {manager.value?.live_agents?.find(
+              (live) => live.agent_id === agent.id,
+            )?.inference_host}
+          </p>{/if}
+        {#if manager.value?.live_agents?.find((live) => live.agent_id === agent.id)?.restart_required}
+          <p>Configuration changed. Restart required.</p>
+          <Button
+            variant="outline"
+            disabled={manager.busy || !!manager.pending}
+            onclick={async () => {
+              await manager.stopAgent(agent.id);
+              if (!manager.pending && !manager.error)
+                await manager.startAgent(agent.id);
+            }}>Restart agent</Button
+          >
+        {/if}
+        {#key agent.id}<CommunityAgentProfile
+            {agent}
+            status={manager.value}
+            unknown={!!manager.connectionError}
+            pending={manager.busy || !!manager.pending}
+            onEdit={() => (manager.editRequested = agent)}
+            onStart={() => void manager.startAgent(agent.id)}
+            onChat={() => manager.newChat(agent.id)}
+            onSessions={() => manager.viewSessions(agent.id)}
+            onActivity={() => manager.viewActivity(agent.id)}
+            onStop={(id) => void manager.stopAgent(id)}
+            onCopy={() => {
+              void copy(agent.id);
+            }}
+          />{/key}
+      </AppShell.Sidebar.Body>
+    {/if}
+  </AppShell.Sidebar>{/if}
 
 <style>
   .store-agent-inference-host {

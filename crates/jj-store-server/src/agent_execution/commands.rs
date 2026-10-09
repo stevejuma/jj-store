@@ -291,6 +291,9 @@ impl Manager for Supervisor {
                 .await?;
         }
         if let Some(outcome) = self.duplicate(command.request_id, &digest)? {
+            if matches!(outcome.state.as_str(), "failed" | "outcome_unknown") {
+                let _ = self.recover_file_publication(command.request_id).await;
+            }
             return Ok(outcome);
         }
         let id = &command.session_id;
@@ -312,6 +315,26 @@ impl Manager for Supervisor {
                     return Err(Error::Invalid);
                 }
                 self.sender(id)?;
+                if let Some(submission) = comments
+                    .as_ref()
+                    .filter(|c| !c.workspace_comments.is_empty())
+                {
+                    let frame = self.queue_file_prompt(
+                        &command,
+                        command.request_id,
+                        saved.view.repository,
+                        &saved.profile,
+                        submission,
+                    )?;
+                    if self.send(id, frame).is_err() {
+                        return self.finish(
+                            command.request_id,
+                            "failed",
+                            Some("dispatch_not_sent"),
+                        );
+                    }
+                    return self.read(|s| Ok(s.intents[&command.request_id].outcome.clone()));
+                }
                 let first = self.read(|s| delivery::needs_initial_context(s, id))?;
                 carries_initial_context = first;
                 let mut feedback =
@@ -586,6 +609,7 @@ impl Manager for Supervisor {
                 .await?;
             outcome.comment_publication = self.comment_publication(request)?;
         }
+        outcome.comment_publication = self.comment_publication(request)?;
         Ok(outcome)
     }
     async fn events(&self, actor: PrincipalId, session: String, after: u64) -> Result<EventPage> {

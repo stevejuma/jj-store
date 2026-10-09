@@ -37,3 +37,9 @@ inventory; the physical commit tree must match its recorded tree. Every object
 hash and kind is verified, metadata paths and symlink traversal are refused, and
 regular-file content is capped at 256 KiB. These reads require no working copy,
 current operation, derived index, CLI display parsing or mutable Git reference.
+
+Eligible file-comment capture invokes the owned JJ inspection on a bounded
+blocking task with an isolated current-thread runtime, since upstream inspection
+futures are not Send. This preserves JST-JJ-003/004 identity and read-only
+inspection semantics; it introduces no upstream JJ types into service contracts.
+E-CHAT-WORKSPACE-004 records the compiled provider/controller boundary.

@@ -466,6 +466,7 @@ async fn verify_qualified_submission(code: &LocalRepository, target: jj_collab::
         command: CollabCommandV1::Thread {
             intent: ThreadCommandV1::Submit {
                 submission: Box::new(ConversationSubmissionV1 {
+                    workspace_comments: vec![],
                     thread_id,
                     expected_thread: result.version,
                     message_id: None,

@@ -7,12 +7,14 @@
     onSend,
     error = "",
     controls,
+    workspace,
     actions,
   }: {
     canSend: boolean;
     onSend: () => void;
     error?: string;
     controls?: Snippet;
+    workspace?: Snippet;
     actions?: Snippet;
   } = $props();
 </script>
@@ -22,6 +24,7 @@
   {#if actions}<div class="chat-message-footer__actions">
       {@render actions()}
     </div>{/if}
+  {@render workspace?.()}
   {@render controls?.()}
   <Button
     size="icon-sm"
@@ -36,6 +39,7 @@
 <style>
   .chat-message-footer {
     display: flex;
+    flex-wrap: wrap;
     justify-content: flex-end;
     align-items: center;
     gap: 0.75rem;

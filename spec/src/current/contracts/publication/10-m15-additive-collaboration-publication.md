@@ -46,3 +46,9 @@ request receipts remain replayable without reopening the foreign source; reading
 that source or preparing new context requires current permission. These
 references never turn a home publication into a cross-repository atomic write
 (JST-PUB-001).
+
+Workspace draft capture precedes per-repository ReviewStore publication,
+followed by the home ThreadStore batch and context preparation. This is ordered
+publication, not cross-repository atomicity. Stable per-draft requests and
+stored commands recover published reviews without duplicating them. Unresolved
+physical drafts cannot enter a ThreadStore graph through a generic command.

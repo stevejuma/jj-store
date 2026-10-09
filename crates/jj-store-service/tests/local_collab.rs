@@ -1139,6 +1139,7 @@ async fn local_conversation_batch_survives_reopen_with_exact_ranges_and_receipt(
         quote: "🦀".into(),
     };
     let submission = ConversationSubmissionV1 {
+        workspace_comments: vec![],
         reply_to: None,
         thread_id: parent.thread_id,
         expected_thread: original.version,

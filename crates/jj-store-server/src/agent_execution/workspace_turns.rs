@@ -65,6 +65,16 @@ impl PromptQueue {
         self.pending.push_back(frame);
         Ok(())
     }
+    pub fn has_pending(&self) -> bool {
+        !self.pending.is_empty()
+    }
+    pub fn is_active(&self) -> bool {
+        self.active.is_some()
+    }
+    pub fn defer(&mut self, frame: Value) {
+        self.active = None;
+        self.pending.push_front(frame);
+    }
     pub fn next(&mut self) -> Option<Value> {
         if self.active.is_some() {
             return None;
@@ -111,5 +121,51 @@ mod tests {
         assert_eq!(queue.cancel("s", "b").unwrap()["requestId"], "b");
         queue.completed(&json!({"type":"record","sessionId":"s","requestId":"a"}));
         assert_eq!(queue.next().unwrap()["requestId"], "c");
+    }
+}
+
+/// Covers the gap between writing a prompt and receiving its started acknowledgement.
+/// Worker teardown drops the lease, including when its future is cancelled.
+pub(super) struct WorkspaceLease {
+    supervisor: Supervisor,
+    session: String,
+    request: RequestId,
+}
+impl Drop for WorkspaceLease {
+    fn drop(&mut self) {
+        if let Ok(mut active) = self.supervisor.0.workspace_activity.lock() {
+            if active.get(&self.session) == Some(&self.request) {
+                active.remove(&self.session);
+            }
+        }
+    }
+}
+impl Supervisor {
+    pub(super) async fn workspace_dispatch(&self, frame: Value) -> Result<(Value, WorkspaceLease)> {
+        let _guard = self.0.workspace_gate.try_lock().map_err(|_| Error::Busy)?;
+        let frame = self.prepare_file_prompt(frame).await?;
+        self.capture_turn_start(&frame).await?;
+        let session = frame["sessionId"]
+            .as_str()
+            .ok_or(Error::Invalid)?
+            .to_owned();
+        let request = frame["requestId"]
+            .as_str()
+            .ok_or(Error::Invalid)?
+            .parse()
+            .map_err(|_| Error::Invalid)?;
+        self.0
+            .workspace_activity
+            .lock()
+            .map_err(|_| Error::Unavailable)?
+            .insert(session.clone(), request);
+        Ok((
+            frame,
+            WorkspaceLease {
+                supervisor: self.clone(),
+                session,
+                request,
+            },
+        ))
     }
 }

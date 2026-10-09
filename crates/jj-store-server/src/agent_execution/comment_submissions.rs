@@ -24,8 +24,16 @@ impl Supervisor {
         request: RequestId,
     ) -> Result<Option<dto::CommentPublication>> {
         self.read(|s| {
-            Ok(s.comment_submissions
+            let parent = s
+                .deferred_file_prompts
                 .get(&request)
+                .map_or(request, |d| d.parent);
+            let deferred = s
+                .deferred_file_prompts
+                .values()
+                .find(|d| d.parent == parent);
+            Ok(s.comment_submissions
+                .get(&parent)
                 .map(|saved| dto::CommentPublication {
                     request_id: saved.request.request_id,
                     batch: saved.batch,
@@ -37,6 +45,25 @@ impl Supervisor {
                         "outcome_unknown"
                     }
                     .into(),
+                })
+                .or_else(|| {
+                    deferred.map(|d| dto::CommentPublication {
+                        request_id: RequestId::new(publication::identity(&format!(
+                            "chat-comments/{}",
+                            d.parent
+                        ))),
+                        batch: None,
+                        state: if s
+                            .workspace_submissions
+                            .get(&parent)
+                            .is_some_and(|s| s.refused)
+                        {
+                            "refused"
+                        } else {
+                            "pending"
+                        }
+                        .into(),
+                    })
                 }))
         })
     }

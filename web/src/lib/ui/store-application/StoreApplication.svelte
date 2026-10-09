@@ -282,7 +282,7 @@
       {shell}
       route={current}
     />{/if}
-  {#if !settingsOpen && (!current.agentsHub || controller.execution?.chat.open)}<StoreApplicationRightPanels
+  {#if !settingsOpen}<StoreApplicationRightPanels
       {controller}
       {stackWorkspace}
       {shell}

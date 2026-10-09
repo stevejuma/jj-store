@@ -107,3 +107,9 @@ test harness exercises explicit cross-repository reference authority, original
 local file context and receipt replay. There is no new CLI command, process
 launch, executable selection or change to installed tools in this reference
 slice.
+
+Workspace file drafts leave JST-CLI-004 unchanged: no CLI flag, arbitrary-root
+reader, or command-output parser is added. The controller uses the existing
+owned snapshot provider and exact portable-evidence inspection. Controlled CLI
+fixtures exercise the browser service boundary without installing or replacing
+user tools.

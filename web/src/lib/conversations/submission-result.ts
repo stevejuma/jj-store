@@ -21,12 +21,13 @@ export function conversationSubmissionResult(
         ? "published"
         : publication === "refused"
           ? "refused"
-          : accepted
+          : accepted && publication === undefined
             ? "published"
             : "unknown",
     batchId: receipt.comment_publication?.request_id,
     delivery,
-    recoveryRequired: !accepted,
+    recoveryRequired:
+      !accepted || (publication !== undefined && publication !== "published"),
     error: accepted
       ? undefined
       : (delivery.find((a) => a.error)?.error ??

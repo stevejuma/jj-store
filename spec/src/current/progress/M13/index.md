@@ -17,6 +17,11 @@ carriers and full chat acceptance remain separate.
 E-CHAT-WORKSPACE-003 verifies references from another metadata home to retained
 local file reviews without copying ReviewStore objects. M13.3 remains In progress;
 this does not qualify the pending file-draft submission and cold browser gates.
+E-CHAT-WORKSPACE-004 adds deferred file-draft capture and receipt-backed review
+publication before prompt dispatch. M13.3 remains In progress. Controlled local
+Unicode, stale-source, grouped publication, exact answer and restart checks pass;
+native/multi-agent, retained turn-boundary and browser gates remain open. Visual
+baselines remain unapproved.
 <!-- generated-navigation -->
 ## Pages
 

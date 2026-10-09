@@ -87,7 +87,16 @@ pub(super) fn prepare(
     frame: Value,
     carries_initial_context: bool,
 ) -> Result<()> {
-    if state.intents.len() >= 4096 || state.intents.contains_key(&request) {
+    if let Some(old) = state.intents.get(&request) {
+        if !state.deferred_file_prompts.contains_key(&request)
+            || old.digest != digest
+            || old.prompt.is_some()
+            || old.outcome.session_id.as_deref() != Some(id)
+            || old.outcome.state != "queued"
+        {
+            return Err(Error::Conflict);
+        }
+    } else if state.intents.len() >= 4096 {
         return Err(Error::Limit);
     }
     let generation = state

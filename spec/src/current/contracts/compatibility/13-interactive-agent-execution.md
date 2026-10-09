@@ -61,3 +61,10 @@ is omitted when absent. JST-COMPAT-001/003/005 preserve native/local source
 widths, canonical stores and independent authorization. Local/native conversion
 refuses these references until qualified mapping exists rather than remapping
 IDs.
+
+The optional omitted-empty workspace comment draft list preserves existing
+submission encodings. Private journal maps retain deferred prompts, per-source
+snapshot attempts, captured review commands and exact results. Restart retains
+these records and marks interrupted delivery unknown; it does not replay
+prompts. ThreadStore refuses unresolved drafts, preserving the old publication
+authority.

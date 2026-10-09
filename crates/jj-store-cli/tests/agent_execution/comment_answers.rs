@@ -226,6 +226,7 @@ async fn exercise_comments(managed: bool) {
     send.request_id = RequestId::new([183; 16]);
     send.text.clear();
     send.comments = Some(Box::new(ConversationSubmissionV1 {
+        workspace_comments: vec![],
         reply_to: None,
         thread_id: thread,
         expected_thread: expected,
