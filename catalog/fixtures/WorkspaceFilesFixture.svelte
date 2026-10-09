@@ -4,6 +4,7 @@
   import StoreApplication from "../../web/src/lib/ui/store-application/StoreApplication.svelte";
   import { createInMemoryStoreController } from "../controller/in-memory-store-controller.svelte.js";
   import { AgentExecution } from "../../web/src/lib/controller/agent-execution.svelte.js";
+  import type { MetadataView } from "../../web/src/lib/controller/conversation-metadata.svelte.js";
   import { agentsRoute } from "../../web/src/lib/controller/agents-route-codec.js";
   import {
     fixtureExecutionStatus,
@@ -110,6 +111,23 @@
       const url = String(input);
       const configured = settings.respond(url, init);
       if (configured) return configured;
+      if (url.includes("/metadata?"))
+        return json({
+          version: 1,
+          repository,
+          target: { type: "conversation", id: status.sessions[0].id },
+          thread: null,
+          revision: null,
+          value: { custom_title: null, generated: null, agent_titles: {} },
+          sources: [],
+          title:
+            status.sessions[0].conversation_title ?? "Fixture conversation",
+          fresh: false,
+          writable: false,
+          unavailable: "Metadata writes are simulated in the metadata family.",
+          details: [],
+          job: null,
+        } satisfies MetadataView);
       if (url.includes("/workspace/inspect")) {
         inspectionReads++;
         if (holdNextRead) {

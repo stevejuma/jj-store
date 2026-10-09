@@ -300,4 +300,7 @@ reason: M24 stays In progress. Focused menu interaction and live style checks do
 
 ```
 <!-- /evidence-field -->
+<!-- generated-navigation -->
+## Pages
+
 

@@ -12,8 +12,8 @@
       "docs/site/concepts/snapshots.md"
     ],
     "review": {
-      "reason": "Reviewed frozen comment batches and repository-qualified file review publication; documented independent child receipts and unchanged manifest/companion authority.",
-      "fingerprint": "32cf6ee307b36d9407914b8a2ab4f999a3c18cb97894f07379d8f3da9c330bbf"
+      "reason": "Reviewed frozen comment batches and repository-qualified file review publication; documented independent child receipts and unchanged manifest/companion authority. Integrated conversation metadata: Reviewed exact AgentStore snapshot membership and receipt-backed metadata publication under unchanged manifest authority.",
+      "fingerprint": "582d7d0a48baf364be5870ee450419ddf9930345e89f0e8721d663cb0ddadd31"
     }
   },
   {
@@ -30,8 +30,8 @@
       "docs/site/concepts/collaboration.md"
     ],
     "review": {
-      "reason": "Reviewed exact conversation sources, repository-qualified review revisions and answer links; documented narrow retained local file anchors without qualifying portable agent anchors.",
-      "fingerprint": "91f1a3eac280e043b67f633a27bd3f672f8a6713aca4f56a3dbfedb7f7c95ed1"
+      "reason": "Reviewed exact conversation sources, repository-qualified review revisions and answer links; documented narrow retained local file anchors without qualifying portable agent anchors. Integrated conversation metadata: Documented immutable conversation metadata, provenance, owner identity, title precedence and bounded validation.",
+      "fingerprint": "5a6a04086ac86b49ca04e54fc31ff794dca1b923ddba0c85ff433c9941816500"
     }
   },
   {
@@ -65,8 +65,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed session-bound workspace readers and qualified review references; documented independent repository access and unchanged service/provider publication ownership.",
-      "fingerprint": "5f2d5ed3c2eabd2c2fdb8dd426ee0bfe988a21a9c69080664140cce88c22edb4"
+      "reason": "Reviewed session-bound workspace readers and qualified review references; documented independent repository access and unchanged service/provider publication ownership. Integrated conversation metadata: Reviewed committed historical metadata discovery and exact source ownership without reconciling local directory reads to the current head.",
+      "fingerprint": "b9e33d0e5f2718934d208ad1e73437dec13dbb282ac3617b6657d696f5397d47"
     }
   },
   {
@@ -96,8 +96,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed deferred workspace submissions and retained turn boundaries in the supervisor; documented source validation, journal receipts and no replay of successful deliveries.",
-      "fingerprint": "1869ec2497af5caa01151c63f2d2be7410404774c8d1bf77685cdeb6b2f40f1e"
+      "reason": "Reviewed deferred workspace submissions and retained turn boundaries in the supervisor; documented source validation, journal receipts and no replay of successful deliveries. Integrated conversation metadata: Reviewed metadata input projection for visible rich parts and owned authored text, excluding retained bootstrap/context bodies, with bounded jobs and explicit recovery.",
+      "fingerprint": "692cb4100f2f2a27820d85d407419924a49b5e97330a35d689960ea52432464d"
     }
   },
   {
@@ -109,8 +109,8 @@
       "docs/site/getting-started/work.md"
     ],
     "review": {
-      "reason": "Task create/edit now use --target-repository for linked code, leaving global -R for the home checkout; reviewed help descriptions, exact versions and receipt examples.",
-      "fingerprint": "d2b7accc9b327026913a4b55b8cf96b2525ab35dd106e3b8e47fd9b2343fc741"
+      "reason": "Task create/edit now use --target-repository for linked code, leaving global -R for the home checkout; reviewed help descriptions, exact versions and receipt examples. Integrated conversation metadata: Documented explicit LocalTrusted metadata administration and bounded command input without implicit endpoints or replay.",
+      "fingerprint": "7cab693f4579ab79af2ac331a4bbb1b0b34427bcb4e70892a54ed6c30eec94b2"
     }
   },
   {
@@ -122,8 +122,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed registered session-bound workspace inspection and comment submission routes; generated API references and documented exact binding/path requests and independent code authorization.",
-      "fingerprint": "1028085e9ed175d987cbcdca9b42189d410aa3927ffee522f81b0200bd3dacc0"
+      "reason": "Reviewed registered session-bound workspace inspection and comment submission routes; generated API references and documented exact binding/path requests and independent code authorization. Integrated conversation metadata: Documented Admin-only metadata routes with independent repository admission and retained job inspection.",
+      "fingerprint": "083ea5b12838d015ff7d8d6f5670a61bcb78f8137b56d7988273cc1540492c76"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed Document inline input, shared comment queue, cached Files/Changes inspection, footer controls and lighter menu headings; linked browser guide to exact comparison and retained-source behavior.",
-      "fingerprint": "012ea3320f04ef3851992b54b37696becc4c4b3a13d8c750895bcbc383f99ba8"
+      "reason": "Reviewed Document inline input, shared comment queue, cached Files/Changes inspection, footer controls and lighter menu headings; linked browser guide to exact comparison and retained-source behavior. Integrated conversation metadata: Documented conversation details, dedicated settings, aligned sidebar navigation and explicit stop-waiting recovery while preserving document recipient pins.",
+      "fingerprint": "aca7f603a052803977b24248d15d0b13bcfb221d749ba51128133186c28c0810"
     }
   },
   {
@@ -154,8 +154,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Regenerated installation, collaboration and public type API references from the landed schemas; documented qualified review references and session-bound inspection without arbitrary filesystem roots.",
-      "fingerprint": "cee7ead89995edaead2320540639fef2259b1aea20eb840f63796e832891c5b7"
+      "reason": "Regenerated installation, collaboration and public type API references from the landed schemas; documented qualified review references and session-bound inspection without arbitrary filesystem roots. Integrated conversation metadata: Reviewed regenerated conversation metadata API types and documented explicit typed CLI commands and refusal boundaries.",
+      "fingerprint": "10291019a29d0a12ad5a522b9fc8e4f1def619201895d016d91b051c4d365718"
     }
   },
   {
@@ -175,8 +175,8 @@
       "docs/site/reference/security.md"
     ],
     "review": {
-      "reason": "Reviewed bounded provider discovery and provider-specific runtime environment with existing authentication, pins and permission-gated Ask mode.",
-      "fingerprint": "065ce9509a054770298d55571aba51cdab09291acb663cd7d455831060e755de"
+      "reason": "Reviewed bounded provider discovery and provider-specific runtime environment with existing authentication, pins and permission-gated Ask mode. Integrated conversation metadata: Documented tool-free metadata completions, decoded transcript limits with bounded JSON escape expansion and strict result validation without interactive authentication.",
+      "fingerprint": "2cacea90a7b0931ca31b8190efef5deafc10ad04a329223986799e4d5a31d3dc"
     }
   }
 ]

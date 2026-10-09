@@ -17404,6 +17404,7 @@ export interface operations {
                                 kind:
                                   | "index_page"
                                   | "thread_version"
+                                  | "conversation_metadata"
                                   | "thread_event"
                                   | "human_message_revision"
                                   | "thread_link"
@@ -39740,6 +39741,7 @@ export interface operations {
                                       kind:
                                         | "index_page"
                                         | "thread_version"
+                                        | "conversation_metadata"
                                         | "thread_event"
                                         | "human_message_revision"
                                         | "thread_link"
@@ -52093,6 +52095,7 @@ export interface operations {
                           kind:
                             | "index_page"
                             | "thread_version"
+                            | "conversation_metadata"
                             | "thread_event"
                             | "human_message_revision"
                             | "thread_link"
@@ -53417,6 +53420,7 @@ export interface operations {
                                 kind:
                                   | "index_page"
                                   | "thread_version"
+                                  | "conversation_metadata"
                                   | "thread_event"
                                   | "human_message_revision"
                                   | "thread_link"

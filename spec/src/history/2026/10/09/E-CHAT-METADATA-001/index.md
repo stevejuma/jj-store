@@ -124,4 +124,7 @@ verification
 - runtime/local-agent/tests/metadata.rs#metadata_does_not_open_databricks_sign_in
 - crates/jj-store-server/src/agent_execution/metadata_text.rs#owned_sent_context_keeps_authored_text_without_bootstrap_or_context_bodies
 <!-- /evidence-field -->
+<!-- generated-navigation -->
+## Pages
 
+- [E-CHAT-METADATA-001 details 2](details-02.md)

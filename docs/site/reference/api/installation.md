@@ -18257,6 +18257,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                         "enum": [
                                                           "index_page",
                                                           "thread_version",
+                                                          "conversation_metadata",
                                                           "thread_event",
                                                           "human_message_revision",
                                                           "thread_link",
@@ -40739,6 +40740,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "enum": [
                                           "index_page",
                                           "thread_version",
+                                          "conversation_metadata",
                                           "thread_event",
                                           "human_message_revision",
                                           "thread_link",
@@ -43720,6 +43722,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                 "enum": [
                                                   "index_page",
                                                   "thread_version",
+                                                  "conversation_metadata",
                                                   "thread_event",
                                                   "human_message_revision",
                                                   "thread_link",

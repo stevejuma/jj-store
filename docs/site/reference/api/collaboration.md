@@ -9773,6 +9773,7 @@ Current repository permission is checked for every request. Commands and status 
                                                 "enum": [
                                                   "index_page",
                                                   "thread_version",
+                                                  "conversation_metadata",
                                                   "thread_event",
                                                   "human_message_revision",
                                                   "thread_link",
