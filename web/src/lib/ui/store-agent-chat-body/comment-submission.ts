@@ -44,7 +44,8 @@ export async function send(state: ChatBodyComments) {
       if (comment.status !== "replied") comment.status = "sent";
       comment.batchId = outcome?.batchId ?? submission.id;
     }
-    if (state.message === submission.text) state.message = "";
+    if (state.message === submission.text)
+      state.message = state.props().restoreMessage?.(submission.text) ?? "";
     state.error = outcome?.error ?? "";
     state.active = undefined;
     state.sending = false;
@@ -85,7 +86,8 @@ export function confirmPublication(
   const submitted = state.retainedSubmission;
   if (!submitted || submitted.id !== id) return;
   state.markPublished(submitted, batchId);
-  if (clearMessage && state.message === submitted.text) state.message = "";
+  if (clearMessage && state.message === submitted.text)
+    state.message = state.props().restoreMessage?.(submitted.text) ?? "";
   state.retainedSubmission = undefined;
   state.error = "";
 }
@@ -117,7 +119,8 @@ export function keepUnresolved(state: ChatBodyComments) {
     submission: submitted,
     result: state.submissionResult,
   });
-  if (state.message === submitted.text) state.message = "";
+  if (state.message === submitted.text)
+    state.message = state.props().restoreMessage?.(submitted.text) ?? "";
   state.retainedSubmission = undefined;
   state.active = undefined;
   state.error = "";

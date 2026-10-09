@@ -2,6 +2,7 @@
   import "./composer.css";
   import {
     composerSubmission,
+    composerFeedback,
     composerSubmissionError,
     editLastComposerMessage,
   } from "./composer-submission.js";
@@ -9,7 +10,6 @@
   import CommunityComposerStatusActions from "./CommunityComposerStatusActions.svelte";
   import Mira from "@lapismd/mira";
   import type { MiraHandle, MiraMarkdownActionId } from "@lapismd/mira";
-  import type { ComposerStatus } from "@lapismd/design-core/ai/chat";
   import CommunityComposerSendActions from "./CommunityComposerSendActions.svelte";
   import CommunityComposerSurface from "./CommunityComposerSurface.svelte";
   import { createComposerSelection } from "./composer-selection.js";
@@ -45,6 +45,7 @@
     hideAvatar = false,
     dockActions = false,
     documentActions = $bindable(),
+    restoreDraft = $bindable(),
     value = $bindable(""),
     formattingOpen = $bindable(false),
     placeholder = "Write a message",
@@ -112,10 +113,11 @@
     setValue: (next) => (value = next),
   });
   const issue = $derived(error || audience.error);
-  const status = $derived<ComposerStatus | undefined>(
-    issue ? { type: "error", message: issue } : composerStatus,
-  );
+  const status = $derived(composerFeedback(issue, composerStatus));
   useDocumentComposerActions({
+    restore: () => audience.restore,
+    getDraft: () => restoreDraft,
+    setDraft: (next) => (restoreDraft = next),
     active: () => dockActions && presentation === "document",
     actions: () => actions,
     get: () => documentActions,

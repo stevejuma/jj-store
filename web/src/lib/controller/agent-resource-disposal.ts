@@ -3,6 +3,7 @@ import { syncAgentPower } from "./agent-power.js";
 export function disposeAgentResources(manager: AgentExecution) {
   void syncAgentPower(null, false);
   manager.chat.destroy();
+  manager.metadata.destroy();
   manager.catalogs.destroy();
   manager.compute.stop();
   manager.tooling.destroy();

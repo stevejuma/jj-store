@@ -7,6 +7,8 @@ mod context_delivery;
 mod conversations;
 #[path = "agent_execution/fleet.rs"]
 mod fleet;
+#[path = "agent_execution/metadata.rs"]
+mod metadata_tests;
 #[path = "agent_execution/providers.rs"]
 mod providers;
 #[path = "agent_execution/real.rs"]

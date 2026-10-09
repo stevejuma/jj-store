@@ -13,6 +13,23 @@ export class AgentExecutionConfigurationFixture {
   respond(path: string, init?: RequestInit) {
     const defaults = this.defaults.respond(path, init);
     if (defaults) return defaults;
+    if (path.includes("/metadata?"))
+      return json({
+        version: 1,
+        repository: this.get().sessions[0]?.repository ?? "11".repeat(16),
+        target: { type: "conversation", id: "44".repeat(16) },
+        thread: null,
+        revision: null,
+        value: { custom_title: null, generated: null, agent_titles: {} },
+        sources: [],
+        title: "Fixture conversation",
+        fresh: false,
+        writable: false,
+        unavailable:
+          "Catalog metadata writes are simulated in the metadata family.",
+        details: [],
+        job: null,
+      });
     if (!path.endsWith("/control") && !path.endsWith("/setups")) return;
     const body = JSON.parse(String(init?.body)),
       status = this.get();

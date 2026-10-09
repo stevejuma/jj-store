@@ -37,6 +37,10 @@ pub struct AgentCoverage {
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, JsonSchema)]
 pub struct AgentSessionSummary {
     pub session_id: AgentSessionId,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub conversation_title: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub discovery_text: Option<String>,
     pub snapshot_id: AgentObjectId,
     pub integration: IntegrationId,
     pub state: SessionState,
@@ -273,6 +277,8 @@ pub(crate) fn summary(
 ) -> AgentSessionSummary {
     AgentSessionSummary {
         session_id: session.session_id,
+        conversation_title: None,
+        discovery_text: None,
         snapshot_id: reference.id,
         integration: session.integration,
         state: session.state,

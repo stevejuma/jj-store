@@ -679,6 +679,55 @@ fn model(error: jj_collab::Error) -> Error {
 use wal::publication::CollabCommandError;
 
 impl PinnedCollabRead {
+    pub async fn conversation_metadata(
+        &self,
+        session: Arc<NativeSession>,
+        target: &ConversationMetadataTargetV1,
+    ) -> Result<Option<(CollabObjectRef, ConversationMetadataV1)>> {
+        self.authorize(&session).await?;
+        let Some(reference) = self
+            .thread
+            .state
+            .metadata
+            .get(&target.key().map_err(|_| Error::NotFound)?)
+            .copied()
+        else {
+            return Ok(None);
+        };
+        let CollabObjectV1::ConversationMetadata(value) = self
+            .thread
+            .graph
+            .get(reference)
+            .map_err(|_| Error::NotFound)?
+        else {
+            return Err(Error::NotFound);
+        };
+        let owner = self
+            .thread
+            .state
+            .threads
+            .get(&value.thread_id)
+            .ok_or(Error::NotFound)?;
+        let CollabObjectV1::ThreadVersion(owner) =
+            self.thread.graph.get(*owner).map_err(|_| Error::NotFound)?
+        else {
+            return Err(Error::NotFound);
+        };
+        if owner.status == ThreadStatusV1::Tombstoned {
+            return Ok(None);
+        }
+        Ok(Some((reference, value.clone())))
+    }
+    pub async fn conversation_discovery(
+        &self,
+        session: Arc<NativeSession>,
+    ) -> Result<BTreeMap<jj_store_wal::publication::AgentSessionId, (Option<String>, String)>> {
+        self.authorize(&session).await?;
+        crate::conversation_discovery::project(&self.thread.state, &self.thread.graph)
+    }
+    pub fn metadata_writable(&self) -> bool {
+        self.feedback_writable
+    }
     pub fn snapshot(&self) -> &CollabReadSnapshotV1 {
         &self.snapshot
     }

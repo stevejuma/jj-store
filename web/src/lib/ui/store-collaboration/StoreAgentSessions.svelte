@@ -1,5 +1,7 @@
 <script lang="ts">
+  import { Input } from "@lapismd/design-core/shadcn/input";
   import { ScrollArea } from "@lapismd/design-core/shadcn/scroll-area";
+  import { Button } from "@lapismd/design-core/shadcn/button";
   import StoreWorkCollection from "../store-work/StoreWorkCollection.svelte";
   import * as Empty from "@lapismd/design-core/shadcn/empty";
   import BotIcon from "@lucide/svelte/icons/bot";
@@ -13,37 +15,50 @@
   import "./store-collaboration.css";
 
   let { controller }: { controller: StoreController } = $props();
-  const state = $derived(controller.state);
+  const view = $derived(controller.state);
+  let search = $state("");
+  const filtered = $derived(
+    view.agentSessions.filter((session) =>
+      [
+        session.conversation_title,
+        session.discovery_text,
+        session.session_id,
+        session.integration,
+      ].some((value) =>
+        value?.toLocaleLowerCase().includes(search.trim().toLocaleLowerCase()),
+      ),
+    ),
+  );
 </script>
 
 <section
   class="store-collaboration"
   aria-label="Agent activity"
-  aria-busy={state.status.agents === "loading"}
+  aria-busy={view.status.agents === "loading"}
 >
   <ScrollArea type="hover" class="store-agent-sessions__scroll">
     <StoreAgentExecutionDirectory
       manager={controller.execution}
-      context={{ repository: state.repository.id }}
+      context={{ repository: view.repository.id }}
     />
     <StoreWorkCollection
       id="agents"
       title="Agent sessions"
-      count={state.agentSessions.length}
+      count={view.agentSessions.length}
       Icon={BotIcon}
     >
-      {#if state.status.error}
+      {#if view.status.error}
         <div class="store-agent-sessions__notice">
           <CommunityProjectsColumnAlert
             title="Agent activity unavailable"
-            description={state.status.error}
+            description={view.status.error}
             tone="destructive"
           />
         </div>
       {/if}
-      {#if (state.status.connection === "connecting" || state.status.navigation === "loading" || state.status.agents === "loading") && state.agentSessions.length === 0}
+      {#if (view.status.connection === "connecting" || view.status.navigation === "loading" || view.status.agents === "loading") && view.agentSessions.length === 0}
         <StoreCollaborationSkeleton label="Loading agent sessions" agents />
-      {:else if state.agentSessions.length === 0}
+      {:else if view.agentSessions.length === 0}
         <Empty.Root class="store-collaboration__empty">
           <Empty.Header
             ><Empty.Media variant="icon"
@@ -54,26 +69,32 @@
           >
         </Empty.Root>
       {:else}
+        <Input
+          type="search"
+          aria-label="Search loaded recorded conversations"
+          placeholder="Search captured conversations"
+          bind:value={search}
+        />
         <div
           class="store-agent-session-list"
           role="list"
           aria-label="Agent sessions"
         >
           <CommunityProjectsVirtualRows
-            rows={state.agentSessions}
+            rows={filtered}
             getKey={(session) => session.session_id}
             estimateSize={() => 82}
-            hasMore={state.canLoadMoreAgents}
-            loading={state.status.agents === "refreshing"}
+            hasMore={view.canLoadMoreAgents && !search}
+            loading={view.status.agents === "refreshing"}
             loadingAsListItem
             loadingLabel="Loading more agent sessions"
             onLoadMore={() => void controller.actions.loadMore("agents")}
           >
             {#snippet row(session)}
               {@const association =
-                state.agentSession?.session.session_id === session.session_id
-                  ? state.agentSession.code[0]
-                  : state.agentRelations.find(
+                view.agentSession?.session.session_id === session.session_id
+                  ? view.agentSession.code[0]
+                  : view.agentRelations.find(
                       (row) =>
                         row.association?.session_id === session.session_id,
                     )?.association}
@@ -81,17 +102,26 @@
                 {session}
                 {association}
                 managed={managedRecordedAgent(
-                  state.repository.id,
+                  view.repository.id,
                   session,
                   controller.execution?.value?.sessions,
                 )}
                 collection
-                selectedId={state.route.agentSessionId}
+                selectedId={view.route.agentSessionId}
                 onSelect={controller.actions.selectAgentSession}
               />
             {/snippet}
           </CommunityProjectsVirtualRows>
         </div>
+        {#if search && !filtered.length}<p role="status">
+            No matches in loaded captures.
+          </p>{/if}
+        {#if search && view.canLoadMoreAgents}<Button
+            variant="ghost"
+            size="sm"
+            onclick={() => controller.actions.loadMore("agents")}
+            >Load more captured conversations</Button
+          >{/if}
       {/if}
     </StoreWorkCollection>
   </ScrollArea>

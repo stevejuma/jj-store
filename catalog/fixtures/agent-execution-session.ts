@@ -13,6 +13,7 @@ export function fixtureSession(input: {
 }): AgentSession {
   return {
     conversation_id: null,
+    conversation_title: "Fixture conversation",
     repository_bindings: [],
     id: "44".repeat(16),
     setup_id: "helper",

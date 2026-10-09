@@ -352,3 +352,41 @@ unavailable text has unknown line counts, and previews are bounded to 100 files.
 These controls read saved repository state and never send another prompt.
 **Undo** is currently unavailable: the ordinary repository operation undo is not
 a safe inverse of only this agent's edits.
+
+## Conversation details and titles
+
+Open **Session options → Conversation details** to inspect captured session IDs,
+activity times, message/tool counts, title, summary, keywords, goals and
+generation provenance. Recorded conversations expose the same details from their
+options menu. Renaming changes the conversation title; the agent name and avatar
+retain the captured identity.
+
+Choose a dedicated provider and model in **Settings → Agents → Conversation
+metadata**. This setting starts unconfigured and is independent of coding-agent
+models and thinking controls. Once configured, new conversations generate
+metadata after their first completed, published exchange. Opening history,
+changing settings and restarting never backfill old conversations.
+
+**Refresh metadata** updates discovery fields and preserves a custom title.
+**Regenerate title** explicitly adopts a new generated title. Later activity
+marks existing metadata stale until you refresh it. Generation uses visible
+authored messages, delivered comments and concise tool names; it excludes hidden
+reasoning and tool bodies. A bounded helper performs a single tool-free model
+request. Partial captures are identified beside their results.
+
+If generation fails, your existing title and metadata remain. **Check retained
+request** inspects or recovers the same request after an uncertain outcome;
+**Publish retained result** publishes an already generated result without asking
+the model again. Concurrent title edits are protected by exact revision checks.
+Optional ACP title suggestions retain their captured provenance; competing agent
+suggestions never select a title by arrival order.
+
+Search loaded conversations or recorded captures by title, summary, keywords and
+goals. Filtering only searches loaded rows; recorded results can load further
+pages explicitly. Native repository search enriches the existing owner Thread
+hit. Local indexed search retains its existing capability limit.
+
+For an interrupted generation with no retained result, **Stop waiting for
+generation** abandons local waiting so you can make a new explicit request. It
+retains the original request and does not claim that the remote model was
+cancelled. Unknown publication still requires receipt recovery.

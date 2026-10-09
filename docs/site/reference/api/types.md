@@ -2495,6 +2495,18 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "session_id": {
       "$ref": "#/components/schemas/AgentSessionId"
     },
+    "conversation_title": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "discovery_text": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
     "snapshot_id": {
       "$ref": "#/components/schemas/AgentObjectId"
     },
@@ -3154,6 +3166,7 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
   "enum": [
     "index_page",
     "thread_version",
+    "conversation_metadata",
     "thread_event",
     "human_message_revision",
     "thread_link",
@@ -8031,6 +8044,23 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 ```text
 {
   "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "version": {
+          "$ref": "#/components/schemas/CollabObjectRef"
+        },
+        "type": {
+          "type": "string",
+          "const": "metadata"
+        }
+      },
+      "required": [
+        "type",
+        "version"
+      ]
+    },
     {
       "type": "object",
       "properties": {
@@ -21970,6 +22000,16 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "keychain_supported": {
       "type": "boolean",
       "default": false
+    },
+    "metadata": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/ConversationMetadataConfig"
+        },
+        {
+          "type": "null"
+        }
+      ]
     }
   },
   "required": [
@@ -22129,6 +22169,27 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       ],
       "additionalProperties": false
     }
+  ]
+}
+```
+
+## ConversationMetadataConfig
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "model": {
+      "type": "string"
+    },
+    "options": {
+      "$ref": "#/components/schemas/AgentRuntimeOptions"
+    }
+  },
+  "required": [
+    "model",
+    "options"
   ]
 }
 ```
@@ -22371,6 +22432,18 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     },
     "title": {
       "type": "string"
+    },
+    "conversation_title": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "discovery_text": {
+      "type": [
+        "string",
+        "null"
+      ]
     },
     "avatar": {
       "type": "string"
@@ -22695,6 +22768,9 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "items": {
         "type": "string"
       }
+    },
+    "metadata_auto_eligible": {
+      "type": "boolean"
     }
   },
   "required": [
@@ -22984,6 +23060,508 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "profile",
     "operation",
     "commit"
+  ]
+}
+```
+
+## ConversationMetadataView
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "repository": {
+      "$ref": "#/components/schemas/RepositoryId"
+    },
+    "target": {
+      "$ref": "#/components/schemas/ConversationMetadataTargetV1"
+    },
+    "thread": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/ThreadId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "revision": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/CollabObjectRef"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "value": {
+      "$ref": "#/components/schemas/ConversationMetadataValueV1"
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ConversationMetadataSourceV1"
+      }
+    },
+    "title": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "fresh": {
+      "type": "boolean"
+    },
+    "writable": {
+      "type": "boolean"
+    },
+    "unavailable": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "details": true,
+    "job": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/ConversationMetadataJob"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "version",
+    "repository",
+    "target",
+    "thread",
+    "revision",
+    "value",
+    "sources",
+    "title",
+    "fresh",
+    "writable",
+    "unavailable",
+    "details",
+    "job"
+  ]
+}
+```
+
+## ConversationMetadataTargetV1
+
+```text
+{
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "const": "conversation"
+        }
+      },
+      "required": [
+        "type",
+        "id"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "session": {
+          "$ref": "#/components/schemas/AgentSessionId"
+        },
+        "type": {
+          "type": "string",
+          "const": "recorded"
+        }
+      },
+      "required": [
+        "type",
+        "session"
+      ]
+    }
+  ]
+}
+```
+
+## ConversationMetadataValueV1
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "custom_title": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "default": null
+    },
+    "generated": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/GeneratedConversationMetadataV1"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null
+    },
+    "agent_titles": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "default": {}
+    },
+    "agent_title_sources": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/components/schemas/ConversationMetadataSourceV1"
+      }
+    }
+  },
+  "required": [
+    "custom_title",
+    "generated",
+    "agent_titles"
+  ]
+}
+```
+
+## GeneratedConversationMetadataV1
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "goals": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ConversationMetadataSourceV1"
+      }
+    },
+    "provider": {
+      "type": "string"
+    },
+    "model": {
+      "type": "string"
+    },
+    "prompt_version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "generated_at_millis": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "truncated": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "title",
+    "summary",
+    "keywords",
+    "goals",
+    "sources",
+    "provider",
+    "model",
+    "prompt_version",
+    "generated_at_millis",
+    "truncated"
+  ]
+}
+```
+
+## ConversationMetadataSourceV1
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "session": {
+      "$ref": "#/components/schemas/AgentSessionId"
+    },
+    "snapshot": {
+      "$ref": "#/components/schemas/AgentObjectRef"
+    }
+  },
+  "required": [
+    "session",
+    "snapshot"
+  ]
+}
+```
+
+## ConversationMetadataJob
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "request_id": {
+      "$ref": "#/components/schemas/RequestId"
+    },
+    "state": {
+      "type": "string"
+    },
+    "error": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "result": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/GeneratedConversationMetadataV1"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "original_command": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/ConversationMetadataCommand"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "request_id",
+    "state",
+    "error",
+    "result"
+  ]
+}
+```
+
+## ConversationMetadataCommand
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "request_id": {
+      "$ref": "#/components/schemas/RequestId"
+    },
+    "query": {
+      "$ref": "#/components/schemas/ConversationMetadataQuery"
+    },
+    "expected": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/CollabObjectRef"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "action": {
+      "$ref": "#/components/schemas/Action"
+    }
+  },
+  "required": [
+    "version",
+    "request_id",
+    "query",
+    "expected",
+    "action"
+  ]
+}
+```
+
+## ConversationMetadataQuery
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "session": {
+      "type": "string"
+    },
+    "repository": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/RepositoryId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "session",
+    "repository"
+  ]
+}
+```
+
+## Action
+
+```text
+{
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string",
+          "const": "rename"
+        }
+      },
+      "required": [
+        "action",
+        "title"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "const": "reset_title"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "const": "capture_titles"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "const": "refresh"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "const": "regenerate_title"
+        }
+      },
+      "required": [
+        "action"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "job": {
+          "$ref": "#/components/schemas/RequestId"
+        },
+        "action": {
+          "type": "string",
+          "const": "cancel"
+        }
+      },
+      "required": [
+        "action",
+        "job"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "job": {
+          "$ref": "#/components/schemas/RequestId"
+        },
+        "action": {
+          "type": "string",
+          "const": "publish"
+        }
+      },
+      "required": [
+        "action",
+        "job"
+      ]
+    }
   ]
 }
 ```

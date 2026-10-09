@@ -215,3 +215,10 @@ validated when eligible to dispatch; unavailable or changed sources cannot be
 silently relocated. Pre-dispatch and completion snapshots establish exact turn
 boundaries when available. Restart recovery consults retained receipts rather
 than replaying successful prompt deliveries.
+
+A new, configured conversation schedules metadata after its first completed
+committed exchange. Jobs freeze their inputs before process side effects;
+restart disables automatic backfill and retains interrupted outcomes without
+model replay. Explicit receipt recovery can retry publication only. The bounded
+helper owns no coding workspace, MCP session or compute startup. Existing
+metadata survives malformed output, cancellation and unavailable providers.

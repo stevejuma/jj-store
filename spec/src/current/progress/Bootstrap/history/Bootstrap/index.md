@@ -12,7 +12,7 @@ not a completion gate selection.
 | [E-GOV-004](../../../../../history/2026/10/08/E-GOV-004/index.md)   | 2026-10-08 | pass            | Original outcome |
 | [E-GOV-005](../../../../../history/2026/10/08/E-GOV-005/index.md)   | 2026-10-08 | fail            | Original outcome |
 | [E-GOV-006](../../../../../history/2026/10/08/E-GOV-006/index.md)   | 2026-10-08 | fail            | Original outcome |
+
 <!-- generated-navigation -->
+
 ## Pages
-
-

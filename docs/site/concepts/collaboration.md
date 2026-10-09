@@ -79,3 +79,11 @@ uses supplied discussion and comment references, and the service validates exact
 answer ranges against delivered context before publishing links. A green
 double-check becomes Go to reply only when a validated destination exists.
 Several destinations offer a chooser; invalid tags remain readable text.
+
+Conversation metadata is an optional ThreadStore catalog of immutable revisions.
+It references exact AgentStore snapshots and keeps custom titles, generated
+titles/summaries/keywords/goals and per-participation ACP suggestions separate
+from captured agent identity. It creates no duplicate human message or primary
+Thread assignment. Tombstoned owners are hidden from discovery. Generation
+provenance records its provider, model, prompt version, source snapshots, time
+and partial coverage.

@@ -33,6 +33,7 @@
     loading = false,
     emptyState,
     onSend,
+    restoreMessage,
   }: {
     controller?: StoreController;
     manager: AgentExecution;
@@ -51,6 +52,7 @@
         import("../store-agent-chat-body/model.js").ChatBodyProps["onSend"]
       >
     >;
+    restoreMessage?: (submitted: string) => string;
   } = $props();
   const appearance = useAppearance();
   const inspection = useConversationInspection();
@@ -73,6 +75,7 @@
       commentUnavailable: commentUnavailable ?? undefined,
       author: user,
       onSend,
+      restoreMessage,
       members: [
         user,
         ...projection.items.flatMap((i) => (i.author ? [i.author] : [])),

@@ -42,9 +42,9 @@
     await userEvent.click(
       c.getByRole("button", { name: "Open fixture conversation" }),
     );
-    await c.findByRole("button", { name: /Open session Repository helper/ });
+    await c.findByRole("button", { name: /Open session Fixture conversation/ });
     const row = await c.findByRole("button", {
-      name: /Open session Repository helper/,
+      name: /Open session Fixture conversation/,
     });
     await expect(row.querySelector("time")).toHaveAttribute(
       "datetime",
@@ -77,7 +77,7 @@
       c.getByRole("button", { name: "Open fixture conversation" }),
     );
     const row = await c.findByRole("button", {
-      name: /Open session Repository helper/,
+      name: /Open session Fixture conversation/,
     });
     await expect(row.querySelector("time")).not.toBeInTheDocument();
     await expect(
@@ -211,7 +211,7 @@
     const draft = await c.findByRole("textbox", { name: "Markdown editor" });
     await userEvent.type(draft, "My first chat message");
     await userEvent.click(c.getByRole("button", { name: "Connect agent" }));
-    await c.findByRole("button", { name: "Send" });
+    await c.findByRole("button", { name: "Send message" });
     await expect(
       await c.findByRole("textbox", { name: "Markdown editor" }),
     ).toHaveTextContent("My first chat message");

@@ -35,6 +35,44 @@ fn bounded<T: Serialize>(value: &T) -> LocalResult<()> {
     Ok(())
 }
 impl LocalRepository {
+    pub async fn conversation_discovery(
+        &self,
+        expected: Option<MetadataCommit>,
+    ) -> LocalResult<BTreeMap<jj_store_wal::publication::AgentSessionId, (Option<String>, String)>>
+    {
+        let pin = match expected {
+            Some(commit) => Some(self.selected_metadata(commit)?),
+            None => None,
+        };
+        self.check_identity(pin.as_ref())?;
+        let store = self.thread_store_at(pin.as_ref()).await?;
+        crate::conversation_discovery::project(&store.state, &store.graph)
+            .map_err(|_| LocalError::Corrupt)
+    }
+    pub async fn conversation_metadata(
+        &self,
+        target: &ConversationMetadataTargetV1,
+    ) -> LocalResult<Option<(CollabObjectRef, ConversationMetadataV1)>> {
+        let store = self.thread_store().await?;
+        let Some(reference) = store.state.metadata.get(&target.key()?).copied() else {
+            return Ok(None);
+        };
+        let CollabObjectV1::ConversationMetadata(value) = store.object(reference)? else {
+            return Err(LocalError::Corrupt);
+        };
+        let owner = store
+            .state
+            .threads
+            .get(&value.thread_id)
+            .ok_or(LocalError::NotFound)?;
+        let CollabObjectV1::ThreadVersion(owner) = store.object(*owner)? else {
+            return Err(LocalError::Corrupt);
+        };
+        if owner.status == ThreadStatusV1::Tombstoned {
+            return Ok(None);
+        }
+        Ok(Some((reference, value.clone())))
+    }
     pub async fn inbox_selection(&self) -> LocalResult<LocalInboxSelection> {
         let pin = self.metadata.read()?;
         self.check_identity(pin.as_ref())?;

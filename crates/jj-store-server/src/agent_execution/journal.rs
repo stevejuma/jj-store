@@ -52,6 +52,8 @@ pub(super) struct State {
     #[serde(default)]
     pub settings: settings::Settings,
     #[serde(default)]
+    pub metadata_jobs: BTreeMap<RequestId, super::metadata_jobs::SavedJob>,
+    #[serde(default)]
     pub compute: jj_store_service::agent_execution::compute::Settings,
     #[serde(default)]
     pub compute_models: std::collections::BTreeSet<String>,
@@ -132,6 +134,23 @@ pub(super) fn read(root: &Path) -> Result<State> {
         return Err(Error::Unavailable);
     }
     super::tooling::recover(&mut state);
+    // Opening retained history never initiates discovery inference.
+    for conversation in state.conversations.values_mut() {
+        conversation.metadata_auto_eligible = false;
+    }
+    if state.metadata_jobs.len() > 4096 {
+        return Err(Error::Limit);
+    }
+    for job in state.metadata_jobs.values_mut() {
+        if matches!(
+            job.view.state.as_str(),
+            "prepared" | "generating" | "publishing"
+        ) {
+            job.view.state = "outcome_unknown".into();
+            job.view.error = Some("interrupted_metadata_request_not_replayed".into());
+        }
+    }
+
     if state.sessions.len() > 64 || state.setups.len() > 64 || state.intents.len() > 4096 {
         return Err(Error::Limit);
     }

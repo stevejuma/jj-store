@@ -99,6 +99,7 @@
       "Conversations",
       "Preferences",
       "Agent runtimes",
+      "Conversation metadata",
       "Agent defaults",
     ]);
     for (const h of headings) {

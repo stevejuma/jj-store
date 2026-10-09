@@ -39,6 +39,71 @@ Usage: jj-store [OPTIONS] [COMMAND]
 | `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
 | `-h, --help` | Print help (see a summary with '-h') |  |
 
+## jj-store conversation-metadata
+
+Read, generate and rename retained conversation metadata on a local service
+
+```text
+Usage: jj-store conversation-metadata [OPTIONS] --endpoint <ENDPOINT> <COMMAND>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `--endpoint <ENDPOINT>` | Explicit literal-loopback LocalTrusted server URL with a trailing slash Required. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store conversation-metadata read
+
+Read selected conversation details without starting inference
+
+```text
+Usage: jj-store conversation-metadata --endpoint <ENDPOINT> read [OPTIONS] --session <SESSION>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `--session <SESSION>` | Managed execution session ID, or captured session ID with --repository Required. |  |
+| `--repository <REPOSITORY>` | Repository owning the captured session; independently authorized |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store conversation-metadata command
+
+Submit one typed metadata command with its original request identity
+
+```text
+Usage: jj-store conversation-metadata --endpoint <ENDPOINT> command [OPTIONS] --input <INPUT>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `--input <INPUT>` | Bounded version-1 metadata command JSON file. Unknown outcomes are retained Required. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store conversation-metadata job
+
+Inspect a retained metadata request without replaying inference
+
+```text
+Usage: jj-store conversation-metadata --endpoint <ENDPOINT> job [OPTIONS] --request <REQUEST>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `--request <REQUEST>` | Original metadata request ID Required. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
 ## jj-store stack
 
 Run local Stacks actions directly in an ordinary JJ workspace

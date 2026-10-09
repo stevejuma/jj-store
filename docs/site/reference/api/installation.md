@@ -15190,6 +15190,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                   "enum": [
                                     "index_page",
                                     "thread_version",
+                                    "conversation_metadata",
                                     "thread_event",
                                     "human_message_revision",
                                     "thread_link",
@@ -16204,6 +16205,333 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                         {
                           "type": "object",
                           "properties": {
+                            "thread_id": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            },
+                            "expected_thread": {
+                              "type": "object",
+                              "properties": {
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "index_page",
+                                    "thread_version",
+                                    "conversation_metadata",
+                                    "thread_event",
+                                    "human_message_revision",
+                                    "thread_link",
+                                    "reaction",
+                                    "reaction_retraction",
+                                    "reaction_slot",
+                                    "custom_emoji_version",
+                                    "image_asset"
+                                  ]
+                                },
+                                "id": {
+                                  "type": "string",
+                                  "pattern": "^[0-9a-f]{64}$",
+                                  "minLength": 64,
+                                  "maxLength": 64
+                                }
+                              },
+                              "additionalProperties": false,
+                              "required": [
+                                "kind",
+                                "id"
+                              ]
+                            },
+                            "expected_metadata": {
+                              "type": [
+                                "object",
+                                "null"
+                              ],
+                              "properties": {
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "index_page",
+                                    "thread_version",
+                                    "conversation_metadata",
+                                    "thread_event",
+                                    "human_message_revision",
+                                    "thread_link",
+                                    "reaction",
+                                    "reaction_retraction",
+                                    "reaction_slot",
+                                    "custom_emoji_version",
+                                    "image_asset"
+                                  ]
+                                },
+                                "id": {
+                                  "type": "string",
+                                  "pattern": "^[0-9a-f]{64}$",
+                                  "minLength": 64,
+                                  "maxLength": 64
+                                }
+                              },
+                              "additionalProperties": false,
+                              "required": [
+                                "kind",
+                                "id"
+                              ]
+                            },
+                            "target": {
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "string"
+                                    },
+                                    "type": {
+                                      "type": "string",
+                                      "const": "conversation"
+                                    }
+                                  },
+                                  "additionalProperties": false,
+                                  "required": [
+                                    "type",
+                                    "id"
+                                  ]
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "session": {
+                                      "type": "string",
+                                      "pattern": "^[0-9a-f]{32}$",
+                                      "minLength": 32,
+                                      "maxLength": 32
+                                    },
+                                    "type": {
+                                      "type": "string",
+                                      "const": "recorded"
+                                    }
+                                  },
+                                  "additionalProperties": false,
+                                  "required": [
+                                    "type",
+                                    "session"
+                                  ]
+                                }
+                              ]
+                            },
+                            "value": {
+                              "type": "object",
+                              "properties": {
+                                "custom_title": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ],
+                                  "default": null
+                                },
+                                "generated": {
+                                  "type": [
+                                    "object",
+                                    "null"
+                                  ],
+                                  "properties": {
+                                    "title": {
+                                      "type": "string"
+                                    },
+                                    "summary": {
+                                      "type": "string"
+                                    },
+                                    "keywords": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "goals": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "string"
+                                      }
+                                    },
+                                    "sources": {
+                                      "type": "array",
+                                      "items": {
+                                        "type": "object",
+                                        "properties": {
+                                          "session": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "snapshot": {
+                                            "type": "object",
+                                            "properties": {
+                                              "kind": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "index_page",
+                                                  "session_snapshot",
+                                                  "turn_snapshot",
+                                                  "message_snapshot",
+                                                  "tool_snapshot",
+                                                  "intent",
+                                                  "observation_batch",
+                                                  "event_batch",
+                                                  "transcript_manifest",
+                                                  "transcript_page",
+                                                  "transcript_chunk",
+                                                  "content",
+                                                  "checkpoint_version",
+                                                  "association",
+                                                  "alias",
+                                                  "relation_page",
+                                                  "source_state",
+                                                  "projection_catalog",
+                                                  "catalog_conflict"
+                                                ]
+                                              },
+                                              "id": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{64}$",
+                                                "minLength": 64,
+                                                "maxLength": 64
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": [
+                                              "kind",
+                                              "id"
+                                            ]
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "session",
+                                          "snapshot"
+                                        ]
+                                      }
+                                    },
+                                    "provider": {
+                                      "type": "string"
+                                    },
+                                    "model": {
+                                      "type": "string"
+                                    },
+                                    "prompt_version": {
+                                      "type": "integer",
+                                      "format": "uint32",
+                                      "minimum": 0
+                                    },
+                                    "generated_at_millis": {
+                                      "type": "integer",
+                                      "format": "int64"
+                                    },
+                                    "truncated": {
+                                      "type": "boolean"
+                                    }
+                                  },
+                                  "additionalProperties": false,
+                                  "required": [
+                                    "title",
+                                    "summary",
+                                    "keywords",
+                                    "goals",
+                                    "sources",
+                                    "provider",
+                                    "model",
+                                    "prompt_version",
+                                    "generated_at_millis",
+                                    "truncated"
+                                  ],
+                                  "default": null
+                                },
+                                "agent_titles": {
+                                  "type": "object",
+                                  "additionalProperties": {
+                                    "type": "string"
+                                  },
+                                  "default": {}
+                                },
+                                "agent_title_sources": {
+                                  "type": "object",
+                                  "additionalProperties": {
+                                    "type": "object",
+                                    "properties": {
+                                      "session": {
+                                        "type": "string",
+                                        "pattern": "^[0-9a-f]{32}$",
+                                        "minLength": 32,
+                                        "maxLength": 32
+                                      },
+                                      "snapshot": {
+                                        "type": "object",
+                                        "properties": {
+                                          "kind": {
+                                            "type": "string",
+                                            "enum": [
+                                              "index_page",
+                                              "session_snapshot",
+                                              "turn_snapshot",
+                                              "message_snapshot",
+                                              "tool_snapshot",
+                                              "intent",
+                                              "observation_batch",
+                                              "event_batch",
+                                              "transcript_manifest",
+                                              "transcript_page",
+                                              "transcript_chunk",
+                                              "content",
+                                              "checkpoint_version",
+                                              "association",
+                                              "alias",
+                                              "relation_page",
+                                              "source_state",
+                                              "projection_catalog",
+                                              "catalog_conflict"
+                                            ]
+                                          },
+                                          "id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{64}$",
+                                            "minLength": 64,
+                                            "maxLength": 64
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "kind",
+                                          "id"
+                                        ]
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": [
+                                      "session",
+                                      "snapshot"
+                                    ]
+                                  }
+                                }
+                              },
+                              "additionalProperties": false
+                            },
+                            "type": {
+                              "type": "string",
+                              "const": "set_metadata"
+                            }
+                          },
+                          "additionalProperties": false,
+                          "required": [
+                            "type",
+                            "thread_id",
+                            "expected_thread",
+                            "target",
+                            "value"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
                             "submission": {
                               "type": "object",
                               "properties": {
@@ -16221,6 +16549,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       "enum": [
                                         "index_page",
                                         "thread_version",
+                                        "conversation_metadata",
                                         "thread_event",
                                         "human_message_revision",
                                         "thread_link",
@@ -16271,6 +16600,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       "enum": [
                                         "index_page",
                                         "thread_version",
+                                        "conversation_metadata",
                                         "thread_event",
                                         "human_message_revision",
                                         "thread_link",
@@ -16316,6 +16646,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                             "enum": [
                                               "index_page",
                                               "thread_version",
+                                              "conversation_metadata",
                                               "thread_event",
                                               "human_message_revision",
                                               "thread_link",
@@ -16388,6 +16719,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                         "enum": [
                                                           "index_page",
                                                           "thread_version",
+                                                          "conversation_metadata",
                                                           "thread_event",
                                                           "human_message_revision",
                                                           "thread_link",
@@ -17034,6 +17366,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                             "enum": [
                                               "index_page",
                                               "thread_version",
+                                              "conversation_metadata",
                                               "thread_event",
                                               "human_message_revision",
                                               "thread_link",
@@ -17068,6 +17401,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                             "enum": [
                                               "index_page",
                                               "thread_version",
+                                              "conversation_metadata",
                                               "thread_event",
                                               "human_message_revision",
                                               "thread_link",
@@ -17152,6 +17486,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                 "enum": [
                                                   "index_page",
                                                   "thread_version",
+                                                  "conversation_metadata",
                                                   "thread_event",
                                                   "human_message_revision",
                                                   "thread_link",
@@ -18597,6 +18932,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               "enum": [
                                                 "index_page",
                                                 "thread_version",
+                                                "conversation_metadata",
                                                 "thread_event",
                                                 "human_message_revision",
                                                 "thread_link",
@@ -19297,6 +19633,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                           "enum": [
                                             "index_page",
                                             "thread_version",
+                                            "conversation_metadata",
                                             "thread_event",
                                             "human_message_revision",
                                             "thread_link",
@@ -20143,6 +20480,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                   "enum": [
                                     "index_page",
                                     "thread_version",
+                                    "conversation_metadata",
                                     "thread_event",
                                     "human_message_revision",
                                     "thread_link",
@@ -20199,6 +20537,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                   "enum": [
                                     "index_page",
                                     "thread_version",
+                                    "conversation_metadata",
                                     "thread_event",
                                     "human_message_revision",
                                     "thread_link",
@@ -20262,6 +20601,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                   "enum": [
                                     "index_page",
                                     "thread_version",
+                                    "conversation_metadata",
                                     "thread_event",
                                     "human_message_revision",
                                     "thread_link",
@@ -20302,6 +20642,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                   "enum": [
                                     "index_page",
                                     "thread_version",
+                                    "conversation_metadata",
                                     "thread_event",
                                     "human_message_revision",
                                     "thread_link",
@@ -20336,6 +20677,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                   "enum": [
                                     "index_page",
                                     "thread_version",
+                                    "conversation_metadata",
                                     "thread_event",
                                     "human_message_revision",
                                     "thread_link",
@@ -20395,6 +20737,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                   "enum": [
                                     "index_page",
                                     "thread_version",
+                                    "conversation_metadata",
                                     "thread_event",
                                     "human_message_revision",
                                     "thread_link",
@@ -20478,6 +20821,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                       "enum": [
                                                         "index_page",
                                                         "thread_version",
+                                                        "conversation_metadata",
                                                         "thread_event",
                                                         "human_message_revision",
                                                         "thread_link",
@@ -21103,6 +21447,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                           "enum": [
                                                             "index_page",
                                                             "thread_version",
+                                                            "conversation_metadata",
                                                             "thread_event",
                                                             "human_message_revision",
                                                             "thread_link",
@@ -21780,6 +22125,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                         "enum": [
                                                           "index_page",
                                                           "thread_version",
+                                                          "conversation_metadata",
                                                           "thread_event",
                                                           "human_message_revision",
                                                           "thread_link",
@@ -22433,6 +22779,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                     "enum": [
                                                       "index_page",
                                                       "thread_version",
+                                                      "conversation_metadata",
                                                       "thread_event",
                                                       "human_message_revision",
                                                       "thread_link",
@@ -23021,6 +23368,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                           "enum": [
                                             "index_page",
                                             "thread_version",
+                                            "conversation_metadata",
                                             "thread_event",
                                             "human_message_revision",
                                             "thread_link",
@@ -23055,6 +23403,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                           "enum": [
                                             "index_page",
                                             "thread_version",
+                                            "conversation_metadata",
                                             "thread_event",
                                             "human_message_revision",
                                             "thread_link",
@@ -23191,6 +23540,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               "enum": [
                                                 "index_page",
                                                 "thread_version",
+                                                "conversation_metadata",
                                                 "thread_event",
                                                 "human_message_revision",
                                                 "thread_link",
@@ -23225,6 +23575,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               "enum": [
                                                 "index_page",
                                                 "thread_version",
+                                                "conversation_metadata",
                                                 "thread_event",
                                                 "human_message_revision",
                                                 "thread_link",
@@ -23674,6 +24025,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                   "enum": [
                                     "index_page",
                                     "thread_version",
+                                    "conversation_metadata",
                                     "thread_event",
                                     "human_message_revision",
                                     "thread_link",
@@ -23728,6 +24080,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                   "enum": [
                                     "index_page",
                                     "thread_version",
+                                    "conversation_metadata",
                                     "thread_event",
                                     "human_message_revision",
                                     "thread_link",
@@ -23759,6 +24112,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                   "enum": [
                                     "index_page",
                                     "thread_version",
+                                    "conversation_metadata",
                                     "thread_event",
                                     "human_message_revision",
                                     "thread_link",
@@ -23863,6 +24217,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                           "enum": [
                                             "index_page",
                                             "thread_version",
+                                            "conversation_metadata",
                                             "thread_event",
                                             "human_message_revision",
                                             "thread_link",
@@ -24501,6 +24856,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                           "enum": [
                                             "index_page",
                                             "thread_version",
+                                            "conversation_metadata",
                                             "thread_event",
                                             "human_message_revision",
                                             "thread_link",
@@ -24549,6 +24905,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                     "enum": [
                                       "index_page",
                                       "thread_version",
+                                      "conversation_metadata",
                                       "thread_event",
                                       "human_message_revision",
                                       "thread_link",
@@ -24635,6 +24992,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                           "enum": [
                                             "index_page",
                                             "thread_version",
+                                            "conversation_metadata",
                                             "thread_event",
                                             "human_message_revision",
                                             "thread_link",
@@ -25222,6 +25580,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                     "enum": [
                                       "index_page",
                                       "thread_version",
+                                      "conversation_metadata",
                                       "thread_event",
                                       "human_message_revision",
                                       "thread_link",
@@ -25307,6 +25666,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                           "enum": [
                                             "index_page",
                                             "thread_version",
+                                            "conversation_metadata",
                                             "thread_event",
                                             "human_message_revision",
                                             "thread_link",
@@ -25947,6 +26307,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                               "enum": [
                                                 "index_page",
                                                 "thread_version",
+                                                "conversation_metadata",
                                                 "thread_event",
                                                 "human_message_revision",
                                                 "thread_link",
@@ -26000,6 +26361,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                     "enum": [
                                       "index_page",
                                       "thread_version",
+                                      "conversation_metadata",
                                       "thread_event",
                                       "human_message_revision",
                                       "thread_link",
@@ -26074,6 +26436,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                   "enum": [
                                     "index_page",
                                     "thread_version",
+                                    "conversation_metadata",
                                     "thread_event",
                                     "human_message_revision",
                                     "thread_link",
@@ -26143,6 +26506,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                   "enum": [
                                     "index_page",
                                     "thread_version",
+                                    "conversation_metadata",
                                     "thread_event",
                                     "human_message_revision",
                                     "thread_link",
@@ -34415,6 +34779,118 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                 "keychain_supported": {
                   "type": "boolean",
                   "default": false
+                },
+                "metadata": {
+                  "type": [
+                    "object",
+                    "null"
+                  ],
+                  "properties": {
+                    "model": {
+                      "type": "string"
+                    },
+                    "options": {
+                      "type": "object",
+                      "properties": {
+                        "inherit_defaults": {
+                          "type": "boolean",
+                          "default": false
+                        },
+                        "provider": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "default": null
+                        },
+                        "endpoint": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "default": null
+                        },
+                        "environment": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "source": {
+                                    "type": "string",
+                                    "const": "literal"
+                                  },
+                                  "value": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "source",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "source": {
+                                    "type": "string",
+                                    "const": "environment"
+                                  },
+                                  "value": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "source",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "source": {
+                                    "type": "string",
+                                    "const": "keychain"
+                                  },
+                                  "value": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "source",
+                                  "value"
+                                ],
+                                "additionalProperties": false
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "source": {
+                                    "type": "string",
+                                    "const": "unset"
+                                  }
+                                },
+                                "required": [
+                                  "source"
+                                ],
+                                "additionalProperties": false
+                              }
+                            ]
+                          },
+                          "default": {}
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "model",
+                    "options"
+                  ]
                 }
               },
               "additionalProperties": false
@@ -36731,6 +37207,925 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
 }
 ```
 
+## GET /v1/local/agents/metadata
+
+LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.
+
+```text
+{
+  "operationId": "local_agents_metadata",
+  "tags": [
+    "local"
+  ],
+  "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+  "parameters": [
+    {
+      "name": "session",
+      "in": "query",
+      "required": true,
+      "schema": {
+        "type": "string"
+      },
+      "style": "form",
+      "explode": true
+    },
+    {
+      "name": "repository",
+      "in": "query",
+      "required": false,
+      "schema": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{32}$",
+        "minLength": 32,
+        "maxLength": 32
+      },
+      "style": "form",
+      "explode": true
+    }
+  ],
+  "responses": {
+    "200": {
+      "description": "Authorized result at the reported snapshot.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ConversationMetadataView"
+          }
+        }
+      }
+    },
+    "400": {
+      "description": "Invalid request, unknown query field or invalid cursor.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "401": {
+      "description": "Missing repository Bearer credential.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "403": {
+      "description": "Access denied, including revoked credentials or disallowed Origin.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "404": {
+      "description": "Object not committed in the selected snapshot or unknown route.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "405": {
+      "description": "Unsupported method.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "408": {
+      "description": "Native query canceled.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "409": {
+      "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "410": {
+      "description": "Index task expired or was lost on server restart.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "413": {
+      "description": "Request or response resource limit exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "415": {
+      "description": "Unsupported request media type or content encoding.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "503": {
+      "description": "Busy, unavailable, corrupt or incomplete history.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "504": {
+      "description": "Request or response deadline exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    }
+  },
+  "x-jj-store-query-schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "session": {
+        "type": "string"
+      },
+      "repository": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "pattern": "^[0-9a-f]{32}$",
+        "minLength": 32,
+        "maxLength": 32
+      }
+    },
+    "required": [
+      "session"
+    ]
+  },
+  "security": [
+    {}
+  ]
+}
+```
+
+## HEAD /v1/local/agents/metadata
+
+LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.
+
+```text
+{
+  "operationId": "local_agents_metadata_head",
+  "tags": [
+    "local"
+  ],
+  "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+  "parameters": [
+    {
+      "name": "session",
+      "in": "query",
+      "required": true,
+      "schema": {
+        "type": "string"
+      },
+      "style": "form",
+      "explode": true
+    },
+    {
+      "name": "repository",
+      "in": "query",
+      "required": false,
+      "schema": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{32}$",
+        "minLength": 32,
+        "maxLength": 32
+      },
+      "style": "form",
+      "explode": true
+    }
+  ],
+  "responses": {
+    "200": {
+      "description": "Authorized result at the reported snapshot."
+    },
+    "400": {
+      "description": "Invalid request, unknown query field or invalid cursor."
+    },
+    "401": {
+      "description": "Missing repository Bearer credential."
+    },
+    "403": {
+      "description": "Access denied, including revoked credentials or disallowed Origin."
+    },
+    "404": {
+      "description": "Object not committed in the selected snapshot or unknown route."
+    },
+    "405": {
+      "description": "Unsupported method."
+    },
+    "408": {
+      "description": "Native query canceled."
+    },
+    "409": {
+      "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index."
+    },
+    "410": {
+      "description": "Index task expired or was lost on server restart."
+    },
+    "413": {
+      "description": "Request or response resource limit exceeded."
+    },
+    "415": {
+      "description": "Unsupported request media type or content encoding."
+    },
+    "503": {
+      "description": "Busy, unavailable, corrupt or incomplete history."
+    },
+    "504": {
+      "description": "Request or response deadline exceeded."
+    }
+  },
+  "x-jj-store-query-schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "session": {
+        "type": "string"
+      },
+      "repository": {
+        "type": [
+          "string",
+          "null"
+        ],
+        "pattern": "^[0-9a-f]{32}$",
+        "minLength": 32,
+        "maxLength": 32
+      }
+    },
+    "required": [
+      "session"
+    ]
+  },
+  "security": [
+    {}
+  ]
+}
+```
+
+## POST /v1/local/agents/metadata
+
+LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.
+
+```text
+{
+  "operationId": "local_agents_metadata_command",
+  "tags": [
+    "local"
+  ],
+  "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+  "parameters": [],
+  "responses": {
+    "200": {
+      "description": "Authorized result at the reported snapshot.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ConversationMetadataJob"
+          }
+        }
+      }
+    },
+    "400": {
+      "description": "Invalid request, unknown query field or invalid cursor.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "401": {
+      "description": "Missing repository Bearer credential.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "403": {
+      "description": "Access denied, including revoked credentials or disallowed Origin.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "404": {
+      "description": "Object not committed in the selected snapshot or unknown route.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "405": {
+      "description": "Unsupported method.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "408": {
+      "description": "Native query canceled.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "409": {
+      "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "410": {
+      "description": "Index task expired or was lost on server restart.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "413": {
+      "description": "Request or response resource limit exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "415": {
+      "description": "Unsupported request media type or content encoding.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "503": {
+      "description": "Busy, unavailable, corrupt or incomplete history.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "504": {
+      "description": "Request or response deadline exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    }
+  },
+  "x-jj-store-query-schema": {
+    "type": "object",
+    "additionalProperties": false
+  },
+  "security": [
+    {}
+  ],
+  "requestBody": {
+    "required": true,
+    "content": {
+      "application/json": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "integer",
+              "format": "uint32",
+              "minimum": 0
+            },
+            "request_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{32}$",
+              "minLength": 32,
+              "maxLength": 32
+            },
+            "query": {
+              "type": "object",
+              "properties": {
+                "session": {
+                  "type": "string"
+                },
+                "repository": {
+                  "type": [
+                    "string",
+                    "null"
+                  ],
+                  "pattern": "^[0-9a-f]{32}$",
+                  "minLength": 32,
+                  "maxLength": 32
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "session"
+              ]
+            },
+            "expected": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "index_page",
+                    "thread_version",
+                    "conversation_metadata",
+                    "thread_event",
+                    "human_message_revision",
+                    "thread_link",
+                    "reaction",
+                    "reaction_retraction",
+                    "reaction_slot",
+                    "custom_emoji_version",
+                    "image_asset"
+                  ]
+                },
+                "id": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$",
+                  "minLength": 64,
+                  "maxLength": 64
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "id"
+              ]
+            },
+            "action": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    },
+                    "action": {
+                      "type": "string",
+                      "const": "rename"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "action",
+                    "title"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "action": {
+                      "type": "string",
+                      "const": "reset_title"
+                    }
+                  },
+                  "required": [
+                    "action"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "action": {
+                      "type": "string",
+                      "const": "capture_titles"
+                    }
+                  },
+                  "required": [
+                    "action"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "action": {
+                      "type": "string",
+                      "const": "refresh"
+                    }
+                  },
+                  "required": [
+                    "action"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "action": {
+                      "type": "string",
+                      "const": "regenerate_title"
+                    }
+                  },
+                  "required": [
+                    "action"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "job": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{32}$",
+                      "minLength": 32,
+                      "maxLength": 32
+                    },
+                    "action": {
+                      "type": "string",
+                      "const": "cancel"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "action",
+                    "job"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "job": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{32}$",
+                      "minLength": 32,
+                      "maxLength": 32
+                    },
+                    "action": {
+                      "type": "string",
+                      "const": "publish"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "action",
+                    "job"
+                  ]
+                }
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "version",
+            "request_id",
+            "query",
+            "action"
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
+## GET /v1/local/agents/metadata/job
+
+LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.
+
+```text
+{
+  "operationId": "local_agents_metadata_job",
+  "tags": [
+    "local"
+  ],
+  "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+  "parameters": [
+    {
+      "name": "request",
+      "in": "query",
+      "required": true,
+      "schema": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{32}$",
+        "minLength": 32,
+        "maxLength": 32
+      },
+      "style": "form",
+      "explode": true
+    }
+  ],
+  "responses": {
+    "200": {
+      "description": "Authorized result at the reported snapshot.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ConversationMetadataJob"
+          }
+        }
+      }
+    },
+    "400": {
+      "description": "Invalid request, unknown query field or invalid cursor.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "401": {
+      "description": "Missing repository Bearer credential.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "403": {
+      "description": "Access denied, including revoked credentials or disallowed Origin.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "404": {
+      "description": "Object not committed in the selected snapshot or unknown route.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "405": {
+      "description": "Unsupported method.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "408": {
+      "description": "Native query canceled.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "409": {
+      "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "410": {
+      "description": "Index task expired or was lost on server restart.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "413": {
+      "description": "Request or response resource limit exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "415": {
+      "description": "Unsupported request media type or content encoding.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "503": {
+      "description": "Busy, unavailable, corrupt or incomplete history.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "504": {
+      "description": "Request or response deadline exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    }
+  },
+  "x-jj-store-query-schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "request": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{32}$",
+        "minLength": 32,
+        "maxLength": 32
+      }
+    },
+    "required": [
+      "request"
+    ]
+  },
+  "security": [
+    {}
+  ]
+}
+```
+
+## HEAD /v1/local/agents/metadata/job
+
+LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.
+
+```text
+{
+  "operationId": "local_agents_metadata_job_head",
+  "tags": [
+    "local"
+  ],
+  "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+  "parameters": [
+    {
+      "name": "request",
+      "in": "query",
+      "required": true,
+      "schema": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{32}$",
+        "minLength": 32,
+        "maxLength": 32
+      },
+      "style": "form",
+      "explode": true
+    }
+  ],
+  "responses": {
+    "200": {
+      "description": "Authorized result at the reported snapshot."
+    },
+    "400": {
+      "description": "Invalid request, unknown query field or invalid cursor."
+    },
+    "401": {
+      "description": "Missing repository Bearer credential."
+    },
+    "403": {
+      "description": "Access denied, including revoked credentials or disallowed Origin."
+    },
+    "404": {
+      "description": "Object not committed in the selected snapshot or unknown route."
+    },
+    "405": {
+      "description": "Unsupported method."
+    },
+    "408": {
+      "description": "Native query canceled."
+    },
+    "409": {
+      "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index."
+    },
+    "410": {
+      "description": "Index task expired or was lost on server restart."
+    },
+    "413": {
+      "description": "Request or response resource limit exceeded."
+    },
+    "415": {
+      "description": "Unsupported request media type or content encoding."
+    },
+    "503": {
+      "description": "Busy, unavailable, corrupt or incomplete history."
+    },
+    "504": {
+      "description": "Request or response deadline exceeded."
+    }
+  },
+  "x-jj-store-query-schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "request": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{32}$",
+        "minLength": 32,
+        "maxLength": 32
+      }
+    },
+    "required": [
+      "request"
+    ]
+  },
+  "security": [
+    {}
+  ]
+}
+```
+
 ## POST /v1/local/agents/chat
 
 LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.
@@ -36975,6 +38370,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                   "enum": [
                                     "index_page",
                                     "thread_version",
+                                    "conversation_metadata",
                                     "thread_event",
                                     "human_message_revision",
                                     "thread_link",
@@ -37635,6 +39031,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                       "enum": [
                         "index_page",
                         "thread_version",
+                        "conversation_metadata",
                         "thread_event",
                         "human_message_revision",
                         "thread_link",
@@ -37685,6 +39082,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                       "enum": [
                         "index_page",
                         "thread_version",
+                        "conversation_metadata",
                         "thread_event",
                         "human_message_revision",
                         "thread_link",
@@ -37730,6 +39128,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                             "enum": [
                               "index_page",
                               "thread_version",
+                              "conversation_metadata",
                               "thread_event",
                               "human_message_revision",
                               "thread_link",
@@ -37802,6 +39201,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "enum": [
                                           "index_page",
                                           "thread_version",
+                                          "conversation_metadata",
                                           "thread_event",
                                           "human_message_revision",
                                           "thread_link",
@@ -38448,6 +39848,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                             "enum": [
                               "index_page",
                               "thread_version",
+                              "conversation_metadata",
                               "thread_event",
                               "human_message_revision",
                               "thread_link",
@@ -38482,6 +39883,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                             "enum": [
                               "index_page",
                               "thread_version",
+                              "conversation_metadata",
                               "thread_event",
                               "human_message_revision",
                               "thread_link",
@@ -38566,6 +39968,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                 "enum": [
                                   "index_page",
                                   "thread_version",
+                                  "conversation_metadata",
                                   "thread_event",
                                   "human_message_revision",
                                   "thread_link",
@@ -40609,6 +42012,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               "enum": [
                                 "index_page",
                                 "thread_version",
+                                "conversation_metadata",
                                 "thread_event",
                                 "human_message_revision",
                                 "thread_link",
@@ -40659,6 +42063,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                               "enum": [
                                 "index_page",
                                 "thread_version",
+                                "conversation_metadata",
                                 "thread_event",
                                 "human_message_revision",
                                 "thread_link",
@@ -40704,6 +42109,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                     "enum": [
                                       "index_page",
                                       "thread_version",
+                                      "conversation_metadata",
                                       "thread_event",
                                       "human_message_revision",
                                       "thread_link",
@@ -40776,6 +42182,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                                 "enum": [
                                                   "index_page",
                                                   "thread_version",
+                                                  "conversation_metadata",
                                                   "thread_event",
                                                   "human_message_revision",
                                                   "thread_link",
@@ -41422,6 +42829,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                     "enum": [
                                       "index_page",
                                       "thread_version",
+                                      "conversation_metadata",
                                       "thread_event",
                                       "human_message_revision",
                                       "thread_link",
@@ -41456,6 +42864,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                     "enum": [
                                       "index_page",
                                       "thread_version",
+                                      "conversation_metadata",
                                       "thread_event",
                                       "human_message_revision",
                                       "thread_link",
@@ -41540,6 +42949,7 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         "enum": [
                                           "index_page",
                                           "thread_version",
+                                          "conversation_metadata",
                                           "thread_event",
                                           "human_message_revision",
                                           "thread_link",

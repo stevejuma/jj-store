@@ -15,6 +15,8 @@ export interface ComposerProps {
   hideAvatar?: boolean;
   dockActions?: boolean;
   documentActions?: Snippet;
+  /** Host-owned submissions can preserve the composer's scoped recipient pins. */
+  restoreDraft?: (submitted: string) => string;
   value?: string;
   formattingOpen?: boolean;
   placeholder?: string;

@@ -53,7 +53,7 @@
           />{recovery.label}</DropdownMenu.Item
         >{/if}
       {#if session}<DropdownMenu.Item onSelect={onRuntime}
-          ><SettingsIcon aria-hidden="true" />Workspace and runtime</DropdownMenu.Item
+          ><SettingsIcon aria-hidden="true" />Conversation details</DropdownMenu.Item
         >{/if}
       <DropdownMenu.Item
         onSelect={() =>

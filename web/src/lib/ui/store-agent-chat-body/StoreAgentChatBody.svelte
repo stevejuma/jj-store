@@ -36,7 +36,6 @@
     label = "Agent chat body",
     customBlock,
     commentState,
-    onInspectTool,
     view = "document",
     loading = false,
     emptyState,
@@ -46,12 +45,13 @@
     metadataSupplement: itemMetadata,
     onOpenThread,
     logLabel = "Conversation messages",
+    ...hostOptions
   }: ChatBodyProps = $props();
   const ownedComments = new ChatBodyComments(() => ({
+    ...hostOptions,
     items,
     author,
     onSend,
-    onInspectTool,
     onReact,
     reactionOptions,
   }));
@@ -238,7 +238,7 @@
                     {item}
                     state={comments}
                     {customBlock}
-                    {onInspectTool}
+                    onInspectTool={hostOptions.onInspectTool}
                   />
                 </div>
               {:else if item.kind !== "message"}

@@ -92,6 +92,9 @@ pub(crate) fn validate_agent_discussion(target: &ReactionTargetV1) -> Result<()>
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(tag = "type", rename_all = "snake_case", deny_unknown_fields)]
 pub enum ThreadEventKindV1 {
+    Metadata {
+        version: CollabObjectRef,
+    },
     Created,
     Renamed {
         previous_title: String,
@@ -144,6 +147,9 @@ impl ThreadEventV1 {
                 expect(*revision, CollabObjectKind::HumanMessageRevision)?
             }
             ThreadEventKindV1::Link { version } => expect(*version, CollabObjectKind::ThreadLink)?,
+            ThreadEventKindV1::Metadata { version } => {
+                expect(*version, CollabObjectKind::ConversationMetadata)?
+            }
             _ => {}
         }
         Ok(())

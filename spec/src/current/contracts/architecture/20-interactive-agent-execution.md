@@ -48,3 +48,14 @@ answer links. Only a definitive stale refusal followed by a NotKnown receipt
 read permits a new answer-link attempt with an updated thread precondition; the
 logical link and answer range stay unchanged. Unknown outcomes never change the
 request. This journal does not replace native or companion authority.
+
+Conversation discovery is a separate bounded helper process, outside ACP and
+coding workspaces. ThreadStore owns immutable metadata; AgentStore owns captured
+sources. The installation journal owns frozen jobs and receipts, never canonical
+conversation metadata. Existing native/local publication and repository policy
+select the result. A metadata read or settings edit starts no process/inference.
+
+Server composition consumes jj-collab's pure types and validators through the
+service/publication authorities. The dependency audit includes this owned domain
+edge; it still rejects native upstream/CLI imports and reverse domain-to-server
+dependencies. Metadata creates no exception to the storage/model/WAL boundary.

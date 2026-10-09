@@ -94,6 +94,15 @@ impl AgentSessionPager {
             if read.snapshot().agent_root != Some(detail.snapshot.agent_root) {
                 return Err(crate::agent_execution::Error::Stale);
             }
+            if let Some((title, text)) = read
+                .conversation_discovery(session.clone())
+                .await
+                .map_err(|_| crate::agent_execution::Error::Unavailable)?
+                .get(&session_id)
+            {
+                detail.session.conversation_title = title.clone();
+                detail.session.discovery_text = Some(text.clone());
+            }
             read.recorded_feedback(session.clone(), &detail.activity)
                 .await
         })

@@ -27,6 +27,8 @@ pub struct ServerCli {
 }
 #[derive(Debug, Subcommand)]
 pub enum ServerCommand {
+    /// Read, generate and rename retained conversation metadata on a local service
+    ConversationMetadata(crate::conversation_metadata::MetadataArgs),
     /// Run local Stacks actions directly in an ordinary JJ workspace
     Stack(crate::stack_commands::StackArgs),
     /// Create a new private local installation with managed RustFS storage
@@ -302,6 +304,9 @@ async fn run(ui: &Ui, cli: ServerCli) -> AuthorityResult<()> {
         return help(ui, no_pager, &[]);
     };
     match command {
+        ServerCommand::ConversationMetadata(args) => {
+            crate::conversation_metadata::run(ui, args).await
+        }
         ServerCommand::Stack(args) => crate::stack_commands::run(ui, format, no_pager, args).await,
         ServerCommand::Init {
             local,

@@ -3,6 +3,7 @@ import { fixtureJsonResponse as json } from "./agent-execution-session.js";
 export class AgentSettingsFixture {
   value = $state<AgentSettingsValue>({
     revision: 0,
+    metadata: null,
     runner: "codex",
     preferences: { model: null, effort: null, mode: null },
     options: {

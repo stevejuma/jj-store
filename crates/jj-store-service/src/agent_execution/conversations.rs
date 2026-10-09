@@ -30,6 +30,8 @@ pub struct Conversation {
     #[serde(default)]
     pub discussion_thread: Option<jj_collab::ThreadId>,
     pub participants: Vec<String>,
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    pub metadata_auto_eligible: bool,
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]

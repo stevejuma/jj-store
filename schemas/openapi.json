@@ -9925,6 +9925,279 @@
                       {
                         "type": "object",
                         "properties": {
+                          "thread_id": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{32}$",
+                            "minLength": 32,
+                            "maxLength": 32
+                          },
+                          "expected_thread": {
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "type": "string",
+                                "enum": [
+                                  "index_page",
+                                  "thread_version",
+                                  "conversation_metadata",
+                                  "thread_event",
+                                  "human_message_revision",
+                                  "thread_link",
+                                  "reaction",
+                                  "reaction_retraction",
+                                  "reaction_slot",
+                                  "custom_emoji_version",
+                                  "image_asset"
+                                ]
+                              },
+                              "id": {
+                                "type": "string",
+                                "pattern": "^[0-9a-f]{64}$",
+                                "minLength": 64,
+                                "maxLength": 64
+                              }
+                            },
+                            "additionalProperties": false,
+                            "required": ["kind", "id"]
+                          },
+                          "expected_metadata": {
+                            "type": ["object", "null"],
+                            "properties": {
+                              "kind": {
+                                "type": "string",
+                                "enum": [
+                                  "index_page",
+                                  "thread_version",
+                                  "conversation_metadata",
+                                  "thread_event",
+                                  "human_message_revision",
+                                  "thread_link",
+                                  "reaction",
+                                  "reaction_retraction",
+                                  "reaction_slot",
+                                  "custom_emoji_version",
+                                  "image_asset"
+                                ]
+                              },
+                              "id": {
+                                "type": "string",
+                                "pattern": "^[0-9a-f]{64}$",
+                                "minLength": 64,
+                                "maxLength": 64
+                              }
+                            },
+                            "additionalProperties": false,
+                            "required": ["kind", "id"]
+                          },
+                          "target": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "id": { "type": "string" },
+                                  "type": {
+                                    "type": "string",
+                                    "const": "conversation"
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": ["type", "id"]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "session": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "const": "recorded"
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": ["type", "session"]
+                              }
+                            ]
+                          },
+                          "value": {
+                            "type": "object",
+                            "properties": {
+                              "custom_title": {
+                                "type": ["string", "null"],
+                                "default": null
+                              },
+                              "generated": {
+                                "type": ["object", "null"],
+                                "properties": {
+                                  "title": { "type": "string" },
+                                  "summary": { "type": "string" },
+                                  "keywords": {
+                                    "type": "array",
+                                    "items": { "type": "string" }
+                                  },
+                                  "goals": {
+                                    "type": "array",
+                                    "items": { "type": "string" }
+                                  },
+                                  "sources": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "object",
+                                      "properties": {
+                                        "session": {
+                                          "type": "string",
+                                          "pattern": "^[0-9a-f]{32}$",
+                                          "minLength": 32,
+                                          "maxLength": 32
+                                        },
+                                        "snapshot": {
+                                          "type": "object",
+                                          "properties": {
+                                            "kind": {
+                                              "type": "string",
+                                              "enum": [
+                                                "index_page",
+                                                "session_snapshot",
+                                                "turn_snapshot",
+                                                "message_snapshot",
+                                                "tool_snapshot",
+                                                "intent",
+                                                "observation_batch",
+                                                "event_batch",
+                                                "transcript_manifest",
+                                                "transcript_page",
+                                                "transcript_chunk",
+                                                "content",
+                                                "checkpoint_version",
+                                                "association",
+                                                "alias",
+                                                "relation_page",
+                                                "source_state",
+                                                "projection_catalog",
+                                                "catalog_conflict"
+                                              ]
+                                            },
+                                            "id": {
+                                              "type": "string",
+                                              "pattern": "^[0-9a-f]{64}$",
+                                              "minLength": 64,
+                                              "maxLength": 64
+                                            }
+                                          },
+                                          "additionalProperties": false,
+                                          "required": ["kind", "id"]
+                                        }
+                                      },
+                                      "additionalProperties": false,
+                                      "required": ["session", "snapshot"]
+                                    }
+                                  },
+                                  "provider": { "type": "string" },
+                                  "model": { "type": "string" },
+                                  "prompt_version": {
+                                    "type": "integer",
+                                    "format": "uint32",
+                                    "minimum": 0
+                                  },
+                                  "generated_at_millis": {
+                                    "type": "integer",
+                                    "format": "int64"
+                                  },
+                                  "truncated": { "type": "boolean" }
+                                },
+                                "additionalProperties": false,
+                                "required": [
+                                  "title",
+                                  "summary",
+                                  "keywords",
+                                  "goals",
+                                  "sources",
+                                  "provider",
+                                  "model",
+                                  "prompt_version",
+                                  "generated_at_millis",
+                                  "truncated"
+                                ],
+                                "default": null
+                              },
+                              "agent_titles": {
+                                "type": "object",
+                                "additionalProperties": { "type": "string" },
+                                "default": {}
+                              },
+                              "agent_title_sources": {
+                                "type": "object",
+                                "additionalProperties": {
+                                  "type": "object",
+                                  "properties": {
+                                    "session": {
+                                      "type": "string",
+                                      "pattern": "^[0-9a-f]{32}$",
+                                      "minLength": 32,
+                                      "maxLength": 32
+                                    },
+                                    "snapshot": {
+                                      "type": "object",
+                                      "properties": {
+                                        "kind": {
+                                          "type": "string",
+                                          "enum": [
+                                            "index_page",
+                                            "session_snapshot",
+                                            "turn_snapshot",
+                                            "message_snapshot",
+                                            "tool_snapshot",
+                                            "intent",
+                                            "observation_batch",
+                                            "event_batch",
+                                            "transcript_manifest",
+                                            "transcript_page",
+                                            "transcript_chunk",
+                                            "content",
+                                            "checkpoint_version",
+                                            "association",
+                                            "alias",
+                                            "relation_page",
+                                            "source_state",
+                                            "projection_catalog",
+                                            "catalog_conflict"
+                                          ]
+                                        },
+                                        "id": {
+                                          "type": "string",
+                                          "pattern": "^[0-9a-f]{64}$",
+                                          "minLength": 64,
+                                          "maxLength": 64
+                                        }
+                                      },
+                                      "additionalProperties": false,
+                                      "required": ["kind", "id"]
+                                    }
+                                  },
+                                  "additionalProperties": false,
+                                  "required": ["session", "snapshot"]
+                                }
+                              }
+                            },
+                            "additionalProperties": false
+                          },
+                          "type": { "type": "string", "const": "set_metadata" }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "type",
+                          "thread_id",
+                          "expected_thread",
+                          "target",
+                          "value"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
                           "submission": {
                             "type": "object",
                             "properties": {
@@ -9942,6 +10215,7 @@
                                     "enum": [
                                       "index_page",
                                       "thread_version",
+                                      "conversation_metadata",
                                       "thread_event",
                                       "human_message_revision",
                                       "thread_link",
@@ -9978,6 +10252,7 @@
                                     "enum": [
                                       "index_page",
                                       "thread_version",
+                                      "conversation_metadata",
                                       "thread_event",
                                       "human_message_revision",
                                       "thread_link",
@@ -10017,6 +10292,7 @@
                                           "enum": [
                                             "index_page",
                                             "thread_version",
+                                            "conversation_metadata",
                                             "thread_event",
                                             "human_message_revision",
                                             "thread_link",
@@ -10083,6 +10359,7 @@
                                                       "enum": [
                                                         "index_page",
                                                         "thread_version",
+                                                        "conversation_metadata",
                                                         "thread_event",
                                                         "human_message_revision",
                                                         "thread_link",
@@ -10685,6 +10962,7 @@
                                           "enum": [
                                             "index_page",
                                             "thread_version",
+                                            "conversation_metadata",
                                             "thread_event",
                                             "human_message_revision",
                                             "thread_link",
@@ -10713,6 +10991,7 @@
                                           "enum": [
                                             "index_page",
                                             "thread_version",
+                                            "conversation_metadata",
                                             "thread_event",
                                             "human_message_revision",
                                             "thread_link",
@@ -10789,6 +11068,7 @@
                                               "enum": [
                                                 "index_page",
                                                 "thread_version",
+                                                "conversation_metadata",
                                                 "thread_event",
                                                 "human_message_revision",
                                                 "thread_link",
@@ -12132,6 +12412,7 @@
                                             "enum": [
                                               "index_page",
                                               "thread_version",
+                                              "conversation_metadata",
                                               "thread_event",
                                               "human_message_revision",
                                               "thread_link",
@@ -12781,6 +13062,7 @@
                                         "enum": [
                                           "index_page",
                                           "thread_version",
+                                          "conversation_metadata",
                                           "thread_event",
                                           "human_message_revision",
                                           "thread_link",
@@ -13566,6 +13848,7 @@
                                 "enum": [
                                   "index_page",
                                   "thread_version",
+                                  "conversation_metadata",
                                   "thread_event",
                                   "human_message_revision",
                                   "thread_link",
@@ -13609,6 +13892,7 @@
                                 "enum": [
                                   "index_page",
                                   "thread_version",
+                                  "conversation_metadata",
                                   "thread_event",
                                   "human_message_revision",
                                   "thread_link",
@@ -13661,6 +13945,7 @@
                                 "enum": [
                                   "index_page",
                                   "thread_version",
+                                  "conversation_metadata",
                                   "thread_event",
                                   "human_message_revision",
                                   "thread_link",
@@ -13695,6 +13980,7 @@
                                 "enum": [
                                   "index_page",
                                   "thread_version",
+                                  "conversation_metadata",
                                   "thread_event",
                                   "human_message_revision",
                                   "thread_link",
@@ -13723,6 +14009,7 @@
                                 "enum": [
                                   "index_page",
                                   "thread_version",
+                                  "conversation_metadata",
                                   "thread_event",
                                   "human_message_revision",
                                   "thread_link",
@@ -13771,6 +14058,7 @@
                                 "enum": [
                                   "index_page",
                                   "thread_version",
+                                  "conversation_metadata",
                                   "thread_event",
                                   "human_message_revision",
                                   "thread_link",
@@ -13848,6 +14136,7 @@
                                                     "enum": [
                                                       "index_page",
                                                       "thread_version",
+                                                      "conversation_metadata",
                                                       "thread_event",
                                                       "human_message_revision",
                                                       "thread_link",
@@ -14443,6 +14732,7 @@
                                                         "enum": [
                                                           "index_page",
                                                           "thread_version",
+                                                          "conversation_metadata",
                                                           "thread_event",
                                                           "human_message_revision",
                                                           "thread_link",
@@ -15079,6 +15369,7 @@
                                                       "enum": [
                                                         "index_page",
                                                         "thread_version",
+                                                        "conversation_metadata",
                                                         "thread_event",
                                                         "human_message_revision",
                                                         "thread_link",
@@ -15692,6 +15983,7 @@
                                                   "enum": [
                                                     "index_page",
                                                     "thread_version",
+                                                    "conversation_metadata",
                                                     "thread_event",
                                                     "human_message_revision",
                                                     "thread_link",
@@ -16247,6 +16539,7 @@
                                         "enum": [
                                           "index_page",
                                           "thread_version",
+                                          "conversation_metadata",
                                           "thread_event",
                                           "human_message_revision",
                                           "thread_link",
@@ -16275,6 +16568,7 @@
                                         "enum": [
                                           "index_page",
                                           "thread_version",
+                                          "conversation_metadata",
                                           "thread_event",
                                           "human_message_revision",
                                           "thread_link",
@@ -16398,6 +16692,7 @@
                                             "enum": [
                                               "index_page",
                                               "thread_version",
+                                              "conversation_metadata",
                                               "thread_event",
                                               "human_message_revision",
                                               "thread_link",
@@ -16426,6 +16721,7 @@
                                             "enum": [
                                               "index_page",
                                               "thread_version",
+                                              "conversation_metadata",
                                               "thread_event",
                                               "human_message_revision",
                                               "thread_link",
@@ -16839,6 +17135,7 @@
                                 "enum": [
                                   "index_page",
                                   "thread_version",
+                                  "conversation_metadata",
                                   "thread_event",
                                   "human_message_revision",
                                   "thread_link",
@@ -16887,6 +17184,7 @@
                                 "enum": [
                                   "index_page",
                                   "thread_version",
+                                  "conversation_metadata",
                                   "thread_event",
                                   "human_message_revision",
                                   "thread_link",
@@ -16915,6 +17213,7 @@
                                 "enum": [
                                   "index_page",
                                   "thread_version",
+                                  "conversation_metadata",
                                   "thread_event",
                                   "human_message_revision",
                                   "thread_link",
@@ -17316,6 +17615,7 @@
                                 "enum": [
                                   "index_page",
                                   "thread_version",
+                                  "conversation_metadata",
                                   "thread_event",
                                   "human_message_revision",
                                   "thread_link",
@@ -18051,6 +18351,7 @@
                                         "enum": [
                                           "index_page",
                                           "thread_version",
+                                          "conversation_metadata",
                                           "thread_event",
                                           "human_message_revision",
                                           "thread_link",
@@ -18644,6 +18945,7 @@
                                         "enum": [
                                           "index_page",
                                           "thread_version",
+                                          "conversation_metadata",
                                           "thread_event",
                                           "human_message_revision",
                                           "thread_link",
@@ -18685,6 +18987,7 @@
                                   "enum": [
                                     "index_page",
                                     "thread_version",
+                                    "conversation_metadata",
                                     "thread_event",
                                     "human_message_revision",
                                     "thread_link",
@@ -18757,6 +19060,7 @@
                                         "enum": [
                                           "index_page",
                                           "thread_version",
+                                          "conversation_metadata",
                                           "thread_event",
                                           "human_message_revision",
                                           "thread_link",
@@ -19314,6 +19618,7 @@
                                   "enum": [
                                     "index_page",
                                     "thread_version",
+                                    "conversation_metadata",
                                     "thread_event",
                                     "human_message_revision",
                                     "thread_link",
@@ -19386,6 +19691,7 @@
                                         "enum": [
                                           "index_page",
                                           "thread_version",
+                                          "conversation_metadata",
                                           "thread_event",
                                           "human_message_revision",
                                           "thread_link",
@@ -19987,6 +20293,7 @@
                                             "enum": [
                                               "index_page",
                                               "thread_version",
+                                              "conversation_metadata",
                                               "thread_event",
                                               "human_message_revision",
                                               "thread_link",
@@ -20031,6 +20338,7 @@
                                   "enum": [
                                     "index_page",
                                     "thread_version",
+                                    "conversation_metadata",
                                     "thread_event",
                                     "human_message_revision",
                                     "thread_link",
@@ -41287,6 +41595,7 @@
                                         "enum": [
                                           "index_page",
                                           "thread_version",
+                                          "conversation_metadata",
                                           "thread_event",
                                           "human_message_revision",
                                           "thread_link",
@@ -42174,6 +42483,287 @@
                               {
                                 "type": "object",
                                 "properties": {
+                                  "thread_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "expected_thread": {
+                                    "type": "object",
+                                    "properties": {
+                                      "kind": {
+                                        "type": "string",
+                                        "enum": [
+                                          "index_page",
+                                          "thread_version",
+                                          "conversation_metadata",
+                                          "thread_event",
+                                          "human_message_revision",
+                                          "thread_link",
+                                          "reaction",
+                                          "reaction_retraction",
+                                          "reaction_slot",
+                                          "custom_emoji_version",
+                                          "image_asset"
+                                        ]
+                                      },
+                                      "id": {
+                                        "type": "string",
+                                        "pattern": "^[0-9a-f]{64}$",
+                                        "minLength": 64,
+                                        "maxLength": 64
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": ["kind", "id"]
+                                  },
+                                  "expected_metadata": {
+                                    "type": ["object", "null"],
+                                    "properties": {
+                                      "kind": {
+                                        "type": "string",
+                                        "enum": [
+                                          "index_page",
+                                          "thread_version",
+                                          "conversation_metadata",
+                                          "thread_event",
+                                          "human_message_revision",
+                                          "thread_link",
+                                          "reaction",
+                                          "reaction_retraction",
+                                          "reaction_slot",
+                                          "custom_emoji_version",
+                                          "image_asset"
+                                        ]
+                                      },
+                                      "id": {
+                                        "type": "string",
+                                        "pattern": "^[0-9a-f]{64}$",
+                                        "minLength": 64,
+                                        "maxLength": 64
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": ["kind", "id"]
+                                  },
+                                  "target": {
+                                    "oneOf": [
+                                      {
+                                        "type": "object",
+                                        "properties": {
+                                          "id": { "type": "string" },
+                                          "type": {
+                                            "type": "string",
+                                            "const": "conversation"
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": ["type", "id"]
+                                      },
+                                      {
+                                        "type": "object",
+                                        "properties": {
+                                          "session": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "type": {
+                                            "type": "string",
+                                            "const": "recorded"
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": ["type", "session"]
+                                      }
+                                    ]
+                                  },
+                                  "value": {
+                                    "type": "object",
+                                    "properties": {
+                                      "custom_title": {
+                                        "type": ["string", "null"],
+                                        "default": null
+                                      },
+                                      "generated": {
+                                        "type": ["object", "null"],
+                                        "properties": {
+                                          "title": { "type": "string" },
+                                          "summary": { "type": "string" },
+                                          "keywords": {
+                                            "type": "array",
+                                            "items": { "type": "string" }
+                                          },
+                                          "goals": {
+                                            "type": "array",
+                                            "items": { "type": "string" }
+                                          },
+                                          "sources": {
+                                            "type": "array",
+                                            "items": {
+                                              "type": "object",
+                                              "properties": {
+                                                "session": {
+                                                  "type": "string",
+                                                  "pattern": "^[0-9a-f]{32}$",
+                                                  "minLength": 32,
+                                                  "maxLength": 32
+                                                },
+                                                "snapshot": {
+                                                  "type": "object",
+                                                  "properties": {
+                                                    "kind": {
+                                                      "type": "string",
+                                                      "enum": [
+                                                        "index_page",
+                                                        "session_snapshot",
+                                                        "turn_snapshot",
+                                                        "message_snapshot",
+                                                        "tool_snapshot",
+                                                        "intent",
+                                                        "observation_batch",
+                                                        "event_batch",
+                                                        "transcript_manifest",
+                                                        "transcript_page",
+                                                        "transcript_chunk",
+                                                        "content",
+                                                        "checkpoint_version",
+                                                        "association",
+                                                        "alias",
+                                                        "relation_page",
+                                                        "source_state",
+                                                        "projection_catalog",
+                                                        "catalog_conflict"
+                                                      ]
+                                                    },
+                                                    "id": {
+                                                      "type": "string",
+                                                      "pattern": "^[0-9a-f]{64}$",
+                                                      "minLength": 64,
+                                                      "maxLength": 64
+                                                    }
+                                                  },
+                                                  "additionalProperties": false,
+                                                  "required": ["kind", "id"]
+                                                }
+                                              },
+                                              "additionalProperties": false,
+                                              "required": [
+                                                "session",
+                                                "snapshot"
+                                              ]
+                                            }
+                                          },
+                                          "provider": { "type": "string" },
+                                          "model": { "type": "string" },
+                                          "prompt_version": {
+                                            "type": "integer",
+                                            "format": "uint32",
+                                            "minimum": 0
+                                          },
+                                          "generated_at_millis": {
+                                            "type": "integer",
+                                            "format": "int64"
+                                          },
+                                          "truncated": { "type": "boolean" }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "title",
+                                          "summary",
+                                          "keywords",
+                                          "goals",
+                                          "sources",
+                                          "provider",
+                                          "model",
+                                          "prompt_version",
+                                          "generated_at_millis",
+                                          "truncated"
+                                        ],
+                                        "default": null
+                                      },
+                                      "agent_titles": {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                          "type": "string"
+                                        },
+                                        "default": {}
+                                      },
+                                      "agent_title_sources": {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                          "type": "object",
+                                          "properties": {
+                                            "session": {
+                                              "type": "string",
+                                              "pattern": "^[0-9a-f]{32}$",
+                                              "minLength": 32,
+                                              "maxLength": 32
+                                            },
+                                            "snapshot": {
+                                              "type": "object",
+                                              "properties": {
+                                                "kind": {
+                                                  "type": "string",
+                                                  "enum": [
+                                                    "index_page",
+                                                    "session_snapshot",
+                                                    "turn_snapshot",
+                                                    "message_snapshot",
+                                                    "tool_snapshot",
+                                                    "intent",
+                                                    "observation_batch",
+                                                    "event_batch",
+                                                    "transcript_manifest",
+                                                    "transcript_page",
+                                                    "transcript_chunk",
+                                                    "content",
+                                                    "checkpoint_version",
+                                                    "association",
+                                                    "alias",
+                                                    "relation_page",
+                                                    "source_state",
+                                                    "projection_catalog",
+                                                    "catalog_conflict"
+                                                  ]
+                                                },
+                                                "id": {
+                                                  "type": "string",
+                                                  "pattern": "^[0-9a-f]{64}$",
+                                                  "minLength": 64,
+                                                  "maxLength": 64
+                                                }
+                                              },
+                                              "additionalProperties": false,
+                                              "required": ["kind", "id"]
+                                            }
+                                          },
+                                          "additionalProperties": false,
+                                          "required": ["session", "snapshot"]
+                                        }
+                                      }
+                                    },
+                                    "additionalProperties": false
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "const": "set_metadata"
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": [
+                                  "type",
+                                  "thread_id",
+                                  "expected_thread",
+                                  "target",
+                                  "value"
+                                ]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
                                   "submission": {
                                     "type": "object",
                                     "properties": {
@@ -42191,6 +42781,7 @@
                                             "enum": [
                                               "index_page",
                                               "thread_version",
+                                              "conversation_metadata",
                                               "thread_event",
                                               "human_message_revision",
                                               "thread_link",
@@ -42227,6 +42818,7 @@
                                             "enum": [
                                               "index_page",
                                               "thread_version",
+                                              "conversation_metadata",
                                               "thread_event",
                                               "human_message_revision",
                                               "thread_link",
@@ -42266,6 +42858,7 @@
                                                   "enum": [
                                                     "index_page",
                                                     "thread_version",
+                                                    "conversation_metadata",
                                                     "thread_event",
                                                     "human_message_revision",
                                                     "thread_link",
@@ -42335,6 +42928,7 @@
                                                               "enum": [
                                                                 "index_page",
                                                                 "thread_version",
+                                                                "conversation_metadata",
                                                                 "thread_event",
                                                                 "human_message_revision",
                                                                 "thread_link",
@@ -42967,6 +43561,7 @@
                                                   "enum": [
                                                     "index_page",
                                                     "thread_version",
+                                                    "conversation_metadata",
                                                     "thread_event",
                                                     "human_message_revision",
                                                     "thread_link",
@@ -42995,6 +43590,7 @@
                                                   "enum": [
                                                     "index_page",
                                                     "thread_version",
+                                                    "conversation_metadata",
                                                     "thread_event",
                                                     "human_message_revision",
                                                     "thread_link",
@@ -43071,6 +43667,7 @@
                                                       "enum": [
                                                         "index_page",
                                                         "thread_version",
+                                                        "conversation_metadata",
                                                         "thread_event",
                                                         "human_message_revision",
                                                         "thread_link",
@@ -44455,6 +45052,7 @@
                                                     "enum": [
                                                       "index_page",
                                                       "thread_version",
+                                                      "conversation_metadata",
                                                       "thread_event",
                                                       "human_message_revision",
                                                       "thread_link",
@@ -45109,6 +45707,7 @@
                                                 "enum": [
                                                   "index_page",
                                                   "thread_version",
+                                                  "conversation_metadata",
                                                   "thread_event",
                                                   "human_message_revision",
                                                   "thread_link",
@@ -45911,6 +46510,7 @@
                                         "enum": [
                                           "index_page",
                                           "thread_version",
+                                          "conversation_metadata",
                                           "thread_event",
                                           "human_message_revision",
                                           "thread_link",
@@ -45962,6 +46562,7 @@
                                         "enum": [
                                           "index_page",
                                           "thread_version",
+                                          "conversation_metadata",
                                           "thread_event",
                                           "human_message_revision",
                                           "thread_link",
@@ -46022,6 +46623,7 @@
                                         "enum": [
                                           "index_page",
                                           "thread_version",
+                                          "conversation_metadata",
                                           "thread_event",
                                           "human_message_revision",
                                           "thread_link",
@@ -46056,6 +46658,7 @@
                                         "enum": [
                                           "index_page",
                                           "thread_version",
+                                          "conversation_metadata",
                                           "thread_event",
                                           "human_message_revision",
                                           "thread_link",
@@ -46084,6 +46687,7 @@
                                         "enum": [
                                           "index_page",
                                           "thread_version",
+                                          "conversation_metadata",
                                           "thread_event",
                                           "human_message_revision",
                                           "thread_link",
@@ -46135,6 +46739,7 @@
                                         "enum": [
                                           "index_page",
                                           "thread_version",
+                                          "conversation_metadata",
                                           "thread_event",
                                           "human_message_revision",
                                           "thread_link",
@@ -46215,6 +46820,7 @@
                                                             "enum": [
                                                               "index_page",
                                                               "thread_version",
+                                                              "conversation_metadata",
                                                               "thread_event",
                                                               "human_message_revision",
                                                               "thread_link",
@@ -46840,6 +47446,7 @@
                                                                 "enum": [
                                                                   "index_page",
                                                                   "thread_version",
+                                                                  "conversation_metadata",
                                                                   "thread_event",
                                                                   "human_message_revision",
                                                                   "thread_link",
@@ -47506,6 +48113,7 @@
                                                               "enum": [
                                                                 "index_page",
                                                                 "thread_version",
+                                                                "conversation_metadata",
                                                                 "thread_event",
                                                                 "human_message_revision",
                                                                 "thread_link",
@@ -48156,6 +48764,7 @@
                                                           "enum": [
                                                             "index_page",
                                                             "thread_version",
+                                                            "conversation_metadata",
                                                             "thread_event",
                                                             "human_message_revision",
                                                             "thread_link",
@@ -48714,6 +49323,7 @@
                                                 "enum": [
                                                   "index_page",
                                                   "thread_version",
+                                                  "conversation_metadata",
                                                   "thread_event",
                                                   "human_message_revision",
                                                   "thread_link",
@@ -48742,6 +49352,7 @@
                                                 "enum": [
                                                   "index_page",
                                                   "thread_version",
+                                                  "conversation_metadata",
                                                   "thread_event",
                                                   "human_message_revision",
                                                   "thread_link",
@@ -48869,6 +49480,7 @@
                                                     "enum": [
                                                       "index_page",
                                                       "thread_version",
+                                                      "conversation_metadata",
                                                       "thread_event",
                                                       "human_message_revision",
                                                       "thread_link",
@@ -48897,6 +49509,7 @@
                                                     "enum": [
                                                       "index_page",
                                                       "thread_version",
+                                                      "conversation_metadata",
                                                       "thread_event",
                                                       "human_message_revision",
                                                       "thread_link",
@@ -49326,6 +49939,7 @@
                                         "enum": [
                                           "index_page",
                                           "thread_version",
+                                          "conversation_metadata",
                                           "thread_event",
                                           "human_message_revision",
                                           "thread_link",
@@ -49374,6 +49988,7 @@
                                         "enum": [
                                           "index_page",
                                           "thread_version",
+                                          "conversation_metadata",
                                           "thread_event",
                                           "human_message_revision",
                                           "thread_link",
@@ -49402,6 +50017,7 @@
                                         "enum": [
                                           "index_page",
                                           "thread_version",
+                                          "conversation_metadata",
                                           "thread_event",
                                           "human_message_revision",
                                           "thread_link",
@@ -49494,6 +50110,7 @@
                                                 "enum": [
                                                   "index_page",
                                                   "thread_version",
+                                                  "conversation_metadata",
                                                   "thread_event",
                                                   "human_message_revision",
                                                   "thread_link",
@@ -50093,6 +50710,7 @@
                                                 "enum": [
                                                   "index_page",
                                                   "thread_version",
+                                                  "conversation_metadata",
                                                   "thread_event",
                                                   "human_message_revision",
                                                   "thread_link",
@@ -50138,6 +50756,7 @@
                                           "enum": [
                                             "index_page",
                                             "thread_version",
+                                            "conversation_metadata",
                                             "thread_event",
                                             "human_message_revision",
                                             "thread_link",
@@ -50215,6 +50834,7 @@
                                                 "enum": [
                                                   "index_page",
                                                   "thread_version",
+                                                  "conversation_metadata",
                                                   "thread_event",
                                                   "human_message_revision",
                                                   "thread_link",
@@ -50772,6 +51392,7 @@
                                           "enum": [
                                             "index_page",
                                             "thread_version",
+                                            "conversation_metadata",
                                             "thread_event",
                                             "human_message_revision",
                                             "thread_link",
@@ -50844,6 +51465,7 @@
                                                 "enum": [
                                                   "index_page",
                                                   "thread_version",
+                                                  "conversation_metadata",
                                                   "thread_event",
                                                   "human_message_revision",
                                                   "thread_link",
@@ -51445,6 +52067,7 @@
                                                     "enum": [
                                                       "index_page",
                                                       "thread_version",
+                                                      "conversation_metadata",
                                                       "thread_event",
                                                       "human_message_revision",
                                                       "thread_link",
@@ -51493,6 +52116,7 @@
                                           "enum": [
                                             "index_page",
                                             "thread_version",
+                                            "conversation_metadata",
                                             "thread_event",
                                             "human_message_revision",
                                             "thread_link",
@@ -51551,6 +52175,7 @@
                                         "enum": [
                                           "index_page",
                                           "thread_version",
+                                          "conversation_metadata",
                                           "thread_event",
                                           "human_message_revision",
                                           "thread_link",
@@ -51613,6 +52238,7 @@
                                         "enum": [
                                           "index_page",
                                           "thread_version",
+                                          "conversation_metadata",
                                           "thread_event",
                                           "human_message_revision",
                                           "thread_link",
@@ -57645,6 +58271,87 @@
                       "keychain_supported": {
                         "type": "boolean",
                         "default": false
+                      },
+                      "metadata": {
+                        "type": ["object", "null"],
+                        "properties": {
+                          "model": { "type": "string" },
+                          "options": {
+                            "type": "object",
+                            "properties": {
+                              "inherit_defaults": {
+                                "type": "boolean",
+                                "default": false
+                              },
+                              "provider": {
+                                "type": ["string", "null"],
+                                "default": null
+                              },
+                              "endpoint": {
+                                "type": ["string", "null"],
+                                "default": null
+                              },
+                              "environment": {
+                                "type": "object",
+                                "additionalProperties": {
+                                  "oneOf": [
+                                    {
+                                      "type": "object",
+                                      "properties": {
+                                        "source": {
+                                          "type": "string",
+                                          "const": "literal"
+                                        },
+                                        "value": { "type": "string" }
+                                      },
+                                      "required": ["source", "value"],
+                                      "additionalProperties": false
+                                    },
+                                    {
+                                      "type": "object",
+                                      "properties": {
+                                        "source": {
+                                          "type": "string",
+                                          "const": "environment"
+                                        },
+                                        "value": { "type": "string" }
+                                      },
+                                      "required": ["source", "value"],
+                                      "additionalProperties": false
+                                    },
+                                    {
+                                      "type": "object",
+                                      "properties": {
+                                        "source": {
+                                          "type": "string",
+                                          "const": "keychain"
+                                        },
+                                        "value": { "type": "string" }
+                                      },
+                                      "required": ["source", "value"],
+                                      "additionalProperties": false
+                                    },
+                                    {
+                                      "type": "object",
+                                      "properties": {
+                                        "source": {
+                                          "type": "string",
+                                          "const": "unset"
+                                        }
+                                      },
+                                      "required": ["source"],
+                                      "additionalProperties": false
+                                    }
+                                  ]
+                                },
+                                "default": {}
+                              }
+                            },
+                            "additionalProperties": false
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": ["model", "options"]
                       }
                     },
                     "additionalProperties": false
@@ -59387,6 +60094,712 @@
         }
       }
     },
+    "/v1/local/agents/metadata": {
+      "get": {
+        "operationId": "local_agents_metadata",
+        "tags": ["local"],
+        "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+        "parameters": [
+          {
+            "name": "session",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" },
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "repository",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{32}$",
+              "minLength": 32,
+              "maxLength": 32
+            },
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result at the reported snapshot.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConversationMetadataView"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request, unknown query field or invalid cursor.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing repository Bearer credential.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied, including revoked credentials or disallowed Origin.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "404": {
+            "description": "Object not committed in the selected snapshot or unknown route.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "405": {
+            "description": "Unsupported method.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "408": {
+            "description": "Native query canceled.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "409": {
+            "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "410": {
+            "description": "Index task expired or was lost on server restart.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "413": {
+            "description": "Request or response resource limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "503": {
+            "description": "Busy, unavailable, corrupt or incomplete history.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "504": {
+            "description": "Request or response deadline exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          }
+        },
+        "x-jj-store-query-schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "session": { "type": "string" },
+            "repository": {
+              "type": ["string", "null"],
+              "pattern": "^[0-9a-f]{32}$",
+              "minLength": 32,
+              "maxLength": 32
+            }
+          },
+          "required": ["session"]
+        },
+        "security": [{}]
+      },
+      "head": {
+        "operationId": "local_agents_metadata_head",
+        "tags": ["local"],
+        "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+        "parameters": [
+          {
+            "name": "session",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "string" },
+            "style": "form",
+            "explode": true
+          },
+          {
+            "name": "repository",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{32}$",
+              "minLength": 32,
+              "maxLength": 32
+            },
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result at the reported snapshot."
+          },
+          "400": {
+            "description": "Invalid request, unknown query field or invalid cursor."
+          },
+          "401": { "description": "Missing repository Bearer credential." },
+          "403": {
+            "description": "Access denied, including revoked credentials or disallowed Origin."
+          },
+          "404": {
+            "description": "Object not committed in the selected snapshot or unknown route."
+          },
+          "405": { "description": "Unsupported method." },
+          "408": { "description": "Native query canceled." },
+          "409": {
+            "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index."
+          },
+          "410": {
+            "description": "Index task expired or was lost on server restart."
+          },
+          "413": {
+            "description": "Request or response resource limit exceeded."
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding."
+          },
+          "503": {
+            "description": "Busy, unavailable, corrupt or incomplete history."
+          },
+          "504": { "description": "Request or response deadline exceeded." }
+        },
+        "x-jj-store-query-schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "session": { "type": "string" },
+            "repository": {
+              "type": ["string", "null"],
+              "pattern": "^[0-9a-f]{32}$",
+              "minLength": 32,
+              "maxLength": 32
+            }
+          },
+          "required": ["session"]
+        },
+        "security": [{}]
+      },
+      "post": {
+        "operationId": "local_agents_metadata_command",
+        "tags": ["local"],
+        "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Authorized result at the reported snapshot.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConversationMetadataJob"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request, unknown query field or invalid cursor.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing repository Bearer credential.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied, including revoked credentials or disallowed Origin.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "404": {
+            "description": "Object not committed in the selected snapshot or unknown route.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "405": {
+            "description": "Unsupported method.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "408": {
+            "description": "Native query canceled.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "409": {
+            "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "410": {
+            "description": "Index task expired or was lost on server restart.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "413": {
+            "description": "Request or response resource limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "503": {
+            "description": "Busy, unavailable, corrupt or incomplete history.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "504": {
+            "description": "Request or response deadline exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          }
+        },
+        "x-jj-store-query-schema": {
+          "type": "object",
+          "additionalProperties": false
+        },
+        "security": [{}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "version": {
+                    "type": "integer",
+                    "format": "uint32",
+                    "minimum": 0
+                  },
+                  "request_id": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{32}$",
+                    "minLength": 32,
+                    "maxLength": 32
+                  },
+                  "query": {
+                    "type": "object",
+                    "properties": {
+                      "session": { "type": "string" },
+                      "repository": {
+                        "type": ["string", "null"],
+                        "pattern": "^[0-9a-f]{32}$",
+                        "minLength": 32,
+                        "maxLength": 32
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": ["session"]
+                  },
+                  "expected": {
+                    "type": ["object", "null"],
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "index_page",
+                          "thread_version",
+                          "conversation_metadata",
+                          "thread_event",
+                          "human_message_revision",
+                          "thread_link",
+                          "reaction",
+                          "reaction_retraction",
+                          "reaction_slot",
+                          "custom_emoji_version",
+                          "image_asset"
+                        ]
+                      },
+                      "id": {
+                        "type": "string",
+                        "pattern": "^[0-9a-f]{64}$",
+                        "minLength": 64,
+                        "maxLength": 64
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": ["kind", "id"]
+                  },
+                  "action": {
+                    "oneOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "title": { "type": "string" },
+                          "action": { "type": "string", "const": "rename" }
+                        },
+                        "additionalProperties": false,
+                        "required": ["action", "title"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "action": { "type": "string", "const": "reset_title" }
+                        },
+                        "required": ["action"],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "action": {
+                            "type": "string",
+                            "const": "capture_titles"
+                          }
+                        },
+                        "required": ["action"],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "action": { "type": "string", "const": "refresh" }
+                        },
+                        "required": ["action"],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "action": {
+                            "type": "string",
+                            "const": "regenerate_title"
+                          }
+                        },
+                        "required": ["action"],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "job": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{32}$",
+                            "minLength": 32,
+                            "maxLength": 32
+                          },
+                          "action": { "type": "string", "const": "cancel" }
+                        },
+                        "additionalProperties": false,
+                        "required": ["action", "job"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "job": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{32}$",
+                            "minLength": 32,
+                            "maxLength": 32
+                          },
+                          "action": { "type": "string", "const": "publish" }
+                        },
+                        "additionalProperties": false,
+                        "required": ["action", "job"]
+                      }
+                    ]
+                  }
+                },
+                "additionalProperties": false,
+                "required": ["version", "request_id", "query", "action"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/local/agents/metadata/job": {
+      "get": {
+        "operationId": "local_agents_metadata_job",
+        "tags": ["local"],
+        "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+        "parameters": [
+          {
+            "name": "request",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{32}$",
+              "minLength": 32,
+              "maxLength": 32
+            },
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result at the reported snapshot.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConversationMetadataJob"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request, unknown query field or invalid cursor.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing repository Bearer credential.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied, including revoked credentials or disallowed Origin.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "404": {
+            "description": "Object not committed in the selected snapshot or unknown route.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "405": {
+            "description": "Unsupported method.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "408": {
+            "description": "Native query canceled.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "409": {
+            "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "410": {
+            "description": "Index task expired or was lost on server restart.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "413": {
+            "description": "Request or response resource limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "503": {
+            "description": "Busy, unavailable, corrupt or incomplete history.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "504": {
+            "description": "Request or response deadline exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          }
+        },
+        "x-jj-store-query-schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "request": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{32}$",
+              "minLength": 32,
+              "maxLength": 32
+            }
+          },
+          "required": ["request"]
+        },
+        "security": [{}]
+      },
+      "head": {
+        "operationId": "local_agents_metadata_job_head",
+        "tags": ["local"],
+        "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+        "parameters": [
+          {
+            "name": "request",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{32}$",
+              "minLength": 32,
+              "maxLength": 32
+            },
+            "style": "form",
+            "explode": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Authorized result at the reported snapshot."
+          },
+          "400": {
+            "description": "Invalid request, unknown query field or invalid cursor."
+          },
+          "401": { "description": "Missing repository Bearer credential." },
+          "403": {
+            "description": "Access denied, including revoked credentials or disallowed Origin."
+          },
+          "404": {
+            "description": "Object not committed in the selected snapshot or unknown route."
+          },
+          "405": { "description": "Unsupported method." },
+          "408": { "description": "Native query canceled." },
+          "409": {
+            "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index."
+          },
+          "410": {
+            "description": "Index task expired or was lost on server restart."
+          },
+          "413": {
+            "description": "Request or response resource limit exceeded."
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding."
+          },
+          "503": {
+            "description": "Busy, unavailable, corrupt or incomplete history."
+          },
+          "504": { "description": "Request or response deadline exceeded." }
+        },
+        "x-jj-store-query-schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "request": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{32}$",
+              "minLength": 32,
+              "maxLength": 32
+            }
+          },
+          "required": ["request"]
+        },
+        "security": [{}]
+      }
+    },
     "/v1/local/agents/chat": {
       "post": {
         "operationId": "local_agents_chat",
@@ -59586,6 +60999,7 @@
                                         "enum": [
                                           "index_page",
                                           "thread_version",
+                                          "conversation_metadata",
                                           "thread_event",
                                           "human_message_revision",
                                           "thread_link",
@@ -60187,6 +61601,7 @@
                             "enum": [
                               "index_page",
                               "thread_version",
+                              "conversation_metadata",
                               "thread_event",
                               "human_message_revision",
                               "thread_link",
@@ -60223,6 +61638,7 @@
                             "enum": [
                               "index_page",
                               "thread_version",
+                              "conversation_metadata",
                               "thread_event",
                               "human_message_revision",
                               "thread_link",
@@ -60262,6 +61678,7 @@
                                   "enum": [
                                     "index_page",
                                     "thread_version",
+                                    "conversation_metadata",
                                     "thread_event",
                                     "human_message_revision",
                                     "thread_link",
@@ -60328,6 +61745,7 @@
                                               "enum": [
                                                 "index_page",
                                                 "thread_version",
+                                                "conversation_metadata",
                                                 "thread_event",
                                                 "human_message_revision",
                                                 "thread_link",
@@ -60930,6 +62348,7 @@
                                   "enum": [
                                     "index_page",
                                     "thread_version",
+                                    "conversation_metadata",
                                     "thread_event",
                                     "human_message_revision",
                                     "thread_link",
@@ -60958,6 +62377,7 @@
                                   "enum": [
                                     "index_page",
                                     "thread_version",
+                                    "conversation_metadata",
                                     "thread_event",
                                     "human_message_revision",
                                     "thread_link",
@@ -61031,6 +62451,7 @@
                                       "enum": [
                                         "index_page",
                                         "thread_version",
+                                        "conversation_metadata",
                                         "thread_event",
                                         "human_message_revision",
                                         "thread_link",
@@ -62826,6 +64247,7 @@
                                     "enum": [
                                       "index_page",
                                       "thread_version",
+                                      "conversation_metadata",
                                       "thread_event",
                                       "human_message_revision",
                                       "thread_link",
@@ -62862,6 +64284,7 @@
                                     "enum": [
                                       "index_page",
                                       "thread_version",
+                                      "conversation_metadata",
                                       "thread_event",
                                       "human_message_revision",
                                       "thread_link",
@@ -62901,6 +64324,7 @@
                                           "enum": [
                                             "index_page",
                                             "thread_version",
+                                            "conversation_metadata",
                                             "thread_event",
                                             "human_message_revision",
                                             "thread_link",
@@ -62967,6 +64391,7 @@
                                                       "enum": [
                                                         "index_page",
                                                         "thread_version",
+                                                        "conversation_metadata",
                                                         "thread_event",
                                                         "human_message_revision",
                                                         "thread_link",
@@ -63569,6 +64994,7 @@
                                           "enum": [
                                             "index_page",
                                             "thread_version",
+                                            "conversation_metadata",
                                             "thread_event",
                                             "human_message_revision",
                                             "thread_link",
@@ -63597,6 +65023,7 @@
                                           "enum": [
                                             "index_page",
                                             "thread_version",
+                                            "conversation_metadata",
                                             "thread_event",
                                             "human_message_revision",
                                             "thread_link",
@@ -63673,6 +65100,7 @@
                                               "enum": [
                                                 "index_page",
                                                 "thread_version",
+                                                "conversation_metadata",
                                                 "thread_event",
                                                 "human_message_revision",
                                                 "thread_link",
@@ -67717,6 +69145,8 @@
         "type": "object",
         "properties": {
           "session_id": { "$ref": "#/components/schemas/AgentSessionId" },
+          "conversation_title": { "type": ["string", "null"] },
+          "discovery_text": { "type": ["string", "null"] },
           "snapshot_id": { "$ref": "#/components/schemas/AgentObjectId" },
           "integration": { "$ref": "#/components/schemas/IntegrationId" },
           "state": { "$ref": "#/components/schemas/SessionState" },
@@ -68077,6 +69507,7 @@
         "enum": [
           "index_page",
           "thread_version",
+          "conversation_metadata",
           "thread_event",
           "human_message_revision",
           "thread_link",
@@ -70724,6 +72155,15 @@
       },
       "ThreadEventKindV1": {
         "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "version": { "$ref": "#/components/schemas/CollabObjectRef" },
+              "type": { "type": "string", "const": "metadata" }
+            },
+            "required": ["type", "version"]
+          },
           {
             "type": "object",
             "properties": { "type": { "type": "string", "const": "created" } },
@@ -77941,7 +79381,13 @@
           },
           "automatically_mention": { "type": "boolean", "default": false },
           "keep_awake": { "type": "boolean", "default": false },
-          "keychain_supported": { "type": "boolean", "default": false }
+          "keychain_supported": { "type": "boolean", "default": false },
+          "metadata": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/ConversationMetadataConfig" },
+              { "type": "null" }
+            ]
+          }
         },
         "required": [
           "revision",
@@ -78016,6 +79462,15 @@
             "additionalProperties": false
           }
         ]
+      },
+      "ConversationMetadataConfig": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "model": { "type": "string" },
+          "options": { "$ref": "#/components/schemas/AgentRuntimeOptions" }
+        },
+        "required": ["model", "options"]
       },
       "AgentSecretStatus": {
         "type": "object",
@@ -78147,6 +79602,8 @@
           "target_id": { "type": "string" },
           "runner": { "type": "string" },
           "title": { "type": "string" },
+          "conversation_title": { "type": ["string", "null"] },
+          "discovery_text": { "type": ["string", "null"] },
           "avatar": { "type": "string" },
           "workspace": { "type": "string" },
           "base_commit": { "type": "string" },
@@ -78321,7 +79778,8 @@
             ],
             "default": null
           },
-          "participants": { "type": "array", "items": { "type": "string" } }
+          "participants": { "type": "array", "items": { "type": "string" } },
+          "metadata_auto_eligible": { "type": "boolean" }
         },
         "required": [
           "id",
@@ -78457,6 +79915,278 @@
           "profile",
           "operation",
           "commit"
+        ]
+      },
+      "ConversationMetadataView": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+          "repository": { "$ref": "#/components/schemas/RepositoryId" },
+          "target": {
+            "$ref": "#/components/schemas/ConversationMetadataTargetV1"
+          },
+          "thread": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/ThreadId" },
+              { "type": "null" }
+            ]
+          },
+          "revision": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/CollabObjectRef" },
+              { "type": "null" }
+            ]
+          },
+          "value": {
+            "$ref": "#/components/schemas/ConversationMetadataValueV1"
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConversationMetadataSourceV1"
+            }
+          },
+          "title": { "type": ["string", "null"] },
+          "fresh": { "type": "boolean" },
+          "writable": { "type": "boolean" },
+          "unavailable": { "type": ["string", "null"] },
+          "details": true,
+          "job": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/ConversationMetadataJob" },
+              { "type": "null" }
+            ]
+          }
+        },
+        "required": [
+          "version",
+          "repository",
+          "target",
+          "thread",
+          "revision",
+          "value",
+          "sources",
+          "title",
+          "fresh",
+          "writable",
+          "unavailable",
+          "details",
+          "job"
+        ]
+      },
+      "ConversationMetadataTargetV1": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string" },
+              "type": { "type": "string", "const": "conversation" }
+            },
+            "required": ["type", "id"]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "session": { "$ref": "#/components/schemas/AgentSessionId" },
+              "type": { "type": "string", "const": "recorded" }
+            },
+            "required": ["type", "session"]
+          }
+        ]
+      },
+      "ConversationMetadataValueV1": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "custom_title": { "type": ["string", "null"], "default": null },
+          "generated": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GeneratedConversationMetadataV1"
+              },
+              { "type": "null" }
+            ],
+            "default": null
+          },
+          "agent_titles": {
+            "type": "object",
+            "additionalProperties": { "type": "string" },
+            "default": {}
+          },
+          "agent_title_sources": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/ConversationMetadataSourceV1"
+            }
+          }
+        },
+        "required": ["custom_title", "generated", "agent_titles"]
+      },
+      "GeneratedConversationMetadataV1": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "title": { "type": "string" },
+          "summary": { "type": "string" },
+          "keywords": { "type": "array", "items": { "type": "string" } },
+          "goals": { "type": "array", "items": { "type": "string" } },
+          "sources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConversationMetadataSourceV1"
+            }
+          },
+          "provider": { "type": "string" },
+          "model": { "type": "string" },
+          "prompt_version": {
+            "type": "integer",
+            "format": "uint32",
+            "minimum": 0
+          },
+          "generated_at_millis": { "type": "integer", "format": "int64" },
+          "truncated": { "type": "boolean" }
+        },
+        "required": [
+          "title",
+          "summary",
+          "keywords",
+          "goals",
+          "sources",
+          "provider",
+          "model",
+          "prompt_version",
+          "generated_at_millis",
+          "truncated"
+        ]
+      },
+      "ConversationMetadataSourceV1": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "session": { "$ref": "#/components/schemas/AgentSessionId" },
+          "snapshot": { "$ref": "#/components/schemas/AgentObjectRef" }
+        },
+        "required": ["session", "snapshot"]
+      },
+      "ConversationMetadataJob": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "request_id": { "$ref": "#/components/schemas/RequestId" },
+          "state": { "type": "string" },
+          "error": { "type": ["string", "null"] },
+          "result": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/GeneratedConversationMetadataV1"
+              },
+              { "type": "null" }
+            ]
+          },
+          "original_command": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/ConversationMetadataCommand" },
+              { "type": "null" }
+            ]
+          }
+        },
+        "required": ["request_id", "state", "error", "result"]
+      },
+      "ConversationMetadataCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+          "request_id": { "$ref": "#/components/schemas/RequestId" },
+          "query": { "$ref": "#/components/schemas/ConversationMetadataQuery" },
+          "expected": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/CollabObjectRef" },
+              { "type": "null" }
+            ]
+          },
+          "action": { "$ref": "#/components/schemas/Action" }
+        },
+        "required": ["version", "request_id", "query", "expected", "action"]
+      },
+      "ConversationMetadataQuery": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "session": { "type": "string" },
+          "repository": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/RepositoryId" },
+              { "type": "null" }
+            ]
+          }
+        },
+        "required": ["session", "repository"]
+      },
+      "Action": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "title": { "type": "string" },
+              "action": { "type": "string", "const": "rename" }
+            },
+            "required": ["action", "title"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "action": { "type": "string", "const": "reset_title" }
+            },
+            "required": ["action"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "action": { "type": "string", "const": "capture_titles" }
+            },
+            "required": ["action"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "action": { "type": "string", "const": "refresh" }
+            },
+            "required": ["action"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "action": { "type": "string", "const": "regenerate_title" }
+            },
+            "required": ["action"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "job": { "$ref": "#/components/schemas/RequestId" },
+              "action": { "type": "string", "const": "cancel" }
+            },
+            "required": ["action", "job"]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "job": { "$ref": "#/components/schemas/RequestId" },
+              "action": { "type": "string", "const": "publish" }
+            },
+            "required": ["action", "job"]
+          }
         ]
       },
       "AgentConversationOutcome": {

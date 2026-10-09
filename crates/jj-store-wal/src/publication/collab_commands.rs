@@ -300,6 +300,27 @@ impl Coordinator {
         command: &ThreadCommandV1,
         qualified: Option<&dyn jj_collab::QualifiedReviewRead>,
     ) -> std::result::Result<(), CollabCommandError> {
+        if let ThreadCommandV1::SetMetadata { value, .. } = command {
+            if !value.source_refs().is_empty() {
+                let agents = self
+                    .agent_store(
+                        base.manifest
+                            .agent_root
+                            .ok_or(Error::Corrupt("metadata source root"))?,
+                    )
+                    .await?;
+                for source in value.source_refs() {
+                    let AgentObjectV1::SessionSnapshot(snapshot) =
+                        agents.read_object(source.snapshot).await?
+                    else {
+                        return Err(Error::Corrupt("metadata source kind").into());
+                    };
+                    if snapshot.session_id != source.session {
+                        return Err(Error::Corrupt("metadata source identity").into());
+                    }
+                }
+            }
+        }
         if !command.conversation_sources().is_empty() || !command.comment_references().is_empty() {
             let selected = self.collab_domain_state(base, Domain::Thread).await?;
             let threads = self.native_thread_store(selected.root).await?;

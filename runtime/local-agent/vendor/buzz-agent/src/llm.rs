@@ -39,6 +39,7 @@ enum DatabricksV2Route {
 
 pub struct Llm {
     http: Client,
+    single_attempt: bool,
     /// One-shot sticky flag: set when a Chat Completions request comes
     /// back with a "use /v1/responses" provider error while `cfg.openai_api
     /// == Auto`. Subsequent OpenAI calls then go straight to Responses
@@ -72,11 +73,20 @@ impl Llm {
         let auth = build_token_source(cfg)?;
         Ok(Self {
             http,
+            single_attempt: false,
             auto_upgraded: AtomicBool::new(false),
             auth,
         })
     }
 
+    /// LapisMD metadata jobs never retry a possibly accepted inference.
+    pub fn single_attempt(mut self) -> Self {
+        self.single_attempt = true;
+        self
+    }
+    fn attempts(&self) -> u32 {
+        if self.single_attempt { 1 } else { MAX_RETRIES }
+    }
     pub async fn complete(
         &self,
         cfg: &Config,
@@ -359,10 +369,17 @@ impl Llm {
 
     async fn post_anthropic(&self, cfg: &Config, body: &Value) -> Result<Value, AgentError> {
         let url = format!("{}/v1/messages", cfg.base_url.trim_end_matches('/'));
-        post(&self.http, &url, body, cfg.llm_timeout, |r| {
-            r.header("x-api-key", &cfg.api_key)
-                .header("anthropic-version", &cfg.anthropic_api_version)
-        })
+        post_with_attempts(
+            &self.http,
+            &url,
+            body,
+            cfg.llm_timeout,
+            self.attempts(),
+            |r| {
+                r.header("x-api-key", &cfg.api_key)
+                    .header("anthropic-version", &cfg.anthropic_api_version)
+            },
+        )
         .await
         .map_err(PostError::into_agent)
     }
@@ -424,7 +441,9 @@ impl Llm {
                 })
                 .map_err(PostError::from),
             Err(PostError::Agent(error))
-                if cfg.openai_api == OpenAiApi::Auto && self.try_upgrade(&error) =>
+                if !self.single_attempt
+                    && cfg.openai_api == OpenAiApi::Auto
+                    && self.try_upgrade(&error) =>
             {
                 let (body, parse) = build(true, request_model);
                 parse(
@@ -498,12 +517,19 @@ impl Llm {
         let mut bearer = self.auth.bearer().await.map_err(PostError::from)?;
         let mut refreshed = false;
         loop {
-            match post(&self.http, &url, body_ref, cfg.llm_timeout, |r| {
-                r.bearer_auth(&bearer)
-            })
+            match post_with_attempts(
+                &self.http,
+                &url,
+                body_ref,
+                cfg.llm_timeout,
+                self.attempts(),
+                |r| r.bearer_auth(&bearer),
+            )
             .await
             {
-                Err(PostError::Agent(AgentError::LlmAuth(_))) if !refreshed => {
+                Err(PostError::Agent(AgentError::LlmAuth(_)))
+                    if !refreshed && !self.single_attempt =>
+                {
                     refreshed = true;
                     bearer = self
                         .auth
@@ -521,8 +547,17 @@ impl Llm {
         let mut bearer = self.auth.bearer().await?;
         let mut refreshed = false;
         loop {
-            match openrouter_post(&self.http, &url, body, &bearer, cfg.llm_timeout).await {
-                Err(AgentError::LlmAuth(_)) if !refreshed => {
+            match openrouter_post_with_attempts(
+                &self.http,
+                &url,
+                body,
+                &bearer,
+                cfg.llm_timeout,
+                self.attempts(),
+            )
+            .await
+            {
+                Err(AgentError::LlmAuth(_)) if !refreshed && !self.single_attempt => {
                     refreshed = true;
                     let new_bearer = self.auth.refresh_now(&bearer).await?;
                     // A static key refreshes to itself — a byte-identical retry
@@ -1824,11 +1859,25 @@ impl From<AgentError> for PostError {
     }
 }
 
+#[cfg(test)]
 async fn post<F>(
     http: &Client,
     url: &str,
     body: &Value,
     base_timeout: std::time::Duration,
+    apply: F,
+) -> Result<Value, PostError>
+where
+    F: Fn(reqwest::RequestBuilder) -> reqwest::RequestBuilder,
+{
+    post_with_attempts(http, url, body, base_timeout, MAX_RETRIES, apply).await
+}
+async fn post_with_attempts<F>(
+    http: &Client,
+    url: &str,
+    body: &Value,
+    base_timeout: std::time::Duration,
+    max_retries: u32,
     apply: F,
 ) -> Result<Value, PostError>
 where
@@ -1841,7 +1890,7 @@ where
     // budget on the next attempt. Non-timeout retryable failures (429, 5xx,
     // connect resets) are not evidence of a slow model and do NOT escalate.
     let mut timeout_failures: u32 = 0;
-    'attempt: for attempt in 0..MAX_RETRIES {
+    'attempt: for attempt in 0..max_retries {
         let per_request_timeout = escalated_timeout(base_timeout, timeout_failures);
         let resp = match apply(
             http.post(url)
@@ -1857,10 +1906,10 @@ where
                 if e.is_timeout() {
                     timeout_failures += 1;
                 }
-                if attempt + 1 < MAX_RETRIES && is_retryable_transport_error(&e) {
+                if attempt + 1 < max_retries && is_retryable_transport_error(&e) {
                     tracing::warn!(
                         attempt = attempt + 1,
-                        max_attempts = MAX_RETRIES,
+                        max_attempts = max_retries,
                         error = %e,
                         is_timeout = e.is_timeout(),
                         timeout_failures,
@@ -1891,10 +1940,10 @@ where
         }
         if status.is_server_error() || status == 429 || status.as_u16() == 499 {
             let body = read_error_body(resp).await;
-            if attempt + 1 < MAX_RETRIES {
+            if attempt + 1 < max_retries {
                 tracing::warn!(
                     attempt = attempt + 1,
-                    max_attempts = MAX_RETRIES,
+                    max_attempts = max_retries,
                     %status,
                     "llm: retryable status, retrying"
                 );
@@ -1971,11 +2020,11 @@ where
                     // the response stalled). Retry with an escalated budget,
                     // same as a transport-phase timeout — the server may be
                     // slow to flush, not permanently broken.
-                    if e.is_timeout() && attempt + 1 < MAX_RETRIES {
+                    if e.is_timeout() && attempt + 1 < max_retries {
                         timeout_failures += 1;
                         tracing::warn!(
                             attempt = attempt + 1,
-                            max_attempts = MAX_RETRIES,
+                            max_attempts = max_retries,
                             is_timeout = true,
                             timeout_failures,
                             error = %e,
@@ -2002,10 +2051,10 @@ where
         match serde_json::from_slice(&buf) {
             Ok(value) => return Ok(value),
             Err(e) => {
-                if attempt + 1 < MAX_RETRIES {
+                if attempt + 1 < max_retries {
                     tracing::warn!(
                         attempt = attempt + 1,
-                        max_attempts = MAX_RETRIES,
+                        max_attempts = max_retries,
                         error = %e,
                         "llm: malformed response body, retrying"
                     );
@@ -2021,12 +2070,12 @@ where
         }
     }
     // Unreachable in practice: every iteration either returns or continues.
-    // A fallthrough here would mean MAX_RETRIES was 0, which is rejected at
+    // A fallthrough here would mean max_retries was 0, which is rejected at
     // config validation. Return a terminal error rather than panic so the
     // invariant is not load-bearing.
     Err(PostError::Agent(terminal_llm_error(
         call_start.elapsed(),
-        MAX_RETRIES,
+        max_retries,
         "exhausted retries",
     )))
 }
@@ -2158,7 +2207,7 @@ enum OpenRouterErrorClass {
 /// sleep on it. OpenRouter can advertise waits up to an hour, but
 /// `openrouter_post`'s per-attempt sleep happens *outside* the per-request
 /// `.timeout()` budget — an unclamped hint could keep a single turn alive for
-/// up to two full-duration sleeps across `MAX_RETRIES`. Clamping (never
+/// up to two full-duration sleeps across `max_retries`. Clamping (never
 /// rejecting) keeps us honoring the server's backoff signal while bounding
 /// worst-case turn latency to a value smaller than the per-request timeout.
 const RETRY_AFTER_CAP_SECS: u64 = 60;
@@ -2220,6 +2269,7 @@ fn openrouter_parameter_routing_error(error_body: &str) -> AgentError {
     ))
 }
 
+#[cfg(test)]
 async fn openrouter_post(
     http: &Client,
     url: &str,
@@ -2227,13 +2277,23 @@ async fn openrouter_post(
     bearer: &str,
     base_timeout: std::time::Duration,
 ) -> Result<Value, AgentError> {
+    openrouter_post_with_attempts(http, url, body, bearer, base_timeout, MAX_RETRIES).await
+}
+async fn openrouter_post_with_attempts(
+    http: &Client,
+    url: &str,
+    body: &Value,
+    bearer: &str,
+    base_timeout: std::time::Duration,
+    max_retries: u32,
+) -> Result<Value, AgentError> {
     let body_bytes =
         serde_json::to_vec(body).map_err(|e| AgentError::Llm(format!("serialize: {e}")))?;
     let call_start = std::time::Instant::now();
     // Count prior timeout failures for per-attempt budget escalation; see
     // `escalated_timeout` for the doubling strategy.
     let mut timeout_failures: u32 = 0;
-    'attempt: for attempt in 0..MAX_RETRIES {
+    'attempt: for attempt in 0..max_retries {
         let per_request_timeout = escalated_timeout(base_timeout, timeout_failures);
         let resp = match http
             .post(url)
@@ -2251,10 +2311,10 @@ async fn openrouter_post(
                 if e.is_timeout() {
                     timeout_failures += 1;
                 }
-                if attempt + 1 < MAX_RETRIES && is_retryable_transport_error(&e) {
+                if attempt + 1 < max_retries && is_retryable_transport_error(&e) {
                     tracing::warn!(
                         attempt = attempt + 1,
-                        max_attempts = MAX_RETRIES,
+                        max_attempts = max_retries,
                         error = %e,
                         is_timeout = e.is_timeout(),
                         timeout_failures,
@@ -2318,7 +2378,7 @@ async fn openrouter_post(
         if status.is_server_error() || status == 429 || status.as_u16() == 499 {
             let header_retry_after = parse_retry_after_header(resp.headers());
             let error_body = read_error_body(resp).await;
-            let should_retry = if attempt + 1 < MAX_RETRIES {
+            let should_retry = if attempt + 1 < max_retries {
                 match classify_openrouter_error(status.as_u16(), &error_body, header_retry_after) {
                     OpenRouterErrorClass::Retryable(delay) => {
                         if let Some(d) = delay {
@@ -2407,11 +2467,11 @@ async fn openrouter_post(
                     // Body-read timeout: retry with escalated budget, same as
                     // transport-phase timeouts — see the corresponding arm in
                     // `post()` for the full rationale.
-                    if e.is_timeout() && attempt + 1 < MAX_RETRIES {
+                    if e.is_timeout() && attempt + 1 < max_retries {
                         timeout_failures += 1;
                         tracing::warn!(
                             attempt = attempt + 1,
-                            max_attempts = MAX_RETRIES,
+                            max_attempts = max_retries,
                             is_timeout = true,
                             timeout_failures,
                             error = %e,
@@ -2436,10 +2496,10 @@ async fn openrouter_post(
         match serde_json::from_slice(&buf) {
             Ok(value) => return Ok(value),
             Err(e) => {
-                if attempt + 1 < MAX_RETRIES {
+                if attempt + 1 < max_retries {
                     tracing::warn!(
                         attempt = attempt + 1,
-                        max_attempts = MAX_RETRIES,
+                        max_attempts = max_retries,
                         error = %e,
                         "llm: openrouter malformed response body, retrying"
                     );
@@ -2456,7 +2516,7 @@ async fn openrouter_post(
     }
     Err(terminal_llm_error(
         call_start.elapsed(),
-        MAX_RETRIES,
+        max_retries,
         "exhausted retries",
     ))
 }
@@ -5845,12 +5905,50 @@ mod tests {
         url
     }
 
+    #[tokio::test]
+    async fn metadata_summary_never_retries_an_unknown_inference() {
+        use std::sync::atomic::{AtomicU32, Ordering};
+        use tokio::io::{AsyncReadExt, AsyncWriteExt};
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let base = format!("http://{}", listener.local_addr().unwrap());
+        let accepts = Arc::new(AtomicU32::new(0));
+        let counted = accepts.clone();
+        let server = tokio::spawn(async move {
+            loop {
+                let (mut socket, _) = listener.accept().await.unwrap();
+                counted.fetch_add(1, Ordering::SeqCst);
+                let mut bytes = [0; 4096];
+                socket.read(&mut bytes).await.unwrap();
+                socket.write_all(b"HTTP/1.1 503 Unavailable\r\nContent-Length: 2\r\nConnection: close\r\n\r\n{}").await.unwrap();
+            }
+        });
+        let llm = llm_with(Arc::new(CountingAuth {
+            refreshes: AtomicU32::new(0),
+        }))
+        .single_attempt();
+        let mut config = cfg(Provider::OpenAi);
+        config.base_url = base;
+        assert!(
+            llm.summarize(
+                &config,
+                "metadata instructions",
+                "untrusted input",
+                32,
+                "model"
+            )
+            .await
+            .is_err()
+        );
+        assert_eq!(accepts.load(Ordering::SeqCst), 1);
+        server.abort();
+    }
     fn llm_with(auth: Arc<dyn TokenSource>) -> Llm {
         Llm {
             http: Client::builder()
                 .timeout(Duration::from_secs(5))
                 .build()
                 .unwrap(),
+            single_attempt: false,
             auto_upgraded: std::sync::atomic::AtomicBool::new(false),
             auth,
         }

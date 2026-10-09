@@ -249,3 +249,10 @@ roots. Bounded listings, source fingerprints, comparison boundaries and opaque
 continuations describe the exact read. Unsupported baselines remain explicit.
 See the generated [installation API](api/installation.md) and
 [collaboration API](api/collaboration.md) for request and response types.
+
+Conversation metadata is exposed through LocalTrusted Admin
+`GET/POST /v1/local/agents/metadata` and `GET /v1/local/agents/metadata/job`.
+Each request independently checks repository access. Commands include rename,
+reset title, refresh, regenerate title, cancellation and retained-result
+publication. Reads never initiate inference. Generated API/CLI references
+describe exact version-1 fields and bounds.

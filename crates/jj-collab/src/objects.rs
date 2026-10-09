@@ -22,6 +22,7 @@ use std::collections::BTreeSet;
 pub enum CollabObjectKind {
     IndexPage,
     ThreadVersion,
+    ConversationMetadata,
     ThreadEvent,
     HumanMessageRevision,
     ThreadLink,
@@ -59,6 +60,7 @@ pub struct CollabObjectRef {
 pub enum CollabObjectV1 {
     IndexPage(CollabIndexPageV1),
     ThreadVersion(ThreadVersionV1),
+    ConversationMetadata(ConversationMetadataV1),
     ThreadEvent(ThreadEventV1),
     HumanMessageRevision(HumanMessageRevisionV1),
     ThreadLink(ThreadLinkV1),
@@ -73,6 +75,7 @@ impl CollabObjectV1 {
         match self {
             Self::IndexPage(_) => CollabObjectKind::IndexPage,
             Self::ThreadVersion(_) => CollabObjectKind::ThreadVersion,
+            Self::ConversationMetadata(_) => CollabObjectKind::ConversationMetadata,
             Self::ThreadEvent(_) => CollabObjectKind::ThreadEvent,
             Self::HumanMessageRevision(_) => CollabObjectKind::HumanMessageRevision,
             Self::ThreadLink(_) => CollabObjectKind::ThreadLink,
@@ -87,6 +90,7 @@ impl CollabObjectV1 {
         match self {
             Self::IndexPage(v) => v.validate(),
             Self::ThreadVersion(v) => v.validate(),
+            Self::ConversationMetadata(v) => v.validate(),
             Self::ThreadEvent(v) => v.validate(),
             Self::HumanMessageRevision(v) => v.validate(),
             Self::ThreadLink(v) => v.validate(),
@@ -107,6 +111,7 @@ impl CollabObjectV1 {
         self.validate()?;
         let refs = match self {
             Self::IndexPage(v) => v.dependencies(),
+            Self::ConversationMetadata(v) => v.previous.into_iter().collect(),
             Self::ThreadVersion(v) => v
                 .previous
                 .into_iter()
@@ -122,7 +127,8 @@ impl CollabObjectV1 {
                 .into_iter()
                 .chain(match v.event {
                     ThreadEventKindV1::Message { revision } => Some(revision),
-                    ThreadEventKindV1::Link { version } => Some(version),
+                    ThreadEventKindV1::Link { version }
+                    | ThreadEventKindV1::Metadata { version } => Some(version),
                     _ => None,
                 })
                 .collect(),
@@ -180,6 +186,12 @@ impl CollabObjectV1 {
     }
     pub fn agent_dependencies(&self) -> BTreeSet<AgentObjectRef> {
         match self {
+            Self::ConversationMetadata(v) => v
+                .value
+                .source_refs()
+                .into_iter()
+                .map(|s| s.snapshot)
+                .collect(),
             Self::ThreadVersion(v) => v
                 .agent_message
                 .as_ref()

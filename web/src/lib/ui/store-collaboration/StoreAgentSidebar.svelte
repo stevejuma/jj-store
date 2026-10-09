@@ -8,6 +8,8 @@
   import StoreAgentSessionMenu from "./StoreAgentSessionMenu.svelte";
   import StoreDiscussionSheet from "../store-discussion/StoreDiscussionSheet.svelte";
   import StoreAgentComments from "./StoreAgentComments.svelte";
+  import StoreConversationMetadata from "../store-agent-execution/StoreConversationMetadata.svelte";
+  import { metadataKey } from "../../controller/conversation-metadata.svelte.js";
   import StoreAgentContext from "./StoreAgentContext.svelte";
   import StoreCollaborationSkeleton from "./StoreCollaborationSkeleton.svelte";
   import "./store-collaboration.css";
@@ -64,6 +66,14 @@
   {/if}
   {#if !failure && !controller?.state.agentSession}
     <StoreCollaborationSkeleton label="Loading agent response" />
+  {:else if controller?.execution && controller.state.agentSession && controller.execution.metadata.details[metadataKey( { session: controller.state.agentSession.session.session_id, repository: controller.state.repository.id } )]}
+    <StoreConversationMetadata
+      manager={controller.execution}
+      query={{
+        session: controller.state.agentSession.session.session_id,
+        repository: controller.state.repository.id,
+      }}
+    />
   {:else if controller}
     <StoreAgentContext {controller} showHeader={false} />
   {/if}

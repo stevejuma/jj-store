@@ -49,6 +49,7 @@ export function dependencyErrors(packages) {
     ],
     "jj-store-server": [
       "jj-agent",
+      "jj-collab",
       "jj-store-capture",
       "jj-store-adapters",
       "jj-store-tantivy",

@@ -218,6 +218,12 @@ impl Supervisor {
             return Err(Error::Invalid);
         }
         validate(&command.settings.options)?;
+        if let Some(config) = &command.settings.metadata {
+            validate(&config.options)?;
+            if !label(&config.model, 256) || config.options.inherit_defaults {
+                return Err(Error::Invalid);
+            }
+        }
         preferences(&command.settings.preferences)?;
         let digest = journal::digest(&command)?;
         let _guard = self.0.mutation.lock().await;

@@ -7721,6 +7721,333 @@ Current repository permission is checked for every request. Commands and status 
                 {
                   "type": "object",
                   "properties": {
+                    "thread_id": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{32}$",
+                      "minLength": 32,
+                      "maxLength": 32
+                    },
+                    "expected_thread": {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "index_page",
+                            "thread_version",
+                            "conversation_metadata",
+                            "thread_event",
+                            "human_message_revision",
+                            "thread_link",
+                            "reaction",
+                            "reaction_retraction",
+                            "reaction_slot",
+                            "custom_emoji_version",
+                            "image_asset"
+                          ]
+                        },
+                        "id": {
+                          "type": "string",
+                          "pattern": "^[0-9a-f]{64}$",
+                          "minLength": 64,
+                          "maxLength": 64
+                        }
+                      },
+                      "additionalProperties": false,
+                      "required": [
+                        "kind",
+                        "id"
+                      ]
+                    },
+                    "expected_metadata": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "index_page",
+                            "thread_version",
+                            "conversation_metadata",
+                            "thread_event",
+                            "human_message_revision",
+                            "thread_link",
+                            "reaction",
+                            "reaction_retraction",
+                            "reaction_slot",
+                            "custom_emoji_version",
+                            "image_asset"
+                          ]
+                        },
+                        "id": {
+                          "type": "string",
+                          "pattern": "^[0-9a-f]{64}$",
+                          "minLength": 64,
+                          "maxLength": 64
+                        }
+                      },
+                      "additionalProperties": false,
+                      "required": [
+                        "kind",
+                        "id"
+                      ]
+                    },
+                    "target": {
+                      "oneOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string",
+                              "const": "conversation"
+                            }
+                          },
+                          "additionalProperties": false,
+                          "required": [
+                            "type",
+                            "id"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "session": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            },
+                            "type": {
+                              "type": "string",
+                              "const": "recorded"
+                            }
+                          },
+                          "additionalProperties": false,
+                          "required": [
+                            "type",
+                            "session"
+                          ]
+                        }
+                      ]
+                    },
+                    "value": {
+                      "type": "object",
+                      "properties": {
+                        "custom_title": {
+                          "type": [
+                            "string",
+                            "null"
+                          ],
+                          "default": null
+                        },
+                        "generated": {
+                          "type": [
+                            "object",
+                            "null"
+                          ],
+                          "properties": {
+                            "title": {
+                              "type": "string"
+                            },
+                            "summary": {
+                              "type": "string"
+                            },
+                            "keywords": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "goals": {
+                              "type": "array",
+                              "items": {
+                                "type": "string"
+                              }
+                            },
+                            "sources": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "session": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "snapshot": {
+                                    "type": "object",
+                                    "properties": {
+                                      "kind": {
+                                        "type": "string",
+                                        "enum": [
+                                          "index_page",
+                                          "session_snapshot",
+                                          "turn_snapshot",
+                                          "message_snapshot",
+                                          "tool_snapshot",
+                                          "intent",
+                                          "observation_batch",
+                                          "event_batch",
+                                          "transcript_manifest",
+                                          "transcript_page",
+                                          "transcript_chunk",
+                                          "content",
+                                          "checkpoint_version",
+                                          "association",
+                                          "alias",
+                                          "relation_page",
+                                          "source_state",
+                                          "projection_catalog",
+                                          "catalog_conflict"
+                                        ]
+                                      },
+                                      "id": {
+                                        "type": "string",
+                                        "pattern": "^[0-9a-f]{64}$",
+                                        "minLength": 64,
+                                        "maxLength": 64
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": [
+                                      "kind",
+                                      "id"
+                                    ]
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": [
+                                  "session",
+                                  "snapshot"
+                                ]
+                              }
+                            },
+                            "provider": {
+                              "type": "string"
+                            },
+                            "model": {
+                              "type": "string"
+                            },
+                            "prompt_version": {
+                              "type": "integer",
+                              "format": "uint32",
+                              "minimum": 0
+                            },
+                            "generated_at_millis": {
+                              "type": "integer",
+                              "format": "int64"
+                            },
+                            "truncated": {
+                              "type": "boolean"
+                            }
+                          },
+                          "additionalProperties": false,
+                          "required": [
+                            "title",
+                            "summary",
+                            "keywords",
+                            "goals",
+                            "sources",
+                            "provider",
+                            "model",
+                            "prompt_version",
+                            "generated_at_millis",
+                            "truncated"
+                          ],
+                          "default": null
+                        },
+                        "agent_titles": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "string"
+                          },
+                          "default": {}
+                        },
+                        "agent_title_sources": {
+                          "type": "object",
+                          "additionalProperties": {
+                            "type": "object",
+                            "properties": {
+                              "session": {
+                                "type": "string",
+                                "pattern": "^[0-9a-f]{32}$",
+                                "minLength": 32,
+                                "maxLength": 32
+                              },
+                              "snapshot": {
+                                "type": "object",
+                                "properties": {
+                                  "kind": {
+                                    "type": "string",
+                                    "enum": [
+                                      "index_page",
+                                      "session_snapshot",
+                                      "turn_snapshot",
+                                      "message_snapshot",
+                                      "tool_snapshot",
+                                      "intent",
+                                      "observation_batch",
+                                      "event_batch",
+                                      "transcript_manifest",
+                                      "transcript_page",
+                                      "transcript_chunk",
+                                      "content",
+                                      "checkpoint_version",
+                                      "association",
+                                      "alias",
+                                      "relation_page",
+                                      "source_state",
+                                      "projection_catalog",
+                                      "catalog_conflict"
+                                    ]
+                                  },
+                                  "id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{64}$",
+                                    "minLength": 64,
+                                    "maxLength": 64
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": [
+                                  "kind",
+                                  "id"
+                                ]
+                              }
+                            },
+                            "additionalProperties": false,
+                            "required": [
+                              "session",
+                              "snapshot"
+                            ]
+                          }
+                        }
+                      },
+                      "additionalProperties": false
+                    },
+                    "type": {
+                      "type": "string",
+                      "const": "set_metadata"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "type",
+                    "thread_id",
+                    "expected_thread",
+                    "target",
+                    "value"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
                     "submission": {
                       "type": "object",
                       "properties": {
@@ -7738,6 +8065,7 @@ Current repository permission is checked for every request. Commands and status 
                               "enum": [
                                 "index_page",
                                 "thread_version",
+                                "conversation_metadata",
                                 "thread_event",
                                 "human_message_revision",
                                 "thread_link",
@@ -7788,6 +8116,7 @@ Current repository permission is checked for every request. Commands and status 
                               "enum": [
                                 "index_page",
                                 "thread_version",
+                                "conversation_metadata",
                                 "thread_event",
                                 "human_message_revision",
                                 "thread_link",
@@ -7833,6 +8162,7 @@ Current repository permission is checked for every request. Commands and status 
                                     "enum": [
                                       "index_page",
                                       "thread_version",
+                                      "conversation_metadata",
                                       "thread_event",
                                       "human_message_revision",
                                       "thread_link",
@@ -7905,6 +8235,7 @@ Current repository permission is checked for every request. Commands and status 
                                                 "enum": [
                                                   "index_page",
                                                   "thread_version",
+                                                  "conversation_metadata",
                                                   "thread_event",
                                                   "human_message_revision",
                                                   "thread_link",
@@ -8551,6 +8882,7 @@ Current repository permission is checked for every request. Commands and status 
                                     "enum": [
                                       "index_page",
                                       "thread_version",
+                                      "conversation_metadata",
                                       "thread_event",
                                       "human_message_revision",
                                       "thread_link",
@@ -8585,6 +8917,7 @@ Current repository permission is checked for every request. Commands and status 
                                     "enum": [
                                       "index_page",
                                       "thread_version",
+                                      "conversation_metadata",
                                       "thread_event",
                                       "human_message_revision",
                                       "thread_link",
@@ -8669,6 +9002,7 @@ Current repository permission is checked for every request. Commands and status 
                                         "enum": [
                                           "index_page",
                                           "thread_version",
+                                          "conversation_metadata",
                                           "thread_event",
                                           "human_message_revision",
                                           "thread_link",
@@ -10114,6 +10448,7 @@ Current repository permission is checked for every request. Commands and status 
                                       "enum": [
                                         "index_page",
                                         "thread_version",
+                                        "conversation_metadata",
                                         "thread_event",
                                         "human_message_revision",
                                         "thread_link",
@@ -10814,6 +11149,7 @@ Current repository permission is checked for every request. Commands and status 
                                   "enum": [
                                     "index_page",
                                     "thread_version",
+                                    "conversation_metadata",
                                     "thread_event",
                                     "human_message_revision",
                                     "thread_link",
@@ -11660,6 +11996,7 @@ Current repository permission is checked for every request. Commands and status 
                           "enum": [
                             "index_page",
                             "thread_version",
+                            "conversation_metadata",
                             "thread_event",
                             "human_message_revision",
                             "thread_link",
@@ -11716,6 +12053,7 @@ Current repository permission is checked for every request. Commands and status 
                           "enum": [
                             "index_page",
                             "thread_version",
+                            "conversation_metadata",
                             "thread_event",
                             "human_message_revision",
                             "thread_link",
@@ -11779,6 +12117,7 @@ Current repository permission is checked for every request. Commands and status 
                           "enum": [
                             "index_page",
                             "thread_version",
+                            "conversation_metadata",
                             "thread_event",
                             "human_message_revision",
                             "thread_link",
@@ -11819,6 +12158,7 @@ Current repository permission is checked for every request. Commands and status 
                           "enum": [
                             "index_page",
                             "thread_version",
+                            "conversation_metadata",
                             "thread_event",
                             "human_message_revision",
                             "thread_link",
@@ -11853,6 +12193,7 @@ Current repository permission is checked for every request. Commands and status 
                           "enum": [
                             "index_page",
                             "thread_version",
+                            "conversation_metadata",
                             "thread_event",
                             "human_message_revision",
                             "thread_link",
@@ -11912,6 +12253,7 @@ Current repository permission is checked for every request. Commands and status 
                           "enum": [
                             "index_page",
                             "thread_version",
+                            "conversation_metadata",
                             "thread_event",
                             "human_message_revision",
                             "thread_link",
@@ -11995,6 +12337,7 @@ Current repository permission is checked for every request. Commands and status 
                                               "enum": [
                                                 "index_page",
                                                 "thread_version",
+                                                "conversation_metadata",
                                                 "thread_event",
                                                 "human_message_revision",
                                                 "thread_link",
@@ -12620,6 +12963,7 @@ Current repository permission is checked for every request. Commands and status 
                                                   "enum": [
                                                     "index_page",
                                                     "thread_version",
+                                                    "conversation_metadata",
                                                     "thread_event",
                                                     "human_message_revision",
                                                     "thread_link",
@@ -13297,6 +13641,7 @@ Current repository permission is checked for every request. Commands and status 
                                                 "enum": [
                                                   "index_page",
                                                   "thread_version",
+                                                  "conversation_metadata",
                                                   "thread_event",
                                                   "human_message_revision",
                                                   "thread_link",
@@ -13950,6 +14295,7 @@ Current repository permission is checked for every request. Commands and status 
                                             "enum": [
                                               "index_page",
                                               "thread_version",
+                                              "conversation_metadata",
                                               "thread_event",
                                               "human_message_revision",
                                               "thread_link",
@@ -14538,6 +14884,7 @@ Current repository permission is checked for every request. Commands and status 
                                   "enum": [
                                     "index_page",
                                     "thread_version",
+                                    "conversation_metadata",
                                     "thread_event",
                                     "human_message_revision",
                                     "thread_link",
@@ -14572,6 +14919,7 @@ Current repository permission is checked for every request. Commands and status 
                                   "enum": [
                                     "index_page",
                                     "thread_version",
+                                    "conversation_metadata",
                                     "thread_event",
                                     "human_message_revision",
                                     "thread_link",
@@ -14708,6 +15056,7 @@ Current repository permission is checked for every request. Commands and status 
                                       "enum": [
                                         "index_page",
                                         "thread_version",
+                                        "conversation_metadata",
                                         "thread_event",
                                         "human_message_revision",
                                         "thread_link",
@@ -14742,6 +15091,7 @@ Current repository permission is checked for every request. Commands and status 
                                       "enum": [
                                         "index_page",
                                         "thread_version",
+                                        "conversation_metadata",
                                         "thread_event",
                                         "human_message_revision",
                                         "thread_link",
@@ -15191,6 +15541,7 @@ Current repository permission is checked for every request. Commands and status 
                           "enum": [
                             "index_page",
                             "thread_version",
+                            "conversation_metadata",
                             "thread_event",
                             "human_message_revision",
                             "thread_link",
@@ -15245,6 +15596,7 @@ Current repository permission is checked for every request. Commands and status 
                           "enum": [
                             "index_page",
                             "thread_version",
+                            "conversation_metadata",
                             "thread_event",
                             "human_message_revision",
                             "thread_link",
@@ -15276,6 +15628,7 @@ Current repository permission is checked for every request. Commands and status 
                           "enum": [
                             "index_page",
                             "thread_version",
+                            "conversation_metadata",
                             "thread_event",
                             "human_message_revision",
                             "thread_link",
@@ -15801,6 +16154,7 @@ Current repository permission is checked for every request. Commands and status 
                           "enum": [
                             "index_page",
                             "thread_version",
+                            "conversation_metadata",
                             "thread_event",
                             "human_message_revision",
                             "thread_link",
@@ -16634,6 +16988,7 @@ Current repository permission is checked for every request. Commands and status 
                                   "enum": [
                                     "index_page",
                                     "thread_version",
+                                    "conversation_metadata",
                                     "thread_event",
                                     "human_message_revision",
                                     "thread_link",
@@ -17272,6 +17627,7 @@ Current repository permission is checked for every request. Commands and status 
                                   "enum": [
                                     "index_page",
                                     "thread_version",
+                                    "conversation_metadata",
                                     "thread_event",
                                     "human_message_revision",
                                     "thread_link",
@@ -17320,6 +17676,7 @@ Current repository permission is checked for every request. Commands and status 
                             "enum": [
                               "index_page",
                               "thread_version",
+                              "conversation_metadata",
                               "thread_event",
                               "human_message_revision",
                               "thread_link",
@@ -17406,6 +17763,7 @@ Current repository permission is checked for every request. Commands and status 
                                   "enum": [
                                     "index_page",
                                     "thread_version",
+                                    "conversation_metadata",
                                     "thread_event",
                                     "human_message_revision",
                                     "thread_link",
@@ -17993,6 +18351,7 @@ Current repository permission is checked for every request. Commands and status 
                             "enum": [
                               "index_page",
                               "thread_version",
+                              "conversation_metadata",
                               "thread_event",
                               "human_message_revision",
                               "thread_link",
@@ -18078,6 +18437,7 @@ Current repository permission is checked for every request. Commands and status 
                                   "enum": [
                                     "index_page",
                                     "thread_version",
+                                    "conversation_metadata",
                                     "thread_event",
                                     "human_message_revision",
                                     "thread_link",
@@ -18718,6 +19078,7 @@ Current repository permission is checked for every request. Commands and status 
                                       "enum": [
                                         "index_page",
                                         "thread_version",
+                                        "conversation_metadata",
                                         "thread_event",
                                         "human_message_revision",
                                         "thread_link",
@@ -18771,6 +19132,7 @@ Current repository permission is checked for every request. Commands and status 
                             "enum": [
                               "index_page",
                               "thread_version",
+                              "conversation_metadata",
                               "thread_event",
                               "human_message_revision",
                               "thread_link",

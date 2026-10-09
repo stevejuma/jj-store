@@ -86,6 +86,16 @@ impl CollabGraphV1 {
             }
         }
         match object {
+            CollabObjectV1::ConversationMetadata(v) => {
+                if let Some(p) = v.previous {
+                    let CollabObjectV1::ConversationMetadata(old) = self.get(p)? else {
+                        return Err(Error::Invalid("metadata history"));
+                    };
+                    if old.target != v.target || old.thread_id != v.thread_id {
+                        return Err(Error::Invalid("metadata history identity"));
+                    }
+                }
+            }
             CollabObjectV1::ReactionSlot(slot) => {
                 slot.resolve(&self.objects)?;
             }
@@ -190,6 +200,20 @@ impl CollabGraphV1 {
                                     || thread.status != old.status
                                 {
                                     return Err(Error::Invalid("Thread message membership"));
+                                }
+                            }
+                            ThreadEventKindV1::Metadata { version } => {
+                                let CollabObjectV1::ConversationMetadata(v) = self.get(*version)?
+                                else {
+                                    return Err(Error::Invalid("metadata event"));
+                                };
+                                if v.thread_id != thread.thread_id
+                                    || v.actor != thread.actor
+                                    || v.accepted_at_millis != thread.accepted_at_millis
+                                    || thread.title != old.title
+                                    || thread.status != old.status
+                                {
+                                    return Err(Error::Invalid("metadata event attribution"));
                                 }
                             }
                             ThreadEventKindV1::Link { version } => {

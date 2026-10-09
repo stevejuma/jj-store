@@ -54,7 +54,7 @@
     await expect(c.getByLabelText("Agent fleet requests")).toHaveTextContent(
       "[]",
     );
-    const editor = within(
+    let editor = within(
       c.getByRole("group", { name: "Message to agents" }),
     ).getByRole("textbox", { name: "Markdown editor" });
     await expect(
@@ -103,6 +103,9 @@
     await expect(
       await c.findByText("Hello from the reusable agent."),
     ).toBeVisible();
+    editor = within(
+      c.getByRole("group", { name: "Message to agents" }),
+    ).getByRole("textbox", { name: "Markdown editor" });
     await expect(editor).toHaveTextContent("Helper");
     await expect(
       within(editor).getByRole("img", { name: "Helper, Idle" }),

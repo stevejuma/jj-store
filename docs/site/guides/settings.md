@@ -136,3 +136,8 @@ independent of Focus/Split placement. Both views retain selection comments,
 reactions and reply navigation. Specialized task and review panels keep their
 own presentation. Enter inserts a new line; Send or Cmd/Ctrl+Enter submits the
 entire pending prompt.
+
+Conversation metadata has its own provider/model under **Agents**. It defaults
+to unconfigured. These settings apply to future metadata jobs and never change a
+coding agent's model, start managed compute or trigger historical backfill.
+Credential environment entries retain the existing installation custody rules.

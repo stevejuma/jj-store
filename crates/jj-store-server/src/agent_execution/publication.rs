@@ -22,6 +22,9 @@ impl Supervisor {
         for saved in sessions {
             if saved.view.published_sequence == saved.view.last_sequence {
                 self.publish_comment_answers_status(&saved.view.id).await?;
+                if self.metadata_suggestions(&saved.view.id).await.is_ok() {
+                    let _ = self.metadata_automatic(&saved.view.id).await;
+                }
                 continue;
             }
             if self
@@ -38,6 +41,9 @@ impl Supervisor {
             let result = self.publish_session(&saved).await;
             if result.is_ok() {
                 self.publish_comment_answers_status(&saved.view.id).await?;
+                if self.metadata_suggestions(&saved.view.id).await.is_ok() {
+                    let _ = self.metadata_automatic(&saved.view.id).await;
+                }
             }
             if result.is_err() {
                 self.update(|s| {

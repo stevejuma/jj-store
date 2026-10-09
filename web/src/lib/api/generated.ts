@@ -2708,6 +2708,43 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/v1/local/agents/metadata": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    get: operations["local_agents_metadata"];
+    put?: never;
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    post: operations["local_agents_metadata_command"];
+    delete?: never;
+    options?: never;
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    head: operations["local_agents_metadata_head"];
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/local/agents/metadata/job": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    get: operations["local_agents_metadata_job"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    head: operations["local_agents_metadata_job_head"];
+    patch?: never;
+    trace?: never;
+  };
   "/v1/local/agents/chat": {
     parameters: {
       query?: never;
@@ -3410,6 +3447,8 @@ export interface components {
     };
     AgentSessionSummary: {
       session_id: components["schemas"]["AgentSessionId"];
+      conversation_title?: string | null;
+      discovery_text?: string | null;
       snapshot_id: components["schemas"]["AgentObjectId"];
       integration: components["schemas"]["IntegrationId"];
       state: components["schemas"]["SessionState"];
@@ -3561,6 +3600,7 @@ export interface components {
     CollabObjectKind:
       | "index_page"
       | "thread_version"
+      | "conversation_metadata"
       | "thread_event"
       | "human_message_revision"
       | "thread_link"
@@ -4643,6 +4683,11 @@ export interface components {
     };
     ThreadEventId: string;
     ThreadEventKindV1:
+      | {
+          version: components["schemas"]["CollabObjectRef"];
+          /** @constant */
+          type: "metadata";
+        }
       | {
           /** @constant */
           type: "created";
@@ -7756,6 +7801,7 @@ export interface components {
       keep_awake: boolean;
       /** @default false */
       keychain_supported: boolean;
+      metadata?: components["schemas"]["ConversationMetadataConfig"] | null;
     };
     AgentExecutionPreferences: {
       model: string | null;
@@ -7794,6 +7840,10 @@ export interface components {
           /** @constant */
           source: "unset";
         };
+    ConversationMetadataConfig: {
+      model: string;
+      options: components["schemas"]["AgentRuntimeOptions"];
+    };
     AgentSecretStatus: {
       keychain_supported: boolean;
     };
@@ -7868,6 +7918,8 @@ export interface components {
       target_id: string;
       runner: string;
       title: string;
+      conversation_title?: string | null;
+      discovery_text?: string | null;
       avatar: string;
       workspace: string;
       base_commit: string;
@@ -7941,6 +7993,7 @@ export interface components {
       /** @default null */
       discussion_thread: components["schemas"]["ThreadId"] | null;
       participants: string[];
+      metadata_auto_eligible?: boolean;
     };
     AgentConversationOrigin: {
       scope: string;
@@ -7992,6 +8045,117 @@ export interface components {
       operation: components["schemas"]["OperationId"];
       commit: string;
     };
+    ConversationMetadataView: {
+      /** Format: uint32 */
+      version: number;
+      repository: components["schemas"]["RepositoryId"];
+      target: components["schemas"]["ConversationMetadataTargetV1"];
+      thread: components["schemas"]["ThreadId"] | null;
+      revision: components["schemas"]["CollabObjectRef"] | null;
+      value: components["schemas"]["ConversationMetadataValueV1"];
+      sources: components["schemas"]["ConversationMetadataSourceV1"][];
+      title: string | null;
+      fresh: boolean;
+      writable: boolean;
+      unavailable: string | null;
+      details: unknown;
+      job: components["schemas"]["ConversationMetadataJob"] | null;
+    };
+    ConversationMetadataTargetV1:
+      | {
+          id: string;
+          /** @constant */
+          type: "conversation";
+        }
+      | {
+          session: components["schemas"]["AgentSessionId"];
+          /** @constant */
+          type: "recorded";
+        };
+    ConversationMetadataValueV1: {
+      /** @default null */
+      custom_title: string | null;
+      /** @default null */
+      generated:
+        components["schemas"]["GeneratedConversationMetadataV1"] | null;
+      /** @default {} */
+      agent_titles: {
+        [key: string]: string;
+      };
+      agent_title_sources?: {
+        [key: string]: components["schemas"]["ConversationMetadataSourceV1"];
+      };
+    };
+    GeneratedConversationMetadataV1: {
+      title: string;
+      summary: string;
+      keywords: string[];
+      goals: string[];
+      sources: components["schemas"]["ConversationMetadataSourceV1"][];
+      provider: string;
+      model: string;
+      /** Format: uint32 */
+      prompt_version: number;
+      /** Format: int64 */
+      generated_at_millis: number;
+      truncated: boolean;
+    };
+    ConversationMetadataSourceV1: {
+      session: components["schemas"]["AgentSessionId"];
+      snapshot: components["schemas"]["AgentObjectRef"];
+    };
+    ConversationMetadataJob: {
+      request_id: components["schemas"]["RequestId"];
+      state: string;
+      error: string | null;
+      result: components["schemas"]["GeneratedConversationMetadataV1"] | null;
+      original_command?:
+        components["schemas"]["ConversationMetadataCommand"] | null;
+    };
+    ConversationMetadataCommand: {
+      /** Format: uint32 */
+      version: number;
+      request_id: components["schemas"]["RequestId"];
+      query: components["schemas"]["ConversationMetadataQuery"];
+      expected: components["schemas"]["CollabObjectRef"] | null;
+      action: components["schemas"]["Action"];
+    };
+    ConversationMetadataQuery: {
+      session: string;
+      repository: components["schemas"]["RepositoryId"] | null;
+    };
+    Action:
+      | {
+          title: string;
+          /** @constant */
+          action: "rename";
+        }
+      | {
+          /** @constant */
+          action: "reset_title";
+        }
+      | {
+          /** @constant */
+          action: "capture_titles";
+        }
+      | {
+          /** @constant */
+          action: "refresh";
+        }
+      | {
+          /** @constant */
+          action: "regenerate_title";
+        }
+      | {
+          job: components["schemas"]["RequestId"];
+          /** @constant */
+          action: "cancel";
+        }
+      | {
+          job: components["schemas"]["RequestId"];
+          /** @constant */
+          action: "publish";
+        };
     AgentConversationOutcome: {
       request_id: components["schemas"]["RequestId"];
       conversation_id: string;
@@ -16463,6 +16627,132 @@ export interface operations {
           request_id: string;
           command:
             | {
+                thread_id: string;
+                expected_thread: {
+                  /** @enum {string} */
+                  kind:
+                    | "index_page"
+                    | "thread_version"
+                    | "conversation_metadata"
+                    | "thread_event"
+                    | "human_message_revision"
+                    | "thread_link"
+                    | "reaction"
+                    | "reaction_retraction"
+                    | "reaction_slot"
+                    | "custom_emoji_version"
+                    | "image_asset";
+                  id: string;
+                };
+                expected_metadata?: {
+                  /** @enum {string} */
+                  kind:
+                    | "index_page"
+                    | "thread_version"
+                    | "conversation_metadata"
+                    | "thread_event"
+                    | "human_message_revision"
+                    | "thread_link"
+                    | "reaction"
+                    | "reaction_retraction"
+                    | "reaction_slot"
+                    | "custom_emoji_version"
+                    | "image_asset";
+                  id: string;
+                } | null;
+                target:
+                  | {
+                      id: string;
+                      /** @constant */
+                      type: "conversation";
+                    }
+                  | {
+                      session: string;
+                      /** @constant */
+                      type: "recorded";
+                    };
+                value: {
+                  /** @default null */
+                  custom_title?: string | null;
+                  /** @default null */
+                  generated?: {
+                    title: string;
+                    summary: string;
+                    keywords: string[];
+                    goals: string[];
+                    sources: {
+                      session: string;
+                      snapshot: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "session_snapshot"
+                          | "turn_snapshot"
+                          | "message_snapshot"
+                          | "tool_snapshot"
+                          | "intent"
+                          | "observation_batch"
+                          | "event_batch"
+                          | "transcript_manifest"
+                          | "transcript_page"
+                          | "transcript_chunk"
+                          | "content"
+                          | "checkpoint_version"
+                          | "association"
+                          | "alias"
+                          | "relation_page"
+                          | "source_state"
+                          | "projection_catalog"
+                          | "catalog_conflict";
+                        id: string;
+                      };
+                    }[];
+                    provider: string;
+                    model: string;
+                    /** Format: uint32 */
+                    prompt_version: number;
+                    /** Format: int64 */
+                    generated_at_millis: number;
+                    truncated: boolean;
+                  } | null;
+                  /** @default {} */
+                  agent_titles?: {
+                    [key: string]: string;
+                  };
+                  agent_title_sources?: {
+                    [key: string]: {
+                      session: string;
+                      snapshot: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "session_snapshot"
+                          | "turn_snapshot"
+                          | "message_snapshot"
+                          | "tool_snapshot"
+                          | "intent"
+                          | "observation_batch"
+                          | "event_batch"
+                          | "transcript_manifest"
+                          | "transcript_page"
+                          | "transcript_chunk"
+                          | "content"
+                          | "checkpoint_version"
+                          | "association"
+                          | "alias"
+                          | "relation_page"
+                          | "source_state"
+                          | "projection_catalog"
+                          | "catalog_conflict";
+                        id: string;
+                      };
+                    };
+                  };
+                };
+                /** @constant */
+                type: "set_metadata";
+              }
+            | {
                 submission: {
                   thread_id: string;
                   expected_thread: {
@@ -16470,6 +16760,7 @@ export interface operations {
                     kind:
                       | "index_page"
                       | "thread_version"
+                      | "conversation_metadata"
                       | "thread_event"
                       | "human_message_revision"
                       | "thread_link"
@@ -16488,6 +16779,7 @@ export interface operations {
                     kind:
                       | "index_page"
                       | "thread_version"
+                      | "conversation_metadata"
                       | "thread_event"
                       | "human_message_revision"
                       | "thread_link"
@@ -16505,6 +16797,7 @@ export interface operations {
                       kind:
                         | "index_page"
                         | "thread_version"
+                        | "conversation_metadata"
                         | "thread_event"
                         | "human_message_revision"
                         | "thread_link"
@@ -16531,6 +16824,7 @@ export interface operations {
                               kind:
                                 | "index_page"
                                 | "thread_version"
+                                | "conversation_metadata"
                                 | "thread_event"
                                 | "human_message_revision"
                                 | "thread_link"
@@ -16785,6 +17079,7 @@ export interface operations {
                       kind:
                         | "index_page"
                         | "thread_version"
+                        | "conversation_metadata"
                         | "thread_event"
                         | "human_message_revision"
                         | "thread_link"
@@ -16800,6 +17095,7 @@ export interface operations {
                       kind:
                         | "index_page"
                         | "thread_version"
+                        | "conversation_metadata"
                         | "thread_event"
                         | "human_message_revision"
                         | "thread_link"
@@ -16826,6 +17122,7 @@ export interface operations {
                           kind:
                             | "index_page"
                             | "thread_version"
+                            | "conversation_metadata"
                             | "thread_event"
                             | "human_message_revision"
                             | "thread_link"
@@ -17371,6 +17668,7 @@ export interface operations {
                           kind:
                             | "index_page"
                             | "thread_version"
+                            | "conversation_metadata"
                             | "thread_event"
                             | "human_message_revision"
                             | "thread_link"
@@ -17640,6 +17938,7 @@ export interface operations {
                         kind:
                           | "index_page"
                           | "thread_version"
+                          | "conversation_metadata"
                           | "thread_event"
                           | "human_message_revision"
                           | "thread_link"
@@ -17937,6 +18236,7 @@ export interface operations {
                   kind:
                     | "index_page"
                     | "thread_version"
+                    | "conversation_metadata"
                     | "thread_event"
                     | "human_message_revision"
                     | "thread_link"
@@ -17958,6 +18258,7 @@ export interface operations {
                   kind:
                     | "index_page"
                     | "thread_version"
+                    | "conversation_metadata"
                     | "thread_event"
                     | "human_message_revision"
                     | "thread_link"
@@ -17981,6 +18282,7 @@ export interface operations {
                   kind:
                     | "index_page"
                     | "thread_version"
+                    | "conversation_metadata"
                     | "thread_event"
                     | "human_message_revision"
                     | "thread_link"
@@ -17997,6 +18299,7 @@ export interface operations {
                   kind:
                     | "index_page"
                     | "thread_version"
+                    | "conversation_metadata"
                     | "thread_event"
                     | "human_message_revision"
                     | "thread_link"
@@ -18012,6 +18315,7 @@ export interface operations {
                   kind:
                     | "index_page"
                     | "thread_version"
+                    | "conversation_metadata"
                     | "thread_event"
                     | "human_message_revision"
                     | "thread_link"
@@ -18033,6 +18337,7 @@ export interface operations {
                   kind:
                     | "index_page"
                     | "thread_version"
+                    | "conversation_metadata"
                     | "thread_event"
                     | "human_message_revision"
                     | "thread_link"
@@ -18062,6 +18367,7 @@ export interface operations {
                                 kind:
                                   | "index_page"
                                   | "thread_version"
+                                  | "conversation_metadata"
                                   | "thread_event"
                                   | "human_message_revision"
                                   | "thread_link"
@@ -18314,6 +18620,7 @@ export interface operations {
                                   kind:
                                     | "index_page"
                                     | "thread_version"
+                                    | "conversation_metadata"
                                     | "thread_event"
                                     | "human_message_revision"
                                     | "thread_link"
@@ -18576,6 +18883,7 @@ export interface operations {
                                 kind:
                                   | "index_page"
                                   | "thread_version"
+                                  | "conversation_metadata"
                                   | "thread_event"
                                   | "human_message_revision"
                                   | "thread_link"
@@ -18833,6 +19141,7 @@ export interface operations {
                               kind:
                                 | "index_page"
                                 | "thread_version"
+                                | "conversation_metadata"
                                 | "thread_event"
                                 | "human_message_revision"
                                 | "thread_link"
@@ -19075,6 +19384,7 @@ export interface operations {
                         kind:
                           | "index_page"
                           | "thread_version"
+                          | "conversation_metadata"
                           | "thread_event"
                           | "human_message_revision"
                           | "thread_link"
@@ -19090,6 +19400,7 @@ export interface operations {
                         kind:
                           | "index_page"
                           | "thread_version"
+                          | "conversation_metadata"
                           | "thread_event"
                           | "human_message_revision"
                           | "thread_link"
@@ -19160,6 +19471,7 @@ export interface operations {
                           kind:
                             | "index_page"
                             | "thread_version"
+                            | "conversation_metadata"
                             | "thread_event"
                             | "human_message_revision"
                             | "thread_link"
@@ -19175,6 +19487,7 @@ export interface operations {
                           kind:
                             | "index_page"
                             | "thread_version"
+                            | "conversation_metadata"
                             | "thread_event"
                             | "human_message_revision"
                             | "thread_link"
@@ -19321,6 +19634,7 @@ export interface operations {
                   kind:
                     | "index_page"
                     | "thread_version"
+                    | "conversation_metadata"
                     | "thread_event"
                     | "human_message_revision"
                     | "thread_link"
@@ -19341,6 +19655,7 @@ export interface operations {
                   kind:
                     | "index_page"
                     | "thread_version"
+                    | "conversation_metadata"
                     | "thread_event"
                     | "human_message_revision"
                     | "thread_link"
@@ -19356,6 +19671,7 @@ export interface operations {
                   kind:
                     | "index_page"
                     | "thread_version"
+                    | "conversation_metadata"
                     | "thread_event"
                     | "human_message_revision"
                     | "thread_link"
@@ -19755,6 +20071,7 @@ export interface operations {
                   kind:
                     | "index_page"
                     | "thread_version"
+                    | "conversation_metadata"
                     | "thread_event"
                     | "human_message_revision"
                     | "thread_link"
@@ -20153,6 +20470,7 @@ export interface operations {
                         kind:
                           | "index_page"
                           | "thread_version"
+                          | "conversation_metadata"
                           | "thread_event"
                           | "human_message_revision"
                           | "thread_link"
@@ -20410,6 +20728,7 @@ export interface operations {
                         kind:
                           | "index_page"
                           | "thread_version"
+                          | "conversation_metadata"
                           | "thread_event"
                           | "human_message_revision"
                           | "thread_link"
@@ -20428,6 +20747,7 @@ export interface operations {
                   kind:
                     | "index_page"
                     | "thread_version"
+                    | "conversation_metadata"
                     | "thread_event"
                     | "human_message_revision"
                     | "thread_link"
@@ -20457,6 +20777,7 @@ export interface operations {
                         kind:
                           | "index_page"
                           | "thread_version"
+                          | "conversation_metadata"
                           | "thread_event"
                           | "human_message_revision"
                           | "thread_link"
@@ -20698,6 +21019,7 @@ export interface operations {
                   kind:
                     | "index_page"
                     | "thread_version"
+                    | "conversation_metadata"
                     | "thread_event"
                     | "human_message_revision"
                     | "thread_link"
@@ -20727,6 +21049,7 @@ export interface operations {
                         kind:
                           | "index_page"
                           | "thread_version"
+                          | "conversation_metadata"
                           | "thread_event"
                           | "human_message_revision"
                           | "thread_link"
@@ -20985,6 +21308,7 @@ export interface operations {
                             kind:
                               | "index_page"
                               | "thread_version"
+                              | "conversation_metadata"
                               | "thread_event"
                               | "human_message_revision"
                               | "thread_link"
@@ -21005,6 +21329,7 @@ export interface operations {
                   kind:
                     | "index_page"
                     | "thread_version"
+                    | "conversation_metadata"
                     | "thread_event"
                     | "human_message_revision"
                     | "thread_link"
@@ -38110,6 +38435,7 @@ export interface operations {
                         kind:
                           | "index_page"
                           | "thread_version"
+                          | "conversation_metadata"
                           | "thread_event"
                           | "human_message_revision"
                           | "thread_link"
@@ -38637,6 +38963,132 @@ export interface operations {
             | {
                 intent:
                   | {
+                      thread_id: string;
+                      expected_thread: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "thread_version"
+                          | "conversation_metadata"
+                          | "thread_event"
+                          | "human_message_revision"
+                          | "thread_link"
+                          | "reaction"
+                          | "reaction_retraction"
+                          | "reaction_slot"
+                          | "custom_emoji_version"
+                          | "image_asset";
+                        id: string;
+                      };
+                      expected_metadata?: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "thread_version"
+                          | "conversation_metadata"
+                          | "thread_event"
+                          | "human_message_revision"
+                          | "thread_link"
+                          | "reaction"
+                          | "reaction_retraction"
+                          | "reaction_slot"
+                          | "custom_emoji_version"
+                          | "image_asset";
+                        id: string;
+                      } | null;
+                      target:
+                        | {
+                            id: string;
+                            /** @constant */
+                            type: "conversation";
+                          }
+                        | {
+                            session: string;
+                            /** @constant */
+                            type: "recorded";
+                          };
+                      value: {
+                        /** @default null */
+                        custom_title?: string | null;
+                        /** @default null */
+                        generated?: {
+                          title: string;
+                          summary: string;
+                          keywords: string[];
+                          goals: string[];
+                          sources: {
+                            session: string;
+                            snapshot: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                          }[];
+                          provider: string;
+                          model: string;
+                          /** Format: uint32 */
+                          prompt_version: number;
+                          /** Format: int64 */
+                          generated_at_millis: number;
+                          truncated: boolean;
+                        } | null;
+                        /** @default {} */
+                        agent_titles?: {
+                          [key: string]: string;
+                        };
+                        agent_title_sources?: {
+                          [key: string]: {
+                            session: string;
+                            snapshot: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                          };
+                        };
+                      };
+                      /** @constant */
+                      type: "set_metadata";
+                    }
+                  | {
                       submission: {
                         thread_id: string;
                         expected_thread: {
@@ -38644,6 +39096,7 @@ export interface operations {
                           kind:
                             | "index_page"
                             | "thread_version"
+                            | "conversation_metadata"
                             | "thread_event"
                             | "human_message_revision"
                             | "thread_link"
@@ -38662,6 +39115,7 @@ export interface operations {
                           kind:
                             | "index_page"
                             | "thread_version"
+                            | "conversation_metadata"
                             | "thread_event"
                             | "human_message_revision"
                             | "thread_link"
@@ -38679,6 +39133,7 @@ export interface operations {
                             kind:
                               | "index_page"
                               | "thread_version"
+                              | "conversation_metadata"
                               | "thread_event"
                               | "human_message_revision"
                               | "thread_link"
@@ -38705,6 +39160,7 @@ export interface operations {
                                     kind:
                                       | "index_page"
                                       | "thread_version"
+                                      | "conversation_metadata"
                                       | "thread_event"
                                       | "human_message_revision"
                                       | "thread_link"
@@ -38959,6 +39415,7 @@ export interface operations {
                             kind:
                               | "index_page"
                               | "thread_version"
+                              | "conversation_metadata"
                               | "thread_event"
                               | "human_message_revision"
                               | "thread_link"
@@ -38974,6 +39431,7 @@ export interface operations {
                             kind:
                               | "index_page"
                               | "thread_version"
+                              | "conversation_metadata"
                               | "thread_event"
                               | "human_message_revision"
                               | "thread_link"
@@ -39000,6 +39458,7 @@ export interface operations {
                                 kind:
                                   | "index_page"
                                   | "thread_version"
+                                  | "conversation_metadata"
                                   | "thread_event"
                                   | "human_message_revision"
                                   | "thread_link"
@@ -39545,6 +40004,7 @@ export interface operations {
                                 kind:
                                   | "index_page"
                                   | "thread_version"
+                                  | "conversation_metadata"
                                   | "thread_event"
                                   | "human_message_revision"
                                   | "thread_link"
@@ -39814,6 +40274,7 @@ export interface operations {
                               kind:
                                 | "index_page"
                                 | "thread_version"
+                                | "conversation_metadata"
                                 | "thread_event"
                                 | "human_message_revision"
                                 | "thread_link"
@@ -40111,6 +40572,7 @@ export interface operations {
                         kind:
                           | "index_page"
                           | "thread_version"
+                          | "conversation_metadata"
                           | "thread_event"
                           | "human_message_revision"
                           | "thread_link"
@@ -40132,6 +40594,7 @@ export interface operations {
                         kind:
                           | "index_page"
                           | "thread_version"
+                          | "conversation_metadata"
                           | "thread_event"
                           | "human_message_revision"
                           | "thread_link"
@@ -40159,6 +40622,7 @@ export interface operations {
                         kind:
                           | "index_page"
                           | "thread_version"
+                          | "conversation_metadata"
                           | "thread_event"
                           | "human_message_revision"
                           | "thread_link"
@@ -40175,6 +40639,7 @@ export interface operations {
                         kind:
                           | "index_page"
                           | "thread_version"
+                          | "conversation_metadata"
                           | "thread_event"
                           | "human_message_revision"
                           | "thread_link"
@@ -40190,6 +40655,7 @@ export interface operations {
                         kind:
                           | "index_page"
                           | "thread_version"
+                          | "conversation_metadata"
                           | "thread_event"
                           | "human_message_revision"
                           | "thread_link"
@@ -40211,6 +40677,7 @@ export interface operations {
                         kind:
                           | "index_page"
                           | "thread_version"
+                          | "conversation_metadata"
                           | "thread_event"
                           | "human_message_revision"
                           | "thread_link"
@@ -40240,6 +40707,7 @@ export interface operations {
                                       kind:
                                         | "index_page"
                                         | "thread_version"
+                                        | "conversation_metadata"
                                         | "thread_event"
                                         | "human_message_revision"
                                         | "thread_link"
@@ -40492,6 +40960,7 @@ export interface operations {
                                         kind:
                                           | "index_page"
                                           | "thread_version"
+                                          | "conversation_metadata"
                                           | "thread_event"
                                           | "human_message_revision"
                                           | "thread_link"
@@ -40754,6 +41223,7 @@ export interface operations {
                                       kind:
                                         | "index_page"
                                         | "thread_version"
+                                        | "conversation_metadata"
                                         | "thread_event"
                                         | "human_message_revision"
                                         | "thread_link"
@@ -41011,6 +41481,7 @@ export interface operations {
                                     kind:
                                       | "index_page"
                                       | "thread_version"
+                                      | "conversation_metadata"
                                       | "thread_event"
                                       | "human_message_revision"
                                       | "thread_link"
@@ -41253,6 +41724,7 @@ export interface operations {
                               kind:
                                 | "index_page"
                                 | "thread_version"
+                                | "conversation_metadata"
                                 | "thread_event"
                                 | "human_message_revision"
                                 | "thread_link"
@@ -41268,6 +41740,7 @@ export interface operations {
                               kind:
                                 | "index_page"
                                 | "thread_version"
+                                | "conversation_metadata"
                                 | "thread_event"
                                 | "human_message_revision"
                                 | "thread_link"
@@ -41338,6 +41811,7 @@ export interface operations {
                                 kind:
                                   | "index_page"
                                   | "thread_version"
+                                  | "conversation_metadata"
                                   | "thread_event"
                                   | "human_message_revision"
                                   | "thread_link"
@@ -41353,6 +41827,7 @@ export interface operations {
                                 kind:
                                   | "index_page"
                                   | "thread_version"
+                                  | "conversation_metadata"
                                   | "thread_event"
                                   | "human_message_revision"
                                   | "thread_link"
@@ -41499,6 +41974,7 @@ export interface operations {
                         kind:
                           | "index_page"
                           | "thread_version"
+                          | "conversation_metadata"
                           | "thread_event"
                           | "human_message_revision"
                           | "thread_link"
@@ -41519,6 +41995,7 @@ export interface operations {
                         kind:
                           | "index_page"
                           | "thread_version"
+                          | "conversation_metadata"
                           | "thread_event"
                           | "human_message_revision"
                           | "thread_link"
@@ -41534,6 +42011,7 @@ export interface operations {
                         kind:
                           | "index_page"
                           | "thread_version"
+                          | "conversation_metadata"
                           | "thread_event"
                           | "human_message_revision"
                           | "thread_link"
@@ -41569,6 +42047,7 @@ export interface operations {
                               kind:
                                 | "index_page"
                                 | "thread_version"
+                                | "conversation_metadata"
                                 | "thread_event"
                                 | "human_message_revision"
                                 | "thread_link"
@@ -41826,6 +42305,7 @@ export interface operations {
                               kind:
                                 | "index_page"
                                 | "thread_version"
+                                | "conversation_metadata"
                                 | "thread_event"
                                 | "human_message_revision"
                                 | "thread_link"
@@ -41844,6 +42324,7 @@ export interface operations {
                         kind:
                           | "index_page"
                           | "thread_version"
+                          | "conversation_metadata"
                           | "thread_event"
                           | "human_message_revision"
                           | "thread_link"
@@ -41873,6 +42354,7 @@ export interface operations {
                               kind:
                                 | "index_page"
                                 | "thread_version"
+                                | "conversation_metadata"
                                 | "thread_event"
                                 | "human_message_revision"
                                 | "thread_link"
@@ -42114,6 +42596,7 @@ export interface operations {
                         kind:
                           | "index_page"
                           | "thread_version"
+                          | "conversation_metadata"
                           | "thread_event"
                           | "human_message_revision"
                           | "thread_link"
@@ -42143,6 +42626,7 @@ export interface operations {
                               kind:
                                 | "index_page"
                                 | "thread_version"
+                                | "conversation_metadata"
                                 | "thread_event"
                                 | "human_message_revision"
                                 | "thread_link"
@@ -42401,6 +42885,7 @@ export interface operations {
                                   kind:
                                     | "index_page"
                                     | "thread_version"
+                                    | "conversation_metadata"
                                     | "thread_event"
                                     | "human_message_revision"
                                     | "thread_link"
@@ -42421,6 +42906,7 @@ export interface operations {
                         kind:
                           | "index_page"
                           | "thread_version"
+                          | "conversation_metadata"
                           | "thread_event"
                           | "human_message_revision"
                           | "thread_link"
@@ -42446,6 +42932,7 @@ export interface operations {
                         kind:
                           | "index_page"
                           | "thread_version"
+                          | "conversation_metadata"
                           | "thread_event"
                           | "human_message_revision"
                           | "thread_link"
@@ -42469,6 +42956,7 @@ export interface operations {
                         kind:
                           | "index_page"
                           | "thread_version"
+                          | "conversation_metadata"
                           | "thread_event"
                           | "human_message_revision"
                           | "thread_link"
@@ -47946,6 +48434,40 @@ export interface operations {
             keep_awake?: boolean;
             /** @default false */
             keychain_supported?: boolean;
+            metadata?: {
+              model: string;
+              options: {
+                /** @default false */
+                inherit_defaults?: boolean;
+                /** @default null */
+                provider?: string | null;
+                /** @default null */
+                endpoint?: string | null;
+                /** @default {} */
+                environment?: {
+                  [key: string]:
+                    | {
+                        /** @constant */
+                        source: "literal";
+                        value: string;
+                      }
+                    | {
+                        /** @constant */
+                        source: "environment";
+                        value: string;
+                      }
+                    | {
+                        /** @constant */
+                        source: "keychain";
+                        value: string;
+                      }
+                    | {
+                        /** @constant */
+                        source: "unset";
+                      };
+                };
+              };
+            } | null;
           };
         };
       };
@@ -49978,6 +50500,664 @@ export interface operations {
       };
     };
   };
+  local_agents_metadata: {
+    parameters: {
+      query: {
+        session: string;
+        repository?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ConversationMetadataView"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  local_agents_metadata_command: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          /** Format: uint32 */
+          version: number;
+          request_id: string;
+          query: {
+            session: string;
+            repository?: string | null;
+          };
+          expected?: {
+            /** @enum {string} */
+            kind:
+              | "index_page"
+              | "thread_version"
+              | "conversation_metadata"
+              | "thread_event"
+              | "human_message_revision"
+              | "thread_link"
+              | "reaction"
+              | "reaction_retraction"
+              | "reaction_slot"
+              | "custom_emoji_version"
+              | "image_asset";
+            id: string;
+          } | null;
+          action:
+            | {
+                title: string;
+                /** @constant */
+                action: "rename";
+              }
+            | {
+                /** @constant */
+                action: "reset_title";
+              }
+            | {
+                /** @constant */
+                action: "capture_titles";
+              }
+            | {
+                /** @constant */
+                action: "refresh";
+              }
+            | {
+                /** @constant */
+                action: "regenerate_title";
+              }
+            | {
+                job: string;
+                /** @constant */
+                action: "cancel";
+              }
+            | {
+                job: string;
+                /** @constant */
+                action: "publish";
+              };
+        };
+      };
+    };
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ConversationMetadataJob"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  local_agents_metadata_head: {
+    parameters: {
+      query: {
+        session: string;
+        repository?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  local_agents_metadata_job: {
+    parameters: {
+      query: {
+        request: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ConversationMetadataJob"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  local_agents_metadata_job_head: {
+    parameters: {
+      query: {
+        request: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
   local_agents_chat: {
     parameters: {
       query?: never;
@@ -50012,6 +51192,7 @@ export interface operations {
                         kind:
                           | "index_page"
                           | "thread_version"
+                          | "conversation_metadata"
                           | "thread_event"
                           | "human_message_revision"
                           | "thread_link"
@@ -50268,6 +51449,7 @@ export interface operations {
               kind:
                 | "index_page"
                 | "thread_version"
+                | "conversation_metadata"
                 | "thread_event"
                 | "human_message_revision"
                 | "thread_link"
@@ -50286,6 +51468,7 @@ export interface operations {
               kind:
                 | "index_page"
                 | "thread_version"
+                | "conversation_metadata"
                 | "thread_event"
                 | "human_message_revision"
                 | "thread_link"
@@ -50303,6 +51486,7 @@ export interface operations {
                 kind:
                   | "index_page"
                   | "thread_version"
+                  | "conversation_metadata"
                   | "thread_event"
                   | "human_message_revision"
                   | "thread_link"
@@ -50329,6 +51513,7 @@ export interface operations {
                         kind:
                           | "index_page"
                           | "thread_version"
+                          | "conversation_metadata"
                           | "thread_event"
                           | "human_message_revision"
                           | "thread_link"
@@ -50583,6 +51768,7 @@ export interface operations {
                 kind:
                   | "index_page"
                   | "thread_version"
+                  | "conversation_metadata"
                   | "thread_event"
                   | "human_message_revision"
                   | "thread_link"
@@ -50598,6 +51784,7 @@ export interface operations {
                 kind:
                   | "index_page"
                   | "thread_version"
+                  | "conversation_metadata"
                   | "thread_event"
                   | "human_message_revision"
                   | "thread_link"
@@ -50624,6 +51811,7 @@ export interface operations {
                     kind:
                       | "index_page"
                       | "thread_version"
+                      | "conversation_metadata"
                       | "thread_event"
                       | "human_message_revision"
                       | "thread_link"
@@ -51585,6 +52773,7 @@ export interface operations {
                     kind:
                       | "index_page"
                       | "thread_version"
+                      | "conversation_metadata"
                       | "thread_event"
                       | "human_message_revision"
                       | "thread_link"
@@ -51603,6 +52792,7 @@ export interface operations {
                     kind:
                       | "index_page"
                       | "thread_version"
+                      | "conversation_metadata"
                       | "thread_event"
                       | "human_message_revision"
                       | "thread_link"
@@ -51620,6 +52810,7 @@ export interface operations {
                       kind:
                         | "index_page"
                         | "thread_version"
+                        | "conversation_metadata"
                         | "thread_event"
                         | "human_message_revision"
                         | "thread_link"
@@ -51646,6 +52837,7 @@ export interface operations {
                               kind:
                                 | "index_page"
                                 | "thread_version"
+                                | "conversation_metadata"
                                 | "thread_event"
                                 | "human_message_revision"
                                 | "thread_link"
@@ -51900,6 +53092,7 @@ export interface operations {
                       kind:
                         | "index_page"
                         | "thread_version"
+                        | "conversation_metadata"
                         | "thread_event"
                         | "human_message_revision"
                         | "thread_link"
@@ -51915,6 +53108,7 @@ export interface operations {
                       kind:
                         | "index_page"
                         | "thread_version"
+                        | "conversation_metadata"
                         | "thread_event"
                         | "human_message_revision"
                         | "thread_link"
@@ -51941,6 +53135,7 @@ export interface operations {
                           kind:
                             | "index_page"
                             | "thread_version"
+                            | "conversation_metadata"
                             | "thread_event"
                             | "human_message_revision"
                             | "thread_link"

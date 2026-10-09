@@ -8,6 +8,24 @@ impl Manager for Supervisor {
     ) -> Result<jj_store_service::agent_execution::workspace_inspection::Inspection> {
         self.workspace_inspection(actor, request).await
     }
+    async fn metadata(&self, actor: PrincipalId, query: metadata::Query) -> Result<metadata::View> {
+        self.metadata_view(actor, query).await
+    }
+    async fn metadata_command(
+        &self,
+        actor: PrincipalId,
+        command: metadata::Command,
+    ) -> Result<metadata::Job> {
+        self.metadata_submit(actor, command).await
+    }
+    async fn metadata_job(&self, actor: PrincipalId, request: RequestId) -> Result<metadata::Job> {
+        self.actor(actor)?;
+        let job = self.read(|s| s.metadata_jobs.get(&request).cloned().ok_or(Error::Stale))?;
+        self.authorized(job.capture.repository, &job.capture.profile, false)
+            .await?;
+        Ok(job.view)
+    }
+
     async fn compute_status(
         &self,
         actor: PrincipalId,
@@ -172,6 +190,8 @@ impl Manager for Supervisor {
                 .is_ok()
             {
                 feedback::attach_identity(&mut session, &saved)?;
+                (session.conversation_title, session.discovery_text) =
+                    self.metadata_title(&saved).await.unwrap_or((None, None));
                 admitted.push(session);
             }
         }
@@ -702,6 +722,7 @@ impl Manager for Supervisor {
         {
             worker.abort();
         }
+        self.metadata_stop()?;
         let senders = self
             .0
             .runtimes

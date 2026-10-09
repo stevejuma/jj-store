@@ -126,6 +126,10 @@ pub struct Session {
     pub target_id: String,
     pub runner: String,
     pub title: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub conversation_title: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub discovery_text: Option<String>,
     pub avatar: String,
     pub workspace: String,
     pub base_commit: String,
@@ -357,6 +361,27 @@ pub trait Manager: Send + Sync {
     ) -> Result<settings::SecretStatus> {
         Err(Error::Unavailable)
     }
+    async fn metadata(
+        &self,
+        _actor: PrincipalId,
+        _query: metadata::Query,
+    ) -> Result<metadata::View> {
+        Err(Error::Unavailable)
+    }
+    async fn metadata_command(
+        &self,
+        _actor: PrincipalId,
+        _command: metadata::Command,
+    ) -> Result<metadata::Job> {
+        Err(Error::Unavailable)
+    }
+    async fn metadata_job(
+        &self,
+        _actor: PrincipalId,
+        _request: RequestId,
+    ) -> Result<metadata::Job> {
+        Err(Error::Unavailable)
+    }
     async fn status(&self, actor: PrincipalId) -> Result<Status>;
     async fn targets(
         &self,
@@ -393,6 +418,7 @@ pub fn native_commit(commit: &str) -> Result<CommitId> {
 
 pub mod compute;
 pub mod context;
+pub mod metadata;
 pub mod settings;
 pub mod tooling;
 

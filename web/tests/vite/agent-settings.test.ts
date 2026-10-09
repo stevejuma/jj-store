@@ -14,6 +14,7 @@ test("secret writes stay separate from durable defaults and successful saves cle
     automatically_mention: false,
     keep_awake: false,
     keychain_supported: true,
+    metadata: null,
     options: {
       inherit_defaults: false,
       provider: null,

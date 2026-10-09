@@ -26,6 +26,10 @@
     active = true,
     scope,
     children,
+    codingControls = true,
+    modelLabel = "Model",
+    providerLabel = "LLM provider",
+    retryLabel = "Retry models",
   }: {
     manager: AgentExecution;
     draft: AgentConfiguration;
@@ -34,6 +38,10 @@
     active?: boolean;
     scope: string;
     children?: Snippet;
+    codingControls?: boolean;
+    modelLabel?: string;
+    providerLabel?: string;
+    retryLabel?: string;
   } = $props();
   const id = $props.id();
   const runner = $derived(
@@ -143,18 +151,19 @@
 
 <div class="store-settings__rows" data-ui-part="agent-configuration-fields">
   <Field.Group class="store-settings__editable-rows">
-    <StoreWorkField label="Harness" id={`${id}-harness`}>
-      <StoreAgentHarnessSelect
-        id={`${id}-harness`}
-        value={draft.runner}
-        disabled={pending}
-        options={manager.value?.runners ?? []}
-        onValueChange={(value) => changeHarness(draft, value)}
-      />
-    </StoreWorkField>
+    {#if codingControls}<StoreWorkField label="Harness" id={`${id}-harness`}>
+        <StoreAgentHarnessSelect
+          id={`${id}-harness`}
+          value={draft.runner}
+          disabled={pending}
+          options={manager.value?.runners ?? []}
+          onValueChange={(value) => changeHarness(draft, value)}
+        />
+      </StoreWorkField>
+    {/if}
     {#if providers.length}
       <StoreWorkField
-        label="LLM provider"
+        label={providerLabel}
         id={`${id}-provider`}
         description={provider?.guidance ?? ""}
       >
@@ -206,9 +215,10 @@
         >
       {/if}
     {/if}
-    <StoreWorkField label="Model" id={`${id}-model`}>
+    <StoreWorkField label={modelLabel} id={`${id}-model`}>
       <StoreAgentModelSelect
         id={`${id}-model`}
+        ariaLabel={modelLabel}
         bind:value={draft.preferences.model}
         options={models}
         disabled={pending}
@@ -223,7 +233,7 @@
         }}
       />
     </StoreWorkField>
-    {#if thinking.length || draft.preferences.effort}
+    {#if codingControls && (thinking.length || draft.preferences.effort)}
       <StoreWorkField label="Thinking" id={`${id}-thinking`}>
         <StoreSettingsSelect
           id={`${id}-thinking`}
@@ -246,27 +256,30 @@
         />
       </StoreWorkField>
     {/if}
-    <StoreWorkField label="Execution mode" id={`${id}-mode`}>
-      <StoreSettingsSelect
+    {#if codingControls}<StoreWorkField
+        label="Execution mode"
         id={`${id}-mode`}
-        bind:value={draft.preferences.mode}
-        disabled={pending || !modes.length}
-        options={[
-          { value: null, label: "Harness default" },
-          ...modes.map((o) => ({ value: o.id, label: o.name })),
-          ...(draft.preferences.mode &&
-          !modes.some((o) => o.id === draft.preferences.mode)
-            ? [
-                {
-                  value: draft.preferences.mode,
-                  label: `${draft.preferences.mode} (saved preference)`,
-                  disabled: true,
-                },
-              ]
-            : []),
-        ]}
-      />
-    </StoreWorkField>
+      >
+        <StoreSettingsSelect
+          id={`${id}-mode`}
+          bind:value={draft.preferences.mode}
+          disabled={pending || !modes.length}
+          options={[
+            { value: null, label: "Harness default" },
+            ...modes.map((o) => ({ value: o.id, label: o.name })),
+            ...(draft.preferences.mode &&
+            !modes.some((o) => o.id === draft.preferences.mode)
+              ? [
+                  {
+                    value: draft.preferences.mode,
+                    label: `${draft.preferences.mode} (saved preference)`,
+                    disabled: true,
+                  },
+                ]
+              : []),
+          ]}
+        />
+      </StoreWorkField>{/if}
   </Field.Group>
   <div class="store-settings__action-row store-settings__action-row--joined">
     <div><p role="status">{source} {status}</p></div>
@@ -278,7 +291,7 @@
         disabled={pending ||
           !runner?.available ||
           manager.catalogs.loading[scope]}
-        onclick={() => load(true)}>Retry models</Button
+        onclick={() => load(true)}>{retryLabel}</Button
       >
     </div>
   </div>

@@ -218,6 +218,7 @@ impl Supervisor {
                         home,
                         discussion_thread: command.origin.thread,
                         participants: Vec::new(),
+                        metadata_auto_eligible: s.settings.metadata.is_some(),
                     },
                 );
             }
@@ -290,6 +291,8 @@ impl Supervisor {
                     target_id: "conversation-home".into(),
                     runner: setup.runner.clone(),
                     title: setup.name.clone(),
+                    conversation_title: None,
+                    discovery_text: None,
                     avatar: setup.avatar.clone(),
                     workspace: path.to_string_lossy().into_owned(),
                     base_commit: source.commit.clone(),

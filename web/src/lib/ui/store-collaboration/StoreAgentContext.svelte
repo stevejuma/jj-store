@@ -16,6 +16,8 @@
   import CommunityProjectsRevisionGraphIds from "../community-projects/CommunityProjectsRevisionGraphIds.svelte";
   import CommunityProjectsVirtualRows from "../community-projects/CommunityProjectsVirtualRows.svelte";
   import StoreAgentTranscript from "./StoreAgentTranscript.svelte";
+  import StoreConversationMetadata from "../store-agent-execution/StoreConversationMetadata.svelte";
+  import { metadataKey } from "../../controller/conversation-metadata.svelte.js";
   import StoreAgentSessionMenu from "./StoreAgentSessionMenu.svelte";
   import StoreMessageActions from "./StoreMessageActions.svelte";
   import { managedRecordedAgent } from "../../collaboration/managed-agent.js";
@@ -109,7 +111,9 @@
               showPresence
               decorative
             />
-            <span class="store-collaboration__detail-title">{agent.name}</span>
+            <span class="store-collaboration__detail-title"
+              >{selected.session.conversation_title ?? agent.name}</span
+            >
           </span>
           <StoreAgentSessionMenu {controller} />
         </div>
@@ -142,6 +146,15 @@
         {/if}
       </header>{/if}
     {#if selected.activity.length}
+      {#if showHeader && controller.execution && selected && controller.execution.metadata.details[metadataKey( { session: selected.session.session_id, repository: state.repository.id } )]}
+        <StoreConversationMetadata
+          manager={controller.execution}
+          query={{
+            session: selected.session.session_id,
+            repository: state.repository.id,
+          }}
+        />
+      {/if}
       <StoreAgentTranscript
         {controller}
         activity={selected.activity}

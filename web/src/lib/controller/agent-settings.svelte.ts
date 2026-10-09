@@ -8,7 +8,11 @@ export type AgentEnvironment = NonNullable<
 export class AgentSettings {
   value = $state<AgentSettingsValue | null>(null);
   draft = $state<AgentSettingsValue | null>(null);
+  metadataDraft = $state<
+    import("./agent-configuration.js").AgentConfiguration | null
+  >(null);
   secretDrafts = $state<Record<string, string>>({});
+  metadataSecretDrafts = $state<Record<string, string>>({});
   setupSecretDrafts = $state<Record<string, Record<string, string>>>({});
   busy = $state(false);
   error = $state("");
@@ -20,6 +24,8 @@ export class AgentSettings {
   dispose() {
     this.#alive = false;
     this.draft = null;
+    this.metadataDraft = null;
+    this.metadataSecretDrafts = {};
     this.secretDrafts = {};
     this.setupSecretDrafts = {};
   }
@@ -45,8 +51,10 @@ export class AgentSettings {
     if (this.value && BigInt(value.revision) < BigInt(this.value.revision))
       return;
     this.value = value;
-    if (this.draft)
+    if (this.draft) {
       this.draft.automatically_mention = value.automatically_mention;
+      this.draft.metadata = value.metadata ?? null;
+    }
   }
   async setAutomaticallyMention(enabled: boolean) {
     if (!this.value || this.busy || this.pending) return false;

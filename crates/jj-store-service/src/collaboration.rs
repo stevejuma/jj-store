@@ -125,7 +125,8 @@ impl AgentSessionPager {
             .list_sessions(None, limit)
             .await
             .map_err(map_wal)?;
-        let sessions = resolve(&pin.store, page.selections).await?;
+        let mut sessions = resolve(&pin.store, page.selections).await?;
+        enrich(session.clone(), &mut sessions).await?;
         authorize_epoch(&session, snapshot.epoch).await?;
         let next_cursor = page
             .next_after
@@ -175,7 +176,8 @@ impl AgentSessionPager {
             .list_sessions(Some(after), limit)
             .await
             .map_err(map_wal)?;
-        let sessions = resolve(&entry.pin.store, page.selections).await?;
+        let mut sessions = resolve(&entry.pin.store, page.selections).await?;
+        enrich(session.clone(), &mut sessions).await?;
         authorize_epoch(&session, entry.pin.snapshot.epoch).await?;
         let next_cursor = self.cursors.next(
             &claims,
@@ -305,4 +307,24 @@ async fn within_timeout<T>(
         return Err(Error::Limit);
     }
     result
+}
+
+async fn enrich(session: Arc<NativeSession>, rows: &mut [AgentSessionSummary]) -> Result<()> {
+    let pin = crate::collab_reads::PinnedCollabRead::open(
+        session.clone(),
+        Arc::new(crate::collab_reads::RepositoryMemberReactionActors),
+    )
+    .await
+    .map_err(|_| Error::Unavailable)?;
+    let discovery = pin
+        .conversation_discovery(session)
+        .await
+        .map_err(|_| Error::Unavailable)?;
+    for row in rows {
+        if let Some((title, text)) = discovery.get(&row.session_id) {
+            row.conversation_title = title.clone();
+            row.discovery_text = Some(text.clone());
+        }
+    }
+    Ok(())
 }

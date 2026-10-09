@@ -38,6 +38,8 @@ pub struct Settings {
     pub automatically_mention: bool,
     pub keep_awake: bool,
     pub keychain_supported: bool,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub metadata: Option<super::metadata::Config>,
 }
 impl Default for Settings {
     fn default() -> Self {
@@ -53,6 +55,7 @@ impl Default for Settings {
             automatically_mention: false,
             keep_awake: false,
             keychain_supported: false,
+            metadata: None,
         }
     }
 }

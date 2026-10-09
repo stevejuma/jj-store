@@ -14,6 +14,7 @@
   import StoreAgentLauncher from "./StoreAgentLauncher.svelte";
   import StoreAgentConversation from "./StoreAgentConversation.svelte";
   import StoreAgentChatActions from "./StoreAgentChatActions.svelte";
+  import StoreConversationMetadata from "./StoreConversationMetadata.svelte";
   import StoreAgentRuntimeSettings from "./StoreAgentRuntimeSettings.svelte";
   import StoreAgentRequestRecovery from "./StoreAgentRequestRecovery.svelte";
   import StoreAgentSetupEditor from "./StoreAgentSetupEditor.svelte";
@@ -124,11 +125,10 @@
 
 {#snippet runtimeSidebar()}
   {#if chat}
-    {#key chat.id}<StoreAgentRuntimeSettings
+    {#key chat.id}<StoreConversationMetadata
         {manager}
-        session={chat}
-        {onReview}
-      />{/key}
+        query={{ session: chat.id }}
+      /><StoreAgentRuntimeSettings {manager} session={chat} {onReview} />{/key}
   {/if}
 {/snippet}
 
@@ -146,7 +146,7 @@
       : undefined}
     threadTitle={route.agentView === "new"
       ? (agent?.name ?? "New agent chat")
-      : (chat?.title ?? "Agent session")}
+      : (chat?.conversation_title ?? "New conversation")}
     threadMember={route.agentView === "new"
       ? agent && agentMember(agent)
       : chat && {

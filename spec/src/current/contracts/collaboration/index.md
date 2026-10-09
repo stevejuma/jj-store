@@ -2,6 +2,7 @@
 
 Read the owning topic and requirement before implementation.
 <!-- generated-navigation -->
+
 ## Pages
 
 - [Agent activity, repository reviews, Threads and Reactions](01-agent-activity-repository-reviews-threads-and-reactions.md)
@@ -49,3 +50,4 @@ Read the owning topic and requirement before implementation.
 - [Local compute and agent configuration](40-local-compute-and-agent-configuration.md)
 - [Conversation comment submissions and answer links](41-conversation-comment-submissions.md)
 - [Freshness producer ownership](41-freshness-producer-ownership.md)
+- [Conversation details and generated metadata](42-conversation-metadata.md)

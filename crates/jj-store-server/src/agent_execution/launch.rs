@@ -97,6 +97,8 @@ impl Supervisor {
             repository: target.repository,
             target_id: target.id,
             runner: command.runner,
+            conversation_title: None,
+            discovery_text: None,
             title: setup
                 .as_ref()
                 .map_or_else(|| format!("{} session", target.name), |s| s.name.clone()),

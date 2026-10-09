@@ -34,3 +34,14 @@ Databricks v2's otherwise curated fallback. The vendor pin is unchanged.
 Provider/menu behavior references Buzz
 `desktop/src/features/agents/ui/agentConfigOptions.tsx` and
 `desktop/src-tauri/src/commands/agent_models{,_openrouter}.rs` at the same pin.
+
+The owned `--metadata` entrypoint calls the maintained fork's bounded tool-free
+summarization API without constructing ACP sessions or MCP tools. Its version-1
+JSON input is capped at 128 KiB of transcript and output at 16 KiB, with a
+120-second deadline. The prompt treats capture as untrusted. Missing Databricks
+credentials refuse instead of opening interactive sign-in. Request durability,
+authorization and publication belong to the controlling application.
+
+Metadata summaries select a maintained single-attempt transport policy. Coding
+turns retain their existing retries; metadata disables transport/auth/endpoint
+replay after an unknown completion. The owned helper rejects malformed results.

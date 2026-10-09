@@ -13,6 +13,7 @@
     disabled = false,
     allowCustom = false,
     defaultLabel = "Harness default",
+    ariaLabel = "Model",
     onChange,
   }: {
     id: string;
@@ -21,6 +22,7 @@
     disabled?: boolean;
     allowCustom?: boolean;
     defaultLabel?: string;
+    ariaLabel?: string;
     onChange?: () => void;
   } = $props();
   let open = $state(false);
@@ -50,7 +52,7 @@
         variant="outline"
         {disabled}
         role="combobox"
-        aria-label="Model"
+        aria-label={ariaLabel}
         aria-expanded={open}
         class="store-agent-model-trigger"
       >

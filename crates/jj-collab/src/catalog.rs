@@ -10,6 +10,8 @@ pub struct ThreadRootV1 {
     pub messages: Option<CollabObjectRef>,
     pub links: Option<CollabObjectRef>,
     pub assignments: Option<CollabObjectRef>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub metadata: Option<CollabObjectRef>,
 }
 impl ThreadRootV1 {
     pub const fn empty() -> Self {
@@ -19,13 +21,20 @@ impl ThreadRootV1 {
             messages: None,
             links: None,
             assignments: None,
+            metadata: None,
         }
     }
     pub fn dependencies(&self) -> Vec<CollabObjectRef> {
-        [self.threads, self.messages, self.links, self.assignments]
-            .into_iter()
-            .flatten()
-            .collect()
+        [
+            self.threads,
+            self.messages,
+            self.links,
+            self.assignments,
+            self.metadata,
+        ]
+        .into_iter()
+        .flatten()
+        .collect()
     }
     pub fn validate(&self) -> Result<()> {
         schema(self.schema_version)?;

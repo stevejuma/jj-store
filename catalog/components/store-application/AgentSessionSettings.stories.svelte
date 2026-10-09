@@ -31,14 +31,16 @@
     )!;
     await expect(getComputedStyle(header).paddingLeft).toBe("16px");
     await expect(getComputedStyle(header).paddingTop).toBe("12px");
-    await expect(c.getAllByRole("button", { name: "Send" })).toHaveLength(1);
+    await expect(
+      c.getAllByRole("button", { name: "Send message" }),
+    ).toHaveLength(1);
     await expect(
       c
-        .getByRole("button", { name: "Send" })
-        .closest(".community-chat-composer"),
+        .getByRole("button", { name: "Send message" })
+        .closest(".chat-message-footer"),
     ).not.toBeNull();
     await expect(
-      c.queryByText("Workspace and runtime", { exact: true }),
+      c.queryByText("Conversation details", { exact: true }),
     ).not.toBeVisible();
     const toggle = c.getByRole("button", { name: "Toggle session chats" });
     await userEvent.click(toggle);
@@ -59,10 +61,10 @@
       288,
     );
     await userEvent.click(
-      page.getByRole("menuitem", { name: "Workspace and runtime" }),
+      page.getByRole("menuitem", { name: "Conversation details" }),
     );
     const runtime = within(
-      await c.findByRole("complementary", { name: "Workspace and runtime" }),
+      await c.findByRole("complementary", { name: "Conversation details" }),
     );
     await waitFor(() =>
       expect(document.body).not.toHaveStyle({ pointerEvents: "none" }),
@@ -82,7 +84,7 @@
       }),
     ).toBeVisible();
     await expect(
-      c.queryByRole("dialog", { name: "Workspace and runtime" }),
+      c.queryByRole("dialog", { name: "Conversation details" }),
     ).not.toBeInTheDocument();
     await expect(
       canvasElement.querySelector(".lc-community-inbox__settings"),
@@ -147,17 +149,17 @@
       expect(document.body).not.toHaveStyle({ pointerEvents: "none" }),
     );
     await userEvent.click(
-      runtime.getByRole("button", { name: "Close workspace and runtime" }),
+      runtime.getByRole("button", { name: "Close conversation details" }),
     );
     await waitFor(() =>
       expect(
-        c.queryByRole("complementary", { name: "Workspace and runtime" }),
+        c.queryByRole("complementary", { name: "Conversation details" }),
       ).not.toBeInTheDocument(),
     );
     await expect(menu).toHaveFocus();
     await userEvent.click(menu);
     await userEvent.click(
-      page.getByRole("menuitem", { name: "Workspace and runtime" }),
+      page.getByRole("menuitem", { name: "Conversation details" }),
     );
     await waitFor(() =>
       expect(document.body).not.toHaveStyle({ pointerEvents: "none" }),
@@ -178,7 +180,7 @@
       expect(document.body).not.toHaveStyle({ pointerEvents: "none" }),
     );
     await userEvent.click(
-      c.getByRole("button", { name: "Close workspace and runtime" }),
+      c.getByRole("button", { name: "Close conversation details" }),
     );
     await expect(draft).toHaveTextContent("Keep this session draft");
     await userEvent.click(menu);
@@ -204,7 +206,7 @@
     await userEvent.type(draft, "Keep this unapplied message");
     await userEvent.click(c.getByRole("button", { name: "Session options" }));
     await userEvent.click(
-      page.getByRole("menuitem", { name: "Workspace and runtime" }),
+      page.getByRole("menuitem", { name: "Conversation details" }),
     );
     await waitFor(() =>
       expect(document.body).not.toHaveStyle({ pointerEvents: "none" }),
@@ -249,7 +251,7 @@
     );
     await userEvent.click(c.getByRole("button", { name: "Session options" }));
     await userEvent.click(
-      page.getByRole("menuitem", { name: "Workspace and runtime" }),
+      page.getByRole("menuitem", { name: "Conversation details" }),
     );
     await waitFor(() =>
       expect(document.body).not.toHaveStyle({ pointerEvents: "none" }),
@@ -316,7 +318,7 @@
     );
     await userEvent.click(c.getByRole("button", { name: "Session options" }));
     await userEvent.click(
-      page.getByRole("menuitem", { name: "Workspace and runtime" }),
+      page.getByRole("menuitem", { name: "Conversation details" }),
     );
     await expect(
       c.getByRole("button", { name: "Edit model" }),

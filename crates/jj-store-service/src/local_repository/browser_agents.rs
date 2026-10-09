@@ -28,6 +28,7 @@ impl LocalRepository {
         }
         let store = self.browser_agent_store(commit).await?;
         let page = store.reads().list_sessions(after, limit).await?;
+        let discovery = self.conversation_discovery(Some(commit)).await?;
         let mut sessions = Vec::new();
         for (key, reference) in page.selections {
             let AgentObjectV1::SessionSnapshot(session) = store.object(reference).await? else {
@@ -43,6 +44,12 @@ impl LocalRepository {
                     .await
                     .map_err(map)?,
             ));
+        }
+        for row in &mut sessions {
+            if let Some((title, text)) = discovery.get(&row.session_id) {
+                row.conversation_title = title.clone();
+                row.discovery_text = Some(text.clone());
+            }
         }
         Ok(LocalBrowserAgentPage {
             version: 1,
@@ -79,13 +86,17 @@ impl LocalRepository {
         let (activity, activity_truncated) = presentation::load_activity(&store, &session, &[])
             .await
             .map_err(map)?;
-        let summary = presentation::session_summary(
+        let mut summary = presentation::session_summary(
             reference,
             &session,
             presentation::session_timing(&store, &session)
                 .await
                 .map_err(map)?,
         );
+        if let Some((title, text)) = self.conversation_discovery(Some(commit)).await?.get(&id) {
+            summary.conversation_title = title.clone();
+            summary.discovery_text = Some(text.clone());
+        }
         let selected = self.selected_metadata(commit)?;
         let threads = self.thread_store_at(Some(&selected)).await?;
         let feedback =

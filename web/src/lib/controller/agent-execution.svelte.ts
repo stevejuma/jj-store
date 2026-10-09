@@ -17,6 +17,7 @@ import { AgentChat } from "./agent-chat.svelte.js";
 import { AgentModelCatalog } from "./agent-model-catalog.svelte.js";
 import { AgentExecutionRefresh } from "./agent-execution-refresh.js";
 import { AgentCompute } from "./agent-compute.svelte.js";
+import { ConversationMetadata } from "./conversation-metadata.svelte.js";
 import { AgentSettings } from "./agent-settings.svelte.js";
 import { AgentRuntimes } from "./agent-runtimes.svelte.js";
 import {
@@ -76,6 +77,7 @@ export class AgentExecution {
   readonly catalogs: AgentModelCatalog;
   readonly tooling: AgentRuntimes;
   readonly settings: AgentSettings;
+  readonly metadata: ConversationMetadata;
   readonly compute: AgentCompute;
   constructor(
     readonly available: () => boolean,
@@ -86,6 +88,10 @@ export class AgentExecution {
     this.client = new LocalClient("", fetcher);
     this.chat = new AgentChat(this, freshness);
     this.settings = new AgentSettings(this.client);
+    this.metadata = new ConversationMetadata(
+      this.client,
+      () => void this.refresh(),
+    );
     this.compute = new AgentCompute(this.client);
     this.catalogs = new AgentModelCatalog(this.client);
     this.tooling = new AgentRuntimes(available, fetcher);

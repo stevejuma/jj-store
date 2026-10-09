@@ -50,6 +50,21 @@ test("service_owned_review_reader_is_within_layer_boundary", () => {
     [],
   );
 });
+test("server_composes_pure_collaboration_types_without_reverse_runtime_dependencies", () => {
+  assert.deepEqual(
+    dependencyErrors([
+      { name: "jj-store-server", dependencies: [{ name: "jj-collab" }] },
+    ]),
+    [],
+  );
+  assert.equal(
+    dependencyErrors([
+      { name: "jj-collab", dependencies: [{ name: "jj-store-server" }] },
+      { name: "jj-store-server", dependencies: [{ name: "jj-cli" }] },
+    ]).length,
+    2,
+  );
+});
 test("accepts_m9_delivery_tasks", () =>
   assert.deepEqual(
     validateLedger(

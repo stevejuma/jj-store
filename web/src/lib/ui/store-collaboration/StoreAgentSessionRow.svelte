@@ -63,7 +63,11 @@
     </span>
     <span class="store-collaboration__row-main">
       <span class="store-collaboration__row-title-row">
-        <span class="store-collaboration__row-title">{agent.name}</span>
+        <span class="store-collaboration__row-title"
+          >{session.conversation_title ??
+            managed?.conversation_title ??
+            agent.name}</span
+        >
         <span class="store-collaboration__row-actions">
           {#if association}<CommunityProjectsRevisionGraphIds
               commitId={association.after_commits[0] ??

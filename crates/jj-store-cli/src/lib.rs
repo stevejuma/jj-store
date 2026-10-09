@@ -16,6 +16,7 @@ mod agent_setup_templates;
 pub mod attachment;
 pub mod binding;
 pub mod commands;
+mod conversation_metadata;
 pub mod credentials;
 mod folder_picker;
 pub mod git_bridge;

@@ -2,6 +2,7 @@
   import StoreWorkspaceButton from "../store-agent-workspace/StoreWorkspaceButton.svelte";
   import type { Snippet } from "svelte";
   let inputActions = $state<Snippet>();
+  let restoreMessage = $state<(submitted: string) => string>();
   import { submitManagedConversation } from "../../conversations/managed-send.js";
 
   import StoreConversationRecovery from "../store-agent-chat/StoreConversationRecovery.svelte";
@@ -140,6 +141,7 @@
   {#if chat.draft}
     <div class="agent-chat-body" data-ui-component="agent-chat">
       <StoreLiveConversation
+        {restoreMessage}
         {controller}
         {manager}
         {rows}
@@ -199,6 +201,7 @@
               events={chat.events[session.id] ?? []}
             />{/each}
           {#key chat.selected}<CommunityChatComposer
+              bind:restoreDraft={restoreMessage}
               {presentation}
               dockActions
               bind:documentActions={inputActions}

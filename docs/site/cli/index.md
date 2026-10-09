@@ -72,3 +72,9 @@ contextual Send; legacy version-2 session controls remain supported. The paired
 custom JJ provisions personal companion homes or materializes registered native
 attachments within app-managed paths. Development validation uses explicit
 binary paths and does not replace installed CLIs.
+
+`jj-store conversation-metadata --endpoint http://127.0.0.1:PORT/` reads
+authorized conversation details, submits a bounded typed command file or
+inspects a retained request. It requires explicit literal-loopback selection and
+never redirects or retries an unknown outcome. See the generated `jj-store`
+reference for arguments.

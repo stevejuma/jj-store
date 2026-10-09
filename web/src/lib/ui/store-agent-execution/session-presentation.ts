@@ -38,11 +38,12 @@ export function sessionItems(
       author: {
         ...agentMember({
           id: session.id,
-          name: session.title,
+          name: session.conversation_title ?? "New conversation",
           avatar: session.avatar,
         }),
         acpAgentId: session.setup_id ?? undefined,
       },
+      excerpt: session.discovery_text ?? undefined,
       context: `${session.setup_id ? (status?.setups.find((s) => s.id === session.setup_id)?.name ?? "Deleted agent") : "Unassigned"} · ${session.runner}`,
       lastActivityAt:
         typeof session.last_activity_at_millis === "number" &&

@@ -192,6 +192,7 @@
                   origin: body.origin,
                   home: session.repository,
                   discussion_thread: null,
+                  metadata_auto_eligible: false,
                   participants: [session.id],
                 },
               ],

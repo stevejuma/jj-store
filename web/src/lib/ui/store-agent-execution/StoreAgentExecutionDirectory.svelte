@@ -28,7 +28,8 @@
         variant="ghost"
         onclick={async () => {
           manager.openSession(session.id);
-        }}>{session.title} · {session.state}</Button
+        }}
+        >{session.conversation_title ?? "New conversation"} · {session.state}</Button
       >{/each}
   </section>{/if}
 

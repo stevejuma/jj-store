@@ -47,6 +47,9 @@ macro_rules! endpoints {
         (get, "/local/agents/runtimes/outcome", runtime_outcome, "local_agents_runtime_outcome", OutcomeQuery, routes::Empty, agents::tooling::Outcome),
         (get, "/local/agents/targets", targets, "local_agents_targets", TargetsQuery, routes::Empty, Vec<agents::Target>),
         (post, "/local/agents/setups", setups, "local_agents_setups", routes::Empty, agents::SetupCommand, agents::Status),
+        (get, "/local/agents/metadata", metadata, "local_agents_metadata", agents::metadata::Query, routes::Empty, agents::metadata::View),
+        (post, "/local/agents/metadata", metadata_command, "local_agents_metadata_command", routes::Empty, agents::metadata::Command, agents::metadata::Job),
+        (get, "/local/agents/metadata/job", metadata_job, "local_agents_metadata_job", OutcomeQuery, routes::Empty, agents::metadata::Job),
         (post, "/local/agents/chat", send_conversation, "local_agents_chat", routes::Empty, agents::conversations::Send, agents::conversations::SendOutcome),
         (post, "/local/agents/control", control_agent, "local_agents_control", routes::Empty, agents::fleet::Control, agents::Outcome),
         (post, "/local/agents/launch", launch, "local_agents_launch", routes::Empty, agents::Launch, agents::Outcome),
@@ -174,6 +177,31 @@ mutation!(
     agents::conversations::Send,
     send_conversation
 );
+mutation!(
+    metadata_command,
+    agents::metadata::Command,
+    metadata_command
+);
+async fn metadata(
+    ExtractState(state): ExtractState<Arc<State>>,
+    query: routes::Input<agents::metadata::Query>,
+) -> Result<Response> {
+    let query = routes::input(query)?;
+    let (m, actor) = manager(&state)?;
+    state.json(&m.metadata(actor, query).await.map_err(failure)?)
+}
+async fn metadata_job(
+    ExtractState(state): ExtractState<Arc<State>>,
+    query: routes::Input<OutcomeQuery>,
+) -> Result<Response> {
+    let query = routes::input(query)?;
+    let (m, actor) = manager(&state)?;
+    state.json(
+        &m.metadata_job(actor, query.request)
+            .await
+            .map_err(failure)?,
+    )
+}
 mutation!(control_agent, agents::fleet::Control, control_agent);
 mutation!(
     inspect_workspace,

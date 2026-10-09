@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreConversationMetadataSettings from "./StoreConversationMetadataSettings.svelte";
   import StoreAgentMentionPreference from "./StoreAgentMentionPreference.svelte";
   import StoreSettingsDisclosure from "./StoreSettingsDisclosure.svelte";
   import { isMacDesktopWindow } from "../../desktop-chrome.js";
@@ -59,6 +60,7 @@
   </section>
 {/if}
 {@render runtimeSection?.()}
+{#if manager}<StoreConversationMetadataSettings {manager} />{/if}
 {#if manager && draft}
   <section class="store-settings__section" aria-labelledby={`${id}-defaults`}>
     <header class="store-settings__section-heading">

@@ -75,3 +75,9 @@ them. Each step retains its own request and receipt; a mixed-repository Send is
 not an atomic transaction across repositories. Successful child publications and
 deliveries are not repeated after partial failure. Exact delivered comment
 revisions and captured answer ranges are required for durable reply links.
+
+Conversation metadata uses the same conditional ThreadStore publication and
+receipts. Referenced session snapshots must belong to the selected AgentStore
+closure and their session identities must match. Native/local source validation
+rejects unpublished or foreign snapshots. Metadata jobs never become canonical
+repository state; uncertain publication retains its original request identity.

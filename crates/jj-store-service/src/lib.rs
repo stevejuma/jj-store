@@ -66,3 +66,5 @@ pub mod conversion;
 pub mod stack_workspace;
 
 pub mod qualified_review;
+
+mod conversation_discovery;

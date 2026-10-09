@@ -8,6 +8,13 @@ use std::collections::BTreeMap;
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(tag = "type", rename_all = "snake_case", deny_unknown_fields)]
 pub enum ThreadCommandV1 {
+    SetMetadata {
+        thread_id: ThreadId,
+        expected_thread: CollabObjectRef,
+        expected_metadata: Option<CollabObjectRef>,
+        target: ConversationMetadataTargetV1,
+        value: Box<ConversationMetadataValueV1>,
+    },
     Submit {
         submission: Box<ConversationSubmissionV1>,
     },
@@ -61,6 +68,7 @@ pub enum ThreadCommandV1 {
 impl ThreadCommandV1 {
     pub fn thread_id(&self) -> ThreadId {
         match self {
+            Self::SetMetadata { thread_id, .. } => *thread_id,
             Self::Submit { submission } => submission.thread_id,
             Self::Create { thread_id, .. }
             | Self::CreateAgentDiscussion { thread_id, .. }
@@ -74,6 +82,20 @@ impl ThreadCommandV1 {
     }
     pub fn validate(&self) -> Result<()> {
         match self {
+            Self::SetMetadata {
+                expected_thread,
+                expected_metadata,
+                target,
+                value,
+                ..
+            } => {
+                expect(*expected_thread, CollabObjectKind::ThreadVersion)?;
+                if let Some(p) = expected_metadata {
+                    expect(*p, CollabObjectKind::ConversationMetadata)?;
+                }
+                target.key()?;
+                value.validate()?;
+            }
             Self::Submit { submission } => submission.validate()?,
             Self::CreateCommentDiscussion { title, source, .. } => {
                 if !label(title, 1024) {
@@ -170,6 +192,7 @@ pub struct ThreadStateV1 {
     pub messages: BTreeMap<HumanMessageId, CollabObjectRef>,
     pub links: BTreeMap<ThreadLinkId, CollabObjectRef>,
     pub assignments: BTreeMap<AgentSessionId, CollabObjectRef>,
+    pub metadata: BTreeMap<CollabCatalogKey, CollabObjectRef>,
 }
 impl ThreadStateV1 {
     pub fn read(root: ThreadRootV1, graph: &CollabGraphV1) -> Result<Self> {
@@ -181,6 +204,7 @@ impl ThreadStateV1 {
             messages: BTreeMap::new(),
             links: BTreeMap::new(),
             assignments: BTreeMap::new(),
+            metadata: BTreeMap::new(),
         };
         for (key, reference) in graph.catalog(root.threads)? {
             let CollabObjectV1::ThreadVersion(v) = graph.get(reference)? else {
@@ -234,6 +258,15 @@ impl ThreadStateV1 {
                 result.assignments.insert(session_id, reference);
             }
         }
+        for (key, reference) in graph.catalog(root.metadata)? {
+            let CollabObjectV1::ConversationMetadata(v) = graph.get(reference)? else {
+                return Err(Error::Invalid("metadata catalog kind"));
+            };
+            if key != v.target.key()? || !result.threads.contains_key(&v.thread_id) {
+                return Err(Error::Invalid("metadata catalog membership"));
+            }
+            result.metadata.insert(key, reference);
+        }
         for reference in result.links.values() {
             let CollabObjectV1::ThreadLink(v) = graph.get(*reference)? else {
                 unreachable!()
@@ -258,6 +291,7 @@ impl ThreadStateV1 {
             messages: BTreeMap::new(),
             links: BTreeMap::new(),
             assignments: BTreeMap::new(),
+            metadata: BTreeMap::new(),
         }
     }
     /// Pure staging. A provider must authorize all referenced targets and publish the selected root atomically.
@@ -270,6 +304,9 @@ impl ThreadStateV1 {
         graph: &mut CollabGraphV1,
     ) -> Result<(ThreadRootV1, ThreadCommandResultV1)> {
         command.validate()?;
+        if matches!(command, ThreadCommandV1::SetMetadata { .. }) {
+            return self.set_metadata(command, actor, request, at, graph);
+        }
         if let ThreadCommandV1::Submit { submission } = command {
             return self.submit_conversation(submission, actor, request, at, graph);
         }
@@ -277,7 +314,7 @@ impl ThreadStateV1 {
         let mut root = self.root.clone();
         let old = self.threads.get(&thread_id).copied();
         let expected = match command {
-            ThreadCommandV1::Submit { .. } => unreachable!(),
+            ThreadCommandV1::Submit { .. } | ThreadCommandV1::SetMetadata { .. } => unreachable!(),
             ThreadCommandV1::Create { .. }
             | ThreadCommandV1::CreateAgentDiscussion { .. }
             | ThreadCommandV1::CreateCommentDiscussion { .. } => None,

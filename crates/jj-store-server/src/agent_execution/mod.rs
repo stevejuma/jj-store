@@ -21,6 +21,14 @@ mod freshness;
 mod journal;
 mod launch;
 mod local_agent;
+mod metadata_cancel;
+mod metadata_directory;
+mod metadata_jobs;
+mod metadata_runtime;
+mod metadata_sources;
+mod metadata_store;
+mod metadata_suggestions;
+mod metadata_text;
 mod provider_catalog;
 mod provider_launch;
 mod qualified_reviews;
@@ -85,6 +93,7 @@ struct Inner {
     installer_task: Mutex<Option<tokio::task::JoinHandle<()>>>,
     shutdown: tokio::sync::Mutex<()>,
     shutdown_finished: Mutex<Option<bool>>,
+    metadata_inference: tokio::sync::Mutex<()>,
     mutation: tokio::sync::Mutex<()>,
     workspace_gate: tokio::sync::Mutex<()>,
     workspace_activity: Mutex<BTreeMap<String, RequestId>>,
@@ -156,6 +165,7 @@ impl Supervisor {
             installer_task: Mutex::new(None),
             shutdown: tokio::sync::Mutex::new(()),
             shutdown_finished: Mutex::new(None),
+            metadata_inference: tokio::sync::Mutex::new(()),
             mutation: tokio::sync::Mutex::new(()),
             workspace_gate: tokio::sync::Mutex::new(()),
             workspace_activity: Mutex::new(BTreeMap::new()),

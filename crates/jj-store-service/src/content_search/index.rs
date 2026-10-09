@@ -186,6 +186,47 @@ impl Index {
             }
             rows.insert(*id, row);
         }
+        for reference in state.metadata.values() {
+            let CollabObjectV1::ConversationMetadata(metadata) =
+                graph.get(*reference).map_err(|_| Error::Corrupt)?
+            else {
+                return Err(Error::Corrupt);
+            };
+            if let Some(row) = rows.get(&metadata.thread_id).copied() {
+                let title = metadata
+                    .value
+                    .title()
+                    .unwrap_or(&index.docs[row].hit.title)
+                    .to_owned();
+                let body = metadata
+                    .value
+                    .generated
+                    .as_ref()
+                    .map(|g| {
+                        format!(
+                            "{}\n{}\n{}",
+                            g.summary,
+                            g.keywords.join(" "),
+                            g.goals.join(" ")
+                        )
+                    })
+                    .unwrap_or_default();
+                if body.len() > 16 * 1024 {
+                    return Err(Error::Limit);
+                }
+                index.docs[row].hit.title = title.clone();
+                index.docs[row].title_fold = title.to_lowercase();
+                index.bytes += body.len() + folded_len(&body) + title.len() + folded_len(&title);
+                if index.bytes > MAX_BYTES {
+                    return Err(Error::Limit);
+                }
+                index.docs[row].body_fold = body.to_lowercase();
+                index.docs[row].body = body.clone();
+                index.docs[row].field = Field::Both;
+                index.docs[row].hit.excerpt = extract::excerpt(&body, "");
+                index.docs[row].hit.revision = reference.id.to_string();
+            }
+        }
         for (id, reference) in &state.messages {
             let CollabObjectV1::HumanMessageRevision(message) =
                 graph.get(*reference).map_err(|_| Error::Corrupt)?

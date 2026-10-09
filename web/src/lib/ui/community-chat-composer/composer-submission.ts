@@ -23,3 +23,9 @@ export function editLastComposerMessage(callback?: () => void) {
 export function composerSubmissionError(cause: unknown) {
   return cause instanceof Error ? cause.message : "Message could not be sent";
 }
+export function composerFeedback(
+  issue: string,
+  fallback: ComposerProps["composerStatus"],
+): ComposerProps["composerStatus"] {
+  return issue ? { type: "error", message: issue } : fallback;
+}

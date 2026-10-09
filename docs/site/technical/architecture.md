@@ -284,3 +284,10 @@ bounded readers, and emits scoped freshness events. The browser retains clean
 observations in session memory without making them repository authority. File
 comments remain ReviewStore-owned and conversation batches reference exact
 repository-qualified revisions; native and local publication stay independent.
+
+Conversation discovery uses a dedicated tool-free helper outside ACP and coding
+workspaces. The server freezes authorized visible capture and model settings
+before inference; ThreadStore selects canonical metadata through existing native
+or companion publication. AgentStore keeps the raw captures. Search enriches
+existing Thread hits and directory rows rather than publishing another
+authority.

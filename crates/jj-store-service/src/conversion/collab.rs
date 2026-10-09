@@ -55,6 +55,19 @@ fn translate(
         CollabObjectV1::IndexPage(_) => {
             return Err("conversion rebuilds collaboration catalogs".into());
         }
+        CollabObjectV1::ConversationMetadata(v) => {
+            if let Some(previous) = &mut v.previous {
+                remap(previous)?;
+            }
+            for source in v.value.agent_title_sources.values_mut() {
+                source.snapshot = mapped(a, source.snapshot)?;
+            }
+            if let Some(g) = &mut v.value.generated {
+                for source in &mut g.sources {
+                    source.snapshot = mapped(a, source.snapshot)?;
+                }
+            }
+        }
         CollabObjectV1::ThreadVersion(v) => {
             if let Some(source) = &mut v.comment_source {
                 target(&mut source.target, c, a, r)?;
@@ -76,7 +89,8 @@ fn translate(
             }
             match &mut v.event {
                 ThreadEventKindV1::Message { revision }
-                | ThreadEventKindV1::Link { version: revision } => remap(revision)?,
+                | ThreadEventKindV1::Link { version: revision }
+                | ThreadEventKindV1::Metadata { version: revision } => remap(revision)?,
                 _ => {}
             }
         }
@@ -233,6 +247,7 @@ pub fn transfer_collab(
             &mut t.messages,
             &mut t.links,
             &mut t.assignments,
+            &mut t.metadata,
         ]);
     }
     if let Some(r) = &mut reaction {

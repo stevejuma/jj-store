@@ -117,6 +117,7 @@ export function completedFleetConversation(
         origin,
         home: changeRepository,
         discussion_thread: null,
+        metadata_auto_eligible: false,
         participants: [session.id],
       },
     ],

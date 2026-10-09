@@ -1169,3 +1169,20 @@ fn mode_options() -> Value {
     json!([{"id":"mode","name":"Execution mode","category":"mode","type":"select","currentValue":"ask",
         "options":[{"value":"ask","name":"Ask before tools"}]}])
 }
+
+/// LapisMD: a standalone tool-free completion for application discovery metadata.
+/// No ACP session, MCP registry or interactive sign-in is constructed.
+pub async fn summarize_metadata(system: &str, input: &str) -> Result<String, AgentError> {
+    let cfg = Config::from_env().map_err(AgentError::InvalidParams)?;
+    if matches!(cfg.provider, Provider::Databricks | Provider::DatabricksV2)
+        && cfg.api_key.is_empty()
+    {
+        return Err(AgentError::InvalidParams(
+            "metadata authentication required".into(),
+        ));
+    }
+    Llm::new(&cfg)?
+        .single_attempt()
+        .summarize(&cfg, system, input, 2048, &cfg.model)
+        .await
+}

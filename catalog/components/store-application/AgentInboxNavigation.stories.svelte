@@ -31,7 +31,7 @@
     await userEvent.unhover(refresh);
     sessions.focus();
     await userEvent.keyboard("{Enter}");
-    await c.findByRole("button", { name: /Open session Repository helper/ });
+    await c.findByRole("button", { name: /Open session Fixture conversation/ });
     await expect(c.getByText("Sessions", { exact: true })).toBeVisible();
     await expect(
       c.queryByLabelText("Session commands"),
@@ -48,7 +48,7 @@
       c.getByRole("button", { name: "Open fixture conversation" }),
     );
     const chat = await c.findByRole("button", {
-      name: /Open session Repository helper/,
+      name: /Open session Fixture conversation/,
     });
     await expect(chat).not.toHaveTextContent("Offline");
     await expect(

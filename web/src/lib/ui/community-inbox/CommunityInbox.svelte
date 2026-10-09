@@ -2,6 +2,7 @@
 <script lang="ts">
   import { AppShell, useAppShell } from "@lapismd/design-core/shell";
   import CommunitySidebarToggleIcon from "../community-app-shell/CommunitySidebarToggleIcon.svelte";
+  import { Input } from "@lapismd/design-core/shadcn/input";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { ScrollArea } from "@lapismd/design-core/shadcn/scroll-area";
   import * as Empty from "@lapismd/design-core/shadcn/empty";
@@ -52,6 +53,19 @@
     threadSidebar?: Snippet;
     children: Snippet;
   } = $props();
+  let search = $state("");
+  const visibleItems = $derived(
+    items.filter((item) =>
+      [
+        item.author.name,
+        item.context,
+        item.excerpt,
+        item.repository?.name,
+      ].some((value) =>
+        value?.toLocaleLowerCase().includes(search.trim().toLocaleLowerCase()),
+      ),
+    ),
+  );
   const shell = useAppShell();
   let bodyElement = $state<HTMLElement | null>(null);
   let listElement = $state<HTMLElement | null>(null);
@@ -116,14 +130,31 @@
             >All sessions</Button
           >{/if}
       </div>
+      <div class="lc-community-inbox__list-header">
+        <Input
+          type="search"
+          aria-label="Search loaded conversations"
+          placeholder="Search conversations"
+          bind:value={search}
+        />
+      </div>
       <ScrollArea class="lc-community-inbox__scroll">
         <div class="lc-community-inbox__items" aria-label="Session chats">
-          <CommunityInboxSessions {items} {activeId} {onSelect} {loading} />
-          {#if !loading && !items.length}<Empty.Root
+          <CommunityInboxSessions
+            items={visibleItems}
+            {activeId}
+            {onSelect}
+            {loading}
+          />
+          {#if !loading && !visibleItems.length}<Empty.Root
               class="lc-community-inbox__empty"
               role="status"
               ><Empty.Header
-                ><Empty.Title>No sessions yet</Empty.Title><Empty.Description
+                ><Empty.Title
+                  >{items.length
+                    ? "No matching conversations"
+                    : "No sessions yet"}</Empty.Title
+                ><Empty.Description
                   >Start a session to begin a chat with this agent.</Empty.Description
                 ></Empty.Header
               ></Empty.Root
@@ -206,17 +237,17 @@
     <AppShell.Body.Sidebar
       side="right"
       panelId="agent-session-settings"
-      label="Workspace and runtime"
+      label="Conversation details"
       mobileLabel="Session settings"
       class="lc-community-inbox__settings"
       bind:open={sidebarOpen}
     >
       <header class="lc-community-inbox__thread-header">
-        <h2 tabindex="-1" bind:this={settingsHeading}>Workspace and runtime</h2>
+        <h2 tabindex="-1" bind:this={settingsHeading}>Conversation details</h2>
         <Button
           variant="ghost"
           size="icon-sm"
-          aria-label="Close workspace and runtime"
+          aria-label="Close conversation details"
           onclick={closeSidebar}
         >
           <CloseIcon aria-hidden="true" />
