@@ -333,3 +333,6 @@ runtime selections and workspace inspection use their existing requests.
 
 E-CHAT-FOOTER-002 confirms JST-API-001 unchanged: repository button surface and
 wrapped-row alignment preserve inspection, copy, selection and Send requests.
+
+E-UI-MENU-002 confirms JST-API-001 unchanged: smaller muted menu titles alter
+presentation only; menu actions, selection and execution requests are unchanged.

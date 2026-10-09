@@ -12,3 +12,8 @@ retains hover feedback and truncates its label before wrapping. Wrapped rows
 align with the formatting toolbar. Three focused interaction/accessibility
 stories and live one-row geometry pass. M24 stays In progress with independent
 workspace qualification, resize investigation and visual approval unchanged.
+
+E-UI-MENU-002 uses secondary-sized, regular-weight muted headings in footer
+menus and shared popovers. Live typography and existing menu interactions retain
+their behavior. M24 remains In progress; workspace qualification and visual
+baselines remain open.

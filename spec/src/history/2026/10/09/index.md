@@ -29,3 +29,4 @@ Browse the child pages below.
 - [E-CHAT-WORKSPACE-008](E-CHAT-WORKSPACE-008/index.md)
 - [E-CHAT-WORKSPACE-009](E-CHAT-WORKSPACE-009/index.md)
 - [E-UI-MENU-001](E-UI-MENU-001/index.md)
+- [E-UI-MENU-002](E-UI-MENU-002/index.md)
