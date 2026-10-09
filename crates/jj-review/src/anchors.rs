@@ -151,6 +151,8 @@ pub struct AgentArtifactAnchorV1 {
 #[serde(tag = "target", content = "value", rename_all = "snake_case")]
 pub enum ArtifactTargetV1 {
     CodeText(Box<CodeTextAnchorV1>),
+    PortableCodeText(Box<crate::PortableCodeTextV2>),
+    PortableCodeArtifact(Box<crate::PortableCodeArtifactV2>),
     CodeArtifact(Box<CodeArtifactAnchorV1>),
     AgentText(Box<AgentTextAnchorV1>),
     AgentArtifact(Box<AgentArtifactAnchorV1>),

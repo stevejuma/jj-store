@@ -64,6 +64,7 @@ impl LocalRepository {
                         repository,
                         root: rr,
                         records: reviews.inventory(),
+                        evidence: Vec::new(),
                     })?,
                 ),
             ]);

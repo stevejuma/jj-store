@@ -34,6 +34,18 @@ pub struct LocalReviewStore {
     objects: BTreeSet<ReviewObjectRef>,
 }
 impl LocalReviewStore {
+    /// The anchor must be reachable from this committed ReviewStore selection.
+    pub async fn file_source(&self, reference: ReviewObjectRef) -> LocalResult<Vec<u8>> {
+        let ReviewObjectV1::Anchor(anchor) = self.object(reference).await? else {
+            return Err(LocalError::Invalid);
+        };
+        let artifact = match &anchor.target {
+            jj_review::ArtifactTargetV1::PortableCodeText(v) => &v.artifact,
+            jj_review::ArtifactTargetV1::PortableCodeArtifact(v) => v.as_ref(),
+            _ => return Err(LocalError::Unsupported),
+        };
+        Ok(self.io.portable_file(artifact)?)
+    }
     pub fn reads(&self) -> ReviewReader<'_> {
         ReviewReader::new(self)
     }
@@ -76,6 +88,7 @@ impl ReviewSnapshotRead for LocalReviewStore {
 impl LocalRepository {
     pub async fn review_store(&self) -> LocalResult<LocalReviewStore> {
         let selected = self.metadata.read()?;
+        self.check_identity(selected.as_ref())?;
         self.review_store_at(selected.as_ref(), m::RepositoryId::new([0; 16]))
             .await
     }
@@ -89,21 +102,20 @@ impl LocalRepository {
             .map(|s| self.metadata.read_domain(s, Domain::Review))
             .transpose()?
             .flatten();
-        let (records, reference) = if let Some(bytes) = bytes {
+        let (records, reference, evidence) = if let Some(bytes) = bytes {
             let value = LocalReviewRootV1::decode(&bytes, repository)?;
             for blob in value.records.values() {
                 self.metadata
                     .read_retained_blob(selected.ok_or(LocalError::Corrupt)?, *blob)?;
             }
-            (value.records, Some(value.root))
+            (value.records, Some(value.root), value.evidence)
         } else {
-            (BTreeMap::new(), None)
+            (BTreeMap::new(), None, Vec::new())
         };
-        let io = Arc::new(ReviewIo::new(Arc::new(GitRecords::new(
-            repository,
-            self.metadata.clone(),
-            records,
-        )?)));
+        let io = Arc::new(ReviewIo::with_evidence(
+            Arc::new(GitRecords::new(repository, self.metadata.clone(), records)?),
+            super::agent_evidence::EvidenceIo::new(self.metadata.clone(), selected, evidence)?,
+        ));
         let root = match reference {
             Some(reference) => io.root(reference).await?,
             None => ReviewRootV1::empty(),

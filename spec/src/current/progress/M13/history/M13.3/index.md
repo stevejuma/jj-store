@@ -18,6 +18,7 @@ Generated from evidence task references and historical mappings. This history is
 | [E-M13-024](../../../../../history/2026/10/02/E-M13-024/index.md) | 2026-10-02 | pass | Original outcome |
 | [E-M13-025](../../../../../history/2026/10/02/E-M13-025/index.md) | 2026-10-02 | pass | Original outcome |
 | [E-M17-034](../../../../../history/2026/10/02/E-M17-034/index.md) | 2026-10-02 | pass | Original outcome |
+| [E-CHAT-WORKSPACE-002](../../../../../history/2026/10/09/E-CHAT-WORKSPACE-002/index.md) | 2026-10-09 | pending | Original outcome |
 <!-- generated-navigation -->
 ## Pages
 

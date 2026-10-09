@@ -386,6 +386,24 @@ async fn local_review_rejects_foreign_and_unqualified_anchors_without_publicatio
     let (_root, repo) = fixture();
     let initialized = receipt(repo.apply_review_command(&create(1)).await.unwrap());
     let before = repo.metadata_store().read().unwrap().unwrap();
+    let foreign_binding = repo.clone().bound_to(m::RepositoryId::new([77; 16]));
+    assert!(matches!(
+        foreign_binding.review_store().await,
+        Err(LocalError::Stale)
+    ));
+    assert_eq!(
+        foreign_binding
+            .apply_review_command(&create(99))
+            .await
+            .unwrap_err(),
+        LocalError::Stale
+    );
+    assert_eq!(
+        foreign_binding
+            .review_command_status(create(1).request_id)
+            .unwrap_err(),
+        LocalError::Stale
+    );
     let mut anchor = ArtifactAnchorV1 {
         schema_version: 1,
         repository_id: m::RepositoryId::new([9; 16]),

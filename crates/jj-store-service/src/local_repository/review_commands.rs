@@ -14,6 +14,7 @@ impl LocalRepository {
         request: &LocalReviewRequest,
     ) -> LocalResult<LocalReviewOutcome> {
         request.validate()?;
+        self.check_identity(self.metadata.read()?.as_ref())?;
         let actor = self.ensure_actor()?;
         let proposed = Self::proposed_repository()?;
         let intent = request.intent_for(actor)?;
@@ -25,6 +26,7 @@ impl LocalRepository {
             .map_err(|_| LocalError::Limit)?;
         for _ in 0..8 {
             let selected = self.metadata.read()?;
+            self.check_identity(selected.as_ref())?;
             if let Some(value) = selected
                 .as_ref()
                 .and_then(|s| s.receipt(actor, request.request_id))
@@ -35,6 +37,19 @@ impl LocalRepository {
                 return receipt(value);
             }
             let base = self.review_store_at(selected.as_ref(), proposed).await?;
+            if let LocalReviewCommand::WithEvidence { evidence, .. } = &request.command {
+                if evidence
+                    .iter()
+                    .any(|e| e.reference.repository != base.repository())
+                {
+                    return Err(LocalError::Invalid);
+                }
+                base.io
+                    .evidence
+                    .as_ref()
+                    .ok_or(LocalError::Corrupt)?
+                    .stage(evidence)?;
+            }
             let (root, command) = match &request.command {
                 LocalReviewCommand::Initialize => (base.root().clone(), None),
                 other => {
@@ -55,7 +70,10 @@ impl LocalRepository {
                                 body: body.clone(),
                             }
                         }
-                        LocalReviewCommand::Apply { intent: command } => command.as_ref().clone(),
+                        LocalReviewCommand::Apply { intent: command }
+                        | LocalReviewCommand::WithEvidence {
+                            intent: command, ..
+                        } => command.as_ref().clone(),
                         LocalReviewCommand::Initialize => unreachable!(),
                     };
                     let typed = ReviewCommandRequest::new(
@@ -92,10 +110,26 @@ impl LocalRepository {
                     repository,
                     root: reference,
                     records: base.io.store.inventory(),
+                    evidence: base
+                        .io
+                        .evidence
+                        .as_ref()
+                        .ok_or(LocalError::Corrupt)?
+                        .inventory(),
                 })
                 .map_err(|_| LocalError::Corrupt)?,
                 result: serde_json::to_vec(&result).map_err(|_| LocalError::Corrupt)?,
-                retained: base.io.store.retained(),
+                retained: {
+                    let mut retained = base.io.store.retained();
+                    retained.extend(
+                        base.io
+                            .evidence
+                            .as_ref()
+                            .ok_or(LocalError::Corrupt)?
+                            .retained(),
+                    );
+                    retained
+                },
             };
             let candidate = match self.metadata.prepare(selected.as_ref(), &update)? {
                 Preparation::Committed(value) => return receipt(&value),
@@ -114,6 +148,7 @@ impl LocalRepository {
         Err(LocalError::Busy)
     }
     pub fn review_command_status(&self, request: m::RequestId) -> LocalResult<LocalReviewOutcome> {
+        self.check_identity(self.metadata.read()?.as_ref())?;
         if let Some(actor) = self.actor()?
             && let Some(selected) = self.metadata.read()?
             && let Some(value) = selected.receipt(actor, request)

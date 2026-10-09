@@ -627,3 +627,41 @@ async fn session_comments_retain_the_snapshot_and_reject_identity_mismatch_after
         2
     );
 }
+
+#[tokio::test]
+async fn native_review_refuses_portable_code_without_qualified_carrier() {
+    use jj_store_model::portable::*;
+    let coordinator = fixture().await;
+    let before = coordinator.read().await.unwrap();
+    let ReviewCommandV1::CreateThread { mut anchor, .. } = create() else {
+        panic!()
+    };
+    anchor.target =
+        ArtifactTargetV1::PortableCodeArtifact(Box::new(jj_review::PortableCodeArtifactV2 {
+            revision: jj_review::PortableRevisionV2 {
+                evidence: CodeEvidenceRefV1 {
+                    repository: REPOSITORY,
+                    profile: CodeProfileV1::GitSha1Jj045,
+                    operation: jj_store_model::OperationId::new([1; 64]),
+                    capsule: jj_store_model::CodeCapsuleId::new([2; 32]),
+                },
+                commit: CodeCommitIdV1::GitSha1Jj045(jj_store_model::GitSha1Id::new([3; 20])),
+                change: None,
+            },
+            path: "code.txt".into(),
+            object: CodeObjectIdV1::GitSha1Jj045 {
+                kind: GitObjectKindV1::Blob,
+                id: jj_store_model::GitSha1Id::new([4; 20]),
+            },
+            value_kind: jj_review::CodeValueKind::File,
+        }));
+    assert!(matches!(
+        coordinator
+            .stage_review_object(&ReviewObjectV1::Anchor(anchor))
+            .await,
+        Err(wal::Error::Unsupported(_))
+    ));
+    let after = coordinator.read().await.unwrap();
+    assert_eq!(before.manifest().published, after.manifest().published);
+    assert_eq!(before.manifest().review_root, after.manifest().review_root);
+}

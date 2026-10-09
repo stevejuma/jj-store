@@ -332,7 +332,11 @@ operation-pinned repository reads, current disk observations and pre-dispatch
 turn boundaries. The remaining footer, file-review publication, cross-repository
 submissions and cold live acceptance are separate required slices. M24 remains
 In progress; M13.3 local review qualification is not advanced by read-only
-inspection. Visual baselines remain unapproved.
+inspection. Visual baselines remain unapproved. E-CHAT-WORKSPACE-002 adds
+retained file-review provider evidence. M24 stays In progress:
+repository-qualified submissions and reply links, the workspace footer/rail, and
+cold native/local browser acceptance are not yet complete. Visual baselines
+remain unapproved and ResizeObserver recheck is pending.
 <!-- generated-navigation -->
 ## Pages
 

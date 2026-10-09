@@ -124,6 +124,13 @@ impl ReviewObjectV1 {
             Self::StatusPage(value) => value.dependencies().into_iter().collect(),
         })
     }
+    pub fn code_evidence(&self) -> Result<BTreeSet<jj_store_model::portable::CodeEvidenceRefV1>> {
+        self.validate()?;
+        match self {
+            Self::Anchor(value) => value.code_evidence(),
+            _ => Ok(BTreeSet::new()),
+        }
+    }
     pub fn native_dependencies(&self) -> Result<BTreeSet<ObjectKey>> {
         self.validate()?;
         match self {

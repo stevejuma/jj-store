@@ -94,3 +94,10 @@ immutable content; only explicit dispatch/completion invokes the existing
 snapshot provider. Both control versions keep pending prompts in the controller,
 capture their start after the prior turn settles, and cancel pending requests
 without sending them to ACP. Restart never resumes this queue automatically.
+
+File-review provider qualification uses disposable ordinary Git-backed
+workspaces and the same shared typed commands used by the application. Tests
+cover retained original reads after source edits, deletion, operation-store loss
+and Git GC, plus exact receipt recovery and refusal of foreign bindings. This
+qualification does not introduce a separate CLI prompt or bypass agent workspace
+authorization.

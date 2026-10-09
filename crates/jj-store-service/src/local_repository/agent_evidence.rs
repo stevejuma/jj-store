@@ -9,7 +9,7 @@ use jj_store_wal::{self as wal, publication::*};
 use serde::{Deserialize, Serialize};
 use std::{collections::BTreeMap, sync::Mutex};
 
-#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct LocalCodeEvidenceV1 {
     pub reference: CodeEvidenceRefV1,
@@ -111,6 +111,18 @@ impl EvidenceIo {
             );
         }
         Ok(())
+    }
+    pub fn file(
+        &self,
+        reference: &CodeEvidenceRefV1,
+        commit: &CodeCommitIdV1,
+        path: &str,
+    ) -> LocalResult<(jj_store_model::GitSha1Id, Vec<u8>)> {
+        let capsule = self.read(reference)?;
+        let CodeCommitIdV1::GitSha1Jj045(commit) = commit else {
+            return Err(LocalError::Unsupported);
+        };
+        Ok(self.metadata.read_capsule_file(&capsule, *commit, path)?)
     }
     pub fn inventory(&self) -> Vec<EvidenceEntry> {
         self.entries.lock().unwrap().values().cloned().collect()

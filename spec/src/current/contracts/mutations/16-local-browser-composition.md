@@ -23,3 +23,12 @@ hooks, record agents, reconcile heads or advance the displayed selection.
 Local folder reconnect is a revision-checked device-binding update only. First
 Add journals the proposed repository identity before initialization; retries
 cannot initialize another identity after interruption.
+
+Qualified portable file reviews use the shared review command reducer with an
+exact optional source-evidence payload. Binding identity is rechecked before
+receipts and each companion-CAS retry. Commands validate selected source bytes,
+UTF-8 ranges and both diff boundaries; failures leave the selected metadata
+unchanged. Review records and retained evidence publish together. Unknown
+outcomes retain the original typed request and successful replay does not
+re-read a later checkout. This adds no filesystem write or snapshot capability
+to browsing.

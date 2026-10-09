@@ -11,7 +11,16 @@ impl ArtifactAnchorV1 {
         if self.schema_version != 1 {
             return Err(Error::Invalid("anchor schema"));
         }
+        if self
+            .code_evidence_unchecked()
+            .iter()
+            .any(|e| e.repository != self.repository_id)
+        {
+            return Err(Error::Invalid("portable anchor repository"));
+        }
         match &self.target {
+            ArtifactTargetV1::PortableCodeText(value) => value.validate(),
+            ArtifactTargetV1::PortableCodeArtifact(value) => value.validate(),
             ArtifactTargetV1::CodeText(value) => validate_code_text(value),
             ArtifactTargetV1::CodeArtifact(value) => validate_code_artifact(value),
             ArtifactTargetV1::AgentText(value) => validate_agent_text(value),
@@ -37,6 +46,7 @@ impl ArtifactAnchorV1 {
         self.validate()?;
         match &self.target {
             ArtifactTargetV1::CodeText(value) => value.text.validate_bytes(bytes),
+            ArtifactTargetV1::PortableCodeText(value) => value.text.validate_bytes(bytes),
             ArtifactTargetV1::AgentText(value) => value.text.validate_bytes(bytes),
             _ => Err(Error::Invalid("anchor is not text")),
         }

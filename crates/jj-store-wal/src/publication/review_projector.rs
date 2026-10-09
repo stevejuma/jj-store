@@ -9,6 +9,7 @@ pub struct ReviewDependencyClosure {
     pub objects: BTreeSet<ReviewObjectRef>,
     pub agent_objects: BTreeSet<AgentObjectRef>,
     pub native: BTreeSet<ObjectKey>,
+    pub code_evidence: BTreeSet<jj_store_model::portable::CodeEvidenceRefV1>,
 }
 
 /// Stages immutable records only. Adapters own authorization, external evidence,
@@ -81,6 +82,7 @@ impl<'a> ReviewProjector<'a> {
         let mut objects = BTreeSet::new();
         let mut native = BTreeSet::new();
         let mut agent = BTreeSet::new();
+        let mut code_evidence = BTreeSet::new();
         while let Some(reference) = pending.pop() {
             if !objects.insert(reference) {
                 continue;
@@ -89,6 +91,7 @@ impl<'a> ReviewProjector<'a> {
                 return Err(Error::Limit("review dependency closure"));
             }
             let object = self.read_review_object(reference).await?;
+            code_evidence.extend(object.code_evidence().map_err(review::review_error)?);
             native.extend(object.native_dependencies().map_err(review::review_error)?);
             agent.extend(object.agent_dependencies().map_err(review::review_error)?);
             pending.extend(object.review_dependencies().map_err(review::review_error)?);
@@ -98,6 +101,7 @@ impl<'a> ReviewProjector<'a> {
             objects,
             agent_objects,
             native,
+            code_evidence,
         })
     }
 }

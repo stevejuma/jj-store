@@ -28,3 +28,11 @@ before dispatch. Repeated publish and status requests retain it, even after
 disconnect or restart. Selected authority distinguishes the exact checkpoint
 from coverage by a newer checkpoint; coverage does not prove that the original
 write succeeded. Neither path prunes retained records or replaces a newer tail.
+
+Review dependency closure now enumerates portable code-evidence references as
+well as native and agent edges. Local file-review publication selects the source
+capsule inventory and its complete Git reachability with the review root. Local
+Thread/Reaction consumers retain that same evidence when referencing review
+records. Native staging and reads reject portable review carriers; this
+extension does not weaken native dependency verification or qualify conversion
+carriers.

@@ -48,3 +48,9 @@ for exact pre-dispatch snapshots. Legacy records missing a start boundary remain
 readable and report Last turn unavailable. This preserves JST-COMPAT-001/003/005
 native widths, object encodings, publication authority and independent native
 qualification. Local review-anchor publication is still a separate M13.3 gate.
+
+The shared review envelope adds portable file target tags using the existing V2
+code-selector types. Existing native and repository target bytes remain exact.
+Local review descriptors add an optional evidence inventory, omitted when empty
+to preserve existing encodings. Native portable carriers, portable agent review
+publication and conversion of those anchors remain separately unqualified.

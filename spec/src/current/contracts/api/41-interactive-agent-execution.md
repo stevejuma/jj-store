@@ -265,3 +265,11 @@ Metadata paths, symlink traversal and unqualified text are not readable. Deleted
 files have an absent after-side, distinct from unavailable content. Branch,
 Since last commit and Last turn retain the precise definitions in the
 conversation contract; missing or ambiguous boundaries never imply no changes.
+
+Local review commands additionally accept an exact WithEvidence payload for
+portable file targets. Its capsule repository and immutable file identity must
+match the source admitted by the provider; body, selection and evidence bounds
+apply before publication. Existing transport admission and independent
+repository authorization remain unchanged. A submitted capsule is not authority
+to select an arbitrary filesystem root or to read staged content through an
+older pin.

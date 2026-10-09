@@ -41,6 +41,11 @@ impl Coordinator {
     }
 
     async fn validate_review_session_anchor(&self, object: &ReviewObjectV1) -> Result<()> {
+        if !object.code_evidence().map_err(review_error)?.is_empty() {
+            return Err(Error::Unsupported(
+                "native portable review evidence carrier",
+            ));
+        }
         if let ReviewObjectV1::Anchor(anchor) = object
             && let jj_review::ArtifactTargetV1::AgentSession {
                 session_id,

@@ -4008,6 +4008,16 @@ export interface components {
         }
       | {
           /** @constant */
+          target: "portable_code_text";
+          value: components["schemas"]["PortableCodeTextV2"];
+        }
+      | {
+          /** @constant */
+          target: "portable_code_artifact";
+          value: components["schemas"]["PortableCodeArtifactV2"];
+        }
+      | {
+          /** @constant */
           target: "code_artifact";
           value: components["schemas"]["CodeArtifactAnchorV1"];
         }
@@ -4082,14 +4092,53 @@ export interface components {
     DiffSide: "before" | "after";
     /** @enum {string} */
     ComparisonKind: "explicit_pair";
-    CodeArtifactAnchorV1: {
-      operation_id: components["schemas"]["OperationId"];
-      commit_id: components["schemas"]["CommitId"];
-      change_id: components["schemas"]["ChangeId"] | null;
+    PortableCodeTextV2: {
+      artifact: components["schemas"]["PortableCodeArtifactV2"];
+      text: components["schemas"]["TextSelectionV1"];
+      diff_context: components["schemas"]["PortableDiffContextV2"] | null;
+    };
+    PortableCodeArtifactV2: {
+      revision: components["schemas"]["PortableRevisionV2"];
       path: string;
-      object: components["schemas"]["ObjectKey"];
+      object: components["schemas"]["CodeObjectIdV1"];
       value_kind: components["schemas"]["CodeValueKind"];
     };
+    PortableRevisionV2: {
+      evidence: components["schemas"]["CodeEvidenceRefV1"];
+      commit: components["schemas"]["CodeCommitIdV1"];
+      change: components["schemas"]["ChangeId"] | null;
+    };
+    CodeEvidenceRefV1: {
+      repository: components["schemas"]["RepositoryId"];
+      profile: components["schemas"]["CodeProfileV1"];
+      operation: components["schemas"]["OperationId"];
+      capsule: components["schemas"]["CodeCapsuleId"];
+    };
+    CodeCapsuleId: string;
+    CodeCommitIdV1:
+      | {
+          /** @constant */
+          profile: "native_v1";
+          id: components["schemas"]["CommitId"];
+        }
+      | {
+          /** @constant */
+          profile: "git_sha1_jj045";
+          id: components["schemas"]["GitSha1Id"];
+        };
+    GitSha1Id: string;
+    CodeObjectIdV1:
+      | {
+          object: components["schemas"]["ObjectKey"];
+          /** @constant */
+          profile: "native_v1";
+        }
+      | {
+          kind: components["schemas"]["GitObjectKindV1"];
+          id: components["schemas"]["GitSha1Id"];
+          /** @constant */
+          profile: "git_sha1_jj045";
+        };
     ObjectKey:
       | {
           /** @constant */
@@ -4130,6 +4179,23 @@ export interface components {
     SymlinkId: string;
     CopyId: string;
     ViewId: string;
+    /** @enum {string} */
+    GitObjectKindV1: "commit" | "tree" | "blob";
+    PortableDiffContextV2: {
+      before: components["schemas"]["PortableRevisionV2"];
+      before_path: string | null;
+      after: components["schemas"]["PortableRevisionV2"];
+      after_path: string | null;
+      side: components["schemas"]["DiffSide"];
+    };
+    CodeArtifactAnchorV1: {
+      operation_id: components["schemas"]["OperationId"];
+      commit_id: components["schemas"]["CommitId"];
+      change_id: components["schemas"]["ChangeId"] | null;
+      path: string;
+      object: components["schemas"]["ObjectKey"];
+      value_kind: components["schemas"]["CodeValueKind"];
+    };
     AgentTextAnchorV1: {
       session_id: components["schemas"]["AgentSessionId"];
       session_snapshot: components["schemas"]["AgentObjectRef"];
@@ -4476,29 +4542,10 @@ export interface components {
       operations: components["schemas"]["CodeEvidenceRefV1"][];
       commits: components["schemas"]["CodeCommitEvidenceV2"][];
     };
-    CodeEvidenceRefV1: {
-      repository: components["schemas"]["RepositoryId"];
-      profile: components["schemas"]["CodeProfileV1"];
-      operation: components["schemas"]["OperationId"];
-      capsule: components["schemas"]["CodeCapsuleId"];
-    };
-    CodeCapsuleId: string;
     CodeCommitEvidenceV2: {
       evidence: components["schemas"]["CodeEvidenceRefV1"];
       commit: components["schemas"]["CodeCommitIdV1"];
     };
-    CodeCommitIdV1:
-      | {
-          /** @constant */
-          profile: "native_v1";
-          id: components["schemas"]["CommitId"];
-        }
-      | {
-          /** @constant */
-          profile: "git_sha1_jj045";
-          id: components["schemas"]["GitSha1Id"];
-        };
-    GitSha1Id: string;
     ThreadDirectoryMetadata: {
       /** Format: uint32 */
       message_count: number;
@@ -14331,6 +14378,233 @@ export interface operations {
                             /** @enum {string} */
                             comparison: "explicit_pair";
                           } | null;
+                        };
+                      }
+                    | {
+                        /** @constant */
+                        target: "portable_code_text";
+                        value: {
+                          artifact: {
+                            revision: {
+                              evidence: {
+                                repository: string;
+                                /** @enum {string} */
+                                profile: "native_v1" | "git_sha1_jj045";
+                                operation: string;
+                                capsule: string;
+                              };
+                              commit:
+                                | {
+                                    /** @constant */
+                                    profile: "native_v1";
+                                    id: string;
+                                  }
+                                | {
+                                    /** @constant */
+                                    profile: "git_sha1_jj045";
+                                    id: string;
+                                  };
+                              change?: string | null;
+                            };
+                            path: string;
+                            object:
+                              | {
+                                  object:
+                                    | {
+                                        /** @constant */
+                                        kind: "commit";
+                                        id: string;
+                                      }
+                                    | {
+                                        /** @constant */
+                                        kind: "tree";
+                                        id: string;
+                                      }
+                                    | {
+                                        /** @constant */
+                                        kind: "file";
+                                        id: string;
+                                      }
+                                    | {
+                                        /** @constant */
+                                        kind: "symlink";
+                                        id: string;
+                                      }
+                                    | {
+                                        /** @constant */
+                                        kind: "copy";
+                                        id: string;
+                                      }
+                                    | {
+                                        /** @constant */
+                                        kind: "view";
+                                        id: string;
+                                      }
+                                    | {
+                                        /** @constant */
+                                        kind: "operation";
+                                        id: string;
+                                      };
+                                  /** @constant */
+                                  profile: "native_v1";
+                                }
+                              | {
+                                  /** @enum {string} */
+                                  kind: "commit" | "tree" | "blob";
+                                  id: string;
+                                  /** @constant */
+                                  profile: "git_sha1_jj045";
+                                };
+                            /** @enum {string} */
+                            value_kind:
+                              | "file"
+                              | "binary_file"
+                              | "empty_file"
+                              | "symlink"
+                              | "gitlink"
+                              | "conflict_term"
+                              | "conflict_artifact";
+                          };
+                          text: {
+                            /** @enum {string} */
+                            encoding: "utf8";
+                            start_byte: string;
+                            end_byte: string;
+                            selected_sha256: string;
+                          };
+                          diff_context?: {
+                            before: {
+                              evidence: {
+                                repository: string;
+                                /** @enum {string} */
+                                profile: "native_v1" | "git_sha1_jj045";
+                                operation: string;
+                                capsule: string;
+                              };
+                              commit:
+                                | {
+                                    /** @constant */
+                                    profile: "native_v1";
+                                    id: string;
+                                  }
+                                | {
+                                    /** @constant */
+                                    profile: "git_sha1_jj045";
+                                    id: string;
+                                  };
+                              change?: string | null;
+                            };
+                            before_path?: string | null;
+                            after: {
+                              evidence: {
+                                repository: string;
+                                /** @enum {string} */
+                                profile: "native_v1" | "git_sha1_jj045";
+                                operation: string;
+                                capsule: string;
+                              };
+                              commit:
+                                | {
+                                    /** @constant */
+                                    profile: "native_v1";
+                                    id: string;
+                                  }
+                                | {
+                                    /** @constant */
+                                    profile: "git_sha1_jj045";
+                                    id: string;
+                                  };
+                              change?: string | null;
+                            };
+                            after_path?: string | null;
+                            /** @enum {string} */
+                            side: "before" | "after";
+                          } | null;
+                        };
+                      }
+                    | {
+                        /** @constant */
+                        target: "portable_code_artifact";
+                        value: {
+                          revision: {
+                            evidence: {
+                              repository: string;
+                              /** @enum {string} */
+                              profile: "native_v1" | "git_sha1_jj045";
+                              operation: string;
+                              capsule: string;
+                            };
+                            commit:
+                              | {
+                                  /** @constant */
+                                  profile: "native_v1";
+                                  id: string;
+                                }
+                              | {
+                                  /** @constant */
+                                  profile: "git_sha1_jj045";
+                                  id: string;
+                                };
+                            change?: string | null;
+                          };
+                          path: string;
+                          object:
+                            | {
+                                object:
+                                  | {
+                                      /** @constant */
+                                      kind: "commit";
+                                      id: string;
+                                    }
+                                  | {
+                                      /** @constant */
+                                      kind: "tree";
+                                      id: string;
+                                    }
+                                  | {
+                                      /** @constant */
+                                      kind: "file";
+                                      id: string;
+                                    }
+                                  | {
+                                      /** @constant */
+                                      kind: "symlink";
+                                      id: string;
+                                    }
+                                  | {
+                                      /** @constant */
+                                      kind: "copy";
+                                      id: string;
+                                    }
+                                  | {
+                                      /** @constant */
+                                      kind: "view";
+                                      id: string;
+                                    }
+                                  | {
+                                      /** @constant */
+                                      kind: "operation";
+                                      id: string;
+                                    };
+                                /** @constant */
+                                profile: "native_v1";
+                              }
+                            | {
+                                /** @enum {string} */
+                                kind: "commit" | "tree" | "blob";
+                                id: string;
+                                /** @constant */
+                                profile: "git_sha1_jj045";
+                              };
+                          /** @enum {string} */
+                          value_kind:
+                            | "file"
+                            | "binary_file"
+                            | "empty_file"
+                            | "symlink"
+                            | "gitlink"
+                            | "conflict_term"
+                            | "conflict_artifact";
                         };
                       }
                     | {
@@ -35912,6 +36186,233 @@ export interface operations {
                             /** @enum {string} */
                             comparison: "explicit_pair";
                           } | null;
+                        };
+                      }
+                    | {
+                        /** @constant */
+                        target: "portable_code_text";
+                        value: {
+                          artifact: {
+                            revision: {
+                              evidence: {
+                                repository: string;
+                                /** @enum {string} */
+                                profile: "native_v1" | "git_sha1_jj045";
+                                operation: string;
+                                capsule: string;
+                              };
+                              commit:
+                                | {
+                                    /** @constant */
+                                    profile: "native_v1";
+                                    id: string;
+                                  }
+                                | {
+                                    /** @constant */
+                                    profile: "git_sha1_jj045";
+                                    id: string;
+                                  };
+                              change?: string | null;
+                            };
+                            path: string;
+                            object:
+                              | {
+                                  object:
+                                    | {
+                                        /** @constant */
+                                        kind: "commit";
+                                        id: string;
+                                      }
+                                    | {
+                                        /** @constant */
+                                        kind: "tree";
+                                        id: string;
+                                      }
+                                    | {
+                                        /** @constant */
+                                        kind: "file";
+                                        id: string;
+                                      }
+                                    | {
+                                        /** @constant */
+                                        kind: "symlink";
+                                        id: string;
+                                      }
+                                    | {
+                                        /** @constant */
+                                        kind: "copy";
+                                        id: string;
+                                      }
+                                    | {
+                                        /** @constant */
+                                        kind: "view";
+                                        id: string;
+                                      }
+                                    | {
+                                        /** @constant */
+                                        kind: "operation";
+                                        id: string;
+                                      };
+                                  /** @constant */
+                                  profile: "native_v1";
+                                }
+                              | {
+                                  /** @enum {string} */
+                                  kind: "commit" | "tree" | "blob";
+                                  id: string;
+                                  /** @constant */
+                                  profile: "git_sha1_jj045";
+                                };
+                            /** @enum {string} */
+                            value_kind:
+                              | "file"
+                              | "binary_file"
+                              | "empty_file"
+                              | "symlink"
+                              | "gitlink"
+                              | "conflict_term"
+                              | "conflict_artifact";
+                          };
+                          text: {
+                            /** @enum {string} */
+                            encoding: "utf8";
+                            start_byte: string;
+                            end_byte: string;
+                            selected_sha256: string;
+                          };
+                          diff_context?: {
+                            before: {
+                              evidence: {
+                                repository: string;
+                                /** @enum {string} */
+                                profile: "native_v1" | "git_sha1_jj045";
+                                operation: string;
+                                capsule: string;
+                              };
+                              commit:
+                                | {
+                                    /** @constant */
+                                    profile: "native_v1";
+                                    id: string;
+                                  }
+                                | {
+                                    /** @constant */
+                                    profile: "git_sha1_jj045";
+                                    id: string;
+                                  };
+                              change?: string | null;
+                            };
+                            before_path?: string | null;
+                            after: {
+                              evidence: {
+                                repository: string;
+                                /** @enum {string} */
+                                profile: "native_v1" | "git_sha1_jj045";
+                                operation: string;
+                                capsule: string;
+                              };
+                              commit:
+                                | {
+                                    /** @constant */
+                                    profile: "native_v1";
+                                    id: string;
+                                  }
+                                | {
+                                    /** @constant */
+                                    profile: "git_sha1_jj045";
+                                    id: string;
+                                  };
+                              change?: string | null;
+                            };
+                            after_path?: string | null;
+                            /** @enum {string} */
+                            side: "before" | "after";
+                          } | null;
+                        };
+                      }
+                    | {
+                        /** @constant */
+                        target: "portable_code_artifact";
+                        value: {
+                          revision: {
+                            evidence: {
+                              repository: string;
+                              /** @enum {string} */
+                              profile: "native_v1" | "git_sha1_jj045";
+                              operation: string;
+                              capsule: string;
+                            };
+                            commit:
+                              | {
+                                  /** @constant */
+                                  profile: "native_v1";
+                                  id: string;
+                                }
+                              | {
+                                  /** @constant */
+                                  profile: "git_sha1_jj045";
+                                  id: string;
+                                };
+                            change?: string | null;
+                          };
+                          path: string;
+                          object:
+                            | {
+                                object:
+                                  | {
+                                      /** @constant */
+                                      kind: "commit";
+                                      id: string;
+                                    }
+                                  | {
+                                      /** @constant */
+                                      kind: "tree";
+                                      id: string;
+                                    }
+                                  | {
+                                      /** @constant */
+                                      kind: "file";
+                                      id: string;
+                                    }
+                                  | {
+                                      /** @constant */
+                                      kind: "symlink";
+                                      id: string;
+                                    }
+                                  | {
+                                      /** @constant */
+                                      kind: "copy";
+                                      id: string;
+                                    }
+                                  | {
+                                      /** @constant */
+                                      kind: "view";
+                                      id: string;
+                                    }
+                                  | {
+                                      /** @constant */
+                                      kind: "operation";
+                                      id: string;
+                                    };
+                                /** @constant */
+                                profile: "native_v1";
+                              }
+                            | {
+                                /** @enum {string} */
+                                kind: "commit" | "tree" | "blob";
+                                id: string;
+                                /** @constant */
+                                profile: "git_sha1_jj045";
+                              };
+                          /** @enum {string} */
+                          value_kind:
+                            | "file"
+                            | "binary_file"
+                            | "empty_file"
+                            | "symlink"
+                            | "gitlink"
+                            | "conflict_term"
+                            | "conflict_artifact";
                         };
                       }
                     | {

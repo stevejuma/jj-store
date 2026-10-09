@@ -26,3 +26,5 @@
   {{#include E-CHAT-LIVE-015/SUMMARY.nav.md}}
 - [E-CHAT-WORKSPACE-001](E-CHAT-WORKSPACE-001/index.md)
   {{#include E-CHAT-WORKSPACE-001/SUMMARY.nav.md}}
+- [E-CHAT-WORKSPACE-002](E-CHAT-WORKSPACE-002/index.md)
+  {{#include E-CHAT-WORKSPACE-002/SUMMARY.nav.md}}

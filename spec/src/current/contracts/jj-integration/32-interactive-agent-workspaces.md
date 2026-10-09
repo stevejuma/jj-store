@@ -30,3 +30,10 @@ owned agent workspace and records the exact result before the prompt is written
 to the harness. Queued prompts remain controller-owned until the prior turn's
 completion/snapshot handling finishes. An uncertain snapshot prevents dispatch
 and is never silently repeated on restart. Source checkouts stay untouched.
+
+Original local file-review reads walk the exact retained Git commit/tree/blob
+through the owned adapter. The capsule must belong to the selected review
+inventory; the physical commit tree must match its recorded tree. Every object
+hash and kind is verified, metadata paths and symlink traversal are refused, and
+regular-file content is capped at 256 KiB. These reads require no working copy,
+current operation, derived index, CLI display parsing or mutable Git reference.

@@ -153,3 +153,42 @@ fn portable_code_evidence_binds_the_anchor_repository_and_complete_diff_pair() {
         anchor.repository_id = m::RepositoryId::new([1; 16]);
     }
 }
+
+#[test]
+fn shared_review_envelopes_keep_native_bytes_and_enumerate_portable_diff_evidence() {
+    let source = anchor();
+    let ArtifactTargetV2::CodeText(mut text) = source.target else {
+        panic!()
+    };
+    text.diff_context = Some(PortableDiffContextV2 {
+        before: revision(4),
+        before_path: Some("old.rs".into()),
+        after: text.artifact.revision.clone(),
+        after_path: Some(text.artifact.path.clone()),
+        side: DiffSide::After,
+    });
+    let mut value = ArtifactAnchorV1 {
+        schema_version: 1,
+        repository_id: source.repository_id,
+        target: ArtifactTargetV1::PortableCodeText(text),
+        created_context: source.created_context,
+        sensitivity: source.sensitivity,
+    };
+    value.validate_text("aéz".as_bytes()).unwrap();
+    assert_eq!(
+        decode_anchor(&encode_anchor(&value).unwrap()).unwrap(),
+        value
+    );
+    assert_eq!(value.code_evidence().unwrap().len(), 2);
+    assert!(value.native_dependencies().unwrap().is_empty());
+    value.repository_id = m::RepositoryId::new([9; 16]);
+    assert!(value.code_evidence().is_err());
+    value.repository_id = source.repository_id;
+    value.target = ArtifactTargetV1::Repository;
+    assert!(value.code_evidence().unwrap().is_empty());
+    let legacy = format!(
+        "{{\"schema_version\":1,\"repository_id\":\"{}\",\"target\":{{\"target\":\"repository\"}},\"created_context\":{{\"publication_position\":null,\"code_state_version\":null,\"agent_root\":null}},\"sensitivity\":\"repository\"}}",
+        source.repository_id
+    );
+    assert_eq!(encode_anchor(&value).unwrap(), legacy.as_bytes());
+}

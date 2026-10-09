@@ -11,8 +11,16 @@ use sha2::{Digest as _, Sha256};
 #[serde(tag = "command", rename_all = "snake_case", deny_unknown_fields)]
 pub enum LocalReviewCommand {
     Initialize,
-    RepositoryThread { body: ReviewCommentBodyV1 },
-    Apply { intent: Box<ReviewCommandV1> },
+    RepositoryThread {
+        body: ReviewCommentBodyV1,
+    },
+    Apply {
+        intent: Box<ReviewCommandV1>,
+    },
+    WithEvidence {
+        intent: Box<ReviewCommandV1>,
+        evidence: Vec<super::agent_evidence::LocalCodeEvidenceV1>,
+    },
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
@@ -31,16 +39,39 @@ impl LocalReviewRequest {
             LocalReviewCommand::RepositoryThread { body } => {
                 body.validate().map_err(|_| LocalError::Invalid)?
             }
-            LocalReviewCommand::Apply { intent: command } => {
+            LocalReviewCommand::Apply { intent: command }
+            | LocalReviewCommand::WithEvidence {
+                intent: command, ..
+            } => {
                 command.validate().map_err(|_| LocalError::Invalid)?;
                 if let ReviewCommandV1::CreateThread { anchor, .. } = command.as_ref()
-                    && (!matches!(anchor.target, ArtifactTargetV1::Repository)
-                        || !anchor
-                            .agent_dependencies()
-                            .map_err(|_| LocalError::Invalid)?
-                            .is_empty())
+                    && (!matches!(
+                        anchor.target,
+                        ArtifactTargetV1::Repository
+                            | ArtifactTargetV1::PortableCodeText(_)
+                            | ArtifactTargetV1::PortableCodeArtifact(_)
+                    ) || !anchor
+                        .agent_dependencies()
+                        .map_err(|_| LocalError::Invalid)?
+                        .is_empty())
                 {
                     return Err(LocalError::Unsupported);
+                }
+            }
+        }
+        if let LocalReviewCommand::WithEvidence { intent, evidence } = &self.command {
+            let ReviewCommandV1::CreateThread { anchor, .. } = intent.as_ref() else {
+                return Err(LocalError::Invalid);
+            };
+            let refs = anchor.code_evidence().map_err(|_| LocalError::Invalid)?;
+            if refs.is_empty() || evidence.len() != refs.len() || evidence.len() > 2 {
+                return Err(LocalError::Invalid);
+            }
+            let mut seen = std::collections::BTreeSet::new();
+            for value in evidence {
+                value.validate()?;
+                if !refs.contains(&value.reference) || !seen.insert(value.reference.clone()) {
+                    return Err(LocalError::Invalid);
                 }
             }
         }

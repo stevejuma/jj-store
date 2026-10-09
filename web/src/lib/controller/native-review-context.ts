@@ -35,6 +35,14 @@ export async function readNativeReviewContext(
     return result;
   }
   if (target.target === "repository") return result;
+  if (
+    target.target === "portable_code_text" ||
+    target.target === "portable_code_artifact"
+  ) {
+    result.codeError =
+      "This source requires the retained portable-file reader.";
+    return result;
+  }
   try {
     const operation = target.value.operation_id;
     let comparisons: Map<string, Comparison>;

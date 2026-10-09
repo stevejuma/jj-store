@@ -549,3 +549,43 @@ test("an explicit home operation replaces a cached activity capture", async () =
   ]);
   expect(activity.homes[0]!.page!.snapshot.operation_id).toBe(pinned);
 });
+
+test("portable reviews never send Git identities to the native context reader", async () => {
+  let reads = 0;
+  const value = await readNativeReviewContext(
+    source({
+      commit: async () => {
+        reads++;
+        throw new Error("native read");
+      },
+    }),
+    {
+      ...reviewThreads[0]!.anchor,
+      target: {
+        target: "portable_code_artifact",
+        value: {
+          revision: {
+            evidence: {
+              repository,
+              profile: "git_sha1_jj045",
+              operation,
+              capsule: "32".repeat(32),
+            },
+            commit: { profile: "git_sha1_jj045", id: "33".repeat(20) },
+            change: null,
+          },
+          path: "code.txt",
+          object: {
+            profile: "git_sha1_jj045",
+            kind: "blob",
+            id: "34".repeat(20),
+          },
+          value_kind: "file",
+        },
+      },
+    },
+  );
+  expect(reads).toBe(0);
+  expect(value.files).toEqual([]);
+  expect(value.codeError).toContain("retained portable-file reader");
+});

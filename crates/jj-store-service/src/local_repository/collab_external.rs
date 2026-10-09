@@ -99,7 +99,12 @@ impl ExternalV1 {
             let r = repo.review_store_at(pin, repository).await?;
             merge(&mut agent, a.io.store.inventory())?;
             merge(&mut review, r.io.store.inventory())?;
-            for e in a.io.evidence.inventory() {
+            for e in a.io.evidence.inventory().into_iter().chain(
+                r.io.evidence
+                    .as_ref()
+                    .ok_or(LocalError::Corrupt)?
+                    .inventory(),
+            ) {
                 if let Some(old) = evidence.insert(e.reference.capsule, e.clone())
                     && (old.reference != e.reference || old.blob != e.blob)
                 {
@@ -116,11 +121,14 @@ impl ExternalV1 {
             )?),
             EvidenceIo::new(repo.metadata.clone(), pin, entries.clone())?,
         );
-        let r = ReviewIo::new(Arc::new(GitRecords::new(
-            repository,
-            repo.metadata.clone(),
-            review.clone(),
-        )?));
+        let r = ReviewIo::with_evidence(
+            Arc::new(GitRecords::new(
+                repository,
+                repo.metadata.clone(),
+                review.clone(),
+            )?),
+            EvidenceIo::new(repo.metadata.clone(), pin, entries.clone())?,
+        );
         let mut pending_agent = BTreeSet::new();
         let mut pending_review = BTreeSet::new();
         let mut required_evidence = BTreeSet::new();
@@ -156,6 +164,7 @@ impl ExternalV1 {
                 return Err(LocalError::Limit);
             }
             let value = r.read_review_object(reference).await?;
+            required_evidence.extend(value.code_evidence().map_err(|_| LocalError::Corrupt)?);
             pending_review.extend(
                 value
                     .review_dependencies()

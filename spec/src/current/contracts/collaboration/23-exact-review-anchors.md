@@ -71,3 +71,13 @@ target supplied through a narrow read port. Callers provide retained original
 bytes, bounded target bytes and typed validated predecessor, rename, copy or
 agent-block lineage. A same `ChangeId` never substitutes for an exact revision
 or for lineage evidence.
+
+The additive `portable_code_text` and `portable_code_artifact` command targets
+embed the existing portable V2 code selectors in the shared review envelope.
+Existing target tags, native bytes and hashes are unchanged. Exact capsule,
+profile, repository, commit, path and blob identity are mandatory. The local
+provider checks the physical retained commit/tree/path before admitting bytes;
+text selection hashes validate against those original bytes. Both diff capsule
+references are retained. Native providers continue refusing portable evidence
+until their carrier is separately qualified; existing native code anchors remain
+native. Conversion also continues refusing unsupported source carriers.

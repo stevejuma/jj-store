@@ -10,13 +10,78 @@ use std::{collections::BTreeSet, sync::Arc};
 pub(crate) struct ReviewIo {
     pub store: Arc<GitRecords>,
     records: Records,
+    pub evidence: Option<super::agent_evidence::EvidenceIo>,
 }
 impl ReviewIo {
     pub fn new(store: Arc<GitRecords>) -> Self {
         Self {
             records: Records::new(store.clone(), store.repository),
             store,
+            evidence: None,
         }
+    }
+    pub fn with_evidence(
+        store: Arc<GitRecords>,
+        evidence: super::agent_evidence::EvidenceIo,
+    ) -> Self {
+        let mut io = Self::new(store);
+        io.evidence = Some(evidence);
+        io
+    }
+    pub fn portable_file(
+        &self,
+        anchor: &jj_review::PortableCodeArtifactV2,
+    ) -> wal::Result<Vec<u8>> {
+        let io = self
+            .evidence
+            .as_ref()
+            .ok_or(wal::Error::Unsupported("portable review evidence"))?;
+        let capsule = io
+            .read(&anchor.revision.evidence)
+            .map_err(|_| wal::Error::Corrupt("review capsule"))?;
+        let jj_store_model::portable::CodeCommitIdV1::GitSha1Jj045(commit) = anchor.revision.commit
+        else {
+            return Err(wal::Error::Unsupported("review code profile"));
+        };
+        let saved = capsule
+            .commits
+            .get(&commit)
+            .ok_or(wal::Error::Corrupt("review commit absent"))?;
+        if anchor
+            .revision
+            .change
+            .is_some_and(|id| id != saved.change_id)
+        {
+            return Err(wal::Error::Corrupt("review change identity"));
+        }
+        let (id, bytes) = io
+            .file(
+                &anchor.revision.evidence,
+                &anchor.revision.commit,
+                &anchor.path,
+            )
+            .map_err(|_| wal::Error::Corrupt("review file source"))?;
+        if anchor.object
+            != (jj_store_model::portable::CodeObjectIdV1::GitSha1Jj045 {
+                kind: jj_store_model::portable::GitObjectKindV1::Blob,
+                id,
+            })
+            || !matches!(
+                anchor.value_kind,
+                jj_review::CodeValueKind::File
+                    | jj_review::CodeValueKind::BinaryFile
+                    | jj_review::CodeValueKind::EmptyFile
+            )
+            || (anchor.value_kind == jj_review::CodeValueKind::EmptyFile && !bytes.is_empty())
+        {
+            return Err(wal::Error::Corrupt("review file identity"));
+        }
+        if anchor.value_kind == jj_review::CodeValueKind::File
+            && (bytes.contains(&0) || std::str::from_utf8(&bytes).is_err())
+        {
+            return Err(wal::Error::Unsupported("review file is not text"));
+        }
+        Ok(bytes)
     }
     fn admit(&self, value: &ReviewObjectV1) -> wal::Result<()> {
         value
@@ -26,10 +91,52 @@ impl ReviewIo {
             if anchor.repository_id != self.store.repository {
                 return Err(wal::Error::Corrupt("local review anchor repository"));
             }
-            if !matches!(anchor.target, ArtifactTargetV1::Repository) {
-                return Err(wal::Error::Unsupported(
-                    "local review anchor evidence is not qualified",
-                ));
+            match &anchor.target {
+                ArtifactTargetV1::Repository => {}
+                ArtifactTargetV1::PortableCodeText(v) => {
+                    let bytes = self.portable_file(&v.artifact)?;
+                    v.text
+                        .validate_bytes(&bytes)
+                        .map_err(|_| wal::Error::Corrupt("review text selection"))?;
+                    if let Some(diff) = &v.diff_context {
+                        let io = self
+                            .evidence
+                            .as_ref()
+                            .ok_or(wal::Error::Unsupported("review evidence"))?;
+                        for (revision, path) in [
+                            (&diff.before, &diff.before_path),
+                            (&diff.after, &diff.after_path),
+                        ] {
+                            io.commit(&revision.evidence, &revision.commit)?;
+                            let capsule = io
+                                .read(&revision.evidence)
+                                .map_err(|_| wal::Error::Corrupt("review diff capsule"))?;
+                            let jj_store_model::portable::CodeCommitIdV1::GitSha1Jj045(commit) =
+                                revision.commit
+                            else {
+                                return Err(wal::Error::Unsupported("review diff profile"));
+                            };
+                            if revision
+                                .change
+                                .is_some_and(|id| id != capsule.commits[&commit].change_id)
+                            {
+                                return Err(wal::Error::Corrupt("review diff change"));
+                            }
+                            if let Some(path) = path {
+                                io.file(&revision.evidence, &revision.commit, path)
+                                    .map_err(|_| wal::Error::Corrupt("review diff path"))?;
+                            }
+                        }
+                    }
+                }
+                ArtifactTargetV1::PortableCodeArtifact(v) => {
+                    self.portable_file(v)?;
+                }
+                _ => {
+                    return Err(wal::Error::Unsupported(
+                        "local review anchor evidence is not qualified",
+                    ));
+                }
             }
         }
         if !value
@@ -113,6 +220,8 @@ pub(crate) struct LocalReviewRootV1 {
     pub repository: jj_store_model::RepositoryId,
     pub root: RecordRef,
     pub records: std::collections::BTreeMap<String, jj_store_jj::local_metadata::GitOid>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub evidence: Vec<super::agent_evidence::EvidenceEntry>,
 }
 impl LocalReviewRootV1 {
     pub fn decode(bytes: &[u8], repository: jj_store_model::RepositoryId) -> LocalResult<Self> {

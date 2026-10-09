@@ -6499,6 +6499,901 @@
                                     "properties": {
                                       "target": {
                                         "type": "string",
+                                        "const": "portable_code_text"
+                                      },
+                                      "value": {
+                                        "type": "object",
+                                        "properties": {
+                                          "artifact": {
+                                            "type": "object",
+                                            "properties": {
+                                              "revision": {
+                                                "type": "object",
+                                                "properties": {
+                                                  "evidence": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                      "repository": {
+                                                        "type": "string",
+                                                        "pattern": "^[0-9a-f]{32}$",
+                                                        "minLength": 32,
+                                                        "maxLength": 32
+                                                      },
+                                                      "profile": {
+                                                        "type": "string",
+                                                        "enum": [
+                                                          "native_v1",
+                                                          "git_sha1_jj045"
+                                                        ]
+                                                      },
+                                                      "operation": {
+                                                        "type": "string",
+                                                        "pattern": "^[0-9a-f]{128}$",
+                                                        "minLength": 128,
+                                                        "maxLength": 128
+                                                      },
+                                                      "capsule": {
+                                                        "type": "string",
+                                                        "pattern": "^[0-9a-f]{64}$",
+                                                        "minLength": 64,
+                                                        "maxLength": 64
+                                                      }
+                                                    },
+                                                    "additionalProperties": false,
+                                                    "required": [
+                                                      "repository",
+                                                      "profile",
+                                                      "operation",
+                                                      "capsule"
+                                                    ]
+                                                  },
+                                                  "commit": {
+                                                    "oneOf": [
+                                                      {
+                                                        "type": "object",
+                                                        "properties": {
+                                                          "profile": {
+                                                            "type": "string",
+                                                            "const": "native_v1"
+                                                          },
+                                                          "id": {
+                                                            "type": "string",
+                                                            "pattern": "^[0-9a-f]{128}$",
+                                                            "minLength": 128,
+                                                            "maxLength": 128
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "profile",
+                                                          "id"
+                                                        ],
+                                                        "additionalProperties": false
+                                                      },
+                                                      {
+                                                        "type": "object",
+                                                        "properties": {
+                                                          "profile": {
+                                                            "type": "string",
+                                                            "const": "git_sha1_jj045"
+                                                          },
+                                                          "id": {
+                                                            "type": "string",
+                                                            "pattern": "^[0-9a-f]{40}$",
+                                                            "minLength": 40,
+                                                            "maxLength": 40
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "profile",
+                                                          "id"
+                                                        ],
+                                                        "additionalProperties": false
+                                                      }
+                                                    ]
+                                                  },
+                                                  "change": {
+                                                    "type": ["string", "null"],
+                                                    "pattern": "^[0-9a-f]{32}$",
+                                                    "minLength": 32,
+                                                    "maxLength": 32
+                                                  }
+                                                },
+                                                "additionalProperties": false,
+                                                "required": [
+                                                  "evidence",
+                                                  "commit"
+                                                ]
+                                              },
+                                              "path": { "type": "string" },
+                                              "object": {
+                                                "oneOf": [
+                                                  {
+                                                    "type": "object",
+                                                    "properties": {
+                                                      "object": {
+                                                        "oneOf": [
+                                                          {
+                                                            "type": "object",
+                                                            "properties": {
+                                                              "kind": {
+                                                                "type": "string",
+                                                                "const": "commit"
+                                                              },
+                                                              "id": {
+                                                                "type": "string",
+                                                                "pattern": "^[0-9a-f]{128}$",
+                                                                "minLength": 128,
+                                                                "maxLength": 128
+                                                              }
+                                                            },
+                                                            "required": [
+                                                              "kind",
+                                                              "id"
+                                                            ],
+                                                            "additionalProperties": false
+                                                          },
+                                                          {
+                                                            "type": "object",
+                                                            "properties": {
+                                                              "kind": {
+                                                                "type": "string",
+                                                                "const": "tree"
+                                                              },
+                                                              "id": {
+                                                                "type": "string",
+                                                                "pattern": "^[0-9a-f]{128}$",
+                                                                "minLength": 128,
+                                                                "maxLength": 128
+                                                              }
+                                                            },
+                                                            "required": [
+                                                              "kind",
+                                                              "id"
+                                                            ],
+                                                            "additionalProperties": false
+                                                          },
+                                                          {
+                                                            "type": "object",
+                                                            "properties": {
+                                                              "kind": {
+                                                                "type": "string",
+                                                                "const": "file"
+                                                              },
+                                                              "id": {
+                                                                "type": "string",
+                                                                "pattern": "^[0-9a-f]{128}$",
+                                                                "minLength": 128,
+                                                                "maxLength": 128
+                                                              }
+                                                            },
+                                                            "required": [
+                                                              "kind",
+                                                              "id"
+                                                            ],
+                                                            "additionalProperties": false
+                                                          },
+                                                          {
+                                                            "type": "object",
+                                                            "properties": {
+                                                              "kind": {
+                                                                "type": "string",
+                                                                "const": "symlink"
+                                                              },
+                                                              "id": {
+                                                                "type": "string",
+                                                                "pattern": "^[0-9a-f]{128}$",
+                                                                "minLength": 128,
+                                                                "maxLength": 128
+                                                              }
+                                                            },
+                                                            "required": [
+                                                              "kind",
+                                                              "id"
+                                                            ],
+                                                            "additionalProperties": false
+                                                          },
+                                                          {
+                                                            "type": "object",
+                                                            "properties": {
+                                                              "kind": {
+                                                                "type": "string",
+                                                                "const": "copy"
+                                                              },
+                                                              "id": {
+                                                                "type": "string",
+                                                                "pattern": "^[0-9a-f]{128}$",
+                                                                "minLength": 128,
+                                                                "maxLength": 128
+                                                              }
+                                                            },
+                                                            "required": [
+                                                              "kind",
+                                                              "id"
+                                                            ],
+                                                            "additionalProperties": false
+                                                          },
+                                                          {
+                                                            "type": "object",
+                                                            "properties": {
+                                                              "kind": {
+                                                                "type": "string",
+                                                                "const": "view"
+                                                              },
+                                                              "id": {
+                                                                "type": "string",
+                                                                "pattern": "^[0-9a-f]{128}$",
+                                                                "minLength": 128,
+                                                                "maxLength": 128
+                                                              }
+                                                            },
+                                                            "required": [
+                                                              "kind",
+                                                              "id"
+                                                            ],
+                                                            "additionalProperties": false
+                                                          },
+                                                          {
+                                                            "type": "object",
+                                                            "properties": {
+                                                              "kind": {
+                                                                "type": "string",
+                                                                "const": "operation"
+                                                              },
+                                                              "id": {
+                                                                "type": "string",
+                                                                "pattern": "^[0-9a-f]{128}$",
+                                                                "minLength": 128,
+                                                                "maxLength": 128
+                                                              }
+                                                            },
+                                                            "required": [
+                                                              "kind",
+                                                              "id"
+                                                            ],
+                                                            "additionalProperties": false
+                                                          }
+                                                        ]
+                                                      },
+                                                      "profile": {
+                                                        "type": "string",
+                                                        "const": "native_v1"
+                                                      }
+                                                    },
+                                                    "additionalProperties": false,
+                                                    "required": [
+                                                      "profile",
+                                                      "object"
+                                                    ]
+                                                  },
+                                                  {
+                                                    "type": "object",
+                                                    "properties": {
+                                                      "kind": {
+                                                        "type": "string",
+                                                        "enum": [
+                                                          "commit",
+                                                          "tree",
+                                                          "blob"
+                                                        ]
+                                                      },
+                                                      "id": {
+                                                        "type": "string",
+                                                        "pattern": "^[0-9a-f]{40}$",
+                                                        "minLength": 40,
+                                                        "maxLength": 40
+                                                      },
+                                                      "profile": {
+                                                        "type": "string",
+                                                        "const": "git_sha1_jj045"
+                                                      }
+                                                    },
+                                                    "additionalProperties": false,
+                                                    "required": [
+                                                      "profile",
+                                                      "kind",
+                                                      "id"
+                                                    ]
+                                                  }
+                                                ]
+                                              },
+                                              "value_kind": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "file",
+                                                  "binary_file",
+                                                  "empty_file",
+                                                  "symlink",
+                                                  "gitlink",
+                                                  "conflict_term",
+                                                  "conflict_artifact"
+                                                ]
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": [
+                                              "revision",
+                                              "path",
+                                              "object",
+                                              "value_kind"
+                                            ]
+                                          },
+                                          "text": {
+                                            "type": "object",
+                                            "properties": {
+                                              "encoding": {
+                                                "type": "string",
+                                                "enum": ["utf8"]
+                                              },
+                                              "start_byte": {
+                                                "type": "string",
+                                                "pattern": "^(0|[1-9][0-9]*)$"
+                                              },
+                                              "end_byte": {
+                                                "type": "string",
+                                                "pattern": "^(0|[1-9][0-9]*)$"
+                                              },
+                                              "selected_sha256": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{64}$",
+                                                "minLength": 64,
+                                                "maxLength": 64
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": [
+                                              "encoding",
+                                              "start_byte",
+                                              "end_byte",
+                                              "selected_sha256"
+                                            ]
+                                          },
+                                          "diff_context": {
+                                            "type": ["object", "null"],
+                                            "properties": {
+                                              "before": {
+                                                "type": "object",
+                                                "properties": {
+                                                  "evidence": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                      "repository": {
+                                                        "type": "string",
+                                                        "pattern": "^[0-9a-f]{32}$",
+                                                        "minLength": 32,
+                                                        "maxLength": 32
+                                                      },
+                                                      "profile": {
+                                                        "type": "string",
+                                                        "enum": [
+                                                          "native_v1",
+                                                          "git_sha1_jj045"
+                                                        ]
+                                                      },
+                                                      "operation": {
+                                                        "type": "string",
+                                                        "pattern": "^[0-9a-f]{128}$",
+                                                        "minLength": 128,
+                                                        "maxLength": 128
+                                                      },
+                                                      "capsule": {
+                                                        "type": "string",
+                                                        "pattern": "^[0-9a-f]{64}$",
+                                                        "minLength": 64,
+                                                        "maxLength": 64
+                                                      }
+                                                    },
+                                                    "additionalProperties": false,
+                                                    "required": [
+                                                      "repository",
+                                                      "profile",
+                                                      "operation",
+                                                      "capsule"
+                                                    ]
+                                                  },
+                                                  "commit": {
+                                                    "oneOf": [
+                                                      {
+                                                        "type": "object",
+                                                        "properties": {
+                                                          "profile": {
+                                                            "type": "string",
+                                                            "const": "native_v1"
+                                                          },
+                                                          "id": {
+                                                            "type": "string",
+                                                            "pattern": "^[0-9a-f]{128}$",
+                                                            "minLength": 128,
+                                                            "maxLength": 128
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "profile",
+                                                          "id"
+                                                        ],
+                                                        "additionalProperties": false
+                                                      },
+                                                      {
+                                                        "type": "object",
+                                                        "properties": {
+                                                          "profile": {
+                                                            "type": "string",
+                                                            "const": "git_sha1_jj045"
+                                                          },
+                                                          "id": {
+                                                            "type": "string",
+                                                            "pattern": "^[0-9a-f]{40}$",
+                                                            "minLength": 40,
+                                                            "maxLength": 40
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "profile",
+                                                          "id"
+                                                        ],
+                                                        "additionalProperties": false
+                                                      }
+                                                    ]
+                                                  },
+                                                  "change": {
+                                                    "type": ["string", "null"],
+                                                    "pattern": "^[0-9a-f]{32}$",
+                                                    "minLength": 32,
+                                                    "maxLength": 32
+                                                  }
+                                                },
+                                                "additionalProperties": false,
+                                                "required": [
+                                                  "evidence",
+                                                  "commit"
+                                                ]
+                                              },
+                                              "before_path": {
+                                                "type": ["string", "null"]
+                                              },
+                                              "after": {
+                                                "type": "object",
+                                                "properties": {
+                                                  "evidence": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                      "repository": {
+                                                        "type": "string",
+                                                        "pattern": "^[0-9a-f]{32}$",
+                                                        "minLength": 32,
+                                                        "maxLength": 32
+                                                      },
+                                                      "profile": {
+                                                        "type": "string",
+                                                        "enum": [
+                                                          "native_v1",
+                                                          "git_sha1_jj045"
+                                                        ]
+                                                      },
+                                                      "operation": {
+                                                        "type": "string",
+                                                        "pattern": "^[0-9a-f]{128}$",
+                                                        "minLength": 128,
+                                                        "maxLength": 128
+                                                      },
+                                                      "capsule": {
+                                                        "type": "string",
+                                                        "pattern": "^[0-9a-f]{64}$",
+                                                        "minLength": 64,
+                                                        "maxLength": 64
+                                                      }
+                                                    },
+                                                    "additionalProperties": false,
+                                                    "required": [
+                                                      "repository",
+                                                      "profile",
+                                                      "operation",
+                                                      "capsule"
+                                                    ]
+                                                  },
+                                                  "commit": {
+                                                    "oneOf": [
+                                                      {
+                                                        "type": "object",
+                                                        "properties": {
+                                                          "profile": {
+                                                            "type": "string",
+                                                            "const": "native_v1"
+                                                          },
+                                                          "id": {
+                                                            "type": "string",
+                                                            "pattern": "^[0-9a-f]{128}$",
+                                                            "minLength": 128,
+                                                            "maxLength": 128
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "profile",
+                                                          "id"
+                                                        ],
+                                                        "additionalProperties": false
+                                                      },
+                                                      {
+                                                        "type": "object",
+                                                        "properties": {
+                                                          "profile": {
+                                                            "type": "string",
+                                                            "const": "git_sha1_jj045"
+                                                          },
+                                                          "id": {
+                                                            "type": "string",
+                                                            "pattern": "^[0-9a-f]{40}$",
+                                                            "minLength": 40,
+                                                            "maxLength": 40
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "profile",
+                                                          "id"
+                                                        ],
+                                                        "additionalProperties": false
+                                                      }
+                                                    ]
+                                                  },
+                                                  "change": {
+                                                    "type": ["string", "null"],
+                                                    "pattern": "^[0-9a-f]{32}$",
+                                                    "minLength": 32,
+                                                    "maxLength": 32
+                                                  }
+                                                },
+                                                "additionalProperties": false,
+                                                "required": [
+                                                  "evidence",
+                                                  "commit"
+                                                ]
+                                              },
+                                              "after_path": {
+                                                "type": ["string", "null"]
+                                              },
+                                              "side": {
+                                                "type": "string",
+                                                "enum": ["before", "after"]
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": [
+                                              "before",
+                                              "after",
+                                              "side"
+                                            ]
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": ["artifact", "text"]
+                                      }
+                                    },
+                                    "required": ["target", "value"]
+                                  },
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "target": {
+                                        "type": "string",
+                                        "const": "portable_code_artifact"
+                                      },
+                                      "value": {
+                                        "type": "object",
+                                        "properties": {
+                                          "revision": {
+                                            "type": "object",
+                                            "properties": {
+                                              "evidence": {
+                                                "type": "object",
+                                                "properties": {
+                                                  "repository": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9a-f]{32}$",
+                                                    "minLength": 32,
+                                                    "maxLength": 32
+                                                  },
+                                                  "profile": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                      "native_v1",
+                                                      "git_sha1_jj045"
+                                                    ]
+                                                  },
+                                                  "operation": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9a-f]{128}$",
+                                                    "minLength": 128,
+                                                    "maxLength": 128
+                                                  },
+                                                  "capsule": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9a-f]{64}$",
+                                                    "minLength": 64,
+                                                    "maxLength": 64
+                                                  }
+                                                },
+                                                "additionalProperties": false,
+                                                "required": [
+                                                  "repository",
+                                                  "profile",
+                                                  "operation",
+                                                  "capsule"
+                                                ]
+                                              },
+                                              "commit": {
+                                                "oneOf": [
+                                                  {
+                                                    "type": "object",
+                                                    "properties": {
+                                                      "profile": {
+                                                        "type": "string",
+                                                        "const": "native_v1"
+                                                      },
+                                                      "id": {
+                                                        "type": "string",
+                                                        "pattern": "^[0-9a-f]{128}$",
+                                                        "minLength": 128,
+                                                        "maxLength": 128
+                                                      }
+                                                    },
+                                                    "required": [
+                                                      "profile",
+                                                      "id"
+                                                    ],
+                                                    "additionalProperties": false
+                                                  },
+                                                  {
+                                                    "type": "object",
+                                                    "properties": {
+                                                      "profile": {
+                                                        "type": "string",
+                                                        "const": "git_sha1_jj045"
+                                                      },
+                                                      "id": {
+                                                        "type": "string",
+                                                        "pattern": "^[0-9a-f]{40}$",
+                                                        "minLength": 40,
+                                                        "maxLength": 40
+                                                      }
+                                                    },
+                                                    "required": [
+                                                      "profile",
+                                                      "id"
+                                                    ],
+                                                    "additionalProperties": false
+                                                  }
+                                                ]
+                                              },
+                                              "change": {
+                                                "type": ["string", "null"],
+                                                "pattern": "^[0-9a-f]{32}$",
+                                                "minLength": 32,
+                                                "maxLength": 32
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": ["evidence", "commit"]
+                                          },
+                                          "path": { "type": "string" },
+                                          "object": {
+                                            "oneOf": [
+                                              {
+                                                "type": "object",
+                                                "properties": {
+                                                  "object": {
+                                                    "oneOf": [
+                                                      {
+                                                        "type": "object",
+                                                        "properties": {
+                                                          "kind": {
+                                                            "type": "string",
+                                                            "const": "commit"
+                                                          },
+                                                          "id": {
+                                                            "type": "string",
+                                                            "pattern": "^[0-9a-f]{128}$",
+                                                            "minLength": 128,
+                                                            "maxLength": 128
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "kind",
+                                                          "id"
+                                                        ],
+                                                        "additionalProperties": false
+                                                      },
+                                                      {
+                                                        "type": "object",
+                                                        "properties": {
+                                                          "kind": {
+                                                            "type": "string",
+                                                            "const": "tree"
+                                                          },
+                                                          "id": {
+                                                            "type": "string",
+                                                            "pattern": "^[0-9a-f]{128}$",
+                                                            "minLength": 128,
+                                                            "maxLength": 128
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "kind",
+                                                          "id"
+                                                        ],
+                                                        "additionalProperties": false
+                                                      },
+                                                      {
+                                                        "type": "object",
+                                                        "properties": {
+                                                          "kind": {
+                                                            "type": "string",
+                                                            "const": "file"
+                                                          },
+                                                          "id": {
+                                                            "type": "string",
+                                                            "pattern": "^[0-9a-f]{128}$",
+                                                            "minLength": 128,
+                                                            "maxLength": 128
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "kind",
+                                                          "id"
+                                                        ],
+                                                        "additionalProperties": false
+                                                      },
+                                                      {
+                                                        "type": "object",
+                                                        "properties": {
+                                                          "kind": {
+                                                            "type": "string",
+                                                            "const": "symlink"
+                                                          },
+                                                          "id": {
+                                                            "type": "string",
+                                                            "pattern": "^[0-9a-f]{128}$",
+                                                            "minLength": 128,
+                                                            "maxLength": 128
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "kind",
+                                                          "id"
+                                                        ],
+                                                        "additionalProperties": false
+                                                      },
+                                                      {
+                                                        "type": "object",
+                                                        "properties": {
+                                                          "kind": {
+                                                            "type": "string",
+                                                            "const": "copy"
+                                                          },
+                                                          "id": {
+                                                            "type": "string",
+                                                            "pattern": "^[0-9a-f]{128}$",
+                                                            "minLength": 128,
+                                                            "maxLength": 128
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "kind",
+                                                          "id"
+                                                        ],
+                                                        "additionalProperties": false
+                                                      },
+                                                      {
+                                                        "type": "object",
+                                                        "properties": {
+                                                          "kind": {
+                                                            "type": "string",
+                                                            "const": "view"
+                                                          },
+                                                          "id": {
+                                                            "type": "string",
+                                                            "pattern": "^[0-9a-f]{128}$",
+                                                            "minLength": 128,
+                                                            "maxLength": 128
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "kind",
+                                                          "id"
+                                                        ],
+                                                        "additionalProperties": false
+                                                      },
+                                                      {
+                                                        "type": "object",
+                                                        "properties": {
+                                                          "kind": {
+                                                            "type": "string",
+                                                            "const": "operation"
+                                                          },
+                                                          "id": {
+                                                            "type": "string",
+                                                            "pattern": "^[0-9a-f]{128}$",
+                                                            "minLength": 128,
+                                                            "maxLength": 128
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "kind",
+                                                          "id"
+                                                        ],
+                                                        "additionalProperties": false
+                                                      }
+                                                    ]
+                                                  },
+                                                  "profile": {
+                                                    "type": "string",
+                                                    "const": "native_v1"
+                                                  }
+                                                },
+                                                "additionalProperties": false,
+                                                "required": [
+                                                  "profile",
+                                                  "object"
+                                                ]
+                                              },
+                                              {
+                                                "type": "object",
+                                                "properties": {
+                                                  "kind": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                      "commit",
+                                                      "tree",
+                                                      "blob"
+                                                    ]
+                                                  },
+                                                  "id": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9a-f]{40}$",
+                                                    "minLength": 40,
+                                                    "maxLength": 40
+                                                  },
+                                                  "profile": {
+                                                    "type": "string",
+                                                    "const": "git_sha1_jj045"
+                                                  }
+                                                },
+                                                "additionalProperties": false,
+                                                "required": [
+                                                  "profile",
+                                                  "kind",
+                                                  "id"
+                                                ]
+                                              }
+                                            ]
+                                          },
+                                          "value_kind": {
+                                            "type": "string",
+                                            "enum": [
+                                              "file",
+                                              "binary_file",
+                                              "empty_file",
+                                              "symlink",
+                                              "gitlink",
+                                              "conflict_term",
+                                              "conflict_artifact"
+                                            ]
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "revision",
+                                          "path",
+                                          "object",
+                                          "value_kind"
+                                        ]
+                                      }
+                                    },
+                                    "required": ["target", "value"]
+                                  },
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "target": {
+                                        "type": "string",
                                         "const": "code_artifact"
                                       },
                                       "value": {
@@ -36127,6 +37022,901 @@
                                     "properties": {
                                       "target": {
                                         "type": "string",
+                                        "const": "portable_code_text"
+                                      },
+                                      "value": {
+                                        "type": "object",
+                                        "properties": {
+                                          "artifact": {
+                                            "type": "object",
+                                            "properties": {
+                                              "revision": {
+                                                "type": "object",
+                                                "properties": {
+                                                  "evidence": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                      "repository": {
+                                                        "type": "string",
+                                                        "pattern": "^[0-9a-f]{32}$",
+                                                        "minLength": 32,
+                                                        "maxLength": 32
+                                                      },
+                                                      "profile": {
+                                                        "type": "string",
+                                                        "enum": [
+                                                          "native_v1",
+                                                          "git_sha1_jj045"
+                                                        ]
+                                                      },
+                                                      "operation": {
+                                                        "type": "string",
+                                                        "pattern": "^[0-9a-f]{128}$",
+                                                        "minLength": 128,
+                                                        "maxLength": 128
+                                                      },
+                                                      "capsule": {
+                                                        "type": "string",
+                                                        "pattern": "^[0-9a-f]{64}$",
+                                                        "minLength": 64,
+                                                        "maxLength": 64
+                                                      }
+                                                    },
+                                                    "additionalProperties": false,
+                                                    "required": [
+                                                      "repository",
+                                                      "profile",
+                                                      "operation",
+                                                      "capsule"
+                                                    ]
+                                                  },
+                                                  "commit": {
+                                                    "oneOf": [
+                                                      {
+                                                        "type": "object",
+                                                        "properties": {
+                                                          "profile": {
+                                                            "type": "string",
+                                                            "const": "native_v1"
+                                                          },
+                                                          "id": {
+                                                            "type": "string",
+                                                            "pattern": "^[0-9a-f]{128}$",
+                                                            "minLength": 128,
+                                                            "maxLength": 128
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "profile",
+                                                          "id"
+                                                        ],
+                                                        "additionalProperties": false
+                                                      },
+                                                      {
+                                                        "type": "object",
+                                                        "properties": {
+                                                          "profile": {
+                                                            "type": "string",
+                                                            "const": "git_sha1_jj045"
+                                                          },
+                                                          "id": {
+                                                            "type": "string",
+                                                            "pattern": "^[0-9a-f]{40}$",
+                                                            "minLength": 40,
+                                                            "maxLength": 40
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "profile",
+                                                          "id"
+                                                        ],
+                                                        "additionalProperties": false
+                                                      }
+                                                    ]
+                                                  },
+                                                  "change": {
+                                                    "type": ["string", "null"],
+                                                    "pattern": "^[0-9a-f]{32}$",
+                                                    "minLength": 32,
+                                                    "maxLength": 32
+                                                  }
+                                                },
+                                                "additionalProperties": false,
+                                                "required": [
+                                                  "evidence",
+                                                  "commit"
+                                                ]
+                                              },
+                                              "path": { "type": "string" },
+                                              "object": {
+                                                "oneOf": [
+                                                  {
+                                                    "type": "object",
+                                                    "properties": {
+                                                      "object": {
+                                                        "oneOf": [
+                                                          {
+                                                            "type": "object",
+                                                            "properties": {
+                                                              "kind": {
+                                                                "type": "string",
+                                                                "const": "commit"
+                                                              },
+                                                              "id": {
+                                                                "type": "string",
+                                                                "pattern": "^[0-9a-f]{128}$",
+                                                                "minLength": 128,
+                                                                "maxLength": 128
+                                                              }
+                                                            },
+                                                            "required": [
+                                                              "kind",
+                                                              "id"
+                                                            ],
+                                                            "additionalProperties": false
+                                                          },
+                                                          {
+                                                            "type": "object",
+                                                            "properties": {
+                                                              "kind": {
+                                                                "type": "string",
+                                                                "const": "tree"
+                                                              },
+                                                              "id": {
+                                                                "type": "string",
+                                                                "pattern": "^[0-9a-f]{128}$",
+                                                                "minLength": 128,
+                                                                "maxLength": 128
+                                                              }
+                                                            },
+                                                            "required": [
+                                                              "kind",
+                                                              "id"
+                                                            ],
+                                                            "additionalProperties": false
+                                                          },
+                                                          {
+                                                            "type": "object",
+                                                            "properties": {
+                                                              "kind": {
+                                                                "type": "string",
+                                                                "const": "file"
+                                                              },
+                                                              "id": {
+                                                                "type": "string",
+                                                                "pattern": "^[0-9a-f]{128}$",
+                                                                "minLength": 128,
+                                                                "maxLength": 128
+                                                              }
+                                                            },
+                                                            "required": [
+                                                              "kind",
+                                                              "id"
+                                                            ],
+                                                            "additionalProperties": false
+                                                          },
+                                                          {
+                                                            "type": "object",
+                                                            "properties": {
+                                                              "kind": {
+                                                                "type": "string",
+                                                                "const": "symlink"
+                                                              },
+                                                              "id": {
+                                                                "type": "string",
+                                                                "pattern": "^[0-9a-f]{128}$",
+                                                                "minLength": 128,
+                                                                "maxLength": 128
+                                                              }
+                                                            },
+                                                            "required": [
+                                                              "kind",
+                                                              "id"
+                                                            ],
+                                                            "additionalProperties": false
+                                                          },
+                                                          {
+                                                            "type": "object",
+                                                            "properties": {
+                                                              "kind": {
+                                                                "type": "string",
+                                                                "const": "copy"
+                                                              },
+                                                              "id": {
+                                                                "type": "string",
+                                                                "pattern": "^[0-9a-f]{128}$",
+                                                                "minLength": 128,
+                                                                "maxLength": 128
+                                                              }
+                                                            },
+                                                            "required": [
+                                                              "kind",
+                                                              "id"
+                                                            ],
+                                                            "additionalProperties": false
+                                                          },
+                                                          {
+                                                            "type": "object",
+                                                            "properties": {
+                                                              "kind": {
+                                                                "type": "string",
+                                                                "const": "view"
+                                                              },
+                                                              "id": {
+                                                                "type": "string",
+                                                                "pattern": "^[0-9a-f]{128}$",
+                                                                "minLength": 128,
+                                                                "maxLength": 128
+                                                              }
+                                                            },
+                                                            "required": [
+                                                              "kind",
+                                                              "id"
+                                                            ],
+                                                            "additionalProperties": false
+                                                          },
+                                                          {
+                                                            "type": "object",
+                                                            "properties": {
+                                                              "kind": {
+                                                                "type": "string",
+                                                                "const": "operation"
+                                                              },
+                                                              "id": {
+                                                                "type": "string",
+                                                                "pattern": "^[0-9a-f]{128}$",
+                                                                "minLength": 128,
+                                                                "maxLength": 128
+                                                              }
+                                                            },
+                                                            "required": [
+                                                              "kind",
+                                                              "id"
+                                                            ],
+                                                            "additionalProperties": false
+                                                          }
+                                                        ]
+                                                      },
+                                                      "profile": {
+                                                        "type": "string",
+                                                        "const": "native_v1"
+                                                      }
+                                                    },
+                                                    "additionalProperties": false,
+                                                    "required": [
+                                                      "profile",
+                                                      "object"
+                                                    ]
+                                                  },
+                                                  {
+                                                    "type": "object",
+                                                    "properties": {
+                                                      "kind": {
+                                                        "type": "string",
+                                                        "enum": [
+                                                          "commit",
+                                                          "tree",
+                                                          "blob"
+                                                        ]
+                                                      },
+                                                      "id": {
+                                                        "type": "string",
+                                                        "pattern": "^[0-9a-f]{40}$",
+                                                        "minLength": 40,
+                                                        "maxLength": 40
+                                                      },
+                                                      "profile": {
+                                                        "type": "string",
+                                                        "const": "git_sha1_jj045"
+                                                      }
+                                                    },
+                                                    "additionalProperties": false,
+                                                    "required": [
+                                                      "profile",
+                                                      "kind",
+                                                      "id"
+                                                    ]
+                                                  }
+                                                ]
+                                              },
+                                              "value_kind": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "file",
+                                                  "binary_file",
+                                                  "empty_file",
+                                                  "symlink",
+                                                  "gitlink",
+                                                  "conflict_term",
+                                                  "conflict_artifact"
+                                                ]
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": [
+                                              "revision",
+                                              "path",
+                                              "object",
+                                              "value_kind"
+                                            ]
+                                          },
+                                          "text": {
+                                            "type": "object",
+                                            "properties": {
+                                              "encoding": {
+                                                "type": "string",
+                                                "enum": ["utf8"]
+                                              },
+                                              "start_byte": {
+                                                "type": "string",
+                                                "pattern": "^(0|[1-9][0-9]*)$"
+                                              },
+                                              "end_byte": {
+                                                "type": "string",
+                                                "pattern": "^(0|[1-9][0-9]*)$"
+                                              },
+                                              "selected_sha256": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{64}$",
+                                                "minLength": 64,
+                                                "maxLength": 64
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": [
+                                              "encoding",
+                                              "start_byte",
+                                              "end_byte",
+                                              "selected_sha256"
+                                            ]
+                                          },
+                                          "diff_context": {
+                                            "type": ["object", "null"],
+                                            "properties": {
+                                              "before": {
+                                                "type": "object",
+                                                "properties": {
+                                                  "evidence": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                      "repository": {
+                                                        "type": "string",
+                                                        "pattern": "^[0-9a-f]{32}$",
+                                                        "minLength": 32,
+                                                        "maxLength": 32
+                                                      },
+                                                      "profile": {
+                                                        "type": "string",
+                                                        "enum": [
+                                                          "native_v1",
+                                                          "git_sha1_jj045"
+                                                        ]
+                                                      },
+                                                      "operation": {
+                                                        "type": "string",
+                                                        "pattern": "^[0-9a-f]{128}$",
+                                                        "minLength": 128,
+                                                        "maxLength": 128
+                                                      },
+                                                      "capsule": {
+                                                        "type": "string",
+                                                        "pattern": "^[0-9a-f]{64}$",
+                                                        "minLength": 64,
+                                                        "maxLength": 64
+                                                      }
+                                                    },
+                                                    "additionalProperties": false,
+                                                    "required": [
+                                                      "repository",
+                                                      "profile",
+                                                      "operation",
+                                                      "capsule"
+                                                    ]
+                                                  },
+                                                  "commit": {
+                                                    "oneOf": [
+                                                      {
+                                                        "type": "object",
+                                                        "properties": {
+                                                          "profile": {
+                                                            "type": "string",
+                                                            "const": "native_v1"
+                                                          },
+                                                          "id": {
+                                                            "type": "string",
+                                                            "pattern": "^[0-9a-f]{128}$",
+                                                            "minLength": 128,
+                                                            "maxLength": 128
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "profile",
+                                                          "id"
+                                                        ],
+                                                        "additionalProperties": false
+                                                      },
+                                                      {
+                                                        "type": "object",
+                                                        "properties": {
+                                                          "profile": {
+                                                            "type": "string",
+                                                            "const": "git_sha1_jj045"
+                                                          },
+                                                          "id": {
+                                                            "type": "string",
+                                                            "pattern": "^[0-9a-f]{40}$",
+                                                            "minLength": 40,
+                                                            "maxLength": 40
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "profile",
+                                                          "id"
+                                                        ],
+                                                        "additionalProperties": false
+                                                      }
+                                                    ]
+                                                  },
+                                                  "change": {
+                                                    "type": ["string", "null"],
+                                                    "pattern": "^[0-9a-f]{32}$",
+                                                    "minLength": 32,
+                                                    "maxLength": 32
+                                                  }
+                                                },
+                                                "additionalProperties": false,
+                                                "required": [
+                                                  "evidence",
+                                                  "commit"
+                                                ]
+                                              },
+                                              "before_path": {
+                                                "type": ["string", "null"]
+                                              },
+                                              "after": {
+                                                "type": "object",
+                                                "properties": {
+                                                  "evidence": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                      "repository": {
+                                                        "type": "string",
+                                                        "pattern": "^[0-9a-f]{32}$",
+                                                        "minLength": 32,
+                                                        "maxLength": 32
+                                                      },
+                                                      "profile": {
+                                                        "type": "string",
+                                                        "enum": [
+                                                          "native_v1",
+                                                          "git_sha1_jj045"
+                                                        ]
+                                                      },
+                                                      "operation": {
+                                                        "type": "string",
+                                                        "pattern": "^[0-9a-f]{128}$",
+                                                        "minLength": 128,
+                                                        "maxLength": 128
+                                                      },
+                                                      "capsule": {
+                                                        "type": "string",
+                                                        "pattern": "^[0-9a-f]{64}$",
+                                                        "minLength": 64,
+                                                        "maxLength": 64
+                                                      }
+                                                    },
+                                                    "additionalProperties": false,
+                                                    "required": [
+                                                      "repository",
+                                                      "profile",
+                                                      "operation",
+                                                      "capsule"
+                                                    ]
+                                                  },
+                                                  "commit": {
+                                                    "oneOf": [
+                                                      {
+                                                        "type": "object",
+                                                        "properties": {
+                                                          "profile": {
+                                                            "type": "string",
+                                                            "const": "native_v1"
+                                                          },
+                                                          "id": {
+                                                            "type": "string",
+                                                            "pattern": "^[0-9a-f]{128}$",
+                                                            "minLength": 128,
+                                                            "maxLength": 128
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "profile",
+                                                          "id"
+                                                        ],
+                                                        "additionalProperties": false
+                                                      },
+                                                      {
+                                                        "type": "object",
+                                                        "properties": {
+                                                          "profile": {
+                                                            "type": "string",
+                                                            "const": "git_sha1_jj045"
+                                                          },
+                                                          "id": {
+                                                            "type": "string",
+                                                            "pattern": "^[0-9a-f]{40}$",
+                                                            "minLength": 40,
+                                                            "maxLength": 40
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "profile",
+                                                          "id"
+                                                        ],
+                                                        "additionalProperties": false
+                                                      }
+                                                    ]
+                                                  },
+                                                  "change": {
+                                                    "type": ["string", "null"],
+                                                    "pattern": "^[0-9a-f]{32}$",
+                                                    "minLength": 32,
+                                                    "maxLength": 32
+                                                  }
+                                                },
+                                                "additionalProperties": false,
+                                                "required": [
+                                                  "evidence",
+                                                  "commit"
+                                                ]
+                                              },
+                                              "after_path": {
+                                                "type": ["string", "null"]
+                                              },
+                                              "side": {
+                                                "type": "string",
+                                                "enum": ["before", "after"]
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": [
+                                              "before",
+                                              "after",
+                                              "side"
+                                            ]
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": ["artifact", "text"]
+                                      }
+                                    },
+                                    "required": ["target", "value"]
+                                  },
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "target": {
+                                        "type": "string",
+                                        "const": "portable_code_artifact"
+                                      },
+                                      "value": {
+                                        "type": "object",
+                                        "properties": {
+                                          "revision": {
+                                            "type": "object",
+                                            "properties": {
+                                              "evidence": {
+                                                "type": "object",
+                                                "properties": {
+                                                  "repository": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9a-f]{32}$",
+                                                    "minLength": 32,
+                                                    "maxLength": 32
+                                                  },
+                                                  "profile": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                      "native_v1",
+                                                      "git_sha1_jj045"
+                                                    ]
+                                                  },
+                                                  "operation": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9a-f]{128}$",
+                                                    "minLength": 128,
+                                                    "maxLength": 128
+                                                  },
+                                                  "capsule": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9a-f]{64}$",
+                                                    "minLength": 64,
+                                                    "maxLength": 64
+                                                  }
+                                                },
+                                                "additionalProperties": false,
+                                                "required": [
+                                                  "repository",
+                                                  "profile",
+                                                  "operation",
+                                                  "capsule"
+                                                ]
+                                              },
+                                              "commit": {
+                                                "oneOf": [
+                                                  {
+                                                    "type": "object",
+                                                    "properties": {
+                                                      "profile": {
+                                                        "type": "string",
+                                                        "const": "native_v1"
+                                                      },
+                                                      "id": {
+                                                        "type": "string",
+                                                        "pattern": "^[0-9a-f]{128}$",
+                                                        "minLength": 128,
+                                                        "maxLength": 128
+                                                      }
+                                                    },
+                                                    "required": [
+                                                      "profile",
+                                                      "id"
+                                                    ],
+                                                    "additionalProperties": false
+                                                  },
+                                                  {
+                                                    "type": "object",
+                                                    "properties": {
+                                                      "profile": {
+                                                        "type": "string",
+                                                        "const": "git_sha1_jj045"
+                                                      },
+                                                      "id": {
+                                                        "type": "string",
+                                                        "pattern": "^[0-9a-f]{40}$",
+                                                        "minLength": 40,
+                                                        "maxLength": 40
+                                                      }
+                                                    },
+                                                    "required": [
+                                                      "profile",
+                                                      "id"
+                                                    ],
+                                                    "additionalProperties": false
+                                                  }
+                                                ]
+                                              },
+                                              "change": {
+                                                "type": ["string", "null"],
+                                                "pattern": "^[0-9a-f]{32}$",
+                                                "minLength": 32,
+                                                "maxLength": 32
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": ["evidence", "commit"]
+                                          },
+                                          "path": { "type": "string" },
+                                          "object": {
+                                            "oneOf": [
+                                              {
+                                                "type": "object",
+                                                "properties": {
+                                                  "object": {
+                                                    "oneOf": [
+                                                      {
+                                                        "type": "object",
+                                                        "properties": {
+                                                          "kind": {
+                                                            "type": "string",
+                                                            "const": "commit"
+                                                          },
+                                                          "id": {
+                                                            "type": "string",
+                                                            "pattern": "^[0-9a-f]{128}$",
+                                                            "minLength": 128,
+                                                            "maxLength": 128
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "kind",
+                                                          "id"
+                                                        ],
+                                                        "additionalProperties": false
+                                                      },
+                                                      {
+                                                        "type": "object",
+                                                        "properties": {
+                                                          "kind": {
+                                                            "type": "string",
+                                                            "const": "tree"
+                                                          },
+                                                          "id": {
+                                                            "type": "string",
+                                                            "pattern": "^[0-9a-f]{128}$",
+                                                            "minLength": 128,
+                                                            "maxLength": 128
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "kind",
+                                                          "id"
+                                                        ],
+                                                        "additionalProperties": false
+                                                      },
+                                                      {
+                                                        "type": "object",
+                                                        "properties": {
+                                                          "kind": {
+                                                            "type": "string",
+                                                            "const": "file"
+                                                          },
+                                                          "id": {
+                                                            "type": "string",
+                                                            "pattern": "^[0-9a-f]{128}$",
+                                                            "minLength": 128,
+                                                            "maxLength": 128
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "kind",
+                                                          "id"
+                                                        ],
+                                                        "additionalProperties": false
+                                                      },
+                                                      {
+                                                        "type": "object",
+                                                        "properties": {
+                                                          "kind": {
+                                                            "type": "string",
+                                                            "const": "symlink"
+                                                          },
+                                                          "id": {
+                                                            "type": "string",
+                                                            "pattern": "^[0-9a-f]{128}$",
+                                                            "minLength": 128,
+                                                            "maxLength": 128
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "kind",
+                                                          "id"
+                                                        ],
+                                                        "additionalProperties": false
+                                                      },
+                                                      {
+                                                        "type": "object",
+                                                        "properties": {
+                                                          "kind": {
+                                                            "type": "string",
+                                                            "const": "copy"
+                                                          },
+                                                          "id": {
+                                                            "type": "string",
+                                                            "pattern": "^[0-9a-f]{128}$",
+                                                            "minLength": 128,
+                                                            "maxLength": 128
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "kind",
+                                                          "id"
+                                                        ],
+                                                        "additionalProperties": false
+                                                      },
+                                                      {
+                                                        "type": "object",
+                                                        "properties": {
+                                                          "kind": {
+                                                            "type": "string",
+                                                            "const": "view"
+                                                          },
+                                                          "id": {
+                                                            "type": "string",
+                                                            "pattern": "^[0-9a-f]{128}$",
+                                                            "minLength": 128,
+                                                            "maxLength": 128
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "kind",
+                                                          "id"
+                                                        ],
+                                                        "additionalProperties": false
+                                                      },
+                                                      {
+                                                        "type": "object",
+                                                        "properties": {
+                                                          "kind": {
+                                                            "type": "string",
+                                                            "const": "operation"
+                                                          },
+                                                          "id": {
+                                                            "type": "string",
+                                                            "pattern": "^[0-9a-f]{128}$",
+                                                            "minLength": 128,
+                                                            "maxLength": 128
+                                                          }
+                                                        },
+                                                        "required": [
+                                                          "kind",
+                                                          "id"
+                                                        ],
+                                                        "additionalProperties": false
+                                                      }
+                                                    ]
+                                                  },
+                                                  "profile": {
+                                                    "type": "string",
+                                                    "const": "native_v1"
+                                                  }
+                                                },
+                                                "additionalProperties": false,
+                                                "required": [
+                                                  "profile",
+                                                  "object"
+                                                ]
+                                              },
+                                              {
+                                                "type": "object",
+                                                "properties": {
+                                                  "kind": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                      "commit",
+                                                      "tree",
+                                                      "blob"
+                                                    ]
+                                                  },
+                                                  "id": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9a-f]{40}$",
+                                                    "minLength": 40,
+                                                    "maxLength": 40
+                                                  },
+                                                  "profile": {
+                                                    "type": "string",
+                                                    "const": "git_sha1_jj045"
+                                                  }
+                                                },
+                                                "additionalProperties": false,
+                                                "required": [
+                                                  "profile",
+                                                  "kind",
+                                                  "id"
+                                                ]
+                                              }
+                                            ]
+                                          },
+                                          "value_kind": {
+                                            "type": "string",
+                                            "enum": [
+                                              "file",
+                                              "binary_file",
+                                              "empty_file",
+                                              "symlink",
+                                              "gitlink",
+                                              "conflict_term",
+                                              "conflict_artifact"
+                                            ]
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "revision",
+                                          "path",
+                                          "object",
+                                          "value_kind"
+                                        ]
+                                      }
+                                    },
+                                    "required": ["target", "value"]
+                                  },
+                                  {
+                                    "type": "object",
+                                    "properties": {
+                                      "target": {
+                                        "type": "string",
                                         "const": "code_artifact"
                                       },
                                       "value": {
@@ -62603,6 +64393,22 @@
           {
             "type": "object",
             "properties": {
+              "target": { "type": "string", "const": "portable_code_text" },
+              "value": { "$ref": "#/components/schemas/PortableCodeTextV2" }
+            },
+            "required": ["target", "value"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "target": { "type": "string", "const": "portable_code_artifact" },
+              "value": { "$ref": "#/components/schemas/PortableCodeArtifactV2" }
+            },
+            "required": ["target", "value"]
+          },
+          {
+            "type": "object",
+            "properties": {
               "target": { "type": "string", "const": "code_artifact" },
               "value": { "$ref": "#/components/schemas/CodeArtifactAnchorV1" }
             },
@@ -62761,29 +64567,113 @@
       },
       "DiffSide": { "type": "string", "enum": ["before", "after"] },
       "ComparisonKind": { "type": "string", "enum": ["explicit_pair"] },
-      "CodeArtifactAnchorV1": {
+      "PortableCodeTextV2": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "operation_id": { "$ref": "#/components/schemas/OperationId" },
-          "commit_id": { "$ref": "#/components/schemas/CommitId" },
-          "change_id": {
+          "artifact": { "$ref": "#/components/schemas/PortableCodeArtifactV2" },
+          "text": { "$ref": "#/components/schemas/TextSelectionV1" },
+          "diff_context": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/PortableDiffContextV2" },
+              { "type": "null" }
+            ]
+          }
+        },
+        "required": ["artifact", "text", "diff_context"]
+      },
+      "PortableCodeArtifactV2": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "revision": { "$ref": "#/components/schemas/PortableRevisionV2" },
+          "path": { "type": "string" },
+          "object": { "$ref": "#/components/schemas/CodeObjectIdV1" },
+          "value_kind": { "$ref": "#/components/schemas/CodeValueKind" }
+        },
+        "required": ["revision", "path", "object", "value_kind"]
+      },
+      "PortableRevisionV2": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "evidence": { "$ref": "#/components/schemas/CodeEvidenceRefV1" },
+          "commit": { "$ref": "#/components/schemas/CodeCommitIdV1" },
+          "change": {
             "anyOf": [
               { "$ref": "#/components/schemas/ChangeId" },
               { "type": "null" }
             ]
-          },
-          "path": { "type": "string" },
-          "object": { "$ref": "#/components/schemas/ObjectKey" },
-          "value_kind": { "$ref": "#/components/schemas/CodeValueKind" }
+          }
         },
-        "required": [
-          "operation_id",
-          "commit_id",
-          "change_id",
-          "path",
-          "object",
-          "value_kind"
+        "required": ["evidence", "commit", "change"]
+      },
+      "CodeEvidenceRefV1": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "repository": { "$ref": "#/components/schemas/RepositoryId" },
+          "profile": { "$ref": "#/components/schemas/CodeProfileV1" },
+          "operation": { "$ref": "#/components/schemas/OperationId" },
+          "capsule": { "$ref": "#/components/schemas/CodeCapsuleId" }
+        },
+        "required": ["repository", "profile", "operation", "capsule"]
+      },
+      "CodeCapsuleId": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{64}$",
+        "minLength": 64,
+        "maxLength": 64
+      },
+      "CodeCommitIdV1": {
+        "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "profile": { "type": "string", "const": "native_v1" },
+              "id": { "$ref": "#/components/schemas/CommitId" }
+            },
+            "required": ["profile", "id"],
+            "additionalProperties": false
+          },
+          {
+            "type": "object",
+            "properties": {
+              "profile": { "type": "string", "const": "git_sha1_jj045" },
+              "id": { "$ref": "#/components/schemas/GitSha1Id" }
+            },
+            "required": ["profile", "id"],
+            "additionalProperties": false
+          }
+        ]
+      },
+      "GitSha1Id": {
+        "type": "string",
+        "pattern": "^[0-9a-f]{40}$",
+        "minLength": 40,
+        "maxLength": 40
+      },
+      "CodeObjectIdV1": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "object": { "$ref": "#/components/schemas/ObjectKey" },
+              "profile": { "type": "string", "const": "native_v1" }
+            },
+            "required": ["profile", "object"]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "kind": { "$ref": "#/components/schemas/GitObjectKindV1" },
+              "id": { "$ref": "#/components/schemas/GitSha1Id" },
+              "profile": { "type": "string", "const": "git_sha1_jj045" }
+            },
+            "required": ["profile", "kind", "id"]
+          }
         ]
       },
       "ObjectKey": {
@@ -62876,6 +64766,47 @@
         "pattern": "^[0-9a-f]{128}$",
         "minLength": 128,
         "maxLength": 128
+      },
+      "GitObjectKindV1": {
+        "type": "string",
+        "enum": ["commit", "tree", "blob"]
+      },
+      "PortableDiffContextV2": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "before": { "$ref": "#/components/schemas/PortableRevisionV2" },
+          "before_path": { "type": ["string", "null"] },
+          "after": { "$ref": "#/components/schemas/PortableRevisionV2" },
+          "after_path": { "type": ["string", "null"] },
+          "side": { "$ref": "#/components/schemas/DiffSide" }
+        },
+        "required": ["before", "before_path", "after", "after_path", "side"]
+      },
+      "CodeArtifactAnchorV1": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "operation_id": { "$ref": "#/components/schemas/OperationId" },
+          "commit_id": { "$ref": "#/components/schemas/CommitId" },
+          "change_id": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/ChangeId" },
+              { "type": "null" }
+            ]
+          },
+          "path": { "type": "string" },
+          "object": { "$ref": "#/components/schemas/ObjectKey" },
+          "value_kind": { "$ref": "#/components/schemas/CodeValueKind" }
+        },
+        "required": [
+          "operation_id",
+          "commit_id",
+          "change_id",
+          "path",
+          "object",
+          "value_kind"
+        ]
       },
       "AgentTextAnchorV1": {
         "type": "object",
@@ -63761,23 +65692,6 @@
         },
         "required": ["operations", "commits"]
       },
-      "CodeEvidenceRefV1": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "repository": { "$ref": "#/components/schemas/RepositoryId" },
-          "profile": { "$ref": "#/components/schemas/CodeProfileV1" },
-          "operation": { "$ref": "#/components/schemas/OperationId" },
-          "capsule": { "$ref": "#/components/schemas/CodeCapsuleId" }
-        },
-        "required": ["repository", "profile", "operation", "capsule"]
-      },
-      "CodeCapsuleId": {
-        "type": "string",
-        "pattern": "^[0-9a-f]{64}$",
-        "minLength": 64,
-        "maxLength": 64
-      },
       "CodeCommitEvidenceV2": {
         "type": "object",
         "additionalProperties": false,
@@ -63786,34 +65700,6 @@
           "commit": { "$ref": "#/components/schemas/CodeCommitIdV1" }
         },
         "required": ["evidence", "commit"]
-      },
-      "CodeCommitIdV1": {
-        "oneOf": [
-          {
-            "type": "object",
-            "properties": {
-              "profile": { "type": "string", "const": "native_v1" },
-              "id": { "$ref": "#/components/schemas/CommitId" }
-            },
-            "required": ["profile", "id"],
-            "additionalProperties": false
-          },
-          {
-            "type": "object",
-            "properties": {
-              "profile": { "type": "string", "const": "git_sha1_jj045" },
-              "id": { "$ref": "#/components/schemas/GitSha1Id" }
-            },
-            "required": ["profile", "id"],
-            "additionalProperties": false
-          }
-        ]
-      },
-      "GitSha1Id": {
-        "type": "string",
-        "pattern": "^[0-9a-f]{40}$",
-        "minLength": 40,
-        "maxLength": 40
       },
       "ThreadDirectoryMetadata": {
         "type": "object",

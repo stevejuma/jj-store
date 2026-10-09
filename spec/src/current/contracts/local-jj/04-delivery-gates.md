@@ -117,3 +117,22 @@ CLI access. M13.3 adds portable AgentStore/ReviewStore evidence. M13.4 adds
 direct local serving, code commands and browser presentation. M13.5 adds local
 transfer. M13.6 qualifies cold end-to-end behavior and native regressions.
 Milestone status and actual command evidence live only in milestones.md.
+
+Portable file-review publication under M13.3 extends the review descriptor with
+an optional selected evidence inventory; empty inventories preserve old
+descriptor bytes. The typed WithEvidence command freezes the exact shared review
+intent and capsule bytes under its original actor/request digest. A single
+companion CAS selects review records and full Git evidence reachability
+together. Missing, foreign, unselected or mismatched evidence cannot publish;
+prior selected reads never admit new staging. Receipts precede stale source
+checks on retry. Shared edit and workflow version checks remain unchanged.
+
+Original file reads require a reachable anchor in the pinned ReviewStore, an
+inventory-selected capsule and an exact regular-file path in its retained
+commit. They verify Git object kinds/hashes, reject symlinks and metadata paths,
+and obey bounded content limits. They do not read the current checkout or
+operation store. Later renames, deletion, operation-store cleanup and ordinary
+Git GC cannot substitute another source. Thread/reaction references retain the
+same evidence closure without acquiring authority over the originating reviews.
+This narrow file gate does not qualify portable agent reviews or a native
+portable carrier.
