@@ -5,7 +5,7 @@ use jj_store_model as m;
 use jj_store_service::reads::{CommittedRead, OpenRead, ReadLimits};
 
 #[derive(Clone)]
-pub(super) struct Entry {
+pub(in crate::agent_execution) struct Entry {
     pub path: String,
     pub file: Option<String>,
     pub kind: String,
@@ -20,7 +20,7 @@ enum Reader {
         pin: Arc<CommittedRead>,
     },
 }
-pub(super) struct Source {
+pub(in crate::agent_execution) struct Source {
     reader: Reader,
     operation: OperationId,
     files: tokio::sync::Mutex<BTreeMap<String, Arc<Vec<Entry>>>>,
@@ -66,7 +66,7 @@ fn error(_: impl std::fmt::Debug) -> Error {
     Error::Unavailable
 }
 impl Supervisor {
-    pub(super) async fn workspace_source(
+    pub(in crate::agent_execution) async fn workspace_source(
         &self,
         repository: RepositoryId,
         profile: &str,

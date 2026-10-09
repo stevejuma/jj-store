@@ -74,19 +74,12 @@ impl Supervisor {
                 };
                 let thread = match &reply.comments[0] {
                     ReactionTargetV1::HumanMessage { thread_id, .. } => *thread_id,
-                    ReactionTargetV1::ReviewComment { .. } => {
-                        let Some(thread) = self.read(|s| {
-                            Ok(saved
-                                .view
-                                .conversation_id
-                                .as_ref()
-                                .and_then(|id| s.conversations.get(id))
-                                .and_then(|c| c.discussion_thread))
-                        })?
-                        else {
+                    ReactionTargetV1::ReviewComment { .. }
+                    | ReactionTargetV1::RepositoryReviewComment { .. } => {
+                        let Some(submission) = &delivery.batch.submission else {
                             continue;
                         };
-                        thread
+                        submission.thread_id
                     }
                     _ => continue,
                 };

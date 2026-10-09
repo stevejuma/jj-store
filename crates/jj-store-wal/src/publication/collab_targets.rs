@@ -19,6 +19,7 @@ use std::collections::BTreeSet;
 /// snapshot before constructing this facade. No object staging is exposed.
 pub struct CollabTargetReaderV1<'a> {
     repository: RepositoryId,
+    qualified: Option<&'a dyn jj_collab::QualifiedReviewRead>,
     work: Option<&'a jj_work::WorkStateV1>,
     thread: Option<(ThreadStateV1, &'a CollabGraphV1, BTreeSet<CollabObjectRef>)>,
     agent: Option<&'a dyn AgentSnapshotRead>,
@@ -49,10 +50,18 @@ impl<'a> CollabTargetReaderV1<'a> {
         Ok(Self {
             repository,
             work: None,
+            qualified: None,
             thread,
             agent,
             review,
         })
+    }
+    pub fn with_qualified_reviews(
+        mut self,
+        reader: Option<&'a dyn jj_collab::QualifiedReviewRead>,
+    ) -> Self {
+        self.qualified = reader;
+        self
     }
     pub fn with_work(
         mut self,
@@ -88,6 +97,15 @@ fn read_result<T>(result: Result<T>) -> jj_collab::Result<Option<T>> {
 }
 #[async_trait::async_trait]
 impl ReactionTargetRead for CollabTargetReaderV1<'_> {
+    async fn qualified_review_comment(
+        &self,
+        target: &jj_collab::ReactionTargetV1,
+    ) -> jj_collab::Result<jj_collab::QualifiedReviewComment> {
+        self.qualified
+            .ok_or(jj_collab::Error::TargetUnavailable)?
+            .comment(target)
+            .await
+    }
     async fn work_comment(
         &self,
         task: jj_work::TaskId,

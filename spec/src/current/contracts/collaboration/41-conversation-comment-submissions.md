@@ -113,3 +113,29 @@ answer projection as live participation. Tool rows carry a committed invocation
 or output target. Permission refusals and bounded-reader failures remain
 explicit unavailable metadata; they do not turn a transcript read into an
 implicit write.
+
+## Repository-qualified file reviews
+
+The additive `repository_review_comment` reference names its owning repository,
+discussion, comment and immutable revision. Existing unqualified reference bytes
+and tokens remain unchanged. Qualified references do not add foreign objects to
+the home repository's ReviewStore dependency graph. The code repository retains
+its own original evidence through its existing publication authority.
+
+Publication requires an explicitly supplied, independently authorized review
+reader. Generic commands without that capability refuse qualified references.
+The reader resolves the exact selected or historical revision and original
+anchor from the owning ReviewStore, verifies the retained source bytes, and
+reauthorizes after the read. Missing, hidden, tombstoned or inaccessible
+comments remain unavailable. Conversation and reply publication perform this
+validation on each attempt; a browser body or a copied quote never grants
+authority.
+
+Frozen context carries the exact file anchor and a bounded source quote with
+surrounding text. File paths, revision IDs, diff side and repository identities
+remain typed source facts. Captured strings pass through the existing sanitizer
+and context framing. The version-1 reply token includes the owning repository
+and discussion, preventing cross-repository ID collisions. The original
+delivered context and completed answer-range proof remain required for every
+reply link. Conversion refuses this carrier until qualified identity remapping
+is available.

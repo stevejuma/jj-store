@@ -100,6 +100,16 @@ impl PinnedCollabRead {
         thread: ThreadId,
         batch: CollabObjectRef,
     ) -> crate::agent_execution::Result<crate::agent_execution::context::ContextBatch> {
+        self.conversation_submission_context_with_reviews(session, thread, batch, None)
+            .await
+    }
+    pub async fn conversation_submission_context_with_reviews(
+        &self,
+        session: Arc<NativeSession>,
+        thread: ThreadId,
+        batch: CollabObjectRef,
+        qualified: Option<&dyn jj_collab::QualifiedReviewRead>,
+    ) -> crate::agent_execution::Result<crate::agent_execution::context::ContextBatch> {
         use crate::agent_execution::Error;
         self.authorize(&session).await.map_err(|_| Error::Denied)?;
         let agents = self
@@ -124,7 +134,8 @@ impl PinnedCollabRead {
                 .as_ref()
                 .map(|s| s as &dyn wal::publication::ReviewSnapshotRead),
         )
-        .map_err(|_| Error::Unavailable)?;
+        .map_err(|_| Error::Unavailable)?
+        .with_qualified_reviews(qualified);
         let result = crate::agent_execution::context_submission::collect_submission(
             &reader,
             self.snapshot.repo_id,

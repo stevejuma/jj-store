@@ -97,7 +97,9 @@ impl ConversationSubmissionV1 {
 pub fn validate_comment_reference(target: &ReactionTargetV1) -> Result<()> {
     if !matches!(
         target,
-        ReactionTargetV1::HumanMessage { .. } | ReactionTargetV1::ReviewComment { .. }
+        ReactionTargetV1::HumanMessage { .. }
+            | ReactionTargetV1::ReviewComment { .. }
+            | ReactionTargetV1::RepositoryReviewComment { .. }
     ) {
         return Err(Error::Invalid("comment reference kind"));
     }

@@ -858,3 +858,114 @@ async fn conversation_submission_is_atomic_receipt_backed_and_rejects_forged_ran
         .is_err()
     );
 }
+
+#[tokio::test]
+async fn qualified_reviews_require_an_explicit_reader_without_foreign_dependencies() {
+    use jj_review as r;
+    struct Authorized(AtomicBool);
+    #[async_trait::async_trait]
+    impl QualifiedReviewRead for Authorized {
+        async fn comment(
+            &self,
+            target: &ReactionTargetV1,
+        ) -> jj_collab::Result<QualifiedReviewComment> {
+            if !self.0.load(Ordering::SeqCst) {
+                return Err(jj_collab::Error::TargetUnavailable);
+            }
+            let ReactionTargetV1::RepositoryReviewComment { repository, .. } = target else {
+                panic!()
+            };
+            Ok(QualifiedReviewComment {
+                target: target.clone(),
+                revision: TargetRevisionV1::Earlier,
+                body: "Review".into(),
+                file: b"hello".to_vec(),
+                anchor: r::ArtifactAnchorV1 {
+                    schema_version: 1,
+                    repository_id: *repository,
+                    target: r::ArtifactTargetV1::CodeArtifact(Box::new(r::CodeArtifactAnchorV1 {
+                        operation_id: OperationId::new([1; 64]),
+                        commit_id: jj_store_model::CommitId::new([2; 64]),
+                        change_id: None,
+                        path: "hello.txt".into(),
+                        object: ObjectKey::File(jj_store_model::FileId::new([3; 64])),
+                        value_kind: r::CodeValueKind::File,
+                    })),
+                    created_context: r::CreatedContextV1 {
+                        publication_position: None,
+                        code_state_version: None,
+                        agent_root: None,
+                    },
+                    sensitivity: r::SensitivityV1::Repository,
+                },
+            })
+        }
+    }
+    let (storage, guard, c) = fixture().await;
+    let parent = thread_result(&publish(&c, &thread(90)).await);
+    let target = ReactionTargetV1::RepositoryReviewComment {
+        repository: RepositoryId::new([99; 16]),
+        thread_id: r::ReviewThreadId::new([91; 16]),
+        comment_id: r::CommentId::new([92; 16]),
+        revision: r::ReviewObjectRef::new(
+            r::ReviewObjectKind::CommentRevision,
+            r::ReviewObjectId::new([93; 32]),
+        ),
+    };
+    let request = command_request(
+        91,
+        CollabCommandV1::Thread {
+            intent: ThreadCommandV1::Submit {
+                submission: Box::new(ConversationSubmissionV1 {
+                    thread_id: parent.thread_id,
+                    expected_thread: parent.version,
+                    message_id: None,
+                    text: None,
+                    reply_to: None,
+                    comments: vec![],
+                    references: vec![target.clone()],
+                }),
+            },
+        },
+    );
+    let before = c.read().await.unwrap().manifest().clone();
+    assert!(c.publish_collab_command(&request).await.is_err());
+    let authority = Authorized(AtomicBool::new(false));
+    assert!(
+        c.publish_collab_command_with_reviews(&request, Some(&authority))
+            .await
+            .is_err()
+    );
+    assert_eq!(c.read().await.unwrap().manifest(), &before);
+    authority.0.store(true, Ordering::SeqCst);
+    let PublishOutcome::Committed(receipt) = c
+        .publish_collab_command_with_reviews(&request, Some(&authority))
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    let cold = coordinator(storage, guard);
+    // A known receipt replays independently of the foreign source's later availability.
+    authority.0.store(false, Ordering::SeqCst);
+    let PublishOutcome::Committed(replay) = cold
+        .publish_collab_command_with_reviews(&request, Some(&authority))
+        .await
+        .unwrap()
+    else {
+        panic!()
+    };
+    assert_eq!(receipt, replay);
+    let pin = cold.read().await.unwrap();
+    let store = cold
+        .native_thread_store(pin.manifest().thread_root.unwrap())
+        .await
+        .unwrap();
+    assert_eq!(store.state.threads.len(), 1);
+    assert!(store.state.messages.is_empty());
+    let batch = thread_result(&receipt).link.unwrap();
+    assert!(
+        matches!(store.graph.get(batch).unwrap(), CollabObjectV1::ThreadLink(ThreadLinkV1 { target: ThreadLinkTargetV1::CommentBatch { comments, .. }, .. }) if comments == &vec![target])
+    );
+    assert_eq!(pin.manifest().review_root, before.review_root);
+}

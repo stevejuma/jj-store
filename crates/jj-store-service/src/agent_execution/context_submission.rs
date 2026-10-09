@@ -14,6 +14,14 @@ pub struct FrozenComment {
     pub source: Option<ConversationSourceV1>,
     #[serde(default)]
     pub surrounding: String,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub file: Option<FrozenFileSource>,
+}
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
+pub struct FrozenFileSource {
+    pub anchor: jj_review::ArtifactAnchorV1,
+    pub quote: String,
 }
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -58,7 +66,19 @@ pub async fn collect_submission(
         resolve_reaction_target(reader, &target)
             .await
             .map_err(|_| Error::Unavailable)?;
+        let mut file = None;
+        let mut file_surrounding = String::new();
         let (body, source) = match &target {
+            ReactionTargetV1::RepositoryReviewComment { .. } => {
+                let resolved = reader
+                    .qualified_review_comment(&target)
+                    .await
+                    .map_err(|_| Error::Unavailable)?;
+                let (source, surrounding) = frozen_file_source(&resolved)?;
+                file = Some(source);
+                file_surrounding = surrounding;
+                (resolved.body, None)
+            }
             ReactionTargetV1::HumanMessage {
                 thread_id,
                 message_id,
@@ -127,13 +147,14 @@ pub async fn collect_submission(
                 Err(_) => return Err(Error::Unavailable),
             }
         } else {
-            String::new()
+            file_surrounding
         };
         let comment = FrozenComment {
             reference: CommentReplyReferenceV1::new(target).map_err(|_| Error::Invalid)?,
             body,
             source,
             surrounding,
+            file,
         };
         bytes += serde_json::to_vec(&comment)
             .map_err(|_| Error::Invalid)?
@@ -144,6 +165,48 @@ pub async fn collect_submission(
         result.comments.push(comment);
     }
     Ok(result)
+}
+
+pub fn frozen_file_source(comment: &QualifiedReviewComment) -> Result<(FrozenFileSource, String)> {
+    use jj_review::ArtifactTargetV1;
+    comment
+        .anchor
+        .validate_text(&comment.file)
+        .map_err(|_| Error::Invalid)?;
+    let text = std::str::from_utf8(&comment.file).map_err(|_| Error::Unavailable)?;
+    if text.len() > 256 * 1024 || text.contains('\0') {
+        return Err(Error::FeedbackLimit);
+    }
+    let selection = match &comment.anchor.target {
+        ArtifactTargetV1::CodeText(v) => Some(&v.text),
+        ArtifactTargetV1::PortableCodeText(v) => Some(&v.text),
+        ArtifactTargetV1::CodeArtifact(_) | ArtifactTargetV1::PortableCodeArtifact(_) => None,
+        _ => return Err(Error::Invalid),
+    };
+    let (start, end) = selection
+        .map(|s| (s.start_byte.get() as usize, s.end_byte.get() as usize))
+        .unwrap_or((0, floor_boundary(text, 512.min(text.len()))));
+    if end - start > 32768 {
+        return Err(Error::FeedbackLimit);
+    }
+    let mut from = start.saturating_sub(512);
+    while !text.is_char_boundary(from) {
+        from += 1;
+    }
+    let to = floor_boundary(text, end.saturating_add(512).min(text.len()));
+    Ok((
+        FrozenFileSource {
+            anchor: comment.anchor.clone(),
+            quote: text[start..end].into(),
+        },
+        text[from..to].into(),
+    ))
+}
+fn floor_boundary(text: &str, mut end: usize) -> usize {
+    while !text.is_char_boundary(end) {
+        end -= 1;
+    }
+    end
 }
 
 fn source_context(text: &str, source: &ConversationSourceV1) -> String {

@@ -79,6 +79,14 @@ impl Coordinator {
         &self,
         request: &CollabCommandRequestV1,
     ) -> std::result::Result<PublishOutcome, CollabCommandError> {
+        self.publish_collab_command_with_reviews(request, None)
+            .await
+    }
+    pub async fn publish_collab_command_with_reviews(
+        &self,
+        request: &CollabCommandRequestV1,
+        qualified: Option<&dyn jj_collab::QualifiedReviewRead>,
+    ) -> std::result::Result<PublishOutcome, CollabCommandError> {
         let intent = request.intent_digest(self.records.repository)?;
         let at = SystemTime::now()
             .duration_since(UNIX_EPOCH)
@@ -88,7 +96,7 @@ impl Coordinator {
             .map_err(|_| Error::Limit("collaboration command time"))?;
         match tokio::time::timeout(
             self.limits.timeout,
-            self.publish_collab_command_inner(request, intent, at),
+            self.publish_collab_command_inner(request, intent, at, qualified),
         )
         .await
         {
@@ -131,6 +139,7 @@ impl Coordinator {
         request: &CollabCommandRequestV1,
         intent: IntentDigest,
         at: i64,
+        qualified: Option<&dyn jj_collab::QualifiedReviewRead>,
     ) -> std::result::Result<Receipt, CollabCommandError> {
         for _ in 0..self.limits.cas_attempts {
             let base = self.read().await?;
@@ -165,7 +174,8 @@ impl Coordinator {
             }
             let (root, result) = match &request.command {
                 CollabCommandV1::Thread { intent: command } => {
-                    self.validate_thread_sources(&base, command).await?;
+                    self.validate_thread_sources(&base, command, qualified)
+                        .await?;
                     let mut threads = self.native_thread_store(expected.root).await?;
                     let (root, result) = threads.state.apply(
                         command,
@@ -288,6 +298,7 @@ impl Coordinator {
         &self,
         base: &ManifestSnapshot,
         command: &ThreadCommandV1,
+        qualified: Option<&dyn jj_collab::QualifiedReviewRead>,
     ) -> std::result::Result<(), CollabCommandError> {
         if !command.conversation_sources().is_empty() || !command.comment_references().is_empty() {
             let selected = self.collab_domain_state(base, Domain::Thread).await?;
@@ -305,7 +316,8 @@ impl Coordinator {
                 Some((threads.state.root, &threads.graph)),
                 agents.as_ref().map(|s| s as &dyn AgentSnapshotRead),
                 reviews.as_ref().map(|s| s as &dyn ReviewSnapshotRead),
-            )?;
+            )?
+            .with_qualified_reviews(qualified);
             for source in command.conversation_sources() {
                 jj_collab::resolve_conversation_source(&reader, source).await?;
             }

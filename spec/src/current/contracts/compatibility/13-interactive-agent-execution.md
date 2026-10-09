@@ -54,3 +54,10 @@ code-selector types. Existing native and repository target bytes remain exact.
 Local review descriptors add an optional evidence inventory, omitted when empty
 to preserve existing encodings. Native portable carriers, portable agent review
 publication and conversion of those anchors remain separately unqualified.
+
+The additive repository_review_comment target includes repository identity;
+legacy reference bytes and tokens remain unchanged. Optional frozen file context
+is omitted when absent. JST-COMPAT-001/003/005 preserve native/local source
+widths, canonical stores and independent authorization. Local/native conversion
+refuses these references until qualified mapping exists rather than remapping
+IDs.

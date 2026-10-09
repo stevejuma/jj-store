@@ -119,6 +119,17 @@ impl Supervisor {
             return Err(Error::Stale);
         }
         if let Some(context) = saved.context {
+            // A receipt is durable; permission to disclose its foreign source is not.
+            for comment in &context.comments {
+                if matches!(
+                    comment.reference.target,
+                    ReactionTargetV1::RepositoryReviewComment { .. }
+                ) {
+                    QualifiedReviewRead::comment(self, &comment.reference.target)
+                        .await
+                        .map_err(|_| Error::Denied)?;
+                }
+            }
             return Ok(context);
         }
         let batch = match saved.batch {
@@ -156,7 +167,11 @@ impl Supervisor {
                 .ok_or(Error::Unavailable)?
                 .open(saved.repository)
                 .map_err(|_| Error::Denied)?
-                .conversation_submission_context(submission.thread_id, batch)
+                .conversation_submission_context_with_reviews(
+                    submission.thread_id,
+                    batch,
+                    Some(self),
+                )
                 .await?
         } else {
             let session = self.home_session(saved.repository)?;
@@ -166,8 +181,13 @@ impl Supervisor {
             )
             .await
             .map_err(|_| Error::Unavailable)?;
-            pin.conversation_submission_context(session, submission.thread_id, batch)
-                .await?
+            pin.conversation_submission_context_with_reviews(
+                session,
+                submission.thread_id,
+                batch,
+                Some(self),
+            )
+            .await?
         };
         self.update(|s| {
             s.comment_submissions
@@ -195,11 +215,14 @@ impl Supervisor {
                 .open(repository)
                 .map_err(|_| Error::Denied)?;
             match local
-                .apply_collab_command(&jj_store_service::local_repository::LocalCollabRequest {
-                    version: 1,
-                    request_id: request.request_id,
-                    command: request.command.clone(),
-                })
+                .apply_collab_command_with_reviews(
+                    &jj_store_service::local_repository::LocalCollabRequest {
+                        version: 1,
+                        request_id: request.request_id,
+                        command: request.command.clone(),
+                    },
+                    Some(self),
+                )
                 .await
             {
                 Ok(jj_store_service::local_repository::LocalCollabOutcome::Committed {
@@ -216,7 +239,7 @@ impl Supervisor {
             }
         } else {
             match CollabCommandService
-                .apply(self.home_session(repository)?, request)
+                .apply_with_reviews(self.home_session(repository)?, request, Some(self))
                 .await
             {
                 Ok(jj_store_service::collab_mutations::Outcome::Committed { receipt }) => {

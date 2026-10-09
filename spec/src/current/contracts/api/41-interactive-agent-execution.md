@@ -273,3 +273,11 @@ apply before publication. Existing transport admission and independent
 repository authorization remain unchanged. A submitted capsule is not authority
 to select an arbitrary filesystem root or to read staged content through an
 older pin.
+
+Conversation submissions and reply links additionally admit repository-qualified
+review-comment references under JST-API-001. The trusted execution service
+supplies an independent code-repository reader for these references; generic
+collaboration endpoints cannot accept foreign reviews by accepting copied
+bodies. Frozen context includes the exact original file anchor and bounded
+source text. Receipt replay preserves publication identity, while preparing or
+reading source context still requires current code-repository permission.

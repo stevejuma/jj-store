@@ -23,6 +23,7 @@ mod launch;
 mod local_agent;
 mod provider_catalog;
 mod provider_launch;
+mod qualified_reviews;
 
 mod prompt_context;
 mod publication;

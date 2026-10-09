@@ -20,6 +20,13 @@ impl CommentReplyReferenceV1 {
         let discussion = match &target {
             ReactionTargetV1::HumanMessage { thread_id, .. } => format!("thread-{thread_id}"),
             ReactionTargetV1::ReviewComment { thread_id, .. } => format!("review-{thread_id}"),
+            ReactionTargetV1::RepositoryReviewComment {
+                repository,
+                thread_id,
+                ..
+            } => {
+                format!("review-{repository}-{thread_id}")
+            }
             _ => return Err(Error::Invalid("comment protocol target")),
         };
         let comment = format!("comment-{}", target.exact_key()?);

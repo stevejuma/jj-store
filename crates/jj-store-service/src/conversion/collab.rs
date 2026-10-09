@@ -31,6 +31,9 @@ fn target(
             *content = mapped(a, *content)?
         }
         ReactionTargetV1::ReviewComment { revision, .. } => *revision = mapped(r, *revision)?,
+        ReactionTargetV1::RepositoryReviewComment { .. } => {
+            return Err("qualified review conversion is not supported".into());
+        }
         ReactionTargetV1::Thread { .. }
         | ReactionTargetV1::ReviewThread { .. }
         | ReactionTargetV1::WorkComment { .. } => {}

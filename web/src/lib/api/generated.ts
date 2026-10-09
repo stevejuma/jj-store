@@ -3529,6 +3529,14 @@ export interface components {
           type: "review_comment";
         }
       | {
+          repository: components["schemas"]["RepositoryId"];
+          thread_id: components["schemas"]["ReviewThreadId"];
+          comment_id: components["schemas"]["CommentId"];
+          revision: components["schemas"]["ReviewObjectRef"];
+          /** @constant */
+          type: "repository_review_comment";
+        }
+      | {
           task_id: components["schemas"]["TaskId"];
           comment_id: components["schemas"]["WorkCommentId"];
           /** Format: uint64 */
@@ -16699,6 +16707,27 @@ export interface operations {
                             type: "review_comment";
                           }
                         | {
+                            repository: string;
+                            thread_id: string;
+                            comment_id: string;
+                            revision: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "anchor"
+                                | "comment_body"
+                                | "comment_revision"
+                                | "thread_event"
+                                | "event_page"
+                                | "thread_snapshot"
+                                | "relation_page"
+                                | "status_page";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "repository_review_comment";
+                          }
+                        | {
                             task_id: string;
                             comment_id: string;
                             /** Format: uint64 */
@@ -16973,6 +17002,27 @@ export interface operations {
                         type: "review_comment";
                       }
                     | {
+                        repository: string;
+                        thread_id: string;
+                        comment_id: string;
+                        revision: {
+                          /** @enum {string} */
+                          kind:
+                            | "index_page"
+                            | "anchor"
+                            | "comment_body"
+                            | "comment_revision"
+                            | "thread_event"
+                            | "event_page"
+                            | "thread_snapshot"
+                            | "relation_page"
+                            | "status_page";
+                          id: string;
+                        };
+                        /** @constant */
+                        type: "repository_review_comment";
+                      }
+                    | {
                         task_id: string;
                         comment_id: string;
                         /** Format: uint64 */
@@ -17210,6 +17260,27 @@ export interface operations {
                         };
                         /** @constant */
                         type: "review_comment";
+                      }
+                    | {
+                        repository: string;
+                        thread_id: string;
+                        comment_id: string;
+                        revision: {
+                          /** @enum {string} */
+                          kind:
+                            | "index_page"
+                            | "anchor"
+                            | "comment_body"
+                            | "comment_revision"
+                            | "thread_event"
+                            | "event_page"
+                            | "thread_snapshot"
+                            | "relation_page"
+                            | "status_page";
+                          id: string;
+                        };
+                        /** @constant */
+                        type: "repository_review_comment";
                       }
                     | {
                         task_id: string;
@@ -17458,6 +17529,27 @@ export interface operations {
                       };
                       /** @constant */
                       type: "review_comment";
+                    }
+                  | {
+                      repository: string;
+                      thread_id: string;
+                      comment_id: string;
+                      revision: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "anchor"
+                          | "comment_body"
+                          | "comment_revision"
+                          | "thread_event"
+                          | "event_page"
+                          | "thread_snapshot"
+                          | "relation_page"
+                          | "status_page";
+                        id: string;
+                      };
+                      /** @constant */
+                      type: "repository_review_comment";
                     }
                   | {
                       task_id: string;
@@ -17861,6 +17953,27 @@ export interface operations {
                               type: "review_comment";
                             }
                           | {
+                              repository: string;
+                              thread_id: string;
+                              comment_id: string;
+                              revision: {
+                                /** @enum {string} */
+                                kind:
+                                  | "index_page"
+                                  | "anchor"
+                                  | "comment_body"
+                                  | "comment_revision"
+                                  | "thread_event"
+                                  | "event_page"
+                                  | "thread_snapshot"
+                                  | "relation_page"
+                                  | "status_page";
+                                id: string;
+                              };
+                              /** @constant */
+                              type: "repository_review_comment";
+                            }
+                          | {
                               task_id: string;
                               comment_id: string;
                               /** Format: uint64 */
@@ -18090,6 +18203,27 @@ export interface operations {
                                 };
                                 /** @constant */
                                 type: "review_comment";
+                              }
+                            | {
+                                repository: string;
+                                thread_id: string;
+                                comment_id: string;
+                                revision: {
+                                  /** @enum {string} */
+                                  kind:
+                                    | "index_page"
+                                    | "anchor"
+                                    | "comment_body"
+                                    | "comment_revision"
+                                    | "thread_event"
+                                    | "event_page"
+                                    | "thread_snapshot"
+                                    | "relation_page"
+                                    | "status_page";
+                                  id: string;
+                                };
+                                /** @constant */
+                                type: "repository_review_comment";
                               }
                             | {
                                 task_id: string;
@@ -18333,6 +18467,27 @@ export interface operations {
                               type: "review_comment";
                             }
                           | {
+                              repository: string;
+                              thread_id: string;
+                              comment_id: string;
+                              revision: {
+                                /** @enum {string} */
+                                kind:
+                                  | "index_page"
+                                  | "anchor"
+                                  | "comment_body"
+                                  | "comment_revision"
+                                  | "thread_event"
+                                  | "event_page"
+                                  | "thread_snapshot"
+                                  | "relation_page"
+                                  | "status_page";
+                                id: string;
+                              };
+                              /** @constant */
+                              type: "repository_review_comment";
+                            }
+                          | {
                               task_id: string;
                               comment_id: string;
                               /** Format: uint64 */
@@ -18567,6 +18722,27 @@ export interface operations {
                             };
                             /** @constant */
                             type: "review_comment";
+                          }
+                        | {
+                            repository: string;
+                            thread_id: string;
+                            comment_id: string;
+                            revision: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "anchor"
+                                | "comment_body"
+                                | "comment_revision"
+                                | "thread_event"
+                                | "event_page"
+                                | "thread_snapshot"
+                                | "relation_page"
+                                | "status_page";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "repository_review_comment";
                           }
                         | {
                             task_id: string;
@@ -19470,6 +19646,27 @@ export interface operations {
                 type: "review_comment";
               }
             | {
+                repository: string;
+                thread_id: string;
+                comment_id: string;
+                revision: {
+                  /** @enum {string} */
+                  kind:
+                    | "index_page"
+                    | "anchor"
+                    | "comment_body"
+                    | "comment_revision"
+                    | "thread_event"
+                    | "event_page"
+                    | "thread_snapshot"
+                    | "relation_page"
+                    | "status_page";
+                  id: string;
+                };
+                /** @constant */
+                type: "repository_review_comment";
+              }
+            | {
                 task_id: string;
                 comment_id: string;
                 /** Format: uint64 */
@@ -19847,6 +20044,27 @@ export interface operations {
                       type: "review_comment";
                     }
                   | {
+                      repository: string;
+                      thread_id: string;
+                      comment_id: string;
+                      revision: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "anchor"
+                          | "comment_body"
+                          | "comment_revision"
+                          | "thread_event"
+                          | "event_page"
+                          | "thread_snapshot"
+                          | "relation_page"
+                          | "status_page";
+                        id: string;
+                      };
+                      /** @constant */
+                      type: "repository_review_comment";
+                    }
+                  | {
                       task_id: string;
                       comment_id: string;
                       /** Format: uint64 */
@@ -20130,6 +20348,27 @@ export interface operations {
                       type: "review_comment";
                     }
                   | {
+                      repository: string;
+                      thread_id: string;
+                      comment_id: string;
+                      revision: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "anchor"
+                          | "comment_body"
+                          | "comment_revision"
+                          | "thread_event"
+                          | "event_page"
+                          | "thread_snapshot"
+                          | "relation_page"
+                          | "status_page";
+                        id: string;
+                      };
+                      /** @constant */
+                      type: "repository_review_comment";
+                    }
+                  | {
                       task_id: string;
                       comment_id: string;
                       /** Format: uint64 */
@@ -20377,6 +20616,27 @@ export interface operations {
                       };
                       /** @constant */
                       type: "review_comment";
+                    }
+                  | {
+                      repository: string;
+                      thread_id: string;
+                      comment_id: string;
+                      revision: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "anchor"
+                          | "comment_body"
+                          | "comment_revision"
+                          | "thread_event"
+                          | "event_page"
+                          | "thread_snapshot"
+                          | "relation_page"
+                          | "status_page";
+                        id: string;
+                      };
+                      /** @constant */
+                      type: "repository_review_comment";
                     }
                   | {
                       task_id: string;
@@ -37741,6 +38001,27 @@ export interface operations {
                       type: "review_comment";
                     }
                   | {
+                      repository: string;
+                      thread_id: string;
+                      comment_id: string;
+                      revision: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "anchor"
+                          | "comment_body"
+                          | "comment_revision"
+                          | "thread_event"
+                          | "event_page"
+                          | "thread_snapshot"
+                          | "relation_page"
+                          | "status_page";
+                        id: string;
+                      };
+                      /** @constant */
+                      type: "repository_review_comment";
+                    }
+                  | {
                       task_id: string;
                       comment_id: string;
                       /** Format: uint64 */
@@ -38315,6 +38596,27 @@ export interface operations {
                                   type: "review_comment";
                                 }
                               | {
+                                  repository: string;
+                                  thread_id: string;
+                                  comment_id: string;
+                                  revision: {
+                                    /** @enum {string} */
+                                    kind:
+                                      | "index_page"
+                                      | "anchor"
+                                      | "comment_body"
+                                      | "comment_revision"
+                                      | "thread_event"
+                                      | "event_page"
+                                      | "thread_snapshot"
+                                      | "relation_page"
+                                      | "status_page";
+                                    id: string;
+                                  };
+                                  /** @constant */
+                                  type: "repository_review_comment";
+                                }
+                              | {
                                   task_id: string;
                                   comment_id: string;
                                   /** Format: uint64 */
@@ -38589,6 +38891,27 @@ export interface operations {
                               type: "review_comment";
                             }
                           | {
+                              repository: string;
+                              thread_id: string;
+                              comment_id: string;
+                              revision: {
+                                /** @enum {string} */
+                                kind:
+                                  | "index_page"
+                                  | "anchor"
+                                  | "comment_body"
+                                  | "comment_revision"
+                                  | "thread_event"
+                                  | "event_page"
+                                  | "thread_snapshot"
+                                  | "relation_page"
+                                  | "status_page";
+                                id: string;
+                              };
+                              /** @constant */
+                              type: "repository_review_comment";
+                            }
+                          | {
                               task_id: string;
                               comment_id: string;
                               /** Format: uint64 */
@@ -38826,6 +39149,27 @@ export interface operations {
                               };
                               /** @constant */
                               type: "review_comment";
+                            }
+                          | {
+                              repository: string;
+                              thread_id: string;
+                              comment_id: string;
+                              revision: {
+                                /** @enum {string} */
+                                kind:
+                                  | "index_page"
+                                  | "anchor"
+                                  | "comment_body"
+                                  | "comment_revision"
+                                  | "thread_event"
+                                  | "event_page"
+                                  | "thread_snapshot"
+                                  | "relation_page"
+                                  | "status_page";
+                                id: string;
+                              };
+                              /** @constant */
+                              type: "repository_review_comment";
                             }
                           | {
                               task_id: string;
@@ -39074,6 +39418,27 @@ export interface operations {
                             };
                             /** @constant */
                             type: "review_comment";
+                          }
+                        | {
+                            repository: string;
+                            thread_id: string;
+                            comment_id: string;
+                            revision: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "anchor"
+                                | "comment_body"
+                                | "comment_revision"
+                                | "thread_event"
+                                | "event_page"
+                                | "thread_snapshot"
+                                | "relation_page"
+                                | "status_page";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "repository_review_comment";
                           }
                         | {
                             task_id: string;
@@ -39481,6 +39846,27 @@ export interface operations {
                                     type: "review_comment";
                                   }
                                 | {
+                                    repository: string;
+                                    thread_id: string;
+                                    comment_id: string;
+                                    revision: {
+                                      /** @enum {string} */
+                                      kind:
+                                        | "index_page"
+                                        | "anchor"
+                                        | "comment_body"
+                                        | "comment_revision"
+                                        | "thread_event"
+                                        | "event_page"
+                                        | "thread_snapshot"
+                                        | "relation_page"
+                                        | "status_page";
+                                      id: string;
+                                    };
+                                    /** @constant */
+                                    type: "repository_review_comment";
+                                  }
+                                | {
                                     task_id: string;
                                     comment_id: string;
                                     /** Format: uint64 */
@@ -39710,6 +40096,27 @@ export interface operations {
                                       };
                                       /** @constant */
                                       type: "review_comment";
+                                    }
+                                  | {
+                                      repository: string;
+                                      thread_id: string;
+                                      comment_id: string;
+                                      revision: {
+                                        /** @enum {string} */
+                                        kind:
+                                          | "index_page"
+                                          | "anchor"
+                                          | "comment_body"
+                                          | "comment_revision"
+                                          | "thread_event"
+                                          | "event_page"
+                                          | "thread_snapshot"
+                                          | "relation_page"
+                                          | "status_page";
+                                        id: string;
+                                      };
+                                      /** @constant */
+                                      type: "repository_review_comment";
                                     }
                                   | {
                                       task_id: string;
@@ -39953,6 +40360,27 @@ export interface operations {
                                     type: "review_comment";
                                   }
                                 | {
+                                    repository: string;
+                                    thread_id: string;
+                                    comment_id: string;
+                                    revision: {
+                                      /** @enum {string} */
+                                      kind:
+                                        | "index_page"
+                                        | "anchor"
+                                        | "comment_body"
+                                        | "comment_revision"
+                                        | "thread_event"
+                                        | "event_page"
+                                        | "thread_snapshot"
+                                        | "relation_page"
+                                        | "status_page";
+                                      id: string;
+                                    };
+                                    /** @constant */
+                                    type: "repository_review_comment";
+                                  }
+                                | {
                                     task_id: string;
                                     comment_id: string;
                                     /** Format: uint64 */
@@ -40187,6 +40615,27 @@ export interface operations {
                                   };
                                   /** @constant */
                                   type: "review_comment";
+                                }
+                              | {
+                                  repository: string;
+                                  thread_id: string;
+                                  comment_id: string;
+                                  revision: {
+                                    /** @enum {string} */
+                                    kind:
+                                      | "index_page"
+                                      | "anchor"
+                                      | "comment_body"
+                                      | "comment_revision"
+                                      | "thread_event"
+                                      | "event_page"
+                                      | "thread_snapshot"
+                                      | "relation_page"
+                                      | "status_page";
+                                    id: string;
+                                  };
+                                  /** @constant */
+                                  type: "repository_review_comment";
                                 }
                               | {
                                   task_id: string;
@@ -40726,6 +41175,27 @@ export interface operations {
                             type: "review_comment";
                           }
                         | {
+                            repository: string;
+                            thread_id: string;
+                            comment_id: string;
+                            revision: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "anchor"
+                                | "comment_body"
+                                | "comment_revision"
+                                | "thread_event"
+                                | "event_page"
+                                | "thread_snapshot"
+                                | "relation_page"
+                                | "status_page";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "repository_review_comment";
+                          }
+                        | {
                             task_id: string;
                             comment_id: string;
                             /** Format: uint64 */
@@ -41009,6 +41479,27 @@ export interface operations {
                             type: "review_comment";
                           }
                         | {
+                            repository: string;
+                            thread_id: string;
+                            comment_id: string;
+                            revision: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "anchor"
+                                | "comment_body"
+                                | "comment_revision"
+                                | "thread_event"
+                                | "event_page"
+                                | "thread_snapshot"
+                                | "relation_page"
+                                | "status_page";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "repository_review_comment";
+                          }
+                        | {
                             task_id: string;
                             comment_id: string;
                             /** Format: uint64 */
@@ -41256,6 +41747,27 @@ export interface operations {
                             };
                             /** @constant */
                             type: "review_comment";
+                          }
+                        | {
+                            repository: string;
+                            thread_id: string;
+                            comment_id: string;
+                            revision: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "anchor"
+                                | "comment_body"
+                                | "comment_revision"
+                                | "thread_event"
+                                | "event_page"
+                                | "thread_snapshot"
+                                | "relation_page"
+                                | "status_page";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "repository_review_comment";
                           }
                         | {
                             task_id: string;
@@ -49106,6 +49618,27 @@ export interface operations {
                       type: "review_comment";
                     }
                   | {
+                      repository: string;
+                      thread_id: string;
+                      comment_id: string;
+                      revision: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "anchor"
+                          | "comment_body"
+                          | "comment_revision"
+                          | "thread_event"
+                          | "event_page"
+                          | "thread_snapshot"
+                          | "relation_page"
+                          | "status_page";
+                        id: string;
+                      };
+                      /** @constant */
+                      type: "repository_review_comment";
+                    }
+                  | {
                       task_id: string;
                       comment_id: string;
                       /** Format: uint64 */
@@ -49402,6 +49935,27 @@ export interface operations {
                       type: "review_comment";
                     }
                   | {
+                      repository: string;
+                      thread_id: string;
+                      comment_id: string;
+                      revision: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "anchor"
+                          | "comment_body"
+                          | "comment_revision"
+                          | "thread_event"
+                          | "event_page"
+                          | "thread_snapshot"
+                          | "relation_page"
+                          | "status_page";
+                        id: string;
+                      };
+                      /** @constant */
+                      type: "repository_review_comment";
+                    }
+                  | {
                       task_id: string;
                       comment_id: string;
                       /** Format: uint64 */
@@ -49674,6 +50228,27 @@ export interface operations {
                   };
                   /** @constant */
                   type: "review_comment";
+                }
+              | {
+                  repository: string;
+                  thread_id: string;
+                  comment_id: string;
+                  revision: {
+                    /** @enum {string} */
+                    kind:
+                      | "index_page"
+                      | "anchor"
+                      | "comment_body"
+                      | "comment_revision"
+                      | "thread_event"
+                      | "event_page"
+                      | "thread_snapshot"
+                      | "relation_page"
+                      | "status_page";
+                    id: string;
+                  };
+                  /** @constant */
+                  type: "repository_review_comment";
                 }
               | {
                   task_id: string;
@@ -50392,6 +50967,27 @@ export interface operations {
                             type: "review_comment";
                           }
                         | {
+                            repository: string;
+                            thread_id: string;
+                            comment_id: string;
+                            revision: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "anchor"
+                                | "comment_body"
+                                | "comment_revision"
+                                | "thread_event"
+                                | "event_page"
+                                | "thread_snapshot"
+                                | "relation_page"
+                                | "status_page";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "repository_review_comment";
+                          }
+                        | {
                             task_id: string;
                             comment_id: string;
                             /** Format: uint64 */
@@ -50664,6 +51260,27 @@ export interface operations {
                         };
                         /** @constant */
                         type: "review_comment";
+                      }
+                    | {
+                        repository: string;
+                        thread_id: string;
+                        comment_id: string;
+                        revision: {
+                          /** @enum {string} */
+                          kind:
+                            | "index_page"
+                            | "anchor"
+                            | "comment_body"
+                            | "comment_revision"
+                            | "thread_event"
+                            | "event_page"
+                            | "thread_snapshot"
+                            | "relation_page"
+                            | "status_page";
+                          id: string;
+                        };
+                        /** @constant */
+                        type: "repository_review_comment";
                       }
                     | {
                         task_id: string;

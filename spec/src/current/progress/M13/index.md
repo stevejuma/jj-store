@@ -14,6 +14,9 @@ E-CHAT-WORKSPACE-002 reviews the portable file-review provider gate under M13.3:
 exact retained sources, shared commands, receipts, Unicode and diff-side
 validation. M13.3 remains In progress; portable agent publication, native portable
 carriers and full chat acceptance remain separate.
+E-CHAT-WORKSPACE-003 verifies references from another metadata home to retained
+local file reviews without copying ReviewStore objects. M13.3 remains In progress;
+this does not qualify the pending file-draft submission and cold browser gates.
 <!-- generated-navigation -->
 ## Pages
 

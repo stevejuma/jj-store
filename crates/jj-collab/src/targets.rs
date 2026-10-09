@@ -48,6 +48,14 @@ pub enum ReactionTargetV1 {
         comment_id: CommentId,
         revision: ReviewObjectRef,
     },
+    /// An independently authorized ReviewStore. Its objects are not dependencies
+    /// in the conversation repository's local review graph.
+    RepositoryReviewComment {
+        repository: jj_store_model::RepositoryId,
+        thread_id: ReviewThreadId,
+        comment_id: CommentId,
+        revision: ReviewObjectRef,
+    },
     WorkComment {
         task_id: TaskId,
         comment_id: WorkCommentId,
@@ -82,6 +90,7 @@ impl ReactionTargetV1 {
                 agent_kind(*content, AgentObjectKind::Content)?;
             }
             Self::ReviewComment { revision, .. }
+            | Self::RepositoryReviewComment { revision, .. }
                 if revision.kind != ReviewObjectKind::CommentRevision =>
             {
                 return Err(Error::Invalid("review revision target"));

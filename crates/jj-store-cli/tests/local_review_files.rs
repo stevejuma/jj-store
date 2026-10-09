@@ -260,6 +260,27 @@ async fn portable_file_reviews_replay_unknown_publication_and_retain_original_af
         receipt(reopened.apply_review_command(&command).await.unwrap()),
         committed
     );
+    let target = jj_collab::ReactionTargetV1::RepositoryReviewComment {
+        repository: initialized.repository,
+        thread_id: result.thread_id,
+        comment_id: result.comment_id.unwrap(),
+        revision: result.comment_revision.unwrap(),
+    };
+    verify_qualified_submission(&reopened, target.clone()).await;
+    let qualified = reopened.qualified_file_comment(&target).await.unwrap();
+    assert_eq!(qualified.body, body().text);
+    assert_eq!(qualified.file, "café 🦀\nunchanged source\n".as_bytes());
+    let (source, surrounding) =
+        jj_store_service::agent_execution::context_submission::frozen_file_source(&qualified)
+            .unwrap();
+    assert_eq!(source.anchor, original);
+    assert_eq!(source.quote, "café 🦀");
+    assert_eq!(surrounding, "café 🦀\nunchanged source\n");
+    let mut foreign = target.clone();
+    if let jj_collab::ReactionTargetV1::RepositoryReviewComment { repository, .. } = &mut foreign {
+        *repository = m::RepositoryId::new([99; 16]);
+    }
+    assert!(reopened.qualified_file_comment(&foreign).await.is_err());
     let restarted = reopened.review_store().await.unwrap();
     assert_eq!(
         restarted.file_source(thread.original_anchor).await.unwrap(),
@@ -401,5 +422,110 @@ async fn portable_review_diff_sides_and_whole_files_require_exact_capsules_paths
         repo.metadata_store()
             .read_capsule_file(&forged, commit, "code.txt")
             .is_err()
+    );
+}
+
+struct ReviewAuthority<'a>(&'a LocalRepository);
+#[async_trait::async_trait]
+impl jj_collab::QualifiedReviewRead for ReviewAuthority<'_> {
+    async fn comment(
+        &self,
+        target: &jj_collab::ReactionTargetV1,
+    ) -> jj_collab::Result<jj_collab::QualifiedReviewComment> {
+        self.0.qualified_file_comment(target).await
+    }
+}
+async fn verify_qualified_submission(code: &LocalRepository, target: jj_collab::ReactionTargetV1) {
+    use jj_collab::*;
+    let root = tempfile::tempdir().unwrap();
+    jj(root.path(), &["git", "init", "--colocate"]);
+    let home = open(root.path());
+    let thread_id = ThreadId::new([91; 16]);
+    let create = LocalCollabRequest {
+        version: 1,
+        request_id: m::RequestId::new([91; 16]),
+        command: CollabCommandV1::Thread {
+            intent: ThreadCommandV1::Create {
+                thread_id,
+                title: "Code discussion".into(),
+                baseline: None,
+            },
+        },
+    };
+    let LocalCollabOutcome::Committed { receipt } =
+        home.apply_collab_command(&create).await.unwrap()
+    else {
+        panic!()
+    };
+    let CollabCommandResultV1::Thread { result } = receipt.result else {
+        panic!()
+    };
+    let submit = LocalCollabRequest {
+        version: 1,
+        request_id: m::RequestId::new([92; 16]),
+        command: CollabCommandV1::Thread {
+            intent: ThreadCommandV1::Submit {
+                submission: Box::new(ConversationSubmissionV1 {
+                    thread_id,
+                    expected_thread: result.version,
+                    message_id: None,
+                    text: None,
+                    reply_to: None,
+                    comments: vec![],
+                    references: vec![target],
+                }),
+            },
+        },
+    };
+    let before = home.metadata_store().read().unwrap().unwrap().commit();
+    assert!(home.apply_collab_command(&submit).await.is_err());
+    assert_eq!(
+        home.metadata_store().read().unwrap().unwrap().commit(),
+        before
+    );
+    let authority = ReviewAuthority(code);
+    let code_before = code.metadata_store().read().unwrap().unwrap().commit();
+    let outcome = home
+        .apply_collab_command_with_reviews(&submit, Some(&authority))
+        .await
+        .unwrap();
+    let LocalCollabOutcome::Committed { receipt } = &outcome else {
+        panic!()
+    };
+    let CollabCommandResultV1::Thread { result } = &receipt.result else {
+        panic!()
+    };
+    assert!(
+        home.conversation_submission_context(thread_id, result.link.unwrap())
+            .await
+            .is_err()
+    );
+    let context = home
+        .conversation_submission_context_with_reviews(
+            thread_id,
+            result.link.unwrap(),
+            Some(&authority),
+        )
+        .await
+        .unwrap();
+    assert_eq!(context.comments.len(), 1);
+    assert_eq!(context.comments[0].file.as_ref().unwrap().quote, "café 🦀");
+    assert_eq!(context.comments[0].body, body().text);
+    assert_eq!(
+        home.apply_collab_command_with_reviews(&submit, Some(&authority))
+            .await
+            .unwrap(),
+        outcome
+    );
+    assert_eq!(
+        code.metadata_store().read().unwrap().unwrap().commit(),
+        code_before
+    );
+    assert!(
+        home.review_threads_at(None, 20, None)
+            .await
+            .unwrap()
+            .threads
+            .is_empty()
     );
 }

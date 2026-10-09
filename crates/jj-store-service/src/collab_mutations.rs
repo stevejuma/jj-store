@@ -169,6 +169,14 @@ pub struct CollabCommandService;
 
 impl CollabCommandService {
     pub async fn apply(&self, session: Arc<NativeSession>, request: &Request) -> Result<Outcome> {
+        self.apply_with_reviews(session, request, None).await
+    }
+    pub async fn apply_with_reviews(
+        &self,
+        session: Arc<NativeSession>,
+        request: &Request,
+        qualified: Option<&dyn jj_collab::QualifiedReviewRead>,
+    ) -> Result<Outcome> {
         if request.version != 1 {
             return Err(Error::Invalid);
         }
@@ -177,7 +185,7 @@ impl CollabCommandService {
         let unknown = || Outcome::OutcomeUnknown {
             request_id: request.request_id,
         };
-        match tokio::time::timeout(timeout, self.apply_inner(session, request)).await {
+        match tokio::time::timeout(timeout, self.apply_inner(session, request, qualified)).await {
             Ok(Err(Error::Unavailable)) | Err(_) => Ok(unknown()),
             Ok(Err(error)) => Err(error),
             Ok(Ok(outcome)) => {
@@ -189,7 +197,12 @@ impl CollabCommandService {
             }
         }
     }
-    async fn apply_inner(&self, session: Arc<NativeSession>, request: &Request) -> Result<Outcome> {
+    async fn apply_inner(
+        &self,
+        session: Arc<NativeSession>,
+        request: &Request,
+        qualified: Option<&dyn jj_collab::QualifiedReviewRead>,
+    ) -> Result<Outcome> {
         let principal = session.principal(Permission::Write).await?.id();
         let publication_id = publication_id(session.repository, principal, request.request_id);
         let command = WalRequest {
@@ -200,7 +213,11 @@ impl CollabCommandService {
             command: request.command.clone(),
         };
         let digest = command.intent_digest(session.repository)?;
-        match session.coordinator.publish_collab_command(&command).await? {
+        match session
+            .coordinator
+            .publish_collab_command_with_reviews(&command, qualified)
+            .await?
+        {
             PublishOutcome::Committed(receipt) => {
                 session.events.published(session.repository);
                 reauthorize(&session, principal, receipt.accepted.epoch).await?;

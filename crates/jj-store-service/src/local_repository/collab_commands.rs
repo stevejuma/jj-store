@@ -11,6 +11,13 @@ impl LocalRepository {
         &self,
         request: &LocalCollabRequest,
     ) -> LocalResult<LocalCollabOutcome> {
+        self.apply_collab_command_with_reviews(request, None).await
+    }
+    pub async fn apply_collab_command_with_reviews(
+        &self,
+        request: &LocalCollabRequest,
+        qualified: Option<&dyn QualifiedReviewRead>,
+    ) -> LocalResult<LocalCollabOutcome> {
         request.validate()?;
         let actor = self.ensure_actor()?;
         let proposed = Self::proposed_repository()?;
@@ -52,7 +59,8 @@ impl LocalRepository {
                             Some((threads.state.root.clone(), &threads.graph)),
                             Some(&agents),
                             Some(&reviews),
-                        )?;
+                        )?
+                        .with_qualified_reviews(qualified);
                         for source in command.conversation_sources() {
                             resolve_conversation_source(&reader, source).await?;
                         }

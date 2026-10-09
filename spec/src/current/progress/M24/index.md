@@ -337,6 +337,10 @@ retained file-review provider evidence. M24 stays In progress:
 repository-qualified submissions and reply links, the workspace footer/rail, and
 cold native/local browser acceptance are not yet complete. Visual baselines
 remain unapproved and ResizeObserver recheck is pending.
+E-CHAT-WORKSPACE-003 adds independently authorized repository-qualified review
+references, retained source context and exact delivered-answer proof. M24 remains
+In progress: file-draft capture, queued dispatch, shared inspector UI and cold
+browser acceptance are not yet complete. Visual baselines remain unapproved.
 <!-- generated-navigation -->
 ## Pages
 

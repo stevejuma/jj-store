@@ -239,6 +239,9 @@ fn sanitize_batch(
         if let Some(source) = &mut comment.source {
             source.quote = sanitize(&source.quote)?;
         }
+        if let Some(file) = &mut comment.file {
+            file.quote = sanitize(&file.quote)?;
+        }
     }
     for reply in &mut batch.replies {
         reply.body = sanitize(&reply.body)?;

@@ -79,6 +79,15 @@ impl LocalRepository {
         thread: jj_collab::ThreadId,
         batch: jj_collab::CollabObjectRef,
     ) -> crate::agent_execution::Result<crate::agent_execution::context::ContextBatch> {
+        self.conversation_submission_context_with_reviews(thread, batch, None)
+            .await
+    }
+    pub async fn conversation_submission_context_with_reviews(
+        &self,
+        thread: jj_collab::ThreadId,
+        batch: jj_collab::CollabObjectRef,
+        qualified: Option<&dyn jj_collab::QualifiedReviewRead>,
+    ) -> crate::agent_execution::Result<crate::agent_execution::context::ContextBatch> {
         use crate::agent_execution::Error;
         use jj_store_wal::publication::CollabTargetReaderV1;
         let actor = self.ensure_actor().map_err(|_| Error::Denied)?;
@@ -102,7 +111,8 @@ impl LocalRepository {
             Some(&agents),
             Some(&reviews),
         )
-        .map_err(|_| Error::Unavailable)?;
+        .map_err(|_| Error::Unavailable)?
+        .with_qualified_reviews(qualified);
         let result = crate::agent_execution::context_submission::collect_submission(
             &reader, repository, thread, batch,
         )

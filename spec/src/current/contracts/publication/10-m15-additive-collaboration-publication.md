@@ -36,3 +36,13 @@ Thread/Reaction consumers retain that same evidence when referencing review
 records. Native staging and reads reject portable review carriers; this
 extension does not weaken native dependency verification or qualify conversion
 carriers.
+
+Repository-qualified review references are explicitly cross-authority
+identities, not local ReviewStore dependency edges. Their source repository
+retains all review and code evidence. Native manifest CAS and local companion
+CAS validate them through an explicitly supplied authorized reader on every
+fresh attempt. Generic publication without the reader refuses them. Original
+request receipts remain replayable without reopening the foreign source; reading
+that source or preparing new context requires current permission. These
+references never turn a home publication into a cross-repository atomic write
+(JST-PUB-001).

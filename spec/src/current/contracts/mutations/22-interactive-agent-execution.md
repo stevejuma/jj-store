@@ -58,3 +58,10 @@ failure releases its delivery reservation while retaining the request outcome.
 Queued cancellation sends no prompt. Uncertain physical effects and restart
 retain their original outcomes without replay; code-repository snapshots remain
 independent from canonical transcript publication.
+
+Repository-qualified review references add a trusted explicit read capability to
+conversation publication under JST-MUT-001. Every new publication attempt
+resolves the exact immutable review revision and original evidence with separate
+code-repository authorization. Generic calls without this capability refuse the
+reference. Receipt replay is stable; cached prompt source context still requires
+current source permission. No home command mutates the foreign ReviewStore.

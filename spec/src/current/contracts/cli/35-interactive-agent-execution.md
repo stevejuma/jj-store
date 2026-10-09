@@ -101,3 +101,9 @@ cover retained original reads after source edits, deletion, operation-store loss
 and Git GC, plus exact receipt recovery and refusal of foreign bindings. This
 qualification does not introduce a separate CLI prompt or bypass agent workspace
 authorization.
+
+E-CHAT-WORKSPACE-003 retains JST-CLI-004 unchanged: the existing CLI provider
+test harness exercises explicit cross-repository reference authority, original
+local file context and receipt replay. There is no new CLI command, process
+launch, executable selection or change to installed tools in this reference
+slice.

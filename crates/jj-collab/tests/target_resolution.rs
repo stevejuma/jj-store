@@ -7,6 +7,7 @@ use std::collections::{BTreeMap, BTreeSet};
 
 #[derive(Default)]
 struct Reader {
+    qualified: Option<QualifiedReviewComment>,
     graph: CollabGraphV1,
     work: Option<jj_work::WorkCommentV1>,
     threads: BTreeMap<ThreadId, CollabObjectRef>,
@@ -19,6 +20,12 @@ struct Reader {
 }
 #[async_trait::async_trait]
 impl ReactionTargetRead for Reader {
+    async fn qualified_review_comment(
+        &self,
+        _: &ReactionTargetV1,
+    ) -> Result<QualifiedReviewComment> {
+        self.qualified.clone().ok_or(Error::TargetUnavailable)
+    }
     async fn work_comment(
         &self,
         _: jj_work::TaskId,
@@ -1080,4 +1087,140 @@ async fn comment_answers_require_delivered_revision_and_exact_controller_capture
     wrong.answer.quote.remove(0);
     selection.selected_sha256 = r::ReviewDigest::sha256(wrong.answer.quote.as_bytes());
     assert!(resolve_comment_reply(&reader, &wrong).await.is_err());
+    // Repository-qualified file answers use the same committed delivery proof.
+    let repository = jj_store_model::RepositoryId::new([70; 16]);
+    let target = ReactionTargetV1::RepositoryReviewComment {
+        repository,
+        thread_id: rid(),
+        comment_id: cid(),
+        revision: rref(r::ReviewObjectKind::CommentRevision),
+    };
+    let anchor = r::ArtifactAnchorV1 {
+        schema_version: 1,
+        repository_id: repository,
+        target: r::ArtifactTargetV1::CodeArtifact(Box::new(r::CodeArtifactAnchorV1 {
+            operation_id: jj_store_model::OperationId::new([1; 64]),
+            commit_id: jj_store_model::CommitId::new([2; 64]),
+            change_id: None,
+            path: "hello.txt".into(),
+            object: jj_store_model::ObjectKey::File(jj_store_model::FileId::new([3; 64])),
+            value_kind: r::CodeValueKind::File,
+        })),
+        created_context: r::CreatedContextV1 {
+            publication_position: None,
+            code_state_version: None,
+            agent_root: None,
+        },
+        sensitivity: r::SensitivityV1::Repository,
+    };
+    reader.qualified = Some(QualifiedReviewComment {
+        target: target.clone(),
+        revision: TargetRevisionV1::Earlier,
+        body: "Original review".into(),
+        anchor,
+        file: b"hello".to_vec(),
+    });
+    let reference = CommentReplyReferenceV1::new(target).unwrap();
+    let protocol = CommentReplyProtocolV1 {
+        version: 1,
+        references: vec![reference.clone()],
+    };
+    let prompt_value = serde_json::json!({"type":"context_delivery","controllerSessionId":"agent","requestId":"file","text":"","userText":"","sentContext":{"version":1,"delivery":"sent","commentReplyProtocol":protocol}});
+    let prompt = capture(&mut reader, prompt_value.clone(), 5);
+    let text = format!(
+        "<comment-reply discussion=\"{}\" comments=\"{}\">File answer 🦀</comment-reply>",
+        reference.discussion, reference.comment
+    );
+    let answer = capture(
+        &mut reader,
+        serde_json::json!({"type":"record","controllerSessionId":"agent","requestId":"file","assistantText":text}),
+        6,
+    );
+    let link = parse_comment_replies(&text)[0]
+        .link(prompt, answer, &protocol, &text)
+        .unwrap();
+    resolve_comment_reply(&reader, &link).await.unwrap();
+    let authorized = reader.qualified.take().unwrap();
+    assert!(
+        resolve_comment_reply(&reader, &link).await.is_err(),
+        "permission loss must refuse publication"
+    );
+    reader.qualified = Some(authorized);
+    let mut omitted = prompt_value;
+    omitted["sentContext"]["commentReplyProtocol"]["references"] = serde_json::json!([]);
+    let mut wrong = link.clone();
+    wrong.prompt = capture(&mut reader, omitted, 7);
+    assert!(
+        resolve_comment_reply(&reader, &wrong).await.is_err(),
+        "a known review was not necessarily delivered"
+    );
+}
+
+#[tokio::test]
+async fn qualified_review_requires_explicit_authority_and_keeps_repository_tokens_distinct() {
+    use jj_store_model::{CommitId, FileId, ObjectKey, OperationId, RepositoryId};
+    let repository = RepositoryId::new([70; 16]);
+    let target = ReactionTargetV1::RepositoryReviewComment {
+        repository,
+        thread_id: rid(),
+        comment_id: cid(),
+        revision: rref(r::ReviewObjectKind::CommentRevision),
+    };
+    let legacy = ReactionTargetV1::ReviewComment {
+        thread_id: rid(),
+        comment_id: cid(),
+        revision: rref(r::ReviewObjectKind::CommentRevision),
+    };
+    assert_eq!(legacy.review_dependencies().len(), 1);
+    assert!(target.review_dependencies().is_empty());
+    let reference = CommentReplyReferenceV1::new(target.clone()).unwrap();
+    assert_ne!(
+        reference,
+        CommentReplyReferenceV1::new(legacy.clone()).unwrap()
+    );
+    assert_eq!(
+        reference.discussion,
+        format!("review-{repository}-{}", rid())
+    );
+    let mut reader = Reader::default();
+    assert!(matches!(
+        resolve_reaction_target(&reader, &target).await,
+        Err(Error::TargetUnavailable)
+    ));
+    reader.qualified = Some(QualifiedReviewComment {
+        target: target.clone(),
+        revision: TargetRevisionV1::Earlier,
+        body: "Comment".into(),
+        file: b"hello".to_vec(),
+        anchor: r::ArtifactAnchorV1 {
+            schema_version: 1,
+            repository_id: repository,
+            target: r::ArtifactTargetV1::CodeArtifact(Box::new(r::CodeArtifactAnchorV1 {
+                operation_id: OperationId::new([1; 64]),
+                commit_id: CommitId::new([2; 64]),
+                change_id: None,
+                path: "hello.txt".into(),
+                object: ObjectKey::File(FileId::new([3; 64])),
+                value_kind: r::CodeValueKind::File,
+            })),
+            created_context: r::CreatedContextV1 {
+                publication_position: None,
+                code_state_version: None,
+                agent_root: None,
+            },
+            sensitivity: r::SensitivityV1::Repository,
+        },
+    });
+    assert_eq!(
+        resolve_reaction_target(&reader, &target)
+            .await
+            .unwrap()
+            .revision,
+        TargetRevisionV1::Earlier
+    );
+    reader.qualified.as_mut().unwrap().anchor.repository_id = RepositoryId::new([71; 16]);
+    assert!(resolve_reaction_target(&reader, &target).await.is_err());
+    reader.qualified.as_mut().unwrap().anchor.repository_id = repository;
+    reader.qualified.as_mut().unwrap().target = legacy;
+    assert!(resolve_reaction_target(&reader, &target).await.is_err());
 }

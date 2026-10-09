@@ -6,12 +6,36 @@ use std::collections::BTreeSet;
 
 pub const MAX_TARGET_RESOLUTION_OBJECTS: usize = 4096;
 
+/// A trusted provider resolves this through the independently authorized,
+/// selected ReviewStore and retains its evidence there. This port never admits
+/// caller-supplied bodies or proof objects as publication authority.
+#[async_trait::async_trait]
+pub trait QualifiedReviewRead: Send + Sync {
+    async fn comment(&self, target: &ReactionTargetV1) -> Result<QualifiedReviewComment>;
+}
+
+#[derive(Clone, Debug)]
+pub struct QualifiedReviewComment {
+    pub target: ReactionTargetV1,
+    pub revision: TargetRevisionV1,
+    pub body: String,
+    pub anchor: jj_review::ArtifactAnchorV1,
+    /// Exact retained file bytes, bounded by the provider's read limits.
+    pub file: Vec<u8>,
+}
+
 /// One authorized repository/root selection. None means absent or inaccessible.
 /// Object reads MUST verify the owning store's canonical repository-bound
 /// identity, semantic kind and captured root closure membership. They never
 /// read staged objects. Conflicted selections are not resolved by time.
 #[async_trait::async_trait]
 pub trait ReactionTargetRead: Send + Sync {
+    async fn qualified_review_comment(
+        &self,
+        _target: &ReactionTargetV1,
+    ) -> Result<QualifiedReviewComment> {
+        Err(Error::TargetUnavailable)
+    }
     async fn thread_selection(&self, id: ThreadId) -> Result<Option<CollabObjectRef>>;
     async fn message_selection(
         &self,
@@ -151,6 +175,14 @@ impl Resolver<'_> {
     async fn resolve(&mut self, target: &ReactionTargetV1) -> Result<TargetRevisionV1> {
         use TargetRevisionV1::{Current, Earlier};
         match target {
+            ReactionTargetV1::RepositoryReviewComment { repository, .. } => {
+                self.admit()?;
+                let resolved = self.reader.qualified_review_comment(target).await?;
+                if resolved.target != *target || resolved.anchor.repository_id != *repository {
+                    return Err(Error::Invalid("qualified review identity"));
+                }
+                Ok(resolved.revision)
+            }
             ReactionTargetV1::WorkComment {
                 task_id,
                 comment_id,

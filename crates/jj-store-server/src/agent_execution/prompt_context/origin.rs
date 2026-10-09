@@ -81,9 +81,10 @@ pub(super) fn discussion(batch: &context::ContextBatch) -> String {
                         .source
                         .as_ref()
                         .map(|s| s.quote.as_str())
+                        .or_else(|| comment.file.as_ref().map(|f| f.quote.as_str()))
                         .unwrap_or("Whole section"),
                     comment.surrounding
-                )
+                ) + &comment.file.as_ref().map(|file| format!("\n\nExact file source:\n\n{}", serde_json::to_string(&file.anchor).unwrap_or_default())).unwrap_or_default()
             })
             .collect::<Vec<_>>()
             .join("\n\n"));

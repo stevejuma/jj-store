@@ -10467,6 +10467,69 @@
                                               ]
                                             },
                                             {
+                                              "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                                              "type": "object",
+                                              "properties": {
+                                                "repository": {
+                                                  "type": "string",
+                                                  "pattern": "^[0-9a-f]{32}$",
+                                                  "minLength": 32,
+                                                  "maxLength": 32
+                                                },
+                                                "thread_id": {
+                                                  "type": "string",
+                                                  "pattern": "^[0-9a-f]{32}$",
+                                                  "minLength": 32,
+                                                  "maxLength": 32
+                                                },
+                                                "comment_id": {
+                                                  "type": "string",
+                                                  "pattern": "^[0-9a-f]{32}$",
+                                                  "minLength": 32,
+                                                  "maxLength": 32
+                                                },
+                                                "revision": {
+                                                  "type": "object",
+                                                  "properties": {
+                                                    "kind": {
+                                                      "type": "string",
+                                                      "enum": [
+                                                        "index_page",
+                                                        "anchor",
+                                                        "comment_body",
+                                                        "comment_revision",
+                                                        "thread_event",
+                                                        "event_page",
+                                                        "thread_snapshot",
+                                                        "relation_page",
+                                                        "status_page"
+                                                      ]
+                                                    },
+                                                    "id": {
+                                                      "type": "string",
+                                                      "pattern": "^[0-9a-f]{64}$",
+                                                      "minLength": 64,
+                                                      "maxLength": 64
+                                                    }
+                                                  },
+                                                  "additionalProperties": false,
+                                                  "required": ["kind", "id"]
+                                                },
+                                                "type": {
+                                                  "type": "string",
+                                                  "const": "repository_review_comment"
+                                                }
+                                              },
+                                              "additionalProperties": false,
+                                              "required": [
+                                                "type",
+                                                "repository",
+                                                "thread_id",
+                                                "comment_id",
+                                                "revision"
+                                              ]
+                                            },
+                                            {
                                               "type": "object",
                                               "properties": {
                                                 "task_id": {
@@ -11110,6 +11173,69 @@
                                       ]
                                     },
                                     {
+                                      "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                                      "type": "object",
+                                      "properties": {
+                                        "repository": {
+                                          "type": "string",
+                                          "pattern": "^[0-9a-f]{32}$",
+                                          "minLength": 32,
+                                          "maxLength": 32
+                                        },
+                                        "thread_id": {
+                                          "type": "string",
+                                          "pattern": "^[0-9a-f]{32}$",
+                                          "minLength": 32,
+                                          "maxLength": 32
+                                        },
+                                        "comment_id": {
+                                          "type": "string",
+                                          "pattern": "^[0-9a-f]{32}$",
+                                          "minLength": 32,
+                                          "maxLength": 32
+                                        },
+                                        "revision": {
+                                          "type": "object",
+                                          "properties": {
+                                            "kind": {
+                                              "type": "string",
+                                              "enum": [
+                                                "index_page",
+                                                "anchor",
+                                                "comment_body",
+                                                "comment_revision",
+                                                "thread_event",
+                                                "event_page",
+                                                "thread_snapshot",
+                                                "relation_page",
+                                                "status_page"
+                                              ]
+                                            },
+                                            "id": {
+                                              "type": "string",
+                                              "pattern": "^[0-9a-f]{64}$",
+                                              "minLength": 64,
+                                              "maxLength": 64
+                                            }
+                                          },
+                                          "additionalProperties": false,
+                                          "required": ["kind", "id"]
+                                        },
+                                        "type": {
+                                          "type": "string",
+                                          "const": "repository_review_comment"
+                                        }
+                                      },
+                                      "additionalProperties": false,
+                                      "required": [
+                                        "type",
+                                        "repository",
+                                        "thread_id",
+                                        "comment_id",
+                                        "revision"
+                                      ]
+                                    },
+                                    {
                                       "type": "object",
                                       "properties": {
                                         "task_id": {
@@ -11658,6 +11784,69 @@
                                     "additionalProperties": false,
                                     "required": [
                                       "type",
+                                      "thread_id",
+                                      "comment_id",
+                                      "revision"
+                                    ]
+                                  },
+                                  {
+                                    "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                                    "type": "object",
+                                    "properties": {
+                                      "repository": {
+                                        "type": "string",
+                                        "pattern": "^[0-9a-f]{32}$",
+                                        "minLength": 32,
+                                        "maxLength": 32
+                                      },
+                                      "thread_id": {
+                                        "type": "string",
+                                        "pattern": "^[0-9a-f]{32}$",
+                                        "minLength": 32,
+                                        "maxLength": 32
+                                      },
+                                      "comment_id": {
+                                        "type": "string",
+                                        "pattern": "^[0-9a-f]{32}$",
+                                        "minLength": 32,
+                                        "maxLength": 32
+                                      },
+                                      "revision": {
+                                        "type": "object",
+                                        "properties": {
+                                          "kind": {
+                                            "type": "string",
+                                            "enum": [
+                                              "index_page",
+                                              "anchor",
+                                              "comment_body",
+                                              "comment_revision",
+                                              "thread_event",
+                                              "event_page",
+                                              "thread_snapshot",
+                                              "relation_page",
+                                              "status_page"
+                                            ]
+                                          },
+                                          "id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{64}$",
+                                            "minLength": 64,
+                                            "maxLength": 64
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": ["kind", "id"]
+                                      },
+                                      "type": {
+                                        "type": "string",
+                                        "const": "repository_review_comment"
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": [
+                                      "type",
+                                      "repository",
                                       "thread_id",
                                       "comment_id",
                                       "revision"
@@ -12244,6 +12433,69 @@
                                 "additionalProperties": false,
                                 "required": [
                                   "type",
+                                  "thread_id",
+                                  "comment_id",
+                                  "revision"
+                                ]
+                              },
+                              {
+                                "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                                "type": "object",
+                                "properties": {
+                                  "repository": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "thread_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "comment_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "revision": {
+                                    "type": "object",
+                                    "properties": {
+                                      "kind": {
+                                        "type": "string",
+                                        "enum": [
+                                          "index_page",
+                                          "anchor",
+                                          "comment_body",
+                                          "comment_revision",
+                                          "thread_event",
+                                          "event_page",
+                                          "thread_snapshot",
+                                          "relation_page",
+                                          "status_page"
+                                        ]
+                                      },
+                                      "id": {
+                                        "type": "string",
+                                        "pattern": "^[0-9a-f]{64}$",
+                                        "minLength": 64,
+                                        "maxLength": 64
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": ["kind", "id"]
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "const": "repository_review_comment"
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": [
+                                  "type",
+                                  "repository",
                                   "thread_id",
                                   "comment_id",
                                   "revision"
@@ -13254,6 +13506,69 @@
                                             ]
                                           },
                                           {
+                                            "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                                            "type": "object",
+                                            "properties": {
+                                              "repository": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{32}$",
+                                                "minLength": 32,
+                                                "maxLength": 32
+                                              },
+                                              "thread_id": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{32}$",
+                                                "minLength": 32,
+                                                "maxLength": 32
+                                              },
+                                              "comment_id": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{32}$",
+                                                "minLength": 32,
+                                                "maxLength": 32
+                                              },
+                                              "revision": {
+                                                "type": "object",
+                                                "properties": {
+                                                  "kind": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                      "index_page",
+                                                      "anchor",
+                                                      "comment_body",
+                                                      "comment_revision",
+                                                      "thread_event",
+                                                      "event_page",
+                                                      "thread_snapshot",
+                                                      "relation_page",
+                                                      "status_page"
+                                                    ]
+                                                  },
+                                                  "id": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9a-f]{64}$",
+                                                    "minLength": 64,
+                                                    "maxLength": 64
+                                                  }
+                                                },
+                                                "additionalProperties": false,
+                                                "required": ["kind", "id"]
+                                              },
+                                              "type": {
+                                                "type": "string",
+                                                "const": "repository_review_comment"
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": [
+                                              "type",
+                                              "repository",
+                                              "thread_id",
+                                              "comment_id",
+                                              "revision"
+                                            ]
+                                          },
+                                          {
                                             "type": "object",
                                             "properties": {
                                               "task_id": {
@@ -13783,6 +14098,69 @@
                                                 "additionalProperties": false,
                                                 "required": [
                                                   "type",
+                                                  "thread_id",
+                                                  "comment_id",
+                                                  "revision"
+                                                ]
+                                              },
+                                              {
+                                                "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                                                "type": "object",
+                                                "properties": {
+                                                  "repository": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9a-f]{32}$",
+                                                    "minLength": 32,
+                                                    "maxLength": 32
+                                                  },
+                                                  "thread_id": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9a-f]{32}$",
+                                                    "minLength": 32,
+                                                    "maxLength": 32
+                                                  },
+                                                  "comment_id": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9a-f]{32}$",
+                                                    "minLength": 32,
+                                                    "maxLength": 32
+                                                  },
+                                                  "revision": {
+                                                    "type": "object",
+                                                    "properties": {
+                                                      "kind": {
+                                                        "type": "string",
+                                                        "enum": [
+                                                          "index_page",
+                                                          "anchor",
+                                                          "comment_body",
+                                                          "comment_revision",
+                                                          "thread_event",
+                                                          "event_page",
+                                                          "thread_snapshot",
+                                                          "relation_page",
+                                                          "status_page"
+                                                        ]
+                                                      },
+                                                      "id": {
+                                                        "type": "string",
+                                                        "pattern": "^[0-9a-f]{64}$",
+                                                        "minLength": 64,
+                                                        "maxLength": 64
+                                                      }
+                                                    },
+                                                    "additionalProperties": false,
+                                                    "required": ["kind", "id"]
+                                                  },
+                                                  "type": {
+                                                    "type": "string",
+                                                    "const": "repository_review_comment"
+                                                  }
+                                                },
+                                                "additionalProperties": false,
+                                                "required": [
+                                                  "type",
+                                                  "repository",
                                                   "thread_id",
                                                   "comment_id",
                                                   "revision"
@@ -14359,6 +14737,69 @@
                                               ]
                                             },
                                             {
+                                              "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                                              "type": "object",
+                                              "properties": {
+                                                "repository": {
+                                                  "type": "string",
+                                                  "pattern": "^[0-9a-f]{32}$",
+                                                  "minLength": 32,
+                                                  "maxLength": 32
+                                                },
+                                                "thread_id": {
+                                                  "type": "string",
+                                                  "pattern": "^[0-9a-f]{32}$",
+                                                  "minLength": 32,
+                                                  "maxLength": 32
+                                                },
+                                                "comment_id": {
+                                                  "type": "string",
+                                                  "pattern": "^[0-9a-f]{32}$",
+                                                  "minLength": 32,
+                                                  "maxLength": 32
+                                                },
+                                                "revision": {
+                                                  "type": "object",
+                                                  "properties": {
+                                                    "kind": {
+                                                      "type": "string",
+                                                      "enum": [
+                                                        "index_page",
+                                                        "anchor",
+                                                        "comment_body",
+                                                        "comment_revision",
+                                                        "thread_event",
+                                                        "event_page",
+                                                        "thread_snapshot",
+                                                        "relation_page",
+                                                        "status_page"
+                                                      ]
+                                                    },
+                                                    "id": {
+                                                      "type": "string",
+                                                      "pattern": "^[0-9a-f]{64}$",
+                                                      "minLength": 64,
+                                                      "maxLength": 64
+                                                    }
+                                                  },
+                                                  "additionalProperties": false,
+                                                  "required": ["kind", "id"]
+                                                },
+                                                "type": {
+                                                  "type": "string",
+                                                  "const": "repository_review_comment"
+                                                }
+                                              },
+                                              "additionalProperties": false,
+                                              "required": [
+                                                "type",
+                                                "repository",
+                                                "thread_id",
+                                                "comment_id",
+                                                "revision"
+                                              ]
+                                            },
+                                            {
                                               "type": "object",
                                               "properties": {
                                                 "task_id": {
@@ -14903,6 +15344,69 @@
                                           "additionalProperties": false,
                                           "required": [
                                             "type",
+                                            "thread_id",
+                                            "comment_id",
+                                            "revision"
+                                          ]
+                                        },
+                                        {
+                                          "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                                          "type": "object",
+                                          "properties": {
+                                            "repository": {
+                                              "type": "string",
+                                              "pattern": "^[0-9a-f]{32}$",
+                                              "minLength": 32,
+                                              "maxLength": 32
+                                            },
+                                            "thread_id": {
+                                              "type": "string",
+                                              "pattern": "^[0-9a-f]{32}$",
+                                              "minLength": 32,
+                                              "maxLength": 32
+                                            },
+                                            "comment_id": {
+                                              "type": "string",
+                                              "pattern": "^[0-9a-f]{32}$",
+                                              "minLength": 32,
+                                              "maxLength": 32
+                                            },
+                                            "revision": {
+                                              "type": "object",
+                                              "properties": {
+                                                "kind": {
+                                                  "type": "string",
+                                                  "enum": [
+                                                    "index_page",
+                                                    "anchor",
+                                                    "comment_body",
+                                                    "comment_revision",
+                                                    "thread_event",
+                                                    "event_page",
+                                                    "thread_snapshot",
+                                                    "relation_page",
+                                                    "status_page"
+                                                  ]
+                                                },
+                                                "id": {
+                                                  "type": "string",
+                                                  "pattern": "^[0-9a-f]{64}$",
+                                                  "minLength": 64,
+                                                  "maxLength": 64
+                                                }
+                                              },
+                                              "additionalProperties": false,
+                                              "required": ["kind", "id"]
+                                            },
+                                            "type": {
+                                              "type": "string",
+                                              "const": "repository_review_comment"
+                                            }
+                                          },
+                                          "additionalProperties": false,
+                                          "required": [
+                                            "type",
+                                            "repository",
                                             "thread_id",
                                             "comment_id",
                                             "revision"
@@ -16458,6 +16962,69 @@
                         ]
                       },
                       {
+                        "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                        "type": "object",
+                        "properties": {
+                          "repository": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{32}$",
+                            "minLength": 32,
+                            "maxLength": 32
+                          },
+                          "thread_id": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{32}$",
+                            "minLength": 32,
+                            "maxLength": 32
+                          },
+                          "comment_id": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{32}$",
+                            "minLength": 32,
+                            "maxLength": 32
+                          },
+                          "revision": {
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "type": "string",
+                                "enum": [
+                                  "index_page",
+                                  "anchor",
+                                  "comment_body",
+                                  "comment_revision",
+                                  "thread_event",
+                                  "event_page",
+                                  "thread_snapshot",
+                                  "relation_page",
+                                  "status_page"
+                                ]
+                              },
+                              "id": {
+                                "type": "string",
+                                "pattern": "^[0-9a-f]{64}$",
+                                "minLength": 64,
+                                "maxLength": 64
+                              }
+                            },
+                            "additionalProperties": false,
+                            "required": ["kind", "id"]
+                          },
+                          "type": {
+                            "type": "string",
+                            "const": "repository_review_comment"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "type",
+                          "repository",
+                          "thread_id",
+                          "comment_id",
+                          "revision"
+                        ]
+                      },
+                      {
                         "type": "object",
                         "properties": {
                           "task_id": {
@@ -17142,6 +17709,69 @@
                                 ]
                               },
                               {
+                                "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                                "type": "object",
+                                "properties": {
+                                  "repository": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "thread_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "comment_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "revision": {
+                                    "type": "object",
+                                    "properties": {
+                                      "kind": {
+                                        "type": "string",
+                                        "enum": [
+                                          "index_page",
+                                          "anchor",
+                                          "comment_body",
+                                          "comment_revision",
+                                          "thread_event",
+                                          "event_page",
+                                          "thread_snapshot",
+                                          "relation_page",
+                                          "status_page"
+                                        ]
+                                      },
+                                      "id": {
+                                        "type": "string",
+                                        "pattern": "^[0-9a-f]{64}$",
+                                        "minLength": 64,
+                                        "maxLength": 64
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": ["kind", "id"]
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "const": "repository_review_comment"
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": [
+                                  "type",
+                                  "repository",
+                                  "thread_id",
+                                  "comment_id",
+                                  "revision"
+                                ]
+                              },
+                              {
                                 "type": "object",
                                 "properties": {
                                   "task_id": {
@@ -17785,6 +18415,69 @@
                                 ]
                               },
                               {
+                                "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                                "type": "object",
+                                "properties": {
+                                  "repository": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "thread_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "comment_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "revision": {
+                                    "type": "object",
+                                    "properties": {
+                                      "kind": {
+                                        "type": "string",
+                                        "enum": [
+                                          "index_page",
+                                          "anchor",
+                                          "comment_body",
+                                          "comment_revision",
+                                          "thread_event",
+                                          "event_page",
+                                          "thread_snapshot",
+                                          "relation_page",
+                                          "status_page"
+                                        ]
+                                      },
+                                      "id": {
+                                        "type": "string",
+                                        "pattern": "^[0-9a-f]{64}$",
+                                        "minLength": 64,
+                                        "maxLength": 64
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": ["kind", "id"]
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "const": "repository_review_comment"
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": [
+                                  "type",
+                                  "repository",
+                                  "thread_id",
+                                  "comment_id",
+                                  "revision"
+                                ]
+                              },
+                              {
                                 "type": "object",
                                 "properties": {
                                   "task_id": {
@@ -18345,6 +19038,69 @@
                                 "additionalProperties": false,
                                 "required": [
                                   "type",
+                                  "thread_id",
+                                  "comment_id",
+                                  "revision"
+                                ]
+                              },
+                              {
+                                "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                                "type": "object",
+                                "properties": {
+                                  "repository": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "thread_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "comment_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "revision": {
+                                    "type": "object",
+                                    "properties": {
+                                      "kind": {
+                                        "type": "string",
+                                        "enum": [
+                                          "index_page",
+                                          "anchor",
+                                          "comment_body",
+                                          "comment_revision",
+                                          "thread_event",
+                                          "event_page",
+                                          "thread_snapshot",
+                                          "relation_page",
+                                          "status_page"
+                                        ]
+                                      },
+                                      "id": {
+                                        "type": "string",
+                                        "pattern": "^[0-9a-f]{64}$",
+                                        "minLength": 64,
+                                        "maxLength": 64
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": ["kind", "id"]
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "const": "repository_review_comment"
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": [
+                                  "type",
+                                  "repository",
                                   "thread_id",
                                   "comment_id",
                                   "revision"
@@ -40189,6 +40945,69 @@
                                 ]
                               },
                               {
+                                "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                                "type": "object",
+                                "properties": {
+                                  "repository": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "thread_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "comment_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "revision": {
+                                    "type": "object",
+                                    "properties": {
+                                      "kind": {
+                                        "type": "string",
+                                        "enum": [
+                                          "index_page",
+                                          "anchor",
+                                          "comment_body",
+                                          "comment_revision",
+                                          "thread_event",
+                                          "event_page",
+                                          "thread_snapshot",
+                                          "relation_page",
+                                          "status_page"
+                                        ]
+                                      },
+                                      "id": {
+                                        "type": "string",
+                                        "pattern": "^[0-9a-f]{64}$",
+                                        "minLength": 64,
+                                        "maxLength": 64
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": ["kind", "id"]
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "const": "repository_review_comment"
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": [
+                                  "type",
+                                  "repository",
+                                  "thread_id",
+                                  "comment_id",
+                                  "revision"
+                                ]
+                              },
+                              {
                                 "type": "object",
                                 "properties": {
                                   "task_id": {
@@ -41198,6 +42017,72 @@
                                                       ]
                                                     },
                                                     {
+                                                      "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                                                      "type": "object",
+                                                      "properties": {
+                                                        "repository": {
+                                                          "type": "string",
+                                                          "pattern": "^[0-9a-f]{32}$",
+                                                          "minLength": 32,
+                                                          "maxLength": 32
+                                                        },
+                                                        "thread_id": {
+                                                          "type": "string",
+                                                          "pattern": "^[0-9a-f]{32}$",
+                                                          "minLength": 32,
+                                                          "maxLength": 32
+                                                        },
+                                                        "comment_id": {
+                                                          "type": "string",
+                                                          "pattern": "^[0-9a-f]{32}$",
+                                                          "minLength": 32,
+                                                          "maxLength": 32
+                                                        },
+                                                        "revision": {
+                                                          "type": "object",
+                                                          "properties": {
+                                                            "kind": {
+                                                              "type": "string",
+                                                              "enum": [
+                                                                "index_page",
+                                                                "anchor",
+                                                                "comment_body",
+                                                                "comment_revision",
+                                                                "thread_event",
+                                                                "event_page",
+                                                                "thread_snapshot",
+                                                                "relation_page",
+                                                                "status_page"
+                                                              ]
+                                                            },
+                                                            "id": {
+                                                              "type": "string",
+                                                              "pattern": "^[0-9a-f]{64}$",
+                                                              "minLength": 64,
+                                                              "maxLength": 64
+                                                            }
+                                                          },
+                                                          "additionalProperties": false,
+                                                          "required": [
+                                                            "kind",
+                                                            "id"
+                                                          ]
+                                                        },
+                                                        "type": {
+                                                          "type": "string",
+                                                          "const": "repository_review_comment"
+                                                        }
+                                                      },
+                                                      "additionalProperties": false,
+                                                      "required": [
+                                                        "type",
+                                                        "repository",
+                                                        "thread_id",
+                                                        "comment_id",
+                                                        "revision"
+                                                      ]
+                                                    },
+                                                    {
                                                       "type": "object",
                                                       "properties": {
                                                         "task_id": {
@@ -41844,6 +42729,69 @@
                                               ]
                                             },
                                             {
+                                              "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                                              "type": "object",
+                                              "properties": {
+                                                "repository": {
+                                                  "type": "string",
+                                                  "pattern": "^[0-9a-f]{32}$",
+                                                  "minLength": 32,
+                                                  "maxLength": 32
+                                                },
+                                                "thread_id": {
+                                                  "type": "string",
+                                                  "pattern": "^[0-9a-f]{32}$",
+                                                  "minLength": 32,
+                                                  "maxLength": 32
+                                                },
+                                                "comment_id": {
+                                                  "type": "string",
+                                                  "pattern": "^[0-9a-f]{32}$",
+                                                  "minLength": 32,
+                                                  "maxLength": 32
+                                                },
+                                                "revision": {
+                                                  "type": "object",
+                                                  "properties": {
+                                                    "kind": {
+                                                      "type": "string",
+                                                      "enum": [
+                                                        "index_page",
+                                                        "anchor",
+                                                        "comment_body",
+                                                        "comment_revision",
+                                                        "thread_event",
+                                                        "event_page",
+                                                        "thread_snapshot",
+                                                        "relation_page",
+                                                        "status_page"
+                                                      ]
+                                                    },
+                                                    "id": {
+                                                      "type": "string",
+                                                      "pattern": "^[0-9a-f]{64}$",
+                                                      "minLength": 64,
+                                                      "maxLength": 64
+                                                    }
+                                                  },
+                                                  "additionalProperties": false,
+                                                  "required": ["kind", "id"]
+                                                },
+                                                "type": {
+                                                  "type": "string",
+                                                  "const": "repository_review_comment"
+                                                }
+                                              },
+                                              "additionalProperties": false,
+                                              "required": [
+                                                "type",
+                                                "repository",
+                                                "thread_id",
+                                                "comment_id",
+                                                "revision"
+                                              ]
+                                            },
+                                            {
                                               "type": "object",
                                               "properties": {
                                                 "task_id": {
@@ -42395,6 +43343,69 @@
                                             "additionalProperties": false,
                                             "required": [
                                               "type",
+                                              "thread_id",
+                                              "comment_id",
+                                              "revision"
+                                            ]
+                                          },
+                                          {
+                                            "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                                            "type": "object",
+                                            "properties": {
+                                              "repository": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{32}$",
+                                                "minLength": 32,
+                                                "maxLength": 32
+                                              },
+                                              "thread_id": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{32}$",
+                                                "minLength": 32,
+                                                "maxLength": 32
+                                              },
+                                              "comment_id": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{32}$",
+                                                "minLength": 32,
+                                                "maxLength": 32
+                                              },
+                                              "revision": {
+                                                "type": "object",
+                                                "properties": {
+                                                  "kind": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                      "index_page",
+                                                      "anchor",
+                                                      "comment_body",
+                                                      "comment_revision",
+                                                      "thread_event",
+                                                      "event_page",
+                                                      "thread_snapshot",
+                                                      "relation_page",
+                                                      "status_page"
+                                                    ]
+                                                  },
+                                                  "id": {
+                                                    "type": "string",
+                                                    "pattern": "^[0-9a-f]{64}$",
+                                                    "minLength": 64,
+                                                    "maxLength": 64
+                                                  }
+                                                },
+                                                "additionalProperties": false,
+                                                "required": ["kind", "id"]
+                                              },
+                                              "type": {
+                                                "type": "string",
+                                                "const": "repository_review_comment"
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": [
+                                              "type",
+                                              "repository",
                                               "thread_id",
                                               "comment_id",
                                               "revision"
@@ -42986,6 +43997,69 @@
                                         "additionalProperties": false,
                                         "required": [
                                           "type",
+                                          "thread_id",
+                                          "comment_id",
+                                          "revision"
+                                        ]
+                                      },
+                                      {
+                                        "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                                        "type": "object",
+                                        "properties": {
+                                          "repository": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "thread_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "comment_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "revision": {
+                                            "type": "object",
+                                            "properties": {
+                                              "kind": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "index_page",
+                                                  "anchor",
+                                                  "comment_body",
+                                                  "comment_revision",
+                                                  "thread_event",
+                                                  "event_page",
+                                                  "thread_snapshot",
+                                                  "relation_page",
+                                                  "status_page"
+                                                ]
+                                              },
+                                              "id": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{64}$",
+                                                "minLength": 64,
+                                                "maxLength": 64
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": ["kind", "id"]
+                                          },
+                                          "type": {
+                                            "type": "string",
+                                            "const": "repository_review_comment"
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "type",
+                                          "repository",
                                           "thread_id",
                                           "comment_id",
                                           "revision"
@@ -44059,6 +45133,72 @@
                                                     ]
                                                   },
                                                   {
+                                                    "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                                                    "type": "object",
+                                                    "properties": {
+                                                      "repository": {
+                                                        "type": "string",
+                                                        "pattern": "^[0-9a-f]{32}$",
+                                                        "minLength": 32,
+                                                        "maxLength": 32
+                                                      },
+                                                      "thread_id": {
+                                                        "type": "string",
+                                                        "pattern": "^[0-9a-f]{32}$",
+                                                        "minLength": 32,
+                                                        "maxLength": 32
+                                                      },
+                                                      "comment_id": {
+                                                        "type": "string",
+                                                        "pattern": "^[0-9a-f]{32}$",
+                                                        "minLength": 32,
+                                                        "maxLength": 32
+                                                      },
+                                                      "revision": {
+                                                        "type": "object",
+                                                        "properties": {
+                                                          "kind": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                              "index_page",
+                                                              "anchor",
+                                                              "comment_body",
+                                                              "comment_revision",
+                                                              "thread_event",
+                                                              "event_page",
+                                                              "thread_snapshot",
+                                                              "relation_page",
+                                                              "status_page"
+                                                            ]
+                                                          },
+                                                          "id": {
+                                                            "type": "string",
+                                                            "pattern": "^[0-9a-f]{64}$",
+                                                            "minLength": 64,
+                                                            "maxLength": 64
+                                                          }
+                                                        },
+                                                        "additionalProperties": false,
+                                                        "required": [
+                                                          "kind",
+                                                          "id"
+                                                        ]
+                                                      },
+                                                      "type": {
+                                                        "type": "string",
+                                                        "const": "repository_review_comment"
+                                                      }
+                                                    },
+                                                    "additionalProperties": false,
+                                                    "required": [
+                                                      "type",
+                                                      "repository",
+                                                      "thread_id",
+                                                      "comment_id",
+                                                      "revision"
+                                                    ]
+                                                  },
+                                                  {
                                                     "type": "object",
                                                     "properties": {
                                                       "task_id": {
@@ -44612,6 +45752,72 @@
                                                         "additionalProperties": false,
                                                         "required": [
                                                           "type",
+                                                          "thread_id",
+                                                          "comment_id",
+                                                          "revision"
+                                                        ]
+                                                      },
+                                                      {
+                                                        "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                                                        "type": "object",
+                                                        "properties": {
+                                                          "repository": {
+                                                            "type": "string",
+                                                            "pattern": "^[0-9a-f]{32}$",
+                                                            "minLength": 32,
+                                                            "maxLength": 32
+                                                          },
+                                                          "thread_id": {
+                                                            "type": "string",
+                                                            "pattern": "^[0-9a-f]{32}$",
+                                                            "minLength": 32,
+                                                            "maxLength": 32
+                                                          },
+                                                          "comment_id": {
+                                                            "type": "string",
+                                                            "pattern": "^[0-9a-f]{32}$",
+                                                            "minLength": 32,
+                                                            "maxLength": 32
+                                                          },
+                                                          "revision": {
+                                                            "type": "object",
+                                                            "properties": {
+                                                              "kind": {
+                                                                "type": "string",
+                                                                "enum": [
+                                                                  "index_page",
+                                                                  "anchor",
+                                                                  "comment_body",
+                                                                  "comment_revision",
+                                                                  "thread_event",
+                                                                  "event_page",
+                                                                  "thread_snapshot",
+                                                                  "relation_page",
+                                                                  "status_page"
+                                                                ]
+                                                              },
+                                                              "id": {
+                                                                "type": "string",
+                                                                "pattern": "^[0-9a-f]{64}$",
+                                                                "minLength": 64,
+                                                                "maxLength": 64
+                                                              }
+                                                            },
+                                                            "additionalProperties": false,
+                                                            "required": [
+                                                              "kind",
+                                                              "id"
+                                                            ]
+                                                          },
+                                                          "type": {
+                                                            "type": "string",
+                                                            "const": "repository_review_comment"
+                                                          }
+                                                        },
+                                                        "additionalProperties": false,
+                                                        "required": [
+                                                          "type",
+                                                          "repository",
                                                           "thread_id",
                                                           "comment_id",
                                                           "revision"
@@ -45218,6 +46424,72 @@
                                                       ]
                                                     },
                                                     {
+                                                      "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                                                      "type": "object",
+                                                      "properties": {
+                                                        "repository": {
+                                                          "type": "string",
+                                                          "pattern": "^[0-9a-f]{32}$",
+                                                          "minLength": 32,
+                                                          "maxLength": 32
+                                                        },
+                                                        "thread_id": {
+                                                          "type": "string",
+                                                          "pattern": "^[0-9a-f]{32}$",
+                                                          "minLength": 32,
+                                                          "maxLength": 32
+                                                        },
+                                                        "comment_id": {
+                                                          "type": "string",
+                                                          "pattern": "^[0-9a-f]{32}$",
+                                                          "minLength": 32,
+                                                          "maxLength": 32
+                                                        },
+                                                        "revision": {
+                                                          "type": "object",
+                                                          "properties": {
+                                                            "kind": {
+                                                              "type": "string",
+                                                              "enum": [
+                                                                "index_page",
+                                                                "anchor",
+                                                                "comment_body",
+                                                                "comment_revision",
+                                                                "thread_event",
+                                                                "event_page",
+                                                                "thread_snapshot",
+                                                                "relation_page",
+                                                                "status_page"
+                                                              ]
+                                                            },
+                                                            "id": {
+                                                              "type": "string",
+                                                              "pattern": "^[0-9a-f]{64}$",
+                                                              "minLength": 64,
+                                                              "maxLength": 64
+                                                            }
+                                                          },
+                                                          "additionalProperties": false,
+                                                          "required": [
+                                                            "kind",
+                                                            "id"
+                                                          ]
+                                                        },
+                                                        "type": {
+                                                          "type": "string",
+                                                          "const": "repository_review_comment"
+                                                        }
+                                                      },
+                                                      "additionalProperties": false,
+                                                      "required": [
+                                                        "type",
+                                                        "repository",
+                                                        "thread_id",
+                                                        "comment_id",
+                                                        "revision"
+                                                      ]
+                                                    },
+                                                    {
                                                       "type": "object",
                                                       "properties": {
                                                         "task_id": {
@@ -45775,6 +47047,69 @@
                                                   "additionalProperties": false,
                                                   "required": [
                                                     "type",
+                                                    "thread_id",
+                                                    "comment_id",
+                                                    "revision"
+                                                  ]
+                                                },
+                                                {
+                                                  "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                                                  "type": "object",
+                                                  "properties": {
+                                                    "repository": {
+                                                      "type": "string",
+                                                      "pattern": "^[0-9a-f]{32}$",
+                                                      "minLength": 32,
+                                                      "maxLength": 32
+                                                    },
+                                                    "thread_id": {
+                                                      "type": "string",
+                                                      "pattern": "^[0-9a-f]{32}$",
+                                                      "minLength": 32,
+                                                      "maxLength": 32
+                                                    },
+                                                    "comment_id": {
+                                                      "type": "string",
+                                                      "pattern": "^[0-9a-f]{32}$",
+                                                      "minLength": 32,
+                                                      "maxLength": 32
+                                                    },
+                                                    "revision": {
+                                                      "type": "object",
+                                                      "properties": {
+                                                        "kind": {
+                                                          "type": "string",
+                                                          "enum": [
+                                                            "index_page",
+                                                            "anchor",
+                                                            "comment_body",
+                                                            "comment_revision",
+                                                            "thread_event",
+                                                            "event_page",
+                                                            "thread_snapshot",
+                                                            "relation_page",
+                                                            "status_page"
+                                                          ]
+                                                        },
+                                                        "id": {
+                                                          "type": "string",
+                                                          "pattern": "^[0-9a-f]{64}$",
+                                                          "minLength": 64,
+                                                          "maxLength": 64
+                                                        }
+                                                      },
+                                                      "additionalProperties": false,
+                                                      "required": ["kind", "id"]
+                                                    },
+                                                    "type": {
+                                                      "type": "string",
+                                                      "const": "repository_review_comment"
+                                                    }
+                                                  },
+                                                  "additionalProperties": false,
+                                                  "required": [
+                                                    "type",
+                                                    "repository",
                                                     "thread_id",
                                                     "comment_id",
                                                     "revision"
@@ -47053,6 +48388,69 @@
                                         ]
                                       },
                                       {
+                                        "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                                        "type": "object",
+                                        "properties": {
+                                          "repository": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "thread_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "comment_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "revision": {
+                                            "type": "object",
+                                            "properties": {
+                                              "kind": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "index_page",
+                                                  "anchor",
+                                                  "comment_body",
+                                                  "comment_revision",
+                                                  "thread_event",
+                                                  "event_page",
+                                                  "thread_snapshot",
+                                                  "relation_page",
+                                                  "status_page"
+                                                ]
+                                              },
+                                              "id": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{64}$",
+                                                "minLength": 64,
+                                                "maxLength": 64
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": ["kind", "id"]
+                                          },
+                                          "type": {
+                                            "type": "string",
+                                            "const": "repository_review_comment"
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "type",
+                                          "repository",
+                                          "thread_id",
+                                          "comment_id",
+                                          "revision"
+                                        ]
+                                      },
+                                      {
                                         "type": "object",
                                         "properties": {
                                           "task_id": {
@@ -47711,6 +49109,69 @@
                                         ]
                                       },
                                       {
+                                        "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                                        "type": "object",
+                                        "properties": {
+                                          "repository": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "thread_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "comment_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "revision": {
+                                            "type": "object",
+                                            "properties": {
+                                              "kind": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "index_page",
+                                                  "anchor",
+                                                  "comment_body",
+                                                  "comment_revision",
+                                                  "thread_event",
+                                                  "event_page",
+                                                  "thread_snapshot",
+                                                  "relation_page",
+                                                  "status_page"
+                                                ]
+                                              },
+                                              "id": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{64}$",
+                                                "minLength": 64,
+                                                "maxLength": 64
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": ["kind", "id"]
+                                          },
+                                          "type": {
+                                            "type": "string",
+                                            "const": "repository_review_comment"
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "type",
+                                          "repository",
+                                          "thread_id",
+                                          "comment_id",
+                                          "revision"
+                                        ]
+                                      },
+                                      {
                                         "type": "object",
                                         "properties": {
                                           "task_id": {
@@ -48271,6 +49732,69 @@
                                         "additionalProperties": false,
                                         "required": [
                                           "type",
+                                          "thread_id",
+                                          "comment_id",
+                                          "revision"
+                                        ]
+                                      },
+                                      {
+                                        "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                                        "type": "object",
+                                        "properties": {
+                                          "repository": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "thread_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "comment_id": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "revision": {
+                                            "type": "object",
+                                            "properties": {
+                                              "kind": {
+                                                "type": "string",
+                                                "enum": [
+                                                  "index_page",
+                                                  "anchor",
+                                                  "comment_body",
+                                                  "comment_revision",
+                                                  "thread_event",
+                                                  "event_page",
+                                                  "thread_snapshot",
+                                                  "relation_page",
+                                                  "status_page"
+                                                ]
+                                              },
+                                              "id": {
+                                                "type": "string",
+                                                "pattern": "^[0-9a-f]{64}$",
+                                                "minLength": 64,
+                                                "maxLength": 64
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": ["kind", "id"]
+                                          },
+                                          "type": {
+                                            "type": "string",
+                                            "const": "repository_review_comment"
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "type",
+                                          "repository",
                                           "thread_id",
                                           "comment_id",
                                           "revision"
@@ -56956,6 +58480,69 @@
                                 ]
                               },
                               {
+                                "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                                "type": "object",
+                                "properties": {
+                                  "repository": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "thread_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "comment_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "revision": {
+                                    "type": "object",
+                                    "properties": {
+                                      "kind": {
+                                        "type": "string",
+                                        "enum": [
+                                          "index_page",
+                                          "anchor",
+                                          "comment_body",
+                                          "comment_revision",
+                                          "thread_event",
+                                          "event_page",
+                                          "thread_snapshot",
+                                          "relation_page",
+                                          "status_page"
+                                        ]
+                                      },
+                                      "id": {
+                                        "type": "string",
+                                        "pattern": "^[0-9a-f]{64}$",
+                                        "minLength": 64,
+                                        "maxLength": 64
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": ["kind", "id"]
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "const": "repository_review_comment"
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": [
+                                  "type",
+                                  "repository",
+                                  "thread_id",
+                                  "comment_id",
+                                  "revision"
+                                ]
+                              },
+                              {
                                 "type": "object",
                                 "properties": {
                                   "task_id": {
@@ -57635,6 +59222,69 @@
                                       ]
                                     },
                                     {
+                                      "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                                      "type": "object",
+                                      "properties": {
+                                        "repository": {
+                                          "type": "string",
+                                          "pattern": "^[0-9a-f]{32}$",
+                                          "minLength": 32,
+                                          "maxLength": 32
+                                        },
+                                        "thread_id": {
+                                          "type": "string",
+                                          "pattern": "^[0-9a-f]{32}$",
+                                          "minLength": 32,
+                                          "maxLength": 32
+                                        },
+                                        "comment_id": {
+                                          "type": "string",
+                                          "pattern": "^[0-9a-f]{32}$",
+                                          "minLength": 32,
+                                          "maxLength": 32
+                                        },
+                                        "revision": {
+                                          "type": "object",
+                                          "properties": {
+                                            "kind": {
+                                              "type": "string",
+                                              "enum": [
+                                                "index_page",
+                                                "anchor",
+                                                "comment_body",
+                                                "comment_revision",
+                                                "thread_event",
+                                                "event_page",
+                                                "thread_snapshot",
+                                                "relation_page",
+                                                "status_page"
+                                              ]
+                                            },
+                                            "id": {
+                                              "type": "string",
+                                              "pattern": "^[0-9a-f]{64}$",
+                                              "minLength": 64,
+                                              "maxLength": 64
+                                            }
+                                          },
+                                          "additionalProperties": false,
+                                          "required": ["kind", "id"]
+                                        },
+                                        "type": {
+                                          "type": "string",
+                                          "const": "repository_review_comment"
+                                        }
+                                      },
+                                      "additionalProperties": false,
+                                      "required": [
+                                        "type",
+                                        "repository",
+                                        "thread_id",
+                                        "comment_id",
+                                        "revision"
+                                      ]
+                                    },
+                                    {
                                       "type": "object",
                                       "properties": {
                                         "task_id": {
@@ -58269,6 +59919,69 @@
                               "additionalProperties": false,
                               "required": [
                                 "type",
+                                "thread_id",
+                                "comment_id",
+                                "revision"
+                              ]
+                            },
+                            {
+                              "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                              "type": "object",
+                              "properties": {
+                                "repository": {
+                                  "type": "string",
+                                  "pattern": "^[0-9a-f]{32}$",
+                                  "minLength": 32,
+                                  "maxLength": 32
+                                },
+                                "thread_id": {
+                                  "type": "string",
+                                  "pattern": "^[0-9a-f]{32}$",
+                                  "minLength": 32,
+                                  "maxLength": 32
+                                },
+                                "comment_id": {
+                                  "type": "string",
+                                  "pattern": "^[0-9a-f]{32}$",
+                                  "minLength": 32,
+                                  "maxLength": 32
+                                },
+                                "revision": {
+                                  "type": "object",
+                                  "properties": {
+                                    "kind": {
+                                      "type": "string",
+                                      "enum": [
+                                        "index_page",
+                                        "anchor",
+                                        "comment_body",
+                                        "comment_revision",
+                                        "thread_event",
+                                        "event_page",
+                                        "thread_snapshot",
+                                        "relation_page",
+                                        "status_page"
+                                      ]
+                                    },
+                                    "id": {
+                                      "type": "string",
+                                      "pattern": "^[0-9a-f]{64}$",
+                                      "minLength": 64,
+                                      "maxLength": 64
+                                    }
+                                  },
+                                  "additionalProperties": false,
+                                  "required": ["kind", "id"]
+                                },
+                                "type": {
+                                  "type": "string",
+                                  "const": "repository_review_comment"
+                                }
+                              },
+                              "additionalProperties": false,
+                              "required": [
+                                "type",
+                                "repository",
                                 "thread_id",
                                 "comment_id",
                                 "revision"
@@ -59429,6 +61142,69 @@
                                               ]
                                             },
                                             {
+                                              "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                                              "type": "object",
+                                              "properties": {
+                                                "repository": {
+                                                  "type": "string",
+                                                  "pattern": "^[0-9a-f]{32}$",
+                                                  "minLength": 32,
+                                                  "maxLength": 32
+                                                },
+                                                "thread_id": {
+                                                  "type": "string",
+                                                  "pattern": "^[0-9a-f]{32}$",
+                                                  "minLength": 32,
+                                                  "maxLength": 32
+                                                },
+                                                "comment_id": {
+                                                  "type": "string",
+                                                  "pattern": "^[0-9a-f]{32}$",
+                                                  "minLength": 32,
+                                                  "maxLength": 32
+                                                },
+                                                "revision": {
+                                                  "type": "object",
+                                                  "properties": {
+                                                    "kind": {
+                                                      "type": "string",
+                                                      "enum": [
+                                                        "index_page",
+                                                        "anchor",
+                                                        "comment_body",
+                                                        "comment_revision",
+                                                        "thread_event",
+                                                        "event_page",
+                                                        "thread_snapshot",
+                                                        "relation_page",
+                                                        "status_page"
+                                                      ]
+                                                    },
+                                                    "id": {
+                                                      "type": "string",
+                                                      "pattern": "^[0-9a-f]{64}$",
+                                                      "minLength": 64,
+                                                      "maxLength": 64
+                                                    }
+                                                  },
+                                                  "additionalProperties": false,
+                                                  "required": ["kind", "id"]
+                                                },
+                                                "type": {
+                                                  "type": "string",
+                                                  "const": "repository_review_comment"
+                                                }
+                                              },
+                                              "additionalProperties": false,
+                                              "required": [
+                                                "type",
+                                                "repository",
+                                                "thread_id",
+                                                "comment_id",
+                                                "revision"
+                                              ]
+                                            },
+                                            {
                                               "type": "object",
                                               "properties": {
                                                 "task_id": {
@@ -60066,6 +61842,69 @@
                                       "additionalProperties": false,
                                       "required": [
                                         "type",
+                                        "thread_id",
+                                        "comment_id",
+                                        "revision"
+                                      ]
+                                    },
+                                    {
+                                      "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph.",
+                                      "type": "object",
+                                      "properties": {
+                                        "repository": {
+                                          "type": "string",
+                                          "pattern": "^[0-9a-f]{32}$",
+                                          "minLength": 32,
+                                          "maxLength": 32
+                                        },
+                                        "thread_id": {
+                                          "type": "string",
+                                          "pattern": "^[0-9a-f]{32}$",
+                                          "minLength": 32,
+                                          "maxLength": 32
+                                        },
+                                        "comment_id": {
+                                          "type": "string",
+                                          "pattern": "^[0-9a-f]{32}$",
+                                          "minLength": 32,
+                                          "maxLength": 32
+                                        },
+                                        "revision": {
+                                          "type": "object",
+                                          "properties": {
+                                            "kind": {
+                                              "type": "string",
+                                              "enum": [
+                                                "index_page",
+                                                "anchor",
+                                                "comment_body",
+                                                "comment_revision",
+                                                "thread_event",
+                                                "event_page",
+                                                "thread_snapshot",
+                                                "relation_page",
+                                                "status_page"
+                                              ]
+                                            },
+                                            "id": {
+                                              "type": "string",
+                                              "pattern": "^[0-9a-f]{64}$",
+                                              "minLength": 64,
+                                              "maxLength": 64
+                                            }
+                                          },
+                                          "additionalProperties": false,
+                                          "required": ["kind", "id"]
+                                        },
+                                        "type": {
+                                          "type": "string",
+                                          "const": "repository_review_comment"
+                                        }
+                                      },
+                                      "additionalProperties": false,
+                                      "required": [
+                                        "type",
+                                        "repository",
                                         "thread_id",
                                         "comment_id",
                                         "revision"
@@ -63226,6 +65065,25 @@
               "type": { "type": "string", "const": "review_comment" }
             },
             "required": ["type", "thread_id", "comment_id", "revision"]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "repository": { "$ref": "#/components/schemas/RepositoryId" },
+              "thread_id": { "$ref": "#/components/schemas/ReviewThreadId" },
+              "comment_id": { "$ref": "#/components/schemas/CommentId" },
+              "revision": { "$ref": "#/components/schemas/ReviewObjectRef" },
+              "type": { "type": "string", "const": "repository_review_comment" }
+            },
+            "required": [
+              "type",
+              "repository",
+              "thread_id",
+              "comment_id",
+              "revision"
+            ],
+            "description": "An independently authorized ReviewStore. Its objects are not dependencies\nin the conversation repository's local review graph."
           },
           {
             "type": "object",
