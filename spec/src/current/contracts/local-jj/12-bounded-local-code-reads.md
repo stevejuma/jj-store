@@ -96,3 +96,14 @@ metadata, or changing operation heads. Comparison cursors bind exact observed
 selections; changed observations require refresh. Missing turn-start evidence,
 ambiguous parents and unestablished comparison bases remain unavailable. A read
 capability does not qualify portable file-review publication under M13.3.
+
+Workspace inspection uses the same bounded physical folder admission as ordinary
+repository browsing, including fresh boundary checks and a single retry for
+watcher invalidation. Inner traversal checks do not reopen the collaboration
+store. An unchanged checkout operation and workspace name retain the exact
+immutable view selection, so completion may revalidate the checkout without
+another CLI process. Physical hints watch authorized owned roots without
+following symlinks and ignore access events. At most 128 session/repository
+watches are retained per controller; session cleanup and shutdown release them.
+Matching hints invalidate current UI reads through the existing application
+feed, without periodic browser requests or changes to publication authority.

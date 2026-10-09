@@ -512,6 +512,11 @@ impl Manager for Supervisor {
                     );
                 }
                 self.session_state(id, "cleaned", None)?;
+                self.0
+                    .inspection_watches
+                    .lock()
+                    .map_err(|_| Error::Unavailable)?
+                    .retain(|(session, _), _| session != id);
                 self.finish(command.request_id, "cleaned", None)
             }
             Action::Resume | Action::ContinueWithContext => {
@@ -651,6 +656,11 @@ impl Manager for Supervisor {
         Some(self.0.freshness.subscribe())
     }
     async fn shutdown(&self) -> Result<()> {
+        self.0
+            .inspection_watches
+            .lock()
+            .map_err(|_| Error::Unavailable)?
+            .clear();
         let _shutdown = self.0.shutdown.lock().await;
         if let Some(success) = *self
             .0

@@ -299,13 +299,11 @@
     const reopened = within(
       await c.findByRole("complementary", { name: "Workspace files" }),
     );
-    const file = await reopened.findByRole("button", {
-      name: "src/unchanged.ts",
-    });
+    await reopened.findByRole("button", { name: "src/unchanged.ts" });
     await userEvent.click(
       c.getByRole("button", { name: "Hold next workspace read" }),
     );
-    await userEvent.click(file);
+    await browser.getByRole("button", { name: /^src\/unchanged\.ts$/ }).click();
     const inspector = within(
       await c.findByRole("complementary", { name: "Workspace file" }),
     );

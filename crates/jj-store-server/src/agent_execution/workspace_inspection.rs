@@ -2,6 +2,7 @@
 mod comparison;
 mod content;
 mod source;
+pub(super) mod watch;
 use super::*;
 use jj_store_service::agent_execution::workspace_inspection as dto;
 use sha2::{Digest as _, Sha256};
@@ -31,6 +32,7 @@ impl Supervisor {
         {
             return Err(Error::Stale);
         }
+        self.watch_inspected_workspace(&request.session, request.repository, &selected)?;
         let source = self
             .workspace_source(request.repository, profile, selected.operation)
             .await?;
@@ -58,9 +60,15 @@ impl Supervisor {
             after.commit = c.after_commit.clone();
         }
         let current = comparison.as_ref().is_none_or(|c| c.current_files);
-        let after_source = self
-            .workspace_source(request.repository, profile, after.operation)
-            .await?;
+        let historical_source = if after.operation != selected.operation {
+            Some(
+                self.workspace_source(request.repository, profile, after.operation)
+                    .await?,
+            )
+        } else {
+            None
+        };
+        let after_source = historical_source.as_ref().unwrap_or(&source);
         let before_source = if let Some(c) = &comparison
             && c.unavailable.is_none()
         {
@@ -175,14 +183,7 @@ impl Supervisor {
         self.authorized(saved.view.repository, &saved.profile, false)
             .await?;
         self.authorized(request.repository, profile, false).await?;
-        let verified = self.0.resources.driver.inspect(proof.path.clone()).await?;
-        if verified.operation != selected.operation
-            || verified.commit != selected.commit
-            || verified.metadata != selected.metadata
-            || verified.name != selected.name
-        {
-            return Err(Error::Stale);
-        }
+        self.0.resources.driver.verify(&selected).await?;
         Ok(dto::Inspection {
             version: 1,
             session: request.session,

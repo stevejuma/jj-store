@@ -81,7 +81,7 @@ export class AgentExecution {
     readonly available: () => boolean,
     fetcher?: typeof fetch,
     principal?: (repository: string) => string,
-    freshness?: import("./application-freshness.js").ApplicationFreshness,
+    readonly freshness?: import("./application-freshness.js").ApplicationFreshness,
   ) {
     this.client = new LocalClient("", fetcher);
     this.chat = new AgentChat(this, freshness);

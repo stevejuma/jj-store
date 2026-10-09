@@ -54,6 +54,14 @@ impl WorkspaceDriver for Driver {
             .map_err(|_| Error::Unavailable)?;
         Ok(workspace(selected, path))
     }
+    async fn verify(&self, value: &Workspace) -> Result<()> {
+        let provider = self.0.clone();
+        let value = selection(value);
+        tokio::task::spawn_blocking(move || provider.verify(&value))
+            .await
+            .map_err(|_| Error::Unavailable)?
+            .map_err(|_| Error::Stale)
+    }
     async fn create(
         &self,
         source: Workspace,

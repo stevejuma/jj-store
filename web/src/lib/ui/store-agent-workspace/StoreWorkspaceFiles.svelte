@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount, tick } from "svelte";
+  import { tick } from "svelte";
   import {
     AppShell,
     type AppShellSidebarController,
@@ -8,7 +8,7 @@
   import * as Select from "@lapismd/design-core/shadcn/select";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { Spinner } from "@lapismd/design-core/shadcn/spinner";
-  import { Skeleton } from "@lapismd/design-core/shadcn/skeleton";
+  import RepositorySkeleton from "../community-projects/CommunityProjectsRepositorySkeleton.svelte";
   import "../store-work/community-work-layout.css";
   import RefreshIcon from "@lucide/svelte/icons/refresh-cw";
   import GitBranchIcon from "@lucide/svelte/icons/git-branch";
@@ -52,12 +52,6 @@
       cancelled = true;
       root.removeEventListener("scroll", remember, true);
     };
-  });
-  onMount(() => {
-    const timer = setInterval(() => {
-      if (browser.railOpen) void browser.load();
-    }, 15000);
-    return () => clearInterval(timer);
   });
   const needsBase = $derived(
     browser.range === "branch" &&
@@ -115,7 +109,7 @@
             size="icon-sm"
             aria-label="Refresh workspace files"
             disabled={listing.loading}
-            onclick={() => void browser.load()}
+            onclick={() => void browser.refresh()}
             >{#if listing.loading}<Spinner />{:else}<RefreshIcon />{/if}</Button
           >
         </div>
@@ -195,32 +189,14 @@
               >
                 {listing.value.incomplete}
               </p>{/if}
-            {#if !listing.loading && !listing.error && !listing.value?.files.length && !listing.value?.comparison?.unavailable}
-              <Empty.Root
-                ><Empty.Header
-                  ><Empty.Media variant="icon"><FolderIcon /></Empty.Media
-                  ><Empty.Title
-                    >{browser.tab === "files"
-                      ? "No workspace files"
-                      : "No changes"}</Empty.Title
-                  ><Empty.Description
-                    >{browser.tab === "files"
-                      ? "Tracked and nonignored files appear here."
-                      : "No supported paths differ within this comparison."}</Empty.Description
-                  ></Empty.Header
-                ></Empty.Root
-              >
-            {:else if !listing.value && listing.loading}
-              <div
-                class="workspace-files-skeleton"
-                aria-label="Loading workspace files"
-                role="status"
-              >
-                {#each [1, 2, 3] as row (row)}<Skeleton
-                    style="height: 2rem"
-                  />{/each}
-              </div>
-            {:else if !needsBase}
+            {#if !listing.value && listing.loading}
+              <RepositorySkeleton
+                layout="file-tree"
+                label={browser.tab === "files"
+                  ? "Loading workspace files"
+                  : "Loading workspace changes"}
+              />
+            {:else}
               <CommunityProjectsRepositoryFileTree
                 files={listing.value?.files ?? []}
                 mode={browser.mode}
@@ -231,7 +207,26 @@
                 onLoadMore={() => void browser.load(true)}
                 onModeChange={(mode) => (browser.mode = mode)}
                 onDirectoryToggle={(path) => browser.toggleDirectory(path)}
-              />
+              >
+                {#snippet empty()}
+                  {#if !listing.error && !listing.value?.comparison?.unavailable}
+                    <Empty.Root
+                      ><Empty.Header
+                        ><Empty.Media variant="icon"><FolderIcon /></Empty.Media
+                        ><Empty.Title
+                          >{browser.tab === "files"
+                            ? "No workspace files"
+                            : "No changes"}</Empty.Title
+                        ><Empty.Description
+                          >{browser.tab === "files"
+                            ? "Tracked and nonignored files appear here."
+                            : "No supported paths differ within this comparison."}</Empty.Description
+                        ></Empty.Header
+                      ></Empty.Root
+                    >
+                  {/if}
+                {/snippet}
+              </CommunityProjectsRepositoryFileTree>
             {/if}
           </div>
         </Tabs.Content>
@@ -263,13 +258,7 @@
     min-width: 0;
   }
   .workspace-files-comparison,
-  .workspace-files-status,
-  .workspace-files-skeleton {
+  .workspace-files-status {
     padding: 0.5rem;
-  }
-  .workspace-files-skeleton {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
   }
 </style>

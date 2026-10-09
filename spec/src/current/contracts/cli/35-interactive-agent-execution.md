@@ -113,3 +113,10 @@ reader, or command-output parser is added. The controller uses the existing
 owned snapshot provider and exact portable-evidence inspection. Controlled CLI
 fixtures exercise the browser service boundary without installing or replacing
 user tools.
+
+E-CHAT-WORKSPACE-009 confirms JST-CLI-004 unchanged: workspace inspection still
+uses the fixed owned provider and no new command or executable selection. The
+read-only physical watcher is bounded and released on cleanup/shutdown.
+Development backend restarts preserve the fixture and installed tools. The
+deterministic conversation test verifies non-prompt harness controls continue to
+be forwarded around prompt queuing, without changing explicit Send policy.

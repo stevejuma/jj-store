@@ -589,6 +589,7 @@ impl Supervisor {
                     target_id: target.id.clone(),
                     profile: target.profile.clone(),
                     workspace: workspace.path.to_string_lossy().into_owned(),
+                    workspace_name: None,
                     selected_operation: target.operation,
                     base_commit: target.commit.clone(),
                     operation: workspace.operation,

@@ -1,7 +1,7 @@
 import { WorkspaceBrowser } from "./workspace-browser.svelte.js";
 import type { ConversationSession } from "./session.svelte.js";
 import type { LocalClient } from "../api/local-client.js";
-import { getContext, setContext, tick } from "svelte";
+import { getContext, setContext, tick, onDestroy } from "svelte";
 import type { AppShellController } from "@lapismd/design-core/shell";
 import type { ChatBodyTool } from "../ui/store-agent-chat-body/model.js";
 import type { ChatBodyComments } from "../ui/store-agent-chat-body/comments.svelte.js";
@@ -36,6 +36,8 @@ export function provideConversationInspection(
   >();
   let workspace = $state<WorkspaceBrowser>();
   let file = $state<WorkspaceBrowser>();
+  const disposers: (() => void)[] = [];
+  onDestroy(() => disposers.forEach((dispose) => dispose()));
   const browsers = new WeakMap<ConversationSession, WorkspaceBrowser>();
   let registered = $state<WorkspaceBrowser[]>([]);
   let opener: HTMLElement | undefined,
@@ -64,7 +66,11 @@ export function provideConversationInspection(
     get file() {
       return ownsInbox(file) ? file : undefined;
     },
-    workspaceBrowser(client: LocalClient, session: ConversationSession) {
+    workspaceBrowser(
+      client: LocalClient,
+      session: ConversationSession,
+      freshness?: import("../controller/application-freshness.js").ApplicationFreshness,
+    ) {
       let browser = browsers.get(session);
       if (!browser) {
         browser = new WorkspaceBrowser(client, session, () => {
@@ -77,6 +83,13 @@ export function provideConversationInspection(
               shell.mobile.show("right", "conversation-file");
           });
         });
+        const owned = browser;
+        disposers.push(
+          owned.watch(
+            freshness,
+            () => ownsInbox(owned) && (owned.railOpen || owned.fileOpen),
+          ),
+        );
         browsers.set(session, browser);
         registered = [...registered, browser];
       }

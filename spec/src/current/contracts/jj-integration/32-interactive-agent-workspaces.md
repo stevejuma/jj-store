@@ -43,3 +43,9 @@ blocking task with an isolated current-thread runtime, since upstream inspection
 futures are not Send. This preserves JST-JJ-003/004 identity and read-only
 inspection semantics; it introduces no upstream JJ types into service contracts.
 E-CHAT-WORKSPACE-004 records the compiled provider/controller boundary.
+
+E-CHAT-WORKSPACE-009 preserves JST-JJ-003/004: the entry inspection still pins
+an exact operation and commit; completion verifies the physical metadata,
+checkout operation and workspace name without launching a second process.
+Unchanged operation/name select the same immutable view. Bounded typed readers
+and fresh admission remain required; browsing never snapshots a working copy.

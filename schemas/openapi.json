@@ -78213,6 +78213,10 @@
           "target_id": { "type": "string" },
           "profile": { "type": "string" },
           "workspace": { "type": "string" },
+          "workspace_name": {
+            "type": ["string", "null"],
+            "description": "Derived from the retained owned workspace, never from a path basename."
+          },
           "selected_operation": { "$ref": "#/components/schemas/OperationId" },
           "base_commit": { "type": "string" },
           "operation": { "$ref": "#/components/schemas/OperationId" },

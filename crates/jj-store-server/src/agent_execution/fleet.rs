@@ -460,6 +460,7 @@ impl Supervisor {
                         continue;
                     }
                     if frame["type"]=="close" { closing=true;deadline.as_mut().reset(tokio::time::Instant::now()+Duration::from_secs(15)); }
+                    runtime::write(&mut input,frame).await?;
                 },
                 line=runtime::bounded_line(&mut output,&mut bytes)=> {
                     if !line? { return Err(Error::Unavailable); }

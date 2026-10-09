@@ -7894,6 +7894,8 @@ export interface components {
       target_id: string;
       profile: string;
       workspace: string;
+      /** @description Derived from the retained owned workspace, never from a path basename. */
+      workspace_name?: string | null;
       selected_operation: components["schemas"]["OperationId"];
       base_commit: string;
       operation: components["schemas"]["OperationId"];

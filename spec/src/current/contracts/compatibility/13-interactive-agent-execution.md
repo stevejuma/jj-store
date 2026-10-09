@@ -68,3 +68,9 @@ snapshot attempts, captured review commands and exact results. Restart retains
 these records and marks interrupted delivery unknown; it does not replay
 prompts. ThreadStore refuses unresolved drafts, preserving the old publication
 authority.
+
+E-CHAT-WORKSPACE-009 adds optional, omitted-when-unknown `workspace_name` to
+code-binding status, derived from the existing retained proof. Legacy journals
+remain readable. JST-COMPAT-001/003/005 native identities, source selections and
+publication formats are unchanged. New physical hints use the existing event
+envelope; read caches are session-only and require no migration.

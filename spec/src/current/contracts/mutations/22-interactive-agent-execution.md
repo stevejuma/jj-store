@@ -75,3 +75,9 @@ stable review receipt, and partial publication retains its exact frozen
 commands. An explicit retry can finish publication from completed captures; it
 never replays admitted prompts or repeats a snapshot whose physical outcome is
 unknown.
+
+E-CHAT-WORKSPACE-009 confirms JST-MUT-001 unchanged. File observations, caches
+and physical change hints grant no mutation capability and publish no repository
+state. Restored forwarding of open/configure/cancel/close controls preserves
+their existing admission and receipts; only eligible prompts enter workspace
+preparation. Unknown effects still retain their original identities.

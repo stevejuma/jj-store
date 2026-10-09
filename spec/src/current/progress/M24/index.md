@@ -336,43 +336,50 @@ inspection. Visual baselines remain unapproved. E-CHAT-WORKSPACE-002 adds
 retained file-review provider evidence. M24 stays In progress:
 repository-qualified submissions and reply links, the workspace footer/rail, and
 cold native/local browser acceptance are not yet complete. Visual baselines
-remain unapproved and ResizeObserver recheck is pending.
-E-CHAT-WORKSPACE-003 adds independently authorized repository-qualified review
-references, retained source context and exact delivered-answer proof. M24 remains
-In progress: file-draft capture, queued dispatch, shared inspector UI and cold
-browser acceptance are not yet complete. Visual baselines remain unapproved.
+remain unapproved and ResizeObserver recheck is pending. E-CHAT-WORKSPACE-003
+adds independently authorized repository-qualified review references, retained
+source context and exact delivered-answer proof. M24 remains In progress:
+file-draft capture, queued dispatch, shared inspector UI and cold browser
+acceptance are not yet complete. Visual baselines remain unapproved.
 E-CHAT-WORKSPACE-004 adds deferred file-draft capture and receipt-backed review
 publication before prompt dispatch. M24 remains In progress. Controlled local
-Unicode, stale-source, grouped publication, exact answer and restart checks pass;
-native/multi-agent, retained turn-boundary and browser gates remain open. Visual
-baselines remain unapproved.
-E-CHAT-WORKSPACE-005 scopes the Files/Changes rail and workspace file inspector
-to their owning inbox session, with independent shell panel identities. The
-inbox header gains its own toggle, and file reads share the repository loading
-skeleton. Five focused stories pass; two older repository body inset checks fail
-identically on the prior revision and remain recorded for separate review. M24
-remains In progress for the outstanding shared reader, retained history and cold
-native/local gates. Visual baselines remain unapproved.
-E-CHAT-WORKSPACE-006 removes the inbox workspace tab-header border and extra
-file-tree wrapper inset, and squares the adjoining inspector edge in constrained
-as well as inline layouts. Six focused interaction/accessibility stories and live
-geometry checks pass; resize exercises still emit the recorded ResizeObserver
-warning. M24 remains In progress, the wider workspace qualification gaps remain
-open, and visual baselines stay unapproved.
-E-CHAT-WORKSPACE-007 adds numbered, highlighted workspace sources without the
-extra comment row or gray background. Both panel header borders remain per the
-user correction. Compact icon selectors truncate labels before wrapping; the
-base selector carries the missing-default prompt. Exact Unicode comment input,
-31 reader/panel interaction stories and language tests pass. M24 remains In
-progress with runtime resize diagnostics and wider workspace qualification still
-open; visual baselines stay unapproved.
+Unicode, stale-source, grouped publication, exact answer and restart checks
+pass; native/multi-agent, retained turn-boundary and browser gates remain open.
+Visual baselines remain unapproved. E-CHAT-WORKSPACE-005 scopes the
+Files/Changes rail and workspace file inspector to their owning inbox session,
+with independent shell panel identities. The inbox header gains its own toggle,
+and file reads share the repository loading skeleton. Five focused stories pass;
+two older repository body inset checks fail identically on the prior revision
+and remain recorded for separate review. M24 remains In progress for the
+outstanding shared reader, retained history and cold native/local gates. Visual
+baselines remain unapproved. E-CHAT-WORKSPACE-006 removes the inbox workspace
+tab-header border and extra file-tree wrapper inset, and squares the adjoining
+inspector edge in constrained as well as inline layouts. Six focused
+interaction/accessibility stories and live geometry checks pass; resize
+exercises still emit the recorded ResizeObserver warning. M24 remains In
+progress, the wider workspace qualification gaps remain open, and visual
+baselines stay unapproved. E-CHAT-WORKSPACE-007 adds numbered, highlighted
+workspace sources without the extra comment row or gray background. Both panel
+header borders remain per the user correction. Compact icon selectors truncate
+labels before wrapping; the base selector carries the missing-default prompt.
+Exact Unicode comment input, 31 reader/panel interaction stories and language
+tests pass. M24 remains In progress with runtime resize diagnostics and wider
+workspace qualification still open; visual baselines stay unapproved.
 E-CHAT-WORKSPACE-008 refines the footer into a compact Git folder button and a
 left-aligned action menu, retaining View files and multi-binding inspection.
 Copy groups the verified project path and workspace name without displaying the
 filesystem path. Ten interaction/accessibility stories, UI type checks and fresh
 live menu inspection pass. M24 remains In progress: this slice does not close
-retained-source, cold publication/recovery or runtime resize qualification. M13.3
-and unapproved visual baselines are unchanged.
+retained-source, cold publication/recovery or runtime resize qualification.
+M13.3 and unapproved visual baselines are unchanged. E-CHAT-WORKSPACE-009 makes
+the footer menu read-free, caches clean file/list observations and replaces
+panel polling with scoped application events. Both rail skeletons match the
+listing; empty bodies retain the toolbar and use an icon-bearing Empty. Focused
+UI, source/provider and cold local conversation checks pass, including restored
+forwarding of non-prompt worker controls. M24 remains In progress; M13.3
+publication qualification and visual approval are unchanged. Existing
+architecture oversizes and ResizeObserver diagnostics remain recorded; native
+publication/GC and installed-harness gates are not closed.
 <!-- generated-navigation -->
 ## Pages
 

@@ -151,21 +151,33 @@ feedback. The menu aligns with its leading edge and its rows align left. It
 shows known branch facts and View files, with a Copy submenu for Project path
 (the inspected directory verified by the server) and the exact Workspace name.
 The filesystem path is not displayed in the menu. An inspection selector changes
-only the viewed binding; it never rebinds
-an agent or changes a checkout. Footer controls wrap at constrained widths while
-keeping Send accessible and the full truncated repository label available.
+only the viewed binding; it never rebinds an agent or changes a checkout. Footer
+controls wrap at constrained widths while keeping Send accessible and the full
+truncated repository label available.
+
+Opening the footer menu performs no workspace read: its actions and copy values
+come from the session's verified binding projection. Listings and bounded file
+contents are cached in session memory by binding, tab, comparison and path.
+Reopening clean files, tabs or panels reuses that data immediately. Matching
+application events and explicit refresh invalidate current observations; hidden
+sessions retain dirtiness until reopened. Healthy idle panels perform no
+polling. One owned reader coalesces events and uses the shared
+outage/failed-read fallback. Exact retained comment sources, drafts, scroll and
+disclosure state survive invalidation; an explicitly opened historical source is
+never replaced by current bytes. Late reads cannot repopulate an invalidated or
+replaced selection.
 
 The inbox agent session owns the workspace rail and file inspector. They mount
 only for that session, retaining its selections and drafts while away. Opening,
-closing or resizing them must not change the original repository/project rail
-or body detail layout; their shell controllers have independent identities.
-Other routes keep their original rails, contents and appearance. The workspace
-footer entry is currently scoped to inbox agent sessions. The inbox header also
+closing or resizing them must not change the original repository/project rail or
+body detail layout; their shell controllers have independent identities. Other
+routes keep their original rails, contents and appearance. The workspace footer
+entry is currently scoped to inbox agent sessions. The inbox header also
 provides its own far-right toggle, available before opening the footer popover.
-It toggles the workspace rail without changing the body inspector or the original
-repository rail. File loading uses the shared repository reader skeleton with an
-accessible loading label, keeping the requested path visible in the inspector
-header; it does not show a text-only loading row.
+It toggles the workspace rail without changing the body inspector or the
+original repository rail. File loading uses the shared repository reader
+skeleton with an accessible loading label, keeping the requested path visible in
+the inspector header; it does not show a text-only loading row.
 
 The conversation workspace rail uses the standard body-sidebar surface, with
 Files and Changes tabs in its header, with the standard bottom divider retained
@@ -173,34 +185,39 @@ beneath both the tabs and the file inspector title. The adjoining inspector edge
 is straight in both inline and constrained replace-main layouts while the rail
 is visible. The file-list toolbar divider spans the rail width; the tree owns
 its row insets without extra parent padding. Tabs reuse Projects navigation
-pills; Refresh stays at the header’s trailing edge. File readers have padded, transparent content with syntax highlighting and a
-separate line-number gutter. Source bytes and exact comment selections remain
-unchanged; the hover/keyboard comment action replaces a separate Comment on file
-row. Comparison controls use compact adjacent selectors with Lucide icons. They
-prefer one row, including at the rail’s minimum width, shrinking labels before
-wrapping when still less space is available. Long labels truncate within each
-control and retain their full hover titles. Choose branch appears on
-the base selector when no default exists instead of repeating that description
-below it. Other unavailability reasons remain visible. Refreshing a listing retains its
-rows and reports busy state in the header, without an appended loading-more row. Other repository rails retain their existing presentation. It reuses
-the owned file tree and public listing controls. Current files include tracked and nonignored untracked
-paths. Comparison selection defaults to Branch; missing verified bases require
-an explicit base selection. Since last commit includes unsnapshotted edits. Last
-turn uses exact completed before/after boundaries and excludes subsequent edits.
-Unsupported comparisons and incomplete totals retain their explanations. Bounded
-asynchronous reads discard obsolete results and never publish or snapshot
-repository state.
+pills; Refresh stays at the header’s trailing edge. File readers have padded,
+transparent content with syntax highlighting and a separate line-number gutter.
+Source bytes and exact comment selections remain unchanged; the hover/keyboard
+comment action replaces a separate Comment on file row. Comparison controls use
+compact adjacent selectors with Lucide icons. They prefer one row, including at
+the rail’s minimum width, shrinking labels before wrapping when still less space
+is available. Long labels truncate within each control and retain their full
+hover titles. Choose branch appears on the base selector when no default exists
+instead of repeating that description below it. Other unavailability reasons
+remain visible. Refreshing a listing retains its rows and reports busy state in
+the header, without an appended loading-more row. Other repository rails retain
+their existing presentation. Empty Files and Changes retain the listing toolbar
+and view controls, with an icon-bearing shadcn Empty inside the listing body.
+Initial Files and Changes loading mirrors the shared listing toolbar, icon/name
+rows and directory indentation; Changes keeps its comparison controls visible.
+It reuses the owned file tree and public listing controls. Current files include
+tracked and nonignored untracked paths. Comparison selection defaults to Branch;
+missing verified bases require an explicit base selection. Since last commit
+includes unsnapshotted edits. Last turn uses exact completed before/after
+boundaries and excludes subsequent edits. Unsupported comparisons and incomplete
+totals retain their explanations. Bounded asynchronous reads discard obsolete
+results and never publish or snapshot repository state.
 
-Standalone sessions mount the workspace inspection panels. An
-unselected agent profile must not reserve the body inspector's shell panel identity.
-Selecting a file opens the shared full-height, resizable body inspector. Changes
-offers highlighted unified/split diffs and explicit before/after selection
-views. Selections retain exact UTF-8 ranges and source fingerprints; file drafts
-join the same pending queue and Send in both conversation renderers. The
-application owns selection, disclosure, scroll and draft state across panel and
-renderer changes. Historical source navigation opens the owning repository and
-retained revision, diff side and range, rather than selecting current bytes by
-matching quotes.
+Standalone sessions mount the workspace inspection panels. An unselected agent
+profile must not reserve the body inspector's shell panel identity. Selecting a
+file opens the shared full-height, resizable body inspector. Changes offers
+highlighted unified/split diffs and explicit before/after selection views.
+Selections retain exact UTF-8 ranges and source fingerprints; file drafts join
+the same pending queue and Send in both conversation renderers. The application
+owns selection, disclosure, scroll and draft state across panel and renderer
+changes. Historical source navigation opens the owning repository and retained
+revision, diff side and range, rather than selecting current bytes by matching
+quotes.
 
 File discussions remain ReviewStore-owned. A historical batch holds qualified
 references; read projections resolve those references through independent code

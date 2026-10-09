@@ -21,6 +21,10 @@ pub(super) async fn exercise(supervisor: &Supervisor, actor: PrincipalId, sessio
         .await
         .unwrap();
     assert_eq!(
+        binding.workspace_name.as_deref(),
+        Some(first.workspace.as_str())
+    );
+    assert_eq!(
         first.file.unwrap().contents.as_deref(),
         Some("review this\n")
     );

@@ -248,6 +248,18 @@ pub trait WorkspaceDriver: Send + Sync {
         Err(Error::Unavailable)
     }
     async fn inspect(&self, path: PathBuf) -> Result<Workspace>;
+    async fn verify(&self, expected: &Workspace) -> Result<()> {
+        let current = self.inspect(expected.path.clone()).await?;
+        if current.path != expected.path
+            || current.metadata != expected.metadata
+            || current.operation != expected.operation
+            || current.commit != expected.commit
+            || current.name != expected.name
+        {
+            return Err(Error::Stale);
+        }
+        Ok(())
+    }
     async fn create(
         &self,
         source: Workspace,

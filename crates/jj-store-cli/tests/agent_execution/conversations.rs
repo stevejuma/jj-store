@@ -65,7 +65,11 @@ async fn repository_free_chat_reuses_isolated_bindings_and_never_replays_after_r
         .await
         .unwrap();
     assert_eq!(first.agents.len(), 2);
-    assert!(first.agents.iter().all(|a| a.error.is_none()), "{first:?}");
+    assert!(
+        first.agents.iter().all(|a| a.error.is_none()),
+        "{first:?}; status: {:?}",
+        supervisor.status(actor).await
+    );
     let status = wait(&supervisor, actor, |s| {
         s.sessions.len() == 2
             && s.sessions

@@ -1,6 +1,6 @@
 <script lang="ts">
   import { ownNotifications } from "../../notifications/notification-context.svelte.js";
-  import { onMount, untrack } from "svelte";
+  import { untrack } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as Menu from "@lapismd/design-core/shadcn/dropdown-menu";
   import FolderGitIcon from "@lucide/svelte/icons/folder-git-2";
@@ -26,7 +26,11 @@
   const { context: notifications } = ownNotifications();
   const inspection = useConversationInspection();
   const browser = untrack(() =>
-    inspection?.workspaceBrowser(manager.client, conversation),
+    inspection?.workspaceBrowser(
+      manager.client,
+      conversation,
+      manager.freshness,
+    ),
   );
   let open = $state(false),
     copied = $state("");
@@ -36,9 +40,11 @@
       : "Workspace",
   );
   const branches = $derived(
-    browser?.details?.references.filter(
-      (r) => r.commit === browser?.details?.commit,
-    ) ?? [],
+    (browser?.details?.session === browser?.binding?.session &&
+    browser?.details?.repository === browser?.binding?.repository
+      ? browser?.details?.references
+      : []
+    )?.filter((r) => r.commit === browser?.details?.commit) ?? [],
   );
   const branch = $derived(branches.length === 1 ? branches[0].name : null);
   $effect(() => {
@@ -47,17 +53,6 @@
         controller?.state.repositories.map((r) => [r.id, r.name]) ?? [],
       );
     untrack(() => browser?.setBindings(value, names));
-  });
-  $effect(() => {
-    if (open && browser?.binding) untrack(() => void browser?.load());
-  });
-  onMount(() => {
-    const timer = window.setInterval(() => {
-      if (browser?.railOpen || open) void browser?.load();
-    }, 15000);
-    return () => {
-      clearInterval(timer);
-    };
   });
   async function copy(value: string, kind: string) {
     try {
@@ -128,46 +123,38 @@
             </Menu.SubContent>
           </Menu.Sub>
         {/if}
-        {#if browser.details && browser.details.repository === browser.binding.repository && browser.details.session === browser.binding.session}
-          {#if branch}<Menu.Label
-              ><span class="workspace-branch"
-                ><GitBranchIcon size={14} aria-hidden="true" /><span
-                  class="truncate"
-                  title={branch}>{branch}</span
-                ></span
-              ></Menu.Label
-            >{/if}
-          <Menu.Item onSelect={() => inspection?.showWorkspace(browser)}>
-            <FilesIcon aria-hidden="true" />View files
-          </Menu.Item>
-          <Menu.Sub>
-            <Menu.SubTrigger
-              ><CopyIcon aria-hidden="true" />Copy</Menu.SubTrigger
-            >
-            <Menu.SubContent aria-label="Copy" class="w-48">
-              <Menu.Group>
-                <Menu.Item
-                  onSelect={() =>
-                    void copy(browser.details!.location, "Project path")}
-                >
-                  <FolderGitIcon aria-hidden="true" />Project path
-                </Menu.Item>
-                <Menu.Item
-                  onSelect={() =>
-                    void copy(browser.details!.workspace, "Workspace name")}
-                >
-                  <CopyIcon aria-hidden="true" />Workspace name
-                </Menu.Item>
-              </Menu.Group>
-            </Menu.SubContent>
-          </Menu.Sub>
-        {:else}
-          <Menu.Label
-            ><span role="status"
-              >{browser.listing.error || "Loading workspace…"}</span
+        {#if branch}<Menu.Label
+            ><span class="workspace-branch"
+              ><GitBranchIcon size={14} aria-hidden="true" /><span
+                class="truncate"
+                title={branch}>{branch}</span
+              ></span
             ></Menu.Label
-          >
-        {/if}
+          >{/if}
+        <Menu.Item onSelect={() => inspection?.showWorkspace(browser)}>
+          <FilesIcon aria-hidden="true" />View files
+        </Menu.Item>
+        <Menu.Sub>
+          <Menu.SubTrigger><CopyIcon aria-hidden="true" />Copy</Menu.SubTrigger>
+          <Menu.SubContent aria-label="Copy" class="w-48">
+            <Menu.Group>
+              <Menu.Item
+                disabled={!browser.binding.location}
+                onSelect={() =>
+                  void copy(browser.binding!.location!, "Project path")}
+              >
+                <FolderGitIcon aria-hidden="true" />Project path
+              </Menu.Item>
+              <Menu.Item
+                disabled={browser.binding.workspace === "Workspace"}
+                onSelect={() =>
+                  void copy(browser.binding!.workspace, "Workspace name")}
+              >
+                <CopyIcon aria-hidden="true" />Workspace name
+              </Menu.Item>
+            </Menu.Group>
+          </Menu.SubContent>
+        </Menu.Sub>
       </Menu.Group>
     </Menu.Content>
   </Menu.Root>

@@ -26,7 +26,9 @@ pub(in crate::agent_execution) struct Source {
     files: tokio::sync::Mutex<BTreeMap<String, Arc<Vec<Entry>>>>,
 }
 struct Access {
-    supervisor: Supervisor,
+    manager: Arc<dyn LocalRepositories>,
+    folder: jj_store_service::local_browser::LocalFolder,
+    admission: Option<Arc<jj_store_service::local_browser::admission::FolderAdmission>>,
     repository: RepositoryId,
     metadata: PathBuf,
     generation: u64,
@@ -43,25 +45,50 @@ impl local::Access for Access {
         &self.metadata
     }
     async fn authorize(&self) -> local::Result<()> {
-        self.supervisor
-            .authorized(self.repository, "local_jj_git", false)
-            .await
-            .map_err(|_| local::Error::Denied)?;
-        let (folder, generation) = self
-            .supervisor
-            .0
-            .resources
-            .folders
-            .as_ref()
-            .ok_or(local::Error::Unavailable)?
-            .folder(self.repository)
-            .map_err(|_| local::Error::Denied)?;
-        if Path::new(&folder.metadata) != self.metadata || generation != self.generation {
-            return Err(local::Error::Denied);
-        }
-        Ok(())
+        self.verify(true).await
+    }
+    async fn check(&self) -> local::Result<()> {
+        self.verify(false).await
     }
 }
+impl Access {
+    async fn verify(&self, force: bool) -> local::Result<()> {
+        if !force
+            && self
+                .admission
+                .as_ref()
+                .is_some_and(|a| a.cached(&self.folder, self.generation))
+        {
+            return Ok(());
+        }
+        let manager = self.manager.clone();
+        let folder = self.folder.clone();
+        let admission = self.admission.clone();
+        let generation = self.generation;
+        let repository = self.repository;
+        tokio::task::spawn_blocking(move || {
+            if let Some(admission) = admission {
+                let result =
+                    admission.validate(&folder, generation, force, || manager.folder(repository));
+                if matches!(result, Err(jj_store_service::local_browser::Error::Stale)) {
+                    admission.validate(&folder, generation, true, || manager.folder(repository))
+                } else {
+                    result
+                }
+            } else {
+                let (current, current_generation) = manager.folder(repository)?;
+                if current != folder || current_generation != generation {
+                    return Err(jj_store_service::local_browser::Error::IdentityChanged);
+                }
+                Ok(())
+            }
+        })
+        .await
+        .map_err(|_| local::Error::Unavailable)?
+        .map_err(|_| local::Error::Denied)
+    }
+}
+
 fn error(_: impl std::fmt::Debug) -> Error {
     Error::Unavailable
 }
@@ -73,18 +100,25 @@ impl Supervisor {
         operation: OperationId,
     ) -> Result<Source> {
         let reader = if profile == "local_jj_git" {
-            let (folder, generation) = self
+            let manager = self
                 .0
                 .resources
                 .folders
                 .as_ref()
                 .ok_or(Error::Unavailable)?
-                .folder(repository)
-                .map_err(error)?;
+                .clone();
+            let check = manager.clone();
+            let (folder, generation) =
+                tokio::task::spawn_blocking(move || check.folder(repository))
+                    .await
+                    .map_err(error)?
+                    .map_err(error)?;
             Reader::Local {
                 executor: local::Executor::new(4).map_err(error)?,
                 access: Arc::new(Access {
-                    supervisor: self.clone(),
+                    admission: manager.read_admission(repository),
+                    manager,
+                    folder: folder.clone(),
                     repository,
                     metadata: folder.metadata.into(),
                     generation,

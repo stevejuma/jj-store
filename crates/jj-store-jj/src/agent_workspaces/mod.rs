@@ -30,26 +30,7 @@ pub struct Provider {
 impl Provider {
     /// Read an existing checkout and exact recorded revision without snapshotting.
     pub async fn inspect(&self, root: &Path) -> Result<Selection> {
-        directory(root)?;
-        let root = root.canonicalize().map_err(|_| "workspace_unavailable")?;
-        for path in [root.join(".jj"), root.join(".jj/working_copy")] {
-            directory(&path)?;
-        }
-        let checkout = regular(&root.join(".jj/working_copy/checkout"), 65536)?;
-        let checkout = Checkout::decode(checkout.as_slice()).map_err(|_| "invalid_checkout")?;
-        let operation =
-            OperationId::from_slice(&checkout.operation_id).map_err(|_| "invalid_operation")?;
-        let metadata = DefaultWorkspaceLoaderFactory
-            .create(&root)
-            .map_err(|_| "workspace_unavailable")?
-            .repo_path()
-            .canonicalize()
-            .map_err(|_| "workspace_unavailable")?;
-        let name = if checkout.workspace_name.is_empty() {
-            "default".into()
-        } else {
-            checkout.workspace_name
-        };
+        let (root, metadata, operation, name) = identity(root)?;
         let commit = self
             .run(
                 &root,
@@ -77,6 +58,19 @@ impl Provider {
             commit,
             name,
         })
+    }
+    /// Revalidate the checkout identity without launching JJ. An unchanged exact
+    /// operation and workspace name select the same immutable view/commit.
+    pub fn verify(&self, expected: &Selection) -> Result<()> {
+        let (root, metadata, operation, name) = identity(&expected.root)?;
+        if root != expected.root
+            || metadata != expected.metadata
+            || operation != expected.operation
+            || name != expected.name
+        {
+            return Err("workspace_changed");
+        }
+        Ok(())
     }
     /// Stable destination/name ownership makes creation retries inspectable.
     pub async fn create(
@@ -200,4 +194,28 @@ fn regular(path: &Path, limit: u64) -> Result<Vec<u8>> {
         return Err("workspace_limit");
     }
     Ok(bytes)
+}
+
+fn identity(root: &Path) -> Result<(PathBuf, PathBuf, OperationId, String)> {
+    directory(root)?;
+    let root = root.canonicalize().map_err(|_| "workspace_unavailable")?;
+    for path in [root.join(".jj"), root.join(".jj/working_copy")] {
+        directory(&path)?;
+    }
+    let checkout = regular(&root.join(".jj/working_copy/checkout"), 65536)?;
+    let checkout = Checkout::decode(checkout.as_slice()).map_err(|_| "invalid_checkout")?;
+    let operation =
+        OperationId::from_slice(&checkout.operation_id).map_err(|_| "invalid_operation")?;
+    let metadata = DefaultWorkspaceLoaderFactory
+        .create(&root)
+        .map_err(|_| "workspace_unavailable")?
+        .repo_path()
+        .canonicalize()
+        .map_err(|_| "workspace_unavailable")?;
+    let name = if checkout.workspace_name.is_empty() {
+        "default".into()
+    } else {
+        checkout.workspace_name
+    };
+    Ok((root, metadata, operation, name))
 }

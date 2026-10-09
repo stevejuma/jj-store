@@ -164,6 +164,15 @@ fn recorded_targets(
 /// Return only exact aliases from committed evidence, using the owning normalizer.
 pub(super) fn attach_identity(session: &mut Session, saved: &SavedSession) -> Result<()> {
     session.recorded_session_ids = recorded_session_ids(saved)?;
+    for binding in &mut session.repository_bindings {
+        binding.workspace_name = saved
+            .code_workspaces
+            .get(&binding.repository)
+            .filter(|proof| {
+                session.state != "cleaned" && proof.path.to_string_lossy() == binding.workspace
+            })
+            .map(|proof| proof.name.clone());
+    }
     session.workspace_name =
         (saved.workspace_ready && session.state != "cleaned").then(|| saved.workspace.name.clone());
     session.workspace_operation = session

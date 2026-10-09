@@ -64,6 +64,9 @@ pub struct Binding {
     pub target_id: String,
     pub profile: String,
     pub workspace: String,
+    /// Derived from the retained owned workspace, never from a path basename.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub workspace_name: Option<String>,
     pub selected_operation: OperationId,
     pub base_commit: String,
     pub operation: OperationId,

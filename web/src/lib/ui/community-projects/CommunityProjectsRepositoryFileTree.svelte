@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { Snippet } from "svelte";
   import {
     FileListing,
     FileListingViewModeToggle,
@@ -19,6 +20,7 @@
     onLoadMore,
     onModeChange,
     onDirectoryToggle,
+    empty,
   }: {
     files: readonly { path: string }[];
     directories?: readonly FileListingDirectory[];
@@ -31,6 +33,7 @@
     onLoadMore?: () => void;
     onModeChange?: (mode: FileListingViewMode) => void;
     onDirectoryToggle?: (path: string) => void;
+    empty?: Snippet;
   } = $props();
 </script>
 
@@ -40,22 +43,26 @@
     <span class="community-projects__file-tree-count">{files.length}</span>
     <FileListingViewModeToggle {mode} {onModeChange} />
   </div>
-  <FileListing
-    files={[...files]}
-    directories={[...directories]}
-    {mode}
-    {collapsedDirectoryPaths}
-    selectedPath={selectedPath || null}
-    virtualize
-    {hasMore}
-    {loading}
-    loadingLabel="Loading more repository files"
-    {onSelectPath}
-    {onLoadMore}
-    {onDirectoryToggle}
-  >
-    {#snippet fileMeta()}
-      <span class="sr-only">Repository file</span>
-    {/snippet}
-  </FileListing>
+  {#if !files.length && !directories.length && empty}
+    {@render empty()}
+  {:else}
+    <FileListing
+      files={[...files]}
+      directories={[...directories]}
+      {mode}
+      {collapsedDirectoryPaths}
+      selectedPath={selectedPath || null}
+      virtualize
+      {hasMore}
+      {loading}
+      loadingLabel="Loading more repository files"
+      {onSelectPath}
+      {onLoadMore}
+      {onDirectoryToggle}
+    >
+      {#snippet fileMeta()}
+        <span class="sr-only">Repository file</span>
+      {/snippet}
+    </FileListing>
+  {/if}
 </div>

@@ -36,6 +36,16 @@ async fn isolated_workspace_preserves_dirty_source_and_retains_cleanup_revision(
     jj(&provider.executable, &root, &["status"]);
     let selected = provider.inspect(&root).await.unwrap();
     let checkout = fs::read(root.join(".jj/working_copy/checkout")).unwrap();
+    let no_process = Provider {
+        executable: fixture.path().join("not-an-executable"),
+    };
+    no_process.verify(&selected).unwrap();
+    let mut wrong = selected.clone();
+    wrong.operation = jj_store_model::OperationId::new([0; 64]);
+    assert_eq!(no_process.verify(&wrong), Err("workspace_changed"));
+    wrong = selected.clone();
+    wrong.name = "foreign".into();
+    assert_eq!(no_process.verify(&wrong), Err("workspace_changed"));
     fs::write(root.join("file.txt"), "dirty source\n").unwrap();
     fs::write(root.join("untracked.txt"), "preserve me").unwrap();
     let reread = provider.inspect(&root).await.unwrap();

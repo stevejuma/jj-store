@@ -289,7 +289,6 @@ pending publication independently of queued delivery. Generic collaboration
 commands refuse unresolved file drafts; only the authorized controller can
 capture and replace them with receipt-backed repository-qualified references.
 
-
 E-CHAT-WORKSPACE-005 confirms JST-API-001 unchanged: inbox-only panel ownership,
 separate shell layout identities and loading placeholders do not alter workspace
 inspection requests, source identities, authorization, publication or generated
@@ -305,5 +304,20 @@ base selector and authorized read requests. No publication or transport changes.
 
 E-CHAT-WORKSPACE-008 confirms JST-API-001 unchanged: the compact footer menu
 copies the existing verified inspection location and workspace name. Menu
-alignment, hover and copy grouping add no API, authorization, storage, publication,
-checkout or agent-binding behavior.
+alignment, hover and copy grouping add no API, authorization, storage,
+publication, checkout or agent-binding behavior.
+
+Session status may include `workspace_name` on each code binding. It is derived
+from the retained owned workspace proof, omitted when unavailable or cleaned,
+and never inferred from a directory basename. Older records remain readable.
+Workspace inspection reuses bounded local folder admission inside traversal;
+fresh entry/completion identity and independent repository authorization remain
+mandatory. Checkout revalidation can compare the exact operation, physical
+metadata identity and workspace name without launching a second JJ process.
+Read-only workspace watchers publish scoped `workspaces` hints on the existing
+application feed, addressed to the local actor. They grant no read capability,
+retain no contents and never snapshot or publish repository state.
+
+E-CHAT-WORKSPACE-009 confirms JST-API-006 unchanged for worker delivery: open,
+configure, cancellation and close frames still reach the owned harness.
+Prompt-only queuing and workspace preparation must not swallow other controls.

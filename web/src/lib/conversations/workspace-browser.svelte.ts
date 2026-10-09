@@ -1,6 +1,14 @@
-import type { WorkspaceFileSource } from "./workspace-types.js";
-import { sha256 } from "@noble/hashes/sha2.js";
-import { bytesToHex } from "@noble/hashes/utils.js";
+import { Listing } from "./workspace-listing.svelte.js";
+import { WorkspaceReadCache } from "./workspace-read-cache.js";
+import {
+  workspaceBindings,
+  activeWorkspaceBinding,
+  workspaceBindingKey,
+  type WorkspaceBinding,
+} from "./workspace-bindings.js";
+import type { ApplicationFreshness } from "../controller/application-freshness.js";
+import { watchWorkspace } from "./workspace-freshness.js";
+import { registerWorkspaceSource } from "./workspace-source.js";
 import type { ChatBodyBlock } from "../ui/store-agent-chat-body/model.js";
 import type { Model } from "../api/client.js";
 import type { LocalClient } from "../api/local-client.js";
@@ -10,25 +18,8 @@ import type { operations } from "../api/generated.js";
 type Request = NonNullable<
   operations["local_agents_workspace_inspect"]["requestBody"]
 >["content"]["application/json"];
-export type WorkspaceBinding = {
-  session: string;
-  repository: string;
-  repositoryName: string;
-  workspace: string;
-  agent: string;
-};
 export type WorkspaceRead = Model<"AgentWorkspaceInspection">;
 type Tab = "files" | "changes";
-class Listing {
-  value = $state<WorkspaceRead>();
-  loading = $state(false);
-  error = $state("");
-  selected = $state("");
-  collapsed = $state<ReadonlySet<string>>(new Set());
-  scroll = 0;
-  generation = 0;
-  abort?: AbortController;
-}
 /** Session-owned observation state. No browser persistence and no checkout mutation. */
 export class WorkspaceBrowser {
   bindings = $state<WorkspaceBinding[]>([]);
@@ -48,6 +39,12 @@ export class WorkspaceBrowser {
   #presentations = new Map<string, "diff" | "before" | "after">();
   diffMode = $state<"unified" | "split">("unified");
   #listings = new Map<string, Listing>();
+  #files = new WorkspaceReadCache();
+  #epoch = 0;
+  #requestRefresh?: () => void;
+  #historical = false;
+  #fileKey = "";
+  #fileRequest?: Request;
   #fileGeneration = 0;
   #fileAbort?: AbortController;
   constructor(
@@ -55,15 +52,56 @@ export class WorkspaceBrowser {
     readonly conversation: ConversationSession,
     readonly inspect: () => void,
   ) {}
+  /** One application-feed reader, owned by the shell rather than either panel. */
+  watch(freshness: ApplicationFreshness | undefined, active: () => boolean) {
+    const watch = watchWorkspace(this, freshness, active);
+    this.#requestRefresh = watch.request;
+    return () => {
+      this.#requestRefresh = undefined;
+      watch.stop();
+      this.dispose();
+    };
+  }
+  invalidate(repository?: string) {
+    this.#epoch++;
+    for (const [key, state] of this.#listings)
+      if (!repository || key.split(":")[1] === repository) state.dirty = true;
+    for (const [key, value] of this.#files)
+      if (!repository || value.repository === repository)
+        this.#files.delete(key);
+  }
+  async refreshVisible() {
+    if (this.railOpen) await this.load();
+    if (
+      this.fileOpen &&
+      !this.#historical &&
+      this.#fileKey &&
+      !this.#files.has(this.#fileKey)
+    )
+      await this.select(
+        this.#fileRequest?.path ?? this.listing.selected,
+        this.#fileRequest,
+      );
+    return (!this.railOpen || !this.listing.dirty) && !this.fileError;
+  }
+  async refresh() {
+    this.invalidate(this.binding?.repository);
+    return this.refreshVisible();
+  }
+  dispose() {
+    this.#epoch++;
+    this.#fileGeneration++;
+    this.#fileAbort?.abort();
+    for (const state of this.#listings.values()) {
+      state.generation++;
+      state.abort?.abort();
+    }
+    this.#files.clear();
+  }
   get binding() {
-    return (
-      this.bindings.find((b) => this.key(b) === this.bindingKey) ??
-      this.bindings[0]
-    );
+    return activeWorkspaceBinding(this.bindings, this.bindingKey);
   }
-  key(b: WorkspaceBinding) {
-    return `${b.session}:${b.repository}`;
-  }
+  key = workspaceBindingKey;
   get cacheKey() {
     return `${this.binding ? this.key(this.binding) : ""}:${this.tab}:${this.tab === "changes" ? `${this.range}:${this.base ?? ""}` : ""}`;
   }
@@ -80,28 +118,26 @@ export class WorkspaceBrowser {
     sessions: readonly AgentSession[],
     names: ReadonlyMap<string, string>,
   ) {
-    this.bindings = sessions.flatMap((s) =>
-      s.repository_bindings.length
-        ? s.repository_bindings.map((b) => ({
-            session: s.id,
-            repository: b.repository,
-            repositoryName: names.get(b.repository) ?? b.repository.slice(0, 8),
-            workspace: b.workspace.split("/").at(-1) ?? b.workspace,
-            agent: s.title,
-          }))
-        : s.workspace_name
-          ? [
-              {
-                session: s.id,
-                repository: s.repository,
-                repositoryName:
-                  names.get(s.repository) ?? s.repository.slice(0, 8),
-                workspace: s.workspace_name,
-                agent: s.title,
-              },
-            ]
-          : [],
-    );
+    const previous = this.bindings;
+    this.bindings = workspaceBindings(sessions, names);
+    for (const old of previous) {
+      const next = this.bindings.find((b) => this.key(b) === this.key(old));
+      if (
+        !next ||
+        next.location !== old.location ||
+        next.revision !== old.revision
+      ) {
+        this.invalidate(old.repository);
+        this.#requestRefresh?.();
+        if (!next && this.file?.repository === old.repository) {
+          this.file = undefined;
+          this.blocks = {};
+          this.fileOpen = false;
+          this.#fileGeneration++;
+          this.#fileAbort?.abort();
+        }
+      }
+    }
     if (!this.bindings.some((b) => this.key(b) === this.bindingKey))
       this.bindingKey = this.bindings[0] ? this.key(this.bindings[0]) : "";
   }
@@ -143,9 +179,10 @@ export class WorkspaceBrowser {
   async load(more = false) {
     const state = this.listing,
       key = this.cacheKey;
-    if (state.loading) return;
+    if (state.loading || (!more && state.value && !state.dirty)) return;
     const cursor = more ? state.value?.next : null;
     if (more && !cursor) return;
+    const epoch = this.#epoch;
     const generation = ++state.generation;
     state.abort?.abort();
     state.abort = new AbortController();
@@ -156,12 +193,13 @@ export class WorkspaceBrowser {
         this.query(null, cursor),
         state.abort.signal,
       );
-      if (state.generation !== generation) return;
+      if (state.generation !== generation || epoch !== this.#epoch) return;
       if (more && value.selection !== state.value?.selection)
         throw new Error("The file listing changed. Refresh it to continue.");
       state.value = more
         ? { ...value, files: [...(state.value?.files ?? []), ...value.files] }
         : value;
+      state.dirty = false;
       if (this.cacheKey === key) this.details = value;
     } catch (error) {
       if (!state.abort.signal.aborted && state.generation === generation)
@@ -180,7 +218,7 @@ export class WorkspaceBrowser {
     this.file = undefined;
     this.#fileGeneration++;
     this.#fileAbort?.abort();
-    await this.load();
+    if (this.railOpen) await this.load();
   }
   async selectTab(tab: Tab) {
     this.tab = tab;
@@ -194,23 +232,33 @@ export class WorkspaceBrowser {
     this.base = base;
     await this.load();
   }
-  async select(path: string) {
+  async select(path: string, retainedRequest?: Request) {
+    if (!path) return;
+    this.#historical = false;
     if (this.file?.file)
       this.#presentations.set(
         `${this.file.selection}:${this.file.file.path}`,
         this.presentation,
       );
-    this.listing.selected = path;
+    if (!retainedRequest) this.listing.selected = path;
     this.fileOpen = true;
-    this.inspect();
+    if (!retainedRequest) this.inspect();
+    const request = retainedRequest ?? this.query(path);
+    this.#fileRequest = request;
     const generation = ++this.#fileGeneration;
     this.#fileAbort?.abort();
     this.#fileAbort = new AbortController();
-    this.fileLoading = true;
+    const epoch = this.#epoch;
+    const key = JSON.stringify(request);
+    this.#fileKey = key;
+    const cached = this.#files.get(key);
+    this.fileLoading = !cached;
     this.fileError = "";
     try {
-      const value = await this.read(this.query(path), this.#fileAbort.signal);
-      if (generation === this.#fileGeneration) {
+      const value =
+        cached ?? (await this.read(request, this.#fileAbort.signal));
+      if (generation === this.#fileGeneration && epoch === this.#epoch) {
+        this.#files.remember(key, value);
         this.file = value;
         this.presentation =
           this.#presentations.get(`${value.selection}:${value.file?.path}`) ??
@@ -232,70 +280,13 @@ export class WorkspaceBrowser {
   }
   blocks = $state<{ before?: ChatBodyBlock; after?: ChatBodyBlock }>({});
   register(value: WorkspaceRead) {
-    const file = value.file;
-    if (!file || file.unavailable) {
-      this.blocks = {};
-      return;
-    }
-    const blocks: { before?: ChatBodyBlock; after?: ChatBodyBlock } = {};
-    for (const side of ["before", "after"] as const) {
-      const contents = side === "before" ? file.before : file.contents;
-      if (contents === null) continue;
-      const comparison = value.comparison,
-        before = side === "before";
-      const operation = before
-        ? comparison?.before_operation
-        : (comparison?.after_operation ?? value.operation);
-      const commit = before
-        ? comparison?.before_commit
-        : (comparison?.after_commit ?? value.commit);
-      if (!operation || !commit) continue;
-      const current = !before && (!comparison || comparison.current_files);
-      const hash = bytesToHex(sha256(new TextEncoder().encode(contents)));
-      const revision = `${operation}:${commit}:${current ? file.fingerprint : hash}`;
-      const block: ChatBodyBlock = {
-        id: `workspace:${value.session}:${value.repository}:${file.path}:${side}:${revision}`,
-        revision,
-        kind: "code",
-        label: file.path,
-        path: file.path,
-        text: contents,
-      };
-      blocks[side] = block;
-      const source: WorkspaceFileSource = {
-        session: value.session,
-        repository: value.repository,
-        workspace: value.workspace,
-        path: file.path,
-        operation,
-        commit,
-        content_sha256: hash,
-        current_fingerprint: current ? file.fingerprint : null,
-        selection: null,
-        diff:
-          comparison?.before_operation && comparison.before_commit
-            ? {
-                before_operation: comparison.before_operation,
-                before_commit: comparison.before_commit,
-                after_operation: comparison.after_operation,
-                after_commit: comparison.after_commit,
-                side,
-              }
-            : null,
-      };
-      this.conversation.workspaceSources.set(block.id, {
-        block,
-        source,
-        reveal: () => {
-          this.file = value;
-          this.blocks = blocks;
-          this.presentation = side;
-          this.fileOpen = true;
-          this.inspect();
-        },
-      });
-    }
-    this.blocks = blocks;
+    registerWorkspaceSource(this, value, () => {
+      this.#historical = true;
+      this.#fileGeneration++;
+      this.#fileAbort?.abort();
+      this.fileLoading = false;
+      this.fileError = "";
+    });
   }
   toggleDirectory(path: string) {
     const next = new Set(this.listing.collapsed);
