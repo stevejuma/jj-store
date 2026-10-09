@@ -364,3 +364,105 @@ async fn one_entry_cache_still_serves_queries_that_need_two_domain_roots() {
     };
     assert_eq!(reactions[0].count, 1);
 }
+
+#[tokio::test]
+async fn metadata_pins_reuse_thread_data_and_select_new_titles_after_publication() {
+    use jj_collab::{ConversationMetadataTargetV1, ConversationMetadataValueV1};
+    use jj_store_service::collab_reads::ReadScope;
+    let f = Fixture::new().await;
+    f.create(10).await;
+    f.react(
+        20,
+        ReactionTargetV1::Thread {
+            thread_id: ThreadId::new([10; 16]),
+        },
+    )
+    .await;
+    let pager = f.pager(Limits::default());
+    let target = ConversationMetadataTargetV1::Conversation {
+        id: "metadata-cache".into(),
+    };
+    let owner = ThreadId::new([10; 16]);
+    let initial = pager
+        .pin(f.session(ACTOR), ReadScope::Threads)
+        .await
+        .unwrap();
+    let thread = initial.thread(f.session(ACTOR), owner).await.unwrap();
+    assert!(
+        initial
+            .conversation_metadata(f.session(ACTOR), &target)
+            .await
+            .unwrap()
+            .is_none()
+    );
+    f.store.take();
+    for _ in 0..9 {
+        let pin = pager
+            .pin(f.session(ACTOR), ReadScope::Threads)
+            .await
+            .unwrap();
+        assert!(
+            pin.conversation_metadata(f.session(ACTOR), &target)
+                .await
+                .unwrap()
+                .is_none()
+        );
+    }
+    let warm = f.store.take();
+    assert_eq!(
+        domain_reads(&warm),
+        0,
+        "session rows must not reload each graph"
+    );
+    assert!(
+        !warm.is_empty(),
+        "manifest and authorization still select each pin"
+    );
+    f.apply(
+        ACTOR,
+        21,
+        CollabCommandV1::Thread {
+            intent: ThreadCommandV1::SetMetadata {
+                thread_id: owner,
+                expected_thread: thread.reference,
+                expected_metadata: None,
+                target: target.clone(),
+                value: Box::new(ConversationMetadataValueV1 {
+                    custom_title: Some("Fresh title 🦀".into()),
+                    ..Default::default()
+                }),
+            },
+        },
+    )
+    .await;
+    f.store.take();
+    let changed = pager
+        .pin(f.session(ACTOR), ReadScope::Threads)
+        .await
+        .unwrap();
+    assert_eq!(
+        changed
+            .conversation_metadata(f.session(ACTOR), &target)
+            .await
+            .unwrap()
+            .unwrap()
+            .1
+            .value
+            .title(),
+        Some("Fresh title 🦀")
+    );
+    let reads = f.store.take();
+    assert!(domain_reads(&reads) > 0, "new root must materialize");
+    assert!(
+        !reads.keys().any(|k| k.contains("/reaction-roots/")),
+        "title lookup loaded unrelated domain"
+    );
+    assert!(
+        initial
+            .conversation_metadata(f.session(ACTOR), &target)
+            .await
+            .unwrap()
+            .is_none(),
+        "old immutable pin changed"
+    );
+}

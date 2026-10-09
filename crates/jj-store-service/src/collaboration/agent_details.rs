@@ -19,7 +19,22 @@ impl AgentSessionPager {
         let _permit = self.cursors.acquire()?;
         within_timeout(
             self.cursors.timeout(),
-            Box::pin(self.detail_inner(session, session_id)),
+            Box::pin(self.detail_inner(session, session_id, true)),
+        )
+        .await
+    }
+
+    /// Exact captured activity for metadata preparation. Display-only feedback
+    /// and discovery enrichment are excluded; source authorization is unchanged.
+    pub async fn captured_detail(
+        &self,
+        session: Arc<NativeSession>,
+        session_id: AgentSessionId,
+    ) -> Result<AgentSessionDetail> {
+        let _permit = self.cursors.acquire()?;
+        within_timeout(
+            self.cursors.timeout(),
+            Box::pin(self.detail_inner(session, session_id, false)),
         )
         .await
     }
@@ -28,6 +43,7 @@ impl AgentSessionPager {
         &self,
         session: Arc<NativeSession>,
         session_id: AgentSessionId,
+        enrich: bool,
     ) -> Result<AgentSessionDetail> {
         let pin = self.pin(&session).await?;
         let key = AgentCatalogKey::derive("session", session_id.as_bytes())
@@ -82,6 +98,10 @@ impl AgentSessionPager {
                 code_truncated,
             },
         );
+        if !enrich {
+            authorize_epoch(&session, detail.snapshot.epoch).await?;
+            return Ok(detail);
+        }
         // Keep the optional feedback reader off the caller's async stack. This
         // detail path is also nested inside native conversation publication.
         let feedback = Box::pin(async {

@@ -19,3 +19,7 @@ informational rows, editable fields and save/cancel commands share one outer
 table per editor. Sync add/remove upstream commands join that same table. Action
 footers have only a top separator, without their own rounded border. Editors are
 installation-owned and unavailable on authenticated/non-Admin connections.
+
+Shared read-only form rows place navigation to the left of Copy. Copy stays at
+the far right, and rows without navigation reserve no empty action slot. Exact
+copy values and independent navigation hit targets remain unchanged.

@@ -100,10 +100,10 @@ impl Supervisor {
                 .reference
         } else {
             let session = self.home_session(capture.repository)?;
-            let pin = jj_store_service::collab_reads::PinnedCollabRead::open(
+            let pin = Box::pin(self.0.metadata_reads.pin(
                 session.clone(),
-                Arc::new(jj_store_service::collab_reads::RepositoryMemberReactionActors),
-            )
+                jj_store_service::collab_reads::ReadScope::Threads,
+            ))
             .await
             .map_err(|_| Error::Unavailable)?;
             pin.thread(session, owner)

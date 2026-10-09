@@ -162,6 +162,8 @@
 }
 
 .lc-community-inbox__item-heading strong {
+  flex: 1;
+  min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -219,6 +221,7 @@
 .lc-community-inbox__item-body {
   display: grid;
   min-width: 0;
+  grid-template-columns: minmax(0, 1fr);
   gap: 0.125rem;
 }
 
@@ -230,6 +233,7 @@
 }
 
 .lc-community-inbox__item-heading {
+  min-width: 0;
   justify-content: space-between;
   gap: 0.75rem;
 }
@@ -272,11 +276,13 @@
 }
 .lc-community-inbox__thread-identity {
   display: flex;
+  flex: 1;
   align-items: center;
   min-width: 0;
   gap: 0.75rem;
 }
 .lc-community-inbox__thread-identity > div {
+  flex: 1;
   min-width: 0;
 }
 .lc-community-inbox__thread-identity p {

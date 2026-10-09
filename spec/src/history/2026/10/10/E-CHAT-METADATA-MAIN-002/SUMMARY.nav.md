@@ -1,0 +1,2 @@
+- [Main metadata handoff validation](details-02.md)
+- [Main handoff final qualification](details-03.md)

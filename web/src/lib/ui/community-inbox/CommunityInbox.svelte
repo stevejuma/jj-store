@@ -207,7 +207,9 @@
               decorative
             />{/if}
           <div>
-            <h1>{threadTitle ?? "Sessions"}</h1>
+            <h1 title={threadTitle ?? "Sessions"}>
+              {threadTitle ?? "Sessions"}
+            </h1>
             {#if threadStatus}<p role="status">{threadStatus}</p>{/if}
           </div>
         </div>

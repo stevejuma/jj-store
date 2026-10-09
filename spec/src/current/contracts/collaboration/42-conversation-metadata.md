@@ -34,7 +34,9 @@ The version-1 prompt treats transcript data as untrusted. It requests a title,
 factual summary, keywords and goals, uses delivered comments and concise tool
 headers, excludes tool bodies and hidden reasoning, and records
 partial/truncated coverage. Metadata is searchable through bounded authorized
-projections.
+projections. Native metadata preparation reads exact captured activity without
+reloading display-only feedback or discovery enrichment. Source authorization,
+immutable snapshots and bounded capture coverage remain enforced.
 
 An owned `jj-store.sent-context.v1` human-message envelope contributes only its
 authored text. Inspector payloads, bootstrap instructions and captured context

@@ -86,6 +86,16 @@
     >
     {#if text && canCopy}
       <span class="store-readonly-row__actions">
+        {#if onOpen}<Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            class="store-readonly-row__open"
+            aria-label={openLabel}
+            title={openLabel}
+            disabled={openDisabled}
+            onclick={onOpen}><ArrowUpRight aria-hidden="true" /></Button
+          >{/if}
         <Button
           type="button"
           variant="ghost"
@@ -103,16 +113,6 @@
                 aria-hidden="true"
               />{:else}<Copy aria-hidden="true" />{/if}{/key}
         </Button>
-        {#if onOpen}<Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            class="store-readonly-row__open"
-            aria-label={openLabel}
-            title={openLabel}
-            disabled={openDisabled}
-            onclick={onOpen}><ArrowUpRight aria-hidden="true" /></Button
-          >{/if}
       </span>
     {/if}
     <span class="sr-only" role="status"
@@ -163,8 +163,7 @@
     white-space: nowrap;
   }
   .store-readonly-row__actions {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
     flex: none;
     align-items: center;
     margin-inline-start: auto;

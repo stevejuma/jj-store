@@ -359,7 +359,10 @@ Open **Session options → Conversation details** to inspect captured session ID
 activity times, message/tool counts, title, summary, keywords, goals and
 generation provenance. Recorded conversations expose the same details from their
 options menu. Renaming changes the conversation title; the agent name and avatar
-retain the captured identity.
+retain the captured identity. Overview and Metadata start closed in one Settings
+form group; expanding or collapsing them retains unfinished edits. Long
+conversation titles truncate in narrow rows and headers; hover for the full
+title.
 
 Choose a dedicated provider and model in **Settings → Agents → Conversation
 metadata**. This setting starts unconfigured and is independent of coding-agent

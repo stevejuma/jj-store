@@ -94,6 +94,7 @@ struct Inner {
     shutdown: tokio::sync::Mutex<()>,
     shutdown_finished: Mutex<Option<bool>>,
     metadata_inference: tokio::sync::Mutex<()>,
+    metadata_reads: jj_store_service::collab_pages::CollabPager,
     mutation: tokio::sync::Mutex<()>,
     workspace_gate: tokio::sync::Mutex<()>,
     workspace_activity: Mutex<BTreeMap<String, RequestId>>,
@@ -166,6 +167,12 @@ impl Supervisor {
             shutdown: tokio::sync::Mutex::new(()),
             shutdown_finished: Mutex::new(None),
             metadata_inference: tokio::sync::Mutex::new(()),
+            metadata_reads: jj_store_service::collab_pages::CollabPager::new(
+                Default::default(),
+                Arc::new(jj_store_service::auth::SystemClock),
+                Arc::new(jj_store_service::collab_reads::RepositoryMemberReactionActors),
+            )
+            .map_err(|_| Error::Unavailable)?,
             mutation: tokio::sync::Mutex::new(()),
             workspace_gate: tokio::sync::Mutex::new(()),
             workspace_activity: Mutex::new(BTreeMap::new()),

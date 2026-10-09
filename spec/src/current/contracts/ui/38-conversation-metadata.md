@@ -7,9 +7,17 @@ Classic. Clearing submitted prose is not a user action to unpin recipients.
 JST-UI-012 presents one repository-backed metadata view for live and recorded
 agent conversations in Document and Classic layouts. The full-height details
 sidebar keeps captured harness identity separate from the conversation title. It
-shows exact IDs, captured activity times/counts, coverage, generated summary,
-keywords, goals, model/protocol provenance and source freshness. Missing times
-remain unavailable; counts describe captured activity, not fabricated totals.
+uses the shared Settings field groups and description/action rows. Overview
+starts closed, expands and collapses accessibly without discarding edits, and
+groups read-only identity and activity fields as flush rows, with a divider
+above the title actions. Metadata starts closed in a separate disclosure in the
+same bordered group and retains readable, wrapped summaries. Conversation titles
+truncate with ellipsis inside narrow list rows and headers without displacing
+actions; full titles remain available to assistive technology and on hover. The
+sidebar shows exact IDs, captured activity times/counts, coverage, generated
+summary, keywords, goals, model/protocol provenance and source freshness.
+Missing times remain unavailable; counts describe captured activity, not
+fabricated totals.
 
 Rename and Use suggested title are conditional publication actions. Refresh
 metadata preserves a custom title. Regenerate title explicitly adopts the new

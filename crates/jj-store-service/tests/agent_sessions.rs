@@ -232,6 +232,17 @@ async fn session_detail_resolves_current_stable_identity_and_exact_links() {
         std::mem::size_of_val(&pending_detail),
     );
     let detail = pending_detail.await.unwrap();
+    let pending_capture = pager.captured_detail(session.clone(), summary.session_id);
+    assert!(std::mem::size_of_val(&pending_capture) < 64 * 1024);
+    let captured = pending_capture.await.unwrap();
+    assert_eq!(captured.snapshot, detail.snapshot);
+    assert_eq!(captured.session, detail.session);
+    assert_eq!(
+        serde_json::to_value(&captured.activity).unwrap(),
+        serde_json::to_value(&detail.activity).unwrap()
+    );
+    assert!(captured.conversation_feedback.is_none());
+    assert!(captured.conversation_unavailable.is_none());
     assert_eq!(detail.version, 1);
     assert_eq!(detail.snapshot, page.snapshot);
     assert_eq!(&detail.session, summary);

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { AppShell } from "@lapismd/design-core/shell";
   import { Button } from "@lapismd/design-core/shadcn/button";
+  import EllipsisIcon from "@lucide/svelte/icons/ellipsis";
   import { Input } from "@lapismd/design-core/shadcn/input";
   import CommunityAppShell from "../../web/src/lib/ui/community-app-shell/CommunityAppShell.svelte";
   import CommunityInbox from "../../web/src/lib/ui/community-inbox/CommunityInbox.svelte";
@@ -9,7 +10,14 @@
   let {
     repositoryName = "Sample repository",
     loading = false,
-  }: { repositoryName?: string; loading?: boolean } = $props();
+    chatTitle = "First chat",
+    threadTitle = "Selected chat",
+  }: {
+    repositoryName?: string;
+    loading?: boolean;
+    chatTitle?: string;
+    threadTitle?: string;
+  } = $props();
   const shell = createStoreShell(createMemoryStoryStorage(), false);
   let active = $state("first"),
     draft = $state("Retained conversation draft"),
@@ -33,7 +41,7 @@
   const items = $derived([
     {
       id: "first",
-      author: author("First chat"),
+      author: author(chatTitle),
       context: "Codex",
       status: "Offline",
       repository: repository("repo-a"),
@@ -83,8 +91,14 @@
       onSelect={(id) => (active = id)}
       onBack={() => {}}
       onNew={() => (active = "draft")}
-      threadTitle="Selected chat"
+      {threadTitle}
     >
+      {#snippet threadActions()}<Button
+          variant="ghost"
+          size="icon-sm"
+          aria-label="Conversation options"
+          ><EllipsisIcon aria-hidden="true" /></Button
+        >{/snippet}
       <div class="fixture-content">
         {#if loadingList}<Button onclick={() => (sessionsLoaded = true)}
             >Finish loading sessions</Button

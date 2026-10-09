@@ -298,3 +298,44 @@
     expect(draft).toHaveAttribute("aria-pressed", "true");
   }}
 />
+
+<Story
+  name="Long conversation titles truncate within rows and beside header actions"
+  args={{
+    chatTitle:
+      "Read README.md and src/example.ts in the attached sample without modifying files",
+    threadTitle:
+      "Read README.md and src/example.ts in the attached sample without modifying files, then explain how the complete application and its configuration work together",
+  }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    const handle = c.getByRole("button", { name: "Resize session chats" });
+    handle.focus();
+    await userEvent.keyboard("{Home}");
+    const list = c.getByRole("complementary", { name: "Session chats" });
+    await waitFor(() => expect(list.getBoundingClientRect().width).toBe(224));
+    const row = c.getByRole("button", { name: /Open session Read README/ });
+    const title = row.querySelector("strong")!;
+    expect(getComputedStyle(title).textOverflow).toBe("ellipsis");
+    expect(title.scrollWidth).toBeGreaterThan(title.clientWidth);
+    expect(title.getBoundingClientRect().right).toBeLessThanOrEqual(
+      row.getBoundingClientRect().right,
+    );
+    expect(title).toHaveAttribute("title", title.textContent!);
+    const narrow = title.clientWidth;
+    handle.focus();
+    await userEvent.keyboard("{End}");
+    await waitFor(() => expect(list.getBoundingClientRect().width).toBe(480));
+    expect(title.clientWidth).toBeGreaterThan(narrow);
+    const heading = c.getByRole("heading", { level: 1 });
+    const actions = c.getByRole("button", { name: "Conversation options" });
+    expect(heading.scrollWidth).toBeGreaterThan(heading.clientWidth);
+    expect(heading.getBoundingClientRect().right).toBeLessThanOrEqual(
+      actions.getBoundingClientRect().left,
+    );
+    expect(heading).toHaveAttribute("title", heading.textContent!);
+    expect(c.getByRole("textbox", { name: "Conversation draft" })).toHaveValue(
+      "Retained conversation draft",
+    );
+  }}
+/>

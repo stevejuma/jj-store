@@ -27,3 +27,16 @@ and 16 state tests pass. Existing ResizeObserver warnings remain recorded;
 M24/M25 stay In progress and visual baselines remain unapproved. The
 default-owned restart and workspace retirement receive separate handoff
 evidence.
+
+## Main handoff and refinements — 2026-10-10
+
+E-CHAT-METADATA-MAIN-002 retires the landed temporary workspace and restarts
+default with nine retained sessions and unchanged settings/repository identity.
+Overview and Metadata use closed Settings disclosures with flat rows and
+retained drafts; titles ellipsize and navigation precedes the far-right Copy
+control. Scoped cache pins and exact captured-detail projection avoid redundant
+native metadata materialization while preserving authorization and immutable
+sources. E-CHAT-METADATA-MAIN-003 confirms unchanged authority boundaries.
+Focused source, interaction and live results remain separate from independent
+provider/platform/IME/transfer gates, prior ResizeObserver/architecture
+diagnostics and visual baseline approval. M24/M25 remain In progress.

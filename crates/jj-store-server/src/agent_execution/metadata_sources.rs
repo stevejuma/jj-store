@@ -4,7 +4,7 @@ use super::{Error, Result};
 use jj_agent::{AgentObjectKind, AgentObjectRef, AgentSessionId};
 use jj_collab::*;
 use jj_store_service::agent_execution::metadata as api;
-use jj_store_service::collab_reads::{PinnedCollabRead, RepositoryMemberReactionActors};
+use jj_store_service::collab_reads::ReadScope;
 #[derive(Clone, serde::Serialize, serde::Deserialize)]
 pub(super) struct Capture {
     pub query: api::Query,
@@ -113,10 +113,9 @@ impl Supervisor {
             )
         } else {
             let session = self.home_session(repository)?;
-            let pin =
-                PinnedCollabRead::open(session.clone(), Arc::new(RepositoryMemberReactionActors))
-                    .await
-                    .map_err(|_| Error::Unavailable)?;
+            let pin = Box::pin(self.0.metadata_reads.pin(session.clone(), ReadScope::All))
+                .await
+                .map_err(|_| Error::Unavailable)?;
             (
                 pin.conversation_metadata(session, &target)
                     .await
@@ -203,7 +202,7 @@ impl Supervisor {
                 .map_err(|_| Error::Unavailable)?;
                 serde_json::to_value(
                     pager
-                        .detail(self.home_session(repository)?, id)
+                        .captured_detail(self.home_session(repository)?, id)
                         .await
                         .map_err(|_| Error::Unavailable)?,
                 )

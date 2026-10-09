@@ -3,9 +3,17 @@
   import * as Collapsible from "@lapismd/design-core/shadcn/collapsible";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
-  let { label = "Advanced", children }: { label?: string; children: Snippet } =
-    $props();
-  let open = $state(false);
+  let {
+    label = "Advanced",
+    open = $bindable(false),
+    inset = true,
+    children,
+  }: {
+    label?: string;
+    open?: boolean;
+    inset?: boolean;
+    children: Snippet;
+  } = $props();
 </script>
 
 <Collapsible.Root class="store-settings-disclosure" bind:open>
@@ -24,7 +32,12 @@
   </Collapsible.Trigger>
   <Collapsible.Content forceMount>
     {#snippet child({ props })}
-      <div {...props} hidden={!open} class="store-settings-disclosure__content">
+      <div
+        {...props}
+        hidden={!open}
+        data-inset={inset}
+        class="store-settings-disclosure__content"
+      >
         {@render children()}
       </div>
     {/snippet}
@@ -60,5 +73,9 @@
     gap: 0.8rem;
     padding: 1rem;
     border-block-start: 1px solid var(--border);
+  }
+  .store-settings-disclosure__content[data-inset="false"]:not([hidden]) {
+    gap: 0;
+    padding: 0;
   }
 </style>

@@ -15,6 +15,7 @@
   args={{ interrupted: true }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
+    await userEvent.click(await c.findByRole("button", { name: "Metadata" }));
     await userEvent.click(
       await c.findByRole("button", { name: "Stop waiting for generation" }),
     );
@@ -36,6 +37,7 @@
   name="Details retain drafts through remount and refresh preserves custom titles"
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
+    await userEvent.click(await c.findByRole("button", { name: "Overview" }));
     const title = await c.findByRole("textbox", {
       name: "Rename conversation",
     });
@@ -46,11 +48,13 @@
     await userEvent.click(
       c.getByRole("button", { name: "Toggle details mount" }),
     );
+    await userEvent.click(await c.findByRole("button", { name: "Overview" }));
     await expect(
       await c.findByRole("textbox", { name: "Rename conversation" }),
     ).toHaveValue("My custom title");
     await userEvent.click(c.getByRole("button", { name: /^Rename$/ }));
     await waitFor(() => expect(c.getByText("My custom title")).toBeVisible());
+    await userEvent.click(c.getByRole("button", { name: "Metadata" }));
     await userEvent.click(c.getByRole("button", { name: "Refresh metadata" }));
     await c.findByText("Fixture generated summary.");
     await expect(c.getByText("My custom title")).toBeVisible();
@@ -71,6 +75,7 @@
   args={{ lost: true }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
+    await userEvent.click(await c.findByRole("button", { name: "Overview" }));
     await userEvent.type(
       await c.findByRole("textbox", { name: "Rename conversation" }),
       "Retained title",
@@ -83,6 +88,8 @@
     await userEvent.click(
       c.getByRole("button", { name: "Toggle details mount" }),
     );
+    await userEvent.click(await c.findByRole("button", { name: "Overview" }));
+    await userEvent.click(c.getByRole("button", { name: "Metadata" }));
     await userEvent.click(
       await c.findByRole("button", { name: "Check retained request" }),
     );
@@ -125,5 +132,49 @@
         c.getByLabelText("Saved metadata configuration"),
       ).toHaveTextContent("null"),
     );
+  }}
+/>
+
+<Story
+  name="Settings sections start closed and collapse retains the rename draft"
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    const overview = await c.findByRole("button", {
+      name: "Overview",
+    });
+    const metadata = c.getByRole("button", { name: "Metadata" });
+    expect(overview).toHaveAttribute("aria-expanded", "false");
+    expect(metadata).toHaveAttribute("aria-expanded", "false");
+    expect(
+      c.queryByRole("textbox", { name: "Rename conversation" }),
+    ).toBeNull();
+    expect(c.queryByRole("button", { name: "Refresh metadata" })).toBeNull();
+    await userEvent.click(overview);
+    const input = c.getByRole("textbox", { name: "Rename conversation" });
+    await userEvent.type(input, "Retained overview draft");
+    expect(input.closest(".community-settings__option-group")).not.toBeNull();
+    expect(
+      c.getByText("Repository ID").closest(".store-settings__summary-rows"),
+    ).not.toBeNull();
+    const content = overview
+      .closest(".store-settings-disclosure")!
+      .querySelector(".store-settings-disclosure__content")!;
+    expect(getComputedStyle(content).padding).toBe("0px");
+    expect(content.querySelector(".store-settings__rows")).toBeNull();
+    expect(metadata.closest(".community-settings__option-group")).toBe(
+      overview.closest(".community-settings__option-group"),
+    );
+    await userEvent.click(overview);
+    expect(overview).toHaveAttribute("aria-expanded", "false");
+    expect(
+      c.queryByRole("textbox", { name: "Rename conversation" }),
+    ).toBeNull();
+    await userEvent.click(metadata);
+    expect(c.getByRole("button", { name: "Refresh metadata" })).toBeVisible();
+    overview.focus();
+    await userEvent.keyboard("{Enter}");
+    expect(
+      await c.findByRole("textbox", { name: "Rename conversation" }),
+    ).toHaveValue("Retained overview draft");
   }}
 />

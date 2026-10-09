@@ -43,7 +43,7 @@
     />
     <span class="lc-community-inbox__item-body">
       <span class="lc-community-inbox__item-heading"
-        ><strong>{item.author.name}</strong></span
+        ><strong title={item.author.name}>{item.author.name}</strong></span
       >
       <span class="lc-community-inbox__item-detail">
         <span class="lc-community-inbox__context">{item.context}</span>

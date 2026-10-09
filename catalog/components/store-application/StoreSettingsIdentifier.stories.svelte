@@ -34,6 +34,11 @@
       const button = canvas.getByRole("button", {
         name: `Copy full Operation ID: ${value}`,
       });
+      const link = canvas.getByRole("button", { name: "Open Operation ID" });
+      expect(link.getBoundingClientRect().right).toBeLessThanOrEqual(
+        button.getBoundingClientRect().left,
+      );
+      expect(button.parentElement!.lastElementChild).toBe(button);
       const label = canvas.getByText("Operation ID", { exact: true });
       const rect = label.getBoundingClientRect();
       const hit = document.elementFromPoint(rect.left + 4, rect.top + 4)!;
@@ -84,11 +89,13 @@
     const write = fn(async (_value: string) => {}),
       restore = clipboard(write);
     try {
-      await userEvent.click(
-        within(canvasElement).getByRole("button", {
-          name: "Copy full Operation ID: 0",
-        }),
+      const button = within(canvasElement).getByRole("button", {
+        name: "Copy full Operation ID: 0",
+      });
+      expect(button.parentElement!.getBoundingClientRect().width).toBe(
+        button.getBoundingClientRect().width,
       );
+      await userEvent.click(button);
       await expect(write).toHaveBeenCalledWith("0");
     } finally {
       restore();
