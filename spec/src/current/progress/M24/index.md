@@ -327,6 +327,12 @@ draft hosts retain their own empty state. Expanded unknown-delivery context
 controls keep themed hover feedback. Focused interaction/accessibility, type,
 ownership and live delayed-history checks pass. M24 remains In progress,
 independent qualification gaps remain open and visual baselines stay unapproved.
+E-CHAT-WORKSPACE-001 starts session-bound workspace inspection with typed,
+operation-pinned repository reads, current disk observations and pre-dispatch
+turn boundaries. The remaining footer, file-review publication, cross-repository
+submissions and cold live acceptance are separate required slices. M24 remains
+In progress; M13.3 local review qualification is not advanced by read-only
+inspection. Visual baselines remain unapproved.
 <!-- generated-navigation -->
 ## Pages
 

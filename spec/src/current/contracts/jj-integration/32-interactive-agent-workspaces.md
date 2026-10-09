@@ -17,3 +17,16 @@ local preparation uses an isolated workspace sharing the companion metadata.
 Reusing native materializations verifies repository ID and exact socket in the
 bounded connection record before accepting the checkout. This tightens physical
 binding verification without changing native identities or publication formats.
+
+JST-JJ-003/004 workspace inspection reads committed paths, bytes, parents and
+references through the existing typed native/local readers at exact operation
+pins. Physical enumeration and ignore-policy reads are bounded and read-only; no
+CLI display output defines a source identity. The configured workspace target is
+read without creating configuration. Missing default evidence requires an
+explicit comparison selection; common ancestors must be unique.
+
+Explicit prompt dispatch records a preparing boundary before snapshotting the
+owned agent workspace and records the exact result before the prompt is written
+to the harness. Queued prompts remain controller-owned until the prior turn's
+completion/snapshot handling finishes. An uncertain snapshot prevents dispatch
+and is never silently repeated on restart. Source checkouts stay untouched.

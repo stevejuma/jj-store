@@ -194,3 +194,40 @@ lookup, never blind retry.
 extend explicit Send with exact range comments and validated answer links,
 without changing canonical transcript ownership or automatic-dispatch
 restrictions.
+
+## Workspace inspection and file feedback
+
+JST-COLLAB-034 through JST-COLLAB-036 extend explicit conversation Send to
+workspace file reviews. The footer identifies a verified participant/repository
+binding; inspection never switches a checkout or rebinds an agent. Files reads
+current disk content, including tracked and nonignored untracked files. Changes
+compares only that binding. Listing, file reads and comparisons never snapshot,
+publish operation heads, reconcile repositories or dispatch an agent.
+
+Since last commit compares the current work in progress with its verified parent
+revision, including unsnapshotted edits. Last turn compares exact durable start
+and completion snapshots for one completed participant request. Older captures
+without both boundaries cannot supply that comparison. Branch compares current
+content with the verified common ancestor of the configured target or default
+branch. Missing configuration requires explicit comparison-only base selection;
+ambiguous parents or ancestry are unavailable rather than guessed.
+
+Inspection uses session-bound, independently authorized repository selectors,
+bounded pages and content reads, exact source fingerprints and stale-response
+rejection. Filesystem roots come only from retained workspace ownership proofs.
+Metadata paths and symlink traversal are forbidden. Unsupported content remains
+visible with a reason, never an invented empty file or zero-change count.
+
+File discussions remain ReviewStore-owned; conversation batches carry exact
+repository-qualified references. Explicit Send freezes drafts, validates their
+original fingerprints, snapshots the authorized workspace and verifies the
+captured bytes before publishing reviews and the reference batch. Stale sources
+retain drafts and require explicit reselection. Required publication and frozen
+context preparation precede dispatch. Independent repository receipts preserve
+partial success and unknown outcomes; sending is not cross-repository atomic.
+
+Native anchors retain their existing identities. Local file publication must
+qualify portable code evidence, complete retained closures and cold original
+context reads before enabling that capability. Source and answer links bind the
+exact submitted revisions, never current paths or quote matching. No answer tag
+resolves a review. M24 and local-review qualification remain separate gates.

@@ -188,6 +188,25 @@ async fn repository_free_chat_reuses_isolated_bindings_and_never_replays_after_r
         outcome.agents.iter().all(|a| a.error.is_none()),
         "{outcome:?}"
     );
+    // Start snapshots are independent events, so sequence growth alone cannot
+    // prove the attached prompt has run. Wait for its exact completion receipts.
+    tokio::time::timeout(Duration::from_secs(30), async {
+        for sent in &outcome.agents {
+            loop {
+                let receipt = supervisor.outcome(actor, sent.request_id).await.unwrap();
+                if receipt.state == "completed" {
+                    break;
+                }
+                assert!(
+                    !matches!(receipt.state.as_str(), "failed" | "outcome_unknown"),
+                    "{receipt:?}"
+                );
+                tokio::time::sleep(Duration::from_millis(20)).await;
+            }
+        }
+    })
+    .await
+    .unwrap();
     let status = wait(&supervisor, actor, |s| {
         s.sessions.iter().all(|s| {
             s.state == "idle"
@@ -218,6 +237,7 @@ async fn repository_free_chat_reuses_isolated_bindings_and_never_replays_after_r
         "dirty\n"
     );
     assert!(!fixture.source.join("agent-edit.txt").exists());
+    super::workspace_inspection::exercise(&supervisor, actor, &status.sessions[0]).await;
     // A new repository chat may use an immutable code snapshot newer than
     // the source checkout. Its base must be the visible revision, without
     // refreshing or snapshotting the dirty source working files.

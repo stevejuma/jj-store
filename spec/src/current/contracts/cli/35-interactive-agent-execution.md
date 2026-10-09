@@ -87,3 +87,10 @@ holding execution admission. An unavailable runtime yields an unavailable
 catalog; explicit starts keep their existing lifecycle. E-CHAT-LIVE-007 tests
 this boundary and validates an explicitly staged rebuilt helper against the
 preserved development fixture without replacing installed tools (JST-CLI-004).
+
+Workspace-inspection startup retains JST-CLI-004 executable/lifecycle ownership.
+No new CLI command is introduced for browsing. Typed repository readers supply
+immutable content; only explicit dispatch/completion invokes the existing
+snapshot provider. Both control versions keep pending prompts in the controller,
+capture their start after the prior turn settles, and cancel pending requests
+without sending them to ACP. Restart never resumes this queue automatically.

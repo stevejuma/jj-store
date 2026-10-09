@@ -32,6 +32,7 @@ struct EventsQuery {
 }
 macro_rules! endpoints {
     ($register:ident) => { $register! {
+        (post, "/local/agents/workspace/inspect", inspect_workspace, "local_agents_workspace_inspect", routes::Empty, agents::workspace_inspection::Request, agents::workspace_inspection::Inspection),
         (get, "/local/compute", compute_status, "local_compute_status", routes::Empty, routes::Empty, agents::compute::Status),
         (post, "/local/compute", compute_command, "local_compute_command", routes::Empty, agents::compute::Command, agents::Outcome),
         (post, "/local/compute/pick", pick_model_file, "local_compute_pick", routes::Empty, routes::Empty, jj_store_service::local_management::ModelFileSelection),
@@ -174,6 +175,11 @@ mutation!(
     send_conversation
 );
 mutation!(control_agent, agents::fleet::Control, control_agent);
+mutation!(
+    inspect_workspace,
+    agents::workspace_inspection::Request,
+    inspect_workspace
+);
 mutation!(setups, agents::SetupCommand, save_setup);
 mutation!(launch, agents::Launch, launch);
 mutation!(command, agents::Command, command);

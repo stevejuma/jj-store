@@ -196,12 +196,49 @@ impl Supervisor {
         let mut closing_request = None;
         let close_deadline = tokio::time::sleep(Duration::from_secs(3600));
         tokio::pin!(close_deadline);
+        let mut prompts = super::workspace_turns::PromptQueue::default();
         loop {
+            if !closing && let Some(mut frame) = prompts.next() {
+                if self.capture_turn_start(&frame).await.is_err() {
+                    let request = frame["requestId"].as_str().ok_or(Error::Invalid)?;
+                    let failure = json!({"type":"error","sessionId":id,"requestId":request,"code":"dispatch_not_sent"});
+                    self.update(|s| delivery::observe(s, id, &failure))?;
+                    self.finish(
+                        request.parse().map_err(|_| Error::Invalid)?,
+                        "failed",
+                        Some("workspace_start_snapshot_unavailable"),
+                    )?;
+                    prompts.completed(&failure);
+                    continue;
+                }
+                frame
+                    .as_object_mut()
+                    .ok_or(Error::Invalid)?
+                    .remove("sessionId");
+                write(&mut stdin, frame).await?;
+            }
             tokio::select! {
                 _ = &mut startup, if !opened => return Err(Error::Unavailable),
                 _ = &mut close_deadline, if closing => return Err(Error::Unavailable),
                 frame = commands.recv(), if !closing => {
-                    let Some(frame) = frame else { return Err(Error::Unavailable); };
+                    let Some(mut frame) = frame else { return Err(Error::Unavailable); };
+                    if frame["type"] == "prompt" {
+                        let request = frame["requestId"].as_str().ok_or(Error::Invalid)?.parse().map_err(|_| Error::Invalid)?;
+                        frame["sessionId"] = json!(id);
+                        if prompts.push(frame).is_ok() { self.finish(request, "queued", None)?; }
+                        else {
+                            self.update(|s| delivery::observe(s,id,&json!({"type":"error","requestId":request,"code":"queue_full"})))?;
+                            self.finish(request, "failed", Some("queue_full"))?;
+                        }
+                        continue;
+                    }
+                    if frame["type"] == "cancel" && let Some(target) = frame["target"].as_str()
+                        && prompts.cancel(id,target).is_some() {
+                        self.update(|s| delivery::observe(s,id,&json!({"type":"error","requestId":target,"code":"dispatch_not_sent"})))?;
+                        self.finish(target.parse().map_err(|_| Error::Invalid)?, "cancelled", None)?;
+                        if let Some(request)=frame["requestId"].as_str().and_then(|s|s.parse().ok()) { self.finish(request,"accepted",None)?; }
+                        continue;
+                    }
                     closing = frame["type"] == "close";
                     if closing { closing_request = frame["requestId"].as_str().and_then(|id| id.parse::<RequestId>().ok()); }
                     if closing { close_deadline.as_mut().reset(tokio::time::Instant::now() + Duration::from_secs(15)); }
@@ -239,6 +276,9 @@ impl Supervisor {
                         value["decisionKind"] = self.permission_kind(id, &value["permissionId"], &value["optionId"])?;
                     }
                     self.append(id, value.clone())?;
+                    let mut completion = value.clone();
+                    completion["sessionId"] = json!(id);
+                    prompts.completed(&completion);
                     match value["type"].as_str().unwrap_or("") {
                         "opened" => {
                             opened = true;
@@ -256,7 +296,7 @@ impl Supervisor {
                             if value["quiescent"] == true {
                                 let saved = self.saved(id)?;
                                 match self.0.resources.driver.snapshot(&saved.workspace).await {
-                                    Ok(workspace) => { self.update(|s| { let saved = s.sessions.get_mut(id).ok_or(Error::Invalid)?; saved.workspace = workspace.clone(); saved.view.operation = workspace.operation; saved.view.review_commit = workspace.commit.clone(); Ok(()) })?; },
+                                    Ok(workspace) => { self.append(id, json!({"type":"repository_snapshot","requestId":request,"repository":saved.view.repository,"state":"completed","operation":workspace.operation,"commit":workspace.commit}))?; self.update(|s| { let saved = s.sessions.get_mut(id).ok_or(Error::Invalid)?; saved.workspace = workspace.clone(); saved.view.operation = workspace.operation; saved.view.review_commit = workspace.commit.clone(); Ok(()) })?; },
                                     Err(_) => { self.session_state(id, "interrupted", Some("workspace_snapshot_unknown"))?; return Err(Error::Unavailable); }
                                 }
                             }

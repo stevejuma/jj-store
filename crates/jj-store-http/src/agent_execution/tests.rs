@@ -9,6 +9,15 @@ struct Manager {
 }
 #[async_trait::async_trait]
 impl agents::Manager for Manager {
+    async fn inspect_workspace(
+        &self,
+        actor: m::PrincipalId,
+        query: agents::workspace_inspection::Request,
+    ) -> agents::Result<agents::workspace_inspection::Inspection> {
+        assert_eq!(actor, m::PrincipalId::new([1; 16]));
+        query.validate()?;
+        Err(agents::Error::Stale)
+    }
     async fn compute_status(&self, _: m::PrincipalId) -> agents::Result<agents::compute::Status> {
         Ok(agents::compute::Status {
             hardware: serde_json::json!({}),
@@ -319,6 +328,69 @@ async fn feedback_is_read_only_local_admin_and_rejects_unbound_queries() {
 }
 fn api(root: &std::path::Path, access: Access) -> HttpApi {
     api_with_picker(root, access, None)
+}
+#[tokio::test]
+async fn workspace_inspection_is_local_admin_and_accepts_no_filesystem_root() {
+    let root = tempfile::tempdir().unwrap();
+    let payload = serde_json::json!({"version":1,"session":"11".repeat(16),"repository":"22".repeat(16),"query":{"view":"files"},"path":null,"cursor":null});
+    for access in [
+        Access::Authenticated,
+        Access::LocalTrusted {
+            principal: m::PrincipalId::new([1; 16]),
+            permission: Permission::Read,
+        },
+    ] {
+        assert_eq!(
+            api(root.path(), access)
+                .router()
+                .oneshot(request(
+                    "/v1/local/agents/workspace/inspect",
+                    Some(payload.clone())
+                ))
+                .await
+                .unwrap()
+                .status(),
+            StatusCode::FORBIDDEN
+        );
+    }
+    let api = api(
+        root.path(),
+        Access::LocalTrusted {
+            principal: m::PrincipalId::new([1; 16]),
+            permission: Permission::Admin,
+        },
+    );
+    assert_eq!(
+        api.router()
+            .oneshot(request(
+                "/v1/local/agents/workspace/inspect",
+                Some(payload.clone())
+            ))
+            .await
+            .unwrap()
+            .status(),
+        StatusCode::CONFLICT
+    );
+    let mut bad = payload.clone();
+    bad["root"] = "/tmp".into();
+    assert_eq!(
+        api.router()
+            .oneshot(request("/v1/local/agents/workspace/inspect", Some(bad)))
+            .await
+            .unwrap()
+            .status(),
+        StatusCode::BAD_REQUEST
+    );
+    let mut bad = payload;
+    bad["path"] = "../secret".into();
+    assert_eq!(
+        api.router()
+            .oneshot(request("/v1/local/agents/workspace/inspect", Some(bad)))
+            .await
+            .unwrap()
+            .status(),
+        StatusCode::BAD_REQUEST
+    );
 }
 fn api_with_picker(
     root: &std::path::Path,

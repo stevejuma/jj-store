@@ -45,3 +45,16 @@ the request stack. Its pinned source, timeout, authorization, optional-feedback
 failure behavior and publication receipts are unchanged. A future-size
 regression, all nine session-reader tests and the real native-home consumer
 exercise this unchanged contract.
+
+Workspace inspection is a read capability under JST-MUT-001: session and code
+repository admission are independent, roots are server-owned and no observation
+advances repository authority. Current observations retain selection
+fingerprints and stale pagination fences. Inspection adds no review publication
+authority.
+
+Controller-owned prompt queuing captures the authorized workspace start only
+when that exact request becomes eligible to dispatch. Proven pre-dispatch
+failure releases its delivery reservation while retaining the request outcome.
+Queued cancellation sends no prompt. Uncertain physical effects and restart
+retain their original outcomes without replay; code-repository snapshots remain
+independent from canonical transcript publication.

@@ -45,7 +45,7 @@ async fn runtime_receipts_recover_without_execution_or_automatic_install_replay(
             .find(|r| r.id == "local")
             .unwrap()
             .label,
-        "jj-agent"
+        "JJ Agent"
     );
     fs::remove_file(bin.join("jj-store-agent-tools")).unwrap();
     assert_eq!(

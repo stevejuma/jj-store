@@ -15,6 +15,8 @@ mod real;
 mod setups;
 #[path = "agent_execution/tooling.rs"]
 mod tooling;
+#[path = "agent_execution/workspace_inspection.rs"]
+mod workspace_inspection;
 use jj_store_model::{PrincipalId, RequestId};
 use jj_store_server::{
     agent_execution::{Resources, Supervisor, driver::Driver},

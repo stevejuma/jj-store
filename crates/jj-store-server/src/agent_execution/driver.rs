@@ -22,6 +22,11 @@ fn workspace(value: jj_store_jj::agent_workspaces::Selection, source: PathBuf) -
 }
 #[async_trait::async_trait]
 impl WorkspaceDriver for Driver {
+    fn ignore_inputs(&self, value: &Workspace) -> Result<Vec<Vec<u8>>> {
+        self.0
+            .ignore_inputs(&selection(value))
+            .map_err(|_| Error::Unavailable)
+    }
     async fn initialize_personal(&self, path: PathBuf) -> Result<Workspace> {
         self.0
             .initialize_personal(&path)

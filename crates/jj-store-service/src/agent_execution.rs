@@ -1,5 +1,6 @@
 //! Application-owned execution contracts, independent of ACP implementation.
 mod feedback_subject;
+pub mod workspace_inspection;
 pub use feedback_subject::FeedbackSubject;
 use jj_store_model::{CommitId, OperationId, PrincipalId, RepositoryId, RequestId};
 use schemars::JsonSchema;
@@ -232,6 +233,9 @@ pub struct Workspace {
 /// JJ composition owns executable selection and physical workspace operations.
 #[async_trait::async_trait]
 pub trait WorkspaceDriver: Send + Sync {
+    fn ignore_inputs(&self, _workspace: &Workspace) -> Result<Vec<Vec<u8>>> {
+        Err(Error::Unavailable)
+    }
     async fn initialize_personal(&self, _path: PathBuf) -> Result<Workspace> {
         Err(Error::Unavailable)
     }
@@ -258,6 +262,13 @@ pub trait WorkspaceDriver: Send + Sync {
 /// Optional LocalTrusted runtime; repository and actor checks remain host-owned.
 #[async_trait::async_trait]
 pub trait Manager: Send + Sync {
+    async fn inspect_workspace(
+        &self,
+        _actor: PrincipalId,
+        _request: workspace_inspection::Request,
+    ) -> Result<workspace_inspection::Inspection> {
+        Err(Error::Unavailable)
+    }
     async fn catalog_preview(
         &self,
         _actor: PrincipalId,

@@ -702,3 +702,9 @@ async fn build(
     mut_repo.set_local_bookmark_target(saved.wip_ref.as_ref(), RefTarget::normal(wip.id().clone()));
     Ok(wip)
 }
+
+/// Inspection-only target selection; does not create config or change a checkout.
+pub fn configured_target(root: &std::path::Path) -> Result<Option<String>> {
+    let config = config::Storage::read_only(root)?;
+    Ok(config.active().map(|w| w.target.clone()))
+}

@@ -409,7 +409,21 @@ impl Supervisor {
             let deadline=tokio::time::sleep(Duration::from_secs(3600));tokio::pin!(deadline);
             let mut bytes=Vec::new();
             let mut stream=super::conversation_frames::Stream::default();
-            loop { tokio::select! {
+            let mut prompts=super::workspace_turns::PromptQueue::default();
+            loop {
+                if !closing && let Some(frame)=prompts.next() {
+                    if self.capture_turn_start(&frame).await.is_err() {
+                        let session=frame["sessionId"].as_str().ok_or(Error::Invalid)?;
+                        let request=frame["requestId"].as_str().ok_or(Error::Invalid)?;
+                        let failed=json!({"version":3,"type":"error","sessionId":session,"requestId":request,"code":"dispatch_not_sent"});
+                        self.update(|s| delivery::observe(s,session,&failed))?;
+                        self.finish(request.parse().map_err(|_|Error::Invalid)?,"failed",Some("workspace_start_snapshot_unavailable"))?;
+                        prompts.completed(&failed);
+                        continue;
+                    }
+                    runtime::write(&mut input,frame).await?;
+                }
+                tokio::select! {
                 biased;
                 _=stopping.changed(),if !closing => {
                     closing=true;deadline.as_mut().reset(tokio::time::Instant::now()+Duration::from_secs(15));
@@ -418,6 +432,23 @@ impl Supervisor {
                 _=&mut deadline,if closing => return Err(Error::Unavailable),
                 _=&mut startup,if !warmed => return Err(Error::Unavailable),
                 frame=commands.recv(),if !closing => { let Some(frame)=frame else {return Err(Error::Unavailable)};
+                    if frame["type"]=="prompt" {
+                        let request=frame["requestId"].as_str().ok_or(Error::Invalid)?.parse().map_err(|_|Error::Invalid)?;
+                        let session=frame["sessionId"].as_str().ok_or(Error::Invalid)?.to_owned();
+                        if prompts.push(frame).is_ok() { self.finish(request,"queued",None)?; }
+                        else {
+                            self.update(|s| delivery::observe(s,&session,&json!({"type":"error","requestId":request,"code":"queue_full"})))?;
+                            self.finish(request,"failed",Some("queue_full"))?;
+                        }
+                        continue;
+                    }
+                    if frame["type"]=="cancel" && let (Some(session),Some(target))=(frame["sessionId"].as_str(),frame["target"].as_str())
+                        && prompts.cancel(session,target).is_some() {
+                        self.update(|s| delivery::observe(s,session,&json!({"type":"error","requestId":target,"code":"dispatch_not_sent"})))?;
+                        self.finish(target.parse().map_err(|_|Error::Invalid)?,"cancelled",None)?;
+                        if let Some(request)=frame["requestId"].as_str().and_then(|s|s.parse().ok()) { self.finish(request,"accepted",None)?; }
+                        continue;
+                    }
                     if frame["type"]=="close" { closing=true;deadline.as_mut().reset(tokio::time::Instant::now()+Duration::from_secs(15)); }
                     runtime::write(&mut input,frame).await?;
                 },
@@ -425,7 +456,7 @@ impl Supervisor {
                     if !line? { return Err(Error::Unavailable); }
                     let frame: Value=serde_json::from_slice(&bytes).map_err(|_|Error::Unavailable)?;bytes.clear();
                     if frame["version"]!=3 {return Err(Error::Unavailable);}
-                    if frame["sessionId"].is_string(){self.touch_worker(id,generation);self.conversation_frame(id,generation,frame,&mut stream).await?;continue;}
+                    if frame["sessionId"].is_string(){self.touch_worker(id,generation);self.conversation_frame(id,generation,frame.clone(),&mut stream).await?;prompts.completed(&frame);continue;}
                     match frame["type"].as_str() {
                         Some("ready")=>runtime::write(&mut input,json!({"version":3,"type":"warm","requestId":format!("warm-{id}-{generation}")})).await?,
                         Some("warmed")=>{warmed=true;self.worker_state(id,generation,"idle",None);},

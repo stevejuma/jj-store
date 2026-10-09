@@ -1,6 +1,13 @@
 use super::*;
 #[async_trait::async_trait]
 impl Manager for Supervisor {
+    async fn inspect_workspace(
+        &self,
+        actor: PrincipalId,
+        request: jj_store_service::agent_execution::workspace_inspection::Request,
+    ) -> Result<jj_store_service::agent_execution::workspace_inspection::Inspection> {
+        self.workspace_inspection(actor, request).await
+    }
     async fn compute_status(
         &self,
         actor: PrincipalId,

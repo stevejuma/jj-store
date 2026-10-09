@@ -42,3 +42,9 @@ AgentStore and ThreadStore formats and manifest/ref-CAS authority remain
 unchanged. M23 version-2 qualification stays separate. Fleet fixture, installed
 adapters, native materialization and cold built-browser gates are recorded
 independently.
+
+Workspace inspection adds strict typed read DTOs and private execution events
+for exact pre-dispatch snapshots. Legacy records missing a start boundary remain
+readable and report Last turn unavailable. This preserves JST-COMPAT-001/003/005
+native widths, object encodings, publication authority and independent native
+qualification. Local review-anchor publication is still a separate M13.3 gate.

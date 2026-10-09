@@ -51682,6 +51682,180 @@
         "security": [{}]
       }
     },
+    "/v1/local/agents/workspace/inspect": {
+      "post": {
+        "operationId": "local_agents_workspace_inspect",
+        "tags": ["local"],
+        "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Authorized result at the reported snapshot.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentWorkspaceInspection"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request, unknown query field or invalid cursor.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing repository Bearer credential.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied, including revoked credentials or disallowed Origin.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "404": {
+            "description": "Object not committed in the selected snapshot or unknown route.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "405": {
+            "description": "Unsupported method.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "408": {
+            "description": "Native query canceled.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "409": {
+            "description": "stale_work, cursor_reset, intent_conflict or work_replication_unsupported.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "410": {
+            "description": "Index task expired or was lost on server restart.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "413": {
+            "description": "Request or response resource limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "503": {
+            "description": "Busy, unavailable, corrupt or incomplete history.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "504": {
+            "description": "Request or response deadline exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          }
+        },
+        "x-jj-store-query-schema": {
+          "type": "object",
+          "additionalProperties": false
+        },
+        "security": [{}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "version": {
+                    "type": "integer",
+                    "format": "uint32",
+                    "minimum": 0
+                  },
+                  "session": { "type": "string" },
+                  "repository": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{32}$",
+                    "minLength": 32,
+                    "maxLength": 32
+                  },
+                  "query": {
+                    "oneOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "view": { "type": "string", "const": "files" }
+                        },
+                        "required": ["view"],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "range": {
+                            "type": "string",
+                            "enum": ["since_last_commit", "last_turn", "branch"]
+                          },
+                          "base": { "type": ["string", "null"] },
+                          "view": { "type": "string", "const": "changes" }
+                        },
+                        "additionalProperties": false,
+                        "required": ["view", "range"]
+                      }
+                    ]
+                  },
+                  "path": { "type": ["string", "null"] },
+                  "cursor": { "type": ["string", "null"] }
+                },
+                "additionalProperties": false,
+                "required": ["version", "session", "repository", "query"]
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/local/compute": {
       "get": {
         "operationId": "local_compute_status",
@@ -70804,6 +70978,123 @@
           "progress": { "$ref": "#/components/schemas/CaptureImportProgress" }
         },
         "required": ["version", "request_id", "receipt", "progress"]
+      },
+      "AgentWorkspaceInspection": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+          "session": { "type": "string" },
+          "repository": { "$ref": "#/components/schemas/RepositoryId" },
+          "workspace": { "type": "string" },
+          "location": { "type": "string" },
+          "operation": { "$ref": "#/components/schemas/OperationId" },
+          "commit": { "type": "string" },
+          "selection": { "type": "string" },
+          "references": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/WorkspaceReference" }
+          },
+          "comparison": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/AgentWorkspaceComparison" },
+              { "type": "null" }
+            ]
+          },
+          "incomplete": { "type": ["string", "null"] },
+          "files": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AgentWorkspaceFileEntry" }
+          },
+          "next": { "type": ["string", "null"] },
+          "file": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/AgentWorkspaceFileContent" },
+              { "type": "null" }
+            ]
+          }
+        },
+        "required": [
+          "version",
+          "session",
+          "repository",
+          "workspace",
+          "location",
+          "operation",
+          "commit",
+          "selection",
+          "references",
+          "comparison",
+          "incomplete",
+          "files",
+          "next",
+          "file"
+        ]
+      },
+      "WorkspaceReference": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "commit": { "type": "string" }
+        },
+        "required": ["name", "commit"]
+      },
+      "AgentWorkspaceComparison": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "range": { "$ref": "#/components/schemas/ComparisonRange" },
+          "before_operation": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/OperationId" },
+              { "type": "null" }
+            ]
+          },
+          "before_commit": { "type": ["string", "null"] },
+          "after_operation": { "$ref": "#/components/schemas/OperationId" },
+          "after_commit": { "type": "string" },
+          "current_files": { "type": "boolean" },
+          "request_id": { "type": ["string", "null"] },
+          "unavailable": { "type": ["string", "null"] }
+        },
+        "required": [
+          "range",
+          "before_operation",
+          "before_commit",
+          "after_operation",
+          "after_commit",
+          "current_files",
+          "request_id",
+          "unavailable"
+        ]
+      },
+      "ComparisonRange": {
+        "type": "string",
+        "enum": ["since_last_commit", "last_turn", "branch"]
+      },
+      "AgentWorkspaceFileEntry": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": { "type": "string" },
+          "kind": { "type": "string" },
+          "bytes": { "type": "integer", "format": "uint64", "minimum": 0 },
+          "fingerprint": { "type": "string" },
+          "status": { "type": ["string", "null"] }
+        },
+        "required": ["path", "kind", "bytes", "fingerprint", "status"]
+      },
+      "AgentWorkspaceFileContent": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "path": { "type": "string" },
+          "fingerprint": { "type": "string" },
+          "contents": { "type": ["string", "null"] },
+          "before": { "type": ["string", "null"] },
+          "unavailable": { "type": ["string", "null"] }
+        },
+        "required": ["path", "fingerprint", "contents", "before", "unavailable"]
       },
       "ComputeStatus": {
         "type": "object",

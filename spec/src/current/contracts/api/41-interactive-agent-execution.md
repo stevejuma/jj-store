@@ -248,3 +248,20 @@ Compact conversation history loading and completed empty states
 and host-owned empty snippets consume the existing retained-event reads without
 changing paging, supersession, source identity, execution, publication or
 receipt contracts. Expanded Sent-context hover is also presentation-only.
+
+Session workspace inspection adds version-1 read-only POST
+`/v1/local/agents/workspace/inspect` under JST-API-001/006. A request names the
+execution session, independently authorized code repository, Files or Changes
+selection, optional relative path and continuation. It cannot supply a physical
+root, executable or arbitrary revision expression. The retained binding selects
+the owned physical workspace; typed operation-pinned native/local readers supply
+committed source facts. No inspection snapshots or publishes state.
+
+Pages contain at most 50 paths, exact selection fingerprints, continuation,
+comparison boundaries and content/unavailability facts. Current listings include
+tracked and nonignored untracked files within explicit traversal/content bounds.
+Continuations bind the complete observation; changed observations are stale.
+Metadata paths, symlink traversal and unqualified text are not readable. Deleted
+files have an absent after-side, distinct from unavailable content. Branch,
+Since last commit and Last turn retain the precise definitions in the
+conversation contract; missing or ambiguous boundaries never imply no changes.

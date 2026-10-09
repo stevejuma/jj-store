@@ -17,3 +17,4 @@ Browse the child pages below.
 - [E-CHAT-LIVE-013](E-CHAT-LIVE-013/index.md)
 - [E-CHAT-LIVE-014](E-CHAT-LIVE-014/index.md)
 - [E-CHAT-LIVE-015](E-CHAT-LIVE-015/index.md)
+- [E-CHAT-WORKSPACE-001](E-CHAT-WORKSPACE-001/index.md)

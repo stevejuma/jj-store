@@ -87,3 +87,12 @@ trigger one additional physical identity/generation check before the HTTP
 boundary admits the operation. This bounded recheck dispatches no command and
 replays no mutation. A changed identity/generation or continued invalidation
 still fails closed and publishes no stale admission entry.
+
+Session workspace inspection under JST-LOCAL-004/005 binds an authorized saved
+agent workspace and uses these same typed operation-pinned readers for immutable
+files, parents and references. Bounded physical scans add current tracked and
+nonignored untracked observations without snapshotting, publishing companion
+metadata, or changing operation heads. Comparison cursors bind exact observed
+selections; changed observations require refresh. Missing turn-start evidence,
+ambiguous parents and unestablished comparison bases remain unavailable. A read
+capability does not qualify portable file-review publication under M13.3.
