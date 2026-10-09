@@ -252,6 +252,26 @@
       ]
     },
     {
+      "local": "web/src/lib/ui/community-chat-composer/CommunityComposerSendActions.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-chat-composer/CommunityChatComposer.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-chat-composer/CommunityComposerSurface.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-chat-composer/CommunityChatComposer.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
       "local": "web/src/lib/ui/community-chat-composer/CommunityComposerAutocompleteLayer.svelte",
       "sources": [
         {

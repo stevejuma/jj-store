@@ -37,7 +37,7 @@
     rows: readonly AgentConversationRow[];
     conversation: ConversationSession;
     user?: CommunityMemberModel;
-    composer?: Snippet;
+    composer?: Snippet<["document" | "classic"]>;
     footer?: Snippet;
     beforeItems?: Snippet;
     onSend?: (

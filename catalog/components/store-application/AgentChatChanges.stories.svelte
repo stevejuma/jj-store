@@ -89,7 +89,7 @@
       "Chat updates are unavailable. Reconnecting…",
     );
     await expect(
-      warning.closest('[data-ui-component="ai-chat-composer"]'),
+      warning.closest('[data-ui-component="community-chat-composer"]'),
     ).not.toBeNull();
     const editor = c.getByRole("textbox", { name: "Markdown editor" });
     await userEvent.click(editor);

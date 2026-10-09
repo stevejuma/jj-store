@@ -1,4 +1,6 @@
 <script lang="ts">
+  import type { Snippet } from "svelte";
+  let inputActions = $state<Snippet>();
   import { createStandaloneSender } from "../../conversations/standalone-send.svelte.js";
 
   import StoreConversationRecovery from "../store-agent-chat/StoreConversationRecovery.svelte";
@@ -116,7 +118,7 @@
         key: `${session!.id}:${row.id}`,
       }))}
     >
-      {#snippet composer()}
+      {#snippet composer(presentation)}
         {#each changes as selection (`${selection.repository}:${selection.operation}:${selection.commit}`)}
           <StoreAgentChangesPanel
             {selection}
@@ -143,6 +145,11 @@
           }}
         >
           <CommunityChatComposer
+            {presentation}
+            dockActions
+            bind:documentActions={inputActions}
+            member={user}
+            hideAvatar={conversation.comments.pending.length > 0}
             mode="chat"
             enterInsertsNewline
             showSubmitButton={false}
@@ -219,6 +226,7 @@
           />{/if}
       {/snippet}
       {#snippet footer()}<ChatMessageFooter
+          actions={inputActions}
           canSend={idle &&
             (ready || canConfigure) &&
             !sender.preparing &&

@@ -369,4 +369,7 @@ UI settings composition and its direct defaults/Add agent consumers. No Rust, ro
 
 Continue the requested live Document input alignment and independent M24 qualification.
 <!-- /evidence-field -->
+<!-- generated-navigation -->
+## Pages
 
+- [E-CHAT-LIVE-010 details 2](details-02.md)

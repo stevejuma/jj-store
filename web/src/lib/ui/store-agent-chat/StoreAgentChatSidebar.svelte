@@ -1,4 +1,6 @@
 <script lang="ts">
+  import type { Snippet } from "svelte";
+  let inputActions = $state<Snippet>();
   import { submitManagedConversation } from "../../conversations/managed-send.js";
 
   import StoreConversationRecovery from "../store-agent-chat/StoreConversationRecovery.svelte";
@@ -165,7 +167,7 @@
             <StoreAgentChatRepositories {controller} />
           {/if}
         {/snippet}
-        {#snippet composer()}
+        {#snippet composer(presentation)}
           {#each chat.sessions as session (session.id)}<div
               class="agent-chat-participant"
             >
@@ -197,6 +199,11 @@
               events={chat.events[session.id] ?? []}
             />{/each}
           {#key chat.selected}<CommunityChatComposer
+              {presentation}
+              dockActions
+              bind:documentActions={inputActions}
+              member={author}
+              hideAvatar={conversation.comments.pending.length > 0}
               bind:value={conversation.comments.message}
               {members}
               audienceKey={JSON.stringify([actorKey, chat.audienceKey])}
@@ -227,6 +234,7 @@
         {/snippet}
         {#snippet footer()}
           <ChatMessageFooter
+            actions={inputActions}
             canSend={conversation.comments.canSend &&
               !chat.busy &&
               !chat.pending &&

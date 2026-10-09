@@ -53,7 +53,7 @@
   let root = $state<HTMLElement | null>(null);
   let previousLast = "";
   let composing = $state(false);
-  let renderedView = $state("document");
+  let renderedView = $state<"document" | "classic">("document");
   $effect(() => {
     if (!composing) renderedView = view;
   });
@@ -265,7 +265,7 @@
         </aside>{/if}
       {#if composer}<div class="chat-document-composer">
           <ChatCommentBatch state={comments} />
-          {@render composer()}
+          {@render composer(renderedView)}
         </div>{/if}
     </ScrollArea>
     <ChatNavigation {items} root={root ?? undefined} {comments} />

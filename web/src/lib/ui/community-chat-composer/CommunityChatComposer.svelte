@@ -9,10 +9,11 @@
   import CommunityComposerStatusActions from "./CommunityComposerStatusActions.svelte";
   import Mira from "@lapismd/mira";
   import type { MiraHandle, MiraMarkdownActionId } from "@lapismd/mira";
-  import { Composer, type ComposerStatus } from "@lapismd/design-core/ai/chat";
-  import { Button } from "@lapismd/design-core/shadcn/button";
-  import { ScrollArea } from "@lapismd/design-core/shadcn/scroll-area";
-  import ArrowUpIcon from "@lucide/svelte/icons/arrow-up";
+  import type { ComposerStatus } from "@lapismd/design-core/ai/chat";
+  import CommunityComposerSendActions from "./CommunityComposerSendActions.svelte";
+  import CommunityComposerSurface from "./CommunityComposerSurface.svelte";
+  import { createComposerSelection } from "./composer-selection.js";
+  import { useDocumentComposerActions } from "./composer-document-actions.svelte.js";
   import type { EditorView } from "@codemirror/view";
   import { onDestroy, untrack } from "svelte";
   import type { ComposerProps } from "./props.js";
@@ -39,6 +40,11 @@
   import CommunityComposerToolbar from "./CommunityComposerToolbar.svelte";
 
   let {
+    presentation = "classic",
+    member = { id: "user", name: "You", handle: "", initials: "YO" },
+    hideAvatar = false,
+    dockActions = false,
+    documentActions = $bindable(),
     value = $bindable(""),
     formattingOpen = $bindable(false),
     placeholder = "Write a message",
@@ -78,6 +84,7 @@
   let items = $state<CommunityComposerAutocompleteItem[]>([]);
   let selectedIndex = $state(0);
   let submitting = $state(false);
+  const selection = createComposerSelection((v) => (view = v));
   let error = $state("");
   const catalogReader = useCommunityComposerSlashCatalog();
   const catalog = $derived(
@@ -108,6 +115,12 @@
   const status = $derived<ComposerStatus | undefined>(
     issue ? { type: "error", message: issue } : composerStatus,
   );
+  useDocumentComposerActions({
+    active: () => dockActions && presentation === "document",
+    actions: () => actions,
+    get: () => documentActions,
+    set: (next) => (documentActions = next),
+  });
   let active = true;
   onDestroy(() => {
     active = false;
@@ -160,10 +173,7 @@
     onOpenMember: () => onOpenMember,
     onMessageMember: () => onMessageMember,
     onWaveMember: () => onWaveMember,
-    onView: (v) => {
-      view = v;
-    },
-    onSelection: () => {},
+    ...selection,
     onAutocompleteQuery: (q) => {
       void autocomplete.update(q);
     },
@@ -173,7 +183,10 @@
     onAutocompleteAccept: () => selectAutocomplete(selectedIndex),
     onAutocompleteDismiss: autocomplete.clear,
     submitOnEnter: () =>
-      !enterInsertsNewline && mode === "chat" && showSubmitButton,
+      presentation !== "document" &&
+      !enterInsertsNewline &&
+      mode === "chat" &&
+      showSubmitButton,
     onSubmit: () => void submit(),
     onEditLast: () => editLastComposerMessage(onEditLastMessage),
     onCancelEdit: () => onCancelContext?.(),
@@ -189,6 +202,20 @@
     });
   });
 </script>
+
+{#snippet actions()}
+  <CommunityComposerToolbar
+    bind:formattingOpen
+    disabled={blocked}
+    mentionMember={audience.mentionButtonMember}
+    onDismissMention={audience.dismissMember}
+    {communityEmojis}
+    onAction={applyAction}
+    onInsert={insert}
+    onEmoji={(emoji, custom) => insert(communityEmojiToken(emoji, custom))}
+  />
+  {#if additionalActions}{@render additionalActions()}{/if}
+{/snippet}
 
 <div
   bind:this={ref}
@@ -214,17 +241,18 @@
         : undefined}
       onSelect={selectAutocomplete}
     />{/if}
-  <Composer
-    class="community-chat-composer__surface"
+  <CommunityComposerSurface
+    {actions}
+    {dockActions}
+    {presentation}
+    {member}
+    {hideAvatar}
     {value}
-    density="spacious"
-    elevation="none"
     disabled={blocked}
-    interactiveDrawerWhenDisabled={Boolean(status || context)}
+    hasContext={!!context}
     {status}
-    statusPosition="top"
-    aria-label={ariaLabel}
-    title={disabled ? disabledReason : undefined}
+    {ariaLabel}
+    {disabledReason}
     onSubmit={() => void submit()}
   >
     {#snippet drawer()}
@@ -244,58 +272,29 @@
           onClearError={() => (error ? (error = "") : audience.clearError())}
         />{/if}
     {/snippet}
-    {#snippet input()}<div class="community-chat-composer__editor-wrap">
-        <ScrollArea
-          type="auto"
-          orientation="vertical"
-          class="community-chat-composer__editor-scroll-area"
-        >
-          <Mira
-            bind:this={mira}
-            bind:value
-            mode="live-preview"
-            extensions={[extension]}
-            readonly={blocked}
-            {placeholder}
-            toolbar={false}
-            blockControls={false}
-            outline={false}
-            htmlPolicy="safe"
-            class="community-chat-composer__mira"
-          />
-        </ScrollArea>
-      </div>{/snippet}
-    {#snippet footerActions()}
-      <CommunityComposerToolbar
-        bind:formattingOpen
-        disabled={blocked}
-        mentionMember={audience.mentionButtonMember}
-        onDismissMention={audience.dismissMember}
-        {communityEmojis}
-        onAction={applyAction}
-        onInsert={insert}
-        onEmoji={(emoji, custom) => insert(communityEmojiToken(emoji, custom))}
+    {#snippet input()}
+      <Mira
+        bind:this={mira}
+        bind:value
+        mode="live-preview"
+        extensions={[extension]}
+        readonly={blocked}
+        placeholder={presentation === "document" ? "" : placeholder}
+        toolbar={false}
+        blockControls={false}
+        outline={false}
+        htmlPolicy="safe"
+        class="community-chat-composer__mira"
       />
-      {#if additionalActions}{@render additionalActions()}{/if}
     {/snippet}
-    {#snippet sendButton()}{#if showSubmitButton}
-        {#if onCancel}<Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            disabled={busy}
-            onclick={onCancel}>Cancel</Button
-          >{/if}
-        <Button
-          type="button"
-          size="icon-sm"
-          class="community-chat-composer__send"
-          data-ui-part="send-button"
-          aria-label={submitLabel ??
-            (context?.kind === "edit" ? "Save message" : "Send message")}
-          disabled={blocked || !onSubmit || (!allowEmpty && !value.trim())}
-          onclick={submit}><ArrowUpIcon aria-hidden="true" /></Button
-        >
-      {/if}{/snippet}
-  </Composer>
+    {#snippet sendButton()}<CommunityComposerSendActions
+        show={showSubmitButton}
+        disabled={blocked || !onSubmit || (!allowEmpty && !value.trim())}
+        {busy}
+        {onCancel}
+        label={submitLabel}
+        editing={context?.kind === "edit"}
+        onSend={submit}
+      />{/snippet}
+  </CommunityComposerSurface>
 </div>

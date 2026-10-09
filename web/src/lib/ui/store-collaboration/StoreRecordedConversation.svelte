@@ -1,4 +1,6 @@
 <script lang="ts">
+  import type { Snippet } from "svelte";
+  let inputActions = $state<Snippet>();
   import { useLinkedConversation } from "../../conversations/linked-conversation.svelte.js";
   import { mergeConversationProjections } from "../../conversations/merge-projections.js";
   import StoreLinkedConversationActivity from "../store-agent-chat/StoreLinkedConversationActivity.svelte";
@@ -16,6 +18,7 @@
   } from "../../conversations/navigation.js";
   import { markdownBlocks } from "../store-agent-chat-body/markdown-blocks.js";
   import { untrack } from "svelte";
+  import StoreThreadPendingActions from "../store-threads/StoreThreadPendingActions.svelte";
   import { sha256 } from "@noble/hashes/sha2.js";
   import { bytesToHex } from "@noble/hashes/utils.js";
   import { Button } from "@lapismd/design-core/shadcn/button";
@@ -252,12 +255,17 @@
         {disabled}
         showControls={false}
       />{/if}{/snippet}
-  {#snippet composer()}
+  {#snippet composer(presentation)}
     {#if controller?.execution}<StoreConversationRecovery
         {conversation}
         manager={controller.execution}
       />{/if}
     <CommunityChatComposer
+      {presentation}
+      dockActions
+      bind:documentActions={inputActions}
+      member={user}
+      hideAvatar={conversation.comments.pending.length > 0}
       bind:value={conversation.comments.message}
       members={[
         user,
@@ -278,18 +286,10 @@
           throw new Error(conversation.comments.error);
       }}
     />
-    {#if threads.pending}<Button
-        variant="outline"
-        disabled={threads.busy}
-        onclick={() => threads.checkPending()}>Check action status</Button
-      ><Button
-        variant="ghost"
-        disabled={threads.busy}
-        onclick={() => threads.retryPending().catch(() => {})}
-        >Retry same action</Button
-      >{/if}
+    <StoreThreadPendingActions {threads} />
   {/snippet}
   {#snippet footer()}<ChatMessageFooter
+      actions={inputActions}
       canSend={!disabled && conversation.comments.canSend}
       onSend={() => void conversation.comments.send()}
       error={conversation.comments.error}

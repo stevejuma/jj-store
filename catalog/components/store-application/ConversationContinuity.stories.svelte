@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { EditorView } from "@codemirror/view";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import {
     expect,
@@ -15,6 +16,73 @@
     parameters: { layout: "fullscreen" },
   });
 </script>
+
+<Story
+  name="Document prompt is inline and preserves selection through composer view switches"
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    const input = () => c.getByRole("textbox", { name: "Markdown editor" });
+    const next = await c.findByRole("group", { name: "Next message draft" });
+    await expect(next).toContainElement(input());
+    await expect(
+      next.querySelector(".cm-content")!.getBoundingClientRect().height,
+    ).toBeGreaterThanOrEqual(256);
+    await expect(
+      c
+        .getByRole("toolbar", { name: "Message formatting and actions" })
+        .closest(".chat-body-footer"),
+    ).not.toBeNull();
+    await expect(
+      canvasElement.querySelector('[data-ui-component="ai-chat-composer"]'),
+    ).toBeNull();
+    await expect(
+      next.querySelector('[data-ui-component="scroll-area"]'),
+    ).toBeNull();
+    await userEvent.click(input());
+    await userEvent.type(input(), "first{Enter}second 🦀{Enter}last");
+    const editor = EditorView.findFromDOM(input())!;
+    await expect(editor.state.doc.toString()).toBe("first\nsecond 🦀\nlast");
+    await expect(c.getByRole("button", { name: "Send message" })).toBeEnabled();
+    await userEvent.keyboard("{Home}{Shift>}{ArrowRight}{ArrowRight}{/Shift}");
+    const selected = {
+      anchor: editor.state.selection.main.anchor,
+      head: editor.state.selection.main.head,
+    };
+    await fireEvent.compositionStart(input(), { data: "" });
+    await userEvent.click(c.getByRole("button", { name: "Switch renderer" }));
+    await expect(next).toBeInTheDocument();
+    await fireEvent.compositionEnd(input(), { data: "" });
+    await waitFor(() =>
+      expect(c.queryByRole("group", { name: "Next message draft" })).toBeNull(),
+    );
+    await expect(
+      canvasElement.querySelector('[data-ui-component="ai-chat-composer"]'),
+    ).not.toBeNull();
+    await expect(
+      EditorView.findFromDOM(input())!.state.selection.main.anchor,
+    ).toBe(selected.anchor);
+    await expect(
+      EditorView.findFromDOM(input())!.state.selection.main.head,
+    ).toBe(selected.head);
+    await userEvent.click(c.getByRole("button", { name: "Switch renderer" }));
+    await c.findByRole("group", { name: "Next message draft" });
+    await expect(EditorView.findFromDOM(input())!.state.doc.toString()).toBe(
+      "first\nsecond 🦀\nlast",
+    );
+    await expect(
+      EditorView.findFromDOM(input())!.state.selection.main.anchor,
+    ).toBe(selected.anchor);
+    await expect(
+      EditorView.findFromDOM(input())!.state.selection.main.head,
+    ).toBe(selected.head);
+    await userEvent.click(c.getByRole("button", { name: "Remount body" }));
+    await c.findByRole("group", { name: "Next message draft" });
+    await expect(input()).toHaveTextContent("second 🦀");
+    await userEvent.click(input());
+    await userEvent.keyboard("{Control>}{Enter}{/Control}");
+    await waitFor(() => expect(input().textContent).toBe(""));
+  }}
+/>
 
 <Story
   name="Streaming updates preserve readers and exact completion"

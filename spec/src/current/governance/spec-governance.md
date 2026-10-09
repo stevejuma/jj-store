@@ -107,3 +107,9 @@ Delta comments whose export omits resolved offsets. The allowlisted Hello World
 fixture retains delivery/reply boundaries and validates source quotes without
 interpreting CRDT fragments or introducing a Delta runtime dependency. Simulated
 sends and replies remain catalog-owned; UI state does not publish agent events.
+
+E-CHAT-LIVE-011 extracts the owned composer surface for Document and Classic
+presentation while sharing the existing audience, editor and send behavior. The
+Community source attribution is retained for the extracted surface; its Document
+layout composes owned chat-body presentation and public Mira/Design Core
+components. No runtime or source dependency on Community is introduced.

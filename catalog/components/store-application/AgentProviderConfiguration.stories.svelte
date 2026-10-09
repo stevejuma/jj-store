@@ -38,12 +38,9 @@
     await userEvent.keyboard("{Enter}");
     await expect(advanced).toHaveAttribute("aria-expanded", "false");
     await expect(advanced).toHaveFocus();
-    await expect(
-      parseFloat(getComputedStyle(advanced).borderTopLeftRadius),
-    ).toBeGreaterThan(0);
-    await expect(
-      parseFloat(getComputedStyle(advanced).borderBottomLeftRadius),
-    ).toBeGreaterThan(0);
+    await userEvent.hover(advanced);
+    await expect(getComputedStyle(advanced).borderTopLeftRadius).toBe("0px");
+    await expect(getComputedStyle(advanced).borderBottomLeftRadius).toBe("0px");
     await expect(getComputedStyle(advanced).outlineStyle).toBe("solid");
     await waitFor(() =>
       expect(parseFloat(getComputedStyle(advanced).outlineOffset)).toBeLessThan(

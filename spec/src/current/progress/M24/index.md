@@ -291,8 +291,16 @@ E-CHAT-LIVE-010 repairs the nested Agent defaults tables: configuration fields,
 discovery, Advanced and Save share one full-width table and straight dividers.
 Focused geometry, provider, draft-retention and accessibility stories pass; live
 settings inspection makes no saved changes. M24 stays In progress with
-independent qualification and visual gates unchanged.
+independent qualification and visual gates unchanged. E-CHAT-LIVE-011 connects
+the live Document input to the prototype's inline layout with roomy editable
+space and fixed formatting/runtime/Send controls. Classic retains its framed
+composer and both share drafts, audience and Send. Composition and selection
+survive renderer changes; Advanced hover areas are square. Focused interaction,
+accessibility and state coverage passes. Broader legacy story failures reproduce
+on the unchanged parent; the existing dev UI acceptance-script size gap remains
+separate. M24 stays In progress and visual baselines remain unapproved.
 <!-- generated-navigation -->
+
 ## Pages
 
 - [history](history/index.md)

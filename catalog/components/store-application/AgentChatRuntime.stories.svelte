@@ -66,7 +66,7 @@
     const error = await c.findByRole("alert");
     await expect(error).toHaveTextContent("agent_rejected");
     await expect(
-      error.closest('[data-ui-component="ai-chat-composer"]'),
+      error.closest('[data-ui-component="community-chat-composer"]'),
     ).not.toBeNull();
     await expect(draft).toHaveTextContent("Keep this after failure");
     await expect(draft).toBeEnabled();
@@ -85,7 +85,7 @@
     const error = await c.findByRole("alert");
     await expect(error).toHaveTextContent("agent_rejected");
     await expect(
-      error.closest('[data-ui-component="ai-chat-composer"]'),
+      error.closest('[data-ui-component="community-chat-composer"]'),
     ).not.toBeNull();
     await expect(
       c.queryByText(/process outcome unknown/),

@@ -220,3 +220,8 @@ unchanged: full-width fields and joined Advanced/action rows alter presentation
 only. Model discovery, configuration drafts, explicit saves, request identities
 and provider capabilities use the existing contracts without a schema or
 dispatch change.
+
+Inline Document input (E-CHAT-LIVE-011) retains JST-API-001 unchanged: it uses
+the same app-owned message/comment draft and existing Send/receipt paths as
+Classic. Input layout, editor selection and composition deferral introduce no
+request, dispatch, authorization or persisted-format changes.

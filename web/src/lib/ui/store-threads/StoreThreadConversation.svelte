@@ -1,4 +1,6 @@
 <script lang="ts">
+  import type { Snippet } from "svelte";
+  let inputActions = $state<Snippet>();
   import StoreConversationMessageActions from "./StoreConversationMessageActions.svelte";
   import { submitThreadConversation } from "../../conversations/thread-send.js";
 
@@ -252,12 +254,17 @@
           showControls={false}
         />{/if}
     {/snippet}
-    {#snippet composer()}
+    {#snippet composer(presentation)}
       {#if controller?.execution}<StoreConversationRecovery
           {conversation}
           manager={controller.execution}
         />{/if}
       <CommunityChatComposer
+        {presentation}
+        dockActions
+        bind:documentActions={inputActions}
+        member={user}
+        hideAvatar={conversation.comments.pending.length > 0}
         bind:value={conversation.comments.message}
         {members}
         communityEmojis={threads.emojis}
@@ -280,6 +287,7 @@
       />
     {/snippet}
     {#snippet footer()}<ChatMessageFooter
+        actions={inputActions}
         canSend={!disabled && conversation.comments.canSend}
         onSend={() => void conversation.comments.send()}
         error={conversation.comments.error}

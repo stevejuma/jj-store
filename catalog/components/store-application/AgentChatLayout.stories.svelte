@@ -27,6 +27,13 @@
       '[data-ui-part="scroll-area-viewport"]',
     )!;
     const dock = layout.querySelector<HTMLElement>(".chat-body-footer")!;
+    const messageInput = c.getByRole("textbox", { name: "Markdown editor" });
+    await expect(
+      messageInput.closest("[data-chat-next-message]"),
+    ).not.toBeNull();
+    await expect(
+      layout.querySelector('[data-ui-component="ai-chat-composer"]'),
+    ).toBeNull();
     const assertUncovered = () => {
       expect(viewport.getBoundingClientRect().bottom).toBeLessThanOrEqual(
         dock.getBoundingClientRect().top + 1,
@@ -58,7 +65,7 @@
         viewport.scrollHeight - viewport.clientHeight - viewport.scrollTop,
       ).toBeLessThan(40),
     );
-    assertUncovered();
+    await waitFor(assertUncovered);
     await expect(draft).toHaveTextContent("that stays below the chat");
     await expect(
       c.queryByLabelText("Session commands"),

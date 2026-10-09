@@ -34,7 +34,9 @@ Agent defaults uses one outer table containing full-width configuration fields,
 the discovery action row, Advanced and the joined save row. Configuration tables
 must not be nested as individual label/control rows. Advanced shares that
 table's straight dividers without another rounded border; its expanded fields
-remain full width and its drafts survive collapse.
+remain full width and its drafts survive collapse. Advanced triggers have square
+hover areas; the owning group retains its outer rounded boundary where
+applicable.
 
 Harness configuration sections are collapsed on page load, retaining drafts
 across disclosure changes. Settings → Compute exposes hardware/model management,

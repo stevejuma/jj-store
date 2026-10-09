@@ -10,6 +10,11 @@ import type {
   CommunityComposerSubmission,
 } from "./model.js";
 export interface ComposerProps {
+  presentation?: "document" | "classic";
+  member?: CommunityMemberModel;
+  hideAvatar?: boolean;
+  dockActions?: boolean;
+  documentActions?: Snippet;
   value?: string;
   formattingOpen?: boolean;
   placeholder?: string;

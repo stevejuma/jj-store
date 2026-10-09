@@ -148,7 +148,7 @@ export interface ChatBodyProps extends ChatCommentHost {
     emoji: string,
     custom?: CommunityCustomEmoji,
   ) => void;
-  composer?: Snippet;
+  composer?: Snippet<["document" | "classic"]>;
   footer?: Snippet;
   label?: string;
   customBlock?: Snippet<[ChatBodyBlock]>;

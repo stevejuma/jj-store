@@ -58,6 +58,17 @@ saved-change panels remain available in both renderers. Captured agent identity
 is separate from current runtime presence. Switching a provider never silently
 changes an existing process's launch configuration.
 
+Document renders the next prompt as the document's inline, frameless input with
+the author's small avatar and primary caret. Its editable typing region retains
+the prototype's roomy minimum height and grows with the text. There is no extra
+composer wrapper or independently scrolling input box; the transcript ScrollArea
+owns that space. Classic retains the framed composer. Both presentations share
+mention, emoji, formatting, audience and submission logic; switching preserves
+draft text and selection, and waits for active input composition to finish. The
+fixed footer retains Send and advertised runtime controls. Queued comments stay
+above the same next-message input, and contextual status/recovery remains
+reachable.
+
 ## Linked answers
 
 Submitted comments remain grouped in the user turn; agent answers appear in the

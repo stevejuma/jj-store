@@ -1,4 +1,6 @@
 <script lang="ts">
+  import type { Snippet } from "svelte";
+  let inputActions = $state<Snippet>();
   import { untrack } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { ConversationSession } from "../../web/src/lib/conversations/session.svelte.js";
@@ -98,7 +100,12 @@
       commentState={conversation.comments}
       {view}
     >
-      {#snippet composer()}<CommunityChatComposer
+      {#snippet composer(presentation)}<CommunityChatComposer
+          {presentation}
+          dockActions
+          bind:documentActions={inputActions}
+          member={user}
+          hideAvatar={conversation.comments.pending.length > 0}
           bind:value={conversation.comments.message}
           placeholder=""
           enterInsertsNewline
@@ -108,6 +115,7 @@
           onSubmit={() => conversation.comments.send().then(() => {})}
         />{/snippet}
       {#snippet footer()}<ChatMessageFooter
+          actions={inputActions}
           canSend={conversation.comments.canSend}
           onSend={() => void conversation.comments.send()}
         />{/snippet}

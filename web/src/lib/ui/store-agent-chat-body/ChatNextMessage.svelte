@@ -1,4 +1,5 @@
 <script lang="ts">
+  import type { Snippet } from "svelte";
   import { MiraCodeEditor, type MiraCodeEditorHandle } from "@lapismd/mira";
   import { keymap } from "@codemirror/view";
   import { Prec } from "@codemirror/state";
@@ -11,25 +12,28 @@
     onSubmit,
     disabled = false,
     hideAvatar = false,
+    input,
   }: {
     value?: string;
     member: CommunityMemberModel;
     onSubmit: () => void;
     disabled?: boolean;
     hideAvatar?: boolean;
+    input?: Snippet;
   } = $props();
-  let editor: MiraCodeEditorHandle;
+  let editor = $state<MiraCodeEditorHandle>();
   const extensions = [
     chatCaret,
     Prec.highest(
       keymap.of([
-        {
-          key: "Mod-Enter",
-          run: () => {
+        ...["Ctrl-Enter", "Mod-Enter"].map((key) => ({
+          key,
+          run: (view: import("@codemirror/view").EditorView) => {
+            if (view.composing || disabled) return false;
             onSubmit();
             return true;
           },
-        },
+        })),
       ]),
     ),
   ];
@@ -53,19 +57,19 @@
       />{/if}
   </div>
   <div class="chat-next-editor">
-    <MiraCodeEditor
-      bind:this={editor}
-      bind:value
-      readonly={disabled}
-      {extensions}
-      ariaLabel="Next message"
-      variant="document"
-      surface="frameless"
-      height="content"
-      minHeight="max(16rem, 45vh)"
-      lineNumbers={false}
-      spellcheck
-    />
+    {#if input}{@render input()}{:else}<MiraCodeEditor
+        bind:this={editor}
+        bind:value
+        readonly={disabled}
+        {extensions}
+        ariaLabel="Next message"
+        variant="document"
+        surface="frameless"
+        height="content"
+        minHeight="max(16rem, 45vh)"
+        lineNumbers={false}
+        spellcheck
+      />{/if}
   </div>
 </div>
 

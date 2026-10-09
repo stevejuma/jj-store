@@ -7,16 +7,21 @@
     onSend,
     error = "",
     controls,
+    actions,
   }: {
     canSend: boolean;
     onSend: () => void;
     error?: string;
     controls?: Snippet;
+    actions?: Snippet;
   } = $props();
 </script>
 
 <div class="chat-message-footer" role="group" aria-label="Message actions">
   {#if error}<p role="alert">{error}</p>{/if}
+  {#if actions}<div class="chat-message-footer__actions">
+      {@render actions()}
+    </div>{/if}
   {@render controls?.()}
   <Button
     size="icon-sm"
@@ -36,5 +41,9 @@
     gap: 0.75rem;
     padding: 0.5rem 0.75rem;
     container: chat-footer / inline-size;
+  }
+  .chat-message-footer__actions {
+    flex: 1;
+    min-width: 0;
   }
 </style>

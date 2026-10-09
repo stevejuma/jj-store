@@ -36,7 +36,7 @@
     min-width: 0;
   }
   :global(.store-settings-disclosure__trigger) {
-    --ui-button-radius: calc(var(--radius) + 0.25rem - 1px);
+    --ui-button-radius: 0px;
     width: 100%;
     height: auto;
     justify-content: space-between;
