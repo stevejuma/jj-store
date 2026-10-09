@@ -133,6 +133,10 @@ export interface ChatCommentHost {
 }
 export interface ChatBodyProps extends ChatCommentHost {
   view?: "document" | "classic";
+  /** Reading history; retain existing items and suppress the empty state. */
+  loading?: boolean;
+  /** Host-specific completed empty state, replacing the default Empty. */
+  emptyState?: Snippet;
   beforeItems?: Snippet;
   afterItems?: Snippet;
   supplement?: Snippet<[ChatBodyItem]>;

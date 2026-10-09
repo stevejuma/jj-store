@@ -151,6 +151,11 @@
   :global(.sent-context-trigger[aria-expanded="true"] > svg) {
     rotate: 90deg;
   }
+  @media (hover: hover) {
+    :global(.sent-context-trigger:hover) {
+      background: color-mix(in oklab, var(--secondary) 90%, var(--foreground));
+    }
+  }
   .sent-context-toggle {
     opacity: 0;
   }

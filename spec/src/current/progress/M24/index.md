@@ -319,9 +319,15 @@ extends the themed surface over the full row, insets compact controls and places
 the disclosure chevron last. Initial loading matches the repository tree and
 compact chat rows. Focused interaction/accessibility, type, ownership and live
 navigation/hover checks pass. M24 stays In progress and independent
-qualification and visual approval gates remain unchanged.
+qualification and visual approval gates remain unchanged. E-CHAT-LIVE-015
+replaces the history skeleton with a compact centered loading button and
+spinner, suppresses premature emptiness, and uses icon-bearing shadcn Empty
+after completed reads. Both views retain existing editors and drafts; agent
+draft hosts retain their own empty state. Expanded unknown-delivery context
+controls keep themed hover feedback. Focused interaction/accessibility, type,
+ownership and live delayed-history checks pass. M24 remains In progress,
+independent qualification gaps remain open and visual baselines stay unapproved.
 <!-- generated-navigation -->
-
 ## Pages
 
 - [history](history/index.md)

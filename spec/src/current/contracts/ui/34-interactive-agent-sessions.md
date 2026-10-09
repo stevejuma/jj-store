@@ -120,8 +120,10 @@ its own Send/Queue action and Stop turn; only an accepted outcome clears an
 execution draft. Below the composer, only the compact Community activity strip
 and exact pending-request recovery actions appear; no ordinary settings or
 explanatory text is shown. Empty conversation bodies use shadcn Empty with an
-icon. Loading the selected session or its retained history shows the owned
-message skeleton and keeps the header, list and drafts intact; superseded
+icon. Loading the selected session or its retained history shows a compact
+centered, disabled “Loading previous messages” button with a spinner, rather
+than a full message skeleton. Retained messages, header, list and drafts stay
+intact. The empty state appears only after history loading finishes; superseded
 history completion cannot clear a newer loading state.
 
 Agents gallery skeletons use the same fixed dimensions, grid gap, padding and

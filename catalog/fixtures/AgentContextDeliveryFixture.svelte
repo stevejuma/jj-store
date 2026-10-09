@@ -1,9 +1,13 @@
 <script lang="ts">
+  import { untrack } from "svelte";
   import StoreAgentPromptContent from "../../web/src/lib/ui/store-agent-execution/StoreAgentPromptContent.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  let { empty = false, wide = false }: { empty?: boolean; wide?: boolean } =
-    $props();
-  let delivery = $state("queued");
+  let {
+    empty = false,
+    wide = false,
+    initialDelivery = "queued",
+  }: { empty?: boolean; wide?: boolean; initialDelivery?: string } = $props();
+  let delivery = $state(untrack(() => initialDelivery));
   const wire = $derived(
     empty
       ? ""

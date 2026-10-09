@@ -33,11 +33,15 @@
     scenario = "reference",
     narrow = false,
     showComposer,
+    historyLoading = false,
+    initialView = "document",
   }: {
     scenario?:
       "reference" | "playground" | "failure" | "empty" | "large" | "comments";
     narrow?: boolean;
     showComposer?: boolean;
+    historyLoading?: boolean;
+    initialView?: "document" | "classic";
   } = $props();
   const referenceDemo = referenceDiscussions(deltaChatItems(reference));
   const commentItems = deltaChatItems(helloWorld);
@@ -52,6 +56,7 @@
       draftEditor?.focus();
     }
   }
+  let loading = $state(untrack(() => historyLoading));
   let appended = $state(false);
   let changed = $state(false);
   let mounted = $state(true);
@@ -197,6 +202,9 @@
     <AppShell.Main>
       <AppShell.Toolbar style="border-block-end: 1px solid var(--border)">
         <div class="chat-body-fixture-header">
+          {#if loading}<Button variant="ghost" onclick={() => (loading = false)}
+              >Finish loading history</Button
+            >{/if}
           <div>
             <h1>
               {scenario === "comments"
@@ -249,6 +257,8 @@
           <div class="chat-body-fixture-body">
             {#if mounted}<StoreAgentChatBody
                 {items}
+                {loading}
+                view={initialView}
                 reactions={reactions.values}
                 onReact={reactions.toggle}
                 composer={composing ? nextDraft : undefined}

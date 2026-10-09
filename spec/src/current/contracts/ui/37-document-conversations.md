@@ -69,6 +69,12 @@ fixed footer retains Send and advertised runtime controls. Queued comments stay
 above the same next-message input, and contextual status/recovery remains
 reachable.
 
+The shared body accepts explicit history loading state in both renderers. A
+compact centered “Loading previous messages” status button and spinner appear
+above any retained messages, without replacing them. An icon-bearing shadcn
+Empty appears only after loading finishes with no messages; hosts can supply
+their own empty presentation without duplicating the default.
+
 ## Linked answers
 
 Submitted comments remain grouped in the user turn; agent answers appear in the

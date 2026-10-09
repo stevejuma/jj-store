@@ -30,6 +30,8 @@
     composer,
     footer,
     beforeItems,
+    loading = false,
+    emptyState,
     onSend,
   }: {
     controller?: StoreController;
@@ -40,6 +42,8 @@
     composer?: Snippet<["document" | "classic"]>;
     footer?: Snippet;
     beforeItems?: Snippet;
+    loading?: boolean;
+    emptyState?: Snippet;
     onSend?: (
       submission: ChatPromptSubmission,
     ) => ReturnType<
@@ -162,6 +166,8 @@
   {composer}
   {footer}
   {beforeItems}
+  {loading}
+  {emptyState}
   {reactions}
   onReact={conversation.host.onReact}
   onInspectTool={conversation.host.onInspectTool}

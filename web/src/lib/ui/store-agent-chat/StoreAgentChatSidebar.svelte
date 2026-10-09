@@ -146,26 +146,25 @@
         user={author}
         onSend={send}
       >
-        {#snippet beforeItems()}
-          {#if !rows.length}
-            <Empty.Root class="agent-draft-empty">
-              <Empty.Header>
-                <Empty.Media variant="icon"
-                  ><MessageIcon aria-hidden="true" /></Empty.Media
-                >
-                <Empty.Title>Start a chat with an agent</Empty.Title>
-                <Empty.Description
-                  >Use @ to choose an agent and send a message. Choose a
-                  repository when you want to work on code.</Empty.Description
-                >
-              </Empty.Header>
-              <Empty.Content
-                ><StoreAgentChatRepositories {controller} /></Empty.Content
+        {#snippet emptyState()}
+          <Empty.Root class="agent-draft-empty">
+            <Empty.Header>
+              <Empty.Media variant="icon"
+                ><MessageIcon aria-hidden="true" /></Empty.Media
               >
-            </Empty.Root>
-          {:else}
-            <StoreAgentChatRepositories {controller} />
-          {/if}
+              <Empty.Title>Start a chat with an agent</Empty.Title>
+              <Empty.Description
+                >Use @ to choose an agent and send a message. Choose a
+                repository when you want to work on code.</Empty.Description
+              >
+            </Empty.Header>
+            <Empty.Content
+              ><StoreAgentChatRepositories {controller} /></Empty.Content
+            >
+          </Empty.Root>
+        {/snippet}
+        {#snippet beforeItems()}
+          {#if rows.length}<StoreAgentChatRepositories {controller} />{/if}
         {/snippet}
         {#snippet composer(presentation)}
           {#each chat.sessions as session (session.id)}<div

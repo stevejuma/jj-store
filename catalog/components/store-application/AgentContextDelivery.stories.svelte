@@ -25,6 +25,14 @@
       expect(getComputedStyle(summary).backgroundColor).not.toBe(resting),
     );
     await browser.getByRole("heading", { name: "Context delivery" }).hover();
+    await userEvent.click(summary);
+    await browser.getByRole("heading", { name: "Context delivery" }).hover();
+    const expanded = getComputedStyle(summary).backgroundColor;
+    await browser.getByRole("button", { name: "Queued context" }).hover();
+    await waitFor(() =>
+      expect(getComputedStyle(summary).backgroundColor).not.toBe(expanded),
+    );
+    await browser.getByRole("heading", { name: "Context delivery" }).hover();
   }}
 />
 
@@ -147,5 +155,26 @@
       canvasElement.querySelector('[data-ui-component="agent-sent-context"]'),
     ).toBeNull();
     await expect(c.getByText("Please update the parser.")).toBeVisible();
+  }}
+/>
+
+<Story
+  name="Unknown delivery keeps expanded hover feedback"
+  args={{ initialDelivery: "unknown" }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    const button = c.getByRole("button", { name: "Context delivery unknown" });
+    button.focus();
+    await userEvent.keyboard("{Enter}");
+    expect(button).toHaveAttribute("aria-expanded", "true");
+    await browser.getByRole("heading", { name: "Context delivery" }).hover();
+    const resting = getComputedStyle(button).backgroundColor;
+    await browser
+      .getByRole("button", { name: "Context delivery unknown" })
+      .hover();
+    await waitFor(() =>
+      expect(getComputedStyle(button).backgroundColor).not.toBe(resting),
+    );
+    await browser.getByRole("heading", { name: "Context delivery" }).hover();
   }}
 />

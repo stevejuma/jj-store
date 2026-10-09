@@ -35,6 +35,40 @@
     groupedCommentEntries,
     commentRail,
   } from "../../fixtures/delta-chat/comment-followup-play.js";
+  async function retainedHistory({
+    canvasElement,
+  }: {
+    canvasElement: HTMLElement;
+  }) {
+    const c = within(canvasElement);
+    const loading = c.getByRole("status", {
+      name: "Loading previous messages",
+    });
+    expect(
+      within(loading).getByRole("button", {
+        name: "Loading previous messages",
+      }),
+    ).toBeDisabled();
+    expect(c.queryByText("No captured messages.")).toBeNull();
+    const reader = canvasElement.querySelector(
+      '[data-chat-item="prose"] .cm-editor',
+    );
+    expect(reader).not.toBeNull();
+    const input = c.getByRole("textbox", { name: "Next message" });
+    await userEvent.click(input);
+    await userEvent.keyboard("Keep this draft");
+    await userEvent.click(
+      c.getByRole("button", { name: "Finish loading history" }),
+    );
+    expect(
+      c.queryByRole("status", { name: "Loading previous messages" }),
+    ).toBeNull();
+    expect(
+      canvasElement.querySelector('[data-chat-item="prose"] .cm-editor'),
+    ).toBe(reader);
+    expect(c.getByRole("textbox", { name: "Next message" })).toBe(input);
+    expect(input).toHaveTextContent("Keep this draft");
+  }
   const { Story } = defineMeta({
     title: "JJ Store/Commentable agent chat body",
     component: StoreAgentChatBody,
@@ -245,8 +279,42 @@
   asChild
   name="Empty captured history"
   play={async ({ canvasElement }) => {
+    const empty = canvasElement.querySelector(
+      '[data-ui-component="empty"][data-slot="empty"]',
+    );
+    expect(empty).not.toBeNull();
+    expect(
+      empty?.querySelector('[data-ui-part="empty-media"] svg'),
+    ).not.toBeNull();
     await expect(
       within(canvasElement).getByText("No captured messages."),
     ).toBeVisible();
+    expect(
+      within(canvasElement).queryByRole("status", {
+        name: "Loading previous messages",
+      }),
+    ).toBeNull();
   }}>{#snippet children()}<Fixture scenario="empty" />{/snippet}</Story
 >
+
+<Story
+  asChild
+  name="Loading history retains document messages and drafts"
+  play={retainedHistory}
+>
+  {#snippet children()}<Fixture
+      scenario="playground"
+      historyLoading
+    />{/snippet}
+</Story>
+<Story
+  asChild
+  name="Loading history retains classic messages and drafts"
+  play={retainedHistory}
+>
+  {#snippet children()}<Fixture
+      scenario="playground"
+      historyLoading
+      initialView="classic"
+    />{/snippet}
+</Story>

@@ -242,3 +242,9 @@ Repository header navigation (E-CHAT-LIVE-014) retains JST-API-001 unchanged:
 one group action opens the existing normal repository file route by exact ID. It
 does not select an arbitrary session workspace/operation, alter captured session
 bindings or dispatch an execution command.
+
+Compact conversation history loading and completed empty states
+(E-CHAT-LIVE-015) retain JST-API-001 unchanged: explicit presentation loading
+and host-owned empty snippets consume the existing retained-event reads without
+changing paging, supersession, source identity, execution, publication or
+receipt contracts. Expanded Sent-context hover is also presentation-only.

@@ -293,14 +293,36 @@
 />
 
 <Story
-  name="Inbox body skeleton waits for retained history"
+  name="Inbox body waits for retained history"
   args={{ holdHistory: true }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
     await userEvent.click(
       c.getByRole("button", { name: "Open fixture conversation" }),
     );
-    await c.findByRole("status", { name: "Loading session history" });
+    const loading = await c.findByRole("status", {
+      name: "Loading previous messages",
+    });
+    const button = within(loading).getByRole("button", {
+      name: "Loading previous messages",
+    });
+    expect(button).toBeDisabled();
+    expect(
+      button.querySelector('[data-ui-component="spinner"]'),
+    ).not.toBeNull();
+    expect(
+      canvasElement.querySelector(
+        '.community-skeleton[data-layout="messages"]',
+      ),
+    ).toBeNull();
+    expect(c.queryByText("No captured messages.")).not.toBeInTheDocument();
+    const region = c.getByRole("region", { name: "Agent chat body" });
+    const rect = button.getBoundingClientRect(),
+      bounds = region.getBoundingClientRect();
+    expect(rect.height).toBeLessThanOrEqual(32);
+    expect(
+      Math.abs(rect.left + rect.width / 2 - bounds.left - bounds.width / 2),
+    ).toBeLessThanOrEqual(8);
     await expect(
       c.queryByText("Start the conversation"),
     ).not.toBeInTheDocument();
@@ -312,7 +334,7 @@
     );
     await c.findByText("Ready to help.");
     await expect(
-      c.queryByRole("status", { name: "Loading session history" }),
+      c.queryByRole("status", { name: "Loading previous messages" }),
     ).not.toBeInTheDocument();
   }}
 />

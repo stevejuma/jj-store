@@ -82,10 +82,12 @@ preserves unsaved field drafts.
 
 Outgoing messages expose a collapsed Sent context control: a compact secondary
 button with a subtle themed background at rest, neutral hover feedback and a
-trailing Lucide chevron. Rendered context fills the panel and starts at its
-small inset; increasing the panel width must not center the document or enlarge
-its side margins. An adjacent icon-only toggle switches the same panel between
-rendered captured repository/project/file/revision/review/discussion content and
+trailing Lucide chevron. Its neutral hover feedback remains visible while
+expanded, including unknown delivery. Rendered context fills the panel and
+starts at its small inset; increasing the panel width must not center the
+document or enlarge its side margins. An adjacent icon-only toggle switches the
+same panel between rendered captured
+repository/project/file/revision/review/discussion content and
 syntax-highlighted JSON. There is no second raw-payload disclosure. The toggle
 is exposed on hover, keyboard focus or touch, and stays visible while raw mode
 is active. Both modes retain exact captured values, keyboard access and inner

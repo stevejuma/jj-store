@@ -5,9 +5,7 @@
 
   import StoreConversationRecovery from "../store-agent-chat/StoreConversationRecovery.svelte";
   import { untrack } from "svelte";
-  import * as Empty from "@lapismd/design-core/shadcn/empty";
 
-  import CommunitySkeleton from "../community-skeleton/CommunitySkeleton.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import StoreConversationRuntime from "../store-agent-chat/StoreConversationRuntime.svelte";
   import StoreLiveConversation from "../store-agent-chat/StoreLiveConversation.svelte";
@@ -110,6 +108,7 @@
       {controller}
       {manager}
       {conversation}
+      loading={manager.eventsLoading}
       {user}
       onSend={send}
       rows={rows.map((row) => ({
@@ -216,14 +215,6 @@
         </form>
         <StoreAgentRequestRecovery {manager} {session} />
         <StoreConversationRecovery {conversation} {manager} standalone />
-      {/snippet}
-      {#snippet beforeItems()}
-        {#if manager.eventsLoading}<CommunitySkeleton
-            layout="messages"
-            count={5}
-            padded
-            label="Loading session history"
-          />{/if}
       {/snippet}
       {#snippet footer()}<ChatMessageFooter
           actions={inputActions}
