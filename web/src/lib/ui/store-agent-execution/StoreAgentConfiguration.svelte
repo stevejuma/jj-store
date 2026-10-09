@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { untrack, onDestroy } from "svelte";
+  import { untrack, onDestroy, type Snippet } from "svelte";
   import * as Field from "@lapismd/design-core/shadcn/field";
   import { Input } from "@lapismd/design-core/shadcn/input";
   import { Button } from "@lapismd/design-core/shadcn/button";
@@ -25,6 +25,7 @@
     pending = false,
     active = true,
     scope,
+    children,
   }: {
     manager: AgentExecution;
     draft: AgentConfiguration;
@@ -32,6 +33,7 @@
     pending?: boolean;
     active?: boolean;
     scope: string;
+    children?: Snippet;
   } = $props();
   const id = $props.id();
   const runner = $derived(
@@ -280,4 +282,5 @@
       >
     </div>
   </div>
+  {@render children?.()}
 </div>

@@ -70,15 +70,14 @@
         </p>
       </div>
     </header>
-    <div class="store-settings__rows">
-      <StoreAgentConfiguration
-        {manager}
-        bind:draft
-        {secrets}
-        pending={busy}
-        scope="agent-defaults"
-      />
-      <Field.Group class="community-settings__option-group">
+    <StoreAgentConfiguration
+      {manager}
+      bind:draft
+      {secrets}
+      pending={busy}
+      scope="agent-defaults"
+    >
+      <Field.Group class="store-settings__editable-rows">
         <StoreSettingsDisclosure>
           <h3>Environment variables</h3>
           <StoreAgentEnvironmentEditor
@@ -105,7 +104,7 @@
           }}>Save defaults</Button
         >
       </div>
-    </div>
+    </StoreAgentConfiguration>
     <StoreNotice
       noticeKey="agent-defaults-command"
       title="Agent defaults need attention"

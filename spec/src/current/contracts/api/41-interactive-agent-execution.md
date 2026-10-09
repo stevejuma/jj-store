@@ -214,3 +214,9 @@ E-CHAT-LIVE-009 retains JST-API-001 contracts: execution stdout projections and
 plain avatar status dots do not alter captured payloads, feedback source parts,
 status facts or publication. A terminal-only source remains a whole-section
 selector; journal display text does not create a committed range identity.
+
+Agent defaults table composition (E-CHAT-LIVE-010) retains JST-API-001
+unchanged: full-width fields and joined Advanced/action rows alter presentation
+only. Model discovery, configuration drafts, explicit saves, request identities
+and provider capabilities use the existing contracts without a schema or
+dispatch change.

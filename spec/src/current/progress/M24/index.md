@@ -286,8 +286,13 @@ with exact mapped stdout parts or honest whole-section journal display for older
 terminal-only captures. Agent avatars use status-coloured dots and retain
 accessible state labels. M24 remains In progress, with independent qualification
 and visual gates unchanged.
-<!-- generated-navigation -->
 
+E-CHAT-LIVE-010 repairs the nested Agent defaults tables: configuration fields,
+discovery, Advanced and Save share one full-width table and straight dividers.
+Focused geometry, provider, draft-retention and accessibility stories pass; live
+settings inspection makes no saved changes. M24 stays In progress with
+independent qualification and visual gates unchanged.
+<!-- generated-navigation -->
 ## Pages
 
 - [history](history/index.md)

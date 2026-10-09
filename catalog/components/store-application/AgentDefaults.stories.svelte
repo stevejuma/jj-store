@@ -113,6 +113,31 @@
       await expect(getComputedStyle(h).fontWeight).toBe("650");
     }
     const defaults = within(c.getByRole("region", { name: "Agent defaults" }));
+    const table = c
+      .getByRole("region", { name: "Agent defaults" })
+      .querySelector<HTMLElement>(".store-settings__rows")!;
+    for (const label of ["Harness", "Model", "Execution mode"]) {
+      const field = defaults
+        .getByLabelText(label, { exact: true })
+        .closest<HTMLElement>(".community-settings__option-row")!;
+      await expect(field.getBoundingClientRect().width).toBeGreaterThan(
+        table.getBoundingClientRect().width - 4,
+      );
+      const control = field.querySelector<HTMLElement>(".store-work__control")!;
+      await expect(control.getBoundingClientRect().left).toBeGreaterThan(
+        field.querySelector("label")!.getBoundingClientRect().right,
+      );
+    }
+    const discovery = defaults
+      .getByRole("button", { name: "Retry models" })
+      .closest<HTMLElement>(".store-settings__action-row")!;
+    const lastField = defaults
+      .getByLabelText("Execution mode", { exact: true })
+      .closest<HTMLElement>(".community-settings__option-row")!;
+    await expect(discovery.getBoundingClientRect().top).toBeCloseTo(
+      lastField.getBoundingClientRect().bottom,
+      0,
+    );
     await expect(
       defaults.queryByText("Harness and model", { exact: true }),
     ).toBeNull();
@@ -188,6 +213,23 @@
       advanced.querySelector("svg.lucide-chevron-right"),
     ).not.toBeNull();
     await expect(advanced).toHaveAttribute("aria-expanded", "false");
+    const group = advanced.closest<HTMLElement>('[data-slot="field-group"]')!;
+    const table = advanced.closest<HTMLElement>(".store-settings__rows")!;
+    await expect(getComputedStyle(group).borderTopWidth).toBe("1px");
+    await expect(getComputedStyle(group).borderRightWidth).toBe("0px");
+    await expect(getComputedStyle(group).borderBottomWidth).toBe("0px");
+    await expect(getComputedStyle(group).borderLeftWidth).toBe("0px");
+    await expect(getComputedStyle(group).borderRadius).toBe("0px");
+    await expect(advanced.getBoundingClientRect().width).toBeGreaterThan(
+      table.getBoundingClientRect().width - 4,
+    );
+    const discovery = c
+      .getByRole("button", { name: "Retry models" })
+      .closest<HTMLElement>(".store-settings__action-row")!;
+    await expect(group.getBoundingClientRect().top).toBeCloseTo(
+      discovery.getBoundingClientRect().bottom,
+      0,
+    );
     advanced.focus();
     await userEvent.keyboard("{Enter}");
     const name = c.getByRole("textbox", { name: "Environment variable name" });
