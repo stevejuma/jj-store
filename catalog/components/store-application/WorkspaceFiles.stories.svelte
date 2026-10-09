@@ -590,6 +590,7 @@
         14,
       );
       const rest = getComputedStyle(trigger).backgroundColor;
+      await expect(rest).not.toBe("rgba(0, 0, 0, 0)");
       await browser.getByRole("button", { name: /Workspace:/ }).hover();
       await waitFor(() =>
         expect(getComputedStyle(trigger).backgroundColor).not.toBe(rest),

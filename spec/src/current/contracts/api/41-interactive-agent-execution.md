@@ -330,3 +330,6 @@ request and authorization contracts; no transport generation is required.
 E-CHAT-FOOTER-001 confirms JST-API-001 unchanged: preserving formatting toolbar
 space and wrapping footer controls changes only layout. Composer state, Send,
 runtime selections and workspace inspection use their existing requests.
+
+E-CHAT-FOOTER-002 confirms JST-API-001 unchanged: repository button surface and
+wrapped-row alignment preserve inspection, copy, selection and Send requests.

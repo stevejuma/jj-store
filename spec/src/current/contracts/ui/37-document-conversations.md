@@ -146,14 +146,18 @@ records the real sample and Unicode/empty-output source mapping regressions.
 ## Workspace files from the conversation footer
 
 The footer identifies the inspected agent, repository and verified workspace.
-Its compact footer button uses a Git folder icon, smaller text and themed hover
-feedback. The menu aligns with its leading edge and its rows align left. It
-shows known branch facts and View files, with a Copy submenu for Project path
-(the inspected directory verified by the server) and the exact Workspace name.
-The filesystem path is not displayed in the menu. An inspection selector changes
-only the viewed binding; it never rebinds an agent or changes a checkout. Footer
-controls wrap at constrained widths while keeping Send accessible and the full
-truncated repository label available.
+Its compact footer button uses a Git folder icon, smaller text, a subtle themed
+grey background at rest and themed hover feedback. When wrapped, its leading
+edge aligns with the formatting row above; runtime and Send remain trailing. The
+repository label shrinks and truncates before controls wrap, retaining its icon
+and a compact minimum target while preserving the full accessible label. The
+menu aligns with its leading edge and its rows align left. It shows known branch
+facts and View files, with a Copy submenu for Project path (the inspected
+directory verified by the server) and the exact Workspace name. The filesystem
+path is not displayed in the menu. An inspection selector changes only the
+viewed binding; it never rebinds an agent or changes a checkout. Footer controls
+wrap at constrained widths while keeping Send accessible and the full truncated
+repository label available.
 
 The collapsed formatting toolbar keeps its intrinsic width; repository and
 runtime controls wrap before they can obscure its buttons. Expanded formatting

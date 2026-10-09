@@ -5,6 +5,7 @@ Browse the child pages below.
 ## Pages
 
 - [E-CHAT-FOOTER-001](E-CHAT-FOOTER-001/index.md)
+- [E-CHAT-FOOTER-002](E-CHAT-FOOTER-002/index.md)
 - [E-CHAT-LIVE-003](E-CHAT-LIVE-003/index.md)
 - [E-CHAT-LIVE-004](E-CHAT-LIVE-004/index.md)
 - [E-CHAT-LIVE-005](E-CHAT-LIVE-005/index.md)

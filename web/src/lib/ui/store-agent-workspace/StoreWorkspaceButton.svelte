@@ -77,7 +77,7 @@
       {#snippet child({ props })}
         <Button
           {...props}
-          variant="ghost"
+          variant="secondary"
           size="xs"
           class="workspace-trigger"
           title={label}
@@ -163,8 +163,10 @@
 
 <style>
   :global(.workspace-trigger) {
-    min-width: 0;
+    flex: 1 1 4rem;
+    min-width: min(4rem, 100%);
     max-width: min(18rem, 100%);
+    margin-inline-end: auto;
   }
   .workspace-branch {
     display: flex;

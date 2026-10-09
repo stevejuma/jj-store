@@ -23,7 +23,7 @@
     const send = within(footer).getByRole("button", { name: "Send message" });
     const originalWidth = footer.style.width;
     try {
-      for (const width of [390, 280, 760]) {
+      for (const width of [548, 390, 280, 760]) {
         footer.style.width = `${width}px`;
         const toggle = within(toolbar).getByRole("button", {
           name: "Show formatting",
@@ -37,6 +37,19 @@
           expect(repo.top >= tools.bottom || repo.left >= tools.right).toBe(
             true,
           );
+          if (repo.top >= tools.bottom)
+            expect(Math.abs(repo.left - tools.left)).toBeLessThanOrEqual(1);
+          // Both fixture runtime labels are "Harness default". At 760px the
+          // controls fit only if the repository yields some of its 18rem cap.
+          if (width === 760) {
+            const sendBox = send.getBoundingClientRect();
+            expect(
+              Math.abs(sendBox.top - tools.top),
+              `Collapsed at ${width}px`,
+            ).toBeLessThanOrEqual(1);
+            expect(repo.top).toBeLessThan(tools.bottom);
+            expect(repo.width).toBeLessThan(288);
+          }
         });
         await userEvent.click(toggle);
         const hide = within(toolbar).getByRole("button", {
@@ -47,9 +60,25 @@
           expect(repository.getBoundingClientRect().top).toBeGreaterThanOrEqual(
             tools.bottom,
           );
+          expect(
+            Math.abs(repository.getBoundingClientRect().left - tools.left),
+          ).toBeLessThanOrEqual(1);
           expect(send.getBoundingClientRect().top).toBeGreaterThanOrEqual(
             tools.bottom,
           );
+          const repo = repository.getBoundingClientRect();
+          const sendBox = send.getBoundingClientRect();
+          expect(
+            Math.abs(
+              repo.top + repo.height / 2 - (sendBox.top + sendBox.height / 2),
+            ),
+            `Expanded at ${width}px: ${Array.from(footer.children)
+              .map(
+                (element) =>
+                  `${element.getBoundingClientRect().width}:${element.getBoundingClientRect().top}`,
+              )
+              .join(", ")}`,
+          ).toBeLessThanOrEqual(1);
           expect(footer.scrollWidth).toBeLessThanOrEqual(
             footer.clientWidth + 1,
           );
