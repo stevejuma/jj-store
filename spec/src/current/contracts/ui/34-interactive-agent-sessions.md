@@ -348,3 +348,9 @@ placed before its text across live inbox, contextual chat and recorded history.
 It displays exact retained Markdown, delivery state and optional raw payload;
 empty context produces no inspector. Delivery updates preserve the message's
 identity, time and disclosure state. No duplicate context footer is rendered.
+
+Agent avatar runtime indicators use a plain circular dot with the status tone:
+idle is success, working is primary, queued/attention is warning, error is
+destructive and offline/starting/stopping/unknown is neutral. Indicators contain
+no status glyph. Accessible avatar names and status tooltips retain the exact
+state independently of colour. E-CHAT-LIVE-009 records this presentation review.

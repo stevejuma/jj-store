@@ -118,3 +118,10 @@ Inline Markdown messages, comments and context use Mira's embedded preview mode.
 They must not inherit a full-document trailing viewport padding when reader
 styles load later. The intentionally blank next-message region is independent.
 E-CHAT-LIVE-007 includes a failing-then-passing late-styles geometry regression.
+
+Execute results include retained stdout, formatted_output and aggregated_output
+parts as terminal output with exact committed source pointers when available.
+Older terminal-only captures may display retained journal command/output as a
+whole-section projection; they must not manufacture text ranges into the
+terminal reference. Raw JSON remains independently reachable. E-CHAT-LIVE-009
+records the real sample and Unicode/empty-output source mapping regressions.

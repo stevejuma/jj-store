@@ -209,3 +209,8 @@ E-CHAT-LIVE-008 retains JST-API-001 Sent-context contracts: the compact
 disclosure and rendered/JSON toggle change only presentation. Captured sanitized
 values, delivery labels, retained revisions and lossless numeric serialization
 are unchanged; inspection creates no request or execution.
+
+E-CHAT-LIVE-009 retains JST-API-001 contracts: execution stdout projections and
+plain avatar status dots do not alter captured payloads, feedback source parts,
+status facts or publication. A terminal-only source remains a whole-section
+selector; journal display text does not create a committed range identity.

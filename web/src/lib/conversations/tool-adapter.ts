@@ -2,7 +2,10 @@ import type { Model } from "../api/client.js";
 import type { ChatBodyBlock } from "../ui/store-agent-chat-body/model.js";
 import type { ActivityRow } from "../ui/store-agent-execution/presentation.js";
 import { liveTranscriptTool } from "../ui/community-agent-activity/transcript-tool-adapters.js";
-import { richTranscriptToolLabel } from "../ui/community-agent-activity/transcript-tool-rich.js";
+import {
+  richTranscriptToolDetail,
+  richTranscriptToolLabel,
+} from "../ui/community-agent-activity/transcript-tool-rich.js";
 import type { ConversationTextSource } from "./source-map.js";
 
 /** Every displayed slice retains its captured string pointer and original offset. */
@@ -18,7 +21,7 @@ export function capturedToolProjection(
   for (const part of (captured?.text_parts ?? []).filter(
     (part) =>
       !part.part ||
-      /(?:^|\/)(?:text|output|stdout|stderr|content|patch|diff|command|result|newText|oldText)$/.test(
+      /(?:^|\/)(?:text|output|stdout|stderr|formatted_output|aggregated_output|content|patch|diff|command|result|newText|oldText)$/.test(
         part.part,
       ),
   )) {
@@ -51,7 +54,15 @@ export function capturedToolProjection(
         id,
         revision,
         label:
-          piece.path ?? (part.part ? `${row.text} · ${part.part}` : row.text),
+          piece.path ??
+          (tool.kind === "execute" &&
+          /(?:stdout|formatted_output|aggregated_output)$/.test(part.part ?? "")
+            ? "Output"
+            : tool.kind === "execute" && /stderr$/.test(part.part ?? "")
+              ? "Error output"
+              : part.part
+                ? `${row.text} · ${part.part}`
+                : row.text),
         text: piece.text,
         kind: piece.kind,
         path: piece.path,
@@ -69,15 +80,25 @@ export function capturedToolProjection(
     }
   }
   if (!blocks.length) {
+    const detail = richTranscriptToolDetail(tool);
+    const shell = detail?.kind === "shell" ? detail : undefined;
     const block: ChatBodyBlock = {
       id: `${key}/section`,
       revision,
       kind: "code",
-      label: row.text,
-      text: JSON.stringify(row.value, null, 2),
+      label: shell ? "Shell" : row.text,
+      text: shell
+        ? [
+            `$ ${shell.command}`,
+            shell.output,
+            shell.error ? `stderr:\n${shell.error}` : undefined,
+          ]
+            .filter((part) => part !== undefined)
+            .join("\n")
+        : JSON.stringify(row.value, null, 2),
       commentable: !!captured,
       wholeSection: true,
-      path: "tool.json",
+      path: shell ? "terminal.sh" : "tool.json",
     };
     blocks.push(block);
     if (captured)

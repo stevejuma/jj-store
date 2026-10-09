@@ -281,7 +281,11 @@ refines the shared Sent context inspector with a compact themed button, trailing
 Lucide chevron and one rendered/JSON view toggle. Keyboard activation, exact
 historical numbers and inner disclosure state remain intact. This UI review
 keeps M24 In progress and all independent live, platform, native IME and
-visual-baseline gates unchanged.
+visual-baseline gates unchanged. E-CHAT-LIVE-009 renders captured execute output
+with exact mapped stdout parts or honest whole-section journal display for older
+terminal-only captures. Agent avatars use status-coloured dots and retain
+accessible state labels. M24 remains In progress, with independent qualification
+and visual gates unchanged.
 <!-- generated-navigation -->
 
 ## Pages

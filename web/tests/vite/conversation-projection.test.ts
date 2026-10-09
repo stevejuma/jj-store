@@ -355,3 +355,137 @@ test("committed comments-only user rows retain their canonical batch and turn", 
   assert.equal(p.items[0].commentBatchId, "batch");
   assert.deepEqual(p.items[0].blocks, []);
 });
+
+test("execute output uses committed stdout parts instead of the terminal snapshot envelope", () => {
+  const output = 'README contents\nexport const greeting = "Hello 🦀";\n';
+  const captured = feedback(output).messages[0];
+  captured.text_parts = [
+    { part: "/content/0/terminalId", text: "exec-terminal" },
+    { part: "/rawOutput/formatted_output", text: output },
+  ];
+  const value = {
+    kind: "execute",
+    status: "completed",
+    rawInput: { command: "cat README.md src/example.ts" },
+    rawOutput: { formatted_output: output, exit_code: 0 },
+    content: [{ type: "terminal", terminalId: "exec-terminal" }],
+    _meta: { terminal_exit: { exit_code: 0, terminal_id: "exec-terminal" } },
+  };
+  const before = structuredClone(value);
+  const sources = new Map<string, ConversationTextSource>();
+  const projected = capturedToolProjection(
+    { ...row("Execute"), kind: "tool", value },
+    "exec",
+    "rev",
+    captured,
+    sources,
+  );
+  assert.equal(projected.blocks.length, 1);
+  const block = projected.blocks[0];
+  assert.equal(block.text, output);
+  assert.equal(block.wholeSection, undefined);
+  assert.equal(block.label, "Output");
+  assert.equal(sources.get(block.id)?.part, "/rawOutput/formatted_output");
+  const quote = "Hello 🦀",
+    from = output.indexOf(quote);
+  const source = exactSource(
+    block,
+    {
+      blockId: block.id,
+      revision: "rev",
+      from,
+      to: from + quote.length,
+      quote,
+    },
+    sources.get(block.id)!,
+  );
+  assert.equal(source.part, "/rawOutput/formatted_output");
+  assert.equal(source.quote, quote);
+  assert.deepEqual(value, before);
+});
+
+test("execute output aliases preserve empty and stderr captures without fabricating terminal text", () => {
+  for (const key of ["formatted_output", "aggregated_output", "stdout"]) {
+    const captured = feedback("").messages[0];
+    captured.text_parts = [
+      { part: `/rawOutput/${key}`, text: "" },
+      { part: "/rawOutput/stderr", text: "warning\n" },
+    ];
+    const sources = new Map<string, ConversationTextSource>();
+    const projected = capturedToolProjection(
+      { ...row("Execute"), kind: "tool", value: { kind: "execute" } },
+      key,
+      "rev",
+      captured,
+      sources,
+    );
+    assert.deepEqual(
+      projected.blocks.map((b) => [b.label, b.text]),
+      [
+        ["Output", ""],
+        ["Error output", "warning\n"],
+      ],
+    );
+  }
+  const captured = feedback("").messages[0];
+  captured.text_parts = [
+    { part: "/content/0/terminalId", text: "unknown-terminal" },
+  ];
+  const projected = capturedToolProjection(
+    {
+      ...row("Execute"),
+      kind: "tool",
+      value: {
+        kind: "execute",
+        content: [{ type: "terminal", terminalId: "unknown-terminal" }],
+      },
+    },
+    "unknown",
+    "rev",
+    captured,
+    new Map(),
+  );
+  assert.equal(projected.blocks[0].wholeSection, true);
+  assert.match(projected.blocks[0].text, /unknown-terminal/);
+});
+
+test("terminal-only committed captures show retained execution output with whole-section comments", () => {
+  const captured = feedback("").messages[0];
+  captured.text_parts = [
+    { part: "/0/type", text: "terminal" },
+    { part: "/0/terminalId", text: "exec-terminal" },
+  ];
+  const value = {
+    kind: "execute",
+    rawInput: { command: "cat README.md" },
+    rawOutput: { formatted_output: "Retained README 🦀\n", exit_code: 0 },
+    content: [{ type: "terminal", terminalId: "exec-terminal" }],
+  };
+  const sources = new Map<string, ConversationTextSource>();
+  const projected = capturedToolProjection(
+    { ...row("Execute"), kind: "tool", value },
+    "terminal",
+    "rev",
+    captured,
+    sources,
+  );
+  const block = projected.blocks[0];
+  assert.equal(block.label, "Shell");
+  assert.equal(block.text, "$ cat README.md\nRetained README 🦀\n");
+  assert.equal(block.wholeSection, true);
+  assert.equal(sources.get(block.id)?.wholeSection, true);
+  const source = exactSource(
+    block,
+    {
+      blockId: block.id,
+      revision: "rev",
+      from: 0,
+      to: block.text.length,
+      quote: block.text,
+    },
+    sources.get(block.id)!,
+  );
+  assert.equal(source.selection, null);
+  assert.equal(source.part, null);
+  assert.equal(source.quote, "");
+});

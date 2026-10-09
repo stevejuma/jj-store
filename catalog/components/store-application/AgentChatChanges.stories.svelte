@@ -23,6 +23,9 @@
         within(header).getByRole("img", { name: "Helper, Idle" }),
       ).toBeVisible(),
     );
+    const presence = header.querySelector('[data-ui-part="presence"]')!;
+    expect(presence.textContent?.trim()).toBe("");
+    expect(presence.children).toHaveLength(0);
     await expect(within(header).getByText("Helper")).toBeVisible();
     await expect(
       within(header).getByRole("button", { name: /^Close$/ }),

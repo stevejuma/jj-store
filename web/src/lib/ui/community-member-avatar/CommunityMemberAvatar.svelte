@@ -95,21 +95,6 @@
       data-presence={presence}
       data-runtime={liveState}
       aria-hidden="true"
-      >{#if liveState}<span class="community-member-avatar__runtime-symbol"
-          >{liveState === "attention"
-            ? "!"
-            : liveState === "working"
-              ? "▶"
-              : liveState === "queued"
-                ? "…"
-                : liveState === "idle"
-                  ? "✓"
-                  : liveState === "error"
-                    ? "×"
-                    : liveState === "offline"
-                      ? "−"
-                      : "○"}</span
-        >{/if}</span
-    >
+    ></span>
   {/if}
 </span>
