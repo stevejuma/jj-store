@@ -225,3 +225,9 @@ Inline Document input (E-CHAT-LIVE-011) retains JST-API-001 unchanged: it uses
 the same app-owned message/comment draft and existing Send/receipt paths as
 Classic. Input layout, editor selection and composition deferral introduce no
 request, dispatch, authorization or persisted-format changes.
+
+Sent-context surfaces and runtime action alignment (E-CHAT-LIVE-012) retain
+JST-API-001 unchanged: resting background, full-width captured Markdown and
+trailing menu placement affect presentation only. Inspection preserves captured
+values and delivery state; menu movement does not alter installation commands,
+request identities, authorization or persisted formats.

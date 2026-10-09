@@ -103,30 +103,6 @@
                 <StoreAgentRuntimeSummary {runtime} {status} />
               </Field.Content>
               <div class="store-runtime__actions">
-                <DropdownMenu.Root>
-                  <DropdownMenu.Trigger>
-                    {#snippet child({ props })}<Button
-                        {...props}
-                        variant="ghost"
-                        size="icon-sm"
-                        aria-label={`${runtime.label} runtime options`}
-                        ><EllipsisVerticalIcon /></Button
-                      >{/snippet}
-                  </DropdownMenu.Trigger>
-                  <DropdownMenu.Content align="end"
-                    ><DropdownMenu.Group>
-                      <DropdownMenu.Item>
-                        {#snippet child({ props })}<a
-                            {...props}
-                            href={runtime.guide_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            ><ExternalLinkIcon />Setup guide</a
-                          >{/snippet}
-                      </DropdownMenu.Item>
-                    </DropdownMenu.Group></DropdownMenu.Content
-                  >
-                </DropdownMenu.Root>
                 {#if runtime.action && runtime.state !== "ready"}
                   <Button
                     variant="outline"
@@ -157,6 +133,30 @@
                       : "Install guide"}
                   </a>
                 {/if}
+                <DropdownMenu.Root>
+                  <DropdownMenu.Trigger>
+                    {#snippet child({ props })}<Button
+                        {...props}
+                        variant="ghost"
+                        size="icon-sm"
+                        aria-label={`${runtime.label} runtime options`}
+                        ><EllipsisVerticalIcon /></Button
+                      >{/snippet}
+                  </DropdownMenu.Trigger>
+                  <DropdownMenu.Content align="end"
+                    ><DropdownMenu.Group>
+                      <DropdownMenu.Item>
+                        {#snippet child({ props })}<a
+                            {...props}
+                            href={runtime.guide_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            ><ExternalLinkIcon />Setup guide</a
+                          >{/snippet}
+                      </DropdownMenu.Item>
+                    </DropdownMenu.Group></DropdownMenu.Content
+                  >
+                </DropdownMenu.Root>
               </div>
             </Field.Field>
           {/each}

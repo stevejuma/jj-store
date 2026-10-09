@@ -48,6 +48,39 @@
 </script>
 
 <Story
+  name="Runtime menus align at the far right after optional actions"
+  play={async ({ canvasElement }) => {
+    const c = await open(canvasElement);
+    const controls = c.getAllByRole("button", { name: /runtime options$/ });
+    expect(controls).toHaveLength(3);
+    const edges = controls.map(
+      (control) => control.getBoundingClientRect().right,
+    );
+    expect(Math.max(...edges) - Math.min(...edges)).toBeLessThanOrEqual(1);
+    for (const control of controls) {
+      const actions = control.closest<HTMLElement>(".store-runtime__actions")!;
+      expect(
+        Math.abs(
+          actions.getBoundingClientRect().right -
+            control.getBoundingClientRect().right,
+        ),
+      ).toBeLessThanOrEqual(1);
+    }
+    controls[1].focus();
+    await userEvent.keyboard("{Enter}");
+    const page = within(document.body);
+    expect(
+      await page.findByRole("menuitem", { name: "Setup guide" }),
+    ).toHaveAttribute("href", "https://cursor.com/docs/cli/installation");
+    await userEvent.keyboard("{Escape}");
+    await waitFor(() => expect(controls[1]).toHaveFocus());
+    expect(c.getByLabelText("Installation command count")).toHaveTextContent(
+      "0",
+    );
+  }}
+/>
+
+<Story
   name="Bundled JJ Agent uses app artwork without an installer"
   args={{ scenario: "ready" }}
   play={async ({ canvasElement }) => {

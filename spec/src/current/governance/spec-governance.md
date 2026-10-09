@@ -113,3 +113,10 @@ presentation while sharing the existing audience, editor and send behavior. The
 Community source attribution is retained for the extracted surface; its Document
 layout composes owned chat-body presentation and public Mira/Design Core
 components. No runtime or source dependency on Community is introduced.
+
+E-CHAT-LIVE-012 records local ownership for the app-authored composer selection
+and Document footer-action lifecycle helpers extracted in E-CHAT-LIVE-011.
+JST-GOV-002/008 remain unchanged: these declarations identify locally authored
+code, retain all copied source/license attribution and introduce no external
+Community dependency or ownership exception. Sent-context and runtime layout
+changes remain governed by the UI chapter and focused evidence.

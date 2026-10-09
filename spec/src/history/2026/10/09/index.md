@@ -13,3 +13,4 @@ Browse the child pages below.
 - [E-CHAT-LIVE-009](E-CHAT-LIVE-009/index.md)
 - [E-CHAT-LIVE-010](E-CHAT-LIVE-010/index.md)
 - [E-CHAT-LIVE-011](E-CHAT-LIVE-011/index.md)
+- [E-CHAT-LIVE-012](E-CHAT-LIVE-012/index.md)

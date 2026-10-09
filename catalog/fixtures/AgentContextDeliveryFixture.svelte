@@ -1,7 +1,8 @@
 <script lang="ts">
   import StoreAgentPromptContent from "../../web/src/lib/ui/store-agent-execution/StoreAgentPromptContent.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  let { empty = false }: { empty?: boolean } = $props();
+  let { empty = false, wide = false }: { empty?: boolean; wide?: boolean } =
+    $props();
   let delivery = $state("queued");
   const wire = $derived(
     empty
@@ -10,7 +11,7 @@
   );
 </script>
 
-<main style="max-width: 48rem; padding: 1rem;">
+<main style:max-width={wide ? "none" : "48rem"} style:padding="1rem">
   <h1>Context delivery</h1>
   <Button onclick={() => (delivery = "sent")}>Acknowledge start</Button>
   <article aria-label="User message">

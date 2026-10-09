@@ -2689,6 +2689,14 @@
     {
       "local": "web/src/lib/ui/community-inbox/inbox-layout.ts",
       "reason": "Versioned installation layout adapter for the agent inbox, with its own stable panel identity and storage refusal handling; locally authored."
+    },
+    {
+      "local": "web/src/lib/ui/community-chat-composer/composer-selection.ts",
+      "reason": "Locally authored jj-store helper retaining draft selection across Document/Classic editor remounts; no Community source is copied."
+    },
+    {
+      "local": "web/src/lib/ui/community-chat-composer/composer-document-actions.svelte.ts",
+      "reason": "Locally authored jj-store effect registering live Document editor actions in the app-owned footer with guarded cleanup; no Community source is copied."
     }
   ],
   "desktopAppearance": {

@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { page as browser } from "vitest/browser";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import Fixture from "../../fixtures/AgentContextDeliveryFixture.svelte";
@@ -9,6 +10,58 @@
     parameters: { layout: "fullscreen", jjStoreShell: true },
   });
 </script>
+
+<Story
+  name="Context button has a subtle resting surface"
+  play={async ({ canvasElement }) => {
+    const summary = within(canvasElement).getByRole("button", {
+      name: "Queued context",
+    });
+    const resting = getComputedStyle(summary).backgroundColor;
+    expect(resting).not.toBe("rgba(0, 0, 0, 0)");
+    expect(resting).not.toBe("transparent");
+    await browser.getByRole("button", { name: "Queued context" }).hover();
+    await waitFor(() =>
+      expect(getComputedStyle(summary).backgroundColor).not.toBe(resting),
+    );
+    await browser.getByRole("heading", { name: "Context delivery" }).hover();
+  }}
+/>
+
+<Story
+  name="Wide rendered context stays at the start"
+  args={{ wide: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await userEvent.click(c.getByRole("button", { name: "Queued context" }));
+    const context = c.getByRole("button", { name: "<agent_context>" });
+    const panel = canvasElement.querySelector<HTMLElement>(
+      '[aria-label="Application context for this message"]',
+    )!;
+    expect(panel.getBoundingClientRect().width).toBeGreaterThan(1000);
+    expect(
+      context.getBoundingClientRect().left - panel.getBoundingClientRect().left,
+    ).toBeLessThanOrEqual(16);
+    await userEvent.click(context);
+    await userEvent.click(c.getByRole("button", { name: "<origin>" }));
+    const heading = c.getByRole("heading", { name: "Captured task" });
+    // Two nested XML disclosures retain their own 1rem indentation.
+    const nestedInset = [
+      ...panel.querySelectorAll<HTMLElement>(".store-prompt-element__body"),
+    ].reduce(
+      (total, body) =>
+        total + Number.parseFloat(getComputedStyle(body).paddingInlineStart),
+      0,
+    );
+    expect(
+      Math.abs(
+        heading.getBoundingClientRect().left -
+          context.getBoundingClientRect().left -
+          nestedInset,
+      ),
+    ).toBeLessThanOrEqual(1);
+  }}
+/>
 
 <Story
   name="One inspector retains disclosure through acknowledgement"

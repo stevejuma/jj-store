@@ -35,7 +35,7 @@
     {@const content = object(captured[key])}
     {#if text(content.title) || text(content.body)}
       <h4>{text(content.title)} · version {String(content.version ?? "")}</h4>
-      <CommunityMarkdownContent content={text(content.body)} />
+      <CommunityMarkdownContent content={text(content.body)} fullWidth />
     {/if}
   {/each}
   {#if text(file.content)}
@@ -44,10 +44,10 @@
   {/if}
   {#if text(reply.content)}
     <h4>Reply context</h4>
-    <CommunityMarkdownContent content={text(reply.content)} />
+    <CommunityMarkdownContent content={text(reply.content)} fullWidth />
   {/if}
 {:else}
-  <CommunityMarkdownContent content={value} />
+  <CommunityMarkdownContent content={value} fullWidth />
 {/if}
 
 <style>

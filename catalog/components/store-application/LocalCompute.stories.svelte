@@ -334,6 +334,14 @@
     await expect(
       c.getByText("Captured task · version 9007199254740993"),
     ).toBeVisible();
+    const panel = c.getByRole("region", {
+      name: "Application context for this message",
+    });
+    const paragraph = c.getByText("Historical", { exact: true }).closest("p")!;
+    expect(
+      paragraph.getBoundingClientRect().left -
+        panel.getBoundingClientRect().left,
+    ).toBeLessThanOrEqual(16);
     await expect(c.getByText("Historical", { exact: true }).tagName).toBe(
       "STRONG",
     );

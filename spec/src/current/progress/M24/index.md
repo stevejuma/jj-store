@@ -299,6 +299,13 @@ survive renderer changes; Advanced hover areas are square. Focused interaction,
 accessibility and state coverage passes. Broader legacy story failures reproduce
 on the unchanged parent; the existing dev UI acceptance-script size gap remains
 separate. M24 stays In progress and visual baselines remain unapproved.
+E-CHAT-LIVE-012 gives Sent context a subtle themed resting surface and fixed
+start alignment for rendered wire and historical snapshots. Runtime option menus
+align at the far right after optional actions. Focused geometry,
+keyboard/accessibility and historical-value checks pass; live inspection makes
+no configuration or execution changes. The ownership audit also records two
+previously undeclared locally authored composer helpers. M24 stays In progress;
+independent qualification and visual-baseline gates remain unchanged.
 <!-- generated-navigation -->
 
 ## Pages

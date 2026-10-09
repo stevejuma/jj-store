@@ -47,7 +47,7 @@
           {#snippet child({ props })}
             <Button
               {...props}
-              variant="ghost"
+              variant="secondary"
               size="xs"
               class="sent-context-trigger"
             >
@@ -81,6 +81,7 @@
               {#if wire}<CommunityMarkdownContent
                   content={wire}
                   promptElements
+                  fullWidth
                 />
               {:else}
                 {#each blocks as block, index (index)}
@@ -112,6 +113,7 @@
                     {/if}
                   {:else}<CommunityMarkdownContent
                       content={text(block.text)}
+                      fullWidth
                     />{/if}
                 {/each}
               {/if}

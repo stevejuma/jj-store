@@ -16,3 +16,5 @@
   {{#include E-CHAT-LIVE-010/SUMMARY.nav.md}}
 - [E-CHAT-LIVE-011](E-CHAT-LIVE-011/index.md)
   {{#include E-CHAT-LIVE-011/SUMMARY.nav.md}}
+- [E-CHAT-LIVE-012](E-CHAT-LIVE-012/index.md)
+  {{#include E-CHAT-LIVE-012/SUMMARY.nav.md}}
