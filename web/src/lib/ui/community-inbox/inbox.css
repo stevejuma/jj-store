@@ -94,10 +94,6 @@
   padding-block: 0.5rem;
 }
 
-.lc-community-inbox__items:has(> .community-skeleton) {
-  padding: 1rem;
-}
-
 .lc-community-inbox__scroll {
   flex: 1;
   min-height: 0;
@@ -163,22 +159,6 @@
   padding: 0.375rem 0.625rem;
   text-align: start;
   white-space: normal;
-}
-
-.lc-community-inbox__item-row {
-  position: relative;
-}
-
-.lc-community-inbox__item-row:has(.lc-community-inbox__repository)
-  .lc-community-inbox__item {
-  padding-inline-end: 2.5rem;
-}
-
-.lc-community-inbox__repository[data-ui-component="button"] {
-  position: absolute;
-  inset-block-start: 50%;
-  inset-inline-end: 0.25rem;
-  transform: translateY(-50%);
 }
 
 .lc-community-inbox__item-heading strong {

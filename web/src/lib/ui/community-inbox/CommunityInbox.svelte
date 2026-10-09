@@ -9,7 +9,6 @@
   import PlusIcon from "@lucide/svelte/icons/plus";
   import CloseIcon from "@lucide/svelte/icons/x";
   import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
-  import CommunitySkeleton from "../community-skeleton/CommunitySkeleton.svelte";
   import CommunityInboxSessions from "./CommunityInboxSessions.svelte";
   import { createInboxResize } from "./inbox-resize.svelte.js";
   import type { SessionInboxItem } from "./model.js";
@@ -119,13 +118,8 @@
       </div>
       <ScrollArea class="lc-community-inbox__scroll">
         <div class="lc-community-inbox__items" aria-label="Session chats">
-          <CommunityInboxSessions {items} {activeId} {onSelect} />
-          {#if loading && !items.length}<CommunitySkeleton
-              layout="messages"
-              count={5}
-              label="Loading sessions"
-            />
-          {:else if !items.length}<Empty.Root
+          <CommunityInboxSessions {items} {activeId} {onSelect} {loading} />
+          {#if !loading && !items.length}<Empty.Root
               class="lc-community-inbox__empty"
               role="status"
               ><Empty.Header

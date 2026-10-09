@@ -1,8 +1,6 @@
-<!-- Community conversation row, with separate owned repository navigation. -->
+<!-- Owned Community conversation row beneath its repository header. -->
 <script lang="ts">
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import * as Tooltip from "@lapismd/design-core/shadcn/tooltip";
-  import FolderGitIcon from "@lucide/svelte/icons/folder-git-2";
   import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
   import CommunityRelativeTime from "../community-relative-time/CommunityRelativeTime.svelte";
   import { formatCommunityFullDate } from "../community-relative-time/model.js";
@@ -63,25 +61,4 @@
         >{/if}
     </span>
   </Button>
-  {#if item.repository}<Tooltip.Provider
-      ><Tooltip.Root>
-        {@const repository = item.repository}
-        <Tooltip.Trigger
-          >{#snippet child({ props })}
-            <a
-              {...props}
-              href={repository.href}
-              class="lc-community-inbox__repository"
-              data-ui-component="button"
-              data-variant="ghost"
-              data-size="icon-sm"
-              aria-label={repository.label}
-            >
-              <FolderGitIcon aria-hidden="true" />
-            </a>
-          {/snippet}</Tooltip.Trigger
-        >
-        <Tooltip.Content role="tooltip">{repository.label}</Tooltip.Content>
-      </Tooltip.Root></Tooltip.Provider
-    >{/if}
 </div>

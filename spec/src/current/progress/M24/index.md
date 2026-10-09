@@ -313,6 +313,13 @@ the resized sidebar. Focused interaction/accessibility, adapter/grouping, type
 and ownership checks pass; live inspection retains the selected chat and uses no
 execution or configuration commands. M24 remains In progress, independent
 qualification gates remain open and visual baselines remain unapproved.
+
+E-CHAT-LIVE-014 moves repository navigation to one independent header action,
+extends the themed surface over the full row, insets compact controls and places
+the disclosure chevron last. Initial loading matches the repository tree and
+compact chat rows. Focused interaction/accessibility, type, ownership and live
+navigation/hover checks pass. M24 stays In progress and independent
+qualification and visual approval gates remain unchanged.
 <!-- generated-navigation -->
 
 ## Pages

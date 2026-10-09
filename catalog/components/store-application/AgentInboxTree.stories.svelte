@@ -46,17 +46,22 @@
     const links = within(first).getAllByRole("link", {
       name: "Open Sample repository",
     });
-    expect(links[1]).toHaveAttribute(
-      "href",
-      "#/repos/repo-a/files?at_op=other-operation&workspace=retained-workspace",
+    expect(links).toHaveLength(1);
+    expect(links[0]).toHaveAttribute("href", "#/repos/repo-a/files");
+    expect(toggle.contains(links[0])).toBe(false);
+    expect(links[0].closest(".inbox-session-tree__header")).toBe(
+      toggle.closest(".inbox-session-tree__header"),
     );
-    expect(chats[1].contains(links[1])).toBe(false);
+    expect(first.querySelector(".inbox-session-tree__children a")).toBeNull();
     await userEvent.click(chats[1]);
     expect(c.getByText("Selected session: second")).toBeVisible();
     expect(chats[1]).toHaveAttribute("aria-pressed", "true");
     expect(c.getByRole("textbox", { name: "Conversation draft" })).toHaveValue(
       "Retained conversation draft",
     );
+    await userEvent.click(toggle);
+    expect(links[0]).toBeVisible();
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
   }}
 />
 
@@ -151,6 +156,7 @@
       name: /Collapse Sample repository/,
     });
     const label = row.querySelector("span")!;
+    const action = within(group as HTMLElement).getByRole("link");
     expect(label.scrollWidth).toBeGreaterThan(label.clientWidth);
     expect(getComputedStyle(label).textOverflow).toBe("ellipsis");
     expect(getComputedStyle(label).overflowX).toBe("hidden");
@@ -161,6 +167,12 @@
     expect(row.getBoundingClientRect().right).toBeLessThanOrEqual(
       list.getBoundingClientRect().right,
     );
+    expect(action.getBoundingClientRect().right).toBeLessThanOrEqual(
+      list.getBoundingClientRect().right,
+    );
+    expect(action.getBoundingClientRect().left).toBeGreaterThanOrEqual(
+      row.getBoundingClientRect().right,
+    );
     const narrowWidth = label.clientWidth;
     handle.focus();
     await userEvent.keyboard("{End}");
@@ -169,6 +181,102 @@
     expect(row.getBoundingClientRect().right).toBeLessThanOrEqual(
       list.getBoundingClientRect().right,
     );
+    expect(c.getByRole("textbox", { name: "Conversation draft" })).toHaveValue(
+      "Retained conversation draft",
+    );
+  }}
+/>
+
+<Story
+  name="Repository header surface includes the separate action hover"
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    const group = canvasElement.querySelector('[data-repository-id="repo-a"]')!;
+    const toggle = within(group as HTMLElement).getByRole("button", {
+      name: "Collapse Sample repository sessions",
+    });
+    const action = within(group as HTMLElement).getByRole("link", {
+      name: "Open Sample repository",
+    });
+    const header = toggle.closest(".inbox-session-tree__header")!;
+    expect(getComputedStyle(header).backgroundColor).not.toBe(
+      "rgba(0, 0, 0, 0)",
+    );
+    expect(getComputedStyle(toggle).backgroundColor).toBe("rgba(0, 0, 0, 0)");
+    const bounds = action.getBoundingClientRect();
+    const row = header.getBoundingClientRect();
+    expect(bounds.width).toBeLessThanOrEqual(24);
+    expect(row.right - bounds.right).toBeGreaterThanOrEqual(4);
+    expect(bounds.top - row.top).toBeGreaterThanOrEqual(4);
+    expect(row.bottom - bounds.bottom).toBeGreaterThanOrEqual(4);
+    const chevron = within(group as HTMLElement).getByRole("button", {
+      name: "Toggle Sample repository sessions",
+    });
+    expect(chevron.getBoundingClientRect().left).toBeGreaterThan(bounds.right);
+    expect(
+      row.right - chevron.getBoundingClientRect().right,
+    ).toBeGreaterThanOrEqual(4);
+    await userEvent.hover(action);
+    await within(document.body).findByRole("tooltip", {
+      name: "Open Sample repository",
+    });
+    expect(toggle).toHaveAttribute("aria-expanded", "true");
+    await userEvent.unhover(action);
+    action.focus();
+    await within(document.body).findByRole("tooltip", {
+      name: "Open Sample repository",
+    });
+    await waitFor(() =>
+      expect(getComputedStyle(action).backgroundColor).not.toBe(
+        "rgba(0, 0, 0, 0)",
+      ),
+    );
+    expect(getComputedStyle(action).backgroundColor).not.toBe(
+      getComputedStyle(header).backgroundColor,
+    );
+    await userEvent.click(chevron);
+    expect(toggle).toHaveAttribute("aria-expanded", "false");
+    expect(action).toBeVisible();
+  }}
+/>
+
+<Story
+  name="Loading sessions matches repository groups and compact chat rows"
+  args={{ loading: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    const status = c.getByRole("status", { name: "Loading sessions" });
+    expect(status).toHaveAttribute("aria-busy", "true");
+    expect(
+      status.querySelectorAll(".inbox-session-tree__skeleton-header"),
+    ).toHaveLength(2);
+    const rows = status.querySelectorAll(".inbox-session-tree__skeleton-row");
+    expect(rows).toHaveLength(5);
+    const header = status.querySelector(
+      ".inbox-session-tree__skeleton-header",
+    )!;
+    expect(rows[0].getBoundingClientRect().left).toBeGreaterThan(
+      header.getBoundingClientRect().left,
+    );
+    expect(rows[0].getBoundingClientRect().height).toBeLessThanOrEqual(64);
+    const placeholderHeight = rows[0].getBoundingClientRect().height;
+    expect(within(status).queryByRole("button")).toBeNull();
+    expect(c.queryByText("No sessions yet", { exact: true })).toBeNull();
+    await userEvent.click(
+      c.getByRole("button", { name: "Finish loading sessions" }),
+    );
+    await waitFor(() =>
+      expect(c.queryByRole("status", { name: "Loading sessions" })).toBeNull(),
+    );
+    expect(
+      c.getByRole("navigation", { name: "Session chats by repository" }),
+    ).toBeVisible();
+    const loadedRow = c.getByRole("button", {
+      name: /Open session First chat/,
+    });
+    expect(
+      Math.abs(loadedRow.getBoundingClientRect().height - placeholderHeight),
+    ).toBeLessThanOrEqual(2);
     expect(c.getByRole("textbox", { name: "Conversation draft" })).toHaveValue(
       "Retained conversation draft",
     );

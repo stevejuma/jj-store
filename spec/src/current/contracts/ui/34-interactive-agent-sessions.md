@@ -274,9 +274,23 @@ Repository names truncate with an ellipsis within the available row width and
 reveal more text as the sidebar grows; the full name remains available on hover
 and in the accessible disclosure label.
 
-Inbox session rows retain Community avatar presence and an icon-only, tooltipped
-link to that chat's exact repository and retained operation in place of the
-status tag. The repository link is independent of the chat selection control.
+Each repository header has one icon-only, tooltipped action linking to that
+repository's normal file view. This action sits beside the disclosure control,
+remains available while collapsed and does not select a chat or toggle the
+group. It does not inherit an individual chat's workspace or historical
+operation. Chat rows retain avatar presence and have no repeated repository
+action; unbound draft headers have no repository link. The muted header surface
+spans the disclosure and action together. Its repository action has a stronger
+themed hover/keyboard-focus surface without changing disclosure state, and
+retains its independent focus ring and tooltip. The compact repository action
+and separate trailing chevron are inset from the header edge. Both the label and
+trailing chevron toggle the same disclosure; the repository action remains
+independent between them. Initial chat-list loading uses anonymous
+repository-header placeholders with indented compact avatar/name/context rows at
+the loaded layout's spacing. It retains one accessible busy status and the
+selected chat/draft, hides the empty state until loading completes, and supplies
+no interactive placeholder links.
+
 The chat column reuses Community's bounded pointer/keyboard resize behavior,
 persists its preferred width under an independent versioned device-layout key,
 clamps to available body width, retains it while hidden, and resets on

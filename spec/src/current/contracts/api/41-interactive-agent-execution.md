@@ -237,3 +237,8 @@ unchanged. Repository IDs and names are local presentation fields derived from
 the existing admitted session and repository catalog. Grouping, disclosure and
 selection retain exact per-chat workspace/operation links, without a new read,
 execution command, binding change or persisted-format change.
+
+Repository header navigation (E-CHAT-LIVE-014) retains JST-API-001 unchanged:
+one group action opens the existing normal repository file route by exact ID. It
+does not select an arbitrary session workspace/operation, alter captured session
+bindings or dispatch an execution command.

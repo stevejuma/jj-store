@@ -6,13 +6,17 @@
   import CommunityInbox from "../../web/src/lib/ui/community-inbox/CommunityInbox.svelte";
   import { createStoreShell } from "../../web/src/lib/ui/store-application/create-store-shell.js";
   import { createMemoryStoryStorage } from "./memory-storage.js";
-  let { repositoryName = "Sample repository" }: { repositoryName?: string } =
-    $props();
+  let {
+    repositoryName = "Sample repository",
+    loading = false,
+  }: { repositoryName?: string; loading?: boolean } = $props();
   const shell = createStoreShell(createMemoryStoryStorage(), false);
   let active = $state("first"),
     draft = $state("Retained conversation draft"),
     refreshed = $state(false),
-    sessionsVisible = $state(true);
+    sessionsVisible = $state(true),
+    sessionsLoaded = $state(false);
+  const loadingList = $derived(loading && !sessionsLoaded);
   const author = (name: string) => ({
     id: name,
     name,
@@ -68,7 +72,12 @@
 >
   <AppShell.Main>
     <CommunityInbox
-      items={sessionsVisible ? (refreshed ? [...items].reverse() : items) : []}
+      items={!loadingList && sessionsVisible
+        ? refreshed
+          ? [...items].reverse()
+          : items
+        : []}
+      loading={loadingList}
       activeId={active}
       layoutStorage={createMemoryStoryStorage()}
       onSelect={(id) => (active = id)}
@@ -77,6 +86,9 @@
       threadTitle="Selected chat"
     >
       <div class="fixture-content">
+        {#if loadingList}<Button onclick={() => (sessionsLoaded = true)}
+            >Finish loading sessions</Button
+          >{/if}
         <p>Selected session: {active}</p>
         <Input aria-label="Conversation draft" bind:value={draft} />
         <Button onclick={() => (refreshed = !refreshed)}

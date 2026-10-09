@@ -40,7 +40,7 @@
 />
 
 <Story
-  name="Offline chat row uses presence and an independent exact repository link"
+  name="Offline chat row uses presence and a separate repository header action"
   args={{ status: "Offline" }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
@@ -59,9 +59,13 @@
     });
     await expect(link).toHaveAttribute(
       "href",
-      `#/repos/${"11".repeat(16)}/files?at_op=${"22".repeat(64)}&workspace=agent-${"44".repeat(16)}`,
+      `#/repos/${"11".repeat(16)}/files`,
     );
     await expect(chat.contains(link)).toBe(false);
+    await expect(
+      chat.closest(".inbox-session-tree__children")?.querySelector("a"),
+    ).toBeNull();
+    await expect(link.closest(".inbox-session-tree__header")).not.toBeNull();
     await expect(link.textContent?.trim()).toBe("");
     link.focus();
     await expect(
