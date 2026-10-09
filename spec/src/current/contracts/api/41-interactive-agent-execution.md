@@ -321,3 +321,8 @@ retain no contents and never snapshot or publish repository state.
 E-CHAT-WORKSPACE-009 confirms JST-API-006 unchanged for worker delivery: open,
 configure, cancellation and close frames still reach the owned harness.
 Prompt-only queuing and workspace preparation must not swallow other controls.
+
+E-UI-MENU-001 confirms JST-API-001 unchanged: normal-weight menu titles and
+connection-screen Help alignment change presentation only. Menu selections,
+workspace inspection, connection admission and Help reads retain their existing
+request and authorization contracts; no transport generation is required.

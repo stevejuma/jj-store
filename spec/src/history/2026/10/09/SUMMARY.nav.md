@@ -42,3 +42,5 @@
   {{#include E-CHAT-WORKSPACE-008/SUMMARY.nav.md}}
 - [E-CHAT-WORKSPACE-009](E-CHAT-WORKSPACE-009/index.md)
   {{#include E-CHAT-WORKSPACE-009/SUMMARY.nav.md}}
+- [E-UI-MENU-001](E-UI-MENU-001/index.md)
+  {{#include E-UI-MENU-001/SUMMARY.nav.md}}

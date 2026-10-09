@@ -181,7 +181,6 @@
     .community-repository-branch-command__title[data-ui-part="popover-title"]
   ) {
     margin: 0;
-    font-weight: var(--font-weight-bold, 700);
     line-height: 1.2;
   }
 

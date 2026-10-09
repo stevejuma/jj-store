@@ -59,6 +59,12 @@ Navigation tooltips use Design Core's standard small-text sizing and restored
 inline/block padding, leaving room around the arrow. The foundation retains
 public sizing tokens; the app consumes its defaults without a tooltip override.
 
+Menu section labels and popover titles use the app's normal-weight sans font and
+body text size, matching menu items across footer controls, repository pickers,
+profile menus and filters. This shared typography also applies to portalled
+surfaces and follows the device font-size preference; dialog and page headings
+retain their own hierarchy.
+
 Accent swatches keep circular selected rings centered inside their circular
 buttons, including after changing accents, on hover and at mobile widths in
 either color mode. Keyboard focus remains visible independently of selection.

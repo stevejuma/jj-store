@@ -28,3 +28,14 @@
 :where(.community-ui) h3 {
   font-size: var(--community-text-section);
 }
+
+/* App menu headings share item typography, including portalled content. */
+[data-ui-part="dropdown-menu-label"],
+[data-ui-part="dropdown-menu-group-heading"],
+[data-ui-part="context-menu-label"],
+[data-ui-part="menubar-label"],
+[data-ui-part="popover-title"] {
+  font-family: inherit;
+  font-size: var(--community-text-body);
+  font-weight: 400;
+}

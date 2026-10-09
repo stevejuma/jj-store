@@ -212,7 +212,6 @@
   }
   :global(.store-workspace-picker__header [data-ui-part="popover-title"]) {
     margin: 0;
-    font-weight: 700;
     line-height: 1.2;
   }
   :global(.store-workspace-picker__command[data-ui-part="popover-content"]) {

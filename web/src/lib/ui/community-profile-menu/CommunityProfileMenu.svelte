@@ -99,7 +99,7 @@
         <DropdownMenu.Group class="community-profile-menu__menu-header">
           <CommunityMemberAvatar {member} showPresence decorative />
           <DropdownMenu.Label class="community-profile-menu__menu-identity">
-            <strong>{member.name}</strong>
+            {member.name}
           </DropdownMenu.Label>
         </DropdownMenu.Group>
 
@@ -237,10 +237,6 @@
     align-self: start;
     justify-items: start;
     padding: 0;
-  }
-
-  :global(.community-profile-menu__menu-identity strong) {
     color: var(--foreground);
-    font-size: var(--community-text-body);
   }
 </style>

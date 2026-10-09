@@ -25,8 +25,9 @@ are admitted only from the exact same-origin Help frame.
 
 The Help entry follows primary sidebar navigation geometry: a centered 2rem icon
 button with 0.5rem horizontal rail padding when collapsed, and a full-width
-labelled button inset by 0.75rem when expanded. Connection-screen Help retains
-its standalone layout.
+labelled button inset by 0.75rem when expanded. Connection-screen Help uses a
+fixed 5rem button at the trailing edge of the card footer, aligned with the
+content inset at normal and narrow widths.
 
 The generated manual uses the app's semantic palette, local DM Sans and Source
 Code Pro fonts, typography scale, sidebar chrome and rounded content surfaces.

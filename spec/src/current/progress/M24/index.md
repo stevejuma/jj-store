@@ -380,6 +380,12 @@ forwarding of non-prompt worker controls. M24 remains In progress; M13.3
 publication qualification and visual approval are unchanged. Existing
 architecture oversizes and ResizeObserver diagnostics remain recorded; native
 publication/GC and installed-harness gates are not closed.
+E-UI-MENU-001 gives footer menus and shared popover titles normal-weight item
+typography, removes picker-specific bold headings and keeps profile menu
+identity consistent. Focused interaction/accessibility and live computed-style
+checks retain existing menu behavior. M24 stays In progress; ResizeObserver
+diagnostics and independent workspace qualification remain open. Visual
+baselines remain unapproved.
 <!-- generated-navigation -->
 ## Pages
 

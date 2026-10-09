@@ -131,7 +131,9 @@
         {pending}
       />
     </Card.Content>
-    <StoreHelp />
+    <Card.Footer class="store-connection__footer">
+      <div class="store-connection__help"><StoreHelp /></div>
+    </Card.Footer>
   </Card.Root>
 </main>
 
@@ -146,6 +148,12 @@
   :global(.store-connection__card) {
     width: min(100%, 30rem);
     background: var(--background);
+  }
+  :global(.store-connection__footer) {
+    justify-content: flex-end;
+  }
+  .store-connection__help {
+    flex: 0 0 5rem;
   }
   .store-connection__title {
     margin: 0;
