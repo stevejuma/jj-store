@@ -1,0 +1,3 @@
+- [E-CHAT-LIVE-007 validation 1](details-02.md)
+- [E-CHAT-LIVE-007 validation 2](details-03.md)
+- [E-CHAT-LIVE-007 final validation](details-04.md)

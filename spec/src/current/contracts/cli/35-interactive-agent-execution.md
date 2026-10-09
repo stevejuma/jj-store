@@ -80,3 +80,10 @@ catalog without opening an ACP session or running coding tools. The service
 selects the executable, uses the same resolved provider environment as launch,
 reserves a process slot and reaps it on cancellation/shutdown. The browser never
 selects an executable. JST-CLI-004 explicit lifecycle and custody remain intact.
+
+Catalog previews for managed local/paired providers use an already-running
+compute endpoint. They must not start compute or open a credential prompt while
+holding execution admission. An unavailable runtime yields an unavailable
+catalog; explicit starts keep their existing lifecycle. E-CHAT-LIVE-007 tests
+this boundary and validates an explicitly staged rebuilt helper against the
+preserved development fixture without replacing installed tools (JST-CLI-004).

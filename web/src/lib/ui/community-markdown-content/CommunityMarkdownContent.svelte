@@ -86,6 +86,7 @@
 >
   <MarkdownPreview
     value={preview.content}
+    embed
     extensions={[
       communityMarkdownExtension,
       ...(promptElements ? [promptElementsExtension] : []),

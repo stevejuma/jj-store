@@ -421,3 +421,132 @@ test("partial delivery keeps the original managed send and per-recipient receipt
     manager.destroy();
   }
 });
+
+test("dispatching retains the exact request until an agent acknowledgement", async () => {
+  const calls: unknown[] = [];
+  let state = "dispatching";
+  const id = "a".repeat(32);
+  const manager = new AgentExecution(
+    () => true,
+    async (url, init) => {
+      if (!String(url).endsWith("/agents/chat")) return Response.json(status());
+      calls.push(JSON.parse(String(init?.body)));
+      return Response.json({
+        request_id: id,
+        conversation_id: "c".repeat(32),
+        agents: [
+          {
+            version: 1,
+            request_id: "d".repeat(32),
+            session_id: "first",
+            state,
+            error: null,
+          },
+        ],
+      });
+    },
+  );
+  manager.value = status();
+  try {
+    manager.chat.showGeneral();
+    await manager.chat.send("Work", ["exact-Helper"], undefined, id);
+    expect(manager.chat.pending?.request_id).toBe(id);
+    const original = JSON.parse(JSON.stringify(manager.chat.pending));
+    await expect(manager.chat.send("Again", ["exact-Helper"])).rejects.toThrow(
+      /pending/,
+    );
+    state = "started";
+    await manager.chat.retry();
+    expect(calls).toEqual([original, original]);
+    expect(manager.chat.pending).toBeNull();
+  } finally {
+    manager.destroy();
+  }
+});
+
+test("live acknowledgement refreshes the retained receipt without dispatching again", async () => {
+  const request = "a".repeat(32),
+    child = "b".repeat(32);
+  const calls: string[] = [];
+  const manager = new AgentExecution(
+    () => true,
+    async (url) => {
+      calls.push(String(url));
+      if (String(url).includes("/events?"))
+        return Response.json({
+          version: 1,
+          events: [
+            {
+              sequence: 1,
+              payload: { type: "started", requestId: child },
+              committed: false,
+            },
+          ],
+          next: null,
+        });
+      if (String(url).includes("/outcome?"))
+        return Response.json({
+          version: 1,
+          request_id: child,
+          session_id: "first",
+          state: "started",
+          error: null,
+        });
+      return Response.json({
+        messages: [],
+        profile: null,
+        write_unavailable: null,
+      });
+    },
+  );
+  manager.value = status();
+  manager.chat.open = true;
+  manager.chat.selected = "chat";
+  manager.value.sessions = [
+    {
+      id: "first",
+      conversation_id: manager.chat.selected,
+      repository: "repo",
+      setup_id: "exact-Helper",
+      state: "running",
+    } as AgentStatus["sessions"][number],
+  ];
+  manager.chat.pending = {
+    version: 1,
+    request_id: request,
+    conversation_id: manager.chat.selected,
+    origin: {
+      scope: "personal",
+      home: null,
+      thread: null,
+      agent_target: null,
+      context: "General conversation",
+    },
+    attachments: [],
+    agent_ids: ["exact-Helper"],
+    text: "Work",
+    max_duration_ms: 1000,
+  };
+  manager.chat.receipts[request] = {
+    request_id: request,
+    conversation_id: manager.chat.selected,
+    comment_publication: null,
+    agents: [
+      {
+        version: 1,
+        request_id: child,
+        session_id: "first",
+        state: "dispatching",
+        error: null,
+      },
+    ],
+  };
+  try {
+    await manager.chat.refresh();
+    expect(manager.chat.pending).toBeNull();
+    expect(manager.chat.receipts[request].agents[0].state).toBe("started");
+    expect(calls.some((url) => url.endsWith("/agents/chat"))).toBe(false);
+  } finally {
+    manager.destroy();
+  }
+});

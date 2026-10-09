@@ -99,3 +99,22 @@ E-CHAT-LIVE-006 records the isolated native/local built-browser flows and cold
 restart. Comment actions appear immediately on focus/hover, avoiding an
 intermediate low-contrast opacity state. Native capability refusals remain
 explicit; qualification uses a supported disposable WorkStore home.
+
+A managed Send admitted as `dispatching` retains the exact request and exposes
+its recovery actions until all addressed agents acknowledge it. Matching live
+acknowledgements trigger reads of the exact child receipts, never redispatch.
+Receipt identity must match both request and session; unknown or unavailable
+outcomes retain recovery. An admission response alone cannot clear the draft or
+strand it behind an unavailable recovery action.
+
+A committed comments-only prompt retains its user turn and canonical sent-batch
+summary even when its authored text part is empty. Publication must not remove
+the summary when an initially uncommitted row gains an exact source mapping.
+E-CHAT-LIVE-007 observes real installed Codex answers to three comments in two
+reply blocks within one turn, plus a separate mixed-send flow. This qualifies
+these recorded runs, not guaranteed model compliance or other adapters.
+
+Inline Markdown messages, comments and context use Mira's embedded preview mode.
+They must not inherit a full-document trailing viewport padding when reader
+styles load later. The intentionally blank next-message region is independent.
+E-CHAT-LIVE-007 includes a failing-then-passing late-styles geometry regression.

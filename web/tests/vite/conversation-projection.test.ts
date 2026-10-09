@@ -338,3 +338,20 @@ test("shared answers repeated in feedback and spanning tool boundaries have stab
     ["First half.", "Second half."],
   );
 });
+
+test("committed comments-only user rows retain their canonical batch and turn", () => {
+  const input = {
+    ...row(""),
+    kind: "user" as const,
+    value: { sentContext: { commentSubmission: { request_id: "batch" } } },
+  };
+  const p = agentConversationProjection(
+    [input],
+    { controller: feedback("", [], "/text") },
+    user,
+  );
+  assert.equal(p.items.length, 1);
+  assert.equal(p.items[0].id, input.key);
+  assert.equal(p.items[0].commentBatchId, "batch");
+  assert.deepEqual(p.items[0].blocks, []);
+});

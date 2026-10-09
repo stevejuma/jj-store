@@ -37,3 +37,11 @@ with exact reply revisions. Only the matching started observation acknowledges
 delivery; unknown outcomes remain reserved without replay. Native and local
 metadata CLI work uses existing WorkStore commands, versions and stable request
 identities.
+
+E-CHAT-LIVE-007 retains JST-MUT-001 and JST-COLLAB-034..036 authority: the
+recorded detail/feedback reader allocates its nested futures on the heap so the
+same read can execute within native conversation publication without exhausting
+the request stack. Its pinned source, timeout, authorization, optional-feedback
+failure behavior and publication receipts are unchanged. A future-size
+regression, all nine session-reader tests and the real native-home consumer
+exercise this unchanged contract.

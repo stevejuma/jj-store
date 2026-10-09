@@ -42,7 +42,11 @@ impl Supervisor {
                 Err(error)
             };
         }
-        if self.local_environment(&mut command, setup).await.is_err() {
+        if self
+            .local_environment(&mut command, setup, false)
+            .await
+            .is_err()
+        {
             return Ok(unavailable("unavailable"));
         }
         // Only discovery may use a placeholder to parse provider configuration before model selection.

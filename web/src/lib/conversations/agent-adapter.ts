@@ -185,7 +185,8 @@ export function agentConversationProjection(
         part.text.slice(from, from + row.text.length) === row.text
           ? part
           : undefined;
-      if (exact)
+      // Committed empty authored text still owns a comments-only user turn.
+      if (exact && (row.kind !== "user" || row.text))
         for (const segment of segments(
           exact.text,
           from!,

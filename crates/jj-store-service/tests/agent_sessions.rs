@@ -225,10 +225,13 @@ async fn session_detail_resolves_current_stable_identity_and_exact_links() {
         summary.first_activity_at_millis
     );
 
-    let detail = pager
-        .detail(session.clone(), summary.session_id)
-        .await
-        .unwrap();
+    let pending_detail = pager.detail(session.clone(), summary.session_id);
+    assert!(
+        std::mem::size_of_val(&pending_detail) < 64 * 1024,
+        "recorded detail future must fit nested default-stack HTTP calls: {} bytes",
+        std::mem::size_of_val(&pending_detail),
+    );
+    let detail = pending_detail.await.unwrap();
     assert_eq!(detail.version, 1);
     assert_eq!(detail.snapshot, page.snapshot);
     assert_eq!(&detail.session, summary);

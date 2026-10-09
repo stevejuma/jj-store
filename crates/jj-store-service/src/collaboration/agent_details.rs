@@ -19,7 +19,7 @@ impl AgentSessionPager {
         let _permit = self.cursors.acquire()?;
         within_timeout(
             self.cursors.timeout(),
-            self.detail_inner(session, session_id),
+            Box::pin(self.detail_inner(session, session_id)),
         )
         .await
     }
@@ -82,7 +82,9 @@ impl AgentSessionPager {
                 code_truncated,
             },
         );
-        let feedback = async {
+        // Keep the optional feedback reader off the caller's async stack. This
+        // detail path is also nested inside native conversation publication.
+        let feedback = Box::pin(async {
             let read = crate::collab_reads::PinnedCollabRead::open(
                 session.clone(),
                 Arc::new(crate::collab_reads::RepositoryMemberReactionActors),
@@ -94,7 +96,7 @@ impl AgentSessionPager {
             }
             read.recorded_feedback(session.clone(), &detail.activity)
                 .await
-        }
+        })
         .await;
         match feedback {
             Ok(value) => detail.conversation_feedback = Some(value),

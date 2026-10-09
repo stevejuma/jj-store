@@ -55,6 +55,9 @@ compatible-endpoint configurations; `openai-api` identifies first-party OpenAI.
 Provider-specific model, effort and endpoint inheritance requires matching
 provider/endpoint context. Catalog discovery uses the same resolved launch
 configuration, performs no prompt, tool execution or interactive sign-in, and
-reports failures without invented models. Provider changes take effect only on
-explicit restart, never by applying a foreign model to a running session.
-Credentials retain their existing custody/redaction.
+reports failures without invented models. Managed local/shared catalog previews
+use only an already-running compute endpoint. Discovery never starts compute,
+creates its identity or opens an interactive credential request; unavailable
+compute remains an explicit unavailable catalog result. Provider changes take
+effect only on explicit restart, never by applying a foreign model to a running
+session. Credentials retain their existing custody/redaction.

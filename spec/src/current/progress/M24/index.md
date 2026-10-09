@@ -262,6 +262,21 @@ visibility fixes it and the affected 96-story family passes again. This
 controlled ACP fixture does not prove real model compliance or native IME. M24
 remains In progress, independent gates and the pre-existing architecture-size
 warning remain open, and visual baselines remain unapproved.
+
+E-CHAT-LIVE-007 exercises the preserved live sample with installed Codex 1.13.1:
+three comments at two anchors produce two validated replies in one turn,
+including Unicode. Drafts survive Document/Classic switching; comments-only and
+mixed sends, automatic acknowledgement, retained Sent instructions and exact
+reply/source navigation pass. A clean backend restart retains all 353 original
+events and both links without replay. The run repairs a native detail-reader
+stack overflow, discovery-triggered compute startup, premature managed-request
+clearing and disappearing committed comments-only summaries. Cold screenshot
+review also fixes full-document padding in embedded Markdown comment cards. The
+paired jj-acp source repair permits empty authored text with prepared context;
+its rebuilt helper is staged only in the ignored validation runtime. M24 remains
+In progress; independent live permissions/cancellation, other adapters, native
+IME, desktop and visual gates remain open. The pre-existing development
+acceptance-script architecture-size failure is unchanged.
 <!-- generated-navigation -->
 
 ## Pages

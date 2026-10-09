@@ -94,3 +94,40 @@ print(json.dumps({'status':'ready','facts':{'models':{'availableModels':[{'model
             .is_err()
     );
 }
+
+#[tokio::test]
+async fn managed_catalog_does_not_start_compute_or_mutate_the_journal() {
+    let fixture = Fixture::new().await;
+    let actor = fixture.actor;
+    let root = fixture.resources.root.clone();
+    fs::write(
+        fixture
+            .resources
+            .executable
+            .with_file_name("jj-store-local-agent"),
+        "unused helper",
+    )
+    .unwrap();
+    let supervisor = Supervisor::open(fixture.resources).unwrap();
+    tokio::time::timeout(Duration::from_secs(240), async {
+        while !supervisor.ready() {
+            tokio::time::sleep(Duration::from_millis(100)).await;
+        }
+    })
+    .await
+    .unwrap();
+    let before = fs::read(root.join("state.json")).unwrap();
+    let preview = serde_json::from_value(json!({
+        "version":1,"runner":"local","preferences":{"model":null,"effort":null,"mode":null},
+        "options":{"provider":"local"},"secrets":{}
+    }))
+    .unwrap();
+    let result = supervisor.catalog_preview(actor, preview).await.unwrap();
+    assert_eq!(result.status.as_deref(), Some("unavailable"));
+    assert!(
+        !root.join("compute").exists(),
+        "read-only discovery started compute preparation"
+    );
+    assert_eq!(fs::read(root.join("state.json")).unwrap(), before);
+    supervisor.shutdown().await.unwrap();
+}

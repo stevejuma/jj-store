@@ -1,3 +1,4 @@
+import { acknowledged, refreshChatReceipt } from "./agent-chat-receipts.js";
 import type { ApplicationFreshness } from "./application-freshness.js";
 import { watchAgentChanges } from "./agent-freshness.js";
 import type { Model } from "../api/client.js";
@@ -223,7 +224,10 @@ export class AgentChat {
       );
       if (refused)
         throw new Error(refused.error ?? "The prompt was not accepted.");
-      this.pending = null;
+      // Admission precedes the harness acknowledgement. Keep the exact request
+      // available to the shared composer recovery until every recipient confirms.
+      if (outcome.agents.every((a) => acknowledged(a.state)))
+        this.pending = null;
       await this.manager.updates.status();
       await this.refresh();
       return outcome;
@@ -272,6 +276,7 @@ export class AgentChat {
         } while (this.#alive);
         void this.manager.discussions.load(session.id);
       }
+      if (this.pending) await refreshChatReceipt(this);
       this.streamError = "";
       return true;
     } catch {

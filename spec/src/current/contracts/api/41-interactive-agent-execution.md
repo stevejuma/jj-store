@@ -198,3 +198,9 @@ Feedback exposes exact captured string parts, discussion revisions and selected
 CommentReply links. These are publication-selected facts, not browser-inferred
 answers. Failed or unknown answer publication remains visible as pending
 execution status and retries the original link request.
+
+E-CHAT-LIVE-007 retains JST-API-001/003 request and event contracts. A managed
+admission response in dispatching state is not an agent acknowledgement. The UI
+may use matching captured events to trigger the existing exact child-outcome
+GET; mismatched request/session identities cannot settle a pending submission.
+This read introduces no endpoint or redispatch and preserves unknown outcomes.
