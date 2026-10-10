@@ -6,12 +6,14 @@
     count = 4,
     padded = false,
     galleryVariant = "default",
+    inlineGallery = false,
   }: {
     layout: "gallery" | "timeline" | "messages" | "details" | "repository";
     label?: string;
     count?: number;
     padded?: boolean;
     galleryVariant?: "default" | "agents";
+    inlineGallery?: boolean;
   } = $props();
 </script>
 
@@ -19,6 +21,7 @@
   class="community-skeleton"
   data-layout={layout}
   data-gallery-variant={galleryVariant}
+  data-inline-gallery={inlineGallery ? "" : undefined}
   data-padded={padded ? "" : undefined}
   role="status"
   aria-label={label}
@@ -47,6 +50,10 @@
   .community-skeleton {
     width: 100%;
     min-width: 0;
+  }
+  .community-skeleton[data-inline-gallery],
+  .community-skeleton[data-inline-gallery] .community-skeleton__items {
+    display: contents;
   }
   .community-skeleton[data-padded] {
     box-sizing: border-box;

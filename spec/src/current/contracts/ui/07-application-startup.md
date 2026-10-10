@@ -13,15 +13,22 @@ infer a username from HTTP. Usable backup status is future-release work.
 
 Main page views load on demand while controller and shell owners retain routes,
 authentication, selections and drafts. Pending view imports show the existing
-accessible skeleton. Failed imports use application notifications with Retry;
-the retry entry URL comes from the application compiler, including hashed
-production entries and development HMR transformations. It is never inferred
-from an output filename. Retries never clear drafts, replay mutations or reload
-the application. Navigation prevents obsolete pending views from rendering.
-Loaded optional overlays stay mounted inside their context owner when closed to
-retain existing cleanup and draft behavior. Built-bundle acceptance checks
-unopened pages remain outside the initial static import closure and dynamic
-chunks remain in the existing browser asset manifest.
+accessible, route-specific skeleton. The module-loading fallback and initial
+data-loading view preserve the same visible page geometry: Threads and agent
+session inboxes retain their list and conversation regions (including stored
+widths and mobile behavior), repository files retain their saved tree
+visibility, history retains its columns, and Projects use the selected tab's
+list, grid, activity or detail composition. A generic details skeleton never
+precedes these page skeletons. Known selection-empty states remain visible while
+their list loads. Failed imports use application notifications with Retry; the
+retry entry URL comes from the application compiler, including hashed production
+entries and development HMR transformations. It is never inferred from an output
+filename. Retries never clear drafts, replay mutations or reload the
+application. Navigation prevents obsolete pending views from rendering. Loaded
+optional overlays stay mounted inside their context owner when closed to retain
+existing cleanup and draft behavior. Built-bundle acceptance checks unopened
+pages remain outside the initial static import closure and dynamic chunks remain
+in the existing browser asset manifest.
 
 Browser interaction fixtures exercise the same bootstrap and repository
 discovery requests as the production controller. Authenticated fixtures supply

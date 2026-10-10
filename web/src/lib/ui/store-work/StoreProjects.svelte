@@ -112,11 +112,11 @@
   class="store-projects community-projects"
   aria-label="Projects and tasks"
   aria-busy={busy}
-  data-task-detail={task ? "" : undefined}
+  data-task-detail={route.taskId ? "" : undefined}
   data-agents-view={tab === "agents" ? "" : undefined}
 >
   <StoreProjectsViewport
-    taskDetail={!!task}
+    taskDetail={!!route.taskId}
     bounded={tab === "agents"}
     bind:viewportRef={element}
   >
@@ -140,13 +140,13 @@
       onValueChange={(value) => changeTab(value as ProjectsTab)}
       class="store-projects__tab-root"
     >
-      {#if !task}<StoreProjectsNavigation
+      {#if !route.taskId}<StoreProjectsNavigation
           {controller}
           {project}
           {tabs}
           {tab}
         />{/if}
-      {#if !task}<header class="community-projects__surface-header">
+      {#if !route.taskId}<header class="community-projects__surface-header">
           <div>
             {#if tab === "tasks"}<ListTodo
                 aria-hidden="true"

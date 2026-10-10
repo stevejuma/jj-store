@@ -1,5 +1,6 @@
 <script lang="ts">
   import StoreLazyView from "./StoreLazyView.svelte";
+  import StorePageSkeleton from "./StorePageSkeleton.svelte";
   import { views } from "./application-views.js";
   import type {
     StoreController,
@@ -12,7 +13,11 @@
 </script>
 
 {#if controller.execution}<StoreLazyView load={views.agents} label="Agents"
-    >{#snippet content(View)}<View
+    >{#snippet loading()}<StorePageSkeleton
+        route={current}
+        label="Agents"
+        surface="agents"
+      />{/snippet}{#snippet content(View)}<View
         {controller}
         manager={controller.execution!}
         repositories={controller.state.repositories}

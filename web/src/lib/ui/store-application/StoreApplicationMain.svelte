@@ -1,5 +1,6 @@
 <script lang="ts">
   import StoreLazyView from "./StoreLazyView.svelte";
+  import StorePageSkeleton from "./StorePageSkeleton.svelte";
   import { views } from "./application-views.js";
   import {
     AppShell,
@@ -127,7 +128,13 @@
     {:else if current.page === "threads"}<StoreLazyView
         load={views.threads}
         label="Threads"
-        >{#snippet content(View)}<View {controller} />{/snippet}</StoreLazyView
+        >{#snippet loading()}<StorePageSkeleton
+            route={current}
+            label="Threads"
+            surface="threads"
+          />{/snippet}{#snippet content(View)}<View
+            {controller}
+          />{/snippet}</StoreLazyView
       >
     {:else}
       {#if shell.mobile.resolvedMode === "mobile"}
@@ -177,7 +184,9 @@
               {#if focusedStacks}
                 {#if stackWorkspace && (!stackWorkspace.snapshot || stackWorkspace.snapshot.repository === current.repository) && !initialStackFailure}
                   <StoreLazyView load={views.stacks} label="Workspace"
-                    >{#snippet content(View)}<View
+                    >{#snippet loading()}<StoreStackWorkspaceState
+                        loading
+                      />{/snippet}{#snippet content(View)}<View
                         {controller}
                         workspace={stackWorkspace}
                       >

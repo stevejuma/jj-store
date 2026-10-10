@@ -86,21 +86,22 @@
       </Tooltip.Provider>
     </div>
   </header>
-  {#if !available || (!value && !unknown)}
-    <div class="agents__grid">{@render sessionsCard()}</div>
-  {/if}
-  {#if !available}<div class="agents__empty">
+  {#if !available}<div class="agents__grid">{@render sessionsCard()}</div>
+    <div class="agents__empty">
       <h2>Agent execution unavailable</h2>
       <p>
         Local agent management requires an enabled local execution service on
         this device.
       </p>
     </div>
-  {:else if !value && !unknown}<CommunitySkeleton
-      layout="gallery"
-      galleryVariant="agents"
-      label="Loading your agents"
-    />
+  {:else if !value && !unknown}<div class="agents__grid">
+      {@render sessionsCard()}{@render addCard()}<CommunitySkeleton
+        layout="gallery"
+        galleryVariant="agents"
+        inlineGallery
+        label="Loading your agents"
+      />
+    </div>
   {:else}
     {#if unknown}<p role="status">
         Agent availability is unknown. Saved agents remain visible while
@@ -108,14 +109,7 @@
       </p>{/if}
     <div class="agents__grid">
       {@render sessionsCard()}
-      <button
-        class="agents__add-card"
-        type="button"
-        aria-label="Add agent"
-        disabled={busy || !value || unknown}
-        onclick={onAdd}
-        ><PlusIcon aria-hidden="true" /><span>Add agent</span></button
-      >
+      {@render addCard()}
       {#each value?.setups ?? [] as agent (agent.id)}
         {@const status = agentAvailability(
           agent.id,
@@ -221,3 +215,12 @@
       </p>{/if}
   {/if}
 </section>
+
+{#snippet addCard()}<button
+    class="agents__add-card"
+    type="button"
+    aria-label="Add agent"
+    disabled={busy || !value || unknown}
+    onclick={onAdd}
+    ><PlusIcon aria-hidden="true" /><span>Add agent</span></button
+  >{/snippet}

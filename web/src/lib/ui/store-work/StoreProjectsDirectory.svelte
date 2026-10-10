@@ -8,7 +8,7 @@
   import StoreProjectsRepositories from "./StoreProjectsRepositories.svelte";
   import type { StoreController } from "../../controller/contracts.js";
   import StoreWorkEmpty from "./StoreWorkEmpty.svelte";
-  import CommunitySkeleton from "../community-skeleton/CommunitySkeleton.svelte";
+  import StoreWorkRowsSkeleton from "./StoreWorkRowsSkeleton.svelte";
   import StoreWorkTaskRows from "./StoreWorkTaskRows.svelte";
   let {
     controller,
@@ -102,8 +102,9 @@
         }}
       />
       {#if home.loading && !home.snapshot}<div class="store-projects__loading">
-          <CommunitySkeleton
-            layout="timeline"
+          <StoreWorkRowsSkeleton
+            {layout}
+            {kind}
             label={`Loading ${home.repository.name} projects and tasks`}
           />
         </div>{/if}

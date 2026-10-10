@@ -221,6 +221,7 @@
 
 <Story
   name="Agents skeleton matches fixed card dimensions"
+  asChild
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
     await c.findByRole("status", { name: "Loading your agents" });
@@ -233,6 +234,16 @@
         expect(tile.getBoundingClientRect().width).toBe(208);
         expect(tile.getBoundingClientRect().height).toBe(260);
       }
+    });
+    await waitFor(() => {
+      const sessions = c.getByRole("button", {
+        name: /^View sessions$/,
+      });
+      const first = canvasElement.querySelector(".community-skeleton__item")!;
+      expect(first.getBoundingClientRect().top).toBeCloseTo(
+        sessions.getBoundingClientRect().top,
+        0,
+      );
     });
   }}>{#snippet children()}<SkeletonFixture />{/snippet}</Story
 >

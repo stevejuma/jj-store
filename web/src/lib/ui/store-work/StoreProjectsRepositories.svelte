@@ -5,7 +5,7 @@
   import StoreWorkEmpty from "./StoreWorkEmpty.svelte";
   import StoreRepositoryDirectoryRow from "./StoreRepositoryDirectoryRow.svelte";
   import ListTodoIcon from "@lucide/svelte/icons/list-todo";
-  import CommunitySkeleton from "../community-skeleton/CommunitySkeleton.svelte";
+  import StoreWorkRowsSkeleton from "./StoreWorkRowsSkeleton.svelte";
   import type { StoreController } from "../../controller/contracts.js";
   import "./community-work-rows.css";
   let {
@@ -24,7 +24,11 @@
 {#if (controller.projects!.loading || controller.projects!.repositories.entries.some((entry) => entry.loading)) && !controller.projects!.repositories.entries.some((entry) => entry.summary)}<div
     class="store-projects__loading"
   >
-    <CommunitySkeleton layout="timeline" label="Loading repositories" />
+    <StoreWorkRowsSkeleton
+      {layout}
+      kind="repositories"
+      label="Loading repositories"
+    />
   </div>{/if}
 
 <div class="community-projects__collection-groups">

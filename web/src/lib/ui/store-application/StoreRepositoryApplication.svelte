@@ -1,5 +1,6 @@
 <script lang="ts">
   import StoreLazyView from "./StoreLazyView.svelte";
+  import StorePageSkeleton from "./StorePageSkeleton.svelte";
   import { views } from "./application-views.js";
   import type { StackWorkspaceController } from "../../controller/stack-workspace/controller.svelte.js";
   import type { AppShellDisplayMode } from "@lapismd/design-core/shell";
@@ -51,17 +52,36 @@
     {#if isRepositoryProjects(state.route) && controller.projects}<StoreLazyView
         load={views.projectsRepository}
         label="Repository projects"
-        >{#snippet content(View)}<View {controller} />{/snippet}</StoreLazyView
+        >{#snippet loading()}<StorePageSkeleton
+            route={state.route}
+            label="Repository projects"
+            surface="projects"
+            {layoutStorage}
+          />{/snippet}{#snippet content(View)}<View
+            {controller}
+          />{/snippet}</StoreLazyView
       >
     {:else if page === "projects" && controller.projects}<StoreLazyView
         load={views.projects}
         label="Projects"
-        >{#snippet content(View)}<View {controller} />{/snippet}</StoreLazyView
+        >{#snippet loading()}<StorePageSkeleton
+            route={state.route}
+            label="Projects"
+            surface="projects"
+            {layoutStorage}
+          />{/snippet}{#snippet content(View)}<View
+            {controller}
+          />{/snippet}</StoreLazyView
       >
     {:else if page === "projects" && controller.work}<StoreLazyView
         load={views.work}
         label="Work"
-        >{#snippet content(View)}<View
+        >{#snippet loading()}<StorePageSkeleton
+            route={state.route}
+            label="Work"
+            surface="projects"
+            {layoutStorage}
+          />{/snippet}{#snippet content(View)}<View
             work={controller.work!}
             principal={state.repository.principal}
             repositories={state.repositories}
@@ -74,7 +94,14 @@
     {:else if page === "threads"}<StoreLazyView
         load={views.threads}
         label="Threads"
-        >{#snippet content(View)}<View {controller} />{/snippet}</StoreLazyView
+        >{#snippet loading()}<StorePageSkeleton
+            route={state.route}
+            label="Threads"
+            surface="threads"
+            {layoutStorage}
+          />{/snippet}{#snippet content(View)}<View
+            {controller}
+          />{/snippet}</StoreLazyView
       >
     {:else if needsOperation}<section
         class="store-repository-application__state"
@@ -108,25 +135,49 @@
     {:else if page === "agents"}<StoreLazyView
         load={views.agentsRecorded}
         label="Agent sessions"
-        >{#snippet content(View)}<View {controller} />{/snippet}</StoreLazyView
+        >{#snippet loading()}<StorePageSkeleton
+            route={state.route}
+            label="Agent sessions"
+            surface="repository"
+            {layoutStorage}
+          />{/snippet}{#snippet content(View)}<View
+            {controller}
+          />{/snippet}</StoreLazyView
       >
     {:else if page === "reviews"}<StoreLazyView
         load={views.reviews}
         label="Reviews"
-        >{#snippet content(View)}<View
+        >{#snippet loading()}<StorePageSkeleton
+            route={state.route}
+            label="Reviews"
+            surface="repository"
+            writable={state.repository.permission === "write" ||
+              state.repository.permission === "admin"}
+            {layoutStorage}
+          />{/snippet}{#snippet content(View)}<View
             {controller}
             {layoutStorage}
           />{/snippet}</StoreLazyView
       >
     {:else if page === "files"}<StoreLazyView load={views.files} label="Files"
-        >{#snippet content(View)}<View
+        >{#snippet loading()}<StorePageSkeleton
+            route={state.route}
+            label="Files"
+            surface="repository"
+            {layoutStorage}
+          />{/snippet}{#snippet content(View)}<View
             {controller}
             now={state.now}
             {layoutStorage}
           />{/snippet}</StoreLazyView
       >
     {:else}<StoreLazyView load={views.log} label="History"
-        >{#snippet content(View)}<View
+        >{#snippet loading()}<StorePageSkeleton
+            route={state.route}
+            label="History"
+            surface="repository"
+            {layoutStorage}
+          />{/snippet}{#snippet content(View)}<View
             {controller}
             {page}
             graph={state.graph}

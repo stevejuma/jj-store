@@ -15,6 +15,7 @@
   args={{ loading: true }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
+    await c.findByRole("tab", { name: "Projects" });
     for (const name of [
       "Projects",
       "Tasks",
@@ -32,6 +33,11 @@
       );
       await expect(c.queryByText(/Checking home repositories/)).toBeNull();
       await expect(c.queryByText(/Loading project…/)).toBeNull();
+      await expect(
+        canvasElement.querySelector(
+          `[data-layout="${name === "Activity" ? "timeline" : "work-list"}"]`,
+        ),
+      ).not.toBeNull();
       await expect(
         c.queryByText(
           /No accessible|No matching|No reviews yet|No repository activity yet/,
@@ -55,6 +61,28 @@
         ).toBeGreaterThanOrEqual(16);
       }
     }
+  }}
+/>
+
+<Story
+  name="Grid skeleton retains project column sizing"
+  args={{ loading: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await userEvent.click(await c.findByRole("radio", { name: "Grid layout" }));
+    await waitFor(() => {
+      const status = c.getByRole("status", { name: "Loading projects" });
+      expect(status).toHaveAttribute("data-layout", "work-grid");
+      const rows = status.querySelectorAll(".community-projects__card");
+      expect(rows).toHaveLength(4);
+      expect(rows[0]!.getBoundingClientRect().top).toBe(
+        rows[1]!.getBoundingClientRect().top,
+      );
+      expect(rows[2]!.getBoundingClientRect().top).toBeGreaterThan(
+        rows[0]!.getBoundingClientRect().top,
+      );
+      expect(rows[0]!.getBoundingClientRect().height).toBeLessThan(60);
+    });
   }}
 />
 

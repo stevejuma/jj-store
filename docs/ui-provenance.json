@@ -2786,6 +2786,22 @@
     {
       "local": "web/src/lib/ui/store-agent-chat-body/ChatHistoryStatus.svelte",
       "reason": "Locally authored conversation history loading and empty-state composition using public Design Core primitives, extracted from the existing owned body."
+    },
+    {
+      "local": "web/src/lib/ui/community-inbox/CommunityInboxSkeleton.svelte",
+      "reason": "Locally authored route and data-loading composition using maintained owned layouts and public Design Core Skeleton primitives; no Community source is copied."
+    },
+    {
+      "local": "web/src/lib/ui/store-application/StorePageSkeleton.svelte",
+      "reason": "Locally authored route and data-loading composition using maintained owned layouts and public Design Core Skeleton primitives; no Community source is copied."
+    },
+    {
+      "local": "web/src/lib/ui/store-work/StoreWorkRowsSkeleton.svelte",
+      "reason": "Locally authored route and data-loading composition using maintained owned layouts and public Design Core Skeleton primitives; no Community source is copied."
+    },
+    {
+      "local": "web/src/lib/ui/store-work/StoreWorkTaskSkeleton.svelte",
+      "reason": "Locally authored route and data-loading composition using maintained owned layouts and public Design Core Skeleton primitives; no Community source is copied."
     }
   ],
   "desktopAppearance": {

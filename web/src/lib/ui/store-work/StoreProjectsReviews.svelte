@@ -3,7 +3,7 @@
   import StoreWorkCollection from "./StoreWorkCollection.svelte";
   import GitBranchIcon from "@lucide/svelte/icons/git-branch";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import CommunitySkeleton from "../community-skeleton/CommunitySkeleton.svelte";
+  import StoreWorkRowsSkeleton from "./StoreWorkRowsSkeleton.svelte";
   import StoreWorkReviewRow from "./StoreWorkReviewRow.svelte";
   import "./community-work-reviews.css";
   import type { StoreController } from "../../controller/contracts.js";
@@ -59,7 +59,12 @@
         {#if home.loading && !home.snapshot}<div
             class="store-projects__loading"
           >
-            <CommunitySkeleton layout="timeline" label="Loading reviews" />
+            <StoreWorkRowsSkeleton
+              {layout}
+              kind="reviews"
+              grouped={false}
+              label="Loading reviews"
+            />
           </div>
         {:else if !home.threads.length && !home.error && !home.unsupported}<StoreWorkEmpty
             kind="reviews"

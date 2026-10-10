@@ -294,6 +294,11 @@
   name="File detail"
   args={{ initialPage: "files", loading: false, detailLoading: true }}
   play={async ({ canvasElement }) => {
+    await within(canvasElement).findByRole(
+      "list",
+      { name: "Repository breadcrumb" },
+      { timeout: 10000 },
+    );
     const status = await within(canvasElement).findByRole("status", {
       name: "Loading README.md",
     });

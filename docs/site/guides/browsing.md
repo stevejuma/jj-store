@@ -16,9 +16,13 @@ Search expands inside its navigation row while the other header controls stay in
 place. Repository and conversation file trees share the same toolbar and listing
 presentation, including when opened directly from a conversation.
 
-Views and optional inspectors load when opened. A loading view retains the shell
-and current controller state. If its download fails, use Retry in the
-notification; navigation and pending work remain available.
+Views and optional inspectors load when opened. Initial page placeholders match
+the selected tab throughout module and data loading. Threads and agent inboxes
+retain both regions and their saved widths; repository Files retains its saved
+tree visibility, and Projects uses list rows, cards, activity or task details as
+appropriate. A loading view retains the shell and current controller state. If
+its download fails, use Retry in the notification; navigation and pending work
+remain available.
 
 ## Choose a snapshot
 

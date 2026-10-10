@@ -235,7 +235,7 @@
       bind:filename={editFilename}
     />
     {#if initialLoading || directoryLoading}<CommunityProjectsRepositorySkeleton
-        layout="directory"
+        layout={view.route.path ? "source" : "directory"}
         label="Loading repository files"
       />{:else}
       {#if view.targets.length > 1}<StoreNotice

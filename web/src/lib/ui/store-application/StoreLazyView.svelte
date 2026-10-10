@@ -6,11 +6,13 @@
     load,
     label,
     active = true,
+    loading,
     content,
   }: {
     load: () => Promise<{ default: Component<Props> }>;
     label: string;
     active?: boolean;
+    loading?: Snippet;
     content: Snippet<[Component<Props>]>;
   } = $props();
   let requested = $state(false);
@@ -30,12 +32,12 @@
 {#if pending}
   {#await pending}
     {#if active}
-      <CommunitySkeleton
-        layout="details"
-        count={3}
-        padded
-        label={`Loading ${label}`}
-      />
+      {#if loading}{@render loading()}{:else}<CommunitySkeleton
+          layout="details"
+          count={3}
+          padded
+          label={`Loading ${label}`}
+        />{/if}
     {/if}
   {:then module}
     {@render content(module.default)}

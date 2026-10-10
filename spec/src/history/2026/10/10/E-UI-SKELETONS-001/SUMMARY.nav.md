@@ -1,0 +1,2 @@
+- [Validation runs](details-02.md)
+- [Verification follow-ups](details-03.md)

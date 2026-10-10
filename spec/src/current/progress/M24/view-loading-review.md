@@ -69,3 +69,13 @@ unchanged; wider view-loading qualification stays open. Registry-only dependency
 release, desktop/platform acceptance and visual baseline approval remain
 independent. Next: finish the independent live-reply and native Stack story
 repairs, then repeat the full interaction lane before any release claim.
+
+E-UI-SKELETONS-001 in enclosing change `mpyvzmqo` repairs the module-loading
+fallback without changing lazy import ownership, dispatch, authentication or
+request caching. Each requested page keeps its route-specific geometry through
+module import and initial reads. Projects lists no longer impersonate activity
+timelines; selected task details and writable review details retain their own
+chrome. Inbox loading uses the live regions and stored widths. M24 stays In
+progress; adapter, installed permission/cancellation, platform and visual
+baseline gates remain independent. Cold browser and focused interaction evidence
+is recorded in that entry; no aggregate or baseline acceptance is inferred.

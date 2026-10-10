@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed historical turn cards, exact cached inspector navigation, warning retry and compact root-file presentation; guide matches current behavior and preserves dispatch and publication authority.",
-      "fingerprint": "287fb7e882f0dd24bbefd039b950134afaf833abc777f4edaf3495b727c8f939"
+      "reason": "Reviewed route-specific skeleton geometry for all requested tabs, selected history diffs and data reads, retaining live row and grid layout, device widths, lazy navigation and drafts.",
+      "fingerprint": "3dac7228d0da23805c6edf21f001c49b680200a07da3eab44b46633e72398bf8"
     }
   },
   {
