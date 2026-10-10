@@ -81,7 +81,7 @@ export async function agentSidebarPlay({
     canvas.getByRole("button", { name: "Show details for apply_patch" }),
   );
   await expect(
-    canvas.getByRole("region", { name: "Changed file src/lib.rs" }),
+    canvas.getByRole("region", { name: "Diff for src/lib.rs" }),
   ).toBeVisible();
   await expect(
     canvas.queryByRole("button", { name: /Copy full tool call ID/u }),

@@ -4,6 +4,12 @@ The integrated browsing and API references retain native Stacks discovery and
 progressive Blame together. Review the combined source fingerprints and preserve
 each feature's existing limitations and verification evidence.
 
+The browsing manual describes contained unavailable-content banners for Reviews
+and agent panes. Keep this presentation distinct from scoped operational toasts,
+retry behavior and exact-request recovery; a rounded banner does not establish
+that the underlying content or repository is available. Source review covers the
+shared alert and its collection/surface placement.
+
 The Blame guide documents on-demand recorded-file annotation, progressive
 genuine origins, source-first display, retained progress, commit navigation and
 slow JJ history. Transport and local technical pages describe operation binding,

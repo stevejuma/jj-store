@@ -4,7 +4,10 @@ Select a repository from the left sidebar before interpreting code views. The
 profile and selected workspace determine which operations are available. A
 project's linked repository may require separate access from its metadata home.
 Repository directories load details for visible rows. Initial reads show
-skeletons; refreshing loaded rows preserves their content.
+skeletons; refreshing loaded rows preserves their content. Unavailable Reviews
+and agent content uses a padded, rounded banner inside its pane, aligned with
+the surrounding header or collection. Request failures retain their scoped
+notification and retry behavior.
 
 ## Choose a snapshot
 

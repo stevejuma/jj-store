@@ -1,5 +1,10 @@
 # Read APIs and browser
 
+The repository unavailable-content banner presentation does not alter API read
+contracts, unavailable/error responses, repository authorization or retry
+semantics. Its collection/surface inset is local UI state; clients do not send
+it or receive it in structured service responses (JST-API-001).
+
 Native and local `GET .../commits/{commit}/blame` accept an explicit `at_op`,
 canonical file `path` and optional opaque `continuation`. The shared versioned
 response identifies repository, operation, commit, path and file; contains line

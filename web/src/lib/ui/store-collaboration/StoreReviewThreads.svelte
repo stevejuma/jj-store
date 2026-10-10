@@ -69,6 +69,7 @@
             title="Reviews unavailable"
             description={view.status.error}
             tone="destructive"
+            inset="surface"
           />{/if}
         {#if (view.status.connection === "connecting" || view.status.navigation === "loading" || view.status.reviews === "loading") && !view.reviewThreads.length}
           <div class="store-reviews__loading">
@@ -124,6 +125,7 @@
         />{/key}
     {:else}<CommunityProjectsColumnAlert
         title="Review unavailable"
+        inset="collection"
         description={view.status.error ||
           "The selected review could not be loaded."}
       />{/if}

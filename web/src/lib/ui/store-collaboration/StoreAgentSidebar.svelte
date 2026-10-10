@@ -60,6 +60,7 @@
   {#if failure}
     <CommunityProjectsColumnAlert
       title="Agent response unavailable"
+      inset="collection"
       description={failure}
       tone="destructive"
     />

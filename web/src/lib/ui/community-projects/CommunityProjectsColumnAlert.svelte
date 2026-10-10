@@ -9,6 +9,7 @@
     description,
     tone = "warning",
     inline = false,
+    inset,
     details,
     children,
   }: {
@@ -16,6 +17,7 @@
     description: string;
     tone?: "warning" | "destructive";
     inline?: boolean;
+    inset?: "collection" | "surface";
     details?: Snippet;
     children?: Snippet;
   } = $props();
@@ -25,6 +27,7 @@
   class="community-projects-column-alert"
   data-tone={tone}
   data-layout={inline ? "inline" : undefined}
+  data-inset={inset}
   variant={tone === "destructive" ? "destructive" : "default"}
 >
   {#if tone === "destructive"}
@@ -52,6 +55,26 @@
     border-style: solid;
     border-color: var(--border);
     border-radius: 0;
+  }
+
+  :global(
+    [data-ui-component="alert"][data-ui-part="alert"].community-projects-column-alert[data-inset]
+  ) {
+    box-sizing: border-box;
+    align-self: flex-start;
+    flex: none;
+    width: calc(100% - 2rem);
+    margin: 0.5rem 1rem;
+    border-width: 1px;
+    border-radius: 0.45rem;
+  }
+
+  :global(
+    [data-ui-component="alert"][data-ui-part="alert"].community-projects-column-alert[data-inset="surface"]
+  ) {
+    width: calc(100% - 1.5rem);
+    margin-inline-start: 0.5rem;
+    border-radius: 0.65rem;
   }
 
   :global(

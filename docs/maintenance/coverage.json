@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed shared intentional Threads, cached Codebase alias publication, Workspace menu naming and confirmed removal returning to inbox without rereading hidden tombstones; updated browsing guidance.",
-      "fingerprint": "fa7ad58fdfd8ee1691c5a2e745bcc33d0e7d0a3edc475296c171604d6b254e69"
+      "reason": "Reviewed contextual repository banner presentation: shared collection/surface insets align Reviews with its header, retain Agents geometry and contain unavailable detail panes; other tabs keep scoped toast and exact-recovery semantics.",
+      "fingerprint": "fb4f4fce64d2884bdd36f0bed1e11c735779a13e0ce0267eeedd71c2a4b2acb6"
     }
   },
   {
