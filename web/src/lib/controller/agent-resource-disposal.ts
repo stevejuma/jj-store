@@ -3,9 +3,10 @@ import { syncAgentPower } from "./agent-power.js";
 export function disposeAgentResources(manager: AgentExecution) {
   void syncAgentPower(null, false);
   manager.chat.destroy();
+  manager.changes.destroy();
   manager.metadata.destroy();
   manager.catalogs.destroy();
-  manager.compute.stop();
+  manager.compute.destroy();
   manager.tooling.destroy();
   manager.discussions.destroy();
   manager.client.close();

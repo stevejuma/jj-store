@@ -18,7 +18,11 @@ export class LocalClient {
   close() {
     this.closed.abort();
   }
-  async fetch(path: string, init: RequestInit = {}) {
+  async fetch(
+    path: string,
+    init: RequestInit = {},
+    timeout: number | null = 35000,
+  ) {
     this.closed.signal.throwIfAborted();
     const response = await this.fetcher(
       `/v1/local/${this.repository ? `repos/${this.repository}/` : ""}${path}`,
@@ -30,7 +34,7 @@ export class LocalClient {
         signal: AbortSignal.any([
           this.closed.signal,
           init.signal ?? new AbortController().signal,
-          AbortSignal.timeout(35000),
+          ...(timeout === null ? [] : [AbortSignal.timeout(timeout)]),
         ]),
         headers: { ...init.headers, "x-jj-store-protocol": "1" },
       },

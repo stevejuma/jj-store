@@ -88,6 +88,28 @@
 </script>
 
 <Story
+  name="Collapsed repository children are read-free and reuse captures on reopen"
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    const counts = () =>
+      JSON.parse(c.getByTestId("sidebar-thread-reads").textContent ?? "{}");
+    await c.findByRole("button", { name: "general" });
+    await expect(counts()["99".repeat(16)] ?? 0).toBe(0);
+    await userEvent.click(
+      c.getByRole("button", { name: "Expand Other repository" }),
+    );
+    await waitFor(() => expect(counts()["99".repeat(16)]).toBe(1));
+    await userEvent.click(
+      c.getByRole("button", { name: "Collapse Other repository" }),
+    );
+    await userEvent.click(
+      c.getByRole("button", { name: "Expand Other repository" }),
+    );
+    await expect(counts()["99".repeat(16)]).toBe(1);
+  }}
+/>
+
+<Story
   name="Threads nest under repositories with contextual breadcrumbs"
   play={nested}
 />

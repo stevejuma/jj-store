@@ -26,6 +26,7 @@
     onSelect,
     onSearch,
     footer,
+    onCompactSectionChange,
   }: {
     model: CommunityNavigationModel;
     activeItemId?: string;
@@ -35,6 +36,7 @@
     onSelect: (item: CommunityNavigationItemModel) => void;
     onSearch?: (query: string) => void;
     footer?: Snippet;
+    onCompactSectionChange?: (id: string) => void;
   } = $props();
   let compactSectionId = $state("");
   let compactTooltipId = $state("");
@@ -66,9 +68,11 @@
   function setCompactSectionOpen(sectionId: string, open: boolean): void {
     if (open) {
       compactSectionId = sectionId;
+      onCompactSectionChange?.(sectionId);
       compactTooltipId = "";
     } else if (compactSectionId === sectionId) {
       compactSectionId = "";
+      onCompactSectionChange?.("");
       const trigger =
         compactSectionTriggerId === sectionId
           ? compactSectionTrigger
@@ -79,6 +83,7 @@
 
   function selectCompactItem(item: CommunityNavigationItemModel): void {
     compactSectionId = "";
+    onCompactSectionChange?.("");
     onSelect(item);
   }
 

@@ -2,11 +2,8 @@
 export function createAutomaticRefresh(options: {
   active(): boolean;
   refresh(): Promise<boolean>;
-  poll(): Promise<boolean>;
   report(cause: unknown): void;
   signal: AbortSignal;
-  interval?: number;
-  fallback?(): boolean;
 }) {
   let pending = false,
     running = false,
@@ -16,7 +13,6 @@ export function createAutomaticRefresh(options: {
   let timer: ReturnType<typeof setTimeout> | undefined;
   let deadline = Infinity;
   let attempts = 0;
-  const fallback = () => options.fallback?.() ?? true;
   const visible = () => typeof document === "undefined" || !document.hidden;
   function schedule(delay: number) {
     if (options.signal.aborted) return;
@@ -32,7 +28,7 @@ export function createAutomaticRefresh(options: {
   }
   function reschedule() {
     if (running) return;
-    if (!visible() || (!pending && !fallback())) {
+    if (!visible() || !options.active() || pauses.size || !pending) {
       clearTimeout(timer);
       timer = undefined;
       deadline = Infinity;
@@ -40,12 +36,9 @@ export function createAutomaticRefresh(options: {
       return;
     }
     if (timer !== undefined) return;
-    const delay = options.fallback
-      ? (fallback() ? [5000, 10000, 20000, 30000] : [500, 1000, 2000, 5000])[
-          Math.min(attempts++, 3)
-        ]! *
-        (0.9 + Math.random() * 0.2)
-      : (options.interval ?? 5000);
+    const delay =
+      [500, 1000, 2000, 5000][Math.min(attempts++, 3)]! *
+      (0.9 + Math.random() * 0.2);
     schedule(delay);
   }
   async function tick() {
@@ -54,15 +47,10 @@ export function createAutomaticRefresh(options: {
     const ticket = epoch;
     try {
       if (visible() && options.active() && !pauses.size) {
-        const polling = !pending && fallback();
-        if (polling) {
-          const changed = await options.poll();
-          if (ticket === epoch) pending ||= changed;
-        }
         const before = requests;
         if (ticket === epoch && pending && !options.signal.aborted) {
           const accepted = await options.refresh();
-          if (accepted && (!polling || !fallback())) attempts = 0;
+          if (accepted) attempts = 0;
           if (ticket === epoch) pending = !accepted || before !== requests;
         }
       }
@@ -86,7 +74,7 @@ export function createAutomaticRefresh(options: {
       clearTimeout(timer);
       timer = undefined;
       deadline = Infinity;
-    } else if (pending || fallback()) schedule(150);
+    } else if (pending) schedule(150);
   };
   if (typeof window !== "undefined") {
     window.addEventListener("focus", wake);

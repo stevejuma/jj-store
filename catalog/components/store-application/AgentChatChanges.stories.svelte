@@ -15,6 +15,9 @@
   args={{ completedChanges: true }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
+    await waitFor(() =>
+      expect(canvasElement.querySelector(".agent-chat-heading")).not.toBeNull(),
+    );
     const header = canvasElement.querySelector<HTMLElement>(
       ".agent-chat-heading",
     )!;

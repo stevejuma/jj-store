@@ -85,6 +85,9 @@ export function createRepositoryThreadNavigation(context: {
   let generation = 0;
   let entries = $state<Record<string, RepositoryThreadEntry>>({});
   const pending = new Map<string, Promise<void>>();
+  const dirty = new Map<string, number>();
+  let revision = 0,
+    visible = new Set<string>();
   const readers = new Set<{ close(): void }>();
   const allowed = (id: string) =>
     context
@@ -95,12 +98,15 @@ export function createRepositoryThreadNavigation(context: {
     for (const reader of readers) reader.close();
     readers.clear();
     pending.clear();
+    dirty.clear();
+    visible.clear();
     entries = {};
   }
   async function read(repository: string, more = false) {
     if (!allowed(repository)) return;
     if (pending.has(repository)) return pending.get(repository);
     const ticket = generation,
+      stamp = dirty.get(repository),
       credential = context.credential();
     const retained = entries[repository];
     if (more && !retained?.cursor) return;
@@ -151,6 +157,7 @@ export function createRepositoryThreadNavigation(context: {
           error: "",
           snapshot,
         };
+        if (dirty.get(repository) === stamp) dirty.delete(repository);
       } catch (cause) {
         if (valid())
           entries[repository] = {
@@ -186,7 +193,7 @@ export function createRepositoryThreadNavigation(context: {
         (repo) =>
           supportsRepositoryThreads(repo) &&
           (!affected || affected.has(repo.id)) &&
-          (refresh || !entries[repo.id]),
+          (refresh || !entries[repo.id] || dirty.has(repo.id)),
       );
     let index = 0;
     await Promise.all(
@@ -197,6 +204,20 @@ export function createRepositoryThreadNavigation(context: {
     );
   }
   return {
+    hasDirty(ids: ReadonlySet<string>) {
+      return [...ids].some((id) => dirty.has(id));
+    },
+    get visible() {
+      return visible;
+    },
+    setVisible(ids: ReadonlySet<string>) {
+      visible = new Set(ids);
+      return load(false, visible);
+    },
+    invalidate(affected?: ReadonlySet<string>) {
+      for (const repo of context.repositories())
+        if (!affected || affected.has(repo.id)) dirty.set(repo.id, ++revision);
+    },
     get entries() {
       return entries;
     },

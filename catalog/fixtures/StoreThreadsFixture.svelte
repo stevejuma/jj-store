@@ -124,6 +124,7 @@
     credential: () => null,
     source: (id) => ({
       list: async (cursor) => {
+        sidebarReads[id] = (sidebarReads[id] ?? 0) + 1;
         const page = await (id === otherId ? other : transport).transport.list(
           cursor,
         );
@@ -132,6 +133,7 @@
       close: () => {},
     }),
   });
+  const sidebarReads = $state<Record<string, number>>({});
   const controller: StoreController = {
     threads,
     threadNavigation,
@@ -163,6 +165,10 @@
     };
   });
 </script>
+
+<output hidden data-testid="sidebar-thread-reads"
+  >{JSON.stringify(sidebarReads)}</output
+>
 
 <StoreRepositoryApplication
   {controller}

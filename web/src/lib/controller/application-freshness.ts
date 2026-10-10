@@ -97,7 +97,7 @@ export class ApplicationFreshness {
       const key = `${change.repository ?? "installation"}:${change.domain}`;
       const previous = this.witnesses.get(key);
       this.witnesses.set(key, change.witness);
-      if (event.type === "changed" || (!initial && previous !== change.witness))
+      if ((event.type === "changed" || !initial) && previous !== change.witness)
         changes.push(change);
     }
     this.state = "live";
@@ -179,10 +179,10 @@ export class ApplicationFreshness {
   }) {
     const abort = new AbortController();
     const automatic = createAutomaticRefresh({
-      active: options.active ?? (() => true),
+      active: () =>
+        (!this.supported || this.healthy) && (options.active?.() ?? true),
       refresh: options.refresh,
-      poll: async () => true,
-      fallback: () => !this.healthy,
+
       report: () => {},
       signal: abort.signal,
     });

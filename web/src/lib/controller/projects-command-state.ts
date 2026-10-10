@@ -11,7 +11,9 @@ export function invalidateProjectViews(
   views: { clear(): void },
   works: ReadonlyMap<string, WorkController>,
   changes: readonly FreshnessChange[],
+  navigation?: import("./projects-hub-types.js").ProjectsHubController["navigation"],
 ) {
+  if (navigation) invalidateProjectNavigation(navigation, changes);
   views.clear();
   for (const change of changes)
     if (change.repository && ["repository", "work"].includes(change.domain))
@@ -35,3 +37,4 @@ export function projectProjectionAccepted(
   const row = projections[domain].find((row) => row.repository.id === id);
   return !!row && !row.error && !row.loading;
 }
+import { invalidateProjectNavigation } from "./projects-refresh-scope.js";

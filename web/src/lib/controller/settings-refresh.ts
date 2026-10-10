@@ -92,7 +92,7 @@ export function observeStoreSettings(
       sectionRevision++;
       return refresh();
     },
-    poll: async () => true,
+
     report: () => {},
     signal: abort.signal,
   });

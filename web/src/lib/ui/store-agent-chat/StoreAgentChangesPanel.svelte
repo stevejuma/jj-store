@@ -12,14 +12,17 @@
     type AgentChangeSelection,
     type AgentChangeSummary,
   } from "../../controller/agent-workspace-changes.js";
+  import type { AgentChangesCache } from "../../controller/agent-changes-cache.js";
   let {
     selection,
     repositoryName,
     fetcher,
+    cache,
   }: {
     selection: AgentChangeSelection;
     repositoryName: string;
     fetcher: typeof fetch;
+    cache?: AgentChangesCache;
   } = $props();
   let summary = $state<AgentChangeSummary | null>(null);
   let error = $state("");
@@ -60,7 +63,12 @@
     expanded = false;
     reviewing = false;
     selectedPath = "";
-    void readAgentWorkspaceChanges(captured, transport, abort.signal)
+    const read = untrack(() =>
+      cache
+        ? cache.read(captured, abort.signal)
+        : readAgentWorkspaceChanges(captured, transport, abort.signal),
+    );
+    void read
       .then((value) => {
         if (!abort.signal.aborted) summary = value;
       })

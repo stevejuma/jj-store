@@ -23,9 +23,11 @@ Healthy idle views, Settings, capture and folder registration perform no
 periodic data requests. Settings observes only its visible section; Projects and
 sidebar navigation refresh affected repository windows, and inline
 Agents/Reviews context refreshes without reloading code. An unchanged
-five-minute feed renewal performs no data reads. Missing or stalled feeds use
-serial jittered 5/10/20/30-second fallback, paused while hidden and removed on
-recovery; preparation status alone uses its bounded 500ms-5s outage fallback.
+five-minute feed renewal performs no data reads. Missing or stalled feeds
+reconnect with bounded backoff while retaining data and independent domain
+dirtiness. They MUST NOT start browser data polling. Focus and visibility
+restore already queued work; they do not invalidate successfully captured data.
+Explicit preparation status has its own bounded command-recovery contract.
 Terminal event/ACK transport is separate.
 
 Agent execution status, settings and workspace targets have separate dirty
@@ -35,9 +37,56 @@ workspace/discovery/code changes refresh targets. Runtime updates invalidate
 visible contextual conversation history after adopting current participation.
 Embedded agent directories and open chats own no regular polling loop. Recorded
 discussion readers use repository notices. Failed reads retain dirtiness, and
-unavailable feeds alone enable the bounded outage fallback above. Unchanged
-renewal is read-free; reset recaptures state without clearing drafts, selections
-or exact pending command identities. Reads and reconnects never dispatch work.
+unavailable feeds reconnect without periodic data reads. Unchanged renewal is
+read-free; reset recaptures state without clearing drafts, selections or exact
+pending command identities. Reads and reconnects never dispatch work.
+
+JST-UI-005/011/012/015/017 require request-count regression coverage for inbox
+and settings navigation. Successful installation status, defaults and targets
+are retained by the application owner and refreshed only by their matching
+domain events, continuity reset or explicit refresh. A component mount uses the
+retained capture; it cannot force all installation reads. Feedback selection and
+discussion watchers share one read. Feedback GET completion cannot invalidate
+reaction data; matching repository notices invalidate that domain once per
+repository. Native and local whole-thread reads retain session caches until
+matching events. Cursors retain their finite validity and authorization scope.
+
+The selected live inbox retains at most eight transcript captures within an
+8,388,608 UTF-16-unit memory budget. Returning to an unchanged session reuses
+captured history; unread activity resumes after its exact sequence. A changed
+published boundary recaptures committed presentation. Cache updates occur on
+completed history reads or leaving a view, not once per streamed token. Drafts
+and command receipts remain outside this evictable read cache. Cold history may
+finish before installation status; its captured committed-event boundary
+supplies the initial cache identity. A later status cannot relabel an older
+capture. An actual publication change still requires recapture. Closed
+conversation sidebars perform no metadata/runtime reads. Details share retained
+reads and recover exact generation jobs through events; explicit superseding
+reads retain their prior cancellation contract.
+
+When the application feed is advertised, the selected inbox follows that feed
+and reads only new activity after its captured sequence. It MUST NOT also open a
+dedicated activity stream. The compatibility activity stream has separate header
+and heartbeat deadlines. The ordinary 35-second request deadline MUST NOT
+terminate a healthy stream. Abort, invalid content and parser failures release
+the body before reconnection. One selected compatibility view owns one activity
+stream, and teardown cancels it. Runtime and compute Settings use execution
+notices with visible ownership, never periodic status timers. Repeated domain
+witnesses and unchanged stream renewal cause no consumer reload. Browser
+acceptance records request counts and request timing; backend response time and
+browser connection queueing remain distinct evidence.
+
+Closed project groups and repository thread children perform no sidebar reads.
+Opening them reads the required owners and reuses successful captures on reopen;
+compact section popovers have the same ownership. Hidden events retain dirty
+generations. Removing a repository clears its dirtiness. Events during a capture
+cannot establish clean state for a later generation. Saved file-change previews
+reuse exact repository/profile/operation/base/commit comparisons through an
+installation-owned observer cache, bounded to eight previews and 8,388,608
+UTF-16 units. One observer leaving cannot cancel another's read; the last
+observer releases transport. Failed and cancelled reads are not successful
+captures. Compute configuration settlement follows execution events and retains
+pending identities when its bounded wait expires; it does not poll status.
 
 Unrelated notices MUST NOT postpone an already queued event read. Deferred or
 failed healthy reads retain dirtiness and retry serially with bounded 500ms-5s

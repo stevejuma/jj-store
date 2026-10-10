@@ -57,7 +57,7 @@ export function createCaptureRefresh(options: {
         automatic = createAutomaticRefresh({
           signal: lifetime.signal,
           active: options.available,
-          poll: async () => true,
+
           refresh: options.refresh,
           report: () => {},
         });

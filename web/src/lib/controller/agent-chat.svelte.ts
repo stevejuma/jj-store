@@ -262,6 +262,9 @@ export class AgentChat {
         (s) => s.conversation_id && watched.has(s.conversation_id),
       ) ?? []) {
         let after = Number(this.events[session.id]?.at(-1)?.sequence ?? 0);
+        void this.manager.discussions.ensure(session.id);
+        if (this.events[session.id] && after >= Number(session.last_sequence))
+          continue;
         do {
           const page = await this.manager.client.request<
             Model<"AgentExecutionEventPage">
@@ -274,7 +277,6 @@ export class AgentChat {
           after = Number(page.events.at(-1)?.sequence ?? after);
           if (page.next === null || page.next === undefined) break;
         } while (this.#alive);
-        void this.manager.discussions.load(session.id);
       }
       if (this.pending) await refreshChatReceipt(this);
       this.streamError = "";

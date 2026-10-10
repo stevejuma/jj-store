@@ -1,4 +1,3 @@
-import { untrack } from "svelte";
 import type { StoreController } from "../../controller/contracts.js";
 
 export function observeRepositoryThreadNavigation(
@@ -6,48 +5,60 @@ export function observeRepositoryThreadNavigation(
 ) {
   $effect(() => {
     const current = controller();
-    if (!current.freshness || !current.threadNavigation) return;
-    const affected = new Set<string>();
+    const projects = current.projects?.navigation;
+    if (!current.freshness || !projects) return;
     const watch = current.freshness.watch({
       initial: false,
+      active: () => projects.visible,
+      reset: () => projects.invalidate(),
       matches: (change) => {
-        if (change.domain === "threads" && change.repository) {
-          affected.add(change.repository);
-          return true;
-        }
-        return (
-          change.repository === null &&
-          ["repository", "discovery"].includes(change.domain)
+        if (!["work", "repository", "discovery"].includes(change.domain))
+          return false;
+        projects.invalidate(
+          change.repository ? new Set([change.repository]) : undefined,
         );
+        return true;
       },
       refresh: async () => {
-        const batch = new Set(affected);
-        await current.threadNavigation!.load(
-          true,
-          batch.size ? batch : undefined,
-        );
-        const failed = Object.entries(current.threadNavigation!.entries).some(
-          ([id, entry]) => (!batch.size || batch.has(id)) && entry.error,
-        );
-        if (!failed) for (const id of batch) affected.delete(id);
-        return !failed;
+        await projects.load();
+        return !projects.dirty && !projects.homes.some((home) => home.error);
       },
     });
     return watch.stop;
   });
-  const repositories = $derived(controller().state.repositories);
-  const repository = $derived(controller().state.repository.id);
   $effect(() => {
-    const current = controller(),
-      navigation = current.threadNavigation;
-    void repositories;
-    untrack(() => void navigation?.load());
-  });
-  $effect(() => {
-    const current = controller(),
-      threads = current.threads;
-    void threads?.threads;
-    if (threads?.status === "ready" && repository)
-      untrack(() => void current.threadNavigation?.read(repository));
+    const current = controller();
+    if (!current.freshness || !current.threadNavigation) return;
+    const watch = current.freshness.watch({
+      initial: false,
+      active: () => !!current.threadNavigation!.visible.size,
+      reset: () => current.threadNavigation!.invalidate(),
+      matches: (change) => {
+        if (
+          ["threads", "repository"].includes(change.domain) &&
+          change.repository
+        ) {
+          current.threadNavigation!.invalidate(new Set([change.repository]));
+          return true;
+        }
+        if (
+          change.repository === null &&
+          ["repository", "discovery"].includes(change.domain)
+        ) {
+          current.threadNavigation!.invalidate();
+          return true;
+        }
+        return false;
+      },
+      refresh: async () => {
+        const batch = current.threadNavigation!.visible;
+        await current.threadNavigation!.load(false, batch);
+        const failed = Object.entries(current.threadNavigation!.entries).some(
+          ([id, entry]) => batch.has(id) && entry.error,
+        );
+        return !failed && !current.threadNavigation!.hasDirty(batch);
+      },
+    });
+    return watch.stop;
   });
 }

@@ -1,4 +1,6 @@
 import { LocalClient } from "../api/local-client.js";
+import { createStoreQueryClient } from "./store-query-client.js";
+import { readQuery } from "./read-query.js";
 import { ApiError, fullId, type Exact, type Model } from "../api/client.js";
 import type { operations } from "../api/generated.js";
 type InboxQuery = NonNullable<
@@ -18,6 +20,8 @@ export class LocalInboxThreads implements ThreadTransport {
   actor = "";
   #selection?: Promise<Model<"LocalInboxSelection">>;
   #epoch = 0;
+  readonly #queries = createStoreQueryClient();
+  #reads = new AbortController();
   constructor(repository: string | LocalClient, fetcher?: typeof fetch) {
     this.client =
       typeof repository === "string"
@@ -50,27 +54,48 @@ export class LocalInboxThreads implements ThreadTransport {
   ) {
     this.#epoch++;
     this.#selection = undefined;
+    this.#queries.clear();
   }
   async cancelReads() {
-    await this.invalidate();
+    this.#reads.abort();
+    this.#reads = new AbortController();
   }
   close() {
     this.#epoch++;
+    this.#reads.abort();
+    this.#queries.clear();
     this.client.close();
+  }
+  private cached<T>(
+    path: string,
+    body: Record<string, unknown>,
+    signal: AbortSignal,
+  ) {
+    return readQuery(
+      this.#queries,
+      {
+        queryKey: [this.client.repository, path, body],
+        staleTime: body.cursor ? 30_000 : Infinity,
+        queryFn: ({ signal }) => this.client.request<T>(path, body, signal),
+      },
+      signal,
+    );
   }
   private async query(
     query: Exact<InboxQuery>,
     cursor?: string,
   ): Promise<ThreadPage> {
     const epoch = this.#epoch;
+    const signal = this.#reads.signal;
     const pin = await this.selection();
-    const response = await this.client.request<Model<"LocalInboxPageResponse">>(
+    const response = await this.cached<Model<"LocalInboxPageResponse">>(
       "collaboration/query",
       {
         metadata_commit: pin.snapshot.metadata_commit,
         query,
         cursor: cursor ?? null,
       },
+      signal,
     );
     if (epoch !== this.#epoch)
       throw new DOMException("Superseded", "AbortError");
@@ -102,13 +127,15 @@ export class LocalInboxThreads implements ThreadTransport {
   }
   async thread(id: string): Promise<ThreadDetail> {
     const epoch = this.#epoch;
+    const signal = this.#reads.signal;
     const pin = await this.selection();
-    const value = await this.client.request<Model<"LocalInboxThreadDetail">>(
+    const value = await this.cached<Model<"LocalInboxThreadDetail">>(
       "collaboration/thread",
       {
         metadata_commit: pin.snapshot.metadata_commit,
         thread_id: fullId(id, 32),
       },
+      signal,
     );
     if (epoch !== this.#epoch)
       throw new DOMException("Superseded", "AbortError");

@@ -14,7 +14,7 @@
   import {
     changeRepository,
     fleetChangesResponse,
-    completedFleetConversation,
+    stageFleetConversation,
   } from "./agent-fleet-changes.js";
   import type {
     AgentStatus,
@@ -263,24 +263,26 @@
   };
   const storage = untrack(createMemoryStoryStorage);
   $effect(() => {
+    let active = true;
     if (completedChanges || reconnect)
-      untrack(() => {
-        manager.value = status;
-        manager.chat.showGeneral("agent-0");
-        const conversation = manager.chat.selected;
-        const completed = completedFleetConversation(
-          status,
-          conversation,
-          manager.chat.draft!.origin,
-          completedChanges,
-        );
-        status = completed.status;
-        events[completed.session.id] = completed.events;
-        manager.value = status;
-        manager.chat.events[completed.session.id] = completed.events;
-        void manager.chat.refresh();
-      });
+      void manager.ensure().then(() =>
+        untrack(() => {
+          if (!active) return;
+          const completed = stageFleetConversation(
+            manager,
+            status,
+            completedChanges,
+            updatesUnavailable,
+          );
+          status = completed.status;
+          events[completed.session.id] = completed.events;
+          void manager.chat.refresh();
+        }),
+      );
     else if (general) untrack(() => manager.chat.showGeneral());
+    return () => {
+      active = false;
+    };
   });
   onDestroy(() => manager.destroy());
 </script>

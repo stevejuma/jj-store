@@ -55,7 +55,7 @@ test("an ended agent accepts ordinary replies after feedback refresh fails", asy
   }
 });
 
-test("discussion outage fallback runs independently and stops when the view closes", async () => {
+test("discussion without a feed loads once and never polls", async () => {
   vi.useFakeTimers();
   const load = vi.fn(async () => {});
   const stop = watchAgentDiscussion(load, "repository");
@@ -63,10 +63,10 @@ test("discussion outage fallback runs independently and stops when the view clos
     await vi.advanceTimersByTimeAsync(160);
     expect(load).toHaveBeenCalledTimes(1);
     await vi.advanceTimersByTimeAsync(5500);
-    expect(load).toHaveBeenCalledTimes(2);
+    expect(load).toHaveBeenCalledTimes(1);
     stop();
     await vi.advanceTimersByTimeAsync(10000);
-    expect(load).toHaveBeenCalledTimes(2);
+    expect(load).toHaveBeenCalledTimes(1);
   } finally {
     stop();
     vi.useRealTimers();

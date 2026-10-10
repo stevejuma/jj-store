@@ -10,8 +10,10 @@ export function createProjectsNavigation(context: {
   denied(home: string): void;
 }) {
   let homes = $state<ProjectHome[]>([]),
-    loading = $state(false),
-    loaded = false;
+    loading = $state(false);
+  let visible = false,
+    revision = 0;
+  const dirty = new Map<string, number>();
   let generation = 0,
     reads = new AbortController();
   async function read(home: ProjectHome, ticket: number, more = false) {
@@ -54,11 +56,11 @@ export function createProjectsNavigation(context: {
   }
   let pendingLoad: Promise<void> | null = null;
   async function loadPages(refresh = false, affected?: ReadonlySet<string>) {
-    if (!refresh && (loaded || loading)) return;
+    const allowed = new Set(context.repositories().map((repo) => repo.id));
+    for (const id of dirty.keys()) if (!allowed.has(id)) dirty.delete(id);
     reads.abort();
     reads = new AbortController();
     const ticket = ++generation;
-    loaded = true;
     loading = true;
     homes = context.repositories().map((repository) => ({
       ...(homes.find((home) => home.repository.id === repository.id) ?? {
@@ -78,7 +80,13 @@ export function createProjectsNavigation(context: {
         Array.from({ length: Math.min(2, homes.length) }, async () => {
           while (index < homes.length && ticket === generation) {
             const home = homes[index++]!;
-            if (affected && !affected.has(home.repository.id) && home.snapshot)
+            const id = home.repository.id,
+              stamp = dirty.get(id);
+            if (
+              home.snapshot &&
+              ((!refresh && stamp === undefined) ||
+                (affected && !affected.has(id)))
+            )
               continue;
             await reloadProjectHomeWindow(
               home,
@@ -86,6 +94,8 @@ export function createProjectsNavigation(context: {
               refresh,
               () => ticket === generation,
             );
+            if (ticket === generation && !home.error && dirty.get(id) === stamp)
+              dirty.delete(id);
           }
         }),
       );
@@ -105,6 +115,21 @@ export function createProjectsNavigation(context: {
     return request;
   }
   return {
+    get dirty() {
+      return dirty.size > 0;
+    },
+    get visible() {
+      return visible;
+    },
+    setVisible(value: boolean) {
+      visible = value;
+      if (visible) return load();
+      return Promise.resolve();
+    },
+    invalidate(affected?: ReadonlySet<string>) {
+      for (const repo of context.repositories())
+        if (!affected || affected.has(repo.id)) dirty.set(repo.id, ++revision);
+    },
     get homes() {
       return homes;
     },
@@ -121,7 +146,8 @@ export function createProjectsNavigation(context: {
       reads.abort();
       homes = [];
       pendingLoad = null;
-      loaded = false;
+      dirty.clear();
+      visible = false;
       loading = false;
     },
   };

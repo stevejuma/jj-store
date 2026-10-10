@@ -1,4 +1,7 @@
 import { ApiError, type Model } from "../api/client.js";
+import { watchAgentChanges } from "./agent-freshness.js";
+import { RetainedReads } from "./retained-reads.js";
+import type { ApplicationFreshness } from "./application-freshness.js";
 import { LocalClient } from "../api/local-client.js";
 export type RuntimeStatus = Model<"AgentRuntimeStatus">;
 export type RuntimeCommand = NonNullable<
@@ -17,25 +20,37 @@ export class AgentRuntimes {
   outcome = $state<RuntimeOutcome | null>(null);
   #active = false;
   #alive = true;
-  #timer?: ReturnType<typeof setTimeout>;
+  readonly #reads = new RetainedReads(() => this.refresh());
+  readonly #watch: ReturnType<typeof watchAgentChanges>;
   readonly client: Pick<LocalClient, "request" | "close">;
   constructor(
     readonly available: () => boolean,
     fetcher?: typeof fetch,
     client?: Pick<LocalClient, "request" | "close">,
+    freshness?: ApplicationFreshness,
   ) {
     this.client = client ?? new LocalClient("", fetcher);
+    this.#watch = watchAgentChanges(freshness, {
+      active: () => this.#alive && this.#active,
+      reset: () => this.#reads.invalidate(),
+      matches: (c) => {
+        const matches = c.repository === null && c.domain === "agent_execution";
+        if (matches) this.#reads.invalidate();
+        return matches;
+      },
+      refresh: async () => (await this.#reads.ensure("runtimes")) !== false,
+    });
   }
   start() {
     this.#active = true;
-    void this.refresh();
+    void this.#reads.ensure("runtimes");
+    this.#watch.request();
   }
   stop() {
     this.#active = false;
-    clearTimeout(this.#timer);
   }
   async refresh() {
-    if (!this.#alive || this.refreshing || !this.available()) return;
+    if (!this.#alive || this.refreshing || !this.available()) return false;
     this.refreshing = true;
     try {
       if (this.pending) await this.checkOutcome();
@@ -45,16 +60,12 @@ export class AgentRuntimes {
       if (!this.pending && value.pending)
         this.pending = value.pending.request_id;
       this.error = "";
+      return true;
     } catch (cause) {
       if (this.#alive) this.error = errorText(cause);
+      return false;
     } finally {
       this.refreshing = false;
-      clearTimeout(this.#timer);
-      if (this.#alive && this.#active)
-        this.#timer = setTimeout(
-          () => void this.refresh(),
-          this.pending ? 1000 : 15000,
-        );
     }
   }
   async install(runtime: Runtime) {
@@ -134,6 +145,7 @@ export class AgentRuntimes {
   }
   destroy() {
     this.#alive = false;
+    this.#watch.stop();
     this.stop();
     this.client.close();
   }

@@ -21,7 +21,6 @@ export function createProductionConnect(context: {
 }) {
   return async (repository: string, token: string | null) => {
     const { data, projects } = context;
-    if (data.accessMode === "local_trusted") void projects.navigation.load();
     if (context.route().agentsHub) {
       data.status.connection = "disconnected";
       return;
@@ -56,7 +55,6 @@ export function createProductionConnect(context: {
       data.repositories = repositories.map((candidate) => ({ ...candidate }));
       data.status.repositories = data.repositories.length ? "ready" : "empty";
       context.token(token);
-      void projects.navigation.load();
       const requested = data.repositories.find(
         (candidate) =>
           candidate.id === (repository.trim() || context.route().repository),

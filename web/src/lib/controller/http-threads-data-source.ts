@@ -24,6 +24,7 @@ export class HttpThreadsDataSource implements ThreadTransport {
     if (!this.active())
       return Promise.reject<T>(new DOMException("Closed", "AbortError"));
     return readQuery(this.queryClient, {
+      staleTime: args.cursor ? 30_000 : Infinity,
       queryKey: storeQueryKeys.resource(this.scope, kind, null, args),
       queryFn: async ({ signal }) => {
         const value = await read(signal);

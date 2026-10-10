@@ -7,6 +7,67 @@ import type {
 import { watchAgentDiscussion } from "../../src/lib/controller/agent-discussion-refresh.js";
 import { ApplicationFreshness } from "../../src/lib/controller/application-freshness.js";
 
+test("dirty failed settings reads stop while the advertised feed is offline", async () => {
+  const f = await fixture();
+  vi.useFakeTimers();
+  try {
+    f.intercept.read = (path) =>
+      path.endsWith("/settings")
+        ? Promise.resolve(
+            Response.json({ code: "unavailable" }, { status: 503 }),
+          )
+        : undefined;
+    f.notice("agent_settings");
+    await vi.advanceTimersByTimeAsync(250);
+    const count = f.paths.filter((p) => p.endsWith("/settings")).length;
+    expect(count).toBe(2);
+    f.disconnect();
+    await vi.advanceTimersByTimeAsync(10);
+    expect(f.freshness.healthy).toBe(false);
+    await vi.advanceTimersByTimeAsync(4000);
+    expect(f.paths.filter((p) => p.endsWith("/settings"))).toHaveLength(count);
+  } finally {
+    f.close();
+    vi.useRealTimers();
+  }
+});
+
+test("pending compute configuration observes events without status polling", async () => {
+  const f = await fixture();
+  let computeReads = 0,
+    completed = false;
+  const value = { version: 1, settings: { revision: 0 }, state: "stopped" };
+  f.intercept.read = (path) => {
+    if (path.endsWith("/compute"))
+      return Promise.resolve(
+        Response.json(computeReads++ === 0 ? { state: "prepared" } : value),
+      );
+    if (path.includes("/outcome?"))
+      return Promise.resolve(
+        Response.json({ state: completed ? "completed" : "prepared" }),
+      );
+  };
+  f.manager.compute.value = value as never;
+  try {
+    const command = f.manager.compute.command({
+      action: "configure",
+      settings: {},
+    } as never);
+    await vi.waitFor(() => expect(computeReads).toBe(2));
+    await new Promise((resolve) => setTimeout(resolve, 250));
+    expect(computeReads).toBe(2);
+    f.notice("agent_settings");
+    await new Promise((resolve) => setTimeout(resolve, 250));
+    expect(computeReads).toBe(2);
+    completed = true;
+    f.notice("agent_execution");
+    expect(await command).toBe(true);
+    expect(computeReads).toBe(3);
+  } finally {
+    f.close();
+  }
+});
+
 async function fixture() {
   let stream!: ReadableStreamDefaultController<Uint8Array>;
   let revision = 0;
@@ -111,6 +172,171 @@ test("healthy idle agent state performs no periodic settings, targets or status 
   }
 });
 
+test("selected inbox uses the shared feed, fetches only new activity and skips unchanged status", async () => {
+  vi.useFakeTimers();
+  const f = await fixture();
+  try {
+    f.manager.open = true;
+    f.status.sessions = [
+      {
+        id: "session",
+        repository: "3".repeat(32),
+        last_sequence: 1,
+        published_sequence: 1,
+      } as AgentSession,
+    ];
+    await f.manager.updates.status();
+    f.events.push({ sequence: 1, committed: true, payload: { type: "ready" } });
+    await f.manager.select("session");
+    f.paths.length = 0;
+    f.events.push({
+      sequence: 2,
+      committed: false,
+      payload: { type: "update", text: "Added" },
+    });
+    f.status.sessions[0]!.last_sequence = 2;
+    f.notice("agent_execution");
+    await vi.advanceTimersByTimeAsync(400);
+    expect(f.manager.events).toHaveLength(2);
+    expect(f.paths).toEqual([
+      "/v1/local/agents",
+      "/v1/local/agents/events?session=session&after=1",
+    ]);
+    f.paths.length = 0;
+    f.notice("agent_execution");
+    await vi.advanceTimersByTimeAsync(400);
+    expect(f.paths).toEqual(["/v1/local/agents"]);
+    f.paths.length = 0;
+    await vi.advanceTimersByTimeAsync(30000);
+    expect(f.paths).toEqual([]);
+    f.frame(
+      { version: 1, type: "reset", reason: "restart", witnesses: [] },
+      "reset",
+    );
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(f.paths.filter((p) => p.includes("/events?"))).toEqual([
+      "/v1/local/agents/events?session=session&after=0",
+    ]);
+    expect(f.paths.some((p) => p.includes("/stream?"))).toBe(false);
+  } finally {
+    f.close();
+    vi.useRealTimers();
+  }
+});
+
+test("inbox remounts reuse initial status, settings and targets", async () => {
+  const f = await fixture();
+  try {
+    await f.manager.ensure();
+    await Promise.all([f.manager.ensure(), f.manager.ensure()]);
+    expect(f.paths).toHaveLength(3);
+  } finally {
+    f.close();
+  }
+});
+
+test("runtime and compute settings reuse captures, stay idle and observe execution events", async () => {
+  vi.useFakeTimers();
+  const f = await fixture();
+  try {
+    f.paths.length = 0;
+    f.manager.tooling.start();
+    f.manager.compute.start();
+    await vi.advanceTimersByTimeAsync(200);
+    expect(f.paths.sort()).toEqual([
+      "/v1/local/agents/runtimes",
+      "/v1/local/compute",
+    ]);
+    await vi.advanceTimersByTimeAsync(30000);
+    expect(f.paths).toHaveLength(2);
+    f.manager.tooling.stop();
+    f.manager.compute.stop();
+    f.manager.tooling.start();
+    f.manager.compute.start();
+    await vi.advanceTimersByTimeAsync(200);
+    expect(f.paths).toHaveLength(2);
+    f.notice("agent_execution");
+    await vi.advanceTimersByTimeAsync(200);
+    expect(f.paths.filter((p) => p.endsWith("/runtimes"))).toHaveLength(2);
+    expect(f.paths.filter((p) => p.endsWith("/compute"))).toHaveLength(2);
+    expect(f.paths).not.toContain("/v1/local/agents/settings");
+    f.manager.tooling.stop();
+    f.manager.compute.stop();
+    f.paths.length = 0;
+    f.notice("agent_execution");
+    await vi.advanceTimersByTimeAsync(200);
+    expect(f.paths).toEqual(["/v1/local/agents"]);
+  } finally {
+    f.close();
+    vi.useRealTimers();
+  }
+});
+
+test("conversation metadata shares reads, ignores unrelated events and retains hidden dirtiness", async () => {
+  vi.useFakeTimers();
+  const f = await fixture();
+  const q = { session: "metadata-session", repository: "3".repeat(32) };
+  try {
+    f.intercept.read = (path) =>
+      path.includes("/metadata?")
+        ? Promise.resolve(
+            Response.json({ repository: q.repository, job: null }),
+          )
+        : undefined;
+    f.paths.length = 0;
+    await Promise.all([
+      f.manager.metadata.ensure(q),
+      f.manager.metadata.ensure(q),
+    ]);
+    const stop = f.manager.metadata.watch(q);
+    await vi.advanceTimersByTimeAsync(200);
+    expect(f.paths).toHaveLength(1);
+    await vi.advanceTimersByTimeAsync(30000);
+    expect(f.paths).toHaveLength(1);
+    f.notice("threads", q.repository);
+    await vi.advanceTimersByTimeAsync(200);
+    expect(f.paths).toHaveLength(2);
+    stop();
+    f.notice("threads", q.repository);
+    await vi.advanceTimersByTimeAsync(200);
+    expect(f.paths).toHaveLength(2);
+    await f.manager.metadata.ensure(q);
+    expect(f.paths).toHaveLength(3);
+  } finally {
+    f.close();
+    vi.useRealTimers();
+  }
+});
+
+test("selection and discussion watchers share one feedback read and retain it on remount", async () => {
+  vi.useFakeTimers();
+  const f = await fixture();
+  try {
+    f.paths.length = 0;
+    let finish!: (response: Response) => void;
+    f.intercept.read = (path) =>
+      path.includes("/feedback?")
+        ? new Promise((done) => {
+            finish = done;
+          })
+        : undefined;
+    const first = f.manager.discussions.ensure("session");
+    const stop = f.manager.discussions.watch("session", "3".repeat(32));
+    await vi.advanceTimersByTimeAsync(200);
+    finish(Response.json({ messages: [] }));
+    await first;
+    await vi.advanceTimersByTimeAsync(6000);
+    stop();
+    const stopAgain = f.manager.discussions.watch("session", "3".repeat(32));
+    await vi.advanceTimersByTimeAsync(200);
+    expect(f.paths).toEqual(["/v1/local/agents/feedback?session=session"]);
+    stopAgain();
+  } finally {
+    f.close();
+    vi.useRealTimers();
+  }
+});
+
 test("agent notices refresh only their owning data and reset retains drafts", async () => {
   vi.useFakeTimers();
   const f = await fixture();
@@ -175,6 +401,7 @@ test("chat and recorded discussion stay idle and update on their respective even
       committed: false,
       payload: { type: "update", text: "New response" },
     });
+    f.status.sessions[0]!.last_sequence = 1;
     f.notice("agent_execution");
     await vi.advanceTimersByTimeAsync(400);
     expect(f.manager.chat.events.session).toHaveLength(1);
@@ -229,7 +456,7 @@ test("event dirtiness survives a failed read and another event during an in-flig
   }
 });
 
-test("unchanged feed renewal stays read-free and outage fallback stops on recovery", async () => {
+test("unchanged renewal and feed outages never poll data", async () => {
   vi.useFakeTimers();
   const f = await fixture();
   try {
@@ -245,9 +472,9 @@ test("unchanged feed renewal stays read-free and outage fallback stops on recove
     expect(f.paths).toEqual([]);
     f.disconnect();
     await vi.advanceTimersByTimeAsync(12000);
-    expect(f.paths.filter((p) => p.endsWith("/agents"))).toHaveLength(1);
-    expect(f.paths.filter((p) => p.endsWith("/settings"))).toHaveLength(1);
-    expect(f.paths.filter((p) => p.endsWith("/targets"))).toHaveLength(1);
+    expect(f.paths.filter((p) => p.endsWith("/agents"))).toHaveLength(0);
+    expect(f.paths.filter((p) => p.endsWith("/settings"))).toHaveLength(0);
+    expect(f.paths.filter((p) => p.endsWith("/targets"))).toHaveLength(0);
     f.frame({ version: 1, type: "ready", witnesses: [] }, "ready");
     await vi.advanceTimersByTimeAsync(200);
     const captured = [...f.paths];

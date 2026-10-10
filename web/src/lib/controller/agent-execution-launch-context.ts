@@ -14,7 +14,7 @@ export async function showAgentLaunch(
   manager.open = true;
   manager.launchOpen = true;
   manager.onNavigate?.("new");
-  await manager.refresh();
+  await manager.ensure();
 }
 
 export function prepareAgentDraft(manager: AgentExecution, id: string) {

@@ -4,10 +4,11 @@ Active Projects, Tasks, Activity, Repositories, Threads, Agents, Reviews and
 current-head code views MUST reload committed data without a manual Refresh.
 Committed WorkStore receipts immediately reload the selected detail. SSE events
 coalesce through one serial refresh queue; ready/reset reconnect announcements
-compare with the retained head. Bounded periodic checks (five seconds while
-visible, at most two concurrent home reads) discover directory changes, other
-homes and missed events. Focus/visibility restoration queues an immediate read.
-The browser never publishes or reconciles heads during these reads.
+compare with the retained head. The shared application event feed discovers
+directory and domain changes. Missing or stalled feeds reconnect without browser
+data polling, retaining cached data and dirtiness. Focus/visibility restoration
+resumes queued work. The browser never publishes or reconciles heads during
+these reads.
 
 Updates preserve stable entity selections, unsent/reply/edit drafts, immutable
 code anchors and exact unknown command identities/preconditions. Task/project
@@ -30,10 +31,10 @@ refresh MUST defer until those reads complete so it cannot invalidate the
 confirmation and leave an already-saved comment in the composer. Failures remain
 visible and retry automatically. Manual Refresh remains optional. Routine
 successful saves and new-data events MUST NOT display a refresh-required banner.
-Settings health, sync/search management and device folder lists refresh
-periodically while visible, preserving dirty forms and retained registration
+Settings health, sync/search management and device folder lists refresh on
+matching events while visible, preserving dirty forms and retained registration
 intent. Dirty search drafts retain the configuration revision from their first
-edit until accepted Save or Cancel, so periodic reads cannot adopt a newer
+edit until accepted Save or Cancel, so background reads cannot adopt a newer
 revision for an older draft. Applying saved search configuration and replication
 controls remain explicit commands.
 

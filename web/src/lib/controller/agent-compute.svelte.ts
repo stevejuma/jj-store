@@ -1,3 +1,6 @@
+import { watchAgentChanges } from "./agent-freshness.js";
+import { RetainedReads } from "./retained-reads.js";
+import type { ApplicationFreshness } from "./application-freshness.js";
 import type { Exact, Model } from "../api/client.js";
 import type { operations } from "../api/generated.js";
 import { ApiError } from "../api/client.js";
@@ -15,19 +18,40 @@ export class AgentCompute {
   modelPicking = $state(false);
   modelPickerError = $state("");
   #picker?: AbortController;
-  #timer?: ReturnType<typeof setTimeout>;
+  #lifetime = new AbortController();
+  readonly #reads = new RetainedReads(() => this.refresh());
+  readonly #watch: ReturnType<typeof watchAgentChanges>;
   #active = false;
-  constructor(readonly client: LocalClient) {}
+  constructor(
+    readonly client: LocalClient,
+    readonly freshness?: ApplicationFreshness,
+  ) {
+    this.#watch = watchAgentChanges(freshness, {
+      active: () => this.#active,
+      reset: () => this.#reads.invalidate(),
+      matches: (c) => {
+        const matches = c.repository === null && c.domain === "agent_execution";
+        if (matches) this.#reads.invalidate();
+        return matches;
+      },
+      refresh: async () => (await this.#reads.ensure("compute")) !== false,
+    });
+  }
+  destroy() {
+    this.#lifetime.abort();
+    this.stop();
+    this.#watch.stop();
+  }
   start() {
     this.#active = true;
-    void this.refresh();
+    void this.#reads.ensure("compute");
+    this.#watch.request();
   }
   stop() {
     this.#active = false;
     this.#picker?.abort();
     this.#picker = undefined;
     this.modelPicking = false;
-    clearTimeout(this.#timer);
   }
   async pickModelFile() {
     if (
@@ -89,12 +113,10 @@ export class AgentCompute {
           this.pending = null;
         }
       }
+      return true;
     } catch (cause) {
       this.error = cause instanceof Error ? cause.message : String(cause);
-    } finally {
-      clearTimeout(this.#timer);
-      if (this.#active)
-        this.#timer = setTimeout(() => void this.refresh(), 2000);
+      return false;
     }
   }
   async command(action: ComputeAction) {
@@ -109,6 +131,7 @@ export class AgentCompute {
       action,
     };
     this.pending = body;
+    let observed = this.freshness?.journal.revision ?? 0;
     try {
       const outcome = await this.client.request<Model<"AgentExecutionOutcome">>(
         "compute",
@@ -133,14 +156,30 @@ export class AgentCompute {
       await this.refresh();
     }
     // A configure acknowledgement must settle before a dependent operation.
-    if (action.action === "configure") {
-      const deadline = Date.now() + 20000;
-      while (
-        this.pending?.request_id === body.request_id &&
-        Date.now() < deadline
-      ) {
-        await new Promise((resolve) => setTimeout(resolve, 100));
-        await this.refresh();
+    if (action.action === "configure" && this.freshness?.supported) {
+      const deadline = new AbortController();
+      const timer = setTimeout(() => deadline.abort(), 20000);
+      const signal = AbortSignal.any([deadline.signal, this.#lifetime.signal]);
+      try {
+        while (
+          this.pending?.request_id === body.request_id &&
+          !signal.aborted
+        ) {
+          await this.freshness.journal.wait({
+            after: observed,
+            matches: (c) =>
+              c.repository === null && c.domain === "agent_execution",
+            healthy: () => true,
+            listen: (listener) => this.freshness!.listen(listener),
+            signal,
+            delay: 0,
+          });
+          if (signal.aborted) break;
+          observed = this.freshness.journal.revision;
+          await this.#reads.ensure("compute");
+        }
+      } finally {
+        clearTimeout(timer);
       }
     }
     return !this.pending && !this.error;

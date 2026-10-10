@@ -8,7 +8,7 @@ export function observeAgentChats(read: () => StoreController) {
 function observeAgentRuntime(read: () => StoreController["execution"]) {
   $effect(() => {
     const execution = read();
-    if (execution?.available()) untrack(() => void execution.refresh());
+    if (execution?.available()) untrack(() => void execution.ensure());
   });
 }
 /** Route changes reopen scoped drafts; uncertain Sends retain their displayed context. */

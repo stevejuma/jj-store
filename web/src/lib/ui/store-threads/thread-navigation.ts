@@ -44,7 +44,10 @@ export function withThreadNavigation(
                   repo.id === controller.state.repository.id
                     ? controller.threads
                     : undefined;
-                const threads = entry?.threads ?? connected?.threads ?? [];
+                const threads =
+                  connected?.status === "ready"
+                    ? connected.threads
+                    : (entry?.threads ?? connected?.threads ?? []);
                 const children: CommunityNavigationItemModel[] = [
                   {
                     id: `threads:${repo.id}`,

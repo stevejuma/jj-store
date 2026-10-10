@@ -21,6 +21,19 @@ export function projectsRefreshScope(changes?: readonly FreshnessChange[]) {
       : undefined;
   return { affected, work };
 }
+export function invalidateProjectNavigation(
+  navigation: ProjectsHubController["navigation"],
+  changes: readonly FreshnessChange[],
+) {
+  const work = changes.some((c) => c.repository === null)
+    ? undefined
+    : new Set(
+        changes
+          .filter((c) => ["work", "repository"].includes(c.domain))
+          .map((c) => c.repository!),
+      );
+  navigation.invalidate(work);
+}
 export async function refreshProjectSources(options: {
   changes?: readonly FreshnessChange[];
   context: ProjectsHubContext;
@@ -43,7 +56,8 @@ export async function refreshProjectSources(options: {
         .filter(([id]) => !work || work.has(id))
         .map(([, source]) => source.refresh?.()),
     );
-  if (!work || work.size) await options.navigation.load(true, work);
+  if (!options.changes) options.navigation.invalidate(work);
+  if (options.navigation.visible) await options.navigation.load(false);
   if (options.current()) await options.restore(true, affected);
 }
 

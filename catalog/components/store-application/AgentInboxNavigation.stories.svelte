@@ -12,6 +12,47 @@
 </script>
 
 <Story
+  name="Navigation reuses settings feedback and transcript without another stream"
+  args={{ observeRuntime: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    const counts = () =>
+      JSON.parse(c.getByTestId("inbox-read-counts").textContent ?? "{}");
+    await userEvent.click(
+      c.getByRole("button", { name: "Open fixture conversation" }),
+    );
+    await c.findByRole("heading", {
+      name: "Fixture conversation",
+    });
+    await waitFor(() =>
+      expect(
+        c.queryByRole("button", {
+          name: "Loading previous messages",
+        }),
+      ).not.toBeInTheDocument(),
+    );
+    const initial = counts();
+    await expect(initial["/v1/local/agents/settings"]).toBe(1);
+    await expect(initial["/v1/local/agents/targets"]).toBe(1);
+    await expect(initial["/v1/local/agents"]).toBe(1);
+    await userEvent.click(
+      c.getByRole("button", { name: "Manage fixture agents" }),
+    );
+    await c.findByRole("button", { name: "View sessions" });
+    await userEvent.click(
+      c.getByRole("button", { name: "Open fixture conversation" }),
+    );
+    await c.findByRole("heading", {
+      name: "Fixture conversation",
+    });
+    await expect(counts()).toEqual(initial);
+    await expect(
+      Object.keys(counts()).some((path) => path.includes("/stream?")),
+    ).toBe(false);
+  }}
+/>
+
+<Story
   name="Directory icon actions open all sessions and expose tooltips"
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);

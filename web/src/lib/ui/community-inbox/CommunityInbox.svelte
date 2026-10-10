@@ -255,7 +255,7 @@
           <CloseIcon aria-hidden="true" />
         </Button>
       </header>
-      {@render threadSidebar()}
+      {#if sidebarOpen}{@render threadSidebar()}{/if}
     </AppShell.Body.Sidebar>
   {/if}
 </AppShell.Body>

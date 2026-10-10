@@ -39,6 +39,7 @@
           (r) => r.id === binding.repository,
         )?.name ?? binding.repository.slice(0, 8)}
         fetcher={controller.execution!.client.fetcher}
+        cache={controller.execution!.changes}
       />
     {/key}
   {:else}

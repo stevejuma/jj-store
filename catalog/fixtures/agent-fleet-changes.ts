@@ -2,6 +2,7 @@ import type {
   AgentStatus,
   AgentEvent,
 } from "../../web/src/lib/controller/agent-execution-types.js";
+import type { AgentExecution } from "../../web/src/lib/controller/agent-execution.svelte.js";
 import {
   fixtureSession,
   fixtureJsonResponse as json,
@@ -10,6 +11,25 @@ export const changeRepository = "aa".repeat(16);
 export const changeOperation = "11".repeat(64);
 export const changeBase = "22".repeat(20);
 export const changeCommit = "33".repeat(20);
+
+export function stageFleetConversation(
+  manager: AgentExecution,
+  status: AgentStatus,
+  changes: boolean,
+  unread: boolean,
+) {
+  manager.chat.showGeneral("agent-0");
+  const completed = completedFleetConversation(
+    status,
+    manager.chat.selected,
+    manager.chat.draft!.origin,
+    changes,
+    unread,
+  );
+  manager.value = completed.status;
+  manager.chat.events[completed.session.id] = completed.visibleEvents;
+  return completed;
+}
 
 export function fleetChangesResponse(init?: RequestInit) {
   const body = JSON.parse(String(init?.body));
@@ -66,6 +86,7 @@ export function completedFleetConversation(
   conversation: string,
   origin: AgentStatus["conversations"][number]["origin"],
   completedChanges: boolean,
+  unread = false,
 ) {
   const session = fixtureSession({
     repository: changeRepository,
@@ -83,6 +104,7 @@ export function completedFleetConversation(
   session.title = "Helper";
   session.avatar = "🤖";
   session.conversation_id = conversation;
+  session.published_sequence = 2;
   session.repository_bindings = completedChanges
     ? [
         {
@@ -147,5 +169,23 @@ export function completedFleetConversation(
       },
     },
   ];
-  return { status: nextStatus, session, events };
+  const visibleEvents = events;
+  if (unread) {
+    session.last_sequence = 3;
+    return {
+      status: nextStatus,
+      session,
+      visibleEvents,
+      events: [
+        ...events,
+        {
+          sequence: 3,
+          committed: false,
+          observed_at_millis: Date.now(),
+          payload: { type: "ready" },
+        },
+      ],
+    };
+  }
+  return { status: nextStatus, session, events, visibleEvents };
 }

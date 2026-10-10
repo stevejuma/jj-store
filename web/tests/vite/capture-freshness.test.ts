@@ -97,7 +97,7 @@ test("capture conditions recover only after complete successful observations", a
     f.management.destroy();
   }
 });
-test("visible capture loads polls coalesces and stops on closure", async () => {
+test("visible capture loads once and stays idle until requested", async () => {
   vi.useFakeTimers();
   const f = fixture();
   try {
@@ -105,13 +105,13 @@ test("visible capture loads polls coalesces and stops on closure", async () => {
     await vi.advanceTimersByTimeAsync(151);
     expect(f.transport.status).toHaveBeenCalledOnce();
     await vi.advanceTimersByTimeAsync(5000);
-    expect(f.transport.status).toHaveBeenCalledTimes(2);
+    expect(f.transport.status).toHaveBeenCalledTimes(1);
     f.management.setActive(false);
     await vi.advanceTimersByTimeAsync(10000);
-    expect(f.transport.status).toHaveBeenCalledTimes(2);
+    expect(f.transport.status).toHaveBeenCalledTimes(1);
     f.management.setActive(true);
     await vi.advanceTimersByTimeAsync(151);
-    expect(f.transport.status).toHaveBeenCalledTimes(3);
+    expect(f.transport.status).toHaveBeenCalledTimes(2);
   } finally {
     f.management.destroy();
     vi.useRealTimers();

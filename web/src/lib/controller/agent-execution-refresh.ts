@@ -3,10 +3,18 @@ import type { AgentExecution } from "./agent-execution.svelte.js";
 import type { AgentStatus, AgentTarget } from "./agent-execution-types.js";
 import { watchAgentChanges } from "./agent-freshness.js";
 import { syncAgentPower } from "./agent-power.js";
+import { RetainedReads } from "./retained-reads.js";
 /** Installation readers share the application's feed and keep separate invalidation scopes. */
 export class AgentExecutionRefresh {
   #alive = true;
   #reads = new Map<string, Promise<boolean>>();
+  readonly retained = new RetainedReads((key) =>
+    key === "status"
+      ? this.status()
+      : key === "settings"
+        ? this.settings()
+        : this.targets(),
+  );
   #watches: ReturnType<typeof watchAgentChanges>[];
   constructor(
     private manager: AgentExecution,
@@ -16,32 +24,58 @@ export class AgentExecutionRefresh {
     this.#watches = [
       watchAgentChanges(freshness, {
         active,
-        refresh: () => this.status(),
+        refresh: () =>
+          this.retained.ensure("status").then((ok) => ok !== false),
         matches: (c) =>
-          (c.repository === null &&
-            ["agent_execution", "discovery", "workspaces"].includes(
+          this.invalidateWhen(
+            "status",
+            (c.repository === null &&
+              ["agent_execution", "discovery", "workspaces"].includes(
+                c.domain,
+              )) ||
+              c.domain === "repository",
+          ),
+      }),
+      watchAgentChanges(freshness, {
+        active,
+        refresh: () =>
+          this.retained.ensure("settings").then((ok) => ok !== false),
+        matches: (c) =>
+          this.invalidateWhen(
+            "settings",
+            c.repository === null && c.domain === "agent_settings",
+          ),
+      }),
+      watchAgentChanges(freshness, {
+        active,
+        refresh: () =>
+          this.retained.ensure("targets").then((ok) => ok !== false),
+        matches: (c) =>
+          this.invalidateWhen(
+            "targets",
+            ["discovery", "workspaces", "repository", "code"].includes(
               c.domain,
-            )) ||
-          c.domain === "repository",
-      }),
-      watchAgentChanges(freshness, {
-        active,
-        refresh: () => this.settings(),
-        matches: (c) => c.repository === null && c.domain === "agent_settings",
-      }),
-      watchAgentChanges(freshness, {
-        active,
-        refresh: () => this.targets(),
-        matches: (c) =>
-          ["discovery", "workspaces", "repository", "code"].includes(c.domain),
+            ),
+          ),
+        reset: () => this.retained.invalidate(),
       }),
     ];
   }
+  private invalidateWhen(key: string, matches: boolean) {
+    if (matches) this.retained.invalidate(key);
+    return matches;
+  }
+  ensure() {
+    return Promise.all(
+      ["status", "settings", "targets"].map((key) => this.retained.ensure(key)),
+    );
+  }
   async refresh() {
+    this.retained.invalidate();
     const results = await Promise.all([
-      this.status(),
-      this.settings(),
-      this.targets(),
+      this.retained.ensure("status"),
+      this.retained.ensure("settings"),
+      this.retained.ensure("targets"),
     ]);
     results.forEach((accepted, index) => {
       if (!accepted) this.#watches[index]!.request();
@@ -66,11 +100,13 @@ export class AgentExecutionRefresh {
         if (m.pending) await m.checkOutcome();
         if (!this.#alive) return true;
         m.connectionError = "";
+        m.invalidateHistory();
         m.chat.invalidate();
         return true;
       } catch (cause) {
         if (!this.#alive) return true;
         void syncAgentPower(null, false);
+        this.retained.invalidate("status");
         m.connectionError =
           cause instanceof Error
             ? cause.message

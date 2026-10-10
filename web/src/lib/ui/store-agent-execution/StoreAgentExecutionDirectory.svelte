@@ -16,7 +16,7 @@
     ) ?? [],
   );
   onMount(() => {
-    void manager?.refresh();
+    void manager?.ensure();
   });
 </script>
 

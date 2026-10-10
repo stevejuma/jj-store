@@ -10,8 +10,7 @@ export function watchAgentDiscussion(
   const refresh = createAutomaticRefresh({
     active: () => true,
     signal: lifetime.signal,
-    fallback: () => !freshness?.healthy,
-    poll: async () => true,
+
     refresh: async () => {
       return (await load()) !== false;
     },
@@ -31,14 +30,9 @@ export function watchAgentDiscussion(
       refresh.request();
     refresh.reschedule();
   });
-  const reconnect = () => refresh.request();
-  if (typeof window !== "undefined")
-    window.addEventListener("online", reconnect);
   refresh.request();
   return () => {
     lifetime.abort();
     unlisten?.();
-    if (typeof window !== "undefined")
-      window.removeEventListener("online", reconnect);
   };
 }

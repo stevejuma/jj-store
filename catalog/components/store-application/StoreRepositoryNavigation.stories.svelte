@@ -39,14 +39,8 @@
       ".lc-community-navigation__section",
     )!;
     await expect(getComputedStyle(section).marginBlockStart).toBe("20px");
-    for (const label of [
-      "Branches",
-      "JJ Log",
-      "Op Log",
-      "Agents",
-      "Reviews",
-      "Projects",
-    ])
+    await expect(left.getByRole("button", { name: "Agents" })).toBeVisible();
+    for (const label of ["Branches", "JJ Log", "Op Log", "Reviews", "Projects"])
       await expect(left.queryByRole("button", { name: label })).toBeNull();
     await userEvent.click(
       canvas.getByRole("button", { name: "Toggle details" }),

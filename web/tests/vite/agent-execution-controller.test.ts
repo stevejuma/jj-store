@@ -103,6 +103,7 @@ test("activity reconnect preserves explicit command errors and does not dispatch
       paths.push(path);
       if (path.includes("/stream")) {
         if (++streams === 1) throw new TypeError("Stream connection lost");
+        let close: () => void;
         return new Response(
           new ReadableStream({
             start(controller) {
@@ -121,11 +122,11 @@ test("activity reconnect preserves explicit command errors and does not dispatch
                   })}\n\n`,
                 ),
               );
-              init?.signal?.addEventListener(
-                "abort",
-                () => controller.close(),
-                { once: true },
-              );
+              close = () => controller.close();
+              init?.signal?.addEventListener("abort", close, { once: true });
+            },
+            cancel() {
+              init?.signal?.removeEventListener("abort", close);
             },
           }),
           { headers: { "content-type": "text/event-stream" } },

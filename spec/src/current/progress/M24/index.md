@@ -1,8 +1,8 @@
 # M24 reusable ACP agents and contextual conversations
 
-| ID  | Status      | Depends | Requirements                                 | Gate                                                                                                                          | Next                                                                                                               | Evidence                                                                                                                                                                                                                                                     |
-| --- | ----------- | ------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| M24 | In progress | M23     | JST-COLLAB-034,JST-COLLAB-035,JST-COLLAB-036 | Warm fleet, personal metadata homes, isolated multiple repository bindings, canonical discussion links and cold contextual UI | Qualify additional version-3 adapters and live permissions/cancellation; retain independent desktop/platform gates | E-FLEET-001,E-COMPUTE-004,E-CHAT-BODY-001,E-CHAT-BODY-002,E-CHAT-BODY-003,E-CHAT-BODY-004,E-CHAT-BODY-005,E-CHAT-BODY-006,E-CHAT-BODY-007,E-CHAT-METADATA-001,E-CHAT-METADATA-002,E-CHAT-METADATA-MAIN-001,E-CHAT-METADATA-MAIN-002,E-CHAT-METADATA-MAIN-003 |
+| ID  | Status      | Depends | Requirements                                 | Gate                                                                                                                          | Next                                                                                                               | Evidence                                                                                                                                                                                                                                                                           |
+| --- | ----------- | ------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| M24 | In progress | M23     | JST-COLLAB-034,JST-COLLAB-035,JST-COLLAB-036 | Warm fleet, personal metadata homes, isolated multiple repository bindings, canonical discussion links and cold contextual UI | Qualify additional version-3 adapters and live permissions/cancellation; retain independent desktop/platform gates | E-FLEET-001,E-COMPUTE-004,E-CHAT-BODY-001,E-CHAT-BODY-002,E-CHAT-BODY-003,E-CHAT-BODY-004,E-CHAT-BODY-005,E-CHAT-BODY-006,E-CHAT-BODY-007,E-CHAT-METADATA-001,E-CHAT-METADATA-002,E-CHAT-METADATA-MAIN-001,E-CHAT-METADATA-MAIN-002,E-CHAT-METADATA-MAIN-003,E-INBOX-FRESHNESS-001 |
 
 M23 remains qualified for its prior version-2 profile. M24 source, fixture and
 installed version-3 results are reviewed independently; no fixture closes a real
@@ -389,8 +389,10 @@ workspace qualification remain open. Visual baselines remain unapproved. The
 The [conversation metadata review](metadata-review.md) records
 E-CHAT-METADATA-001/002 and the main-workspace integration.
 <!-- generated-navigation -->
+
 ## Pages
 
 - [Conversation footer review](footer-review.md)
+- [Inbox read lifecycle review](inbox-freshness-review.md)
 - [Conversation metadata review](metadata-review.md)
 - [history](history/index.md)

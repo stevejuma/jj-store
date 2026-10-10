@@ -1,4 +1,5 @@
 <script lang="ts">
+  import * as lifecycle from "./agent-execution-lifecycle.svelte.js";
   import { AgentExecutionConfigurationFixture } from "./agent-execution-configuration.svelte.js";
   import {
     fixtureExecutionStatus,
@@ -17,15 +18,13 @@
     fixtureAgentTargets,
   } from "./agent-execution-session.js";
   import { AppShell } from "@lapismd/design-core/shell";
-  import { createMemoryStoryStorage } from "./memory-storage.js";
   import CommunityAppShell from "../../web/src/lib/ui/community-app-shell/CommunityAppShell.svelte";
-  import { createStoreShell } from "../../web/src/lib/ui/store-application/create-store-shell.js";
   import { provideAgentExecution } from "../../web/src/lib/ui/store-agent-execution/context.js";
   import { agentsRoute } from "../../web/src/lib/controller/agents-route-codec.js";
   import StoreAgentDetailsSidebar from "../../web/src/lib/ui/store-agent-execution/StoreAgentDetailsSidebar.svelte";
   import StoreAgentExecutionNotice from "../../web/src/lib/ui/store-agent-execution/StoreAgentExecutionNotice.svelte";
   import type { StoreRoute } from "../../web/src/lib/controller/contracts.js";
-  import { onDestroy, untrack } from "svelte";
+  import { untrack } from "svelte";
   import { AgentExecution } from "../../web/src/lib/controller/agent-execution.svelte.js";
   import type {
     AgentStatus,
@@ -62,8 +61,10 @@
     replayHistory = false,
     revisionIndexRequired = false,
     status = "Online",
+    observeRuntime = false,
   }: {
     permission?: boolean;
+    observeRuntime?: boolean;
     agentReplies?: boolean | "refresh-failed";
     unknownReply?: boolean;
     feedbackWriteUnavailable?: boolean;
@@ -96,6 +97,7 @@
   let resolveConfiguration = $state<(() => void) | undefined>();
   let resolveHistory = $state<(() => void) | undefined>();
   let commands = $state<Record<string, unknown>[]>([]);
+  let reads = $state<Record<string, number>>({});
   let lastCommand = $state<Record<string, unknown> | null>(null);
   let lastOpened = $state<{
     repository: string;
@@ -158,12 +160,14 @@
       feedbackWriteUnavailable,
     ),
   );
+  let route = $state<StoreRoute>(agentsRoute());
   const manager = untrack(
     () =>
       new AgentExecution(
         () => true,
         async (input, init) => {
           const path = String(input);
+          if (!init?.body) reads = { ...reads, [path]: (reads[path] ?? 0) + 1 };
           const discussion = await discussionFixture(path, init);
           if (discussion) return discussion;
           const revision = revisions(path);
@@ -231,21 +235,16 @@
       ),
   );
   provideAgentExecution(() => manager);
-  let route = $state<StoreRoute>(agentsRoute());
-  const shell = untrack(() => createStoreShell(undefined, false));
-  const inboxStorage = createMemoryStoryStorage();
+  if (untrack(() => observeRuntime))
+    lifecycle.observeFixtureAgentRuntime(manager, () => route);
+  const { shell, inboxStorage } = untrack(lifecycle.fixtureAgentShell);
   untrack(() => {
     if (replayHistory) discussion.seedReplayDrafts(manager.discussions.drafts);
     manager.onNavigate = (view, id, relatedId) =>
       (route = agentsRoute(view, id, relatedId));
     if (status === "Unknown") manager.value = fixtureStatus;
   });
-  onDestroy(() => {
-    manager.destroy();
-    receipts.destroy();
-    feed.freshness.destroy();
-    void shell.dispose();
-  });
+  lifecycle.own(manager, receipts, feed.freshness, shell);
 </script>
 
 <CommunityAppShell
@@ -287,6 +286,7 @@
   </AppShell.Main>
   <StoreAgentDetailsSidebar {manager} {shell} {route} />
 </CommunityAppShell>
+<output hidden data-testid="inbox-read-counts">{JSON.stringify(reads)}</output>
 <StoreAgentExecutionNotice
   {manager}
   activeSession={route.agentView === "session"

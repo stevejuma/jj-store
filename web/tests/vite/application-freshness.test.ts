@@ -86,7 +86,7 @@ test("scoped dirtiness survives failed reads and events arriving during a read",
     refresh: unaffected,
     initial: false,
   });
-  f.send(frame("changed", 1, { change: change() }));
+  f.send(frame("changed", 1, { change: change("threads", "one-changed") }));
   await vi.advanceTimersByTimeAsync(151);
   expect(refresh).toHaveBeenCalledTimes(1);
   expect(unaffected).not.toHaveBeenCalled();
@@ -110,7 +110,7 @@ test("scoped dirtiness survives failed reads and events arriving during a read",
   b.stop();
   f.freshness.destroy();
 });
-test("an outage enables bounded fallback and recovery stops it without a reload", async () => {
+test("an outage reconnects only the stream and leaves consumer data idle", async () => {
   const f = fixture();
   await f.freshness.configure(true, null);
   const refresh = vi.fn(async () => true);
@@ -157,4 +157,28 @@ test("ready reconciliation visits every matching scope before continuity advance
   expect(refresh).toHaveBeenCalledOnce();
   watch.stop();
   f.freshness.destroy();
+});
+
+test("duplicate domain witnesses and unrelated notices perform no reads", async () => {
+  const f = fixture();
+  await f.freshness.configure(true, null);
+  const refresh = vi.fn(async () => true);
+  const watch = f.freshness.watch({
+    matches: (c) => c.domain === "threads",
+    refresh,
+    initial: false,
+  });
+  try {
+    f.send(frame("changed", 1, { change: change("threads", "one") }));
+    f.send(frame("changed", 2, { change: change("storage", "other") }));
+    await vi.advanceTimersByTimeAsync(200);
+    expect(refresh).not.toHaveBeenCalled();
+    f.send(frame("changed", 3, { change: change("threads", "two") }));
+    f.send(frame("changed", 4, { change: change("threads", "two") }));
+    await vi.advanceTimersByTimeAsync(200);
+    expect(refresh).toHaveBeenCalledOnce();
+  } finally {
+    watch.stop();
+    f.freshness.destroy();
+  }
 });

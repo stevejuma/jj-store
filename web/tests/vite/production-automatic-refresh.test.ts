@@ -55,19 +55,21 @@ function fixture() {
     updates: createProductionAutomaticRefresh(options),
   };
 }
-test("a missed repository publication reloads without an SSE or a manual action", async () => {
+test("repository views remain idle without an event feed", async () => {
   const f = fixture();
   await vi.advanceTimersByTimeAsync(5000);
-  expect(f.refresh).toHaveBeenCalledTimes(1);
+  expect(f.refresh).not.toHaveBeenCalled();
+  expect(f.source.snapshot).not.toHaveBeenCalled();
   f.abort.abort();
 });
-test("directory changes refresh sidebar metadata even in a code view", async () => {
+test("directory observations are never polled from a code view", async () => {
   const f = fixture();
   f.source.snapshot.mockResolvedValue(f.data.head!);
   f.directories.mockResolvedValue(true);
   await vi.advanceTimersByTimeAsync(5000);
-  expect(f.navigation).toHaveBeenCalledWith(true);
-  expect(f.refresh).toHaveBeenCalledTimes(1);
+  expect(f.navigation).not.toHaveBeenCalled();
+  expect(f.directories).not.toHaveBeenCalled();
+  expect(f.refresh).not.toHaveBeenCalled();
   f.abort.abort();
 });
 test("a prepared code mutation defers updates until its exact preview is released", async () => {

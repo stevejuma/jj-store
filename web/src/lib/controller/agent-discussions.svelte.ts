@@ -1,13 +1,10 @@
+import { createAgentDiscussionReader } from "./agent-discussion-reader.js";
 import type { LocalClient } from "../api/local-client.js";
-import { Client, type Model } from "../api/client.js";
-import { HttpThreadsDataSource } from "./http-threads-data-source.js";
-import { LocalInboxThreads } from "./local-inbox-threads.js";
-import { createStoreQueryClient } from "./store-query-client.js";
-import { createThreadsController } from "./production-threads.svelte.js";
-import { initialStoreRoute } from "./store-route-history.svelte.js";
+import { type Model } from "../api/client.js";
 import { watchAgentDiscussion } from "./agent-discussion-refresh.js";
 import type { ApplicationFreshness } from "./application-freshness.js";
 import type { ReactionTarget } from "./thread-types.js";
+import { RetainedReads } from "./retained-reads.js";
 type Feedback = Model<"AgentExecutionFeedback">;
 
 /** Repository-owned feedback with installation-owned drafts and exact receipt recovery. */
@@ -16,7 +13,8 @@ export class AgentDiscussions {
   errors = $state<Record<string, string>>({});
   drafts = $state<Record<string, string>>({});
   recovered = $state<Record<string, number>>({});
-  #loading = new Set<string>();
+  readonly #reads = new RetainedReads((id) => this.read(id));
+  #unlisten?: () => void;
   #alive = true;
   #awaiting = $state<
     Record<
@@ -31,7 +29,7 @@ export class AgentDiscussions {
       | undefined
     >
   >({});
-  #readers = new Map<string, ReturnType<typeof this.createReader>>();
+  #readers = new Map<string, ReturnType<typeof createAgentDiscussionReader>>();
   #profiles = $state<Record<string, string>>({});
   constructor(
     private client: LocalClient,
@@ -43,67 +41,59 @@ export class AgentDiscussions {
     private fetcher?: typeof fetch,
     private principal: (repository: string) => string = () => "",
     private freshness?: ApplicationFreshness,
-  ) {}
+  ) {
+    this.#unlisten = freshness?.listen(({ changes, reset }) => {
+      if (reset) this.#reads.invalidate();
+      const reactions = new Set<string>();
+      for (const session of sessions()) {
+        if (
+          reset ||
+          changes.some(
+            (change) =>
+              change.repository === session.repository &&
+              ["threads", "agents", "repository"].includes(change.domain),
+          )
+        ) {
+          this.#reads.invalidate(session.id);
+          if (
+            reset ||
+            changes.some(
+              (c) =>
+                c.repository === session.repository &&
+                ["threads", "repository"].includes(c.domain),
+            )
+          )
+            reactions.add(session.repository);
+        }
+      }
+      for (const repository of reactions)
+        void this.#readers.get(repository)?.invalidate();
+    });
+  }
   reader(repository: string) {
     // Every rendered message tracks profile adoption, including readers created
     // while the asynchronous local selection is being prepared.
     const profile = this.#profiles[repository] ?? "native";
     let reader = this.#readers.get(repository);
     if (!reader) {
-      reader = this.createReader(repository, profile);
+      reader = createAgentDiscussionReader(
+        repository,
+        profile,
+        this.fetcher,
+        this.principal,
+      );
       this.#readers.set(repository, reader);
     }
     return reader.threads;
   }
-  private createReader(repository: string, profile = "native") {
-    const client = new Client(repository, null, () => {}, this.fetcher);
-    const queries = createStoreQueryClient();
-    let active = true;
-    let route = initialStoreRoute();
-    const local =
-      profile === "local_jj_git"
-        ? new LocalInboxThreads(repository, this.fetcher)
-        : undefined;
-    const source =
-      local ??
-      new HttpThreadsDataSource(
-        client,
-        queries,
-        { repository, profile: "native", session: crypto.randomUUID() },
-        () => active,
-      );
-    const threads = createThreadsController({
-      source: () => source,
-      repository: () => repository,
-      principal: () => local?.actor ?? this.principal(repository),
-      route: () => route,
-      select: (id) => {
-        route = { ...route, threadId: id };
-      },
-    });
-    return {
-      threads,
-      profile,
-      principal: () => local?.actor ?? this.principal(repository),
-      prepare: () => local?.prepare() ?? Promise.resolve(),
-      async invalidate() {
-        await source.invalidate("reactions");
-        threads.invalidateReactions();
-      },
-      close() {
-        local?.close();
-        active = false;
-        threads.clear();
-        client.close();
-        void queries.cancelQueries();
-        queries.clear();
-      },
-    };
+  ensure(id: string) {
+    return this.#reads.ensure(id);
   }
-  async load(id: string) {
+  load(id: string) {
+    return this.#reads.refresh(id);
+  }
+  private async read(id: string) {
     if (!this.#alive) return true;
-    if (this.#loading.has(id)) return false;
-    this.#loading.add(id);
     try {
       const value = await this.client.request<Feedback>(
         `agents/feedback?session=${encodeURIComponent(id)}`,
@@ -122,7 +112,12 @@ export class AgentDiscussions {
             throw new Error(
               "Check the original reply status before changing repository profile",
             );
-          const reader = this.createReader(session.repository, profile);
+          const reader = createAgentDiscussionReader(
+            session.repository,
+            profile,
+            this.fetcher,
+            this.principal,
+          );
           try {
             await reader.prepare();
           } catch (cause) {
@@ -145,7 +140,6 @@ export class AgentDiscussions {
           this.#profiles[session.repository] = profile;
         }
         this.reader(session.repository);
-        await this.#readers.get(session.repository)?.invalidate();
       }
       if (!this.#alive) return;
       this.values = { ...this.values, [id]: value };
@@ -158,13 +152,11 @@ export class AgentDiscussions {
         [id]: cause instanceof Error ? cause.message : String(cause),
       };
       return false;
-    } finally {
-      this.#loading.delete(id);
     }
   }
   watch(id: string, repository: string) {
     return watchAgentDiscussion(
-      () => this.load(id),
+      () => this.ensure(id),
       repository,
       this.freshness,
     );
@@ -290,6 +282,8 @@ export class AgentDiscussions {
     return threads.toggle(target, emoji, custom, fromBar).catch(() => {});
   }
   destroy() {
+    this.#unlisten?.();
+    this.#reads.clear();
     this.#alive = false;
     for (const reader of this.#readers.values()) reader.close();
     this.#readers.clear();

@@ -1,4 +1,3 @@
-import { pretty } from "../api/client.js";
 import { createAutomaticRefresh } from "./automatic-refresh.js";
 import { followProductionStoreEvents } from "./production-store-events.js";
 import type { ProductionStoreState } from "./production-store-state.svelte.js";
@@ -13,7 +12,6 @@ export function createProductionAutomaticRefresh(options: {
   active(): boolean;
   projects: ProjectsHubController;
   threads: ReturnType<typeof createThreadsController>;
-  pollProjects(): Promise<boolean>;
   refresh(
     changes?: readonly import("../api/application-events.js").FreshnessChange[],
   ): Promise<void>;
@@ -42,23 +40,6 @@ export function createProductionAutomaticRefresh(options: {
     );
   const automatic = createAutomaticRefresh({
     ...options,
-    fallback: options.freshness ? () => !options.freshness!.healthy : undefined,
-    poll: async () => {
-      const directoryChanged = await options.pollProjects();
-      if (options.route().page === "projects")
-        return directoryChanged || Boolean(projectReadError());
-      if (directoryChanged) await projects.navigation.load(true);
-      const active = options.source();
-      if (!active || data.status.connection !== "connected") return false;
-      const head = await active.snapshot(true);
-      return (
-        options.source() === active &&
-        (directoryChanged ||
-          pretty(head) !== pretty(data.head) ||
-          Boolean(data.status.error) ||
-          (options.route().page === "threads" && threads.status === "failed"))
-      );
-    },
     refresh: async () => {
       if (
         data.status.connection === "connecting" ||

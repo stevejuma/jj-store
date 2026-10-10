@@ -1,5 +1,6 @@
 <script lang="ts">
-  import type { Snippet } from "svelte";
+  import { untrack, type Snippet } from "svelte";
+  import { supportsRepositoryThreads } from "../../controller/repository-thread-navigation.svelte.js";
   import type { StoreController } from "../../controller/contracts.js";
   import CommunityNavigation from "../community-navigation/CommunityNavigation.svelte";
   import type { CommunityNavigationItemModel } from "../community-navigation/model.js";
@@ -29,6 +30,38 @@
     footer?: Snippet;
   } = $props();
   let createProject = $state(false);
+  let compactSection = $state("");
+  $effect(() => {
+    const navigation = controller.threadNavigation,
+      projects = controller.projects?.navigation;
+    const projectsVisible = compact
+      ? compactSection === "projects"
+      : (sectionOpen.projects ?? true);
+    const repositoriesVisible = compact
+      ? compactSection === "repositories"
+      : (sectionOpen.repositories ?? true);
+    const route = controller.state.route;
+    const visible = new Set(
+      controller.state.repositories
+        .filter(
+          (repo) =>
+            supportsRepositoryThreads(repo) &&
+            repositoriesVisible &&
+            (compact ||
+              (itemOpen[repo.id] ??
+                (route.page === "threads" && route.repository === repo.id))),
+        )
+        .map((repo) => repo.id),
+    );
+    untrack(() => {
+      void projects?.setVisible(projectsVisible);
+      void navigation?.setVisible(visible);
+    });
+    return () => {
+      void projects?.setVisible(false);
+      void navigation?.setVisible(new Set());
+    };
+  });
   const canCreateProject = $derived(
     !!controller.projects &&
       (controller.state.accessMode === "local_trusted" ||
@@ -114,6 +147,7 @@
     {compact}
     bind:sectionOpen
     bind:itemOpen
+    onCompactSectionChange={(id) => (compactSection = id)}
     {onSearch}
     {footer}
     onSelect={(item) => {

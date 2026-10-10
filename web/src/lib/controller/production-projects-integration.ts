@@ -1,12 +1,11 @@
 import { repositories as loadRepositories } from "../api/repositories.js";
 import { followProductionStoreEvents } from "./production-store-events.js";
-import { pretty, ApiError } from "../api/client.js";
+import { ApiError } from "../api/client.js";
 import {
   repositorySource,
   captureRepositoryActor,
 } from "./repository-source.js";
 import type { StoreDataSource } from "./native-data-source.js";
-import { createStoreQueryClient } from "./store-query-client.js";
 import { createProjectsHub } from "./production-projects-hub.svelte.js";
 import type { ProductionStoreState } from "./production-store-state.svelte.js";
 import type { StoreController } from "./contracts.js";
@@ -35,7 +34,6 @@ export function createProductionProjects(
     fetcher,
   };
   const sources = new Map<string, StoreDataSource>();
-  const observed = new Map<string, string>();
   let selectedHome: string | null = null;
   let feed = new AbortController(),
     discovery = new AbortController();
@@ -128,65 +126,6 @@ export function createProductionProjects(
   return {
     projects,
     discover,
-    async poll() {
-      const ticket = context.session(),
-        credential = context.token();
-      const route = context.route();
-      if (route.page !== "projects") return false;
-      const repositories = await loadRepositories(credential, context.fetcher);
-      if (ticket !== context.session() || credential !== context.token())
-        return false;
-      let dirty = pretty(repositories) !== pretty(context.data.repositories);
-      if (dirty) {
-        context.data.repositories = repositories.map((repo) => ({ ...repo }));
-        for (const [id, active] of sources)
-          if (!repositories.some((repo) => repo.id === id)) {
-            active.close();
-            sources.delete(id);
-            observed.delete(id);
-          }
-      }
-      const visible = new Set(
-        route.workTab === "repositories"
-          ? projects.repositories.visibleIds
-          : route.workTab === "agents"
-            ? projects.agents.homes.map((home) => home.repository.id)
-            : route.workTab === "reviews"
-              ? projects.reviews.homes.map((home) => home.repository.id)
-              : route.workTab === "activity"
-                ? projects.activity.homes.map((home) => home.repository.id)
-                : route.projectId
-                  ? [route.repository]
-                  : projects.homes.map((home) => home.repository.id),
-      );
-      const selected = repositories.filter((repo) => visible.has(repo.id));
-      let index = 0;
-      await Promise.all(
-        Array.from({ length: Math.min(2, selected.length) }, async () => {
-          while (index < selected.length) {
-            const repo = selected[index++]!;
-            if (!context.data.repositories.some((r) => r.id === repo.id))
-              continue;
-            projects.transport(repo.id);
-            const active = sources.get(repo.id)!;
-            try {
-              const head = await active.snapshot(true);
-              if (
-                ticket !== context.session() ||
-                sources.get(repo.id) !== active
-              )
-                return;
-              const value = pretty(head);
-              if (observed.get(repo.id) !== value) dirty = true;
-              observed.set(repo.id, value);
-            } catch {
-              dirty = true;
-            }
-          }
-        }),
-      );
-      return ticket === context.session() && dirty;
-    },
     stopEvents() {
       selectedHome = null;
       feed.abort();
@@ -197,7 +136,6 @@ export function createProductionProjects(
       projects.reset();
       for (const source of sources.values()) source.close();
       sources.clear();
-      observed.clear();
       selectedHome = null;
     },
   };

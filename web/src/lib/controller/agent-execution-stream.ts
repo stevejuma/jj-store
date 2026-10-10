@@ -14,25 +14,45 @@ export async function consumeAgentEvents(
   },
 ) {
   while (owner.alive() && !signal.aborted) {
+    const stream = new AbortController();
+    const combined = AbortSignal.any([signal, stream.signal]);
+    let timer = setTimeout(
+      () => stream.abort(new Error("Agent connection timed out")),
+      35000,
+    );
     try {
       const response = await client.fetch(
         `agents/stream?session=${encodeURIComponent(id)}&after=${after}`,
-        { signal },
+        { signal: combined, headers: { accept: "text/event-stream" } },
+        null,
       );
+      clearTimeout(timer);
       if (
         !response.ok ||
         !response.headers
           .get("content-type")
           ?.startsWith("text/event-stream") ||
         !response.body
-      )
+      ) {
+        await response.body?.cancel();
         throw new Error("Agent activity unavailable");
+      }
       const reader = response.body.getReader(),
         decoder = new TextDecoder();
       let buffer = "";
+      const stop = () => {
+        void reader.cancel().catch(() => {});
+      };
+      combined.addEventListener("abort", stop, { once: true });
       try {
-        while (!signal.aborted) {
+        while (!combined.aborted) {
+          timer = setTimeout(
+            () => stream.abort(new Error("Agent activity heartbeat stalled")),
+            45000,
+          );
           const next = await reader.read();
+          clearTimeout(timer);
+          if (combined.aborted) throw combined.reason;
           if (next.done) break;
           buffer += decoder.decode(next.value, { stream: true });
           if (buffer.length > 16 * 1024 * 1024)
@@ -56,6 +76,7 @@ export async function consumeAgentEvents(
           }
         }
       } finally {
+        combined.removeEventListener("abort", stop);
         await reader.cancel().catch(() => {});
         reader.releaseLock();
       }
@@ -66,6 +87,9 @@ export async function consumeAgentEvents(
             ? cause.message
             : "Agent activity reconnecting",
         );
+    } finally {
+      clearTimeout(timer);
+      stream.abort();
     }
     if (!signal.aborted)
       await new Promise<void>((resolve) => {
@@ -85,8 +109,9 @@ export async function readAgentEventHistory(
   id: string,
   signal: AbortSignal,
   receive: (events: AgentEvent[]) => void,
+  start = 0,
 ) {
-  let after = 0;
+  let after = start;
   do {
     const page = await client.request<Model<"AgentExecutionEventPage">>(
       `agents/events?session=${id}&after=${after}`,

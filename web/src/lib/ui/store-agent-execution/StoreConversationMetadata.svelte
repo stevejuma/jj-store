@@ -24,25 +24,11 @@
         ["prepared", "generating", "publishing"].includes(entry.job.state)),
   );
   $effect(() => {
-    let disposed = false;
-    const current = query,
-      revision = manager.value?.revision;
-    untrack(() => {
+    const current = { session: query.session, repository: query.repository };
+    return untrack(() => {
       entry = manager.metadata.entry(current);
-      void revision;
-      void manager.metadata.load(current).then(() => {
-        if (
-          !disposed &&
-          entry.job &&
-          ["prepared", "generating", "publishing"].includes(entry.job.state)
-        )
-          void manager.metadata.poll(current);
-      });
+      return manager.metadata.watch(current);
     });
-    return () => {
-      disposed = true;
-      manager.metadata.leave(current);
-    };
   });
   onDestroy(() => manager.metadata.leave(query));
   const generated = $derived(entry.value?.value.generated);

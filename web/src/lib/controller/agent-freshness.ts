@@ -8,6 +8,7 @@ export function watchAgentChanges(
     active(): boolean;
     matches(change: FreshnessChange): boolean;
     refresh(): Promise<boolean>;
+    reset?(): void;
   },
 ) {
   if (freshness) return freshness.watch({ ...options, initial: false });
@@ -15,8 +16,7 @@ export function watchAgentChanges(
   const refresh = createAutomaticRefresh({
     active: options.active,
     refresh: options.refresh,
-    poll: async () => true,
-    fallback: () => true,
+
     report: () => {},
     signal: lifetime.signal,
   });

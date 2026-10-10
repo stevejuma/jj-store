@@ -124,6 +124,7 @@
             {selection}
             repositoryName={selection.repository.slice(0, 8)}
             fetcher={manager.client.fetcher}
+            cache={manager.changes}
           />
         {/each}
         <form

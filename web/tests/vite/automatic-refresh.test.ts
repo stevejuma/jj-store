@@ -5,16 +5,14 @@ function fixture() {
   vi.useFakeTimers();
   const abort = new AbortController();
   const refresh = vi.fn(async () => true),
-    poll = vi.fn(async () => false),
     report = vi.fn();
   const updates = createAutomaticRefresh({
     active: () => true,
     refresh,
-    poll,
     report,
     signal: abort.signal,
   });
-  return { abort, updates, refresh, poll, report };
+  return { abort, updates, refresh, report };
 }
 test("live events coalesce and an event during a reload schedules another reload", async () => {
   const f = fixture();
@@ -47,9 +45,11 @@ test("edit pauses defer updates and release reloads without a manual action", as
   expect(f.refresh).toHaveBeenCalledTimes(1);
   f.abort.abort();
 });
-test("missed data is detected by periodic reads and failures retry automatically", async () => {
+test("idle state never polls and only failed requested work retries", async () => {
   const f = fixture();
-  f.poll.mockResolvedValueOnce(true);
+  await vi.advanceTimersByTimeAsync(60000);
+  expect(f.refresh).not.toHaveBeenCalled();
+  f.updates.request();
   f.refresh.mockRejectedValueOnce(new Error("offline"));
   await vi.advanceTimersByTimeAsync(5000);
   expect(f.report).toHaveBeenCalledTimes(1);
@@ -59,35 +59,34 @@ test("missed data is detected by periodic reads and failures retry automatically
   await vi.advanceTimersByTimeAsync(10000);
   expect(f.refresh).toHaveBeenCalledTimes(2);
 });
-test("session reset discards late polls and queued work", async () => {
+test("session reset discards queued refresh work", async () => {
   const f = fixture();
   let resolve!: (changed: boolean) => void;
-  f.poll.mockImplementationOnce(
+  f.refresh.mockImplementationOnce(
     () =>
       new Promise((done) => {
         resolve = done;
       }),
   );
-  await vi.advanceTimersByTimeAsync(5000);
+  f.updates.request();
+  await vi.advanceTimersByTimeAsync(150);
+  f.updates.request();
   f.updates.reset();
   resolve(true);
   await vi.advanceTimersByTimeAsync(5000);
-  expect(f.refresh).not.toHaveBeenCalled();
+  expect(f.refresh).toHaveBeenCalledTimes(1);
   f.abort.abort();
 });
 
 test("unrelated healthy notices cannot postpone a queued event read", async () => {
   vi.useFakeTimers();
   const abort = new AbortController();
-  const refresh = vi.fn(async () => true),
-    poll = vi.fn(async () => false);
+  const refresh = vi.fn(async () => true);
   const updates = createAutomaticRefresh({
     active: () => true,
     refresh,
-    poll,
     report: () => {},
     signal: abort.signal,
-    fallback: () => false,
   });
   updates.request();
   await vi.advanceTimersByTimeAsync(20);
@@ -98,7 +97,6 @@ test("unrelated healthy notices cannot postpone a queued event read", async () =
   expect(refresh).toHaveBeenCalledOnce();
   await vi.advanceTimersByTimeAsync(60000);
   expect(refresh).toHaveBeenCalledOnce();
-  expect(poll).not.toHaveBeenCalled();
   abort.abort();
 });
 
@@ -109,10 +107,8 @@ test("a deferred healthy event retries promptly and stops after an accepted read
   const updates = createAutomaticRefresh({
     active: () => true,
     refresh,
-    poll: async () => false,
     report: () => {},
     signal: abort.signal,
-    fallback: () => false,
   });
   updates.request();
   await vi.advanceTimersByTimeAsync(150);

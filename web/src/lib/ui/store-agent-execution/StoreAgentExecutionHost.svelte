@@ -94,7 +94,7 @@
       manager.open = true;
       manager.launchOpen = view === "new";
       if (view === "new") manager.setupId = setup ?? "";
-      if (available) void manager.refresh();
+      if (available) void manager.ensure();
     });
   });
   $effect(() => {

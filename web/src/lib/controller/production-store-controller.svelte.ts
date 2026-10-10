@@ -68,7 +68,6 @@ export function createProductionStoreController(
     projects,
     clear: clearProjects,
     stopEvents: stopProjectEvents,
-    poll: pollProjects,
     discover: discoverProjects,
   } = createProductionProjects(
     data,
@@ -273,7 +272,6 @@ export function createProductionStoreController(
       automatic: {
         projects,
         threads,
-        pollProjects,
         sources,
         active: () => authorizationReady(data, sessionToken),
         refresh: (changes) => refresh(true, changes),

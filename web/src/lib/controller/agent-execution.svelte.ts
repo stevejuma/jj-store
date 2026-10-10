@@ -1,4 +1,6 @@
 import { ConversationSessions } from "../conversations/session.svelte.js";
+import { AgentChangesCache } from "./agent-changes-cache.js";
+import { AgentSelectionHistory } from "./agent-selection-history.js";
 import { disposeAgentResources } from "./agent-resource-disposal.js";
 import {
   agentControlBody,
@@ -20,10 +22,6 @@ import { AgentCompute } from "./agent-compute.svelte.js";
 import { ConversationMetadata } from "./conversation-metadata.svelte.js";
 import { AgentSettings } from "./agent-settings.svelte.js";
 import { AgentRuntimes } from "./agent-runtimes.svelte.js";
-import {
-  consumeAgentEvents,
-  readAgentEventHistory,
-} from "./agent-execution-stream.js";
 import { LocalClient } from "../api/local-client.js";
 import type {
   AgentAction,
@@ -69,7 +67,7 @@ export class AgentExecution {
   } | null>(null);
   outcome = $state<AgentOutcome | null>(null);
   #alive = true;
-  #stream?: AbortController;
+  readonly #selection = new AgentSelectionHistory(this);
   readonly updates: AgentExecutionRefresh;
   readonly client: LocalClient;
   readonly discussions: AgentDiscussions;
@@ -79,6 +77,7 @@ export class AgentExecution {
   readonly settings: AgentSettings;
   readonly metadata: ConversationMetadata;
   readonly compute: AgentCompute;
+  readonly changes: AgentChangesCache;
   constructor(
     readonly available: () => boolean,
     fetcher?: typeof fetch,
@@ -86,15 +85,17 @@ export class AgentExecution {
     readonly freshness?: import("./application-freshness.js").ApplicationFreshness,
   ) {
     this.client = new LocalClient("", fetcher);
+    this.changes = new AgentChangesCache(this.client.fetcher);
     this.chat = new AgentChat(this, freshness);
     this.settings = new AgentSettings(this.client);
     this.metadata = new ConversationMetadata(
       this.client,
-      () => void this.refresh(),
+      () => void this.updates.status(),
+      freshness,
     );
-    this.compute = new AgentCompute(this.client);
+    this.compute = new AgentCompute(this.client, freshness);
     this.catalogs = new AgentModelCatalog(this.client);
-    this.tooling = new AgentRuntimes(available, fetcher);
+    this.tooling = new AgentRuntimes(available, fetcher, undefined, freshness);
     this.updates = new AgentExecutionRefresh(this, freshness);
     this.discussions = new AgentDiscussions(
       this.client,
@@ -126,43 +127,19 @@ export class AgentExecution {
   }
   pauseView() {
     this.open = false;
-    this.#stream?.abort();
+    this.#selection.pause();
   }
   refresh() {
     return this.updates.refresh();
   }
-  async select(id: string) {
-    this.#stream?.abort();
-    this.drafts[id] ??= "";
-    this.selected = id;
-    void this.discussions.load(id);
-    this.events = [];
-    this.eventsLoading = true;
-    const abort = (this.#stream = new AbortController());
-    try {
-      const after = await readAgentEventHistory(
-        this.client,
-        id,
-        abort.signal,
-        (events) => {
-          if (this.#alive) this.events = [...this.events, ...events];
-        },
-      );
-      void consumeAgentEvents(this.client, id, after, abort.signal, {
-        alive: () => this.#alive,
-        receive: (events) => {
-          this.activityError = "";
-          this.events = [...this.events, ...events];
-        },
-        failed: (message) => {
-          this.activityError = message;
-        },
-      });
-    } catch (cause) {
-      if (!abort.signal.aborted) this.activityError = String(cause);
-    } finally {
-      if (this.#stream === abort) this.eventsLoading = false;
-    }
+  ensure() {
+    return this.updates.ensure();
+  }
+  select(id: string) {
+    return this.#selection.select(id);
+  }
+  invalidateHistory() {
+    this.#selection.invalidate();
   }
   private accept(outcome: AgentOutcome) {
     this.outcome = outcome;
@@ -279,10 +256,10 @@ export class AgentExecution {
     return request_id;
   }
   destroy() {
+    this.#selection.destroy();
     this.conversations.clear();
     this.#alive = false;
     this.updates.destroy();
     disposeAgentResources(this);
-    this.#stream?.abort();
   }
 }

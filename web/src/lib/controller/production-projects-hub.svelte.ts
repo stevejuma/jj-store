@@ -51,9 +51,9 @@ export function createProjectsHub(
     works.get(home)?.reset();
     views.clear();
   }
-  function report(message: string) {
+  const report = (message: string) => {
     error = message;
-  }
+  };
   const navigation = createProjectsNavigation({
     repositories: context.repositories,
     transport,
@@ -230,7 +230,7 @@ export function createProjectsHub(
         changes,
         context.repositories().map((repo) => repo.id),
       );
-      invalidateProjectViews(views, works, changes);
+      invalidateProjectViews(views, works, changes, navigation);
     },
     async refresh(changes) {
       if (changes)
