@@ -88,4 +88,8 @@ Rebase plus landing planning, not execution of the landing plan. The combined in
 - web/tests/vite/agent-chatgpt.test.ts#proven command refusal releases the
   draft; polling recovers after an outage
 <!-- /evidence-field -->
+<!-- generated-navigation -->
+## Pages
 
+- [E-CHATGPT-REBASE-001 details 2](details-02.md)
+- [E-CHATGPT-REBASE-001 details 3](details-03.md)

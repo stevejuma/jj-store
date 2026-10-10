@@ -1,8 +1,8 @@
 # M25 local compute, agent configuration and sent context
 
-| ID  | Status      | Depends | Requirements                                                        | Gate                                                                                                                           | Next                                                       | Evidence                                                                                                                                                                                                                                                                                |
-| --- | ----------- | ------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| M25 | In progress | M24     | JST-COLLAB-034,JST-COLLAB-035,JST-COLLAB-036,JST-UI-012,JST-API-001 | Defaults/environment, rich sent context, real local ACP coding tools, private paired inference, cold packaged macOS/Linux runs | Qualify signed macOS/WKWebView and Linux CPU distributions | E-COMPUTE-001,E-COMPUTE-002,E-COMPUTE-003,E-COMPUTE-004,E-COMPUTE-005,E-COMPUTE-006,E-COMPUTE-007,E-COMPUTE-008,E-CHAT-LIVE-007,E-CHAT-METADATA-002,E-CHAT-METADATA-MAIN-001,E-CHAT-METADATA-MAIN-002,E-CHAT-METADATA-MAIN-003,E-INBOX-FRESHNESS-001,E-CHATGPT-001,E-CHATGPT-REBASE-001 |
+| ID  | Status      | Depends | Requirements                                                        | Gate                                                                                                                           | Next                                                       | Evidence                                                                                                                                                                                                                                                                                                   |
+| --- | ----------- | ------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| M25 | In progress | M24     | JST-COLLAB-034,JST-COLLAB-035,JST-COLLAB-036,JST-UI-012,JST-API-001 | Defaults/environment, rich sent context, real local ACP coding tools, private paired inference, cold packaged macOS/Linux runs | Qualify signed macOS/WKWebView and Linux CPU distributions | E-COMPUTE-001,E-COMPUTE-002,E-COMPUTE-003,E-COMPUTE-004,E-COMPUTE-005,E-COMPUTE-006,E-COMPUTE-007,E-COMPUTE-008,E-CHAT-LIVE-007,E-CHAT-METADATA-002,E-CHAT-METADATA-MAIN-001,E-CHAT-METADATA-MAIN-002,E-CHAT-METADATA-MAIN-003,E-INBOX-FRESHNESS-001,E-CHATGPT-001,E-CHATGPT-REBASE-001,E-CHATGPT-LAND-001 |
 
 M24's independent adapter, installed live permission/cancellation and desktop
 qualification gates remain unchanged. M25 source/fixture passes do not qualify
@@ -116,6 +116,17 @@ its running application and development fixture are retained.
    ChatGPT workspace until main qualification and recoverable cleanup are
    explicitly selected.
 
+## ChatGPT main landing and workspace retirement — 2026-10-10
+
+E-CHATGPT-LAND-001 completes the requested source landing in `default`,
+retaining `szzqmzpx` and `nqtxppsx` above main's inbox/read-lifecycle change.
+The fresh main account/freshness regression and web/catalog checks pass. The
+clean `chatgpt-plan` workspace has no unique nonempty changes or active process
+use; its registration is forgotten and its directory is moved to macOS Trash.
+Main's running application and `.local/dev-demo` fixture are retained. M25 stays
+In progress: runtime activation, authenticated subscription/Keychain acceptance,
+signed macOS/WKWebView, Linux distribution and visual approval remain separate
+gates.
 <!-- generated-navigation -->
 
 ## Pages
