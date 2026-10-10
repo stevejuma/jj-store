@@ -52,6 +52,7 @@
   outline: none;
 }
 .chat-text-reader {
+  --mira-font-sans: var(--font-sans, ui-sans-serif, system-ui, sans-serif);
   --file-line-width: 100%;
   --file-margins-x: 0px;
   --file-margins-y: 0px;

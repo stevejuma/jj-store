@@ -1,2 +1,4 @@
 - [E-CHAT-MARKDOWN-001](E-CHAT-MARKDOWN-001/index.md)
   {{#include E-CHAT-MARKDOWN-001/SUMMARY.nav.md}}
+- [E-CHAT-QUEUE-LAND-001](E-CHAT-QUEUE-LAND-001/index.md)
+  {{#include E-CHAT-QUEUE-LAND-001/SUMMARY.nav.md}}

@@ -33,3 +33,7 @@ reproduces three AgentFleet initial-control failures; the changed tree records
 seven and an intermittent footer initial failure. Focused queue interaction and
 accessibility checks pass, but no full direct-family pass is claimed. Existing
 architecture oversizes remain; changed governed sources do not enlarge them.
+
+E-CHAT-QUEUE-LAND-001 records main-workspace integration and retirement of the
+session workspace, without advancing M24 or the existing wider qualification
+gaps. Concurrent Markdown navigation and column acceptance remain retained.
