@@ -34,3 +34,5 @@
   {{#include E-THREADS-001/SUMMARY.nav.md}}
 - [E-THREADS-002](E-THREADS-002/index.md)
   {{#include E-THREADS-002/SUMMARY.nav.md}}
+- [E-UI-FAVICON-001](E-UI-FAVICON-001/index.md)
+  {{#include E-UI-FAVICON-001/SUMMARY.nav.md}}

@@ -12,3 +12,10 @@ that diagnostic remains recorded. M24 stays In progress; provider, permission,
 cancellation, desktop/platform and ResizeObserver gates remain independent.
 Visual baselines remain unapproved. M25 account presentation is reviewed in its
 ledger and the same evidence.
+
+E-UI-FAVICON-001 adds the accepted application logo to the browser tab through
+an explicit icon link and a compact self-contained SVG. The existing public
+asset inventory includes it in built bundles without changing native asset
+admission or MIME handling. The enclosing change vpxrwszm preserves appearance,
+agent identity and API contracts. M24 stays In progress; visual baselines remain
+unapproved and native execution/ResizeObserver qualification is independent.

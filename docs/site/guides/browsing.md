@@ -9,6 +9,9 @@ and agent content uses a padded, rounded banner inside its pane, aligned with
 the surrounding header or collection. Request failures retain their scoped
 notification and retry behavior.
 
+The browser tab displays the app's blue-jay and gear logo. Its favicon is
+bundled locally and loads without contacting another website.
+
 ## Choose a snapshot
 
 History follows the selected bookmark/workspace and query. Op Log describes

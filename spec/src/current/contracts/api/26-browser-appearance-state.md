@@ -1,5 +1,12 @@
 # Browser appearance state
 
+E-UI-FAVICON-001 registers the application's owned favicon through the existing
+manifest-selected `agent-icons/*.svg` asset route under JST-API-001 and
+JST-UI-018. The SVG contains only the accepted logo's embedded 64px PNG export;
+it requires no external image request. Existing SVG media type, bundle size/path
+validation, strict CSP and API authorization remain unchanged. No API, schema,
+publication or preference format is added.
+
 Device appearance is browser-owned presentation state under JST-UI-018. It is
 independent of server settings revisions, repository operations and receipts.
 Appearance changes make no repository mutation or website metadata requests.

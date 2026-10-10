@@ -8,6 +8,13 @@ Compact/Comfy/Spacious conversations, local Compact/Rich link cards and
 Focus/Split discussions. Preferences are device-local and app-wide; Settings
 location remains transient. Defaults are System/Buzz, default font, Comfy
 density, Compact links, Split replies, glass off and subtle active tabs.
+
+The browser tab uses the accepted blue-jay and gear application artwork as its
+favicon, with an explicit SVG icon link in the HTML entry. Its self-contained
+64px RGBA export retains transparent surrounds and the pale silhouette edge for
+light and dark browser chrome. The favicon loads locally in development and is
+included in the manifest-selected built bundle through the existing SVG asset
+inventory. This static branding does not change device appearance preferences.
 Temporary previews never persist. Startup, cross-tab and OS changes share the
 same resolved palette, including portalled controls and emoji pickers. Native
 entity links retain chips rather than becoming website cards. Conversation and

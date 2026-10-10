@@ -113,6 +113,12 @@ validation, preserved evidence and process ownership checks. Presentation-only
 Help changes may retain accurate manual prose after explicit review; sidebar
 sizing follows the application navigation requirements.
 
+E-UI-FAVICON-001 adds local browser-tab branding to the browsing guide and
+reviews the existing application source coverage. The accepted artwork and its
+built asset registration add no manual runtime dependency or external request.
+Source review fingerprints, strict documentation staging and qualification
+boundaries remain unchanged under JST-DOC-002.
+
 Main-workspace integration reviews the combined source fingerprints and retains
 each source slice's evidence. Ignored development fixtures remain device-local;
 merging presentation code MUST NOT migrate recorded AgentStore data.

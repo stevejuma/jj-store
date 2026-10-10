@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Responsive shared tabs, loaded-only inbox filters, icon empty states, device-local pin/archive with a leading pinned group, compact joined row actions and footer pickers; no read or lifecycle authority changes.",
-      "fingerprint": "6e957ba9b563f73bc939b40a62cd596da8e964c90316d4b5ac9873116175ef52"
+      "reason": "Reviewed browsing and settings: local tab branding uses the accepted logo; existing compact footer menus and inbox controls retain documented navigation and device-local behavior.",
+      "fingerprint": "2d161804b38d123ca399ad61ae588586c71bcd7f5d909c48fdc51d4f0eb915fc"
     }
   },
   {

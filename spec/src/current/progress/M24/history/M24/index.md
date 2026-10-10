@@ -76,6 +76,7 @@ not a completion gate selection.
 | [E-THREADS-001](../../../../../history/2026/10/10/E-THREADS-001/index.md)                       | 2026-10-10 | pass            | Original outcome |
 | [E-CHAT-FOOTER-003](../../../../../history/2026/10/10/E-CHAT-FOOTER-003/index.md)               | 2026-10-10 | pass            | Control review   |
 | [E-THREADS-002](../../../../../history/2026/10/10/E-THREADS-002/index.md)                       | 2026-10-10 | pending         | Original outcome |
+| [E-UI-FAVICON-001](../../../../../history/2026/10/10/E-UI-FAVICON-001/index.md) | 2026-10-10 | pass | Local browser branding review |
 
 |
 [E-AGENT-TRANSCRIPT-VIEW-001](../../../../../history/2026/10/10/E-AGENT-TRANSCRIPT-VIEW-001/index.md)
@@ -84,3 +85,4 @@ not a completion gate selection.
 <!-- generated-navigation -->
 
 ## Pages
+
