@@ -9,6 +9,11 @@ Confirmed WorkStore reactions reload only their exact target through existing
 authorized reads; request identities and observed slot preconditions are
 unchanged.
 
+E-CHAT-CARET-001 changes only browser-owned Document caret geometry and draft
+insets. Thread and agent source identities, UTF-8 selectors, retained drafts and
+existing prompt/comment send commands remain unchanged. Caret and avatar
+alignment introduces no API requests, publication or persistence format changes.
+
 Local POST `/v1/local/repos/{repo}/working-copy/read` takes a relative file
 path. It returns `WorkingFile` with a device selection and bounded physical
 UTF-8 text. POST `/working-copy/save` takes that exact selection and replacement

@@ -5,6 +5,7 @@ Browse the child pages below.
 ## Pages
 
 - [E-AGENTS-LAYOUT-001](E-AGENTS-LAYOUT-001/index.md)
+- [E-CHAT-CARET-001](E-CHAT-CARET-001/index.md)
 - [E-CHAT-METADATA-MAIN-001](E-CHAT-METADATA-MAIN-001/index.md)
 - [Main metadata handoff and presentation refinements](E-CHAT-METADATA-MAIN-002/index.md)
 - [Unchanged authority confirmation for main refinements](E-CHAT-METADATA-MAIN-003/index.md)

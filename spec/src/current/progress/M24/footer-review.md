@@ -24,3 +24,14 @@ chat-body processes while retaining the fixture and exact saved configuration.
 The refreshed manual records workspace inspection and local file-review limits.
 M24 and M13.3 qualification remain unchanged; this handoff is not release or
 full-flow acceptance, and visual baselines remain unapproved.
+
+E-CHAT-CARET-001 shares the prototype's editor caret theme with live Thread and
+agent document composers. Reading carets stay grey; draft carets use the primary
+colour. Both retain 2px strokes and the taller shape, with the same draft
+typography. Focused production/prototype parity and view-switching checks retain
+the existing editing and Classic contracts. The first-line clipping regression
+was reproduced on all three surfaces: a negative caret margin hid part of the
+stroke. Zero overhang retains the full shape within editor bounds, including
+multiline drafts. Live Thread geometry confirms the fix. M24 remains In
+progress; existing resize diagnostics and unapproved visual baselines remain
+independent.

@@ -4,7 +4,7 @@
   import { keymap } from "@codemirror/view";
   import { Prec } from "@codemirror/state";
   import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
-  import { chatCaret } from "./chat-caret.js";
+  import { chatDraftCaret } from "./chat-caret.js";
   import type { CommunityMemberModel } from "../community-workspace/model.js";
   let {
     value = $bindable(""),
@@ -23,7 +23,7 @@
   } = $props();
   let editor = $state<MiraCodeEditorHandle>();
   const extensions = [
-    chatCaret,
+    chatDraftCaret,
     Prec.highest(
       keymap.of([
         ...["Ctrl-Enter", "Mod-Enter"].map((key) => ({
@@ -80,7 +80,7 @@
     gap: 0.5rem;
   }
   .chat-next-avatar {
-    padding-top: 0.125rem;
+    padding-top: 0.375rem;
   }
   .chat-next-editor {
     min-width: 0;

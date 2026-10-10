@@ -69,6 +69,18 @@ fixed footer retains Send and advertised runtime controls. Queued comments stay
 above the same next-message input, and contextual status/recovery remains
 reachable.
 
+Live Thread and agent document drafts use the prototype's shared editor caret
+theme: a 2px stroke, 1.2 height scale and primary colour. Immutable source
+readers retain the same stroke and scale in theme grey. Prose drafts use 1rem
+sans-serif text at 1.75 line height (16px/28px at the default scale); readers
+retain their prose/code typography. The full caret remains inside clipping
+bounds at the start and end of each line, including an empty draft; frameless
+surfaces must not offset half of its stroke outside the editor. Draft text keeps
+a small internal inset (4px vertically, 2px horizontally at the default scale),
+with the avatar aligned to that inset. This clearance belongs to the input and
+does not reintroduce the Classic composer wrapper. Classic composer presentation
+remains independent.
+
 The shared body accepts explicit history loading state in both renderers. A
 compact centered “Loading previous messages” status button and spinner appear
 above any retained messages, without replacing them. An icon-bearing shadcn

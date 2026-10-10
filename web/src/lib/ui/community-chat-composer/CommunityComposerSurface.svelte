@@ -128,10 +128,4 @@
     :global(.community-chat-composer__mira .cm-content) {
     min-height: max(16rem, 45vh);
   }
-  .community-document-composer
-    :global(.community-chat-composer__mira .cm-cursor) {
-    border-inline-start-color: var(--primary);
-    transform: scaleY(1.2);
-    transform-origin: center;
-  }
 </style>

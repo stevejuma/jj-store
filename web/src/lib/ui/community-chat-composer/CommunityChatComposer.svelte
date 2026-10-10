@@ -10,6 +10,8 @@
   import CommunityComposerStatusActions from "./CommunityComposerStatusActions.svelte";
   import Mira from "@lapismd/mira";
   import type { MiraHandle, MiraMarkdownActionId } from "@lapismd/mira";
+  import { defineMiraExtension } from "@lapismd/mira/extensions";
+  import { chatDraftCaret } from "../store-agent-chat-body/chat-caret.js";
   import CommunityComposerSendActions from "./CommunityComposerSendActions.svelte";
   import CommunityComposerSurface from "./CommunityComposerSurface.svelte";
   import { createComposerSelection } from "./composer-selection.js";
@@ -38,6 +40,11 @@
   import CommunityComposerEditContext from "./CommunityComposerEditContext.svelte";
   import CommunityReplyContext from "../community-reply-context/CommunityReplyContext.svelte";
   import CommunityComposerToolbar from "./CommunityComposerToolbar.svelte";
+
+  const documentCaret = defineMiraExtension({
+    name: "conversation-document-caret",
+    codeMirror: () => chatDraftCaret,
+  });
 
   let {
     presentation = "classic",
@@ -279,7 +286,9 @@
         bind:this={mira}
         bind:value
         mode="live-preview"
-        extensions={[extension]}
+        extensions={presentation === "document"
+          ? [extension, documentCaret]
+          : [extension]}
         readonly={blocked}
         placeholder={presentation === "document" ? "" : placeholder}
         toolbar={false}
