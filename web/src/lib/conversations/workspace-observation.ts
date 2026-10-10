@@ -12,6 +12,20 @@ import type { operations } from "../api/generated.js";
 export type WorkspaceRequest = NonNullable<
   operations["local_agents_workspace_inspect"]["requestBody"]
 >["content"]["application/json"];
+export async function selectWorkspaceTab(
+  browser: WorkspaceBrowser,
+  tab: "files" | "changes",
+) {
+  if (
+    tab === "changes" &&
+    browser.binding?.source === "repository" &&
+    browser.range === "branch" &&
+    !browser.base
+  )
+    browser.range = "since_last_commit";
+  browser.tab = tab;
+  await browser.load();
+}
 export function workspaceQuery(
   browser: WorkspaceBrowser,
   path: string | null = null,

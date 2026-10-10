@@ -5,6 +5,14 @@ jj-acp control version 2. The application owns authorization, durable intents,
 workspace selection, prompt preparation and evidence publication. The harness
 owns protocol, warm ACP sessions, permission exchange and bounded termination.
 
+The application sanitizes assistant and reasoning text across ACP chunk
+boundaries before journaling, events or capture publication. Possible privacy
+root prefixes remain bounded memory-only state until resolved; split workspace,
+home, temporary and exact credential replacements cannot bypass normalization.
+Message identity changes, tool boundaries and terminal frames flush the held
+text in order through the same scanner. Buffer failure is unavailable, never
+raw fallback. Restart never replays an inference to repair historical captures.
+
 Codex and Cursor are the initial qualification targets. Executable availability
 is distinct from installed-product acceptance. Ordinary reads, capture imports,
 comments and reviews never dispatch execution. Launch actions are available only

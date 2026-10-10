@@ -1,0 +1,14 @@
+.agent-changes-warning {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  padding-inline-end: calc(var(--spacing) * 4);
+}
+.agent-changes-warning [data-slot="alert-title"],
+.agent-changes-warning [data-slot="alert-description"] {
+  grid-column: 2;
+}
+.agent-changes-warning [data-slot="alert-action"] {
+  position: static;
+  grid-column: 3;
+  grid-row: 1 / span 2;
+  align-self: center;
+}

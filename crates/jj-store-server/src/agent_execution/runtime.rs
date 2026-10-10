@@ -14,10 +14,7 @@ pub(super) async fn sanitizer(this: &Supervisor, workspace: &Path) -> Result<Tra
         .for_workspace(workspace)
         .map_err(|_| Error::Unavailable)
 }
-pub(super) fn safe(sanitizer: &TranscriptSanitizer, value: Value) -> Result<Value> {
-    let payload = sanitizer.sanitize(value).ok_or(Error::Unavailable)?;
-    serde_json::from_slice(payload.bytes()).map_err(|_| Error::Unavailable)
-}
+pub(super) use super::runtime_privacy::safe;
 pub(super) struct OwnedChild(pub(super) Child);
 impl OwnedChild {
     pub(super) async fn stop(&mut self) {
@@ -191,6 +188,7 @@ impl Supervisor {
         let mut reader = BufReader::new(stdout);
         let mut bytes = Vec::new();
         let mut assistant = BTreeMap::<String, String>::new();
+        let mut privacy = super::runtime_privacy::StreamPrivacy::default();
         let mut tools = BTreeMap::<String, Value>::new();
         let startup = tokio::time::sleep(Duration::from_secs(90));
         tokio::pin!(startup);
@@ -202,7 +200,7 @@ impl Supervisor {
         let mut prompts = super::workspace_turns::PromptQueue::default();
         let mut workspace_lease = None;
         let mut retry_at = tokio::time::Instant::now();
-        loop {
+        'runtime: loop {
             if !prompts.is_active() {
                 workspace_lease.take();
             }
@@ -272,7 +270,7 @@ impl Supervisor {
                         write(&mut stdin, json!({"version":2,"type":"open","requestId":format!("open-{id}"),"loadSessionId":load})).await?;
                     }
                     let fresh=sanitizer.for_oauth_secrets(&self.oauth_redactions()?).map_err(|_|Error::Unavailable)?;
-                    let mut value = safe(&fresh, raw)?;
+                    for mut value in privacy.frames(&fresh, raw)? {
                     let request = value["requestId"].as_str().unwrap_or("").to_owned();
                     if value["type"] == "activity" {
                         let update = &value["update"];
@@ -340,8 +338,9 @@ impl Supervisor {
                         "closed" => {
                             if value["confirmedStopped"] != true { return Err(Error::Unavailable); }
                             if let Some(request) = closing_request { self.finish(request, "ended", None)?; }
-                            self.session_state(id, "ended", None)?; break;
+                            self.session_state(id, "ended", None)?; break 'runtime;
                         }, _ => {},
+                    }
                     }
                 },
             }

@@ -4,12 +4,18 @@ import { Decoration, type DecorationSet } from "@codemirror/view";
 import {
   getAtxHeadingMarkerRange,
   getMarkdownLinkTextRange,
+  getIndentLineLayout,
 } from "@lapismd/mira/codemirror";
+import { PathLabel } from "./path-label.js";
 
 /** Fixed reading decorations: selection never reveals Markdown source markers. */
 export function readingDecorations(
   text: string,
   ignored: readonly { from: number; to: number }[] = [],
+  options: {
+    fileLink?: (destination: string) => boolean;
+    paths?: readonly (readonly [string, string])[];
+  } = {},
 ): {
   decorations: DecorationSet;
   hidden: DecorationSet;
@@ -21,6 +27,31 @@ export function readingDecorations(
       if (ignored.some((r) => node.from >= r.from && node.to <= r.to))
         return false;
       const name = node.name;
+      if (
+        name === "ListMark" &&
+        node.node.parent?.parent?.name === "BulletList"
+      ) {
+        const from = text.lastIndexOf("\n", node.from - 1) + 1;
+        const end = text.indexOf("\n", node.to);
+        const layout = getIndentLineLayout(
+          text.slice(from, end < 0 ? undefined : end),
+        );
+        if (layout?.listKind === "ul" && layout.markerTo !== undefined)
+          marks.push(
+            {
+              from: node.from,
+              to: from + layout.markerTo,
+              value: Decoration.mark({
+                class: `cm-formatting-list cm-formatting-list-ul cm-formatting-list-bullet cm-list-${layout.depth}`,
+              }),
+            },
+            {
+              from: node.from,
+              to: node.to,
+              value: Decoration.mark({ class: "cm-meta" }),
+            },
+          );
+      }
       if (
         [
           "HeaderMark",
@@ -54,8 +85,13 @@ export function readingDecorations(
         });
       if (name === "Link") {
         const source = text.slice(node.from, node.to);
-        const link = /^\[([^\]]+)\]\(([^\s)]+)(?:\s+[^)]*)?\)$/.exec(source);
-        if (link && /^https?:\/\//i.test(link[2])) {
+        const url = node.node.getChild("URL");
+        const destination = url
+          ? text.slice(url.from, url.to).replace(/^<|>$/g, "")
+          : "";
+        const external = /^https?:\/\//i.test(destination);
+        const file = !external && options.fileLink?.(destination);
+        if (external || file) {
           const range = getMarkdownLinkTextRange(source, node.from, node.to);
           if (!range) return;
           const { from: start, to: end } = range;
@@ -71,7 +107,7 @@ export function readingDecorations(
               attributes: {
                 role: "link",
                 tabindex: "0",
-                "data-chat-link": link[2],
+                [file ? "data-chat-file-link" : "data-chat-link"]: destination,
               },
             }),
           });
@@ -86,6 +122,27 @@ export function readingDecorations(
       const value = Decoration.replace({});
       hiddenBuilder.add(range.from, range.to, value);
       marks.push({ ...range, value });
+    }
+  }
+  for (const [path, label] of [...(options.paths ?? [])].sort(
+    (a, b) => b[0].length - a[0].length,
+  )) {
+    if (!path) continue;
+    let from = text.indexOf(path);
+    while (from >= 0) {
+      const to = from + path.length;
+      if (
+        !hidden.some((range) => from < range.to && to > range.from) &&
+        !marks.some(
+          (mark) => mark.value.spec.widget && from < mark.to && to > mark.from,
+        )
+      )
+        marks.push({
+          from,
+          to,
+          value: Decoration.replace({ widget: new PathLabel(label) }),
+        });
+      from = text.indexOf(path, to);
     }
   }
   return {

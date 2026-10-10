@@ -3,6 +3,13 @@ const path = require("node:path");
 
 const localPackages = new Map([
   [
+    "@lapismd/mira",
+    {
+      protocol: "file:",
+      path: "../mira-mde/.local/packages/lapismd-mira-0.0.2.tgz",
+    },
+  ],
+  [
     "@lapismd/design-core",
     {
       protocol: "file:",

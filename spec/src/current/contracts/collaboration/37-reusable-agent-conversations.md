@@ -49,6 +49,13 @@ real prompt includes structured bootstrap instructions, origin and pinned
 attachments; warmup never sends an instruction-only turn. Context revisions are
 reserved and marked delivered only at the exact started event.
 
+Fleet assistant/reasoning privacy prefixes stay bounded and memory-only across
+ACP chunks, isolated by participation. Message, tool and terminal boundaries
+flush ordered text through the same scanner before journal, event and capture
+publication. Terminal assistant text includes the flushed suffix; failures never
+emit raw fallback or replay a prompt. This shares the interactive execution
+privacy boundary with the earlier per-session profile.
+
 Failed explicit Resume/Continue commands settle their own durable receipt. An
 exact adapter rejection is failed; an unconfirmed open remains outcome unknown.
 A scoped error that tears down the adapter also retires the controller worker
@@ -96,7 +103,8 @@ paths, an expandable remaining list and View changes with the same comparison in
 the shared Changes rail and file inspector. The saved SHA/Change ID control and
 list/folder/package toggle reuse existing components. Older cards load when near
 the viewport and share bounded session-memory caches. Failed reads use a warning
-alert with a themed icon-bearing Retry button, retaining drafts. Native and
+alert with a themed icon-bearing Retry button in a trailing column, centered
+vertically beside its title and description, retaining drafts. Native and
 registered-folder reads remain pinned and bounded; partial, binary, unavailable
 and unknown outcomes cannot imply zero changes or fabricated counts. Reads admit
 at most two 50-path pages and four concurrent file comparisons, retaining at

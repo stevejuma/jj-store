@@ -28,7 +28,11 @@ export function readingExtensions(
       : [];
   const reading =
     block.kind === "markdown"
-      ? readingDecorations(block.text, references)
+      ? readingDecorations(block.text, references, {
+          fileLink: (destination) =>
+            !!comments.props().resolveFileLink?.(block, destination),
+          paths: comments.props().displayPaths?.(block),
+        })
       : undefined;
   const referenceDecorations = Decoration.set(
     references.map((r) => r.decoration),
@@ -69,6 +73,11 @@ export function readingExtensions(
     }),
     block.kind === "markdown"
       ? [
+          EditorView.editorAttributes.of({
+            class: "markdown-preview-surface markdown-live-preview-mode",
+            style:
+              "--mira-preview-padding: 0; --file-margins-x: 0px; --file-margins-y: 0px; --file-line-width: 100%;",
+          }),
           EditorView.decorations.of(reading!.decorations),
           EditorView.decorations.of(referenceDecorations),
           EditorView.atomicRanges.of(() => referenceDecorations),
@@ -104,9 +113,16 @@ export function readingExtensions(
           element?.closest("[data-chat-comment-area], [data-chat-fold-control]")
         )
           return false;
-        const link = element?.closest<HTMLElement>("[data-chat-link]");
+        const link = element?.closest<HTMLElement>(
+          "[data-chat-link], [data-chat-file-link]",
+        );
         if (link && event.key === "Enter") {
-          window.open(link.dataset.chatLink, "_blank", "noopener,noreferrer");
+          if (link.dataset.chatFileLink)
+            comments
+              .props()
+              .resolveFileLink?.(block, link.dataset.chatFileLink)?.();
+          else
+            window.open(link.dataset.chatLink, "_blank", "noopener,noreferrer");
           return true;
         }
         if (
@@ -142,10 +158,15 @@ export function readingExtensions(
       },
       click(event) {
         const link = (event.target as Element)?.closest?.<HTMLElement>(
-          "[data-chat-link]",
+          "[data-chat-link], [data-chat-file-link]",
         );
         if (link) {
-          window.open(link.dataset.chatLink, "_blank", "noopener,noreferrer");
+          if (link.dataset.chatFileLink)
+            comments
+              .props()
+              .resolveFileLink?.(block, link.dataset.chatFileLink)?.();
+          else
+            window.open(link.dataset.chatLink, "_blank", "noopener,noreferrer");
           return true;
         }
         return false;

@@ -1,10 +1,6 @@
 //! Generation-fenced transcript delivery and independent repository snapshots.
+pub(super) use super::conversation_stream::Stream;
 use super::*;
-#[derive(Default)]
-pub(super) struct Stream {
-    assistant: BTreeMap<String, String>,
-    tools: BTreeMap<String, Value>,
-}
 impl Supervisor {
     pub(super) async fn open_participation(&self, setup: &Setup, id: &str) -> Result<()> {
         self.prepare_coordination(id).await?;
@@ -144,171 +140,143 @@ impl Supervisor {
             })?;
         }
         let sanitizer = runtime::sanitizer(self, &saved.workspace.path).await?;
-        let mut value = runtime::safe(&sanitizer, raw)?;
-        let request = value["requestId"].as_str().unwrap_or("").to_owned();
-        value["version"] = json!(2);
-        if value["type"] == "opened" {
-            value["sessionId"] = value["adapterSessionId"].clone();
-        }
-        if handshake && value["type"] == "activity" {
-            self.append(&id, value)?;
-            return Ok(());
-        }
-        let key = format!("{id}/{request}");
-        if value["type"] == "activity" {
-            let update = &value["update"];
-            if update["sessionUpdate"] == "agent_message_chunk"
-                && let Some(text) = update["content"]["text"].as_str()
-            {
-                let target = stream.assistant.entry(key.clone()).or_default();
-                if target.len() + text.len() > 512 * 1024 {
-                    return Err(Error::Limit);
+        for mut value in stream.frames(&id, &sanitizer, raw)? {
+            let saved = self.saved(&id)?;
+            let request = value["requestId"].as_str().unwrap_or("").to_owned();
+            value["version"] = json!(2);
+            if value["type"] == "opened" {
+                value["sessionId"] = value["adapterSessionId"].clone();
+            }
+            if handshake && value["type"] == "activity" {
+                self.append(&id, value)?;
+                continue;
+            }
+            stream.observe(&id, &request, &mut value)?;
+            if value["type"] == "permission_resolved" {
+                value["decisionKind"] =
+                    self.permission_kind(&id, &value["permissionId"], &value["optionId"])?;
+            }
+            self.append(&id, value.clone())?;
+            match value["type"].as_str() {
+                Some("opened") => {
+                    self.update(|s| {
+                        let view = &mut s.sessions.get_mut(&id).ok_or(Error::Invalid)?.view;
+                        view.adapter_session_id =
+                            value["adapterSessionId"].as_str().map(str::to_owned);
+                        view.capabilities["initialize"] = value["capabilities"].clone();
+                        view.capabilities["session"] = value["session"].clone();
+                        view.state = "opening".into();
+                        view.last_error = None;
+                        Ok(())
+                    })?;
+                    let p = saved.view.preferences;
+                    self.fleet_send(agent,json!({"version":3,"type":"configure","requestId":format!("configure-{request}"),"sessionId":id,"model":p.model,"effort":p.effort,"mode":p.mode}))?;
                 }
-                target.push_str(text);
-            }
-            if let Some(call) = update["toolCallId"].as_str() {
-                let tool = format!("{key}/{call}");
-                if stream.tools.len() >= 256 && !stream.tools.contains_key(&tool) {
-                    return Err(Error::Limit);
-                }
-                let target = stream.tools.entry(tool).or_insert_with(|| json!({}));
-                if let Some(fields) = update.as_object() {
-                    for (k, v) in fields {
-                        target[k] = v.clone();
-                    }
-                }
-                value["toolSnapshot"] = target.clone();
-            }
-        }
-        if value["type"] == "record" {
-            value["assistantText"] = json!(stream.assistant.remove(&key).unwrap_or_default());
-            stream
-                .tools
-                .retain(|key2, _| !key2.starts_with(&format!("{key}/")));
-        }
-        if value["type"] == "permission_resolved" {
-            value["decisionKind"] =
-                self.permission_kind(&id, &value["permissionId"], &value["optionId"])?;
-        }
-        self.append(&id, value.clone())?;
-        match value["type"].as_str() {
-            Some("opened") => {
-                self.update(|s| {
-                    let view = &mut s.sessions.get_mut(&id).ok_or(Error::Invalid)?.view;
-                    view.adapter_session_id = value["adapterSessionId"].as_str().map(str::to_owned);
-                    view.capabilities["initialize"] = value["capabilities"].clone();
-                    view.capabilities["session"] = value["session"].clone();
-                    view.state = "opening".into();
-                    view.last_error = None;
-                    Ok(())
-                })?;
-                let p = saved.view.preferences;
-                self.fleet_send(agent,json!({"version":3,"type":"configure","requestId":format!("configure-{request}"),"sessionId":id,"model":p.model,"effort":p.effort,"mode":p.mode}))?;
-            }
-            Some("configured") => {
-                self.update(|s| {
-                    let view = &mut s.sessions.get_mut(&id).ok_or(Error::Invalid)?.view;
-                    view.capabilities["configuration"] = value["configuration"].clone();
-                    view.capabilities["modeReady"] = value["modeReady"].clone();
-                    view.state = if value["modeReady"] == true {
-                        "idle"
-                    } else {
-                        "interrupted"
-                    }
-                    .into();
-                    view.last_error = if value["modeReady"] == true {
-                        None
-                    } else {
-                        Some("execution_mode_required".into())
-                    };
-                    Ok(())
-                })?;
-                if let Ok(r) = request.parse() {
-                    self.finish(r, "accepted", None)?;
-                }
-            }
-            Some("queued") => {
-                if let Ok(r) = request.parse() {
-                    self.finish(r, "queued", None)?;
-                }
-            }
-            Some("started") => {
-                self.session_state(&id, "running", None)?;
-            }
-            Some("record") => {
-                let usable = value["sessionUsable"] == true;
-                let mut snapshot_error = None;
-                if value["quiescent"] == true {
-                    for (repo, workspace) in saved.code_workspaces {
-                        let snapshot = self.0.resources.driver.snapshot(&workspace).await;
-                        if snapshot.is_err() {
-                            snapshot_error = Some(format!("snapshot_unknown/{repo}"));
+                Some("configured") => {
+                    self.update(|s| {
+                        let view = &mut s.sessions.get_mut(&id).ok_or(Error::Invalid)?.view;
+                        view.capabilities["configuration"] = value["configuration"].clone();
+                        view.capabilities["modeReady"] = value["modeReady"].clone();
+                        view.state = if value["modeReady"] == true {
+                            "idle"
+                        } else {
+                            "interrupted"
                         }
-                        self.append(&id, json!({"type":"repository_snapshot","requestId":request,"repository":repo,"state":if snapshot.is_ok(){"completed"}else{"outcome_unknown"},"operation":snapshot.as_ref().ok().map(|w|w.operation),"commit":snapshot.as_ref().ok().map(|w|w.commit.clone())}))?;
-                        self.update(|s| {
-                            let saved = s.sessions.get_mut(&id).ok_or(Error::Invalid)?;
-                            match &snapshot {
-                                Ok(workspace) => {
-                                    saved.code_workspaces.insert(repo, workspace.clone());
-                                    if let Some(b) = saved
-                                        .view
-                                        .repository_bindings
-                                        .iter_mut()
-                                        .find(|b| b.repository == repo)
-                                    {
-                                        b.operation = workspace.operation;
-                                        b.commit = workspace.commit.clone();
+                        .into();
+                        view.last_error = if value["modeReady"] == true {
+                            None
+                        } else {
+                            Some("execution_mode_required".into())
+                        };
+                        Ok(())
+                    })?;
+                    if let Ok(r) = request.parse() {
+                        self.finish(r, "accepted", None)?;
+                    }
+                }
+                Some("queued") => {
+                    if let Ok(r) = request.parse() {
+                        self.finish(r, "queued", None)?;
+                    }
+                }
+                Some("started") => {
+                    self.session_state(&id, "running", None)?;
+                }
+                Some("record") => {
+                    let usable = value["sessionUsable"] == true;
+                    let mut snapshot_error = None;
+                    if value["quiescent"] == true {
+                        for (repo, workspace) in saved.code_workspaces {
+                            let snapshot = self.0.resources.driver.snapshot(&workspace).await;
+                            if snapshot.is_err() {
+                                snapshot_error = Some(format!("snapshot_unknown/{repo}"));
+                            }
+                            self.append(&id, json!({"type":"repository_snapshot","requestId":request,"repository":repo,"state":if snapshot.is_ok(){"completed"}else{"outcome_unknown"},"operation":snapshot.as_ref().ok().map(|w|w.operation),"commit":snapshot.as_ref().ok().map(|w|w.commit.clone())}))?;
+                            self.update(|s| {
+                                let saved = s.sessions.get_mut(&id).ok_or(Error::Invalid)?;
+                                match &snapshot {
+                                    Ok(workspace) => {
+                                        saved.code_workspaces.insert(repo, workspace.clone());
+                                        if let Some(b) = saved
+                                            .view
+                                            .repository_bindings
+                                            .iter_mut()
+                                            .find(|b| b.repository == repo)
+                                        {
+                                            b.operation = workspace.operation;
+                                            b.commit = workspace.commit.clone();
+                                        }
+                                    }
+                                    Err(_) => {
+                                        saved.view.last_error =
+                                            Some(format!("snapshot_unknown/{repo}"));
                                     }
                                 }
-                                Err(_) => {
-                                    saved.view.last_error =
-                                        Some(format!("snapshot_unknown/{repo}"));
-                                }
-                            }
-                            Ok(())
-                        })?;
+                                Ok(())
+                            })?;
+                        }
+                    }
+                    if let Ok(r) = request.parse() {
+                        self.finish(
+                            r,
+                            value["record"]["status"]
+                                .as_str()
+                                .unwrap_or("outcome_unknown"),
+                            value["record"]["error"].as_str(),
+                        )?;
+                    }
+                    self.session_state(
+                        &id,
+                        if usable { "idle" } else { "interrupted" },
+                        if usable {
+                            snapshot_error.as_deref()
+                        } else {
+                            Some("session_unusable")
+                        },
+                    )?;
+                    if !usable {
+                        return Err(Error::Unavailable);
                     }
                 }
-                if let Ok(r) = request.parse() {
-                    self.finish(
-                        r,
-                        value["record"]["status"]
-                            .as_str()
-                            .unwrap_or("outcome_unknown"),
-                        value["record"]["error"].as_str(),
-                    )?;
+                Some("session_closed") => {
+                    self.session_state(&id, "ended", None)?;
+                    if let Ok(r) = request.parse() {
+                        self.finish(r, "ended", None)?;
+                    }
                 }
-                self.session_state(
-                    &id,
-                    if usable { "idle" } else { "interrupted" },
-                    if usable {
-                        snapshot_error.as_deref()
-                    } else {
-                        Some("session_unusable")
-                    },
-                )?;
-                if !usable {
-                    return Err(Error::Unavailable);
+                Some("ack") => {
+                    if let Ok(r) = request.parse() {
+                        self.finish(r, "accepted", None)?;
+                    }
                 }
+                Some("error") => {
+                    if let Ok(r) = request.parse() {
+                        self.finish(r, "failed", value["code"].as_str())?;
+                    }
+                    self.session_state(&id, "interrupted", value["code"].as_str())?;
+                }
+                _ => {}
             }
-            Some("session_closed") => {
-                self.session_state(&id, "ended", None)?;
-                if let Ok(r) = request.parse() {
-                    self.finish(r, "ended", None)?;
-                }
-            }
-            Some("ack") => {
-                if let Ok(r) = request.parse() {
-                    self.finish(r, "accepted", None)?;
-                }
-            }
-            Some("error") => {
-                if let Ok(r) = request.parse() {
-                    self.finish(r, "failed", value["code"].as_str())?;
-                }
-                self.session_state(&id, "interrupted", value["code"].as_str())?;
-            }
-            _ => {}
         }
         Ok(())
     }

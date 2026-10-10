@@ -179,6 +179,22 @@
     });
     expect(retry.querySelector("svg")).not.toBeNull();
     expect(retry).toHaveAttribute("data-variant", "secondary");
+    const description = alert.querySelector<HTMLElement>(
+      '[data-slot="alert-description"]',
+    )!;
+    expect(retry.parentElement).toHaveAttribute("data-ui-part", "alert-action");
+    const retryBounds = retry.getBoundingClientRect();
+    const alertBounds = alert.getBoundingClientRect();
+    expect(retryBounds.left).toBeGreaterThan(
+      description.getBoundingClientRect().right,
+    );
+    expect(
+      Math.abs(
+        retryBounds.top +
+          retryBounds.height / 2 -
+          (alertBounds.top + alertBounds.height / 2),
+      ),
+    ).toBeLessThan(1);
     expect(getComputedStyle(retry).backgroundColor).not.toBe(
       "rgba(0, 0, 0, 0)",
     );

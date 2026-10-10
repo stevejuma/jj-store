@@ -43,6 +43,14 @@ Healthy idle pages make no periodic agent data requests. Changes from another
 tab appear automatically; reconnect and bounded failed-read retries preserve
 drafts and exact pending requests.
 
+Agent transcript file links open the bound repository's Files rail and shared
+file preview, including a selected line when the link provides one. Links cannot
+open files outside that conversation's verified codebases. Historical absolute
+workspace and home paths display as `$WORKSPACE` and `$HOME` without changing
+the saved message or its comment anchors. Markdown lists use the same bullet
+presentation as the editor. If saved file changes are unavailable, Retry sits
+beside the warning text and retains the draft.
+
 Supported browsers share the update connection between tabs running the same
 application version and using the same credential. After a development update,
 reload other open jj-store views once so they can adopt the updated transport.

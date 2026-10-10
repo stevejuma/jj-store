@@ -6,6 +6,30 @@ import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 const { createHooks } = require("./local-package-pnpmfile.cjs");
 
+test("local package hook uses built Mira and keeps registry fallback and peers portable", () => {
+  const root = "/workspace/jj-store";
+  const archive = path.resolve(
+    root,
+    "../mira-mde/.local/packages/lapismd-mira-0.0.2.tgz",
+  );
+  const manifest = {
+    devDependencies: { "@lapismd/mira": "^0.0.2" },
+    peerDependencies: { "@lapismd/mira": "^0.0.2" },
+  };
+  const result = createHooks({
+    root,
+    fileExists: (file) => file === archive,
+  }).hooks.readPackage(structuredClone(manifest));
+  assert.equal(result.devDependencies["@lapismd/mira"], `file:${archive}`);
+  assert.equal(result.peerDependencies["@lapismd/mira"], "^0.0.2");
+  assert.deepEqual(
+    createHooks({ root, fileExists: () => false }).hooks.readPackage(
+      structuredClone(manifest),
+    ),
+    manifest,
+  );
+});
+
 test("local package hook uses the packed Design Core artifact without rewriting peers", () => {
   const root = "/workspace/jj-store";
   const designCore = path.resolve(

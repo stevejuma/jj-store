@@ -5,6 +5,11 @@
   import StoreAgentReplyDraftRecovery from "../store-agent-execution/StoreAgentReplyDraftRecovery.svelte";
   import { openingReplayRowIds } from "../store-agent-execution/presentation.js";
   import { useConversationInspection } from "../../conversations/inspection.svelte.js";
+  import {
+    conversationFileLink,
+    conversationPathLabels,
+  } from "../../conversations/file-links.js";
+  import { workspaceBindingKey } from "../../conversations/workspace-bindings.js";
   import { untrack, type Snippet } from "svelte";
   import type { AgentExecution } from "../../controller/agent-execution.svelte.js";
   import {
@@ -58,6 +63,13 @@
   } = $props();
   const appearance = useAppearance();
   const inspection = useConversationInspection();
+  const workspace = untrack(() =>
+    inspection?.workspaceBrowser(
+      manager.client,
+      conversation,
+      manager.freshness,
+    ),
+  );
   const projection = $derived(
     agentConversationProjection(rows, manager.discussions.values, user),
   );
@@ -78,6 +90,39 @@
       author: user,
       onSend,
       restoreMessage,
+      displayPaths: (block) => {
+        const item = projection.items.find((i) =>
+          i.blocks.some((b) => b.id === block.id),
+        );
+        const row = item && rowFor(item);
+        return row ? conversationPathLabels(row.session) : [];
+      },
+      resolveFileLink: (block, destination) => {
+        const item = projection.items.find((i) =>
+          i.blocks.some((b) => b.id === block.id),
+        );
+        const row = item && rowFor(item);
+        const link = row && conversationFileLink(destination, row.session);
+        if (
+          !link ||
+          !workspace ||
+          !inspection ||
+          !workspace.bindings.some(
+            (binding) =>
+              workspaceBindingKey(binding) ===
+              workspaceBindingKey(link.binding),
+          )
+        )
+          return;
+        return () =>
+          void (async () => {
+            await workspace.selectBinding(workspaceBindingKey(link.binding));
+            workspace.tab = "files";
+            inspection.showWorkspace(workspace);
+            await workspace.select(link.path);
+            workspace.fileLine = link.line;
+          })();
+      },
       members: [
         user,
         ...projection.items.flatMap((i) => (i.author ? [i.author] : [])),

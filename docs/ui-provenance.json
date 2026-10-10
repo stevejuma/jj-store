@@ -2788,6 +2788,14 @@
       "reason": "Locally authored conversation history loading and empty-state composition using public Design Core primitives, extracted from the existing owned body."
     },
     {
+      "local": "web/src/lib/ui/store-agent-chat-body/path-label.ts",
+      "reason": "Locally authored display-only CodeMirror path labels retaining immutable transcript source offsets; no Community source is copied."
+    },
+    {
+      "local": "web/src/lib/ui/store-agent-chat/agent-changes-alert.css",
+      "reason": "Locally authored layout for a trailing vertically centered retry column; composes public Design Core Alert without copying or overriding its theme styles."
+    },
+    {
       "local": "web/src/lib/ui/community-inbox/CommunityInboxSkeleton.svelte",
       "reason": "Locally authored route and data-loading composition using maintained owned layouts and public Design Core Skeleton primitives; no Community source is copied."
     },

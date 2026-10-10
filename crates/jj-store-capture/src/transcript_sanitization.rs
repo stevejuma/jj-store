@@ -1,4 +1,5 @@
 //! Sanitization is the only bridge from memory-only native rows to reader intent.
+mod stream_text;
 use crate::{
     CaptureResult, codex_transcript::CodexTranscriptBatch, reader_progress::ReaderCapture,
 };

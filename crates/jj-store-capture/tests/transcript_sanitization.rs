@@ -10,6 +10,74 @@ use serde_json::json;
 use std::{fs, io::Write as _, path::Path};
 const SECRET: &str = "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";
 const SESSION: &str = "00000000-0000-0000-0000-000000000001";
+#[test]
+fn streaming_paths_are_private_at_every_chunk_boundary() {
+    let root = tempfile::tempdir().unwrap();
+    let cache = std::env::var_os("JJ_STORE_TRANSCRIPT_CACHE")
+        .map(std::path::PathBuf::from)
+        .unwrap_or_else(|| root.path().join("cache"));
+    let sanitizer = TranscriptSanitizer::new(
+        Path::new("/Users/synthetic/project"),
+        Path::new("/Users/synthetic"),
+        Path::new("/tmp/synthetic"),
+        &cache,
+    )
+    .unwrap();
+    let mut output = String::new();
+    let mut pending = String::new();
+    for chunk in [
+        "Updated [LICENSE](<",
+        "/",
+        "Users",
+        "/synthetic",
+        "/project",
+        "/LICENSE:3>)",
+    ] {
+        let text = sanitizer
+            .replace_stream_text(&mut pending, chunk, false)
+            .unwrap();
+        let safe = sanitizer.sanitize(json!({"text":text})).unwrap();
+        let value: serde_json::Value = serde_json::from_slice(safe.bytes()).unwrap();
+        output.push_str(value["text"].as_str().unwrap());
+    }
+    output.push_str(
+        &sanitizer
+            .replace_stream_text(&mut pending, "", true)
+            .unwrap(),
+    );
+    assert_eq!(output, "Updated [LICENSE](<$WORKSPACE/LICENSE:3>)");
+    let sanitizer = sanitizer
+        .for_secrets(&["synthetic-secret-value".into()])
+        .unwrap();
+    for (raw, expected) in [
+        (
+            "🦀 /Users/synthetic/project/LICENSE:3",
+            "🦀 $WORKSPACE/LICENSE:3",
+        ),
+        ("/Users/synthetic/config", "$HOME/config"),
+        ("/tmp/synthetic/file", "$TEMP/file"),
+        ("synthetic-secret-value", "$SECRET"),
+    ] {
+        for split in raw.char_indices().map(|(n, _)| n) {
+            let mut pending = String::new();
+            let mut output = sanitizer
+                .replace_stream_text(&mut pending, &raw[..split], false)
+                .unwrap();
+            output.push_str(
+                &sanitizer
+                    .replace_stream_text(&mut pending, &raw[split..], false)
+                    .unwrap(),
+            );
+            output.push_str(
+                &sanitizer
+                    .replace_stream_text(&mut pending, "", true)
+                    .unwrap(),
+            );
+            assert_eq!(output, expected, "split {split}");
+            assert!(pending.is_empty());
+        }
+    }
+}
 fn fixture(path: &Path) {
     let records = vec![
         json!({"type":"session_meta","payload":{"id":SESSION,"cwd":"/workspace/project","cli_version":"0.156.1","source":"cli","originator":"codex_cli_rs"}}),

@@ -4,6 +4,7 @@ import {
   readWorkspace,
   showSavedTurn,
   registerWorkspaceRead,
+  selectWorkspaceTab,
 } from "./workspace-observation.js";
 import type {
   AgentTurnSelection,
@@ -40,6 +41,7 @@ export class WorkspaceBrowser {
   details = $state<WorkspaceRead>();
   file = $state<WorkspaceRead>();
   fileOpen = $state(false);
+  fileLine = $state<number>();
   fileLoading = $state(false);
   fileError = $state("");
   railOpen = $state(false);
@@ -213,15 +215,7 @@ export class WorkspaceBrowser {
     if (this.railOpen) await this.load();
   }
   async selectTab(tab: Tab) {
-    if (
-      tab === "changes" &&
-      this.binding?.source === "repository" &&
-      this.range === "branch" &&
-      !this.base
-    )
-      this.range = "since_last_commit";
-    this.tab = tab;
-    await this.load();
+    await selectWorkspaceTab(this, tab);
   }
   async compare(
     range: Model<"ComparisonRange">,
@@ -234,6 +228,7 @@ export class WorkspaceBrowser {
   }
   async select(path: string, retainedRequest?: Request) {
     if (!path) return;
+    this.fileLine = undefined;
     this.#historical = false;
     if (this.file?.file)
       this.#presentations.set(

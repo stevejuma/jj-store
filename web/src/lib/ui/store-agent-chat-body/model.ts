@@ -117,6 +117,13 @@ export interface ChatSubmissionResult {
   error?: string;
 }
 export interface ChatCommentHost {
+  resolveFileLink?: (
+    block: ChatBodyBlock,
+    destination: string,
+  ) => (() => void) | undefined;
+  displayPaths?: (
+    block: ChatBodyBlock,
+  ) => readonly (readonly [string, string])[];
   externalBlocks?: readonly ChatBodyBlock[];
   restoreMessage?: (submitted: string) => string;
   canComment?: boolean;

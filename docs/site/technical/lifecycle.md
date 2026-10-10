@@ -220,6 +220,10 @@ nesting old injected context. Coordination checkouts are verified before Send
 and remain separate from code snapshots. No startup automatically replays a
 prompt.
 
+Fleet workers keep streamed privacy prefixes isolated by participation. They
+flush ordered text before terminal records so saved assistant content and live
+events use the same sanitized text; restart discards memory-only prefixes.
+
 Workspace submissions retain frozen file selections, child publication receipts
 and per-agent delivery state in the execution journal. Queued file comments are
 validated when eligible to dispatch; unavailable or changed sources cannot be

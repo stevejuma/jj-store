@@ -39,8 +39,8 @@
     "sources": ["crates/jj-store-capture/src"],
     "pages": ["docs/site/guides/capture.md", "docs/site/technical/capture.md"],
     "review": {
-      "reason": "OAuth JWT redaction has a separate 16 KiB bound; reviewed canonical capture and retained the ordinary secret limit.",
-      "fingerprint": "d007be14b57eaddabfbadcdcfedde1bf0932e81781c75def5c4a7634b72ffb32"
+      "reason": "Reviewed bounded cross-chunk privacy replacement before scanning, durability and publication; documented memory-only buffering and unchanged capture authority.",
+      "fingerprint": "4f693fa9f16bcb36074c8e31fd8cf1e00d7ebf63cc5e934e75172842c7dec566"
     }
   },
   {
@@ -96,8 +96,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed bounded comparison counts computed from existing content observations within four worker slots; inspection remains read-only and generation fenced.",
-      "fingerprint": "a8af23291c1d8e312f3ce827878f3a6b5ec17a8ba46017bc178178825fc57458"
+      "reason": "Reviewed both session and fleet streaming ingress, ordered boundary flush and isolated participation buffers; no execution replay or authorization change.",
+      "fingerprint": "ec0567aee970fd783a0cb54c91b9ad9d3451c618b23b9e6f148bee4d57e5faa3"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed route-specific skeleton geometry for all requested tabs, selected history diffs and data reads, retaining live row and grid layout, device widths, lazy navigation and drafts.",
-      "fingerprint": "3dac7228d0da23805c6edf21f001c49b680200a07da3eab44b46633e72398bf8"
+      "reason": "Reviewed verified transcript file-link navigation, immutable display-only path labels, Mira list rendering and the trailing vertically centered warning Retry column.",
+      "fingerprint": "6c9fb85ef2cc9806f6c2898e53d7f9693b1d4a5343c1e162f6ba7df565b89da9"
     }
   },
   {

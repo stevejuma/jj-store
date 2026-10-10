@@ -72,6 +72,13 @@ message. Reconnect/restart retries exact publication intents, never prompts.
 Privacy path rebinding reuses the immutable compiled scanner. Managed execution
 workspaces are excluded from automatic transcript capture to avoid duplicates.
 
+Assistant and reasoning text retains possible privacy-root prefixes in bounded
+memory across streamed chunks. Message, tool and terminal boundaries flush that
+text through the same scanner before journal durability or browser delivery.
+Workspace, home and temporary paths use their symbolic labels even when the
+adapter splits a path across updates. Exact registered secrets share this
+buffer; failure never falls back to raw text or replays an inference.
+
 Resolved agent credentials are registered as exact in-memory redactions before
 any journal or repository capture, and survive workspace rebinding. Keychain and
 sensitive environment references require values of at least eight bytes.

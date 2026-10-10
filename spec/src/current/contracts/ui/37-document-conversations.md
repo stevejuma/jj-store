@@ -22,6 +22,21 @@ identities. Native hover/IME findings remain separate from fixture assertions.
 
 ## Renderer and draft ownership
 
+Read-only transcript Markdown uses Mira's shipped list-marker presentation,
+including hyphen bullets. Live and linked conversation file links with
+CommonMark angle-bracket destinations open the owning conversation's Files rail
+and file inspector. Relative and `$WORKSPACE` destinations resolve only within
+that message's authorized code bindings; legacy absolute destinations require
+the same retained binding path. Line suffixes select the corresponding file
+line. Unknown paths, traversal and unsafe URL schemes never become filesystem
+navigation. Historical path labels may shorten verified workspace roots without
+changing immutable source bytes, revisions or UTF-16 comment offsets. HTTP links
+retain external navigation.
+
+Local Mira validation consumes a built archive through the existing optional
+pnpm hook, never a source alias or consumer patch. Registry manifest ranges stay
+portable; artifact revision and cold acceptance belong in the evidence record.
+
 Workspace Files and Changes use the shared FileListing in list, directory and
 package modes. Root-file icons retain the normal row inset in directory and
 package views, without a disclosure spacer; nested-file indentation stays
@@ -270,12 +285,13 @@ repository state.
 Each completed turn that changed files retains its own full-width card after
 that turn in the transcript, including older cards during later work. A failed
 comparison read uses a shadcn warning alert with an icon-bearing themed Retry
-button and retains the draft. Completed-turn cards open the shared workspace
-rail on Changes with that turn's exact comparison selected. Selecting a card
-file also opens the shared inspector on its Diff view. Card and rail reuse one
-cached listing; a later turn cannot silently replace the selected boundaries.
-Missing verified boundaries remain unavailable. The card shows the existing
-inline Git SHA/JJ Change ID control below its heading and the shared
+button in a separate trailing column, vertically centered beside its title and
+description, and retains the draft. Completed-turn cards open the shared
+workspace rail on Changes with that turn's exact comparison selected. Selecting
+a card file also opens the shared inspector on its Diff view. Card and rail
+reuse one cached listing; a later turn cannot silently replace the selected
+boundaries. Missing verified boundaries remain unavailable. The card shows the
+existing inline Git SHA/JJ Change ID control below its heading and the shared
 list/folder/package toggle below View changes at the trailing edge. That toggle
 controls the card's hierarchy and remains consistent with the rail. These
 read-only controls also work in an open contextual agent chat without changing

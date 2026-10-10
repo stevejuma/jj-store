@@ -114,6 +114,7 @@
           state={comments}
           showHeader={false}
           fileView
+          initialLine={browser.fileLine}
         />
       {/if}
     {/if}

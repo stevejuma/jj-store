@@ -19,6 +19,7 @@
     messageActions,
     reply = false,
     fileView = false,
+    initialLine,
   }: {
     block: ChatBodyBlock;
     state: ChatBodyComments;
@@ -27,6 +28,7 @@
     messageActions?: ChatBodyProps["messageActions"];
     reply?: boolean;
     fileView?: boolean;
+    initialLine?: number;
   } = $props();
   let editor: MiraCodeEditorHandle;
   let view = $state<EditorView>();
@@ -121,6 +123,14 @@
   function comment() {
     comments.open(block, view?.state.selection.main ?? { from: 0, to: 0 });
   }
+  $effect(() => {
+    if (view && initialLine) {
+      const from = view.state.doc.line(
+        Math.min(initialLine, view.state.doc.lines),
+      ).from;
+      view.dispatch({ selection: { anchor: from }, scrollIntoView: true });
+    }
+  });
 </script>
 
 <section

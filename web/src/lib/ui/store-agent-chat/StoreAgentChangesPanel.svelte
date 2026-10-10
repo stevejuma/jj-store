@@ -1,4 +1,5 @@
 <script lang="ts">
+  import "./agent-changes-alert.css";
   import { untrack } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as Alert from "@lapismd/design-core/shadcn/alert";
@@ -134,15 +135,15 @@
 
 <div bind:this={root} data-saved-turn={selection.requestId}>
   {#if error}
-    <Alert.Root data-severity="warning">
+    <Alert.Root data-severity="warning" class="agent-changes-warning">
       <TriangleAlert />
       <Alert.Title>File changes unavailable</Alert.Title>
-      <Alert.Description
-        >{error}
+      <Alert.Description>{error}</Alert.Description>
+      <Alert.Action>
         <Button size="sm" variant="secondary" onclick={() => attempt++}>
           <RefreshIcon data-icon="inline-start" />Retry file changes
         </Button>
-      </Alert.Description>
+      </Alert.Action>
     </Alert.Root>
   {:else if !summary}
     <p class="agent-changes-feedback" role="status">Loading saved changes…</p>
