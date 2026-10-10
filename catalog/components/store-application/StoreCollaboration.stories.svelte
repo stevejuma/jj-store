@@ -29,7 +29,9 @@
   args={{ initialPage: "agents" }}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const header = canvas.getByRole("button", { name: /^Agent sessions/ });
+    const header = await canvas.findByRole("button", {
+      name: /^Agent sessions/,
+    });
     await userEvent.click(header);
     const count = header.querySelector(
       ".community-projects__list-group-count",
@@ -60,7 +62,11 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(
-      canvas.getAllByRole("group", { name: "Collaboration participants" })[0],
+      (
+        await canvas.findAllByRole("group", {
+          name: "Collaboration participants",
+        })
+      )[0],
     ).toBeVisible();
     await expect(canvas.getAllByLabelText(/review replies/u)[0]).toBeVisible();
     await userEvent.click(
@@ -138,7 +144,11 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(
-      canvas.getAllByRole("group", { name: "Collaboration participants" })[0],
+      (
+        await canvas.findAllByRole("group", {
+          name: "Collaboration participants",
+        })
+      )[0],
     ).toBeVisible();
     await expect(canvas.getAllByLabelText(/review replies/u)[0]).toBeVisible();
     await userEvent.click(
@@ -164,7 +174,7 @@
   args={{ initialPage: "agents", collaborationState: "loading" }}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const status = canvas.getByRole("status", {
+    const status = await canvas.findByRole("status", {
       name: "Loading agent sessions",
     });
     await expect(status).toBeVisible();
@@ -202,7 +212,7 @@
   args={{ initialPage: "reviews", collaborationState: "empty" }}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(canvas.getByText("No review threads")).toBeVisible();
+    await expect(await canvas.findByText("No review threads")).toBeVisible();
   }}
 >
   {#snippet template(args)}<StoreRepositoryApplication {...args} />{/snippet}
@@ -213,12 +223,16 @@
   args={{ initialPage: "agents", collaborationState: "failed" }}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await expect(canvas.getByText("Agent activity unavailable")).toBeVisible();
+    await expect(
+      await canvas.findByText("Agent activity unavailable"),
+    ).toBeVisible();
     await expect(
       canvas.getAllByText("The collaboration snapshot could not be loaded.")[0],
     ).toBeVisible();
     await expect(canvas.getByText("No agent sessions")).toBeVisible();
-    const header = canvas.getByRole("button", { name: /^Agent sessions/ });
+    const header = await canvas.findByRole("button", {
+      name: /^Agent sessions/,
+    });
     const alert = canvas
       .getByText("Agent activity unavailable")
       .closest('[role="alert"]')!;
@@ -348,7 +362,7 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(
-      canvas.getAllByRole("button", { name: /Revision open/u })[0]!,
+      (await canvas.findAllByRole("button", { name: /Revision open/u }))[0]!,
     );
     await userEvent.click(canvas.getByRole("button", { name: "Resolve" }));
     await expect(canvas.getByText("Review outcome unknown")).toBeVisible();

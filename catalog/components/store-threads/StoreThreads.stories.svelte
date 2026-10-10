@@ -31,7 +31,7 @@
       c.getByRole("complementary", { name: "Thread contributors" }),
     ).toBeVisible();
     await userEvent.click(
-      c.getByRole("button", { name: "Close thread panel" }),
+      await c.findByRole("button", { name: "Close thread panel" }),
     );
     await userEvent.click(c.getByRole("button", { name: "New Thread" }));
     const dialog = await body.findByRole("dialog");
@@ -403,7 +403,7 @@
     );
     await userEvent.click(body.getByRole("menuitem", { name: "Settings" }));
     await userEvent.click(await c.findByRole("button", { name: "Appearance" }));
-    await userEvent.click(c.getByRole("radio", { name: "Focus" }));
+    await userEvent.click(await c.findByRole("radio", { name: "Focus" }));
     await userEvent.click(c.getByRole("radio", { name: "Larger" }));
     await userEvent.click(c.getByRole("button", { name: "Back to jj-store" }));
     const dialog = await body.findByRole("region", { name: "Replies" });

@@ -13,7 +13,7 @@
   });
 
   async function expectReviewBanner(canvasElement: HTMLElement) {
-    const region = within(canvasElement).getByRole("region", {
+    const region = await within(canvasElement).findByRole("region", {
       name: "Repository reviews",
     });
     const banner = within(region).getByRole("alert");
@@ -39,9 +39,9 @@
   }
 
   async function expectDetailBanner(canvasElement: HTMLElement, title: string) {
-    const banner = within(canvasElement)
-      .getByText(title)
-      .closest('[role="alert"]')!;
+    const banner = (await within(canvasElement).findByText(title)).closest(
+      '[role="alert"]',
+    )!;
     await expect(banner).toBeVisible();
     const style = getComputedStyle(banner);
     await expect(style.borderRadius).toBe("7.2px");
@@ -89,7 +89,7 @@
   name="Agents banner keeps the collection inset"
   args={{ initialPage: "agents" }}
   play={async ({ canvasElement }) => {
-    const region = within(canvasElement).getByRole("region", {
+    const region = await within(canvasElement).findByRole("region", {
       name: "Agent activity",
     });
     const banner = within(region).getByRole("alert");

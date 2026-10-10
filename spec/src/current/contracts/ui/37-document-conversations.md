@@ -234,13 +234,15 @@ their existing presentation. Empty Files and Changes retain the listing toolbar
 and view controls, with an icon-bearing shadcn Empty inside the listing body.
 Initial Files and Changes loading mirrors the shared listing toolbar, icon/name
 rows and directory indentation; Changes keeps its comparison controls visible.
-It reuses the owned file tree and public listing controls. Current files include
-tracked and nonignored untracked paths. Comparison selection defaults to Branch;
-missing verified bases require an explicit base selection. Since last commit
-includes unsnapshotted edits. Last turn uses exact completed before/after
-boundaries and excludes subsequent edits. Unsupported comparisons and incomplete
-totals retain their explanations. Bounded asynchronous reads discard obsolete
-results and never publish or snapshot repository state.
+It reuses the owned file tree and public listing controls. The file tree loads
+its own toolbar and row styles without depending on a prior Files-page visit.
+Current files include tracked and nonignored untracked paths. Comparison
+selection defaults to Branch; missing verified bases require an explicit base
+selection. Since last commit includes unsnapshotted edits. Last turn uses exact
+completed before/after boundaries and excludes subsequent edits. Unsupported
+comparisons and incomplete totals retain their explanations. Bounded
+asynchronous reads discard obsolete results and never publish or snapshot
+repository state.
 
 Standalone sessions mount the workspace inspection panels. An unselected agent
 profile must not reserve the body inspector's shell panel identity. Selecting a

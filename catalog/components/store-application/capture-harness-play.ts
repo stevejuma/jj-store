@@ -112,7 +112,9 @@ export const captureSettingsLayout = async ({
     c.getByRole("heading", { name: "Agents", level: 1 }),
   ).toBeVisible();
   const refresh = c.getByRole("button", { name: "Refresh capture" });
-  await expect(refresh.closest(".store-settings__tab-bar")).not.toBeNull();
+  await expect(
+    c.getByRole("navigation", { name: "Settings page navigation" }),
+  ).toContainElement(refresh);
   await userEvent.click(c.getByRole("tab", { name: "Capture" }));
   const pause = c.getByRole("button", { name: "Pause capture" });
   const rescan = c.getByRole("button", { name: "Rescan capture" });

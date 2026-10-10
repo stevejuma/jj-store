@@ -31,7 +31,7 @@
       ).toBeVisible();
     };
     await userEvent.click(
-      canvas.getByRole("button", { name: "Show repository file tree" }),
+      await canvas.findByRole("button", { name: "Show repository file tree" }),
     );
     await userEvent.click(canvas.getByRole("button", { name: "README.md" }));
     await returnToRoot();
@@ -57,7 +57,7 @@
     const canvas = within(canvasElement),
       body = within(canvasElement.ownerDocument.body);
     await userEvent.click(
-      canvas.getByRole("button", { name: "Open commit details" }),
+      await canvas.findByRole("button", { name: "Open commit details" }),
     );
     await waitFor(() =>
       expect(canvas.getByRole("tab", { name: "Commits" })).toHaveAttribute(
@@ -67,7 +67,7 @@
     );
     await userEvent.click(canvas.getByRole("tab", { name: "Overview" }));
     await userEvent.click(
-      canvas.getByRole("button", { name: "Show repository file tree" }),
+      await canvas.findByRole("button", { name: "Show repository file tree" }),
     );
     await userEvent.click(canvas.getByRole("button", { name: "README.md" }));
     const metadata = canvas.getByRole("region", {

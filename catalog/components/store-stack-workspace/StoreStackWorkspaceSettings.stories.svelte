@@ -20,7 +20,7 @@
     const panel = await c.findByRole("complementary", {
       name: "Workspace settings",
     });
-    const form = within(panel).getByRole("form", {
+    const form = await within(panel).findByRole("form", {
       name: "Workspace settings",
     });
     const group = form.querySelector(".community-settings__option-group")!;

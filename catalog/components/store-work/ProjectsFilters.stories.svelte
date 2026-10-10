@@ -75,7 +75,18 @@
       await expect(getComputedStyle(close).borderTopWidth).toBe("1px");
       const openBounds = close.getBoundingClientRect();
       for (const axis of ["x", "y", "width", "height"] as const)
-        await expect(openBounds[axis]).toBeCloseTo(closedBounds[axis], 1);
+        await expect(
+          openBounds[axis],
+          JSON.stringify({
+            axis,
+            closed: closedBounds[axis],
+            open: openBounds[axis],
+            buttonWidth: getComputedStyle(close).width,
+            shrink: getComputedStyle(close).flexShrink,
+            spacing: getComputedStyle(close).getPropertyValue("--spacing"),
+            groupWidth: getComputedStyle(group).width,
+          }),
+        ).toBeCloseTo(closedBounds[axis], 1);
       await expectCircle(close);
       await expect(
         c.queryByRole("button", { name: "Clear search" }),

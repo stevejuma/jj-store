@@ -142,7 +142,7 @@ test("cold device appearance restores under the production CSP and propagates ac
   await page.setViewportSize({ width: 390, height: 900 });
   await expect(
     page
-      .getByRole("region", { name: "Appearance settings" })
+      .getByRole("navigation", { name: "Settings page navigation" })
       .getByRole("heading", { name: "Appearance", exact: true }),
   ).toBeVisible();
   expect(

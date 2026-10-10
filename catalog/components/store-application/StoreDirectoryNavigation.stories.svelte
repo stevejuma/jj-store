@@ -15,7 +15,7 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(
-      canvas.getByRole("button", { name: "Open directory src" }),
+      await canvas.findByRole("button", { name: "Open directory src" }),
     );
     await expect(
       canvas.getByRole("status", { name: "Loading repository files" }),

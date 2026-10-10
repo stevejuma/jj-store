@@ -38,3 +38,5 @@
   {{#include E-UI-FAVICON-001/SUMMARY.nav.md}}
 - [E-UI-VIEW-LOADING-001](E-UI-VIEW-LOADING-001/index.md)
   {{#include E-UI-VIEW-LOADING-001/SUMMARY.nav.md}}
+- [E-UI-VIEW-READINESS-001](E-UI-VIEW-READINESS-001/index.md)
+  {{#include E-UI-VIEW-READINESS-001/SUMMARY.nav.md}}

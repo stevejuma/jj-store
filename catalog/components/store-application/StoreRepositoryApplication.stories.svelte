@@ -39,6 +39,7 @@
     const canvas = within(canvasElement),
       body = within(canvasElement.ownerDocument.body);
     await userEvent.click(canvas.getByRole("button", { name: "jj-store" }));
+    await canvas.findByRole("region", { name: "Repository files" });
     const fileSummary = within(
       canvasElement.querySelector<HTMLElement>(
         ".community-projects__file-browser-summary",
@@ -111,7 +112,9 @@
       canvas.getByRole("table", { name: "Repository files" }),
     ).toBeVisible();
     await userEvent.click(
-      canvas.getByRole("combobox", { name: "Repository bookmark or change" }),
+      await canvas.findByRole("combobox", {
+        name: "Repository bookmark or change",
+      }),
     );
     await userEvent.click(
       await body.findByRole("option", { name: "feature/native-objects" }),
@@ -151,7 +154,9 @@
     );
     await userEvent.click(canvas.getByRole("button", { name: "Back" }));
     await userEvent.click(
-      canvas.getByRole("combobox", { name: "Repository bookmark or change" }),
+      await canvas.findByRole("combobox", {
+        name: "Repository bookmark or change",
+      }),
     );
     await userEvent.click(await body.findByRole("tab", { name: "Changes" }));
     await userEvent.type(
@@ -188,7 +193,9 @@
     const canvas = within(canvasElement),
       body = within(canvasElement.ownerDocument.body);
     await userEvent.click(
-      canvas.getByRole("combobox", { name: "Repository bookmark or change" }),
+      await canvas.findByRole("combobox", {
+        name: "Repository bookmark or change",
+      }),
     );
     await userEvent.click(
       await body.findByRole("option", { name: /conflicted/ }),
@@ -306,7 +313,9 @@
       canvasElement.querySelectorAll("[data-row-index]").length,
     ).toBeLessThan(80);
     await userEvent.click(
-      canvas.getByRole("combobox", { name: "Repository bookmark or change" }),
+      await canvas.findByRole("combobox", {
+        name: "Repository bookmark or change",
+      }),
     );
     await waitFor(() =>
       expect(body.getAllByRole("option").length).toBeGreaterThan(0),

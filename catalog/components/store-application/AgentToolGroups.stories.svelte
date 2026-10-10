@@ -15,7 +15,11 @@
     await userEvent.click(
       await c.findByRole("button", { name: /Open Codex ended/ }),
     );
-    await c.findByRole("button", { name: "Expand 3 tool calls" });
+    await c.findByRole(
+      "button",
+      { name: "Expand 3 tool calls" },
+      { timeout: 10_000 },
+    );
     return c;
   };
 </script>
@@ -164,9 +168,11 @@
     await userEvent.click(
       c.getByRole("button", { name: "Collapse 3 tool calls" }),
     );
-    await expect(
-      c.queryByRole("button", { name: "Hide details for Bash" }),
-    ).toBeNull();
+    await waitFor(() =>
+      expect(
+        c.queryByRole("button", { name: "Hide details for Bash" }),
+      ).toBeNull(),
+    );
     await userEvent.click(
       c.getByRole("button", { name: "Expand 3 tool calls" }),
     );
@@ -229,7 +235,10 @@
       await userEvent.click(
         await c.findByRole("button", { name: "Appearance" }),
       );
-      await userEvent.click(c.getByRole("radio", { name: "Focus" }));
+      // This route compiles on demand in a cold story process.
+      await userEvent.click(
+        await c.findByRole("radio", { name: "Focus" }, { timeout: 10_000 }),
+      );
       await userEvent.click(
         c.getByRole("button", { name: "Back to jj-store" }),
       );

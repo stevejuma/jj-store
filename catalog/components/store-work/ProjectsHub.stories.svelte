@@ -22,7 +22,7 @@
   args={{ localReviews: true }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
-    await userEvent.click(c.getByRole("tab", { name: "Reviews" }));
+    await userEvent.click(await c.findByRole("tab", { name: "Reviews" }));
     const home = await c.findByRole("region", {
       name: "Reviews in UI repository",
     });
@@ -52,7 +52,7 @@
   args={{ failedReviews: true }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
-    await userEvent.click(c.getByRole("tab", { name: "Reviews" }));
+    await userEvent.click(await c.findByRole("tab", { name: "Reviews" }));
     const home = await c.findByRole("region", {
       name: "Reviews in Parser repository",
     });

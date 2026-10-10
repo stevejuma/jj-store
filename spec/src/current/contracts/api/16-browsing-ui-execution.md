@@ -1,5 +1,13 @@
 # Browsing UI execution
 
+E-UI-VIEW-READINESS-001 reviews JST-API-001 for the lazy-view consumers.
+Mounted-control readiness, shared file-tree styling and stable search-header
+geometry change no endpoint, admission rule, authorization, request identity,
+continuation, source mapping or persisted browser format. Cold built-browser
+checks retain production CSP, exact snapshots and retry without command replay.
+UI loading measurements from captured response fixtures do not qualify live
+backend performance or broader release gates.
+
 Review detail and Projects Activity consume the existing authorized native read
 routes without adding repository authority. Exact review anchors determine code
 comparisons; related agent context comes only from root-pinned associations and

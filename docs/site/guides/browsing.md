@@ -12,6 +12,10 @@ notification and retry behavior.
 The browser tab displays the app's blue-jay and gear logo. Its favicon is
 bundled locally and loads without contacting another website.
 
+Search expands inside its navigation row while the other header controls stay in
+place. Repository and conversation file trees share the same toolbar and listing
+presentation, including when opened directly from a conversation.
+
 Views and optional inspectors load when opened. A loading view retains the shell
 and current controller state. If its download fails, use Retry in the
 notification; navigation and pending work remain available.

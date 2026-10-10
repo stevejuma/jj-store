@@ -41,7 +41,7 @@
       within(document.body).getByRole("menuitem", { name: "Settings" }),
     );
     await userEvent.click(await c.findByRole("button", { name: "Appearance" }));
-    await userEvent.click(c.getByRole("radio", { name: /^Classic$/ }));
+    await userEvent.click(await c.findByRole("radio", { name: /^Classic$/ }));
     await userEvent.click(c.getByRole("button", { name: "Back to jj-store" }));
     const classic = await c.findByRole("complementary", {
       name: "Agent response",
@@ -114,7 +114,7 @@
     );
     await userEvent.click(portal.getByRole("menuitem", { name: "Settings" }));
     await userEvent.click(await c.findByRole("button", { name: "Appearance" }));
-    await userEvent.click(c.getByRole("radio", { name: /^Split$/ }));
+    await userEvent.click(await c.findByRole("radio", { name: /^Split$/ }));
     await userEvent.click(c.getByRole("button", { name: "Back to jj-store" }));
     const split = await c.findByRole("complementary", {
       name: "Agent response",
@@ -248,7 +248,13 @@
     await userEvent.click(menu);
     const portal = within(document.body);
     const copy = await portal.findByRole("menuitem", { name: /^Copy$/ });
-    await userEvent.hover(copy);
+    await waitFor(() =>
+      expect(
+        copy.closest('[role="menu"]')!.contains(document.activeElement),
+      ).toBe(true),
+    );
+    copy.focus();
+    await userEvent.keyboard("{ArrowRight}");
     await expect(
       await portal.findByRole("menuitem", { name: "Copy message ID" }),
     ).toBeVisible();

@@ -53,13 +53,18 @@
   }
   async function parity({ canvasElement }: { canvasElement: HTMLElement }) {
     const c = within(canvasElement);
-    const input = await c.findByRole("textbox", {
+    // Wait for the conversation's editors, rather than an unrelated fixture input.
+    const draft = await c.findByRole("group", { name: "Next message draft" });
+    const input = await within(draft).findByRole("textbox", {
       name: /^(Next message|Markdown editor)$/,
     });
-    const reader = canvasElement.querySelector<HTMLElement>(
-      '.chat-text-block[data-kind="markdown"] .cm-content',
-    );
-    expect(reader).not.toBeNull();
+    const reader = await waitFor(() => {
+      const content = canvasElement.querySelector<HTMLElement>(
+        '.chat-text-block[data-kind="markdown"] .cm-content',
+      );
+      expect(content).not.toBeNull();
+      return content!;
+    });
     reader!.scrollIntoView({ block: "center" });
     await userEvent.click(reader!);
     await userEvent.keyboard("{Home}");

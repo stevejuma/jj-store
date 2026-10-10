@@ -20,7 +20,7 @@ export async function expectPersistentRepositoryLayout(
   const persistedShellWidth = Number(shellResize.getAttribute("aria-valuenow"));
 
   await userEvent.click(
-    canvas.getByRole("button", { name: "Collapse Branches column" }),
+    await canvas.findByRole("button", { name: "Collapse Branches column" }),
   );
   for (const name of ["Branches", "Commits", "Op Log", "Agents", "Reviews"]) {
     await userEvent.click(canvas.getByRole("tab", { name }));
@@ -29,7 +29,7 @@ export async function expectPersistentRepositoryLayout(
     ).not.toBeInTheDocument();
   }
   await userEvent.click(canvas.getByRole("tab", { name: "Overview" }));
-  const breadcrumb = canvas.getByRole("list", {
+  const breadcrumb = await canvas.findByRole("list", {
     name: "Repository breadcrumb",
   });
   await expect(breadcrumb).toBeVisible();
@@ -40,7 +40,7 @@ export async function expectPersistentRepositoryLayout(
     canvas.queryByRole("complementary", { name: "Repository file tree" }),
   ).toBeNull();
   await userEvent.click(
-    canvas.getByRole("button", { name: "Show repository file tree" }),
+    await canvas.findByRole("button", { name: "Show repository file tree" }),
   );
   const regions = canvasElement.querySelector<HTMLElement>(
     '.store-application__body-regions[data-page="files"]',
@@ -82,11 +82,9 @@ export async function expectPersistentRepositoryLayout(
     "data-saved-shell-layout",
     expect.stringContaining(`\"width\":${persistedShellWidth}`),
   );
-  await waitFor(() =>
-    expect(
-      canvas.getByRole("button", { name: "Show repository file tree" }),
-    ).toBeVisible(),
-  );
+  await expect(
+    await canvas.findByRole("button", { name: "Show repository file tree" }),
+  ).toBeVisible();
   const restoredShellResize = canvas.getByRole("slider", {
     name: "Resize repository navigation sidebar",
   });
@@ -96,7 +94,7 @@ export async function expectPersistentRepositoryLayout(
     ),
   );
   await userEvent.click(
-    canvas.getByRole("button", { name: "Show repository file tree" }),
+    await canvas.findByRole("button", { name: "Show repository file tree" }),
   );
   await expect(
     Number(
@@ -108,14 +106,14 @@ export async function expectPersistentRepositoryLayout(
 
   await userEvent.click(canvas.getByRole("tab", { name: "Branches" }));
   await expect(
-    canvas.getByRole("button", { name: "Expand Branches column" }),
+    await canvas.findByRole("button", { name: "Expand Branches column" }),
   ).toBeVisible();
   await userEvent.click(canvas.getByRole("tab", { name: "Commits" }));
   await expect(
-    canvas.getByRole("button", { name: "Collapse JJ Log column" }),
+    await canvas.findByRole("button", { name: "Collapse JJ Log column" }),
   ).toBeVisible();
   await userEvent.click(canvas.getByRole("tab", { name: "Branches" }));
   await expect(
-    canvas.getByRole("button", { name: "Expand Branches column" }),
+    await canvas.findByRole("button", { name: "Expand Branches column" }),
   ).toBeVisible();
 }

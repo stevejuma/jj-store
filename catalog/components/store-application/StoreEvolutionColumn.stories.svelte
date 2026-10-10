@@ -15,7 +15,7 @@
   args={{ state: "loading" }}
   play={async ({ canvasElement }) => {
     await expect(
-      within(canvasElement).getByRole("status", {
+      await within(canvasElement).findByRole("status", {
         name: "Loading evolution log",
       }),
     ).toBeVisible();
@@ -26,7 +26,7 @@
   args={{ state: "empty" }}
   play={async ({ canvasElement }) => {
     await expect(
-      within(canvasElement.ownerDocument.body).getByText(
+      await within(canvasElement.ownerDocument.body).findByText(
         "No evolution history",
       ),
     ).toBeVisible();
@@ -37,7 +37,7 @@
   args={{ state: "failed" }}
   play={async ({ canvasElement }) => {
     await expect(
-      within(canvasElement.ownerDocument.body).getByText(
+      await within(canvasElement.ownerDocument.body).findByText(
         "Evolution unavailable",
       ),
     ).toBeVisible();
@@ -55,7 +55,7 @@
     const canvas = within(canvasElement),
       page = within(canvasElement.ownerDocument.body);
     await expect(
-      page.getByText("Incomplete predecessor history"),
+      await page.findByText("Incomplete predecessor history"),
     ).toBeVisible();
     await expect(
       within(canvas.getByRole("list", { name: "Evolution log" })).getAllByRole(

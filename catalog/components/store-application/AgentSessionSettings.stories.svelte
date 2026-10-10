@@ -29,8 +29,13 @@
     const header = canvasElement.querySelector(
       ".lc-community-inbox__thread-header",
     )!;
-    await expect(getComputedStyle(header).paddingLeft).toBe("16px");
-    await expect(getComputedStyle(header).paddingTop).toBe("12px");
+    await expect(getComputedStyle(header).paddingLeft).toBe("8px");
+    const listNavigation = canvasElement.querySelector(
+      ".lc-community-inbox__list-header .store-application__tabs",
+    )!;
+    await expect(getComputedStyle(header).paddingTop).toBe(
+      getComputedStyle(listNavigation).paddingTop,
+    );
     await expect(
       c.getAllByRole("button", { name: "Send message" }),
     ).toHaveLength(1);

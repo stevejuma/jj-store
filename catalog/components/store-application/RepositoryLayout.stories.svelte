@@ -28,8 +28,11 @@
       style.paddingRight,
       style.paddingBottom,
     ]) {
-      await expect(Number.parseFloat(inset)).toBeGreaterThanOrEqual(12);
+      // JST-UI-015: Overview is flush, with its own divider and top margin.
+      await expect(inset).toBe("0px");
     }
+    await expect(style.borderTopWidth).toBe("1px");
+    await expect(style.marginTop).toBe("8px");
     await expect(body.scrollWidth).toBeLessThanOrEqual(body.clientWidth);
     for (const selector of [
       ".store-application__tabs",

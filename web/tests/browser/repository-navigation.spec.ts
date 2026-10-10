@@ -29,7 +29,16 @@ test("right rail destinations match repository tabs and preserve workspace snaps
         style.paddingBottom,
       ].map(Number.parseFloat);
     });
-  expect(overviewInsets.every((inset) => inset >= 12)).toBe(true);
+  // JST-UI-015 places the inset in the file card, with a flush body divider.
+  expect(overviewInsets).toEqual([0, 0, 0, 0]);
+  await expect(page.locator(".store-application__body-regions")).toHaveCSS(
+    "border-top-width",
+    "1px",
+  );
+  await expect(page.locator(".store-application__body-regions")).toHaveCSS(
+    "margin-top",
+    "8px",
+  );
   await expect(
     page.getByRole("combobox", { name: "Repository workspace" }),
   ).toContainText("desktop");
@@ -69,10 +78,17 @@ test("right rail destinations match repository tabs and preserve workspace snaps
   const left = page.getByRole("complementary", {
     name: "Repository navigation sidebar",
   });
-  for (const label of ["Branches", "JJ Log", "Op Log", "Agents", "Reviews"])
+  for (const label of ["Branches", "JJ Log", "Op Log", "Reviews"])
     await expect(
       left.getByRole("button", { name: label, exact: true }),
     ).toHaveCount(0);
+  // Agents and Threads are intentional installation-wide navigation entries.
+  await expect(
+    left.getByRole("button", { name: "Agents", exact: true }),
+  ).toHaveCount(1);
+  await expect(
+    left.getByRole("button", { name: "Threads", exact: true }),
+  ).toHaveCount(1);
 });
 
 test("phone overflow supports keyboard selection, reload, resize and right rail navigation", async ({

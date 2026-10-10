@@ -81,7 +81,7 @@
       void onQuery(search);
     }}
   >
-    <InputGroup.Root>
+    <InputGroup.Root style="height: calc(var(--spacing) * 8)">
       <InputGroup.Input
         onkeydown={(event) => {
           if (event.key === "Escape" && !event.defaultPrevented) {

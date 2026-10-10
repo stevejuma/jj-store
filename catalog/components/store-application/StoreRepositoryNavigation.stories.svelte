@@ -136,7 +136,7 @@
       rail.queryByRole("group", { name: "Selected repository actions" }),
     ).toBeNull();
     await userEvent.click(
-      canvas.getByRole("button", {
+      await canvas.findByRole("button", {
         name: "Merge native storage and publication",
       }),
     );
@@ -261,7 +261,7 @@
     );
     await expect(rail.queryByRole("button", { name: "Evo Log" })).toBeNull();
     await userEvent.click(
-      canvas.getByRole("button", {
+      await canvas.findByRole("button", {
         name: "Merge native storage and publication",
       }),
     );

@@ -59,7 +59,9 @@
     ).toBeVisible();
     await choose(canvasElement, "agent/review");
     await expect(
-      canvas.getByRole("combobox", { name: "Repository bookmark or change" }),
+      await canvas.findByRole("combobox", {
+        name: "Repository bookmark or change",
+      }),
     ).toHaveTextContent("Working copy · agent/review");
     await userEvent.click(canvas.getByRole("tab", { name: "Commits" }));
     await expect(

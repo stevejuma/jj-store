@@ -84,8 +84,11 @@
       c.queryByText("Choose how jj-store looks and feels."),
     ).toBeNull();
     await expect(
-      c.getByRole("navigation", { name: "Settings page navigation" })
-        .firstElementChild,
+      Array.from(
+        c
+          .getByRole("navigation", { name: "Settings page navigation" })
+          .querySelector(".store-application__tab-root")!.children,
+      ).find((child) => !child.hasAttribute("inert")),
     ).toBe(c.getByRole("heading", { name: "Appearance", level: 1 }));
     await expect(c.queryByRole("button", { name: "Back to app" })).toBeNull();
     await userEvent.click(c.getByRole("button", { name: /Theme style,/ }));

@@ -7,6 +7,7 @@
     type FileListingViewMode,
   } from "@lapismd/design-core/diff";
   import "./repository-file-tree-resize.css";
+  import "./repository-file-tree.css";
 
   let {
     files,

@@ -175,7 +175,7 @@
       await userEvent.click(
         await c.findByRole("button", { name: "Appearance" }),
       );
-      await userEvent.click(c.getByRole("radio", { name: layout }));
+      await userEvent.click(await c.findByRole("radio", { name: layout }));
       await userEvent.click(
         c.getByRole("button", { name: "Back to jj-store" }),
       );

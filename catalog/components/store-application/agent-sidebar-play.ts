@@ -17,7 +17,9 @@ export async function agentSidebarPlay({
   await userEvent.click(
     await canvas.findByRole("button", { name: "Appearance" }),
   );
-  await userEvent.click(canvas.getByRole("radio", { name: /^Classic$/ }));
+  await userEvent.click(
+    await canvas.findByRole("radio", { name: /^Classic$/ }),
+  );
   await userEvent.click(
     canvas.getByRole("button", { name: "Back to jj-store" }),
   );
@@ -51,7 +53,7 @@ export async function agentSidebarPlay({
   await expect(
     response.querySelector(".store-collaboration__detail-header"),
   ).toBeNull();
-  const firstMessage = within(response).getAllByRole("article")[0]!;
+  const firstMessage = (await within(response).findAllByRole("article"))[0]!;
   const viewport = response.querySelector(
     '[data-ui-part="scroll-area-viewport"]',
   )!;

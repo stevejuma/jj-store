@@ -32,9 +32,11 @@ export async function playMobileSettings({
   await expect(
     navigation.querySelector("h1 svg[aria-hidden='true']"),
   ).toBeVisible();
-  await expect(navigation.firstElementChild).toBe(
-    within(navigation).getByRole("heading", { level: 1 }),
-  );
+  await expect(
+    Array.from(
+      navigation.querySelector(".store-application__tab-root")!.children,
+    ).find((child) => !child.hasAttribute("inert")),
+  ).toBe(within(navigation).getByRole("heading", { level: 1 }));
   await expect(
     within(navigation).queryByRole("button", { name: "Back to app" }),
   ).toBeNull();

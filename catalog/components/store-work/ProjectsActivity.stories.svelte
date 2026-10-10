@@ -22,7 +22,7 @@
       "Repositories",
       "Activity",
     ]) {
-      await userEvent.click(c.getByRole("tab", { name }));
+      await userEvent.click(await c.findByRole("tab", { name }));
       await waitFor(() =>
         expect(
           canvasElement.querySelector(
@@ -82,7 +82,7 @@
       "Repositories",
       "Activity",
     ]) {
-      await userEvent.click(c.getByRole("tab", { name }));
+      await userEvent.click(await c.findByRole("tab", { name }));
       await waitFor(() =>
         expect(
           c.getByRole("status", { name: `Loading ${name.toLowerCase()}` }),
@@ -143,7 +143,7 @@
       c.getByRole("button", { name: "Open project Native release" }),
     ).toBe(target);
     for (const name of ["Tasks", "Reviews", "Repositories", "Activity"]) {
-      await userEvent.click(c.getByRole("tab", { name }));
+      await userEvent.click(await c.findByRole("tab", { name }));
       await waitFor(() =>
         expect(
           c.getByRole("button", { name: "Refresh projects" }),

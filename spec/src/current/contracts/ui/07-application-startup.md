@@ -27,3 +27,8 @@ Browser interaction fixtures exercise the same bootstrap and repository
 discovery requests as the production controller. Authenticated fixtures supply
 one memory-only token and an authorized repository page before opening a
 repository; LocalTrusted fixtures discover without an Authorization header.
+
+E-UI-VIEW-READINESS-001 confirms the unchanged JST-UI-005/010 loading and
+accessibility contract. Interaction fixtures await the mounted view controls;
+they retain each owned loading phase, draft and layout assertion. Classic-only
+fixtures declare that view locally without changing the Document default.

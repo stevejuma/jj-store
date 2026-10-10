@@ -26,9 +26,46 @@ repaired and its affected seven-story family now passes. The existing
 architecture violations remain unchanged. ResizeObserver warnings recur and are
 unresolved. No assertion, diagnostic guard or visual baseline was weakened.
 
+E-UI-VIEW-READINESS-001 reviews enclosing default-workspace change `twuyslro`.
+The immediate consumer repairs await mounted lazy-view controls and preserve
+loading phases, selections, drafts, keyboard access and geometry thresholds.
+Classic grouped-tool/menu fixtures select that renderer explicitly. Overview
+checks now match its documented flush divider and card-owned inset; read-only
+Document replies verify the next-message input and Send are absent. Settings
+checks skip the responsive navigation's inert measuring node.
+
+Two production defects were reproduced: file-tree styling depended on loading
+the Files page first, and opening toolbar search enlarged the row and shifted
+nearby buttons. The file tree now imports its owned stylesheet directly; search
+uses the same theme-based control height as its neighboring buttons. Provenance
+retains the existing source revision/license and presentation contracts.
+
+The complete affected run passed 237 of 238 stories across 41 families. Its
+remaining cold Appearance lookup exposed a one-second readiness deadline; an
+isolated rerun also exposed that deadline at the cold transcript tool header.
+Those two semantic import-boundary waits are now bounded at ten seconds. The
+final nine-story grouped-tool/responsive-search rerun passes, retaining the
+original draft, geometry and hit-target checks. All 240 unique stories across
+the 42 affected/direct-consumer families pass across these focused runs. This
+does not substitute for a new full-suite run.
+
+The intermediate wider audit completed with 704 passing and 53 failing stories
+across 159 families. It began before later repairs and is not the current final
+failure count or a controlled comparison with the earlier 639/118 run. Remaining
+qualification includes superseded live reply-panel expectations, native Stacks
+fixture/adapter flows, managed-agent identity, repository-review geometry and
+stack-spacer float equality. Each remains explicit in the new evidence; no
+release acceptance is inferred from the repaired consumers.
+
+Fresh built-bundle asset tests and all seven cold browser flows pass, including
+Retry without command replay, delayed navigation, appearance/CSP persistence,
+responsive repository navigation and notifications. Demo data, Vite PID 77827,
+backend PID 98788 and RustFS PID 98790 remain retained. Types and source
+ownership pass. ResizeObserver warnings recur in interaction runs and remain
+unresolved.
+
 M24 remains **In progress**. Historical M4.9 source-ownership acceptance remains
-unchanged; the new wider view-loading qualification stays open in this review.
-Registry-only dependency release, desktop/platform acceptance and visual
-baseline approval remain independent. Next: reconcile and repair the wider
-asynchronous story consumers, then repeat their complete lane before any release
-claim.
+unchanged; wider view-loading qualification stays open. Registry-only dependency
+release, desktop/platform acceptance and visual baseline approval remain
+independent. Next: finish the independent live-reply and native Stack story
+repairs, then repeat the full interaction lane before any release claim.

@@ -1,12 +1,12 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, fn, userEvent, waitFor, within } from "storybook/test";
-  import Fixture from "../../fixtures/StoreRepositoryApplicationFixture.svelte";
+  import Fixture from "../../fixtures/AgentLayoutFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Native agent actions",
     component: Fixture,
     tags: ["visual-pending"],
-    args: { initiallyCollapsed: true },
+    args: { repository: true, focus: false, conversationView: "classic" },
     parameters: { layout: "fullscreen" },
   });
   async function openCopy() {
@@ -18,10 +18,9 @@
 
 <Story
   name="Native identifier menus preserve selection and exact values"
-  args={{ initialPage: "agents" }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement),
-      select = c.getByRole("button", { name: /Open Codex ended/ });
+      select = await c.findByRole("button", { name: /Open Codex ended/ });
     const card = select.closest(".store-collaboration__row")!;
     const duration = card.querySelector(
       ".store-collaboration__agent-duration",
@@ -52,7 +51,7 @@
       await expect(select).toHaveAttribute("aria-pressed", "false");
       await userEvent.click(select);
       await userEvent.click(
-        c.getByRole("button", { name: "Agent details actions" }),
+        await c.findByRole("button", { name: "Agent details actions" }),
       );
       await openCopy();
       await userEvent.click(

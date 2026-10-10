@@ -351,19 +351,27 @@
     const toolbar = panel.querySelector<HTMLElement>(
       ".community-projects__file-tree-actions",
     )!;
-    await expect({
-      headerBorder: getComputedStyle(header).borderBottomWidth,
-      startsAtPanelEdge:
-        Math.abs(
-          toolbar.getBoundingClientRect().left -
-            panel.getBoundingClientRect().left,
-        ) <= 1,
-      endsAtPanelEdge:
-        Math.abs(
-          toolbar.getBoundingClientRect().right -
-            panel.getBoundingClientRect().right,
-        ) <= 1,
-    }).toEqual({
+    await expect(
+      {
+        headerBorder: getComputedStyle(header).borderBottomWidth,
+        startsAtPanelEdge:
+          Math.abs(
+            toolbar.getBoundingClientRect().left -
+              panel.getBoundingClientRect().left,
+          ) <= 1,
+        endsAtPanelEdge:
+          Math.abs(
+            toolbar.getBoundingClientRect().right -
+              panel.getBoundingClientRect().right,
+          ) <= 1,
+      },
+      JSON.stringify({
+        state: panel.getAttribute("data-state"),
+        variant: panel.getAttribute("data-variant"),
+        shell: !!header.closest(".community-app-shell__surface"),
+        headerClass: header.className,
+      }),
+    ).toEqual({
       headerBorder: "1px",
       startsAtPanelEdge: true,
       endsAtPanelEdge: true,

@@ -24,7 +24,7 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await expect(
-      canvas.getByRole("button", { name: "Collapse Branches column" }),
+      await canvas.findByRole("button", { name: "Collapse Branches column" }),
     ).toBeVisible();
     await userEvent.click(canvas.getByRole("option", { name: "main" }));
     await expect(

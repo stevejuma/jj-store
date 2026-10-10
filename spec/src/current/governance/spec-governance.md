@@ -1,5 +1,11 @@
 # Change map
 
+E-UI-VIEW-READINESS-001 retains JST-UI-015 source ownership. The shared file
+tree now owns its existing row and toolbar stylesheet at the component import
+boundary, with the original source revision and license retained in provenance.
+Loading that presentation no longer depends on visiting another lazy page. No
+external source dependency or public component contract is introduced.
+
 E-UI-VIEW-LOADING-001 records the local package hook against a packed artifact
 and registry fallback, preserving peer ranges and portable dependency metadata.
 Development optimization and production lazy chunks require separate cold

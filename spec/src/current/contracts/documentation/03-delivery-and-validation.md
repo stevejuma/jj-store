@@ -266,3 +266,7 @@ physical completion or production mutation capability.
 Event freshness guidance MUST describe shared-tab support and its fallback,
 retain event-driven refresh without data polling, and distinguish a cold
 transport regression from live timings with older views still connected.
+
+E-UI-VIEW-READINESS-001 keeps JST-DOC-003 delivery and review gates unchanged.
+The browsing guide describes stable search-header geometry and shared file-tree
+presentation; fixture proof remains distinct from release qualification.

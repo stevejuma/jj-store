@@ -8,9 +8,9 @@
     tags: ["visual-pending"],
     parameters: { layout: "fullscreen", jjStoreShell: true },
   });
-  function assertPending(element: HTMLElement) {
+  async function assertPending(element: HTMLElement) {
     const canvas = within(element);
-    const busy = canvas.getByRole("status", {
+    const busy = await canvas.findByRole("status", {
       name: "Loading stack workspace",
     });
     expect(busy).toHaveAttribute("aria-busy", "true");
@@ -27,19 +27,19 @@
   }
   async function load(element: HTMLElement) {
     const canvas = within(element);
-    assertPending(element);
+    await assertPending(element);
     await userEvent.click(
       canvas.getByRole("button", { name: "Connect repository" }),
     );
-    assertPending(element);
+    await assertPending(element);
     await userEvent.click(
-      canvas.getByRole("button", { name: "Discover workspace binding" }),
+      await canvas.findByRole("button", { name: "Discover workspace binding" }),
     );
-    assertPending(element);
+    await assertPending(element);
     await userEvent.click(
       canvas.getByRole("button", { name: "Start workspace read" }),
     );
-    assertPending(element);
+    await assertPending(element);
     await userEvent.click(
       canvas.getByRole("button", { name: "Complete workspace read" }),
     );
@@ -112,7 +112,7 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.click(
-      canvas.getByRole("button", { name: "Discover workspace binding" }),
+      await canvas.findByRole("button", { name: "Discover workspace binding" }),
     );
     await userEvent.click(
       canvas.getByRole("button", { name: "Start workspace read" }),
@@ -131,7 +131,7 @@
     await userEvent.click(
       canvas.getByRole("button", { name: "Retry workspace" }),
     );
-    assertPending(canvasElement);
+    await assertPending(canvasElement);
     await userEvent.click(
       canvas.getByRole("button", { name: "Complete workspace read" }),
     );

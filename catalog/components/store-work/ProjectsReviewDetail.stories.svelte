@@ -11,7 +11,7 @@
   async function openReviewPage(canvasElement: HTMLElement, project = false) {
     const c = within(canvasElement);
     if (project) await c.findByRole("button", { name: "Edit project" });
-    await userEvent.click(c.getByRole("tab", { name: "Reviews" }));
+    await userEvent.click(await c.findByRole("tab", { name: "Reviews" }));
     await userEvent.click(
       await c.findByRole("button", { name: /Open Revision open/ }),
     );

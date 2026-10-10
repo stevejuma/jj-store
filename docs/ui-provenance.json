@@ -1518,6 +1518,16 @@
       ]
     },
     {
+      "local": "web/src/lib/ui/community-projects/repository-file-tree.css",
+      "sources": [
+        {
+          "path": "src/components/community-projects/CommunityProjects.css",
+          "revision": "d859f33a484a9238bb11f974f4ead8e9be729ec6",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
       "local": "web/src/lib/ui/community-projects/repository-log-diff.css",
       "sources": [
         {

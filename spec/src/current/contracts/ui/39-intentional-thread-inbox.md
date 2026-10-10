@@ -54,12 +54,12 @@ Threads and agent session inboxes put the shared responsive navigation tabs in a
 single left-sidebar header, replacing the separate title and body navigation
 rows. Search starts as an icon; opening it replaces the tabs with an input
 filling that row, focuses it and retains filter/New actions. Escape closes and
-clears search and restores trigger focus. Both headers use the repository
-navigation height, with matching small leading and trailing sidebar-header
-insets. Session tabs retain Agents navigation and scoped agent/all-session
-routes; Threads retains repository scope. Both use the compact label All for
-their unfiltered tab. Active/Archived and Connected views filter only the loaded
-conversations.
+clears search and restores trigger focus. Opening search keeps the same compact
+control height and header geometry. Both headers use the repository navigation
+height, with matching small leading and trailing sidebar-header insets. Session
+tabs retain Agents navigation and scoped agent/all-session routes; Threads
+retains repository scope. Both use the compact label All for their unfiltered
+tab. Active/Archived and Connected views filter only the loaded conversations.
 
 The filter icon opens a searchable multi-select command view. Values within a
 facet are alternatives; repository, agent, lifecycle/presence and harness facets

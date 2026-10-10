@@ -21,7 +21,7 @@
     const toast = await page.findByRole("status", { name: "" });
     await expect(toast).toHaveTextContent("Preparing the graph index…");
     await expect(
-      canvas.getByRole("status", { name: "Loading JJ log" }),
+      await canvas.findByRole("status", { name: "Loading JJ log" }),
     ).toBeVisible();
     await userEvent.click(
       within(toast).getByRole("button", { name: "Cancel preparation" }),
@@ -70,7 +70,7 @@
       page.getByRole("button", { name: "Cancel preparation" }),
     ).toBeEnabled();
     await userEvent.click(canvas.getByRole("button", { name: "Repository" }));
-    await userEvent.click(canvas.getByRole("tab", { name: "Advanced" }));
+    await userEvent.click(await canvas.findByRole("tab", { name: "Advanced" }));
     await expect(page.getAllByText("Preparing the graph index…")).toHaveLength(
       1,
     );
@@ -100,7 +100,7 @@
       page.queryByText("Preparing the graph index…"),
     ).not.toBeInTheDocument();
     await expect(
-      canvas.getByRole("status", { name: "Loading operation log" }),
+      await canvas.findByRole("status", { name: "Loading operation log" }),
     ).toBeVisible();
     await userEvent.click(canvas.getByRole("tab", { name: "Commits" }));
     await expect(

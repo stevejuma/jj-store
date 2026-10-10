@@ -23,7 +23,7 @@
       "Reviews",
       "Repositories",
     ]) {
-      await userEvent.click(c.getByRole("tab", { name: tab }));
+      await userEvent.click(await c.findByRole("tab", { name: tab }));
       const launch = await c.findByRole("button", {
         name: "New agent session",
       });

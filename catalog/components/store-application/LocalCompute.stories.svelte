@@ -171,7 +171,20 @@
     await page.viewport(390, 844);
     try {
       const c = within(canvasElement);
-      await userEvent.click(await c.findByRole("tab", { name: "Sharing" }));
+      const sharing = c.queryByRole("tab", { name: "Sharing" });
+      if (sharing) await userEvent.click(sharing);
+      else {
+        await userEvent.click(
+          await c.findByRole("button", {
+            name: "More compute settings sections",
+          }),
+        );
+        await userEvent.click(
+          await within(document.body).findByRole("menuitem", {
+            name: "Sharing",
+          }),
+        );
+      }
       await c.findByRole("button", { name: "Unpair" });
       await expect(
         c.getByLabelText("Machine invitation", {

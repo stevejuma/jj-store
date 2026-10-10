@@ -16,7 +16,9 @@
     label: string,
     layout: string,
   ) {
-    const status = within(canvasElement).getByRole("status", { name: label });
+    const status = await within(canvasElement).findByRole("status", {
+      name: label,
+    });
     await expect(status).toHaveAttribute("aria-busy", "true");
     await expect(status).toHaveAttribute("data-layout", layout);
     await expect(
@@ -30,7 +32,7 @@
       "Loading review details",
       "review-detail",
     );
-    const status = within(canvasElement).getByRole("status", {
+    const status = await within(canvasElement).findByRole("status", {
       name: "Loading review details",
     });
     const header = status.querySelector<HTMLElement>(
@@ -229,7 +231,7 @@
     host.style.width = "380px";
     host.style.height = "640px";
     await expectReviewDetailSkeleton(canvasElement);
-    const status = within(canvasElement).getByRole("status", {
+    const status = await within(canvasElement).findByRole("status", {
       name: "Loading review details",
     });
     await expect(status.scrollWidth).toBeLessThanOrEqual(status.clientWidth);
@@ -292,7 +294,7 @@
   name="File detail"
   args={{ initialPage: "files", loading: false, detailLoading: true }}
   play={async ({ canvasElement }) => {
-    const status = within(canvasElement).getByRole("status", {
+    const status = await within(canvasElement).findByRole("status", {
       name: "Loading README.md",
     });
     await expect(status).toBeVisible();
@@ -306,7 +308,7 @@
   name="JJ Log detail"
   args={{ initialPage: "log", loading: false, detailLoading: true }}
   play={async ({ canvasElement }) => {
-    const files = within(canvasElement).getByRole("region", {
+    const files = await within(canvasElement).findByRole("region", {
       name: "Changed files",
     });
     await expect(within(files).getByText("Changed files")).toBeVisible();
@@ -328,7 +330,7 @@
   name="Op Log detail"
   args={{ initialPage: "oplog", loading: false, detailLoading: true }}
   play={async ({ canvasElement }) => {
-    const files = within(canvasElement).getByRole("region", {
+    const files = await within(canvasElement).findByRole("region", {
       name: "Changed files in operation",
     });
     await expect(

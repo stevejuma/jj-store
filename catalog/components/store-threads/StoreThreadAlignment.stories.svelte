@@ -18,10 +18,13 @@
     const c = within(canvasElement),
       body = within(document.body);
     await expect(await c.findByText("Welcome to the channel")).toBeVisible();
+    await waitFor(() =>
+      expect(document.body).not.toHaveStyle({ pointerEvents: "none" }),
+    );
     await userEvent.click(
       c.getByRole("button", { name: "Conversation details" }),
     );
-    await expect(body.queryByRole("menu")).toBeNull();
+    await waitFor(() => expect(body.queryByRole("menu")).toBeNull());
     const settings = c.getByRole("complementary", {
       name: "Conversation details",
     });
@@ -226,13 +229,23 @@
     await expect(
       within(replies).queryByRole("button", { name: /^Add reaction(?: to|$)/ }),
     ).toBeNull();
+    // Read-only Document replies omit the composer, while source readers remain selectable.
     await expect(
-      within(replies).getByRole("textbox", { name: "Markdown editor" }),
-    ).toHaveAttribute("contenteditable", "false");
+      within(replies).queryByRole("group", { name: "Next message draft" }),
+    ).toBeNull();
+    await expect(
+      within(replies).queryByRole("textbox", { name: "Markdown editor" }),
+    ).toBeNull();
+    await expect(
+      within(replies).queryByRole("button", { name: "Send message" }),
+    ).toBeNull();
+    await waitFor(() =>
+      expect(document.body).not.toHaveStyle({ pointerEvents: "none" }),
+    );
     await userEvent.click(
       c.getByRole("button", { name: "Conversation details" }),
     );
-    await expect(body.queryByRole("menu")).toBeNull();
+    await waitFor(() => expect(body.queryByRole("menu")).toBeNull());
     await expect(c.queryByRole("button", { name: "Remove thread" })).toBeNull();
     await expect(c.queryByRole("button", { name: /^Name/ })).toBeNull();
   }}
