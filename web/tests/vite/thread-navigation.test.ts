@@ -88,3 +88,21 @@ test("thread selection forwards its repository instead of reusing the active con
   });
   expect(openThreads).toHaveBeenCalledWith(THREAD_IDS.thread, other);
 });
+
+test("the Threads hub stays selected while a conversation is open", async () => {
+  const { controller } = await fixture();
+  expect(
+    activeStoreNavigation({
+      ...controller.state.route,
+      threadsHub: true,
+      threadId: THREAD_IDS.thread,
+    }),
+  ).toBe("threads");
+  expect(
+    activeStoreNavigation({
+      ...controller.state.route,
+      threadsHub: false,
+      threadId: THREAD_IDS.thread,
+    }),
+  ).toBe(`thread:${THREAD_IDS.repo}:${THREAD_IDS.thread}`);
+});

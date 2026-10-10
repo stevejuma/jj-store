@@ -87,3 +87,7 @@ independently authorized Codebase repositories, footer membership and shared
 Files/Changes inspection. Generated API references include local creation,
 version-checked membership and internal annotation containers. Source reviews
 preserve exact publication, legacy identity and independent execution gates.
+
+The interactive agent guide describes the shared Threads/session header,
+responsive All/More navigation, loaded-only multiple filter choices and empty
+list behavior, without presenting those client controls as new server queries.

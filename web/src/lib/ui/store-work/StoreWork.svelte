@@ -12,6 +12,7 @@
   import PlusIcon from "@lucide/svelte/icons/plus";
   import PencilIcon from "@lucide/svelte/icons/pencil";
   import LinkIcon from "@lucide/svelte/icons/link";
+  import StoreViewTabs from "../store-application/StoreViewTabs.svelte";
   import StoreWorkLayoutControls from "./StoreWorkLayoutControls.svelte";
   import StoreWorkOwnershipGroups from "./StoreWorkOwnershipGroups.svelte";
   import StoreWorkEmpty from "./StoreWorkEmpty.svelte";
@@ -75,17 +76,16 @@
 >
   <StoreWorkStatus {work} />
   <Tabs.Root bind:value={tab} class="store-projects__tab-root">
-    {#if !view.task || tab !== "tasks"}<div class="community-projects__tabs">
-        <Tabs.List
-          class="community-projects__tab-list"
-          aria-label="Project views"
-        >
-          {#each ["projects", "tasks", "repositories"] as value}<Tabs.Trigger
-              class="community-projects__tab-trigger"
-              {value}>{value[0]!.toUpperCase() + value.slice(1)}</Tabs.Trigger
-            >{/each}
-        </Tabs.List>
-      </div>
+    {#if !view.task || tab !== "tasks"}<StoreViewTabs
+        inheritContext
+        value={tab}
+        sections={["projects", "tasks", "repositories"].map((value) => ({
+          value,
+          label: value[0]!.toUpperCase() + value.slice(1),
+        }))}
+        label="Project views"
+        onSelect={(value) => (tab = value)}
+      />
       <header class="community-projects__surface-header">
         <div>
           {#if tab === "tasks"}<ListTodoIcon

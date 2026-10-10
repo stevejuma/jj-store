@@ -19,7 +19,7 @@
   <Popover.Trigger
     >{#snippet child({ props })}<Button
         {...props}
-        variant="ghost"
+        variant="secondary"
         size="icon-sm"
         aria-label="Agent repositories"
         title="Agent repositories"

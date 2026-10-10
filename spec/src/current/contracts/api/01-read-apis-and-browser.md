@@ -310,3 +310,8 @@ on protobuf field 7. Empty bytes preserve legacy unlinked behavior. The server
 derives actor and acceptance time; the client checks the exact returned binding,
 request, publication and result identities. Publication retains the binding and
 selects Agent plus Thread roots atomically through the existing manifest.
+
+The shared inbox navigation/filter presentation changes no JST-API-001 wire
+contracts, authorized read scopes, cache invalidation, pagination or retry
+behavior. Facets use only loaded exact identities; source/view filtering does
+not initiate additional reads or broaden repository access.

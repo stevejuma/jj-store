@@ -2728,6 +2728,22 @@
     {
       "local": "web/src/lib/ui/community-chat-composer/composer-document-actions.svelte.ts",
       "reason": "Locally authored jj-store effect registering live Document editor actions in the app-owned footer with guarded cleanup; no Community source is copied."
+    },
+    {
+      "local": "web/src/lib/ui/community-inbox/CommunityInboxFilters.svelte",
+      "reason": "Locally authored loaded-only multi-select facets composing public Design Core Popover and Command View; no additional Community source copied."
+    },
+    {
+      "local": "web/src/lib/ui/community-inbox/inbox-filters.ts",
+      "reason": "Locally authored exact-identity client facet adapter for authorized loaded thread/session rows."
+    },
+    {
+      "local": "web/src/lib/ui/store-application/view-tabs.css",
+      "reason": "Shared owned repository navigation pill styling extracted from store-application.css; reused by Projects, Settings, workspaces and inboxes."
+    },
+    {
+      "local": "web/src/lib/ui/community-inbox/inbox-preferences.ts",
+      "reason": "Locally authored bounded device-only pin/archive ID storage; uses storage events and existing layout storage refusal handling, without content persistence or service authority."
     }
   ],
   "desktopAppearance": {

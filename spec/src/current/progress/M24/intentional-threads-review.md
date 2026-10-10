@@ -49,3 +49,20 @@ examples. Cold browser results, restart/reload behavior and ResizeObserver
 diagnostics are recorded in E-THREADS-002. Visual baselines remain unapproved.
 Installed adapter, real permission/cancellation and desktop/platform gates
 remain independent. No root aggregate qualification is claimed.
+
+E-INBOX-CONTROLS-001 in enclosing default-workspace change `mlrnlkzl` unifies
+responsive navigation and places All/search/filter/New controls in the inbox
+sidebar header. No-fit widths put every tab in More. Exact loaded-only facets
+preserve aliases/drafts and pagination. Icon Empty states, absolute hover/focus
+Pin and local Archive actions share the same presentation on both pages. Pins
+lead the tree in an expandable group and archive is explicitly device-local;
+versioned bounded ID-only preferences use storage events across tabs. Provider
+and lifecycle gates remain separate. The final direct-consumer run passes 87
+interaction/accessibility stories, plus exact identity/preference models and
+navigation regression tests. Natural-width probes avoid replacing controls or
+subscribing fitting effects to their own output, repairing the development page
+freeze. Footer pickers retain grey rest/hover surfaces, row actions use joined
+24px buttons, and the Threads destination stays selected within its inbox. M24
+remains In progress. Focused interaction/accessibility and live resize evidence
+remain separate from unapproved visual baselines and existing ResizeObserver
+warnings.

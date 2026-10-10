@@ -9,7 +9,7 @@
   import * as Tabs from "@lapismd/design-core/shadcn/tabs";
   import * as Tooltip from "@lapismd/design-core/shadcn/tooltip";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import { ScrollArea } from "@lapismd/design-core/shadcn/scroll-area";
+  import StoreViewTabs from "../store-application/StoreViewTabs.svelte";
   import type { StoreSettingsSection } from "./model.js";
   import "./StoreSettings.css";
 
@@ -72,53 +72,45 @@
 {/snippet}
 
 {#snippet navigation()}
-  <nav class="store-settings__tab-bar" aria-label="Settings page navigation">
-    <h1 id="store-settings-title" class="store-settings__page-title">
-      <PageIcon aria-hidden="true" />
-      <span>{title}</span>
-    </h1>
-    {#if tabs.length}
-      <ScrollArea
-        orientation="horizontal"
-        type="hover"
-        class="store-settings__tab-scroll"
-      >
-        <Tabs.List
-          aria-label={`${title} settings sections`}
-          class="store-settings__tab-list"
-        >
-          {#each tabs as tab (tab.value)}
-            <Tabs.Trigger value={tab.value} disabled={tab.disabled}
-              >{tab.label}</Tabs.Trigger
-            >
-          {/each}
-        </Tabs.List>
-      </ScrollArea>
-    {/if}
-    {#if onRefresh}
-      <div class="store-settings__nav-actions">
-        <Tooltip.Provider>
-          <Tooltip.Root>
-            <Tooltip.Trigger>
-              {#snippet child({ props })}
-                <Button
-                  {...props}
-                  variant="ghost"
-                  size="icon-sm"
-                  aria-label={refreshLabel}
-                  disabled={refreshDisabled}
-                  onclick={() => void onRefresh?.()}
-                >
-                  <RefreshCwIcon aria-hidden="true" />
-                </Button>
-              {/snippet}
-            </Tooltip.Trigger>
-            <Tooltip.Content>{refreshLabel}</Tooltip.Content>
-          </Tooltip.Root>
-        </Tooltip.Provider>
-      </div>
-    {/if}
-  </nav>
+  <StoreViewTabs
+    inheritContext
+    {value}
+    sections={tabs}
+    onSelect={(next) => (value = next)}
+    label={`${title} settings sections`}
+    navigationLabel="Settings page navigation"
+  >
+    {#snippet leading()}
+      <h1 id="store-settings-title" class="store-settings__page-title">
+        <PageIcon aria-hidden="true" /><span>{title}</span>
+      </h1>
+    {/snippet}
+    {#snippet trailing()}
+      {#if onRefresh}
+        <div class="store-settings__nav-actions">
+          <Tooltip.Provider>
+            <Tooltip.Root>
+              <Tooltip.Trigger>
+                {#snippet child({ props })}
+                  <Button
+                    {...props}
+                    variant="ghost"
+                    size="icon-sm"
+                    aria-label={refreshLabel}
+                    disabled={refreshDisabled}
+                    onclick={() => void onRefresh?.()}
+                  >
+                    <RefreshCwIcon aria-hidden="true" />
+                  </Button>
+                {/snippet}
+              </Tooltip.Trigger>
+              <Tooltip.Content>{refreshLabel}</Tooltip.Content>
+            </Tooltip.Root>
+          </Tooltip.Provider>
+        </div>
+      {/if}
+    {/snippet}
+  </StoreViewTabs>
 {/snippet}
 
 {#if tabs.length}

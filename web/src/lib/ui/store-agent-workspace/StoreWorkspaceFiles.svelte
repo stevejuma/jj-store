@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreViewTabs from "../store-application/StoreViewTabs.svelte";
   import { tick } from "svelte";
   import {
     AppShell,
@@ -90,29 +91,35 @@
       resizeLabel="Resize workspace files"
       closeable
     >
-      <AppShell.Sidebar.Header class="community-projects">
-        <Tabs.List
-          class="community-projects__tab-list"
-          aria-label="Workspace contents"
-          title={browser.binding?.repositoryName}
+      <AppShell.Sidebar.Header
+        class="community-projects"
+        style="padding-inline: 0; --store-view-tabs-padding-inline-end: 0.75rem;"
+      >
+        <StoreViewTabs
+          inheritContext
+          value={browser.tab}
+          sections={[
+            { value: "files", label: "Files" },
+            { value: "changes", label: "Changes" },
+          ]}
+          label="Workspace contents"
+          onSelect={(value) =>
+            void browser.selectTab(value as "files" | "changes")}
         >
-          <Tabs.Trigger class="community-projects__tab-trigger" value="files"
-            >Files</Tabs.Trigger
-          >
-          <Tabs.Trigger class="community-projects__tab-trigger" value="changes"
-            >Changes</Tabs.Trigger
-          >
-        </Tabs.List>
-        <div class="workspace-files-refresh">
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            aria-label="Refresh workspace files"
-            disabled={listing.loading}
-            onclick={() => void browser.refresh()}
-            >{#if listing.loading}<Spinner />{:else}<RefreshIcon />{/if}</Button
-          >
-        </div>
+          {#snippet trailing()}
+            <div class="workspace-files-refresh">
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                aria-label="Refresh workspace files"
+                disabled={listing.loading}
+                onclick={() => void browser.refresh()}
+                >{#if listing.loading}<Spinner />{:else}<RefreshIcon
+                  />{/if}</Button
+              >
+            </div>
+          {/snippet}
+        </StoreViewTabs>
       </AppShell.Sidebar.Header>
       <AppShell.Sidebar.Body bind:ref={body}>
         <Tabs.Content value={browser.tab} aria-busy={listing.loading}>

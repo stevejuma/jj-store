@@ -12,18 +12,22 @@
     loading = false,
     chatTitle = "First chat",
     threadTitle = "Selected chat",
+    kind = "session",
   }: {
     repositoryName?: string;
     loading?: boolean;
     chatTitle?: string;
     threadTitle?: string;
+    kind?: "session" | "thread";
   } = $props();
   const shell = createStoreShell(createMemoryStoryStorage(), false);
   let active = $state("first"),
     draft = $state("Retained conversation draft"),
     refreshed = $state(false),
     sessionsVisible = $state(true),
-    sessionsLoaded = $state(false);
+    sessionsLoaded = $state(false),
+    inboxMounted = $state(true);
+  const inboxStorage = createMemoryStoryStorage();
   const loadingList = $derived(loading && !sessionsLoaded);
   const author = (name: string) => ({
     id: name,
@@ -42,6 +46,8 @@
     {
       id: "first",
       author: author(chatTitle),
+      agents: [{ id: "codex", name: "Codex" }],
+      harness: "codex",
       context: "Codex",
       status: "Offline",
       repository: repository("repo-a"),
@@ -50,6 +56,8 @@
     {
       id: "second",
       author: author("Second chat"),
+      agents: [{ id: "cursor", name: "Cursor" }],
+      harness: "cursor",
       context: "Cursor",
       status: "Online",
       repository: {
@@ -60,6 +68,8 @@
     {
       id: "other",
       author: author("Other repository chat"),
+      agents: [{ id: "codex", name: "Codex" }],
+      harness: "codex",
       context: "Codex",
       status: "Offline",
       repository: repository("repo-b"),
@@ -79,48 +89,53 @@
   style="height: 100dvh"
 >
   <AppShell.Main>
-    <CommunityInbox
-      items={!loadingList && sessionsVisible
-        ? refreshed
-          ? [...items].reverse()
-          : items
-        : []}
-      loading={loadingList}
-      activeId={active}
-      layoutStorage={createMemoryStoryStorage()}
-      onSelect={(id) => (active = id)}
-      onBack={() => {}}
-      onNew={() => (active = "draft")}
-      {threadTitle}
+    {#if inboxMounted}<CommunityInbox
+        {kind}
+        title={kind === "thread" ? "Threads" : "Sessions"}
+        items={!loadingList && sessionsVisible
+          ? refreshed
+            ? [...items].reverse()
+            : items
+          : []}
+        loading={loadingList}
+        activeId={active}
+        layoutStorage={inboxStorage}
+        onSelect={(id) => (active = id)}
+        onBack={() => {}}
+        onNew={() => (active = "draft")}
+        {threadTitle}
+      >
+        {#snippet threadActions()}<Button
+            variant="ghost"
+            size="icon-sm"
+            aria-label="Conversation options"
+            ><EllipsisIcon aria-hidden="true" /></Button
+          >{/snippet}
+        <div class="fixture-content">
+          {#if loadingList}<Button onclick={() => (sessionsLoaded = true)}
+              >Finish loading sessions</Button
+            >{/if}
+          <p>Selected session: {active}</p>
+          <Input aria-label="Conversation draft" bind:value={draft} />
+          <Button onclick={() => (refreshed = !refreshed)}
+            >Refresh and rename repository</Button
+          >
+          <Button onclick={() => (sessionsVisible = !sessionsVisible)}
+            >{sessionsVisible
+              ? "Hide loaded sessions"
+              : "Restore loaded sessions"}</Button
+          >
+          <Button onclick={() => (active = "other")}
+            >Select other repository externally</Button
+          >
+          <Button onclick={() => (active = "first")}
+            >Select first chat externally</Button
+          >
+        </div>
+      </CommunityInbox>{/if}
+    <Button onclick={() => (inboxMounted = !inboxMounted)}
+      >{inboxMounted ? "Unmount inbox" : "Remount inbox"}</Button
     >
-      {#snippet threadActions()}<Button
-          variant="ghost"
-          size="icon-sm"
-          aria-label="Conversation options"
-          ><EllipsisIcon aria-hidden="true" /></Button
-        >{/snippet}
-      <div class="fixture-content">
-        {#if loadingList}<Button onclick={() => (sessionsLoaded = true)}
-            >Finish loading sessions</Button
-          >{/if}
-        <p>Selected session: {active}</p>
-        <Input aria-label="Conversation draft" bind:value={draft} />
-        <Button onclick={() => (refreshed = !refreshed)}
-          >Refresh and rename repository</Button
-        >
-        <Button onclick={() => (sessionsVisible = !sessionsVisible)}
-          >{sessionsVisible
-            ? "Hide loaded sessions"
-            : "Restore loaded sessions"}</Button
-        >
-        <Button onclick={() => (active = "other")}
-          >Select other repository externally</Button
-        >
-        <Button onclick={() => (active = "first")}
-          >Select first chat externally</Button
-        >
-      </div>
-    </CommunityInbox>
   </AppShell.Main>
 </CommunityAppShell>
 

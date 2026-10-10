@@ -2,7 +2,16 @@
 <script lang="ts">
   import { AppShell, useAppShell } from "@lapismd/design-core/shell";
   import CommunitySidebarToggleIcon from "../community-app-shell/CommunitySidebarToggleIcon.svelte";
-  import { Input } from "@lapismd/design-core/shadcn/input";
+  import {
+    readInboxPreferences,
+    saveInboxPreferences,
+    toggleInboxPreference,
+    inboxPreferencesKey,
+  } from "./inbox-preferences.js";
+  import StoreViewTabs from "../store-application/StoreViewTabs.svelte";
+  import StoreToolbarSearch from "../StoreToolbarSearch.svelte";
+  import CommunityInboxFilters from "./CommunityInboxFilters.svelte";
+  import { emptyInboxFilters, filterInboxItems } from "./inbox-filters.js";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { ScrollArea } from "@lapismd/design-core/shadcn/scroll-area";
   import * as Empty from "@lapismd/design-core/shadcn/empty";
@@ -16,7 +25,7 @@
   import { resolveLayoutStorage } from "../layout-storage.js";
   import type { CommunityMemberModel } from "../community-workspace/model.js";
   import type { Snippet } from "svelte";
-  import { tick, untrack } from "svelte";
+  import { tick, untrack, onMount } from "svelte";
   import "./inbox.css";
   let {
     items,
@@ -29,6 +38,7 @@
     onNew,
     onBack,
     onAll,
+    scopeLabel,
     threadTitle,
     threadMember,
     threadStatus,
@@ -48,6 +58,7 @@
     onNew: () => void;
     onBack: () => void;
     onAll?: () => void;
+    scopeLabel?: string;
     threadTitle?: string;
     threadMember?: CommunityMemberModel;
     threadStatus?: string;
@@ -57,6 +68,41 @@
     listFooter?: Snippet;
     children: Snippet;
   } = $props();
+  const storage = untrack(() => resolveLayoutStorage(layoutStorage));
+  let preferences = $state(untrack(() => readInboxPreferences(storage, kind)));
+  function togglePreference(field: "pinned" | "archived", id: string) {
+    const restoreFocus = document.activeElement?.closest(".inbox-row-actions");
+    preferences = toggleInboxPreference(preferences, field, id);
+    saveInboxPreferences(storage, kind, preferences);
+    if (restoreFocus)
+      void tick().then(() => {
+        const row = [
+          ...(listElement?.querySelectorAll<HTMLElement>(
+            "[data-inbox-identity]",
+          ) ?? []),
+        ].find((row) => row.dataset.inboxIdentity === id);
+        const next = row?.querySelector<HTMLButtonElement>(
+          `button[aria-label="${field === "pinned" ? (preferences.pinned.includes(id) ? "Unpin conversation" : "Pin conversation") : preferences.archived.includes(id) ? "Archive on this device" : "Restore on this device"}"]`,
+        );
+        (
+          next ??
+          listElement?.querySelector<HTMLButtonElement>(
+            'button[aria-label="Search loaded conversations"],button[aria-label="Close search"]',
+          )
+        )?.focus({ preventScroll: true });
+      });
+  }
+  onMount(() => {
+    const update = (event: StorageEvent) => {
+      if (
+        event.storageArea === storage &&
+        (event.key === inboxPreferencesKey(kind) || event.key === null)
+      )
+        preferences = readInboxPreferences(storage, kind);
+    };
+    window.addEventListener("storage", update);
+    return () => window.removeEventListener("storage", update);
+  });
   const plural = $derived(kind === "thread" ? "Threads" : "Sessions");
   const listLabel = $derived(
     kind === "thread" ? "Thread conversations" : "Session chats",
@@ -69,17 +115,43 @@
       ? "thread-conversation-settings"
       : "agent-session-settings",
   );
-  let search = $state("");
+  let search = $state(""),
+    searchOpen = $state(false),
+    view = $state("all"),
+    filters = $state(emptyInboxFilters());
+  $effect(() => {
+    view = scopeLabel ? "scope" : "all";
+  });
+  const sections = $derived([
+    { value: "all", label: "All" },
+    ...(scopeLabel ? [{ value: "scope", label: scopeLabel }] : []),
+    ...(kind === "thread"
+      ? [{ value: "active", label: "Active" }]
+      : [{ value: "connected", label: "Connected" }]),
+    { value: "archived", label: "Archived" },
+    ...(kind === "thread" ? [] : [{ value: "agents", label: "Agents" }]),
+  ]);
+  function selectView(next: string) {
+    if (next === "agents") {
+      onBack();
+      return;
+    }
+    view = next;
+    if (next === "all") {
+      if (onAll) onAll();
+      else if (kind === "thread") onBack();
+    }
+  }
   const visibleItems = $derived(
-    items.filter((item) =>
-      [
-        item.author.name,
-        item.context,
-        item.excerpt,
-        item.repository?.name,
-      ].some((value) =>
-        value?.toLocaleLowerCase().includes(search.trim().toLocaleLowerCase()),
-      ),
+    filterInboxItems(
+      items,
+      search,
+      filters,
+      view === "archived" ? "all" : view,
+    ).filter(
+      (item) =>
+        preferences.archived.includes(item.targetId ?? item.id) ===
+        (view === "archived"),
     ),
   );
   const shell = useAppShell();
@@ -88,7 +160,7 @@
   const resize = createInboxResize(
     () => bodyElement,
     () => listElement,
-    untrack(() => resolveLayoutStorage(layoutStorage)),
+    storage,
   );
   let listOpen = $state(true);
   let sidebarOpen = $state(false);
@@ -131,31 +203,40 @@
     bind:open={listOpen}
   >
     <div class="lc-community-inbox__list">
-      <header class="lc-community-inbox__list-header">
-        <strong>{title}</strong>
-        <Button
-          variant="ghost"
-          size="icon-sm"
-          aria-label={kind === "thread" ? "New Thread" : "New agent session"}
-          onclick={onNew}><PlusIcon aria-hidden="true" /></Button
+      <header
+        class="lc-community-inbox__list-header"
+        aria-label={`${title} navigation`}
+      >
+        <StoreViewTabs
+          value={view}
+          {sections}
+          onSelect={selectView}
+          label={kind === "thread" ? "Thread views" : "Session views"}
+          hideTabs={searchOpen}
         >
+          {#snippet leading()}<StoreToolbarSearch
+              label="Search loaded conversations"
+              scope={kind}
+              query={search}
+              bind:open={searchOpen}
+              live
+              onQuery={(query) => {
+                search = query;
+              }}
+            />{/snippet}
+          {#snippet trailing()}
+            <CommunityInboxFilters {items} bind:filters />
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              aria-label={kind === "thread"
+                ? "New Thread"
+                : "New agent session"}
+              onclick={onNew}><PlusIcon aria-hidden="true" /></Button
+            >
+          {/snippet}
+        </StoreViewTabs>
       </header>
-      <div class="lc-community-inbox__list-header">
-        <Button variant="ghost" size="sm" onclick={onBack}
-          >{kind === "thread" ? "All Threads" : "Agents"}</Button
-        >
-        {#if onAll}<Button variant="ghost" size="sm" onclick={onAll}
-            >All sessions</Button
-          >{/if}
-      </div>
-      <div class="lc-community-inbox__list-header">
-        <Input
-          type="search"
-          aria-label="Search loaded conversations"
-          placeholder="Search conversations"
-          bind:value={search}
-        />
-      </div>
       <ScrollArea class="lc-community-inbox__scroll">
         <div class="lc-community-inbox__items" aria-label={listLabel}>
           <CommunityInboxSessions
@@ -164,20 +245,28 @@
             {onSelect}
             {loading}
             {kind}
+            pinned={preferences.pinned}
+            archived={preferences.archived}
+            onPin={(id) => togglePreference("pinned", id)}
+            onArchive={(id) => togglePreference("archived", id)}
           />
           {@render listFooter?.()}
           {#if !loading && !visibleItems.length}<Empty.Root
               class="lc-community-inbox__empty"
               role="status"
               ><Empty.Header
+                ><Empty.Media variant="icon"
+                  ><MailIcon aria-hidden="true" /></Empty.Media
                 ><Empty.Title
                   >{items.length
                     ? "No matching conversations"
                     : `No ${kind === "thread" ? "Threads" : "sessions"} yet`}</Empty.Title
                 ><Empty.Description
-                  >{kind === "thread"
-                    ? "Create a Thread to begin a conversation."
-                    : "Start a session to begin a chat with this agent."}</Empty.Description
+                  >{items.length
+                    ? "Try changing your search or filters."
+                    : kind === "thread"
+                      ? "Create a Thread to begin a conversation."
+                      : "Start a session to begin a chat with this agent."}</Empty.Description
                 ></Empty.Header
               ></Empty.Root
             >{/if}

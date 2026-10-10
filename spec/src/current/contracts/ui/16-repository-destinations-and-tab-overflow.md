@@ -14,5 +14,19 @@ and Projects in that order. Overview is the existing Files destination; its
 native file browser and legacy `files` hash remain intact. Width measurement
 follows the repository-document tabs: keep a visible leading prefix, move
 trailing tabs to More, preserve the selected hidden destination, and restore
-tabs when width returns. Pill colors, shape and typography stay unchanged;
-keyboard selection and dropdown focus remain available.
+tabs when width returns. When no tab fits fully, More includes every section,
+including the first; no clipped first tab is stranded outside its menu. Pill
+colors, shape and typography stay unchanged; keyboard selection and dropdown
+focus remain available.
+
+Application navigation reuses the same owned responsive tab strip in Projects,
+selected-project views, the legacy work surface, Settings and conversation
+Files/Changes. Each preserves its existing enclosing tab panel context, disabled
+sections and selection callback. Fitting measures the space remaining after
+leading/trailing controls, refits after search closes and restores the leading
+prefix when width returns. The selected overflow entry remains marked in More.
+Natural widths are measured in an inert hidden surface without replacing active
+controls. Fitting does not subscribe to its own output state, repeatedly reset
+visible tabs or remount an open overflow menu while the sidebar is resized.
+Repository document previews retain their existing responsive line tabs and
+icons; fixed avatar/profile mode switches are distinct from navigation pills.

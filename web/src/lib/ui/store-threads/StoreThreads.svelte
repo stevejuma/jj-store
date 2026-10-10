@@ -68,6 +68,14 @@
 <CommunityInbox
   kind="thread"
   title="Threads"
+  scopeLabel={controller.state.route.threadRepository
+    ? (controller.state.repositories.find(
+        (r) => r.id === controller.state.route.threadRepository,
+      )?.name ?? "This repository")
+    : undefined}
+  onAll={controller.state.route.threadRepository
+    ? () => void controller.actions.openThreads?.()
+    : undefined}
   {items}
   activeId={selected}
   loading={!entries.length ||

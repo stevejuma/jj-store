@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed contextual repository banner presentation: shared collection/surface insets align Reviews with its header, retain Agents geometry and contain unavailable detail panes; other tabs keep scoped toast and exact-recovery semantics.",
-      "fingerprint": "fb4f4fce64d2884bdd36f0bed1e11c735779a13e0ce0267eeedd71c2a4b2acb6"
+      "reason": "Responsive shared tabs, loaded-only inbox filters, icon empty states, device-local pin/archive with a leading pinned group, compact joined row actions and footer pickers; no read or lifecycle authority changes.",
+      "fingerprint": "6e957ba9b563f73bc939b40a62cd596da8e964c90316d4b5ac9873116175ef52"
     }
   },
   {

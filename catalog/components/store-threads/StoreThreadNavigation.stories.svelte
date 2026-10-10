@@ -28,10 +28,8 @@
     await expect(
       c.queryAllByRole("button", { name: "Browse threads" }),
     ).toHaveLength(0);
-    await userEvent.click(c.getByRole("button", { name: "All Threads" }));
-    await expect(
-      c.getByRole("button", { name: /^Threads$/ }),
-    ).toBeVisible();
+    await userEvent.click(c.getByRole("tab", { name: "All" }));
+    await expect(c.getByRole("button", { name: /^Threads$/ })).toBeVisible();
   }
 </script>
 
@@ -75,12 +73,8 @@
   args={{ initiallyCollapsed: true }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
-    await expect(
-      c.getByRole("button", { name: /^Agents$/ }),
-    ).toBeVisible();
-    await expect(
-      c.getByRole("button", { name: /^Threads$/ }),
-    ).toBeVisible();
+    await expect(c.getByRole("button", { name: /^Agents$/ })).toBeVisible();
+    await expect(c.getByRole("button", { name: /^Threads$/ })).toBeVisible();
     await expect(
       c.queryByRole("button", { name: "Browse threads" }),
     ).toBeNull();

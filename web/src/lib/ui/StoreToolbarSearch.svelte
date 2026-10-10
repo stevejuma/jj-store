@@ -10,11 +10,13 @@
     query = "",
     open = $bindable(false),
     onQuery,
+    live = false,
   }: {
     label: string;
     scope: string;
     query?: string;
     open?: boolean;
+    live?: boolean;
     onQuery: (value: string) => void | Promise<void>;
   } = $props();
   let search = $state("");
@@ -86,6 +88,10 @@
             event.preventDefault();
             void close();
           }
+        }}
+        type={live ? "search" : "text"}
+        oninput={(event) => {
+          if (live) void onQuery(event.currentTarget.value);
         }}
         bind:ref={input}
         bind:value={search}

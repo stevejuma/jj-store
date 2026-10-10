@@ -139,6 +139,7 @@
     activeId={route.agentView === "new"
       ? "new-session"
       : route.executionSessionId}
+    scopeLabel={route.setupId ? (agent?.name ?? "This agent") : undefined}
     title={agent ? `${agent.name} sessions` : "Sessions"}
     loading={!manager.value}
     threadSidebar={route.agentView === "session" && chat

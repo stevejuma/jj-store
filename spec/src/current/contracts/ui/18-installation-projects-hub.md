@@ -245,3 +245,9 @@ beside it with the same treatment and omits duplicate body actions. Task detail
 uses the same icon launcher in its header. Launch retains the exact existing
 project/task/repository context and performs the existing explicit launch flow;
 this presentation never warms, dispatches or creates a workspace by itself.
+
+Projects and selected-project navigation use the shared repository responsive
+pill tabs, keeping a leading prefix and trailing More menu as the available
+width shrinks. Search and filter actions retain their existing semantics and
+panel relationships; opening search fills the navigation row. This presentation
+adds no discovery, read, polling or mutation work.

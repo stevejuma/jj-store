@@ -1,8 +1,8 @@
 # M24 reusable ACP agents and contextual conversations
 
-| ID  | Status      | Depends | Requirements                                 | Gate                                                                                                                          | Next                                                                                                               | Evidence                                                                                                                                                                                                                                                                           |
-| --- | ----------- | ------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| M24 | In progress | M23     | JST-COLLAB-034,JST-COLLAB-035,JST-COLLAB-036 | Warm fleet, personal metadata homes, isolated multiple repository bindings, canonical discussion links and cold contextual UI | Qualify additional version-3 adapters and live permissions/cancellation; retain independent desktop/platform gates | E-FLEET-001,E-COMPUTE-004,E-CHAT-BODY-001,E-CHAT-BODY-002,E-CHAT-BODY-003,E-CHAT-BODY-004,E-CHAT-BODY-005,E-CHAT-BODY-006,E-CHAT-BODY-007,E-CHAT-METADATA-001,E-CHAT-METADATA-002,E-CHAT-METADATA-MAIN-001,E-CHAT-METADATA-MAIN-002,E-CHAT-METADATA-MAIN-003,E-INBOX-FRESHNESS-001,E-THREADS-001,E-THREADS-002 |
+| ID  | Status      | Depends | Requirements                                 | Gate                                                                                                                          | Next                                                                                                               | Evidence                                                                                                                                                                                                                                                                                                                            |
+| --- | ----------- | ------- | -------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| M24 | In progress | M23     | JST-COLLAB-034,JST-COLLAB-035,JST-COLLAB-036 | Warm fleet, personal metadata homes, isolated multiple repository bindings, canonical discussion links and cold contextual UI | Qualify additional version-3 adapters and live permissions/cancellation; retain independent desktop/platform gates | E-FLEET-001,E-COMPUTE-004,E-CHAT-BODY-001,E-CHAT-BODY-002,E-CHAT-BODY-003,E-CHAT-BODY-004,E-CHAT-BODY-005,E-CHAT-BODY-006,E-CHAT-BODY-007,E-CHAT-METADATA-001,E-CHAT-METADATA-002,E-CHAT-METADATA-MAIN-001,E-CHAT-METADATA-MAIN-002,E-CHAT-METADATA-MAIN-003,E-INBOX-FRESHNESS-001,E-THREADS-001,E-THREADS-002,E-INBOX-CONTROLS-001 |
 
 M23 remains qualified for its prior version-2 profile. M24 source, fixture and
 installed version-3 results are reviewed independently; no fixture closes a real
@@ -384,17 +384,17 @@ footer menus and shared popover titles normal-weight item typography, removes
 picker-specific bold headings and keeps profile menu identity consistent.
 Focused interaction/accessibility and live computed-style checks retain existing
 menu behavior. M24 stays In progress; ResizeObserver diagnostics and independent
-workspace qualification remain open. Visual baselines remain unapproved. The [footer review](footer-review.md) records E-CHAT-FOOTER-001/002.
-The [metadata review](metadata-review.md) records E-CHAT-METADATA-001/002
-and main integration. The [inbox review](inbox-freshness-review.md) records
+workspace qualification remain open. Visual baselines remain unapproved. The
+[footer review](footer-review.md) records E-CHAT-FOOTER-001/002. The
+[metadata review](metadata-review.md) records E-CHAT-METADATA-001/002 and main
+integration. The [inbox review](inbox-freshness-review.md) records
 E-EVENT-CONNECTIONS-001. The [Threads review](intentional-threads-review.md)
 records E-THREADS-001/002.
 <!-- generated-navigation -->
+
 ## Pages
 
 - [Agents presentation review](agents-presentation-review.md)
 - [Conversation footer review](footer-review.md)
 - [Inbox read lifecycle review](inbox-freshness-review.md)
-- [Intentional Threads review](intentional-threads-review.md)
-
 - [Next page](SUMMARY.index-index/002/index.md)

@@ -18,6 +18,22 @@ export function threadInboxRows(
         thread.value.comment_source
       )
         continue;
+      const agents = [
+        ...new Set(
+          (controller.execution?.value?.conversations ?? [])
+            .filter(
+              (c) =>
+                c.origin.home === home &&
+                c.origin.thread === thread.value.thread_id,
+            )
+            .flatMap((c) => c.participants),
+        ),
+      ].map((id) => ({
+        id,
+        name:
+          controller.execution?.value?.setups.find((a) => a.id === id)?.name ??
+          `Agent ${id.slice(0, 12)}`,
+      }));
       const identity = `${home}:${thread.value.thread_id}`;
       const codebase = thread.value.codebase ?? [home];
       const visible = codebase.filter((id) =>
@@ -37,6 +53,7 @@ export function threadInboxRows(
           context: thread.value.title,
           excerpt: thread.directory?.excerpt,
           status: thread.value.status,
+          agents,
           lastActivityAt:
             Number(
               thread.directory?.last_activity_at_millis ??

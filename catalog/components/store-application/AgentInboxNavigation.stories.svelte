@@ -76,7 +76,9 @@
     sessions.focus();
     await userEvent.keyboard("{Enter}");
     await c.findByRole("button", { name: /Open session Fixture conversation/ });
-    await expect(c.getByText("Sessions", { exact: true })).toBeVisible();
+    await expect(
+      c.getByRole("tablist", { name: "Session views" }),
+    ).toBeVisible();
     await expect(
       c.queryByLabelText("Session commands"),
     ).not.toBeInTheDocument();

@@ -73,3 +73,33 @@ test("repository groups retain service order, distinct identities and exact per-
 test("empty inboxes do not invent repository groups", () => {
   assert.deepEqual(groupSessionInboxItems([]), []);
 });
+
+test("pins form the first expandable group and collapse repository aliases into one canonical row", () => {
+  const author = { id: "agent", name: "Agent", initials: "AG", handle: "" };
+  const rows: SessionInboxItem[] = [
+    {
+      id: "shared:a",
+      targetId: "home:shared",
+      author,
+      context: "Thread",
+      status: "active",
+      repository: { id: "a", name: "A", href: "#/repos/a", label: "Open A" },
+    },
+    {
+      id: "shared:b",
+      targetId: "home:shared",
+      author,
+      context: "Thread",
+      status: "active",
+      repository: { id: "b", name: "B", href: "#/repos/b", label: "Open B" },
+    },
+    { id: "other", author, context: "Other", status: "active" },
+  ];
+  const groups = groupSessionInboxItems(rows, ["home:shared"]);
+  assert.equal(groups[0].id, "pinned");
+  assert.equal(groups[0].name, "Pinned");
+  assert.deepEqual(groups[0].items, [rows[0]]);
+  assert.equal(groups[1].id, "unbound");
+  assert.strictEqual(groups[0].items[0], rows[0]);
+  assert.equal(groupSessionInboxItems(rows).length, 3);
+});

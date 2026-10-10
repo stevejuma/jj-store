@@ -1,5 +1,10 @@
 # Change map
 
+E-INBOX-CONTROLS-001 retains JST-UI-015 ownership: inbox filters, ID-only device
+preferences and responsive navigation styles are maintained under `web/src/lib`.
+Their provenance identifies the owned derivation; production imports no
+Community or catalog source. Public Design Core primitives remain dependencies.
+
 `docs/ui-provenance.json` requires both `spec-governance.md` and `ui.md`. The
 isolated `docs/capture-preview.md` runbook maps to `cli.md` and
 `collaboration.md`; its launcher and admission examples remain governed

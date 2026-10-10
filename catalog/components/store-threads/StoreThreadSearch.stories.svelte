@@ -12,6 +12,9 @@
   async function search({ canvasElement }: { canvasElement: HTMLElement }) {
     const c = within(canvasElement);
     await c.findByRole("button", { name: "Open Thread general" });
+    await userEvent.click(
+      await c.findByRole("button", { name: "Search loaded conversations" }),
+    );
     const input = c.getByRole("searchbox", {
       name: "Search loaded conversations",
     });
@@ -28,10 +31,15 @@
     await expect(
       await c.findByText("Release planning discussion"),
     ).toBeVisible();
-    await userEvent.click(c.getByRole("button", { name: "All Threads" }));
-    await expect(input).toHaveValue("release checklist");
-    await userEvent.clear(input);
-    await userEvent.type(input, "no match");
+    await userEvent.click(c.getByRole("button", { name: "Close search" }));
+    await userEvent.click(
+      await c.findByRole("button", { name: "Search loaded conversations" }),
+    );
+    const nextInput = c.getByRole("searchbox", {
+      name: "Search loaded conversations",
+    });
+    await userEvent.clear(nextInput);
+    await userEvent.type(nextInput, "no match");
     await expect(c.getByText("No matching conversations")).toBeVisible();
   }
 </script>
@@ -48,6 +56,9 @@
     await userEvent.click(
       await c.findByRole("button", { name: "Toggle thread conversations" }),
     );
+    await userEvent.click(
+      await c.findByRole("button", { name: "Search loaded conversations" }),
+    );
     await userEvent.type(
       c.getByRole("searchbox", { name: "Search loaded conversations" }),
       "release",
@@ -63,6 +74,9 @@
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
     await c.findByRole("button", { name: "Open Thread general" });
+    await userEvent.click(
+      await c.findByRole("button", { name: "Search loaded conversations" }),
+    );
     const input = c.getByRole("searchbox", {
       name: "Search loaded conversations",
     });

@@ -53,6 +53,17 @@ export function sessionItems(
           ? session.last_activity_at_millis / 1_000
           : undefined,
       status: sessionStatus(session, unknown),
+      agents: session.setup_id
+        ? [
+            {
+              id: session.setup_id,
+              name:
+                status?.setups.find((s) => s.id === session.setup_id)?.name ??
+                "Deleted agent",
+            },
+          ]
+        : [],
+      harness: session.runner,
       repository: {
         id: session.repository,
         name: repositoryName,

@@ -2,6 +2,19 @@
 
 ## Document conversations and workspace files
 
+Threads and agent sessions use the same compact sidebar header. **All** shows
+the loaded conversations; narrow sidebars move tabs into **More**, including All
+when no tab fits. Resize the sidebar to reveal tabs again. The search icon
+expands into an input across the header; Escape closes it. The filter icon lets
+you select several repositories, agents, statuses or harnesses where loaded
+metadata supplies those choices. Filters combine across groups and make no
+additional requests. Pagination remains available for matching older
+conversations. Empty lists use the shared icon-bearing empty state. Hover or
+focus a chat row to **Pin** or **Archive on this device**. Pins appear in the
+first expandable Pinned group, once per conversation. Archive hides the row from
+All; use Archived to restore it. These choices persist on this browser device
+without changing shared Thread status, agent execution or history.
+
 Document is the default conversation view; Appearance can switch to Classic.
 Write the next prompt in the document's inline input. The footer retains
 formatting, agent, model, thinking and Send controls. Drafts and pending

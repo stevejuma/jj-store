@@ -5,6 +5,7 @@
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as Tooltip from "@lapismd/design-core/shadcn/tooltip";
   import { Skeleton } from "@lapismd/design-core/shadcn/skeleton";
+  import PinIcon from "@lucide/svelte/icons/pin";
   import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
   import FolderGitIcon from "@lucide/svelte/icons/folder-git-2";
   import MessagesSquareIcon from "@lucide/svelte/icons/messages-square";
@@ -16,14 +17,22 @@
     onSelect,
     loading = false,
     kind = "session",
+    pinned = [],
+    archived = [],
+    onPin,
+    onArchive,
   }: {
     items: readonly SessionInboxItem[];
     activeId?: string | null;
     onSelect: (id: string) => void;
     loading?: boolean;
     kind?: "session" | "thread";
+    pinned?: readonly string[];
+    archived?: readonly string[];
+    onPin?: (id: string) => void;
+    onArchive?: (id: string) => void;
   } = $props();
-  const groups = $derived(groupSessionInboxItems(items));
+  const groups = $derived(groupSessionInboxItems(items, pinned));
   let openGroups = $state<Record<string, boolean>>({});
   let revealedId: string | null | undefined;
   $effect(() => {
@@ -92,7 +101,9 @@
                 aria-label={`${open ? "Collapse" : "Expand"} ${group.name} ${kind === "thread" ? "Threads" : "sessions"}`}
                 title={group.name}
               >
-                {#if group.repositoryId}<FolderGitIcon
+                {#if group.pinned}<PinIcon
+                    aria-hidden="true"
+                  />{:else if group.repositoryId}<FolderGitIcon
                     data-icon="inline-start"
                     aria-hidden="true"
                   />{:else}<MessagesSquareIcon
@@ -148,6 +159,14 @@
                 {item}
                 active={(item.targetId ?? item.id) === activeId}
                 onSelect={() => onSelect(item.targetId ?? item.id)}
+                pinned={pinned.includes(item.targetId ?? item.id)}
+                archived={archived.includes(item.targetId ?? item.id)}
+                onPin={onPin
+                  ? () => onPin(item.targetId ?? item.id)
+                  : undefined}
+                onArchive={onArchive
+                  ? () => onArchive(item.targetId ?? item.id)
+                  : undefined}
               />
             {/each}
           </div>

@@ -1,6 +1,5 @@
 <script lang="ts">
-  import * as Tabs from "@lapismd/design-core/shadcn/tabs";
-  import { ScrollArea } from "@lapismd/design-core/shadcn/scroll-area";
+  import StoreViewTabs from "../store-application/StoreViewTabs.svelte";
   import StoreToolbarSearch from "../StoreToolbarSearch.svelte";
   import StoreProjectsFilterControls from "./StoreProjectsFilterControls.svelte";
   import type { StoreController } from "../../controller/contracts.js";
@@ -26,43 +25,38 @@
 </script>
 
 <div class="community-projects__tabs store-projects-navigation">
-  {#if tab !== "reviews"}<StoreToolbarSearch
-      label={`Search ${tab}`}
-      {scope}
-      {query}
-      bind:open
-      onQuery={(value) => hub.filter({ workQuery: value })}
-    />{/if}
-  {#if tab === "reviews" || !open}
-    <ScrollArea
-      type="hover"
-      orientation="horizontal"
-      class="community-projects__tabs-scroll-area"
-    >
-      <Tabs.List
-        class="community-projects__tab-list"
-        aria-label={project ? "Project views" : "Projects views"}
-      >
-        {#each tabs as value}<Tabs.Trigger
-            class="community-projects__tab-trigger"
-            {value}>{value[0]!.toUpperCase() + value.slice(1)}</Tabs.Trigger
-          >{/each}
-      </Tabs.List>
-    </ScrollArea>
-  {/if}
-  {#if tab !== "repositories"}<div class="store-projects-navigation__filters">
-      <StoreProjectsFilterControls {controller} {project} />
-    </div>{/if}
+  <StoreViewTabs
+    inheritContext
+    value={tab}
+    sections={tabs.map((value) => ({
+      value,
+      label: value[0]!.toUpperCase() + value.slice(1),
+    }))}
+    onSelect={(value) => void hub.filter({ workTab: value as ProjectsTab })}
+    label={project ? "Project views" : "Projects views"}
+    hideTabs={tab !== "reviews" && open}
+  >
+    {#snippet leading()}
+      {#if tab !== "reviews"}<StoreToolbarSearch
+          label={`Search ${tab}`}
+          {scope}
+          {query}
+          bind:open
+          onQuery={(value) => hub.filter({ workQuery: value })}
+        />{/if}
+    {/snippet}
+    {#snippet trailing()}
+      {#if tab !== "repositories"}<StoreProjectsFilterControls
+          {controller}
+          {project}
+        />{/if}
+    {/snippet}
+  </StoreViewTabs>
 </div>
 
 <style>
   .store-projects-navigation {
-    height: 3.25rem;
-  }
-  .store-projects-navigation__filters {
-    display: flex;
-    align-items: center;
-    gap: 0.4rem;
-    flex: none;
+    padding: 0;
+    min-width: 0;
   }
 </style>
