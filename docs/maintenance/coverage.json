@@ -30,8 +30,8 @@
       "docs/site/concepts/collaboration.md"
     ],
     "review": {
-      "reason": "Reviewed exact conversation sources, repository-qualified review revisions and answer links; documented narrow retained local file anchors without qualifying portable agent anchors. Integrated conversation metadata: Documented immutable conversation metadata, provenance, owner identity, title precedence and bounded validation.",
-      "fingerprint": "5a6a04086ac86b49ca04e54fc31ff794dca1b923ddba0c85ff433c9941816500"
+      "reason": "Reviewed intentional Thread ownership, typed internal annotations and independently authorized Codebase publication; updated the collaboration manual.",
+      "fingerprint": "771b4a0e50da72c6ca4851e799e09ae620aba40b594e3469e88a144906718710"
     }
   },
   {
@@ -65,8 +65,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed application-owned ChatGPT account interfaces and retained independent repository mutation and RPC authorization.",
-      "fingerprint": "8e294aa4eb4f30eb1ef986d98b2d5d76e87206aeb8dbe3934dd11737f8a6312e"
+      "reason": "Reviewed Thread workspace service requests, directory/search exclusion and frozen repository witnesses; transport guidance preserves exact native/local authority.",
+      "fingerprint": "0b927917bbf6b91f011b7c9a7c1c0c874545ad996c7344469da48e1ab028b855"
     }
   },
   {
@@ -96,8 +96,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed disconnected-account sign-out cancellation and generation fencing, preserving application-owned credential custody and explicit authorization.",
-      "fingerprint": "b1b8ccdb20aa97761185fbaf2383d7f9e728c4b4eb7eeabcd6ac196e1055989d"
+      "reason": "Reviewed supervisor Thread request journal, personal metadata home and active-work removal gate; lifecycle manual documents restart and independent repository access.",
+      "fingerprint": "c4283659ca652e18b06524cf0379160b79f9e884dfc3e63d3f59a3243b6d7e38"
     }
   },
   {
@@ -122,8 +122,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Documented LocalTrusted Admin account routes and credential-free browser contracts; repository admission remains unchanged.",
-      "fingerprint": "a488a19489d1933dbe1c4196723b5e1dc3b8aa0166fcf7b077cc2b3ed0138d8d"
+      "reason": "Reviewed LocalTrusted Admin Thread configuration and generic browser refusals; generated references and transport manual retain admission and independent code authorization.",
+      "fingerprint": "012f519ca250d0d332e485a65d282ef44c87d58f399d388cbbbfb6f5778e7d5a"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed bounded cross-tab event sharing, retained reset boundaries, whole-domain catch-up and fallback limits; browsing guidance remains accurate.",
-      "fingerprint": "afeeb8e50ca74bb96b6b581d2c47179e0a65f560399478c6c0afe96a6991206e"
+      "reason": "Reviewed shared intentional Threads, cached Codebase alias publication, Workspace menu naming and confirmed removal returning to inbox without rereading hidden tombstones; updated browsing guidance.",
+      "fingerprint": "fa7ad58fdfd8ee1691c5a2e745bcc33d0e7d0a3edc475296c171604d6b254e69"
     }
   },
   {
@@ -154,8 +154,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Reviewed generated ChatGPT account and runtime-option schemas, preserving existing CLI commands and response boundaries.",
-      "fingerprint": "1bc9d94f7bd4ad105f73985c56d7b60f266be099f9e69a94d29b7cefa3fc7a97"
+      "reason": "Reviewed generated Thread workspace requests, annotated internal owners and exact send witnesses; regenerated API references and updated transport guidance.",
+      "fingerprint": "afed574faf87f31537fe4f1a285975c2eb7912267f13e97164f14cc1bfded08d"
     }
   },
   {

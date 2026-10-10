@@ -18,7 +18,7 @@ export function createProfileRouteRestorer(context: {
     const route = context.route(),
       source = context.source();
     context.invalidate();
-    if (route.agentsHub) return;
+    if (route.agentsHub || (route.threadsHub && !route.repository)) return;
     if (route.page === "projects") {
       await context.projects.restore();
       return;

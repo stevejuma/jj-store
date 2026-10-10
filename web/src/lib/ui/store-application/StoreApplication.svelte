@@ -83,6 +83,8 @@
   const detailsRail = shell.getPanel(repositoryDetailsPanelId)!;
   provideConversationInspection(shell, () => {
     const route = controller.state.route;
+    if (route.page === "threads" && route.threadId && controller.threads)
+      return `${controller.threads.conversationScope}:${route.threadId}:main`;
     return route.agentsHub && route.agentView === "session"
       ? (route.executionSessionId ?? null)
       : null;
@@ -217,7 +219,7 @@
       />{:else if !settingsOpen && current.page === "threads"}<StoreThreadsBreadcrumb
         {controller}
       />{/if}{/snippet}
-  {#snippet headerEnd()}{#if !settingsOpen && current.agentsHub && (current.agentView === "session" || current.agentView === "sessions")}<StoreWorkspaceToggle
+  {#snippet headerEnd()}{#if !settingsOpen && ((current.agentsHub && (current.agentView === "session" || current.agentView === "sessions")) || (current.page === "threads" && current.threadId))}<StoreWorkspaceToggle
       />{:else if !settingsOpen && (!current.agentsHub || controller.execution?.chat.open)}<StoreApplicationHeaderActions
         {controller}
         disabled={editorOpen}

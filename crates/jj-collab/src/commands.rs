@@ -8,6 +8,25 @@ use std::collections::BTreeMap;
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(tag = "type", rename_all = "snake_case", deny_unknown_fields)]
 pub enum ThreadCommandV1 {
+    CreateIntentional {
+        thread_id: ThreadId,
+        title: String,
+        repositories: Vec<jj_store_model::RepositoryId>,
+    },
+    CreateConversation {
+        thread_id: ThreadId,
+        title: String,
+        target: ConversationMetadataTargetV1,
+    },
+    CreateAnnotation {
+        thread_id: ThreadId,
+        title: String,
+    },
+    SetCodebase {
+        thread_id: ThreadId,
+        expected: CollabObjectRef,
+        repositories: Vec<jj_store_model::RepositoryId>,
+    },
     SetMetadata {
         thread_id: ThreadId,
         expected_thread: CollabObjectRef,
@@ -78,10 +97,43 @@ impl ThreadCommandV1 {
             | Self::Message { thread_id, .. }
             | Self::Link { thread_id, .. }
             | Self::Detach { thread_id, .. } => *thread_id,
+            Self::CreateIntentional { thread_id, .. }
+            | Self::CreateConversation { thread_id, .. }
+            | Self::CreateAnnotation { thread_id, .. }
+            | Self::SetCodebase { thread_id, .. } => *thread_id,
         }
     }
     pub fn validate(&self) -> Result<()> {
         match self {
+            Self::CreateIntentional {
+                title,
+                repositories,
+                ..
+            } => {
+                if !label(title, 1024) {
+                    return Err(Error::Invalid("Thread title"));
+                }
+                validate_codebase(repositories)?;
+            }
+            Self::CreateConversation { title, target, .. } => {
+                if !label(title, 1024) {
+                    return Err(Error::Invalid("conversation title"));
+                }
+                target.key()?;
+            }
+            Self::CreateAnnotation { title, .. } => {
+                if !label(title, 1024) {
+                    return Err(Error::Invalid("annotation title"));
+                }
+            }
+            Self::SetCodebase {
+                expected,
+                repositories,
+                ..
+            } => {
+                expect(*expected, CollabObjectKind::ThreadVersion)?;
+                validate_codebase(repositories)?;
+            }
             Self::SetMetadata {
                 expected_thread,
                 expected_metadata,
@@ -318,7 +370,11 @@ impl ThreadStateV1 {
             ThreadCommandV1::Create { .. }
             | ThreadCommandV1::CreateAgentDiscussion { .. }
             | ThreadCommandV1::CreateCommentDiscussion { .. } => None,
+            ThreadCommandV1::CreateIntentional { .. }
+            | ThreadCommandV1::CreateConversation { .. }
+            | ThreadCommandV1::CreateAnnotation { .. } => None,
             ThreadCommandV1::Rename { expected, .. }
+            | ThreadCommandV1::SetCodebase { expected, .. }
             | ThreadCommandV1::Lifecycle { expected, .. } => Some(*expected),
             ThreadCommandV1::Message {
                 expected_thread, ..
@@ -336,6 +392,31 @@ impl ThreadStateV1 {
         let mut message = None;
         let mut link = None;
         let mut reassigned_from = None;
+        let prior = old.and_then(|r| match graph.get(r).ok()? {
+            CollabObjectV1::ThreadVersion(v) => Some(v),
+            _ => None,
+        });
+        let purpose = match command {
+            ThreadCommandV1::CreateConversation { target, .. } => {
+                Some(ThreadPurposeV1::Conversation {
+                    target: target.clone(),
+                })
+            }
+            ThreadCommandV1::CreateCommentDiscussion { .. }
+            | ThreadCommandV1::CreateAgentDiscussion { .. }
+            | ThreadCommandV1::CreateAnnotation { .. } => Some(ThreadPurposeV1::Annotation),
+            _ => prior.and_then(|v| v.purpose.clone()),
+        };
+        let codebase = match command {
+            ThreadCommandV1::CreateIntentional { repositories, .. }
+            | ThreadCommandV1::SetCodebase { repositories, .. } => Some(repositories.clone()),
+            _ => prior.and_then(|v| v.codebase.clone()),
+        };
+        if matches!(command, ThreadCommandV1::SetCodebase { .. })
+            && !prior.is_some_and(ThreadVersionV1::is_user_thread)
+        {
+            return Err(Error::Invalid("internal conversation Codebase"));
+        }
         let comment_source = match command {
             ThreadCommandV1::CreateCommentDiscussion { source, .. } => Some(source.clone()),
             _ => old.and_then(|r| match graph.get(r).ok()? {
@@ -357,6 +438,9 @@ impl ThreadStateV1 {
         };
         let (title, status, baseline, event_kind) = match command {
             ThreadCommandV1::CreateAgentDiscussion { title, .. }
+            | ThreadCommandV1::CreateIntentional { title, .. }
+            | ThreadCommandV1::CreateConversation { title, .. }
+            | ThreadCommandV1::CreateAnnotation { title, .. }
             | ThreadCommandV1::CreateCommentDiscussion { title, .. } => (
                 title.clone(),
                 ThreadStatusV1::Created,
@@ -380,6 +464,7 @@ impl ThreadStateV1 {
                 let mut title = previous.title.clone();
                 let mut status = previous.status;
                 let event_kind = match command {
+                    ThreadCommandV1::SetCodebase { .. } => ThreadEventKindV1::CodebaseChanged,
                     ThreadCommandV1::Rename { title: new, .. } => {
                         title = new.clone();
                         ThreadEventKindV1::Renamed {
@@ -666,6 +751,8 @@ impl ThreadStateV1 {
             baseline,
             agent_message,
             comment_source,
+            purpose,
+            codebase,
         }))?;
         root.threads = graph.catalog_update(
             root.threads,

@@ -14,7 +14,15 @@
   import { threadWritable } from "./thread-view.js";
   import { useThreadPanel } from "./thread-panel.svelte.js";
   import StoreThreadLifecycleActions from "./StoreThreadLifecycleActions.svelte";
-  let { controller }: { controller: StoreController } = $props();
+  let {
+    controller,
+    embedded = false,
+    onClose,
+  }: {
+    controller: StoreController;
+    embedded?: boolean;
+    onClose?: () => void;
+  } = $props();
   const threads = $derived(controller.threads);
   const detail = $derived(threads?.detail);
   const panel = useThreadPanel();
@@ -46,7 +54,8 @@
 {#if detail && threads}<CommunityChannelSettings
     title={detail.thread.value.title}
     id={detail.thread.value.thread_id}
-    onClose={panel.close}
+    {embedded}
+    onClose={onClose ?? panel.close}
     onMembers={() => panel.open("members")}
     onRename={writable && detail.thread.value.status !== "tombstoned"
       ? () => {

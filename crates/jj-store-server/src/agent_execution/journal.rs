@@ -95,6 +95,15 @@ pub(super) struct State {
     #[serde(default)]
     pub personal_home: Option<super::conversation_home::Home>,
     #[serde(default)]
+    pub thread_requests: BTreeMap<
+        RequestId,
+        (
+            RepositoryId,
+            String,
+            jj_store_service::collab_mutations::Request,
+        ),
+    >,
+    #[serde(default)]
     pub comment_submissions: BTreeMap<RequestId, super::comment_submissions::SavedSubmission>,
     #[serde(default)]
     pub workspace_submissions: BTreeMap<RequestId, super::workspace_freeze::WorkspaceSubmission>,
@@ -177,6 +186,7 @@ pub(super) fn read(root: &Path) -> Result<State> {
             .iter()
             .any(|id| !state.setups.contains_key(id))
         || state.conversations.len() > 128
+        || state.thread_requests.len() > 4096
     {
         return Err(Error::Limit);
     }

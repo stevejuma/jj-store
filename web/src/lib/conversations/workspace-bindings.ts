@@ -1,6 +1,7 @@
 import type { AgentSession } from "../controller/agent-execution-types.js";
 export type WorkspaceBinding = {
   session: string;
+  source?: "repository";
   repository: string;
   repositoryName: string;
   workspace: string;

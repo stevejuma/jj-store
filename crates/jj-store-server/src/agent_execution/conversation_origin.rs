@@ -35,10 +35,12 @@ impl Supervisor {
                         target,
                     }
                 } else {
-                    ThreadCommandV1::Create {
+                    ThreadCommandV1::CreateConversation {
                         thread_id: ThreadId::new(thread),
                         title: "Agent conversation".into(),
-                        baseline: None,
+                        target: jj_collab::ConversationMetadataTargetV1::Conversation {
+                            id: id.into(),
+                        },
                     }
                 },
             },

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { RepositoryInspection } from "../../conversations/repository-inspection.js";
   import { ownNotifications } from "../../notifications/notification-context.svelte.js";
   import { untrack } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
@@ -17,11 +18,13 @@
     sessions,
     conversation,
     controller,
+    repositories = [],
   }: {
     manager: AgentExecution;
     sessions: readonly AgentSession[];
     conversation: ConversationSession;
     controller?: StoreController;
+    repositories?: readonly string[];
   } = $props();
   const { context: notifications } = ownNotifications();
   const inspection = useConversationInspection();
@@ -52,7 +55,14 @@
       names = new Map(
         controller?.state.repositories.map((r) => [r.id, r.name]) ?? [],
       );
-    untrack(() => browser?.setBindings(value, names));
+    const codebase = repositories;
+    untrack(() => {
+      if (browser && controller?.acquireRepository)
+        browser.repositoryReads ??= new RepositoryInspection(
+          controller.acquireRepository,
+        );
+      browser?.setBindings(value, names, codebase);
+    });
   });
   async function copy(value: string, kind: string) {
     try {
@@ -99,10 +109,10 @@
         {#if browser.bindings.length > 1}
           <Menu.Sub>
             <Menu.SubTrigger
-              ><FolderGitIcon aria-hidden="true" />Inspect workspace</Menu.SubTrigger
+              ><FolderGitIcon aria-hidden="true" />Workspace</Menu.SubTrigger
             >
             <Menu.SubContent
-              aria-label="Inspect workspace"
+              aria-label="Workspace"
               class="max-w-[calc(100vw-2rem)]"
             >
               <Menu.RadioGroup

@@ -331,7 +331,8 @@ impl PinnedCollabRead {
                 continue;
             }
             match self.thread_value(*id) {
-                Ok(value) => values.push(value),
+                Ok(value) if value.value.is_user_thread() => values.push(value),
+                Ok(_) => continue,
                 Err(Error::NotFound) => continue,
                 Err(e) => return Err(e),
             }

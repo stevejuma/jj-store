@@ -40,6 +40,7 @@ mod runtime;
 mod secrets;
 mod sent_context;
 mod targets;
+mod thread_workspace;
 mod tooling;
 mod workspace_deferred;
 mod workspace_freeze;

@@ -127,8 +127,16 @@ export class AgentChat {
     );
   }
   showContext(controller: StoreController, fresh = false, parent?: string) {
-    const { origin, attachments } = chatContext(controller, parent);
-    this.show(origin, attachments, undefined, fresh);
+    const context = chatContext(controller, parent);
+    this.show(context.origin, context.attachments, undefined, fresh);
+    if (this.draft && !this.pending) {
+      this.draft.threadCodebase = context.codebase;
+      this.draft.allowedRepositories = context.repositories;
+      if (context.repositories)
+        this.draft.attachments = this.draft.attachments.filter((a) =>
+          context.repositories!.includes(a.repository),
+        );
+    }
   }
   newConversation() {
     if (this.draft && !this.busy && !this.pending)
@@ -188,6 +196,7 @@ export class AgentChat {
       comments,
       conversation_id: this.selected,
       origin: this.draft.origin,
+      thread_codebase: this.draft.threadCodebase,
       attachments: [...this.draft.attachments],
       agent_ids: [...agentIds],
       text,

@@ -1,5 +1,6 @@
 //! Application-owned execution contracts, independent of ACP implementation.
 mod feedback_subject;
+pub mod thread_workspace;
 pub mod workspace_inspection;
 pub use feedback_subject::FeedbackSubject;
 use jj_store_model::{CommitId, OperationId, PrincipalId, RepositoryId, RequestId};
@@ -278,6 +279,13 @@ pub trait WorkspaceDriver: Send + Sync {
 /// Optional LocalTrusted runtime; repository and actor checks remain host-owned.
 #[async_trait::async_trait]
 pub trait Manager: Send + Sync {
+    async fn thread_workspace(
+        &self,
+        _actor: PrincipalId,
+        _request: thread_workspace::Request,
+    ) -> Result<thread_workspace::Outcome> {
+        Err(Error::Unavailable)
+    }
     async fn chatgpt_status(&self, _actor: PrincipalId) -> Result<chatgpt::Status> {
         Ok(chatgpt::Status {
             supported: false,

@@ -18,6 +18,7 @@ import { seedRepositoryProfiles } from "./dev-demo-profiles.mjs";
 import { registerDemoLocalFolder } from "./dev-demo-local-folder.mjs";
 import { linkDemoFolder } from "./dev-demo-folder.mjs";
 import { seedSampleWork } from "./dev-demo-work-run.mjs";
+import { seedThreads } from "./dev-demo-threads.mjs";
 import { seedWork } from "./dev-demo-work.mjs";
 import { developmentAgentEnvironment } from "./dev-agent-runtime.mjs";
 import {
@@ -227,6 +228,11 @@ async function restart({ reset = false } = {}) {
       origin,
       repositoryId: fixture.repositoryId,
       path: layout.repository,
+    });
+    await seedThreads({
+      origin,
+      runtimeRoot: layout.runtimeRoot,
+      repositories: [fixture.repositoryId, profiles.localGit],
     });
     const work = await seedWork({
       origin,

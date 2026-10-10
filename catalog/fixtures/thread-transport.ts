@@ -169,8 +169,19 @@ export function createThreadTransport(
       if (prior) return prior;
       if (kind === "threads") {
         const c = (request as ThreadRequest).command;
-        if (c.type === "create" || c.type === "create_agent_discussion") {
+        if (
+          c.type === "create" ||
+          c.type === "create_agent_discussion" ||
+          c.type === "create_annotation"
+        ) {
           addThread(c.thread_id, c.title);
+          if (c.type === "create_annotation") {
+            const row = threads.get(c.thread_id)!;
+            threads.set(c.thread_id, {
+              ...row,
+              value: { ...row.value, purpose: { type: "annotation" } },
+            });
+          }
           if (c.type === "create_agent_discussion") {
             const thread = threads.get(c.thread_id)!;
             threads.set(c.thread_id, {

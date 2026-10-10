@@ -214,6 +214,8 @@ export function productionControllerSurface(
     >;
     projects: StoreController["projects"];
     threadNavigation?: StoreController["threadNavigation"];
+    threadWorkspaces?: StoreController["threadWorkspaces"];
+    acquireRepository?: StoreController["acquireRepository"];
     now?: () => number;
     actions: StoreController["actions"];
     globalSearch?: StoreController["globalSearch"];
@@ -245,6 +247,8 @@ export function productionControllerSurface(
     },
     projects: options.projects,
     threadNavigation: options.threadNavigation,
+    threadWorkspaces: options.threadWorkspaces,
+    acquireRepository: options.acquireRepository,
     globalSearch: options.globalSearch,
     referenceSearch: options.referenceSearch,
     historyQuery: options.historyQuery,

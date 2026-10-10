@@ -99,6 +99,7 @@ async fn send(s: &Supervisor, actor: PrincipalId, n: u8) -> String {
         .send_conversation(
             actor,
             chat::Send {
+                thread_codebase: None,
                 version: 1,
                 request_id: RequestId::new([n; 16]),
                 comments: None,

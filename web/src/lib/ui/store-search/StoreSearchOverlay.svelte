@@ -97,8 +97,8 @@
   });
   const actions = $derived([
     {
-      id: "browse-threads",
-      label: "Browse threads",
+      id: "threads",
+      label: "Threads",
       kind: "thread" as const,
       run: () =>
         choose(() => {
@@ -229,11 +229,9 @@
     else void controller.actions.loadMore("search");
   }}
 />
-{#if controller.threads}<StoreThreadCreate
-    threads={controller.threads}
-    bind:open={createThreadOpen}
-    showTrigger={false}
-    disabled={!writable}
+{#if createThreadOpen && controller.threadWorkspaces}<StoreThreadCreate
+    {controller}
+    onClose={() => (createThreadOpen = false)}
   />{/if}
 {#if work}<Dialog.Root bind:open={createProjectOpen}
     ><Dialog.Content preventScroll={false}

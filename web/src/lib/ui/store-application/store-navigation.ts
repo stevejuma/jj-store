@@ -52,6 +52,7 @@ export function selectStoreNavigation(
 
 export function activeStoreNavigation(route: StoreRoute) {
   if (route.agentsHub) return "agents";
+  if (route.threadsHub && !route.threadId) return "threads";
   if (route.page === "threads")
     return route.threadId
       ? `thread:${route.repository}:${route.threadId}`

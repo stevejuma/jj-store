@@ -62,17 +62,20 @@ test("selecting a repository-owned child binds its owner before opening its exac
   expect(f.history.route.replyId ?? null).toBeNull();
   expect(f.integration.threads.detail?.thread.value.thread_id).toBe(ids.thread);
 });
-test("Browse threads from a local folder chooses an authorized native repository", async () => {
+test("opening the Threads inbox leaves repository code unconnected", async () => {
   const f = fixture();
-  f.data.repositories[0] = { ...f.data.repositories[0]!, permission: null };
   f.setSource({ repository: local });
   await f.integration.openThreads();
-  expect(f.connectRepository).toHaveBeenCalledExactlyOnceWith(other, null);
+  expect(f.connectRepository).not.toHaveBeenCalled();
   expect(f.history.route).toMatchObject({
-    repository: other,
     page: "threads",
+    threadsHub: true,
+    repository: "",
     threadId: null,
   });
+  await f.integration.openThreads(null, other);
+  expect(f.history.route.threadRepository).toBe(other);
+  expect(f.connectRepository).not.toHaveBeenCalled();
 });
 test("unsupported and unauthorized owners never connect or open a thread", async () => {
   const f = fixture();

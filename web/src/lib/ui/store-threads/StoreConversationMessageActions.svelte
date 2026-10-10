@@ -1,5 +1,11 @@
 <script lang="ts">
   import { Button } from "@lapismd/design-core/shadcn/button";
+  import * as DropdownMenu from "@lapismd/design-core/shadcn/dropdown-menu";
+  import MoreIcon from "@lucide/svelte/icons/ellipsis";
+  import ReplyIcon from "@lucide/svelte/icons/reply";
+  import LinkIcon from "@lucide/svelte/icons/link";
+  import PencilIcon from "@lucide/svelte/icons/pencil";
+  import CopyIcon from "@lucide/svelte/icons/copy";
   import CommunityChatComposer from "../community-chat-composer/CommunityChatComposer.svelte";
   import { storeRouteToHash } from "../../controller/store-route-codec.js";
   import type { StoreController } from "../../controller/contracts.js";
@@ -20,6 +26,7 @@
     user,
     onReply,
     id,
+    menu = false,
   }: {
     item: ChatBodyItem;
     messages: readonly CommunityMessageModel[];
@@ -30,6 +37,7 @@
     user: CommunityMemberModel;
     onReply?: (id: string) => void;
     id: string;
+    menu?: boolean;
   } = $props();
   async function saveEdit() {
     const edit = conversation.editing;
@@ -79,38 +87,42 @@
   }
 </script>
 
-{#if messages.some((m) => m.id === item.id)}<div
-    class="conversation-message-actions"
-  >
-    {#if onReply}<Button
-        variant="ghost"
-        size="sm"
-        onclick={() => onReply?.(item.id)}
-        >{disabled ? "View replies" : "Reply in thread"}</Button
-      >{/if}
-    {#if controller}<Button
-        variant="ghost"
-        size="sm"
-        onclick={() => copyLink(item.id)}>Copy link</Button
-      >{/if}
-    {#if !disabled && messages.find((m) => m.id === item.id)?.authorId === user.id}<Button
-        variant="ghost"
-        size="sm"
-        {disabled}
-        onclick={() => editMessage(messages.find((m) => m.id === item.id)!)}
-        >Edit message</Button
-      >{/if}
-    <Button
-      variant="ghost"
-      size="sm"
-      onclick={() =>
-        navigator.clipboard.writeText(
-          messages.find((m) => m.id === item.id)?.content ?? "",
-        )}>Copy message</Button
-    >
-  </div>
-
-  {#if conversation.editing?.id === item.id}<CommunityChatComposer
+{#if messages.some((m) => m.id === item.id)}
+  {#if menu}<DropdownMenu.Root>
+      <DropdownMenu.Trigger
+        >{#snippet child({ props })}<Button
+            {...props}
+            variant="ghost"
+            size="icon-sm"
+            aria-label="More message actions"
+            title="More message actions"><MoreIcon aria-hidden="true" /></Button
+          >{/snippet}</DropdownMenu.Trigger
+      >
+      <DropdownMenu.Content align="end">
+        <DropdownMenu.Group>
+          {#if onReply}<DropdownMenu.Item onSelect={() => onReply?.(item.id)}
+              ><ReplyIcon aria-hidden="true" />{disabled
+                ? "View replies"
+                : "Reply in thread"}</DropdownMenu.Item
+            >{/if}
+          {#if controller}<DropdownMenu.Item onSelect={() => copyLink(item.id)}
+              ><LinkIcon aria-hidden="true" />Copy link</DropdownMenu.Item
+            >{/if}
+          {#if !disabled && messages.find((m) => m.id === item.id)?.authorId === user.id}<DropdownMenu.Item
+              onSelect={() =>
+                editMessage(messages.find((m) => m.id === item.id)!)}
+              ><PencilIcon aria-hidden="true" />Edit message</DropdownMenu.Item
+            >{/if}
+          <DropdownMenu.Item
+            onSelect={() =>
+              navigator.clipboard.writeText(
+                messages.find((m) => m.id === item.id)?.content ?? "",
+              )}><CopyIcon aria-hidden="true" />Copy message</DropdownMenu.Item
+          >
+        </DropdownMenu.Group>
+      </DropdownMenu.Content>
+    </DropdownMenu.Root>
+  {:else if conversation.editing?.id === item.id}<CommunityChatComposer
       bind:value={conversation.editing.text}
       {disabled}
       ariaLabel="Edit message"
@@ -121,11 +133,3 @@
       >Cancel edit</Button
     >{/if}
 {/if}
-
-<style>
-  .conversation-message-actions {
-    display: flex;
-    gap: 0.5rem;
-    justify-content: flex-end;
-  }
-</style>

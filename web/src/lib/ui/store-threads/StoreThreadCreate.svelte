@@ -1,68 +1,94 @@
 <script lang="ts">
-  import StoreNotice from "../store-notifications/StoreNotice.svelte";
+  import { untrack } from "svelte";
   import * as Dialog from "@lapismd/design-core/shadcn/dialog";
+  import { DialogFrame } from "@lapismd/design-core/forms/dialog";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { Input } from "@lapismd/design-core/shadcn/input";
-  import { Label } from "@lapismd/design-core/shadcn/label";
-  import type { ThreadsController } from "../../controller/thread-types.js";
+  import * as Field from "@lapismd/design-core/shadcn/field";
+  import StoreRepositoryPicker from "../store-application/StoreRepositoryPicker.svelte";
+  import StoreWorkField from "../store-work/StoreWorkField.svelte";
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
+  import type { StoreController } from "../../controller/contracts.js";
   let {
-    threads,
-    disabled = false,
-    open = $bindable(false),
-    showTrigger = true,
-  }: {
-    threads: ThreadsController;
-    disabled?: boolean;
-    open?: boolean;
-    showTrigger?: boolean;
-  } = $props();
-  let title = $state(""),
-    error = $state("");
+    controller,
+    onClose,
+  }: { controller: StoreController; onClose: () => void } = $props();
+  let title = $state("");
+  let repositories = $state<string[]>(
+    untrack(() =>
+      controller.state.route.threadRepository
+        ? [controller.state.route.threadRepository]
+        : [],
+    ),
+  );
+  const manager = $derived(controller.threadWorkspaces);
+  const options = $derived(
+    controller.state.repositories.filter(
+      (r) =>
+        !!r.permission &&
+        !["unavailable", "identity_changed"].includes(r.availability ?? ""),
+    ),
+  );
   async function create() {
-    error = "";
-    try {
-      await threads.create(title);
-      open = false;
-      title = "";
-    } catch (e) {
-      error = e instanceof Error ? e.message : String(e);
-    }
+    const result = await manager
+      ?.submit({ type: "create", title, repositories })
+      .catch(() => undefined);
+    if (result) onClose();
   }
 </script>
 
-<Dialog.Root bind:open>
-  {#if showTrigger}<Button
-      variant="outline"
-      disabled={disabled || threads.busy || !!threads.pending}
-      onclick={() => (open = true)}>New thread</Button
-    >{/if}
-  <Dialog.Content preventScroll={false}>
-    <Dialog.Header
-      ><Dialog.Title>New thread</Dialog.Title><Dialog.Description
-        >Create a thread for this repository’s conversation.</Dialog.Description
-      ></Dialog.Header
-    >
-    <form
-      onsubmit={(event) => {
-        event.preventDefault();
-        void create();
-      }}
-    >
-      <Label for="thread-title">Thread name</Label>
-      <Input id="thread-title" bind:value={title} maxlength={1024} required />
-      <StoreNotice
-        noticeKey="thread-create"
-        title="Could not create thread"
-        message={error}
-        pending={threads.busy}
-      />
-      <Dialog.Footer
-        ><Button
-          type="submit"
-          disabled={!title.trim() || threads.busy || !!threads.pending}
-          >{threads.busy ? "Creating…" : "Create thread"}</Button
-        ></Dialog.Footer
+<Dialog.Root
+  open
+  onOpenChange={(value) => {
+    if (!value) onClose();
+  }}
+>
+  <DialogFrame
+    title="Create Thread"
+    description="Start a conversation. Repositories are optional; adding one does not start an agent."
+  >
+    <Field.Group class="community-settings__option-group">
+      <StoreWorkField label="Title" id="thread-create-title"
+        ><Input
+          id="thread-create-title"
+          aria-label="Thread title"
+          bind:value={title}
+          disabled={manager?.busy || !!manager?.pending}
+        /></StoreWorkField
       >
-    </form>
-  </Dialog.Content>
+      <StoreWorkField
+        label="Codebase"
+        description="Optional. Choose up to eight repositories."
+      >
+        <StoreRepositoryPicker
+          label="Thread Codebase"
+          repositories={options}
+          bind:values={repositories}
+          multiple
+          disabled={manager?.busy || !!manager?.pending}
+          emptyLabel="Choose repositories"
+        />
+      </StoreWorkField>
+      <div class="community-settings__option-row flex justify-end">
+        {#if manager?.pending}<Button
+            disabled={manager.busy}
+            onclick={() =>
+              void manager
+                .retry()
+                .then((result) => {
+                  if (result) onClose();
+                })
+                .catch(() => {})}>Check same action</Button
+          >{:else}<Button
+            disabled={!manager || manager.busy || !title.trim()}
+            onclick={() => void create()}>Create Thread</Button
+          >{/if}
+      </div>
+    </Field.Group>
+    <StoreNotice
+      noticeKey="thread-create"
+      title="Thread action needs attention"
+      message={manager?.error ?? ""}
+    />
+  </DialogFrame>
 </Dialog.Root>

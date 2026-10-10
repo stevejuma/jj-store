@@ -326,12 +326,12 @@ impl Supervisor {
                 .map_err(|_| Error::Unavailable)
         }
     }
-    pub(super) async fn home_thread_revision(
+    pub(super) async fn home_thread_summary(
         &self,
         repository: RepositoryId,
         profile: &str,
         thread: ThreadId,
-    ) -> Result<CollabObjectRef> {
+    ) -> Result<jj_store_service::collab_reads::ThreadSummaryV1> {
         self.authorized(repository, profile, true).await?;
         if profile == "local_jj_git" {
             let local = self
@@ -352,8 +352,7 @@ impl Supervisor {
                 .inbox_thread(pin, thread)
                 .await
                 .map_err(|_| Error::Unavailable)?
-                .thread
-                .reference)
+                .thread)
         } else {
             let session = self.home_session(repository)?;
             let pin = jj_store_service::collab_reads::PinnedCollabRead::open(
@@ -365,8 +364,18 @@ impl Supervisor {
             Ok(pin
                 .thread(session, thread)
                 .await
-                .map_err(|_| Error::Unavailable)?
-                .reference)
+                .map_err(|_| Error::Unavailable)?)
         }
+    }
+    pub(super) async fn home_thread_revision(
+        &self,
+        repository: RepositoryId,
+        profile: &str,
+        thread: ThreadId,
+    ) -> Result<CollabObjectRef> {
+        Ok(self
+            .home_thread_summary(repository, profile, thread)
+            .await?
+            .reference)
     }
 }

@@ -10,4 +10,6 @@ export type ChatDraft = {
   origin: ChatOrigin;
   text: string;
   attachments: ChatAttachment[];
+  threadCodebase?: ChatSend["thread_codebase"];
+  allowedRepositories?: string[];
 };

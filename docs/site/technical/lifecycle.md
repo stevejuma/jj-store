@@ -222,3 +222,10 @@ restart disables automatic backfill and retains interrupted outcomes without
 model replay. Explicit receipt recovery can retry publication only. The bounded
 helper owns no coding workspace, MCP session or compute startup. Existing
 metadata survives malformed output, cancellation and unavailable providers.
+
+Intentional Thread creation and Codebase edits retain stable requests in the
+installation supervisor journal before native/local receipt-backed publication.
+Restart can recover an unknown request without changing its intent or
+duplicating a Thread. Repository removal is refused while linked agent work is
+running, queued or unknown. The personal metadata home retains collaboration
+authority; attached code repositories still require independent authorization.

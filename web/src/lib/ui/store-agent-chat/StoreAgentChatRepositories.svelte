@@ -9,7 +9,13 @@
   const manager = $derived(controller.execution!);
   const chat = $derived(manager.chat);
   const disabled = $derived(chat.busy || !!chat.pending);
-  const repositories = $derived(controller.state.repositories);
+  const repositories = $derived(
+    controller.state.repositories.filter(
+      (r) =>
+        !chat.draft?.allowedRepositories ||
+        chat.draft.allowedRepositories.includes(r.id),
+    ),
+  );
   const available = $derived(
     repositories.filter(
       (r) => !chat.draft?.attachments.some((a) => a.repository === r.id),

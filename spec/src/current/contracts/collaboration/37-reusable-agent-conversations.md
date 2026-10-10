@@ -231,3 +231,9 @@ qualify portable code evidence, complete retained closures and cold original
 context reads before enabling that capability. Source and answer links bind the
 exact submitted revisions, never current paths or quote matching. No answer tag
 resolves a review. M24 and local-review qualification remain separate gates.
+
+Intentional user Thread ownership and the bounded Codebase supersede implicit
+directory-visible conversation owners as specified in
+[Intentional Threads](43-intentional-threads-and-codebases.md). Standalone chats
+still use internal ThreadStore records for comments and metadata. They do not
+create an intentional Thread or a primary user Thread assignment.

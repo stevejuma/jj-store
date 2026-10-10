@@ -2,6 +2,8 @@ import type { CommunityMemberModel } from "../community-workspace/model.js";
 
 export interface SessionInboxItem {
   id: string;
+  targetId?: string;
+  label?: string;
   author: CommunityMemberModel;
   context: string;
   excerpt?: string;

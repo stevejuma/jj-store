@@ -77,6 +77,7 @@ async fn exercise_comments(managed: bool) {
         .await
         .unwrap();
     let mut send = chat::Send {
+        thread_codebase: None,
         version: 1,
         request_id: RequestId::new([182; 16]),
         conversation_id: "b1".repeat(16),

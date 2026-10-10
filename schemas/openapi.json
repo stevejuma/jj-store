@@ -9931,6 +9931,164 @@
                             "minLength": 32,
                             "maxLength": 32
                           },
+                          "title": { "type": "string" },
+                          "repositories": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            }
+                          },
+                          "type": {
+                            "type": "string",
+                            "const": "create_intentional"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "type",
+                          "thread_id",
+                          "title",
+                          "repositories"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "thread_id": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{32}$",
+                            "minLength": 32,
+                            "maxLength": 32
+                          },
+                          "title": { "type": "string" },
+                          "target": {
+                            "oneOf": [
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "id": { "type": "string" },
+                                  "type": {
+                                    "type": "string",
+                                    "const": "conversation"
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": ["type", "id"]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "session": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "const": "recorded"
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": ["type", "session"]
+                              }
+                            ]
+                          },
+                          "type": {
+                            "type": "string",
+                            "const": "create_conversation"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": ["type", "thread_id", "title", "target"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "thread_id": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{32}$",
+                            "minLength": 32,
+                            "maxLength": 32
+                          },
+                          "title": { "type": "string" },
+                          "type": {
+                            "type": "string",
+                            "const": "create_annotation"
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": ["type", "thread_id", "title"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "thread_id": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{32}$",
+                            "minLength": 32,
+                            "maxLength": 32
+                          },
+                          "expected": {
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "type": "string",
+                                "enum": [
+                                  "index_page",
+                                  "thread_version",
+                                  "conversation_metadata",
+                                  "thread_event",
+                                  "human_message_revision",
+                                  "thread_link",
+                                  "reaction",
+                                  "reaction_retraction",
+                                  "reaction_slot",
+                                  "custom_emoji_version",
+                                  "image_asset"
+                                ]
+                              },
+                              "id": {
+                                "type": "string",
+                                "pattern": "^[0-9a-f]{64}$",
+                                "minLength": 64,
+                                "maxLength": 64
+                              }
+                            },
+                            "additionalProperties": false,
+                            "required": ["kind", "id"]
+                          },
+                          "repositories": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            }
+                          },
+                          "type": { "type": "string", "const": "set_codebase" }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "type",
+                          "thread_id",
+                          "expected",
+                          "repositories"
+                        ]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "thread_id": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{32}$",
+                            "minLength": 32,
+                            "maxLength": 32
+                          },
                           "expected_thread": {
                             "type": "object",
                             "properties": {
@@ -42544,6 +42702,172 @@
                                     "minLength": 32,
                                     "maxLength": 32
                                   },
+                                  "title": { "type": "string" },
+                                  "repositories": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string",
+                                      "pattern": "^[0-9a-f]{32}$",
+                                      "minLength": 32,
+                                      "maxLength": 32
+                                    }
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "const": "create_intentional"
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": [
+                                  "type",
+                                  "thread_id",
+                                  "title",
+                                  "repositories"
+                                ]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "thread_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "title": { "type": "string" },
+                                  "target": {
+                                    "oneOf": [
+                                      {
+                                        "type": "object",
+                                        "properties": {
+                                          "id": { "type": "string" },
+                                          "type": {
+                                            "type": "string",
+                                            "const": "conversation"
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": ["type", "id"]
+                                      },
+                                      {
+                                        "type": "object",
+                                        "properties": {
+                                          "session": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "type": {
+                                            "type": "string",
+                                            "const": "recorded"
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": ["type", "session"]
+                                      }
+                                    ]
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "const": "create_conversation"
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": [
+                                  "type",
+                                  "thread_id",
+                                  "title",
+                                  "target"
+                                ]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "thread_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "title": { "type": "string" },
+                                  "type": {
+                                    "type": "string",
+                                    "const": "create_annotation"
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": ["type", "thread_id", "title"]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "thread_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
+                                  "expected": {
+                                    "type": "object",
+                                    "properties": {
+                                      "kind": {
+                                        "type": "string",
+                                        "enum": [
+                                          "index_page",
+                                          "thread_version",
+                                          "conversation_metadata",
+                                          "thread_event",
+                                          "human_message_revision",
+                                          "thread_link",
+                                          "reaction",
+                                          "reaction_retraction",
+                                          "reaction_slot",
+                                          "custom_emoji_version",
+                                          "image_asset"
+                                        ]
+                                      },
+                                      "id": {
+                                        "type": "string",
+                                        "pattern": "^[0-9a-f]{64}$",
+                                        "minLength": 64,
+                                        "maxLength": 64
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": ["kind", "id"]
+                                  },
+                                  "repositories": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string",
+                                      "pattern": "^[0-9a-f]{32}$",
+                                      "minLength": 32,
+                                      "maxLength": 32
+                                    }
+                                  },
+                                  "type": {
+                                    "type": "string",
+                                    "const": "set_codebase"
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": [
+                                  "type",
+                                  "thread_id",
+                                  "expected",
+                                  "repositories"
+                                ]
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "thread_id": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  },
                                   "expected_thread": {
                                     "type": "object",
                                     "properties": {
@@ -57168,6 +57492,238 @@
         "security": [{}]
       }
     },
+    "/v1/local/threads": {
+      "post": {
+        "operationId": "local_threads_configure",
+        "tags": ["local"],
+        "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Authorized result at the reported snapshot.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ThreadWorkspaceOutcome"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request, unknown query field or invalid cursor.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing repository Bearer credential.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "403": {
+            "description": "Access denied, including revoked credentials or disallowed Origin.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "404": {
+            "description": "Object not committed in the selected snapshot or unknown route.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "405": {
+            "description": "Unsupported method.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "408": {
+            "description": "Native query canceled.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "409": {
+            "description": "cursor_reset, stale_collaboration, intent_conflict or collaboration_replication_unsupported. No latest-state fallback or automatic retry.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "410": {
+            "description": "Index task expired or was lost on server restart.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "413": {
+            "description": "Request or response resource limit exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported request media type or content encoding.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "503": {
+            "description": "Busy, unavailable, corrupt or incomplete history.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          },
+          "504": {
+            "description": "Request or response deadline exceeded.",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ErrorBody" }
+              }
+            }
+          }
+        },
+        "x-jj-store-query-schema": {
+          "type": "object",
+          "additionalProperties": false
+        },
+        "security": [{}],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "version": {
+                    "type": "integer",
+                    "format": "uint32",
+                    "minimum": 0
+                  },
+                  "request_id": {
+                    "type": "string",
+                    "pattern": "^[0-9a-f]{32}$",
+                    "minLength": 32,
+                    "maxLength": 32
+                  },
+                  "command": {
+                    "oneOf": [
+                      {
+                        "type": "object",
+                        "properties": {
+                          "title": { "type": "string" },
+                          "repositories": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            }
+                          },
+                          "type": { "type": "string", "const": "create" }
+                        },
+                        "additionalProperties": false,
+                        "required": ["type", "title", "repositories"]
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "home": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{32}$",
+                            "minLength": 32,
+                            "maxLength": 32
+                          },
+                          "thread": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{32}$",
+                            "minLength": 32,
+                            "maxLength": 32
+                          },
+                          "expected": {
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "type": "string",
+                                "enum": [
+                                  "index_page",
+                                  "thread_version",
+                                  "conversation_metadata",
+                                  "thread_event",
+                                  "human_message_revision",
+                                  "thread_link",
+                                  "reaction",
+                                  "reaction_retraction",
+                                  "reaction_slot",
+                                  "custom_emoji_version",
+                                  "image_asset"
+                                ]
+                              },
+                              "id": {
+                                "type": "string",
+                                "pattern": "^[0-9a-f]{64}$",
+                                "minLength": 64,
+                                "maxLength": 64
+                              }
+                            },
+                            "additionalProperties": false,
+                            "required": ["kind", "id"]
+                          },
+                          "repositories": {
+                            "type": "array",
+                            "items": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            }
+                          },
+                          "type": { "type": "string", "const": "codebase" }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "type",
+                          "home",
+                          "thread",
+                          "expected",
+                          "repositories"
+                        ]
+                      }
+                    ]
+                  }
+                },
+                "additionalProperties": false,
+                "required": ["version", "request_id", "command"]
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/local/agents/workspace/inspect": {
       "post": {
         "operationId": "local_agents_workspace_inspect",
@@ -61938,6 +62494,35 @@
                     },
                     "additionalProperties": false,
                     "required": ["scope", "context"]
+                  },
+                  "thread_codebase": {
+                    "type": ["object", "null"],
+                    "properties": {
+                      "kind": {
+                        "type": "string",
+                        "enum": [
+                          "index_page",
+                          "thread_version",
+                          "conversation_metadata",
+                          "thread_event",
+                          "human_message_revision",
+                          "thread_link",
+                          "reaction",
+                          "reaction_retraction",
+                          "reaction_slot",
+                          "custom_emoji_version",
+                          "image_asset"
+                        ]
+                      },
+                      "id": {
+                        "type": "string",
+                        "pattern": "^[0-9a-f]{64}$",
+                        "minLength": 64,
+                        "maxLength": 64
+                      }
+                    },
+                    "additionalProperties": false,
+                    "required": ["kind", "id"]
                   },
                   "agent_ids": {
                     "type": "array",
@@ -72227,6 +72812,16 @@
               { "$ref": "#/components/schemas/ConversationSourceV1" },
               { "type": "null" }
             ]
+          },
+          "purpose": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/ThreadPurposeV1" },
+              { "type": "null" }
+            ]
+          },
+          "codebase": {
+            "type": ["array", "null"],
+            "items": { "$ref": "#/components/schemas/RepositoryId" }
           }
         },
         "required": [
@@ -72310,6 +72905,51 @@
           "commit": { "$ref": "#/components/schemas/CodeCommitIdV1" }
         },
         "required": ["evidence", "commit"]
+      },
+      "ThreadPurposeV1": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "target": {
+                "$ref": "#/components/schemas/ConversationMetadataTargetV1"
+              },
+              "type": { "type": "string", "const": "conversation" }
+            },
+            "required": ["type", "target"]
+          },
+          {
+            "type": "object",
+            "properties": {
+              "type": { "type": "string", "const": "annotation" }
+            },
+            "required": ["type"],
+            "additionalProperties": false
+          }
+        ]
+      },
+      "ConversationMetadataTargetV1": {
+        "oneOf": [
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "id": { "type": "string" },
+              "type": { "type": "string", "const": "conversation" }
+            },
+            "required": ["type", "id"]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "session": { "$ref": "#/components/schemas/AgentSessionId" },
+              "type": { "type": "string", "const": "recorded" }
+            },
+            "required": ["type", "session"]
+          }
+        ]
       },
       "ThreadDirectoryMetadata": {
         "type": "object",
@@ -72541,6 +73181,14 @@
       },
       "ThreadEventKindV1": {
         "oneOf": [
+          {
+            "type": "object",
+            "properties": {
+              "type": { "type": "string", "const": "codebase_changed" }
+            },
+            "required": ["type"],
+            "additionalProperties": false
+          },
           {
             "type": "object",
             "additionalProperties": false,
@@ -79492,6 +80140,17 @@
         },
         "required": ["version", "request_id", "receipt", "progress"]
       },
+      "ThreadWorkspaceOutcome": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "request_id": { "$ref": "#/components/schemas/RequestId" },
+          "home": { "$ref": "#/components/schemas/RepositoryId" },
+          "thread": { "$ref": "#/components/schemas/ThreadId" },
+          "revision": { "$ref": "#/components/schemas/CollabObjectRef" }
+        },
+        "required": ["request_id", "home", "thread", "revision"]
+      },
       "AgentWorkspaceInspection": {
         "type": "object",
         "additionalProperties": false,
@@ -80408,28 +81067,6 @@
           "unavailable",
           "details",
           "job"
-        ]
-      },
-      "ConversationMetadataTargetV1": {
-        "oneOf": [
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "id": { "type": "string" },
-              "type": { "type": "string", "const": "conversation" }
-            },
-            "required": ["type", "id"]
-          },
-          {
-            "type": "object",
-            "additionalProperties": false,
-            "properties": {
-              "session": { "$ref": "#/components/schemas/AgentSessionId" },
-              "type": { "type": "string", "const": "recorded" }
-            },
-            "required": ["type", "session"]
-          }
         ]
       },
       "ConversationMetadataValueV1": {

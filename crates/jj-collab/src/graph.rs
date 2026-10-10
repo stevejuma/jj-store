@@ -177,10 +177,17 @@ impl CollabGraphV1 {
                             || old.baseline != thread.baseline
                             || old.agent_message != thread.agent_message
                             || old.comment_source != thread.comment_source
+                            || old.purpose != thread.purpose
+                            || (old.codebase != thread.codebase
+                                && event.event != ThreadEventKindV1::CodebaseChanged)
                         {
                             return Err(Error::Invalid("Thread history identity"));
                         }
                         match &event.event {
+                            ThreadEventKindV1::CodebaseChanged
+                                if thread.is_user_thread()
+                                    && thread.title == old.title
+                                    && thread.status == old.status => {}
                             ThreadEventKindV1::Lifecycle {
                                 previous_status,
                                 action,

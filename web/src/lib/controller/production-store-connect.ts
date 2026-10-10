@@ -21,7 +21,10 @@ export function createProductionConnect(context: {
 }) {
   return async (repository: string, token: string | null) => {
     const { data, projects } = context;
-    if (context.route().agentsHub) {
+    if (
+      context.route().agentsHub ||
+      (context.route().threadsHub && !context.route().repository)
+    ) {
       data.status.connection = "disconnected";
       return;
     }

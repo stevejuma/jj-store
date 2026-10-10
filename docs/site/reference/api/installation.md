@@ -3774,6 +3774,100 @@ Runs the same authorized GET validation and drops the body. No JSON, binary byte
 }
 ```
 
+## GET /v1/events/ws
+
+Same-origin WebSocket freshness. Exact Host and mandatory Origin, WebSocket Fetch Metadata, and jj-store-events-v1 subprotocol replace the HTTP protocol header on this route only. No queries, cookies or Authorization headers. Authenticate in the first JSON message within five seconds (8192 bytes maximum); credentials remain memory-only. No frames precede current authorization. Version-1 event frames retain the SSE scope, cursor, replay/reset and per-delivery authorization. Heartbeat JSON every 15 seconds; finite admission 300 seconds. Close 1000 renews, 4403 denies, 4400 rejects protocol, 1013 retries. Client messages after hello cannot issue commands.
+
+```text
+{
+  "operationId": "application_events_websocket",
+  "tags": [
+    "reads"
+  ],
+  "description": "Same-origin WebSocket freshness. Exact Host and mandatory Origin, WebSocket Fetch Metadata, and jj-store-events-v1 subprotocol replace the HTTP protocol header on this route only. No queries, cookies or Authorization headers. Authenticate in the first JSON message within five seconds (8192 bytes maximum); credentials remain memory-only. No frames precede current authorization. Version-1 event frames retain the SSE scope, cursor, replay/reset and per-delivery authorization. Heartbeat JSON every 15 seconds; finite admission 300 seconds. Close 1000 renews, 4403 denies, 4400 rejects protocol, 1013 retries. Client messages after hello cannot issue commands.",
+  "parameters": [
+    {
+      "in": "header",
+      "name": "Origin",
+      "required": true,
+      "schema": {
+        "type": "string"
+      }
+    },
+    {
+      "in": "header",
+      "name": "Sec-WebSocket-Protocol",
+      "required": true,
+      "schema": {
+        "const": "jj-store-events-v1"
+      }
+    }
+  ],
+  "security": [
+    {}
+  ],
+  "x-websocket-client-schema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+      "version": {
+        "type": "integer",
+        "format": "uint32",
+        "minimum": 0
+      },
+      "token": {
+        "type": [
+          "string",
+          "null"
+        ]
+      },
+      "after": {
+        "type": [
+          "string",
+          "null"
+        ]
+      }
+    },
+    "required": [
+      "version"
+    ]
+  },
+  "x-websocket-event-schema": {
+    "$ref": "#/components/schemas/ApplicationFreshnessFrame"
+  },
+  "x-websocket-heartbeat-schema": {
+    "type": "object",
+    "required": [
+      "version",
+      "type"
+    ],
+    "properties": {
+      "version": {
+        "const": 1
+      },
+      "type": {
+        "const": "heartbeat"
+      }
+    },
+    "additionalProperties": false
+  },
+  "responses": {
+    "101": {
+      "description": "WebSocket upgraded; first-message authorization still required."
+    },
+    "400": {
+      "description": "Invalid upgrade."
+    },
+    "403": {
+      "description": "Origin, authority or protocol admission denied."
+    },
+    "503": {
+      "description": "Bounded event admission exhausted."
+    }
+  }
+}
+```
+
 ## GET /v1/local/repositories
 
 LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.
@@ -16202,6 +16296,193 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                   "properties": {
                     "intent": {
                       "oneOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "thread_id": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            },
+                            "title": {
+                              "type": "string"
+                            },
+                            "repositories": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "pattern": "^[0-9a-f]{32}$",
+                                "minLength": 32,
+                                "maxLength": 32
+                              }
+                            },
+                            "type": {
+                              "type": "string",
+                              "const": "create_intentional"
+                            }
+                          },
+                          "additionalProperties": false,
+                          "required": [
+                            "type",
+                            "thread_id",
+                            "title",
+                            "repositories"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "thread_id": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            },
+                            "title": {
+                              "type": "string"
+                            },
+                            "target": {
+                              "oneOf": [
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "string"
+                                    },
+                                    "type": {
+                                      "type": "string",
+                                      "const": "conversation"
+                                    }
+                                  },
+                                  "additionalProperties": false,
+                                  "required": [
+                                    "type",
+                                    "id"
+                                  ]
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "session": {
+                                      "type": "string",
+                                      "pattern": "^[0-9a-f]{32}$",
+                                      "minLength": 32,
+                                      "maxLength": 32
+                                    },
+                                    "type": {
+                                      "type": "string",
+                                      "const": "recorded"
+                                    }
+                                  },
+                                  "additionalProperties": false,
+                                  "required": [
+                                    "type",
+                                    "session"
+                                  ]
+                                }
+                              ]
+                            },
+                            "type": {
+                              "type": "string",
+                              "const": "create_conversation"
+                            }
+                          },
+                          "additionalProperties": false,
+                          "required": [
+                            "type",
+                            "thread_id",
+                            "title",
+                            "target"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "thread_id": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            },
+                            "title": {
+                              "type": "string"
+                            },
+                            "type": {
+                              "type": "string",
+                              "const": "create_annotation"
+                            }
+                          },
+                          "additionalProperties": false,
+                          "required": [
+                            "type",
+                            "thread_id",
+                            "title"
+                          ]
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "thread_id": {
+                              "type": "string",
+                              "pattern": "^[0-9a-f]{32}$",
+                              "minLength": 32,
+                              "maxLength": 32
+                            },
+                            "expected": {
+                              "type": "object",
+                              "properties": {
+                                "kind": {
+                                  "type": "string",
+                                  "enum": [
+                                    "index_page",
+                                    "thread_version",
+                                    "conversation_metadata",
+                                    "thread_event",
+                                    "human_message_revision",
+                                    "thread_link",
+                                    "reaction",
+                                    "reaction_retraction",
+                                    "reaction_slot",
+                                    "custom_emoji_version",
+                                    "image_asset"
+                                  ]
+                                },
+                                "id": {
+                                  "type": "string",
+                                  "pattern": "^[0-9a-f]{64}$",
+                                  "minLength": 64,
+                                  "maxLength": 64
+                                }
+                              },
+                              "additionalProperties": false,
+                              "required": [
+                                "kind",
+                                "id"
+                              ]
+                            },
+                            "repositories": {
+                              "type": "array",
+                              "items": {
+                                "type": "string",
+                                "pattern": "^[0-9a-f]{32}$",
+                                "minLength": 32,
+                                "maxLength": 32
+                              }
+                            },
+                            "type": {
+                              "type": "string",
+                              "const": "set_codebase"
+                            }
+                          },
+                          "additionalProperties": false,
+                          "required": [
+                            "type",
+                            "thread_id",
+                            "expected",
+                            "repositories"
+                          ]
+                        },
                         {
                           "type": "object",
                           "properties": {
@@ -33215,6 +33496,290 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
 }
 ```
 
+## POST /v1/local/threads
+
+LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.
+
+```text
+{
+  "operationId": "local_threads_configure",
+  "tags": [
+    "local"
+  ],
+  "description": "LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.",
+  "parameters": [],
+  "responses": {
+    "200": {
+      "description": "Authorized result at the reported snapshot.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ThreadWorkspaceOutcome"
+          }
+        }
+      }
+    },
+    "400": {
+      "description": "Invalid request, unknown query field or invalid cursor.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "401": {
+      "description": "Missing repository Bearer credential.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "403": {
+      "description": "Access denied, including revoked credentials or disallowed Origin.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "404": {
+      "description": "Object not committed in the selected snapshot or unknown route.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "405": {
+      "description": "Unsupported method.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "408": {
+      "description": "Native query canceled.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "409": {
+      "description": "cursor_reset, stale_collaboration, intent_conflict or collaboration_replication_unsupported. No latest-state fallback or automatic retry.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "410": {
+      "description": "Index task expired or was lost on server restart.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "413": {
+      "description": "Request or response resource limit exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "415": {
+      "description": "Unsupported request media type or content encoding.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "503": {
+      "description": "Busy, unavailable, corrupt or incomplete history.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "504": {
+      "description": "Request or response deadline exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    }
+  },
+  "x-jj-store-query-schema": {
+    "type": "object",
+    "additionalProperties": false
+  },
+  "security": [
+    {}
+  ],
+  "requestBody": {
+    "required": true,
+    "content": {
+      "application/json": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "integer",
+              "format": "uint32",
+              "minimum": 0
+            },
+            "request_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{32}$",
+              "minLength": 32,
+              "maxLength": 32
+            },
+            "command": {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "title": {
+                      "type": "string"
+                    },
+                    "repositories": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[0-9a-f]{32}$",
+                        "minLength": 32,
+                        "maxLength": 32
+                      }
+                    },
+                    "type": {
+                      "type": "string",
+                      "const": "create"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "type",
+                    "title",
+                    "repositories"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "home": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{32}$",
+                      "minLength": 32,
+                      "maxLength": 32
+                    },
+                    "thread": {
+                      "type": "string",
+                      "pattern": "^[0-9a-f]{32}$",
+                      "minLength": 32,
+                      "maxLength": 32
+                    },
+                    "expected": {
+                      "type": "object",
+                      "properties": {
+                        "kind": {
+                          "type": "string",
+                          "enum": [
+                            "index_page",
+                            "thread_version",
+                            "conversation_metadata",
+                            "thread_event",
+                            "human_message_revision",
+                            "thread_link",
+                            "reaction",
+                            "reaction_retraction",
+                            "reaction_slot",
+                            "custom_emoji_version",
+                            "image_asset"
+                          ]
+                        },
+                        "id": {
+                          "type": "string",
+                          "pattern": "^[0-9a-f]{64}$",
+                          "minLength": 64,
+                          "maxLength": 64
+                        }
+                      },
+                      "additionalProperties": false,
+                      "required": [
+                        "kind",
+                        "id"
+                      ]
+                    },
+                    "repositories": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "pattern": "^[0-9a-f]{32}$",
+                        "minLength": 32,
+                        "maxLength": 32
+                      }
+                    },
+                    "type": {
+                      "type": "string",
+                      "const": "codebase"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "type",
+                    "home",
+                    "thread",
+                    "expected",
+                    "repositories"
+                  ]
+                }
+              ]
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "version",
+            "request_id",
+            "command"
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
 ## POST /v1/local/agents/workspace/inspect
 
 LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.
@@ -39428,6 +39993,41 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
               "required": [
                 "scope",
                 "context"
+              ]
+            },
+            "thread_codebase": {
+              "type": [
+                "object",
+                "null"
+              ],
+              "properties": {
+                "kind": {
+                  "type": "string",
+                  "enum": [
+                    "index_page",
+                    "thread_version",
+                    "conversation_metadata",
+                    "thread_event",
+                    "human_message_revision",
+                    "thread_link",
+                    "reaction",
+                    "reaction_retraction",
+                    "reaction_slot",
+                    "custom_emoji_version",
+                    "image_asset"
+                  ]
+                },
+                "id": {
+                  "type": "string",
+                  "pattern": "^[0-9a-f]{64}$",
+                  "minLength": 64,
+                  "maxLength": 64
+                }
+              },
+              "additionalProperties": false,
+              "required": [
+                "kind",
+                "id"
               ]
             },
             "agent_ids": {

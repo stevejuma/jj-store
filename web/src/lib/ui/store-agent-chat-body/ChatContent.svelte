@@ -13,6 +13,7 @@
     customBlock,
     showHeaders = true,
     reactionTarget,
+    messageActions,
     reply = false,
   }: {
     blocks: readonly ChatBodyBlock[];
@@ -20,6 +21,7 @@
     customBlock?: ChatBodyProps["customBlock"];
     showHeaders?: boolean;
     reactionTarget?: string;
+    messageActions?: ChatBodyProps["messageActions"];
     reply?: boolean;
   } = $props();
 </script>
@@ -46,6 +48,7 @@
           {block}
           {state}
           {reactionTarget}
+          {messageActions}
           onComment={() => state.open(block, { from: 0, to: 0 })}
         />
         {#each state.visibleThreads.filter( (t) => validAnchor(block, t.anchor) ) as thread (thread.id)}
@@ -56,6 +59,7 @@
         {block}
         {state}
         {reactionTarget}
+        {messageActions}
         reply={reply && index === 0}
         showHeader={showHeaders}
       />{/if}

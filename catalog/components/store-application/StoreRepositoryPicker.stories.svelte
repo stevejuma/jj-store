@@ -86,3 +86,48 @@
     ).toBeDisabled();
   }}
 />
+
+<Story
+  name="Multiple selections retain search state and enforce the eight repository bound"
+  args={{
+    multiple: true,
+    repositories: Array.from({ length: 9 }, (_, i) => ({
+      id: (i + 1).toString(16).padStart(32, "0"),
+      name: `Codebase ${i + 1}`,
+    })),
+  }}
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement),
+      body = within(document.body);
+    const trigger = canvas.getByRole("combobox", { name: "Repository" });
+    await userEvent.click(trigger);
+    for (let i = 1; i <= 8; i++)
+      await userEvent.click(
+        body.getByRole("option", { name: new RegExp(`^Codebase ${i} `) }),
+      );
+    await expect(trigger).toHaveTextContent("8 repositories selected");
+    await expect(
+      body.getByRole("option", { name: /^Codebase 9 / }),
+    ).toHaveAttribute("aria-disabled", "true");
+    const search = body.getByPlaceholderText("Search repositories");
+    await userEvent.type(search, "Codebase 1");
+    await expect(body.getAllByRole("option")).toHaveLength(1);
+    await userEvent.click(body.getByRole("option", { name: /^Codebase 1 / }));
+    await expect(trigger).toHaveTextContent("7 repositories selected");
+    await userEvent.clear(search);
+    await userEvent.click(body.getByRole("option", { name: /^Codebase 9 / }));
+    await userEvent.click(
+      body.getByRole("button", { name: "Close repository selector" }),
+    );
+    await userEvent.click(trigger);
+    await expect(
+      body.getByRole("option", { name: /^Codebase 1 / }),
+    ).toHaveAttribute("data-repository-selected", "false");
+    await expect(
+      body.getByRole("option", { name: /^Codebase 9 / }),
+    ).toHaveAttribute("data-repository-selected", "true");
+    await userEvent.click(
+      body.getByRole("button", { name: "Close repository selector" }),
+    );
+  }}
+/>

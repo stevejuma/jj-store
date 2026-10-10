@@ -75,3 +75,9 @@ maintained.
 The application manual explains current behavior to users, operators and
 contributors. The specification continues to own normative requirements and
 qualification evidence; internal plans and evidence are not published as Help.
+
+The manual describes intentional Threads with one metadata home, optional
+independently authorized Codebase repositories, footer membership and shared
+Files/Changes inspection. Generated API references include local creation,
+version-checked membership and internal annotation containers. Source reviews
+preserve exact publication, legacy identity and independent execution gates.

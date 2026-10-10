@@ -22,6 +22,7 @@
     items,
     activeId,
     title = "Sessions",
+    kind = "session",
     loading = false,
     layoutStorage,
     onSelect,
@@ -34,11 +35,13 @@
     threadActions,
     threadAvatar,
     threadSidebar,
+    listFooter,
     children,
   }: {
     items: readonly SessionInboxItem[];
     activeId?: string | null;
     title?: string;
+    kind?: "session" | "thread";
     loading?: boolean;
     layoutStorage?: Storage;
     onSelect: (id: string) => void;
@@ -50,9 +53,22 @@
     threadStatus?: string;
     threadActions?: Snippet<[{ openSidebar: () => void }]>;
     threadAvatar?: Snippet;
-    threadSidebar?: Snippet;
+    threadSidebar?: Snippet<[{ close: () => void }]>;
+    listFooter?: Snippet;
     children: Snippet;
   } = $props();
+  const plural = $derived(kind === "thread" ? "Threads" : "Sessions");
+  const listLabel = $derived(
+    kind === "thread" ? "Thread conversations" : "Session chats",
+  );
+  const panelId = $derived(
+    kind === "thread" ? "thread-conversations" : "agent-sessions",
+  );
+  const settingsId = $derived(
+    kind === "thread"
+      ? "thread-conversation-settings"
+      : "agent-session-settings",
+  );
   let search = $state("");
   const visibleItems = $derived(
     items.filter((item) =>
@@ -81,7 +97,7 @@
   function openSidebar() {
     sidebarOpen = true;
     if (shell.mobile.resolvedMode === "mobile")
-      shell.mobile.show("right", "agent-session-settings");
+      shell.mobile.show("right", settingsId);
     void tick().then(() => settingsHeading?.focus({ preventScroll: true }));
   }
   function closeSidebar() {
@@ -99,15 +115,15 @@
 <AppShell.Body
   bind:ref={bodyElement}
   layout="regions"
-  label="Agent sessions inbox"
-  class="lc-community-inbox"
+  label={`${plural} inbox`}
+  class={`lc-community-inbox${kind === "thread" ? " lc-community-inbox--thread" : ""}`}
 >
   <AppShell.Body.Sidebar
     bind:ref={listElement}
     side="left"
-    panelId="agent-sessions"
-    label="Session chats"
-    mobileLabel="Sessions"
+    {panelId}
+    label={listLabel}
+    mobileLabel={plural}
     class="lc-community-inbox__list-region"
     style={resize.width === undefined
       ? undefined
@@ -120,12 +136,14 @@
         <Button
           variant="ghost"
           size="icon-sm"
-          aria-label="New agent session"
+          aria-label={kind === "thread" ? "New Thread" : "New agent session"}
           onclick={onNew}><PlusIcon aria-hidden="true" /></Button
         >
       </header>
       <div class="lc-community-inbox__list-header">
-        <Button variant="ghost" size="sm" onclick={onBack}>Agents</Button>
+        <Button variant="ghost" size="sm" onclick={onBack}
+          >{kind === "thread" ? "All Threads" : "Agents"}</Button
+        >
         {#if onAll}<Button variant="ghost" size="sm" onclick={onAll}
             >All sessions</Button
           >{/if}
@@ -139,13 +157,15 @@
         />
       </div>
       <ScrollArea class="lc-community-inbox__scroll">
-        <div class="lc-community-inbox__items" aria-label="Session chats">
+        <div class="lc-community-inbox__items" aria-label={listLabel}>
           <CommunityInboxSessions
             items={visibleItems}
             {activeId}
             {onSelect}
             {loading}
+            {kind}
           />
+          {@render listFooter?.()}
           {#if !loading && !visibleItems.length}<Empty.Root
               class="lc-community-inbox__empty"
               role="status"
@@ -153,9 +173,11 @@
                 ><Empty.Title
                   >{items.length
                     ? "No matching conversations"
-                    : "No sessions yet"}</Empty.Title
+                    : `No ${kind === "thread" ? "Threads" : "sessions"} yet`}</Empty.Title
                 ><Empty.Description
-                  >Start a session to begin a chat with this agent.</Empty.Description
+                  >{kind === "thread"
+                    ? "Create a Thread to begin a conversation."
+                    : "Start a session to begin a chat with this agent."}</Empty.Description
                 ></Empty.Header
               ></Empty.Root
             >{/if}
@@ -168,7 +190,7 @@
       type="button"
       class="lc-community-inbox__resize-handle"
       data-resizing={resize.resizing ? "" : undefined}
-      aria-label="Resize session chats"
+      aria-label={`Resize ${listLabel.toLowerCase()}`}
       title="Drag to resize. Double-click to reset width."
       onpointerdown={resize.begin}
       onpointermove={resize.move}
@@ -181,7 +203,7 @@
     </button>
   {/if}
   <AppShell.Body.Content
-    label="Selected agent session"
+    label={`Selected ${kind}`}
     class="lc-community-inbox__thread-region"
   >
     <section class="lc-community-inbox__thread">
@@ -190,13 +212,13 @@
           <Button
             variant="ghost"
             size="icon-sm"
-            aria-label="Toggle session chats"
-            title="Toggle session chats"
+            aria-label={`Toggle ${listLabel.toLowerCase()}`}
+            title={`Toggle ${listLabel.toLowerCase()}`}
             aria-pressed={expanded}
             onclick={() => {
               if (shell.mobile.resolvedMode === "mobile") {
                 if (expanded) shell.mobile.showMain();
-                else shell.mobile.show("left", "agent-sessions");
+                else shell.mobile.show("left", panelId);
               } else listOpen = !listOpen;
             }}><CommunitySidebarToggleIcon side="left" {expanded} /></Button
           >
@@ -207,8 +229,8 @@
               decorative
             />{/if}
           <div>
-            <h1 title={threadTitle ?? "Sessions"}>
-              {threadTitle ?? "Sessions"}
+            <h1 title={threadTitle ?? plural}>
+              {threadTitle ?? plural}
             </h1>
             {#if threadStatus}<p role="status">{threadStatus}</p>{/if}
           </div>
@@ -228,17 +250,21 @@
           ><Empty.Header
             ><Empty.Media variant="icon"
               ><MailIcon aria-hidden="true" /></Empty.Media
-            ><Empty.Title>Select a session</Empty.Title><Empty.Description
-              >Choose a chat on the left, or start a new session.</Empty.Description
+            ><Empty.Title>Select a {kind}</Empty.Title><Empty.Description
+              >{kind === "thread"
+                ? "Choose a Thread on the left, or create one."
+                : "Choose a chat on the left, or start a new session."}</Empty.Description
             ></Empty.Header
-          ><Button onclick={onNew}>Start session</Button></Empty.Root
+          ><Button onclick={onNew}
+            >{kind === "thread" ? "Create Thread" : "Start session"}</Button
+          ></Empty.Root
         >{/if}
     </section>
   </AppShell.Body.Content>
   {#if threadSidebar}
     <AppShell.Body.Sidebar
       side="right"
-      panelId="agent-session-settings"
+      panelId={settingsId}
       label="Conversation details"
       mobileLabel="Session settings"
       class="lc-community-inbox__settings"
@@ -255,7 +281,7 @@
           <CloseIcon aria-hidden="true" />
         </Button>
       </header>
-      {#if sidebarOpen}{@render threadSidebar()}{/if}
+      {#if sidebarOpen}{@render threadSidebar({ close: closeSidebar })}{/if}
     </AppShell.Body.Sidebar>
   {/if}
 </AppShell.Body>

@@ -657,7 +657,7 @@
     const trigger = await c.findByRole("button", { name: /Workspace:/ });
     await browserEvent.click(trigger);
     const select = await page.findByRole("menuitem", {
-      name: "Inspect workspace",
+      name: "Workspace",
     });
     select.focus();
     await browserEvent.keyboard("{ArrowRight}");

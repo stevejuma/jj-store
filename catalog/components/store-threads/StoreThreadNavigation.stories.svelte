@@ -6,139 +6,83 @@
     title: "JJ Store/Repository thread navigation",
     component: Fixture,
     tags: ["visual-pending"],
-    args: { otherRepository: true },
+    args: { otherRepository: true, multiRepository: true },
     parameters: { layout: "fullscreen" },
   });
-  async function nested({ canvasElement }: { canvasElement: HTMLElement }) {
+  async function aliases({ canvasElement }: { canvasElement: HTMLElement }) {
     const c = within(canvasElement);
-    const mobile = c.queryByRole("button", { name: "Open navigation sidebar" });
-    if (mobile) await userEvent.click(mobile);
-    const navigation = c.getByRole("navigation", {
-      name: "Repository navigation",
+    const inbox = await c.findByRole("navigation", {
+      name: "Threads by repository",
     });
-    await waitFor(() =>
-      expect(
-        within(navigation).getByRole("button", { name: "general" }),
-      ).toBeVisible(),
-    );
-    await expect(
-      navigation.querySelector('[data-navigation-section-kind="channels"]'),
-    ).toBeNull();
-    const browse = within(navigation)
-      .getAllByRole("button", { name: "Browse threads" })
-      .find((button) =>
-        button.closest(".lc-community-navigation__section-header"),
-      )!;
-    await expect(browse.textContent?.trim()).toBe("");
-    await expect(
-      browse.closest(".lc-community-navigation__section-header"),
-    ).not.toBeNull();
-    const home = within(navigation)
-      .getByRole("button", { name: "Collaboration home" })
-      .closest(".lc-community-navigation__item-tree")!;
-    const thread = within(home as HTMLElement).getByRole("button", {
-      name: "general",
+    const rows = within(inbox).getAllByRole("button", {
+      name: "Open Thread general",
     });
-    const repo = within(home as HTMLElement).getByRole("button", {
-      name: "Collaboration home",
-    });
-    await expect(thread).toBeVisible();
-    await expect(
-      thread.querySelector("svg")!.getBoundingClientRect().left -
-        repo.querySelector("svg")!.getBoundingClientRect().left,
-    ).toBeGreaterThan(16);
-    await expect(
-      within(home as HTMLElement).getByRole("button", {
-        name: "Browse threads",
-      }),
-    ).toBeVisible();
-    await userEvent.click(
-      within(navigation).getByRole("button", {
-        name: "Expand Other repository",
-      }),
-    );
-    const other = within(navigation)
-      .getByRole("button", { name: "Other repository" })
-      .closest(".lc-community-navigation__item-tree")!;
-    await userEvent.click(
-      await within(other as HTMLElement).findByRole("button", {
-        name: "general",
-      }),
-    );
+    await expect(rows).toHaveLength(2);
+    await userEvent.click(rows[1]!);
     await expect(await c.findByText("Welcome to the channel")).toBeVisible();
-    const breadcrumb = await c.findByRole("navigation", { name: "breadcrumb" });
-    if (mobile)
-      await expect(
-        breadcrumb.closest('[aria-label="Main toolbar"]'),
-      ).not.toBeNull();
     await expect(
-      within(breadcrumb).getByRole("link", { name: "Other repository" }),
+      within(inbox)
+        .getAllByRole("button", { name: "Open Thread general" })
+        .every((row) => row.getAttribute("aria-pressed") === "true"),
+    ).toBe(true);
+    await expect(
+      c.queryAllByRole("button", { name: "Browse threads" }),
+    ).toHaveLength(0);
+    await userEvent.click(c.getByRole("button", { name: "All Threads" }));
+    await expect(
+      c.getByRole("button", { name: /^Threads$/ }),
     ).toBeVisible();
-    await expect(breadcrumb).toHaveTextContent(
-      /Other repository.*Threads.*general/,
-    );
-    await userEvent.click(
-      within(breadcrumb).getByRole("link", { name: "Threads" }),
-    );
-    await waitFor(() =>
-      expect(breadcrumb).toHaveTextContent(/^Other repository\s*Threads$/),
-    );
-    await expect(c.getByRole("heading", { name: "Threads" })).toBeVisible();
   }
 </script>
 
 <Story
-  name="Collapsed repository children are read-free and reuse captures on reopen"
+  name="Multiple repository aliases open one canonical Thread"
+  play={aliases}
+/>
+<Story
+  name="Loaded inbox and repository navigation reuse the same captures"
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
+    await c.findByRole("navigation", { name: "Threads by repository" });
     const counts = () =>
       JSON.parse(c.getByTestId("sidebar-thread-reads").textContent ?? "{}");
-    await c.findByRole("button", { name: "general" });
-    await expect(counts()["99".repeat(16)] ?? 0).toBe(0);
-    await userEvent.click(
-      c.getByRole("button", { name: "Expand Other repository" }),
-    );
     await waitFor(() => expect(counts()["99".repeat(16)]).toBe(1));
     await userEvent.click(
-      c.getByRole("button", { name: "Collapse Other repository" }),
+      c.getByRole("button", { name: "Collapse Other repository Threads" }),
     );
     await userEvent.click(
-      c.getByRole("button", { name: "Expand Other repository" }),
+      c.getByRole("button", { name: "Expand Other repository Threads" }),
     );
     await expect(counts()["99".repeat(16)]).toBe(1);
   }}
 />
-
 <Story
-  name="Threads nest under repositories with contextual breadcrumbs"
-  play={nested}
-/>
-<Story
-  name="Mobile thread context remains in the main toolbar"
+  name="Mobile Thread aliases retain one conversation"
   args={{ displayMode: "mobile" }}
-  play={nested}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await userEvent.click(
+      await c.findByRole("button", { name: "Toggle thread conversations" }),
+    );
+    await userEvent.click(
+      (await c.findAllByRole("button", { name: "Open Thread general" }))[1]!,
+    );
+    await expect(await c.findByText("Welcome to the channel")).toBeVisible();
+  }}
 />
 <Story
-  name="Collapsed repositories retain thread and browse actions"
+  name="Compact navigation keeps Threads beneath Agents"
   args={{ initiallyCollapsed: true }}
   play={async ({ canvasElement }) => {
-    const c = within(canvasElement),
-      body = within(document.body);
-    await userEvent.click(c.getByRole("button", { name: "Repositories" }));
-    const option = await body.findByRole("option", {
-      name: /general Other repository/,
-    });
-    await userEvent.click(option);
-    await expect(await c.findByText("Welcome to the channel")).toBeVisible();
+    const c = within(canvasElement);
     await expect(
-      c.getByRole("navigation", { name: "breadcrumb" }),
-    ).toHaveTextContent(/Other repository.*Threads.*general/);
-    await userEvent.click(c.getByRole("button", { name: "Repositories" }));
-    await userEvent.click(
-      await body.findByRole("option", { name: "Browse threads" }),
-    );
+      c.getByRole("button", { name: /^Agents$/ }),
+    ).toBeVisible();
     await expect(
-      c.getByRole("navigation", { name: "breadcrumb" }),
-    ).toHaveTextContent(/^Other repository\s*Threads$/);
+      c.getByRole("button", { name: /^Threads$/ }),
+    ).toBeVisible();
+    await expect(
+      c.queryByRole("button", { name: "Browse threads" }),
+    ).toBeNull();
   }}
 />

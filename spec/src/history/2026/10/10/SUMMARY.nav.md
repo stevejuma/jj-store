@@ -20,3 +20,7 @@
   {{#include E-EVENT-WEBSOCKET-001/SUMMARY.nav.md}}
 - [E-INBOX-FRESHNESS-001](E-INBOX-FRESHNESS-001/index.md)
   {{#include E-INBOX-FRESHNESS-001/SUMMARY.nav.md}}
+- [E-THREADS-001](E-THREADS-001/index.md)
+  {{#include E-THREADS-001/SUMMARY.nav.md}}
+- [E-THREADS-002](E-THREADS-002/index.md)
+  {{#include E-THREADS-002/SUMMARY.nav.md}}

@@ -68,3 +68,18 @@ test("native comments, commits and operations cross-link without remapping ident
   assert.equal(storeRouteFromHash(storeRouteToHash(link.route)!).kind, "route");
   assert.equal(parseCommunityEntityLink("javascript:alert(1)"), undefined);
 });
+test("canonical Thread and reply links retain exact identity in composer chips", () => {
+  for (const href of [
+    `#/threads/${repository}/${thread}`,
+    `#/threads/${repository}/${thread}?reply=${message}`,
+  ]) {
+    const text = `[Planning](${href})`;
+    assert.deepEqual(communityEntityLinkMatches(text), [
+      { value: href, href, start: 11, end: 11 + href.length },
+    ]);
+    const link = parseCommunityEntityLink(href)!;
+    assert.equal(link.route.repository, repository);
+    assert.equal(link.route.threadId, thread);
+    assert.equal(link.kind, href.includes("reply=") ? "message" : "channel");
+  }
+});

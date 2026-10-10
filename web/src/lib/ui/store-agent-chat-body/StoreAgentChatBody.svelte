@@ -44,6 +44,7 @@
     supplement: itemSupplement,
     metadataSupplement: itemMetadata,
     onOpenThread,
+    messageActions,
     logLabel = "Conversation messages",
     ...hostOptions
   }: ChatBodyProps = $props();
@@ -181,6 +182,7 @@
                       blocks={item.blocks}
                       state={comments}
                       reactionTarget={item.id}
+                      {messageActions}
                       reply={!!item.replyContext}
                       {customBlock}
                     />{/snippet}
@@ -212,6 +214,7 @@
                       blocks={item.blocks}
                       state={comments}
                       reactionTarget={item.id}
+                      {messageActions}
                       reply={item.role === "assistant" && !!item.replyContext}
                       {customBlock}
                     />
@@ -259,6 +262,7 @@
                           blocks={item.blocks}
                           state={comments}
                           reactionTarget={item.id}
+                          {messageActions}
                           {customBlock}
                         />{/if}</Collapsible.Content
                     >

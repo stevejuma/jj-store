@@ -158,7 +158,7 @@ impl Index {
             else {
                 return Err(Error::Corrupt);
             };
-            if t.status == ThreadStatusV1::Tombstoned {
+            if t.status == ThreadStatusV1::Tombstoned || !t.is_user_thread() {
                 continue;
             }
             let row = index.add(

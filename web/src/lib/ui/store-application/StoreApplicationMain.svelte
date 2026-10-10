@@ -19,6 +19,7 @@
   import StoreSettings from "../store-settings/StoreSettings.svelte";
   import CommunityApplicationMobileNavigation from "../community-application/CommunityApplicationMobileNavigation.svelte";
   import StoreProjectsBreadcrumb from "../store-work/StoreProjectsBreadcrumb.svelte";
+  import StoreThreads from "../store-threads/StoreThreads.svelte";
   import StoreThreadsBreadcrumb from "../store-threads/StoreThreadsBreadcrumb.svelte";
   import { isRepositoryProjects } from "../../controller/projects-view-cache.js";
   import StoreRepositoryTabs from "./StoreRepositoryTabs.svelte";
@@ -92,6 +93,7 @@
     repository={current.repository}
     profile={controller.state.repository.profile ?? "native"}
     enabled={!current.agentsHub &&
+      current.page !== "threads" &&
       !focusedStacks &&
       !settingsOpen &&
       !conflictOpen &&
@@ -121,6 +123,7 @@
         onClose={closeSettings}
       />
     {:else if current.agentsHub}{@render agents?.()}
+    {:else if current.page === "threads"}<StoreThreads {controller} />
     {:else}
       {#if shell.mobile.resolvedMode === "mobile"}
         <AppShell.Toolbar>
@@ -130,8 +133,6 @@
           {#if focusedStacks && stackWorkspace?.snapshot?.repository === current.repository}<StoreStackWorkspacePicker
               controller={stackWorkspace}
             />{:else if current.page === "projects" && controller.projects && !isRepositoryProjects(current)}<StoreProjectsBreadcrumb
-              {controller}
-            />{:else if current.page === "threads"}<StoreThreadsBreadcrumb
               {controller}
             />{/if}
           <div class="store-application__details-toggle">
@@ -153,7 +154,7 @@
           : undefined}
       >
         <div class="store-application__body-frame">
-          {#if !(current.page === "projects" && controller.projects && !isRepositoryProjects(current)) && current.page !== "threads" && !focusedStacks}
+          {#if !(current.page === "projects" && controller.projects && !isRepositoryProjects(current)) && !focusedStacks}
             {#if !(current.page === "reviews" && current.reviewThreadId)}<StoreRepositoryTabs
                 page={current.page}
                 local={controller.state.repository.profile === "git_sha1_jj045"}

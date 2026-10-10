@@ -15,6 +15,8 @@ mod providers;
 mod real;
 #[path = "agent_execution/setups.rs"]
 mod setups;
+#[path = "agent_execution/thread_workspace.rs"]
+mod thread_workspace_tests;
 #[path = "agent_execution/tooling.rs"]
 mod tooling;
 #[path = "agent_execution/workspace_comments.rs"]

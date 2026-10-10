@@ -115,11 +115,6 @@
 .chat-stale {
   padding: 1.5rem;
 }
-.chat-stale {
-  border: 1px solid var(--border);
-  margin: 1rem;
-  border-radius: var(--radius);
-}
 .store-agent-chat-body .sr-only {
   position: absolute;
   width: 1px;

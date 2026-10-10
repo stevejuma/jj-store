@@ -2,7 +2,6 @@
 
 Read the owning topic and requirement before implementation.
 <!-- generated-navigation -->
-
 ## Pages
 
 - [Agent activity, repository reviews, Threads and Reactions](01-agent-activity-repository-reviews-threads-and-reactions.md)
@@ -52,3 +51,4 @@ Read the owning topic and requirement before implementation.
 - [Conversation comment submissions and answer links](41-conversation-comment-submissions.md)
 - [Freshness producer ownership](41-freshness-producer-ownership.md)
 - [Conversation details and generated metadata](42-conversation-metadata.md)
+- [Intentional Threads and conversation ownership](43-intentional-threads-and-codebases.md)

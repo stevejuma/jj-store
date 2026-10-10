@@ -111,6 +111,17 @@ export class HttpStoreDataSource
     this.#scope.epoch = head.epoch;
     return head;
   }
+  codeSummary(operation: string, signal?: AbortSignal) {
+    const query = { at_op: fullId(operation), limit: 50 };
+    return this.#query<Envelope<Model<"NativeCodeSummary">>>(
+      "code-summary",
+      operation,
+      query,
+      (shared) =>
+        this.#client.request("code/summary", query, { signal: shared }),
+      signal,
+    );
+  }
   references(operation: string, cursor?: string, input: ReferenceQuery = {}) {
     return httpReferences(this.#client, this.#query, operation, cursor, input);
   }

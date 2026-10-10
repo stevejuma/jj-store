@@ -41,15 +41,16 @@
       ? compactSection === "repositories"
       : (sectionOpen.repositories ?? true);
     const route = controller.state.route;
+    const anyRepositoryOpen =
+      repositoriesVisible &&
+      (compact ||
+        controller.state.repositories.some((repo) => itemOpen[repo.id]));
     const visible = new Set(
       controller.state.repositories
         .filter(
           (repo) =>
             supportsRepositoryThreads(repo) &&
-            repositoriesVisible &&
-            (compact ||
-              (itemOpen[repo.id] ??
-                (route.page === "threads" && route.repository === repo.id))),
+            (route.page === "threads" || anyRepositoryOpen),
         )
         .map((repo) => repo.id),
     );
@@ -93,6 +94,7 @@
       primaryItems: [
         ...model.primaryItems,
         { id: "agents", label: "Agents", kind: "agents" },
+        { id: "threads", label: "Threads", kind: "threads" },
       ],
       sections: model.sections.map((section) => ({
         ...section,

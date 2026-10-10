@@ -17,6 +17,7 @@ import { exactSource } from "./source-map.js";
 
 /** Owned by an application controller, never a renderer or browser storage. */
 export class ConversationSession {
+  constructor(readonly id = "") {}
   projection = $state<ConversationProjection>({
     items: [],
     sources: new Map(),
@@ -209,7 +210,7 @@ export class ConversationSessions {
   get(key: string) {
     let session = this.#sessions.get(key);
     if (!session) {
-      session = new ConversationSession();
+      session = new ConversationSession(key);
       this.#sessions.set(key, session);
     }
     return session;

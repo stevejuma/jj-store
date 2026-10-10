@@ -266,3 +266,10 @@ authorization URLs and executable selections are not accepted browser inputs or
 returned data. This application-owned interface adds no native repository
 mutation or RPC credential transfer. An interrupted authorization requires a new
 explicit sign-in.
+
+Installation-local Admin `POST /v1/local/threads` explicitly creates a Thread or
+conditionally edits its Codebase. Stable request IDs and retained receipts
+preserve unknown outcomes. Each attached repository needs independent access.
+Ordinary repository endpoints admit bounded annotation containers without agent
+execution; supervisor-owned conversation creation and Codebase edits remain
+installation-local.

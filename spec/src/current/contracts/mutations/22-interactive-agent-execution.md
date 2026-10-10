@@ -1,5 +1,10 @@
 # Interactive agent execution
 
+Intentional Thread creation and Codebase edits use the same service authority;
+see [Thread workspace API](../api/44-thread-workspaces.md). Agent sends validate
+the exact committed membership and selected subset before preparing workspaces.
+Internal conversation containers remain separate from user Thread assignments.
+
 JST-COLLAB-031 through JST-COLLAB-033 add owned service contracts for agent
 setup, targets, explicit launches, prompts, current permission decisions,
 lifecycle commands and stable request outcomes. Durable commands survive browser

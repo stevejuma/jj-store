@@ -1,3 +1,4 @@
+import { createRepositoryThreadNavigation } from "../../src/lib/controller/repository-thread-navigation.svelte.js";
 import { expect, test, vi } from "vitest";
 import { createInMemoryStoreController } from "../../../catalog/controller/in-memory-store-controller.svelte.js";
 import {
@@ -36,7 +37,14 @@ async function fixture() {
   });
   await threads.list();
   const openThreads = vi.fn(async () => {});
+  const threadNavigation = createRepositoryThreadNavigation({
+    repositories: () => [repo],
+    credential: () => null,
+    source: () => ({ list: transport.transport.list, close: () => {} }),
+  });
+  await threadNavigation.load();
   const controller: StoreController = {
+    threadNavigation,
     ...base,
     threads,
     state: { ...base.state, route, repository: repo, repositories: [repo] },
@@ -45,7 +53,7 @@ async function fixture() {
   return { controller, repo, openThreads };
 }
 
-test("repository threads are children of their owner with one section browse action", async () => {
+test("repository aliases retain their canonical owner and omit Browse controls", async () => {
   const { controller, repo } = await fixture();
   const model = withThreadNavigation(
     controller,
@@ -53,15 +61,10 @@ test("repository threads are children of their owner with one section browse act
   );
   expect(model.sections.map((s) => s.id)).toEqual(["repositories"]);
   const section = model.sections[0]!;
-  expect(section.action).toMatchObject({
-    kind: "threads",
-    label: "Browse threads",
-    repository: repo.id,
-  });
-  expect(section.items[0]!.children?.[0]).toMatchObject({
-    label: "Browse threads",
-    repository: repo.id,
-  });
+  expect(section.action).toBeUndefined();
+  expect(section.items[0]!.children?.map((row) => row.label)).toEqual([
+    "general",
+  ]);
   expect(section.items[0]!.children).toContainEqual(
     expect.objectContaining({
       id: `thread:${repo.id}:${THREAD_IDS.thread}`,

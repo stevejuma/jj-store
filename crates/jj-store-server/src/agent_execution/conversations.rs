@@ -193,6 +193,34 @@ impl Supervisor {
                 })
                 .collect::<Result<Vec<_>>>()
         })?;
+        if let Some(thread) = command.origin.thread {
+            let home = command.origin.home.ok_or(Error::Invalid)?;
+            let profile = if self
+                .0
+                .resources
+                .folders
+                .as_ref()
+                .is_some_and(|f| f.open(home).is_ok())
+            {
+                "local_jj_git"
+            } else {
+                "native"
+            };
+            let selected = self.home_thread_summary(home, profile, thread).await?;
+            if selected.value.codebase.is_some()
+                && command.thread_codebase != Some(selected.reference)
+            {
+                return Err(Error::Stale);
+            }
+            let allowed = selected.value.codebase.unwrap_or_else(|| vec![home]);
+            if command
+                .attachments
+                .iter()
+                .any(|a| !allowed.contains(&a.repository))
+            {
+                return Err(Error::Denied);
+            }
+        }
         self.remember(command.request_id, digest, None)?;
         self.finish(command.request_id, "preparing_home", None)?;
         let (home, profile, source) = self.conversation_home(command.origin.home).await?;
@@ -262,10 +290,52 @@ impl Supervisor {
         }
         let mut participants = Vec::new();
         for setup in setups {
-            let id = hex::encode(publication::identity(&format!(
+            let base_id = hex::encode(publication::identity(&format!(
                 "participation/{}/{}/{home}",
                 command.conversation_id, setup.id
             )));
+            let removed = self.read(|s| {
+                Ok(s.sessions.get(&base_id).is_some_and(|saved| {
+                    saved
+                        .code_workspaces
+                        .keys()
+                        .any(|r| !command.attachments.iter().any(|a| a.repository == *r))
+                }))
+            })?;
+            let reusable = self.read(|s| {
+                Ok(s.sessions
+                    .values()
+                    .filter(|saved| {
+                        saved.view.conversation_id.as_deref() == Some(&command.conversation_id)
+                            && saved.view.setup_id.as_deref() == Some(&setup.id)
+                            && saved
+                                .code_workspaces
+                                .keys()
+                                .all(|r| command.attachments.iter().any(|a| a.repository == *r))
+                    })
+                    .max_by_key(|saved| saved.view.last_activity_at_millis)
+                    .map(|saved| saved.view.id.clone()))
+            })?;
+            let id = if let Some(id) = reusable {
+                id
+            } else if removed {
+                if let Some(thread) = command.origin.thread {
+                    if self.thread_has_pending_work(home, thread)? {
+                        return Err(Error::Busy);
+                    }
+                }
+                hex::encode(publication::identity(&format!(
+                    "participation-scope/{base_id}/{}",
+                    command.request_id
+                )))
+            } else {
+                base_id.clone()
+            };
+            let continuation = if removed {
+                self.read(|s| Ok(prompt_context::retained(s, &base_id)))?
+            } else {
+                String::new()
+            };
             if self.read(|s| Ok(!s.sessions.contains_key(&id)))? {
                 let path = self
                     .0
@@ -314,7 +384,7 @@ impl Supervisor {
                     profile: profile.clone(),
                     instructions: setup.instructions.clone(),
                     context: None,
-                    continuation: String::new(),
+                    continuation,
                     delivered_sections: BTreeMap::new(),
                     coordination: None,
                     events: vec![],

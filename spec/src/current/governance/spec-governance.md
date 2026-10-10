@@ -132,3 +132,9 @@ The application-event browser harness serves only synthetic version-1 hints and
 built client assets on an isolated loopback port. Its connection-count, fanout
 and final-release evidence qualifies client transport; it cannot substitute for
 live repository action timings or native authorization qualification.
+
+E-THREADS-002 governs explicit demo Thread seeding and its launcher hook. The
+seed covers zero, one and two attached repositories through the same receipt
+authority as the live form. An ignored fixture marker prevents replay during
+ordinary startup. Reset remains an explicitly authorized destructive development
+operation; UI iteration and backend restart never reset collaboration state.

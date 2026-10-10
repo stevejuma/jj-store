@@ -23,6 +23,12 @@ impl Supervisor {
         if saved.origin_linked {
             return Ok(());
         }
+        let primary = self.read(|s| Ok(s.conversations[conversation].origin.thread.is_some()))?
+            && self
+                .home_thread_summary(saved.view.repository, &saved.profile, thread)
+                .await?
+                .value
+                .is_user_thread();
         self.authorized(saved.view.repository, &saved.profile, true)
             .await?;
         let session_id = *feedback::recorded_session_ids(&saved)?
@@ -102,7 +108,7 @@ impl Supervisor {
                                 AgentObjectKind::SessionSnapshot,
                                 snapshot_id,
                             ),
-                            primary: true,
+                            primary,
                         },
                         observed_primary: None,
                     },

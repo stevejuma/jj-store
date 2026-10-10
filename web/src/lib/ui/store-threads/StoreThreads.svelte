@@ -1,176 +1,174 @@
 <script lang="ts">
-  import StoreThreadConversation from "./StoreThreadConversation.svelte";
-  import { agentMember } from "../community-agents/model.js";
-
-  import StoreNotice from "../store-notifications/StoreNotice.svelte";
-  import "./store-threads.css";
-
-  import CommunitySkeleton from "../community-skeleton/CommunitySkeleton.svelte";
-  import ForumTopicList from "../forum-topic-list/ForumTopicList.svelte";
-  import type { CommunityWorkspaceModel } from "../../community/workspace-model.js";
-  import { ScrollArea } from "@lapismd/design-core/shadcn/scroll-area";
+  import { untrack } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as Alert from "@lapismd/design-core/shadcn/alert";
-  import { untrack } from "svelte";
-  import type { StoreController } from "../../controller/contracts.js";
-
-  import StoreThreadHeader from "./StoreThreadHeader.svelte";
+  import MoreIcon from "@lucide/svelte/icons/ellipsis";
+  import UsersIcon from "@lucide/svelte/icons/users";
+  import RefreshIcon from "@lucide/svelte/icons/refresh-cw";
+  import CommunityInbox from "../community-inbox/CommunityInbox.svelte";
+  import CommunitySkeleton from "../community-skeleton/CommunitySkeleton.svelte";
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
+  import StoreThreadConversation from "./StoreThreadConversation.svelte";
+  import StoreThreadSettings from "./StoreThreadSettings.svelte";
+  import StoreThreadCreate from "./StoreThreadCreate.svelte";
+  import { threadInboxRows } from "./thread-inbox.js";
+  import { threadMembers, threadDisabled } from "./thread-view.js";
+  import { agentMember } from "../community-agents/model.js";
   import { useThreadPanel } from "./thread-panel.svelte.js";
-  import {
-    threadMembers,
-    threadDisabled,
-    threadWritable,
-  } from "./thread-view.js";
-  import { principalMember } from "../../collaboration/presentation.js";
-
+  import type { StoreController } from "../../controller/contracts.js";
   let { controller }: { controller: StoreController } = $props();
-  let query = $state("");
-  const searchRepository = $derived(controller.state.route.repository);
-  $effect(() => {
-    searchRepository;
-    query = "";
-  });
   const threads = $derived(controller.threads);
   const panel = useThreadPanel();
+  let creating = $state(false);
+  const rows = $derived(threadInboxRows(controller));
+  const items = $derived(
+    controller.state.route.threadRepository
+      ? rows.filter(
+          (r) => r.repository?.id === controller.state.route.threadRepository,
+        )
+      : rows,
+  );
+  const entries = $derived(
+    Object.entries(controller.threadNavigation?.entries ?? {}),
+  );
+  const detail = $derived(threads?.detail);
+  const id = $derived(controller.state.route.threadId);
+  const selected = $derived(
+    id ? `${controller.state.route.repository}:${id}` : null,
+  );
   const members = $derived([
     ...threadMembers(controller),
     ...(controller.execution?.value?.setups ?? []).map(agentMember),
   ]);
-  const disabled = $derived(threadDisabled(controller));
-  const projection = $derived(threads?.projection);
-  const room = $derived({
-    id: threads?.detail?.thread.value.thread_id ?? "",
-    name: threads?.detail?.thread.value.title ?? "Threads",
-    kind: "channel" as const,
-    participantIds: members.map((m) => m.id),
-    memberListCompleteness: "partial" as const,
-  });
-  const model = $derived<CommunityWorkspaceModel>({
-    communities: [],
-    activeCommunityId: controller.state.route.repository,
-    navigationSections: [{ id: "threads", label: "Threads", rooms: [room] }],
-    activeRoomId: room.id,
-    view: "channel",
-    messages:
-      projection?.messages
-        .filter((m) => !m.parentMessageId)
-        .map((m) => ({
-          ...m,
-          reactions: threads?.reactionModels(projection.targets[m.id]!) ?? [],
-        })) ?? [],
-    topics: [],
-    members,
-    currentMemberId: controller.state.repository.principal,
-  });
-  let forumViewport = $state<HTMLElement | null>(null);
-  const topics = $derived(
-    threads?.threads.map((t) => ({
-      id: t.value.thread_id,
-      title: t.value.title,
-      excerpt: t.directory?.excerpt ?? "",
-      authorId: t.value.actor,
-      replyCount: Number(t.directory?.reply_count ?? 0),
-      replyCountAvailable: !!t.directory,
-      participantIds: t.directory?.participants ?? [],
-      lastActivityLabel: new Date(
-        Number(
-          t.directory?.last_activity_at_millis ?? t.value.accepted_at_millis,
-        ),
-      ).toLocaleDateString(undefined, { month: "short", day: "numeric" }),
-    })) ?? [],
-  );
-  const directoryMembers = $derived([
-    ...new Map(
-      (threads?.threads ?? []).flatMap((t) =>
-        [t.value.actor, ...(t.directory?.participants ?? [])].map(
-          (id) => [id, principalMember(id)] as const,
-        ),
-      ),
-    ).values(),
-  ]);
-  const visibleTopics = $derived(
-    topics.filter((topic) =>
-      `${topic.title}\n${topic.excerpt}`
-        .toLocaleLowerCase()
-        .includes(query.trim().toLocaleLowerCase()),
-    ),
+  const messages = $derived(
+    threads?.projection.messages
+      .filter((m) => !m.parentMessageId)
+      .map((m) => ({
+        ...m,
+        reactions:
+          threads?.reactionModels(threads.projection.targets[m.id]!) ?? [],
+      })) ?? [],
   );
   $effect(() => {
-    const id = room.id;
+    const key = detail?.thread.value.thread_id;
     untrack(() => {
-      if (id) void threads?.loadEmojis().catch(() => {});
+      if (key) void threads?.loadEmojis().catch(() => {});
     });
   });
-  function reply(id: string) {
-    threads?.selectReply(id);
+  $effect(() => {
+    if (controller.execution?.available())
+      untrack(() => void controller.execution?.ensure());
+  });
+  function reply(message: string) {
+    threads?.selectReply(message);
     panel.open("replies");
   }
 </script>
 
-{#if threads}<section class="store-threads" aria-label="Threads">
-    <StoreThreadHeader {controller} bind:query />
-    <StoreNotice
-      noticeKey="threads"
-      title="Thread action needs attention"
-      message={threads.pending ? "" : threads.error}
-      pending={threads.busy}
-    />
-    {#if threads.pending && threads.error}<Alert.Root variant="destructive"
-        ><Alert.Title>Thread action needs attention</Alert.Title
-        ><Alert.Description>{threads.error}</Alert.Description>
-        {#if threads.pending}<Button
-            variant="outline"
-            disabled={threads.busy}
-            onclick={() => threads.checkPending()}>Check action status</Button
-          ><Button
-            variant="ghost"
-            disabled={threads.busy}
-            onclick={() => threads.retryPending().catch(() => {})}
-            >Retry same action</Button
-          >{/if}
-      </Alert.Root>{/if}
-    {#if !threads.detail && threads.status === "loading"}<CommunitySkeleton
-        layout="messages"
-        label="Loading threads"
-        padded
-      />
-    {:else if threads.detail && projection}
-      <div class="store-threads__conversation">
-        <StoreThreadConversation
-          {controller}
-          {threads}
-          messages={model.messages}
-          {members}
-          user={members.find(
-            (m) => m.id === controller.state.repository.principal,
-          ) ?? controller.state.member}
-          {disabled}
-          onReply={reply}
-        />
-      </div>
-    {:else}<ScrollArea
-        bind:viewportRef={forumViewport}
-        type="hover"
-        orientation="vertical"
-        class="store-threads__directory"
-      >
-        <ForumTopicList
-          topics={visibleTopics}
-          filtered={!!query.trim()}
-          members={directoryMembers}
-          viewport={forumViewport}
-          disabled={threads.busy || !!threads.pending}
-          composerStatus={threads.error
-            ? { type: "error", message: threads.error }
-            : undefined}
-          onCreateTopic={threadWritable(controller)
-            ? (draft) => threads.create(draft.title, draft.content)
-            : undefined}
-          onOpenTopic={(id) => threads.open(id)}
-        />{#if threads.hasMore}<Button
-            variant="ghost"
-            class="store-threads__more"
-            onclick={threads.more}>More threads</Button
-          >{/if}</ScrollArea
+<CommunityInbox
+  kind="thread"
+  title="Threads"
+  {items}
+  activeId={selected}
+  loading={!entries.length ||
+    entries.some(([, e]) => e.loading && !e.threads.length)}
+  threadTitle={detail?.thread.value.title ?? "Threads"}
+  threadStatus={detail?.thread.value.status}
+  onNew={() => (creating = true)}
+  onBack={() => void controller.actions.openThreads?.()}
+  onSelect={(target) => {
+    const [home, thread] = target.split(":");
+    void controller.actions.openThreads?.(thread, home);
+  }}
+  threadSidebar={detail ? settings : undefined}
+>
+  {#snippet threadActions({ openSidebar })}
+    <Button
+      variant="ghost"
+      size="icon-sm"
+      aria-label="Refresh Threads"
+      onclick={() => {
+        controller.threadNavigation?.invalidate();
+        void controller.threadNavigation?.load();
+        if (id) void threads?.refresh();
+      }}><RefreshIcon aria-hidden="true" /></Button
+    >
+    {#if detail}<Button
+        variant="ghost"
+        size="icon-sm"
+        aria-label="Thread contributors"
+        onclick={() => panel.open("members")}
+        ><UsersIcon aria-hidden="true" /></Button
+      ><Button
+        variant="ghost"
+        size="icon-sm"
+        aria-label="Conversation details"
+        onclick={openSidebar}><MoreIcon aria-hidden="true" /></Button
       >{/if}
-  </section>{/if}
+  {/snippet}
+  {#if threads?.pending && threads.error}<Alert.Root variant="destructive"
+      ><Alert.Title>Thread action needs attention</Alert.Title
+      ><Alert.Description>{threads.error}</Alert.Description><Button
+        disabled={threads.busy}
+        onclick={() => void threads.checkPending()}>Check action status</Button
+      ><Button
+        variant="ghost"
+        disabled={threads.busy}
+        onclick={() => void threads.retryPending().catch(() => {})}
+        >Retry same action</Button
+      ></Alert.Root
+    >{/if}
+  <StoreNotice
+    noticeKey="thread-inbox"
+    title="Thread action needs attention"
+    message={threads?.pending
+      ? ""
+      : (threads?.error ?? controller.state.status.error)}
+  />
+  {#if id && (!detail || detail.thread.value.thread_id !== id)}
+    {#if threads?.status === "failed"}<p role="status">
+        This Thread is unavailable. {threads.error}
+      </p>{:else}<CommunitySkeleton
+        layout="messages"
+        label="Loading Thread"
+        padded
+      />{/if}
+  {:else if threads && detail}
+    {#key `${threads.conversationScope}:${id}`}
+      <StoreThreadConversation
+        {controller}
+        {threads}
+        {messages}
+        {members}
+        user={members.find(
+          (m) => m.id === controller.state.repository.principal,
+        ) ?? controller.state.member}
+        disabled={threadDisabled(controller)}
+        onReply={reply}
+      />
+    {/key}
+  {/if}
+  {#snippet listFooter()}
+    {#each entries.filter(([, e]) => e.error || e.cursor) as [home, entry] (home)}
+      <Button
+        variant="ghost"
+        onclick={() =>
+          void (entry.error
+            ? controller.threadNavigation?.read(home)
+            : controller.threadNavigation?.more(home))}
+        >{entry.error ? "Retry Threads" : "More Threads"} · {controller.state.repositories.find(
+          (r) => r.id === home,
+        )?.name}</Button
+      >
+    {/each}
+  {/snippet}
+</CommunityInbox>
+{#snippet settings({ close }: { close: () => void })}<StoreThreadSettings
+    {controller}
+    embedded
+    onClose={close}
+  />{/snippet}
+{#if creating}<StoreThreadCreate
+    {controller}
+    onClose={() => (creating = false)}
+  />{/if}

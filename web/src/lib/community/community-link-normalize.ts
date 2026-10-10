@@ -24,7 +24,7 @@ export function communityEntityLinkMatches(
     end: number;
   }> = [];
   for (const match of content.matchAll(
-    /(?:https?:\/\/[^\s<>]*?)?#\/(?:repos|projects)[^\s<>)]*/gu,
+    /(?:https?:\/\/[^\s<>]*?)?#\/(?:repos|projects|threads)[^\s<>)]*/gu,
   )) {
     const value = trimLinkCandidate(match[0]);
     const href = normalizeCommunityEntityHref(value);

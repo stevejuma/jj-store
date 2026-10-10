@@ -59,6 +59,14 @@ pub(crate) async fn thread_apply(
 ) -> Result<Response> {
     routes::input(args)?;
     let body = input(body)?;
+    if matches!(
+        body.command,
+        ThreadCommandV1::SetCodebase { .. }
+            | ThreadCommandV1::CreateIntentional { .. }
+            | ThreadCommandV1::CreateConversation { .. }
+    ) {
+        return Err(Error::denied());
+    }
     dispatch(
         &state,
         context,

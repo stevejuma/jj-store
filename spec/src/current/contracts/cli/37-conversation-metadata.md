@@ -1,5 +1,10 @@
 # Conversation metadata administration
 
+Conversation metadata uses internal collaboration owners where no intentional
+Thread is selected. These owners do not enter ordinary Thread directories or
+become primary session assignments. Existing command and receipt semantics
+continue to resolve exact authorized owners.
+
 JST-CLI-004 provides jj-store conversation-metadata with one explicit --endpoint
 http://127.0.0.1:PORT/ (or literal IPv6 loopback). Remote hosts, credentials in
 URLs, redirects and implicit service selection are refused.

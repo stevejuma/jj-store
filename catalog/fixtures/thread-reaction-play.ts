@@ -17,7 +17,7 @@ export async function pendingReaction(
   await waitFor(() =>
     expect(
       within(message as HTMLElement).getAllByRole("button", {
-        name: /Reply in thread|View replies|Add reaction/,
+        name: /More message actions|Add reaction/,
       })[0]!,
     ).toBeVisible(),
   );

@@ -18,9 +18,13 @@
     const c = within(canvasElement),
       body = within(document.body);
     await expect(await c.findByText("Welcome to the channel")).toBeVisible();
-    await userEvent.click(c.getByRole("button", { name: "Thread settings" }));
+    await userEvent.click(
+      c.getByRole("button", { name: "Conversation details" }),
+    );
     await expect(body.queryByRole("menu")).toBeNull();
-    const settings = c.getByRole("complementary", { name: "Thread settings" });
+    const settings = c.getByRole("complementary", {
+      name: "Conversation details",
+    });
     await expect(within(settings).getByText("Code baseline")).toBeVisible();
     const nameStyle = getComputedStyle(
       within(settings).getByText("Name", { exact: true }),
@@ -40,10 +44,23 @@
     }
     const mainHeader = c
       .getByRole("heading", { name: "general", level: 1 })
-      .closest('[data-ui-part="toolbar"]')!;
+      .closest(".lc-community-inbox__thread-header")!;
     const paneHeader = settings.querySelector(
-      '[data-ui-part="sidebar-header"]',
+      ".lc-community-inbox__thread-header",
     )!;
+    const title = within(mainHeader as HTMLElement).getByRole("heading", {
+      name: "general",
+      level: 1,
+    });
+    const status = within(mainHeader as HTMLElement).getByRole("status");
+    await expect(
+      Math.abs(
+        title.getBoundingClientRect().top +
+          title.getBoundingClientRect().height / 2 -
+          status.getBoundingClientRect().top -
+          status.getBoundingClientRect().height / 2,
+      ),
+    ).toBeLessThan(1);
     await expect(
       Math.abs(
         mainHeader.getBoundingClientRect().bottom -
@@ -52,31 +69,10 @@
     ).toBeLessThan(1);
     await expect(getComputedStyle(paneHeader).borderBottomWidth).toBe("0px");
 
-    await expect(settings).toHaveClass(
-      "community-application__standard-right-sidebar",
-    );
-    const threadResize = c.getByRole("slider", {
-      name: "Resize thread details",
-    });
-    const threadWidth = Number(threadResize.getAttribute("aria-valuenow"));
-    threadResize.focus();
-    await userEvent.keyboard("{ArrowRight}");
-    await waitFor(() =>
-      expect(Number(threadResize.getAttribute("aria-valuenow"))).toBeLessThan(
-        threadWidth,
-      ),
-    );
-    const resizedThreadWidth = threadResize.getAttribute("aria-valuenow");
-    await userEvent.click(c.getByRole("button", { name: "Toggle details" }));
-    const rail = c.getByRole("complementary", { name: "Repository details" });
-    await expect(rail).toBeVisible();
-    await expect(settings).toBeVisible();
-    await userEvent.click(c.getByRole("button", { name: "Toggle details" }));
-    await expect(rail).not.toBeVisible();
-    await expect(settings).toBeVisible();
+    await expect(settings).toHaveClass("lc-community-inbox__settings");
     await expect(
-      c.getByRole("slider", { name: "Resize thread details" }),
-    ).toHaveAttribute("aria-valuenow", resizedThreadWidth!);
+      settings.closest('[data-ui-part="body-sidebar"]'),
+    ).not.toBeNull();
     await userEvent.click(
       within(settings).getByRole("button", { name: /^Name/ }),
     );
@@ -91,7 +87,7 @@
       within(dialog).getByRole("button", { name: "Save name" }),
     );
     await expect(
-      await c.findByText("planning", { selector: "[data-ui-part=room-title]" }),
+      await c.findByRole("heading", { name: "planning", level: 1 }),
     ).toBeVisible();
     await waitFor(() =>
       expect(body.queryByRole("dialog", { name: "Rename thread" })).toBeNull(),
@@ -208,7 +204,7 @@
     await waitFor(() =>
       expect(
         within(message as HTMLElement).getAllByRole("button", {
-          name: /Reply in thread|View replies|Add reaction/,
+          name: /More message actions|Add reaction/,
         })[0]!,
       ).toBeVisible(),
     );
@@ -219,7 +215,12 @@
       within(message).queryByRole("button", { name: "Reply in thread" }),
     ).toBeNull();
     await userEvent.click(
-      within(message).getByRole("button", { name: "View replies" }),
+      within(message).getByRole("button", { name: "More message actions" }),
+    );
+    await userEvent.click(
+      await within(document.body).findByRole("menuitem", {
+        name: "View replies",
+      }),
     );
     const replies = c.getByRole("complementary", { name: "Thread replies" });
     await expect(
@@ -228,7 +229,9 @@
     await expect(
       within(replies).getByRole("textbox", { name: "Markdown editor" }),
     ).toHaveAttribute("contenteditable", "false");
-    await userEvent.click(c.getByRole("button", { name: "Thread settings" }));
+    await userEvent.click(
+      c.getByRole("button", { name: "Conversation details" }),
+    );
     await expect(body.queryByRole("menu")).toBeNull();
     await expect(c.queryByRole("button", { name: "Remove thread" })).toBeNull();
     await expect(c.queryByRole("button", { name: /^Name/ })).toBeNull();

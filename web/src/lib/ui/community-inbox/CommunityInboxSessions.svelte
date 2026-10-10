@@ -15,11 +15,13 @@
     activeId,
     onSelect,
     loading = false,
+    kind = "session",
   }: {
     items: readonly SessionInboxItem[];
     activeId?: string | null;
     onSelect: (id: string) => void;
     loading?: boolean;
+    kind?: "session" | "thread";
   } = $props();
   const groups = $derived(groupSessionInboxItems(items));
   let openGroups = $state<Record<string, boolean>>({});
@@ -27,7 +29,7 @@
   $effect(() => {
     const id = activeId;
     const group = groups.find((group) =>
-      group.items.some((item) => item.id === id),
+      group.items.some((item) => (item.targetId ?? item.id) === id),
     );
     if (group && id !== revealedId)
       untrack(() => {
@@ -65,7 +67,10 @@
     </div>
   </div>
 {:else if groups.length}
-  <nav aria-label="Session chats by repository" class="inbox-session-tree">
+  <nav
+    aria-label={`${kind === "thread" ? "Threads" : "Session chats"} by repository`}
+    class="inbox-session-tree"
+  >
     {#each groups as group (group.id)}
       {@const open = openGroups[group.id] ?? true}
       <Collapsible.Root
@@ -74,7 +79,7 @@
           (openGroups = { ...openGroups, [group.id]: value })}
         role="group"
         class="inbox-session-tree__group"
-        aria-label={`${group.name} sessions`}
+        aria-label={`${group.name} ${kind === "thread" ? "Threads" : "sessions"}`}
         data-repository-id={group.repositoryId}
       >
         <div class="inbox-session-tree__header">
@@ -84,7 +89,7 @@
                 {...props}
                 variant="ghost"
                 class="inbox-session-tree__repository"
-                aria-label={`${open ? "Collapse" : "Expand"} ${group.name} sessions`}
+                aria-label={`${open ? "Collapse" : "Expand"} ${group.name} ${kind === "thread" ? "Threads" : "sessions"}`}
                 title={group.name}
               >
                 {#if group.repositoryId}<FolderGitIcon
@@ -129,7 +134,7 @@
                 variant="ghost"
                 size="icon-xs"
                 class="inbox-session-tree__toggle"
-                aria-label={`Toggle ${group.name} sessions`}
+                aria-label={`Toggle ${group.name} ${kind === "thread" ? "Threads" : "sessions"}`}
               >
                 <ChevronRightIcon aria-hidden="true" />
               </Button>
@@ -141,8 +146,8 @@
             {#each group.items as item (item.id)}
               <CommunityInboxItem
                 {item}
-                active={item.id === activeId}
-                onSelect={() => onSelect(item.id)}
+                active={(item.targetId ?? item.id) === activeId}
+                onSelect={() => onSelect(item.targetId ?? item.id)}
               />
             {/each}
           </div>

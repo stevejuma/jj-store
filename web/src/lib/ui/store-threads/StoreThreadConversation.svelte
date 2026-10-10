@@ -1,4 +1,12 @@
 <script lang="ts">
+  import StoreThreadAgentRepositories from "./StoreThreadAgentRepositories.svelte";
+  import StoreThreadCodebase from "./StoreThreadCodebase.svelte";
+  import StoreWorkspaceButton from "../store-agent-workspace/StoreWorkspaceButton.svelte";
+  import StoreConversationRuntime from "../store-agent-chat/StoreConversationRuntime.svelte";
+  import {
+    agentMentionToken,
+    mentionedAgentIds,
+  } from "../../community/agent-mentions.js";
   import type { Snippet } from "svelte";
   let inputActions = $state<Snippet>();
   import StoreConversationMessageActions from "./StoreConversationMessageActions.svelte";
@@ -92,6 +100,7 @@
       communityEmojis: threads.emojis,
       members,
       onSend: disabled ? undefined : send,
+
       ...conversationNavigation(controller, conversation),
       onInspectTool: inspection
         ? (tool, opener) => inspection.open(tool, conversation.comments, opener)
@@ -130,6 +139,13 @@
     const committed = threads.committedRequestId;
     untrack(() => conversation.comments.confirmPublication(committed, true));
   });
+  const selectedAgent = $derived(
+    mentionedAgentIds(conversation.comments.message)[0] ??
+      linkedSessions.find((s) => s.setup_id)?.setup_id,
+  );
+  const selectedSession = $derived(
+    linkedSessions.filter((s) => s.setup_id === selectedAgent).at(-1),
+  );
   const initialAgentIds = $derived([
     ...new Set(linkedSessions.flatMap((s) => (s.setup_id ? [s.setup_id] : []))),
   ]);
@@ -183,8 +199,25 @@
     );
 </script>
 
+{#snippet messageActions(messageId: string)}
+  {@const item = projection.items.find((item) => item.id === messageId)}
+  {#if item}<StoreConversationMessageActions
+      menu
+      {item}
+      {messages}
+      {threads}
+      {conversation}
+      {controller}
+      {disabled}
+      {user}
+      {onReply}
+      {id}
+    />{/if}
+{/snippet}
+
 <div class="thread-conversation" bind:this={element}>
   <StoreAgentChatBody
+    {messageActions}
     items={conversation.projection.items}
     commentState={conversation.comments}
     view={appearance?.live.conversationView ?? "document"}
@@ -291,7 +324,27 @@
         canSend={!disabled && conversation.comments.canSend}
         onSend={() => void conversation.comments.send()}
         error={conversation.comments.error}
-      />{/snippet}
+      >
+        {#snippet workspace()}{#if controller?.execution && !parent}<StoreThreadCodebase
+              {controller}
+            /><StoreThreadAgentRepositories {controller} /><StoreWorkspaceButton
+              manager={controller.execution}
+              sessions={linkedSessions}
+              {conversation}
+              {controller}
+              repositories={threads.detail?.thread.value.codebase ??
+                (threads.detail ? [controller.state.route.repository] : [])}
+            />{/if}{/snippet}
+        {#snippet controls()}{#if controller?.execution}<StoreConversationRuntime
+              manager={controller.execution}
+              agentId={selectedAgent}
+              session={selectedSession}
+              {disabled}
+              onAgentChange={(id) => {
+                conversation.comments.message = `${agentMentionToken(id)} ${conversation.comments.message}`;
+              }}
+            />{/if}{/snippet}
+      </ChatMessageFooter>{/snippet}
   </StoreAgentChatBody>
 </div>
 

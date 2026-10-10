@@ -6,7 +6,7 @@ answer different questions.
 | Record               | Purpose                                                                        |
 | -------------------- | ------------------------------------------------------------------------------ |
 | Agent activity       | Retained, sanitized evidence of an observed coding-agent session               |
-| Thread/message       | Repository-owned human conversation and replies                                |
+| Thread/message       | Human conversation with one metadata home and optional linked repositories     |
 | Review thread        | Discussion attached to an exact repository artifact or supported anchor        |
 | Reaction             | A versioned response to an exact target, with observed-state conflict handling |
 | Project/task comment | Work discussion owned by its project metadata home                             |
@@ -35,6 +35,31 @@ Reactions retain exact target and actor identity. Conflicting states are shown
 rather than silently choosing the last request by wall-clock time. Comment
 editing and deletion retain revision/tombstone semantics; they do not erase
 history or rewrite the original evidence.
+
+## Intentional Threads and Codebase
+
+Create a Thread explicitly from Threads beneath Agents. A Thread can stand alone
+or include up to eight registered repositories. The create dialog uses a title
+and searchable multi-select Codebase picker; Create Thread has its own row. The
+inbox groups a Thread under each attached repository, with one shared
+conversation and drafts. Repository-free Threads appear under No repository.
+Repository pages retain their filtered Threads navigation.
+
+The footer Codebase picker adds or removes repositories. The next agent chat can
+use only a subset of those attached repositories, initially all of them. Each
+repository still requires independent authorization; attaching it grants no code
+access. Agents use separate workspaces. Running, queued or unknown work prevents
+removal, and edits check the exact observed Thread revision.
+
+Files and Changes use the same inspector as the agent inbox. Before execution,
+they browse a pinned repository snapshot without creating an agent or workspace.
+The outer rail has no separate repository picker. Additional message actions,
+including Edit and Reply in thread, appear in the hover action menu.
+
+Agent chats and their annotation/metadata owners remain durable internal
+records. Starting a chat or commenting does not create an intentional Thread.
+Legacy records retain their identities and are not migrated by matching their
+titles.
 
 ## Independent lifetimes
 

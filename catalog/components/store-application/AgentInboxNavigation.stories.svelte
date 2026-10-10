@@ -53,17 +53,20 @@
 />
 
 <Story
-  name="Directory icon actions open all sessions and expose tooltips"
+  name="Directory session tile precedes Add agent and Refresh exposes its tooltip"
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
     const refresh = await c.findByRole("button", { name: "Refresh agents" });
+    await c.findByRole("button", { name: "View Repository helper" });
     const sessions = c.getByRole("button", {
       name: "View sessions",
     });
     await expect(refresh.textContent?.trim()).toBe("");
-    await expect(sessions.textContent?.trim()).toBe("");
+    await expect(sessions.textContent?.trim()).toBe("View sessions");
+    await expect(sessions.querySelector("svg")).not.toBeNull();
+    const add = c.getByRole("button", { name: "Add agent" });
     await expect(sessions.getBoundingClientRect().left).toBeLessThan(
-      refresh.getBoundingClientRect().left,
+      add.getBoundingClientRect().left,
     );
     refresh.focus();
     await expect(

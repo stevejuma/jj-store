@@ -63,10 +63,9 @@ export function createThreadConversations(
           version: 1,
           request_id: requestId,
           command: {
-            type: "create",
+            type: "create_annotation",
             thread_id: id,
             title: "Agent conversation",
-            baseline: null,
           },
         });
         return options.source().thread(id);

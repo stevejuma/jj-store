@@ -40,6 +40,7 @@ export async function submitThreadConversation(
     if (!manager?.available())
       throw new Error("Agent execution is unavailable on this device.");
     manager.chat.showContext(controller!, false, parent);
+    manager.chat.close();
     batch.message_id = null;
     batch.text = null;
     try {

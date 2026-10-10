@@ -120,7 +120,25 @@ export function chatContext(controller: StoreController, parent?: string) {
         },
       ]
     : [];
-  return { origin, attachments };
+  const thread =
+    r.threadId &&
+    controller.threads?.detail?.thread.value.thread_id === r.threadId
+      ? controller.threads.detail.thread
+      : undefined;
+  const codebase = thread?.value.codebase ?? (thread ? [r.repository] : []);
+  return {
+    origin,
+    attachments: thread
+      ? codebase.map((repository) => ({
+          repository,
+          target_id: null,
+          operation: null,
+          commit: null,
+        }))
+      : attachments,
+    codebase: thread?.reference,
+    repositories: thread ? codebase : undefined,
+  };
 }
 
 /** Reply context is part of a conversation's identity, never inferred from text. */

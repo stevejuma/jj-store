@@ -2,18 +2,20 @@
   import { Button } from "@lapismd/design-core/shadcn/button";
   import MessageCircleIcon from "@lucide/svelte/icons/message-circle";
   import CommunityReactions from "../community-reactions/CommunityReactions.svelte";
-  import type { ChatBodyBlock } from "./model.js";
+  import type { ChatBodyBlock, ChatBodyProps } from "./model.js";
   import type { ChatBodyComments } from "./comments.svelte.js";
   let {
     block,
     state,
     onComment,
     reactionTarget,
+    messageActions,
   }: {
     block: ChatBodyBlock;
     state: ChatBodyComments;
     onComment: () => void;
     reactionTarget?: string;
+    messageActions?: ChatBodyProps["messageActions"];
   } = $props();
 </script>
 
@@ -44,4 +46,5 @@
         : undefined}
     onclick={onComment}><MessageCircleIcon size={14} /> Comment</Button
   >
+  {#if reactionTarget}{@render messageActions?.(reactionTarget)}{/if}
 </div>

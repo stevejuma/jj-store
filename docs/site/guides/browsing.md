@@ -254,3 +254,15 @@ for the inspected agent checkout. File selection opens its body inspector; these
 panels leave ordinary repository and project rails unchanged. See
 [workspace files in conversations](agent-execution.md#document-conversations-and-workspace-files)
 for current-file reads, comparison ranges and queued file comments.
+
+## Threads inbox
+
+Threads beneath Agents uses the same conversation workspace as the agent inbox.
+Create a Thread intentionally with a title and optional repositories. Grouped
+repository rows share the canonical conversation. The footer manages Codebase
+membership and the Files/Changes inspector; before agent execution it reads a
+pinned repository snapshot. Additional message actions use the hover menu.
+Published membership changes refresh every displayed alias without a reload.
+Removing a Thread returns to the inbox and refreshes its rows after publication.
+The conversation is hidden and read only; a repository administrator can restore
+it.

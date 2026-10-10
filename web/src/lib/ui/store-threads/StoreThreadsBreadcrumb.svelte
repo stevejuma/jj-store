@@ -2,6 +2,7 @@
   import * as Breadcrumb from "@lapismd/design-core/shadcn/breadcrumb";
   import FolderGitIcon from "@lucide/svelte/icons/folder-git-2";
   import type { StoreController } from "../../controller/contracts.js";
+  import { threadsRoute } from "../../controller/threads-route-codec.js";
   import { storeRouteToHash } from "../../controller/store-route-codec.js";
   import "../store-work/community-work-breadcrumb.css";
   let { controller }: { controller: StoreController } = $props();
@@ -15,39 +16,32 @@
       replyId: null,
     }) ?? "#",
   );
-  const threadsHref = $derived(
-    storeRouteToHash({
-      ...controller.state.route,
-      page: "threads",
-      threadId: null,
-      replyId: null,
-    }) ?? "#",
-  );
+  const threadsHref = $derived(storeRouteToHash(threadsRoute()));
 </script>
 
 <div class="community-application__project-breadcrumb">
   <Breadcrumb.Root>
     <Breadcrumb.List>
-      <Breadcrumb.Item
-        ><Breadcrumb.Link
-          href={repositoryHref}
-          onclick={(event) => {
-            event.preventDefault();
-            controller.actions.selectPage("files");
-          }}
-        >
-          <FolderGitIcon aria-hidden="true" /><span title={repository.name}
-            >{repository.name}</span
+      {#if !controller.state.route.threadsHub}<Breadcrumb.Item
+          ><Breadcrumb.Link
+            href={repositoryHref}
+            onclick={(event) => {
+              event.preventDefault();
+              controller.actions.selectPage("files");
+            }}
           >
-        </Breadcrumb.Link></Breadcrumb.Item
-      >
-      <Breadcrumb.Separator />
+            <FolderGitIcon aria-hidden="true" /><span title={repository.name}
+              >{repository.name}</span
+            >
+          </Breadcrumb.Link></Breadcrumb.Item
+        >
+        <Breadcrumb.Separator />{/if}
       <Breadcrumb.Item>
         {#if detail}<Breadcrumb.Link
             href={threadsHref}
             onclick={(event) => {
               event.preventDefault();
-              void controller.actions.openThreads?.(null, repository.id);
+              void controller.actions.openThreads?.();
             }}><span>Threads</span></Breadcrumb.Link
           >
         {:else}<Breadcrumb.Page><span>Threads</span></Breadcrumb.Page>{/if}

@@ -164,6 +164,10 @@ export interface StoreController {
   readonly referenceSearch?: import("./global-search-types.js").GlobalSearchController;
   readonly globalSearch?: import("./global-search-types.js").GlobalSearchController;
   readonly threads?: import("./thread-types.js").ThreadsController;
+  readonly threadWorkspaces?: import("./thread-workspaces.svelte.js").ThreadWorkspaces;
+  readonly acquireRepository?: (
+    id: string,
+  ) => import("./native-data-source.js").StoreDataSource;
   readonly threadNavigation?: import("./repository-thread-navigation.svelte.js").RepositoryThreadNavigation;
   readonly projects?: import("./projects-hub-types.js").ProjectsHubController;
   readonly work?: import("./work-types.js").WorkController;

@@ -5,6 +5,7 @@ export async function refreshCommittedThreadAction(
   source: ThreadTransport,
   reactions: { refresh(target: ReactionTarget): Promise<void> },
   restore: () => Promise<void>,
+  removed?: () => Promise<void>,
 ) {
   const command = intent.request.command;
   if (
@@ -17,6 +18,12 @@ export async function refreshCommittedThreadAction(
     await reactions.refresh(command.target);
   } else {
     await source.invalidate?.("threads");
-    await restore();
+    if (
+      command.type === "lifecycle" &&
+      command.action === "tombstone" &&
+      removed
+    )
+      await removed();
+    else await restore();
   }
 }

@@ -143,6 +143,8 @@ impl Drop for WorkspaceLease {
 impl Supervisor {
     pub(super) async fn workspace_dispatch(&self, frame: Value) -> Result<(Value, WorkspaceLease)> {
         let _guard = self.0.workspace_gate.try_lock().map_err(|_| Error::Busy)?;
+        self.validate_thread_workspace(frame["sessionId"].as_str().ok_or(Error::Invalid)?)
+            .await?;
         let frame = self.prepare_file_prompt(frame).await?;
         self.capture_turn_start(&frame).await?;
         let session = frame["sessionId"]

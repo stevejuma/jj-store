@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { ThreadWorkspaces } from "../../web/src/lib/controller/thread-workspaces.svelte.js";
+  import { LocalClient } from "../../web/src/lib/api/local-client.js";
   import { untrack } from "svelte";
   import { ApiError } from "../../web/src/lib/api/api-error.js";
   import StoreRepositoryApplication from "../../web/src/lib/ui/store-application/StoreRepositoryApplication.svelte";
@@ -17,6 +19,7 @@
     withReply = false,
     rejectReaction = false,
     otherRepository = false,
+    multiRepository = false,
     initiallyCollapsed = false,
     displayMode = "auto",
     searchable = false,
@@ -29,6 +32,7 @@
     withReply?: boolean;
     rejectReaction?: boolean;
     otherRepository?: boolean;
+    multiRepository?: boolean;
     initiallyCollapsed?: boolean;
     displayMode?: "auto" | "desktop" | "mobile";
     searchable?: boolean;
@@ -94,6 +98,7 @@
     replyId: untrack(() => (replySelected ? replyId : null)) as string | null,
   });
   const threads = createThreadsController({
+    directory: false,
     source: () =>
       route.repository === otherId ? other.transport : transport.transport,
     repository: () => route.repository,
@@ -119,6 +124,14 @@
       ? [repository, { ...repository, id: otherId, name: "Other repository" }]
       : [repository],
   );
+  if (untrack(() => multiRepository)) {
+    const row = transport.threads.get(THREAD_IDS.thread)!;
+    transport.threads.set(THREAD_IDS.thread, {
+      ...row,
+      value: { ...row.value, codebase: [THREAD_IDS.repo, otherId] },
+    });
+    other.threads.clear();
+  }
   const threadNavigation = createRepositoryThreadNavigation({
     repositories: () => repositories,
     credential: () => null,
@@ -134,7 +147,49 @@
     }),
   });
   const sidebarReads = $state<Record<string, number>>({});
+  const configurationReceipts = new Map<string, unknown>();
+  const threadWorkspaces = new ThreadWorkspaces(
+    new LocalClient("", async (_url, init) => {
+      const request = JSON.parse(String(init?.body));
+      if (configurationReceipts.has(request.request_id))
+        return Response.json(configurationReceipts.get(request.request_id));
+      const command = request.command;
+      const id =
+        command.type === "create" ? request.request_id : command.thread;
+      if (command.type === "create")
+        await transport.transport.command("threads", {
+          version: 1,
+          request_id: request.request_id,
+          command: {
+            type: "create",
+            thread_id: id,
+            title: command.title,
+            baseline: null,
+          },
+        });
+      const row = transport.threads.get(id)!;
+      transport.threads.set(id, {
+        ...row,
+        value: { ...row.value, codebase: command.repositories },
+      });
+      const outcome = {
+        request_id: request.request_id,
+        home: THREAD_IDS.repo,
+        thread: id,
+        revision: row.reference,
+      };
+      configurationReceipts.set(request.request_id, outcome);
+      return Response.json(outcome);
+    }),
+    async (outcome) => {
+      threadNavigation.invalidate();
+      await threadNavigation.load();
+      route = { ...route, repository: outcome.home };
+      await threads.open(outcome.thread);
+    },
+  );
   const controller: StoreController = {
+    threadWorkspaces,
     threads,
     threadNavigation,
     get state() {

@@ -2511,6 +2511,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/v1/local/threads": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    post: operations["local_threads_configure"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/v1/local/agents/workspace/inspect": {
     parameters: {
       query?: never;
@@ -4603,6 +4620,8 @@ export interface components {
       baseline: components["schemas"]["ThreadCodeAnchorV1"] | null;
       agent_message?: components["schemas"]["ReactionTargetV1"] | null;
       comment_source?: components["schemas"]["ConversationSourceV1"] | null;
+      purpose?: components["schemas"]["ThreadPurposeV1"] | null;
+      codebase?: components["schemas"]["RepositoryId"][] | null;
     };
     /** @enum {string} */
     ThreadStatusV12: "created" | "active" | "idle" | "archived" | "tombstoned";
@@ -4630,6 +4649,27 @@ export interface components {
       evidence: components["schemas"]["CodeEvidenceRefV1"];
       commit: components["schemas"]["CodeCommitIdV1"];
     };
+    ThreadPurposeV1:
+      | {
+          target: components["schemas"]["ConversationMetadataTargetV1"];
+          /** @constant */
+          type: "conversation";
+        }
+      | {
+          /** @constant */
+          type: "annotation";
+        };
+    ConversationMetadataTargetV1:
+      | {
+          id: string;
+          /** @constant */
+          type: "conversation";
+        }
+      | {
+          session: components["schemas"]["AgentSessionId"];
+          /** @constant */
+          type: "recorded";
+        };
     ThreadDirectoryMetadata: {
       /** Format: uint32 */
       message_count: number;
@@ -4719,6 +4759,10 @@ export interface components {
     };
     ThreadEventId: string;
     ThreadEventKindV1:
+      | {
+          /** @constant */
+          type: "codebase_changed";
+        }
       | {
           version: components["schemas"]["CollabObjectRef"];
           /** @constant */
@@ -7694,6 +7738,12 @@ export interface components {
       receipt: components["schemas"]["CaptureImportAcceptance"] | null;
       progress: components["schemas"]["CaptureImportProgress"];
     };
+    ThreadWorkspaceOutcome: {
+      request_id: components["schemas"]["RequestId"];
+      home: components["schemas"]["RepositoryId"];
+      thread: components["schemas"]["ThreadId"];
+      revision: components["schemas"]["CollabObjectRef"];
+    };
     AgentWorkspaceInspection: {
       /** Format: uint32 */
       version: number;
@@ -8122,17 +8172,6 @@ export interface components {
       details: unknown;
       job: components["schemas"]["ConversationMetadataJob"] | null;
     };
-    ConversationMetadataTargetV1:
-      | {
-          id: string;
-          /** @constant */
-          type: "conversation";
-        }
-      | {
-          session: components["schemas"]["AgentSessionId"];
-          /** @constant */
-          type: "recorded";
-        };
     ConversationMetadataValueV1: {
       /** @default null */
       custom_title: string | null;
@@ -16687,6 +16726,58 @@ export interface operations {
           version: number;
           request_id: string;
           command:
+            | {
+                thread_id: string;
+                title: string;
+                repositories: string[];
+                /** @constant */
+                type: "create_intentional";
+              }
+            | {
+                thread_id: string;
+                title: string;
+                target:
+                  | {
+                      id: string;
+                      /** @constant */
+                      type: "conversation";
+                    }
+                  | {
+                      session: string;
+                      /** @constant */
+                      type: "recorded";
+                    };
+                /** @constant */
+                type: "create_conversation";
+              }
+            | {
+                thread_id: string;
+                title: string;
+                /** @constant */
+                type: "create_annotation";
+              }
+            | {
+                thread_id: string;
+                expected: {
+                  /** @enum {string} */
+                  kind:
+                    | "index_page"
+                    | "thread_version"
+                    | "conversation_metadata"
+                    | "thread_event"
+                    | "human_message_revision"
+                    | "thread_link"
+                    | "reaction"
+                    | "reaction_retraction"
+                    | "reaction_slot"
+                    | "custom_emoji_version"
+                    | "image_asset";
+                  id: string;
+                };
+                repositories: string[];
+                /** @constant */
+                type: "set_codebase";
+              }
             | {
                 thread_id: string;
                 expected_thread: {
@@ -39068,6 +39159,58 @@ export interface operations {
                 intent:
                   | {
                       thread_id: string;
+                      title: string;
+                      repositories: string[];
+                      /** @constant */
+                      type: "create_intentional";
+                    }
+                  | {
+                      thread_id: string;
+                      title: string;
+                      target:
+                        | {
+                            id: string;
+                            /** @constant */
+                            type: "conversation";
+                          }
+                        | {
+                            session: string;
+                            /** @constant */
+                            type: "recorded";
+                          };
+                      /** @constant */
+                      type: "create_conversation";
+                    }
+                  | {
+                      thread_id: string;
+                      title: string;
+                      /** @constant */
+                      type: "create_annotation";
+                    }
+                  | {
+                      thread_id: string;
+                      expected: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "thread_version"
+                          | "conversation_metadata"
+                          | "thread_event"
+                          | "human_message_revision"
+                          | "thread_link"
+                          | "reaction"
+                          | "reaction_retraction"
+                          | "reaction_slot"
+                          | "custom_emoji_version"
+                          | "image_asset";
+                        id: string;
+                      };
+                      repositories: string[];
+                      /** @constant */
+                      type: "set_codebase";
+                    }
+                  | {
+                      thread_id: string;
                       expected_thread: {
                         /** @enum {string} */
                         kind:
@@ -47611,6 +47754,172 @@ export interface operations {
       };
     };
   };
+  local_threads_configure: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          /** Format: uint32 */
+          version: number;
+          request_id: string;
+          command:
+            | {
+                title: string;
+                repositories: string[];
+                /** @constant */
+                type: "create";
+              }
+            | {
+                home: string;
+                thread: string;
+                expected: {
+                  /** @enum {string} */
+                  kind:
+                    | "index_page"
+                    | "thread_version"
+                    | "conversation_metadata"
+                    | "thread_event"
+                    | "human_message_revision"
+                    | "thread_link"
+                    | "reaction"
+                    | "reaction_retraction"
+                    | "reaction_slot"
+                    | "custom_emoji_version"
+                    | "image_asset";
+                  id: string;
+                };
+                repositories: string[];
+                /** @constant */
+                type: "codebase";
+              };
+        };
+      };
+    };
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ThreadWorkspaceOutcome"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description cursor_reset, stale_collaboration, intent_conflict or collaboration_replication_unsupported. No latest-state fallback or automatic retry. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
   local_agents_workspace_inspect: {
     parameters: {
       query?: never;
@@ -51920,6 +52229,22 @@ export interface operations {
               | null;
             context: string;
           };
+          thread_codebase?: {
+            /** @enum {string} */
+            kind:
+              | "index_page"
+              | "thread_version"
+              | "conversation_metadata"
+              | "thread_event"
+              | "human_message_revision"
+              | "thread_link"
+              | "reaction"
+              | "reaction_retraction"
+              | "reaction_slot"
+              | "custom_emoji_version"
+              | "image_asset";
+            id: string;
+          } | null;
           agent_ids: string[];
           attachments: {
             repository: string;

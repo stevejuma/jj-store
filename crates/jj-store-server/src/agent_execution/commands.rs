@@ -1,6 +1,13 @@
 use super::*;
 #[async_trait::async_trait]
 impl Manager for Supervisor {
+    async fn thread_workspace(
+        &self,
+        actor: PrincipalId,
+        request: jj_store_service::agent_execution::thread_workspace::Request,
+    ) -> Result<jj_store_service::agent_execution::thread_workspace::Outcome> {
+        self.configure_thread(actor, request).await
+    }
     async fn chatgpt_status(
         &self,
         actor: PrincipalId,

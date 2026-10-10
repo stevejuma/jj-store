@@ -32,6 +32,7 @@ struct EventsQuery {
 }
 macro_rules! endpoints {
     ($register:ident) => { $register! {
+        (post, "/local/threads", configure_thread, "local_threads_configure", routes::Empty, agents::thread_workspace::Request, agents::thread_workspace::Outcome),
         (post, "/local/agents/workspace/inspect", inspect_workspace, "local_agents_workspace_inspect", routes::Empty, agents::workspace_inspection::Request, agents::workspace_inspection::Inspection),
         (get, "/local/compute", compute_status, "local_compute_status", routes::Empty, routes::Empty, agents::compute::Status),
         (post, "/local/compute", compute_command, "local_compute_command", routes::Empty, agents::compute::Command, agents::Outcome),
@@ -205,6 +206,11 @@ async fn metadata_job(
     )
 }
 mutation!(control_agent, agents::fleet::Control, control_agent);
+mutation!(
+    configure_thread,
+    agents::thread_workspace::Request,
+    thread_workspace
+);
 mutation!(
     inspect_workspace,
     agents::workspace_inspection::Request,

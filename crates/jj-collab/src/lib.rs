@@ -19,7 +19,9 @@ mod reaction_state;
 mod reactions;
 mod resolver;
 mod targets;
+mod thread_codebase;
 mod threads;
+pub use thread_codebase::*;
 
 pub use assets::*;
 pub use catalog::*;

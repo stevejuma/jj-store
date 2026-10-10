@@ -143,6 +143,7 @@ export interface ChatBodyProps extends ChatCommentHost {
   afterItems?: Snippet;
   supplement?: Snippet<[ChatBodyItem]>;
   metadataSupplement?: Snippet<[ChatBodyItem]>;
+  messageActions?: Snippet<[string]>;
   logLabel?: string;
   onOpenThread?: (id: string) => void;
   communityEmojis?: readonly CommunityCustomEmoji[];

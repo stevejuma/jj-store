@@ -12,6 +12,8 @@ export interface StoreRoute {
   replyId?: string | null;
   projectsHub?: boolean;
   agentsHub?: boolean;
+  threadsHub?: boolean;
+  threadRepository?: string;
   agentView?: "directory" | "new" | "sessions" | "session" | "activity";
   executionSessionId?: string | null;
   setupId?: string | null;

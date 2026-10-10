@@ -43,6 +43,7 @@ async fn repository_free_chat_reuses_isolated_bindings_and_never_replays_after_r
             .unwrap();
     }
     let send = chat::Send {
+        thread_codebase: None,
         comments: None,
         version: 1,
         request_id: RequestId::new([140; 16]),
@@ -95,6 +96,22 @@ async fn repository_free_chat_reuses_isolated_bindings_and_never_replays_after_r
         .metadata_commit;
     let thread = local.inbox_thread(pin, discussion).await.unwrap();
     assert_eq!(thread.thread.value.title, "Agent conversation");
+    assert!(!thread.thread.value.is_user_thread());
+    let directory = local
+        .inbox_page(
+            pin,
+            &jj_store_service::collab_pages::Query::Threads { limit: 256 },
+            None,
+        )
+        .await
+        .unwrap();
+    let jj_store_service::collab_pages::Items::Threads { threads } = directory.items else {
+        panic!("Thread directory");
+    };
+    assert!(
+        threads.is_empty(),
+        "Internal owners must not appear in the directory"
+    );
     for session in &status.sessions {
         let page = supervisor
             .events(actor, session.id.clone(), 0)

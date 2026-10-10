@@ -41,6 +41,8 @@ pub struct Send {
     pub request_id: RequestId,
     pub conversation_id: String,
     pub origin: Origin,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub thread_codebase: Option<jj_collab::CollabObjectRef>,
     pub agent_ids: Vec<String>,
     pub attachments: Vec<Attachment>,
     pub text: String,

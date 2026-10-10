@@ -28,6 +28,8 @@ export function createThreadsController(options: {
   route: () => StoreRoute;
   select: (id: string | null) => void;
   selectReply?: (id: string | null) => void;
+  directory?: boolean;
+  onRemoved?: () => Promise<void>;
 }) {
   const conversationHost = createThreadConversations(options, (request) =>
     actions.execute("threads", request),
@@ -57,6 +59,10 @@ export function createThreadsController(options: {
         options.source(),
         richReactions,
         restore,
+        async () => {
+          await open(null);
+          await options.onRemoved?.();
+        },
       ),
     onCommitted: (id) => {
       committedRequestId = id;
@@ -161,6 +167,7 @@ export function createThreadsController(options: {
     generation++;
     directory.loading = conversationLoading = false;
     if (detail?.thread.value.thread_id !== options.route().threadId) {
+      discussionRead.clear();
       detail = undefined;
       events = [];
       eventCursor = null;
@@ -169,7 +176,11 @@ export function createThreadsController(options: {
     const id = options.route().threadId;
     if (options.source().cancelReads) await options.source().cancelReads!();
     if (ticket !== generation) return;
-    await Promise.all([list(), id ? read(id) : Promise.resolve()]);
+    await Promise.all([
+      options.directory === false ? Promise.resolve() : list(),
+      id ? read(id) : Promise.resolve(),
+    ]);
+    if (!id && options.directory === false) status = "ready";
     if (ticket === generation && id && !error) await focusReply(id);
   }
   async function open(id: string | null) {
@@ -178,6 +189,7 @@ export function createThreadsController(options: {
     detail = undefined;
     events = [];
     eventCursor = null;
+    discussionRead.clear();
     error = "";
     options.select(id);
     const ticket = generation;
@@ -186,7 +198,8 @@ export function createThreadsController(options: {
     if (id) {
       await read(id);
       await focusReply(id);
-    } else await list();
+    } else if (options.directory !== false) await list();
+    else status = "ready";
   }
   async function refresh() {
     await options.source().invalidate?.("all");

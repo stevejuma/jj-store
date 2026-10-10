@@ -60,10 +60,10 @@ impl Supervisor {
             version: 1,
             request_id: RequestId::new(identity),
             command: CollabCommandV1::Thread {
-                intent: ThreadCommandV1::Create {
+                intent: ThreadCommandV1::CreateConversation {
                     thread_id: owner,
                     title: "Conversation metadata".into(),
-                    baseline: None,
+                    target: capture.target.clone(),
                 },
             },
         };

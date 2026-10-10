@@ -169,7 +169,7 @@
   }
 </script>
 
-{#if !inspection?.current && !inspection?.file && !chatOpen && current.page === "threads" && controller.threads?.detail && !threadFocused}
+{#if !inspection?.current && !inspection?.file && !chatOpen && current.page === "threads" && controller.threads?.detail && !threadFocused && threadPanel.kind !== "settings"}
   <AppShell.Sidebar
     side="right"
     constraintPriority={0}
@@ -277,7 +277,7 @@
     browser={inspection.workspace}
     sidebarController={inspection.workspaceRail}
   />
-{:else if !current.agentsHub}<AppShell.Sidebar
+{:else if !current.agentsHub && current.page !== "threads"}<AppShell.Sidebar
     side="right"
     sidebarController={detailsRail}
     constraintPriority={100}

@@ -1,4 +1,5 @@
 import { expect, test, vi } from "vitest";
+import { ApiError } from "../../src/lib/api/client.js";
 import {
   createThreadTransport,
   THREAD_IDS as ids,
@@ -55,6 +56,23 @@ function fixture(unknownFirst = false) {
     },
   };
 }
+test("committed removal returns to the inbox without reading the hidden thread", async () => {
+  const f = fixture();
+  await f.controller.restore();
+  const thread = vi
+    .spyOn(f.transport, "thread")
+    .mockRejectedValue(new ApiError("not_found"));
+  const events = vi
+    .spyOn(f.transport, "events")
+    .mockRejectedValue(new ApiError("not_found"));
+  await f.controller.lifecycle("tombstone");
+  expect(f.route().threadId).toBeNull();
+  expect(f.controller.detail).toBeUndefined();
+  expect(f.controller.status).toBe("ready");
+  expect(f.controller.error).toBe("");
+  expect(thread).not.toHaveBeenCalled();
+  expect(events).not.toHaveBeenCalled();
+});
 test("human replies retain exact parent revision and edit identity", async () => {
   const f = fixture();
   await f.controller.restore();
@@ -579,4 +597,27 @@ test("rejected initial body keeps the directory draft and retries its created th
   expect(f.controller.projection.messages.map((m) => m.content)).toEqual([
     "Corrected draft",
   ]);
+});
+
+test("inbox conversation restore does not duplicate its shared directory read", async () => {
+  const transport = createThreadTransport();
+  const list = vi.spyOn(transport.transport, "list");
+  const route = {
+    ...initialStoreRoute(),
+    page: "threads" as const,
+    repository: ids.repo,
+    threadId: ids.thread,
+  };
+  const threads = createThreadsController({
+    directory: false,
+    source: () => transport.transport,
+    repository: () => ids.repo,
+    principal: () => ids.actor,
+    route: () => route,
+    select: () => {},
+  });
+  await threads.restore();
+  await threads.refresh();
+  expect(list).not.toHaveBeenCalled();
+  expect(threads.detail?.thread.value.thread_id).toBe(ids.thread);
 });

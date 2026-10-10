@@ -28,7 +28,8 @@ export function provideConversationInspection(
     const session = inboxSession();
     return (
       !!session &&
-      !!browser?.bindings.some((binding) => binding.session === session)
+      (browser?.conversation.id === session ||
+        !!browser?.bindings.some((binding) => binding.session === session))
     );
   }
   let current = $state<

@@ -46,6 +46,8 @@ export function validateWorkspaces(chat: AgentChat) {
 export function attach(chat: AgentChat, repository: string) {
   if (
     chat.draft &&
+    (!chat.draft.allowedRepositories ||
+      chat.draft.allowedRepositories.includes(repository)) &&
     !chat.busy &&
     !chat.pending &&
     !chat.draft.attachments.some((a) => a.repository === repository) &&

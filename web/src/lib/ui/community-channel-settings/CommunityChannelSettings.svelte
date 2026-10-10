@@ -18,6 +18,7 @@
     closeLabel = "Close thread settings",
     identity,
     details,
+    embedded = false,
   }: {
     title: string;
     id: string;
@@ -28,19 +29,14 @@
     closeLabel?: string;
     identity?: Snippet;
     details?: Snippet;
+    embedded?: boolean;
     children?: Snippet;
     actions?: Snippet;
   } = $props();
 </script>
 
-<AppShell.Sidebar.Header class="lc-channel-settings__header"
-  ><strong>{heading}</strong><AppShell.Sidebar.Close
-    label={closeLabel}
-    onclick={onClose}
-  /></AppShell.Sidebar.Header
->
-<AppShell.Sidebar.Body
-  ><div class="lc-channel-settings">
+{#snippet content()}
+  <div class="lc-channel-settings">
     <div class="lc-channel-settings__identity">
       <span class="lc-channel-settings__image" aria-hidden="true"
         >{#if identity}{@render identity()}{:else}<Hash />{/if}</span
@@ -89,5 +85,15 @@
       {/if}
     </section>
     {#if actions}{@render actions()}{/if}
-  </div></AppShell.Sidebar.Body
->
+  </div>
+{/snippet}
+{#if embedded}{@render content()}{:else}
+  <AppShell.Sidebar.Header class="lc-channel-settings__header"
+    ><strong>{heading}</strong><AppShell.Sidebar.Close
+      label={closeLabel}
+      onclick={onClose}
+    /></AppShell.Sidebar.Header
+  >
+
+  <AppShell.Sidebar.Body>{@render content()}</AppShell.Sidebar.Body>
+{/if}

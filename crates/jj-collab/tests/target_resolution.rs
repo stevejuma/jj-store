@@ -147,6 +147,8 @@ impl Reader {
         let reference = self
             .graph
             .stage(CollabObjectV1::ThreadVersion(ThreadVersionV1 {
+                purpose: None,
+                codebase: None,
                 agent_message: None,
                 comment_source: None,
                 schema_version: 1,

@@ -144,7 +144,7 @@ impl LocalRepository {
                     let CollabObjectV1::ThreadVersion(value) = store.object(*reference)? else {
                         return Err(LocalError::Corrupt);
                     };
-                    if value.status == ThreadStatusV1::Tombstoned {
+                    if value.status == ThreadStatusV1::Tombstoned || !value.is_user_thread() {
                         continue;
                     }
                     threads.push(ThreadSummaryV1 {

@@ -63,6 +63,32 @@ function browser() {
   browser.bindingKey = browser.key(browser.bindings[0]);
   return { conversation, browser };
 }
+test("retained workspace requests keep their authority when the active binding changes", async () => {
+  const { browser: b } = browser();
+  const request = b.query("src/a.ts");
+  const repositoryRead = vi.fn(async () => ({
+    ...value,
+    session: `repository:${repository}`,
+  }));
+  b.repositoryReads = { read: repositoryRead } as unknown as NonNullable<
+    WorkspaceBrowser["repositoryReads"]
+  >;
+  const repositoryBinding = {
+    ...b.bindings[0],
+    session: `repository:${repository}`,
+    source: "repository" as const,
+  };
+  b.bindings = [...b.bindings, repositoryBinding];
+  b.bindingKey = b.key(repositoryBinding);
+  expect((await b.read(request)).session).toBe(session);
+  expect(repositoryRead).not.toHaveBeenCalled();
+  const snapshotRequest = b.query("src/a.ts");
+  b.bindingKey = b.key(b.bindings[0]);
+  expect((await b.read(snapshotRequest)).session).toBe(
+    `repository:${repository}`,
+  );
+  expect(repositoryRead).toHaveBeenCalledTimes(1);
+});
 test("file selection joins the existing queue and sends exact UTF-8 ranges without transcript rows", async () => {
   const { conversation, browser: b } = browser();
   await b.select("src/a.ts");

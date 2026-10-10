@@ -45,3 +45,4 @@
 - [Conversation comment submissions and answer links](41-conversation-comment-submissions.md)
 - [Freshness producer ownership](41-freshness-producer-ownership.md)
 - [Conversation details and generated metadata](42-conversation-metadata.md)
+- [Intentional Threads and conversation ownership](43-intentional-threads-and-codebases.md)

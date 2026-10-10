@@ -10,6 +10,23 @@ import {
   type ComposerSlashEntry,
 } from "../community-chat-composer/composer-slash-session.js";
 import type { ComposerSlashKind } from "../community-chat-composer/composer-slash.js";
+import { threadsRoute } from "../../controller/threads-route-codec.js";
+function threadCatalog(app: StoreController) {
+  const owners = app.threadNavigation
+    ? Object.entries(app.threadNavigation.entries).flatMap(([home, entry]) =>
+        entry.threads.map((thread) => ({ home, thread })),
+      )
+    : (app.threads?.threads ?? []).map((thread) => ({
+        home: app.state.route.repository,
+        thread,
+      }));
+  return owners.filter(
+    ({ thread }) =>
+      !thread.value.purpose &&
+      !thread.value.agent_message &&
+      !thread.value.comment_source,
+  );
+}
 export function provideStoreEntityContext(
   controller: () => StoreController,
   blocked: () => boolean,
@@ -27,9 +44,11 @@ export function provideStoreEntityContext(
       )?.name;
       if (link.kind === "channel")
         return (
-          app.threads?.threads.find(
-            (t) => t.value.thread_id === link.route.threadId,
-          )?.value.title ?? "Thread"
+          threadCatalog(app).find(
+            ({ home, thread }) =>
+              home === link.route.repository &&
+              thread.value.thread_id === link.route.threadId,
+          )?.thread.value.title ?? "Thread"
         );
       return link.kind === "repo"
         ? `${repository ?? "Repository"} · ${communityEntityLinkPresentation(link).fallbackLabel}`
@@ -57,11 +76,12 @@ export function provideStoreEntityContext(
           entry(r.id, r.name, { ...emptyRoute(r.id), page: "log" }),
         ),
         threads:
-          app.threads?.threads.map((t) =>
-            entry(t.value.thread_id, t.value.title, {
-              ...emptyRoute(route.repository),
-              threadId: t.value.thread_id,
-            }),
+          threadCatalog(app).map(({ home, thread: t }) =>
+            entry(
+              `${home}:${t.value.thread_id}`,
+              t.value.title,
+              threadsRoute(home, t.value.thread_id),
+            ),
           ) ?? [],
         commits: app.state.targets.map((id) =>
           entry(

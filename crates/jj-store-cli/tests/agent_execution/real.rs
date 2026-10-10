@@ -220,6 +220,7 @@ async fn installed_fleet_warms_general_chat_then_reuses_an_attached_workspace() 
     .await;
     assert!(warm.sessions.is_empty());
     let mut send = chat::Send {
+        thread_codebase: None,
         comments: None,
         version: 1,
         request_id: RequestId::new([173; 16]),

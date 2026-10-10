@@ -1,3 +1,4 @@
+import { readThreadsHash, threadsRouteToHash } from "./threads-route-codec.js";
 import { readAgentsHash, agentsRouteToHash } from "./agents-route-codec.js";
 import {
   safeLabel,
@@ -34,6 +35,8 @@ export type StoreRouteHashResult =
   | { kind: "route"; route: StoreRoute };
 
 export function storeRouteToHash(route: StoreRoute): string | null {
+  if (route.threadsHub && route.page === "threads")
+    return threadsRouteToHash(route);
   if (route.agentsHub && route.page === "agents")
     return agentsRouteToHash(route);
   if (route.projectsHub && route.page === "projects")
@@ -74,6 +77,8 @@ export function storeRouteToHash(route: StoreRoute): string | null {
 }
 
 export function storeRouteFromHash(hash: string): StoreRouteHashResult {
+  const threads = readThreadsHash(hash);
+  if (threads) return threads;
   const agents = readAgentsHash(hash);
   if (agents) return agents;
   if (hash.startsWith("#/projects")) {

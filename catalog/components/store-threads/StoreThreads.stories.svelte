@@ -18,16 +18,14 @@
     const c = within(canvasElement),
       body = within(document.body);
     await expect(
-      (await c.findAllByRole("button", { name: "Browse threads" })).find(
-        (button) => button.closest(".lc-community-navigation__section-header"),
-      )!,
+      await c.findByRole("button", { name: /^Threads$/ }),
     ).toBeVisible();
     await userEvent.click(
-      (await c.findAllByRole("button", { name: "general" }))[0]!,
+      (await c.findAllByRole("button", { name: "Open Thread general" }))[0]!,
     );
     await expect(await c.findByText("Welcome to the channel")).toBeVisible();
     await userEvent.click(
-      c.getByRole("button", { name: /View thread contributors/ }),
+      c.getByRole("button", { name: "Thread contributors" }),
     );
     await expect(
       c.getByRole("complementary", { name: "Thread contributors" }),
@@ -35,22 +33,25 @@
     await userEvent.click(
       c.getByRole("button", { name: "Close thread panel" }),
     );
-    await userEvent.click(c.getByRole("button", { name: "All threads" }));
-    await userEvent.click(
-      c.getByRole("button", { name: "Start a new post in Threads" }),
-    );
+    await userEvent.click(c.getByRole("button", { name: "New Thread" }));
+    const dialog = await body.findByRole("dialog");
     await userEvent.type(
-      await c.findByRole("textbox", { name: "Markdown editor" }),
-      "planning{Shift>}{Enter}{/Shift}First post",
+      within(dialog).getByRole("textbox", { name: "Thread title" }),
+      "planning",
     );
-    await userEvent.click(c.getByRole("button", { name: "Publish post" }));
+    await userEvent.click(
+      within(dialog).getByRole("button", { name: "Create Thread" }),
+    );
     await expect(
-      await c.findByText("planning", { selector: "[data-ui-part=room-title]" }),
+      await c.findByRole("heading", { name: "planning" }),
     ).toBeVisible();
+    await expect(c.queryByText("First post")).toBeNull();
+    const input = await c.findByRole("textbox", { name: "Markdown editor" });
+    await userEvent.click(input);
+    await userEvent.type(input, "First post{Control>}{Enter}{/Control}");
     await expect(
-      await c.findByRole("button", { name: "planning" }),
+      await c.findByText("First post", { exact: true }),
     ).toBeVisible();
-    await expect(await c.findByText(/First post/)).toBeVisible();
   }}
 />
 <Story
@@ -78,14 +79,17 @@
     await waitFor(() =>
       expect(
         within(message as HTMLElement).getAllByRole("button", {
-          name: /Reply in thread|View replies|Add reaction/,
+          name: /More message actions|Add reaction/,
         })[0]!,
       ).toBeVisible(),
     );
     await userEvent.click(
       within(message as HTMLElement).getByRole("button", {
-        name: "Reply in thread",
+        name: "More message actions",
       }),
+    );
+    await userEvent.click(
+      await body.findByRole("menuitem", { name: "Reply in thread" }),
     );
     const replies = c.getByRole("complementary", { name: "Thread replies" });
     const replyInput = within(replies).getByRole("textbox", {
@@ -102,7 +106,7 @@
         { exact: true },
       ),
     ).toBeVisible();
-    await userEvent.click(c.getByRole("button", { name: "Refresh threads" }));
+    await userEvent.click(c.getByRole("button", { name: "Refresh Threads" }));
     await expect(
       await within(replies).findByText("A reply", { exact: true }),
     ).toBeVisible();
@@ -117,7 +121,7 @@
     await waitFor(() =>
       expect(
         within(reply as HTMLElement).getAllByRole("button", {
-          name: /Reply in thread|View replies|Add reaction/,
+          name: /More message actions|Add reaction/,
         })[0]!,
       ).toBeVisible(),
     );
@@ -195,6 +199,109 @@
   args={{ selected: true, unknownFirst: true, withReply: true }}
   play={(context) => pendingReaction(context)}
 />
+
+<Story
+  name="Settings creation uses searchable Codebase multi select and canonical aliases"
+  args={{ otherRepository: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement),
+      body = within(document.body);
+    await userEvent.click(await c.findByRole("button", { name: "New Thread" }));
+    const dialog = await body.findByRole("dialog", { name: "Create Thread" });
+    const title = within(dialog).getByRole("textbox", { name: "Thread title" });
+    await expect(
+      title.closest(".community-settings__option-group"),
+    ).not.toBeNull();
+    const create = within(dialog).getByRole("button", {
+      name: "Create Thread",
+    });
+    await expect(create.closest(".community-settings__option-group")).toBe(
+      title.closest(".community-settings__option-group"),
+    );
+    const actionRow = create.closest(".community-settings__option-row")!;
+    await expect(actionRow).not.toContainElement(title);
+    await expect(create.getBoundingClientRect().right).toBeGreaterThan(
+      actionRow.getBoundingClientRect().left +
+        actionRow.getBoundingClientRect().width / 2,
+    );
+    await userEvent.type(title, "Shared planning");
+    const picker = within(dialog).getByRole("combobox", {
+      name: "Thread Codebase",
+    });
+    await userEvent.click(picker);
+    const search = body.getByPlaceholderText("Search repositories");
+    await userEvent.type(search, "Collaboration");
+    await userEvent.click(
+      body.getByRole("option", { name: /^Collaboration home/ }),
+    );
+    await userEvent.clear(search);
+    await userEvent.click(
+      body.getByRole("option", { name: /^Other repository/ }),
+    );
+    await expect(picker).toHaveTextContent("2 repositories selected");
+    await userEvent.click(
+      body.getByRole("button", { name: "Close thread codebase selector" }),
+    );
+    await userEvent.click(
+      within(dialog).getByRole("button", { name: "Create Thread" }),
+    );
+    await expect(
+      await c.findByRole("heading", { name: "Shared planning" }),
+    ).toBeVisible();
+    await waitFor(() =>
+      expect(
+        c.getAllByRole("button", { name: "Open Thread Shared planning" }),
+      ).toHaveLength(2),
+    );
+  }}
+/>
+
+<Story
+  name="Message edit is a hover menu action and updates the exact message"
+  args={{ selected: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement),
+      body = within(document.body);
+    const message = (await c.findByText("Welcome to the channel")).closest(
+      "article",
+    )!;
+    await expect(
+      within(message).queryByRole("button", { name: "Edit message" }),
+    ).toBeNull();
+    await page
+      .elementLocator(message.querySelector(".chat-text-block") ?? message)
+      .hover();
+    await userEvent.click(
+      within(message).getByRole("button", { name: "More message actions" }),
+    );
+    await userEvent.click(
+      await body.findByRole("menuitem", { name: "Edit message" }),
+    );
+    const composer = await within(message).findByRole("group", {
+      name: "Edit message",
+    });
+    const input = within(composer).getByRole("textbox", {
+      name: "Markdown editor",
+    });
+    await userEvent.click(input);
+    await userEvent.clear(input);
+    await userEvent.type(input, "An edited message");
+    await expect(input).toHaveTextContent("An edited message");
+    await userEvent.click(
+      within(composer).getByRole("button", { name: "Send message" }),
+    );
+    await expect(
+      await c.findByText("An edited message", { exact: true }),
+    ).toBeVisible();
+    await expect(c.queryByText("Welcome to the channel")).toBeNull();
+    await expect(c.queryByRole("group", { name: "Edit message" })).toBeNull();
+    await expect(
+      c
+        .getByRole("log", { name: "general messages" })
+        .querySelectorAll("[data-message-id]"),
+    ).toHaveLength(1);
+  }}
+/>
 <Story
   name="Unknown reply reaction stays in reply message metadata"
   args={{ selected: true, unknownFirst: true, replySelected: true }}
@@ -216,7 +323,7 @@
     await waitFor(() =>
       expect(
         within(message as HTMLElement).getAllByRole("button", {
-          name: /Reply in thread|View replies|Add reaction/,
+          name: /More message actions|Add reaction/,
         })[0]!,
       ).toBeVisible(),
     );
@@ -276,22 +383,21 @@
     await waitFor(() =>
       expect(
         within(message as HTMLElement).getAllByRole("button", {
-          name: /Reply in thread|View replies|Add reaction/,
+          name: /More message actions|Add reaction/,
         })[0]!,
       ).toBeVisible(),
     );
     await userEvent.click(
-      within(message).getByRole("button", { name: "Reply in thread" }),
+      within(message).getByRole("button", { name: "More message actions" }),
+    );
+    await userEvent.click(
+      await body.findByRole("menuitem", { name: "Reply in thread" }),
     );
     const replies = c.getByRole("complementary", { name: "Thread replies" });
     await userEvent.type(
       within(replies).getByRole("textbox", { name: "Markdown editor" }),
       "Unsent reply draft",
     );
-    await userEvent.click(c.getByRole("button", { name: "Toggle details" }));
-    await expect(
-      c.getByRole("complementary", { name: "Repository details" }),
-    ).toBeVisible();
     await userEvent.click(
       c.getByRole("button", { name: /Open profile menu for/ }),
     );
@@ -321,9 +427,6 @@
     await expect(
       c.getByRole("textbox", { name: "Markdown editor" }),
     ).toHaveTextContent("Unsent channel draft");
-    await expect(
-      c.getByRole("complementary", { name: "Repository details" }),
-    ).toBeVisible();
     await page
       .elementLocator(c.getByText("Welcome to the channel").closest("article")!)
       .hover();
@@ -331,7 +434,10 @@
     await userEvent.click(
       within(
         c.getByText("Welcome to the channel").closest("article")!,
-      ).getByRole("button", { name: "Reply in thread" }),
+      ).getByRole("button", { name: "More message actions" }),
+    );
+    await userEvent.click(
+      await body.findByRole("menuitem", { name: "Reply in thread" }),
     );
     const reopened = await body.findByRole("region", { name: "Replies" });
     await expect(

@@ -1,3 +1,4 @@
+import { threadsRoute } from "./threads-route-codec.js";
 import { ApiError } from "../api/client.js";
 import { supportsRepositoryThreads } from "./repository-thread-navigation.svelte.js";
 import { createThreadsController } from "./production-threads.svelte.js";
@@ -13,9 +14,11 @@ export function createThreadsIntegration(options: {
     repository: string,
     token: string | null,
   ) => Promise<void>;
+  refreshDirectory?: (home: string) => Promise<void>;
 }) {
   const { data, history } = options;
   const threads = createThreadsController({
+    directory: false,
     source: () => {
       const t = options.source()?.threads;
       if (!t) throw new ApiError("threads_unavailable");
@@ -26,6 +29,10 @@ export function createThreadsIntegration(options: {
       data.repositories.find((r) => r.id === options.source()?.repository)
         ?.principal ?? "",
     route: () => history.route,
+    onRemoved: () =>
+      options.refreshDirectory?.(
+        options.source()?.repository ?? history.route.repository,
+      ) ?? Promise.resolve(),
     selectReply: (replyId) => history.push({ ...history.route, replyId }),
     select: (threadId) =>
       history.push({
@@ -33,6 +40,7 @@ export function createThreadsIntegration(options: {
         repository: options.source()?.repository ?? history.route.repository,
         snapshotOperationId: history.route.snapshotOperationId,
         page: "threads",
+        threadsHub: true,
         threadId,
       }),
   });
@@ -62,9 +70,13 @@ export function createThreadsIntegration(options: {
         return;
       }
       if (history.route.page === "threads") await threads.restore();
-      else await threads.list();
+      // Directory reads belong to the shared inbox/navigation cache.
     },
     async openThreads(id: string | null = null, repository?: string) {
+      if (!id) {
+        history.push(threadsRoute("", null, repository));
+        return;
+      }
       const active = options.source();
       const target =
         repository ?? (active?.threads ? active.repository : threadHome()?.id);
@@ -78,6 +90,7 @@ export function createThreadsIntegration(options: {
           ...initialStoreRoute(),
           repository: repo.id,
           page: "threads",
+          threadsHub: true,
           threadId: id,
         });
         await options.connectRepository(repo.id, null);
@@ -88,6 +101,8 @@ export function createThreadsIntegration(options: {
         )
           return;
       }
+      if (active?.repository === repo.id)
+        history.push(threadsRoute(repo.id, id));
       if (options.source()?.repository !== repo.id) return;
       if (!options.source()?.threads) throw new ApiError("threads_unavailable");
       await threads.open(id);

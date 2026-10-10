@@ -1,3 +1,7 @@
+import { ThreadWorkspaces } from "./thread-workspaces.svelte.js";
+import { LocalClient } from "../api/local-client.js";
+import { repositories as loadRepositories } from "../api/repositories.js";
+import { ApiError } from "../api/client.js";
 import { agentsRoute } from "./agents-route-codec.js";
 import { createProductionStacksReaders } from "./production-stacks-history.js";
 import { createReadScope } from "./read-scope.js";
@@ -86,6 +90,7 @@ export function createProductionStoreController(
     data,
     history,
     connectRepository,
+    refreshDirectory: (home) => sources.refreshThreads(threadNavigation, home),
   });
   const { threads, openThreads } = threadsIntegration;
   const restoreRoute = createProfileRouteRestorer({
@@ -123,6 +128,19 @@ export function createProductionStoreController(
     restoreRoute,
     fetcher: options.fetcher,
   });
+  const threadWorkspaces = new ThreadWorkspaces(
+    new LocalClient("", options.fetcher),
+    async (result) => {
+      data.repositories = (
+        await loadRepositories(sessionToken, options.fetcher)
+      ).map((r) => ({ ...r }));
+      // Entries and the shared transport have separate caches. Publication
+      // must invalidate the metadata home's reads before refreshing aliases.
+      threadNavigation.invalidate(new Set([result.home]));
+      await sources.refreshThreads(threadNavigation, result.home);
+      await openThreads(result.thread, result.home);
+    },
+  );
   local.execution.onNavigate = (view, id, relatedId) => {
     void openRoute(agentsRoute(view, id, relatedId));
   };
@@ -249,7 +267,10 @@ export function createProductionStoreController(
     connect: ({ repository, token }) => connect(repository, token),
     connectRepository,
     disconnect: () => disconnect(),
-    destroy: () => connection.destroy(disconnect, history),
+    destroy: () => {
+      threadWorkspaces.destroy();
+      connection.destroy(disconnect, history);
+    },
     refresh,
     selectOperation,
     restoreRoute,
@@ -291,6 +312,12 @@ export function createProductionStoreController(
       threads: threadsIntegration,
       projects,
       threadNavigation,
+      threadWorkspaces,
+      acquireRepository: (id) => {
+        const repo = data.repositories.find((r) => r.id === id);
+        if (!repo) throw new ApiError("access_denied");
+        return sources.acquire(repo, sessionToken);
+      },
       now: options.now,
       globalSearch,
       referenceSearch,

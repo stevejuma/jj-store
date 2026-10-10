@@ -30,7 +30,9 @@
     data-active={active ? "" : undefined}
     aria-pressed={active}
     data-ui-part="inbox-conversation"
-    aria-label={`Open session ${item.author.name} · ${item.id}${item.status === "Draft" ? "" : `, ${item.status}`}`}
+    aria-label={item.label
+      ? `Open Thread ${item.label}`
+      : `Open session ${item.author.name} · ${item.id}${item.status === "Draft" ? "" : `, ${item.status}`}`}
     onclick={onSelect}
   >
     <CommunityMemberAvatar
@@ -43,10 +45,14 @@
     />
     <span class="lc-community-inbox__item-body">
       <span class="lc-community-inbox__item-heading"
-        ><strong title={item.author.name}>{item.author.name}</strong></span
+        ><strong title={item.label ?? item.author.name}
+          >{item.label ?? item.author.name}</strong
+        ></span
       >
       <span class="lc-community-inbox__item-detail">
-        <span class="lc-community-inbox__context">{item.context}</span>
+        <span class="lc-community-inbox__context"
+          >{item.label ? item.author.name : item.context}</span
+        >
         {#if item.lastActivityAt !== undefined}<span
             class="lc-community-inbox__time"
           >

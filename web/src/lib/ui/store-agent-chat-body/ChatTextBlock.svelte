@@ -5,7 +5,7 @@
   import ChatHoverActions from "./ChatHoverActions.svelte";
   import type { EditorView } from "@codemirror/view";
   import { readingExtensions, refreshComments } from "./text-editor.js";
-  import type { ChatBodyBlock } from "./model.js";
+  import type { ChatBodyBlock, ChatBodyProps } from "./model.js";
   import type { ChatBodyComments } from "./comments.svelte.js";
   import { validAnchor } from "./anchors.js";
   import { middleFoldKey } from "./middle-fold.js";
@@ -16,6 +16,7 @@
     state: comments,
     showHeader = true,
     reactionTarget,
+    messageActions,
     reply = false,
     fileView = false,
   }: {
@@ -23,6 +24,7 @@
     state: ChatBodyComments;
     showHeader?: boolean;
     reactionTarget?: string;
+    messageActions?: ChatBodyProps["messageActions"];
     reply?: boolean;
     fileView?: boolean;
   } = $props();
@@ -150,6 +152,7 @@
     {block}
     state={comments}
     {reactionTarget}
+    {messageActions}
     onComment={comment}
   />
 </section>

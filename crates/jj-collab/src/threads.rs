@@ -53,10 +53,20 @@ pub struct ThreadVersionV1 {
     pub agent_message: Option<ReactionTargetV1>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub comment_source: Option<ConversationSourceV1>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub purpose: Option<ThreadPurposeV1>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub codebase: Option<Vec<jj_store_model::RepositoryId>>,
 }
 impl ThreadVersionV1 {
     pub fn validate(&self) -> Result<()> {
         schema(self.schema_version)?;
+        if let Some(repositories) = &self.codebase {
+            validate_codebase(repositories)?;
+        }
+        if let Some(ThreadPurposeV1::Conversation { target }) = &self.purpose {
+            target.key()?;
+        }
         if let Some(source) = &self.comment_source {
             source.validate()?;
         }
@@ -92,6 +102,7 @@ pub(crate) fn validate_agent_discussion(target: &ReactionTargetV1) -> Result<()>
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(tag = "type", rename_all = "snake_case", deny_unknown_fields)]
 pub enum ThreadEventKindV1 {
+    CodebaseChanged,
     Metadata {
         version: CollabObjectRef,
     },

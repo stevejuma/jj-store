@@ -7469,6 +7469,25 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
           "type": "null"
         }
       ]
+    },
+    "purpose": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/ThreadPurposeV1"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "codebase": {
+      "type": [
+        "array",
+        "null"
+      ],
+      "items": {
+        "$ref": "#/components/schemas/RepositoryId"
+      }
     }
   },
   "required": [
@@ -7619,6 +7638,88 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
   "required": [
     "evidence",
     "commit"
+  ]
+}
+```
+
+## ThreadPurposeV1
+
+```text
+{
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "target": {
+          "$ref": "#/components/schemas/ConversationMetadataTargetV1"
+        },
+        "type": {
+          "type": "string",
+          "const": "conversation"
+        }
+      },
+      "required": [
+        "type",
+        "target"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "annotation"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false
+    }
+  ]
+}
+```
+
+## ConversationMetadataTargetV1
+
+```text
+{
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "const": "conversation"
+        }
+      },
+      "required": [
+        "type",
+        "id"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "session": {
+          "$ref": "#/components/schemas/AgentSessionId"
+        },
+        "type": {
+          "type": "string",
+          "const": "recorded"
+        }
+      },
+      "required": [
+        "type",
+        "session"
+      ]
+    }
   ]
 }
 ```
@@ -8044,6 +8145,19 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 ```text
 {
   "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "const": "codebase_changed"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "additionalProperties": false
+    },
     {
       "type": "object",
       "additionalProperties": false,
@@ -14343,6 +14457,26 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "discovery",
     "workspaces",
     "conversion"
+  ]
+}
+```
+
+## ApplicationFreshnessFrame
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "event": {
+      "$ref": "#/components/schemas/ApplicationFreshnessEvent"
+    }
+  },
+  "required": [
+    "id",
+    "event"
   ]
 }
 ```
@@ -21386,6 +21520,35 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 }
 ```
 
+## ThreadWorkspaceOutcome
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "request_id": {
+      "$ref": "#/components/schemas/RequestId"
+    },
+    "home": {
+      "$ref": "#/components/schemas/RepositoryId"
+    },
+    "thread": {
+      "$ref": "#/components/schemas/ThreadId"
+    },
+    "revision": {
+      "$ref": "#/components/schemas/CollabObjectRef"
+    }
+  },
+  "required": [
+    "request_id",
+    "home",
+    "thread",
+    "revision"
+  ]
+}
+```
+
 ## AgentWorkspaceInspection
 
 ```text
@@ -23271,49 +23434,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "unavailable",
     "details",
     "job"
-  ]
-}
-```
-
-## ConversationMetadataTargetV1
-
-```text
-{
-  "oneOf": [
-    {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "id": {
-          "type": "string"
-        },
-        "type": {
-          "type": "string",
-          "const": "conversation"
-        }
-      },
-      "required": [
-        "type",
-        "id"
-      ]
-    },
-    {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "session": {
-          "$ref": "#/components/schemas/AgentSessionId"
-        },
-        "type": {
-          "type": "string",
-          "const": "recorded"
-        }
-      },
-      "required": [
-        "type",
-        "session"
-      ]
-    }
   ]
 }
 ```

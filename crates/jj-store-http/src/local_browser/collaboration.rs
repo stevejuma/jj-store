@@ -128,6 +128,16 @@ async fn apply(
 ) -> Result<Response> {
     routes::input(args)?;
     let request = decode_body(body)?;
+    if matches!(
+        &request.command,
+        model::CollabCommandV1::Thread {
+            intent: model::ThreadCommandV1::SetCodebase { .. }
+                | model::ThreadCommandV1::CreateIntentional { .. }
+                | model::ThreadCommandV1::CreateConversation { .. }
+        }
+    ) {
+        return Err(Error::denied());
+    }
     let _ = binding(&state, repository).await?;
     let manager = manager(&state)?;
     let runtime = tokio::runtime::Handle::current();

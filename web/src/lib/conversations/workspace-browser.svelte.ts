@@ -1,3 +1,4 @@
+import { RepositoryInspection } from "./repository-inspection.js";
 import { Listing } from "./workspace-listing.svelte.js";
 import { WorkspaceReadCache } from "./workspace-read-cache.js";
 import {
@@ -47,6 +48,7 @@ export class WorkspaceBrowser {
   #fileRequest?: Request;
   #fileGeneration = 0;
   #fileAbort?: AbortController;
+  repositoryReads?: RepositoryInspection;
   constructor(
     readonly client: LocalClient,
     readonly conversation: ConversationSession,
@@ -117,9 +119,20 @@ export class WorkspaceBrowser {
   setBindings(
     sessions: readonly AgentSession[],
     names: ReadonlyMap<string, string>,
+    repositories: readonly string[] = [],
   ) {
     const previous = this.bindings;
-    this.bindings = workspaceBindings(sessions, names);
+    this.bindings = [
+      ...workspaceBindings(sessions, names),
+      ...repositories.map((repository) => ({
+        session: `repository:${repository}`,
+        repository,
+        repositoryName: names.get(repository) ?? repository.slice(0, 8),
+        workspace: "Repository snapshot",
+        agent: "",
+        source: "repository" as const,
+      })),
+    ];
     for (const old of previous) {
       const next = this.bindings.find((b) => this.key(b) === this.key(old));
       if (
@@ -161,6 +174,19 @@ export class WorkspaceBrowser {
     };
   }
   async read(request: Request, signal?: AbortSignal) {
+    if (request.session.startsWith("repository:")) {
+      if (!this.repositoryReads)
+        throw new Error("Repository browsing is unavailable.");
+      return this.repositoryReads.read(
+        request.repository,
+        request.path ?? null,
+        request.cursor ?? null,
+        signal,
+        request.query.view === "changes"
+          ? { range: request.query.range, base: request.query.base ?? null }
+          : undefined,
+      );
+    }
     const value = await this.client.request<WorkspaceRead>(
       "agents/workspace/inspect",
       request,
@@ -221,6 +247,13 @@ export class WorkspaceBrowser {
     if (this.railOpen) await this.load();
   }
   async selectTab(tab: Tab) {
+    if (
+      tab === "changes" &&
+      this.binding?.source === "repository" &&
+      this.range === "branch" &&
+      !this.base
+    )
+      this.range = "since_last_commit";
     this.tab = tab;
     await this.load();
   }
@@ -280,6 +313,23 @@ export class WorkspaceBrowser {
   }
   blocks = $state<{ before?: ChatBodyBlock; after?: ChatBodyBlock }>({});
   register(value: WorkspaceRead) {
+    if (value.session.startsWith("repository:")) {
+      this.blocks =
+        value.file?.contents != null
+          ? {
+              after: {
+                id: value.selection + ":" + value.file.path,
+                revision: value.commit,
+                text: value.file.contents,
+                kind: "code",
+                path: value.file.path,
+                label: value.file.path,
+                commentable: false,
+              },
+            }
+          : {};
+      return;
+    }
     registerWorkspaceSource(this, value, () => {
       this.#historical = true;
       this.#fileGeneration++;
