@@ -33,10 +33,9 @@ for (const code of [
       version: 1,
       request_id: "create-request",
       command: {
-        type: "create",
+        type: "create_annotation",
         thread_id: THREAD_IDS.thread,
         title: "Agent conversation",
-        baseline: null,
       },
     });
     expect(read).toHaveBeenCalledTimes(2);

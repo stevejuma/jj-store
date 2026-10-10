@@ -1,7 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { activityRows } from "../src/lib/ui/store-agent-execution/presentation.js";
-import { orderedAssistantRows } from "../src/lib/conversations/ordered-activity.js";
 import type { AgentEvent } from "../src/lib/controller/agent-execution-types.js";
 const events = (values: object[]) =>
   values.map(
@@ -77,4 +76,67 @@ test("legacy answers retain explicit unknown ordering, inconsistent streams have
     activityRows(mismatch).find((r) => r.kind === "assistant")?.sourceFrom,
     undefined,
   );
+});
+
+test("each assistant segment retains its first valid time without borrowing neighboring times", () => {
+  const input = events([
+    chunk("unknown"),
+    chunk(" then known"),
+    chunk(" then later"),
+    { type: "activity", requestId: "r", toolSnapshot: { toolCallId: "t" } },
+    chunk("invalid"),
+    chunk(" still invalid"),
+    chunk(" known"),
+    { type: "permission", requestId: "r" },
+    chunk("untimed"),
+  ]);
+  for (const [index, millis] of [
+    [1, 3000],
+    [2, 4000],
+    [4, NaN],
+    [5, -1],
+    [6, 5000],
+  ] as const)
+    input[index]!.observed_at_millis = millis;
+  const rows = activityRows(input).filter((row) => row.kind === "assistant");
+  assert.deepEqual(
+    rows.map((row) => row.observedAtMillis),
+    [3000, 5000, undefined],
+  );
+  assert.deepEqual(
+    rows.map((row) => [row.sourceFrom, row.sourceTo]),
+    [
+      [0, 29],
+      [29, 56],
+      [56, 63],
+    ],
+  );
+});
+
+test("legacy final answers use only a valid observation time from their own record", () => {
+  for (const millis of [
+    undefined,
+    NaN,
+    -1,
+    1.5,
+    Number.MAX_SAFE_INTEGER,
+    0,
+    6000,
+  ]) {
+    const input = events([
+      {
+        type: "record",
+        requestId: "r",
+        assistantText: "Legacy",
+        record: { status: "completed" },
+      },
+    ]);
+    input[0]!.observed_at_millis = millis;
+    const row = activityRows(input).find((row) => row.kind === "assistant")!;
+    assert.equal(
+      row.observedAtMillis,
+      millis === 0 || millis === 6000 ? millis : undefined,
+    );
+    assert.equal(row.orderingKnown, false);
+  }
 });

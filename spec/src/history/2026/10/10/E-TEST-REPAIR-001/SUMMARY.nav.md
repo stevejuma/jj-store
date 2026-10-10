@@ -1,0 +1,3 @@
+- [details-02.md](details-02.md)
+- [details-03.md](details-03.md)
+- [details-04.md](details-04.md)

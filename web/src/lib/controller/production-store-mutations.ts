@@ -2,7 +2,7 @@ import { untrack } from "svelte";
 import { isLocal, type RepositoryHead } from "./repository-profile.js";
 import type { Head } from "../api/client.js";
 import type { StoreDataSource } from "./native-data-source.js";
-import { storeErrorMessage } from "./http-store-data-source.js";
+import { storeErrorMessage } from "./store-error.js";
 import {
   mutationReceipt,
   mutationRequest,

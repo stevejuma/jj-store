@@ -1,6 +1,6 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
-  import { expect, userEvent, within } from "storybook/test";
+  import { expect, userEvent, within, waitFor } from "storybook/test";
   import Fixture from "../../fixtures/ManagedAgentRepositoryFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Managed agent identity",
@@ -55,9 +55,11 @@
     const response = await c.findByRole("complementary", {
       name: "Agent response",
     });
-    await expect(
-      response.querySelector('[data-ui-part="emoji"]'),
-    ).toHaveTextContent("🐝");
+    await waitFor(() =>
+      expect(
+        response.querySelector('[data-ui-part="emoji"]'),
+      ).toHaveTextContent("🐝"),
+    );
     await expect(c.getByLabelText("Execution commands")).toHaveTextContent("0");
   }}
 />

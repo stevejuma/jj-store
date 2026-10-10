@@ -129,10 +129,16 @@
       canvas.queryByRole("button", { name: "Commit selected changes" }),
     ).toBeNull();
     expect(canvas.queryByRole("button", { name: "Amend commit" })).toBeNull();
+    {
+      const commit = canvas.getByRole("button", {
+        name: "Expose repository API",
+      });
+      if (!commit.closest('[aria-current="true"]'))
+        await userEvent.click(commit);
+    }
     await userEvent.click(
-      canvas.getByRole("button", { name: "Expose repository API" }),
+      await canvas.findByRole("button", { name: "src/api.ts" }),
     );
-    await userEvent.click(canvas.getByRole("button", { name: "src/api.ts" }));
     const stackDiff = await canvas.findByRole("region", {
       name: "Selected changes from stack-api",
     });

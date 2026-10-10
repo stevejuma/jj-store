@@ -19,9 +19,6 @@
   const layoutStorage = untrack(createMemoryStoryStorage);
   onDestroy(() => controller.actions.destroy());
   $effect(() => {
-    if (controller.stackWorkspace) controller.stackWorkspace.page = "branches";
-  });
-  $effect(() => {
     if (
       clearTransientFeedback &&
       controller.state.status.error.includes("index rebuild required")

@@ -22,7 +22,7 @@ const json = (value: unknown, status = 200) =>
 export function productionStacksHttp(cold = false, dependent = false) {
   const requests: { path: string; body: any }[] = [];
   let prepared = !cold,
-    hash = `#/repos/${stackRepository}/stacks?at_op=${stackOperation}`;
+    hash = `#/repos/${stackRepository}/stacks?at_op=${stackOperation}&stack_tab=branches`;
   const browser: StoreRouteBrowser = {
     hash: () => hash,
     push: (next) => (hash = next),

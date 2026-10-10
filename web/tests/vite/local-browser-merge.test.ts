@@ -1,4 +1,4 @@
-import { expect, test } from "vitest";
+import { expect, test, vi } from "vitest";
 import {
   createThreadTransport,
   THREAD_IDS as ids,
@@ -53,14 +53,28 @@ function fixture(unknownFirst = false) {
       route = value;
     },
     native,
+    route: () => route,
   };
 }
 
-test("mixed_thread_navigation_selects_a_native_home", async () => {
+test("thread_hub_navigation_uses_the_shared_directory_without_connecting", async () => {
   const f = fixture();
+  const directory = vi.spyOn(f.native.transport, "list");
   await f.integration.openThreads();
+  expect(f.connected).toEqual([]);
+  expect(directory).not.toHaveBeenCalled();
+  expect(f.route()).toMatchObject({
+    page: "threads",
+    threadsHub: true,
+    threadId: null,
+  });
+});
+
+test("explicit_thread_navigation_connects_its_native_home", async () => {
+  const f = fixture();
+  await f.integration.openThreads(ids.thread, ids.repo);
   expect(f.connected).toEqual([ids.repo]);
-  expect(f.integration.threads.threads.length).toBeGreaterThan(0);
+  expect(f.integration.threads.detail?.thread.value.thread_id).toBe(ids.thread);
 });
 
 test("local_profile_switch_preserves_unknown_native_thread_intent", async () => {
@@ -90,17 +104,35 @@ test("local_profile_switch_preserves_unknown_native_thread_intent", async () => 
   expect(f.integration.threads.pending).toBeNull();
 });
 
-test("local_profile_hides_threads_and_discards_previous_native_thread_state", async () => {
+test("unsupported_transport_discards_previous_native_thread_detail", async () => {
   const f = fixture();
   f.setSource({ repository: ids.repo, threads: f.native.transport });
+  f.setRoute({
+    ...initialStoreRoute(),
+    repository: ids.repo,
+    page: "threads",
+    threadId: ids.thread,
+  });
   await f.integration.connected();
-  expect(f.integration.threads.threads.length).toBeGreaterThan(0);
+  expect(f.integration.threads.detail?.thread.value.thread_id).toBe(ids.thread);
   expect(f.integration.available()).toBe(true);
+  f.setRoute({ ...initialStoreRoute(), repository: local });
   f.setSource({ repository: local });
   expect(f.integration.available()).toBe(false);
   await f.integration.connected();
   expect(f.integration.threads.threads).toEqual([]);
+  expect(f.integration.threads.detail).toBeUndefined();
+  expect(f.integration.threads.events).toEqual([]);
   expect(f.integration.threads.error).toBe("");
+});
+
+test("local_thread_capability_comes_from_the_transport", async () => {
+  const f = fixture();
+  f.setSource({ repository: local, threads: f.native.transport });
+  const directory = vi.spyOn(f.native.transport, "list");
+  await f.integration.connected();
+  expect(f.integration.available()).toBe(true);
+  expect(directory).not.toHaveBeenCalled();
 });
 
 test("profile_route_reconnects_before_restoring_threads_without_a_code_operation", async () => {

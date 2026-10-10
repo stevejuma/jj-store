@@ -59,7 +59,10 @@
     expect(
       within(dialog).getByRole("list", { name: "Selected changes" }),
     ).toHaveTextContent("README.md · 1 hunk(s)");
-    await userEvent.type(portal.getByLabelText("Search branches"), "model");
+    await userEvent.type(
+      await portal.findByLabelText("Search destinations"),
+      "model",
+    );
     expect(portal.getAllByRole("option")).toHaveLength(1);
     expect(
       portal.getByRole("option", { name: /feature\/model/ }),

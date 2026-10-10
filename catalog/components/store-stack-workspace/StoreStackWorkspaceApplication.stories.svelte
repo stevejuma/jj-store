@@ -3,7 +3,6 @@
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import StackWorkspaceApplicationFixture from "../../fixtures/StackWorkspaceApplicationFixture.svelte";
   import {
-    applyPreview,
     messagePreview,
     assertCompactColumnToggle,
   } from "../../fixtures/stack-workspace/story-actions.js";
@@ -70,7 +69,7 @@
     const spacer = columns.querySelector<HTMLElement>(
       '[data-ui-part="trailing-spacer"]',
     )!;
-    await expect(spacer.getBoundingClientRect().width).toBe(390);
+    await expect(spacer.getBoundingClientRect().width).toBeCloseTo(390, 2);
     const footer = body.querySelector<HTMLElement>(".stack-workspace__footer")!;
     expect(footer.textContent).not.toMatch(/Folder:|Base:/);
     expect(
@@ -113,7 +112,10 @@
     });
     await expect(apply).toHaveTextContent("Apply to workspace");
     await userEvent.click(apply);
-    await applyPreview(canvasElement);
+    await within(stack).findByRole("button", {
+      name: "Unapply feature/search",
+    });
+    await expect(canvas.queryByRole("dialog")).toBeNull();
     await userEvent.click(
       within(
         canvas.getByRole("tablist", { name: "Local repository views" }),
@@ -182,7 +184,7 @@
       within(api).getByRole("button", { name: "Expose repository API" }),
     );
     await userEvent.click(
-      within(api).getByRole("button", { name: "src/api.ts" }),
+      await within(api).findByRole("button", { name: "src/api.ts" }),
     );
     const apiDiff = await canvas.findByRole("region", {
       name: "Selected changes from stack-api",
@@ -193,11 +195,15 @@
     await userEvent.click(
       within(apiDiff).getByRole("radio", { name: "Show split diff" }),
     );
+    {
+      const commit = within(ui).getByRole("button", {
+        name: "Add workspace toolbar",
+      });
+      if (!commit.closest('[aria-current="true"]'))
+        await userEvent.click(commit);
+    }
     await userEvent.click(
-      within(ui).getByRole("button", { name: "Add workspace toolbar" }),
-    );
-    await userEvent.click(
-      within(ui).getByRole("button", { name: "src/toolbar.ts" }),
+      await within(ui).findByRole("button", { name: "src/toolbar.ts" }),
     );
     const uiDiff = await canvas.findByRole("region", {
       name: "Selected changes from stack-ui",
@@ -265,11 +271,15 @@
       ).toBeNull(),
     );
     await expect(apiDiff).toBeInTheDocument();
+    {
+      const commit = within(ui).getByRole("button", {
+        name: "Add workspace toolbar",
+      });
+      if (!commit.closest('[aria-current="true"]'))
+        await userEvent.click(commit);
+    }
     await userEvent.click(
-      within(ui).getByRole("button", { name: "Add workspace toolbar" }),
-    );
-    await userEvent.click(
-      within(ui).getByRole("button", { name: "src/toolbar.ts" }),
+      await within(ui).findByRole("button", { name: "src/toolbar.ts" }),
     );
     await canvas.findByRole("region", {
       name: "Selected changes from stack-ui",

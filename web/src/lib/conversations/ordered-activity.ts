@@ -7,6 +7,14 @@ import {
   openingReplay,
   type ActivityRow,
 } from "../ui/store-agent-execution/presentation.js";
+import { agentMessageTimestamp } from "../collaboration/presentation.js";
+
+function observedTime(event: AgentEvent): number | undefined {
+  const millis = event.observed_at_millis;
+  return agentMessageTimestamp(millis).createdAt && Number(millis) >= 0
+    ? Number(millis)
+    : undefined;
+}
 export interface OrderedActivityRow extends ActivityRow {
   sourceRowId?: string;
   sourceFrom?: number;
@@ -50,10 +58,7 @@ export function orderedAssistantRows(
           value,
           request,
           sequence: Number(event.sequence),
-          observedAtMillis:
-            event.observed_at_millis == null
-              ? undefined
-              : Number(event.observed_at_millis),
+          observedAtMillis: observedTime(event),
           sourceFrom: prior.length,
           sourceTo: prior.length,
           orderingKnown: true,
@@ -62,6 +67,7 @@ export function orderedAssistantRows(
         active.set(request, row);
         result.push(row);
       }
+      row.observedAtMillis ??= observedTime(event);
       row.text += chunk;
       row.sourceTo = prior.length + chunk.length;
       totals.set(request, prior + chunk);
@@ -82,6 +88,7 @@ export function orderedAssistantRows(
           value,
           request,
           sequence: Number(event.sequence),
+          observedAtMillis: observedTime(event),
           sourceFrom: 0,
           sourceTo: captured.length,
           orderingKnown: false,

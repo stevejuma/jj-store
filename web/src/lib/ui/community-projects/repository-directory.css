@@ -163,7 +163,8 @@
   text-align: end;
 }
 
-.community-projects__file-browser-table [data-ui-part="table-head"] {
+.community-projects__file-browser-table
+  [data-ui-component="table"][data-ui-part="table-head"] {
   height: 1.95rem;
   padding-block: 0.2rem;
   padding-inline: 0.55rem;
