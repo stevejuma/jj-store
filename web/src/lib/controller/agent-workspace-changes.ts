@@ -17,6 +17,7 @@ import type { AgentEvent, AgentSession } from "./agent-execution-types.js";
 import { object, text } from "./agent-execution-types.js";
 import { presentChangedFiles, presentPatch } from "./native-presentation.js";
 import { unavailableDiffMessage } from "../projects/repository-diff.js";
+import { readTurnRevisionId } from "./agent-turn-changes.js";
 
 export type AgentChangeSelection = AgentSession["repository_bindings"][number];
 export interface AgentChangedFile {
@@ -25,10 +26,69 @@ export interface AgentChangedFile {
   deletions: number | null;
   patch?: string;
   unavailable?: string;
+  before?: string;
+  after?: string;
 }
 export interface AgentChangeSummary {
   files: AgentChangedFile[];
   complete: boolean;
+  changeId?: string;
+}
+export type AgentTurnSelection = AgentChangeSelection & {
+  session: string;
+  requestId: string;
+  beforeOperation: string;
+};
+
+/** Historical cards require both boundaries of their own completed request. */
+export function completedAgentTurns(
+  session: AgentSession,
+  events: readonly AgentEvent[],
+): AgentTurnSelection[] {
+  const turns = new Map<string, AgentTurnSelection>();
+  for (const event of events) {
+    const record = object(event.payload),
+      request = text(record.requestId);
+    if (
+      record.type !== "record" ||
+      object(record.record).status !== "completed" ||
+      !request
+    )
+      continue;
+    for (const binding of session.repository_bindings) {
+      const boundary = (type: string) =>
+        object(
+          events.find((e) => {
+            const value = object(e.payload);
+            return (
+              value.type === type &&
+              value.requestId === request &&
+              value.repository === binding.repository &&
+              value.state === "completed"
+            );
+          })?.payload,
+        );
+      const start = boundary("repository_turn_start"),
+        end = boundary("repository_snapshot");
+      if (
+        !text(start.operation) ||
+        !text(start.commit) ||
+        !text(end.operation) ||
+        !text(end.commit)
+      )
+        continue;
+      turns.set(`${request}:${binding.repository}`, {
+        ...binding,
+        session: session.id,
+        requestId: request,
+        beforeOperation: text(start.operation),
+        base_commit: text(start.commit),
+        operation: text(end.operation),
+        commit: text(end.commit),
+      });
+    }
+  }
+  return [...turns.values()];
 }
 
 /** Only a confirmed snapshot belonging to the retained completed turn is admitted. */
@@ -212,6 +272,8 @@ export async function readAgentWorkspaceChanges(
             const bytes = new TextEncoder().encode(patch ?? "").byteLength;
             if (bytes + retainedPatchBytes <= 2 * 1024 * 1024) {
               file.patch = patch;
+              file.before = change.content.hunks.map((h) => h.before).join("");
+              file.after = change.content.hunks.map((h) => h.after).join("");
               retainedPatchBytes += bytes;
             } else
               file.unavailable =
@@ -223,7 +285,17 @@ export async function readAgentWorkspaceChanges(
         }
       }),
     );
-    return { files, complete: !cursor && !truncated };
+    const changeId =
+      files.length && "requestId" in selection
+        ? await readTurnRevisionId(selection, fetcher, signal).catch(
+            () => undefined,
+          )
+        : undefined;
+    return {
+      files,
+      complete: !cursor && !truncated,
+      ...(changeId ? { changeId } : {}),
+    };
   } finally {
     client.close();
   }

@@ -88,19 +88,24 @@ Chat update/reconnect failures appear as warnings inside the composer. Exact
 Send/recovery errors retain precedence; the warning clears on successful history
 refresh without disabling composition or replaying a prompt.
 
-After a completed turn with a confirmed repository snapshot, a panel above the
-composer compares the binding's original base against that exact saved commit at
-its recorded operation. It shows edited-file totals, captured line counts, three
-initial paths, an expandable remaining list and View changes with the same
-comparison. Native and registered-folder reads remain pinned and bounded;
-partial, binary, unavailable and unknown outcomes cannot imply zero changes or
-fabricated counts. Reads admit at most two 50-path pages and four concurrent
-file comparisons, retaining at most 2 MiB of diff text. Counts from available
-hunks remain exact even when a text preview exceeds that retained-byte limit.
-Each repository has an independent panel. No panel read, expansion or diff view
-dispatches execution. Generic repository-operation Undo is not a session-scoped
-inverse; the panel exposes that action as unavailable until an exact guarded
-agent-change undo contract is qualified.
+Each completed turn with confirmed repository start/completion snapshots keeps
+its own full-width panel in the transcript, including during later work. It
+compares that turn's exact base against its saved commit at the recorded
+operation. It shows edited-file totals, captured line counts, three initial
+paths, an expandable remaining list and View changes with the same comparison in
+the shared Changes rail and file inspector. The saved SHA/Change ID control and
+list/folder/package toggle reuse existing components. Older cards load when near
+the viewport and share bounded session-memory caches. Failed reads use a warning
+alert with a themed icon-bearing Retry button, retaining drafts. Native and
+registered-folder reads remain pinned and bounded; partial, binary, unavailable
+and unknown outcomes cannot imply zero changes or fabricated counts. Reads admit
+at most two 50-path pages and four concurrent file comparisons, retaining at
+most 2 MiB of diff text. Counts from available hunks remain exact even when a
+text preview exceeds that retained-byte limit. Each repository has an
+independent panel. No panel read, expansion or diff view dispatches execution.
+Generic repository-operation Undo is not a session-scoped inverse; the panel
+exposes that action as unavailable until an exact guarded agent-change undo
+contract is qualified.
 
 The composer supports @ autocomplete using exact saved-agent IDs and multiple
 recipients. Its automatic-mention switch appears inside the agent picker.

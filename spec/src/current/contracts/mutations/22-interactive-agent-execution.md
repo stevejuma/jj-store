@@ -1,5 +1,11 @@
 # Interactive agent execution
 
+E-CHAT-INSPECTOR-001 confirms JST-MUT-001 unchanged. Optional read-only line
+counts accompany the existing workspace observation and its selection fence.
+They neither snapshot files nor create a command or publication receipt. Legacy
+entries omit unknown counts; no mutation or independent code authorization is
+introduced by inspector tabs, icons or statistics.
+
 Intentional Thread creation and Codebase edits use the same service authority;
 see [Thread workspace API](../api/44-thread-workspaces.md). Agent sends validate
 the exact committed membership and selected subset before preparing workspaces.

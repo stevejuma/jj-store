@@ -81,6 +81,8 @@
   onDestroy(() => void shell.dispose());
   const detailsRail = shell.getPanel(repositoryDetailsPanelId)!;
   provideConversationInspection(shell, () => {
+    if (controller.execution?.chat.open)
+      return `chat:${controller.execution.chat.selected}`;
     const route = controller.state.route;
     if (route.page === "threads" && route.threadId && controller.threads)
       return `${controller.threads.conversationScope}:${route.threadId}:main`;

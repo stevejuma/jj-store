@@ -3,7 +3,6 @@
   import type { AgentSession } from "../../controller/agent-execution-types.js";
   import StoreAgentRequestRecovery from "../store-agent-execution/StoreAgentRequestRecovery.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import StoreAgentBindings from "./StoreAgentBindings.svelte";
   let {
     controller,
     sessions,
@@ -25,10 +24,5 @@
         if (chat) manager.chat.show(chat.origin);
       }}>Open chat with {session.title}</Button
     >
-    <StoreAgentBindings
-      {controller}
-      {session}
-      events={manager.chat.events[session.id] ?? []}
-    />
   </section>
 {/each}

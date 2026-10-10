@@ -27,6 +27,47 @@ pub fn safe_path(path: &str) -> bool {
         })
 }
 
+/// Exact counts using the native bounded line diff; refusal is unknown, never zero.
+pub fn text_change_counts(before: &str, after: &str) -> Option<(u64, u64)> {
+    if before.len() > 256 * 1024
+        || after.len() > 256 * 1024
+        || before.contains('\0')
+        || after.contains('\0')
+    {
+        return None;
+    }
+    let spans = crate::line_diff::bounded(before, after, 2_000_000, |_| Ok::<_, ()>(())).ok()??;
+    let (mut additions, mut deletions) = (0, 0);
+    for span in spans {
+        if span.kind == jj_lib::diff::DiffHunkKind::Different {
+            additions += after[span.after].lines().count() as u64;
+            deletions += before[span.before].lines().count() as u64;
+        }
+    }
+    Some((additions, deletions))
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn text_counts_keep_shared_lines_and_refuse_unsupported_content() {
+        assert_eq!(
+            text_change_counts("same\nold\nend\n", "same\nnew\nextra\nend\n"),
+            Some((2, 1))
+        );
+        assert_eq!(text_change_counts("", "first\nlast"), Some((2, 0)));
+        assert_eq!(text_change_counts("removed\r\n", ""), Some((0, 1)));
+        assert_eq!(text_change_counts("", ""), Some((0, 0)));
+        assert_eq!(text_change_counts("\0", "text"), None);
+        assert_eq!(text_change_counts("", &"x".repeat(256 * 1024 + 1)), None);
+        assert_eq!(
+            text_change_counts(&"old\n".repeat(2000), &"new\n".repeat(2000)),
+            None
+        );
+    }
+}
+
 /// Capture immutable code evidence from an authorized operation, without snapshotting.
 pub async fn evidence(
     metadata: &std::path::Path,

@@ -3,6 +3,8 @@
   import {
     FileListing,
     FileListingViewModeToggle,
+    FileChangeStats,
+    type FileListingFile,
     type FileListingDirectory,
     type FileListingViewMode,
   } from "@lapismd/design-core/diff";
@@ -17,19 +19,21 @@
     selectedPath = "",
     hasMore = false,
     loading = false,
+    showChangeStats = false,
     onSelectPath,
     onLoadMore,
     onModeChange,
     onDirectoryToggle,
     empty,
   }: {
-    files: readonly { path: string }[];
+    files: readonly FileListingFile[];
     directories?: readonly FileListingDirectory[];
     mode?: FileListingViewMode;
     collapsedDirectoryPaths?: ReadonlySet<string>;
     selectedPath?: string | undefined;
     hasMore?: boolean;
     loading?: boolean;
+    showChangeStats?: boolean;
     onSelectPath: (path: string) => void;
     onLoadMore?: () => void;
     onModeChange?: (mode: FileListingViewMode) => void;
@@ -61,8 +65,15 @@
       {onLoadMore}
       {onDirectoryToggle}
     >
-      {#snippet fileMeta()}
-        <span class="sr-only">Repository file</span>
+      {#snippet fileMeta({ file })}
+        {#if showChangeStats}
+          {#if typeof file.additions === "number" && typeof file.deletions === "number"}
+            <FileChangeStats
+              additions={file.additions}
+              deletions={file.deletions}
+            />
+          {:else}<span class="sr-only">Line counts unavailable</span>{/if}
+        {:else}<span class="sr-only">Repository file</span>{/if}
       {/snippet}
     </FileListing>
   {/if}

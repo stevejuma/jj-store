@@ -2,6 +2,14 @@
 
 ## Document conversations and workspace files
 
+File inspectors place Diff, Before and After in the header beside the file icon
+and title. At narrow widths, More contains hidden choices. Unified and Split use
+the same icon controls as repository diffs. Changes rows show added/removed line
+counts for the selected comparison when bounded text is available; missing
+counts mean unknown. Counts arrive with the existing listing, without a separate
+inspection request for each row. Working and Starting avatars align with the
+message and next-draft avatars.
+
 Threads and agent sessions use the same compact sidebar header. **All** shows
 the loaded conversations; narrow sidebars move tabs into **More**, including All
 when no tab fits. Resize the sidebar to reveal tabs again. The search icon
@@ -388,13 +396,19 @@ when history refresh succeeds. Your editable draft and explicit Send remain
 available; exact command errors take precedence.
 
 After a completed turn saves a repository snapshot, the panel above the composer
-shows the edited files and line counts since the agent's starting revision.
-Expand the list to see more paths, or choose **View changes** or a path to
-inspect that saved comparison. The inbox uses the same panel. Binary or
+shows the edited files and line counts for that exact turn. Each completed turn
+that changed files retains its full-width card in the transcript, including
+older turns while another turn is running. The inline Git SHA/JJ Change ID
+control identifies its saved revision. Expand the list to see more paths; use
+the list, folder or package toggle below **View changes** to change its layout.
+**View changes** opens the shared right rail on **Changes → Selected turn**.
+Selecting a file also opens its shared Diff inspector. Earlier turns keep their
+own saved bytes and boundaries. The inbox uses the same panel. Binary or
 unavailable text has unknown line counts, and previews are bounded to 100 files.
-These controls read saved repository state and never send another prompt.
-**Undo** is currently unavailable: the ordinary repository operation undo is not
-a safe inverse of only this agent's edits.
+A failed read shows a warning alert with an icon-bearing **Retry file changes**
+button; retry preserves your draft. These controls read saved repository state
+and never send another prompt. **Undo** is currently unavailable: the ordinary
+repository operation undo is not a safe inverse of only this agent's edits.
 
 ## Conversation details and titles
 

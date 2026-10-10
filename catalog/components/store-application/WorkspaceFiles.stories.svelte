@@ -124,9 +124,9 @@
       await c.findByRole("complementary", { name: "Workspace file" }),
     );
     await expect(
-      await diff.findByRole("radio", { name: "Before" }),
+      await diff.findByRole("tab", { name: "Before" }),
     ).toBeVisible();
-    await userEvent.click(diff.getByRole("radio", { name: "After" }));
+    await userEvent.click(diff.getByRole("tab", { name: "After" }));
     await expect(
       await diff.findByRole("textbox", { name: "src/example.ts" }),
     ).toHaveTextContent("café 🦀");

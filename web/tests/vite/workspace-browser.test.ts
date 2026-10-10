@@ -323,3 +323,68 @@ test("workspace feed invalidates hidden caches, refreshes visible files, and nev
     vi.useRealTimers();
   }
 });
+
+test("saved turn rail and inspector reuse immutable bytes, preserve old boundaries and never read today's workspace", async () => {
+  const { browser: b, conversation } = browser();
+  const transport = vi.spyOn(b.client, "request");
+  const selection = {
+    session,
+    repository,
+    target_id: "target",
+    profile: "native",
+    workspace: "workspace",
+    selected_operation: operation,
+    operation,
+    commit,
+    base_commit: "6".repeat(40),
+    beforeOperation: "7".repeat(128),
+    requestId: "old-turn",
+  };
+  const summary = {
+    complete: true,
+    files: [
+      {
+        path: "src/a.ts",
+        additions: 2,
+        deletions: 1,
+        before: "old\n",
+        after: "new\nmore\n",
+      },
+    ],
+  };
+  b.showSavedTurn(selection, summary);
+  await b.load();
+  expect(b.tab).toBe("changes");
+  expect(b.listing.value?.comparison?.request_id).toBe("old-turn");
+  await b.select("src/a.ts");
+  expect(b.file?.file?.before).toBe("old\n");
+  expect(b.file?.file?.contents).toBe("new\nmore\n");
+  expect(b.file?.comparison?.before_operation).toBe(selection.beforeOperation);
+  const source = [...conversation.workspaceSources.values()][0]!.source;
+  expect(source.current_fingerprint).toBeNull();
+  expect(source.diff?.before_commit).toBe(selection.base_commit);
+  b.invalidate(repository);
+  await b.refreshVisible();
+  expect(b.file?.comparison?.request_id).toBe("old-turn");
+  expect(transport).not.toHaveBeenCalled();
+  b.showSavedTurn(
+    {
+      ...selection,
+      requestId: "later-turn",
+      base_commit: commit,
+      commit: "8".repeat(40),
+    },
+    {
+      ...summary,
+      files: [
+        { ...summary.files[0]!, before: "new\nmore\n", after: "later\n" },
+      ],
+    },
+  );
+  await b.select("src/a.ts");
+  expect(b.file?.file?.contents).toBe("later\n");
+  b.showSavedTurn(selection, summary);
+  await b.select("src/a.ts");
+  expect(b.file?.file?.contents).toBe("new\nmore\n");
+  expect(transport).not.toHaveBeenCalled();
+});

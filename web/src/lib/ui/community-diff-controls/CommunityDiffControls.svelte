@@ -8,7 +8,12 @@
   let {
     viewMode = $bindable("unified"),
     wrap = $bindable(false),
-  }: { viewMode?: FileDiffViewMode; wrap?: boolean } = $props();
+    showWrap = true,
+  }: {
+    viewMode?: FileDiffViewMode;
+    wrap?: boolean;
+    showWrap?: boolean;
+  } = $props();
   function setViewMode(next: string | undefined) {
     if (next === "unified" || next === "split") viewMode = next;
   }
@@ -35,19 +40,19 @@
     </ToggleGroup.Item>
   </ToggleGroup.Root>
 </span>
-<span
-  class="community-projects-repository-log-diff__chrome community-projects-repository-log-diff__wrap"
->
-  <Toggle
-    bind:pressed={wrap}
-    variant="outline"
-    size="sm"
-    aria-label="Wrap text"
-    title="Wrap text"
+{#if showWrap}<span
+    class="community-projects-repository-log-diff__chrome community-projects-repository-log-diff__wrap"
   >
-    <WrapTextIcon />
-  </Toggle>
-</span>
+    <Toggle
+      bind:pressed={wrap}
+      variant="outline"
+      size="sm"
+      aria-label="Wrap text"
+      title="Wrap text"
+    >
+      <WrapTextIcon />
+    </Toggle>
+  </span>{/if}
 
 <style>
   .community-projects-repository-log-diff__chrome {

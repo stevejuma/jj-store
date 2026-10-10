@@ -1,15 +1,24 @@
 import { RepositoryInspection } from "./repository-inspection.js";
+import {
+  workspaceQuery,
+  readWorkspace,
+  showSavedTurn,
+  registerWorkspaceRead,
+} from "./workspace-observation.js";
+import type {
+  AgentTurnSelection,
+  AgentChangeSummary,
+} from "../controller/agent-workspace-changes.js";
 import { Listing } from "./workspace-listing.svelte.js";
 import { WorkspaceReadCache } from "./workspace-read-cache.js";
 import {
-  workspaceBindings,
+  inspectionBindings,
   activeWorkspaceBinding,
   workspaceBindingKey,
   type WorkspaceBinding,
 } from "./workspace-bindings.js";
 import type { ApplicationFreshness } from "../controller/application-freshness.js";
 import { watchWorkspace } from "./workspace-freshness.js";
-import { registerWorkspaceSource } from "./workspace-source.js";
 import type { ChatBodyBlock } from "../ui/store-agent-chat-body/model.js";
 import type { Model } from "../api/client.js";
 import type { LocalClient } from "../api/local-client.js";
@@ -44,6 +53,10 @@ export class WorkspaceBrowser {
   #epoch = 0;
   #requestRefresh?: () => void;
   #historical = false;
+  savedTurn = $state<{
+    selection: AgentTurnSelection;
+    summary: AgentChangeSummary;
+  }>();
   #fileKey = "";
   #fileRequest?: Request;
   #fileGeneration = 0;
@@ -105,7 +118,7 @@ export class WorkspaceBrowser {
   }
   key = workspaceBindingKey;
   get cacheKey() {
-    return `${this.binding ? this.key(this.binding) : ""}:${this.tab}:${this.tab === "changes" ? `${this.range}:${this.base ?? ""}` : ""}`;
+    return `${this.binding ? this.key(this.binding) : ""}:${this.tab}:${this.tab === "changes" ? `${this.range}:${this.base ?? ""}:${this.savedTurn?.selection.requestId ?? ""}` : ""}`;
   }
   get listing() {
     const key = this.cacheKey;
@@ -122,17 +135,7 @@ export class WorkspaceBrowser {
     repositories: readonly string[] = [],
   ) {
     const previous = this.bindings;
-    this.bindings = [
-      ...workspaceBindings(sessions, names),
-      ...repositories.map((repository) => ({
-        session: `repository:${repository}`,
-        repository,
-        repositoryName: names.get(repository) ?? repository.slice(0, 8),
-        workspace: "Repository snapshot",
-        agent: "",
-        source: "repository" as const,
-      })),
-    ];
+    this.bindings = inspectionBindings(sessions, names, repositories);
     for (const old of previous) {
       const next = this.bindings.find((b) => this.key(b) === this.key(old));
       if (
@@ -159,48 +162,10 @@ export class WorkspaceBrowser {
     cursor: string | null = null,
     files = false,
   ): Request {
-    const b = this.binding;
-    if (!b) throw new Error("This agent has no available code workspace.");
-    return {
-      version: 1,
-      session: b.session,
-      repository: b.repository,
-      path,
-      cursor,
-      query:
-        files || this.tab === "files"
-          ? { view: "files" }
-          : { view: "changes", range: this.range, base: this.base },
-    };
+    return workspaceQuery(this, path, cursor, files);
   }
-  async read(request: Request, signal?: AbortSignal) {
-    if (request.session.startsWith("repository:")) {
-      if (!this.repositoryReads)
-        throw new Error("Repository browsing is unavailable.");
-      return this.repositoryReads.read(
-        request.repository,
-        request.path ?? null,
-        request.cursor ?? null,
-        signal,
-        request.query.view === "changes"
-          ? { range: request.query.range, base: request.query.base ?? null }
-          : undefined,
-      );
-    }
-    const value = await this.client.request<WorkspaceRead>(
-      "agents/workspace/inspect",
-      request,
-      signal,
-    );
-    if (
-      value.session !== request.session ||
-      value.repository !== request.repository ||
-      (request.path && value.file?.path !== request.path)
-    )
-      throw new Error(
-        "The workspace selection changed. Please select it again.",
-      );
-    return value;
+  read(request: Request, signal?: AbortSignal) {
+    return readWorkspace(this, request, signal);
   }
   async load(more = false) {
     const state = this.listing,
@@ -238,6 +203,7 @@ export class WorkspaceBrowser {
     }
   }
   async selectBinding(key: string) {
+    this.savedTurn = undefined;
     this.bindingKey = key;
     this.base = null;
     this.fileOpen = false;
@@ -261,6 +227,7 @@ export class WorkspaceBrowser {
     range: Model<"ComparisonRange">,
     base: string | null = this.base,
   ) {
+    this.savedTurn = undefined;
     this.range = range;
     this.base = base;
     await this.load();
@@ -282,7 +249,10 @@ export class WorkspaceBrowser {
     this.#fileAbort?.abort();
     this.#fileAbort = new AbortController();
     const epoch = this.#epoch;
-    const key = JSON.stringify(request);
+    const key = JSON.stringify([
+      request,
+      this.savedTurn?.selection.requestId ?? "",
+    ]);
     this.#fileKey = key;
     const cached = this.#files.get(key);
     this.fileLoading = !cached;
@@ -312,25 +282,11 @@ export class WorkspaceBrowser {
     }
   }
   blocks = $state<{ before?: ChatBodyBlock; after?: ChatBodyBlock }>({});
+  showSavedTurn(selection: AgentTurnSelection, summary: AgentChangeSummary) {
+    showSavedTurn(this, selection, summary);
+  }
   register(value: WorkspaceRead) {
-    if (value.session.startsWith("repository:")) {
-      this.blocks =
-        value.file?.contents != null
-          ? {
-              after: {
-                id: value.selection + ":" + value.file.path,
-                revision: value.commit,
-                text: value.file.contents,
-                kind: "code",
-                path: value.file.path,
-                label: value.file.path,
-                commentable: false,
-              },
-            }
-          : {};
-      return;
-    }
-    registerWorkspaceSource(this, value, () => {
+    registerWorkspaceRead(this, value, () => {
       this.#historical = true;
       this.#fileGeneration++;
       this.#fileAbort?.abort();

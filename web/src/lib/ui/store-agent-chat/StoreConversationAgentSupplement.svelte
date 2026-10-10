@@ -1,4 +1,7 @@
 <script lang="ts">
+  import StoreAgentBindings from "./StoreAgentBindings.svelte";
+  import type { ConversationSession } from "../../conversations/session.svelte.js";
+  import type { StoreController } from "../../controller/contracts.js";
   import type { AgentExecution } from "../../controller/agent-execution.svelte.js";
   import type {
     AgentConversationRow,
@@ -12,12 +15,16 @@
   import { Button } from "@lapismd/design-core/shadcn/button";
   let {
     manager,
+    conversation,
+    controller,
     rows,
     projection,
     item,
     user,
   }: {
     manager: AgentExecution;
+    conversation: ConversationSession;
+    controller?: StoreController;
     rows: readonly AgentConversationRow[];
     projection: ConversationProjection;
     item: ChatBodyItem;
@@ -58,4 +65,16 @@
           target: row!.request,
         })}>Cancel queued prompt</Button
     >{/if}
+{/if}
+
+{#if row?.kind === "record"}
+  <StoreAgentBindings
+    {manager}
+    {controller}
+    {conversation}
+    session={row.session}
+    requestId={row.request}
+    events={manager.chat.events[row.session.id] ??
+      (manager.selected === row.session.id ? manager.events : [])}
+  />
 {/if}

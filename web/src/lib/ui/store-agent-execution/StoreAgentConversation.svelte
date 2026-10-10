@@ -19,8 +19,6 @@
   import { conversationError } from "./conversation-error.js";
   import type { AgentExecution } from "../../controller/agent-execution.svelte.js";
   import { object, text } from "../../controller/agent-execution-types.js";
-  import { completedAgentChanges } from "../../controller/agent-workspace-changes.js";
-  import StoreAgentChangesPanel from "../store-agent-chat/StoreAgentChangesPanel.svelte";
   import type { StoreController } from "../../controller/contracts.js";
   let {
     manager,
@@ -59,9 +57,6 @@
   });
   const facts = $derived(object(session?.capabilities));
   const rows = $derived(activityRows(manager.events));
-  const changes = $derived(
-    session ? completedAgentChanges(session, manager.events) : [],
-  );
   const idle = $derived(
     session?.connected === true &&
       (session.state === "idle" || session.state === "running"),
@@ -116,14 +111,6 @@
       }))}
     >
       {#snippet composer(presentation)}
-        {#each changes as selection (`${selection.repository}:${selection.operation}:${selection.commit}`)}
-          <StoreAgentChangesPanel
-            {selection}
-            repositoryName={selection.repository.slice(0, 8)}
-            fetcher={manager.client.fetcher}
-            cache={manager.changes}
-          />
-        {/each}
         <form
           aria-label="Send agent prompt"
           onsubmit={(event) => {

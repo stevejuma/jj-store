@@ -145,6 +145,8 @@ impl Scan<'_> {
                     bytes: info.st_size.max(0) as u64,
                     fingerprint: hex::encode(hash.finalize()),
                     status: None,
+                    additions: None,
+                    deletions: None,
                 });
             }
         }

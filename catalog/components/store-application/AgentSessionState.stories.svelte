@@ -45,6 +45,16 @@
         )!;
       const a = avatar.getBoundingClientRect(),
         t = caption.getBoundingClientRect();
+      const messageAvatar = canvasElement.querySelector(
+          ".chat-message-avatar .community-member-avatar",
+        )!,
+        draftAvatar = draft.querySelector(".community-member-avatar")!;
+      expect(
+        Math.abs(a.left - messageAvatar.getBoundingClientRect().left),
+      ).toBeLessThan(1);
+      expect(
+        Math.abs(a.left - draftAvatar.getBoundingClientRect().left),
+      ).toBeLessThan(1);
       expect(
         Math.abs(a.top + a.height / 2 - t.top - t.height / 2),
       ).toBeLessThan(1);

@@ -100,6 +100,8 @@ impl Supervisor {
                     bytes: 0,
                     fingerprint: String::new(),
                     status: None,
+                    additions: None,
+                    deletions: None,
                 })
                 .collect()
         };

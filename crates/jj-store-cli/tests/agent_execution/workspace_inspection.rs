@@ -30,6 +30,7 @@ pub(super) async fn exercise(supervisor: &Supervisor, actor: PrincipalId, sessio
     );
     fs::write(root.join("agent-edit.txt"), "later unsnapshotted 🌍\n").unwrap();
     fs::write(root.join("untracked.txt"), "new\n").unwrap();
+    fs::write(root.join("binary.bin"), b"\0binary").unwrap();
     let current = supervisor
         .inspect_workspace(actor, query.clone())
         .await
@@ -53,6 +54,12 @@ pub(super) async fn exercise(supervisor: &Supervisor, actor: PrincipalId, sessio
         Some("review this\n")
     );
     assert!(!last_turn.files.iter().any(|f| f.path == "untracked.txt"));
+    let recorded = last_turn
+        .files
+        .iter()
+        .find(|f| f.path == "agent-edit.txt")
+        .unwrap();
+    assert_eq!((recorded.additions, recorded.deletions), (Some(1), Some(0)));
     query.query = inspect::InspectionView::Changes {
         range: inspect::ComparisonRange::SinceLastCommit,
         base: None,
@@ -67,6 +74,19 @@ pub(super) async fn exercise(supervisor: &Supervisor, actor: PrincipalId, sessio
             .iter()
             .any(|f| f.path == "untracked.txt" && f.status.as_deref() == Some("added"))
     );
+    let added = changed
+        .files
+        .iter()
+        .find(|f| f.path == "untracked.txt")
+        .unwrap();
+    assert_eq!((added.additions, added.deletions), (Some(1), Some(0)));
+    let binary = changed
+        .files
+        .iter()
+        .find(|f| f.path == "binary.bin")
+        .unwrap();
+    assert_eq!(binary.status.as_deref(), Some("added"));
+    assert_eq!((binary.additions, binary.deletions), (None, None));
     assert_eq!(
         changed.file.unwrap().contents.as_deref(),
         Some("later unsnapshotted 🌍\n")
@@ -84,6 +104,12 @@ pub(super) async fn exercise(supervisor: &Supervisor, actor: PrincipalId, sessio
             .any(|f| f.path == "source.txt" && f.status.as_deref() == Some("deleted"))
     );
     let file = deleted.file.unwrap();
+    let removed = deleted
+        .files
+        .iter()
+        .find(|f| f.path == "source.txt")
+        .unwrap();
+    assert_eq!((removed.additions, removed.deletions), (Some(0), Some(1)));
     assert!(file.unavailable.is_none(), "{file:?}");
     assert!(file.contents.is_none());
     assert_eq!(file.before.as_deref(), Some("base\n"));

@@ -80252,7 +80252,17 @@
           "kind": { "type": "string" },
           "bytes": { "type": "integer", "format": "uint64", "minimum": 0 },
           "fingerprint": { "type": "string" },
-          "status": { "type": ["string", "null"] }
+          "status": { "type": ["string", "null"] },
+          "additions": {
+            "type": ["integer", "null"],
+            "format": "uint64",
+            "minimum": 0
+          },
+          "deletions": {
+            "type": ["integer", "null"],
+            "format": "uint64",
+            "minimum": 0
+          }
         },
         "required": ["path", "kind", "bytes", "fingerprint", "status"]
       },

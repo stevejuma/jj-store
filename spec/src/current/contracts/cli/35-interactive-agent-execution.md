@@ -1,5 +1,11 @@
 # Interactive agent execution
 
+E-CHAT-INSPECTOR-001 preserves JST-CLI-004 command and executable custody.
+Workspace comparison counts reuse authorized bounded content observations and
+the owned native line-diff adapter. The default development backend is rebuilt
+and restarted without resetting its fixture, replacing installed tools or
+dispatching an agent prompt.
+
 Explicit JJ_STORE_ACP_EXECUTABLE selects a rebuilt harness outside checkout
 configuration. The CLI composition supplies the fixed native-aware JJ executable
 and workspace provider. The LocalTrusted service supervises ACP v2 sessions and

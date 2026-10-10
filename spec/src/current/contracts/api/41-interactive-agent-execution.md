@@ -270,13 +270,18 @@ the owned physical workspace; typed operation-pinned native/local readers supply
 committed source facts. No inspection snapshots or publishes state.
 
 Pages contain at most 50 paths, exact selection fingerprints, continuation,
-comparison boundaries and content/unavailability facts. Current listings include
-tracked and nonignored untracked files within explicit traversal/content bounds.
-Continuations bind the complete observation; changed observations are stale.
-Metadata paths, symlink traversal and unqualified text are not readable. Deleted
-files have an absent after-side, distinct from unavailable content. Branch,
-Since last commit and Last turn retain the precise definitions in the
-conversation contract; missing or ambiguous boundaries never imply no changes.
+comparison boundaries and content/unavailability facts. Comparison listings
+include optional additions/deletions when bounded text comparison succeeds.
+Legacy responses and ordinary Files listings may omit counts; absence means
+unknown. The existing observation supplies counts without a separate file
+request, and the selection fingerprint binds them with the other comparison
+facts. Current listings include tracked and nonignored untracked files within
+explicit traversal/content bounds. Continuations bind the complete observation;
+changed observations are stale. Metadata paths, symlink traversal and
+unqualified text are not readable. Deleted files have an absent after-side,
+distinct from unavailable content. Branch, Since last commit and Last turn
+retain the precise definitions in the conversation contract; missing or
+ambiguous boundaries never imply no changes.
 
 Local review commands additionally accept an exact WithEvidence payload for
 portable file targets. Its capsule repository and immutable file identity must

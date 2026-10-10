@@ -1,5 +1,12 @@
 # Interactive agent execution
 
+E-CHAT-INSPECTOR-001 preserves JST-JJ-003/004 operation and checkout authority.
+The owned adapter derives text line counts using the existing native bounded
+line diff. Each side is capped at 256 KiB, the complexity allowance is two
+million diff cells, and binary/oversized/complex inputs return unknown counts.
+The server invokes this pure helper on a blocking task within its existing four
+comparison slots; no upstream JJ type enters the service DTO.
+
 Session workspace creation and snapshotting use the native-aware owned JJ
 provider with a fixed executable and exact revision arguments. A source folder
 is never snapshotted by preparation or a read. Workspace metadata binds its

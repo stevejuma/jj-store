@@ -106,6 +106,8 @@ impl Supervisor {
                 bytes: 0,
                 fingerprint: String::new(),
                 status: Some("deleted".into()),
+                additions: None,
+                deletions: None,
             });
         }
         // Bound expensive content comparison separately from file-tree paging.
@@ -118,12 +120,10 @@ impl Supervisor {
                 let original = &original;
                 let current = &current;
                 async move {
-                    if !original.contains(&entry.path) {
+                    let before_exists = original.contains(&entry.path);
+                    let after_exists = current.contains(&entry.path);
+                    if !before_exists {
                         entry.status = Some("added".into());
-                        return Ok(Some(entry));
-                    }
-                    if !current.contains(&entry.path) {
-                        return Ok(Some(entry));
                     }
                     let content = self
                         .workspace_content(
@@ -133,16 +133,30 @@ impl Supervisor {
                             Some(comparison),
                             source,
                             Some(before_source),
-                            true,
-                            true,
+                            after_exists,
+                            before_exists,
                         )
                         .await?;
-                    if content.unavailable.is_some() {
+                    if content.unavailable.is_some() && before_exists && after_exists {
                         entry.status = Some("unavailable".into());
-                    } else if content.contents != content.before {
+                    } else if before_exists && after_exists && content.contents != content.before {
                         entry.status = Some("modified".into());
-                    } else {
+                    } else if before_exists && after_exists && content.unavailable.is_none() {
                         return Ok(None);
+                    }
+                    if content.unavailable.is_none() {
+                        let counts = tokio::task::spawn_blocking(move || {
+                            jj_store_jj::agent_workspaces::inspection::text_change_counts(
+                                content.before.as_deref().unwrap_or(""),
+                                content.contents.as_deref().unwrap_or(""),
+                            )
+                        })
+                        .await
+                        .map_err(|_| Error::Unavailable)?;
+                        if let Some((additions, deletions)) = counts {
+                            entry.additions = Some(additions);
+                            entry.deletions = Some(deletions);
+                        }
                     }
                     Ok::<_, Error>(Some(entry))
                 }

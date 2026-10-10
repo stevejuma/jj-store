@@ -13,8 +13,9 @@
   } from "./agent-execution-session.js";
   import {
     changeRepository,
-    fleetChangesResponse,
+    createFleetChangesResponder,
     stageFleetConversation,
+    fleetTargetsResponse,
   } from "./agent-fleet-changes.js";
   import type {
     AgentStatus,
@@ -27,6 +28,7 @@
     modelFailure = false,
     catalogSession,
     completedChanges = false,
+    changesFailure = false,
     reconnect = false,
   }: {
     general?: boolean;
@@ -35,6 +37,7 @@
     modelFailure?: boolean;
     catalogSession?: "live" | "remembered";
     completedChanges?: boolean;
+    changesFailure?: boolean;
     reconnect?: boolean;
   } = $props();
   const base = untrack(() =>
@@ -42,6 +45,9 @@
   );
   let requests = $state<Record<string, unknown>[]>([]);
   let catalogRequests = $state(0);
+  const changeResponse = untrack(() =>
+    createFleetChangesResponder(changesFailure),
+  );
   let updatesUnavailable = $state(untrack(() => reconnect));
   let status: AgentStatus = untrack(() => ({
     version: 1,
@@ -93,7 +99,7 @@
           const settings = defaults.respond(path, init);
           if (settings) return settings;
           if (path.includes(`/repos/${changeRepository}/query`))
-            return fleetChangesResponse(init);
+            return changeResponse(init);
           if (path.includes("/catalog")) {
             catalogRequests++;
             return modelFailure
@@ -126,18 +132,9 @@
                 });
           }
           if (path.includes("/targets"))
-            return json(
-              multipleWorkspaces
-                ? [0, 1].map((n) => ({
-                    id: `workspace-${n}`,
-                    repository: base.state.repository.id,
-                    name: n ? "Feature workspace" : "Original workspace",
-                    folder: `/device/workspace-${n}`,
-                    profile: "local_jj_git",
-                    operation: String(n + 1).repeat(128),
-                    commit: String(n + 1).repeat(40),
-                  }))
-                : [],
+            return fleetTargetsResponse(
+              base.state.repository.id,
+              multipleWorkspaces,
             );
           if (path.includes("/feedback"))
             return json({

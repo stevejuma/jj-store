@@ -8,3 +8,4 @@
 - [history](history/index.md)
   {{#include history/SUMMARY.nav.md}}
 - [M24 reusable ACP agents and contextual conversations: pages 2](SUMMARY.index-index/002/index.md)
+- [Workspace inspector and historical turn review](workspace-inspector-review.md)

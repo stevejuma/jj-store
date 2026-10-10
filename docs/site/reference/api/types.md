@@ -21766,6 +21766,22 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         "string",
         "null"
       ]
+    },
+    "additions": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "format": "uint64",
+      "minimum": 0
+    },
+    "deletions": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "format": "uint64",
+      "minimum": 0
     }
   },
   "required": [

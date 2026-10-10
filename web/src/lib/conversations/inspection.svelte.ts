@@ -111,6 +111,16 @@ export function provideConversationInspection(
           shell.mobile.show("right", "conversation-workspace");
       });
     },
+    showSavedTurn(browser: WorkspaceBrowser, openingFile = false) {
+      if (!ownsInbox(browser)) return;
+      if (!openingFile) {
+        file = undefined;
+        workspaceInspector.close();
+        browser.fileOpen = false;
+        browser.file = undefined;
+      }
+      panel.showWorkspace(browser);
+    },
     hideWorkspace(browser: WorkspaceBrowser) {
       if (workspace === browser) {
         workspace = undefined;

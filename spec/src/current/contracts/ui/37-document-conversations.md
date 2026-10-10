@@ -22,6 +22,11 @@ identities. Native hover/IME findings remain separate from fixture assertions.
 
 ## Renderer and draft ownership
 
+Workspace Files and Changes use the shared FileListing in list, directory and
+package modes. Root-file icons retain the normal row inset in directory and
+package views, without a disclosure spacer; nested-file indentation stays
+unchanged, including virtualized rows.
+
 One device-local appearance preference, conversationView = document or classic,
 selects all live/recorded agent chats, ordinary threads and thread replies.
 Missing or invalid values default to document. Existing Focus/Split placement is
@@ -95,7 +100,9 @@ messages and before the roomy draft, with its label centred vertically against
 the avatar. Interrupted or unavailable state cannot retain an animated
 Starting/Working claim. Queued comments stay above the same next-message input,
 and contextual status/recovery remains reachable. Activity captions retain a
-polite live status announcement in their shared row.
+polite live status announcement in their shared row. The activity avatar shares
+the message and next-draft avatar column; nested activity chrome must not
+introduce a separate horizontal inset.
 
 Live Thread and agent document drafts use the prototype's shared editor caret
 theme: a 2px stroke, 1.2 height scale and primary colour. Immutable source
@@ -260,16 +267,37 @@ comparisons and incomplete totals retain their explanations. Bounded
 asynchronous reads discard obsolete results and never publish or snapshot
 repository state.
 
+Each completed turn that changed files retains its own full-width card after
+that turn in the transcript, including older cards during later work. A failed
+comparison read uses a shadcn warning alert with an icon-bearing themed Retry
+button and retains the draft. Completed-turn cards open the shared workspace
+rail on Changes with that turn's exact comparison selected. Selecting a card
+file also opens the shared inspector on its Diff view. Card and rail reuse one
+cached listing; a later turn cannot silently replace the selected boundaries.
+Missing verified boundaries remain unavailable. The card shows the existing
+inline Git SHA/JJ Change ID control below its heading and the shared
+list/folder/package toggle below View changes at the trailing edge. That toggle
+controls the card's hierarchy and remains consistent with the rail. These
+read-only controls also work in an open contextual agent chat without changing
+the original repository layout.
+
 Standalone sessions mount the workspace inspection panels. An unselected agent
 profile must not reserve the body inspector's shell panel identity. Selecting a
 file opens the shared full-height, resizable body inspector. Changes offers
-highlighted unified/split diffs and explicit before/after selection views.
-Selections retain exact UTF-8 ranges and source fingerprints; file drafts join
-the same pending queue and Send in both conversation renderers. The application
-owns selection, disclosure, scroll and draft state across panel and renderer
-changes. Historical source navigation opens the owning repository and retained
-revision, diff side and range, rather than selecting current bytes by matching
-quotes.
+highlighted unified/split diffs and explicit before/after selection views. The
+file inspector header contains a file icon and the standard body-sized title,
+followed by the shared responsive Diff/Before/After tabs. Overflow moves all
+hidden choices into the same More menu used by inbox navigation. Unified and
+Split use the existing icon-only diff controls with accessible labels. Changes
+rows show exact additions/deletions from the selected comparison, using the same
+statistics component as repository diffs. Unavailable or bounded-out counts stay
+unknown. Counts accompany the existing listing capture; rendering them does not
+add one inspection request per path. Selections retain exact UTF-8 ranges and
+source fingerprints; file drafts join the same pending queue and Send in both
+conversation renderers. The application owns selection, disclosure, scroll and
+draft state across panel and renderer changes. Historical source navigation
+opens the owning repository and retained revision, diff side and range, rather
+than selecting current bytes by matching quotes.
 
 File discussions remain ReviewStore-owned. A historical batch holds qualified
 references; read projections resolve those references through independent code

@@ -362,3 +362,66 @@ test("text retention is bounded independently of exact line counts and aborted r
   ).rejects.toThrow();
   expect(calls).toBe(2);
 });
+
+test("historical turn cards preserve every completed request's own repository boundaries during later work", async () => {
+  const { completedAgentTurns } =
+    await import("../../src/lib/controller/agent-workspace-changes.js");
+  const session = {
+    id: "12".repeat(16),
+    state: "running",
+    repository_bindings: [selection],
+  } as AgentSession;
+  const start = event("repository_turn_start", {
+    ...selection,
+    operation: "10".repeat(64),
+    commit: "20".repeat(20),
+    state: "completed",
+  });
+  const first = [
+    start,
+    event("record", { record: { status: "completed" } }),
+    event("repository_snapshot", { ...selection, state: "completed" }),
+  ];
+  const second = first.map((e) => ({
+    ...e,
+    payload: {
+      ...(e.payload as object),
+      requestId: "second",
+      ...((e.payload as any).type === "repository_turn_start"
+        ? { commit: selection.commit }
+        : (e.payload as any).type === "repository_snapshot"
+          ? { commit: "60".repeat(20) }
+          : {}),
+    },
+  }));
+  const turns = completedAgentTurns(session, [
+    ...first,
+    ...second,
+    event("record", { requestId: "failed", record: { status: "failed" } }),
+  ]);
+  expect(turns.map((t) => [t.requestId, t.base_commit, t.commit])).toEqual([
+    ["turn", "20".repeat(20), selection.commit],
+    ["second", selection.commit, "60".repeat(20)],
+  ]);
+  expect(turns[0]!.beforeOperation).toBe("10".repeat(64));
+  expect(
+    completedAgentTurns(
+      session,
+      first.filter((e) => (e.payload as any).type !== "repository_turn_start"),
+    ),
+  ).toEqual([]);
+  expect(
+    completedAgentTurns(
+      session,
+      first.map((e) => ({
+        ...e,
+        payload: {
+          ...(e.payload as object),
+          ...((e.payload as any).type === "repository_turn_start"
+            ? { repository: "bb".repeat(16) }
+            : {}),
+        },
+      })),
+    ),
+  ).toEqual([]);
+});

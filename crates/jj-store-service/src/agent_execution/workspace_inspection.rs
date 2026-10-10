@@ -39,6 +39,10 @@ pub struct FileEntry {
     pub bytes: u64,
     pub fingerprint: String,
     pub status: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub additions: Option<u64>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub deletions: Option<u64>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
@@ -102,5 +106,22 @@ impl Request {
             return Err(Error::Invalid);
         }
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn legacy_file_entries_keep_unknown_counts_and_new_counts_round_trip() {
+        let old = serde_json::json!({"path":"a.txt","kind":"file","bytes":1,"fingerprint":"old","status":"modified"});
+        let mut entry: FileEntry = serde_json::from_value(old.clone()).unwrap();
+        assert_eq!((entry.additions, entry.deletions), (None, None));
+        assert_eq!(serde_json::to_value(&entry).unwrap(), old);
+        entry.additions = Some(2);
+        entry.deletions = Some(1);
+        let value = serde_json::to_value(&entry).unwrap();
+        assert_eq!(value["additions"], 2);
+        assert_eq!(serde_json::from_value::<FileEntry>(value).unwrap(), entry);
     }
 }

@@ -190,6 +190,8 @@
         />{/each}{/if}
   {/snippet}
   {#snippet supplement(item)}<StoreConversationAgentSupplement
+      {conversation}
+      {controller}
       {manager}
       {rows}
       {projection}

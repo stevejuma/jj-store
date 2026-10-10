@@ -27,6 +27,13 @@
     sidebarController: AppShellSidebarController;
   } = $props();
   const listing = $derived(browser.listing);
+  const files = $derived(
+    (listing.value?.files ?? []).map((file) => ({
+      ...file,
+      additions: file.additions == null ? undefined : Number(file.additions),
+      deletions: file.deletions == null ? undefined : Number(file.deletions),
+    })),
+  );
   let body = $state<HTMLDivElement | null>(null);
   $effect(() => {
     const root = body,
@@ -68,11 +75,16 @@
         ? "Choose branch"
         : "Configured branch",
   );
-  const ranges: { value: Model<"ComparisonRange">; label: string }[] = [
-    { value: "branch", label: "Branch" },
-    { value: "since_last_commit", label: "Since last commit" },
-    { value: "last_turn", label: "Last turn" },
-  ];
+  const ranges = $derived<{ value: Model<"ComparisonRange">; label: string }[]>(
+    [
+      { value: "branch", label: "Branch" },
+      { value: "since_last_commit", label: "Since last commit" },
+      {
+        value: "last_turn",
+        label: browser.savedTurn ? "Selected turn" : "Last turn",
+      },
+    ],
+  );
 </script>
 
 <Tabs.Root
@@ -205,7 +217,8 @@
               />
             {:else}
               <CommunityProjectsRepositoryFileTree
-                files={listing.value?.files ?? []}
+                {files}
+                showChangeStats={browser.tab === "changes"}
                 mode={browser.mode}
                 collapsedDirectoryPaths={listing.collapsed}
                 selectedPath={listing.selected}

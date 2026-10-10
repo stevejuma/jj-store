@@ -22,7 +22,6 @@
 
   import { activityRows } from "../store-agent-execution/presentation.js";
   import { agentMember } from "../community-agents/model.js";
-  import StoreAgentBindings from "./StoreAgentBindings.svelte";
   import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
   import {
     mentionedAgentIds,
@@ -178,11 +177,7 @@
                   >End participation</Button
                 >{/if}
             </div>
-            <StoreAgentBindings
-              {controller}
-              {session}
-              events={chat.events[session.id] ?? []}
-            />{/each}
+          {/each}
           {#key chat.selected}<CommunityChatComposer
               bind:restoreDraft={restoreMessage}
               {presentation}

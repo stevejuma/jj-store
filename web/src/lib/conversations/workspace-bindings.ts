@@ -51,3 +51,20 @@ export function activeWorkspaceBinding(
 ) {
   return bindings.find((b) => workspaceBindingKey(b) === key) ?? bindings[0];
 }
+export function inspectionBindings(
+  sessions: readonly AgentSession[],
+  names: ReadonlyMap<string, string>,
+  repositories: readonly string[],
+): WorkspaceBinding[] {
+  return [
+    ...workspaceBindings(sessions, names),
+    ...repositories.map((repository) => ({
+      session: `repository:${repository}`,
+      repository,
+      repositoryName: names.get(repository) ?? repository.slice(0, 8),
+      workspace: "Repository snapshot",
+      agent: "",
+      source: "repository" as const,
+    })),
+  ];
+}

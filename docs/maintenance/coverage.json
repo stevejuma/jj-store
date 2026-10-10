@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed verified workspace inspection and retained code evidence; documented WithEvidence companion CAS and original-source reads with separate M13.3 gates.",
-      "fingerprint": "e82f7d5caa7f3a6a7c6b86bbbc1d274e531ebd89377def59e9ad381347ec49a8"
+      "reason": "Reviewed native bounded text-count helper: 256 KiB per side, two million diff cells, read-only operation pins and unchanged checkout authority.",
+      "fingerprint": "c9d447e39c1c62cb19167cfd5eb91819b3dd399f40941409d04aee8f85cd9a1e"
     }
   },
   {
@@ -65,8 +65,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed Thread workspace service requests, directory/search exclusion and frozen repository witnesses; transport guidance preserves exact native/local authority.",
-      "fingerprint": "0b927917bbf6b91f011b7c9a7c1c0c874545ad996c7344469da48e1ab028b855"
+      "reason": "Reviewed optional workspace comparison counts with legacy omission and unchanged command, receipt, publication and independent repository authorization contracts.",
+      "fingerprint": "30781e6f3c8b0e3f9f34a1b61215cc4ba75f259c869c4b44fb84b9ceaf4bf382"
     }
   },
   {
@@ -96,8 +96,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed acknowledged-turn resume eligibility, scoped preparation rejection and failed-history recovery; lifecycle guidance preserves unknown receipts and prohibits prompt replay.",
-      "fingerprint": "a5dabf5c0242bbc4dd15fbf105870364792ce36b6c75384fd819e1d53a3c38ca"
+      "reason": "Reviewed bounded comparison counts computed from existing content observations within four worker slots; inspection remains read-only and generation fenced.",
+      "fingerprint": "a8af23291c1d8e312f3ce827878f3a6b5ec17a8ba46017bc178178825fc57458"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Documented automatic Send preparation and selected-agent participation, semantic readiness observation and retained transcript recovery; manual actions remain optional and uncertain prompts are never replayed.",
-      "fingerprint": "01d2e3703db68d0eb0ef61fae2d5b262b134b161d8d76ba154feb93d11afef40"
+      "reason": "Reviewed historical turn cards, exact cached inspector navigation, warning retry and compact root-file presentation; guide matches current behavior and preserves dispatch and publication authority.",
+      "fingerprint": "287fb7e882f0dd24bbefd039b950134afaf833abc777f4edaf3495b727c8f939"
     }
   },
   {
@@ -154,8 +154,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Reviewed generated Thread workspace requests, annotated internal owners and exact send witnesses; regenerated API references and updated transport guidance.",
-      "fingerprint": "afed574faf87f31537fe4f1a285975c2eb7912267f13e97164f14cc1bfded08d"
+      "reason": "Regenerated optional AgentWorkspaceFileEntry additions and deletions; legacy fields, version one admission and unknown count semantics remain documented.",
+      "fingerprint": "e0124501818b440ed6a9356efc3bdcc69972a403f96ac6bcdf1cc75c802f96a4"
     }
   },
   {

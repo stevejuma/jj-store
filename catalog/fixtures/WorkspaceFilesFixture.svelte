@@ -19,6 +19,7 @@
   let {
     controlReads = false,
     emptyFiles = false,
+    rootChanges = false,
     routeNavigation = false,
     missingBase = false,
     multipleBindings = false,
@@ -26,6 +27,7 @@
   }: {
     controlReads?: boolean;
     emptyFiles?: boolean;
+    rootChanges?: boolean;
     routeNavigation?: boolean;
     missingBase?: boolean;
     multipleBindings?: boolean;
@@ -177,15 +179,21 @@
               }
             : null,
           incomplete: null,
-          files: (emptyFiles ? [] : changed ? ["src/example.ts"] : paths).map(
-            (path) => ({
-              path,
-              kind: "file",
-              bytes: "40",
-              fingerprint: "44".repeat(32),
-              status: changed ? "modified" : null,
-            }),
-          ),
+          files: (emptyFiles
+            ? []
+            : changed
+              ? rootChanges
+                ? paths
+                : ["src/example.ts"]
+              : paths
+          ).map((path) => ({
+            path,
+            kind: "file",
+            bytes: "40",
+            fingerprint: "44".repeat(32),
+            status: changed ? "modified" : null,
+            ...(changed ? { additions: 1, deletions: 1 } : {}),
+          })),
           next: null,
           file: selected
             ? {

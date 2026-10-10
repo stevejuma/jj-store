@@ -7784,6 +7784,10 @@ export interface components {
       bytes: number;
       fingerprint: string;
       status: string | null;
+      /** Format: uint64 */
+      additions?: number | null;
+      /** Format: uint64 */
+      deletions?: number | null;
     };
     AgentWorkspaceFileContent: {
       path: string;

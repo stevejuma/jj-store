@@ -247,7 +247,11 @@ authorized. The versioned workspace inspection POST names an execution session,
 verified binding and relative path; it does not accept arbitrary filesystem
 roots. Bounded listings, source fingerprints, comparison boundaries and opaque
 continuations describe the exact read. Unsupported baselines remain explicit.
-See the generated [installation API](api/installation.md) and
+Comparison entries may include optional additions/deletions from bounded text
+diffs. Omitted counts remain unknown, including older responses and unsupported
+text. The same observation and selection fence carry these counts; the client
+does not request every file again to obtain them. See the generated
+[installation API](api/installation.md) and
 [collaboration API](api/collaboration.md) for request and response types.
 
 Conversation metadata is exposed through LocalTrusted Admin

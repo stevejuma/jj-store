@@ -1,5 +1,13 @@
 # Application documentation
 
+E-CHAT-INSPECTOR-001 retains JST-DOC-001/002/003 delivery gates. The agent
+manual describes responsive presentation tabs in the file header, icon diff
+controls, aligned activity avatars and bounded comparison counts with unknown
+states. Generated installation references retain optional fields and legacy
+decoding. Source reviews cover the adapter, service DTO, server, application and
+generated contracts; existing publication and authorization guidance remains
+unchanged.
+
 The integrated browsing and API references retain native Stacks discovery and
 progressive Blame together. Review the combined source fingerprints and preserve
 each feature's existing limitations and verification evidence.

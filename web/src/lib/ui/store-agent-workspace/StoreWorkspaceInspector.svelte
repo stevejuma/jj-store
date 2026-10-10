@@ -1,7 +1,9 @@
 <script lang="ts">
   import { AppShell } from "@lapismd/design-core/shell";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import * as ToggleGroup from "@lapismd/design-core/shadcn/toggle-group";
+  import StoreViewTabs from "../store-application/StoreViewTabs.svelte";
+  import CommunityDiffControls from "../community-diff-controls/CommunityDiffControls.svelte";
+  import FileIcon from "@lucide/svelte/icons/file";
   import XIcon from "@lucide/svelte/icons/x";
   import MessageSquarePlus from "@lucide/svelte/icons/message-square-plus";
   import {
@@ -21,6 +23,11 @@
   const changed = $derived(!!browser.file?.comparison);
   const comments = $derived(browser.conversation.comments);
   const blocks = $derived(browser.blocks);
+  const sections = $derived([
+    { value: "diff", label: "Diff" },
+    { value: "before", label: "Before", disabled: !blocks.before },
+    { value: "after", label: "After", disabled: !blocks.after },
+  ]);
   const selectedBlock = $derived(
     browser.presentation === "before" ? blocks.before : blocks.after,
   );
@@ -40,14 +47,41 @@
   }
 </script>
 
-<AppShell.Sidebar.Header>
-  <strong class="truncate" title={path}>{path ?? "Workspace file"}</strong>
-  <Button
-    variant="ghost"
-    size="icon-sm"
-    aria-label="Close workspace file"
-    onclick={onClose}><XIcon /></Button
+<AppShell.Sidebar.Header
+  style="padding-inline: 0; --store-view-tabs-padding-inline-end: 0.5rem; --store-view-tabs-min-width: 5rem;"
+>
+  <StoreViewTabs
+    value={browser.presentation}
+    {sections}
+    hideTabs={!changed || browser.fileLoading || !!browser.fileError}
+    label="File presentation"
+    onSelect={(value) => {
+      if (value === "diff" || value === "before" || value === "after")
+        browser.presentation = value;
+    }}
   >
+    {#snippet leading()}
+      <span class="workspace-inspector-title">
+        <FileIcon aria-hidden="true" />
+        <strong class="truncate" title={path}>{path ?? "Workspace file"}</strong
+        >
+      </span>
+    {/snippet}
+    {#snippet trailing()}
+      {#if changed && !browser.fileLoading && browser.presentation === "diff"}
+        <CommunityDiffControls
+          bind:viewMode={browser.diffMode}
+          showWrap={false}
+        />
+      {/if}
+      <Button
+        variant="ghost"
+        size="icon-sm"
+        aria-label="Close workspace file"
+        onclick={onClose}><XIcon /></Button
+      >
+    {/snippet}
+  </StoreViewTabs>
 </AppShell.Sidebar.Header>
 <AppShell.Sidebar.Body>
   <div class="workspace-file-content">
@@ -59,29 +93,6 @@
         {browser.fileError || file?.unavailable}
       </p>
     {:else if file}
-      {#if changed}
-        <div class="workspace-inspector-controls">
-          <ToggleGroup.Root
-            type="single"
-            bind:value={browser.presentation}
-            aria-label="File presentation"
-            ><ToggleGroup.Item value="diff">Diff</ToggleGroup.Item
-            ><ToggleGroup.Item value="before" disabled={!blocks.before}
-              >Before</ToggleGroup.Item
-            ><ToggleGroup.Item value="after" disabled={!blocks.after}
-              >After</ToggleGroup.Item
-            ></ToggleGroup.Root
-          >
-          {#if browser.presentation === "diff"}<ToggleGroup.Root
-              type="single"
-              bind:value={browser.diffMode}
-              aria-label="Diff layout"
-              ><ToggleGroup.Item value="unified">Unified</ToggleGroup.Item
-              ><ToggleGroup.Item value="split">Split</ToggleGroup.Item
-              ></ToggleGroup.Root
-            >{/if}
-        </div>
-      {/if}
       {#if changed && browser.presentation === "diff"}
         <FileDiff
           path={file.path}
@@ -119,11 +130,19 @@
   }
   strong {
     min-width: 0;
-    font-size: 0.875rem;
+    font-size: var(--community-text-body);
   }
-  .workspace-inspector-controls {
-    display: flex;
+  .workspace-inspector-title {
+    display: inline-flex;
+    flex: 0 1 auto;
+    min-width: 0;
+    max-width: 35%;
+    align-items: center;
     gap: 0.5rem;
-    flex-wrap: wrap;
+  }
+  .workspace-inspector-title :global(svg) {
+    width: 1rem;
+    height: 1rem;
+    flex: none;
   }
 </style>

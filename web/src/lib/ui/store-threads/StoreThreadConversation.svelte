@@ -250,7 +250,7 @@
           rows={linkedRows}
           {projection}
           {item}
-          {user}
+          {...{ conversation, controller, user }}
         />{/if}
       {#if messages.some((m) => m.id === item.id)}<StoreConversationMessageActions
           {item}

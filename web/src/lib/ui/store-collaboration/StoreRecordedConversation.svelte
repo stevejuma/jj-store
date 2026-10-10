@@ -283,7 +283,7 @@
         rows={linked.rows}
         projection={linked.projection}
         {item}
-        {user}
+        {...{ conversation, controller, user }}
       />{/if}
     {@const entry = activity.find(
       (e) => e.type === "message" && `${sessionId}:${e.message_id}` === item.id,

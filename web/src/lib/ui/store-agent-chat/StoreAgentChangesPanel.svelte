@@ -1,25 +1,43 @@
 <script lang="ts">
   import { untrack } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import { FileChangeStats } from "@lapismd/design-core/diff";
+  import * as Alert from "@lapismd/design-core/shadcn/alert";
+  import TriangleAlert from "@lucide/svelte/icons/triangle-alert";
+  import RefreshIcon from "@lucide/svelte/icons/refresh-cw";
+  import {
+    FileChangeStats,
+    FileListing,
+    FileListingViewModeToggle,
+  } from "@lapismd/design-core/diff";
   import FileDiffIcon from "@lucide/svelte/icons/file-diff";
   import UndoIcon from "@lucide/svelte/icons/undo-2";
   import ChevronDown from "@lucide/svelte/icons/chevron-down";
   import ChevronUp from "@lucide/svelte/icons/chevron-up";
-  import StoreAgentChangesDiff from "./StoreAgentChangesDiff.svelte";
+  import CommunityRevisionIds from "../community-projects/CommunityProjectsRevisionGraphIds.svelte";
+  import { encodeJjChangeId } from "../../projects/repository-log-graph.js";
+  import { useConversationInspection } from "../../conversations/inspection.svelte.js";
+  import type { ConversationSession } from "../../conversations/session.svelte.js";
+  import type { LocalClient } from "../../api/local-client.js";
+  import type { ApplicationFreshness } from "../../controller/application-freshness.js";
   import {
     readAgentWorkspaceChanges,
-    type AgentChangeSelection,
+    type AgentTurnSelection,
     type AgentChangeSummary,
   } from "../../controller/agent-workspace-changes.js";
   import type { AgentChangesCache } from "../../controller/agent-changes-cache.js";
   let {
     selection,
+    conversation,
+    client,
+    freshness,
     repositoryName,
     fetcher,
     cache,
   }: {
-    selection: AgentChangeSelection;
+    selection: AgentTurnSelection;
+    conversation: ConversationSession;
+    client: LocalClient;
+    freshness?: ApplicationFreshness;
     repositoryName: string;
     fetcher: typeof fetch;
     cache?: AgentChangesCache;
@@ -28,8 +46,42 @@
   let error = $state("");
   let attempt = $state(0);
   let expanded = $state(false);
-  let reviewing = $state(false);
-  let selectedPath = $state("");
+  const inspection = useConversationInspection();
+  const browser = untrack(() =>
+    inspection?.workspaceBrowser(client, conversation, freshness),
+  );
+  let root = $state<HTMLElement>();
+  let visible = $state(false);
+  let mode =
+    $state<import("@lapismd/design-core/diff").FileListingViewMode>("tree");
+  const selectedTurn = $derived(
+    browser?.savedTurn?.selection.requestId === selection.requestId &&
+      browser.savedTurn.selection.repository === selection.repository,
+  );
+  const listingMode = $derived(selectedTurn ? browser!.mode : mode);
+  $effect(() => {
+    if (!root) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) visible = true;
+      },
+      { rootMargin: "200px" },
+    );
+    observer.observe(root);
+    return () => observer.disconnect();
+  });
+  function openChanges(path?: string) {
+    if (!browser || !inspection || !summary) return;
+    browser.mode = listingMode;
+    browser.showSavedTurn(selection, summary);
+    inspection.showSavedTurn(browser, !!path);
+    if (path) {
+      browser.presentation = "diff";
+      void browser.select(path).then(() => {
+        browser.presentation = "diff";
+      });
+    }
+  }
   const selectionKey = $derived(
     JSON.stringify([
       selection.repository,
@@ -53,6 +105,7 @@
       : null,
   );
   $effect(() => {
+    if (!visible) return;
     selectionKey;
     const captured = untrack(() => ({ ...selection }));
     const transport = fetcher;
@@ -61,8 +114,7 @@
     summary = null;
     error = "";
     expanded = false;
-    reviewing = false;
-    selectedPath = "";
+
     const read = untrack(() =>
       cache
         ? cache.read(captured, abort.signal)
@@ -80,114 +132,119 @@
   });
 </script>
 
-{#if error}
-  <div class="agent-changes-feedback" role="status">
-    <span>{error}</span><Button
-      size="sm"
-      variant="ghost"
-      onclick={() => attempt++}>Retry file changes</Button
+<div bind:this={root} data-saved-turn={selection.requestId}>
+  {#if error}
+    <Alert.Root data-severity="warning">
+      <TriangleAlert />
+      <Alert.Title>File changes unavailable</Alert.Title>
+      <Alert.Description
+        >{error}
+        <Button size="sm" variant="secondary" onclick={() => attempt++}>
+          <RefreshIcon data-icon="inline-start" />Retry file changes
+        </Button>
+      </Alert.Description>
+    </Alert.Root>
+  {:else if !summary}
+    <p class="agent-changes-feedback" role="status">Loading saved changes…</p>
+  {:else if !summary.complete && !summary.files.length}
+    <p class="agent-changes-feedback" role="status">
+      The saved comparison is incomplete. Changed-file totals are unavailable.
+    </p>
+  {:else if summary.files.length}
+    <section
+      class="agent-changes-panel"
+      aria-label={`Changes in ${repositoryName} · turn ${selection.requestId.slice(0, 8)}`}
     >
-  </div>
-{:else if !summary}
-  <p class="agent-changes-feedback" role="status">Loading saved changes…</p>
-{:else if !summary.complete && !summary.files.length}
-  <p class="agent-changes-feedback" role="status">
-    The saved comparison is incomplete. Changed-file totals are unavailable.
-  </p>
-{:else if summary.files.length}
-  <section
-    class="agent-changes-panel"
-    aria-label={`Changes in ${repositoryName}`}
-  >
-    <header>
-      <span class="agent-changes-icon"><FileDiffIcon aria-hidden="true" /></span
-      >
-      <div class="agent-changes-heading">
-        <strong
-          >{summary.complete ? "Edited" : "At least"}
-          {summary.files.length}
-          {summary.files.length === 1 ? "file" : "files"}</strong
+      <header>
+        <span class="agent-changes-icon"
+          ><FileDiffIcon aria-hidden="true" /></span
         >
-        <span class="agent-changes-repository">{repositoryName}</span>
-        {#if totals}<FileChangeStats
-            showZero
-            additions={totals.additions}
-            deletions={totals.deletions}
+        <div class="agent-changes-heading">
+          <strong
+            >{summary.complete ? "Edited" : "At least"}
+            {summary.files.length}
+            {summary.files.length === 1 ? "file" : "files"}</strong
+          >
+          <CommunityRevisionIds
+            placement="inline"
+            commitId={selection.commit}
+            changeId={encodeJjChangeId(summary.changeId ?? "")}
           />
-        {:else}<span class="agent-changes-unavailable"
-            >Full line counts unavailable</span
-          >{/if}
+          <span class="agent-changes-repository">{repositoryName}</span>
+          {#if totals}<FileChangeStats
+              showZero
+              additions={totals.additions}
+              deletions={totals.deletions}
+            />
+          {:else}<span class="agent-changes-unavailable"
+              >Full line counts unavailable</span
+            >{/if}
+        </div>
+        <span
+          title="Session-specific Undo is not available for saved agent changes."
+          ><Button
+            size="sm"
+            variant="ghost"
+            disabled
+            aria-label="Undo unavailable"
+            >Undo <UndoIcon aria-hidden="true" /></Button
+          ></span
+        >
+        <div class="agent-changes-actions">
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={!inspection?.workspaceEnabled}
+            onclick={() => openChanges()}>View changes</Button
+          >
+          <FileListingViewModeToggle
+            mode={listingMode}
+            onModeChange={(next) => {
+              mode = next;
+              if (selectedTurn && browser) browser.mode = next;
+            }}
+          />
+        </div>
+      </header>
+      <div class="agent-changes-files">
+        <FileListing
+          files={(expanded ? summary.files : summary.files.slice(0, 3)).map(
+            (file) => ({
+              ...file,
+              additions: file.additions ?? undefined,
+              deletions: file.deletions ?? undefined,
+            }),
+          )}
+          mode={listingMode}
+          selectedPath={selectedTurn ? browser!.listing.selected : null}
+          onSelectPath={(path) => openChanges(path)}
+        />
       </div>
-      <span
-        title="Session-specific Undo is not available for saved agent changes."
-        ><Button
+      {#if summary.files.length > 3}<Button
           size="sm"
           variant="ghost"
-          disabled
-          aria-label="Undo unavailable"
-          >Undo <UndoIcon aria-hidden="true" /></Button
-        ></span
-      >
-      <Button size="sm" variant="outline" onclick={() => (reviewing = true)}
-        >View changes</Button
-      >
-    </header>
-    <ul>
-      {#each expanded ? summary.files : summary.files.slice(0, 3) as file (file.path)}
-        <li>
-          <button
-            type="button"
-            class="agent-changes-file"
-            onclick={() => {
-              selectedPath = file.path;
-              reviewing = true;
-            }}
-            title={file.path}
-            aria-label={`View changes to ${file.path}`}
-          >
-            <span>{file.path}</span>
-            {#if file.additions !== null && file.deletions !== null}<FileChangeStats
-                showZero
-                additions={file.additions}
-                deletions={file.deletions}
-              />
-            {:else}<span class="agent-changes-unavailable"
-                >Counts unavailable</span
-              >{/if}
-          </button>
-        </li>
-      {/each}
-    </ul>
-    {#if summary.files.length > 3}<Button
-        size="sm"
-        variant="ghost"
-        class="agent-changes-disclosure"
-        aria-expanded={expanded}
-        onclick={() => (expanded = !expanded)}
-        >{expanded
-          ? "Show fewer files"
-          : `Show ${summary.files.length - 3} more files`}{#if expanded}<ChevronUp
-            aria-hidden="true"
-          />{:else}<ChevronDown aria-hidden="true" />{/if}</Button
-      >{/if}
-    {#if !summary.complete}<p class="agent-changes-feedback">
-        Showing {summary.files.length} changed files. Additional files are outside
-        this bounded preview.
-      </p>{/if}
-  </section>
-  <StoreAgentChangesDiff
-    files={summary.files}
-    {repositoryName}
-    bind:open={reviewing}
-    bind:selectedPath
-  />
-{/if}
+          class="agent-changes-disclosure"
+          aria-expanded={expanded}
+          onclick={() => (expanded = !expanded)}
+          >{expanded
+            ? "Show fewer files"
+            : `Show ${summary.files.length - 3} more files`}{#if expanded}<ChevronUp
+              aria-hidden="true"
+            />{:else}<ChevronDown aria-hidden="true" />{/if}</Button
+        >{/if}
+      {#if !summary.complete}<p class="agent-changes-feedback">
+          Showing {summary.files.length} changed files. Additional files are outside
+          this bounded preview.
+        </p>{/if}
+    </section>
+  {/if}
+</div>
 
 <style>
   .agent-changes-panel {
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    margin: 0.25rem 0.75rem 0.5rem;
+    margin: 0.25rem 0 0.5rem;
     min-width: 0;
     background: var(--background);
   }
@@ -208,10 +265,6 @@
     border-radius: var(--radius);
     background: var(--muted);
   }
-  .agent-changes-icon :global(svg) {
-    width: 1.125rem;
-    height: 1.125rem;
-  }
   .agent-changes-heading {
     display: flex;
     flex-direction: column;
@@ -224,41 +277,17 @@
     font-size: 0.75rem;
     color: var(--muted-foreground);
   }
-  .agent-changes-panel ul {
-    list-style: none;
-    margin: 0;
+  .agent-changes-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+    margin-inline-start: auto;
+  }
+  .agent-changes-files {
     padding: 0.375rem;
     max-height: 12rem;
     overflow: auto;
-  }
-  .agent-changes-file {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.375rem;
-    text-align: start;
-    width: 100%;
-    border: 0;
-    border-radius: var(--radius);
-    background: transparent;
-    color: var(--foreground);
-    font: inherit;
-    font-size: 0.8125rem;
-    cursor: pointer;
-  }
-  .agent-changes-file:hover {
-    background: var(--muted);
-  }
-  .agent-changes-file:focus-visible {
-    outline: 2px solid var(--ring);
-    outline-offset: 1px;
-  }
-  .agent-changes-file > span:first-child {
-    flex: 1;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    min-width: 0;
   }
   :global(.agent-changes-disclosure) {
     margin: 0 0.375rem 0.375rem;
