@@ -54,13 +54,27 @@ Catalog collaboration fixtures and state wrappers remain transport-free and
 cannot be imported by production. These extractions keep every production module
 and complete Svelte file within the governed counted-line budget.
 
-The local pnpm hook follows the workspace source-first boundary for Design Core.
-When the sibling source exists it resolves the declared dependency from that
-checkout for development validation; otherwise it leaves the semver range
-intact. It never rewrites peer ranges. The publishable manifest retains registry
-ranges. Temporary source validation retains registry resolutions in the tracked
-lockfile and records the exact source revision separately. A source-validation
-pass does not qualify a registry release with missing public APIs.
+The local pnpm hook consumes Design Core's explicitly packed development archive
+under the sibling's ignored package directory. Sibling source alone MUST NOT
+substitute a dependency. Missing archives retain registry ranges; peer ranges
+are never rewritten. The publishable manifest and tracked lockfile retain
+registry resolution. Local validation records the archive digest and checks its
+public contents against the qualified input. The prepared archive contains
+JavaScript rune modules, declarations, Svelte components and CSS under the same
+public subpaths. Components remain consumer-compiled Svelte; this does not
+qualify a registry release with missing public APIs.
+
+The browser enables Svelte dependency optimization for package components and
+rune modules. Main page views and optional inspectors use typed dynamic imports
+selected by current route or explicit opening. Controller and context owners
+stay mounted. Successful imports are shared; failures allow explicit retry
+without automatic reload. Closing a loaded overlay retains its component and
+existing draft/cleanup behavior. A late import cannot render in an unmounted
+region. Development prebundling and emitted production chunks have independent
+cold acceptance; neither changes API or publication authority. Production chunk
+grouping and one shared stylesheet keep the complete lazy asset inventory within
+existing native count, manifest, per-file and total byte limits. Page entries
+remain outside the shell's static import closure.
 
 Agent capture uses MongoDB Kingfisher 2.7.0 in-process at source revision
 `63dccba231b6b01990c84319d25f92f49428a431`. The scanner is compiled without

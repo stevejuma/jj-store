@@ -1,17 +1,11 @@
 <script lang="ts">
+  import StoreLazyView from "./StoreLazyView.svelte";
+  import { views } from "./application-views.js";
   import type { StackWorkspaceController } from "../../controller/stack-workspace/controller.svelte.js";
   import type { AppShellDisplayMode } from "@lapismd/design-core/shell";
   import type { StoreController } from "../../controller/contracts.js";
   import { isRepositoryProjects } from "../../controller/projects-view-cache.js";
-  import StoreRepositoryProjects from "../store-work/StoreRepositoryProjects.svelte";
-  import StoreProjects from "../store-work/StoreProjects.svelte";
-  import StoreWork from "../store-work/StoreWork.svelte";
-  import StoreThreads from "../store-threads/StoreThreads.svelte";
   import StoreApplication from "./StoreApplication.svelte";
-  import CommunityProjectsRepositoryLog from "../community-projects/CommunityProjectsRepositoryLog.svelte";
-  import CommunityProjectsRepositoryFiles from "../community-projects/CommunityProjectsRepositoryFiles.svelte";
-  import StoreAgentSessions from "../store-collaboration/StoreAgentSessions.svelte";
-  import StoreReviewThreads from "../store-collaboration/StoreReviewThreads.svelte";
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   let {
@@ -54,22 +48,34 @@
   {layoutStorage}
 >
   {#snippet children(page)}
-    {#if isRepositoryProjects(state.route) && controller.projects}<StoreRepositoryProjects
-        {controller}
-      />
-    {:else if page === "projects" && controller.projects}<StoreProjects
-        {controller}
-      />
-    {:else if page === "projects" && controller.work}<StoreWork
-        work={controller.work}
-        principal={state.repository.principal}
-        repositories={state.repositories}
-        onOpenRepository={controller.actions.openRepository}
-        writable={state.accessMode === "local_trusted" ||
-          state.repository.permission === "write" ||
-          state.repository.permission === "admin"}
-      />
-    {:else if page === "threads"}<StoreThreads {controller} />
+    {#if isRepositoryProjects(state.route) && controller.projects}<StoreLazyView
+        load={views.projectsRepository}
+        label="Repository projects"
+        >{#snippet content(View)}<View {controller} />{/snippet}</StoreLazyView
+      >
+    {:else if page === "projects" && controller.projects}<StoreLazyView
+        load={views.projects}
+        label="Projects"
+        >{#snippet content(View)}<View {controller} />{/snippet}</StoreLazyView
+      >
+    {:else if page === "projects" && controller.work}<StoreLazyView
+        load={views.work}
+        label="Work"
+        >{#snippet content(View)}<View
+            work={controller.work!}
+            principal={state.repository.principal}
+            repositories={state.repositories}
+            onOpenRepository={controller.actions.openRepository}
+            writable={state.accessMode === "local_trusted" ||
+              state.repository.permission === "write" ||
+              state.repository.permission === "admin"}
+          />{/snippet}</StoreLazyView
+      >
+    {:else if page === "threads"}<StoreLazyView
+        load={views.threads}
+        label="Threads"
+        >{#snippet content(View)}<View {controller} />{/snippet}</StoreLazyView
+      >
     {:else if needsOperation}<section
         class="store-repository-application__state"
       >
@@ -99,56 +105,68 @@
           >Browse repository</Button
         >
       </section>
-    {:else if page === "agents"}<StoreAgentSessions {controller} />
-    {:else if page === "reviews"}<StoreReviewThreads
-        {controller}
-        {layoutStorage}
-      />
-    {:else if page === "files"}<CommunityProjectsRepositoryFiles
-        {controller}
-        now={state.now}
-        {layoutStorage}
-      />
-    {:else}<CommunityProjectsRepositoryLog
-        {controller}
-        {page}
-        graph={state.graph}
-        bookmarks={[...state.bookmarks]}
-        workingCopies={[...state.workingCopies]}
-        selectedBranch={state.route.bookmark}
-        {selectedId}
-        selectedPath={state.route.path}
-        files={state.graph.revisions.find(
-          (revision) => revision.eventId === selectedId,
-        )?.empty
-          ? []
-          : (state.detail?.files ?? [])}
-        patch={state.route.path
-          ? state.detail?.patches[state.route.path]
-          : undefined}
-        hasMoreBookmarks={state.canLoadMoreBookmarks}
-        hasMoreGraph={state.canLoadMoreGraph}
-        hasMoreFiles={state.canLoadMoreDetail}
-        unavailableComparisonCount={state.unavailableComparisonCount}
-        loading={state.status.graph === "loading" ||
-          state.status.graph === "refreshing" ||
-          preparing}
-        referencesLoading={state.status.bookmarks === "loading" ||
-          state.status.bookmarks === "refreshing" ||
-          preparing}
-        detailLoading={state.status.detail === "loading" ||
-          (preparing && !!selectedId && !state.detail)}
-        filesLoading={state.status.detail === "refreshing"}
-        now={state.now}
-        {layoutStorage}
-        onSelectBranch={controller.actions.selectBookmark}
-        onSelectWorkingCopy={controller.actions.selectWorkingCopy}
-        onSelectRevision={controller.actions.selectRevision}
-        onSelectPath={controller.actions.selectFile}
-        onLoadMoreBookmarks={() => controller.actions.loadMore("bookmarks")}
-        onLoadMoreGraph={() => controller.actions.loadMore("graph")}
-        onLoadMoreFiles={() => controller.actions.loadMore("detail")}
-      />{/if}
+    {:else if page === "agents"}<StoreLazyView
+        load={views.agentsRecorded}
+        label="Agent sessions"
+        >{#snippet content(View)}<View {controller} />{/snippet}</StoreLazyView
+      >
+    {:else if page === "reviews"}<StoreLazyView
+        load={views.reviews}
+        label="Reviews"
+        >{#snippet content(View)}<View
+            {controller}
+            {layoutStorage}
+          />{/snippet}</StoreLazyView
+      >
+    {:else if page === "files"}<StoreLazyView load={views.files} label="Files"
+        >{#snippet content(View)}<View
+            {controller}
+            now={state.now}
+            {layoutStorage}
+          />{/snippet}</StoreLazyView
+      >
+    {:else}<StoreLazyView load={views.log} label="History"
+        >{#snippet content(View)}<View
+            {controller}
+            {page}
+            graph={state.graph}
+            bookmarks={[...state.bookmarks]}
+            workingCopies={[...state.workingCopies]}
+            selectedBranch={state.route.bookmark}
+            {selectedId}
+            selectedPath={state.route.path}
+            files={state.graph.revisions.find(
+              (revision) => revision.eventId === selectedId,
+            )?.empty
+              ? []
+              : (state.detail?.files ?? [])}
+            patch={state.route.path
+              ? state.detail?.patches[state.route.path]
+              : undefined}
+            hasMoreBookmarks={state.canLoadMoreBookmarks}
+            hasMoreGraph={state.canLoadMoreGraph}
+            hasMoreFiles={state.canLoadMoreDetail}
+            unavailableComparisonCount={state.unavailableComparisonCount}
+            loading={state.status.graph === "loading" ||
+              state.status.graph === "refreshing" ||
+              preparing}
+            referencesLoading={state.status.bookmarks === "loading" ||
+              state.status.bookmarks === "refreshing" ||
+              preparing}
+            detailLoading={state.status.detail === "loading" ||
+              (preparing && !!selectedId && !state.detail)}
+            filesLoading={state.status.detail === "refreshing"}
+            now={state.now}
+            {layoutStorage}
+            onSelectBranch={controller.actions.selectBookmark}
+            onSelectWorkingCopy={controller.actions.selectWorkingCopy}
+            onSelectRevision={controller.actions.selectRevision}
+            onSelectPath={controller.actions.selectFile}
+            onLoadMoreBookmarks={() => controller.actions.loadMore("bookmarks")}
+            onLoadMoreGraph={() => controller.actions.loadMore("graph")}
+            onLoadMoreFiles={() => controller.actions.loadMore("detail")}
+          />{/snippet}</StoreLazyView
+      >{/if}
   {/snippet}
 </StoreApplication>
 

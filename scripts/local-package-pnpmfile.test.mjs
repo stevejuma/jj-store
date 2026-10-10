@@ -6,9 +6,12 @@ import { createRequire } from "node:module";
 const require = createRequire(import.meta.url);
 const { createHooks } = require("./local-package-pnpmfile.cjs");
 
-test("local package hook uses available Design Core source", () => {
+test("local package hook uses the packed Design Core artifact without rewriting peers", () => {
   const root = "/workspace/jj-store";
-  const designCore = path.resolve(root, "../design-core");
+  const designCore = path.resolve(
+    root,
+    "../design-core/.local/packages/lapismd-design-core-0.1.2-built.tgz",
+  );
   const manifest = {
     devDependencies: { "@lapismd/design-core": "^0.2.0" },
     peerDependencies: { "@lapismd/design-core": "^0.2.0" },
@@ -26,14 +29,14 @@ test("local package hook uses available Design Core source", () => {
   assert.equal(result.peerDependencies["@lapismd/design-core"], "^0.2.0");
 });
 
-test("local package hook retains registry range when source is absent", () => {
+test("local package hook retains registry range when only sibling source exists", () => {
   const manifest = {
     devDependencies: { "@lapismd/design-core": "^0.2.0" },
   };
 
   const result = createHooks({
     root: "/workspace/jj-store",
-    fileExists: () => false,
+    fileExists: (candidate) => candidate === "/workspace/design-core",
   }).hooks.readPackage(manifest);
 
   assert.deepEqual(result, manifest);

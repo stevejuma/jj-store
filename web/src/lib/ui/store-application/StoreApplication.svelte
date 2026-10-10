@@ -1,4 +1,8 @@
 <script lang="ts">
+  import StoreApplicationAgents from "./StoreApplicationAgents.svelte";
+  import StoreApplicationOverlays from "./StoreApplicationOverlays.svelte";
+  import StoreLazyView from "./StoreLazyView.svelte";
+  import { views } from "./application-views.js";
   import { provideConversationInspection } from "../../conversations/inspection.svelte.js";
   import { provideTerminalControls } from "../../terminal/controls.svelte.js";
   provideTerminalControls();
@@ -9,12 +13,10 @@
   import { ownApplicationNotifications } from "../../notifications/notification-context.svelte.js";
   import StoreNotificationHost from "../store-notifications/StoreNotificationHost.svelte";
   import StoreAgentExecutionNotice from "../store-agent-execution/StoreAgentExecutionNotice.svelte";
-  import StoreAgentExecutionHost from "../store-agent-execution/StoreAgentExecutionHost.svelte";
   import { provideAgentExecution } from "../store-agent-execution/context.js";
   import { observeAgentChats } from "../../controller/agent-chat-navigation.svelte.js";
   // Adapted from CommunityApplication's shell composition; all state is local.
   import { AppShell } from "@lapismd/design-core/shell";
-  import StoreAgentDetailsSidebar from "../store-agent-execution/StoreAgentDetailsSidebar.svelte";
   import StoreApplicationRightPanels from "./StoreApplicationRightPanels.svelte";
   import { createStoreShell } from "./create-store-shell.js";
   import { repositoryDetailsPanelId } from "../layout-storage.js";
@@ -42,7 +44,6 @@
     CommunityNavigationItemModel,
   } from "../community-navigation/model.js";
   import CommunityProfileMenu from "../community-profile-menu/CommunityProfileMenu.svelte";
-  import StoreSearchOverlay from "../store-search/StoreSearchOverlay.svelte";
   import StoreSettingsRepository from "../store-settings/StoreSettingsRepository.svelte";
   import StoreSettingsNavigation from "../store-settings/StoreSettingsNavigation.svelte";
   import type { StoreSettingsSection } from "../store-settings/model.js";
@@ -50,8 +51,6 @@
   import StoreWorkspaceToggle from "../store-agent-workspace/StoreWorkspaceToggle.svelte";
   import { provideDiscussionFocus } from "../store-discussion/discussion-focus.svelte.js";
   import StoreFocusedDiscussion from "../store-discussion/StoreFocusedDiscussion.svelte";
-  import StoreStackWorkspaceConflict from "../store-stack-workspace/StoreStackWorkspaceConflict.svelte";
-  import StoreConflictEditor from "../store-conflicts/StoreConflictEditor.svelte";
   import { conflictEditorKey } from "../store-conflicts/conflict-editor.js";
   import { resolveLayoutStorage } from "../layout-storage.js";
   import {
@@ -173,26 +172,7 @@
   provideAgentExecution(() => controller.execution);
 </script>
 
-{#snippet agents()}{#if controller.execution}<StoreAgentExecutionHost
-      {controller}
-      manager={controller.execution}
-      repositories={controller.state.repositories}
-      route={current}
-      onReview={(repository, commit, operation) =>
-        void controller.actions.openRoute?.({
-          ...current,
-          agentsHub: false,
-          agentView: undefined,
-          executionSessionId: null,
-          setupId: null,
-          repository,
-          page: "log",
-          commitId: commit,
-          snapshotOperationId: operation,
-          agentSessionId: null,
-          projectsHub: false,
-        })}
-    />{/if}{/snippet}
+{#snippet agents()}<StoreApplicationAgents {controller} {current} />{/snippet}
 
 {#snippet settingsRepository()}
   <StoreSettingsRepository
@@ -286,11 +266,16 @@
       selectSettings("repository");
     }}
   />
-  {#if !settingsOpen && current.agentsHub && controller.execution && !controller.execution.chat.open}<StoreAgentDetailsSidebar
-      manager={controller.execution}
-      {shell}
-      route={current}
-    />{/if}
+  {#if !settingsOpen && current.agentsHub && controller.execution && !controller.execution.chat.open}<StoreLazyView
+      load={views.agentDetails}
+      label="Agent details"
+      active={Boolean(controller.execution.detailsId)}
+      >{#snippet content(View)}<View
+          manager={controller.execution!}
+          {shell}
+          route={current}
+        />{/snippet}</StoreLazyView
+    >{/if}
   {#if !settingsOpen}<StoreApplicationRightPanels
       {controller}
       {stackWorkspace}
@@ -305,28 +290,21 @@
     open={!settingsOpen && !editorOpen && threadPanel.focused}
     {controller}
   />
-  <StoreConflictEditor
+  <StoreApplicationOverlays
     {controller}
-    open={conflictOpen}
-    returnFocus={conflictReturnFocus}
-    onClose={() => (conflictOpen = false)}
+    {stackWorkspace}
+    {current}
+    {settingsOpen}
+    bind:conflictOpen
+    bind:searchOpen
+    {conflictReturnFocus}
   />
-  {#if stackWorkspace && isStacksRoute(current)}
-    <StoreStackWorkspaceConflict
-      controller={stackWorkspace}
-      bind:open={stackWorkspace.conflictOpen}
-    />
-  {/if}
 </CommunityAppShell>
-{#if !settingsOpen}<StoreSearchOverlay
-    {controller}
-    bind:open={searchOpen}
-  />{/if}
 
 <StoreIndexPreparationNotice {controller} />
 <StoreNotificationHost owner={notifications} />
 {#if controller.execution}<StoreAgentExecutionNotice
-    manager={controller.execution}
+    manager={controller.execution!}
     activeSession={current.agentsHub && current.agentView === "session"
       ? current.executionSessionId
       : undefined}

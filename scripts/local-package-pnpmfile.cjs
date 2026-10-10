@@ -2,7 +2,13 @@ const { existsSync } = require("node:fs");
 const path = require("node:path");
 
 const localPackages = new Map([
-  ["@lapismd/design-core", { protocol: "file:", path: "../design-core" }],
+  [
+    "@lapismd/design-core",
+    {
+      protocol: "file:",
+      path: "../design-core/.local/packages/lapismd-design-core-0.1.2-built.tgz",
+    },
+  ],
 ]);
 
 function createHooks({

@@ -1,5 +1,11 @@
 # Delivery and validation
 
+E-UI-VIEW-LOADING-001 documents packed local dependency substitution and demand
+loaded views. The manual distinguishes archive input, development prebundling
+and production chunk delivery. Registry-only installation keeps its independent
+qualification limits; source review and strict documentation staging remain
+required, and development timings do not qualify a production release.
+
 Agent collection source reviews retain accurate browsing prose when only the
 unavailable-content banner inset, margin and corners change. Fresh development
 fixture evidence distinguishes current-format generation in an isolated root

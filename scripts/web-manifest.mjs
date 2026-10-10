@@ -26,6 +26,8 @@ export function applicationAssets(manifest, entry = "index.html") {
       visit(dependency);
   }
   visit(entry);
+  // Vite emits the unsplit stylesheet as its own manifest entry.
+  if (manifest["style.css"]) visit("style.css");
   return [...files].sort();
 }
 

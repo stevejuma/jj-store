@@ -38,3 +38,13 @@ test("browser manifest rejects missing dependencies and unsafe asset paths", () 
     /Unexpected browser asset path/,
   );
 });
+
+test("browser manifest includes Vite's unsplit application stylesheet", () => {
+  assert.deepEqual(
+    applicationAssets({
+      "index.html": { file: "assets/index.js" },
+      "style.css": { file: "assets/style.css", assets: ["assets/font.woff2"] },
+    }),
+    ["assets/font.woff2", "assets/index.js", "assets/style.css", "index.html"],
+  );
+});

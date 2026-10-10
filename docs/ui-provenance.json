@@ -2744,6 +2744,30 @@
     {
       "local": "web/src/lib/ui/community-inbox/inbox-preferences.ts",
       "reason": "Locally authored bounded device-only pin/archive ID storage; uses storage events and existing layout storage refusal handling, without content persistence or service authority."
+    },
+    {
+      "local": "web/src/lib/ui/store-application/StoreLazyView.svelte",
+      "reason": "Application-owned typed lazy module boundary and shell composition; reuses maintained components and public Design Core presentation without copying upstream source."
+    },
+    {
+      "local": "web/src/lib/ui/store-application/lazy-view.ts",
+      "reason": "Application-owned typed lazy module boundary and shell composition; reuses maintained components and public Design Core presentation without copying upstream source."
+    },
+    {
+      "local": "web/src/lib/ui/store-application/application-views.ts",
+      "reason": "Application-owned typed lazy module boundary and shell composition; reuses maintained components and public Design Core presentation without copying upstream source."
+    },
+    {
+      "local": "web/src/lib/ui/store-application/StoreApplicationOverlays.svelte",
+      "reason": "Application-owned typed lazy module boundary and shell composition; reuses maintained components and public Design Core presentation without copying upstream source."
+    },
+    {
+      "local": "web/src/lib/ui/store-application/StoreApplicationInspectionPanels.svelte",
+      "reason": "Application-owned typed lazy module boundary and shell composition; reuses maintained components and public Design Core presentation without copying upstream source."
+    },
+    {
+      "local": "web/src/lib/ui/store-application/StoreApplicationAgents.svelte",
+      "reason": "Application-owned deferred agent view retaining existing exact navigation callbacks and execution context."
     }
   ],
   "desktopAppearance": {

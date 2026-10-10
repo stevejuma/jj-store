@@ -86,3 +86,5 @@ not a completion gate selection.
 
 ## Pages
 
+
+| [E-UI-VIEW-LOADING-001](../../../../../history/2026/10/10/E-UI-VIEW-LOADING-001/index.md) | 2026-10-10 | pending | Focused view-loading proofs; wider gates retained |

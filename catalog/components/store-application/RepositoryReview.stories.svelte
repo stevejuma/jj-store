@@ -17,6 +17,7 @@
   name="Shell and row-local graph spacing"
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    await canvas.findByRole("option", { name: "main" });
     const navigationHeader = canvasElement.querySelector<HTMLElement>(
       ".lc-community-navigation__header",
     )!;

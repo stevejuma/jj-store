@@ -4,6 +4,7 @@ export async function expectRepositoryDirectoryLayout(
   canvasElement: HTMLElement,
 ) {
   const canvas = within(canvasElement);
+  await canvas.findByRole("region", { name: "Repository files" });
   const body = within(canvasElement.ownerDocument.body);
   const bodyBreadcrumb = canvasElement.querySelector<HTMLElement>(
     ".store-application__body-breadcrumb",

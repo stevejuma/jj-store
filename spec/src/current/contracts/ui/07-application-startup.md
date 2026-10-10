@@ -11,6 +11,18 @@ replacement, revocation and teardown cancel protected requests, event streams
 and caches. Local loopback identity is labelled only as `Local`; the UI does not
 infer a username from HTTP. Usable backup status is future-release work.
 
+Main page views load on demand while controller and shell owners retain routes,
+authentication, selections and drafts. Pending view imports show the existing
+accessible skeleton. Failed imports use application notifications with Retry;
+the retry entry URL comes from the application compiler, including hashed
+production entries and development HMR transformations. It is never inferred
+from an output filename. Retries never clear drafts, replay mutations or reload
+the application. Navigation prevents obsolete pending views from rendering.
+Loaded optional overlays stay mounted inside their context owner when closed to
+retain existing cleanup and draft behavior. Built-bundle acceptance checks
+unopened pages remain outside the initial static import closure and dynamic
+chunks remain in the existing browser asset manifest.
+
 Browser interaction fixtures exercise the same bootstrap and repository
 discovery requests as the production controller. Authenticated fixtures supply
 one memory-only token and an authorized repository page before opening a

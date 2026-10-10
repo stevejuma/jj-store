@@ -3,9 +3,11 @@ export async function rail(element: HTMLElement) {
   const canvas = within(element);
   await canvas.findByRole("region", { name: "Unstaged files" });
   await userEvent.click(canvas.getByRole("button", { name: "Toggle details" }));
-  return within(
+  const details = within(
     canvas.getByRole("complementary", { name: "Repository details" }),
   );
+  await details.findByRole("region", { name: "Workspace actions" });
+  return details;
 }
 export async function closeEditor(element: HTMLElement) {
   const portal = within(element.ownerDocument.body);

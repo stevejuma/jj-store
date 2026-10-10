@@ -33,6 +33,14 @@ workspace's optional local Design Core substitution. Registry-only acceptance
 has its own current limitations; inspect the command results rather than
 assuming that installing dependencies proves the UI is qualified.
 
+For local package validation, the optional hook consumes
+`../design-core/.local/packages/lapismd-design-core-0.1.2-built.tgz` when
+present. Build it with `pnpm package:local` in Design Core. Sibling source alone
+does not activate the override. The archive includes prepared modules and
+declarations; Vite compiles and prebundles its Svelte components in development,
+while the production build emits optimized JavaScript chunks. Keep the tracked
+manifest and lockfile on registry dependencies during local archive validation.
+
 Use absolute paths to `target/debug/jj`, `target/debug/jj-store`, and
 `runtime/embedded-rustfs/target/debug/jj-store-rustfs`. These commands do not
 replace an installed `jj`. Keep the paired CLI and server from the same build.

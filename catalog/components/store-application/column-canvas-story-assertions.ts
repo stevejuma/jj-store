@@ -1,6 +1,13 @@
-import { expect } from "storybook/test";
+import { expect, waitFor } from "storybook/test";
 
 export async function expectColumnCanvasFillsBody(canvasElement: HTMLElement) {
+  await waitFor(() =>
+    expect(
+      canvasElement.querySelector(
+        '[data-ui-component="column-canvas"][data-ui-part="root"]',
+      ),
+    ).not.toBeNull(),
+  );
   const root = canvasElement.querySelector<HTMLElement>(
     '[data-ui-component="column-canvas"][data-ui-part="root"]',
   )!;

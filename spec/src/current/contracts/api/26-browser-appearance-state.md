@@ -1,5 +1,12 @@
 # Browser appearance state
 
+E-UI-VIEW-LOADING-001 changes module delivery through packed development
+dependencies, prebundling and typed lazy views under JST-UI-005/JST-ARCH-004.
+Controller ownership, event connections, authorization, operation pins, drafts
+and exact pending commands remain unchanged. Chunk loading adds no API polling,
+mutation, DTO or persistence format. Existing manifest-selected browser asset
+admission includes the generated dynamic chunks.
+
 E-UI-FAVICON-001 registers the application's owned favicon through the existing
 manifest-selected `agent-icons/*.svg` asset route under JST-API-001 and
 JST-UI-018. The SVG contains only the accepted logo's embedded 64px PNG export;

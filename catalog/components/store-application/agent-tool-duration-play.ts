@@ -10,7 +10,9 @@ export async function agentToolDurationPlay({
     await c.findByRole("button", { name: /Open Codex ended/ }),
   );
 
-  await userEvent.click(c.getByRole("button", { name: "Expand 3 tool calls" }));
+  await userEvent.click(
+    await c.findByRole("button", { name: "Expand 3 tool calls" }),
+  );
   for (const [name, duration, status] of [
     ["apply_patch", "1.25s", "unknown"],
     ["Bash", "250ms", "error"],

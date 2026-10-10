@@ -16,7 +16,7 @@
   }) {
     const canvas = within(canvasElement);
     await expect(
-      canvas.getByRole("region", { name: "Repository files" }),
+      await canvas.findByRole("region", { name: "Repository files" }),
     ).toBeVisible();
     const body = canvasElement.querySelector<HTMLElement>(
       ".store-application__body-regions",

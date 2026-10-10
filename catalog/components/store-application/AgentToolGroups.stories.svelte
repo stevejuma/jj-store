@@ -15,6 +15,7 @@
     await userEvent.click(
       await c.findByRole("button", { name: /Open Codex ended/ }),
     );
+    await c.findByRole("button", { name: "Expand 3 tool calls" });
     return c;
   };
 </script>

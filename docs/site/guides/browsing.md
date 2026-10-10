@@ -12,6 +12,10 @@ notification and retry behavior.
 The browser tab displays the app's blue-jay and gear logo. Its favicon is
 bundled locally and loads without contacting another website.
 
+Views and optional inspectors load when opened. A loading view retains the shell
+and current controller state. If its download fails, use Retry in the
+notification; navigation and pending work remain available.
+
 ## Choose a snapshot
 
 History follows the selected bookmark/workspace and query. Op Log describes

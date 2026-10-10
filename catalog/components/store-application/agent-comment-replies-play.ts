@@ -10,7 +10,9 @@ export async function agentCommentReplies({
   await userEvent.click(
     await c.findByRole("button", { name: /Open Codex ended/ }),
   );
-  await userEvent.click(c.getByRole("button", { name: "Expand 3 tool calls" }));
+  await userEvent.click(
+    await c.findByRole("button", { name: "Expand 3 tool calls" }),
+  );
   const tool = c.getByRole("group", { name: "apply_patch tool call" });
   await within(tool).findByText(
     "The nested follow-up stays attached to the reply branch.",

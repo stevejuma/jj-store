@@ -1,12 +1,24 @@
 import { defineConfig } from "vite";
 import { svelte } from "@sveltejs/vite-plugin-svelte";
 import tailwindcss from "@tailwindcss/vite";
+import { fileURLToPath } from "node:url";
+import { viewModuleUrls } from "../scripts/view-module-urls.mjs";
 export default defineConfig({
-  plugins: [tailwindcss(), svelte()],
+  plugins: [
+    viewModuleUrls(fileURLToPath(new URL("../web", import.meta.url))),
+    tailwindcss(),
+    svelte(),
+  ],
   resolve: { dedupe: ["svelte", "bits-ui"] },
-  // Process source-distributed Svelte rune modules through the normal compiler.
+  // Prebundle prepared Svelte families together to retain one context identity.
   optimizeDeps: {
     include: [
+      "@lapismd/design-core/shell",
+      "@lapismd/design-core/forms",
+      "@lapismd/design-core/ai",
+      "@lapismd/design-core/diff",
+      "@lapismd/design-core/workspace",
+      "@lapismd/design-core/filter",
       "bits-ui",
       "@lucide/svelte/icons/arrow-left-right",
       "@lucide/svelte/icons/ban",
@@ -70,11 +82,6 @@ export default defineConfig({
       "debug",
       "extend",
     ],
-    exclude: [
-      "@lapismd/design-core",
-      "@lapismd/design-core/shell",
-      "@lapismd/design-core/shadcn/column-canvas",
-      "@tursodatabase/database-wasm",
-    ],
+    exclude: ["@tursodatabase/database-wasm"],
   },
 });

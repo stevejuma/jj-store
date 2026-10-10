@@ -1,5 +1,12 @@
 # Change map
 
+E-UI-VIEW-LOADING-001 records the local package hook against a packed artifact
+and registry fallback, preserving peer ranges and portable dependency metadata.
+Development optimization and production lazy chunks require separate cold
+evidence; neither substitutes for registry release or visual baseline approval.
+Focused import, delivery and conflict-context checks pass; broader interaction
+failures remain explicit in the evidence and milestone review.
+
 E-INBOX-CONTROLS-001 retains JST-UI-015 ownership: inbox filters, ID-only device
 preferences and responsive navigation styles are maintained under `web/src/lib`.
 Their provenance identifies the owned derivation; production imports no

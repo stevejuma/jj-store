@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed browsing and settings: local tab branding uses the accepted logo; existing compact footer menus and inbox controls retain documented navigation and device-local behavior.",
-      "fingerprint": "2d161804b38d123ca399ad61ae588586c71bcd7f5d909c48fdc51d4f0eb915fc"
+      "reason": "Prepared archive consumption, shared view imports, shell-owned conflict overlays and bounded dynamic asset inventory are documented in the install and browsing guides; controller selections, authentication and drafts retain their owners.",
+      "fingerprint": "b157903a4aa161cb2d4fd21f73aad001927f6a09dc4a68d0c5c5a25ebf1f7ac7"
     }
   },
   {

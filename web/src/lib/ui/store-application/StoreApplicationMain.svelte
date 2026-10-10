@@ -1,10 +1,11 @@
 <script lang="ts">
+  import StoreLazyView from "./StoreLazyView.svelte";
+  import { views } from "./application-views.js";
   import {
     AppShell,
     type AppShellController,
   } from "@lapismd/design-core/shell";
   import StoreStackWorkspacePicker from "../store-stack-workspace/StoreStackWorkspacePicker.svelte";
-  import StoreStacksApplicationView from "../store-stack-workspace/StoreStacksApplicationView.svelte";
   import { isStacksRoute } from "../../controller/store-stacks-navigation.js";
   import StoreStackWorkspaceState from "../store-stack-workspace/StoreStackWorkspaceState.svelte";
   import type { StackWorkspaceController } from "../../controller/stack-workspace/controller.svelte.js";
@@ -16,10 +17,8 @@
   import type { StorePage } from "../community-navigation/model.js";
   import type { StoreSettingsSection } from "../store-settings/model.js";
   import StoreTerminalWorkspace from "../store-terminal/StoreTerminalWorkspace.svelte";
-  import StoreSettings from "../store-settings/StoreSettings.svelte";
   import CommunityApplicationMobileNavigation from "../community-application/CommunityApplicationMobileNavigation.svelte";
   import StoreProjectsBreadcrumb from "../store-work/StoreProjectsBreadcrumb.svelte";
-  import StoreThreads from "../store-threads/StoreThreads.svelte";
   import StoreThreadsBreadcrumb from "../store-threads/StoreThreadsBreadcrumb.svelte";
   import { isRepositoryProjects } from "../../controller/projects-view-cache.js";
   import StoreRepositoryTabs from "./StoreRepositoryTabs.svelte";
@@ -117,13 +116,19 @@
           {@render settingsRepository()}
         </AppShell.Toolbar>
       {/if}
-      <StoreSettings
-        {controller}
-        section={settingsSection}
-        onClose={closeSettings}
-      />
+      <StoreLazyView load={views.settings} label="Settings"
+        >{#snippet content(View)}<View
+            {controller}
+            section={settingsSection}
+            onClose={closeSettings}
+          />{/snippet}</StoreLazyView
+      >
     {:else if current.agentsHub}{@render agents?.()}
-    {:else if current.page === "threads"}<StoreThreads {controller} />
+    {:else if current.page === "threads"}<StoreLazyView
+        load={views.threads}
+        label="Threads"
+        >{#snippet content(View)}<View {controller} />{/snippet}</StoreLazyView
+      >
     {:else}
       {#if shell.mobile.resolvedMode === "mobile"}
         <AppShell.Toolbar>
@@ -171,20 +176,22 @@
             {#key current.repository + (focusedStacks ? "stacks" : current.page)}
               {#if focusedStacks}
                 {#if stackWorkspace && (!stackWorkspace.snapshot || stackWorkspace.snapshot.repository === current.repository) && !initialStackFailure}
-                  <StoreStacksApplicationView
-                    {controller}
-                    workspace={stackWorkspace}
+                  <StoreLazyView load={views.stacks} label="Workspace"
+                    >{#snippet content(View)}<View
+                        {controller}
+                        workspace={stackWorkspace}
+                      >
+                        {#snippet history()}
+                          {#if children}{@render children(
+                              current.page,
+                              current.repository,
+                            )}{:else}<StoreApplicationPlaceholder
+                              repository={current.repository}
+                              page={current.page}
+                            />{/if}
+                        {/snippet}
+                      </View>{/snippet}</StoreLazyView
                   >
-                    {#snippet history()}
-                      {#if children}{@render children(
-                          current.page,
-                          current.repository,
-                        )}{:else}<StoreApplicationPlaceholder
-                          repository={current.repository}
-                          page={current.page}
-                        />{/if}
-                    {/snippet}
-                  </StoreStacksApplicationView>
                 {:else}
                   <StoreStackWorkspaceState
                     loading={Boolean(stacksPreparing)}
