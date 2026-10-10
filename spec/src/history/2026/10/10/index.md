@@ -32,3 +32,4 @@ Browse the child pages below.
 - [E-TEST-REPAIR-LAND-001](E-TEST-REPAIR-LAND-001/index.md)
 - [E-CHAT-INSPECTOR-001](E-CHAT-INSPECTOR-001/index.md)
 - [E-UI-SKELETONS-001](E-UI-SKELETONS-001/index.md)
+- [E-CHAT-QUEUE-001](E-CHAT-QUEUE-001/index.md)

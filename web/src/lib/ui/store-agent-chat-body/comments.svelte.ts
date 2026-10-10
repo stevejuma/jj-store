@@ -80,12 +80,7 @@ export class ChatBodyComments {
     );
   }
   get canSend() {
-    return (
-      !!this.props().onSend &&
-      !this.sending &&
-      !this.retainedSubmission &&
-      (!!this.message.trim() || this.pending.length > 0)
-    );
+    return submission.canSend(this);
   }
   get key() {
     return this.active ? anchorKey(this.active.anchor) : "";

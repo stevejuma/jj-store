@@ -14,7 +14,6 @@ import {
   runtimeMatches,
   waitForRuntime,
 } from "../ui/store-agent-execution/runtime-preparation.js";
-import { conversationSubmissionResult } from "./submission-result.js";
 import { prepareStandaloneRuntime } from "./prepare-standalone-runtime.js";
 import { sha256 } from "@noble/hashes/sha2.js";
 import { bytesToHex } from "@noble/hashes/utils.js";
@@ -135,7 +134,7 @@ export function createStandaloneSender(
       const outcome = await manager.client.request<AgentOutcome>(
         `agents/outcome?request=${submission.id}`,
       );
-      return conversationSubmissionResult({
+      return manager.promptQueue.submitted(submission, {
         request_id: submission.id,
         conversation_id: id,
         comment_publication: outcome.comment_publication ?? null,

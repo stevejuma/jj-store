@@ -20,6 +20,15 @@ receipts. An adapter session with no acknowledged turn is prepared as a new
 context session rather than loading a nonexistent rollout. No new command, DTO,
 credential, permission or prompt-retry authority is introduced.
 
+E-CHAT-QUEUE-001 preserves JST-API-001/JST-API-006. The browser captures pending
+prompt/comment snapshots and consumes existing command/outcome receipts and
+context_delivery queue acknowledgements. Cancel first reads the original request
+and targets only its exact queued recipient. Status/recovery reads never
+resubmit a prompt. Deferred comment publication remains independent from queue
+acceptance. No endpoint, generated DTO, admission, execution-journal or ACP
+control field changes; the queued publication label and captured author are
+internal UI state only.
+
 Status `revision` is the conditional saved-setup revision. Session activity,
 publication and process shutdown do not change it; a setup save or removal does.
 Duplicate original requests retain their receipt without advancing it. A

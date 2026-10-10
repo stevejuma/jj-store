@@ -17,6 +17,7 @@
     size = "medium",
     showPresence = false,
     decorative = false,
+    contrast = "default",
     presence: presenceOverride,
     shape,
   }: {
@@ -25,6 +26,7 @@
     shape?: "circle" | "rounded";
     showPresence?: boolean;
     decorative?: boolean;
+    contrast?: "default" | "strong";
     presence?: CommunityMemberModel["presence"] | "unknown";
   } = $props();
 
@@ -68,6 +70,7 @@
   class="community-member-avatar"
   data-ui-component="community-member-avatar"
   data-size={size}
+  data-contrast={contrast === "strong" ? "strong" : undefined}
   data-shape={resolvedShape}
   title={liveState ? `${member.name}, ${presenceLabel}` : undefined}
   aria-hidden={hidden ? "true" : undefined}

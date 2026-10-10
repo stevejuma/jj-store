@@ -101,6 +101,7 @@
       {controller}
       {manager}
       {conversation}
+      sessions={[session]}
       loading={manager.eventsLoading}
       {user}
       onSend={send}
@@ -194,6 +195,7 @@
           {manager}
           sessions={[session]}
           actions={inputActions}
+          comments={conversation.comments}
           canSend={(canPrepare || (idle && (ready || canConfigure))) &&
             !sender.preparing &&
             !manager.busy &&

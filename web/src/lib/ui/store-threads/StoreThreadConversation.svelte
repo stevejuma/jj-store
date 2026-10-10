@@ -1,4 +1,6 @@
 <script lang="ts">
+  import StoreAgentPromptQueue from "../store-agent-chat/StoreAgentPromptQueue.svelte";
+  import { useConversationReactions } from "../../conversations/reactions.svelte.js";
   import StoreThreadAgentRepositories from "./StoreThreadAgentRepositories.svelte";
   import StoreThreadCodebase from "./StoreThreadCodebase.svelte";
   import StoreWorkspaceButton from "../store-agent-workspace/StoreWorkspaceButton.svelte";
@@ -108,30 +110,7 @@
       onReact: disabled
         ? undefined
         : (id, emoji, custom) => {
-            const target = threads.projection.targets[id];
-            if (target)
-              void threads.toggle(target, emoji, custom).catch(() => {});
-            else {
-              const linked = projection.targets.get(id),
-                session = linkedSessions.find(
-                  (s) => s.id === linked?.sessionId,
-                );
-              const feedback =
-                linked &&
-                controller?.execution?.discussions.message(
-                  linked.sessionId,
-                  linked.rowId,
-                );
-              if (session && feedback)
-                void controller!
-                  .execution!.discussions.toggle(
-                    session.repository,
-                    feedback.target,
-                    emoji,
-                    custom,
-                  )
-                  .catch(() => {});
-            }
+            void feedback.toggle(id, emoji, custom).catch(() => {});
           },
     };
   });
@@ -161,30 +140,13 @@
           ?.scrollIntoView({ block: "nearest" }),
       );
   });
-  const reactions = $derived(
-    Object.fromEntries(
-      projection.items.map((item) => {
-        const target = threads.projection.targets[item.id];
-        if (target) return [item.id, threads.reactionModels(target)];
-        const linked = projection.targets.get(item.id),
-          session = linkedSessions.find((s) => s.id === linked?.sessionId);
-        const feedback =
-          linked &&
-          controller?.execution?.discussions.message(
-            linked.sessionId,
-            linked.rowId,
-          );
-        return [
-          item.id,
-          session && feedback
-            ? controller!
-                .execution!.discussions.reader(session.repository)
-                .reactionModels(feedback.target)
-            : [],
-        ];
-      }),
-    ),
-  );
+  const feedback = useConversationReactions(() => ({
+    threads,
+    targets: new Map(Object.entries(threads.projection.targets)),
+    projection,
+    rows: linkedRows,
+    manager: controller?.execution,
+  }));
   $effect(() => {
     threads.conversations.destination;
     projection;
@@ -226,7 +188,7 @@
       ? "Thread replies"
       : `${threads.detail?.thread.value.title ?? "Thread"} messages`}
     onOpenThread={onReply}
-    {reactions}
+    reactions={feedback.models}
     onReact={conversation.host.onReact}
     onInspectTool={conversation.host.onInspectTool}
   >
@@ -265,28 +227,18 @@
         />{/if}
     {/snippet}
     {#snippet metadataSupplement(item)}
-      {@const target = threads.projection.targets[item.id]}
-      {@const linked = projection.targets.get(item.id)}
-      {@const captured =
-        linked &&
-        controller?.execution?.discussions.message(
-          linked.sessionId,
-          linked.rowId,
-        )}
-      {#if target}<StoreMessageReactions
-          {threads}
-          {target}
-          {disabled}
-          showControls={false}
-        />{:else if captured && controller?.execution}<StoreMessageReactions
-          threads={controller.execution.discussions.reader(
-            linkedSessions.find((s) => s.id === linked?.sessionId)!.repository,
-          )}
-          target={captured.target}
+      {@const entry = feedback.entry(item.id)}
+      {#if entry}<StoreMessageReactions
+          threads={entry.threads}
+          target={entry.target}
           {disabled}
           showControls={false}
         />{/if}
     {/snippet}
+    {#snippet queuedMessages()}{#if controller?.execution}<StoreAgentPromptQueue
+          manager={controller.execution}
+          sessions={linkedSessions}
+        />{/if}{/snippet}
     {#snippet composer(presentation)}
       {#if controller?.execution}<StoreConversationRecovery
           {conversation}
@@ -323,6 +275,7 @@
         manager={controller?.execution}
         sessions={linkedSessions}
         actions={inputActions}
+        comments={conversation.comments}
         canSend={!disabled && conversation.comments.canSend}
         onSend={() => void conversation.comments.send()}
         error={conversation.comments.error}

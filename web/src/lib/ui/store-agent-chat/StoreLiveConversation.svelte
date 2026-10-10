@@ -24,12 +24,14 @@
   import type { ConversationSession } from "../../conversations/session.svelte.js";
   import { useAppearance } from "../../appearance/store.svelte.js";
   import StoreAgentChatBody from "../store-agent-chat-body/StoreAgentChatBody.svelte";
+  import StoreAgentPromptQueue from "./StoreAgentPromptQueue.svelte";
   import StoreConversationAgentSupplement from "./StoreConversationAgentSupplement.svelte";
   import StoreMessageReactions from "../store-threads/StoreMessageReactions.svelte";
   let {
     controller,
     manager,
     rows,
+    sessions,
     conversation,
     user = { id: "user", name: "You", handle: "", initials: "YO" },
     composer,
@@ -44,6 +46,7 @@
     controller?: StoreController;
     manager: AgentExecution;
     rows: readonly AgentConversationRow[];
+    sessions: readonly import("../../controller/agent-execution-types.js").AgentSession[];
     conversation: ConversationSession;
     user?: CommunityMemberModel;
     composer?: Snippet<["document" | "classic"]>;
@@ -71,7 +74,15 @@
     ),
   );
   const projection = $derived(
-    agentConversationProjection(rows, manager.discussions.values, user),
+    agentConversationProjection(
+      rows.filter(
+        (r) =>
+          r.kind !== "user" ||
+          !manager.promptQueue.hidePrompt(r.session.id, r.request),
+      ),
+      manager.discussions.values,
+      user,
+    ),
   );
   $effect(() => {
     const next = projection;
@@ -222,6 +233,10 @@
   onReact={conversation.host.onReact}
   onInspectTool={conversation.host.onInspectTool}
 >
+  {#snippet queuedMessages()}<StoreAgentPromptQueue
+      {manager}
+      {sessions}
+    />{/snippet}
   {#snippet afterItems()}
     {#each replay as source (source)}<StoreAgentReplyDraftRecovery
         {manager}

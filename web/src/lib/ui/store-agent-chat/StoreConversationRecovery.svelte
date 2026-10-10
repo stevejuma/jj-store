@@ -3,7 +3,6 @@
   import { Button } from "@lapismd/design-core/shadcn/button";
   import type { ConversationSession } from "../../conversations/session.svelte.js";
   import type { AgentExecution } from "../../controller/agent-execution.svelte.js";
-  import { conversationSubmissionResult } from "../../conversations/submission-result.js";
   let {
     conversation,
     manager,
@@ -45,12 +44,14 @@
   }
   $effect(() => {
     if (pending && receipt) {
-      const id = pending.id,
-        result = conversationSubmissionResult(
-          receipt,
-          new Map(manager.value?.sessions.map((s) => [s.id, s.title])),
-        );
-      untrack(() => conversation.comments.recover(id, result));
+      const submission = pending,
+        outcome = receipt;
+      untrack(() =>
+        conversation.comments.recover(
+          submission.id,
+          manager.promptQueue.submitted(submission, outcome),
+        ),
+      );
     }
   });
   function keep() {

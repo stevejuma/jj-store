@@ -105,6 +105,49 @@ test("unknown publication freezes the original snapshot and rejects duplicate se
   expect(session.comments.message).toBe("");
   expect(session.comments.pending).toHaveLength(0);
 });
+test("a deferred review queue acknowledgement frees the composer without claiming publication", async () => {
+  const session = new ConversationSessions().get("queued-reviews");
+  session.adopt(projection());
+  session.host = { author: user, onSend: () => ({ publication: "unknown" }) };
+  session.comments.open(block, { from: 0, to: 5 }, "Review next");
+  session.comments.message = "With this review";
+  expect(await session.comments.send()).toBe(false);
+  const retained = session.comments.retainedSubmission!;
+  session.comments.recover(retained.id, {
+    publication: "queued",
+    recoveryRequired: false,
+  });
+  expect(session.comments.retainedSubmission).toBeUndefined();
+  expect(session.comments.message).toBe("");
+  expect(session.comments.pending).toHaveLength(0);
+  expect(
+    session.comments.findComment(retained.comments[0].commentId),
+  ).toMatchObject({ status: "queued" });
+  expect(
+    session.comments.findComment(retained.comments[0].commentId)?.revision,
+  ).toBeUndefined();
+  session.comments.message = "Another message";
+  expect(session.comments.canSend).toBe(true);
+});
+test("a proven queue refusal retains editable text and comments rather than freezing an unknown request", async () => {
+  const session = new ConversationSessions().get("full-queue");
+  session.adopt(projection());
+  session.host = {
+    author: user,
+    onSend: () => ({
+      publication: "refused",
+      recoveryRequired: true,
+      error: "queue_full",
+    }),
+  };
+  session.comments.open(block, { from: 0, to: 5 }, "Review next");
+  session.comments.message = "Keep this message";
+  expect(await session.comments.send()).toBe(false);
+  expect(session.comments.message).toBe("Keep this message");
+  expect(session.comments.pending[0].comment.status).toBe("draft");
+  expect(session.comments.retainedSubmission).toBeUndefined();
+  expect(session.comments.canSend).toBe(true);
+});
 test("editing a sent comment retains its old answered revision and prepares a checked replacement", () => {
   const session = new ConversationSessions().get("a");
   session.host = { author: user };

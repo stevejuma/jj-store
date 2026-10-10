@@ -105,10 +105,17 @@ owns that space. Classic retains the framed composer. Both presentations share
 mention, emoji, formatting, audience and submission logic; switching preserves
 draft text and selection, and waits for active input composition to finish. The
 fixed footer retains Send and advertised runtime controls. During active work
-Send becomes a destructive red Stop button with a square icon. Stop cancels
-exact active turns (or ends an opening participation before its handshake is
-connected) and has a separate receipt lane, so a pending Send never blocks it or
-loses its request identity. Unknown Stop outcomes are checked without issuing
+the input remains editable after queue acknowledgement. Nonblank authored text
+or pending comments selects an arrow-up Queue message button using the theme
+primary background; addressing tokens and whitespace alone do not select Send.
+With no submission content, the control is a destructive Stop button with a
+square icon. Pending/unknown request safeguards disable submission independently
+of active-turn state. Stop cancels exact active turns (or ends an opening
+participation before its handshake is connected) and has a separate receipt
+lane, so a pending Send never blocks it or loses its request identity. Unknown
+send confirmation retains a separate Stop action beside disabled Queue while its
+exact captured draft is frozen. Queue acknowledgement restores the normal
+content-sensitive action. Unknown Stop outcomes are checked without issuing
 another Stop. This behavior is shared by live, linked Thread and
 recorded-conversation footers. Starting/Working appears directly after retained
 messages and before the roomy draft, with its label centred vertically against
@@ -118,6 +125,30 @@ and contextual status/recovery remains reachable. Activity captions retain a
 polite live status announcement in their shared row. The activity avatar shares
 the message and next-draft avatar column; nested activity chrome must not
 introduce a separate horizontal inset.
+
+Accepted unstarted messages appear in one Queued messages area above the input
+in both views, alongside unsent comments. Captured text/comments and exact
+per-recipient state survive view switching and in-app navigation. The pending
+prompt group reuses the pending-comment chevron and card styles. The theme
+background contains the captured author avatar, text and hover actions. The
+whole queued row, including avatar and metadata, uses reduced opacity. Initials
+fallbacks use the owned avatar's optional stronger contrast; photo and emoji
+avatars preserve their captured content. Recipient/status metadata sits below,
+outside the card. Cancel/status actions also appear on keyboard focus and touch;
+labels and actions retain readable contrast. Queued prose uses the same
+body-size token, sans-serif family and 1.65 line height as normal message
+responses. Short text is vertically centred beside its avatar; card block
+padding is symmetric. Prompts longer than 600 characters or eight lines show a
+compact text preview with See More / See Less. Truncation changes presentation
+only; full captured requests remain unchanged. Group and prompt disclosure state
+survive view switches and in-app navigation. Cancel targets only that queued
+request; editing and reordering are unavailable. Confirmed start moves that
+recipient's message into history without duplicate rendering. Queue
+acknowledgement includes controller context_delivery events and releases the
+composer before the active turn completes. Publication, enqueueing and starting
+remain distinct; failed or uncertain outcomes retain exact drafts and recovery
+identities. Reads never resubmit a prompt. Queue state is application session
+state, not browser persistence or a new server authority.
 
 Live Thread and agent document drafts use the prototype's shared editor caret
 theme: a 2px stroke, 1.2 height scale and primary colour. Immutable source

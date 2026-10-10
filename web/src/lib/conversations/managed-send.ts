@@ -5,7 +5,6 @@ import type {
   ChatSubmissionResult,
 } from "../ui/store-agent-chat-body/model.js";
 import { mentionedAgentIds } from "../community/agent-mentions.js";
-import { conversationSubmissionResult } from "./submission-result.js";
 export async function submitManagedConversation(
   manager: AgentExecution,
   conversation: ConversationSession,
@@ -46,11 +45,17 @@ export async function submitManagedConversation(
   }
   try {
     await chat.send(submission.text, addressed, comments, submission.id);
-    return conversationSubmissionResult(chat.receipts[submission.id]);
+    return manager.promptQueue.submitted(
+      submission,
+      chat.receipts[submission.id],
+    );
   } catch (cause) {
     const state = chat.publications[submission.id]?.state;
     if (chat.receipts[submission.id])
-      return conversationSubmissionResult(chat.receipts[submission.id]);
+      return manager.promptQueue.submitted(
+        submission,
+        chat.receipts[submission.id],
+      );
     if (chat.pending?.request_id === submission.id)
       return { publication: "unknown", error: chat.error };
     throw cause;

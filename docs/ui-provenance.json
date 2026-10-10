@@ -960,7 +960,8 @@
           "revision": "d859f33a484a9238bb11f974f4ead8e9be729ec6",
           "license": "Apache-2.0"
         }
-      ]
+      ],
+      "reason": "Optional strong initials contrast supports uniformly dimmed pending rows; default, image and emoji presentation remain unchanged."
     },
     {
       "local": "web/src/lib/ui/community-member-avatar/community-member-avatar.css",
@@ -970,7 +971,8 @@
           "revision": "d859f33a484a9238bb11f974f4ead8e9be729ec6",
           "license": "Apache-2.0"
         }
-      ]
+      ],
+      "reason": "Optional strong initials contrast supports uniformly dimmed pending rows; default, image and emoji presentation remain unchanged."
     },
     {
       "local": "web/src/lib/ui/community-member-avatar/handle.ts",
@@ -2810,6 +2812,26 @@
     {
       "local": "web/src/lib/ui/store-work/StoreWorkTaskSkeleton.svelte",
       "reason": "Locally authored route and data-loading composition using maintained owned layouts and public Design Core Skeleton primitives; no Community source is copied."
+    },
+    {
+      "local": "web/src/lib/ui/store-agent-chat/StoreAgentPromptQueue.svelte",
+      "reason": "Application-authored accepted prompt queue shared by both conversation renderers; composes public Design Core buttons and preserves exact cancellation identities."
+    },
+    {
+      "local": "web/src/lib/conversations/queued-agent-messages.svelte.ts",
+      "reason": "Application-authored session-only queue projection of exact retained submission snapshots, existing receipts and execution events; no external presentation or source dependency."
+    },
+    {
+      "local": "web/src/lib/conversations/prompt-delivery.ts",
+      "reason": "Application-authored projection of queue/start/context-delivery acknowledgements and authored prompt content under existing execution contracts."
+    },
+    {
+      "local": "web/src/lib/conversations/legacy-recorded.ts",
+      "reason": "Extracted unchanged legacy transcript item projection from owned StoreRecordedConversation; no external dependency or new source contract."
+    },
+    {
+      "local": "web/src/lib/ui/store-agent-chat/QueuedPromptText.svelte",
+      "reason": "Application-authored presentation-only queued prompt preview; reuses the owned diff disclosure styles and retains full captured submission text."
     }
   ],
   "desktopAppearance": {

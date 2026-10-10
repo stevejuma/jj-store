@@ -37,6 +37,7 @@
     loading = false,
     emptyState,
     beforeItems,
+    queuedMessages,
     afterItems,
     supplement: itemSupplement,
     metadataSupplement: itemMetadata,
@@ -283,6 +284,7 @@
             />{/each}
         </aside>{/if}
       {#if composer}<div class="chat-document-composer">
+          {@render queuedMessages?.()}
           <ChatCommentBatch state={comments} />
           {@render composer(renderedView)}
         </div>{/if}

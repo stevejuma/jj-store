@@ -1,3 +1,4 @@
+import { authoredPrompt } from "../../conversations/prompt-delivery.js";
 import { tick } from "svelte";
 import type { ChatBodyComments } from "./comments.svelte.js";
 import type {
@@ -5,10 +6,22 @@ import type {
   ChatPromptSubmission,
   ChatSubmissionResult,
 } from "./model.js";
+export function hasContent(state: ChatBodyComments) {
+  return !!authoredPrompt(state.message) || state.pending.length > 0;
+}
+export function canSend(state: ChatBodyComments) {
+  return (
+    !!state.props().onSend &&
+    !state.sending &&
+    !state.retainedSubmission &&
+    hasContent(state)
+  );
+}
 export async function send(state: ChatBodyComments) {
   if (!state.canSend) return false;
   const submission: ChatPromptSubmission = {
     id: crypto.randomUUID().replaceAll("-", ""),
+    author: { ...state.author },
     text: state.message,
     comments: state.pending.map(({ thread, comment }) => ({
       threadId: thread.id,
@@ -25,6 +38,11 @@ export async function send(state: ChatBodyComments) {
   try {
     const outcome = await state.props().onSend!(submission);
     state.submissionResult = outcome ?? { publication: "published" };
+    if (outcome?.publication === "refused")
+      throw new Error(
+        outcome.error ??
+          "The submission was refused. Your drafts are retained.",
+      );
     if (outcome?.publication === "unknown" || outcome?.recoveryRequired) {
       state.retainedSubmission = submission;
       if (outcome.publication === "published")
@@ -34,14 +52,10 @@ export async function send(state: ChatBodyComments) {
         "Publication is awaiting confirmation. Check the retained request.";
       return false;
     }
-    if (outcome?.publication === "refused")
-      throw new Error(
-        outcome.error ??
-          "The submission was refused. Your drafts are retained.",
-      );
     for (const c of submission.comments) {
       const comment = state.findComment(c.commentId)!;
-      if (comment.status !== "replied") comment.status = "sent";
+      if (comment.status !== "replied")
+        comment.status = outcome?.publication === "queued" ? "queued" : "sent";
       comment.batchId = outcome?.batchId ?? submission.id;
     }
     if (state.message === submission.text)
@@ -98,6 +112,18 @@ export function recover(
 ) {
   if (state.retainedSubmission?.id !== id) return;
   state.submissionResult = result;
+  if (result.publication === "queued" && !result.recoveryRequired) {
+    const submitted = state.retainedSubmission;
+    for (const entry of submitted.comments) {
+      const comment = state.findComment(entry.commentId);
+      if (comment && comment.status !== "replied") comment.status = "queued";
+    }
+    if (state.message === submitted.text)
+      state.message = state.props().restoreMessage?.(submitted.text) ?? "";
+    state.retainedSubmission = undefined;
+    state.error = "";
+    return;
+  }
   if (result.publication === "refused") {
     state.refusePublication(id, result.error ?? "Publication was refused.");
     return;

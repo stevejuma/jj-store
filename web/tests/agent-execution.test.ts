@@ -32,6 +32,18 @@ test("queue cancellation targets only prompts that have not started or settled",
     ["retained"],
   );
 });
+test("controller context delivery acknowledges a queued prompt before ACP starts it", () => {
+  const events = [
+    event(1, {
+      type: "context_delivery",
+      requestId: "next",
+      sentContext: { version: 1, delivery: "queued" },
+    }),
+  ];
+  assert.deepEqual([...queuedRequests(events)], ["next"]);
+  events.push(event(2, { type: "started", requestId: "next" }));
+  assert.deepEqual([...queuedRequests(events)], []);
+});
 test("runtime choices prefer advertised configuration values and retain groups", () => {
   const session = {
     modes: { availableModes: [{ id: "old", name: "Old" }] },

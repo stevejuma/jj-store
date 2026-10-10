@@ -1,10 +1,12 @@
 <script lang="ts">
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import SendIcon from "@lucide/svelte/icons/send";
+  import SendIcon from "@lucide/svelte/icons/arrow-up";
   import StopIcon from "@lucide/svelte/icons/square";
   import type { Snippet } from "svelte";
   let {
     canSend,
+    hasContent = canSend,
+    sendPending = false,
     onSend,
     onStop,
     stopping = false,
@@ -14,6 +16,8 @@
     actions,
   }: {
     canSend: boolean;
+    hasContent?: boolean;
+    sendPending?: boolean;
     onSend: () => void;
     onStop?: () => void;
     stopping?: boolean;
@@ -22,6 +26,8 @@
     workspace?: Snippet;
     actions?: Snippet;
   } = $props();
+  const stopSelected = $derived(!!onStop && !hasContent);
+  const sendLabel = $derived(onStop ? "Queue message" : "Send message");
 </script>
 
 <div class="chat-message-footer" role="group" aria-label="Message actions">
@@ -31,18 +37,32 @@
     </div>{/if}
   {@render workspace?.()}
   {@render controls?.()}
+  {#if onStop && hasContent && sendPending}
+    <Button
+      size="icon-sm"
+      variant="destructive"
+      disabled={stopping}
+      onclick={onStop}
+      aria-label={stopping ? "Stopping agent" : "Stop agent"}
+      title="Stop active work"><StopIcon aria-hidden="true" /></Button
+    >
+  {/if}
   <Button
     size="icon-sm"
-    variant={onStop ? "destructive" : "outline"}
-    disabled={onStop ? stopping : !canSend}
-    onclick={onStop ?? onSend}
-    aria-label={onStop
+    variant={stopSelected ? "destructive" : "default"}
+    disabled={stopSelected ? stopping : !canSend}
+    onclick={stopSelected ? onStop : onSend}
+    aria-label={stopSelected
       ? stopping
         ? "Stopping agent"
         : "Stop agent"
-      : "Send message"}
-    title={onStop ? "Stop active work" : "Send message (⌘ / Ctrl + Enter)"}
-    >{#if onStop}<StopIcon />{:else}<SendIcon />{/if}</Button
+      : sendLabel}
+    title={stopSelected
+      ? "Stop active work"
+      : `${sendLabel} (⌘ / Ctrl + Enter)`}
+    >{#if stopSelected}<StopIcon aria-hidden="true" />{:else}<SendIcon
+        aria-hidden="true"
+      />{/if}</Button
   >
 </div>
 

@@ -5,6 +5,7 @@
 - [Conversation metadata review](metadata-review.md)
 - [Bounded test repair review](test-repairs-review.md)
 - [View loading review](view-loading-review.md)
+- [Queued agent message review](queued-messages-review.md)
 - [history](history/index.md)
   {{#include history/SUMMARY.nav.md}}
 - [M24 reusable ACP agents and contextual conversations: pages 2](SUMMARY.index-index/002/index.md)

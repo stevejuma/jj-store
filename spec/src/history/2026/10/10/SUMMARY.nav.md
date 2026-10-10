@@ -54,3 +54,5 @@
   {{#include E-CHAT-INSPECTOR-001/SUMMARY.nav.md}}
 - [E-UI-SKELETONS-001](E-UI-SKELETONS-001/index.md)
   {{#include E-UI-SKELETONS-001/SUMMARY.nav.md}}
+- [E-CHAT-QUEUE-001](E-CHAT-QUEUE-001/index.md)
+  {{#include E-CHAT-QUEUE-001/SUMMARY.nav.md}}

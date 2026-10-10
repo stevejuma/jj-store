@@ -64,7 +64,7 @@
 </script>
 
 <Story
-  name="Working follows messages and Stop preserves the draft"
+  name="Working follows messages and drafted content selects Queue"
   args={{ status: "Working", chatFeedback: "working" }}
   play={async ({ canvasElement }) => {
     const c = await layout(canvasElement, "Working");
@@ -83,14 +83,19 @@
     expect(getComputedStyle(draft).lineHeight).toBe(
       getComputedStyle(reader).lineHeight,
     );
-    await userEvent.click(draft);
-    await userEvent.keyboard("Retained follow-up");
     const stop = c.getByRole("button", { name: "Stop agent" });
     expect(stop).toBeEnabled();
     expect(stop).toHaveAttribute("data-variant", "destructive");
-    await userEvent.click(stop);
+    await userEvent.click(draft);
+    await userEvent.keyboard("Retained follow-up");
+    const queue = c.getByRole("button", { name: "Queue message" });
+    expect(queue).toBeEnabled();
+    expect(queue).toHaveAttribute("data-variant", "default");
+    await userEvent.click(draft);
+    await userEvent.keyboard("{Control>}a{/Control}{Backspace}");
+    await userEvent.click(c.getByRole("button", { name: "Stop agent" }));
     await c.findByRole("button", { name: "Send message" });
-    expect(draft).toHaveTextContent("Retained follow-up");
+    expect(draft).toHaveTextContent("");
     expect(c.queryByRole("button", { name: "Stop agent" })).toBeNull();
     const command = JSON.parse(
       c.getByLabelText("Last session command").textContent!,

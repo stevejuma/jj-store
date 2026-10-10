@@ -19,7 +19,7 @@ export async function refreshChatReceipt(chat: AgentChat) {
       const observed = events.some(
         (e) =>
           object(e.payload).requestId === entry.request_id &&
-          ["queued", "started", "record", "error"].includes(
+          ["queued", "started", "record", "error", "context_delivery"].includes(
             String(object(e.payload).type),
           ),
       );

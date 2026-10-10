@@ -48,7 +48,14 @@ export function useLinkedConversation(
   );
   const projection = $derived(
     agentConversationProjection(
-      rows,
+      rows.filter(
+        (r) =>
+          r.kind !== "user" ||
+          !options.controller?.execution?.promptQueue.hidePrompt(
+            r.session.id,
+            r.request,
+          ),
+      ),
       options.controller?.execution?.discussions.values ?? {},
       options.user,
     ),

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import type { ChatBodyComments } from "../store-agent-chat-body/comments.svelte.js";
+  import { hasContent as draftHasContent } from "../store-agent-chat-body/comment-submission.js";
   import type { Snippet } from "svelte";
   import type { AgentExecution } from "../../controller/agent-execution.svelte.js";
   import type { AgentSession } from "../../controller/agent-execution-types.js";
@@ -8,6 +10,8 @@
     manager,
     sessions,
     canSend,
+    comments,
+    hasContent = comments ? draftHasContent(comments) : canSend,
     onSend,
     error = "",
     controls,
@@ -17,6 +21,8 @@
     manager?: AgentExecution;
     sessions: readonly AgentSession[];
     canSend: boolean;
+    comments?: ChatBodyComments;
+    hasContent?: boolean;
     onSend: () => void;
     error?: string;
     controls?: Snippet;
@@ -53,6 +59,8 @@
 
 <ChatMessageFooter
   {canSend}
+  {hasContent}
+  sendPending={!!comments?.sending || !!comments?.retainedSubmission}
   {onSend}
   {error}
   {controls}

@@ -63,38 +63,51 @@
 }
 
 .community-member-avatar__image[data-fallback-tone="blue"] {
+  --community-member-avatar-strong-background: #172554;
   color: #ffffff;
   background: #2563eb;
 }
 
 .community-member-avatar__image[data-fallback-tone="emerald"] {
+  --community-member-avatar-strong-background: #022c22;
   color: #ffffff;
   background: #047857;
 }
 
 .community-member-avatar__image[data-fallback-tone="amber"] {
+  --community-member-avatar-strong-background: #451a03;
   color: #451a03;
   background: #fbbf24;
 }
 
 .community-member-avatar__image[data-fallback-tone="rose"] {
+  --community-member-avatar-strong-background: #4c0519;
   color: #ffffff;
   background: #e11d48;
 }
 
 .community-member-avatar__image[data-fallback-tone="cyan"] {
+  --community-member-avatar-strong-background: #083344;
   color: #083344;
   background: #22d3ee;
 }
 
 .community-member-avatar__image[data-fallback-tone="violet"] {
+  --community-member-avatar-strong-background: #2e1065;
   color: #ffffff;
   background: #7c3aed;
 }
 
 .community-member-avatar__image[data-fallback-tone="orange"] {
+  --community-member-avatar-strong-background: #431407;
   color: #ffffff;
   background: #c2410c;
+}
+
+.community-member-avatar[data-contrast="strong"]
+  .community-member-avatar__image[data-content="initials"] {
+  color: #ffffff;
+  background: var(--community-member-avatar-strong-background, #171717);
 }
 
 .community-member-avatar__image img {

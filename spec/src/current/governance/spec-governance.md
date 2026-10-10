@@ -169,3 +169,9 @@ resources before service replacement. Runtime observation and Send preparation
 are application-owned helpers; no source aliases, copied dependencies or
 credential authority are added. The jj-acp rejection fix has separate source
 evidence and a separately rebuilt, ignored development resource.
+
+E-CHAT-QUEUE-001 retains JST-GOV-002/008 ownership. The prompt queue and its
+session-only projection are application-authored under web/src/lib, with native
+ownership declarations in docs/ui-provenance.json. The shared footer composes
+the public Design Core primary Button and Lucide arrow-up; existing copied
+Community attribution remains intact. No external source dependency is added.

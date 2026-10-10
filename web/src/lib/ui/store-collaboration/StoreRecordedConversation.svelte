@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreAgentPromptQueue from "../store-agent-chat/StoreAgentPromptQueue.svelte";
   import type { Snippet } from "svelte";
   let inputActions = $state<Snippet>();
   import { useLinkedConversation } from "../../conversations/linked-conversation.svelte.js";
@@ -16,7 +17,7 @@
     consumeConversationDestination,
     openConversationSource,
   } from "../../conversations/navigation.js";
-  import { markdownBlocks } from "../store-agent-chat-body/markdown-blocks.js";
+  import { legacyRecordedItems } from "../../conversations/legacy-recorded.js";
   import { untrack } from "svelte";
   import StoreThreadPendingActions from "../store-threads/StoreThreadPendingActions.svelte";
   import { sha256 } from "@noble/hashes/sha2.js";
@@ -99,30 +100,7 @@
       captured?.conversation_feedback ?? undefined,
     );
     if (!activity.length)
-      next.items.unshift(
-        ...legacy.map((chunk) => {
-          const id = `${sessionId}:legacy:${chunk.sequence}`;
-          return {
-            id,
-            kind: "message" as const,
-            role: "assistant" as const,
-            author: agent,
-            label: "Assistant message",
-            blocks: markdownBlocks(
-              id,
-              String(chunk.sequence),
-              "Assistant message",
-              chunk.content,
-            ).map((block) => ({ ...block, commentable: false })),
-            turn: {
-              id,
-              author: agent.name,
-              prompt: "Recorded output",
-              summary: chunk.content.slice(0, 240),
-            },
-          };
-        }),
-      );
+      next.items.unshift(...legacyRecordedItems(sessionId, legacy, agent));
     return mergeConversationProjections(next, linked.projection);
   });
   const disabled = $derived(
@@ -245,6 +223,7 @@
     manager={controller?.execution}
     sessions={linked.sessions}
     actions={inputActions}
+    comments={conversation.comments}
     canSend={!disabled && conversation.comments.canSend}
     onSend={() => void conversation.comments.send()}
     error={conversation.comments.error}
@@ -260,6 +239,10 @@
   onReact={conversation.host.onReact}
   onInspectTool={conversation.host.onInspectTool}
 >
+  {#snippet queuedMessages()}{#if controller.execution}<StoreAgentPromptQueue
+        manager={controller.execution}
+        sessions={linked.sessions}
+      />{/if}{/snippet}
   {#snippet beforeItems()}{#if legacy.length}<p role="status">
         This legacy transcript has no exact message source. Selection comments
         are unavailable.

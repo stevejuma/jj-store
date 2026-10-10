@@ -6,7 +6,6 @@ import type {
   ChatSubmissionResult,
 } from "../ui/store-agent-chat-body/model.js";
 import { mentionedAgentIds } from "../community/agent-mentions.js";
-import { conversationSubmissionResult } from "./submission-result.js";
 export async function submitThreadConversation(
   context: {
     threads: ThreadsController;
@@ -51,10 +50,14 @@ export async function submitThreadConversation(
         submission.id,
       );
       await threads.refresh();
-      return conversationSubmissionResult(manager.chat.receipts[submission.id]);
+      return manager.promptQueue.submitted(
+        submission,
+        manager.chat.receipts[submission.id],
+      );
     } catch (cause) {
       if (manager.chat.receipts[submission.id])
-        return conversationSubmissionResult(
+        return manager.promptQueue.submitted(
+          submission,
           manager.chat.receipts[submission.id],
         );
       if (manager.chat.pending?.request_id === submission.id)

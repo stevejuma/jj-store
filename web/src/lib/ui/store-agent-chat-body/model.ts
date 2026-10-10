@@ -71,7 +71,7 @@ export interface ChatComment {
   id: string;
   author: CommunityMemberModel;
   text: string;
-  status: "draft" | "sending" | "sent" | "replied";
+  status: "draft" | "sending" | "queued" | "sent" | "replied";
   /** Persisted identity is separate from this editor's stable presentation ID. */
   messageId?: string;
   historical?: boolean;
@@ -101,11 +101,12 @@ export interface ChatPromptComment {
 }
 export interface ChatPromptSubmission {
   id: string;
+  author?: CommunityMemberModel;
   text: string;
   comments: readonly ChatPromptComment[];
 }
 export interface ChatSubmissionResult {
-  publication: "published" | "unknown" | "refused";
+  publication: "published" | "queued" | "unknown" | "refused";
   batchId?: string;
   delivery?: readonly {
     id: string;
@@ -147,6 +148,7 @@ export interface ChatBodyProps extends ChatCommentHost {
   /** Host-specific completed empty state, replacing the default Empty. */
   emptyState?: Snippet;
   beforeItems?: Snippet;
+  queuedMessages?: Snippet;
   afterItems?: Snippet;
   supplement?: Snippet<[ChatBodyItem]>;
   metadataSupplement?: Snippet<[ChatBodyItem]>;

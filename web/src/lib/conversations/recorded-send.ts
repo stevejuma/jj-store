@@ -6,7 +6,6 @@ import type {
   ChatSubmissionResult,
 } from "../ui/store-agent-chat-body/model.js";
 import { mentionedAgentIds } from "../community/agent-mentions.js";
-import { conversationSubmissionResult } from "./submission-result.js";
 export async function submitRecordedConversation(
   context: {
     controller: StoreController;
@@ -55,7 +54,10 @@ export async function submitRecordedConversation(
         submission.id,
       );
       await threads.loadConversation(parentId);
-      return conversationSubmissionResult(manager.chat.receipts[submission.id]);
+      return manager.promptQueue.submitted(
+        submission,
+        manager.chat.receipts[submission.id],
+      );
     }
     await threads.submitConversation({
       version: 1,
@@ -67,7 +69,8 @@ export async function submitRecordedConversation(
     return { publication: "published" };
   } catch (cause) {
     if (controller.execution?.chat.receipts[submission.id])
-      return conversationSubmissionResult(
+      return controller.execution.promptQueue.submitted(
+        submission,
         controller.execution.chat.receipts[submission.id],
       );
     if (threads.committedRequestId === submission.id)

@@ -15,15 +15,30 @@ export function conversationSubmissionResult(
     ["queued", "started", "running", "completed"].includes(a.state),
   );
   const publication = receipt.comment_publication?.state;
+  const refusedBeforeDispatch =
+    !publication &&
+    delivery.every(
+      (a) =>
+        a.state === "failed" &&
+        [
+          "queue_full",
+          "dispatch_not_sent",
+          "workspace_start_snapshot_unavailable",
+          "chat_preparation_failed_no_prompt",
+          "chat_context_preparation_failed_no_prompt",
+        ].includes(a.error ?? ""),
+    );
   return {
     publication:
       publication === "published"
         ? "published"
         : publication === "refused"
           ? "refused"
-          : accepted && publication === undefined
-            ? "published"
-            : "unknown",
+          : refusedBeforeDispatch
+            ? "refused"
+            : accepted && publication === undefined
+              ? "published"
+              : "unknown",
     batchId: receipt.comment_publication?.request_id,
     delivery,
     recoveryRequired:

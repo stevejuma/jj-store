@@ -1,3 +1,4 @@
+import { promptDeliveries } from "../../conversations/prompt-delivery.js";
 import {
   object,
   text,
@@ -187,16 +188,9 @@ export function runtimeChoices(session: unknown, category: string) {
   return [];
 }
 export function queuedRequests(events: readonly AgentEvent[]) {
-  const states = new Map<string, string>();
-  for (const event of events) {
-    const payload = object(event.payload),
-      type = text(payload.type);
-    if (["queued", "started", "record", "error"].includes(type))
-      states.set(text(payload.requestId), type);
-  }
   return new Set(
-    [...states]
-      .filter(([, type]) => type === "queued")
+    [...promptDeliveries(events)]
+      .filter(([, state]) => state === "queued")
       .map(([request]) => request),
   );
 }

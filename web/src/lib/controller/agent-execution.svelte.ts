@@ -1,3 +1,4 @@
+import { QueuedAgentMessages } from "../conversations/queued-agent-messages.svelte.js";
 import { ConversationSessions } from "../conversations/session.svelte.js";
 import { AgentChangesCache } from "./agent-changes-cache.js";
 import { AgentSelectionHistory } from "./agent-selection-history.js";
@@ -40,6 +41,7 @@ const newId = () => crypto.randomUUID().replaceAll("-", "");
 /** Installation owner retains drafts and exact pending identities across navigation. */
 export class AgentExecution {
   readonly conversations = new ConversationSessions();
+  readonly promptQueue = new QueuedAgentMessages(this);
   readonly runtimeObservation = new AgentRuntimeObservation();
   open = $state(false);
   onNavigate?: (view: AgentView, id?: string, relatedId?: string) => void;

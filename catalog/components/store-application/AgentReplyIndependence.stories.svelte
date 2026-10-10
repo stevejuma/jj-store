@@ -77,7 +77,10 @@
     await userEvent.type(second, "Second inline comment");
     expect(inlineEditors(canvasElement)).toHaveLength(2);
     expect(promptCommands(canvasElement)).toHaveLength(0);
-    await expect(c.getByRole("button", { name: "Stop agent" })).toBeVisible();
+    await expect(
+      c.getByRole("button", { name: "Queue message" }),
+    ).toBeEnabled();
+    expect(c.queryByRole("button", { name: "Stop agent" })).toBeNull();
     expect(c.queryByRole("button", { name: "Send message" })).toBeNull();
     await userEvent.click(
       c.getByRole("button", { name: "Complete fixture turn" }),

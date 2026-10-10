@@ -133,6 +133,7 @@
         {manager}
         {rows}
         {conversation}
+        sessions={chat.sessions}
         user={author}
         onSend={send}
       >
@@ -222,6 +223,7 @@
             {manager}
             sessions={chat.sessions}
             actions={inputActions}
+            comments={conversation.comments}
             canSend={conversation.comments.canSend &&
               !chat.busy &&
               !chat.pending &&

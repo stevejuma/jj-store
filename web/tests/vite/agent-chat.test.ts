@@ -466,7 +466,9 @@ test("dispatching retains the exact request until an agent acknowledgement", asy
   }
 });
 
-test("live acknowledgement refreshes the retained receipt without dispatching again", async () => {
+async function acknowledgeRetainedRequest(
+  type: "started" | "context_delivery",
+) {
   const request = "a".repeat(32),
     child = "b".repeat(32);
   const calls: string[] = [];
@@ -480,7 +482,11 @@ test("live acknowledgement refreshes the retained receipt without dispatching ag
           events: [
             {
               sequence: 1,
-              payload: { type: "started", requestId: child },
+              payload: {
+                type,
+                requestId: child,
+                sentContext: { version: 1, delivery: "queued" },
+              },
               committed: false,
             },
           ],
@@ -491,7 +497,7 @@ test("live acknowledgement refreshes the retained receipt without dispatching ag
           version: 1,
           request_id: child,
           session_id: "first",
-          state: "started",
+          state: type === "started" ? "started" : "queued",
           error: null,
         });
       return Response.json({
@@ -546,9 +552,15 @@ test("live acknowledgement refreshes the retained receipt without dispatching ag
   try {
     await manager.chat.refresh();
     expect(manager.chat.pending).toBeNull();
-    expect(manager.chat.receipts[request].agents[0].state).toBe("started");
+    expect(manager.chat.receipts[request].agents[0].state).toBe(
+      type === "started" ? "started" : "queued",
+    );
     expect(calls.some((url) => url.endsWith("/agents/chat"))).toBe(false);
   } finally {
     manager.destroy();
   }
-});
+}
+test("live acknowledgement refreshes the retained receipt without dispatching again", () =>
+  acknowledgeRetainedRequest("started"));
+test("controller queue acknowledgement refreshes the retained receipt without dispatching again", () =>
+  acknowledgeRetainedRequest("context_delivery"));
