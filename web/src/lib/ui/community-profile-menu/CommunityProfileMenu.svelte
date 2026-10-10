@@ -129,7 +129,7 @@
   }
 
   .community-profile-menu[data-compact] {
-    padding-inline: 0.5rem;
+    padding-inline: 0.25rem;
   }
 
   .community-profile-menu__tooltip-anchor {
@@ -175,6 +175,7 @@
       .community-profile-menu__trigger[data-ui-component="button"]
   ) {
     width: 2.5rem;
+    max-width: 100%;
     min-height: 2.5rem;
     justify-content: center;
     margin-inline: auto;

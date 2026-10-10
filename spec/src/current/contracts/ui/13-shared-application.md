@@ -7,6 +7,8 @@ resolve to explicit snapshots; divergent changes and conflicted bookmarks
 require a target choice. Back/Forward restores repository, page, snapshot and
 file selection. Catalog account actions only change fixture identity. Production
 connection state replaces the fixture account when the HTTP controller is used.
+The collapsed profile footer centers its avatar and trigger within the icon
+rail; the trigger fits its padded container rather than overflowing one side.
 The file preview presents the selected path in its labelled content header and
 keeps the source Code Block scoped to file bytes and language highlighting;
 catalog interactions verify those surfaces separately.

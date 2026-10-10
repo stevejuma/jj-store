@@ -129,6 +129,14 @@ Main's running application and `.local/dev-demo` fixture are retained. M25 stays
 In progress: runtime activation, authenticated subscription/Keychain acceptance,
 signed macOS/WKWebView, Linux distribution and visual approval remain separate
 gates.
+
+## Account action presentation — 2026-10-10
+
+E-AGENTS-LAYOUT-001, in default change `qxortzqu`, places account actions in a
+wrapping row below their description and presents Manage usage as an outlined
+button while preserving external-link protection. Focused account stories, web
+checks and live geometry pass. M25 remains In progress; provider/platform gates
+and visual baselines retain their independent status.
 <!-- generated-navigation -->
 
 ## Pages

@@ -47,6 +47,17 @@
   } = $props();
 </script>
 
+{#snippet sessionsCard()}
+  <button
+    class="agents__add-card agents__sessions-card"
+    type="button"
+    onclick={() => onSessions()}
+    ><span class="agents__sessions-icon"
+      ><SessionsIcon aria-hidden="true" /></span
+    ><span>View sessions</span></button
+  >
+{/snippet}
+
 <section class="agents" aria-label="Your agents">
   <header>
     <div>
@@ -55,22 +66,6 @@
     </div>
     <div class="agents__header-actions">
       <Tooltip.Provider>
-        <Tooltip.Root>
-          <Tooltip.Trigger
-            >{#snippet child({ props })}
-              <Button
-                {...props}
-                variant="ghost"
-                size="icon-sm"
-                aria-label="View sessions"
-                onclick={() => onSessions()}
-              >
-                <SessionsIcon aria-hidden="true" />
-              </Button>
-            {/snippet}</Tooltip.Trigger
-          >
-          <Tooltip.Content role="tooltip">View sessions</Tooltip.Content>
-        </Tooltip.Root>
         <Tooltip.Root>
           <Tooltip.Trigger
             >{#snippet child({ props })}
@@ -91,6 +86,9 @@
       </Tooltip.Provider>
     </div>
   </header>
+  {#if !available || (!value && !unknown)}
+    <div class="agents__grid">{@render sessionsCard()}</div>
+  {/if}
   {#if !available}<div class="agents__empty">
       <h2>Agent execution unavailable</h2>
       <p>
@@ -109,6 +107,7 @@
         reconnecting.
       </p>{/if}
     <div class="agents__grid">
+      {@render sessionsCard()}
       <button
         class="agents__add-card"
         type="button"

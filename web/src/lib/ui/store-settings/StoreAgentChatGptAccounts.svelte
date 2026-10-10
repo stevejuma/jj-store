@@ -36,9 +36,11 @@
             : "Signed out"}</span
         >
       </StoreWorkField>
-      <div class="store-settings__action-row">
+      <div
+        class="store-settings__action-row store-settings__action-row--full-width"
+      >
         <p>Account {account.id.slice(0, 8)}. Shared plan limits apply.</p>
-        <div class="store-settings__actions">
+        <div class="store-settings__actions store-settings__actions--wrapping">
           <Button
             variant="outline"
             disabled={accounts.busy ||
@@ -55,7 +57,10 @@
       </div>
     {/each}
     {#each authorizing as attempt (attempt.id)}
-      <div class="store-settings__action-row" role="status">
+      <div
+        class="store-settings__action-row store-settings__action-row--full-width"
+        role="status"
+      >
         <p>Complete sign-in in your browser.</p>
         <Button
           variant="outline"
@@ -75,13 +80,15 @@
         ></StoreWorkField
       >
     {/each}
-    <div class="store-settings__action-row">
+    <div
+      class="store-settings__action-row store-settings__action-row--full-width"
+    >
       <p>
         {accounts.value?.supported === false
           ? "ChatGPT plan connections require local macOS."
           : "Usage counts toward your eligible ChatGPT subscription."}
       </p>
-      <div class="store-settings__actions">
+      <div class="store-settings__actions store-settings__actions--wrapping">
         <Button
           disabled={!accounts.value?.supported ||
             accounts.busy ||
@@ -94,13 +101,20 @@
           onclick={() => accounts.refresh()}>Check accounts</Button
         >
         <a
+          class="chatgpt-usage"
+          data-ui-component="button"
+          data-slot="button"
+          data-variant="outline"
+          data-size="default"
           href="https://chatgpt.com/settings/usage"
           target="_blank"
           rel="noopener noreferrer">Manage usage</a
         >
       </div>
     </div>
-    {#if accounts.pending}<div class="store-settings__action-row">
+    {#if accounts.pending}<div
+        class="store-settings__action-row store-settings__action-row--full-width"
+      >
         <p>The connection request needs checking.</p>
         <Button
           variant="outline"
@@ -115,3 +129,10 @@
     message={accounts.error}
   />
 </section>
+
+<style>
+  .chatgpt-usage {
+    flex: 0 0 10rem;
+    max-width: 100%;
+  }
+</style>

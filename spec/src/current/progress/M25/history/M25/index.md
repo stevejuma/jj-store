@@ -19,6 +19,7 @@ not a completion gate selection.
 | [E-FLEET-012](../../../../../history/2026/10/08/E-FLEET-012/index.md)                           | 2026-10-08 | pending         | Original outcome |
 | [E-CHAT-LIVE-007](../../../../../history/2026/10/09/E-CHAT-LIVE-007/index.md)                   | 2026-10-09 | pending         | Original outcome |
 | [E-CHAT-METADATA-002](../../../../../history/2026/10/09/E-CHAT-METADATA-002/index.md)           | 2026-10-09 | pending         | Original outcome |
+| [E-AGENTS-LAYOUT-001](../../../../../history/2026/10/10/E-AGENTS-LAYOUT-001/index.md)           | 2026-10-10 | pending         | Original outcome |
 | [E-CHAT-METADATA-MAIN-001](../../../../../history/2026/10/10/E-CHAT-METADATA-MAIN-001/index.md) | 2026-10-10 | pass            | Original outcome |
 | [E-CHAT-METADATA-MAIN-002](../../../../../history/2026/10/10/E-CHAT-METADATA-MAIN-002/index.md) | 2026-10-10 | pass            | Original outcome |
 | [E-CHAT-METADATA-MAIN-003](../../../../../history/2026/10/10/E-CHAT-METADATA-MAIN-003/index.md) | 2026-10-10 | pass            | Original outcome |

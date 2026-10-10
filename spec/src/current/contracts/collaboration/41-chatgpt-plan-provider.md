@@ -45,3 +45,7 @@ reconnect/sign-out and usage recovery. Drafts and pending request IDs survive
 refresh. Credentials do not pass through the web UI. Linux, remote login,
 commercial hosting and live text streaming are deferred. Fixture acceptance is
 separate from authenticated provider and signed desktop qualification.
+
+ChatGPT account actions appear in a wrapping row below their description. Manage
+usage retains its external link semantics, new-tab protection and destination
+while using the same outlined button presentation as account checks.

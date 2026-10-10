@@ -393,6 +393,7 @@ review adds E-EVENT-CONNECTIONS-001 for shared cross-instance event transport.
 
 ## Pages
 
+- [Agents presentation review](agents-presentation-review.md)
 - [Conversation footer review](footer-review.md)
 - [Inbox read lifecycle review](inbox-freshness-review.md)
 - [Conversation metadata review](metadata-review.md)

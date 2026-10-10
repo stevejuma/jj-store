@@ -3,6 +3,7 @@
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as Tabs from "@lapismd/design-core/shadcn/tabs";
   import MessageIcon from "@lucide/svelte/icons/message-square";
+  import NewChatIcon from "@lucide/svelte/icons/square-pen";
   import ActivityIcon from "@lucide/svelte/icons/wrench";
   import FingerprintIcon from "@lucide/svelte/icons/fingerprint";
   import UserIcon from "@lucide/svelte/icons/user-round";
@@ -108,7 +109,7 @@
         onclick={onStart}><PlayIcon aria-hidden="true" />Start agent</Button
       >{/if}
     {#if onChat}<Button variant="secondary" disabled={pending} onclick={onChat}
-        >New chat</Button
+        ><NewChatIcon data-icon="inline-start" aria-hidden="true" />New chat</Button
       >{/if}
     <Button variant="secondary" disabled={pending} onclick={onSessions}
       ><MessageIcon aria-hidden="true" />View chats</Button

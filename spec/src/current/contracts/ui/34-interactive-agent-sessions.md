@@ -23,7 +23,12 @@ focus to the card; mobile uses the shell sidebar view. Overflow actions offer
 configuration, explicit launch, session history and deleting the saved
 configuration. Deletion never ends or cleans up a session. The standalone
 management page contains the gallery only. Agent and Add tiles retain a fixed
-width and height when details opens; available width only changes columns.
+width and height when details opens; available width only changes columns. The
+Agents heading and trailing Refresh control span the available body with the
+standard 1rem inset. View sessions precedes Add agent with the same white tile
+and hover treatment, plus a muted background behind its centered icon;
+navigation remains available during loading or unavailable execution. New chat
+uses a Lucide icon above its label alongside the other profile action tiles.
 Add/edit uses the owned Community dialog, image upload/HTTPS URL/colored emoji
 avatar picker, optional description, instructions and combined harness/model
 picker. Legacy plain emoji values remain readable and unchanged until explicitly
