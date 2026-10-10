@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { views as applicationViews } from "../../../web/src/lib/ui/store-application/application-views.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import StackWorkspaceApplicationFixture from "../../fixtures/StackWorkspaceApplicationFixture.svelte";
@@ -7,6 +8,15 @@
     component: StackWorkspaceApplicationFixture,
     tags: ["visual-pending"],
     parameters: { layout: "fullscreen", jjStoreShell: true },
+    beforeEach: async () => {
+      await Promise.all([
+        applicationViews.stacks(),
+        applicationViews.files(),
+        applicationViews.log(),
+        applicationViews.stackDetails(),
+        applicationViews.stackConflicts(),
+      ]);
+    },
   });
   const views = (element: HTMLElement) =>
     within(

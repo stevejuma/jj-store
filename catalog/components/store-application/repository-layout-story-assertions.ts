@@ -1,4 +1,5 @@
 import { expect, userEvent, waitFor, within } from "storybook/test";
+import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
 
 export async function expectPersistentRepositoryLayout(
   canvasElement: HTMLElement,
@@ -19,6 +20,9 @@ export async function expectPersistentRepositoryLayout(
   );
   const persistedShellWidth = Number(shellResize.getAttribute("aria-valuenow"));
 
+  // Representative loading headers appear before the corresponding view is
+  // ready. Await the application's real import, keeping all layout assertions.
+  await views.log();
   await userEvent.click(
     await canvas.findByRole("button", { name: "Collapse Branches column" }),
   );
@@ -29,6 +33,7 @@ export async function expectPersistentRepositoryLayout(
     ).not.toBeInTheDocument();
   }
   await userEvent.click(canvas.getByRole("tab", { name: "Overview" }));
+  await views.files();
   const breadcrumb = await canvas.findByRole("list", {
     name: "Repository breadcrumb",
   });

@@ -10,6 +10,8 @@
   {{#include E-CHAT-CARET-001/SUMMARY.nav.md}}
 - [E-CHAT-FOOTER-003](E-CHAT-FOOTER-003/index.md)
   {{#include E-CHAT-FOOTER-003/SUMMARY.nav.md}}
+- [E-CHAT-INSPECTOR-001](E-CHAT-INSPECTOR-001/index.md)
+  {{#include E-CHAT-INSPECTOR-001/SUMMARY.nav.md}}
 - [E-CHAT-METADATA-MAIN-001](E-CHAT-METADATA-MAIN-001/index.md)
   {{#include E-CHAT-METADATA-MAIN-001/SUMMARY.nav.md}}
 - [Main metadata handoff and presentation refinements](E-CHAT-METADATA-MAIN-002/index.md)
@@ -22,6 +24,8 @@
   {{#include E-CHATGPT-LAND-001/SUMMARY.nav.md}}
 - [E-CHATGPT-REBASE-001](E-CHATGPT-REBASE-001/index.md)
   {{#include E-CHATGPT-REBASE-001/SUMMARY.nav.md}}
+- [E-COLUMN-HOVER-001](E-COLUMN-HOVER-001/index.md)
+  {{#include E-COLUMN-HOVER-001/SUMMARY.nav.md}}
 - [E-EVENT-CONNECTIONS-001](E-EVENT-CONNECTIONS-001/index.md)
   {{#include E-EVENT-CONNECTIONS-001/SUMMARY.nav.md}}
 - [E-EVENT-CONNECTIONS-002](E-EVENT-CONNECTIONS-002/index.md)
@@ -38,21 +42,19 @@
   {{#include E-TEST-REPAIR-001/SUMMARY.nav.md}}
 - [E-TEST-REPAIR-002](E-TEST-REPAIR-002/index.md)
   {{#include E-TEST-REPAIR-002/SUMMARY.nav.md}}
+- [E-TEST-REPAIR-LAND-001](E-TEST-REPAIR-LAND-001/index.md)
+  {{#include E-TEST-REPAIR-LAND-001/SUMMARY.nav.md}}
 - [E-THREADS-001](E-THREADS-001/index.md)
   {{#include E-THREADS-001/SUMMARY.nav.md}}
 - [E-THREADS-002](E-THREADS-002/index.md)
   {{#include E-THREADS-002/SUMMARY.nav.md}}
 - [E-UI-FAVICON-001](E-UI-FAVICON-001/index.md)
   {{#include E-UI-FAVICON-001/SUMMARY.nav.md}}
+- [E-UI-SKELETONS-001](E-UI-SKELETONS-001/index.md)
+  {{#include E-UI-SKELETONS-001/SUMMARY.nav.md}}
 - [E-UI-VIEW-LOADING-001](E-UI-VIEW-LOADING-001/index.md)
   {{#include E-UI-VIEW-LOADING-001/SUMMARY.nav.md}}
 - [E-UI-VIEW-READINESS-001](E-UI-VIEW-READINESS-001/index.md)
   {{#include E-UI-VIEW-READINESS-001/SUMMARY.nav.md}}
-- [E-TEST-REPAIR-LAND-001](E-TEST-REPAIR-LAND-001/index.md)
-  {{#include E-TEST-REPAIR-LAND-001/SUMMARY.nav.md}}
-- [E-CHAT-INSPECTOR-001](E-CHAT-INSPECTOR-001/index.md)
-  {{#include E-CHAT-INSPECTOR-001/SUMMARY.nav.md}}
-- [E-UI-SKELETONS-001](E-UI-SKELETONS-001/index.md)
-  {{#include E-UI-SKELETONS-001/SUMMARY.nav.md}}
 - [E-CHAT-QUEUE-001](E-CHAT-QUEUE-001/index.md)
   {{#include E-CHAT-QUEUE-001/SUMMARY.nav.md}}

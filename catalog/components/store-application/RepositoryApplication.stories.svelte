@@ -2,6 +2,7 @@
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within } from "storybook/test";
   import StoreRepositoryApplication from "../../fixtures/StoreRepositoryApplicationFixture.svelte";
+  import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
   const { Story } = defineMeta({
     title: "JJ Store/Application",
     component: StoreRepositoryApplication,
@@ -23,10 +24,11 @@
   name="Repository workspace"
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    await views.log();
     await expect(
       await canvas.findByRole("button", { name: "Collapse Branches column" }),
     ).toBeVisible();
-    await userEvent.click(canvas.getByRole("option", { name: "main" }));
+    await userEvent.click(await canvas.findByRole("option", { name: "main" }));
     await expect(
       await canvas.findByRole("button", {
         name: "Merge native storage and publication",

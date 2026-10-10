@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import {
     expect,
@@ -211,6 +212,7 @@
   name="Review discussion empty"
   args={{ initialPage: "reviews", collaborationState: "empty" }}
   play={async ({ canvasElement }) => {
+    await views.reviews();
     const canvas = within(canvasElement);
     await expect(await canvas.findByText("No review threads")).toBeVisible();
   }}
