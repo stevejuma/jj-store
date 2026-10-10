@@ -42,7 +42,7 @@ test("HMR proxy preserves the public origin and streams every versioned API rout
   assert.ok(server.fs.deny.includes("**/.local/**"));
   assert.ok(server.fs.deny.includes("**/.jj/**"));
   assert.deepEqual(server.proxy, {
-    "/v1": { target: settings.backendOrigin, changeOrigin: false },
+    "/v1": { target: settings.backendOrigin, changeOrigin: false, ws: true },
   });
   assert.match(
     server.headers["Content-Security-Policy"],

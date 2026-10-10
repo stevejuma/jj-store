@@ -21,6 +21,8 @@ use tokio_rustls::{
         pki_types::{CertificateDer, PrivateKeyDer, pem::PemObject},
     },
 };
+mod http;
+pub(crate) use http::serve;
 
 pub(crate) fn tls(certificate: &[u8], key: &[u8]) -> Result<TlsAcceptor> {
     let certificates = CertificateDer::pem_slice_iter(certificate)
@@ -45,6 +47,8 @@ pub(crate) struct Connection {
     _permit: OwnedSemaphorePermit,
     idle: Duration,
     timer: Pin<Box<Sleep>>,
+    stopped: Option<Pin<Box<dyn std::future::Future<Output = ()> + Send>>>,
+    cancelled: bool,
 }
 impl Connection {
     fn new(socket: impl Socket + 'static, permit: OwnedSemaphorePermit, idle: Duration) -> Self {
@@ -53,10 +57,33 @@ impl Connection {
             _permit: permit,
             idle,
             timer: Box::pin(tokio::time::sleep(idle)),
+            stopped: None,
+            cancelled: false,
         }
+    }
+    fn stop_with(
+        mut self,
+        stopped: impl std::future::Future<Output = ()> + Send + 'static,
+    ) -> Self {
+        self.stopped = Some(Box::pin(stopped));
+        self
     }
     fn deadline(&mut self, cx: &mut Context<'_>) -> io::Result<()> {
         use std::future::Future as _;
+        if self
+            .stopped
+            .as_mut()
+            .is_some_and(|s| s.as_mut().poll(cx).is_ready())
+        {
+            self.stopped = None;
+            self.cancelled = true;
+        }
+        if self.cancelled {
+            return Err(io::Error::new(
+                io::ErrorKind::ConnectionAborted,
+                "listener stopped",
+            ));
+        }
         if self.timer.as_mut().poll(cx).is_ready() {
             Err(io::Error::new(io::ErrorKind::TimedOut, "idle connection"))
         } else {

@@ -325,20 +325,20 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
     ] {
         assert!(paths.contains_key(path), "missing integrated route: {path}");
     }
-    assert_eq!(paths.len(), 145);
+    assert_eq!(paths.len(), 167);
     assert_eq!(
         paths
             .keys()
             .filter(|name| name.starts_with("/v1/local/"))
             .count(),
-        61
+        82
     );
     assert_eq!(
         paths
             .keys()
             .filter(|name| !name.starts_with("/v1/local/"))
             .count(),
-        84
+        85
     );
     let mut ids = std::collections::BTreeSet::new();
     for (name, path) in paths {
@@ -347,6 +347,17 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
             if name == "/v1/bootstrap" {
                 assert_eq!(operation["parameters"], json!([]));
                 assert_eq!(operation["security"], json!([{}]));
+            } else if name == "/v1/events/ws" {
+                assert_eq!(method, "get");
+                assert_eq!(operation["security"], json!([{}]));
+                assert_eq!(operation["parameters"][0]["name"], "Origin");
+                assert_eq!(
+                    operation["parameters"][1]["schema"]["const"],
+                    "jj-store-events-v1"
+                );
+                assert!(operation["responses"]["101"].is_object());
+                assert!(operation["x-websocket-client-schema"].is_object());
+                assert!(operation["x-websocket-event-schema"].is_object());
             } else if name == "/v1/events" {
                 assert_eq!(operation["security"], json!([{"repositoryBearer":[]},{}]));
                 assert_eq!(operation["parameters"][0]["name"], "after");

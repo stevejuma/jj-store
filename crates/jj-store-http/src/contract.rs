@@ -2,6 +2,7 @@
 use crate::{dto::ErrorBody, m, routes};
 use schemars::{JsonSchema, SchemaGenerator, generate::SchemaSettings};
 use serde_json::{Map, Value, json};
+mod application_websocket;
 
 pub(crate) enum Reply {
     Json(u16),

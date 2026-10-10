@@ -17,25 +17,48 @@ trigger a read/refresh feedback loop. Confirmed access or source failures retain
 their unavailable/invalidation path.
 
 The optional bootstrap `application_events` advertisement selects authenticated
-`GET /v1/events`. Version-1 ready/changed/reset frames contain repository or
-installation domain witnesses and optional exact task/request identities, never
-repository bodies. Native durable WAL cursors remain unchanged. The
-process-local application cursor binds server generation, credential scope and
-bounded replay; restart, overflow or lost continuity sends reset and closes the
-stream. Current authorization is checked before every queued frame and
-heartbeat. Admission allows a separate 300-second finite stream with 15-second
-heartbeats; the browser treats 45 seconds without traffic as a stalled feed.
-Shared refcounted metadata monitors and filesystem hints validate committed
-changes within five seconds under qualified healthy load. Idle monitors retire
-after a bounded grace period.
+`GET /v1/events` for existing SSE clients and `GET /v1/events/ws` for the
+application WebSocket client. Version-1 ready/changed/reset frames contain
+repository or installation domain witnesses and optional exact task/request
+identities, never repository bodies. Native durable WAL cursors remain
+unchanged. The process-local application cursor binds server generation,
+credential scope and bounded replay; restart, overflow or lost continuity sends
+reset and closes the stream. Current authorization is checked before every
+queued frame and heartbeat. Admission allows a separate 300-second finite stream
+with 15-second heartbeats; the browser treats 45 seconds without traffic as a
+stalled feed. Shared refcounted metadata monitors and filesystem hints validate
+committed changes within five seconds under qualified healthy load. Idle
+monitors retire after a bounded grace period.
 
-Browser sharing retains the version-1 endpoint, admission and authorization
-scope. A worker shares only connections with the same credential and deployed
-asset, keeps bounded witnesses in memory and cancels the upstream body after its
-final subscriber leaves. A synthesized catch-up snapshot omits the last exact
-identity when its domain witness can cover multiple missed changes; current
-subscribers continue receiving exact change identities. Server-selected cursors
-and current authorization remain authoritative.
+WebSocket upgrades require GET, exact configured Host, a mandatory exact Origin,
+and the single `jj-store-events-v1` subprotocol. On this route alone that
+subprotocol replaces `x-jj-store-protocol`; present Fetch Metadata requires
+same-origin / websocket / empty. Queries, cookies, Authorization headers and
+method overrides are rejected. Other HTTP routes retain their existing checks.
+The first text message is a strict `{version:1, token, after?}` record, at most
+8192 bytes, with a five-second authentication/setup deadline. Authenticated
+profiles require the existing bearer; LocalTrusted requires null/absent token.
+Tokens remain memory-only and never enter URLs, subprotocols or diagnostics. No
+event or witness is sent before current authorization succeeds.
+
+WebSocket server messages carry `{id, event}` using the exact version-1 event
+and cursor contracts. A `{version:1,type:"heartbeat"}` message renews liveness
+without invalidation. Both transports use the same subscription, monitor leases,
+replay/reset and per-delivery authorization. The upgrade owns a bounded event
+permit through teardown, independent of ordinary HTTP admission. Client frames
+are bounded; subsequent data messages cannot issue commands. Slow sends and
+handshakes are bounded to five seconds; the existing finite event lifetime
+remains 300 seconds. Close 1000 renews, 4403 denies, 4400 rejects malformed
+input, and 1013 retries with existing bounded backoff. Close/reset releases
+leases.
+
+Browser sharing retains the version-1 event and authorization scope. A worker
+shares only connections with the same credential and deployed asset, keeps
+bounded witnesses in memory and closes the upstream transport after its final
+subscriber leaves. A synthesized catch-up snapshot omits the last exact identity
+when its domain witness can cover multiple missed changes; current subscribers
+continue receiving exact change identities. Server-selected cursors and current
+authorization remain authoritative.
 
 Installation-local `agent_execution` and `agent_settings` notices join the
 shared feed for LocalTrusted Admin only. Supervisor settlement, runtime

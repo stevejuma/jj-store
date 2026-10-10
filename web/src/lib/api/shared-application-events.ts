@@ -1,10 +1,8 @@
+import { applicationEventTransport } from "./application-events-websocket.js";
 import { ApiError } from "./api-error.js";
-import {
-  applicationEvents,
-  type ApplicationEvent,
-} from "./application-events.js";
+import { type ApplicationEvent } from "./application-events.js";
 
-/** Share HTTP/1's scarce connection slots across app tabs with the same credential. */
+/** Share one WebSocket across app tabs with the same credential. */
 export async function sharedApplicationEvents(
   token: string | null,
   after: string | undefined,
@@ -18,18 +16,18 @@ export async function sharedApplicationEvents(
     typeof SharedWorker === "undefined" ||
     typeof window === "undefined"
   )
-    return applicationEvents(token, after, signal, deliver, fetcher);
+    return applicationEventTransport(token, after, signal, deliver, fetcher);
   if (signal.aborted) return Promise.reject(signal.reason);
   let worker: SharedWorker;
   try {
     // The URL identifies the worker. A fixed name would reject a new asset URL
-    // while an older deployment is open, forcing each new tab into direct SSE.
+    // while an older deployment is open, forcing each new tab into a direct socket.
     worker = new SharedWorker(
       new URL("./application-events.worker.ts", import.meta.url),
       { type: "module" },
     );
   } catch {
-    return applicationEvents(token, after, signal, deliver);
+    return applicationEventTransport(token, after, signal, deliver);
   }
   return new Promise<void>((resolve, reject) => {
     let finished = false;
@@ -79,7 +77,7 @@ export async function sharedApplicationEvents(
       cause.code === "shared_event_worker_unavailable" &&
       !signal.aborted
     )
-      return applicationEvents(token, after, signal, deliver);
+      return applicationEventTransport(token, after, signal, deliver);
     throw cause;
   });
 }

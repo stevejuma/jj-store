@@ -214,3 +214,28 @@ test("collaboration_commands_reject_actor_injection_and_keep_exact_rich_values",
   );
   assert.equal(new Set(ids).size, ids.length);
 });
+
+test("websocket_freshness_documents_authentication_and_typed_event_frames", () => {
+  const op = document.paths["/v1/events/ws"].get;
+  assert.ok(op.responses[101]);
+  assert.equal(document.paths["/v1/events/ws"].head, undefined);
+  validate(op["x-websocket-client-schema"], { version: 1, token: null });
+  assert.throws(() =>
+    validate(op["x-websocket-client-schema"], { version: 1, command: "write" }),
+  );
+  const id = `jse1:${"aa".repeat(16)}:${"bb".repeat(16)}:0`;
+  for (const event of [
+    { version: 1, type: "ready", witnesses: [] },
+    { version: 1, type: "reset", reason: "generation_or_scope", witnesses: [] },
+    {
+      version: 1,
+      type: "changed",
+      change: { repository: null, domain: "agent_settings", witness: "one" },
+    },
+  ])
+    validate(op["x-websocket-event-schema"], { id, event });
+  validate(op["x-websocket-heartbeat-schema"], {
+    version: 1,
+    type: "heartbeat",
+  });
+});

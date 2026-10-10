@@ -407,6 +407,10 @@ async fn admit(
     mut request: axum::extract::Request,
     next: Next,
 ) -> Response {
+    let websocket = request
+        .extensions()
+        .get::<axum::extract::MatchedPath>()
+        .is_some_and(|p| p.as_str() == "/v1/events/ws");
     for (name, value) in request.headers_mut().iter_mut() {
         if name == header::AUTHORIZATION {
             value.set_sensitive(true);
@@ -445,7 +449,9 @@ async fn admit(
                 return Err(Error::denied());
             }
             let protocol = request.headers().get_all(PROTOCOL_HEADER);
-            if protocol.iter().count() != 1
+            if websocket {
+                application_events::websocket::admission(&request)?;
+            } else if protocol.iter().count() != 1
                 || protocol.iter().next().is_none_or(|value| value != "1")
             {
                 return Err(Error::denied());
@@ -477,10 +483,13 @@ async fn admit(
                         .get("sec-fetch-site")
                         .is_none_or(|v| v != "same-origin")
                     || request.headers().get_all("sec-fetch-mode").iter().count() != 1
-                    || request
-                        .headers()
-                        .get("sec-fetch-mode")
-                        .is_none_or(|v| v != "cors" && v != "same-origin")
+                    || request.headers().get("sec-fetch-mode").is_none_or(|v| {
+                        if websocket {
+                            v != "websocket"
+                        } else {
+                            v != "cors" && v != "same-origin"
+                        }
+                    })
                     || request.headers().get_all("sec-fetch-dest").iter().count() != 1
                     || request
                         .headers()

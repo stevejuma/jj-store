@@ -11,6 +11,13 @@ both shutdown handlers are installed before the listening event is flushed.
 Immediate interrupt or termination after that event must enter graceful
 shutdown, even before the listener or search worker future is first polled.
 
+The shared TCP/TLS listener MUST hand HTTP/1 upgrades to the WebSocket owner
+while continuing to serve HTTP/2 native RPC and ordinary HTTP reads. TLS/ALPN,
+connection admission, per-connection concurrency, HTTP/2 header limits and the
+300-second connection age remain bounded. Upgraded sockets retain their socket
+permit after the HTTP handshake finishes, and listener teardown cancels their
+I/O after graceful HTTP drain. Unix RPC keeps its independent peer admission.
+
 `jj-store config example` prints the format-2 configuration template, while
 `config check` validates it without contacting storage. Older formats are
 rejected and there is no migration command for this unreleased application.

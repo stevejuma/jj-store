@@ -39,15 +39,8 @@ impl PreparedServer {
         }
         let incoming =
             crate::listener::incoming(self.listener, self.tls, self.concurrent * 4, self.timeout);
-        let serve = Server::builder()
-            .accept_http1(true)
-            .max_concurrent_streams(self.concurrent as u32)
-            .concurrency_limit_per_connection(self.concurrent)
-            .http2_max_header_list_size(16 * 1024)
-            .max_connection_age(Duration::from_secs(300))
-            .max_connection_age_grace(self.timeout)
-            .add_routes(Routes::from(router))
-            .serve_with_incoming_shutdown(incoming, async {
+        let serve =
+            crate::listener::serve(incoming, router, self.concurrent, self.timeout, async {
                 let _ = rx.await;
             });
         let result = if let Some(local_rpc) = local_rpc {
@@ -107,7 +100,7 @@ async fn run_with_local_rpc<H, S>(
     stop_http: tokio::sync::oneshot::Sender<()>,
 ) -> Result<()>
 where
-    H: Future<Output = std::result::Result<(), tonic::transport::Error>> + Send,
+    H: Future<Output = Result<()>> + Send,
     S: Future<Output = ()> + Send,
 {
     let LocalRpc {
@@ -133,7 +126,7 @@ where
         result = &mut http => {
             let _ = stop_rpc.send(());
             let _ = tokio::time::timeout(Duration::from_secs(5), &mut rpc).await;
-            finish(result)
+            result
         },
         result = &mut rpc => {
             let _ = stop_http.send(());
@@ -144,7 +137,7 @@ where
             let _ = stop_http.send(());
             let _ = stop_rpc.send(());
             tokio::time::timeout(Duration::from_secs(5), async {
-                finish((&mut http).await)?;
+                (&mut http).await?;
                 finish((&mut rpc).await)
             }).await.map_err(|_| Error::Service("graceful shutdown exceeded five seconds; in-flight outcomes may be unknown"))?
         },

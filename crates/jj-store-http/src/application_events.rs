@@ -12,8 +12,11 @@ mod authorization;
 mod code_indexes;
 mod monitors;
 mod producers;
+mod subscription;
+pub(crate) mod websocket;
 pub(crate) use code_indexes::resume as resume_code_indexes;
 pub(super) use monitors::Monitors;
+use subscription::{Delivery, Subscription};
 
 #[derive(Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]
@@ -39,7 +42,9 @@ enum Event {
     },
 }
 pub(super) fn router() -> Router<Arc<State>> {
-    Router::new().route("/events", get(events))
+    Router::new()
+        .route("/events", get(events))
+        .route("/events/ws", get(websocket::upgrade))
 }
 pub(super) fn document(document: &mut contract::Document) {
     document.endpoint::<Query, Event>(
@@ -48,85 +53,7 @@ pub(super) fn document(document: &mut contract::Document) {
         "application_events",
         contract::Reply::ApplicationEvents,
     );
-}
-struct Subscription {
-    state: Arc<State>,
-    auth: authorization::Authorization,
-    leases: BTreeMap<Option<m::RepositoryId>, monitors::Lease>,
-    updates: tokio::sync::watch::Receiver<u64>,
-    revision: u64,
-    pending: VecDeque<SseEvent>,
-    closed: bool,
-    heartbeat: Instant,
-}
-impl Subscription {
-    async fn synchronize(&mut self) -> Result<()> {
-        let repositories = self.auth.repositories(&self.state).await?;
-        self.leases.retain(|repo, _| {
-            repo.is_none() || repositories.iter().any(|(id, _)| Some(*id) == *repo)
-        });
-        for (repository, local) in repositories {
-            if !self.leases.contains_key(&Some(repository)) {
-                let lease = self
-                    .state
-                    .event_monitors
-                    .acquire(&self.state, Some(repository), local)
-                    .await?;
-                self.leases.insert(Some(repository), lease);
-            }
-        }
-        Ok(())
-    }
-    fn witnesses(&self) -> Vec<Change> {
-        self.state
-            .freshness
-            .snapshot()
-            .1
-            .into_iter()
-            .filter(|change| self.auth.visible(change))
-            .collect()
-    }
-    fn frame(&self, revision: u64, name: &str, event: Event) -> Result<SseEvent> {
-        SseEvent::default()
-            .id(self.auth.cursor(&self.state, revision))
-            .event(name)
-            .json_data(event)
-            .map_err(|_| Error::unavailable())
-    }
-    async fn load(&mut self) -> Result<()> {
-        let Some(records) = self.state.freshness.after(self.revision) else {
-            self.revision = self.state.freshness.snapshot().0;
-            self.pending.push_back(self.frame(
-                self.revision,
-                "reset",
-                Event::Reset {
-                    version: 1,
-                    reason: "replay_window",
-                    witnesses: self.witnesses(),
-                },
-            )?);
-            self.closed = true;
-            return Ok(());
-        };
-        if records
-            .iter()
-            .any(|(_, c)| matches!(c.domain, Domain::Discovery | Domain::Workspaces))
-        {
-            self.synchronize().await?;
-        }
-        for (revision, change) in records {
-            self.revision = revision;
-            if self.auth.visible(&change) {
-                self.auth.authorize(&self.state, change.repository).await?;
-                self.pending.push_back(self.frame(
-                    revision,
-                    "changed",
-                    Event::Changed { version: 1, change },
-                )?);
-            }
-        }
-        Ok(())
-    }
+    websocket::document(document);
 }
 async fn events(
     ExtractState(state): ExtractState<Arc<State>>,
@@ -149,97 +76,30 @@ async fn events(
     {
         return Err(Error::invalid());
     }
-    let auth = authorization::Authorization::new(&state, &headers)?;
-    // Install the listener before any capture so a racing publication stays replayable.
-    let updates = state.freshness.subscribe();
-    let mut subscription = Subscription {
-        state,
-        auth,
-        leases: BTreeMap::new(),
-        updates,
-        revision: 0,
-        pending: VecDeque::new(),
-        closed: false,
-        heartbeat: Instant::now() + Duration::from_secs(15),
-    };
-    subscription.synchronize().await?;
-    let lease = subscription
-        .state
-        .event_monitors
-        .acquire(&subscription.state, None, false)
-        .await?;
-    subscription.leases.insert(None, lease);
-    subscription.synchronize().await?;
-    let current = subscription.state.freshness.snapshot().0;
-    let after = query.after.as_deref().or(header);
-    match after
-        .map(|cursor| subscription.auth.resume(&subscription.state, cursor))
-        .transpose()?
-    {
-        Some(Some(revision)) => {
-            subscription.revision = revision;
-            subscription.load().await?;
-        }
-        Some(None) => {
-            subscription.revision = current;
-            subscription.pending.push_back(subscription.frame(
-                current,
-                "reset",
-                Event::Reset {
-                    version: 1,
-                    reason: "generation_or_scope",
-                    witnesses: subscription.witnesses(),
-                },
-            )?);
-            subscription.closed = true;
-        }
-        None => subscription.revision = current,
-    }
-    if !subscription.closed {
-        subscription.pending.push_back(subscription.frame(
-            subscription.revision,
-            "ready",
-            Event::Ready {
-                version: 1,
-                witnesses: subscription.witnesses(),
-            },
-        )?);
-    }
+    let subscription =
+        Subscription::open(state, &headers, query.after.as_deref().or(header)).await?;
     let stream = futures::stream::try_unfold(subscription, |mut s| async move {
-        loop {
-            if !s.closed && Instant::now() >= s.heartbeat {
-                s.auth
-                    .authorize(&s.state, None)
-                    .await
-                    .map_err(|_| std::io::Error::other("freshness access denied"))?;
-                s.heartbeat = Instant::now() + Duration::from_secs(15);
-                return Ok::<_, std::io::Error>(Some((
-                    SseEvent::default().comment("keep-alive"),
-                    s,
-                )));
+        let frame = s
+            .next()
+            .await
+            .map_err(|_| std::io::Error::other("freshness unavailable"))?;
+        let event = match frame {
+            Some(Delivery::Heartbeat) => SseEvent::default().comment("keep-alive"),
+            Some(Delivery::Event(frame)) => {
+                let name = match &frame.event {
+                    Event::Ready { .. } => "ready",
+                    Event::Changed { .. } => "changed",
+                    Event::Reset { .. } => "reset",
+                };
+                SseEvent::default()
+                    .id(frame.id)
+                    .event(name)
+                    .json_data(frame.event)
+                    .map_err(std::io::Error::other)?
             }
-            if let Some(frame) = s.pending.pop_front() {
-                s.auth
-                    .authorize(&s.state, None)
-                    .await
-                    .map_err(|_| std::io::Error::other("freshness access denied"))?;
-                return Ok::<_, std::io::Error>(Some((frame, s)));
-            }
-            if s.closed {
-                return Ok(None);
-            }
-            tokio::select! {
-                result = s.updates.changed() => {
-                    result.map_err(std::io::Error::other)?;
-                    s.load().await.map_err(|_| std::io::Error::other("freshness unavailable"))?;
-                }
-                _ = tokio::time::sleep_until(s.heartbeat) => {
-                    s.auth.authorize(&s.state, None).await.map_err(|_| std::io::Error::other("freshness access denied"))?;
-                    s.heartbeat = Instant::now() + Duration::from_secs(15);
-                    return Ok(Some((SseEvent::default().comment("keep-alive"), s)));
-                }
-            }
-        }
+            None => return Ok(None),
+        };
+        Ok::<_, std::io::Error>(Some((event, s)))
     });
     let mut response = Sse::new(stream).into_response();
     response

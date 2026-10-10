@@ -1,6 +1,6 @@
+import { applicationEventTransport } from "./application-events-websocket.js";
 import { ApiError } from "./api-error.js";
 import {
-  applicationEvents,
   assertApplicationContinuity,
   type ApplicationEvent,
   type FreshnessChange,
@@ -82,7 +82,7 @@ export class ApplicationEventHub {
   ) {
     let error: string | undefined;
     try {
-      await applicationEvents(
+      await applicationEventTransport(
         token,
         after,
         group.abort.signal,

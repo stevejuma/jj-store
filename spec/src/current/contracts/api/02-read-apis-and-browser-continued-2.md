@@ -42,14 +42,14 @@ change and comparison identities are distinct fields and must not be substituted
 for one another.
 
 The Vite development listener serves UI modules and HMR on the browser origin,
-proxying all `/v1` routes, including local administration and SSE, to the
-existing compiled loopback backend. The backend public origin stays equal to the
-Vite origin; Host, Origin, Fetch Metadata and protocol headers are forwarded
-unchanged, without adding CORS or credentials. Development CSS and the exact HMR
-WebSocket origin have a separate local-only document CSP. Production built
-assets and backend API security keep their existing strict policies. Vite file
-serving rejects development state, JJ/Git metadata, private key/env files and
-generated native build directories.
+proxying all `/v1` routes, including local administration, SSE and WebSocket
+upgrades, to the existing compiled loopback backend. The backend public origin
+stays equal to the Vite origin; Host, Origin, Fetch Metadata and protocol
+headers are forwarded unchanged, without adding CORS or credentials. Development
+CSS and the exact HMR WebSocket origin have a separate local-only document CSP.
+Production built assets and backend API security keep their existing strict
+policies. Vite file serving rejects development state, JJ/Git metadata, private
+key/env files and generated native build directories.
 
 Appearance uses the device-local `jj-store.appearance.v1` preference record. The
 Original light/dark pair and Buzz-derived palettes change browser presentation

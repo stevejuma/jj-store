@@ -3,7 +3,7 @@ use http_body::Body as _;
 use jj_store_service::registry::{RegistrySnapshot, RepositoryEntry, RepositoryRegistry};
 use std::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
 #[derive(Default)]
-struct Registry {
+pub(super) struct Registry {
     generation: AtomicU64,
     reads: AtomicUsize,
 }
@@ -43,7 +43,7 @@ impl RepositoryRegistry for Registry {
         unreachable!()
     }
 }
-fn api(registry: Arc<Registry>, root: &std::path::Path) -> HttpApi {
+pub(super) fn api(registry: Arc<Registry>, root: &std::path::Path) -> HttpApi {
     HttpApi::with_search(
         None,
         root.into(),

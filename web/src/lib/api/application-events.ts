@@ -64,6 +64,25 @@ function validateChange(value: FreshnessChange) {
   )
     throw new ApiError("invalid_application_event");
 }
+export function validateApplicationEvent(event: ApplicationEvent, id: string) {
+  if (
+    !event ||
+    event.version !== 1 ||
+    !["ready", "changed", "reset"].includes(event.type) ||
+    !validApplicationCursor(id)
+  )
+    throw new ApiError("invalid_application_event");
+  if (event.type === "changed") validateChange(event.change);
+  else {
+    if (
+      !Array.isArray(event.witnesses) ||
+      event.witnesses.length > 4096 ||
+      (event.type === "reset" && typeof event.reason !== "string")
+    )
+      throw new ApiError("invalid_application_event");
+    event.witnesses.forEach(validateChange);
+  }
+}
 export class ApplicationEventParser {
   private buffer = "";
   constructor(private deliver: (event: ApplicationEvent, id: string) => void) {}
@@ -87,24 +106,8 @@ export class ApplicationEventParser {
       }
       if (!lines.length) continue;
       const event = decode(lines.join("\n")) as ApplicationEvent;
-      if (
-        !event ||
-        event.version !== 1 ||
-        !["ready", "changed", "reset"].includes(event.type) ||
-        name !== event.type ||
-        !validApplicationCursor(id)
-      )
-        throw new ApiError("invalid_application_event");
-      if (event.type === "changed") validateChange(event.change);
-      else {
-        if (
-          !Array.isArray(event.witnesses) ||
-          event.witnesses.length > 4096 ||
-          (event.type === "reset" && typeof event.reason !== "string")
-        )
-          throw new ApiError("invalid_application_event");
-        event.witnesses.forEach(validateChange);
-      }
+      validateApplicationEvent(event, id);
+      if (name !== event.type) throw new ApiError("invalid_application_event");
       this.deliver(event, id);
     }
   }

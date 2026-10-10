@@ -1487,6 +1487,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/v1/events/ws": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description Same-origin WebSocket freshness. Exact Host and mandatory Origin, WebSocket Fetch Metadata, and jj-store-events-v1 subprotocol replace the HTTP protocol header on this route only. No queries, cookies or Authorization headers. Authenticate in the first JSON message within five seconds (8192 bytes maximum); credentials remain memory-only. No frames precede current authorization. Version-1 event frames retain the SSE scope, cursor, replay/reset and per-delivery authorization. Heartbeat JSON every 15 seconds; finite admission 300 seconds. Close 1000 renews, 4403 denies, 4400 rejects protocol, 1013 retries. Client messages after hello cannot issue commands. */
+    get: operations["application_events_websocket"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/v1/local/repositories": {
     parameters: {
       query?: never;
@@ -6107,6 +6124,10 @@ export interface components {
       | "discovery"
       | "workspaces"
       | "conversion";
+    ApplicationFreshnessFrame: {
+      id: string;
+      event: components["schemas"]["ApplicationFreshnessEvent"];
+    };
     LocalBindings: {
       /** Format: uint32 */
       version: number;
@@ -31532,6 +31553,48 @@ export interface operations {
       };
       /** @description Request or response deadline exceeded. */
       504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  application_events_websocket: {
+    parameters: {
+      query?: never;
+      header: {
+        Origin: string;
+        "Sec-WebSocket-Protocol": "jj-store-events-v1";
+      };
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description WebSocket upgraded; first-message authorization still required. */
+      101: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Invalid upgrade. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Origin, authority or protocol admission denied. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Bounded event admission exhausted. */
+      503: {
         headers: {
           [name: string]: unknown;
         };

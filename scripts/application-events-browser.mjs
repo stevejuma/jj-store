@@ -3,6 +3,7 @@ import { createServer } from "node:http";
 import { readFile, stat } from "node:fs/promises";
 import { resolve, extname } from "node:path";
 import { build } from "vite";
+import { WebSocketServer } from "ws";
 const root = resolve(import.meta.dirname, "..");
 const outDir = resolve(root, ".scratch/application-events-browser");
 await build({
@@ -27,7 +28,7 @@ let opened = 0,
   sequence = 0;
 const prefix = `jse1:${"aa".repeat(16)}:${"bb".repeat(16)}:`;
 const frame = (value) =>
-  `id: ${prefix}${sequence}\nevent: ${value.type}\ndata: ${JSON.stringify(value)}\n\n`;
+  JSON.stringify({ id: `${prefix}${sequence}`, event: value });
 const server = createServer(async (req, res) => {
   const path = new URL(req.url, "http://127.0.0.1").pathname;
   res.setHeader(
@@ -35,17 +36,8 @@ const server = createServer(async (req, res) => {
     "default-src 'self'; script-src 'self'; worker-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'",
   );
   if (path === "/v1/events") {
-    opened++;
-    clients.add(res);
-    res.writeHead(200, {
-      "content-type": "text/event-stream",
-      "cache-control": "no-store",
-    });
-    res.write(frame({ version: 1, type: "ready", witnesses: [] }));
-    req.on("close", () => {
-      closed++;
-      clients.delete(res);
-    });
+    res.writeHead(500);
+    res.end("SSE must not be used");
     return;
   }
   if (path === "/probe") {
@@ -56,7 +48,7 @@ const server = createServer(async (req, res) => {
   if (path === "/change" && req.method === "POST") {
     sequence++;
     for (const client of clients)
-      client.write(
+      client.send(
         frame({
           version: 1,
           type: "changed",
@@ -93,15 +85,38 @@ const server = createServer(async (req, res) => {
     res.end();
   }
 });
+const sockets = new WebSocketServer({ noServer: true, maxPayload: 8192 });
+server.on("upgrade", (req, socket, head) => {
+  if (
+    req.url !== "/v1/events/ws" ||
+    req.headers["sec-websocket-protocol"] !== "jj-store-events-v1"
+  )
+    return socket.destroy();
+  sockets.handleUpgrade(req, socket, head, (client) => {
+    opened++;
+    clients.add(client);
+    client.once("message", (data) => {
+      const hello = JSON.parse(data.toString());
+      if (hello.version !== 1 || hello.token !== null)
+        return client.close(4403);
+      client.send(frame({ version: 1, type: "ready", witnesses: [] }));
+    });
+    client.on("close", () => {
+      closed++;
+      clients.delete(client);
+    });
+  });
+});
 server.listen(17764, "127.0.0.1", () =>
   console.log("Acceptance: http://127.0.0.1:17764/"),
 );
 const heartbeat = setInterval(() => {
-  for (const client of clients) client.write(": heartbeat\n\n");
+  for (const client of clients)
+    client.send(JSON.stringify({ version: 1, type: "heartbeat" }));
 }, 15000);
 function stop() {
   clearInterval(heartbeat);
-  for (const client of clients) client.end();
+  for (const client of clients) client.close();
   server.close();
   server.closeAllConnections();
 }

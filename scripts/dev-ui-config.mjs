@@ -46,7 +46,7 @@ export function uiDevelopmentServer(environment = process.env) {
       ],
     },
     proxy: {
-      "/v1": { target: settings.backendOrigin, changeOrigin: false },
+      "/v1": { target: settings.backendOrigin, changeOrigin: false, ws: true },
     },
     headers: {
       "Content-Security-Policy": [

@@ -27,13 +27,16 @@ receive the current bounded witness snapshot before discovery. Catch-up
 snapshots invalidate whole domains, not only their last changed identity;
 continuity mismatch or a missed repository reset resets only that subscriber.
 Port release, page exit and final subscriber teardown release their ownership;
-the final release cancels the upstream body. Stream errors and authorization
+the final release closes the upstream WebSocket. Stream errors and authorization
 denial propagate to each affected owner. Workers retain at most 4096 domain
 witnesses per credential and no repository bodies, drafts or credentials in
-browser storage. Unsupported or unavailable workers retain the direct event
-transport. This fallback has no cross-tab connection-budget claim. Neither path
-introduces periodic data polling. Cold browser qualification must include
-concurrent instances and request-start delay, not only warm cache reuse.
+browser storage. Unsupported or unavailable workers use the same WebSocket
+directly. They MUST NOT fall back to HTTP/1 SSE and consume ordinary request
+slots. Different worker assets may coexist without starving HTTP reads. Tab
+selections, drafts and composition remain independently owned; sharing transport
+never shares those states or authorization scopes. Neither path introduces
+periodic data polling. Cold browser qualification must include concurrent
+instances and request-start delay, not only warm cache reuse.
 
 Healthy idle views, Settings, capture and folder registration perform no
 periodic data requests. Settings observes only its visible section; Projects and

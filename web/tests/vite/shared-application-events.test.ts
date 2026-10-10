@@ -1,3 +1,4 @@
+import { EventSocket, installSockets } from "./event-websocket-fixture.js";
 import { afterEach, expect, test, vi } from "vitest";
 import { sharedApplicationEvents } from "../../src/lib/api/shared-application-events.js";
 const cursor = `jse1:${"aa".repeat(16)}:${"bb".repeat(16)}:0`;
@@ -28,6 +29,7 @@ class WorkerStub {
 }
 function setup() {
   vi.useFakeTimers();
+  installSockets();
   WorkerStub.instances = [];
   const window = new EventTarget();
   vi.stubGlobal("window", window);
@@ -109,8 +111,11 @@ test("failed worker startup falls back, while a silent startup has a bounded dea
     code: "event_unavailable",
   });
   f.worker.onerror?.();
+  await Promise.resolve();
+  EventSocket.instances[0]!.onerror?.();
   await rejection;
-  expect(f.fetcher).toHaveBeenCalledOnce();
+  expect(EventSocket.instances).toHaveLength(1);
+  expect(f.fetcher).not.toHaveBeenCalled();
   expect(f.worker.port.close).toHaveBeenCalledOnce();
   const abort = new AbortController();
   const stalled = sharedApplicationEvents(
@@ -125,7 +130,7 @@ test("failed worker startup falls back, while a silent startup has a bounded dea
   await vi.advanceTimersByTimeAsync(35000);
   await timeout;
   expect(WorkerStub.instances[1]!.port.close).toHaveBeenCalledOnce();
-  expect(f.fetcher).toHaveBeenCalledOnce();
+  expect(f.fetcher).not.toHaveBeenCalled();
 });
 
 test("a consumer parser failure detaches its port and never accepts subsequent hints", async () => {

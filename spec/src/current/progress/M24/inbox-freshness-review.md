@@ -110,3 +110,30 @@ test/platform gaps retain their recorded status.
 
 Next: profile feedback/target server work separately, verify any remaining older
 app instances after reload, and retain the independent milestone gates.
+
+## WebSocket connection qualification — 2026-10-10
+
+E-EVENT-WEBSOCKET-001, in enclosing default change `kktlomnz`, moves the
+application freshness feed and its no-worker fallback to authenticated
+WebSocket. Credential-scoped worker sharing, replay/reset, authorization and
+event-only invalidation remain intact; ordinary requests stay HTTP. The actual
+TCP/TLS listener now supports upgrades while retaining HTTP/2 RPC, admission and
+bounded shutdown. A real listener regression catches the initial 101-then-1006
+failure that standalone Axum route tests did not expose.
+
+After rebuilding and restarting the default backend with the fixture preserved,
+seven extra live WebSockets receive events and stay open. Fresh TypeScript chat
+rendering takes 607.9ms; history pre-send waits are 1.2–1.9ms. First View files
+rendering takes 405.8ms, with a 1.2ms pre-send wait and 333.4ms server wait. The
+reproduced browser connection bottleneck is absent in these runs. A separate
+feedback response still takes 2.03s on the server and is not qualified as
+optimized. Earlier assets need a reload; no claim is made that every older
+embedded browser view has already reloaded.
+
+Cold worker and direct-fallback fixtures verify event delivery beyond six
+sockets, ordinary request responsiveness and final socket cleanup. Focused HTTP,
+listener, native authorization, TLS/RPC, shutdown, web, contract and ownership
+checks pass. M24/M25 remain In progress, visual baselines unapproved; prior
+ResizeObserver and independent provider/platform gaps retain their status. Next:
+profile separate feedback/target backend costs and retain those independent
+qualification gates.
