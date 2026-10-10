@@ -10,6 +10,18 @@ pub(super) fn validate(options: &RuntimeOptions) -> Result<()> {
     {
         return Err(Error::Invalid);
     }
+    if options.account.as_ref().is_some_and(|id| !label(id, 64)) {
+        return Err(Error::Invalid);
+    }
+    if options.provider.as_deref() == Some("chatgpt-plan")
+        && (options.endpoint.is_some()
+            || options
+                .environment
+                .keys()
+                .any(|name| name.starts_with("OPENAI_") || name == "BUZZ_AGENT_PROVIDER"))
+    {
+        return Err(Error::Invalid);
+    }
     if options.environment.len() > 64 {
         return Err(Error::Limit);
     }
@@ -115,7 +127,12 @@ pub(super) fn resolve(setup: &Setup, defaults: &Settings) -> Setup {
             .endpoint
             .as_ref()
             .is_none_or(|endpoint| Some(endpoint) == defaults.options.endpoint.as_ref());
-        if same_provider && same_endpoint {
+        let same_account = setup
+            .options
+            .account
+            .as_ref()
+            .is_none_or(|id| Some(id) == defaults.options.account.as_ref());
+        if same_provider && same_endpoint && same_account {
             effective.preferences.model = setup
                 .preferences
                 .model
@@ -138,6 +155,11 @@ pub(super) fn resolve(setup: &Setup, defaults: &Settings) -> Setup {
             .clone()
             .or_else(|| defaults.options.provider.clone());
         if same_provider {
+            effective.options.account = setup
+                .options
+                .account
+                .clone()
+                .or_else(|| defaults.options.account.clone());
             effective.options.endpoint = setup
                 .options
                 .endpoint

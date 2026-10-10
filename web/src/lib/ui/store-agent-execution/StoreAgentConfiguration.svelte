@@ -5,9 +5,15 @@
   import { Button } from "@lapismd/design-core/shadcn/button";
   import StoreWorkField from "../store-work/StoreWorkField.svelte";
   import StoreSettingsSelect from "../store-settings/StoreSettingsSelect.svelte";
+  import StoreAgentChatGptAccount from "./StoreAgentChatGptAccount.svelte";
   import StoreAgentHarnessSelect from "./StoreAgentHarnessSelect.svelte";
+  import StoreAgentExecutionMode from "./StoreAgentExecutionMode.svelte";
   import StoreAgentModelSelect from "./StoreAgentModelSelect.svelte";
   import { harnessCatalog } from "./harness-catalog.js";
+  import {
+    configurationStatus,
+    configurationSource,
+  } from "./agent-configuration-status.js";
   import { runtimeChoices } from "./presentation.js";
   import {
     canonicalProvider,
@@ -71,16 +77,15 @@
     draft.runner === "local" ? result?.facts : harness.facts,
   );
   const source = $derived(
-    draft.runner === "local"
-      ? ""
-      : !runtimeChoices(facts, "model").length &&
-          !runtimeChoices(facts, "thought_level").length
-        ? "No model or thinking choices have been advertised."
-        : harness.remembered
-          ? "Showing choices from this harness's last session."
-          : harness.session?.connected
-            ? "Showing choices from this harness's live session."
-            : "",
+    configurationSource(
+      draft.runner === "local",
+      !!(
+        runtimeChoices(facts, "model").length ||
+        runtimeChoices(facts, "thought_level").length
+      ),
+      harness.remembered,
+      !!harness.session?.connected,
+    ),
   );
   const models = $derived(runtimeChoices(facts, "model"));
   const thinking = $derived(runtimeChoices(facts, "thought_level"));
@@ -88,6 +93,7 @@
   const generation = $derived(
     JSON.stringify([
       manager.settings.value?.revision,
+      manager.chatgpt?.value?.accounts,
       manager.compute.value?.settings,
       manager.compute.value?.state,
       manager.compute.value?.models,
@@ -132,20 +138,14 @@
     peerId ? manager.compute.value?.settings.peers?.[peerId] : undefined,
   );
   const status = $derived(
-    !runner?.available
-      ? "This harness is unavailable. Open Settings → Agents → Runtimes."
-      : manager.catalogs.loading[scope]
-        ? "Loading models from this configuration…"
-        : manager.catalogs.errors[scope] ||
-          (result?.status === "authentication_required"
-            ? "Authentication is required. Check the provider credentials in Advanced, then retry."
-            : result?.status === "unavailable"
-              ? "This provider is unavailable. Check its endpoint or Compute settings, then retry."
-              : result?.status === "empty"
-                ? "The provider returned no models. Your saved selection is retained."
-                : result
-                  ? "Models advertised by this configuration. Saved changes apply on the next start."
-                  : "Choose a provider and configure credentials to discover models."),
+    configurationStatus(
+      !!runner?.available,
+      !!manager.catalogs.loading[scope],
+      manager.catalogs.errors[scope] ?? "",
+      result?.status,
+      !!result,
+      effectiveProvider === "chatgpt-plan",
+    ),
   );
 </script>
 
@@ -178,12 +178,21 @@
               value: null,
               label: `${draft.options.inherit_defaults ? "Application" : "Harness"} default (${defaultProvider?.label ?? "This machine"})`,
             },
-            ...providers.map((p) => ({ value: p.id, label: p.label })),
+            ...providers.map((p) => ({
+              value: p.id,
+              label: p.label,
+              disabled: p.available === false,
+            })),
           ]}
           onValueChange={(value) => changeProvider(draft, value)}
         />
       </StoreWorkField>
-      {#if provider && !provider.managed}
+      {#if effectiveProvider === "chatgpt-plan"}<StoreAgentChatGptAccount
+          {manager}
+          bind:draft
+          {pending}
+        />{/if}
+      {#if provider && !provider.managed && effectiveProvider !== "chatgpt-plan"}
         <StoreWorkField
           label={provider.endpoint_env === "DATABRICKS_HOST"
             ? "Workspace URL"
@@ -222,7 +231,9 @@
         bind:value={draft.preferences.model}
         options={models}
         disabled={pending}
-        allowCustom={!!provider && !provider.managed}
+        allowCustom={!!provider &&
+          !provider.managed &&
+          effectiveProvider !== "chatgpt-plan"}
         defaultLabel={provider?.managed
           ? "Host default model"
           : provider?.model_required
@@ -256,30 +267,12 @@
         />
       </StoreWorkField>
     {/if}
-    {#if codingControls}<StoreWorkField
-        label="Execution mode"
+    {#if codingControls}<StoreAgentExecutionMode
         id={`${id}-mode`}
-      >
-        <StoreSettingsSelect
-          id={`${id}-mode`}
-          bind:value={draft.preferences.mode}
-          disabled={pending || !modes.length}
-          options={[
-            { value: null, label: "Harness default" },
-            ...modes.map((o) => ({ value: o.id, label: o.name })),
-            ...(draft.preferences.mode &&
-            !modes.some((o) => o.id === draft.preferences.mode)
-              ? [
-                  {
-                    value: draft.preferences.mode,
-                    label: `${draft.preferences.mode} (saved preference)`,
-                    disabled: true,
-                  },
-                ]
-              : []),
-          ]}
-        />
-      </StoreWorkField>{/if}
+        bind:value={draft.preferences.mode}
+        options={modes}
+        disabled={pending}
+      />{/if}
   </Field.Group>
   <div class="store-settings__action-row store-settings__action-row--joined">
     <div><p role="status">{source} {status}</p></div>

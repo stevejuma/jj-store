@@ -9,6 +9,19 @@ pub(super) fn configure(
 ) -> Result<()> {
     let provider = providers::get(setup.options.provider.as_deref()).ok_or(Error::Invalid)?;
     command.env("BUZZ_AGENT_PROVIDER", &provider.runtime_provider);
+    if provider.id == "chatgpt-plan" {
+        if setup.options.endpoint.is_some() {
+            return Err(Error::Invalid);
+        }
+        for name in [
+            "OPENAI_COMPAT_API_KEY",
+            "OPENAI_COMPAT_BASE_URL",
+            "OPENAI_COMPAT_API",
+            "OPENAI_API_KEY",
+        ] {
+            command.env_remove(name);
+        }
+    }
     if let Some(model) = setup.preferences.model.as_ref().or(local_model.as_ref()) {
         command.env("BUZZ_AGENT_MODEL", model);
     } else if provider.managed {
@@ -67,7 +80,10 @@ mod tests {
     }
     #[test]
     fn external_providers_use_native_keys_and_do_not_force_chat() {
-        for provider in providers::catalog().into_iter().filter(|p| !p.managed) {
+        for provider in providers::catalog()
+            .into_iter()
+            .filter(|p| !p.managed && p.authentication.as_deref() != Some("oauth"))
+        {
             let setup: Setup = serde_json::from_value(json!({"id":"a","name":"A","avatar":"","instructions":"","runner":"local","preferences":{"model":"chosen","effort":"high","mode":"ask"},"options":{"provider":provider.id,"endpoint":"https://provider.example/v1"}})).unwrap();
             let mut command = tokio::process::Command::new("fixture");
             configure(&mut command, &setup, None).unwrap();

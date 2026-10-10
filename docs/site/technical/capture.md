@@ -79,3 +79,10 @@ Ordinary short environment values remain usable. Credential values never enter
 saved configuration or diagnostic responses. Captured context envelopes retain
 sanitized historical content and delivery status through canonical AgentStore
 publication.
+
+Application-owned OAuth redaction allows bounded JWTs up to 16 KiB while keeping
+ordinary environment-secret input at 4 KiB. Access, refresh and ID tokens are
+registered for exact in-memory redaction before worker delivery, including
+rotated tokens and JSON object keys. Provider replay state is not part of
+canonical transcript serialization. This preserves the existing Kingfisher scan
+and publication boundary.

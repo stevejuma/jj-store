@@ -157,6 +157,7 @@ impl Supervisor {
         Ok(())
     }
     pub(super) fn stop_worker(&self, id: &str) -> Result<()> {
+        self.0.chatgpt.revoke_worker(id, None);
         if let Some(worker) = self
             .0
             .fleet
@@ -305,8 +306,25 @@ impl Supervisor {
         self.launch_environment(&mut command, &setup)?;
         self.local_launch(&mut command, &setup, true).await?;
         self.register_launch_secrets(&command, &setup)?;
+        let generation = self.update(|s| {
+            let generation = s
+                .worker_generations
+                .get(id)
+                .copied()
+                .unwrap_or(0)
+                .checked_add(1)
+                .ok_or(Error::Limit)?;
+            s.worker_generations.insert(id.into(), generation);
+            Ok(generation)
+        })?;
+
+        let chatgpt_lease = self
+            .chatgpt_launch(&mut command, &setup, id, generation)
+            .await?;
+        self.register_launch_secrets(&command, &setup)?;
         let mut workers = self.0.fleet.lock().map_err(|_| Error::Unavailable)?;
         if workers.get(id).is_some_and(|w| !w.sender.is_closed()) {
+            self.0.chatgpt.revoke_worker(id, Some(generation));
             return Ok(());
         }
         if workers.values().filter(|w| !w.sender.is_closed()).count()
@@ -323,19 +341,9 @@ impl Supervisor {
             )
             >= 4
         {
+            self.0.chatgpt.revoke_worker(id, Some(generation));
             return Err(Error::Limit);
         }
-        let generation = self.update(|s| {
-            let generation = s
-                .worker_generations
-                .get(id)
-                .copied()
-                .unwrap_or(0)
-                .checked_add(1)
-                .ok_or(Error::Limit)?;
-            s.worker_generations.insert(id.into(), generation);
-            Ok(generation)
-        })?;
 
         command
             .env("PATH", paths)
@@ -380,6 +388,7 @@ impl Supervisor {
         let id = id.to_owned();
         let task_id = format!("fleet/{id}");
         let task = tokio::spawn(async move {
+            let _chatgpt_lease = chatgpt_lease;
             this.run_worker(&id, generation, child, receiver, stopping)
                 .await;
         });
@@ -478,6 +487,7 @@ impl Supervisor {
             } }
         }.await;
         child.stop().await;
+        self.0.chatgpt.revoke_worker(id, Some(generation));
         let _ = self.interrupt_participations(id, generation);
         self.worker_state(
             id,

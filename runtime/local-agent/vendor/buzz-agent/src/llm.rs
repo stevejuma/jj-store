@@ -1,3 +1,5 @@
+// LapisMD maintained fork of block/buzz at ef2aa1ae38fadcc0bc22b8bf6ed96b35933146be (Apache-2.0).
+mod chatgpt_plan;
 use std::collections::BTreeSet;
 use std::path::PathBuf;
 use std::sync::Arc;
@@ -61,8 +63,13 @@ pub struct Llm {
 const LLM_CONNECT_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(10);
 
 impl Llm {
+    pub fn with_token_source(mut self, source: Arc<dyn TokenSource>) -> Self {
+        self.auth = source;
+        self
+    }
     pub fn new(cfg: &Config) -> Result<Self, AgentError> {
         let http = Client::builder()
+            .redirect(reqwest::redirect::Policy::none())
             .connect_timeout(LLM_CONNECT_TIMEOUT)
             // No client-level read_timeout: we apply a per-request total
             // timeout via RequestBuilder::timeout() so that escalated budgets
@@ -95,6 +102,11 @@ impl Llm {
         tools: &[ToolDef],
         effective_model: &str,
     ) -> Result<LlmResponse, AgentError> {
+        if cfg.openai_api == OpenAiApi::ChatGptPlan {
+            return self
+                .subscription_complete(cfg, system_prompt, history, tools, effective_model)
+                .await;
+        }
         let effort = cfg.thinking_effort;
         let call_start = std::time::Instant::now();
         let result = match cfg.provider {
@@ -257,6 +269,18 @@ impl Llm {
         effective_model: &str,
     ) -> Result<String, AgentError> {
         let call_start = std::time::Instant::now();
+        if cfg.openai_api == OpenAiApi::ChatGptPlan {
+            return Ok(self
+                .subscription_complete(
+                    cfg,
+                    system_prompt,
+                    &[HistoryItem::User(user_prompt.into())],
+                    &[],
+                    effective_model,
+                )
+                .await?
+                .text);
+        }
         let result = (async {
             match cfg.provider {
                 Provider::Anthropic => {

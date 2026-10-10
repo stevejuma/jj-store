@@ -88,3 +88,11 @@ comparison boundaries, with narrow local retained-file support and independent
 publication, delivery and answer state. This fulfills JST-DOC-001/002 without
 expanding M24 or M13.3 qualification; source review and a successful Help build
 do not close native, multi-agent, recovery or visual gates.
+
+The execution guide documents explicit Continue with ChatGPT authorization on
+local macOS, independent account/workspace registrations, account-specific model
+selection, Keychain custody, renewable private worker access and separate
+metadata configuration. It distinguishes source/fixture acceptance from live
+subscription and signed desktop gates, and explains local sign-out with
+unconfirmed remote revocation. It does not instruct users to copy Codex tokens,
+provide browser credentials, or configure a paid API fallback.

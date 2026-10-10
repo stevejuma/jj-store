@@ -256,3 +256,13 @@ Each request independently checks repository access. Commands include rename,
 reset title, refresh, regenerate title, cancellation and retained-result
 publication. Reads never initiate inference. Generated API/CLI references
 describe exact version-1 fields and bounds.
+
+## Device ChatGPT registrations
+
+LocalTrusted Admin admission protects GET/POST `/v1/local/agents/chatgpt`.
+Responses expose account/workspace registrations and bounded authorization
+attempts; commands accept opaque references and Connect request IDs. Tokens,
+authorization URLs and executable selections are not accepted browser inputs or
+returned data. This application-owned interface adds no native repository
+mutation or RPC credential transfer. An interrupted authorization requires a new
+explicit sign-in.

@@ -3,6 +3,7 @@ use axum::{
     body::{Body, to_bytes},
     http::Request,
 };
+use serde_json::{Value, json};
 use tower::ServiceExt as _;
 struct Manager {
     changes: tokio::sync::broadcast::Sender<u64>,
@@ -811,4 +812,49 @@ async fn draft_catalog_is_local_admin_only_and_does_not_echo_secrets() {
             .status(),
         StatusCode::FORBIDDEN
     );
+}
+#[tokio::test]
+async fn chatgpt_account_routes_require_local_admin_and_reject_credential_input() {
+    let root = tempfile::tempdir().unwrap();
+    for access in [
+        Access::Authenticated,
+        Access::LocalTrusted {
+            principal: m::PrincipalId::new([1; 16]),
+            permission: Permission::Read,
+        },
+    ] {
+        let response = api(root.path(), access)
+            .router()
+            .oneshot(request("/v1/local/agents/chatgpt", None))
+            .await
+            .unwrap();
+        assert_eq!(response.status(), StatusCode::FORBIDDEN);
+    }
+    let api = api(
+        root.path(),
+        Access::LocalTrusted {
+            principal: m::PrincipalId::new([1; 16]),
+            permission: Permission::Admin,
+        },
+    );
+    let response = api
+        .router()
+        .oneshot(request("/v1/local/agents/chatgpt", None))
+        .await
+        .unwrap();
+    assert_eq!(response.status(), StatusCode::OK);
+    let value: Value =
+        serde_json::from_slice(&to_bytes(response.into_body(), 4096).await.unwrap()).unwrap();
+    assert_eq!(value["supported"], false);
+    assert!(value.get("access_token").is_none());
+    for field in ["access_token", "refresh_token", "url", "executable"] {
+        let mut body = json!({"action":"connect","request_id":"11".repeat(16),"account":null});
+        body[field] = json!("untrusted");
+        let response = api
+            .router()
+            .oneshot(request("/v1/local/agents/chatgpt", Some(body)))
+            .await
+            .unwrap();
+        assert_eq!(response.status(), StatusCode::BAD_REQUEST);
+    }
 }

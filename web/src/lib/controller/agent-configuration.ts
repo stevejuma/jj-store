@@ -15,6 +15,7 @@ export function changeHarness(draft: AgentConfiguration, runner: string) {
   draft.runner = runner;
   draft.preferences = { model: null, effort: null, mode: null };
   draft.options.provider = null;
+  draft.options.account = null;
   draft.options.endpoint = null;
 }
 export function changeProvider(
@@ -23,6 +24,7 @@ export function changeProvider(
 ) {
   if (draft.options.provider === provider) return;
   draft.options.provider = provider;
+  draft.options.account = null;
   draft.options.endpoint = null;
   draft.preferences.model = null;
   draft.preferences.effort = null;
@@ -42,4 +44,14 @@ export function sameLaunchOptions(
     a.runner === b.runner &&
     JSON.stringify(a.options) === JSON.stringify(b.options)
   );
+}
+
+export function changeAccount(
+  draft: AgentConfiguration,
+  account: string | null,
+) {
+  if ((draft.options.account ?? null) === account) return;
+  draft.options.account = account;
+  draft.preferences.model = null;
+  draft.preferences.effort = null;
 }

@@ -361,3 +361,30 @@ fn unknown_directory_never_sanitizes_native_bodies_and_safe_gaps_allow_later_rep
         5
     );
 }
+
+#[test]
+fn oauth_jwts_are_redacted_at_their_own_bound_without_expanding_ordinary_secrets() {
+    let root = tempfile::tempdir().unwrap();
+    let cache = std::env::var_os("JJ_STORE_TRANSCRIPT_CACHE")
+        .map(std::path::PathBuf::from)
+        .unwrap_or_else(|| root.path().join("cache"));
+    let sanitizer = TranscriptSanitizer::new(
+        &root.path().join("workspace"),
+        Path::new("/Users/synthetic-oauth"),
+        Path::new("/tmp/synthetic-oauth"),
+        &cache,
+    )
+    .unwrap();
+    let token = "synthetic-jwt-".to_owned() + &"x".repeat(12000);
+    assert!(sanitizer.for_secrets(std::slice::from_ref(&token)).is_err());
+    let oauth = sanitizer
+        .for_oauth_secrets(std::slice::from_ref(&token))
+        .unwrap();
+    let result = oauth
+        .sanitize(json!({"text":format!("credential {token}"),token.clone():"key"}))
+        .unwrap();
+    let value: serde_json::Value = serde_json::from_slice(result.bytes()).unwrap();
+    assert_eq!(value["text"], "credential $SECRET");
+    assert_eq!(value["$SECRET"], "key");
+    assert!(sanitizer.for_oauth_secrets(&["x".repeat(16385)]).is_err());
+}

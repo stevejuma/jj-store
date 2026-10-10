@@ -18,3 +18,12 @@ options and write-only transient secret inputs. Service-owned provider
 descriptors contain no credentials or executable selections. Preview does not
 create a receipt, mutate settings, store secrets or publish repository state;
 repository mutation authority remains unchanged.
+
+The ChatGPT plan profile adds sanitized LocalTrusted account status and explicit
+registration/cancel/sign-out commands to the optional execution manager. These
+are application operations with device-private receipts, independent of
+repository mutations. Credential bundles remain in Keychain and access tokens
+cross only the generation-fenced local broker. Account-visible changes notify
+the existing agent-settings freshness scope. Conditional saved configuration,
+repository authorization, immutable AgentStore publication and receipt semantics
+remain unchanged.

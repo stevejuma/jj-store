@@ -98,6 +98,8 @@ async function fixture() {
         { headers: { "content-type": "text/event-stream" } },
       );
     paths.push(path);
+    if (path.endsWith("/chatgpt"))
+      return Response.json({ supported: false, accounts: [], attempts: [] });
     const intercepted = intercept.read?.(path);
     if (intercepted) return intercepted;
     if (path.includes("/events?"))
@@ -163,9 +165,9 @@ test("healthy idle agent state performs no periodic settings, targets or status 
   vi.useFakeTimers();
   const f = await fixture();
   try {
-    expect(f.paths).toHaveLength(3);
+    expect(f.paths).toHaveLength(4);
     await vi.advanceTimersByTimeAsync(30000);
-    expect(f.paths).toHaveLength(3);
+    expect(f.paths).toHaveLength(4);
   } finally {
     f.close();
     vi.useRealTimers();
@@ -349,7 +351,10 @@ test("agent notices refresh only their owning data and reset retains drafts", as
     f.paths.length = 0;
     f.notice("agent_settings");
     await vi.advanceTimersByTimeAsync(200);
-    expect(f.paths).toEqual(["/v1/local/agents/settings"]);
+    expect(f.paths).toEqual([
+      "/v1/local/agents/settings",
+      "/v1/local/agents/chatgpt",
+    ]);
     f.paths.length = 0;
     f.notice("code", "3".repeat(32));
     await vi.advanceTimersByTimeAsync(200);
@@ -362,6 +367,7 @@ test("agent notices refresh only their owning data and reset retains drafts", as
     await vi.advanceTimersByTimeAsync(200);
     expect([...f.paths].sort()).toEqual([
       "/v1/local/agents",
+      "/v1/local/agents/chatgpt",
       "/v1/local/agents/settings",
       "/v1/local/agents/targets",
     ]);

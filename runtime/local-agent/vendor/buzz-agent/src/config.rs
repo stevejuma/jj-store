@@ -1,3 +1,4 @@
+// LapisMD maintained fork of block/buzz at ef2aa1ae38fadcc0bc22b8bf6ed96b35933146be (Apache-2.0).
 use std::time::Duration;
 
 pub const PROTOCOL_VERSION: u32 = 2;
@@ -526,6 +527,8 @@ fn glob_matches(pattern: &str, value: &str) -> bool {
 /// provider error.
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub enum OpenAiApi {
+    /// Application-owned subscription Responses transport.
+    ChatGptPlan,
     Chat,
     Responses,
     Auto,
@@ -661,6 +664,14 @@ impl Config {
                 .ok_or_else(|| "config: ANTHROPIC_MODEL required".to_string())?,
                 env_or("ANTHROPIC_BASE_URL", "https://api.anthropic.com"),
                 OpenAiApi::Auto, // unused for Anthropic
+            ),
+            Provider::OpenAi if env("BUZZ_AGENT_PROVIDER").as_deref() == Some("chatgpt-plan") => (
+                String::new(),
+                buzz_agent_model
+                    .clone()
+                    .ok_or_else(|| "config: BUZZ_AGENT_MODEL required".to_owned())?,
+                "https://api.openai.com/v1".into(),
+                OpenAiApi::ChatGptPlan,
             ),
             Provider::OpenAi => (
                 req("OPENAI_COMPAT_API_KEY")?,
@@ -929,6 +940,7 @@ fn resolve_provider(
         Some(raw) => {
             let normalized = raw.to_ascii_lowercase();
             match normalized.as_str() {
+                "chatgpt-plan" => Ok(Provider::OpenAi),
                 "anthropic" if present_nonempty(anthropic_key) => Ok(Provider::Anthropic),
                 "anthropic" => Err(
                     "config: ANTHROPIC_API_KEY required".into(),

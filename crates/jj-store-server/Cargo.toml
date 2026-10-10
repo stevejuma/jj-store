@@ -24,6 +24,7 @@ jj-store-http.workspace = true
 jj-store-adapters.workspace = true
 jj-store-tantivy.workspace = true
 zeroize = "1"
+jsonwebtoken = { version = "10", default-features = false, features = ["rust_crypto"] }
 reqwest = { version = "0.12", default-features = false, features = ["rustls-tls", "stream"] }
 futures = "0.3"
 tokio-stream = { version = "0.1", features = ["net"] }

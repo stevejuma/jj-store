@@ -20,6 +20,7 @@ import { AgentModelCatalog } from "./agent-model-catalog.svelte.js";
 import { AgentExecutionRefresh } from "./agent-execution-refresh.js";
 import { AgentCompute } from "./agent-compute.svelte.js";
 import { ConversationMetadata } from "./conversation-metadata.svelte.js";
+import { AgentChatGpt } from "./agent-chatgpt.svelte.js";
 import { AgentSettings } from "./agent-settings.svelte.js";
 import { AgentRuntimes } from "./agent-runtimes.svelte.js";
 import { LocalClient } from "../api/local-client.js";
@@ -75,6 +76,7 @@ export class AgentExecution {
   readonly catalogs: AgentModelCatalog;
   readonly tooling: AgentRuntimes;
   readonly settings: AgentSettings;
+  readonly chatgpt: AgentChatGpt;
   readonly metadata: ConversationMetadata;
   readonly compute: AgentCompute;
   readonly changes: AgentChangesCache;
@@ -88,6 +90,9 @@ export class AgentExecution {
     this.changes = new AgentChangesCache(this.client.fetcher);
     this.chat = new AgentChat(this, freshness);
     this.settings = new AgentSettings(this.client);
+    this.chatgpt = new AgentChatGpt(this.client, () =>
+      this.catalogs?.invalidate(),
+    );
     this.metadata = new ConversationMetadata(
       this.client,
       () => void this.updates.status(),

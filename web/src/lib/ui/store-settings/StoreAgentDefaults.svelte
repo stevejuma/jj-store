@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreAgentChatGptAccounts from "./StoreAgentChatGptAccounts.svelte";
   import StoreConversationMetadataSettings from "./StoreConversationMetadataSettings.svelte";
   import StoreAgentMentionPreference from "./StoreAgentMentionPreference.svelte";
   import StoreSettingsDisclosure from "./StoreSettingsDisclosure.svelte";
@@ -60,6 +61,7 @@
   </section>
 {/if}
 {@render runtimeSection?.()}
+{#if manager}<StoreAgentChatGptAccounts accounts={manager.chatgpt} />{/if}
 {#if manager}<StoreConversationMetadataSettings {manager} />{/if}
 {#if manager && draft}
   <section class="store-settings__section" aria-labelledby={`${id}-defaults`}>

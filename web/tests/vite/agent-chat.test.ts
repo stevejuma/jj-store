@@ -429,6 +429,8 @@ test("dispatching retains the exact request until an agent acknowledgement", asy
   const manager = new AgentExecution(
     () => true,
     async (url, init) => {
+      if (String(url).endsWith("/agents/chatgpt"))
+        return Response.json({ supported: false, accounts: [], attempts: [] });
       if (!String(url).endsWith("/agents/chat")) return Response.json(status());
       calls.push(JSON.parse(String(init?.body)));
       return Response.json({

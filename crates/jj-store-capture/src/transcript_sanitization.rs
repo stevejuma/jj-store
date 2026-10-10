@@ -91,9 +91,16 @@ impl TranscriptSanitizer {
     }
     /// Add exact device-resolved credentials before any journal/publication capture.
     pub fn for_secrets(&self, secrets: &[String]) -> CaptureResult<Self> {
+        self.with_secret_limit(secrets, 4096)
+    }
+    /// Bounded OAuth JWTs can exceed ordinary environment-secret limits.
+    pub fn for_oauth_secrets(&self, secrets: &[String]) -> CaptureResult<Self> {
+        self.with_secret_limit(secrets, 16384)
+    }
+    fn with_secret_limit(&self, secrets: &[String], limit: usize) -> CaptureResult<Self> {
         let mut result = self.clone();
         for secret in secrets {
-            if secret.len() < 8 || secret.len() > 4096 {
+            if secret.len() < 8 || secret.len() > limit {
                 return Err("invalid credential redaction length".into());
             }
             if !result.replacements.iter().any(|(old, _)| old == secret) {

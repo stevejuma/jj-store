@@ -278,6 +278,20 @@ pub trait WorkspaceDriver: Send + Sync {
 /// Optional LocalTrusted runtime; repository and actor checks remain host-owned.
 #[async_trait::async_trait]
 pub trait Manager: Send + Sync {
+    async fn chatgpt_status(&self, _actor: PrincipalId) -> Result<chatgpt::Status> {
+        Ok(chatgpt::Status {
+            supported: false,
+            accounts: vec![],
+            attempts: vec![],
+        })
+    }
+    async fn chatgpt_command(
+        &self,
+        _actor: PrincipalId,
+        _command: chatgpt::Command,
+    ) -> Result<chatgpt::Status> {
+        Err(Error::Unavailable)
+    }
     async fn inspect_workspace(
         &self,
         _actor: PrincipalId,
@@ -416,6 +430,7 @@ pub fn native_commit(commit: &str) -> Result<CommitId> {
     commit.parse().map_err(|_| Error::Invalid)
 }
 
+pub mod chatgpt;
 pub mod compute;
 pub mod context;
 pub mod metadata;

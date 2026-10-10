@@ -141,3 +141,15 @@ Conversation metadata has its own provider/model under **Agents**. It defaults
 to unconfigured. These settings apply to future metadata jobs and never change a
 coding agent's model, start managed compute or trigger historical backfill.
 Credential environment entries retain the existing installation custody rules.
+
+## ChatGPT accounts
+
+On local macOS, **Continue with ChatGPT** in Agents settings opens the system
+browser. Connect personal and team workspace registrations separately, then
+select ChatGPT plan and its account for JJ Agent defaults or a saved agent. The
+model picker shows that account's advertised models. Changing accounts clears
+the previous model and thinking choices. Reconnect renews authorization; Sign
+out stops dependent workers and clears local credentials. Manage usage opens
+ChatGPT plan usage settings. See the
+[connection guide](agent-execution.md#connect-a-chatgpt-subscription) for scope
+and the separate live-account qualification gates.

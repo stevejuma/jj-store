@@ -18,6 +18,16 @@ impl Supervisor {
         setup: &Setup,
         secrets: &BTreeMap<String, String>,
     ) -> Result<Catalog> {
+        if setup.options.provider.as_deref() == Some("chatgpt-plan") {
+            let Some(account) = setup.options.account.as_deref() else {
+                return Ok(unavailable("authentication_required"));
+            };
+            return match self.chatgpt_models(account).await {
+                Ok(value) => Ok(value),
+                Err(Error::Denied | Error::Invalid) => Ok(unavailable("authentication_required")),
+                Err(_) => Ok(unavailable("unavailable")),
+            };
+        }
         let mut cache = self.0.catalogs.lock().await;
         let guard = self.0.mutation.lock().await;
         if self.0.stopping.load(Ordering::Acquire) || self.tooling_busy()? {

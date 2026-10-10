@@ -47,6 +47,7 @@ impl Supervisor {
                             mode: None,
                         },
                         options: settings::RuntimeOptions {
+                            account: None,
                             inherit_defaults: true,
                             ..Default::default()
                         },

@@ -68,3 +68,12 @@ identity. Peers receive bounded inference access only; files and coding tools
 remain on the requesting machine. Revocation closes admitted peer connections
 while local inference remains available. Public discovery and automatic cloud
 fallback remain disabled.
+
+ChatGPT authorization is an explicit LocalTrusted macOS operation. The temporary
+callback binds literal 127.0.0.1, validates state, and exchanges the code with
+PKCE and the exact redirect URI. Signed ID tokens must match issuer, issued
+client audience, nonce, expiry and the selected account. OAuth bundles stay in
+Keychain; browser status and repository data contain no tokens. Model discovery
+never opens a browser or Keychain authentication prompt. Sign-out reports
+unconfirmed remote revocation separately from local disconnection. Live
+subscription and signed desktop qualification remain separate from fixtures.

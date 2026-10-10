@@ -7,4 +7,5 @@ Browse the child pages below.
 - [E-CHAT-METADATA-MAIN-001](E-CHAT-METADATA-MAIN-001/index.md)
 - [Main metadata handoff and presentation refinements](E-CHAT-METADATA-MAIN-002/index.md)
 - [Unchanged authority confirmation for main refinements](E-CHAT-METADATA-MAIN-003/index.md)
+- [E-CHATGPT-001](E-CHATGPT-001/index.md)
 - [E-INBOX-FRESHNESS-001](E-INBOX-FRESHNESS-001/index.md)

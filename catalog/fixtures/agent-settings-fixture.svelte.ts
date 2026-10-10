@@ -10,6 +10,7 @@ export class AgentSettingsFixture {
       inherit_defaults: false,
       provider: null,
       endpoint: null,
+      account: null,
       environment: {},
     },
     automatically_mention: false,
@@ -17,6 +18,8 @@ export class AgentSettingsFixture {
     keychain_supported: false,
   });
   respond(path: string, init?: RequestInit) {
+    if (path.endsWith("/agents/chatgpt"))
+      return json({ supported: false, accounts: [], attempts: [] });
     if (!path.endsWith("/agents/settings")) return;
     if (!init?.body) return json(this.value);
     const body = JSON.parse(String(init.body));

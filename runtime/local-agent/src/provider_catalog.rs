@@ -34,22 +34,31 @@ async fn discover() -> Result<Value, &'static str> {
         cfg.databricks_model_filter = buzz_agent::config::DatabricksModelFilter::parse(Some("*"))
             .map_err(|_| "unavailable")?;
     }
-    let models = match cfg.provider {
-        Provider::Databricks | Provider::DatabricksV2 => {
-            buzz_agent::discover_databricks_models(&cfg)
-                .await
-                .map_err(|e| {
-                    if matches!(e, AgentError::LlmAuth(_)) {
-                        "authentication_required"
-                    } else {
-                        "unavailable"
-                    }
-                })?
-                .into_iter()
-                .map(|m| json!({"modelId":m.id,"name":m.name}))
-                .collect()
+    let models = if cfg.openai_api == buzz_agent::config::OpenAiApi::ChatGptPlan {
+        let source = crate::chatgpt_token::source()
+            .map_err(|_| "authentication_required")?
+            .ok_or("authentication_required")?;
+        buzz_agent::discover_subscription_models(source)
+            .await
+            .map_err(|_| "unavailable")?
+    } else {
+        match cfg.provider {
+            Provider::Databricks | Provider::DatabricksV2 => {
+                buzz_agent::discover_databricks_models(&cfg)
+                    .await
+                    .map_err(|e| {
+                        if matches!(e, AgentError::LlmAuth(_)) {
+                            "authentication_required"
+                        } else {
+                            "unavailable"
+                        }
+                    })?
+                    .into_iter()
+                    .map(|m| json!({"modelId":m.id,"name":m.name}))
+                    .collect()
+            }
+            _ => discover_http(&cfg).await?,
         }
-        _ => discover_http(&cfg).await?,
     };
     let options = vec![
         json!({"id":"mode","name":"Execution mode","category":"mode","type":"select","currentValue":"ask","options":[{"value":"ask","name":"Ask before tools"}]}),

@@ -71,6 +71,7 @@ impl Supervisor {
         command.arg("serve");
         self.launch_environment(&mut command, &setup)?;
         self.local_launch(&mut command, &setup, true).await?;
+        let chatgpt_lease = self.chatgpt_launch(&mut command, &setup, id, 0).await?;
         self.register_launch_secrets(&command, &setup)?;
         let sanitizer = sanitizer(self, &saved.workspace.path).await?;
 
@@ -119,9 +120,11 @@ impl Supervisor {
         let id = id.to_owned();
         let task_id = id.clone();
         let task = tokio::spawn(async move {
-            let result = this
-                .run(&id, &mut child, stdin, stdout, rx, load, sanitizer)
-                .await;
+            let mut chatgpt_lease = chatgpt_lease;
+            let result = tokio::select! {
+                result=this.run(&id, &mut child, stdin, stdout, rx, load, sanitizer)=>result,
+                _=chatgpt::broker::cancelled(&mut chatgpt_lease)=>Err(Error::Denied),
+            };
             child.stop().await;
             if let Ok(mut map) = this.0.runtimes.lock() {
                 map.remove(&id);
@@ -268,7 +271,8 @@ impl Supervisor {
                     if raw["type"] == "ready" {
                         write(&mut stdin, json!({"version":2,"type":"open","requestId":format!("open-{id}"),"loadSessionId":load})).await?;
                     }
-                    let mut value = safe(&sanitizer, raw)?;
+                    let fresh=sanitizer.for_oauth_secrets(&self.oauth_redactions()?).map_err(|_|Error::Unavailable)?;
+                    let mut value = safe(&fresh, raw)?;
                     let request = value["requestId"].as_str().unwrap_or("").to_owned();
                     if value["type"] == "activity" {
                         let update = &value["update"];

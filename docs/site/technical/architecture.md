@@ -291,3 +291,12 @@ before inference; ThreadStore selects canonical metadata through existing native
 or companion publication. AgentStore keeps the raw captures. Search enriches
 existing Thread hits and directory rows rather than publishing another
 authority.
+
+The macOS ChatGPT plan provider keeps OAuth, signed identity validation,
+Keychain custody and serialized refresh in the application supervisor. A worker
+receives only access tokens over an owner-only Unix socket with an account-bound
+capability and process-generation lifetime. The bundled agent uses the fixed
+public Responses endpoint and consumes SSE internally. Exact output replay and
+opaque reasoning live in bounded worker memory; AgentStore capture remains
+sanitized. Account settings and tool-free metadata selection are independent.
+This path has no Codex CLI authentication dependency.

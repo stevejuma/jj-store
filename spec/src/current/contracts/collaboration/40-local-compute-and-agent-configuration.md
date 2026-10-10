@@ -61,3 +61,6 @@ creates its identity or opens an interactive credential request; unavailable
 compute remains an explicit unavailable catalog result. Provider changes take
 effect only on explicit restart, never by applying a foreign model to a running
 session. Credentials retain their existing custody/redaction.
+
+The additive [ChatGPT plan provider](41-chatgpt-plan-provider.md) owns its
+account-scoped model inheritance and renewable credential lifecycle.

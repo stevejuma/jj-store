@@ -50,6 +50,15 @@ pub(super) struct Intent {
 #[serde(deny_unknown_fields)]
 pub(super) struct State {
     #[serde(default)]
+    pub chatgpt_accounts: BTreeMap<String, super::chatgpt::Record>,
+    #[serde(default)]
+    pub chatgpt_host: Option<String>,
+    #[serde(default)]
+    pub chatgpt_notices: BTreeMap<String, jj_store_service::agent_execution::chatgpt::Attempt>,
+    #[serde(default)]
+    pub chatgpt_requests:
+        BTreeMap<RequestId, (String, jj_store_service::agent_execution::chatgpt::Attempt)>,
+    #[serde(default)]
     pub settings: settings::Settings,
     #[serde(default)]
     pub metadata_jobs: BTreeMap<RequestId, super::metadata_jobs::SavedJob>,
@@ -116,7 +125,10 @@ pub(super) fn read(root: &Path) -> Result<State> {
         return Err(Error::Limit);
     }
     let mut state: State = serde_json::from_slice(&bytes).map_err(|_| Error::Unavailable)?;
-    if state.workspace_submissions.len() > 4096
+    if state.chatgpt_accounts.len() > 64
+        || state.chatgpt_requests.len() > 4096
+        || state.chatgpt_notices.len() > 64
+        || state.workspace_submissions.len() > 4096
         || state.file_publications.len() > 4096
         || state.deferred_file_prompts.len() > 4096
         || state.runtime_installs.len() > 128

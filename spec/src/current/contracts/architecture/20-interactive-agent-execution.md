@@ -59,3 +59,9 @@ Server composition consumes jj-collab's pure types and validators through the
 service/publication authorities. The dependency audit includes this owned domain
 edge; it still rejects native upstream/CLI imports and reverse domain-to-server
 dependencies. Metadata creates no exception to the storage/model/WAL boundary.
+
+The controlling application owns ChatGPT-plan OAuth, account metadata and
+Keychain token bundles. A private Unix-domain token broker supplies only access
+tokens to the maintained local-agent fork. jj-acp owns no identity or OAuth
+implementation. See
+[ChatGPT plans](../collaboration/41-chatgpt-plan-provider.md).

@@ -35,6 +35,9 @@ impl Supervisor {
         let mut command = tokio::process::Command::new(executable);
         self.launch_environment_preview(&mut command, &setup, &BTreeMap::new())?;
         self.local_environment(&mut command, &setup, false).await?;
+        let mut chatgpt_lease = self
+            .chatgpt_launch(&mut command, &setup, &format!("metadata/{}", setup.id), 0)
+            .await?;
         self.register_launch_secrets(&command, &setup)?;
         let path = self.0.resources.root.join("metadata-runtime");
         journal::private_directory(&path)?;
@@ -52,7 +55,9 @@ impl Supervisor {
         let mut child = runtime::OwnedChild(command.spawn().map_err(|_| Error::Unavailable)?);
         let input = serde_json::to_vec(&json!({"version":1,"transcript":transcript}))
             .map_err(|_| Error::Invalid)?;
-        let result = tokio::time::timeout(Duration::from_secs(125), async {
+        let result = tokio::select! {
+        _=chatgpt::broker::cancelled(&mut chatgpt_lease)=>Err(Error::Denied),
+        result=async {tokio::time::timeout(Duration::from_secs(125), async {
             let mut stdin = child.0.stdin.take().ok_or(Error::Unavailable)?;
             stdin
                 .write_all(&input)
@@ -78,11 +83,12 @@ impl Supervisor {
                 return Err(Error::Unavailable);
             }
             let value = serde_json::from_slice(&bytes).map_err(|_| Error::Invalid)?;
-            serde_json::from_value(runtime::safe(&sanitizer, value)?).map_err(|_| Error::Invalid)
+            serde_json::from_value(runtime::safe(&sanitizer.for_oauth_secrets(&self.oauth_redactions()?).map_err(|_|Error::Unavailable)?, value)?).map_err(|_| Error::Invalid)
         })
         .await
         .map_err(|_| Error::Unavailable)
-        .and_then(|v| v);
+        .and_then(|v| v)}=>result,
+        };
         child.stop().await;
         result
     }

@@ -39,6 +39,7 @@
                   inherit_defaults: false,
                   provider: "local",
                   endpoint: null,
+                  account: null,
                   environment: {},
                 },
               ),

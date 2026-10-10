@@ -50,6 +50,7 @@
                 inherit_defaults: !setup && !session,
                 provider: null,
                 endpoint: null,
+                account: null,
                 environment: {},
               },
             ),

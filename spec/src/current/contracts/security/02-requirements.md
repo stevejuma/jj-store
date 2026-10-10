@@ -9,3 +9,9 @@
 | JST-SEC-005 | Server operations MUST NOT execute repository hooks, arbitrary programs, editors, or merge tools; only explicitly admitted, fixed OS folder-dialog helpers MAY run for local folder selection; paths, bodies, queries, and work queues MUST have explicit limits.                                         |
 | JST-SEC-006 | LocalTrusted MUST accept only verified local peers, assign stable installation principals, and protect every browser route with exact loopback authority, origin, fetch-metadata, protocol-version, method, and media-type checks; authenticated shared deployment remains deferred.                      |
 | JST-SEC-007 | Authenticated discovery MUST derive candidates from a token ID without treating that index as authority, reauthorize the full token against every current repository policy, preserve independent permission, expiry and revocation per repository, and reveal no repository for a forged secret.         |
+
+For M25 ChatGPT-plan authentication, JST-SEC-005 additionally admits the fixed
+macOS system-browser opener with an application-built OpenAI authorization URL
+containing no tokens. Repository data cannot select its executable or URL.
+JST-SEC-002/JST-SEC-006 retain Keychain custody and exact application admission;
+the separate loopback callback requires state, nonce and PKCE validation.

@@ -21947,6 +21947,104 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 }
 ```
 
+## AgentChatGptStatus
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "supported": {
+      "type": "boolean"
+    },
+    "accounts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/AgentChatGptAccount"
+      }
+    },
+    "attempts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/AgentChatGptAttempt"
+      }
+    }
+  },
+  "required": [
+    "supported",
+    "accounts",
+    "attempts"
+  ]
+}
+```
+
+## AgentChatGptAccount
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "label": {
+      "type": "string"
+    },
+    "email": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "connected": {
+      "type": "boolean"
+    },
+    "plan_enabled": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "id",
+    "label",
+    "email",
+    "connected",
+    "plan_enabled"
+  ]
+}
+```
+
+## AgentChatGptAttempt
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "account": {
+      "type": "string"
+    },
+    "state": {
+      "type": "string"
+    },
+    "error": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "account",
+    "state",
+    "error"
+  ]
+}
+```
+
 ## AgentSettings
 
 ```text
@@ -22082,6 +22180,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         "null"
       ],
       "default": null
+    },
+    "account": {
+      "type": [
+        "string",
+        "null"
+      ]
     },
     "environment": {
       "type": "object",
@@ -22668,6 +22772,18 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     },
     "guidance": {
       "type": "string"
+    },
+    "authentication": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "available": {
+      "type": [
+        "boolean",
+        "null"
+      ]
     }
   },
   "required": [

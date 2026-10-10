@@ -119,6 +119,7 @@ export class AgentExecutionRefresh {
   settings() {
     return this.read("settings", async () => {
       const accepted = await this.manager.settings.refresh();
+      void this.manager.chatgpt.refresh();
       if (this.#alive && accepted)
         void syncAgentPower(
           this.manager.connectionError ? null : this.manager.value,

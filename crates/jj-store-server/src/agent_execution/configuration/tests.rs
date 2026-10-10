@@ -150,3 +150,29 @@ fn provider_changes_do_not_inherit_foreign_models_endpoints_or_effort() {
     assert_eq!(resolved.preferences.effort, None);
     assert_eq!(resolved.options.endpoint, None);
 }
+#[test]
+fn subscription_account_changes_do_not_inherit_a_foreign_model_or_endpoint() {
+    let mut defaults = Settings::default();
+    defaults.runner = "local".into();
+    defaults.options.provider = Some("chatgpt-plan".into());
+    defaults.options.account = Some("account-one".into());
+    defaults.preferences.model = Some("account-one-model".into());
+    let mut agent = setup();
+    agent.runner = "local".into();
+    agent.options.inherit_defaults = true;
+    assert_eq!(
+        resolve(&agent, &defaults).options.account.as_deref(),
+        Some("account-one")
+    );
+    agent.options.account = Some("account-two".into());
+    assert!(resolve(&agent, &defaults).preferences.model.is_none());
+    agent.options.provider = Some("chatgpt-plan".into());
+    agent.options.endpoint = Some("https://foreign.example/v1".into());
+    assert!(validate(&agent.options).is_err());
+    agent.options.endpoint = None;
+    agent.options.environment.insert(
+        "OPENAI_COMPAT_BASE_URL".into(),
+        EnvironmentValue::Literal("https://foreign.example/v1".into()),
+    );
+    assert!(validate(&agent.options).is_err());
+}

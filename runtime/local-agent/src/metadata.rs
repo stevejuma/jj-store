@@ -31,7 +31,11 @@ pub fn run() {
         let text = runtime.block_on(async {
             tokio::time::timeout(
                 std::time::Duration::from_secs(120),
-                buzz_agent::summarize_metadata(SYSTEM, &input),
+                buzz_agent::summarize_metadata_with_token_source(
+                    SYSTEM,
+                    &input,
+                    crate::chatgpt_token::source().map_err(|_| ())?,
+                ),
             )
             .await
             .map_err(|_| ())?

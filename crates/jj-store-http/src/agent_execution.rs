@@ -36,6 +36,8 @@ macro_rules! endpoints {
         (get, "/local/compute", compute_status, "local_compute_status", routes::Empty, routes::Empty, agents::compute::Status),
         (post, "/local/compute", compute_command, "local_compute_command", routes::Empty, agents::compute::Command, agents::Outcome),
         (post, "/local/compute/pick", pick_model_file, "local_compute_pick", routes::Empty, routes::Empty, jj_store_service::local_management::ModelFileSelection),
+        (get, "/local/agents/chatgpt", chatgpt_status, "local_agents_chatgpt", routes::Empty, routes::Empty, agents::chatgpt::Status),
+        (post, "/local/agents/chatgpt", chatgpt_command, "local_agents_chatgpt_command", routes::Empty, agents::chatgpt::Command, agents::chatgpt::Status),
         (get, "/local/agents/settings", settings, "local_agents_settings", routes::Empty, routes::Empty, agents::settings::Settings),
         (post, "/local/agents/settings", save_settings, "local_agents_settings_save", routes::Empty, agents::settings::SettingsCommand, agents::settings::Settings),
         (post, "/local/agents/secrets", secret, "local_agents_secret", routes::Empty, agents::settings::SecretCommand, agents::settings::SecretStatus),
@@ -328,3 +330,9 @@ async fn catalog_preview(
     let Json(preview) = body.map_err(|_| Error::invalid())?;
     state.json(&m.catalog_preview(actor, preview).await.map_err(failure)?)
 }
+
+async fn chatgpt_status(ExtractState(state): ExtractState<Arc<State>>) -> Result<Response> {
+    let (m, actor) = manager(&state)?;
+    state.json(&m.chatgpt_status(actor).await.map_err(failure)?)
+}
+mutation!(chatgpt_command, agents::chatgpt::Command, chatgpt_command);

@@ -166,3 +166,28 @@ notably `desktop/src-tauri/src/managed_agents/managed_node_paths.rs` and
 application maintains its own fixed catalog, typed commands and durable
 selection; it has no Buzz runtime/build dependency. Existing Community avatars
 and settings components retain their attribution in `docs/ui-provenance.json`.
+
+## Connect a ChatGPT subscription
+
+On local macOS, open Settings → Agents → Defaults and select **Continue with
+ChatGPT** in ChatGPT accounts. Complete authorization in the system browser. The
+application stores credentials in Keychain; the browser UI receives account
+status only. You can add separate personal or team workspace registrations.
+
+Choose JJ Agent as the harness and ChatGPT plan as the provider. Select the
+connected account and a model advertised for that account, then save your
+defaults or agent configuration. Per-agent accounts override the application
+default. Changing the account clears its old model and thinking selections;
+saved runtime changes apply on the next explicit start. Codex CLI is not
+required for this provider. Configure Conversation metadata separately if it
+should use the subscription too.
+
+Reconnect an account when authorization or plan permission needs renewal. Sign
+out stops dependent workers and clears local credentials. If remote revocation
+could not be confirmed, disconnect the app in ChatGPT settings. Responses count
+toward the eligible account's plan limits; Manage usage opens ChatGPT usage
+settings. No API-key or other-provider fallback happens automatically.
+
+The initial profile is same-machine macOS only. Source and controlled fixtures
+are qualified separately from live subscription, Keychain and signed desktop
+acceptance; those remaining gates are recorded in E-CHATGPT-001.

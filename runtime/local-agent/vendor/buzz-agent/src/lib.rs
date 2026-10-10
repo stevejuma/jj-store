@@ -1,3 +1,4 @@
+// LapisMD maintained fork of block/buzz at ef2aa1ae38fadcc0bc22b8bf6ed96b35933146be (Apache-2.0).
 // Modified by LapisMD: advertise a single permission-gated ACP ask mode.
 #![forbid(unsafe_code)]
 mod agent;
@@ -154,16 +155,25 @@ fn die(msg: String) -> ! {
 }
 
 pub fn run() -> Result<(), Box<dyn std::error::Error>> {
-    run_with_model_discovery(false)
+    run_with_model_discovery(false, None)
 }
 
 /// LapisMD entrypoint: enable bounded OpenAI catalog reads at session creation.
 /// The upstream entrypoint retains its configured-model behavior.
 pub fn run_with_local_catalog() -> Result<(), Box<dyn std::error::Error>> {
-    run_with_model_discovery(true)
+    run_with_model_discovery(true, None)
 }
 
-fn run_with_model_discovery(local_catalog: bool) -> Result<(), Box<dyn std::error::Error>> {
+/// LapisMD entrypoint: renew credentials through an application-owned source.
+pub fn run_with_local_catalog_and_token_source(
+    source: std::sync::Arc<dyn auth::TokenSource>,
+) -> Result<(), Box<dyn std::error::Error>> {
+    run_with_model_discovery(true, Some(source))
+}
+fn run_with_model_discovery(
+    local_catalog: bool,
+    source: Option<std::sync::Arc<dyn auth::TokenSource>>,
+) -> Result<(), Box<dyn std::error::Error>> {
     let args: Vec<String> = std::env::args().collect();
     if matches!(args.get(1).map(String::as_str), Some("auth")) {
         return tokio::runtime::Builder::new_multi_thread()
@@ -174,7 +184,7 @@ fn run_with_model_discovery(local_catalog: bool) -> Result<(), Box<dyn std::erro
     tokio::runtime::Builder::new_multi_thread()
         .enable_all()
         .build()?
-        .block_on(async_main(local_catalog));
+        .block_on(async_main(local_catalog, source));
     Ok(())
 }
 
@@ -215,13 +225,17 @@ async fn auth_subcommand(args: &[String]) -> Result<(), Box<dyn std::error::Erro
     }
 }
 
-async fn async_main(local_catalog: bool) {
+async fn async_main(local_catalog: bool, source: Option<std::sync::Arc<dyn auth::TokenSource>>) {
     tracing_subscriber::fmt()
         .with_writer(std::io::stderr)
         .with_ansi(false)
         .init();
     let cfg = Config::from_env().unwrap_or_else(|e| die(e));
-    let llm = Arc::new(Llm::new(&cfg).unwrap_or_else(|e| die(e.to_string())));
+    let mut llm = Llm::new(&cfg).unwrap_or_else(|e| die(e.to_string()));
+    if let Some(source) = source {
+        llm = llm.with_token_source(source);
+    }
+    let llm = Arc::new(llm);
     let max_line = cfg.max_line_bytes;
     let permissions = Arc::new(permission::PermissionBroker::new(
         cfg.max_pending_permissions,
@@ -568,6 +582,15 @@ async fn session_new(app: &Arc<App>, id: Value, params: Value, wire_tx: &WireSen
                     .iter()
                     .map(|m| json!({ "modelId": m.id, "name": m.name }))
                     .collect()
+            }
+            Provider::OpenAi if app.cfg.openai_api == config::OpenAiApi::ChatGptPlan => {
+                match app.llm.subscription_models().await {
+                    Ok(models) => models,
+                    Err(_) => {
+                        return reject(wire_tx, id, -32000, "ChatGPT model catalog unavailable")
+                            .await;
+                    }
+                }
             }
             Provider::OpenAi if app.local_catalog => {
                 local_catalog::discover(&app.cfg).await.unwrap_or_else(|_| {
@@ -1172,7 +1195,23 @@ fn mode_options() -> Value {
 
 /// LapisMD: a standalone tool-free completion for application discovery metadata.
 /// No ACP session, MCP registry or interactive sign-in is constructed.
+pub async fn discover_subscription_models(
+    source: std::sync::Arc<dyn auth::TokenSource>,
+) -> Result<Vec<serde_json::Value>, AgentError> {
+    let cfg = Config::from_env().map_err(AgentError::InvalidParams)?;
+    Llm::new(&cfg)?
+        .with_token_source(source)
+        .subscription_models()
+        .await
+}
 pub async fn summarize_metadata(system: &str, input: &str) -> Result<String, AgentError> {
+    summarize_metadata_with_token_source(system, input, None).await
+}
+pub async fn summarize_metadata_with_token_source(
+    system: &str,
+    input: &str,
+    source: Option<std::sync::Arc<dyn auth::TokenSource>>,
+) -> Result<String, AgentError> {
     let cfg = Config::from_env().map_err(AgentError::InvalidParams)?;
     if matches!(cfg.provider, Provider::Databricks | Provider::DatabricksV2)
         && cfg.api_key.is_empty()
@@ -1181,8 +1220,11 @@ pub async fn summarize_metadata(system: &str, input: &str) -> Result<String, Age
             "metadata authentication required".into(),
         ));
     }
-    Llm::new(&cfg)?
-        .single_attempt()
+    let mut llm = Llm::new(&cfg)?;
+    if let Some(source) = source {
+        llm = llm.with_token_source(source);
+    }
+    llm.single_attempt()
         .summarize(&cfg, system, input, 2048, &cfg.model)
         .await
 }

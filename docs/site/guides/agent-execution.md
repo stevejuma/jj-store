@@ -192,6 +192,31 @@ runtime choices and waits for the exact accepted configuration receipt and
 confirmed mode readiness before submitting the message; failed configuration
 retains your draft.
 
+## Connect a ChatGPT subscription
+
+On local macOS, open **Settings → Agents** and select **Continue with ChatGPT**
+in ChatGPT accounts. Complete authorization in the system browser. The
+application stores credentials in Keychain; the browser UI receives account
+status only. Connect personal and team workspace registrations separately.
+
+Choose **JJ Agent** as the harness and **ChatGPT plan** as the provider. Select
+the connected account and one of its advertised models, then save your defaults
+or agent configuration. Per-agent accounts override the application default.
+Changing the account clears the previous model and thinking choices. Saved
+runtime changes apply on the next explicit start. This provider does not require
+Codex CLI. Configure Conversation metadata separately if it should also use the
+subscription.
+
+Reconnect when authorization or plan permission needs renewal. Sign out stops
+dependent workers and clears local credentials. If remote revocation could not
+be confirmed, disconnect the app in ChatGPT settings. Responses count toward the
+eligible account's plan limits; **Manage usage** opens ChatGPT usage settings.
+No API-key or other-provider fallback happens automatically.
+
+The initial profile is same-machine macOS only. Controlled source and fixture
+checks are separate from live subscription, real Keychain and signed desktop
+acceptance. Those gates remain open in E-CHATGPT-001.
+
 ## Replies and reactions
 
 Hover or focus a saved user/agent message to reply or react. Replies are

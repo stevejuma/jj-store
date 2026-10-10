@@ -181,3 +181,12 @@ tooling into a fresh private directory. Failed verification keeps the previous
 selection; interrupted unselected staging is never replayed. Discovery/launch
 resolve that bin directory first, followed by device PATH and conventional tool
 directories. There is no npm-cache search or global binary replacement.
+
+The local macOS JJ Agent can use the `chatgpt-plan` provider with an opaque
+`options.account` registration reference. Application defaults and per-agent
+selections use the existing conditional settings writes. Accounts are connected
+in Settings → Agents → Defaults; tokens are kept in Keychain. This provider has
+a fixed endpoint and does not accept API-key or endpoint overrides. Model and
+effort defaults apply only to the same provider/account. Configure conversation
+metadata independently, and explicitly restart after saved launch configuration
+changes.

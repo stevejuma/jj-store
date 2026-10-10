@@ -1,6 +1,7 @@
 //! Local device execution; journal admission precedes every process side effect.
 mod avatar;
 mod catalog;
+mod chatgpt;
 mod commands;
 mod comment_answers;
 mod comment_submissions;
@@ -81,6 +82,7 @@ pub struct Resources {
 #[derive(Clone)]
 pub struct Supervisor(Arc<Inner>);
 struct Inner {
+    chatgpt: chatgpt::Runtime,
     resources: Resources,
     state: Mutex<State>,
     runtimes: Mutex<BTreeMap<String, mpsc::Sender<Value>>>,
@@ -154,6 +156,7 @@ impl Supervisor {
         journal::persist(&resources.root, &state)?;
         let (changed, _) = broadcast::channel(32);
         let supervisor = Self(Arc::new(Inner {
+            chatgpt: Default::default(),
             resources,
             state: Mutex::new(state),
             runtimes: Mutex::new(BTreeMap::new()),
@@ -264,7 +267,8 @@ impl Supervisor {
         let result = f(&mut candidate)?;
         let execution_changed =
             freshness::execution_witness(&candidate)? != freshness::execution_witness(&state)?;
-        let settings_changed = candidate.settings.revision != state.settings.revision;
+        let settings_changed = candidate.settings.revision != state.settings.revision
+            || freshness::chatgpt_witness(&candidate)? != freshness::chatgpt_witness(&state)?;
         candidate.revision = candidate.revision.checked_add(1).ok_or(Error::Limit)?;
         journal::persist(&self.0.resources.root, &candidate)?;
         *state = candidate;

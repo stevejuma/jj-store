@@ -336,3 +336,13 @@ wrapped-row alignment preserve inspection, copy, selection and Send requests.
 
 E-UI-MENU-002 confirms JST-API-001 unchanged: smaller muted menu titles alter
 presentation only; menu actions, selection and execution requests are unchanged.
+
+## ChatGPT plan accounts
+
+JST-API-001 adds LocalTrusted Admin GET /v1/local/agents/chatgpt and POST
+/v1/local/agents/chatgpt for sanitized account/authorization state and explicit
+connect, cancel and sign-out commands. The application opens its fixed system
+browser; responses contain no authorization URL or tokens. Account references
+are additive runtime options; legacy options default to no account. The separate
+temporary OAuth callback is state/PKCE-bound and is not a relaxation of API
+admission. See [ChatGPT plans](../collaboration/41-chatgpt-plan-provider.md).

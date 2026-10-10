@@ -39,8 +39,8 @@
     "sources": ["crates/jj-store-capture/src"],
     "pages": ["docs/site/guides/capture.md", "docs/site/technical/capture.md"],
     "review": {
-      "reason": "Documented exact in-memory resolved credential redactions before capture and historical context snapshots.",
-      "fingerprint": "7d3fe15c294917b1fd06a72a8f8f611b1ea4c6d475e22077844aeb72a240bdb7"
+      "reason": "OAuth JWT redaction has a separate 16 KiB bound; reviewed canonical capture and retained the ordinary secret limit.",
+      "fingerprint": "d007be14b57eaddabfbadcdcfedde1bf0932e81781c75def5c4a7634b72ffb32"
     }
   },
   {
@@ -65,8 +65,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed exact captured-detail metadata preparation: authorization and immutable activity stay unchanged while browser-only feedback enrichment is omitted. Recorded detail retains its existing enrichment and limits.",
-      "fingerprint": "02bcc63614e17996904b84b7477bd0920bd33ba407fbfc57d27b03c55acea405"
+      "reason": "Reviewed application-owned ChatGPT account interfaces and retained independent repository mutation and RPC authorization.",
+      "fingerprint": "8e294aa4eb4f30eb1ef986d98b2d5d76e87206aeb8dbe3934dd11737f8a6312e"
     }
   },
   {
@@ -96,8 +96,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed metadata source preparation through exact captured activity and bounded cached pins with boxed futures. Reads preserve authorization and snapshots, and never dispatch or change publication or helper behavior.",
-      "fingerprint": "d86b44f99a90965a759c9737e0a397f424ba8e8906d15743b4146d38ab578640"
+      "reason": "Reviewed disconnected-account sign-out cancellation and generation fencing, preserving application-owned credential custody and explicit authorization.",
+      "fingerprint": "b1b8ccdb20aa97761185fbaf2383d7f9e728c4b4eb7eeabcd6ac196e1055989d"
     }
   },
   {
@@ -122,8 +122,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed registered session-bound workspace inspection and comment submission routes; generated API references and documented exact binding/path requests and independent code authorization. Integrated conversation metadata: Documented Admin-only metadata routes with independent repository admission and retained job inspection.",
-      "fingerprint": "083ea5b12838d015ff7d8d6f5670a61bcb78f8137b56d7988273cc1540492c76"
+      "reason": "Documented LocalTrusted Admin account routes and credential-free browser contracts; repository admission remains unchanged.",
+      "fingerprint": "a488a19489d1933dbe1c4196723b5e1dc3b8aa0166fcf7b077cc2b3ed0138d8d"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed closed Overview and Metadata disclosures, flat Settings rows, retained drafts, title ellipsis and link-before-copy action order without reserving absent buttons. Help remains accurate; authority is unchanged.",
-      "fingerprint": "0331f7118e64d165fb1af158bdf0d9f4cc245b15039402997705d650dc658a39"
+      "reason": "Documented Continue with ChatGPT, per-agent account and model selection, recovery and sign-out in owned Settings.",
+      "fingerprint": "100b2c02ac62dc5a7fe8374da6a98ec02e0a352b4f7f95784fcce6d091a16d25"
     }
   },
   {
@@ -154,8 +154,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Regenerated installation, collaboration and public type API references from the landed schemas; documented qualified review references and session-bound inspection without arbitrary filesystem roots. Integrated conversation metadata: Reviewed regenerated conversation metadata API types and documented explicit typed CLI commands and refusal boundaries.",
-      "fingerprint": "10291019a29d0a12ad5a522b9fc8e4f1def619201895d016d91b051c4d365718"
+      "reason": "Reviewed generated ChatGPT account and runtime-option schemas, preserving existing CLI commands and response boundaries.",
+      "fingerprint": "1bc9d94f7bd4ad105f73985c56d7b60f266be099f9e69a94d29b7cefa3fc7a97"
     }
   },
   {
@@ -175,8 +175,8 @@
       "docs/site/reference/security.md"
     ],
     "review": {
-      "reason": "Reviewed bounded provider discovery and provider-specific runtime environment with existing authentication, pins and permission-gated Ask mode. Integrated conversation metadata: Documented tool-free metadata completions, decoded transcript limits with bounded JSON escape expansion and strict result validation without interactive authentication.",
-      "fingerprint": "2cacea90a7b0931ca31b8190efef5deafc10ad04a329223986799e4d5a31d3dc"
+      "reason": "Documented direct ChatGPT subscription transport, independent metadata configuration and separate live qualification.",
+      "fingerprint": "63d260c5e042c0df6f6d2da0242aaf6510b44b285de645888e4cfe99f9c78530"
     }
   }
 ]

@@ -1,6 +1,31 @@
 use super::*;
 #[async_trait::async_trait]
 impl Manager for Supervisor {
+    async fn chatgpt_status(
+        &self,
+        actor: PrincipalId,
+    ) -> Result<jj_store_service::agent_execution::chatgpt::Status> {
+        self.actor(actor)?;
+        self.chatgpt_view()
+    }
+    async fn chatgpt_command(
+        &self,
+        actor: PrincipalId,
+        command: jj_store_service::agent_execution::chatgpt::Command,
+    ) -> Result<jj_store_service::agent_execution::chatgpt::Status> {
+        use jj_store_service::agent_execution::chatgpt::Command;
+        self.actor(actor)?;
+        match command {
+            Command::Connect {
+                request_id,
+                account,
+            } => self.chatgpt_connect(request_id, account).await?,
+            Command::Cancel { attempt } => self.chatgpt_cancel(&attempt)?,
+            Command::SignOut { account } => self.chatgpt_sign_out(&account).await?,
+        }
+        self.chatgpt_view()
+    }
+
     async fn inspect_workspace(
         &self,
         actor: PrincipalId,
@@ -676,6 +701,7 @@ impl Manager for Supervisor {
         Some(self.0.freshness.subscribe())
     }
     async fn shutdown(&self) -> Result<()> {
+        self.0.chatgpt.shutdown();
         self.0
             .inspection_watches
             .lock()

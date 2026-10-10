@@ -23,6 +23,17 @@ pub(super) fn execution_witness(state: &State) -> Result<String> {
         &state.compute,
     ))
 }
+pub(super) fn chatgpt_witness(state: &State) -> Result<String> {
+    journal::digest(&(
+        state
+            .chatgpt_accounts
+            .values()
+            .map(|r| &r.view)
+            .collect::<Vec<_>>(),
+        &state.chatgpt_notices,
+        &state.chatgpt_requests,
+    ))
+}
 impl Supervisor {
     pub(super) fn execution_changed(&self) {
         let _ = self.0.changed.send(0);

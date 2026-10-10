@@ -24,6 +24,8 @@ pub struct RuntimeOptions {
     pub inherit_defaults: bool,
     pub provider: Option<String>,
     pub endpoint: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub account: Option<String>,
     pub environment: BTreeMap<String, EnvironmentValue>,
 }
 

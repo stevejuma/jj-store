@@ -99,6 +99,7 @@
       "Conversations",
       "Preferences",
       "Agent runtimes",
+      "ChatGPT accounts",
       "Conversation metadata",
       "Agent defaults",
     ]);

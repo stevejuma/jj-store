@@ -13,5 +13,6 @@ export function disposeAgentResources(manager: AgentExecution) {
   manager.drafts = {};
   manager.setupDrafts = {};
   manager.settings.dispose();
+  manager.chatgpt.dispose();
   manager.pending = null;
 }

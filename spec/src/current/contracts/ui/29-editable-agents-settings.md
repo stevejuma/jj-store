@@ -54,3 +54,9 @@ M24 adds
 [reusable agent conversations](../collaboration/37-reusable-agent-conversations.md)
 under JST-COLLAB-034 through JST-COLLAB-036. Existing M23 qualification remains
 unchanged.
+
+M25 adds ChatGPT account management beside agent runtime defaults and account
+selection in the shared JJ Agent configuration form. Continue with ChatGPT opens
+the system browser only on explicit action. Account/plan status, usage links and
+contextual recovery preserve drafts; transient failures use the notification
+service. See [ChatGPT plans](../collaboration/41-chatgpt-plan-provider.md).

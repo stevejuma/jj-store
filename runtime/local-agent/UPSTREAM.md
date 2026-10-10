@@ -45,3 +45,25 @@ authorization and publication belong to the controlling application.
 Metadata summaries select a maintained single-attempt transport policy. Coding
 turns retain their existing retries; metadata disables transport/auth/endpoint
 replay after an unknown completion. The owned helper rejects malformed results.
+
+The maintained fork adds a distinct `chatgpt-plan` Responses dialect and an
+injectable access-token source. The application performs dynamic-client OAuth,
+Keychain custody and rotating refresh; the worker receives only account-bound
+access tokens through private Unix IPC. The public OpenAI endpoint is fixed and
+cannot be replaced by provider environment settings. Subscription completion,
+summary and compaction calls consume bounded SSE and require a completed
+terminal event before releasing text or tool calls. History retains exact output
+and opaque reasoning in memory; canonical capture never serializes this provider
+replay state. One confirmed pre-stream 401 permits renewal; uncertain requests
+are not retried. The upstream pin, other provider transports, MCP credential
+filtering and mandatory tool permissions remain in place.
+
+The protocol follows OpenAI's OSS registration, account/session, model and
+inference documentation at
+https://developers.openai.com/siwc/token-sharing-open-source. Rust
+implementation research also examined Everruns revision
+`ef90d32744503cced40fda8e113768121f805657`; this integration introduces no
+Everruns package or source dependency. Current Zed/Goose references use Codex
+backends and do not establish this direct public subscription flow. Synthetic
+OAuth/JWKS and inference fixtures qualify the owned boundaries separately from
+live account and signed desktop acceptance.

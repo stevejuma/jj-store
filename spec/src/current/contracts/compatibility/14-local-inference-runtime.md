@@ -42,3 +42,10 @@ repository format migration. Native JJ identities and existing compute ABI/pins
 are unchanged under JST-COMPAT-001/JST-COMPAT-003/JST-COMPAT-005. Fixture
 provider responses do not qualify authenticated cloud endpoints or packaged
 platforms.
+
+The maintained Buzz fork adds a dedicated ChatGPT plan Responses dialect and an
+injectable token source. The upstream pin remains unchanged. Streaming is
+internal and existing ACP completion/tool permissions remain authoritative. No
+Codex CLI is required for this provider. Account-specific model catalogs and
+rotating credentials are governed by the
+[ChatGPT plan contract](../collaboration/41-chatgpt-plan-provider.md).
