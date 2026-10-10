@@ -51,6 +51,15 @@
     min-width: 0;
     max-width: 100%;
   }
+  @media (hover: hover) {
+    .chat-message-footer :global(.conversation-context-trigger:hover) {
+      background-color: color-mix(
+        in oklab,
+        var(--secondary) 90%,
+        var(--secondary-foreground) 10%
+      );
+    }
+  }
   .chat-message-footer__actions:has(
     :global([data-ui-part="composer-toolbar"][data-formatting-open])
   ) {

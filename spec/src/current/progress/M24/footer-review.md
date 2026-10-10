@@ -48,3 +48,13 @@ interaction/accessibility and projection checks qualify this presentation slice
 in the enclosing change umouvlrv. M24 remains In progress. Provider, restart
 execution, existing ResizeObserver investigation and visual baselines retain
 their independent gates; no visual baseline is approved.
+
+E-CHAT-FOOTER-003 keeps Agent repositories immediately before Agent with the
+same compact button treatment, adds distinct themed hover feedback to Codebase,
+Workspace and individual Pin/Archive actions, and gives the shared inbox split
+control a theme border. The Workspace menu uses its own viewport-bounded width;
+both inbox sidebar headers retain smaller matching horizontal insets. Existing
+repository selections, audience, draft and device-local pin/archive contracts
+remain unchanged in enclosing change pqnxyszz. Focused stories and live geometry
+review these presentation changes. M24 remains In progress; existing
+ResizeObserver diagnostics and unapproved visual baselines stay open.

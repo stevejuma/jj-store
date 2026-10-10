@@ -74,6 +74,7 @@ not a completion gate selection.
 | [E-INBOX-CONTROLS-001](../../../../../history/2026/10/10/E-INBOX-CONTROLS-001/index.md)         | 2026-10-10 | pass            | Original outcome |
 | [E-INBOX-FRESHNESS-001](../../../../../history/2026/10/10/E-INBOX-FRESHNESS-001/index.md)       | 2026-10-10 | pending         | Original outcome |
 | [E-THREADS-001](../../../../../history/2026/10/10/E-THREADS-001/index.md)                       | 2026-10-10 | pass            | Original outcome |
+| [E-CHAT-FOOTER-003](../../../../../history/2026/10/10/E-CHAT-FOOTER-003/index.md)               | 2026-10-10 | pass            | Control review   |
 | [E-THREADS-002](../../../../../history/2026/10/10/E-THREADS-002/index.md)                       | 2026-10-10 | pending         | Original outcome |
 
 |

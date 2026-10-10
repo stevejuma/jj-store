@@ -85,6 +85,7 @@
 
 .lc-community-inbox__list-header {
   padding: 0;
+  --store-view-tabs-padding-inline-end: 0.5rem;
 }
 
 .lc-community-inbox__items {

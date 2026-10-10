@@ -138,6 +138,7 @@
     position: absolute;
     inset-inline-end: 0.25rem;
     inset-block-start: 0.125rem;
+    border: 1px solid var(--border);
     border-radius: var(--radius);
     background: var(--secondary);
     opacity: 0;
@@ -147,6 +148,15 @@
   .lc-community-inbox__item-row:focus-within .inbox-row-actions {
     opacity: 1;
     pointer-events: auto;
+  }
+  @media (hover: hover) {
+    .inbox-row-actions :global([data-ui-component="button"]:hover) {
+      background-color: color-mix(
+        in oklab,
+        var(--secondary) 90%,
+        var(--secondary-foreground) 10%
+      );
+    }
   }
   @media (hover: none) {
     .inbox-row-actions {

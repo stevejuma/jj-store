@@ -89,7 +89,7 @@
           {...props}
           variant="secondary"
           size="xs"
-          class="workspace-trigger"
+          class="workspace-trigger conversation-context-trigger"
           title={label}
           aria-label={`Workspace: ${label}`}
           ><FolderGitIcon data-icon="inline-start" aria-hidden="true" /><span
@@ -102,7 +102,7 @@
       align="start"
       side="top"
       aria-label="Workspace"
-      class="w-64 max-w-[calc(100vw-2rem)]"
+      style="width: min(18rem, calc(100vw - 2rem)); min-width: 0"
     >
       <Menu.Group>
         <Menu.Label>Workspace</Menu.Label>
@@ -113,7 +113,7 @@
             >
             <Menu.SubContent
               aria-label="Workspace"
-              class="max-w-[calc(100vw-2rem)]"
+              style="max-width: calc(100vw - 2rem)"
             >
               <Menu.RadioGroup
                 value={browser.bindingKey}
@@ -146,7 +146,10 @@
         </Menu.Item>
         <Menu.Sub>
           <Menu.SubTrigger><CopyIcon aria-hidden="true" />Copy</Menu.SubTrigger>
-          <Menu.SubContent aria-label="Copy" class="w-48">
+          <Menu.SubContent
+            aria-label="Copy"
+            style="width: min(12rem, calc(100vw - 2rem)); min-width: 0"
+          >
             <Menu.Group>
               <Menu.Item
                 disabled={!browser.binding.location}

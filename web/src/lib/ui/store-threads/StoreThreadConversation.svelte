@@ -327,7 +327,7 @@
       >
         {#snippet workspace()}{#if controller?.execution && !parent}<StoreThreadCodebase
               {controller}
-            /><StoreThreadAgentRepositories {controller} /><StoreWorkspaceButton
+            /><StoreWorkspaceButton
               manager={controller.execution}
               sessions={linkedSessions}
               {conversation}
@@ -335,20 +335,31 @@
               repositories={threads.detail?.thread.value.codebase ??
                 (threads.detail ? [controller.state.route.repository] : [])}
             />{/if}{/snippet}
-        {#snippet controls()}{#if controller?.execution}<StoreConversationRuntime
-              manager={controller.execution}
-              agentId={selectedAgent}
-              session={selectedSession}
-              {disabled}
-              onAgentChange={(id) => {
-                conversation.comments.message = `${agentMentionToken(id)} ${conversation.comments.message}`;
-              }}
-            />{/if}{/snippet}
+        {#snippet controls()}{#if controller?.execution}<div
+              class="thread-runtime-controls"
+            >
+              {#if !parent}<StoreThreadAgentRepositories {controller} />{/if}
+              <StoreConversationRuntime
+                manager={controller.execution}
+                agentId={selectedAgent}
+                session={selectedSession}
+                {disabled}
+                onAgentChange={(id) => {
+                  conversation.comments.message = `${agentMentionToken(id)} ${conversation.comments.message}`;
+                }}
+              />
+            </div>{/if}{/snippet}
       </ChatMessageFooter>{/snippet}
   </StoreAgentChatBody>
 </div>
 
 <style>
+  .thread-runtime-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    min-width: 0;
+  }
   .thread-conversation {
     display: flex;
     flex-direction: column;

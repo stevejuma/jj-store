@@ -62,6 +62,7 @@
           {...props}
           variant="secondary"
           size="xs"
+          class="conversation-context-trigger"
           aria-label="Thread repositories"
           ><FolderGitIcon
             data-icon="inline-start"

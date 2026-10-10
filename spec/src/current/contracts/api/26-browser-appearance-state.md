@@ -21,6 +21,14 @@ reads, pagination, sanitized captured content, retained drafts, authorization,
 comment requests and receipt recovery remain unchanged under JST-UI-015 and
 JST-UI-018. No API, schema or persistence format changes are introduced.
 
+E-CHAT-FOOTER-003 changes only footer control order and presentation, Workspace
+menu width, compact sidebar-header insets, and the shared inbox Pin/Archive
+split-button border and individual hover feedback under JST-UI-015/JST-UI-018.
+Repository selection, independently authorized inspection, agent audience,
+session-only drafts and device-local pin/archive identities keep their existing
+contracts. No API requests, schema or persistence changes are introduced by
+these styling adjustments.
+
 Local POST `/v1/local/repos/{repo}/working-copy/read` takes a relative file
 path. It returns `WorkingFile` with a device selection and bounded physical
 UTF-8 text. POST `/working-copy/save` takes that exact selection and replacement
