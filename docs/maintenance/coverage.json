@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Documented Continue with ChatGPT, per-agent account and model selection, recovery and sign-out in owned Settings.",
-      "fingerprint": "100b2c02ac62dc5a7fe8374da6a98ec02e0a352b4f7f95784fcce6d091a16d25"
+      "reason": "Reviewed retained installation reads combined with ChatGPT account freshness; Settings and inbox guidance preserve explicit authorization, drafts and scoped event refresh.",
+      "fingerprint": "7ad211b0237a19e5f53090e8a42a0e9e5e147875541e5f445eec2b7c5f345182"
     }
   },
   {

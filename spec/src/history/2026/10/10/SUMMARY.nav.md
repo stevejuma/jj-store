@@ -6,5 +6,7 @@
   {{#include E-CHAT-METADATA-MAIN-003/SUMMARY.nav.md}}
 - [E-CHATGPT-001](E-CHATGPT-001/index.md)
   {{#include E-CHATGPT-001/SUMMARY.nav.md}}
+- [E-CHATGPT-REBASE-001](E-CHATGPT-REBASE-001/index.md)
+  {{#include E-CHATGPT-REBASE-001/SUMMARY.nav.md}}
 - [E-INBOX-FRESHNESS-001](E-INBOX-FRESHNESS-001/index.md)
   {{#include E-INBOX-FRESHNESS-001/SUMMARY.nav.md}}

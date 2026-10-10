@@ -190,4 +190,10 @@ Affected service/server/HTTP, capture privacy, bundled runtime and direct UI con
   last valid view without an unhandled poll
 - crates/jj-store-server/src/agent_execution/chatgpt/tests.rs#sign_out_cancels_reauthorization_of_disconnected_accounts
 <!-- /evidence-field -->
+<!-- generated-navigation -->
+## Pages
 
+- [E-CHATGPT-001 details 2](details-02.md)
+- [E-CHATGPT-001 details 3](details-03.md)
+- [E-CHATGPT-001 details 4](details-04.md)
+- [E-CHATGPT-001 details 5](details-05.md)

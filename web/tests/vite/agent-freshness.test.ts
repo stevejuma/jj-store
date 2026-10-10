@@ -231,7 +231,12 @@ test("inbox remounts reuse initial status, settings and targets", async () => {
   try {
     await f.manager.ensure();
     await Promise.all([f.manager.ensure(), f.manager.ensure()]);
-    expect(f.paths).toHaveLength(3);
+    expect([...f.paths].sort()).toEqual([
+      "/v1/local/agents",
+      "/v1/local/agents/chatgpt",
+      "/v1/local/agents/settings",
+      "/v1/local/agents/targets",
+    ]);
   } finally {
     f.close();
   }

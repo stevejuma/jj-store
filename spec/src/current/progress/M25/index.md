@@ -1,8 +1,8 @@
 # M25 local compute, agent configuration and sent context
 
-| ID  | Status      | Depends | Requirements                                                        | Gate                                                                                                                           | Next                                                       | Evidence                                                                                                                                                                                                                                                           |
-| --- | ----------- | ------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| M25 | In progress | M24     | JST-COLLAB-034,JST-COLLAB-035,JST-COLLAB-036,JST-UI-012,JST-API-001 | Defaults/environment, rich sent context, real local ACP coding tools, private paired inference, cold packaged macOS/Linux runs | Qualify signed macOS/WKWebView and Linux CPU distributions | E-COMPUTE-001,E-COMPUTE-002,E-COMPUTE-003,E-COMPUTE-004,E-COMPUTE-005,E-COMPUTE-006,E-COMPUTE-007,E-COMPUTE-008,E-CHAT-LIVE-007,E-CHAT-METADATA-002,E-CHAT-METADATA-MAIN-001,E-CHAT-METADATA-MAIN-002,E-CHAT-METADATA-MAIN-003,E-INBOX-FRESHNESS-001,E-CHATGPT-001 |
+| ID  | Status      | Depends | Requirements                                                        | Gate                                                                                                                           | Next                                                       | Evidence                                                                                                                                                                                                                                                                                |
+| --- | ----------- | ------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| M25 | In progress | M24     | JST-COLLAB-034,JST-COLLAB-035,JST-COLLAB-036,JST-UI-012,JST-API-001 | Defaults/environment, rich sent context, real local ACP coding tools, private paired inference, cold packaged macOS/Linux runs | Qualify signed macOS/WKWebView and Linux CPU distributions | E-COMPUTE-001,E-COMPUTE-002,E-COMPUTE-003,E-COMPUTE-004,E-COMPUTE-005,E-COMPUTE-006,E-COMPUTE-007,E-COMPUTE-008,E-CHAT-LIVE-007,E-CHAT-METADATA-002,E-CHAT-METADATA-MAIN-001,E-CHAT-METADATA-MAIN-002,E-CHAT-METADATA-MAIN-003,E-INBOX-FRESHNESS-001,E-CHATGPT-001,E-CHATGPT-REBASE-001 |
 
 M24's independent adapter, installed live permission/cancellation and desktop
 qualification gates remain unchanged. M25 source/fixture passes do not qualify
@@ -83,6 +83,39 @@ Settings acceptance remain separate from authenticated subscription and real
 Keychain evidence. M25 stays In progress; signed macOS/WKWebView, Linux CPU, M24
 adapter and visual gates remain open. Six unchanged parent architecture size
 diagnostics are recorded separately from changed-module verification.
+
+## ChatGPT rebase and main landing plan — 2026-10-10
+
+E-CHATGPT-REBASE-001 records rebasing `szzqmzpx` onto main's committed
+`klrylvzw` (`08b34cc5`). Both historical evidence payloads and M25's In progress
+status remain unchanged. Follow-up `nqtxppsx` qualifies the combined read
+lifecycle and records this landing plan. The default workspace remains on main;
+its running application and development fixture are retained.
+
+1. Recheck both workspaces and the main tip. Require a clean default working
+   copy. If committed main advanced, rebase `szzqmzpx` onto `default@-`, resolve
+   shared ownership and navigation, and repeat the affected regression and
+   type/ownership/spec checks before selecting a new landing candidate.
+2. From the default workspace, move its empty working-copy change above the
+   verified tip with `jj rebase -r @ -o nqtxppsx`. Preserve the implementation
+   and qualification as separate changes; the retained main history remains an
+   ancestor. This step lands source without modifying device state.
+3. Confirm clean main, no conflicts, the expected parent and an empty tree diff
+   against `nqtxppsx`. Run the combined account/freshness regression and record
+   fresh main qualification evidence. Keep E-CHATGPT-001 and
+   E-INBOX-FRESHNESS-001 immutable; retain the open live and platform gates.
+4. When activating the development app, rebuild and restage the bundled helpers
+   with `pnpm desktop:prepare`, supplying the pinned control-version-3 ACP path
+   through `--acp-executable`. Preflight the paired JJ resources, retain
+   `.local/dev-demo`, and use the existing UI-mode backend build/restart or
+   built-mode full restart. Qualify the cold Settings/inbox flow and the staged
+   JJ Agent helper. Activation never uses reset or replaces the installed CLI.
+5. Complete authenticated subscription/model/tool/refresh and real Keychain
+   restart/sign-out acceptance separately, using explicit browser sign-in.
+   Signed macOS/WKWebView and visual approval remain independent. Retain the
+   ChatGPT workspace until main qualification and recoverable cleanup are
+   explicitly selected.
+
 <!-- generated-navigation -->
 
 ## Pages
