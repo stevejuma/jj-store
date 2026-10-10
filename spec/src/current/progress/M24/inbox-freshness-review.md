@@ -79,3 +79,34 @@ visual baselines and ResizeObserver diagnostics are not qualified as resolved.
 Next: re-time both uncached live actions after older views reload, qualify
 explicit preparation flows against complete task events, and retain the
 independent milestone gates.
+
+## Fresh Chrome connection qualification — 2026-10-10
+
+E-EVENT-CONNECTIONS-002, in enclosing default change `qoplzmtl`, follows an
+explicit development-server start with the fixture retained. Fresh Chrome 155
+opens the uncached TypeScript chat in 712ms and its workspace files in 767ms.
+History requests spend 1–18ms before sending; file inspection spends 3.5ms. Six
+live app tabs share one application event connection, verified against Chrome's
+network process and unfinished server responses. The sixth tab's uncached chat
+takes 1.64s, with history request-start waits of 1.6–4.5ms.
+
+A bounded diagnostic opens five additional direct event readers alongside that
+shared stream. A normal Settings request cannot connect until one reader is
+aborted at three seconds; CDP records connectStart at 3000.166ms. Its remaining
+server response wait is separately 1.59s. After all diagnostic readers close,
+another Settings request completes in 24.6ms. This proves the browser's HTTP/1
+connection-slot mechanism without changing publication, admission or polling.
+The earlier 35.43s chat and 19.49s files measurements in the in-app browser
+remain valid; this fresh Chrome result does not identify every former owner or
+qualify that older browser session as repaired.
+
+Feedback (1.83–2.17s), targets (1.27s), and file inspection (642ms) retain
+separate server response costs. These are not browser queue time and are not
+qualified as optimized here. One application tab remains open; five temporary
+tabs, all diagnostic readers, page instrumentation and the Node inspector are
+closed. Production source and the fixture are unchanged. M24/M25 remain In
+progress; visual baselines, ResizeObserver diagnostics and prior independent
+test/platform gaps retain their recorded status.
+
+Next: profile feedback/target server work separately, verify any remaining older
+app instances after reload, and retain the independent milestone gates.
