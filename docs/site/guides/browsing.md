@@ -15,14 +15,20 @@ IDs when copying a selection into a command or review.
 
 Selecting a historical operation pins code reads. Files and comparisons retain
 that context across navigation instead of drifting to the latest head. Current
-views refresh after saves and relevant committed events; unavailable feeds use
-bounded fallback; explicit historical selections stay historical. To see newly
-published code, return to a current selection deliberately.
+views refresh after saves and relevant committed events; unavailable feeds
+reconnect without periodic data polling; explicit historical selections stay
+historical. To see newly published code, return to a current selection
+deliberately.
 
 The Agents directory, defaults and open chats follow the same event feed.
 Healthy idle pages make no periodic agent data requests. Changes from another
 tab appear automatically; reconnect and bounded failed-read retries preserve
 drafts and exact pending requests.
+
+Supported browsers share the update connection between tabs running the same
+application version and using the same credential. After a development update,
+reload other open jj-store views once so they can adopt the updated transport.
+Browsers without shared-worker support retain independent update connections.
 
 ## Inspect files
 

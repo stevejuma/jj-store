@@ -30,6 +30,22 @@ export function validApplicationCursor(id: string) {
     cursorPattern.test(id) && BigInt(id.split(":")[3]!) <= 18446744073709551615n
   );
 }
+export function assertApplicationContinuity(
+  previous: string | undefined,
+  event: ApplicationEvent,
+  id: string,
+) {
+  if (
+    previous &&
+    event.type !== "reset" &&
+    (id.split(":").slice(0, 3).join(":") !==
+      previous.split(":").slice(0, 3).join(":") ||
+      (event.type === "changed"
+        ? BigInt(id.split(":")[3]!) <= BigInt(previous.split(":")[3]!)
+        : BigInt(id.split(":")[3]!) < BigInt(previous.split(":")[3]!)))
+  )
+    throw new ApiError("invalid_application_cursor");
+}
 function validateChange(value: FreshnessChange) {
   if (
     !value ||

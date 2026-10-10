@@ -72,7 +72,9 @@ E-INBOX-FRESHNESS-001 qualifies retained, event-driven installation reads in
 Settings and the inbox. The
 [inbox lifecycle review](../M24/inbox-freshness-review.md) records live timing
 limitations and the remaining preparation-flow audit. M25 stays In progress;
-distribution and independent M24 gates remain unchanged.
+distribution and independent M24 gates remain unchanged. E-EVENT-CONNECTIONS-001
+adds cross-instance event transport and records the remaining old-client live
+timing limit in that review.
 
 ## Direct ChatGPT subscription review — 2026-10-10
 

@@ -19,6 +19,22 @@ aliases and affected collaboration families; exact immutable operation/object
 reads remain reusable. Prepared availability, expiring cursors, errors and
 optional metadata are transient.
 
+Where SharedWorker is supported, same-origin app instances running the same
+worker asset with the same in-memory credential MUST share one application event
+transport. Independent tabs must not exhaust HTTP/1 connection slots with
+duplicate long-lived feeds. Credential scopes remain isolated. New subscribers
+receive the current bounded witness snapshot before discovery. Catch-up
+snapshots invalidate whole domains, not only their last changed identity;
+continuity mismatch or a missed repository reset resets only that subscriber.
+Port release, page exit and final subscriber teardown release their ownership;
+the final release cancels the upstream body. Stream errors and authorization
+denial propagate to each affected owner. Workers retain at most 4096 domain
+witnesses per credential and no repository bodies, drafts or credentials in
+browser storage. Unsupported or unavailable workers retain the direct event
+transport. This fallback has no cross-tab connection-budget claim. Neither path
+introduces periodic data polling. Cold browser qualification must include
+concurrent instances and request-start delay, not only warm cache reuse.
+
 Healthy idle views, Settings, capture and folder registration perform no
 periodic data requests. Settings observes only its visible section; Projects and
 sidebar navigation refresh affected repository windows, and inline

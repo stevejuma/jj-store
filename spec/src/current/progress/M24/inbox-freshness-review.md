@@ -52,5 +52,30 @@ be absent; its assertion now agrees with JST-UI-015. Fixture staging no longer
 depends on duplicate boot reads. Existing ResizeObserver diagnostics are not
 qualified as resolved by this data-lifecycle change.
 
-Next: identify the live connection-queue owner, qualify explicit preparation
-flows against complete task events, and retain M24/M25's independent gates.
+## Cross-instance connection follow-up — 2026-10-10
+
+E-EVENT-CONNECTIONS-001, in enclosing default change `zswrwonw`, identifies
+HTTP/1 connection-slot exhaustion: five unfinished application streams and one
+legacy agent stream belonged to the Codex browser network process. Requests
+waited before connecting, while transcript responses took tens of milliseconds.
+This establishes the transport bottleneck, not a missing database index or the
+exact origin of every old background view. The prior cache repair remains valid.
+
+Same-asset, same-credential app instances now share a bounded worker transport.
+Sixteen owners in two fresh real browser tabs used one connection; a fixture
+event reached all sixteen. Closing one tab retained the stream, final release
+closed it, and ordinary request probes took 2.6–29.4ms. The fixture tests actual
+built worker lifecycle under same-origin CSP, separate from live-repository
+latency. Focused protocol/controller and catalog coverage passes. Three wider
+web test failures reproduce on the unchanged parent and remain recorded.
+
+The live browser still includes older application/legacy streams outside the two
+tabs accessible to this task. Reloading only those two does not retire the old
+connections. A clean live chat/files after comparison remains pending until
+those views reload; no sub-second live result is claimed. Source edits and UI
+restarts preserve backend PID 92799 and the fixture. M24/M25 remain In progress;
+visual baselines and ResizeObserver diagnostics are not qualified as resolved.
+
+Next: re-time both uncached live actions after older views reload, qualify
+explicit preparation flows against complete task events, and retain the
+independent milestone gates.

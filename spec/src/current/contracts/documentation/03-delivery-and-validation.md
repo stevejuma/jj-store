@@ -250,3 +250,7 @@ legacy bytes and unchanged shared capacity. Distinguish immutable replay after
 new editor work from live physical validation; terminal upgrade and missing-body
 reconstruction remain prohibited. No saved input example may advertise a
 physical completion or production mutation capability.
+
+Event freshness guidance MUST describe shared-tab support and its fallback,
+retain event-driven refresh without data polling, and distinguish a cold
+transport regression from live timings with older views still connected.

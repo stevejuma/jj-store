@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed retained installation reads combined with ChatGPT account freshness; Settings and inbox guidance preserve explicit authorization, drafts and scoped event refresh.",
-      "fingerprint": "7ad211b0237a19e5f53090e8a42a0e9e5e147875541e5f445eec2b7c5f345182"
+      "reason": "Reviewed bounded cross-tab event sharing, retained reset boundaries, whole-domain catch-up and fallback limits; browsing guidance remains accurate.",
+      "fingerprint": "afeeb8e50ca74bb96b6b581d2c47179e0a65f560399478c6c0afe96a6991206e"
     }
   },
   {

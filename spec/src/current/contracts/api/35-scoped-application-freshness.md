@@ -29,6 +29,14 @@ Shared refcounted metadata monitors and filesystem hints validate committed
 changes within five seconds under qualified healthy load. Idle monitors retire
 after a bounded grace period.
 
+Browser sharing retains the version-1 endpoint, admission and authorization
+scope. A worker shares only connections with the same credential and deployed
+asset, keeps bounded witnesses in memory and cancels the upstream body after its
+final subscriber leaves. A synthesized catch-up snapshot omits the last exact
+identity when its domain witness can cover multiple missed changes; current
+subscribers continue receiving exact change identities. Server-selected cursors
+and current authorization remain authoritative.
+
 Installation-local `agent_execution` and `agent_settings` notices join the
 shared feed for LocalTrusted Admin only. Supervisor settlement, runtime
 preparation and worker transitions invalidate execution; committed defaults

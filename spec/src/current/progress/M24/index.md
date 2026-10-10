@@ -387,7 +387,8 @@ menu behavior. M24 stays In progress; ResizeObserver diagnostics and independent
 workspace qualification remain open. Visual baselines remain unapproved. The
 [conversation footer review](footer-review.md) records E-CHAT-FOOTER-001/002.
 The [conversation metadata review](metadata-review.md) records
-E-CHAT-METADATA-001/002 and the main-workspace integration.
+E-CHAT-METADATA-001/002 and the main-workspace integration. The inbox lifecycle
+review adds E-EVENT-CONNECTIONS-001 for shared cross-instance event transport.
 <!-- generated-navigation -->
 
 ## Pages

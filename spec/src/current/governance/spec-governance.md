@@ -127,3 +127,8 @@ retains pinned Svelte/CSS source attribution in docs/ui-provenance.json; native
 session/repository identities and grouping remain application-owned. JST-GOV-008
 ownership boundaries remain unchanged and no Community checkout dependency is
 introduced.
+
+The application-event browser harness serves only synthetic version-1 hints and
+built client assets on an isolated loopback port. Its connection-count, fanout
+and final-release evidence qualifies client transport; it cannot substitute for
+live repository action timings or native authorization qualification.

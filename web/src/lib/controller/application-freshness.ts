@@ -1,6 +1,7 @@
 import { ApiError } from "../api/client.js";
+import { sharedApplicationEvents } from "../api/shared-application-events.js";
 import {
-  applicationEvents,
+  assertApplicationContinuity,
   type ApplicationEvent,
   type FreshnessChange,
 } from "../api/application-events.js";
@@ -73,16 +74,7 @@ export class ApplicationFreshness {
     return this.ready;
   }
   private accept(event: ApplicationEvent, id: string) {
-    if (
-      this.cursor &&
-      event.type !== "reset" &&
-      (id.split(":").slice(0, 3).join(":") !==
-        this.cursor.split(":").slice(0, 3).join(":") ||
-        (event.type === "changed"
-          ? BigInt(id.split(":")[3]!) <= BigInt(this.cursor.split(":")[3]!)
-          : BigInt(id.split(":")[3]!) < BigInt(this.cursor.split(":")[3]!)))
-    )
-      throw new ApiError("invalid_application_cursor");
+    assertApplicationContinuity(this.cursor, event, id);
     const reset =
       event.type === "reset" ||
       (event.type === "changed" &&
@@ -116,7 +108,7 @@ export class ApplicationFreshness {
         live = false;
       const started = Date.now();
       try {
-        await applicationEvents(
+        await sharedApplicationEvents(
           token,
           this.cursor,
           signal,
