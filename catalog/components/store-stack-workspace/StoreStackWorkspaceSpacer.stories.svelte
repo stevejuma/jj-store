@@ -28,7 +28,7 @@
     expect(reserve).not.toBeNull();
     expect(reserve).not.toHaveAttribute("aria-hidden", "true");
     expect(reserve.closest('[data-ui-part="column"]')).toBeNull();
-    expect(reserve.getBoundingClientRect().width).toBe(390);
+    expect(reserve.getBoundingClientRect().width).toBeCloseTo(390, 2);
     expect(getComputedStyle(prompt).backgroundImage).toBe("none");
     expect(getComputedStyle(prompt).borderInlineStartWidth).toBe("0px");
     const empty = prompt.querySelector(

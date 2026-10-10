@@ -1,257 +1,223 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
-  import Fixture from "../../fixtures/AgentExecutionFixture.svelte";
+  import Fixture from "../../fixtures/AgentInlineCommentsFixture.svelte";
+  import {
+    openInlineConversation,
+    startInlineComment,
+    commentEditor,
+    inlineEditors,
+    promptCommands,
+    sendInlineComments,
+  } from "../../fixtures/agent-inline-comment-play.js";
   const { Story } = defineMeta({
     title: "JJ Store/Agent message discussion",
     component: Fixture,
     tags: ["visual-pending"],
     parameters: { layout: "fullscreen" },
   });
-  async function open(canvasElement: HTMLElement) {
-    const c = within(canvasElement);
-    await userEvent.click(
-      c.getByRole("button", { name: "Open fixture conversation" }),
-    );
-    const message = (
-      await c.findAllByRole("article", {
-        name: "Message from Repository helper",
-      })
-    )[0];
-    await userEvent.hover(message);
-    await waitFor(() =>
-      expect(message).toHaveAttribute("data-actions-visible"),
-    );
-    await userEvent.click(
-      within(message).getByRole("button", { name: "Reply" }),
-    );
-    return {
-      c,
-      panel: within(
-        await c.findByRole("region", { name: "Replies to Repository helper" }),
-      ),
-    };
-  }
 </script>
 
 <Story
-  name="Resume replay preserves exact replies and recovers a retained draft"
-  args={{
-    agentReplies: true,
-    chatFeedback: "completed",
-    replayHistory: true,
-    status: "Offline",
-  }}
+  name="Drafts at different message anchors remain independent and submit together"
   play={async ({ canvasElement }) => {
-    const c = within(canvasElement),
-      page = within(document.body);
+    const c = await openInlineConversation(canvasElement);
+    const assistant = await startInlineComment(canvasElement);
+    await userEvent.type(assistant, "Comment on the answer");
+    await userEvent.click(c.getByRole("textbox", { name: "Your message" }));
     await userEvent.click(
-      c.getByRole("button", { name: "Open fixture conversation" }),
+      c.getByRole("button", { name: "Comment on Your message" }),
     );
-    await waitFor(() =>
-      expect(
-        c.getAllByRole("article", { name: "Message from Repository helper" }),
-      ).toHaveLength(2),
-    );
-    await expect(c.queryByText("$WORKSPACE")).not.toBeInTheDocument();
-    const recovery = within(
-      await c.findByRole("region", { name: "Retained reply draft" }),
-    );
-    await recovery.findByText("Is there a license in the repo?");
-    await expect(
-      recovery.getByRole("button", { name: "Restore reply draft" }),
-    ).toBeDisabled();
-    const picker = recovery.getByRole("button", { name: "Reply to" });
-    picker.focus();
-    await userEvent.keyboard("{Enter}");
-    await expect(
-      await page.findByRole("option", {
-        name: "1. You: Show the retained time",
-      }),
-    ).toHaveAttribute("data-disabled");
-    await userEvent.keyboard("{ArrowDown}{Enter}");
-    await waitFor(() =>
-      expect(picker).toHaveTextContent("2. Repository helper: Ready to help."),
-    );
-    await waitFor(() =>
-      expect(document.body).not.toHaveStyle("pointer-events: none"),
-    );
-    await userEvent.click(
-      recovery.getByRole("button", { name: "Restore reply draft" }),
+    const user = await commentEditor(canvasElement, "Your message");
+    await userEvent.type(user, "Comment on the prompt");
+    await startInlineComment(canvasElement);
+    await expect(inlineEditors(canvasElement)[0]).toHaveTextContent(
+      "Comment on the answer",
     );
     await expect(
-      c.queryByRole("region", { name: "Retained reply draft" }),
-    ).not.toBeInTheDocument();
-    const panel = within(
-      await c.findByRole("region", { name: "Replies to Repository helper" }),
-    );
-    await expect(
-      panel.getByRole("textbox", { name: "Markdown editor" }),
-    ).toHaveTextContent("Is there a license in the repo?");
-    await expect(
-      panel.getByRole("button", { name: "Save reply" }),
-    ).toBeEnabled();
-    await expect(
-      panel.queryByText("Is there a license in the repo?", {
-        selector: "article *",
-      }),
-    ).not.toBeInTheDocument();
-    await expect(
-      c.queryByLabelText("Session commands"),
-    ).not.toBeInTheDocument();
-    await userEvent.click(panel.getByRole("button", { name: "Save reply" }));
-    await panel.findByText("Is there a license in the repo?");
-    await expect(
-      panel.getByRole("textbox", { name: "Markdown editor" }),
-    ).not.toHaveTextContent("Is there a license in the repo?");
-    await expect(
-      c.queryByLabelText("Session commands"),
-    ).not.toBeInTheDocument();
-    // The prompt target's existing draft was never overwritten.
-    const prompt = c.getAllByRole("article", { name: "Message from You" })[0];
-    await userEvent.hover(prompt);
-    await waitFor(() => expect(prompt).toHaveAttribute("data-actions-visible"));
-    await userEvent.click(
-      within(prompt).getByRole("button", { name: "Reply" }),
-    );
-    const original = within(
-      await c.findByRole("region", { name: "Replies to You" }),
-    );
-    await expect(
-      original.getByRole("textbox", { name: "Markdown editor" }),
-    ).toHaveTextContent("Keep the existing prompt reply");
-    await expect(
-      original.queryByText("Is there a license in the repo?"),
-    ).not.toBeInTheDocument();
+      inlineEditors(canvasElement, "Your message")[0],
+    ).toHaveTextContent("Comment on the prompt");
+    expect(
+      canvasElement.querySelectorAll(
+        '[data-location="queue"] [role="textbox"]',
+      ),
+    ).toHaveLength(2);
+    expect(promptCommands(canvasElement)).toHaveLength(0);
+    await sendInlineComments(canvasElement);
+    const prompt = promptCommands(canvasElement)[0];
+    if (prompt.action.action !== "prompt") throw new Error("Expected prompt");
+    expect(prompt.action.text).toBe("");
+    expect(prompt.action.comments!.comments).toHaveLength(2);
+    expect(prompt.action.comments!.comments[0]).toMatchObject({
+      body: "Comment on the answer",
+      source: { target: { content: { id: "22".repeat(32) } } },
+    });
+    expect(prompt.action.comments!.comments[1]).toMatchObject({
+      body: "Comment on the prompt",
+      source: { target: { content: { id: "11".repeat(32) } } },
+    });
+    expect(promptCommands(canvasElement)).toHaveLength(1);
   }}
 />
-
 <Story
-  name="Exact reactions share the message toolbar and bar"
-  args={{ agentReplies: true, chatFeedback: "completed" }}
+  name="Immutable message reactions use the shared toolbar and reaction bar"
   play={async ({ canvasElement }) => {
-    const c = within(canvasElement),
+    const c = await openInlineConversation(canvasElement),
       page = within(document.body);
+    const source = c.getAllByRole("textbox", { name: "Assistant message" })[0];
+    await userEvent.click(source);
     await userEvent.click(
-      c.getByRole("button", { name: "Open fixture conversation" }),
-    );
-    const message = (
-      await c.findAllByRole("article", {
-        name: "Message from Repository helper",
-      })
-    )[0];
-    await userEvent.hover(message);
-    await waitFor(() =>
-      expect(message).toHaveAttribute("data-actions-visible"),
-    );
-    await userEvent.click(
-      within(message).getByRole("button", { name: "Add reaction" }),
+      c.getAllByRole("button", {
+        name: "Add reaction to Assistant message",
+      })[0],
     );
     await userEvent.click(await page.findByRole("button", { name: ":lapis:" }));
-    const reaction = await within(message).findByRole("button", {
+    const reaction = await c.findByRole("button", {
       name: /1 reaction with Lapis/,
     });
     await userEvent.click(reaction);
     await waitFor(() =>
       expect(
-        within(message).queryByRole("button", {
-          name: /1 reaction with Lapis/,
-        }),
-      ).not.toBeInTheDocument(),
+        c.queryByRole("button", { name: /1 reaction with Lapis/ }),
+      ).toBeNull(),
     );
-    await expect(
-      c.queryByLabelText("Session commands"),
-    ).not.toBeInTheDocument();
+    expect(promptCommands(canvasElement)).toHaveLength(0);
   }}
 />
 <Story
-  name="Saved replies retain drafts and do not prompt"
-  args={{ agentReplies: true, chatFeedback: "completed" }}
+  name="Inline range comments synchronize the queue survive remount and send exact sources"
   play={async ({ canvasElement }) => {
-    const { c, panel } = await open(canvasElement);
-    const editor = panel.getByRole("textbox", { name: "Markdown editor" });
-    await userEvent.type(editor, "Use the shared form component.");
-    await userEvent.click(panel.getByRole("button", { name: "Save reply" }));
-    await panel.findByText("Use the shared form component.");
-    await expect(editor).not.toHaveTextContent(
-      "Use the shared form component.",
+    const c = await openInlineConversation(canvasElement);
+    const source = c.getAllByRole("textbox", { name: "Assistant message" })[0];
+    await userEvent.click(source);
+    await userEvent.keyboard("{Home}{Shift>}{End}{/Shift}x");
+    const editor = await commentEditor(canvasElement);
+    await userEvent.keyboard(" Use the shared form component.");
+    const text = "x Use the shared form component.";
+    await expect(editor).toHaveTextContent(text);
+    const queued = canvasElement.querySelector<HTMLElement>(
+      '[data-location="queue"] [role="textbox"]',
+    )!;
+    await expect(queued).toHaveTextContent(text);
+    expect(promptCommands(canvasElement)).toHaveLength(0);
+    await userEvent.click(c.getByRole("button", { name: "Switch renderer" }));
+    await waitFor(() =>
+      expect(
+        canvasElement.querySelector("[data-conversation-view]"),
+      ).toHaveAttribute("data-conversation-view", "classic"),
     );
-    await expect(
-      c.queryByLabelText("Session commands"),
-    ).not.toBeInTheDocument();
-    await userEvent.type(editor, "Retained next reply");
+    await expect(inlineEditors(canvasElement)[0]).toHaveTextContent(text);
     await userEvent.click(
-      c.getByRole("button", { name: "Manage fixture agents" }),
+      c.getByRole("button", { name: "Leave fixture conversation" }),
     );
-    const reopened = await open(canvasElement);
-    await expect(
-      reopened.panel.getByRole("textbox", { name: "Markdown editor" }),
-    ).toHaveTextContent("Retained next reply");
-    await reopened.panel.findByText("Use the shared form component.");
+    await openInlineConversation(canvasElement);
+    await expect(inlineEditors(canvasElement)[0]).toHaveTextContent(text);
+    await userEvent.click(c.getByRole("button", { name: "Switch renderer" }));
+    await waitFor(() =>
+      expect(
+        canvasElement.querySelector("[data-conversation-view]"),
+      ).toHaveAttribute("data-conversation-view", "document"),
+    );
+    await sendInlineComments(canvasElement);
+    const prompt = promptCommands(canvasElement)[0];
+    if (prompt.action.action !== "prompt") throw new Error("Expected prompt");
+    expect(prompt.action.comments?.comments[0]).toMatchObject({
+      body: text,
+      source: {
+        quote: "Ready to help.",
+        selection: { encoding: "utf8", start_byte: "0", end_byte: "14" },
+        target: { content: { id: "22".repeat(32) } },
+      },
+    });
+    expect(promptCommands(canvasElement)).toHaveLength(1);
   }}
 />
 <Story
-  name="Unsupported repository retains reply draft without dispatch"
-  args={{
-    agentReplies: true,
-    feedbackWriteUnavailable: true,
-    chatFeedback: "completed",
-  }}
+  name="Unsupported repositories explain unavailable comments without dispatch"
+  args={{ writeUnavailable: true }}
   play={async ({ canvasElement }) => {
-    const { panel, c } = await open(canvasElement);
-    await userEvent.type(
-      panel.getByRole("textbox", { name: "Markdown editor" }),
-      "Retained feedback",
+    const c = await openInlineConversation(canvasElement);
+    const source = c.getAllByRole("textbox", { name: "Assistant message" })[0];
+    await userEvent.click(source);
+    const action = c.getAllByRole("button", {
+      name: "Comment on Assistant message",
+    })[0];
+    await waitFor(() => expect(action).toBeDisabled());
+    await expect(action).toHaveAttribute(
+      "title",
+      "Comments are unavailable until collaboration replication is qualified.",
     );
-    await panel.findByText(/until collaboration replication is qualified/);
+    await expect(source).toHaveTextContent("Ready to help.");
+    expect(inlineEditors(canvasElement)).toHaveLength(0);
+    expect(promptCommands(canvasElement)).toHaveLength(0);
+  }}
+/>
+<Story
+  name="Unpublished assistant content stays readable until exact commenting is available"
+  args={{ unpublished: true }}
+  play={async ({ canvasElement }) => {
+    const c = await openInlineConversation(canvasElement);
+    const source = c.getAllByRole("textbox", { name: "Assistant message" })[0];
+    await userEvent.click(source);
+    const action = c.getAllByRole("button", {
+      name: "Comment on Assistant message",
+    })[0];
+    await expect(action).toBeDisabled();
+    await expect(action).toHaveAttribute(
+      "title",
+      "Waiting for an exact published source",
+    );
+    await expect(source).toHaveTextContent("Ready to help.");
+    expect(inlineEditors(canvasElement)).toHaveLength(0);
+    expect(promptCommands(canvasElement)).toHaveLength(0);
+  }}
+/>
+<Story
+  name="Unknown comment batches retain the exact request for receipt recovery"
+  args={{ unknown: true }}
+  play={async ({ canvasElement }) => {
+    const c = await openInlineConversation(canvasElement);
+    const editor = await startInlineComment(canvasElement);
+    await userEvent.type(editor, "Publish exactly once");
+    await userEvent.click(c.getByRole("button", { name: "Send message" }));
+    const check = await c.findByRole("button", {
+      name: "Check retained request",
+    });
+    await expect(editor).toHaveTextContent("Publish exactly once");
+    await expect(editor).toHaveAttribute("contenteditable", "false");
     await expect(
-      panel.getByRole("button", { name: "Save reply" }),
+      c.getByRole("button", { name: "Send message" }),
     ).toBeDisabled();
+    const original = promptCommands(canvasElement)[0];
+    await userEvent.click(check);
     await expect(
-      c.queryByLabelText("Session commands"),
-    ).not.toBeInTheDocument();
-  }}
-/>
-<Story
-  name="Reply waits for original publication"
-  args={{ chatFeedback: "completed" }}
-  play={async ({ canvasElement }) => {
-    const { panel } = await open(canvasElement);
-    await userEvent.type(
-      panel.getByRole("textbox", { name: "Markdown editor" }),
-      "Keep this reply draft",
-    );
-    await panel.findByText(/Waiting for this message to be published/);
-    await expect(
-      panel.getByRole("button", { name: "Save reply" }),
-    ).toBeDisabled();
-  }}
-/>
-<Story
-  name="Unknown reply keeps exact request for status recovery"
-  args={{ agentReplies: true, unknownReply: true, chatFeedback: "completed" }}
-  play={async ({ canvasElement }) => {
-    const { panel, c } = await open(canvasElement);
-    const editor = panel.getByRole("textbox", { name: "Markdown editor" });
-    await userEvent.type(editor, "Saved exactly once");
-    await userEvent.click(panel.getByRole("button", { name: "Save reply" }));
-    await panel.findByRole("button", { name: "Check reply status" });
-    await expect(editor).toHaveTextContent("Saved exactly once");
+      await c.findByRole("button", { name: "Check retained request" }),
+    ).toBeEnabled();
+    expect(promptCommands(canvasElement)).toHaveLength(1);
     await userEvent.click(
-      panel.getByRole("button", { name: "Check reply status" }),
+      c.getByRole("button", { name: "Confirm fixture request" }),
+    );
+    await userEvent.click(
+      c.getByRole("button", { name: "Check retained request" }),
     );
     await waitFor(() =>
       expect(
-        panel.queryByRole("button", { name: "Check reply status" }),
-      ).not.toBeInTheDocument(),
+        c.queryByRole("button", { name: "Check retained request" }),
+      ).toBeNull(),
     );
-    await panel.findByText("Saved exactly once");
+    await userEvent.click(
+      c.getByRole("button", { name: "Refresh captured feedback" }),
+    );
+    await c.findByRole("button", { name: "Edit comment" });
+    expect(promptCommands(canvasElement)).toEqual([original]);
+    const checks = JSON.parse(
+      canvasElement.querySelector('[data-testid="comment-checks"]')!
+        .textContent!,
+    );
+    expect(checks.length).toBeGreaterThanOrEqual(3);
+    expect(checks.every((id: string) => id === original.request_id)).toBe(true);
     await expect(
-      panel.getByRole("textbox", { name: "Markdown editor" }),
-    ).not.toHaveTextContent("Saved exactly once");
-    await expect(panel.queryByRole("alert")).not.toBeInTheDocument();
-    await expect(
-      c.queryByLabelText("Session commands"),
-    ).not.toBeInTheDocument();
+      canvasElement.querySelector('[data-location="queue"]'),
+    ).toBeNull();
   }}
 />

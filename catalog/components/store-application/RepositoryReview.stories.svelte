@@ -122,20 +122,18 @@
       await expect(getComputedStyle(header).borderBottomWidth).toBe("1px");
     }
     await userEvent.click(canvas.getByRole("tab", { name: "Op Log" }));
-    const status = canvas.getByRole("status");
-    await expect(getComputedStyle(status).borderBottomWidth).toBe("1px");
-    await expect(getComputedStyle(status).backgroundColor).not.toBe(
-      "rgba(0, 0, 0, 0)",
-    );
+    const graph = await canvas.findByRole("list", { name: "Operation graph" });
     const opHeader = canvasElement.querySelector(
       '[data-ui-part="column-header"]',
     )!;
-    await expect(getComputedStyle(status).backgroundColor).not.toBe(
-      getComputedStyle(opHeader).backgroundColor,
-    );
-    const graph = canvas.getByRole("list", { name: "Operation graph" });
+    await expect(canvas.queryByRole("status")).toBeNull();
+    await expect(
+      await within(document.body).findByText(
+        /operation heads · selecting one does not reconcile history/,
+      ),
+    ).toBeVisible();
     await expect(graph.getBoundingClientRect().top).toBeCloseTo(
-      status.getBoundingClientRect().bottom,
+      opHeader.getBoundingClientRect().bottom,
       0,
     );
     const opRowsBeforeSelection = canvasElement.querySelectorAll<HTMLElement>(
@@ -212,11 +210,11 @@
       within(operationFiles).getByRole("button", { name: "assets/logo.bin" }),
     );
     await expect(
-      within(diffColumn).getByText("Binary diff unavailable"),
+      await within(diffColumn).findByText("Text diff unavailable"),
     ).toBeVisible();
-    await expect(within(diffColumn).getByRole("status")).toHaveTextContent(
-      "Binary or unavailable text diff for assets/logo.bin.",
-    );
+    await expect(
+      await within(diffColumn).findByRole("status"),
+    ).toHaveTextContent("No text diff is available for this comparison.");
     await userEvent.click(
       within(operationFiles).getByRole("button", { name: "src/lib.rs" }),
     );

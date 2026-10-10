@@ -5,47 +5,28 @@ Browse the child pages below.
 ## Pages
 
 - [E-AGENT-RESUME-001](E-AGENT-RESUME-001/index.md)
-  {{#include E-AGENT-RESUME-001/SUMMARY.nav.md}}
 - [E-AGENT-STATE-001](E-AGENT-STATE-001/index.md)
-  {{#include E-AGENT-STATE-001/SUMMARY.nav.md}}
 - [E-AGENT-TRANSCRIPT-VIEW-001](E-AGENT-TRANSCRIPT-VIEW-001/index.md)
-  {{#include E-AGENT-TRANSCRIPT-VIEW-001/SUMMARY.nav.md}}
 - [E-AGENTS-LAYOUT-001](E-AGENTS-LAYOUT-001/index.md)
-  {{#include E-AGENTS-LAYOUT-001/SUMMARY.nav.md}}
 - [E-CHAT-CARET-001](E-CHAT-CARET-001/index.md)
-  {{#include E-CHAT-CARET-001/SUMMARY.nav.md}}
 - [E-CHAT-FOOTER-003](E-CHAT-FOOTER-003/index.md)
-  {{#include E-CHAT-FOOTER-003/SUMMARY.nav.md}}
 - [E-CHAT-METADATA-MAIN-001](E-CHAT-METADATA-MAIN-001/index.md)
-  {{#include E-CHAT-METADATA-MAIN-001/SUMMARY.nav.md}}
 - [Main metadata handoff and presentation refinements](E-CHAT-METADATA-MAIN-002/index.md)
-  {{#include E-CHAT-METADATA-MAIN-002/SUMMARY.nav.md}}
 - [Unchanged authority confirmation for main refinements](E-CHAT-METADATA-MAIN-003/index.md)
-  {{#include E-CHAT-METADATA-MAIN-003/SUMMARY.nav.md}}
 - [E-CHATGPT-001](E-CHATGPT-001/index.md)
-  {{#include E-CHATGPT-001/SUMMARY.nav.md}}
 - [E-CHATGPT-LAND-001](E-CHATGPT-LAND-001/index.md)
-  {{#include E-CHATGPT-LAND-001/SUMMARY.nav.md}}
 - [E-CHATGPT-REBASE-001](E-CHATGPT-REBASE-001/index.md)
-  {{#include E-CHATGPT-REBASE-001/SUMMARY.nav.md}}
 - [E-EVENT-CONNECTIONS-001](E-EVENT-CONNECTIONS-001/index.md)
-  {{#include E-EVENT-CONNECTIONS-001/SUMMARY.nav.md}}
 - [E-EVENT-CONNECTIONS-002](E-EVENT-CONNECTIONS-002/index.md)
-  {{#include E-EVENT-CONNECTIONS-002/SUMMARY.nav.md}}
 - [E-EVENT-WEBSOCKET-001](E-EVENT-WEBSOCKET-001/index.md)
-  {{#include E-EVENT-WEBSOCKET-001/SUMMARY.nav.md}}
 - [E-INBOX-CONTROLS-001](E-INBOX-CONTROLS-001/index.md)
-  {{#include E-INBOX-CONTROLS-001/SUMMARY.nav.md}}
 - [E-INBOX-FRESHNESS-001](E-INBOX-FRESHNESS-001/index.md)
-  {{#include E-INBOX-FRESHNESS-001/SUMMARY.nav.md}}
 - [E-REPOSITORY-BANNERS-001](E-REPOSITORY-BANNERS-001/index.md)
-  {{#include E-REPOSITORY-BANNERS-001/SUMMARY.nav.md}}
+- [E-TEST-REPAIR-001](E-TEST-REPAIR-001/index.md)
+- [E-TEST-REPAIR-002](E-TEST-REPAIR-002/index.md)
 - [E-THREADS-001](E-THREADS-001/index.md)
-  {{#include E-THREADS-001/SUMMARY.nav.md}}
 - [E-THREADS-002](E-THREADS-002/index.md)
-  {{#include E-THREADS-002/SUMMARY.nav.md}}
 - [E-UI-FAVICON-001](E-UI-FAVICON-001/index.md)
-  {{#include E-UI-FAVICON-001/SUMMARY.nav.md}}
 - [E-UI-VIEW-LOADING-001](E-UI-VIEW-LOADING-001/index.md)
-  {{#include E-UI-VIEW-LOADING-001/SUMMARY.nav.md}}
 - [E-UI-VIEW-READINESS-001](E-UI-VIEW-READINESS-001/index.md)
+- [E-TEST-REPAIR-LAND-001](E-TEST-REPAIR-LAND-001/index.md)

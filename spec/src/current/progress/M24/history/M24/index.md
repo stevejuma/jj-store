@@ -80,6 +80,9 @@ not a completion gate selection.
 | [E-AGENT-TRANSCRIPT-VIEW-001](../../../../../history/2026/10/10/E-AGENT-TRANSCRIPT-VIEW-001/index.md) | 2026-10-10 | pass            | Renderer parity review                                   |
 | [E-UI-VIEW-LOADING-001](../../../../../history/2026/10/10/E-UI-VIEW-LOADING-001/index.md)             | 2026-10-10 | pending         | Focused view-loading proofs; wider gates retained        |
 | [E-UI-VIEW-READINESS-001](../../../../../history/2026/10/10/E-UI-VIEW-READINESS-001/index.md)         | 2026-10-10 | pending         | Immediate consumer repairs; wider qualification retained |
+| [E-TEST-REPAIR-001](../../../../../history/2026/10/10/E-TEST-REPAIR-001/index.md)                     | 2026-10-10 | pass            | Quick test repairs; ten deeper reply cases retained      |
+| [E-TEST-REPAIR-002](../../../../../history/2026/10/10/E-TEST-REPAIR-002/index.md)                     | 2026-10-10 | pass            | Current inline replies; ten legacy cases superseded      |
+| [E-TEST-REPAIR-LAND-001](../../../../../history/2026/10/10/E-TEST-REPAIR-LAND-001/index.md)           | 2026-10-10 | pass            | Default landing; current runtime and inline acceptance   |
 
 <!-- generated-navigation -->
 

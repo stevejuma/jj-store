@@ -56,7 +56,7 @@
     await canvas.findByRole("combobox", { name: "Workspace target branch" });
     assertSetupMargins(canvasElement);
     expect(
-      canvas.getByText("No stack workspace", {
+      await canvas.findByText("No stack workspace", {
         selector: '[data-ui-part="empty-title"]',
       }),
     ).toBeVisible();
@@ -72,7 +72,7 @@
       canvas.getByRole("complementary", { name: "Repository details" }),
     );
     expect(
-      rail.getByRole("navigation", { name: "Stack workspace views" }),
+      await rail.findByRole("navigation", { name: "Stack workspace views" }),
     ).toBeVisible();
     for (const name of [
       "Workspace settings",
@@ -85,7 +85,7 @@
     ).toBeEnabled();
     await choose(canvasElement);
     expect(
-      canvas.getByText("No stack workspace", {
+      await canvas.findByText("No stack workspace", {
         selector: '[data-ui-part="empty-title"]',
       }),
     ).toBeVisible();
@@ -117,7 +117,7 @@
     );
     expect(canvas.queryByRole("region", { name: "Unstaged files" })).toBeNull();
     expect(
-      canvas.getByText("No stack workspace", {
+      await canvas.findByText("No stack workspace", {
         selector: '[data-ui-part="empty-title"]',
       }),
     ).toBeVisible();

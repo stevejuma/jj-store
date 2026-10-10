@@ -1,6 +1,6 @@
 import type { StoreDataSource } from "./native-data-source.js";
 import type { StoreSearchResult } from "./contracts.js";
-import { storeErrorMessage } from "./http-store-data-source.js";
+import { storeErrorMessage } from "./store-error.js";
 import type { ProductionStoreState } from "./production-store-state.svelte.js";
 import type { createStoreRouteHistory } from "./store-route-history.svelte.js";
 import {
