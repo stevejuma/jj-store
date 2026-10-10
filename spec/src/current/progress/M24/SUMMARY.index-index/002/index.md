@@ -6,7 +6,7 @@
 
 ## Pages
 
-- [Inbox read lifecycle review](../../inbox-freshness-review.md)
+- [Conversation footer review](../../footer-review.md)
 - [Intentional Threads review](../../intentional-threads-review.md)
 - [Conversation metadata review](../../metadata-review.md)
 - [Bounded test repair review](../../test-repairs-review.md)

@@ -1,7 +1,9 @@
 # Bounded test repair review
 
 Enclosing test-repairs workspace change `vslkntzy`, based on `7601e3cf`.
-E-TEST-REPAIR-001 qualifies the quick repair slice. M24 stays **In progress**.
+E-TEST-REPAIR-001 qualifies the quick repair slice. E-TEST-REPAIR-002 qualifies
+its follow-up in enclosing change `mxqyuuzn`, based on `9907dd70`. M24 stays
+**In progress**.
 
 The earlier eight unit/module failures are repaired. Pure controllers now import
 the existing error utility without pulling Svelte Query into Node. Ordered
@@ -31,18 +33,29 @@ recur before edits; both Setup stories pass afterward. Checks run in bounded
 processes, with an independent node_modules copy. No shared runner setup,
 diagnostic guard, accessibility requirement or visual baseline was changed.
 
-Ten deeper reply cases remain reproduced and unchanged in AgentDiscussion (6)
-and AgentReplyIndependence (4). They address the superseded per-message Reply
-button, separate reply-panel composer, Save reply workflow and old tool/context
-controls. A temporary explicit Classic fixture did not repair them and was
-reverted. Their replacement must qualify the current durable inline-comment
-projection, publication, reaction, nested-edit, offline and unknown-outcome
-boundaries; deleting assertions alone would not establish acceptance.
+The ten obsolete reply cases are now superseded by current inline-comment
+acceptance in AgentDiscussion (6) and AgentReplyIndependence (4), at the user's
+explicit request. No legacy Reply panel, Save reply, independent offline save,
+replay recovery or grouped-tool assumptions remain. A dedicated fixture uses
+production conversation, sender, source projection, reactions and read sidebar;
+the existing shared execution fixture and runtime guards are unchanged.
+
+Ten fresh interaction/accessibility stories pass. Drafts at separate anchors
+remain independent, inline and queue editors synchronize through renderer
+switches and remounts, and comments-only Send carries exact source references
+and UTF-8 ranges. Multiple comments retain distinct IDs at one anchor; editing
+sends the original message ID, source and expected revision. Offline composition
+survives failed feedback and waits for resume before dispatch. Unpublished and
+unsupported sources explain disabled commenting. Immutable reactions toggle
+without prompting. Sent-context rendered/raw controls and independent tool
+disclosures retain their state and exact comment source. Unknown batches keep
+one request identity through unsuccessful and successful checks without another
+dispatch. Fixture stream cancellation owns teardown to prevent duplicate close.
 
 Full-suite release acceptance, the previously recorded architecture-budget
 violations, native/provider/desktop/platform qualification and registry-only
 dependency acceptance remain independent. ResizeObserver warnings did not recur
-in these bounded runs; the earlier warning is not declared resolved. Visual
+in the bounded runs; the earlier warning is not declared resolved. Visual
 baselines remain unapproved. The main workspace, running app and demo data are
-retained. Next: migrate and verify the ten reply cases, then repeat the broader
-interaction lane before a release claim.
+retained. Next: repeat the broader interaction lane before a release claim; the
+original ten-case reply backlog is no longer a remaining test failure.

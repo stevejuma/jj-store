@@ -32,6 +32,8 @@
   {{#include E-REPOSITORY-BANNERS-001/SUMMARY.nav.md}}
 - [E-TEST-REPAIR-001](E-TEST-REPAIR-001/index.md)
   {{#include E-TEST-REPAIR-001/SUMMARY.nav.md}}
+- [E-TEST-REPAIR-002](E-TEST-REPAIR-002/index.md)
+  {{#include E-TEST-REPAIR-002/SUMMARY.nav.md}}
 - [E-THREADS-001](E-THREADS-001/index.md)
   {{#include E-THREADS-001/SUMMARY.nav.md}}
 - [E-THREADS-002](E-THREADS-002/index.md)
