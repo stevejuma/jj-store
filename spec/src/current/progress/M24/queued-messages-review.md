@@ -37,3 +37,9 @@ architecture oversizes remain; changed governed sources do not enlarge them.
 E-CHAT-QUEUE-LAND-001 records main-workspace integration and retirement of the
 session workspace, without advancing M24 or the existing wider qualification
 gaps. Concurrent Markdown navigation and column acceptance remain retained.
+
+E-WORKSPACE-RETIRE-001 confirms the prior test-repair changes are ancestors of
+default and its clean checkout is retired with local logs in recoverable Trash.
+Only default remains registered in jj-store; the app, API and Storybook retain
+main ownership. Unrelated documentation work and demo data remain preserved.
+This bookkeeping leaves M24 In progress and does not advance its gates.
