@@ -18,6 +18,8 @@
   {{#include E-CHAT-METADATA-MAIN-002/SUMMARY.nav.md}}
 - [Unchanged authority confirmation for main refinements](E-CHAT-METADATA-MAIN-003/index.md)
   {{#include E-CHAT-METADATA-MAIN-003/SUMMARY.nav.md}}
+- [E-CHAT-QUEUE-001](E-CHAT-QUEUE-001/index.md)
+  {{#include E-CHAT-QUEUE-001/SUMMARY.nav.md}}
 - [E-CHATGPT-001](E-CHATGPT-001/index.md)
   {{#include E-CHATGPT-001/SUMMARY.nav.md}}
 - [E-CHATGPT-LAND-001](E-CHATGPT-LAND-001/index.md)
@@ -58,5 +60,3 @@
   {{#include E-UI-VIEW-LOADING-001/SUMMARY.nav.md}}
 - [E-UI-VIEW-READINESS-001](E-UI-VIEW-READINESS-001/index.md)
   {{#include E-UI-VIEW-READINESS-001/SUMMARY.nav.md}}
-- [E-CHAT-QUEUE-001](E-CHAT-QUEUE-001/index.md)
-  {{#include E-CHAT-QUEUE-001/SUMMARY.nav.md}}

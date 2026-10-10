@@ -14,6 +14,7 @@ Browse the child pages below.
 - [E-CHAT-METADATA-MAIN-001](E-CHAT-METADATA-MAIN-001/index.md)
 - [Main metadata handoff and presentation refinements](E-CHAT-METADATA-MAIN-002/index.md)
 - [Unchanged authority confirmation for main refinements](E-CHAT-METADATA-MAIN-003/index.md)
+- [E-CHAT-QUEUE-001](E-CHAT-QUEUE-001/index.md)
 - [E-CHATGPT-001](E-CHATGPT-001/index.md)
 - [E-CHATGPT-LAND-001](E-CHATGPT-LAND-001/index.md)
 - [E-CHATGPT-REBASE-001](E-CHATGPT-REBASE-001/index.md)
@@ -34,4 +35,3 @@ Browse the child pages below.
 - [E-UI-SKELETONS-001](E-UI-SKELETONS-001/index.md)
 - [E-UI-VIEW-LOADING-001](E-UI-VIEW-LOADING-001/index.md)
 - [E-UI-VIEW-READINESS-001](E-UI-VIEW-READINESS-001/index.md)
-- [E-CHAT-QUEUE-001](E-CHAT-QUEUE-001/index.md)

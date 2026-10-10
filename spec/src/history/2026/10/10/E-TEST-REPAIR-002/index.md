@@ -163,4 +163,8 @@ verification
 - catalog/components/store-application/AgentReplyIndependence.stories.svelte#Consecutive
   tools expand together and retain exact call actions
 <!-- /evidence-field -->
+<!-- generated-navigation -->
+## Pages
 
+- [E-TEST-REPAIR-002 details 2](details-02.md)
+- [E-TEST-REPAIR-002 details 3](details-03.md)

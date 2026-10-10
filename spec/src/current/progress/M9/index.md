@@ -18,7 +18,6 @@ inline validation/recovery and scoped request toasts. Focused production stories
 cover header alignment, narrow width, retained Agents geometry and unavailable
 detail placement. Visual baseline approval remains independent.
 <!-- generated-navigation -->
-
 ## Pages
 
 - [history](history/index.md)

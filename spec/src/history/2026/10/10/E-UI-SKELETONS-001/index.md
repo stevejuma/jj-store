@@ -152,4 +152,3 @@ reason: M24 remains In progress; view-loading-review.md records the enclosing ch
 
 - [Validation runs](details-02.md)
 - [Verification follow-ups](details-03.md)
-

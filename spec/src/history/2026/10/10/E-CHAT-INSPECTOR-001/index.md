@@ -137,4 +137,8 @@ verification
 - catalog/components/store-application/WorkspaceInspector.stories.svelte#Files
   and Changes retain compact root icons and nested indentation
 <!-- /evidence-field -->
+<!-- generated-navigation -->
+## Pages
 
+- [E-CHAT-INSPECTOR-001 details 2](details-02.md)
+- [E-CHAT-INSPECTOR-001 details 3](details-03.md)

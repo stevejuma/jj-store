@@ -110,7 +110,6 @@ verification
 
 - crates/jj-store-cli/tests/agent_execution/conversation_failures.rs#rejected_resume_finishes_receipt_retires_worker_and_never_replays
 <!-- /evidence-field -->
-
 <!-- generated-navigation -->
 ## Pages
 

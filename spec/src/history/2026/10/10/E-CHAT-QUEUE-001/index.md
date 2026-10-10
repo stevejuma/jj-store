@@ -155,12 +155,10 @@ UI-only acceptance: active Document and Classic composers send exact queued subm
 
 The shared footer unconditionally preferred Stop while an active session existed. Queue projection and managed receipt refresh ignored context_delivery acknowledgements with sentContext.delivery=queued. Before-state regressions failed once each at those two boundaries; accepted queued review snapshots could keep the composer unresolved until start.
 <!-- /evidence-field -->
-
-
 <!-- generated-navigation -->
 ## Pages
 
-- [Validation and review 2](details-02.md)
-- [Validation and review 3](details-03.md)
-- [Validation and review 4](details-04.md)
-- [Validation and review 5](details-05.md)
+- [E-CHAT-QUEUE-001 details 2](details-02.md)
+- [E-CHAT-QUEUE-001 details 3](details-03.md)
+- [E-CHAT-QUEUE-001 details 4](details-04.md)
+- [E-CHAT-QUEUE-001 details 5](details-05.md)

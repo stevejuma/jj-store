@@ -1,3 +1,3 @@
-- [details-02.md](details-02.md)
-- [details-03.md](details-03.md)
-- [details-04.md](details-04.md)
+- [E-TEST-REPAIR-001 details 2](details-02.md)
+- [E-TEST-REPAIR-001 details 3](details-03.md)
+- [E-TEST-REPAIR-001 details 4](details-04.md)

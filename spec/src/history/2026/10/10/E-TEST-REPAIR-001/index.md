@@ -97,4 +97,9 @@ verification
 - web/tests/vite/local-browser-merge.test.ts#mixed_thread_navigation_selects_a_native_home
 - web/tests/vite/local-browser-merge.test.ts#local_profile_hides_threads_and_discards_previous_native_thread_state
 <!-- /evidence-field -->
+<!-- generated-navigation -->
+## Pages
 
+- [E-TEST-REPAIR-001 details 2](details-02.md)
+- [E-TEST-REPAIR-001 details 3](details-03.md)
+- [E-TEST-REPAIR-001 details 4](details-04.md)

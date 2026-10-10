@@ -231,4 +231,8 @@ verification
 - web/tests/vite/production-threads.test.ts#committed removal returns to the
   inbox without reading the hidden thread
 <!-- /evidence-field -->
+<!-- generated-navigation -->
+## Pages
 
+- [E-THREADS-002 details 2](details-02.md)
+- [E-THREADS-002 details 3](details-03.md)

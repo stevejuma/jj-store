@@ -292,4 +292,9 @@ verification
 - web/tests/agent-inbox-groups.test.ts#pins form the first expandable group and
   collapse repository aliases into one canonical row
 <!-- /evidence-field -->
+<!-- generated-navigation -->
+## Pages
 
+- [E-TEST-REPAIR-LAND-001 details 2](details-02.md)
+- [E-TEST-REPAIR-LAND-001 details 3](details-03.md)
+- [E-TEST-REPAIR-LAND-001 details 4](details-04.md)

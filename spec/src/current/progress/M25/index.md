@@ -138,7 +138,6 @@ button while preserving external-link protection. Focused account stories, web
 checks and live geometry pass. M25 remains In progress; provider/platform gates
 and visual baselines retain their independent status.
 <!-- generated-navigation -->
-
 ## Pages
 
 - [history](history/index.md)
