@@ -52,7 +52,10 @@
 <Story
   name="Agent response activity"
   args={{ initialPage: "agents" }}
-  play={agentSidebarPlay}
+  play={async (context) => {
+    await Promise.all([views.agentsRecorded(), views.settings()]);
+    await agentSidebarPlay(context);
+  }}
 >
   {#snippet template(args)}<StoreRepositoryApplication {...args} />{/snippet}
 </Story>
@@ -61,6 +64,7 @@
   name="Revision collaboration context"
   args={{ initialPage: "log" }}
   play={async ({ canvasElement }) => {
+    await views.log();
     const canvas = within(canvasElement);
     await expect(
       (
