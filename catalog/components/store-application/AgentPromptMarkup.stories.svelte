@@ -10,6 +10,7 @@
   const { Story } = defineMeta({
     title: "JJ Store/Agent prompt markup",
     component: Fixture,
+    args: { conversationView: "classic" },
     tags: ["visual-pending"],
     parameters: { layout: "fullscreen", jjStoreShell: true },
   });

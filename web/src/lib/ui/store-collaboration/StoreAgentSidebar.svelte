@@ -1,5 +1,7 @@
 <script lang="ts">
+  import type { Snippet } from "svelte";
   import { AppShell } from "@lapismd/design-core/shell";
+  import { useAppearance } from "../../appearance/store.svelte.js";
   import type { StoreController } from "../../controller/contracts.js";
   import CommunityProjectsColumnAlert from "../community-projects/CommunityProjectsColumnAlert.svelte";
   import { agentMember } from "../../collaboration/presentation.js";
@@ -41,6 +43,10 @@
       : undefined,
   );
   const failure = $derived(error || controller?.state.status.error);
+  const appearance = useAppearance();
+  const documentMode = $derived(
+    (appearance?.live.conversationView ?? "document") === "document",
+  );
 </script>
 
 {#snippet heading(sheet = false)}
@@ -56,7 +62,7 @@
     >{/if}
   {#if controller}<StoreAgentSessionMenu {controller} />{/if}
 {/snippet}
-{#snippet body()}
+{#snippet body(afterItems: Snippet | undefined)}
   {#if failure}
     <CommunityProjectsColumnAlert
       title="Agent response unavailable"
@@ -76,11 +82,12 @@
       }}
     />
   {:else if controller}
-    <StoreAgentContext {controller} showHeader={false} />
+    <StoreAgentContext {controller} showHeader={false} {afterItems} />
   {/if}
+  {#if !controller?.state.agentSession || (controller?.execution && controller.execution.metadata.details[metadataKey( { session: controller.state.agentSession.session.session_id, repository: controller.state.repository.id } )])}{@render afterItems?.()}{/if}
 {/snippet}
 
-<StoreAgentComments {controller}>
+<StoreAgentComments {controller} inlineComposer={documentMode}>
   {#snippet children(comments, composer)}
     {#if focused}
       <StoreDiscussionSheet
@@ -88,10 +95,13 @@
         {open}
         {onClose}
         {returnFocus}
+        footer={documentMode ? undefined : composer}
       >
         {#snippet header()}{@render heading(true)}{/snippet}
-        {#snippet footer()}{@render composer()}{/snippet}
-        {@render body()}{@render comments()}
+        {#if documentMode}<div class="store-agent-sidebar__document">
+            {@render body(comments)}
+          </div>
+        {:else}{@render body(undefined)}{@render comments()}{/if}
       </StoreDiscussionSheet>
     {:else}
       <AppShell.Sidebar.Header>
@@ -101,17 +111,32 @@
           onclick={onClose}
         />
       </AppShell.Sidebar.Header>
-      <AppShell.Sidebar.Body
-        >{@render body()}{@render comments()}</AppShell.Sidebar.Body
-      >
-      <AppShell.Sidebar.Footer class="store-agent-sidebar__footer"
-        >{@render composer()}</AppShell.Sidebar.Footer
-      >
+      <AppShell.Sidebar.Body>
+        {#if documentMode}<div class="store-agent-sidebar__document">
+            {@render body(comments)}
+          </div>
+        {:else}{@render body(undefined)}{@render comments()}{/if}
+      </AppShell.Sidebar.Body>
+      {#if !documentMode}<AppShell.Sidebar.Footer
+          class="store-agent-sidebar__footer"
+          >{@render composer()}</AppShell.Sidebar.Footer
+        >{/if}
     {/if}
   {/snippet}
 </StoreAgentComments>
 
 <style>
+  .store-agent-sidebar__document {
+    height: 100%;
+    min-height: 0;
+  }
+  .store-agent-sidebar__document :global(.store-agent-context) {
+    height: 100%;
+  }
+  .store-agent-sidebar__document :global(.chat-body-reading-surface) {
+    flex: 1;
+  }
+
   :global(.store-agent-sidebar__footer) {
     padding: 0;
     border: 0;

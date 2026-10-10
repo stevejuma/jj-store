@@ -1,4 +1,6 @@
 <script lang="ts">
+  import StoreRepositoryApplication from "../../web/src/lib/ui/store-application/StoreRepositoryApplication.svelte";
+  import { createMemoryStoryStorage } from "./memory-storage.js";
   import { untrack } from "svelte";
   import StoreAgentTranscript from "../../web/src/lib/ui/store-collaboration/StoreAgentTranscript.svelte";
   import StoreReviewConversation from "../../web/src/lib/ui/store-collaboration/StoreReviewConversation.svelte";
@@ -11,12 +13,20 @@
   let {
     surface = "agents",
     writable = true,
+    interactive = true,
   }: {
-    surface?: "agents" | "reviews";
+    surface?: "agents" | "reviews" | "sidebar";
     writable?: boolean;
+    interactive?: boolean;
   } = $props();
-  const base = untrack(() => createInMemoryStoreController(surface));
-  untrack(() => base.actions.selectReviewThread(reviewThreads[0]!.thread_id));
+  const base = untrack(() =>
+    createInMemoryStoreController(surface === "sidebar" ? "agents" : surface),
+  );
+  untrack(() =>
+    surface === "sidebar"
+      ? base.actions.selectAgentSession(agentDetail.session.session_id)
+      : base.actions.selectReviewThread(reviewThreads[0]!.thread_id),
+  );
   const f = createThreadTransport();
   const threads = createThreadsController({
     source: () => f.transport,
@@ -30,6 +40,9 @@
     get state(): StoreController["state"] {
       return {
         ...base.state,
+        ...(surface === "sidebar"
+          ? { agentSession: { ...agentDetail, activity } }
+          : {}),
         repository: {
           ...base.state.repository,
           principal: THREAD_IDS.actor,
@@ -64,13 +77,18 @@
   $effect(() => () => threads.clear());
 </script>
 
-{#if surface === "agents"}<StoreAgentTranscript
+{#if surface === "sidebar"}<StoreRepositoryApplication
+    {controller}
+    layoutStorage={createMemoryStoryStorage()}
+  />
+{:else if surface === "agents"}<StoreAgentTranscript
     {controller}
     {activity}
     {agent}
     member={principalMember(THREAD_IDS.actor)}
     sessionId={agentDetail.session.session_id}
     integration={agentDetail.session.integration}
+    {interactive}
   />{:else}<StoreReviewConversation
     {controller}
     showComposer={false}

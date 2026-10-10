@@ -83,7 +83,7 @@
       view.getByRole("log", { name: "Agent conversation activity" }),
     ).toHaveTextContent("Updated the parser");
     await expect(
-      view.getByRole("group", { name: "apply_patch tool call" }),
+      view.getByRole("button", { name: "Show details for Edited file" }),
     ).toBeVisible();
     await expect(
       view.getByRole("list", { name: "Review comments" }),

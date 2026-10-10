@@ -7,6 +7,20 @@ export async function agentSidebarPlay({
   canvasElement: HTMLElement;
 }) {
   const canvas = within(canvasElement);
+  // This story protects the Classic tool-review controls and layout.
+  await userEvent.click(
+    canvas.getByRole("button", { name: /Open profile menu for/ }),
+  );
+  await userEvent.click(
+    within(document.body).getByRole("menuitem", { name: "Settings" }),
+  );
+  await userEvent.click(
+    await canvas.findByRole("button", { name: "Appearance" }),
+  );
+  await userEvent.click(canvas.getByRole("radio", { name: /^Classic$/ }));
+  await userEvent.click(
+    canvas.getByRole("button", { name: "Back to jj-store" }),
+  );
   await waitFor(() =>
     expect(canvas.getByRole("list", { name: "Agent sessions" })).toBeVisible(),
   );

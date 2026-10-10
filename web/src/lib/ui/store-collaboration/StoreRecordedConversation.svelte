@@ -46,6 +46,7 @@
     member,
     interactive = true,
     legacy = [],
+    afterItems: hostAfterItems,
   }: {
     controller: StoreController;
     activity: readonly Model<"AgentActivity">[];
@@ -55,6 +56,7 @@
     member: CommunityMemberModel;
     interactive?: boolean;
     legacy?: readonly Model<"AgentTranscriptChunk">[];
+    afterItems?: Snippet;
   } = $props();
   const threads = $derived(controller.threads!);
   const appearance = useAppearance(),
@@ -206,8 +208,50 @@
     );
 </script>
 
+{#snippet recordedComposer(presentation: "document" | "classic")}
+  {#if controller?.execution}<StoreConversationRecovery
+      {conversation}
+      manager={controller.execution}
+    />{/if}
+  <CommunityChatComposer
+    {presentation}
+    dockActions
+    bind:documentActions={inputActions}
+    member={user}
+    hideAvatar={conversation.comments.pending.length > 0}
+    bind:value={conversation.comments.message}
+    members={[
+      user,
+      agent,
+      ...(controller.execution?.value?.setups ?? []).map(agentMember),
+    ]}
+    communityEmojis={threads.emojis}
+    audienceKey={key}
+    {disabled}
+    ariaLabel="Message about recorded conversation"
+    placeholder=""
+    enterInsertsNewline
+    showSubmitButton={false}
+    allowEmpty={conversation.comments.pending.length > 0}
+    clearOnSubmit={false}
+    onSubmit={async () => {
+      if (!(await conversation.comments.send()))
+        throw new Error(conversation.comments.error);
+    }}
+  />
+  <StoreThreadPendingActions {threads} />
+{/snippet}
+{#snippet recordedFooter()}<ChatMessageFooter
+    actions={inputActions}
+    canSend={!disabled && conversation.comments.canSend}
+    onSend={() => void conversation.comments.send()}
+    error={conversation.comments.error}
+  />{/snippet}
+
 <StoreAgentChatBody
   items={conversation.projection.items}
+  composer={interactive ? recordedComposer : undefined}
+  footer={interactive ? recordedFooter : undefined}
   commentState={conversation.comments}
   view={appearance?.live.conversationView ?? "document"}
   reactions={feedback.models}
@@ -230,7 +274,7 @@
   {#snippet afterItems()}{#if controller.execution}<StoreLinkedConversationActivity
         {controller}
         sessions={linked.sessions}
-      />{/if}{/snippet}
+      />{/if}{@render hostAfterItems?.()}{/snippet}
   {#snippet supplement(item)}
     {#if controller.execution}<StoreConversationAgentSupplement
         manager={controller.execution}
@@ -255,43 +299,4 @@
         {disabled}
         showControls={false}
       />{/if}{/snippet}
-  {#snippet composer(presentation)}
-    {#if controller?.execution}<StoreConversationRecovery
-        {conversation}
-        manager={controller.execution}
-      />{/if}
-    <CommunityChatComposer
-      {presentation}
-      dockActions
-      bind:documentActions={inputActions}
-      member={user}
-      hideAvatar={conversation.comments.pending.length > 0}
-      bind:value={conversation.comments.message}
-      members={[
-        user,
-        agent,
-        ...(controller.execution?.value?.setups ?? []).map(agentMember),
-      ]}
-      communityEmojis={threads.emojis}
-      audienceKey={key}
-      {disabled}
-      ariaLabel="Message about recorded conversation"
-      placeholder=""
-      enterInsertsNewline
-      showSubmitButton={false}
-      allowEmpty={conversation.comments.pending.length > 0}
-      clearOnSubmit={false}
-      onSubmit={async () => {
-        if (!(await conversation.comments.send()))
-          throw new Error(conversation.comments.error);
-      }}
-    />
-    <StoreThreadPendingActions {threads} />
-  {/snippet}
-  {#snippet footer()}<ChatMessageFooter
-      actions={inputActions}
-      canSend={!disabled && conversation.comments.canSend}
-      onSend={() => void conversation.comments.send()}
-      error={conversation.comments.error}
-    />{/snippet}
 </StoreAgentChatBody>

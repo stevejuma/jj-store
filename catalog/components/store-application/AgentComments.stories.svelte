@@ -86,18 +86,23 @@
 
 <Story
   name="Focus keeps session comments and the footer anchored"
-  args={{ repository: true, focus: true }}
+  args={{ conversationView: "classic", repository: true, focus: true }}
   play={async ({ canvasElement }) => comments(canvasElement, true)}
 />
 <Story
   name="Split keeps session comments and the footer anchored"
-  args={{ repository: true, focus: false }}
+  args={{ conversationView: "classic", repository: true, focus: false }}
   play={async ({ canvasElement }) => comments(canvasElement, false)}
 />
 
 <Story
   name="Read-only session responses have no writable footer"
-  args={{ repository: true, focus: false, readOnly: true }}
+  args={{
+    conversationView: "classic",
+    repository: true,
+    focus: false,
+    readOnly: true,
+  }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
     await userEvent.click(
@@ -124,7 +129,12 @@
 />
 <Story
   name="Unknown session comment outcomes retain the footer draft until checked"
-  args={{ repository: true, focus: false, reviewOutcome: "unknown" }}
+  args={{
+    conversationView: "classic",
+    repository: true,
+    focus: false,
+    reviewOutcome: "unknown",
+  }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
     await userEvent.click(
@@ -157,7 +167,12 @@
 
 <Story
   name="Tool and nested comment outcomes retain drafts until their receipt is checked"
-  args={{ repository: true, focus: false, reviewOutcome: "unknown" }}
+  args={{
+    conversationView: "classic",
+    repository: true,
+    focus: false,
+    reviewOutcome: "unknown",
+  }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
     await userEvent.click(

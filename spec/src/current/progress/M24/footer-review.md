@@ -35,3 +35,16 @@ stroke. Zero overhang retains the full shape within editor bounds, including
 multiline drafts. Live Thread geometry confirms the fix. M24 remains In
 progress; existing resize diagnostics and unapproved visual baselines remain
 independent.
+
+E-AGENT-TRANSCRIPT-VIEW-001 applies the saved Document/Classic preference to
+Projects landing and project-specific responses, repository sessions, legacy
+chunks and embedded captured context. Document hosts omit the permanent Classic
+session-review composer. Explicit whole-session ReviewStore forms and recovery
+remain available inside the document scroll area; the shared Send footer stays
+within the panel. Read-only embedded captures have no prompt input or footer.
+Pagination, copy identities, sanitized prompt markup and recorded command/output
+content remain available. Live Focus geometry and focused renderer, remount,
+interaction/accessibility and projection checks qualify this presentation slice
+in the enclosing change umouvlrv. M24 remains In progress. Provider, restart
+execution, existing ResizeObserver investigation and visual baselines retain
+their independent gates; no visual baseline is approved.

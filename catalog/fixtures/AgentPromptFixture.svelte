@@ -1,4 +1,9 @@
 <script lang="ts">
+  import { untrack } from "svelte";
+  import {
+    createAppearanceStore,
+    provideAppearance,
+  } from "../../web/src/lib/appearance/store.svelte.js";
   import StoreAgentTranscript from "../../web/src/lib/ui/store-collaboration/StoreAgentTranscript.svelte";
   import StoreAgentContext from "../../web/src/lib/ui/store-collaboration/StoreAgentContext.svelte";
   import CommunityMarkdownContent from "../../web/src/lib/ui/community-markdown-content/CommunityMarkdownContent.svelte";
@@ -14,6 +19,7 @@
     occurredAt = 1_704_164_702_456,
     integration = "codex",
     mediaType = "text",
+    conversationView = "document",
   }: {
     content?: string;
     fallback?: boolean;
@@ -21,7 +27,11 @@
     occurredAt?: number | null;
     integration?: typeof agentDetail.session.integration;
     mediaType?: "text" | "json";
+    conversationView?: "document" | "classic";
   } = $props();
+  const appearance = createAppearanceStore();
+  untrack(() => appearance.update({ conversationView }));
+  provideAppearance(appearance);
   const base = createInMemoryStoreController("agents");
   const session = $derived({ ...agentDetail.session, integration });
   const controller: StoreController = {

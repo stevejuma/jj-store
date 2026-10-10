@@ -1,31 +1,30 @@
 <script lang="ts">
-  import StoreRecordedConversation from "./StoreRecordedConversation.svelte";
+  import type { Snippet } from "svelte";
   import * as Empty from "@lapismd/design-core/shadcn/empty";
   import BotIcon from "@lucide/svelte/icons/bot";
   import ExternalLinkIcon from "@lucide/svelte/icons/external-link";
-  import CommunityMessage from "../community-message/CommunityMessage.svelte";
   import { isLocalAssociation } from "../../controller/repository-read-types.js";
   import type { StoreController } from "../../controller/contracts.js";
-  import {
-    agentMember,
-    transcriptMessage,
-  } from "../../collaboration/presentation.js";
+  import { agentMember } from "../../collaboration/presentation.js";
   import { storeRouteToHash } from "../../controller/store-route-codec.js";
   import CommunityChip from "../community-chip/CommunityChip.svelte";
   import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
   import CommunityProjectsRevisionGraphIds from "../community-projects/CommunityProjectsRevisionGraphIds.svelte";
-  import CommunityProjectsVirtualRows from "../community-projects/CommunityProjectsVirtualRows.svelte";
   import StoreAgentTranscript from "./StoreAgentTranscript.svelte";
   import StoreConversationMetadata from "../store-agent-execution/StoreConversationMetadata.svelte";
   import { metadataKey } from "../../controller/conversation-metadata.svelte.js";
   import StoreAgentSessionMenu from "./StoreAgentSessionMenu.svelte";
-  import StoreMessageActions from "./StoreMessageActions.svelte";
   import { managedRecordedAgent } from "../../collaboration/managed-agent.js";
 
   let {
     controller,
     showHeader = true,
-  }: { controller: StoreController; showHeader?: boolean } = $props();
+    afterItems,
+  }: {
+    controller: StoreController;
+    showHeader?: boolean;
+    afterItems?: Snippet;
+  } = $props();
   const state = $derived(controller.state);
   const selected = $derived(state.agentSession);
   const agent = $derived(
@@ -157,6 +156,7 @@
       {/if}
       <StoreAgentTranscript
         {controller}
+        {afterItems}
         activity={selected.activity}
         sessionId={selected.session.session_id}
         integration={selected.session.integration}
@@ -167,60 +167,17 @@
         }}
         patches={state.detail?.patches}
       />
-    {:else if state.agentTranscript.length && controller.threads}
-      <StoreRecordedConversation
+    {:else if state.agentTranscript.length}
+      <StoreAgentTranscript
         {controller}
+        {afterItems}
         activity={[]}
+        legacy={state.agentTranscript}
         sessionId={selected.session.session_id}
         integration={selected.session.integration}
         {agent}
         member={state.member}
-        legacy={state.agentTranscript}
       />
-    {:else if state.agentTranscript.length}
-      <div
-        class="store-collaboration__messages"
-        role="list"
-        aria-label="Agent response transcript"
-      >
-        <CommunityProjectsVirtualRows
-          rows={state.agentTranscript}
-          getKey={(chunk) => String(chunk.sequence)}
-          estimateSize={() => 118}
-          hasMore={state.canLoadMoreTranscript}
-          loading={state.status.transcript === "refreshing"}
-          loadingAsListItem
-          loadingLabel="Loading more transcript activity"
-          onLoadMore={() => void controller.actions.loadMore("transcript")}
-        >
-          {#snippet row(chunk)}
-            <div class="store-collaboration__message" role="listitem">
-              <CommunityMessage
-                promptElements
-                message={transcriptMessage(chunk, selected.session)}
-                author={agent}
-                members={[agent]}
-                avatarShape="rounded"
-                >{#snippet supplement()}<StoreMessageActions
-                    authorName={agent.name}
-                    items={[
-                      { label: "Copy message", value: chunk.content },
-                      {
-                        label: "Copy session ID",
-                        value: selected.session.session_id,
-                      },
-                      {
-                        label: "Copy transcript ID",
-                        value: selected.transcripts[0]?.transcript_id,
-                      },
-                      { label: "Copy sequence", value: String(chunk.sequence) },
-                    ]}
-                  />{/snippet}</CommunityMessage
-              >
-            </div>
-          {/snippet}
-        </CommunityProjectsVirtualRows>
-      </div>
     {:else}
       <Empty.Root class="store-collaboration__empty">
         <Empty.Header>
@@ -233,6 +190,7 @@
           >
         </Empty.Header>
       </Empty.Root>
+      {@render afterItems?.()}
     {/if}
   </div>
 {:else}

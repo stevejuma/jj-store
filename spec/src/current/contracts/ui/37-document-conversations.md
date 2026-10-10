@@ -29,6 +29,18 @@ independent. Standalone review and task panels keep their specialized renderers.
 Both conversation renderers offer range comments, pending batches and reply
 links.
 
+Projects landing and selected-project agent responses, repository agent
+responses and embedded recorded transcripts follow the same preference in Focus
+and Split. A reader without ThreadStore capability still uses the chosen
+renderer, with selection comments unavailable. Read-only embedded captures have
+no next-message input or footer. Document responses do not mount a second
+Classic composer in the host footer. Existing whole-session ReviewStore comments
+remain separately identified, with their form opened explicitly beside that
+review discussion; their drafts and recovery identities are retained. Document
+response panels bound the shared conversation to the available panel height and
+place session reviews inside its scroll area, keeping its own Send footer
+visible. Classic retains its existing host review footer.
+
 A shared controller owns drafts, audience, exact pending submissions and source
 mappings across view switches, navigation, sidebar changes and remounts. Drafts
 remain session-only; no draft text is stored in browser persistence. Typing

@@ -14,6 +14,7 @@ export const appearanceToolDiscussionPlay = async ({
     await userEvent.click(body.getByRole("menuitem", { name: "Settings" }));
     await userEvent.click(await c.findByRole("button", { name: "Appearance" }));
     await userEvent.click(c.getByRole("radio", { name: layout }));
+    await userEvent.click(c.getByRole("radio", { name: /^Classic$/ }));
     await userEvent.click(c.getByRole("button", { name: "Back to jj-store" }));
   };
   await settings("Focus");

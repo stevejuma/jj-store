@@ -489,3 +489,41 @@ test("terminal-only committed captures show retained execution output with whole
   assert.equal(source.part, null);
   assert.equal(source.quote, "");
 });
+
+test("recorded tools retain command and output without writable capture targets", () => {
+  const activity: Model<"AgentActivity">[] = [
+    {
+      type: "tool",
+      sequence: 1,
+      event_id: hex("7"),
+      tool: {
+        tool_call_id: hex("8"),
+        snapshot_id: hex("9", 64),
+        turn_id: null,
+        native_name: "exec_command",
+        kind: "execute",
+        state: "succeeded",
+        input: { media_type: "json", content: '{"command":"cat README.md"}' },
+        output: { media_type: "text", content: "Retained README 🦀" },
+        observed_paths: [],
+        code: [],
+      },
+    },
+  ];
+  const before = structuredClone(activity);
+  const projection = recordedConversationProjection(
+    activity,
+    hex("6"),
+    "codex",
+    user,
+    user,
+  );
+  const tool = projection.items[0].tools![0];
+  assert.match(tool.blocks[0].text, /cat README.md/);
+  assert.match(tool.blocks[0].text, /Retained README 🦀/);
+  assert.equal(tool.raw.rawInput, activity[0].tool.input!.content);
+  assert.equal(tool.raw.rawOutput, activity[0].tool.output!.content);
+  assert.equal(projection.sources.size, 0);
+  assert.equal(tool.blocks[0].commentable, false);
+  assert.deepEqual(activity, before);
+});

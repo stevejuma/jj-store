@@ -76,6 +76,10 @@ not a completion gate selection.
 | [E-THREADS-001](../../../../../history/2026/10/10/E-THREADS-001/index.md)                       | 2026-10-10 | pass            | Original outcome |
 | [E-THREADS-002](../../../../../history/2026/10/10/E-THREADS-002/index.md)                       | 2026-10-10 | pending         | Original outcome |
 
+|
+[E-AGENT-TRANSCRIPT-VIEW-001](../../../../../history/2026/10/10/E-AGENT-TRANSCRIPT-VIEW-001/index.md)
+| 2026-10-10 | pass | Renderer parity review |
+
 <!-- generated-navigation -->
 
 ## Pages

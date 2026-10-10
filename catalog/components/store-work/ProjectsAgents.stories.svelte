@@ -63,7 +63,9 @@
       "src",
       "/agent-icons/codex.svg",
     );
-    const transcriptRow = within(response).getAllByRole("article")[0]!;
+    const transcriptRow =
+      response.querySelector<HTMLElement>("[data-chat-item]")!;
+    await expect(transcriptRow).not.toBeNull();
     const viewport = response.querySelector(
       '[data-ui-part="scroll-area-viewport"]',
     )!;

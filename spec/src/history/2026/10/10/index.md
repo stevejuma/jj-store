@@ -4,6 +4,7 @@ Browse the child pages below.
 <!-- generated-navigation -->
 ## Pages
 
+- [E-AGENT-TRANSCRIPT-VIEW-001](E-AGENT-TRANSCRIPT-VIEW-001/index.md)
 - [E-AGENTS-LAYOUT-001](E-AGENTS-LAYOUT-001/index.md)
 - [E-CHAT-CARET-001](E-CHAT-CARET-001/index.md)
 - [E-CHAT-METADATA-MAIN-001](E-CHAT-METADATA-MAIN-001/index.md)

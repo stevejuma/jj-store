@@ -9,8 +9,12 @@
   let {
     controller,
     children,
-  }: { controller?: StoreController; children: Snippet<[Snippet, Snippet]> } =
-    $props();
+    inlineComposer = false,
+  }: {
+    controller?: StoreController;
+    children: Snippet<[Snippet, Snippet]>;
+    inlineComposer?: boolean;
+  } = $props();
   const drafts = useDrafts();
   const sessionId = $derived(
     controller?.state.agentSession?.session.session_id,
@@ -137,20 +141,30 @@
 </script>
 
 {#snippet comments()}
-  {#if supported && visibleDetail && controller}<section
+  {#if supported && controller && (visibleDetail || (inlineComposer && writable))}<section
       aria-label="Session comments"
       class="store-agent-comments"
     >
       <h2>Session comments</h2>
-      <StoreReviewConversation
-        rootDepth={1}
-        {controller}
-        reviewDetail={visibleDetail}
-        onActivate={activate}
-        inline
-        showComposer={false}
-        showDiff={false}
-      />
+      {#if visibleDetail}<StoreReviewConversation
+          rootDepth={1}
+          {controller}
+          reviewDetail={visibleDetail}
+          onActivate={activate}
+          inline
+          showComposer={false}
+          showDiff={false}
+        />{/if}
+      {#if inlineComposer && writable}<Button
+          variant="secondary"
+          size="sm"
+          aria-expanded={!!draft.open}
+          onclick={() => (draft.open = !draft.open)}
+          >{draft.open
+            ? "Close session review comment"
+            : "Add session review comment"}</Button
+        >{/if}
+      {#if inlineComposer && (draft.open || draft.pendingRequestId)}{@render composer()}{/if}
     </section>{/if}
   {#if supported && error}<div class="store-agent-comments">
       <p role="alert">{error}</p>

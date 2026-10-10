@@ -14,6 +14,7 @@
     focus = true,
     readOnly = false,
     reviewOutcome,
+    conversationView = "document",
   }: {
     repository?: boolean;
     project?: boolean;
@@ -21,6 +22,7 @@
     focus?: boolean;
     readOnly?: boolean;
     reviewOutcome?: "committed" | "unknown";
+    conversationView?: "document" | "classic";
   } = $props();
   const storage = untrack(() => {
     const memory = createMemoryStoryStorage();
@@ -28,6 +30,7 @@
       appearanceStorageKey,
       JSON.stringify({
         ...defaultAppearance,
+        conversationView,
         threads: focus ? "focus" : "split",
       }),
     );

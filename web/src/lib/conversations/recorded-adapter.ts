@@ -171,6 +171,8 @@ export function recordedConversationProjection(
           status:
             entry.tool.state === "succeeded" ? "completed" : entry.tool.state,
           paths: entry.tool.observed_paths,
+          rawInput: entry.tool.input?.content,
+          rawOutput: entry.tool.output?.content,
         },
       });
     } else if (entry.type === "capture_gap")
