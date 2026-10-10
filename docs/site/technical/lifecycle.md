@@ -157,9 +157,12 @@ prompts are never replayed. See [agent sessions](../guides/agent-execution.md).
 Agent restart preserves setup associations, avatar/configuration snapshots and
 history and last observed activity time while clearing live connection state.
 Legacy sessions without timing remain unknown until new activity; reopening or
-refreshing status never invents a timestamp. Resume remains explicit. Validated
-avatars are bounded together across setups and retained sessions to 8 MiB,
-within the existing 32 MiB private execution journal.
+refreshing status never invents a timestamp. Explicit Send prepares the selected
+agent's participation, loading a supported saved adapter session only when a
+prompt-start acknowledgement exists. Otherwise it creates a session with bounded
+retained context. Failed or unknown preparation never replays a prompt.
+Validated avatars are bounded together across setups and retained sessions to 8
+MiB, within the existing 32 MiB private execution journal.
 
 Submitted agent chats first enter the installation's private execution journal.
 The publisher then captures sanitized events into the selected repository's
@@ -175,6 +178,8 @@ Runtime preparation, worker transitions and visible journal changes publish
 installation freshness notices to the application's shared feed. Defaults have a
 separate notice. Unchanged publication retry bookkeeping stays quiet; producer
 overflow or process restart resets continuity before clients recapture state.
+Recapture retains visible messages until its replacement completes. A failed
+read keeps the previous publication boundary and remains eligible for recovery.
 
 ## Reusable ACP worker lifetime
 
@@ -185,6 +190,12 @@ agents begin disabled. Surplus idle workers retire after ten minutes. Shutdown
 uses a dedicated signal even when a command queue is full. An immediate Start
 awaits the stopping generation before creating another. Restart retains exact
 conversations and interrupted history without replaying a prompt.
+
+A valid adapter rejection during opening or configuration interrupts only that
+participation; other sessions remain usable. Timeout, protocol failure or
+process exit still invalidates the affected worker's live sessions. Development
+startup probes prepared-context parsing before replacing the running service; a
+control version flag alone does not prove helper compatibility.
 
 Before dispatch, the journal retains the exact sanitized authored text, separate
 XML context and captured Sent context snapshot. ACP supplies both in one turn,

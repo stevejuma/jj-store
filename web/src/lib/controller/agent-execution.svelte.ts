@@ -25,6 +25,7 @@ import { AgentSettings } from "./agent-settings.svelte.js";
 import { AgentRuntimes } from "./agent-runtimes.svelte.js";
 import { LocalClient } from "../api/local-client.js";
 import { AgentSessionStop } from "./agent-session-stop.svelte.js";
+import { AgentRuntimeObservation } from "./agent-runtime-observation.js";
 import type {
   AgentAction,
   AgentEvent,
@@ -39,6 +40,7 @@ const newId = () => crypto.randomUUID().replaceAll("-", "");
 /** Installation owner retains drafts and exact pending identities across navigation. */
 export class AgentExecution {
   readonly conversations = new ConversationSessions();
+  readonly runtimeObservation = new AgentRuntimeObservation();
   open = $state(false);
   onNavigate?: (view: AgentView, id?: string, relatedId?: string) => void;
   setupId = $state("");
@@ -264,6 +266,7 @@ export class AgentExecution {
     return request_id;
   }
   destroy() {
+    this.runtimeObservation.destroy();
     this.#selection.destroy();
     this.conversations.clear();
     this.#alive = false;

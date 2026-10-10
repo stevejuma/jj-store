@@ -75,7 +75,7 @@ async fn conversation(supervisor: &Supervisor, actor: PrincipalId, byte: u8) -> 
 }
 
 #[tokio::test]
-async fn rejected_resume_finishes_receipt_retires_worker_and_never_replays() {
+async fn rejected_resume_finishes_receipt_preserves_worker_and_never_replays() {
     rejected_reopen(false).await;
 }
 
@@ -129,13 +129,21 @@ async fn rejected_reopen(configuration: bool) {
     assert_eq!(outcome.state, "failed");
     assert_eq!(outcome.error.as_deref(), Some("agent_rejected"));
     let status = wait(&supervisor, fixture.actor, |s| {
-        s.live_agents[0].state == "error"
+        s.live_agents[0].state == "idle"
             && s.sessions
                 .iter()
-                .all(|s| s.state == "interrupted" || s.state == "ended")
+                .any(|s| s.id == id && s.state == "interrupted")
+            && s.sessions.iter().any(|s| s.id == other && s.connected)
     })
     .await;
-    assert!(status.sessions.iter().all(|s| !s.connected));
+    assert!(
+        !status
+            .sessions
+            .iter()
+            .find(|s| s.id == id)
+            .unwrap()
+            .connected
+    );
     assert_eq!(
         status
             .sessions
@@ -143,7 +151,7 @@ async fn rejected_reopen(configuration: bool) {
             .find(|s| s.id == other)
             .unwrap()
             .state,
-        "interrupted"
+        "idle"
     );
     assert_eq!(
         supervisor
@@ -270,5 +278,63 @@ async fn stop_during_resume_cancels_opening_without_resurrection_or_prompt_repla
         1
     );
     assert!(!supervisor.status(actor).await.unwrap().sessions[0].connected);
+    supervisor.shutdown().await.unwrap();
+}
+
+#[tokio::test]
+async fn resume_without_an_acknowledged_turn_creates_context_session_without_loading() {
+    let fixture = Fixture::new().await;
+    let peer = fs::read_to_string(&fixture.resources.executable).unwrap()
+        .replace("        emit('started', request)", "        # No prompt-start acknowledgement")
+        .replace("elif kind == 'open':", "elif kind == 'open':\n        if frame.get('loadSessionId'):\n            emit('error', request, code='agent_rejected')\n            continue");
+    fs::write(&fixture.resources.executable, peer).unwrap();
+    let supervisor = agent(&fixture).await;
+    let id = conversation(&supervisor, fixture.actor, 189).await;
+    supervisor
+        .command(
+            fixture.actor,
+            Command {
+                version: 1,
+                request_id: RequestId::new([190; 16]),
+                session_id: id.clone(),
+                action: Action::End,
+            },
+        )
+        .await
+        .unwrap();
+    wait(&supervisor, fixture.actor, |s| {
+        s.sessions[0].state == "ended"
+    })
+    .await;
+    let outcome = supervisor
+        .command(
+            fixture.actor,
+            Command {
+                version: 1,
+                request_id: RequestId::new([191; 16]),
+                session_id: id.clone(),
+                action: Action::Resume,
+            },
+        )
+        .await
+        .unwrap();
+    assert_eq!(outcome.state, "opening");
+    let status = supervisor.status(fixture.actor).await.unwrap();
+    assert!(status.sessions[0].connected);
+    assert_eq!(status.live_agents[0].state, "idle");
+    let events = supervisor
+        .events(fixture.actor, id, 0)
+        .await
+        .unwrap()
+        .events;
+    assert_eq!(
+        events
+            .iter()
+            .filter(|e| e.payload["type"] == "prompt")
+            .count(),
+        1
+    );
+    assert!(events.iter().any(|e| e.payload["type"] == "continuation"));
+    assert!(!events.iter().any(|e| e.payload["code"] == "agent_rejected"));
     supervisor.shutdown().await.unwrap();
 }

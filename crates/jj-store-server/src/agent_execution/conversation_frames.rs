@@ -48,11 +48,7 @@ impl Supervisor {
         {
             return Ok(());
         }
-        let load = if saved.view.capabilities["initialize"]["loadSession"] == true {
-            saved.view.adapter_session_id.clone()
-        } else {
-            None
-        };
+        let load = super::participation_resume::load_session(&saved);
         if load.is_none() && saved.view.adapter_session_id.is_some() {
             self.update(|s| delivery::continuation(s, id))?;
             self.append(

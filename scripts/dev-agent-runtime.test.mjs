@@ -5,11 +5,11 @@ import { dirname, join } from "node:path";
 import test from "node:test";
 import { developmentAgentEnvironment } from "./dev-agent-runtime.mjs";
 
-async function executable(path, versions = "1|2|3") {
+async function executable(path, versions = "1|2|3", context = true) {
   await mkdir(dirname(path), { recursive: true });
   await writeFile(
     path,
-    `#!/bin/sh\n[ "$1" = "--help" ] || exit 17\nprintf '%s\\n' '--control-version <${versions}>'\n`,
+    `#!/bin/sh\nif [ "$1" = "--help" ]; then\nprintf '%s\\n' '--control-version <${versions}>'\nelse\ncat >/dev/null\nprintf '%s\\n' '${JSON.stringify({ version: 3, type: "error", requestId: "preflight-text-context", code: context ? "session_not_open" : "invalid_request" })}' '${JSON.stringify({ version: 3, type: "error", requestId: "preflight-context-only", code: context ? "session_not_open" : "invalid_request" })}'\nfi\n`,
     { mode: 0o755 },
   );
 }
@@ -62,6 +62,15 @@ test("missing or stale bundled ACP fails before a service can be replaced", asyn
   await assert.rejects(
     developmentAgentEnvironment(root, {}),
     /desktop:prepare/u,
+  );
+});
+
+test("version 3 alone does not qualify a helper that rejects prepared context", async (t) => {
+  const { root, acp } = await fixture(t);
+  await executable(acp, "1|2|3", false);
+  await assert.rejects(
+    developmentAgentEnvironment(root, {}),
+    /prepared context/u,
   );
 });
 

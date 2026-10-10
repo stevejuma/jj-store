@@ -65,7 +65,20 @@ live workers, and Stop can cancel an exact turn while Send remains unresolved.
 The shared footer, transcript activity placement, centred captions, prose parity
 and code-attachment inbox grouping follow the updated owning contracts. M24
 stays In progress. Existing adapter/provider, live permissions, desktop,
-ResizeObserver and visual baseline gates remain independent and unapproved.
-The wider fixture audit reproduces ten existing discussion/reply story failures
-at parent 7601e3cf. Its two activity regressions are repaired; reply-interface
+ResizeObserver and visual baseline gates remain independent and unapproved. The
+wider fixture audit reproduces ten existing discussion/reply story failures at
+parent 7601e3cf. Its two activity regressions are repaired; reply-interface
 story migration and existing architecture oversizes remain separate open work.
+
+E-AGENT-RESUME-001 reviews the enclosing default-workspace change vlpumryo. The
+stale bundled helper is detected before restart; rebuilt source accepts the
+prepared prompt. Send automatically prepares disconnected selected agents, skips
+unpersisted adapter rollouts, and observes receipts without polling. Valid
+open/configure rejection preserves the other warm sessions. Publication
+recapture retains keyed rows and drafts. A cold real Codex turn completed the
+MIT prompt, published 435/435 events and captured one LICENSE change; all four
+pre-existing row DOM identities survived. Failed recapture keeps its authority
+read retryable; all 113 focused controller/inbox tests pass. M24 stays In
+progress. Source jj-acp qualification is E-M12-004; the four known Node-test
+failures, ten existing reply-story failures, architecture/Clippy baselines and
+independent platform, permission/cancellation and visual gates remain explicit.

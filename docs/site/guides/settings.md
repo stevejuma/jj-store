@@ -103,7 +103,10 @@ and retains exact recipients for replies. The switch in the agent picker and
 Settings → Agents controls the same saved preference; changes save immediately.
 Turning it off pauses automatic mentions and preserves your draft and selected
 agents. Remove a tag or unpin it to stop including that agent. ACP avatars show
-the current worker state across the app.
+the current worker state across the app. Send automatically prepares the
+selected agent's participation and observes its readiness without periodic
+status reads. Choosing another agent prepares that agent's own participation on
+the next Send.
 
 ## Local compute and agent defaults
 

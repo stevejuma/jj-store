@@ -30,5 +30,5 @@ export function conversationError(
       ? text(latest.code)
       : "";
   const error = code || session.last_error;
-  return `${error === "agent_rejected" ? "The harness rejected this session request" : error.replaceAll("_", " ")} (${error}). Workspace, saved history and your draft are retained. Use Session options to resume or start a new session with saved context.`;
+  return `${error === "agent_rejected" ? "The harness rejected this session request" : error.replaceAll("_", " ")} (${error}). Workspace, saved history and your draft are retained. Send prepares the selected agent automatically. Review any uncertain previous work before sending.`;
 }

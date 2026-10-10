@@ -25,6 +25,11 @@ export function commandReceipts(
         session().connected = false;
       }
       if (action?.action === "cancel") session().state = "idle";
+      if (action?.action === "resume" && !resumeFailure) {
+        session().state = "idle";
+        session().connected = true;
+        (session().capabilities as { modeReady: boolean }).modeReady = true;
+      }
       if (action?.action === "configure") {
         configuring.set(body.request_id, {
           preferences: {
@@ -59,7 +64,9 @@ export function commandReceipts(
                 ? "dispatching"
                 : resumeFailure && action?.action === "resume"
                   ? "failed"
-                  : "queued",
+                  : action?.action === "resume"
+                    ? "opening"
+                    : "queued",
         error:
           resumeFailure && action?.action === "resume"
             ? "agent_rejected"

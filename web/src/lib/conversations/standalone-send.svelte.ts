@@ -15,6 +15,7 @@ import {
   waitForRuntime,
 } from "../ui/store-agent-execution/runtime-preparation.js";
 import { conversationSubmissionResult } from "./submission-result.js";
+import { prepareStandaloneRuntime } from "./prepare-standalone-runtime.js";
 import { sha256 } from "@noble/hashes/sha2.js";
 import { bytesToHex } from "@noble/hashes/utils.js";
 export function createStandaloneSender(
@@ -31,7 +32,10 @@ export function createStandaloneSender(
   let preparing = $state(false),
     preparationError = $state("");
   let mounted = true;
-  onDestroy(() => (mounted = false));
+  onDestroy(() => {
+    mounted = false;
+    read().manager.runtimeObservation.notify();
+  });
   async function send(
     submission: ChatPromptSubmission,
   ): Promise<ChatSubmissionResult> {
@@ -49,8 +53,10 @@ export function createStandaloneSender(
       wanted = preferences && { ...preferences };
     if (
       (!draft?.trim() && !submission.comments.length) ||
-      !idle ||
-      (!ready && !canConfigure) ||
+      !session ||
+      session.state === "cleaned" ||
+      (!idle && !session.setup_id) ||
+      (!ready && !canConfigure && !preferences?.mode) ||
       manager.pending ||
       manager.busy ||
       preparing
@@ -62,7 +68,16 @@ export function createStandaloneSender(
     preparing = true;
     preparationError = "";
     try {
-      if (!ready && wanted) {
+      if (!(await prepareStandaloneRuntime(manager, id, () => mounted)))
+        throw new Error(
+          manager.error ||
+            "The agent could not be prepared. Your draft is retained.",
+        );
+      if (
+        wanted &&
+        (!runtimeMatches(manager.session, wanted) ||
+          object(manager.session?.capabilities).modeReady !== true)
+      ) {
         const request = await manager.commandSession(id, {
           action: "configure",
           preferences: wanted,

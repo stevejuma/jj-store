@@ -17,7 +17,7 @@ export function runtimeMatches(
   );
 }
 
-/** Poll reads for the exact configure receipt; never retry or replace its identity. */
+/** Observe the exact configure receipt; never poll, retry or replace its identity. */
 export async function waitForRuntime(
   manager: AgentExecution,
   sessionId: string,
@@ -26,19 +26,15 @@ export async function waitForRuntime(
   active: () => boolean,
 ) {
   if (!requestId) return false;
-  const started = Date.now();
-  while (
-    active() &&
-    manager.selected === sessionId &&
-    manager.session?.connected
-  ) {
-    const outcome = manager.outcome;
+  return manager.runtimeObservation.wait(() => {
     if (
-      manager.error ||
-      manager.connectionError ||
-      Date.now() - started >= 10000
+      !active() ||
+      manager.selected !== sessionId ||
+      !manager.session?.connected
     )
       return false;
+    const outcome = manager.outcome;
+    if (manager.error || manager.connectionError) return false;
     if (
       outcome?.request_id !== requestId ||
       (manager.pending && manager.pending.body.request_id !== requestId)
@@ -52,9 +48,6 @@ export async function waitForRuntime(
       )
         return true;
     } else if (outcome.state !== "dispatching") return false;
-    await new Promise((resolve) => setTimeout(resolve, 250));
-    if (!active() || manager.selected !== sessionId) return false;
-    await manager.refresh();
-  }
-  return false;
+    return undefined;
+  }, 10000);
 }

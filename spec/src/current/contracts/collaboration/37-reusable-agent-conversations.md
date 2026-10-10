@@ -36,13 +36,18 @@ closed. Code evidence is separate and independently authorized. Native code
 ThreadStore reducer refusal and WorkStore origin freeze remain unchanged.
 
 Logical participation survives process generations. Each generation has exact
-worker, session and turn fences. Resume loads only advertised sessions;
-otherwise an explicit continuation includes bounded retained context and
-discloses the new adapter session. No restart, crash or unknown outcome replays
-prompts. The first real prompt includes structured bootstrap instructions,
-origin and pinned attachments; warmup never sends an instruction-only turn.
-Context revisions are reserved and marked delivered only at the exact started
-event.
+worker, session and turn fences. Explicit Send prepares the selected agent,
+reuses a connected participation, and resumes only an advertised adapter session
+with a retained prompt-start acknowledgement. A newly opened adapter session
+without an acknowledged turn may have no persisted rollout; preparation creates
+a new session with bounded retained context in that case. Changing the selected
+agent keeps the conversation identity and prepares that agent's own
+participation on Send. Preparation never prompts on selection alone. Otherwise
+an explicit continuation includes bounded retained context and discloses the new
+adapter session. No restart, crash or unknown outcome replays prompts. The first
+real prompt includes structured bootstrap instructions, origin and pinned
+attachments; warmup never sends an instruction-only turn. Context revisions are
+reserved and marked delivered only at the exact started event.
 
 Failed explicit Resume/Continue commands settle their own durable receipt. An
 exact adapter rejection is failed; an unconfirmed open remains outcome unknown.
@@ -50,6 +55,11 @@ A scoped error that tears down the adapter also retires the controller worker
 and invalidates its live participations, preserving the classified failure and
 never replaying prompts. Ending an opening participation cancels its opening
 receipt; delayed handshake frames cannot reopen that ended participation.
+
+A valid adapter RPC rejection of open/configure interrupts only that
+participation and settles its receipt; the agent and its other sessions stay
+usable. Failed preparation sends no prompt. No automatic fallback follows a
+rejected or uncertain resumed turn.
 
 Limits are four workers, one active turn per worker and participation, sixteen
 queued turns per participation and sixty-four total. Surplus idle workers retire
@@ -129,6 +139,18 @@ reads. Initial capture, semantic events, explicit actions and continuity
 recovery drive coalesced reads, preserving drafts and exact unresolved requests.
 Internal publication retries with unchanged visible state cannot create a
 refresh loop.
+
+Publication-boundary recapture retains visible message rows until a complete
+replacement arrives. New sequences append without clearing prior history.
+Refresh errors preserve retained rows and drafts; a changed commitment/source
+mapping updates the existing keyed row. Reset recaptures authority but does not
+temporarily remove the selected chat's messages. A failed recapture does not
+advance the captured publication boundary; recovery retries its authority read.
+
+Development startup validates prepared text/context and context-only v3 frames
+against the selected helper without warming an agent. A control-version flag
+alone does not establish compatibility. Incompatible resources fail preflight
+before replacing a running service.
 
 Real adapter, cold browser, restart and multi-repository qualification remain
 independent acceptance gates. Fixture success does not close them.

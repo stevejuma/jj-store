@@ -242,6 +242,93 @@ test("inbox remounts reuse initial status, settings and targets", async () => {
   }
 });
 
+test("publication refresh retains visible messages until replacement history arrives", async () => {
+  vi.useFakeTimers();
+  const f = await fixture();
+  try {
+    f.manager.open = true;
+    f.status.sessions = [
+      {
+        id: "session",
+        repository: "3".repeat(32),
+        last_sequence: 1,
+        published_sequence: 0,
+      } as AgentSession,
+    ];
+    f.events.push({
+      sequence: 1,
+      committed: false,
+      payload: { type: "prompt", text: "Retained message" },
+    });
+    await f.manager.updates.status();
+    await f.manager.select("session");
+    f.manager.drafts.session = "Unsent draft";
+    let finish!: (response: Response) => void;
+    f.intercept.read = (path) =>
+      path.includes("/events?")
+        ? new Promise((done) => {
+            finish = done;
+          })
+        : undefined;
+    f.status.sessions[0]!.published_sequence = 1;
+    f.events[0]!.committed = true;
+    f.notice("agent_execution");
+    await vi.advanceTimersByTimeAsync(400);
+    expect(f.manager.events).toHaveLength(1);
+    expect(f.manager.events[0]!.payload).toMatchObject({
+      text: "Retained message",
+    });
+    expect(f.manager.drafts.session).toBe("Unsent draft");
+    finish(Response.json({ version: 1, next: null, events: f.events }));
+    await vi.advanceTimersByTimeAsync(100);
+    expect(f.manager.events).toHaveLength(1);
+    expect(f.manager.events[0]!.committed).toBe(true);
+  } finally {
+    f.close();
+    vi.useRealTimers();
+  }
+});
+
+test("failed publication recapture retries authority while retaining old rows", async () => {
+  vi.useFakeTimers();
+  const f = await fixture();
+  try {
+    f.manager.open = true;
+    f.status.sessions = [
+      {
+        id: "session",
+        repository: "3".repeat(32),
+        last_sequence: 1,
+        published_sequence: 0,
+      } as AgentSession,
+    ];
+    f.events.push({
+      sequence: 1,
+      committed: false,
+      payload: { type: "prompt", text: "Retained message" },
+    });
+    await f.manager.updates.status();
+    await f.manager.select("session");
+    f.status.sessions[0]!.published_sequence = 1;
+    f.events[0]!.committed = true;
+    f.intercept.read = (path) =>
+      path.includes("/events?")
+        ? Promise.reject(new Error("Temporary read failure"))
+        : undefined;
+    f.notice("agent_execution");
+    await vi.advanceTimersByTimeAsync(400);
+    expect(f.manager.events).toHaveLength(1);
+    expect(f.manager.events[0]!.committed).toBe(false);
+    f.intercept.read = undefined;
+    await vi.advanceTimersByTimeAsync(6000);
+    expect(f.manager.events[0]!.committed).toBe(true);
+    expect(f.manager.activityError).toBe("");
+  } finally {
+    f.close();
+    vi.useRealTimers();
+  }
+});
+
 test("runtime and compute settings reuse captures, stay idle and observe execution events", async () => {
   vi.useFakeTimers();
   const f = await fixture();

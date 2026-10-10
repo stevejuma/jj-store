@@ -79,6 +79,9 @@
   const ready = $derived(
     facts.modeReady === true && runtimeMatches(session, preferences),
   );
+  const canPrepare = $derived(
+    session?.state !== "cleaned" && !!session?.setup_id && !!preferences?.mode,
+  );
   const sender = createStandaloneSender(() => ({
     manager,
     session,
@@ -153,7 +156,8 @@
             submitLabel={session.state === "running"
               ? "Queue follow-up"
               : "Send"}
-            onSubmit={idle && (ready || canConfigure) && !manager.eventsLoading
+            onSubmit={(canPrepare || (idle && (ready || canConfigure))) &&
+            !manager.eventsLoading
               ? async () => {
                   if (!(await conversation.comments.send()))
                     throw new Error(conversation.comments.error);
@@ -165,7 +169,7 @@
                 ? { type: "error", message: error }
                 : manager.activityError
                   ? { type: "warning", message: manager.activityError }
-                  : !idle
+                  : !idle && !canPrepare
                     ? {
                         type: "warning",
                         message:
@@ -203,8 +207,7 @@
           {manager}
           sessions={[session]}
           actions={inputActions}
-          canSend={idle &&
-            (ready || canConfigure) &&
+          canSend={(canPrepare || (idle && (ready || canConfigure))) &&
             !sender.preparing &&
             !manager.busy &&
             !manager.pending &&

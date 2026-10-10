@@ -483,7 +483,7 @@ impl Supervisor {
                         // These failures tear down the adapter inside jj-acp. Its
                         // control process may remain alive, but it is no longer warm.
                         if frame["type"] == "error" && matches!(frame["code"].as_str(),
-                            Some("timed_out" | "agent_exited" | "protocol_error" | "agent_rejected" | "cancelled")) {
+                            Some("timed_out" | "agent_exited" | "protocol_error" | "cancelled")) {
                             failure_code = frame["code"].as_str().map(str::to_owned);
                             self.worker_state(id,generation,"error",failure_code.as_deref());
                             return Err(Error::Unavailable);

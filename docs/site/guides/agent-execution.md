@@ -126,12 +126,15 @@ keeps its captured instructions and workspace. Closing the sidebar preserves
 unapplied preferences and your conversation draft. The composer supplies Send.
 Beneath it, only the compact activity strip and explicit pending-request
 recovery actions appear. Empty bodies use shadcn Empty with an icon;
-session/history loading shows the owned skeleton. Resume uses the adapter's
-explicit load capability. New session with saved context starts a fresh adapter
-session and labels that distinction. Neither action sends a prompt
-automatically. Resume failures appear as an error in the composer, with their
-safe ACP code and retained draft/history. If the harness no longer has its saved
-conversation, choose New session with saved context explicitly.
+session/history loading shows the owned skeleton. Send automatically prepares
+the selected agent before dispatch. It reuses a connected session, loads a
+supported saved adapter session with an acknowledged turn, or opens a fresh
+session with bounded retained context when no resumable turn exists. Manual
+Resume and New session with saved context remain optional recovery actions;
+neither sends a prompt. Preparation failures retain the draft/history and show
+their safe ACP code. After a rejected load, New session with saved context can
+open a fresh adapter session explicitly. Unknown outcomes must be checked before
+continuing; preparation never blindly falls back or replays a prompt.
 
 Request identities and drafts survive refresh and navigation. If another setup
 save changes the configuration version, the editor retains your draft and shows
@@ -199,11 +202,13 @@ needs preparation, choose Rebuild index to prepare that exact
 repository/operation and reload its choices. Your selected revision and typed
 message remain retained during recovery.
 
-You can draft messages while a session is offline. Resume or start a linked new
-session explicitly before sending. Send uses the configured agent's negotiated
-runtime choices and waits for the exact accepted configuration receipt and
-confirmed mode readiness before submitting the message; failed configuration
-retains your draft.
+You can draft and Send while a selected agent is offline. Send prepares its
+participation, applies negotiated runtime choices and waits for the exact
+accepted configuration receipt and confirmed mode readiness before submitting
+the message. Preparation observes semantic updates without polling. Failed
+configuration retains your draft; changing chats during preparation does not
+retarget that submission. Publication refresh keeps existing messages visible
+and retries a failed read without clearing the transcript.
 
 ## Connect a ChatGPT subscription
 

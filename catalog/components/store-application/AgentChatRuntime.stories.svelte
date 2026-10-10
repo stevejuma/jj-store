@@ -117,7 +117,7 @@
 />
 
 <Story
-  name="Ended session keeps drafts editable and explains explicit resume"
+  name="Send prepares an ended session automatically and dispatches once"
   args={{ status: "Offline", agentModeReady: false }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
@@ -128,18 +128,26 @@
     await expect(draft).toBeEnabled();
     await userEvent.type(draft, "Keep this for resume");
     await expect(
-      c.getByText(/Resume this session from Session options/),
-    ).toBeVisible();
+      c.queryByText(/Resume this session from Session options/),
+    ).not.toBeInTheDocument();
     await expect(
       c.queryByText(/Choose an execution mode in Session options/),
     ).not.toBeInTheDocument();
-    await expect(
-      c.getByRole("button", { name: "Send message" }),
-    ).toBeDisabled();
+    await expect(c.getByRole("button", { name: "Send message" })).toBeEnabled();
     await expect(draft).toHaveTextContent("Keep this for resume");
     await expect(
       c.queryByLabelText("Session commands"),
     ).not.toBeInTheDocument();
+    await userEvent.click(c.getByRole("button", { name: "Send message" }));
+    await waitFor(() => {
+      const commands = JSON.parse(
+        c.getByLabelText("Session commands").textContent ?? "[]",
+      );
+      expect(commands).toHaveLength(2);
+      expect(commands[0].action.action).toBe("resume");
+      expect(commands[1].action.action).toBe("prompt");
+      expect(commands[1].action.text).toBe("Keep this for resume");
+    });
   }}
 />
 

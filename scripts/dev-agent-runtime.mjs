@@ -3,6 +3,7 @@ import { constants } from "node:fs";
 import { access, lstat } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { promisify } from "node:util";
+import { probePreparedContext } from "./dev-agent-probe.mjs";
 
 const execute = promisify(execFile);
 const guidance =
@@ -53,6 +54,14 @@ export async function developmentAgentEnvironment(
     throw Error(
       `jj-acp at ${executable} does not support control version 3. ${guidance}`,
     );
+  try {
+    if (!(await probePreparedContext(executable, repositoryRoot, environment)))
+      throw Error();
+  } catch {
+    throw Error(
+      `jj-acp at ${executable} does not support prepared context. ${guidance}`,
+    );
+  }
   return {
     JJ_STORE_ACP_EXECUTABLE: executable,
     JJ_STORE_AGENT_JJ_EXECUTABLE: jj,

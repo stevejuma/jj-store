@@ -161,3 +161,11 @@ seed covers zero, one and two attached repositories through the same receipt
 authority as the live form. An ignored fixture marker prevents replay during
 ordinary startup. Reset remains an explicitly authorized destructive development
 operation; UI iteration and backend restart never reset collaboration state.
+
+E-AGENT-RESUME-001 leaves JST-GOV-002/008 ownership unchanged. Development
+launchers verify the selected v3 helper's prepared-context parser without
+warming, opening or prompting an agent. The no-session probe rejects stale
+resources before service replacement. Runtime observation and Send preparation
+are application-owned helpers; no source aliases, copied dependencies or
+credential authority are added. The jj-acp rejection fix has separate source
+evidence and a separately rebuilt, ignored development resource.

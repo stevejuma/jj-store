@@ -64,6 +64,13 @@ Exact range publication requires a committed source mapping. Nontext sources
 support whole-section comments; unavailable/unpublished sources explain why a
 pending comment cannot yet be submitted.
 
+With an agent selected, Send prepares disconnected participation automatically
+before dispatching the captured prompt. Manual Resume/New session actions are
+optional recovery controls. Opening/configuration observes semantic state
+updates and exact receipts, without periodic status reads. Failed or unknown
+preparation retains the draft and never dispatches it; selection changes cancel
+the local wait without retargeting that captured submission.
+
 Existing permissions, cancellation, queued prompts, multiple recipients,
 reactions, mentions, Sent-context inspectors, provider-aware runtime choices and
 saved-change panels remain available in both renderers. Captured agent identity

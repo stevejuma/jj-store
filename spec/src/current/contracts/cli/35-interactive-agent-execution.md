@@ -126,3 +126,11 @@ Failed reopen receipts and adapter retirement use the existing supervisor and
 control-version-3 frames. Development qualification rebuilds the explicit
 backend in the default workspace and preserves the fixture; installed tools,
 credentials and uncertain prompts remain untouched.
+
+E-AGENT-RESUME-001 retains JST-CLI-004 executable custody, control v3 and the
+existing command/receipt contracts. A valid open/configure rejection fails only
+its participation; fatal protocol/process/deadline errors retire the worker. An
+adapter with no acknowledged turn is opened with retained context instead of
+loading a nonexistent rollout. Development preflight checks prepared-context
+parsing without starting an agent; current jj-acp resources are rebuilt and
+staged only for the default demo, preserving its fixture and installed tools.

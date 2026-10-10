@@ -4,6 +4,8 @@ Browse the child pages below.
 <!-- generated-navigation -->
 ## Pages
 
+- [E-AGENT-RESUME-001](E-AGENT-RESUME-001/index.md)
+  {{#include E-AGENT-RESUME-001/SUMMARY.nav.md}}
 - [E-AGENT-STATE-001](E-AGENT-STATE-001/index.md)
   {{#include E-AGENT-STATE-001/SUMMARY.nav.md}}
 - [E-AGENT-TRANSCRIPT-VIEW-001](E-AGENT-TRANSCRIPT-VIEW-001/index.md)

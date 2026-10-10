@@ -91,3 +91,12 @@ preserve exact publication, legacy identity and independent execution gates.
 The interactive agent guide describes the shared Threads/session header,
 responsive All/More navigation, loaded-only multiple filter choices and empty
 list behavior, without presenting those client controls as new server queries.
+
+E-AGENT-RESUME-001 preserves JST-DOC-001/002/003 manual ownership, source review
+and delivery gates. Agent and Settings guides now explain preparation on
+explicit Send, acknowledged-turn resume eligibility, optional manual recovery
+and event-driven readiness. Lifecycle guidance distinguishes scoped adapter
+rejection from fatal worker failure and preserves failed-history recapture.
+Source fingerprints are reviewed for the changed server/application trees.
+Focused and real-demo acceptance does not imply broader adapter, desktop or
+release qualification.

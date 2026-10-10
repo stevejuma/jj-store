@@ -14,6 +14,12 @@ semantic execution events. Corrected reopen settlement, activity presentation
 and code-attachment grouping add no DTO fields, admission bypass, polling or
 automatic prompt replay. Journal and control formats remain unchanged.
 
+E-AGENT-RESUME-001 also preserves JST-API-001/JST-API-006 wire contracts.
+Automatic Send preparation uses existing Resume/configure commands and exact
+receipts. An adapter session with no acknowledged turn is prepared as a new
+context session rather than loading a nonexistent rollout. No new command, DTO,
+credential, permission or prompt-retry authority is introduced.
+
 Status `revision` is the conditional saved-setup revision. Session activity,
 publication and process shutdown do not change it; a setup save or removal does.
 Duplicate original requests retain their receipt without advancing it. A

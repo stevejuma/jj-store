@@ -103,6 +103,7 @@ export class AgentExecutionRefresh {
         m.connectionError = "";
         m.invalidateHistory();
         m.chat.invalidate();
+        m.runtimeObservation.notify();
         return true;
       } catch (cause) {
         if (!this.#alive) return true;
@@ -112,6 +113,7 @@ export class AgentExecutionRefresh {
           cause instanceof Error
             ? cause.message
             : "Agent execution unavailable";
+        m.runtimeObservation.notify();
         this.#watches[0]!.request();
         return false;
       }

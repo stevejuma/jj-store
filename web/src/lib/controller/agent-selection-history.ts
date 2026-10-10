@@ -68,26 +68,29 @@ export class AgentSelectionHistory {
       return;
     this.retainHistory();
     this.stream?.abort();
+    const sameSelection = this.manager.selected === id;
     this.manager.drafts[id] ??= "";
     this.manager.selected = id;
+    this.manager.runtimeObservation.notify();
     void this.manager.discussions.ensure(id);
     const publication = String(
       this.manager.session?.published_sequence ?? "unknown",
     );
-    this.publication = publication;
     const cached = this.reset ? undefined : this.history.get(id, publication);
     if (this.reset) this.history.clear();
-    this.manager.events = cached ?? [];
-    if (this.reset) this.manager.events = [];
+    let recapture = !cached && (sameSelection || this.reset);
+    if (!sameSelection) this.manager.events = cached ?? [];
+    let captured: AgentEvent[] = cached ? [...cached] : [];
     this.reset = false;
     this.manager.eventsLoading = true;
     const abort = (this.stream = new AbortController());
     try {
-      const start = Number(this.manager.events.at(-1)?.sequence ?? 0);
+      const start = Number(captured.at(-1)?.sequence ?? 0);
       const receive = (events: AgentEvent[]) => {
         if (!this.alive || abort.signal.aborted || this.stream !== abort)
           return;
-        this.manager.events = [...this.manager.events, ...events];
+        captured = [...captured, ...events];
+        if (!recapture) this.manager.events = captured;
       };
       const after =
         cached &&
@@ -102,6 +105,9 @@ export class AgentSelectionHistory {
               start,
             );
       if (abort.signal.aborted || !this.alive) return;
+      this.manager.events = captured;
+      recapture = false;
+      this.publication = publication;
       this.manager.activityError = "";
       // A cold route can capture history before installation status arrives.
       // Event commitment is captured authority; do not adopt a later status blindly.
@@ -131,7 +137,10 @@ export class AgentSelectionHistory {
         },
       });
     } catch (cause) {
-      if (!abort.signal.aborted) this.manager.activityError = String(cause);
+      if (!abort.signal.aborted) {
+        this.reset = true;
+        this.manager.activityError = String(cause);
+      }
       abort.abort();
     } finally {
       if (this.stream === abort) this.manager.eventsLoading = false;

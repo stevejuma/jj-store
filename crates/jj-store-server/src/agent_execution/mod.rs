@@ -30,6 +30,7 @@ mod metadata_sources;
 mod metadata_store;
 mod metadata_suggestions;
 mod metadata_text;
+mod participation_resume;
 mod provider_catalog;
 mod provider_launch;
 mod qualified_reviews;

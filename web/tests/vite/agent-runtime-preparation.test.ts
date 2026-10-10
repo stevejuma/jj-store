@@ -2,6 +2,7 @@ import { expect, test, vi } from "vitest";
 import { AgentExecution } from "../../src/lib/controller/agent-execution.svelte.js";
 import type { AgentSession } from "../../src/lib/controller/agent-execution-types.js";
 import { waitForRuntime } from "../../src/lib/ui/store-agent-execution/runtime-preparation.js";
+import { prepareStandaloneRuntime } from "../../src/lib/conversations/prepare-standalone-runtime.js";
 
 const wanted = { model: "saved-model", effort: "medium", mode: "ask" };
 function fixture(state = "dispatching", request = "exact-request") {
@@ -44,13 +45,7 @@ test("old ready capabilities cannot bypass a pending exact configure receipt", a
   vi.useFakeTimers();
   const manager = fixture();
   const command = vi.spyOn(manager, "commandSession");
-  let checks = 0;
-  const refresh = vi.spyOn(manager, "refresh").mockImplementation(async () => {
-    if (++checks === 2) {
-      manager.pending = null;
-      manager.outcome!.state = "accepted";
-    }
-  });
+  const refresh = vi.spyOn(manager, "refresh");
   try {
     const waiting = waitForRuntime(
       manager,
@@ -61,10 +56,94 @@ test("old ready capabilities cannot bypass a pending exact configure receipt", a
     );
     await vi.advanceTimersByTimeAsync(250);
     expect(manager.pending?.body.request_id).toBe("exact-request");
+    manager.pending = null;
+    manager.outcome!.state = "accepted";
+    manager.runtimeObservation.notify();
     await vi.advanceTimersByTimeAsync(250);
     expect(await waiting).toBe(true);
-    expect(refresh).toHaveBeenCalledTimes(2);
+    expect(refresh).not.toHaveBeenCalled();
     expect(command).not.toHaveBeenCalled();
+  } finally {
+    manager.destroy();
+    vi.useRealTimers();
+  }
+});
+
+test("Send prepares a disconnected session once and observes readiness without dispatching a prompt", async () => {
+  vi.useFakeTimers();
+  const manager = fixture("opening");
+  manager.pending = null;
+  manager.session!.connected = false;
+  manager.session!.state = "interrupted";
+  const command = vi
+    .spyOn(manager, "commandSession")
+    .mockImplementation(async () => {
+      manager.outcome!.request_id = "open-request";
+      manager.session!.state = "opening";
+      return "open-request";
+    });
+  const refresh = vi.spyOn(manager, "refresh");
+  try {
+    const prepared = prepareStandaloneRuntime(manager, "session", () => true);
+    await vi.advanceTimersByTimeAsync(500);
+    expect(command).toHaveBeenCalledExactlyOnceWith("session", {
+      action: "resume",
+    });
+    manager.session!.connected = true;
+    manager.session!.state = "idle";
+    manager.runtimeObservation.notify();
+    await vi.advanceTimersByTimeAsync(1);
+    expect(await prepared).toBe(true);
+    expect(refresh).not.toHaveBeenCalled();
+    expect(await prepareStandaloneRuntime(manager, "session", () => true)).toBe(
+      true,
+    );
+    expect(command).toHaveBeenCalledTimes(1);
+  } finally {
+    manager.destroy();
+    vi.useRealTimers();
+  }
+});
+
+test.each(["failed", "outcome_unknown"])(
+  "%s automatic preparation never sends or falls back",
+  async (state) => {
+    const manager = fixture(state);
+    manager.pending = null;
+    manager.session!.connected = false;
+    manager.session!.state = "interrupted";
+    const command = vi
+      .spyOn(manager, "commandSession")
+      .mockResolvedValue("exact-request");
+    try {
+      expect(
+        await prepareStandaloneRuntime(manager, "session", () => true),
+      ).toBe(false);
+      expect(command).toHaveBeenCalledExactlyOnceWith("session", {
+        action: "resume",
+      });
+    } finally {
+      manager.destroy();
+    }
+  },
+);
+
+test("changing selection during opening does not retarget the captured submission", async () => {
+  vi.useFakeTimers();
+  const manager = fixture("opening");
+  manager.pending = null;
+  manager.session!.connected = false;
+  const command = vi
+    .spyOn(manager, "commandSession")
+    .mockResolvedValue("exact-request");
+  try {
+    const preparing = prepareStandaloneRuntime(manager, "session", () => true);
+    await vi.advanceTimersByTimeAsync(1);
+    manager.selected = "other-session";
+    manager.runtimeObservation.notify();
+    await vi.advanceTimersByTimeAsync(1);
+    expect(await preparing).toBe(false);
+    expect(command).toHaveBeenCalledTimes(1);
   } finally {
     manager.destroy();
     vi.useRealTimers();
