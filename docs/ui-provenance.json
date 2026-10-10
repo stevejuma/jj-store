@@ -2778,6 +2778,14 @@
     {
       "local": "web/src/lib/ui/store-application/StoreApplicationAgents.svelte",
       "reason": "Application-owned deferred agent view retaining existing exact navigation callbacks and execution context."
+    },
+    {
+      "local": "web/src/lib/ui/store-agent-chat/StoreAgentMessageFooter.svelte",
+      "reason": "Locally authored exact-participation Stop/Send adapter shared by live, Thread and recorded conversation footers; composes public Design Core primitives."
+    },
+    {
+      "local": "web/src/lib/ui/store-agent-chat-body/ChatHistoryStatus.svelte",
+      "reason": "Locally authored conversation history loading and empty-state composition using public Design Core primitives, extracted from the existing owned body."
     }
   ],
   "desktopAppearance": {

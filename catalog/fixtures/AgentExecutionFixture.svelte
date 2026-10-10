@@ -1,4 +1,10 @@
 <script lang="ts">
+  import AgentExecutionPendingControls from "./AgentExecutionPendingControls.svelte";
+  import {
+    staleResumeOutcome,
+    seedStaleResume,
+    cancelledTurnEvents,
+  } from "./agent-session-recovery.js";
   import * as lifecycle from "./agent-execution-lifecycle.svelte.js";
   import { AgentExecutionConfigurationFixture } from "./agent-execution-configuration.svelte.js";
   import {
@@ -31,8 +37,6 @@
     AgentSession,
   } from "../../web/src/lib/controller/agent-execution-types.js";
   import StoreAgentExecutionHost from "../../web/src/lib/ui/store-agent-execution/StoreAgentExecutionHost.svelte";
-  import StoreAgentLaunchButton from "../../web/src/lib/ui/store-agent-execution/StoreAgentLaunchButton.svelte";
-  import { Button } from "@lapismd/design-core/shadcn/button";
   let {
     permission = false,
     fail = false,
@@ -51,6 +55,7 @@
     holdConfiguration = false,
     uncertainConfiguration = false,
     resumeFailure = false,
+    staleResumeReceipt = false,
     retainedError = false,
     longHistory = false,
     chatFeedback,
@@ -85,6 +90,7 @@
     holdConfiguration?: boolean;
     uncertainConfiguration?: boolean;
     resumeFailure?: boolean;
+    staleResumeReceipt?: boolean;
     retainedError?: boolean;
     longHistory?: boolean;
     chatTools?: boolean | "grouped";
@@ -192,12 +198,15 @@
             return json(receipts.dispatch(body, resumeFailure));
           }
           if (path.includes("/outcome"))
-            return json(
-              receipts.outcome(
-                new URL(path, "http://fixture").searchParams.get("request") ??
-                  "",
-              ),
-            );
+            if (staleResumeReceipt)
+              return json(staleResumeOutcome(fixtureStatus.sessions[0]));
+            else
+              return json(
+                receipts.outcome(
+                  new URL(path, "http://fixture").searchParams.get("request") ??
+                    "",
+                ),
+              );
           if (path.includes("/events")) {
             if (holdHistory)
               await new Promise<void>((resolve) => {
@@ -210,6 +219,7 @@
               chatFeedback,
               replayHistory,
             );
+            result.events.push(...cancelledTurnEvents(lastCommand));
             if (chatTools)
               appendChatToolEvents(result.events, chatTools === "grouped");
             return json(result);
@@ -235,6 +245,9 @@
       ),
   );
   provideAgentExecution(() => manager);
+  untrack(() =>
+    seedStaleResume(manager, fixtureStatus.sessions[0], staleResumeReceipt),
+  );
   if (untrack(() => observeRuntime))
     lifecycle.observeFixtureAgentRuntime(manager, () => route);
   const { shell, inboxStorage } = untrack(lifecycle.fixtureAgentShell);
@@ -255,24 +268,14 @@
 >
   <AppShell.Main>
     <div>
-      {#if resolveHistory}<Button
-          onclick={() => {
-            resolveHistory?.();
-            resolveHistory = undefined;
-          }}>Resolve fixture history</Button
-        >{/if}
-      {#if resolveConfiguration}<Button
-          onclick={() => {
-            resolveConfiguration?.();
-            resolveConfiguration = undefined;
-          }}>Resolve fixture configuration</Button
-        >{/if}
+      <AgentExecutionPendingControls
+        {manager}
+        sessionId={fixtureStatus.sessions[0]?.id}
+        controls={configuration.controls}
+        bind:history={resolveHistory}
+        bind:configuration={resolveConfiguration}
+      />
       <AgentExecutionCommandOutput {commands} {lastCommand} {lastOpened} />
-      <StoreAgentLaunchButton {manager} /><Button
-        onclick={() => manager.openSession(fixtureStatus.sessions[0].id)}
-        >Open fixture conversation</Button
-      ><Button onclick={() => manager.directory()}>Manage fixture agents</Button
-      >
     </div>
     <StoreAgentExecutionHost
       {manager}
@@ -293,7 +296,3 @@
     ? route.executionSessionId
     : undefined}
 />
-
-{#if configuration.controls.length}<output aria-label="Agent controls"
-    >{JSON.stringify(configuration.controls)}</output
-  >{/if}

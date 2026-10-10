@@ -54,7 +54,11 @@
   async function parity({ canvasElement }: { canvasElement: HTMLElement }) {
     const c = within(canvasElement);
     // Wait for the conversation's editors, rather than an unrelated fixture input.
-    const draft = await c.findByRole("group", { name: "Next message draft" });
+    const draft = await c.findByRole(
+      "group",
+      { name: "Next message draft" },
+      { timeout: 10000 },
+    );
     const input = await within(draft).findByRole("textbox", {
       name: /^(Next message|Markdown editor)$/,
     });
@@ -86,8 +90,15 @@
     ).toBeLessThan(1);
     expect(cursor.height).toBeGreaterThan(avatar.height * 0.85);
     expect(draftColor).not.toBe(readingColor);
-    expect(getComputedStyle(input).fontSize).toBe("16px");
-    expect(getComputedStyle(input).lineHeight).toBe("28px");
+    expect(getComputedStyle(input).fontFamily).toBe(
+      getComputedStyle(reader).fontFamily,
+    );
+    expect(getComputedStyle(input).fontSize).toBe(
+      getComputedStyle(reader).fontSize,
+    );
+    expect(getComputedStyle(input).lineHeight).toBe(
+      getComputedStyle(reader).lineHeight,
+    );
     await userEvent.keyboard("Caret sample");
     expect(input).toHaveTextContent("Caret sample");
     await userEvent.keyboard("{Home}");

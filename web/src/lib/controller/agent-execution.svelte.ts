@@ -24,6 +24,7 @@ import { AgentChatGpt } from "./agent-chatgpt.svelte.js";
 import { AgentSettings } from "./agent-settings.svelte.js";
 import { AgentRuntimes } from "./agent-runtimes.svelte.js";
 import { LocalClient } from "../api/local-client.js";
+import { AgentSessionStop } from "./agent-session-stop.svelte.js";
 import type {
   AgentAction,
   AgentEvent,
@@ -71,6 +72,7 @@ export class AgentExecution {
   readonly #selection = new AgentSelectionHistory(this);
   readonly updates: AgentExecutionRefresh;
   readonly client: LocalClient;
+  readonly stops: AgentSessionStop;
   readonly discussions: AgentDiscussions;
   readonly chat: AgentChat;
   readonly catalogs: AgentModelCatalog;
@@ -87,6 +89,7 @@ export class AgentExecution {
     readonly freshness?: import("./application-freshness.js").ApplicationFreshness,
   ) {
     this.client = new LocalClient("", fetcher);
+    this.stops = new AgentSessionStop(this.client, () => this.updates.status());
     this.changes = new AgentChangesCache(this.client.fetcher);
     this.chat = new AgentChat(this, freshness);
     this.settings = new AgentSettings(this.client);

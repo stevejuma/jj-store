@@ -107,8 +107,12 @@
     justify-self: end;
   }
   .community-document-composer :global(.community-chat-composer__mira.mira) {
-    --mira-font-size: 1rem;
-    --mira-line-height: 1.75;
+    --mira-font-sans: var(
+      --conversation-prose-font,
+      var(--font-sans, system-ui)
+    );
+    --mira-font-size: var(--conversation-prose-size, 0.875rem);
+    --mira-line-height: var(--conversation-prose-leading, 1.65);
     min-height: 1.75rem;
   }
   .community-document-composer

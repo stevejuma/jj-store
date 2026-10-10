@@ -17,8 +17,8 @@ export const chatDraftCaret = [
   chatCaret,
   EditorView.theme({
     "&.cm-editor > .cm-scroller > .cm-content": {
-      paddingBlock: "0.25em",
-      paddingInline: "0.125em",
+      paddingBlock: "4px",
+      paddingInline: "2px",
     },
   }),
 ];

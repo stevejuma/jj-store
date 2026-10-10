@@ -3,6 +3,8 @@
 mod comment_answers;
 #[path = "agent_execution/context_delivery.rs"]
 mod context_delivery;
+#[path = "agent_execution/conversation_failures.rs"]
+mod conversation_failures;
 #[path = "agent_execution/conversations.rs"]
 mod conversations;
 #[path = "agent_execution/fleet.rs"]

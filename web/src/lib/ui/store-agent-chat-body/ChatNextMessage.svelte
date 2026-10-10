@@ -80,19 +80,33 @@
     gap: 0.5rem;
   }
   .chat-next-avatar {
-    padding-top: 0.375rem;
+    padding-top: max(
+      0px,
+      calc(
+        0.25rem +
+          (
+            var(--conversation-prose-size, 0.875rem) *
+              var(--conversation-prose-leading, 1.65) - 1.5rem
+          ) /
+          2
+      )
+    );
   }
   .chat-next-editor {
     min-width: 0;
     --chat-caret-color: var(--primary);
-    --mira-font-size: 1rem;
-    --mira-line-height: 1.75;
+    --mira-font-sans: var(
+      --conversation-prose-font,
+      var(--font-sans, system-ui)
+    );
+    --mira-font-size: var(--conversation-prose-size, 0.875rem);
+    --mira-line-height: var(--conversation-prose-leading, 1.65);
     --file-margins-x: 0px;
     --file-margins-y: 0px;
     --file-line-width: 100%;
     --mira-code-editor-padding: 0;
     --mira-code-editor-background: transparent;
     --mira-code-editor-font-family: var(--font-sans, system-ui);
-    --mira-code-editor-font-size: 1rem;
+    --mira-code-editor-font-size: var(--conversation-prose-size, 0.875rem);
   }
 </style>

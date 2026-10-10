@@ -409,6 +409,7 @@ impl Supervisor {
         mut stopping: tokio::sync::watch::Receiver<bool>,
     ) {
         let mut child = runtime::OwnedChild(child);
+        let mut failure_code = None;
         let result: Result<()> = async {
             let mut input=child.0.stdin.take().ok_or(Error::Unavailable)?;
             let mut output=BufReader::new(child.0.stdout.take().ok_or(Error::Unavailable)?);
@@ -475,7 +476,20 @@ impl Supervisor {
                     if !line? { return Err(Error::Unavailable); }
                     let frame: Value=serde_json::from_slice(&bytes).map_err(|_|Error::Unavailable)?;bytes.clear();
                     if frame["version"]!=3 {return Err(Error::Unavailable);}
-                    if frame["sessionId"].is_string(){self.touch_worker(id,generation);self.conversation_frame(id,generation,frame.clone(),&mut stream).await?;prompts.completed(&frame);continue;}
+                    if frame["sessionId"].is_string(){
+                        self.touch_worker(id,generation);
+                        self.conversation_frame(id,generation,frame.clone(),&mut stream).await?;
+                        prompts.completed(&frame);
+                        // These failures tear down the adapter inside jj-acp. Its
+                        // control process may remain alive, but it is no longer warm.
+                        if frame["type"] == "error" && matches!(frame["code"].as_str(),
+                            Some("timed_out" | "agent_exited" | "protocol_error" | "agent_rejected" | "cancelled")) {
+                            failure_code = frame["code"].as_str().map(str::to_owned);
+                            self.worker_state(id,generation,"error",failure_code.as_deref());
+                            return Err(Error::Unavailable);
+                        }
+                        continue;
+                    }
                     match frame["type"].as_str() {
                         Some("ready")=>runtime::write(&mut input,json!({"version":3,"type":"warm","requestId":format!("warm-{id}-{generation}")})).await?,
                         Some("warmed")=>{warmed=true;self.worker_state(id,generation,"idle",None);},
@@ -496,7 +510,7 @@ impl Supervisor {
             if result.is_ok() {
                 None
             } else {
-                Some("process_outcome_unknown")
+                failure_code.as_deref().or(Some("process_outcome_unknown"))
             },
         );
         if let Ok(mut tasks) = self.0.runtime_tasks.lock() {

@@ -1,7 +1,7 @@
 <script lang="ts">
   import { conversationNavigation } from "../../conversations/navigation.js";
   import type { StoreController } from "../../controller/contracts.js";
-  import { Reasoning } from "@lapismd/design-core/ai/experimental";
+  import StoreAgentRequestRecovery from "../store-agent-execution/StoreAgentRequestRecovery.svelte";
   import StoreAgentReplyDraftRecovery from "../store-agent-execution/StoreAgentReplyDraftRecovery.svelte";
   import { openingReplayRowIds } from "../store-agent-execution/presentation.js";
   import { useConversationInspection } from "../../conversations/inspection.svelte.js";
@@ -30,6 +30,7 @@
     composer,
     footer,
     beforeItems,
+    activity,
     loading = false,
     emptyState,
     onSend,
@@ -43,6 +44,7 @@
     composer?: Snippet<["document" | "classic"]>;
     footer?: Snippet;
     beforeItems?: Snippet;
+    activity?: Snippet;
     loading?: boolean;
     emptyState?: Snippet;
     onSend?: (
@@ -132,9 +134,9 @@
           (r.sourceRowId ?? r.id) === target.rowId),
     );
   }
-  const working = $derived(
+  const participations = $derived(
     [...new Map(rows.map((r) => [r.session.id, r.session])).values()].filter(
-      (s) => s.connected && s.state === "running",
+      (s) => ["running", "opening", "preparing"].includes(s.state),
     ),
   );
   const replay = $derived(
@@ -182,10 +184,10 @@
         rows={rows.filter((r) => r.session.id === manager.selected)}
         onRestore={restore}
       />{/each}
-    {#each working as session (session.id)}<Reasoning
-        label="Working"
-        streaming
-      />{/each}
+    {#if activity}{@render activity()}{:else}{#each participations as session (session.id)}<StoreAgentRequestRecovery
+          {manager}
+          {session}
+        />{/each}{/if}
   {/snippet}
   {#snippet supplement(item)}<StoreConversationAgentSupplement
       {manager}

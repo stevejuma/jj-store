@@ -590,9 +590,40 @@ impl Manager for Supervisor {
                         })?;
                         self.append(id, json!({"type":"continuation","requestId":request,"label":"New adapter session with saved context"}))?;
                     }
+                    let previous_opening = saved.view.capabilities["openingRequest"].clone();
                     drop(_guard);
-                    self.open_participation(&setup, id).await?;
-                    return self.finish(command.request_id, "opening", None);
+                    return match self.open_participation(&setup, id).await {
+                        Ok(()) => self.finish(command.request_id, "opening", None),
+                        Err(_) => {
+                            let saved = self.saved(id)?;
+                            if matches!(saved.view.state.as_str(), "ended" | "cleaned") {
+                                return self.finish(command.request_id, "cancelled", None);
+                            }
+                            let opening = &saved.view.capabilities["openingRequest"];
+                            let configure = opening.as_str().map(|id| format!("configure-{id}"));
+                            let code = saved
+                                .events
+                                .iter()
+                                .rev()
+                                .find(|e| {
+                                    *opening != previous_opening
+                                        && opening.is_string()
+                                        && (e.payload["requestId"] == *opening
+                                            || e.payload["requestId"].as_str()
+                                                == configure.as_deref())
+                                        && e.payload["type"] == "error"
+                                })
+                                .and_then(|e| e.payload["code"].as_str());
+                            let known = code.is_some_and(|c| {
+                                !matches!(c, "timed_out" | "agent_exited" | "protocol_error")
+                            });
+                            self.finish(
+                                command.request_id,
+                                if known { "failed" } else { "outcome_unknown" },
+                                Some(code.unwrap_or("session_open_outcome_unknown")),
+                            )
+                        }
+                    };
                 }
                 let load = if command.action == Action::Resume {
                     saved.view.adapter_session_id

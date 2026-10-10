@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Reasoning } from "@lapismd/design-core/ai/experimental";
+  import { Spinner } from "@lapismd/design-core/shadcn/spinner";
   import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
   import type { CommunityMemberModel } from "../community-workspace/model.js";
   let {
@@ -19,6 +19,7 @@
   class="agent-composer-activity"
   data-ui-component="community-agent-composer-activity"
   data-state={state}
+  data-streaming={streaming}
   role="group"
   aria-label="Agent activity"
 >
@@ -29,7 +30,8 @@
         shape="rounded"
         decorative
       />{/if}
-    <Reasoning {label} {streaming} />
+    {#if streaming}<Spinner aria-hidden="true" />{/if}
+    <span role="status" aria-live="polite">{label}</span>
   </div>
 </div>
 
@@ -60,9 +62,5 @@
     overflow: hidden;
     padding-block: 0.25rem;
     padding-inline: 0.25rem;
-  }
-  .agent-composer-activity :global([data-ui-component="ai-chat-reasoning"]) {
-    flex: 1 1 auto;
-    min-width: 0;
   }
 </style>

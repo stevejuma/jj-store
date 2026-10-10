@@ -7,10 +7,9 @@
   import StoreConversationRecovery from "../store-agent-chat/StoreConversationRecovery.svelte";
   import { untrack } from "svelte";
 
-  import { Button } from "@lapismd/design-core/shadcn/button";
   import StoreConversationRuntime from "../store-agent-chat/StoreConversationRuntime.svelte";
   import StoreLiveConversation from "../store-agent-chat/StoreLiveConversation.svelte";
-  import ChatMessageFooter from "../store-agent-chat-body/ChatMessageFooter.svelte";
+  import StoreAgentMessageFooter from "../store-agent-chat/StoreAgentMessageFooter.svelte";
 
   import StoreAgentRequestRecovery from "./StoreAgentRequestRecovery.svelte";
 
@@ -62,11 +61,6 @@
   const rows = $derived(activityRows(manager.events));
   const changes = $derived(
     session ? completedAgentChanges(session, manager.events) : [],
-  );
-  const active = $derived(
-    [...manager.events]
-      .reverse()
-      .find((e) => object(e.payload).type === "started"),
   );
   const idle = $derived(
     session?.connected === true &&
@@ -197,28 +191,17 @@
               !!manager.pending ||
               sender.preparing ||
               manager.eventsLoading}
-          >
-            {#snippet additionalActions()}
-              <div class="agent-execution-actions">
-                {#if session.state === "running" && active}<Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    disabled={manager.busy || !!manager.pending}
-                    onclick={() =>
-                      manager.command({
-                        action: "cancel",
-                        target: text(object(active.payload).requestId),
-                      })}>Stop turn</Button
-                  >{/if}
-              </div>
-            {/snippet}
-          </CommunityChatComposer>
+          ></CommunityChatComposer>
         </form>
-        <StoreAgentRequestRecovery {manager} {session} />
         <StoreConversationRecovery {conversation} {manager} standalone />
       {/snippet}
-      {#snippet footer()}<ChatMessageFooter
+      {#snippet activity()}<StoreAgentRequestRecovery
+          {manager}
+          {session}
+        />{/snippet}
+      {#snippet footer()}<StoreAgentMessageFooter
+          {manager}
+          sessions={[session]}
           actions={inputActions}
           canSend={idle &&
             (ready || canConfigure) &&
@@ -237,7 +220,7 @@
           {#snippet controls()}<StoreConversationRuntime
               {manager}
               {session}
-            />{/snippet}</ChatMessageFooter
+            />{/snippet}</StoreAgentMessageFooter
         >{/snippet}
     </StoreLiveConversation>
   </div>

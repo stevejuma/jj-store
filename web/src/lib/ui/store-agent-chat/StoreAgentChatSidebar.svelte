@@ -9,7 +9,8 @@
   import { untrack } from "svelte";
   import StoreConversationRuntime from "./StoreConversationRuntime.svelte";
   import StoreLiveConversation from "./StoreLiveConversation.svelte";
-  import ChatMessageFooter from "../store-agent-chat-body/ChatMessageFooter.svelte";
+  import StoreAgentRequestRecovery from "../store-agent-execution/StoreAgentRequestRecovery.svelte";
+  import StoreAgentMessageFooter from "../store-agent-chat/StoreAgentMessageFooter.svelte";
   import type { ChatPromptSubmission } from "../store-agent-chat-body/model.js";
   import { AppShell } from "@lapismd/design-core/shell";
   import { Button } from "@lapismd/design-core/shadcn/button";
@@ -97,7 +98,6 @@
           a.sequence - b.sequence,
       ),
   );
-  const working = $derived(chat.sessions.some((s) => s.state === "running"));
   const selectedAgent = $derived(headingAgents[0]?.id);
   const selectedSession = $derived(
     chat.sessions.find((s) => s.setup_id === selectedAgent),
@@ -114,18 +114,6 @@
   const actorKey = $derived(author.id);
   const send = (submission: ChatPromptSubmission) =>
     submitManagedConversation(manager, conversation, submission);
-
-  function stopTurn(id: string) {
-    const events = chat.events[id] ?? [];
-    const started = [...events]
-      .reverse()
-      .find((e) => object(e.payload).type === "started");
-    if (started)
-      void manager.commandSession(id, {
-        action: "cancel",
-        target: text(object(started.payload).requestId),
-      });
-  }
 </script>
 
 <AppShell.Sidebar.Header class="agent-chat-heading">
@@ -181,12 +169,7 @@
                     !!manager.connectionError,
                   )
                 ]}</span
-              >{#if session.state === "running"}<Button
-                  size="sm"
-                  variant="ghost"
-                  disabled={manager.busy || !!manager.pending}
-                  onclick={() => stopTurn(session.id)}>Stop turn</Button
-                >{/if}{#if session.connected}<Button
+              >{#if session.connected}<Button
                   size="sm"
                   variant="ghost"
                   disabled={manager.busy || !!manager.pending}
@@ -235,8 +218,14 @@
             />{/key}
           <StoreConversationRecovery {conversation} {manager} />
         {/snippet}
+        {#snippet activity()}{#each chat.sessions as session (session.id)}<StoreAgentRequestRecovery
+              {manager}
+              {session}
+            />{/each}{/snippet}
         {#snippet footer()}
-          <ChatMessageFooter
+          <StoreAgentMessageFooter
+            {manager}
+            sessions={chat.sessions}
             actions={inputActions}
             canSend={conversation.comments.canSend &&
               !chat.busy &&
@@ -262,7 +251,7 @@
                     conversation.comments.message += `${conversation.comments.message.endsWith(" ") || !conversation.comments.message ? "" : " "}${agentMentionToken(id)} `;
                 }}
               />{/snippet}
-          </ChatMessageFooter>
+          </StoreAgentMessageFooter>
         {/snippet}
       </StoreLiveConversation>
     </div>

@@ -24,12 +24,20 @@
   border-top: 1px solid var(--border);
 }
 .store-agent-chat-body {
+  --conversation-prose-font: var(--font-sans, system-ui);
+  --conversation-prose-size: var(--community-text-body, 0.875rem);
+  --conversation-prose-leading: 1.65;
   height: 100%;
   min-height: 0;
   color: var(--foreground);
   background: var(--background);
   font-family: var(--font-sans, system-ui);
   font-size: 1rem;
+}
+.chat-transcript-activity {
+  max-width: 62rem;
+  margin-inline: auto;
+  padding: 0 2.75rem 0.5rem 1rem;
 }
 .store-agent-chat-body > [data-ui-part="scroll-area-viewport"] {
   overscroll-behavior: contain;

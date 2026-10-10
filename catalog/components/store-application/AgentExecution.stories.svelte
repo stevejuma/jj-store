@@ -111,7 +111,7 @@
     await c.findByRole("article", { name: "Agent permission request" });
     await expect(c.getByRole("button", { name: "Allow once" })).toBeEnabled();
     await userEvent.click(c.getByRole("button", { name: "Reject once" }));
-    await expect(c.getByRole("button", { name: "Stop turn" })).toBeEnabled();
+    await expect(c.getByRole("button", { name: "Stop agent" })).toBeEnabled();
   }}
 />
 <Story

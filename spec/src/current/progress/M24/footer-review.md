@@ -58,3 +58,14 @@ repository selections, audience, draft and device-local pin/archive contracts
 remain unchanged in enclosing change pqnxyszz. Focused stories and live geometry
 review these presentation changes. M24 remains In progress; existing
 ResizeObserver diagnostics and unapproved visual baselines stay open.
+
+E-AGENT-STATE-001 reviews the enclosing default-workspace change xmorxmqv.
+Explicit reopen failures settle their receipts, fatal scoped ACP errors retire
+live workers, and Stop can cancel an exact turn while Send remains unresolved.
+The shared footer, transcript activity placement, centred captions, prose parity
+and code-attachment inbox grouping follow the updated owning contracts. M24
+stays In progress. Existing adapter/provider, live permissions, desktop,
+ResizeObserver and visual baseline gates remain independent and unapproved.
+The wider fixture audit reproduces ten existing discussion/reply story failures
+at parent 7601e3cf. Its two activity regressions are repaired; reply-interface
+story migration and existing architecture oversizes remain separate open work.

@@ -77,21 +77,30 @@ composer wrapper or independently scrolling input box; the transcript ScrollArea
 owns that space. Classic retains the framed composer. Both presentations share
 mention, emoji, formatting, audience and submission logic; switching preserves
 draft text and selection, and waits for active input composition to finish. The
-fixed footer retains Send and advertised runtime controls. Queued comments stay
-above the same next-message input, and contextual status/recovery remains
-reachable.
+fixed footer retains Send and advertised runtime controls. During active work
+Send becomes a destructive red Stop button with a square icon. Stop cancels
+exact active turns (or ends an opening participation before its handshake is
+connected) and has a separate receipt lane, so a pending Send never blocks it or
+loses its request identity. Unknown Stop outcomes are checked without issuing
+another Stop. This behavior is shared by live, linked Thread and
+recorded-conversation footers. Starting/Working appears directly after retained
+messages and before the roomy draft, with its label centred vertically against
+the avatar. Interrupted or unavailable state cannot retain an animated
+Starting/Working claim. Queued comments stay above the same next-message input,
+and contextual status/recovery remains reachable. Activity captions retain a
+polite live status announcement in their shared row.
 
 Live Thread and agent document drafts use the prototype's shared editor caret
 theme: a 2px stroke, 1.2 height scale and primary colour. Immutable source
-readers retain the same stroke and scale in theme grey. Prose drafts use 1rem
-sans-serif text at 1.75 line height (16px/28px at the default scale); readers
-retain their prose/code typography. The full caret remains inside clipping
-bounds at the start and end of each line, including an empty draft; frameless
-surfaces must not offset half of its stroke outside the editor. Draft text keeps
-a small internal inset (4px vertically, 2px horizontally at the default scale),
-with the avatar aligned to that inset. This clearance belongs to the input and
-does not reintroduce the Classic composer wrapper. Classic composer presentation
-remains independent.
+readers retain the same stroke and scale in theme grey. Prose drafts and message
+prose share the application sans-serif family, body-size token and 1.65 line
+height (14px/23.1px at the default scale). Code keeps its separate typography.
+The full caret remains inside clipping bounds at the start and end of each line,
+including an empty draft; frameless surfaces must not offset half of its stroke
+outside the editor. Draft text keeps a small internal inset (4px vertically, 2px
+horizontally at the default scale), with the avatar aligned to that inset. This
+clearance belongs to the input and does not reintroduce the Classic composer
+wrapper. Classic composer presentation remains independent.
 
 The shared body accepts explicit history loading state in both renderers. A
 compact centered “Loading previous messages” status button and spinner appear

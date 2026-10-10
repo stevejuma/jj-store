@@ -120,3 +120,9 @@ read-only physical watcher is bounded and released on cleanup/shutdown.
 Development backend restarts preserve the fixture and installed tools. The
 deterministic conversation test verifies non-prompt harness controls continue to
 be forwarded around prompt queuing, without changing explicit Send policy.
+
+E-AGENT-STATE-001 preserves JST-CLI-004 executable custody and explicit Send.
+Failed reopen receipts and adapter retirement use the existing supervisor and
+control-version-3 frames. Development qualification rebuilds the explicit
+backend in the default workspace and preserves the fixture; installed tools,
+credentials and uncertain prompts remain untouched.

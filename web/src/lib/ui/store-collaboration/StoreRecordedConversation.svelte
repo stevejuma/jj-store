@@ -31,7 +31,7 @@
   import { useConversationInspection } from "../../conversations/inspection.svelte.js";
   import { useAppearance } from "../../appearance/store.svelte.js";
   import StoreAgentChatBody from "../store-agent-chat-body/StoreAgentChatBody.svelte";
-  import ChatMessageFooter from "../store-agent-chat-body/ChatMessageFooter.svelte";
+  import StoreAgentMessageFooter from "../store-agent-chat/StoreAgentMessageFooter.svelte";
   import CommunityChatComposer from "../community-chat-composer/CommunityChatComposer.svelte";
   import StoreMessageReactions from "../store-threads/StoreMessageReactions.svelte";
   import StoreAgentPromptContent from "../store-agent-execution/StoreAgentPromptContent.svelte";
@@ -241,7 +241,9 @@
   />
   <StoreThreadPendingActions {threads} />
 {/snippet}
-{#snippet recordedFooter()}<ChatMessageFooter
+{#snippet recordedFooter()}<StoreAgentMessageFooter
+    manager={controller?.execution}
+    sessions={linked.sessions}
     actions={inputActions}
     canSend={!disabled && conversation.comments.canSend}
     onSend={() => void conversation.comments.send()}

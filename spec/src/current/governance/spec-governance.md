@@ -1,5 +1,10 @@
 # Change map
 
+E-AGENT-STATE-001 retains JST-GOV-002/008 ownership: the shared agent footer and
+history-state helpers are application-authored production components declared in
+provenance. Community and Design Core remain inspected presentation references;
+no Community, catalog or external source dependency is introduced.
+
 E-UI-VIEW-READINESS-001 retains JST-UI-015 source ownership. The shared file
 tree now owns its existing row and toolbar stylesheet at the component import
 boundary, with the original source revision and license retained in provenance.

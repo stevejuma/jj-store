@@ -79,7 +79,11 @@ impl Supervisor {
                 if saved.view.state == "idle" && saved.view.capabilities["modeReady"] == true {
                     return Ok(());
                 }
-                if saved.view.state == "interrupted" || saved.view.last_error.is_some() {
+                if matches!(
+                    saved.view.state.as_str(),
+                    "interrupted" | "ended" | "cleaned"
+                ) || saved.view.last_error.is_some()
+                {
                     return Err(Error::Unavailable);
                 }
                 tokio::time::sleep(Duration::from_millis(25)).await;
@@ -125,6 +129,9 @@ impl Supervisor {
             .as_str()
             .unwrap_or("");
         let handshake = request == opening || request == format!("configure-{opening}");
+        if handshake && matches!(saved.view.state.as_str(), "ended" | "cleaned") {
+            return Ok(());
+        }
         if !handshake {
             let request: RequestId = request.parse().map_err(|_| Error::Stale)?;
             self.read(|s| {
@@ -316,7 +323,7 @@ impl Supervisor {
                     && s.view.setup_id.as_deref() == Some(agent)
                     && s.view.capabilities["workerGeneration"] == generation
             }) {
-                if saved.view.state != "ended" {
+                if !matches!(saved.view.state.as_str(), "ended" | "interrupted") {
                     saved.view.state = "interrupted".into();
                     saved.view.last_error = Some("process_stopped_no_replay".into());
                 }

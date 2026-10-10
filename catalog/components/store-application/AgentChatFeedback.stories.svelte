@@ -35,7 +35,7 @@
 />
 
 <Story
-  name="Running session mirrors Community working in the body and composer activity strip"
+  name="Running session has one activity strip directly after its messages"
   args={{ status: "Working", chatFeedback: "working" }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
@@ -43,15 +43,17 @@
       c.getByRole("button", { name: "Open fixture conversation" }),
     );
     const working = await c.findAllByText("Working", { exact: true });
-    const body = working.find((element) => element.closest('[role="log"]'));
-    await expect(body).toBeDefined();
-    await expect(
-      body?.closest('[data-ui-component="ai-chat-reasoning"]'),
-    ).toHaveAttribute("data-streaming", "true");
+    await expect(working).toHaveLength(1);
     const strip = canvasElement.querySelector<HTMLElement>(
       '[data-ui-component="community-agent-composer-activity"]',
     )!;
     await expect(strip).toBeVisible();
+    await expect(strip).toHaveAttribute("data-streaming", "true");
+    await expect(strip.closest('[role="log"]')).toBeNull();
+    const log = canvasElement.querySelector('[role="log"]')!;
+    await expect(
+      log.compareDocumentPosition(strip) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
     await expect(
       strip.querySelector(".community-member-avatar"),
     ).not.toBeNull();
@@ -99,7 +101,7 @@
     await expect(action.closest('[data-ui-part="toast"]')).not.toBeNull();
     await expect(c.queryByRole("alert")).not.toBeInTheDocument();
     await expect(strip.querySelector("button")).toBeNull();
-    const row = strip.querySelector('[data-ui-part="reasoning-label"]')!;
+    const row = within(strip).getByRole("status");
     const range = document.createRange();
     range.selectNodeContents(row);
     await expect(range.getClientRects()).toHaveLength(1);

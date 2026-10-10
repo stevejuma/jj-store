@@ -1,10 +1,13 @@
 <script lang="ts">
   import { Button } from "@lapismd/design-core/shadcn/button";
   import SendIcon from "@lucide/svelte/icons/send";
+  import StopIcon from "@lucide/svelte/icons/square";
   import type { Snippet } from "svelte";
   let {
     canSend,
     onSend,
+    onStop,
+    stopping = false,
     error = "",
     controls,
     workspace,
@@ -12,6 +15,8 @@
   }: {
     canSend: boolean;
     onSend: () => void;
+    onStop?: () => void;
+    stopping?: boolean;
     error?: string;
     controls?: Snippet;
     workspace?: Snippet;
@@ -28,11 +33,16 @@
   {@render controls?.()}
   <Button
     size="icon-sm"
-    variant="outline"
-    disabled={!canSend}
-    onclick={onSend}
-    aria-label="Send message"
-    title="Send message (⌘ / Ctrl + Enter)"><SendIcon /></Button
+    variant={onStop ? "destructive" : "outline"}
+    disabled={onStop ? stopping : !canSend}
+    onclick={onStop ?? onSend}
+    aria-label={onStop
+      ? stopping
+        ? "Stopping agent"
+        : "Stop agent"
+      : "Send message"}
+    title={onStop ? "Stop active work" : "Send message (⌘ / Ctrl + Enter)"}
+    >{#if onStop}<StopIcon />{:else}<SendIcon />{/if}</Button
   >
 </div>
 

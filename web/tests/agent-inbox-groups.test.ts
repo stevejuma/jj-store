@@ -4,6 +4,59 @@ import {
   groupSessionInboxItems,
   type SessionInboxItem,
 } from "../src/lib/ui/community-inbox/model.js";
+import { sessionItems } from "../src/lib/ui/store-agent-execution/session-presentation.js";
+import type {
+  AgentSession,
+  AgentStatus,
+} from "../src/lib/controller/agent-execution-types.js";
+
+test("repository-backed conversations group by code attachments with their own operation and workspace, never their metadata home", () => {
+  const session = {
+    id: "chat",
+    repository: "personal-home",
+    conversation_id: "conversation",
+    conversation_title: "Task",
+    avatar: "",
+    runner: "codex",
+    state: "idle",
+    connected: true,
+    operation: "home-op",
+    workspace_name: "home-workspace",
+    repository_bindings: [
+      {
+        repository: "code-a",
+        operation: "code-op-a",
+        workspace_name: "code-workspace-a",
+      },
+      {
+        repository: "code-b",
+        operation: "code-op-b",
+        workspace_name: "code-workspace-b",
+      },
+    ],
+  } as AgentSession;
+  const status = { sessions: [session], setups: [] } as unknown as AgentStatus;
+  const items = sessionItems(status, undefined, false, [
+    { id: "code-a", name: "demo/server-only" },
+    { id: "code-b", name: "Second codebase" },
+  ]);
+  assert.deepEqual(
+    groupSessionInboxItems(items).map((g) => g.repositoryId),
+    ["code-a", "code-b"],
+  );
+  assert.equal(items[0].repository.name, "demo/server-only");
+  assert.equal(
+    items[0].repository.href,
+    "#/repos/code-a/files?at_op=code-op-a&workspace=code-workspace-a",
+  );
+  assert.equal(
+    items[1].repository.href,
+    "#/repos/code-b/files?at_op=code-op-b&workspace=code-workspace-b",
+  );
+  session.repository_bindings = [];
+  assert.equal(sessionItems(status)[0].repository.name, "Personal");
+  assert.equal(session.repository, "personal-home");
+});
 
 test("repository groups retain service order, distinct identities and exact per-chat links", () => {
   const author = { id: "agent", name: "Agent", initials: "AG", handle: "" };

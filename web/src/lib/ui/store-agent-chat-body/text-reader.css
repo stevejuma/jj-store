@@ -78,6 +78,9 @@
   font-family: var(--font-mono, monospace);
   font-size: 0.85rem;
 }
+.chat-text-block[data-kind="markdown"] .chat-text-reader {
+  --mira-code-editor-font-size: var(--conversation-prose-size, 0.875rem);
+}
 .chat-text-block[data-kind="code"] .cm-content:not([data-comment-editor] *) {
   padding: 0.75rem;
 }

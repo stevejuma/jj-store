@@ -134,6 +134,11 @@ history completion cannot clear a newer loading state.
 Agents gallery skeletons use the same fixed dimensions, grid gap, padding and
 rounded avatar/title/model layout as loaded cards, including narrow screens.
 
+Repository-backed inbox sessions group under each attached code repository,
+using that binding's own operation and workspace link. Their metadata home is
+not a codebase category. Repository-free conversations use the Personal group.
+Pins still deduplicate a participation across codebase groups.
+
 Inbox session rows show the last retained activity time using the owned
 Community relative-time presentation with its exact-date tooltip. They omit the
 bottom row when timing is unknown; lifecycle state and repository/session IDs

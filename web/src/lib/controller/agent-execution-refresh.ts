@@ -98,6 +98,7 @@ export class AgentExecutionRefresh {
         m.value = status;
         void syncAgentPower(status, m.settings.value?.keep_awake === true);
         if (m.pending) await m.checkOutcome();
+        await m.stops.checkOutcomes();
         if (!this.#alive) return true;
         m.connectionError = "";
         m.invalidateHistory();

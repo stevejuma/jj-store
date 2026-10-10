@@ -44,6 +44,13 @@ origin and pinned attachments; warmup never sends an instruction-only turn.
 Context revisions are reserved and marked delivered only at the exact started
 event.
 
+Failed explicit Resume/Continue commands settle their own durable receipt. An
+exact adapter rejection is failed; an unconfirmed open remains outcome unknown.
+A scoped error that tears down the adapter also retires the controller worker
+and invalidates its live participations, preserving the classified failure and
+never replaying prompts. Ending an opening participation cancels its opening
+receipt; delayed handshake frames cannot reopen that ended participation.
+
 Limits are four workers, one active turn per worker and participation, sixteen
 queued turns per participation and sixty-four total. Surplus idle workers retire
 after ten minutes. Stopping a turn, ending participation and stopping an agent

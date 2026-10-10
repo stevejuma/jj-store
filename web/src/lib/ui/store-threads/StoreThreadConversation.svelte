@@ -27,7 +27,7 @@
   import StoreConversationAgentSupplement from "../store-agent-chat/StoreConversationAgentSupplement.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import StoreAgentChatBody from "../store-agent-chat-body/StoreAgentChatBody.svelte";
-  import ChatMessageFooter from "../store-agent-chat-body/ChatMessageFooter.svelte";
+  import StoreAgentMessageFooter from "../store-agent-chat/StoreAgentMessageFooter.svelte";
   import CommunityChatComposer from "../community-chat-composer/CommunityChatComposer.svelte";
   import { threadConversationProjection } from "../../conversations/thread-adapter.js";
   import { useAppearance } from "../../appearance/store.svelte.js";
@@ -319,7 +319,9 @@
         }}
       />
     {/snippet}
-    {#snippet footer()}<ChatMessageFooter
+    {#snippet footer()}<StoreAgentMessageFooter
+        manager={controller?.execution}
+        sessions={linkedSessions}
         actions={inputActions}
         canSend={!disabled && conversation.comments.canSend}
         onSend={() => void conversation.comments.send()}
@@ -349,7 +351,7 @@
                 }}
               />
             </div>{/if}{/snippet}
-      </ChatMessageFooter>{/snippet}
+      </StoreAgentMessageFooter>{/snippet}
   </StoreAgentChatBody>
 </div>
 

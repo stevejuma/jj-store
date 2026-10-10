@@ -8,6 +8,12 @@ source access and physical bindings. Request bodies accept server-issued targets
 and exact operation/revision IDs, not executable configuration. SSE/live
 reconnect is separate from committed repository freshness.
 
+E-AGENT-STATE-001 leaves JST-API-001 and JST-API-006 wire contracts unchanged.
+The separate Stop receipt lane uses existing command/outcome endpoints and
+semantic execution events. Corrected reopen settlement, activity presentation
+and code-attachment grouping add no DTO fields, admission bypass, polling or
+automatic prompt replay. Journal and control formats remain unchanged.
+
 Status `revision` is the conditional saved-setup revision. Session activity,
 publication and process shutdown do not change it; a setup save or removal does.
 Duplicate original requests retain their receipt without advancing it. A
