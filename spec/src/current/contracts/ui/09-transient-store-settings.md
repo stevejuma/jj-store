@@ -1,4 +1,4 @@
-# Transient store settings
+# Settings navigation and lifecycle
 
 JST-UI-016 installation capture management lives in dedicated Agents settings,
 independently of a selected repository. LocalTrusted bootstrap must advertise
@@ -34,8 +34,16 @@ selecting a different source, including when its receipt is unavailable.
 Global Settings opens from the profile menu and contains only Appearance, Local
 service, Agents and Compute. Local service owns installation-wide Protection,
 authority storage and backup configuration, and folder registration. Its
-destination and selected section remain transient, outside URL/history/storage.
-Back to jj-store restores the retained application route and resumes updates.
+destination is recorded as `#/settings?section=agents&tab=runtimes`. Missing
+fields select Local service / Overview; unknown, duplicate and incompatible
+fields fail closed. Category and tab changes participate in history. Reload and
+shared links restore the selected destination; a root app startup resumes the
+last open Settings section/tab from a validated device preference. Explicit URLs
+take precedence, leaving Settings clears the startup preference, and no
+credentials, drafts or repository selections are stored there. Back to jj-store
+restores the exact retained session application route and resumes updates; a
+fresh settings link falls back to Projects. Global Settings navigation does not
+perform ordinary graph/file reads or replace controller owners.
 
 Repository Settings opens through an icon-only gear at the far right of the
 repository body tab/header row, including focused Stacks views. It replaces
@@ -83,9 +91,11 @@ decorative placeholders are hidden from assistive technology and respect reduced
 motion. Navigation stays above the bounded Scroll Area and narrow layouts stack
 without overflow. Skeletons replace only data that has not loaded: background
 refresh retains existing values, empty results, drafts and pending commands.
-Global Settings follows the same loading conventions for its initial
-configuration and compute reads, retaining loaded values during background
-refresh.
+Global Settings follows the same loading conventions for lazy module loading and
+initial data reads. Each Appearance, Local service, Agents and Compute
+section/tab uses its own card, row, disclosure and footer geometry. The global
+page heading and selected tabs remain visible while content loads; retained
+values are never replaced during background refresh.
 
 Local service reports access mode, authoritative-storage readiness, HTTP and SSE
 state and automatic update status. Repository reports the retained discovery

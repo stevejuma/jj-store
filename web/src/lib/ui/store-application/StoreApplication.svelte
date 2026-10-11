@@ -135,7 +135,7 @@
   });
   observeAgentChats(() => controller);
   let searchOpen = $state(false);
-  let settingsOpen = $state(false);
+  const settingsOpen = $derived(Boolean(current.globalSettings));
   const repositorySettingsOpen = $derived(current.page === "settings");
   $effect(() => {
     controller.actions.setRefreshPaused?.(
@@ -144,7 +144,6 @@
     );
     return () => controller.actions.setRefreshPaused?.("settings", false);
   });
-  let settingsSection = $state<StoreSettingsSection>("service");
   const compact = $derived(
     shell.mobile.resolvedMode === "desktop" &&
       shell.left.collapsed &&
@@ -169,16 +168,15 @@
   }
   function openSettings(section?: StoreSettingsSection) {
     if (editorOpen) return;
-    if (section) settingsSection = section;
-    settingsOpen = true;
+    controller.actions.openGlobalSettings(section);
     if (shell.mobile.resolvedMode === "mobile") shell.mobile.showMain();
   }
   function selectSettings(section: StoreSettingsSection) {
-    settingsSection = section;
+    controller.actions.selectGlobalSettings(section);
     if (shell.mobile.resolvedMode === "mobile") shell.mobile.showMain();
   }
   function closeSettings() {
-    settingsOpen = false;
+    void controller.actions.leaveGlobalSettings();
     if (shell.mobile.resolvedMode === "mobile") shell.mobile.showMain();
   }
   const notifications = ownApplicationNotifications(() => controller);
@@ -222,7 +220,7 @@
     edgeRevealLabel="Preview repository navigation sidebar"
   >
     {#if settingsOpen}<StoreSettingsNavigation
-        section={settingsSection}
+        section={current.globalSettings?.section ?? "service"}
         {compact}
         onSelect={selectSettings}
         onClose={closeSettings}
@@ -253,7 +251,7 @@
     {shell}
     {current}
     {settingsOpen}
-    {settingsSection}
+    settingsSection={current.globalSettings?.section ?? "service"}
     openRepositorySettings={() => settingsGuard.open()}
     {closeSettings}
     conflictOpen={editorOpen}

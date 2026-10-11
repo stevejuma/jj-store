@@ -97,8 +97,9 @@ strip uses the body horizontal padding; no title-only strip is shown. Primary
 and secondary navigation stay outside the bounded Design Core Scroll Area used
 by repository and global settings. Card headers meet the first row without extra
 spacing. Keyboard selection and overflow remain unchanged. Global Settings
-retains its transient sidebar categories and a fixed page heading with
-contextual Refresh. Appearance uses Theme and Preferences subtabs.
+retains its sidebar categories and a fixed page heading with contextual Refresh.
+Global section/subtab URLs, history and root-startup resume follow JST-UI-012.
+Appearance uses Theme and Preferences subtabs.
 
 Presentation changes MUST retain validation, capability and permission filters,
 disabled states, loading feedback, confirmation flows and all original request

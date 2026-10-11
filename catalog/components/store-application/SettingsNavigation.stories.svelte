@@ -87,7 +87,11 @@
       };
     };
     const heading = typography(
-      c.getByRole("heading", { name: "Service status" }),
+      await c.findByRole(
+        "heading",
+        { name: "Service status" },
+        { timeout: 10000 },
+      ),
     );
     const label = typography(c.getByText("Access mode", { exact: true }));
     await userEvent.click(c.getByRole("button", { name: "Appearance" }));
@@ -231,7 +235,11 @@
     ).toBeVisible();
     await userEvent.click(c.getByRole("button", { name: /^Local service$/ }));
     await expect(
-      c.getByRole("heading", { name: "Service status" }),
+      await c.findByRole(
+        "heading",
+        { name: "Service status" },
+        { timeout: 10000 },
+      ),
     ).toBeVisible();
     await expect(
       c.queryByRole("heading", { name: "Agent transcript capture" }),

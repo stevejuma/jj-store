@@ -13,6 +13,7 @@
   import StoreCaptureHarnessConfiguration from "./StoreCaptureHarnessConfiguration.svelte";
   import StoreSettingsNotice from "./StoreSettingsNotice.svelte";
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
+  import { globalSettingsSkeletonCards } from "./global-settings-skeleton.js";
   import StoreSettingsSkeleton from "./StoreSettingsSkeleton.svelte";
   import type { CaptureManagement } from "../../controller/capture-types.js";
   import type { CaptureDraft } from "../../controller/capture-configuration.js";
@@ -196,11 +197,7 @@
     >{:else}<StoreSettingsSkeleton
       heading={false}
       label="Loading capture configuration"
-      cards={[
-        { rows: ["fact", "fact"] },
-        { rows: ["toggle", "numeric", "numeric", "numeric", "numeric"] },
-        { rows: ["input", "input", "input"], actions: 2 },
-      ]}
+      cards={globalSettingsSkeletonCards("agents", "configuration")}
     />{/if}
   <StoreNotice
     scope="installation-capture"

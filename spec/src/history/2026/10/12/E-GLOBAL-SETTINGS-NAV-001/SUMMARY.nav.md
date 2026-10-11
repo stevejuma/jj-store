@@ -1,0 +1,3 @@
+- [E-GLOBAL-SETTINGS-NAV-001 details 2](details-02.md)
+- [E-GLOBAL-SETTINGS-NAV-001 details 3](details-03.md)
+- [E-GLOBAL-SETTINGS-NAV-001 details 4](details-04.md)

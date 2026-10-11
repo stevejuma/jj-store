@@ -189,15 +189,16 @@
     {:else}
       <div
         class="store-settings__rows"
+        role="status"
         aria-label="Loading agent runtimes"
         aria-busy="true"
       >
-        <Field.Group class="store-settings__editable-rows store-runtime__list">
-          {#each [0, 1] as row (row)}<Field.Field
-              orientation="horizontal"
-              class="store-settings__option-row store-runtime__row"
-            >
-              <Field.Content>
+        <Field.Group
+          aria-hidden="true"
+          class="store-settings__editable-rows store-runtime__list"
+        >
+          {#each [0, 1, 2] as row (row)}<StoreSettingsFooter>
+              {#snippet description()}
                 <div class="store-runtime__summary">
                   <Skeleton class="h-8 w-8 rounded-lg" />
                   <div class="store-runtime__copy">
@@ -205,9 +206,9 @@
                     <Skeleton class="h-3 w-64 max-w-full" />
                   </div>
                 </div>
-              </Field.Content>
-              <Skeleton class="h-8 w-20" />
-            </Field.Field>{/each}
+              {/snippet}
+              <span aria-hidden="true"><Skeleton class="h-8 w-20" /></span>
+            </StoreSettingsFooter>{/each}
         </Field.Group>
       </div>
     {/if}

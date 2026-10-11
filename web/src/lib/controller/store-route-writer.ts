@@ -1,3 +1,4 @@
+import { globalSettingsHash } from "./global-settings-route-codec.js";
 import { threadsRouteToHash } from "./threads-route-codec.js";
 import { agentsRouteToHash } from "./agents-route-codec.js";
 import { projectsRouteToHash } from "./projects-route-codec.js";
@@ -9,6 +10,7 @@ import type { StoreRoute } from "./contracts.js";
 const repositoryId = /^[0-9a-f]{32}$/u;
 
 export function storeRouteToHash(route: StoreRoute): string | null {
+  if (route.globalSettings) return globalSettingsHash(route.globalSettings);
   if (route.threadsHub && route.page === "threads")
     return threadsRouteToHash(route);
   if (route.agentsHub && route.page === "agents")

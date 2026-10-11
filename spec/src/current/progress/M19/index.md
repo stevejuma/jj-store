@@ -1,8 +1,8 @@
 # M19 tasks and gates
 
-| ID  | Status  | Depends | Requirements                                    | Gate                                                                                    | Next                                                                      | Evidence                                                                                                                                                                                                    |
-| --- | ------- | ------- | ----------------------------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| M19 | Partial | M4.9    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004 | Bundled Markdown manual, generated references, review gates and accessible offline Help | Complete registry dependency and packaged WKWebView release qualification | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008,E-DOC-009,E-GUIDE-STRUCTURE-001,E-SETTINGS-REFRESH-001,E-NUMERIC-SETTINGS-001,E-SETTINGS-SKELETON-001,E-GLOBAL-SETTINGS-001 |
+| ID  | Status  | Depends | Requirements                                    | Gate                                                                                    | Next                                                                      | Evidence                                                                                                                                                                                                                              |
+| --- | ------- | ------- | ----------------------------------------------- | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| M19 | Partial | M4.9    | JST-DOC-001,JST-DOC-002,JST-DOC-003,JST-DOC-004 | Bundled Markdown manual, generated references, review gates and accessible offline Help | Complete registry dependency and packaged WKWebView release qualification | E-DOC-001,E-DOC-002,E-DOC-003,E-DOC-004,E-DOC-005,E-DOC-006,E-DOC-007,E-DOC-008,E-DOC-009,E-GUIDE-STRUCTURE-001,E-SETTINGS-REFRESH-001,E-NUMERIC-SETTINGS-001,E-SETTINGS-SKELETON-001,E-GLOBAL-SETTINGS-001,E-GLOBAL-SETTINGS-NAV-001 |
 
 E-UI-MENU-001 aligns connection-screen Help at the trailing card inset with a
 fixed compact width. Normal and narrow geometry plus keyboard open/Escape/focus
@@ -37,6 +37,13 @@ Settings presentation and form guidance retain existing save, permission, draft
 and transient navigation semantics. Focused interaction/live acceptance does not
 promote visual or release gates; inherited composer and governance diagnostics
 remain separate. The enclosing Jujutsu change owns the evidence.
+
+E-GLOBAL-SETTINGS-NAV-001 reviews M19 with statuses unchanged. Global Settings
+now records section/tab URLs and validated root-startup resume; selected-page
+skeletons match the refreshed layout. Exact session returns, owners and pending
+commands remain retained. Focused cold web acceptance and inherited diagnostics
+are separate from native-platform, release and visual gates. The enclosing
+Jujutsu change owns this evidence.
 
 <!-- generated-navigation -->
 

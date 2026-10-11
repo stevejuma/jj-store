@@ -152,7 +152,10 @@
             Icon={BotIcon}
             title="Capture status unavailable"
             description="Status refresh will retry automatically while this page is open."
-          />{:else}<StoreCaptureLoading label="Loading capture status" />{/if}
+          />{:else}<StoreCaptureLoading
+            label="Loading capture status"
+            tab={section}
+          />{/if}
       {/if}
       {#if section === "sources" && !state.value?.enabled && !state.value}
         <StoreCaptureSources

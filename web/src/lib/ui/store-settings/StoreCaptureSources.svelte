@@ -92,7 +92,7 @@
   {/if}
   <div class="store-capture-sources__table">
     {#if !sources && captureState.sourceState !== "failed"}
-      <StoreCaptureLoading label="Loading capture sources" />
+      <StoreCaptureLoading label="Loading capture sources" tab="sources" />
     {:else if sources}
       <Table.Root aria-label="Capture sources">
         <Table.Header>

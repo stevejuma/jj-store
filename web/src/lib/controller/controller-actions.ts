@@ -101,6 +101,16 @@ export type StoreControllerActions = {
     historyMode?: "live" | "pinned",
   ): void | Promise<void>;
   leaveStacks(): void | Promise<void>;
+  openGlobalSettings(
+    section?: import("./global-settings-navigation.js").GlobalSettingsSection,
+    tab?: string,
+  ): void;
+  selectGlobalSettings(
+    section: import("./global-settings-navigation.js").GlobalSettingsSection,
+    tab?: string,
+    replace?: boolean,
+  ): void;
+  leaveGlobalSettings(): void | Promise<void>;
   openRepositorySettings(
     section?: import("./repository-settings-navigation.js").RepositorySettingsSection,
   ): void | Promise<void>;

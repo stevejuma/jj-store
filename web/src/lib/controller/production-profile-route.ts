@@ -17,6 +17,10 @@ export function createProfileRouteRestorer(context: {
   return async () => {
     const route = context.route(),
       source = context.source();
+    if (route.globalSettings) {
+      context.data.status.navigation = "ready";
+      return;
+    }
     context.invalidate();
     if (route.agentsHub || (route.threadsHub && !route.repository)) return;
     if (route.page === "projects") {

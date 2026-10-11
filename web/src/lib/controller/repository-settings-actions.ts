@@ -4,6 +4,12 @@ export function repositorySettingsActions(
   restore: () => Promise<void>,
 ) {
   return {
+    openGlobalSettings: history.globalSettings.open,
+    selectGlobalSettings: history.globalSettings.select,
+    async leaveGlobalSettings() {
+      history.globalSettings.leave();
+      await restore();
+    },
     setNavigationGuard: history.setNavigationGuard,
     openRepositorySettings: history.repositorySettings.open,
     selectRepositorySettings: history.repositorySettings.select,

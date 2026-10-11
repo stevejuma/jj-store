@@ -10,7 +10,7 @@
   import "./appearance-preview.css";
   import "./theme-preview.css";
   const appearance = useAppearance();
-  let active = $state("theme");
+  let { active = $bindable("theme") }: { active?: string } = $props();
   onDestroy(() => appearance?.resetPreview());
 </script>
 

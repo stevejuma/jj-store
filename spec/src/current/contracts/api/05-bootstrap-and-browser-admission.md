@@ -26,11 +26,11 @@ browse and ReviewStore page contracts with separate authorization and bounded
 pages; it never adds persisted discovery ownership or reconciles operation
 heads.
 
-The transient Settings presentation composes only existing bootstrap, repository
+The Settings presentation composes only existing bootstrap, repository
 discovery, capabilities, snapshot, search-status and index-task contracts. The
-repository Details Settings action selects the transient Repository section over
-the already connected repository. JST-API-005/008 remain unchanged: the action
-adds no repository-open request, endpoint, authorization or persisted route and
+repository body-header Settings action opens scoped settings over the already
+connected repository. JST-API-005/008 remain unchanged: the action adds no
+repository-open request, endpoint, authorization or server-persisted route and
 retains the exact selected snapshot and code context. The production controller
 retains each discovered repository's effective permission and exposes the
 already captured capabilities and snapshot authority to presentation. Search
@@ -79,12 +79,13 @@ the retained native/Git-backed profile and grant no additional authority.
 Settings identifiers use public Design Core CopyableValue with complete native
 values unchanged; abbreviation affects display only. Repository, Search
 generation and Sync frontier values share this control. The sidebar Back action
-invokes the existing transient Settings close callback without a new read or
-persisted Settings-route write. Overview insets, full-width file editor tokens,
-a stationary review header and native record Copy submenus are
-presentation-only. Clipboard values, read sessions, routes, capabilities and
-publication callbacks retain their existing contracts; these layouts add no
-request or generated schema. Compact header insets and Source syntax
-highlighting remain presentation-only; recorded and draft bytes, safe Markdown
-previews and edit publication are unchanged. Highlighting uses detected filename
-languages and static token styles under the existing production asset policy.
+restores the retained application route. Global section/tab URLs and validated
+device-only startup restoration follow JST-UI-012 and add no server persistence.
+Overview insets, full-width file editor tokens, a stationary review header and
+native record Copy submenus are presentation-only. Clipboard values, read
+sessions, routes, capabilities and publication callbacks retain their existing
+contracts; these layouts add no request or generated schema. Compact header
+insets and Source syntax highlighting remain presentation-only; recorded and
+draft bytes, safe Markdown previews and edit publication are unchanged.
+Highlighting uses detected filename languages and static token styles under the
+existing production asset policy.

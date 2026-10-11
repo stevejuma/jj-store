@@ -1,6 +1,7 @@
 <script lang="ts">
   import StoreRepositorySettingsButton from "../store-settings/StoreRepositorySettingsButton.svelte";
   import StoreLazyView from "./StoreLazyView.svelte";
+  import StoreGlobalSettingsLoading from "../store-settings/StoreGlobalSettingsLoading.svelte";
   import StoreRepositorySettingsLoading from "../store-settings/StoreRepositorySettingsLoading.svelte";
   import StorePageSkeleton from "./StorePageSkeleton.svelte";
   import { views } from "./application-views.js";
@@ -150,7 +151,12 @@
         </AppShell.Toolbar>
       {/if}
       <StoreLazyView load={views.settings} label="Settings"
-        >{#snippet content(View)}<View
+        >{#snippet loading()}<StoreGlobalSettingsLoading
+            section={settingsSection}
+            tab={current.globalSettings?.tab}
+            onSelect={(tab) =>
+              controller.actions.selectGlobalSettings(settingsSection, tab)}
+          />{/snippet}{#snippet content(View)}<View
             {controller}
             section={settingsSection}
             onClose={closeSettings}

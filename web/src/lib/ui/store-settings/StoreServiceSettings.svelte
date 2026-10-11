@@ -8,8 +8,19 @@
   import StoreReadOnlyRow from "./StoreReadOnlyRow.svelte";
   import StoreLocalFolders from "./StoreLocalFolders.svelte";
   import type { StoreController } from "../../controller/contracts.js";
-  let { controller }: { controller: StoreController } = $props();
-  let active = $state("overview");
+  let {
+    controller,
+    active = $bindable("overview"),
+  }: { controller: StoreController; active?: string } = $props();
+  $effect(() => {
+    if (
+      (active === "protection" || active === "storage") &&
+      !controller.configuration?.available() &&
+      controller.state.accessMode !== "bootstrapping"
+    ) {
+      controller.actions.selectGlobalSettings("service", "overview", true);
+    }
+  });
   const view = $derived(controller.state);
 </script>
 

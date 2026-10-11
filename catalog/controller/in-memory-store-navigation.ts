@@ -1,3 +1,4 @@
+import { createGlobalSettingsNavigation } from "../../web/src/lib/controller/global-settings-navigation.js";
 import { createRepositorySettingsNavigation } from "../../web/src/lib/controller/repository-settings-navigation.js";
 import { workspaceSelectedRoute } from "../../web/src/lib/controller/store-workspaces.js";
 import {
@@ -18,8 +19,15 @@ export function createInMemoryStoreNavigation(context: {
     ...context,
     replace: context.push,
   });
+  const globalSettings = createGlobalSettingsNavigation({
+    ...context,
+    replace: context.push,
+  });
   const stacks = createStoreStacksNavigation(context);
   return {
+    openGlobalSettings: globalSettings.open,
+    selectGlobalSettings: globalSettings.select,
+    leaveGlobalSettings: globalSettings.leave,
     openRepositorySettings: repositorySettings.open,
     selectRepositorySettings: repositorySettings.select,
     leaveRepositorySettings: repositorySettings.leave,

@@ -1,3 +1,13 @@
+import { untrack } from "svelte";
+import {
+  createGlobalSettingsNavigation,
+  withoutGlobalSettings,
+} from "./global-settings-navigation.js";
+import {
+  browserNavigation,
+  type StoreRouteBrowser,
+} from "./store-route-browser.js";
+export type { StoreRouteBrowser } from "./store-route-browser.js";
 import { createStoreNavigationGuards } from "./store-navigation-guards.js";
 import { createRepositorySettingsNavigation } from "./repository-settings-navigation.js";
 import type { StorePage } from "../ui/community-navigation/model.js";
@@ -11,14 +21,6 @@ import {
   storeRouteToHash,
   type StoreRouteHashResult,
 } from "./store-route-codec.js";
-
-export interface StoreRouteBrowser {
-  hash(): string;
-  push(hash: string): void;
-  replace(hash: string): void;
-  go(delta: -1 | 1): void;
-  listen(listener: () => void): () => void;
-}
 
 export const initialStoreRoute = (): StoreRoute => ({
   page: "branches",
@@ -38,27 +40,11 @@ export const initialStoreRoute = (): StoreRoute => ({
   reviewThreadId: null,
 });
 
-function browserNavigation(): StoreRouteBrowser | undefined {
-  if (typeof window === "undefined") return undefined;
-  return {
-    hash: () => window.location.hash,
-    push: (hash) => window.history.pushState(null, "", hash),
-    replace: (hash) => window.history.replaceState(null, "", hash),
-    go: (delta) => window.history.go(delta),
-    listen(listener) {
-      window.addEventListener("hashchange", listener);
-      window.addEventListener("popstate", listener);
-      return () => {
-        window.removeEventListener("hashchange", listener);
-        window.removeEventListener("popstate", listener);
-      };
-    },
-  };
-}
-
 function same(left: StoreRoute, right: StoreRoute) {
   const leftHash = storeRouteToHash(left),
     rightHash = storeRouteToHash(right);
+  if (left.globalSettings && right.globalSettings && leftHash === rightHash)
+    return same(withoutGlobalSettings(left), withoutGlobalSettings(right));
   return leftHash && rightHash
     ? leftHash === rightHash
     : JSON.stringify(left) === JSON.stringify(right);
@@ -71,6 +57,8 @@ export function createStoreRouteHistory(
   let entries = $state<StoreRoute[]>([
     parsed.kind === "route" ? parsed.route : initialStoreRoute(),
   ]);
+  const newEntryId = () => crypto.randomUUID();
+  let entryIds = [browser?.entryId?.() ?? newEntryId()];
   let index = $state(0);
   let error = $state(parsed.kind === "invalid" ? parsed.message : "");
   const guards = createStoreNavigationGuards(() => route);
@@ -86,12 +74,18 @@ export function createStoreRouteHistory(
   const route = $derived(entries[index]!);
   function sync(next: StoreRoute, mode: "push" | "replace") {
     const hash = storeRouteToHash(next);
-    if (!hash || !browser || browser.hash() === hash) return;
-    browser[mode](hash);
+    if (!hash || !browser) return;
+    if (
+      browser.hash() === hash &&
+      (!browser.entryId || browser.entryId() === entryIds[index])
+    )
+      return;
+    browser[mode](hash, entryIds[index]);
   }
   function push(next: StoreRoute) {
     if (same(next, route) || blocked(next)) return;
     entries = [...entries.slice(0, index + 1), next];
+    entryIds = [...entryIds.slice(0, index + 1), newEntryId()];
     index += 1;
     error = "";
     sync(next, "push");
@@ -105,7 +99,24 @@ export function createStoreRouteHistory(
       sync(next, "replace");
     },
   });
+  const globalSettings = createGlobalSettingsNavigation({
+    route: () => route,
+    push,
+    replace(next) {
+      if (blocked(next)) return;
+      entries[index] = next;
+      error = "";
+      sync(next, "replace");
+    },
+  });
   const stacks = createStoreStacksNavigation({ route: () => route, push });
+  untrack(() => {
+    if (browser?.entryId && storeRouteToHash(route))
+      browser.replace(
+        route.globalSettings ? storeRouteToHash(route)! : browser.hash(),
+        entryIds[index],
+      );
+  });
   const stop = browser?.listen(() => {
     const result = storeRouteFromHash(browser.hash());
     if (result.kind === "none") return;
@@ -114,17 +125,35 @@ export function createStoreRouteHistory(
       external?.(result);
       return;
     }
+    const browserId = browser.entryId?.();
+    const candidate = browserId ? entryIds.indexOf(browserId) : -1;
+    const identified =
+      candidate >= 0 &&
+      storeRouteToHash(entries[candidate]!) === storeRouteToHash(result.route)
+        ? candidate
+        : -1;
+    if (identified >= 0) result.route = entries[identified]!;
+    else if (result.route.globalSettings)
+      result.route = { ...route, globalSettings: result.route.globalSettings };
     if (!same(result.route, route) && blocked(result.route)) {
       sync(route, "replace");
       return;
     }
     error = "";
-    if (same(result.route, route)) return;
-    const known = entries.findIndex((entry) => same(entry, result.route));
+    if (same(result.route, route) && (identified < 0 || identified === index))
+      return;
+    const known =
+      identified >= 0
+        ? identified
+        : browser.entryId
+          ? -1
+          : entries.findIndex((entry) => same(entry, result.route));
     if (known >= 0) index = known;
     else {
       entries = [...entries.slice(0, index + 1), result.route];
+      entryIds = [...entryIds.slice(0, index + 1), browserId ?? newEntryId()];
       index += 1;
+      if (browser.entryId) sync(result.route, "replace");
     }
     external?.(result);
   });
@@ -148,6 +177,7 @@ export function createStoreRouteHistory(
     setNavigationGuard: guards.setNavigationGuard,
     stacks,
     repositorySettings,
+    globalSettings,
     replace(next: StoreRoute) {
       entries[index] = next;
       error = "";

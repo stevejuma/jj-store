@@ -20,6 +20,12 @@ Link previews and Thread layout have their own cards under Preferences. Launch
 and Storage group their read-only inventory by purpose. Use Copy beside a
 configured path or endpoint to copy the complete value.
 
+Global Settings links record the section and tab, for example
+`#/settings?section=agents&tab=runtimes`. Reload restores that page, and a root
+app restart resumes the last open Settings destination. An explicit link takes
+precedence. Back to jj-store returns to your session entry and clears restart
+resume; a fresh Settings link returns to Projects.
+
 Use the **Repository settings** gear at the far right of a repository's tab row
 for General, Local folders, Search, Storage, Sync and Advanced. Available
 categories and actions depend on that repository's type, capabilities and your
@@ -40,8 +46,8 @@ The adjacent Open action navigates independently.
 
 Both global and repository Settings use full-width cards, aligned rows and
 section footers. Subtabs use icons and an underline; their navigation stays
-visible while the content scrolls. Global selections are temporary and do not
-change the URL.
+visible while the content scrolls. Both record their selected destination in the
+URL and support browser Back/Forward.
 
 While settings first load, placeholders follow the selected page’s cards and
 fields. Later refreshes keep existing values and unsaved drafts on screen.

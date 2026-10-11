@@ -105,10 +105,12 @@ their explicit default presentation.
 - Preserve routes/history, exact Back and Details restoration, controller
   owners, drafts, pending request identities, stale-response rejection and
   stable automatic refresh. Presentation changes cannot change API/configuration
-  formats or authorization. Global Settings categories remain transient: never
-  persist them in routes, history or storage. Retain its sidebar and fixed page
-  heading/Refresh; only actual subtabs get the line navigation. Appearance has
-  Theme and Preferences subtabs.
+  formats or authorization. Global Settings records its section and tab in the
+  URL and browser history. A validated device preference resumes the last open
+  Settings destination only on root startup; explicit URLs win and leaving
+  clears it. Never persist drafts or credentials in navigation preferences.
+  Retain its sidebar and fixed page heading/Refresh; only actual subtabs get the
+  line navigation. Appearance has Theme and Preferences subtabs.
 - Use `StoreNotice` for transient request errors with stable resource identity
   and appropriate lifetime. Keep field validation and exact recovery beside
   controls; never duplicate the same error inline and in a toast. Status must be
@@ -123,10 +125,11 @@ baselines without explicit approval.
 
 ## Loading and scope
 
-- Skeletons match the active category/subtab's cards, facts, controls and action
-  footers. Use one named busy status per pending region, hide decorative
-  placeholders from assistive technology, and respect reduced motion. Keep
-  navigation outside the content Scroll Area.
+- Repository and global Settings skeletons match the active category/subtab's
+  cards, facts, controls, disclosures, previews and action footers. Use one
+  named busy status per pending region, hide decorative placeholders from
+  assistive technology, and respect reduced motion. Keep navigation outside the
+  content Scroll Area.
 - Only initial missing data uses skeletons. Background reads retain loaded
   values, empty results, drafts, pending commands and request identities.
 - Appearance and immediate preferences keep their immediate-save behavior;

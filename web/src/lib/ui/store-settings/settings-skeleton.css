@@ -134,6 +134,9 @@
   padding: 0.85rem 1rem;
   border-block-start: 1px solid var(--border);
 }
+.store-settings-skeleton__footer:first-child {
+  border-block-start: 0;
+}
 .store-settings-skeleton__footer > .store-settings-skeleton__description {
   flex: 1;
   max-width: 18rem;
@@ -170,4 +173,35 @@
   .store-repository-settings__pending-tab {
     animation: none;
   }
+}
+
+.store-settings-skeleton__row[data-kind="disclosure"],
+.store-settings-skeleton__row[data-kind="runtime"] {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+.store-settings-skeleton__value[data-kind="disclosure"] {
+  width: 1rem;
+}
+.store-settings-skeleton__value[data-kind="disclosure"]
+  .store-settings-skeleton__control {
+  height: 1rem;
+}
+.store-settings-skeleton__value[data-kind="runtime"] {
+  width: 4rem;
+}
+
+.store-settings-skeleton__row[data-kind="preview"] {
+  display: block;
+  padding: 1rem;
+}
+.store-settings-skeleton__row[data-kind="preview"]
+  .store-settings-skeleton__label {
+  display: none;
+}
+.store-settings-skeleton__value[data-kind="preview"] {
+  width: 100%;
+}
+.store-settings-skeleton__value[data-kind="preview"]
+  .store-settings-skeleton__control {
+  height: 8rem;
 }

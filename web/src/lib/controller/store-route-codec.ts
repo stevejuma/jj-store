@@ -1,3 +1,4 @@
+import { readGlobalSettingsHash } from "./global-settings-route-codec.js";
 import { readThreadsHash } from "./threads-route-codec.js";
 import { readAgentsHash } from "./agents-route-codec.js";
 import {
@@ -30,6 +31,8 @@ export type StoreRouteHashResult =
 export { storeRouteToHash } from "./store-route-writer.js";
 
 export function storeRouteFromHash(hash: string): StoreRouteHashResult {
+  const settings = readGlobalSettingsHash(hash);
+  if (settings) return settings;
   const threads = readThreadsHash(hash);
   if (threads) return threads;
   const agents = readAgentsHash(hash);

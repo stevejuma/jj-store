@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreSettingsSkeleton from "./StoreSettingsSkeleton.svelte";
   import StoreSettingsFooter from "./StoreSettingsFooter.svelte";
   import StoreSettingsCard from "./StoreSettingsCard.svelte";
   import SectionIcon from "@lucide/svelte/icons/bot";
@@ -68,6 +69,12 @@
       </StoreSettingsDisclosure>
     </Field.Group>
   </StoreSettingsCard>
+{:else if manager && !manager.settings.error}
+  <StoreSettingsSkeleton
+    heading={false}
+    label="Loading agent preferences"
+    cards={[{ rows: ["toggle", "toggle", "disclosure"] }]}
+  />
 {/if}
 {@render runtimeSection?.()}
 {#if manager}<StoreAgentChatGptAccounts accounts={manager.chatgpt} />{/if}
@@ -132,4 +139,10 @@
       message={manager.settings.error}
     />
   </StoreSettingsCard>
+{:else if manager && !manager.settings.error}
+  <StoreSettingsSkeleton
+    heading={false}
+    label="Loading agent defaults"
+    cards={[{ rows: ["input", "input", "input", "disclosure"], actions: 1 }]}
+  />
 {/if}

@@ -136,5 +136,5 @@ only; API formats, configuration and packaged-release gates remain unchanged.
 E-GLOBAL-SETTINGS-001 retains JST-DOC-001/002/003 delivery and review gates. The
 Settings guide now covers shared global/repository form presentation, Appearance
 subtabs, grouped deployment inventory and unit-aware global fields. Application
-source review retains transient global navigation, immediate device preferences,
-explicit configuration saves and unchanged configuration formats.
+source review retains URL-linked global navigation, immediate device
+preferences, explicit configuration saves and unchanged configuration formats.

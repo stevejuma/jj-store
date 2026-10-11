@@ -55,16 +55,16 @@
           style="--card-spacing: 0"
           class="store-settings-card store-settings-skeleton__card"
         >
-          <div
-            class="store-settings-card__header store-settings-skeleton__header"
-          >
-            <Skeleton class="store-settings-skeleton__icon" /><Skeleton
-              class="store-settings-skeleton__title"
-            />
-            {#if card.badge}<Skeleton
-                class="store-settings-skeleton__badge"
-              />{/if}
-          </div>
+          {#if card.header !== false}<div
+              class="store-settings-card__header store-settings-skeleton__header"
+            >
+              <Skeleton class="store-settings-skeleton__icon" /><Skeleton
+                class="store-settings-skeleton__title"
+              />
+              {#if card.badge}<Skeleton
+                  class="store-settings-skeleton__badge"
+                />{/if}
+            </div>{/if}
           <Card.Content class="store-settings-card__content">
             {#each card.rows as kind}{@render row(kind)}{/each}
             {#if card.actions}<div class="store-settings-skeleton__footer">

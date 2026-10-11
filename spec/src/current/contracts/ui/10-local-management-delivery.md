@@ -1,10 +1,11 @@
 # Local management delivery
 
-This staged extension keeps global Settings transient and makes repository
-Settings routed and automatic snapshot refresh contract. It adds Local service,
-Repository, Agents, Search, Storage and Sync sections as their operations become
-available. The milestone ledger is the single source of delivery status; this
-section defines the accepted scope.
+This staged extension records global Settings section/tab in the URL with
+validated startup restoration and makes repository Settings routed and automatic
+snapshot refresh contract. It adds Local service, Repository, Agents, Search,
+Storage and Sync sections as their operations become available. The milestone
+ledger is the single source of delivery status; this section defines the
+accepted scope.
 
 Local management uses versioned owned capabilities, profile-aware workspace
 links, settings revisions and bounded operation reports. Service interfaces

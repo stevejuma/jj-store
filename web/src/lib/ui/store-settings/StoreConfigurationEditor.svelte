@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { globalSettingsSkeletonCards } from "./global-settings-skeleton.js";
   import StoreReadOnlyRow from "./StoreReadOnlyRow.svelte";
   import StoreSettingsSkeleton from "./StoreSettingsSkeleton.svelte";
   import SaveIcon from "@lucide/svelte/icons/save";
@@ -188,16 +189,10 @@
         section="sync"
         cards={section === "sync"
           ? undefined
-          : [
-              { rows: ["fact"] },
-              {
-                rows:
-                  section === "service"
-                    ? ["numeric", "numeric", "numeric", "numeric"]
-                    : ["textarea", "textarea"],
-                actions: 2,
-              },
-            ]}
+          : globalSettingsSkeletonCards(
+              "service",
+              section === "service" ? "limits" : "protection",
+            )}
         tab="configuration"
         heading={false}
         label={`Loading ${section === "sync" ? "sync" : section === "service" ? "service" : "protection"} configuration`}

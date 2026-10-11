@@ -1,5 +1,5 @@
 export type StoreSettingsSection =
-  "appearance" | "service" | "agents" | "compute";
+  import("../../controller/global-settings-navigation.js").GlobalSettingsSection;
 export type StoreSettingsPageSection =
   | StoreSettingsSection
   | "repository"

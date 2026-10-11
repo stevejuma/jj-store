@@ -23,6 +23,7 @@ export function storePageRoute(route: StoreRoute, page: StorePage): StoreRoute {
   return {
     ...route,
     page,
+    globalSettings: undefined,
     repositorySettingsSection: undefined,
     repositorySettingsTab: undefined,
     fileDisplay: undefined,

@@ -1,7 +1,16 @@
 import type { RepositorySettingsSection } from "../../controller/repository-settings-navigation.js";
 
-type Row = "fact" | "input" | "numeric" | "toggle" | "textarea";
+type Row =
+  | "fact"
+  | "input"
+  | "numeric"
+  | "toggle"
+  | "textarea"
+  | "disclosure"
+  | "runtime"
+  | "preview";
 export type SettingsSkeletonCard = {
+  header?: boolean;
   rows: Row[];
   actions?: number;
   badge?: boolean;

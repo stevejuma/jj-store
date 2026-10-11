@@ -6,7 +6,7 @@
 - [Application notifications](06-application-notifications.md)
 - [Application startup](07-application-startup.md)
 - [Device appearance](08-device-appearance.md)
-- [Transient store settings](09-transient-store-settings.md)
+- [Settings navigation and lifecycle](09-transient-store-settings.md)
 - [Local management delivery](10-local-management-delivery.md)
 - [Shell composition](11-shell-composition.md)
 - [Repository presentation](12-repository-presentation.md)

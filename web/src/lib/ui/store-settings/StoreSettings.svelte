@@ -39,6 +39,10 @@
       repositoryError = storeErrorMessage(cause);
     }
   }
+  const selectedTab = $derived(controller.state.route.globalSettings?.tab);
+  function selectTab(tab: string) {
+    controller.actions.selectGlobalSettings(section, tab);
+  }
   const repository = $derived(controller.state.route.repository);
   $effect(() => {
     const selected = section;
@@ -55,9 +59,12 @@
     aria-label="Settings content"
   >
     {#if section === "appearance"}
-      <StoreAppearance />
+      <StoreAppearance bind:active={() => selectedTab ?? "theme", selectTab} />
     {:else if section === "service"}
-      <StoreServiceSettings {controller} />
+      <StoreServiceSettings
+        {controller}
+        bind:active={() => selectedTab ?? "overview", selectTab}
+      />
     {:else if section === "agents"}
       <StoreNotice
         noticeKey="capture-repository"
@@ -65,6 +72,7 @@
         message={repositoryError}
       />
       <StoreAgentSettings
+        bind:tab={() => selectedTab ?? "runtimes", selectTab}
         manager={controller.execution}
         management={controller.capture}
         runtimes={controller.execution?.tooling}
@@ -77,7 +85,10 @@
           "Previously bound repository"}
       />
     {:else if section === "compute"}
-      <StoreComputeSettings management={controller.execution?.compute} />
+      <StoreComputeSettings
+        management={controller.execution?.compute}
+        bind:active={() => selectedTab ?? "models", selectTab}
+      />
     {/if}
   </div>
 </AppShell.Body>

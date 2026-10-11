@@ -1,4 +1,6 @@
 <script lang="ts">
+  import StoreSettingsSkeleton from "./StoreSettingsSkeleton.svelte";
+  import { globalSettingsSkeletonCards } from "./global-settings-skeleton.js";
   import StoreSettingsCard from "./StoreSettingsCard.svelte";
   import StoreReadOnlyRow from "./StoreReadOnlyRow.svelte";
   import DatabaseIcon from "@lucide/svelte/icons/database";
@@ -144,6 +146,14 @@
         </dl>
       </StoreSettingsCard>
     {/each}
+  {:else if management?.available() && !management.state.error}<StoreSettingsSkeleton
+      heading={false}
+      label="Loading configuration inventory"
+      cards={globalSettingsSkeletonCards(
+        "service",
+        section === "service" ? "launch" : "storage",
+      )}
+    />
   {:else}<p>
       Configuration inventory requires a local service with administrator
       access.

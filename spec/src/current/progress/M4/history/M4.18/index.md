@@ -30,7 +30,10 @@ commands and configuration contracts remain unchanged. Wider gates remain open.
 |
 [E-GLOBAL-SETTINGS-001](../../../../../history/2026/10/11/E-GLOBAL-SETTINGS-001/index.md)
 | 2026-10-11 | pending | Focused global presentation; inherited diagnostics
-remain separate |
+remain separate | |
+[E-GLOBAL-SETTINGS-NAV-001](../../../../../history/2026/10/12/E-GLOBAL-SETTINGS-NAV-001/index.md)
+| 2026-10-12 | pending | Global Settings URLs, startup resume and representative
+loading; inherited diagnostics separate |
 
 <!-- generated-navigation -->
 

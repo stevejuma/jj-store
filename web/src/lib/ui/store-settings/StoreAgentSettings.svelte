@@ -8,6 +8,7 @@
   import * as Tabs from "@lapismd/design-core/shadcn/tabs";
   import type { AgentRuntimes } from "../../controller/agent-runtimes.svelte.js";
   let {
+    tab = $bindable("runtimes"),
     manager,
     management,
     runtimes,
@@ -15,6 +16,7 @@
     onRepository,
     repositoryNavigationReason,
   }: {
+    tab?: string;
     manager?: AgentExecution;
     management?: CaptureManagement;
     runtimes?: AgentRuntimes;
@@ -22,7 +24,6 @@
     onRepository?: (id: string) => void;
     repositoryNavigationReason?: string;
   } = $props();
-  let tab = $state("runtimes");
 </script>
 
 <StoreSettingsPage

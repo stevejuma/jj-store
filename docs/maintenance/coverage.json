@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Global Settings presentation and consolidated preferences; save and authorization contracts retained",
-      "fingerprint": "8ba1fcb59e847e1b4228f75b17cefabe1ca3bf21f9fc891756027aefe183dbe7"
+      "reason": "Global Settings URL/history and validated startup destination with selected-page skeleton geometry, single footer dividers and unchanged server configuration/authorization contracts",
+      "fingerprint": "919eea5e880fc587f698aba77062d6cd6ccb7c7800ea2ea3ac2496b0f9143456"
     }
   },
   {

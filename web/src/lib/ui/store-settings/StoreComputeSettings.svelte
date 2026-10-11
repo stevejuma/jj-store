@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { globalSettingsSkeletonCards } from "./global-settings-skeleton.js";
   import StoreSettingsSkeleton from "./StoreSettingsSkeleton.svelte";
   import StoreSettingsFooter from "./StoreSettingsFooter.svelte";
   import StoreSettingsCard from "./StoreSettingsCard.svelte";
@@ -16,11 +17,13 @@
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import type { AgentCompute } from "../../controller/agent-compute.svelte.js";
   import type { Model } from "../../api/client.js";
-  let { management }: { management?: AgentCompute } = $props();
+  let {
+    management,
+    active = $bindable("models"),
+  }: { management?: AgentCompute; active?: string } = $props();
   let draft = $state<Model<"ComputeSettings"> | null>(
     untrack(() => management?.draft ?? null),
   );
-  let active = $state("models");
   const id = $props.id();
   const status = $derived(management?.value);
   const blocked = $derived(management?.busy || !!management?.pending);
@@ -146,9 +149,6 @@
   {:else if !management?.error && management}<StoreSettingsSkeleton
       heading={false}
       label="Loading compute settings"
-      cards={[
-        { rows: ["fact", "fact", "input", "input"], actions: 4 },
-        { rows: ["input"], actions: 1 },
-      ]}
+      cards={globalSettingsSkeletonCards("compute", active)}
     />{/if}
 </StoreSettingsPage>
