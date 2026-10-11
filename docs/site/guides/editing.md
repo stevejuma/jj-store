@@ -33,53 +33,81 @@ older committed preview.
 
 ## Local Stacks mutations
 
+Assign changes to commits, review native commit actions and resolve supported
+text conflicts from Stacks.
+
+### Assign files or hunks to a commit
+
 In a registered ordinary local JJ repository, a named workspace retains a
 megamerge and an ordinary unfinished commit above it. Drag files or supported
 text hunks from Unstaged into a stack's staging card to compose a new commit, or
-onto an existing commit to move those changes into it. The assignment picker
-names the exact destination commit, including commits below a branch head.
-Review the preview before applying. Native squash and descendant rebasing
-propagate the changes through the existing merge and WIP; they do not rebuild
-the workspace combination. Empty unfinished commits remain available.
+onto an existing commit to move those changes into it.
+
+The assignment picker names the exact destination commit, including commits
+below a branch head. Review the preview before applying. Native squash and
+descendant rebasing propagate the changes through the existing merge and WIP;
+they do not rebuild the workspace combination. Empty unfinished commits remain
+available.
+
+### Edit commits and branch membership
 
 Commit and branch menus provide reword, empty-commit and branch insertion above
 or below, rename, split selected changes, move/reorder, squash, uncommit and
-rebase where the exact native commit is mutable. Target and internal retention
-commits remain protected. Delete stack removes its top bookmark and saved
-membership, retaining lower bookmarks and commits. Abandon and selected discard
-require destructive confirmation. Discard applies only to the selected current
-WIP files or native text hunks, retaining unselected content.
+rebase where the exact native commit is mutable.
+
+Target and internal retention commits remain protected. Delete stack removes its
+top bookmark and saved membership, retaining lower bookmarks and commits.
+Abandon and selected discard require destructive confirmation. Discard applies
+only to the selected current WIP files or native text hunks, retaining
+unselected content.
+
+### Check hunk and file-operation limits
 
 Hunk tokens bind the exact source and complete file bytes. Binary, mode/type,
 conflicted and oversized deltas require whole-file operations or native JJ
-tools. Net branch diffs are read-only. The local Merge Editor supports bounded
-three-term text conflicts with an editable Resolved pane. Multi-sided text
-conflicts retain the native version picker and show the same editable Merge
-Editor. Its small comparison picker sits in the center of the editor header.
+tools. Net branch diffs are read-only.
+
+### Resolve local text conflicts
+
+The local Merge Editor supports bounded three-term text conflicts with an
+editable Resolved pane. Multi-sided text conflicts retain the native version
+picker and show the same editable Merge Editor. Its small comparison picker sits
+in the center of the editor header.
+
 Choose a version in the searchable picker; each option shows line/byte counts
 and a short content preview. Compare it with the current resolution, then
 explicitly stage the whole file for complete-file preview and guarded JJ
 resolution. Selecting a deleted version cannot replace it with an empty file.
+
 Structural, mode, binary and oversized conflicts retain their explicit
 unsupported reason and require native JJ tools.
+
+### Adjust the Merge Editor display
 
 Workspace and Op Log share the editor header settings menu: Wrap lines, Sync
 horizontal scroll, Ignore whitespace and Ignore case. Synchronization starts
 enabled and comparison filters start off. All four display preferences are
 remembered in browser local storage; changing them retains your resolution text.
+
 Comparison filters do not complete conflict resolution; stage the reviewed whole
-file explicitly. Resolution drafts are not saved in local storage. Line-number
-gutters remain opaque above horizontally scrolled text. While a conflict file
-loads, a merge skeleton fills the editor area and keeps the header and file
-browser available. Stage and preview remain disabled until the file is ready.
+file explicitly. Resolution drafts are not saved in local storage.
+
+Line-number gutters remain opaque above horizontally scrolled text. While a
+conflict file loads, a merge skeleton fills the editor area and keeps the header
+and file browser available. Stage and preview remain disabled until the file is
+ready.
+
+### Undo changes and recover an interrupted command
 
 Undo and Redo follow repository-wide native operation history, including CLI
 operations, while retaining current Git bookkeeping. They do not restore
-`.jj/jj-store/stacks.toml`. Refresh and Switch preserve saved membership without
-rebuilding it; **Reapply saved branches** explicitly reconciles the combination.
-After an unknown response, inspect current state and operation history rather
-than replaying the command. Changes can complete before the graph index is
-ready; use **Prepare graph index** to resume retained histories and diffs.
+`.jj/jj-store/stacks.toml`.
+
+Refresh and Switch preserve saved membership without rebuilding it; **Reapply
+saved branches** explicitly reconciles the combination. After an unknown
+response, inspect current state and operation history rather than replaying the
+command. Changes can complete before the graph index is ready; use **Prepare
+graph index** to resume retained histories and diffs.
 
 ## Resolve native conflicts
 

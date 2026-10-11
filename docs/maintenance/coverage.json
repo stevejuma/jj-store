@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed verified transcript file-link navigation, immutable display-only path labels, Mira list rendering and the trailing vertically centered warning Retry column.",
-      "fingerprint": "6c9fb85ef2cc9806f6c2898e53d7f9693b1d4a5343c1e162f6ba7df565b89da9"
+      "reason": "Reviewed owned Empty fallbacks, continuous project rows, exact repository-bound agent avatars and expandable stored-session reviews with unchanged authorization, anchors, drafts and receipt recovery. Guide sections now distinguish these interactions and their capability limits.",
+      "fingerprint": "8c4148b4b1a5f9338c8cd55d2c67b19d41e9b3ce7ba7cd7157651245cb23e6a6"
     }
   },
   {

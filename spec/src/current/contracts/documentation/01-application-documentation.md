@@ -1,5 +1,11 @@
 # Application documentation
 
+Under JST-DOC-001, Guides use task-ordered sections with descriptive headings
+and short paragraphs. Separate setup, routine actions, inspection and recovery
+when they describe distinct workflows; keep technical limits beside the relevant
+task. Retain existing heading anchors and links when reorganizing content.
+Readability edits do not expand supported capabilities or qualification.
+
 E-CHAT-INSPECTOR-001 retains JST-DOC-001/002/003 delivery gates. The agent
 manual describes responsive presentation tabs in the file header, icon diff
 controls, aligned activity avatars and bounded comparison counts with unknown

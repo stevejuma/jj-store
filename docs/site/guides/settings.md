@@ -94,39 +94,68 @@ with inline icons. Runtime and capture tabs show only their own controls.
 
 ## Reusable agents and chat
 
+Use these controls to open chats, manage recipient preferences and check agent
+readiness.
+
+### Open an agent chat
+
 On the Agents screen, Start warms an agent in place; it does not open a chat.
 New chat opens a repository-free draft. In a project or repository, use Chat
 beside the top-bar Details toggle to open the right body sidebar. Opening never
 sends a message. Attach registered repositories, select one or more saved agents
-with @, write a message and press Send. Automatically mention agents is opt-in
-and retains exact recipients for replies. The switch in the agent picker and
-Settings → Agents controls the same saved preference; changes save immediately.
-Turning it off pauses automatic mentions and preserves your draft and selected
-agents. Remove a tag or unpin it to stop including that agent. ACP avatars show
-the current worker state across the app. Send automatically prepares the
-selected agent's participation and observes its readiness without periodic
-status reads. Choosing another agent prepares that agent's own participation on
-the next Send.
+with @, write a message and press Send.
+
+Automatically mention agents is opt-in and retains exact recipients for replies.
+
+### Configure automatic mentions
+
+The switch in the agent picker and Settings → Agents controls the same saved
+preference; changes save immediately. Turning it off pauses automatic mentions
+and preserves your draft and selected agents. Remove a tag or unpin it to stop
+including that agent.
+
+### Check readiness when sending
+
+ACP avatars show the current worker state across the app. Send automatically
+prepares the selected agent's participation and observes its readiness without
+periodic status reads.
+
+Choosing another agent prepares that agent's own participation on the next Send.
 
 ## Local compute and agent defaults
+
+Prepare compute resources separately from the provider and model defaults used
+by your agents.
+
+### Prepare models, resources and sharing
 
 Compute settings separates Models, Resources and Sharing into tabs. Models
 contains runtime preparation, GGUF downloads/imports, start/stop and
 managed-weight removal; Resources contains hardware and memory limits; Sharing
 contains trusted machine pairing and relay configuration. Drafts remain intact
-across tabs, and Save compute settings is available from each tab. Agent
-settings add global defaults, automatic-mention preferences, macOS desktop
+across tabs, and Save compute settings is available from each tab.
+
+### Choose agent defaults and a model provider
+
+Agent settings add global defaults, automatic-mention preferences, macOS desktop
 keep-awake, and collapsed Advanced environment configuration in both defaults
-and Add/Edit agent. Choose JJ Agent to reveal a separate LLM provider selector:
-This machine, JJ Store shared compute, Anthropic, OpenAI, OpenAI-compatible,
-OpenRouter, Databricks or Databricks v2. Shared compute uses the selected
-trusted host in Compute → Sharing. The default option identifies the inherited
-provider, even while another provider is selected. Provider endpoint and model
-discovery use the draft; Advanced holds credential references. Discovery never
-saves or starts a chat. Unknown saved models remain visible; Retry models and
-exact custom external IDs are available. Changing provider clears incompatible
-choices. Save provider changes, then explicitly restart the agent. Harness
-sections are collapsed on initial load. See
+and Add/Edit agent.
+
+Choose JJ Agent to reveal a separate LLM provider selector: This machine, JJ
+Store shared compute, Anthropic, OpenAI, OpenAI-compatible, OpenRouter,
+Databricks or Databricks v2. Shared compute uses the selected trusted host in
+Compute → Sharing. The default option identifies the inherited provider, even
+while another provider is selected.
+
+### Discover models and apply provider changes
+
+Provider endpoint and model discovery use the draft; Advanced holds credential
+references. Discovery never saves or starts a chat.
+
+Unknown saved models remain visible; Retry models and exact custom external IDs
+are available. Changing provider clears incompatible choices. Save provider
+changes, then explicitly restart the agent. Harness sections are collapsed on
+initial load. See
 [agent configuration and compute](agent-execution.md#compute-defaults-and-captured-context)
 for precedence, credentials, pairing and context disclosure.
 
@@ -139,6 +168,8 @@ independent of Focus/Split placement. Both views retain selection comments,
 reactions and reply navigation. Specialized task and review panels keep their
 own presentation. Enter inserts a new line; Send or Cmd/Ctrl+Enter submits the
 entire pending prompt.
+
+### Choose a separate metadata model
 
 Conversation metadata has its own provider/model under **Agents**. It defaults
 to unconfigured. These settings apply to future metadata jobs and never change a
