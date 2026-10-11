@@ -373,4 +373,7 @@ Final formatting passes. The amended cleanup record passed focused progress (146
 
 pass
 <!-- /evidence-field -->
+<!-- generated-navigation -->
+## Pages
 
+- [E-WORKSPACE-RETIRE-001 details 2](details-02.md)
