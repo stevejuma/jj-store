@@ -1,5 +1,10 @@
 # Local workspace links
 
+The joined Folder path/Browse focus group and divided bottom action row change
+only Settings presentation. JST-UI-016 and existing link authorization, observed
+revision, request identity, validation and native picker behavior remain
+unchanged.
+
 The optional `local_workspace_links` capability is advertised only by a
 LocalTrusted admin deployment with a composed workspace manager. Repository
 `GET /local/workspaces` returns a versioned revision and bounded list of

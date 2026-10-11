@@ -16,9 +16,11 @@ publication or preference format is added.
 
 Device appearance is browser-owned presentation state under JST-UI-018. It is
 independent of server settings revisions, repository operations and receipts.
-Appearance changes make no repository mutation or website metadata requests.
-Merge qualification retains physical working-copy actions, native tool review
-reads and local repository review creation in the shared controller contract.
+Settings font-family, heading and row-text alignment retains the existing device
+preference schema, save/preview behavior and public palette tokens. Appearance
+changes make no repository mutation or website metadata requests. Merge
+qualification retains physical working-copy actions, native tool review reads
+and local repository review creation in the shared controller contract.
 Confirmed WorkStore reactions reload only their exact target through existing
 authorized reads; request identities and observed slot preconditions are
 unchanged.

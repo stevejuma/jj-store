@@ -2,7 +2,6 @@
   max-width: 64rem;
   margin: 0 auto;
   padding: 0 0 1.5rem;
-  font-family: "Inter Variable", var(--font-sans, sans-serif);
   font-size: var(--community-text-body);
 }
 .appearance-groups {
@@ -10,10 +9,10 @@
   gap: 3rem;
 }
 .appearance-group > h2 {
-  margin: 0 1rem 0.5rem;
+  margin: 0 0 0.8rem;
   font-size: var(--community-text-body);
-  font-weight: 600;
-  color: var(--muted-foreground);
+  font-weight: 650;
+  color: var(--foreground);
 }
 .appearance-card {
   container-type: inline-size;
@@ -40,9 +39,11 @@
 }
 .appearance-row p {
   margin: 0;
-  font-weight: 500;
+  font-size: var(--community-text-secondary);
+  font-weight: 550;
 }
 .appearance-row p + p {
+  margin-block-start: 0.35rem;
   color: var(--muted-foreground);
   font-weight: 400;
 }

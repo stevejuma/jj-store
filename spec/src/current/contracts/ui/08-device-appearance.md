@@ -9,6 +9,12 @@ Focus/Split discussions. Preferences are device-local and app-wide; Settings
 location remains transient. Defaults are System/Buzz, default font, Comfy
 density, Compact links, Split replies, glass off and subtle active tabs.
 
+Appearance inherits the Settings font family and uses the same section-heading
+size, weight, foreground and left alignment as other Settings pages. Row labels
+and descriptions share their secondary text size; labels retain the same weight
+as read-only Settings rows and descriptions use regular muted text. Device font
+preferences still scale controls and previews without changing saved settings.
+
 The browser tab uses the accepted blue-jay and gear application artwork as its
 favicon, with an explicit SVG icon link in the HTML entry. Its self-contained
 64px RGBA export retains transparent surrounds and the pale silhouette edge for

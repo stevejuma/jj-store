@@ -77,9 +77,12 @@ enablement/budget or file-scope controls share one bordered group, with labels
 and descriptions left and controls right. Save/Cancel, index maintenance and
 sync controls use that same description-left/action-right composition. Each
 Settings action group stacks vertically, with its buttons stretching to equal
-width; Appearance option groups retain their horizontal layout. Rows stack their
-label and control columns on narrow screens. Standalone guidance, loading and
-status messages use public Design Core Alert composition with an information
+width; Appearance option groups retain their horizontal layout. The native
+folder-link form instead keeps Cancel and Link folder in a bottom button row
+aligned to the right, below its guidance and a public Separator, within the same
+bordered group as Folder path. Its controls wrap at narrow widths. Rows stack
+their label and control columns on narrow screens. Standalone guidance, loading
+and status messages use public Design Core Alert composition with an information
 icon and polite status semantics; transient operational errors use the
 application notification service. Descriptions and status values already
 contained in rows remain within those rows. Capture policy, harness diagnostics,
@@ -159,8 +162,10 @@ removed.
 
 The optional native folder picker joins Folder path to a Git-icon Browse button.
 The path/Browse group fills its available control column, with the input taking
-the space left by Browse. Only an explicit click opens the dialog on the
-local-service machine. Selection fills the draft; Link folder remains the
+the space left by Browse. Public Design Core Input Group controls give the
+entire input-and-Browse group one focus ring when the input is focused. Browse
+retains independent keyboard activation. Only an explicit click opens the dialog
+on the local-service machine. Selection fills the draft; Link folder remains the
 separate validation/save action. Cancel preserves the draft; failures retain
 manual entry and explain the fallback. While picking, repeated browse and link
 actions are disabled. Repository changes discard late selections. Unsupported

@@ -93,6 +93,39 @@
 />
 
 <Story
+  name="Appearance typography matches other Settings sections"
+  play={async ({ canvasElement }) => {
+    await openSettings(canvasElement);
+    const c = within(canvasElement);
+    const typography = (element: Element) => {
+      const style = getComputedStyle(element);
+      return {
+        family: style.fontFamily,
+        size: style.fontSize,
+        weight: style.fontWeight,
+        color: style.color,
+      };
+    };
+    const heading = typography(
+      c.getByRole("heading", { name: "Service status" }),
+    );
+    const label = typography(c.getByText("Access mode", { exact: true }));
+    await userEvent.click(c.getByRole("button", { name: "Appearance" }));
+    const theme = c.getByRole("heading", { name: "Theme" });
+    await expect(typography(theme)).toEqual(heading);
+    await expect(getComputedStyle(theme).marginLeft).toBe("0px");
+    await expect(
+      typography(c.getByText("Color mode", { exact: true })),
+    ).toEqual(label);
+    const description = c.getByText(
+      "Follow your system or choose a light or dark appearance.",
+    );
+    await expect(getComputedStyle(description).fontSize).toBe(label.size);
+    await expect(getComputedStyle(description).fontWeight).toBe("400");
+  }}
+/>
+
+<Story
   name="Consistent title and body spacing across Settings pages"
   play={async ({ canvasElement }) => {
     await openSettings(canvasElement);

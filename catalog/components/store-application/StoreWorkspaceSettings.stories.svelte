@@ -1,6 +1,6 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
-  import { expect, userEvent, within } from "storybook/test";
+  import { expect, userEvent, waitFor, within } from "storybook/test";
   import WorkspaceSettingsFixture from "../../fixtures/WorkspaceSettingsFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Settings/Local folders",
@@ -25,11 +25,8 @@
     ).toHaveTextContent("");
     const link = canvas.getByRole("button", { name: "Link folder" });
     const cancel = canvas.getByRole("button", { name: /^Cancel$/ });
-    await expect(cancel.getBoundingClientRect().top).toBeGreaterThanOrEqual(
-      link.getBoundingClientRect().bottom,
-    );
-    await expect(cancel.getBoundingClientRect().width).toBeCloseTo(
-      link.getBoundingClientRect().width,
+    await expect(cancel.getBoundingClientRect().top).toBeCloseTo(
+      link.getBoundingClientRect().top,
       0,
     );
     const group = input.closest('[role="group"]')!;
@@ -52,6 +49,43 @@
     ).toBeVisible();
     await expect(canvas.getByText("Ready", { exact: true })).toBeVisible();
     await expect(input).toHaveValue("");
+  }}
+/>
+<Story
+  name="Joined folder form and shared input focus ring"
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    const input = c.getByRole("textbox", { name: "Folder path" });
+    const browse = c.getByRole("button", { name: "Browse…" });
+    const group = c.getByRole("group", { name: "Choose local folder" });
+    await userEvent.click(input);
+    await waitFor(() =>
+      expect(getComputedStyle(group).boxShadow).toContain("3px"),
+    );
+    await expect(group.contains(browse)).toBe(true);
+    await userEvent.type(input, "/retained draft");
+    await userEvent.tab();
+    await expect(browse).toHaveFocus();
+    await expect(input).toHaveValue("/retained draft");
+    const link = c.getByRole("button", { name: "Link folder" });
+    const cancel = c.getByRole("button", { name: /^Cancel$/ });
+    const card = input.closest(".store-settings__rows")!;
+    await expect(link.closest(".store-settings__rows")).toBe(card);
+    await expect(
+      card.querySelector('[data-ui-component="separator"]'),
+    ).not.toBeNull();
+    const footer = link.closest("footer")!;
+    await expect(link.getBoundingClientRect().right).toBeCloseTo(
+      group.getBoundingClientRect().right,
+      0,
+    );
+    await expect(cancel.getBoundingClientRect().top).toBeCloseTo(
+      link.getBoundingClientRect().top,
+      0,
+    );
+    await expect(link.getBoundingClientRect().top).toBeGreaterThan(
+      footer.querySelector("p")!.getBoundingClientRect().bottom,
+    );
   }}
 />
 <Story

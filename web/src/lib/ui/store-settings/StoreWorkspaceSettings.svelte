@@ -2,12 +2,12 @@
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import LinkIcon from "@lucide/svelte/icons/link";
   import XIcon from "@lucide/svelte/icons/x";
-  import * as ButtonGroup from "@lapismd/design-core/shadcn/button-group";
+  import * as InputGroup from "@lapismd/design-core/shadcn/input-group";
+  import { Separator } from "@lapismd/design-core/shadcn/separator";
   import GitBranchIcon from "@lucide/svelte/icons/git-branch";
   import StoreSettingsEmpty from "./StoreSettingsEmpty.svelte";
   import * as Field from "@lapismd/design-core/shadcn/field";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import { Input } from "@lapismd/design-core/shadcn/input";
   import type { WorkspaceLinkSettings } from "../../controller/workspace-link-types.js";
   let {
     settings,
@@ -92,8 +92,8 @@
         void onLink();
       }}
     >
-      <Field.Group>
-        <div class="store-settings__rows">
+      <div class="store-settings__rows">
+        <Field.Group class="store-workspace-link-form">
           <Field.Field
             data-disabled={busy}
             orientation="horizontal"
@@ -107,12 +107,11 @@
                   opens a dialog on the machine running the local service.{/if}</Field.Description
               >
             </Field.Content>
-            <ButtonGroup.Root
+            <InputGroup.Root
               class="store-settings__field-action"
-              style="width: 100%"
               aria-label="Choose local folder"
             >
-              <Input
+              <InputGroup.Input
                 id="workspace-folder-path"
                 value={settings.workspacePath}
                 oninput={(event) => onPath(event.currentTarget.value)}
@@ -124,47 +123,49 @@
                 aria-describedby="workspace-folder-help"
               />
               {#if pickerSupported}
-                <Button
-                  type="button"
-                  variant="outline"
-                  disabled={busy}
-                  onclick={() => void onBrowse()}
-                  ><GitBranchIcon
-                    data-icon="inline-start"
-                    aria-hidden="true"
-                  />Browse…</Button
-                >
+                <InputGroup.Addon align="inline-end">
+                  <InputGroup.Button
+                    size="sm"
+                    disabled={busy}
+                    onclick={() => void onBrowse()}
+                    ><GitBranchIcon
+                      data-icon="inline-start"
+                      aria-hidden="true"
+                    />Browse…</InputGroup.Button
+                  >
+                </InputGroup.Addon>
               {/if}
-            </ButtonGroup.Root>
+            </InputGroup.Root>
           </Field.Field>
-        </div>
-        <div class="store-settings__action-row">
-          <div>
-            <strong>Link an existing folder</strong>
-            <p>Linking preserves files and repository history.</p>
-          </div>
-          <div class="store-settings__actions">
-            <Button
-              type="submit"
-              disabled={busy ||
-                !settings.workspaceLinks ||
-                !settings.workspacePath}
-              ><LinkIcon data-icon="inline-start" aria-hidden="true" />Link
-              folder</Button
-            >
-            <Button
-              type="button"
-              variant="outline"
-              disabled={busy || !settings.workspacePath}
-              onclick={() => onPath("")}
-              ><XIcon
-                data-icon="inline-start"
-                aria-hidden="true"
-              />Cancel</Button
-            >
-          </div>
-        </div>
-      </Field.Group>
+          <Separator />
+          <footer class="store-workspace-link-form__footer">
+            <div>
+              <strong>Link an existing folder</strong>
+              <p>Linking preserves files and repository history.</p>
+            </div>
+            <div class="store-workspace-link-form__actions">
+              <Button
+                type="button"
+                variant="outline"
+                disabled={busy || !settings.workspacePath}
+                onclick={() => onPath("")}
+                ><XIcon
+                  data-icon="inline-start"
+                  aria-hidden="true"
+                />Cancel</Button
+              >
+              <Button
+                type="submit"
+                disabled={busy ||
+                  !settings.workspaceLinks ||
+                  !settings.workspacePath}
+                ><LinkIcon data-icon="inline-start" aria-hidden="true" />Link
+                folder</Button
+              >
+            </div>
+          </footer>
+        </Field.Group>
+      </div>
       {#if settings.workspaceValidation}<p role="alert">
           {settings.workspaceValidation}
         </p>{/if}
@@ -183,3 +184,40 @@
     />
   {/if}
 </section>
+
+<style>
+  :global(.store-workspace-link-form) {
+    gap: 0;
+  }
+  :global(.store-workspace-link-form > [data-slot="field"]) {
+    display: grid;
+    grid-template-columns: minmax(10rem, 0.8fr) minmax(0, 1.5fr);
+    gap: 1rem;
+    align-items: start;
+  }
+  .store-workspace-link-form__footer {
+    display: grid;
+    gap: 1rem;
+    padding: 1rem;
+  }
+  .store-workspace-link-form__footer strong {
+    font-size: var(--community-text-body);
+    font-weight: 550;
+  }
+  .store-workspace-link-form__footer p {
+    margin-block-start: 0.35rem;
+    color: var(--muted-foreground);
+    font-size: var(--community-text-secondary);
+  }
+  .store-workspace-link-form__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+  @media (max-width: 40rem) {
+    :global(.store-workspace-link-form > [data-slot="field"]) {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

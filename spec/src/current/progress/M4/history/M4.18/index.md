@@ -11,6 +11,7 @@ not a completion gate selection.
 | [E-UI-100](../../../../../history/2026/10/04/E-UI-100/index.md)                                             | 2026-10-04 | pass            | Original outcome                                                                          |
 | [E-SETTINGS-REPOSITORY-001](../../../../../history/2026/10/11/E-SETTINGS-REPOSITORY-001/index.md)           | 2026-10-11 | pending         | Focused UI acceptance passes; inherited diagnostics and visual approval remain separate   |
 | [E-REPOSITORY-RAIL-SETTINGS-001](../../../../../history/2026/10/11/E-REPOSITORY-RAIL-SETTINGS-001/index.md) | 2026-10-11 | pending         | Focused rail/settings regression; inherited diagnostics and visual review remain separate |
+| [E-SETTINGS-POLISH-001](../../../../../history/2026/10/11/E-SETTINGS-POLISH-001/index.md)                   | 2026-10-11 | pending         | Focused Settings refinement; inherited diagnostics and visual approval remain separate    |
 
 <!-- generated-navigation -->
 
