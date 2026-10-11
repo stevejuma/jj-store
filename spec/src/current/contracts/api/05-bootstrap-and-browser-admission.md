@@ -68,6 +68,10 @@ selection from Projects, retains the Settings section across a switch, avoids
 reopening the current repository and blocks switching while drafts or pending
 work would be lost. The selected repository and Settings refresh use existing
 controller transitions; no new server route or generated contract is introduced.
+The Repository empty-state picker uses that same transition and guarded
+discovery list. Until its route explicitly selects the displayed repository, the
+page hides repository details and subsection actions. Repository-type chips use
+the retained native/Git-backed profile and grant no additional authority.
 Settings identifiers use public Design Core CopyableValue with complete native
 values unchanged; abbreviation affects display only. Repository, Search
 generation and Sync frontier values share this control. The sidebar Back action

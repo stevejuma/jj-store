@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onDestroy } from "svelte";
   import { settingsNavigationReason } from "./settings-navigation.js";
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import type { StoreController } from "../../controller/contracts.js";
@@ -10,17 +11,24 @@
     controller,
     section,
     disabled = false,
+    placement = "header",
   }: {
     controller: StoreController;
     section: StoreSettingsSection;
     disabled?: boolean;
+    placement?: "header" | "inline";
   } = $props();
   let switching = $state(false),
     selection = $state(""),
     error = $state("");
+  let disposed = false;
+  onDestroy(() => {
+    disposed = true;
+  });
   const view = $derived(controller.state);
   const settings = $derived(view.settings);
   const current = $derived(view.route.projectsHub ? "" : view.route.repository);
+  const hasRepository = $derived(!!current && current === view.repository.id);
   const reason = $derived(
     disabled
       ? "Finish the current edit before changing repositories."
@@ -41,19 +49,25 @@
     error = "";
     try {
       await controller.actions.openRepository(repository);
+      if (disposed) return;
       if (controller.state.status.connection === "failed")
         error = controller.state.status.error || "Could not open repository.";
     } catch (cause) {
-      error = storeErrorMessage(cause);
+      if (!disposed) error = storeErrorMessage(cause);
     } finally {
-      selection = current;
-      switching = false;
+      if (!disposed) {
+        selection = current;
+        switching = false;
+      }
     }
   }
 </script>
 
-{#if section !== "appearance" && section !== "service" && section !== "agents"}
-  <div class="store-settings-repository">
+{#if section !== "appearance" && section !== "service" && section !== "agents" && (placement === "inline" || section !== "repository" || hasRepository)}
+  <div
+    class="store-settings-repository"
+    class:store-settings-repository--inline={placement === "inline"}
+  >
     <Tooltip.Provider>
       <Tooltip.Root disabled={!reason}>
         <Tooltip.Trigger>
@@ -66,7 +80,7 @@
             >
               <StoreRepositoryPicker
                 label="Settings repository"
-                variant="ghost"
+                variant={placement === "inline" ? "outline" : "ghost"}
                 repositories={view.repositories}
                 bind:value={selection}
                 disabled={!!reason}
@@ -96,5 +110,8 @@
   }
   .store-settings-repository__control {
     display: block;
+  }
+  .store-settings-repository--inline {
+    max-width: min(20rem, 100%);
   }
 </style>

@@ -125,22 +125,32 @@ keyboard accessible.
 
 Repository settings groups General, Local folders and Advanced values in
 keyboard-accessible tabs with horizontal overflow on narrow screens. Tab changes
-do not discard folder drafts. Read-only Settings values use an owned reusable
-row composed with public Design Core controls. Copying is explicitly enabled for
-identifiers and hashes, or implicitly available when the value has an internal
-Open action. Ordinary names, statuses, counts and descriptive values remain
-plain text without copy controls or row-click behavior. Clicking any part of a
-copyable row or activating its copy button with Enter or Space copies the full
-value, with circular tick feedback and an announced failure/retry state. The
-entire copy target remains stable throughout a pointer press, including on
-labels and values. Each successful copy animates the tick unless reduced motion
-is enabled. Long values truncate in the available space; missing values retain
-their availability label without a copy action. A separate trailing Open action
-is offered only for valid app destinations and does not copy. Rows without Open
-reserve the same trailing action space so their copy buttons align with rows
-that have a link. This empty space adds no focusable control. Settings
-navigation preserves drafts and pending-action guards. Feedback clears when the
-value changes or the row is removed.
+do not discard folder drafts. Until an explicit repository is selected, the
+Repository page MUST show the public shadcn Empty composition with a repository
+icon, selection guidance and one inline repository picker, without subsection
+tabs, refresh actions or unavailable identity rows. Projects context MUST NOT
+substitute a previously retained repository. Selection uses the existing
+authorized open action and retains draft/pending-command guards and failures.
+After selection, Identity and snapshot MUST include an icon-bearing type chip:
+Local JJ for the registered Git-backed folder profile and Server Hosted for
+native server-managed storage, including a LocalTrusted service. Chip tones
+distinguish these types without relying on colour alone. Read-only Settings
+values use an owned reusable row composed with public Design Core controls.
+Copying is explicitly enabled for identifiers and hashes, or implicitly
+available when the value has an internal Open action. Ordinary names, statuses,
+counts and descriptive values remain plain text without copy controls or
+row-click behavior. Clicking any part of a copyable row or activating its copy
+button with Enter or Space copies the full value, with circular tick feedback
+and an announced failure/retry state. The entire copy target remains stable
+throughout a pointer press, including on labels and values. Each successful copy
+animates the tick unless reduced motion is enabled. Long values truncate in the
+available space; missing values retain their availability label without a copy
+action. A separate trailing Open action is offered only for valid app
+destinations and does not copy. Rows without Open reserve the same trailing
+action space so their copy buttons align with rows that have a link. This empty
+space adds no focusable control. Settings navigation preserves drafts and
+pending-action guards. Feedback clears when the value changes or the row is
+removed.
 
 The optional native folder picker joins Folder path to a Git-icon Browse button.
 The path/Browse group fills its available control column, with the input taking

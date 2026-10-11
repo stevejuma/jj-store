@@ -33,6 +33,11 @@ preferences and responsive navigation styles are maintained under `web/src/lib`.
 Their provenance identifies the owned derivation; production imports no
 Community or catalog source. Public Design Core primitives remain dependencies.
 
+E-SETTINGS-REPOSITORY-001 retains JST-GOV-008 ownership: Identity and snapshot
+rows are an application-authored component using the maintained CommunityChip
+and public Design Core controls. Empty-state selection reuses the existing owned
+picker and authorization; no Community source is copied or imported.
+
 `docs/ui-provenance.json` requires both `spec-governance.md` and `ui.md`. The
 isolated `docs/capture-preview.md` runbook maps to `cli.md` and
 `collaboration.md`; its launcher and admission examples remain governed
