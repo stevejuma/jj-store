@@ -53,11 +53,14 @@ links restore the selected presentation after a cold page load. Agent item
 wrappers reserve two pixels above and below each row, leaving at least four
 pixels between neighboring hover/selected backgrounds in both directories and
 repository listings, including measured virtual rows. The agent header and
-session comment footer remain outside the scrolling body in both layouts. The
-footer adds human comments to the selected native session through an exact
-immutable session anchor; session comments appear after its recorded transcript.
-Drafts retain repository/session identity across Close, Settings and layout
-changes. Read-only and unsupported local profiles do not offer a writable
+classic session comment footer remain outside the scrolling body in both
+layouts. Document mode places session reviews after the recorded transcript. A
+collapsed Add review action with a review icon and chevron opens the same muted
+disclosure and white avatar/editor card as draft comments; Classic keeps it in
+the footer. The editor retains Markdown controls and adds human comments through
+an exact immutable session anchor; saved comments appear after the recorded
+transcript. Drafts retain repository/session identity across Close, Settings and
+layout changes. Read-only and unsupported local profiles do not offer a writable
 composer; pending or unknown outcomes retain drafts and stable request
 identities.
 

@@ -2655,7 +2655,7 @@
     },
     {
       "local": "web/src/lib/ui/store-collaboration/StoreAgentComments.svelte",
-      "reason": "Native session-comment integration composing owned ReviewStore conversation and composer components; locally authored, not copied from Community."
+      "reason": "Native session-comment integration composing owned ReviewStore conversation, avatar/comment-card presentation and the Markdown composer inside a public Design Core disclosure; locally authored, not copied from Community."
     },
     {
       "local": "web/src/lib/collaboration/review-comment-rows.ts",

@@ -102,7 +102,7 @@
     ).toBeNull();
     await userEvent.click(
       within(focused).getByRole("button", {
-        name: "Add session review comment",
+        name: "Add review",
       }),
     );
     const editor = within(focused).getByRole("textbox", {
@@ -194,7 +194,7 @@
       ),
     );
     const reviewAction = within(panel).getByRole("button", {
-      name: "Add session review comment",
+      name: "Add review",
     });
     expect(reviewAction.closest(".store-agent-chat-body")).not.toBeNull();
     expect(panel.querySelector('[data-ui-part="sidebar-footer"]')).toBeNull();

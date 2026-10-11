@@ -29,6 +29,15 @@ disposed bindings. Tool comments, nested replies and session comments retain
 their exact pending request and draft until receipt status confirms publication;
 each inline composer offers that status check.
 
+Stored-session review drafts use an accessible Add review disclosure with a
+review icon and chevron in Document and Classic responses. Its muted context
+contains a white comment card with the repository reviewer's avatar and existing
+Markdown composer. Collapse retains the draft and selected session; an unknown
+request keeps the editor and Check comment status visible until its receipt is
+confirmed. This JST-UI-015/JST-COLLAB-005 presentation does not change
+authorization, exact immutable anchors, request identities or ReviewStore
+publication behavior.
+
 Task detail uses a fixed title/header row and a fixed bottom comment composer.
 Only the intervening metadata, description, subtasks and Activity/comments
 scroll within the available page height. The same layout works on narrow and

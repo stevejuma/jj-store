@@ -1,6 +1,12 @@
 <script lang="ts">
   import { untrack, type Snippet } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
+  import * as Collapsible from "@lapismd/design-core/shadcn/collapsible";
+  import MessageSquarePlusIcon from "@lucide/svelte/icons/message-square-plus";
+  import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
+  import ChatDisclosureIcon from "../store-agent-chat-body/ChatDisclosureIcon.svelte";
+  import { principalMember } from "../../collaboration/presentation.js";
+  import "../store-agent-chat-body/comment-card.css";
   import type { ReviewDetail } from "../../controller/repository-read-types.js";
   import type { StoreController } from "../../controller/contracts.js";
   import { useDrafts } from "../../appearance/drafts.svelte.js";
@@ -155,16 +161,7 @@
           showComposer={false}
           showDiff={false}
         />{/if}
-      {#if inlineComposer && writable}<Button
-          variant="secondary"
-          size="sm"
-          aria-expanded={!!draft.open}
-          onclick={() => (draft.open = !draft.open)}
-          >{draft.open
-            ? "Close session review comment"
-            : "Add session review comment"}</Button
-        >{/if}
-      {#if inlineComposer && (draft.open || draft.pendingRequestId)}{@render composer()}{/if}
+      {#if inlineComposer && writable}{@render composer()}{/if}
     </section>{/if}
   {#if supported && error}<div class="store-agent-comments">
       <p role="alert">{error}</p>
@@ -176,25 +173,67 @@
 {#snippet composer()}
   {#if writable && sessionId && controller}<div
       class="store-agent-comments__composer"
-      data-ui-part="agent-session-footer"
+      data-ui-part="agent-session-review"
     >
-      <CommunityChatComposer
-        mode="form"
-        showSubmitButton
-        bind:value={draft.value}
-        {disabled}
-        busy={controller?.state.status.reviewAction === "refreshing"}
-        ariaLabel="Agent session comment"
-        submitLabel="Add comment"
-        placeholder="Add a comment about this session…"
-        onSubmit={(submission) => submit(submission.content)}
-      />
-      {#if draft.pendingRequestId}<Button
-          variant="secondary"
-          size="sm"
-          onclick={() => controller?.actions.checkReviewAction()}
-          >Check comment status</Button
-        >{/if}
+      <Collapsible.Root
+        class="chat-comment-context"
+        open={!!draft.open || !!draft.pendingRequestId}
+        disabled={!!draft.pendingRequestId}
+        onOpenChange={(open) => (draft.open = open)}
+      >
+        <Collapsible.Trigger>
+          {#snippet child({ props })}
+            <Button
+              {...props}
+              variant="ghost"
+              size="sm"
+              class="store-agent-comments__toggle"
+            >
+              <MessageSquarePlusIcon data-icon="inline-start" />
+              Add review
+              <ChatDisclosureIcon />
+            </Button>
+          {/snippet}
+        </Collapsible.Trigger>
+        <Collapsible.Content class="store-agent-comments__draft">
+          {#if draft.open || draft.pendingRequestId}
+            <div class="chat-comment-list" data-ui-part="agent-session-footer">
+              <div class="chat-comment-card">
+                <CommunityMemberAvatar
+                  member={principalMember(
+                    controller.state.repository.principal ?? "local",
+                  )}
+                  size="xsmall"
+                  decorative
+                />
+                <div class="chat-comment-content">
+                  <CommunityChatComposer
+                    mode="form"
+                    hideAvatar
+                    showSubmitButton
+                    bind:value={draft.value}
+                    {disabled}
+                    busy={controller?.state.status.reviewAction ===
+                      "refreshing"}
+                    ariaLabel="Agent session comment"
+                    submitLabel="Add comment"
+                    placeholder="Add a comment about this session…"
+                    onSubmit={(submission) => submit(submission.content)}
+                  />
+                </div>
+              </div>
+            </div>
+            {#if draft.pendingRequestId}<div class="chat-comment-status">
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onclick={() => controller?.actions.checkReviewAction()}
+                  >Check comment status</Button
+                >
+              </div>{/if}
+          {/if}
+        </Collapsible.Content>
+      </Collapsible.Root>
     </div>{/if}
 {/snippet}
 {@render children(comments, composer)}
@@ -211,6 +250,23 @@
   }
   .store-agent-comments__composer {
     min-width: 0;
-    padding: 0.5rem 0.75rem 0.75rem;
+    padding: 0.5rem 0.75rem;
+  }
+  :global(.store-agent-comments__toggle) {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  :global(.store-agent-comments__draft) {
+    padding-block-start: 0.5rem;
+  }
+  .store-agent-comments__composer :global(.community-chat-composer__surface) {
+    --ui-ai-chat-composer-radius: 0;
+    --ui-ai-chat-composer-padding: 0;
+  }
+  .store-agent-comments__composer
+    :global(.community-chat-composer__surface > [data-ui-part="body"]) {
+    border: 0;
+    padding: 0;
+    box-shadow: none;
   }
 </style>

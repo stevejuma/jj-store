@@ -17,6 +17,9 @@
     const detail = focus
       ? await body.findByRole("region", { name: "Agent response" })
       : await c.findByRole("complementary", { name: "Agent response" });
+    await userEvent.click(
+      within(detail).getByRole("button", { name: "Add review" }),
+    );
     const footer = await within(detail).findByRole("group", {
       name: "Agent session comment",
     });
@@ -143,6 +146,10 @@
     const detail = await c.findByRole("complementary", {
       name: "Agent response",
     });
+    const disclosure = within(detail).getByRole("button", {
+      name: "Add review",
+    });
+    await userEvent.click(disclosure);
     const footer = within(detail).getByRole("group", {
       name: "Agent session comment",
     });
@@ -154,6 +161,8 @@
       within(footer).getByRole("button", { name: "Add comment" }),
     );
     await expect(editor).toHaveTextContent("Retain until receipt");
+    await expect(disclosure).toHaveAttribute("aria-expanded", "true");
+    await expect(disclosure).toBeDisabled();
     await expect(
       within(footer).getByRole("button", { name: "Add comment" }),
     ).toBeDisabled();
