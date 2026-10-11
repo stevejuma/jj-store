@@ -12,6 +12,16 @@
       a11y: { test: "error" },
     },
   });
+  function actionStyle(button: HTMLElement, icon: string, circular: boolean) {
+    expect(button.querySelector("svg")).toHaveClass(`lucide-${icon}`);
+    const box = button.getBoundingClientRect();
+    expect(box.width).toBe(box.height);
+    const radius = getComputedStyle(button).borderTopLeftRadius;
+    const pixels = radius.endsWith("%")
+      ? (parseFloat(radius) * box.width) / 100
+      : parseFloat(radius);
+    expect(pixels >= box.width / 2).toBe(circular);
+  }
   async function layout(canvasElement: HTMLElement, label: string) {
     const c = within(canvasElement);
     await userEvent.click(
@@ -86,15 +96,18 @@
     const stop = c.getByRole("button", { name: "Stop agent" });
     expect(stop).toBeEnabled();
     expect(stop).toHaveAttribute("data-variant", "destructive");
+    actionStyle(stop, "square", false);
     await userEvent.click(draft);
     await userEvent.keyboard("Retained follow-up");
     const queue = c.getByRole("button", { name: "Queue message" });
     expect(queue).toBeEnabled();
     expect(queue).toHaveAttribute("data-variant", "default");
+    await waitFor(() => actionStyle(queue, "arrow-up", true));
     await userEvent.click(draft);
     await userEvent.keyboard("{Control>}a{/Control}{Backspace}");
     await userEvent.click(c.getByRole("button", { name: "Stop agent" }));
-    await c.findByRole("button", { name: "Send message" });
+    const send = await c.findByRole("button", { name: "Send message" });
+    await waitFor(() => actionStyle(send, "send-horizontal", true));
     expect(draft).toHaveTextContent("");
     expect(c.queryByRole("button", { name: "Stop agent" })).toBeNull();
     const command = JSON.parse(

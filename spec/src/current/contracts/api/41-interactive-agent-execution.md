@@ -29,6 +29,12 @@ acceptance. No endpoint, generated DTO, admission, execution-journal or ACP
 control field changes; the queued publication label and captured author are
 internal UI state only.
 
+E-DOCUMENT-SEND-001 retains these wire contracts. The Document footer uses a
+circular send-horizontal action when idle, a destructive rounded-square Stop
+action during active work without content, and a circular arrow-up Queue action
+with content. Only icon and shape presentation change; dispatch, cancellation,
+captured drafts and request receipts retain the existing boundaries.
+
 Status `revision` is the conditional saved-setup revision. Session activity,
 publication and process shutdown do not change it; a setup save or removal does.
 Duplicate original requests retain their receipt without advancing it. A

@@ -43,3 +43,9 @@ default and its clean checkout is retired with local logs in recoverable Trash.
 Only default remains registered in jj-store; the app, API and Storybook retain
 main ownership. Unrelated documentation work and demo data remain preserved.
 This bookkeeping leaves M24 In progress and does not advance its gates.
+
+E-DOCUMENT-SEND-001 restores the Document footer’s circular send-horizontal Send
+action when idle, preserves the destructive rounded-square Stop action during
+active work and uses a circular arrow-up Queue action with captured content.
+Shape and icon transition assertions cover the shared footer. M24 stays In
+progress; wider provider/platform and visual gates remain independent.

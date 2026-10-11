@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import SendIcon from "@lucide/svelte/icons/arrow-up";
+  import SendIcon from "@lucide/svelte/icons/send-horizontal";
+  import QueueIcon from "@lucide/svelte/icons/arrow-up";
   import StopIcon from "@lucide/svelte/icons/square";
   import type { Snippet } from "svelte";
   let {
@@ -49,6 +50,7 @@
   {/if}
   <Button
     size="icon-sm"
+    class={stopSelected ? undefined : "chat-message-footer__send"}
     variant={stopSelected ? "destructive" : "default"}
     disabled={stopSelected ? stopping : !canSend}
     onclick={stopSelected ? onStop : onSend}
@@ -60,7 +62,9 @@
     title={stopSelected
       ? "Stop active work"
       : `${sendLabel} (⌘ / Ctrl + Enter)`}
-    >{#if stopSelected}<StopIcon aria-hidden="true" />{:else}<SendIcon
+    >{#if stopSelected}<StopIcon
+        aria-hidden="true"
+      />{:else if onStop}<QueueIcon aria-hidden="true" />{:else}<SendIcon
         aria-hidden="true"
       />{/if}</Button
   >
@@ -80,6 +84,9 @@
     flex: 1 0 auto;
     min-width: 0;
     max-width: 100%;
+  }
+  .chat-message-footer :global(.chat-message-footer__send) {
+    border-radius: 50%;
   }
   @media (hover: hover) {
     .chat-message-footer :global(.conversation-context-trigger:hover) {

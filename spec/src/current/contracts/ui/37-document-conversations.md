@@ -104,13 +104,15 @@ composer wrapper or independently scrolling input box; the transcript ScrollArea
 owns that space. Classic retains the framed composer. Both presentations share
 mention, emoji, formatting, audience and submission logic; switching preserves
 draft text and selection, and waits for active input composition to finish. The
-fixed footer retains Send and advertised runtime controls. During active work
-the input remains editable after queue acknowledgement. Nonblank authored text
-or pending comments selects an arrow-up Queue message button using the theme
-primary background; addressing tokens and whitespace alone do not select Send.
-With no submission content, the control is a destructive Stop button with a
-square icon. Pending/unknown request safeguards disable submission independently
-of active-turn state. Stop cancels exact active turns (or ends an opening
+fixed footer retains Send and advertised runtime controls. The Document footer's
+idle Send uses a circular button with the send-horizontal icon. During active
+work the input remains editable after queue acknowledgement. Nonblank authored
+text or pending comments selects an arrow-up Queue message button using the
+theme primary background and circular shape; addressing tokens and whitespace
+alone do not select Send. With no submission content, the control is a
+destructive Stop button with a square icon and a rounded-square button shape.
+Pending/unknown request safeguards disable submission independently of
+active-turn state. Stop cancels exact active turns (or ends an opening
 participation before its handshake is connected) and has a separate receipt
 lane, so a pending Send never blocks it or loses its request identity. Unknown
 send confirmation retains a separate Stop action beside disabled Queue while its
