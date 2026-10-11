@@ -48,3 +48,8 @@ loading; inherited diagnostics separate |
 [E-SETTINGS-POLISH-001](../../../../../history/2026/10/11/E-SETTINGS-POLISH-001/index.md)
 | 2026-10-11 | pending | Focused Settings refinement; inherited diagnostics and
 visual approval remain separate |
+
+[E-LOCAL-SERVICE-ICONS-001](../../../../../history/2026/10/12/E-LOCAL-SERVICE-ICONS-001/index.md)
+reviews M14.2 without changing its Done status. Launch/Storage row icon
+selection now follows each setting's meaning while retaining Copy and navigation
+behavior.

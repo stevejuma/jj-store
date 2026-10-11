@@ -9,6 +9,23 @@
   import ShieldIcon from "@lucide/svelte/icons/shield";
   import SettingsIcon from "@lucide/svelte/icons/settings-2";
   import NetworkIcon from "@lucide/svelte/icons/network";
+  import ArchiveIcon from "@lucide/svelte/icons/archive";
+  import BookOpenIcon from "@lucide/svelte/icons/book-open";
+  import ContainerIcon from "@lucide/svelte/icons/container";
+  import FileBadgeIcon from "@lucide/svelte/icons/file-badge";
+  import FileCodeIcon from "@lucide/svelte/icons/file-code-corner";
+  import FileJsonIcon from "@lucide/svelte/icons/file-json";
+  import FingerprintIcon from "@lucide/svelte/icons/fingerprint";
+  import GlobeIcon from "@lucide/svelte/icons/globe";
+  import HardDriveIcon from "@lucide/svelte/icons/hard-drive";
+  import KeyIcon from "@lucide/svelte/icons/key-round";
+  import MapPinIcon from "@lucide/svelte/icons/map-pin";
+  import MessageSquareIcon from "@lucide/svelte/icons/message-square";
+  import PlugIcon from "@lucide/svelte/icons/plug";
+  import ShieldCheckIcon from "@lucide/svelte/icons/shield-check";
+  import ShieldUserIcon from "@lucide/svelte/icons/shield-user";
+  import TerminalIcon from "@lucide/svelte/icons/terminal";
+  import type { Component } from "svelte";
   import type { ServerSettingsManagement } from "../../controller/server-settings.svelte.js";
   let {
     management,
@@ -44,6 +61,39 @@
     "access.rpc_socket": "Native RPC socket",
     "storage.runtime_executable": "Runtime executable",
   };
+  // Describe the setting's purpose, independently of whether its value is a path.
+  const rowIcons: Readonly<Record<string, Component>> = {
+    bind: NetworkIcon,
+    public_url: GlobeIcon,
+    state_dir: FolderIcon,
+    operator_policy: ShieldCheckIcon,
+    web_root: FileCodeIcon,
+    format: FileJsonIcon,
+    development_browser_annotations: MessageSquareIcon,
+    "access.catalog": BookOpenIcon,
+    "access.installation": FingerprintIcon,
+    "access.mode": ShieldIcon,
+    "access.permission": ShieldCheckIcon,
+    "access.rpc_socket": PlugIcon,
+    tls: ShieldCheckIcon,
+    "tls.certificate": FileBadgeIcon,
+    "tls.private_key": KeyIcon,
+    "storage.mode": DatabaseIcon,
+    "storage.volume": HardDriveIcon,
+    "storage.runtime_executable": TerminalIcon,
+    "storage.installation": FingerprintIcon,
+    "storage.ownership": ShieldUserIcon,
+  };
+  function iconFor(name: string): Component {
+    if (rowIcons[name]) return rowIcons[name];
+    if (/(?:^|\.)credentials(?:\.|$)/.test(name)) return KeyIcon;
+    if (/(?:^|\.)(?:address|endpoint)$/.test(name)) return NetworkIcon;
+    if (name.endsWith(".bucket")) return ContainerIcon;
+    if (name.endsWith(".region")) return MapPinIcon;
+    if (/(?:^|\.)insecure_loopback$/.test(name)) return ShieldIcon;
+    if (name.startsWith("backup")) return ArchiveIcon;
+    return SettingsIcon;
+  }
   function groupFor(name: string) {
     if (section === "service") {
       if (name.startsWith("access.") || name === "operator_policy")
@@ -129,15 +179,7 @@
               value={item.saved}
               copyable={(path || /(?:endpoint|public_url)$/.test(item.name)) &&
                 !["Not configured", "None", ""].includes(item.saved)}
-              Icon={path
-                ? FolderIcon
-                : /(?:address|bind|url|endpoint|socket)/.test(item.name)
-                  ? NetworkIcon
-                  : /(?:mode|permission|credential|tls|insecure)/.test(
-                        item.name,
-                      )
-                    ? ShieldIcon
-                    : SettingsIcon}
+              Icon={iconFor(item.name)}
               description={item.saved !== item.effective
                 ? `Running: ${item.effective}`
                 : undefined}

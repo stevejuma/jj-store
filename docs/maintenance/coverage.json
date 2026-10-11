@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Global Settings URL/history and validated startup destination with selected-page skeleton geometry, single footer dividers and unchanged server configuration/authorization contracts",
-      "fingerprint": "919eea5e880fc587f698aba77062d6cd6ccb7c7800ea2ea3ac2496b0f9143456"
+      "reason": "Local service Launch and Storage row icons now describe setting purpose independently of copyable paths; labels, exact copy values, grouping and behavior unchanged",
+      "fingerprint": "08137199d791b9527c335ed2ae82f43974992b8afaa62efc82d3288de488d8d2"
     }
   },
   {
