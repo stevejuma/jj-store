@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { ownRepositorySettingsGuard } from "../store-settings/repository-settings-guard.svelte.js";
+  import StoreApplicationHeaderCenter from "./StoreApplicationHeaderCenter.svelte";
   import StoreApplicationAgents from "./StoreApplicationAgents.svelte";
   import StoreApplicationOverlays from "./StoreApplicationOverlays.svelte";
   import StoreLazyView from "./StoreLazyView.svelte";
@@ -8,7 +10,6 @@
   provideTerminalControls();
   import StoreIndexPreparationNotice from "./StoreIndexPreparationNotice.svelte";
   import StoreApplicationMain from "./StoreApplicationMain.svelte";
-  import { isStacksRoute } from "../../controller/store-stacks-navigation.js";
   import StoreHelp from "../store-help/StoreHelp.svelte";
   import { ownApplicationNotifications } from "../../notifications/notification-context.svelte.js";
   import StoreNotificationHost from "../store-notifications/StoreNotificationHost.svelte";
@@ -26,16 +27,13 @@
     selectStoreNavigation,
     activeStoreNavigation,
   } from "./store-navigation.js";
-  import StoreStackWorkspacePicker from "../store-stack-workspace/StoreStackWorkspacePicker.svelte";
-  import StoreProjectsBreadcrumb from "../store-work/StoreProjectsBreadcrumb.svelte";
-  import StoreThreadsBreadcrumb from "../store-threads/StoreThreadsBreadcrumb.svelte";
-  import { isRepositoryProjects } from "../../controller/projects-view-cache.js";
   import StoreThreadFocus from "../store-threads/StoreThreadFocus.svelte";
   import { createApplicationThreadPanel as ownThreadPanel } from "../store-threads/thread-panel.svelte.js";
   import { onDestroy, setContext, untrack } from "svelte";
   import type { StoreApplicationProps } from "./application-props.js";
   import { isMacDesktopWindow } from "../../desktop-chrome.js";
   import "./store-application.css";
+  import "./store-application-settings.css";
   import { workspaceNavigationKey } from "./workspace-navigation.js";
   import CommunityAppShell from "../community-app-shell/CommunityAppShell.svelte";
   import StoreApplicationNavigation from "./StoreApplicationNavigation.svelte";
@@ -44,7 +42,6 @@
     CommunityNavigationItemModel,
   } from "../community-navigation/model.js";
   import CommunityProfileMenu from "../community-profile-menu/CommunityProfileMenu.svelte";
-  import StoreSettingsRepository from "../store-settings/StoreSettingsRepository.svelte";
   import StoreSettingsNavigation from "../store-settings/StoreSettingsNavigation.svelte";
   import type { StoreSettingsSection } from "../store-settings/model.js";
   import StoreApplicationHeaderActions from "./StoreApplicationHeaderActions.svelte";
@@ -128,11 +125,23 @@
     storage,
   );
   const current = $derived(controller.state.route);
+  const settingsGuard = ownRepositorySettingsGuard({
+    controller: () => controller,
+    blocked: () => workspaceBlocked,
+    stacksLocked: () => Boolean(stackWorkspace?.locked),
+    showMain: () => {
+      if (shell.mobile.resolvedMode === "mobile") shell.mobile.showMain();
+    },
+  });
   observeAgentChats(() => controller);
   let searchOpen = $state(false);
   let settingsOpen = $state(false);
+  const repositorySettingsOpen = $derived(current.page === "settings");
   $effect(() => {
-    controller.actions.setRefreshPaused?.("settings", settingsOpen);
+    controller.actions.setRefreshPaused?.(
+      "settings",
+      settingsOpen || repositorySettingsOpen,
+    );
     return () => controller.actions.setRefreshPaused?.("settings", false);
   });
   let settingsSection = $state<StoreSettingsSection>("service");
@@ -150,6 +159,7 @@
   }
   function select(item: CommunityNavigationItemModel) {
     if (editorOpen) return;
+    if (!settingsGuard.allow(item)) return;
     selectStoreNavigation(controller, item);
     if (shell.mobile.resolvedMode === "mobile") shell.mobile.showMain();
   }
@@ -177,14 +187,6 @@
 
 {#snippet agents()}<StoreApplicationAgents {controller} {current} />{/snippet}
 
-{#snippet settingsRepository()}
-  <StoreSettingsRepository
-    {controller}
-    section={settingsSection}
-    disabled={workspaceBlocked}
-  />
-{/snippet}
-
 <CommunityAppShell
   controller={shell}
   {displayMode}
@@ -194,16 +196,15 @@
   onNavigateBack={() => navigate(-1)}
   onNavigateForward={() => navigate(1)}
 >
-  {#snippet headerCenter()}{#if settingsOpen}{@render settingsRepository()}{:else if isStacksRoute(current) && stackWorkspace?.snapshot?.repository === current.repository}<StoreStackWorkspacePicker
-        controller={stackWorkspace}
-        disabled={editorOpen}
-      />{:else if current.page === "projects" && controller.projects && !isRepositoryProjects(current)}<StoreProjectsBreadcrumb
-        {controller}
-      />{:else if !settingsOpen && current.page === "threads"}<StoreThreadsBreadcrumb
-        {controller}
-      />{/if}{/snippet}
-  {#snippet headerEnd()}{#if !settingsOpen && ((current.agentsHub && (current.agentView === "session" || current.agentView === "sessions")) || (current.page === "threads" && current.threadId))}<StoreWorkspaceToggle
-      />{:else if !settingsOpen && (!current.agentsHub || controller.execution?.chat.open)}<StoreApplicationHeaderActions
+  {#snippet headerCenter()}<StoreApplicationHeaderCenter
+      {controller}
+      {stackWorkspace}
+      {current}
+      {editorOpen}
+      hidden={settingsOpen || repositorySettingsOpen}
+    />{/snippet}
+  {#snippet headerEnd()}{#if !repositorySettingsOpen && !settingsOpen && ((current.agentsHub && (current.agentView === "session" || current.agentView === "sessions")) || (current.page === "threads" && current.threadId))}<StoreWorkspaceToggle
+      />{:else if !repositorySettingsOpen && !settingsOpen && (!current.agentsHub || controller.execution?.chat.open)}<StoreApplicationHeaderActions
         {controller}
         disabled={editorOpen}
         detailsOpen={!detailsRail.closed}
@@ -253,7 +254,7 @@
     {current}
     {settingsOpen}
     {settingsSection}
-    {settingsRepository}
+    openRepositorySettings={() => settingsGuard.open()}
     {closeSettings}
     conflictOpen={editorOpen}
     {workspaceBlocked}
@@ -264,7 +265,7 @@
     {selectPage}
     {children}
     {agents}
-    linkFolder={() => openSettings("repository")}
+    linkFolder={() => settingsGuard.open("folders")}
   />
   {#if !settingsOpen && current.agentsHub && controller.execution && !controller.execution.chat.open}<StoreLazyView
       load={views.agentDetails}
@@ -276,19 +277,29 @@
           route={current}
         />{/snippet}</StoreLazyView
     >{/if}
-  {#if !settingsOpen}<StoreApplicationRightPanels
+  <div
+    hidden={settingsOpen || repositorySettingsOpen}
+    class="store-repository-panels"
+  >
+    <StoreApplicationRightPanels
       {controller}
       {stackWorkspace}
       {shell}
       onSelectPage={selectPage}
-      onRepositorySettings={() => openSettings("repository")}
       threadFocused={threadPanel.focused}
-    />{/if}
+    />
+  </div>
   <StoreFocusedDiscussion
-    open={!settingsOpen && !editorOpen && !threadPanel.focused}
+    open={!settingsOpen &&
+      !repositorySettingsOpen &&
+      !editorOpen &&
+      !threadPanel.focused}
   />
   <StoreThreadFocus
-    open={!settingsOpen && !editorOpen && threadPanel.focused}
+    open={!settingsOpen &&
+      !repositorySettingsOpen &&
+      !editorOpen &&
+      threadPanel.focused}
     {controller}
   />
   <StoreApplicationOverlays
@@ -299,6 +310,7 @@
     bind:conflictOpen
     bind:searchOpen
     {conflictReturnFocus}
+    settingsNavigationNotice={settingsGuard.notice}
   />
 </CommunityAppShell>
 

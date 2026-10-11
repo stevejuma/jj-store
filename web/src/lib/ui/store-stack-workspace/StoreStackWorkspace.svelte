@@ -2,6 +2,7 @@
   import * as Empty from "@lapismd/design-core/shadcn/empty";
   import type { Snippet } from "svelte";
   import type { StoreStacksView } from "../../controller/store-stacks-navigation.js";
+  import StoreRepositorySettingsButton from "../store-settings/StoreRepositorySettingsButton.svelte";
   import StoreStacksNavigation from "./StoreStacksNavigation.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import StoreStackFolderCopy from "./StoreStackFolderCopy.svelte";
@@ -39,6 +40,7 @@
     showStackActions = true,
     showPicker = true,
     onSettings,
+    onRepositorySettings,
     focusedView,
     onSelectView,
     historyMode,
@@ -50,6 +52,7 @@
     showStackActions?: boolean;
     showPicker?: boolean;
     onSettings?: () => void;
+    onRepositorySettings?: () => void;
     focusedView?: StoreStacksView;
     onSelectView?: (view: StoreStacksView) => void;
     historyMode?: "live" | "pinned";
@@ -164,7 +167,10 @@
         {onSettings}
         {historyMode}
         {onHistoryMode}
-      />{/snippet}
+      />{#if onRepositorySettings}<StoreRepositorySettingsButton
+          disabled={controller.locked}
+          onOpen={onRepositorySettings}
+        />{/if}{/snippet}
   </StoreStacksNavigation>
   {#if !snapshot || !controller.snapshotLoaded || !eligible}
     <StoreStackWorkspaceState {controller} />

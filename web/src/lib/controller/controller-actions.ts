@@ -23,6 +23,10 @@ export type StoreControllerActions = {
     section?: import("./settings-refresh.js").SettingsRefreshScope,
   ): Promise<void>;
   setRefreshPaused?(key: string, paused: boolean): void;
+  setNavigationGuard?(
+    key: string,
+    guard?: (current: StoreRoute, next: StoreRoute) => string,
+  ): void;
   refreshWorkspaceLinks(): Promise<void>;
   setWorkspacePath(path: string): void;
   linkWorkspace(): Promise<void>;
@@ -97,6 +101,15 @@ export type StoreControllerActions = {
     historyMode?: "live" | "pinned",
   ): void | Promise<void>;
   leaveStacks(): void | Promise<void>;
+  openRepositorySettings(
+    section?: import("./repository-settings-navigation.js").RepositorySettingsSection,
+  ): void | Promise<void>;
+  selectRepositorySettings(
+    section: import("./repository-settings-navigation.js").RepositorySettingsSection,
+    tab?: import("./repository-settings-navigation.js").RepositorySettingsTab,
+    replace?: boolean,
+  ): void | Promise<void>;
+  leaveRepositorySettings(): void | Promise<void>;
   navigate(delta: -1 | 1): void | Promise<void>;
   selectBookmark(name: string): void | Promise<void>;
   selectWorkingCopy(commit: string, workspace?: string): void | Promise<void>;

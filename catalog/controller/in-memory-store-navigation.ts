@@ -1,3 +1,4 @@
+import { createRepositorySettingsNavigation } from "../../web/src/lib/controller/repository-settings-navigation.js";
 import { workspaceSelectedRoute } from "../../web/src/lib/controller/store-workspaces.js";
 import {
   createStoreStacksNavigation,
@@ -13,8 +14,15 @@ export function createInMemoryStoreNavigation(context: {
   push(route: StoreRoute): void;
   workingCopies: readonly RepositoryWorkingCopy[];
 }) {
+  const repositorySettings = createRepositorySettingsNavigation({
+    ...context,
+    replace: context.push,
+  });
   const stacks = createStoreStacksNavigation(context);
   return {
+    openRepositorySettings: repositorySettings.open,
+    selectRepositorySettings: repositorySettings.select,
+    leaveRepositorySettings: repositorySettings.leave,
     selectStacksView: stacks.select,
     leaveStacks: stacks.leave,
     selectWorkspace(workspace: string | null) {

@@ -1,0 +1,4 @@
+- [Validation](details-02.md)
+- [Validation continued](details-03.md)
+- [Outcome and reviews](details-04.md)
+- [Final checks](details-05.md)

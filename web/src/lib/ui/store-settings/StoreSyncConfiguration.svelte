@@ -51,8 +51,7 @@
   <div>
     <dt>Repository</dt>
     <dd>
-      {repositoryName ||
-        "Select a native repository in the Settings repository picker."}
+      {repositoryName || "Repository identity is not loaded yet."}
     </dd>
   </div>
   <div>

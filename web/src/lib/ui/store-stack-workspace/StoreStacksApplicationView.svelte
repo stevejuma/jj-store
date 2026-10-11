@@ -8,10 +8,12 @@
     controller,
     workspace,
     history,
+    onRepositorySettings,
   }: {
     controller: StoreController;
     workspace: StackWorkspaceController;
     history: Snippet;
+    onRepositorySettings?: () => void;
   } = $props();
   const route = $derived(controller.state.route);
   const view = $derived(stacksRouteView(route));
@@ -51,4 +53,5 @@
   }}
   onSettings={() => (workspace.settingsOpen = true)}
   {history}
+  {onRepositorySettings}
 />

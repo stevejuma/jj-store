@@ -15,7 +15,7 @@
       await c.findByRole("button", { name: "Workspace actions" }),
     );
     await userEvent.click(
-      await portal.findByRole("menuitem", { name: "Settings" }),
+      await portal.findByRole("menuitem", { name: "Workspace settings" }),
     );
     const panel = await c.findByRole("complementary", {
       name: "Workspace settings",

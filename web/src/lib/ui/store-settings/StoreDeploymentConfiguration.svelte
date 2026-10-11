@@ -19,8 +19,9 @@
         : "Authority storage configuration"}
     </h2>
     <p>
-      These values are managed by setup and launch. Operational limits, Search,
-      Agents, protection and Sync have editors in their respective sections.
+      These values are managed by setup and launch. Operational limits and
+      Protection are under Local service; Agents are global. Search and Sync
+      have editors in repository settings.
     </p>
   </header>
   {#if management?.available() && management.state.value}

@@ -1,0 +1,6 @@
+.store-repository-panels {
+  display: contents;
+}
+.store-repository-panels[hidden] {
+  display: none;
+}

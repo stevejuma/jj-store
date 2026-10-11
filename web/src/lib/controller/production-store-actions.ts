@@ -1,3 +1,4 @@
+import { repositorySettingsActions } from "./repository-settings-actions.js";
 import { isStacksRoute } from "./store-stacks-navigation.js";
 import { workspaceSelectedRoute } from "./store-workspaces.js";
 import type { StoreController } from "./contracts.js";
@@ -219,10 +220,7 @@ export function createProductionStoreActions(options: {
             : "ready";
       } else await options.restoreRoute();
     },
-    async leaveStacks() {
-      options.history.stacks.leave();
-      await options.restoreRoute();
-    },
+    ...repositorySettingsActions(options.history, options.restoreRoute),
     async navigate(delta) {
       if (options.history.navigate(delta)) await options.restoreRoute();
     },

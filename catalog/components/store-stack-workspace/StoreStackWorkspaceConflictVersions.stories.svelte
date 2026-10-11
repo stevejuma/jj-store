@@ -70,7 +70,7 @@
       canvas.getByRole("button", { name: "Workspace actions" }),
     );
     const standardMenuItem = page.getByRole("menuitem", {
-      name: "Settings",
+      name: "Workspace settings",
     });
     const fontFields = [
       "fontFamily",

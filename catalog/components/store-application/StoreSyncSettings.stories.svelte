@@ -45,13 +45,12 @@
     await expect(
       c.getByText("No upstream is configured. Repository work remains local."),
     ).toBeVisible();
-    await expect(c.getByRole("tab", { name: "Progress" })).toBeDisabled();
-    const empty = c
-      .getByText("WorkStore sync is not supported.")
-      .closest('[data-slot="empty"]')!;
     await expect(
-      empty.querySelector('[data-ui-part="empty-media"] svg'),
-    ).toBeVisible();
+      c.queryByRole("tab", { name: "Progress" }),
+    ).not.toBeInTheDocument();
+    await expect(
+      c.queryByText("WorkStore sync is not supported."),
+    ).not.toBeInTheDocument();
     await expect(
       c
         .getByText("No upstream is configured. Repository work remains local.")

@@ -412,3 +412,29 @@ test("global Agents and recorded repository history survive Back, Forward and re
   history.destroy();
   reload.destroy();
 });
+
+test("settings history retains tabs and refuses guarded external owner changes", () => {
+  const initial = `#/repos/${repository}/oplog?at_op=${operation}&operation=${operation}`;
+  const navigation = fakeBrowser(initial),
+    history = createStoreRouteHistory(navigation.browser);
+  const entry = history.route;
+  history.repositorySettings.open();
+  history.repositorySettings.select("search", "scopes");
+  const scopes = storeRouteToHash(history.route)!;
+  history.repositorySettings.select("storage", "maintenance");
+  navigation.visit(scopes);
+  expect(history.route.repositorySettingsTab).toBe("scopes");
+  history.setNavigationGuard("pending", (current, next) =>
+    current.repository !== next.repository ? "Resolve pending storage" : "",
+  );
+  navigation.visit(`#/repos/${"ef".repeat(16)}/settings?section=general`);
+  expect(history.route.repository).toBe(repository);
+  expect(navigation.replaced.at(-1)).toBe(scopes);
+  expect(history.error).toBe("Resolve pending storage");
+  history.repositorySettings.leave();
+  expect(history.route).toEqual(entry);
+  history.setNavigationGuard("pending");
+  navigation.visit(`#/repos/${"ef".repeat(16)}/settings?section=general`);
+  expect(history.route.repository).toBe("ef".repeat(16));
+  history.destroy();
+});

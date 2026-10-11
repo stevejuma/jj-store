@@ -1,9 +1,10 @@
 # Local management delivery
 
-This staged extension keeps the transient Settings shell and automatic snapshot
-refresh contract. It adds Local service, Repository, Agents, Search, Storage and
-Sync sections as their operations become available. The milestone ledger is the
-single source of delivery status; this section defines the accepted scope.
+This staged extension keeps global Settings transient and makes repository
+Settings routed and automatic snapshot refresh contract. It adds Local service,
+Repository, Agents, Search, Storage and Sync sections as their operations become
+available. The milestone ledger is the single source of delivery status; this
+section defines the accepted scope.
 
 Local management uses versioned owned capabilities, profile-aware workspace
 links, settings revisions and bounded operation reports. Service interfaces
@@ -75,22 +76,13 @@ strip. The section icon and title come first, followed by horizontally
 scrollable tabs. Search configuration/scopes/health, native Local folders,
 Storage and Sync place their current refresh action at the far right as a ghost
 icon-only button with its accessible name and public shadcn tooltip. Existing
-capability, loading and pending-action guards remain intact. Back remains in the
-Settings sidebar.
+capability, loading and pending-action guards remain intact. Global Back remains
+in the Settings sidebar; repository Back uses the body header.
 
-Repository-specific Settings sections center the existing repository Command
-View picker in the application header, including the mobile toolbar. Appearance
-Local service and Agents omit this picker. Its trigger uses a transparent,
-borderless ghost style with muted text, fits its content up to 11rem and
-truncates long names with an ellipsis. Opening from Projects shows Choose
-repository until explicitly selected. Selection uses the existing
-repository-open action, refreshes Settings and retains the active section;
-selecting the current repository is a no-op and preserves the selected
-historical snapshot. Dirty Search and folder drafts, pending Storage commands,
-active Settings work and guarded code edits prevent a repository change and
-explain the reason in a tooltip. Repository switching retains the existing
-teardown and stale-response protections. Settings section selection itself
-remains transient and does not write the route.
+Repository settings are scoped by their repository URL and have no repository
+picker. Installation-wide Protection and storage configuration live under Local
+service. Dirty drafts, pending commands and active work retain their existing
+owner-change guards; same-repository settings navigation preserves that owner.
 
 Repository review creation and Refresh share one trailing action group at the
 far right of the Reviews header.

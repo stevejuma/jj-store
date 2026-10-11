@@ -1,3 +1,4 @@
+import { storePageRoute } from "./store-stacks-navigation.js";
 import {
   repositorySource,
   selectedRepository,
@@ -34,6 +35,17 @@ export async function connectRepositorySource(
   repository: string,
   token: string | null,
 ) {
+  if (
+    options.history.route.repository &&
+    options.history.route.repository !== repository &&
+    !options.history.canNavigateTo({
+      ...storePageRoute(options.history.route, "files"),
+      repository,
+      snapshotOperationId: null,
+      workspace: null,
+    })
+  )
+    return;
   options.disconnect("", false, true);
   options.data.status.connection = "connecting";
   const ticket = options.nextVersion(),

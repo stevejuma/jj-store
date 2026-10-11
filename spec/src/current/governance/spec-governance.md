@@ -190,3 +190,11 @@ session-only projection are application-authored under web/src/lib, with native
 ownership declarations in docs/ui-provenance.json. The shared footer composes
 the public Design Core primary Button and Lucide arrow-up; existing copied
 Community attribution remains intact. No external source dependency is added.
+
+E-SETTINGS-SPLIT-001 retains JST-GOV-002/008 source ownership. Repository
+Settings routes, guards and category models are application-authored; maintained
+Community presentation remains owned under web/src/lib and released Design Core
+supplies shared controls. Extracted header/layout helpers are declared in
+provenance. Settings navigation changes client URL/session state only; server
+API, configuration formats, authorization and repository authority are
+unchanged.

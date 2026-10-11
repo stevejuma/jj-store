@@ -1,65 +1,96 @@
 <script lang="ts">
-  import { untrack } from "svelte";
-  import type { StoreController } from "../../web/src/lib/controller/contracts.js";
-  import StoreRepositorySettings from "../../web/src/lib/ui/store-settings/StoreRepositorySettings.svelte";
+  import { untrack, onDestroy } from "svelte";
+  import type {
+    StoreController,
+    StoreRoute,
+  } from "../../web/src/lib/controller/contracts.js";
+  import StoreRepositorySettingsView from "../../web/src/lib/ui/store-settings/StoreRepositorySettingsView.svelte";
+  import { createRepositorySettingsNavigation } from "../../web/src/lib/controller/repository-settings-navigation.js";
   import { createInMemoryStoreController } from "../controller/in-memory-store-controller.svelte.js";
-
+  import { createServerSettings } from "../../web/src/lib/controller/server-settings.svelte.js";
+  import { serverSettingsValue } from "./server-settings.js";
   let {
-    initialRepository = "",
-    retainedRepository = false,
-    blocked = false,
-    failSelection = false,
+    local = false,
+    reader = false,
+    section = "general",
+    tab,
   }: {
-    initialRepository?: string;
-    retainedRepository?: boolean;
-    blocked?: boolean;
-    failSelection?: boolean;
+    local?: boolean;
+    reader?: boolean;
+    section?:
+      "general" | "folders" | "search" | "storage" | "sync" | "advanced";
+    tab?: "health" | "scopes";
   } = $props();
-  let selected = $state(untrack(() => initialRepository));
-  const base = untrack(() => createInMemoryStoreController());
-  const repositories = [
-    {
-      id: "jj-store",
-      name: "Managed repository",
-      profile: "native",
-      permission: "admin",
-    },
-    {
-      id: "local-jj",
-      name: "Folder repository",
-      profile: "git_sha1_jj045",
-      permission: "write",
-    },
-  ] as const;
+  const base = untrack(() => createInMemoryStoreController("files"));
+  const capabilities = untrack(() => base.state.settings.capabilities);
+  if (!capabilities || !("native_profile" in capabilities))
+    throw new Error("Native Settings fixture required.");
+  const repository = "ab".repeat(16);
+  let route = $state<StoreRoute>(
+    untrack(() => ({
+      ...base.state.route,
+      repository,
+      page: "settings",
+      bookmark: "",
+      commitId: null,
+      repositorySettingsSection: section,
+      repositorySettingsTab: tab,
+    })),
+  );
+  let folderPath = $state("");
+  const navigation = createRepositorySettingsNavigation({
+    route: () => route,
+    push: (next) => (route = next),
+    replace: (next) => (route = next),
+  });
+  const configuration = createServerSettings({
+    available: () => !reader,
+    client: { close() {}, request: async () => serverSettingsValue() } as never,
+  });
+  onDestroy(() => configuration.destroy());
   const controller: StoreController = {
-    get state() {
+    configuration,
+    get state(): StoreController["state"] {
       return {
         ...base.state,
-        repositories,
-        repository:
-          repositories.find((repository) => repository.id === selected) ??
-          (retainedRepository
-            ? repositories[0]
-            : { id: "", name: "", permission: null }),
-        route: {
-          ...base.state.route,
-          repository: selected,
-          projectsHub: !selected,
+        accessMode: reader ? "authenticated" : "local_trusted",
+        repository: {
+          id: repository,
+          name: local ? "Folder repository" : "Managed repository",
+          profile: local ? "git_sha1_jj045" : "native",
+          permission: reader ? "read" : "admin",
         },
+        route,
         settings: {
           ...base.state.settings,
-          workspacePath: blocked ? "/retained/draft" : "",
+          workspacePath: folderPath,
+          capabilities: {
+            ...capabilities,
+            search: !local,
+            index_tasks: !local,
+            local_workspace_links: !local && !reader,
+            local_storage_management: !local && !reader,
+            local_sync_management: !local && !reader,
+          },
         },
       };
     },
     actions: {
       ...base.actions,
-      async openRepository(repository) {
-        if (failSelection) throw new Error("Repository access was denied.");
-        selected = repository;
+      openRepositorySettings: navigation.open,
+      selectRepositorySettings: navigation.select,
+      leaveRepositorySettings: navigation.leave,
+      setWorkspacePath(path) {
+        folderPath = path;
       },
     },
   };
 </script>
 
-<main><StoreRepositorySettings {controller} /></main>
+<main>
+  <StoreRepositorySettingsView {controller} /><output
+    aria-label="Settings route"
+    >{route.page}:{route.repositorySettingsSection}:{route.repositorySettingsTab ??
+      ""}</output
+  >
+</main>

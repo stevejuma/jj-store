@@ -3,9 +3,6 @@
   import BotIcon from "@lucide/svelte/icons/bot";
   import PaletteIcon from "@lucide/svelte/icons/palette";
   import ArrowLeftIcon from "@lucide/svelte/icons/arrow-left";
-  import DatabaseIcon from "@lucide/svelte/icons/database";
-  import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
-  import SearchIcon from "@lucide/svelte/icons/search";
   import ServerIcon from "@lucide/svelte/icons/server";
   import type { StoreSettingsSection } from "./model.js";
   import "./StoreSettingsNavigation.css";
@@ -27,10 +24,6 @@
     { id: "service", label: "Local service", icon: ServerIcon },
     { id: "agents", label: "Agents", icon: BotIcon },
     { id: "compute", label: "Compute", icon: ServerIcon },
-    { id: "repository", label: "Repository", icon: DatabaseIcon },
-    { id: "search", label: "Search", icon: SearchIcon },
-    { id: "storage", label: "Storage", icon: DatabaseIcon },
-    { id: "sync", label: "Sync", icon: RefreshCwIcon },
   ] as const;
 </script>
 

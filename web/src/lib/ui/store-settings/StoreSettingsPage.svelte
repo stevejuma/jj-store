@@ -10,7 +10,7 @@
   import * as Tooltip from "@lapismd/design-core/shadcn/tooltip";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import StoreViewTabs from "../store-application/StoreViewTabs.svelte";
-  import type { StoreSettingsSection } from "./model.js";
+  import type { StoreSettingsPageSection } from "./model.js";
   import "./StoreSettings.css";
 
   let {
@@ -20,17 +20,22 @@
     onRefresh,
     refreshLabel = "Refresh settings",
     refreshDisabled = false,
+    embedded = false,
+    onSelect,
     children,
   }: {
-    section: StoreSettingsSection;
+    section: StoreSettingsPageSection;
     tabs?: readonly { value: string; label: string; disabled?: boolean }[];
     value?: string;
     onRefresh?: () => Promise<void>;
     refreshLabel?: string;
     refreshDisabled?: boolean;
+    embedded?: boolean;
+    onSelect?: (value: string) => void;
     children: Snippet;
   } = $props();
 
+  const titleId = $props.id();
   const title = $derived(
     section === "appearance"
       ? "Appearance"
@@ -41,12 +46,16 @@
           : section === "compute"
             ? "Compute"
             : section === "repository"
-              ? "Repository"
-              : section === "storage"
-                ? "Storage"
-                : section === "sync"
-                  ? "Sync"
-                  : "Search",
+              ? "General"
+              : section === "folders"
+                ? "Local folders"
+                : section === "advanced"
+                  ? "Advanced"
+                  : section === "storage"
+                    ? "Storage"
+                    : section === "sync"
+                      ? "Sync"
+                      : "Search",
   );
   const PageIcon = $derived(
     section === "appearance"
@@ -66,7 +75,7 @@
 </script>
 
 {#snippet content()}
-  <div class="store-settings" aria-labelledby="store-settings-title">
+  <div class="store-settings" aria-labelledby={titleId}>
     {@render children()}
   </div>
 {/snippet}
@@ -76,17 +85,20 @@
     inheritContext
     {value}
     sections={tabs}
-    onSelect={(next) => (value = next)}
+    onSelect={(next) => {
+      if (onSelect) onSelect(next);
+      else value = next;
+    }}
     label={`${title} settings sections`}
     navigationLabel="Settings page navigation"
   >
     {#snippet leading()}
-      <h1 id="store-settings-title" class="store-settings__page-title">
-        <PageIcon aria-hidden="true" /><span>{title}</span>
-      </h1>
+      {#if !embedded}<h1 id={titleId} class="store-settings__page-title">
+          <PageIcon aria-hidden="true" /><span>{title}</span>
+        </h1>{/if}
     {/snippet}
     {#snippet trailing()}
-      {#if onRefresh}
+      {#if onRefresh && !embedded}
         <div class="store-settings__nav-actions">
           <Tooltip.Provider>
             <Tooltip.Root>
@@ -113,17 +125,34 @@
   </StoreViewTabs>
 {/snippet}
 
+{#if embedded}<h1 id={titleId} class="store-settings__sr-only">{title}</h1>{/if}
 {#if tabs.length}
-  <Tabs.Root bind:value class="store-settings__tabs">
+  <Tabs.Root
+    {value}
+    onValueChange={(next) => {
+      if (onSelect) onSelect(next);
+      else value = next;
+    }}
+    class="store-settings__tabs"
+  >
     {@render navigation()}
     {@render content()}
   </Tabs.Root>
 {:else}
-  {@render navigation()}
+  {#if !embedded}{@render navigation()}{/if}
   {@render content()}
 {/if}
 
 <style>
+  .store-settings__sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
   .store-settings {
     width: 100%;
     min-width: 0;

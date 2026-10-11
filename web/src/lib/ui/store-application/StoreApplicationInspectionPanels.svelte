@@ -20,13 +20,11 @@
     stackWorkspace,
     shell,
     onSelectPage,
-    onRepositorySettings,
   }: {
     controller: StoreController;
     stackWorkspace?: StackWorkspaceController;
     shell: AppShellController;
     onSelectPage: StoreController["actions"]["selectPage"];
-    onRepositorySettings(): void;
   } = $props();
   const current = $derived(controller.state.route);
   const inspection = useConversationInspection();
@@ -110,9 +108,6 @@
         {#if !isStacksRoute(current)}<StoreRepositoryNavigation
             page={current.page}
             onSelect={onSelectPage}
-            onSettings={current.repository && !current.projectsHub
-              ? onRepositorySettings
-              : undefined}
           />
           <StoreRepositoryContextActions {controller} />{/if}
       {/if}

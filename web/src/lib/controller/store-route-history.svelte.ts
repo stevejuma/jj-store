@@ -1,3 +1,5 @@
+import { createStoreNavigationGuards } from "./store-navigation-guards.js";
+import { createRepositorySettingsNavigation } from "./repository-settings-navigation.js";
 import type { StorePage } from "../ui/community-navigation/model.js";
 import type { StoreRoute } from "./contracts.js";
 import {
@@ -71,6 +73,15 @@ export function createStoreRouteHistory(
   ]);
   let index = $state(0);
   let error = $state(parsed.kind === "invalid" ? parsed.message : "");
+  const guards = createStoreNavigationGuards(() => route);
+  function blocked(next: StoreRoute) {
+    const reason = guards.reason(next);
+    if (reason) {
+      error = reason;
+      return true;
+    }
+    return false;
+  }
   let external: ((result: StoreRouteHashResult) => void) | undefined;
   const route = $derived(entries[index]!);
   function sync(next: StoreRoute, mode: "push" | "replace") {
@@ -79,12 +90,21 @@ export function createStoreRouteHistory(
     browser[mode](hash);
   }
   function push(next: StoreRoute) {
-    if (same(next, route)) return;
+    if (same(next, route) || blocked(next)) return;
     entries = [...entries.slice(0, index + 1), next];
     index += 1;
     error = "";
     sync(next, "push");
   }
+  const repositorySettings = createRepositorySettingsNavigation({
+    route: () => route,
+    push,
+    replace(next) {
+      entries[index] = next;
+      error = "";
+      sync(next, "replace");
+    },
+  });
   const stacks = createStoreStacksNavigation({ route: () => route, push });
   const stop = browser?.listen(() => {
     const result = storeRouteFromHash(browser.hash());
@@ -92,6 +112,10 @@ export function createStoreRouteHistory(
     if (result.kind === "invalid") {
       error = result.message;
       external?.(result);
+      return;
+    }
+    if (!same(result.route, route) && blocked(result.route)) {
+      sync(route, "replace");
       return;
     }
     error = "";
@@ -118,7 +142,12 @@ export function createStoreRouteHistory(
       return error;
     },
     push,
+    canNavigateTo(next: StoreRoute) {
+      return !blocked(next);
+    },
+    setNavigationGuard: guards.setNavigationGuard,
     stacks,
+    repositorySettings,
     replace(next: StoreRoute) {
       entries[index] = next;
       error = "";
@@ -192,7 +221,7 @@ export function createStoreRouteHistory(
     },
     navigate(delta: -1 | 1) {
       const next = Math.max(0, Math.min(entries.length - 1, index + delta));
-      if (next === index) return false;
+      if (next === index || blocked(entries[next]!)) return false;
       if (browser) {
         browser.go(delta);
         return false;

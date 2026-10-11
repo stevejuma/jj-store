@@ -16,6 +16,9 @@
     SyncAction,
   } from "../../controller/sync-settings.js";
   let {
+    value,
+    embedded = false,
+    onSelect,
     settings,
     supported,
     onRefresh,
@@ -24,9 +27,13 @@
     onStopWait,
     reconciliation,
     configuration,
+    configurationSupported,
     onRefreshConfiguration,
     configurationBusy = false,
   }: {
+    value?: string;
+    embedded?: boolean;
+    onSelect?: (value: string) => void;
     settings: SyncSettings;
     supported: boolean;
     onRefresh: () => Promise<void>;
@@ -35,10 +42,12 @@
     onStopWait: () => void;
     reconciliation?: import("svelte").Snippet;
     configuration?: import("svelte").Snippet;
+    configurationSupported?: boolean;
     onRefreshConfiguration?: () => Promise<void>;
     configurationBusy?: boolean;
   } = $props();
   let active = $state("overview");
+  const selected = $derived(value ?? active);
   const worker = $derived(settings.value?.worker);
   const busy = $derived(
     settings.changing || ["loading", "refreshing"].includes(settings.state),
@@ -50,21 +59,21 @@
 </script>
 
 <StoreSettingsPage
+  {embedded}
   section="sync"
-  onRefresh={active === "configuration"
+  onRefresh={selected === "configuration"
     ? onRefreshConfiguration
     : supported
       ? onRefresh
       : undefined}
   refreshLabel="Refresh sync"
-  refreshDisabled={active === "configuration" ? configurationBusy : busy}
-  bind:value={active}
+  refreshDisabled={selected === "configuration" ? configurationBusy : busy}
+  value={selected}
+  onSelect={onSelect ?? ((next) => (active = next))}
   tabs={[
     { value: "overview", label: "Overview" },
-    ...(supported
-      ? [{ value: "progress", label: "Progress", disabled: !worker }]
-      : []),
-    ...(configuration
+    ...(supported && worker ? [{ value: "progress", label: "Progress" }] : []),
+    ...(configuration && configurationSupported !== false
       ? [{ value: "configuration", label: "Configuration" }]
       : []),
   ]}
@@ -99,11 +108,6 @@
               value="No upstream is configured. Repository work remains local."
             />
           </dl>
-          <StoreSettingsEmpty
-            Icon={CloudOffIcon}
-            title="WorkStore sync unavailable"
-            description="WorkStore sync is not supported."
-          />
         {:else if worker}
           <dl class="store-settings__rows">
             <StoreReadOnlyRow label="Worker" value={words(worker.phase)} />

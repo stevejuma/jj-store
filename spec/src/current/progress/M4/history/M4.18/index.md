@@ -13,6 +13,11 @@ not a completion gate selection.
 | [E-REPOSITORY-RAIL-SETTINGS-001](../../../../../history/2026/10/11/E-REPOSITORY-RAIL-SETTINGS-001/index.md) | 2026-10-11 | pending         | Focused rail/settings regression; inherited diagnostics and visual review remain separate |
 | [E-SETTINGS-POLISH-001](../../../../../history/2026/10/11/E-SETTINGS-POLISH-001/index.md)                   | 2026-10-11 | pending         | Focused Settings refinement; inherited diagnostics and visual approval remain separate    |
 
+|
+[E-SETTINGS-SPLIT-001](../../../../../history/2026/10/11/E-SETTINGS-SPLIT-001/index.md)
+| 2026-10-11 | pending | Scoped Settings acceptance passes; inherited
+diagnostics and visual review remain separate |
+
 <!-- generated-navigation -->
 
 ## Pages

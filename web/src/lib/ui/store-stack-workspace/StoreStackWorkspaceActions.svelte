@@ -78,7 +78,7 @@
             <Menu.Item
               disabled={!onSettings || !snapshot.active}
               onSelect={() => onSettings?.()}
-              ><Settings aria-hidden="true" />Settings</Menu.Item
+              ><Settings aria-hidden="true" />Workspace settings</Menu.Item
             >
             {#if snapshot.membershipChanged}<Menu.Item
                 disabled={!controller.can("reconcile_workspace")}

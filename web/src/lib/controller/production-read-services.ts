@@ -14,6 +14,10 @@ export function createProductionReadServices(
   const settings = createProductionStoreSettings({
     ...options,
     route: () => options.history.route,
+    // Settings belongs to the repository owner, independent of code selections.
+    current: (_ticket, active) => options.current(options.version(), active),
+    // Repository disconnect calls clear(); ordinary view changes retain tasks.
+    signal: undefined,
   });
   watchCodeIndexRecovery(() => settings.recoverCodeIndex());
   return {

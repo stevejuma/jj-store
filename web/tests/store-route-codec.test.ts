@@ -337,3 +337,16 @@ test("multiline history URLs round trip while other controls remain invalid", ()
     );
   }
 });
+
+test("repository settings URLs retain category, subtab and operation without code selections", () => {
+  const hash = `#/repos/${repository}/settings?section=search&tab=scopes&at_op=${operation}`;
+  const result = storeRouteFromHash(hash);
+  assert.equal(result.kind, "route");
+  if (result.kind === "route") {
+    assert.equal(storeRouteToHash(result.route), hash);
+    assert.equal(result.route.page, "settings");
+    assert.equal(result.route.repositorySettingsSection, "search");
+    assert.equal(result.route.repositorySettingsTab, "scopes");
+    assert.equal(result.route.commitId, null);
+  }
+});

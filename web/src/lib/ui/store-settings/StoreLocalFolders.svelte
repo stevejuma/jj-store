@@ -1,5 +1,10 @@
 <script lang="ts">
   import StoreSettingsNotice from "./StoreSettingsNotice.svelte";
+  import { getContext, onDestroy } from "svelte";
+  import {
+    repositorySettingsGuardKey,
+    type RepositorySettingsDraftGuard,
+  } from "./repository-settings-guards.js";
   import { onMount, type Snippet } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import StoreLocalFolderDialog from "./StoreLocalFolderDialog.svelte";
@@ -17,14 +22,29 @@
   let {
     controller,
     repository,
+    visible = true,
     mode = "settings",
     trigger,
   }: {
     controller: StoreController;
     repository?: string;
+    visible?: boolean;
     mode?: "settings" | "add";
     trigger?: Snippet<[add: () => void, disabled: boolean]>;
   } = $props();
+  const draftGuard = getContext<RepositorySettingsDraftGuard | undefined>(
+    repositorySettingsGuardKey,
+  );
+  $effect(() => {
+    if (repository && draftGuard)
+      draftGuard.folders =
+        pending || busy || (open && (path || name))
+          ? "Finish or cancel the folder form before changing repositories."
+          : "";
+  });
+  onDestroy(() => {
+    if (repository && draftGuard) draftGuard.folders = "";
+  });
   let manager = $state<LocalFolderManager>();
   let bindings = $state<Model<"LocalBinding">[]>([]);
   let open = $state(false),
@@ -86,7 +106,13 @@
           change.domain,
         ),
       active: () =>
-        Boolean(manager && !busy && !pending && (mode === "settings" || open)),
+        Boolean(
+          visible &&
+          manager &&
+          !busy &&
+          !pending &&
+          (mode === "settings" || open),
+        ),
       refresh: async () => {
         await run(list);
         return !message;
@@ -96,6 +122,7 @@
       ? undefined
       : setInterval(() => {
           if (
+            visible &&
             !document.hidden &&
             manager &&
             !busy &&
@@ -156,7 +183,8 @@
     <header><h2 id="local-folders-heading">Git-backed JJ folders</h2></header>
     <div class="store-settings__action-row">
       <div>
-        <strong>Register a folder</strong>
+        <strong>{repository ? "Registered folder" : "Register a folder"}</strong
+        >
         <p>
           Register an existing JJ folder for browsing and projects. Add
           initializes companion metadata when it is missing. Search, code edits,
@@ -164,14 +192,14 @@
         </p>
       </div>
       <div class="store-settings__actions">
-        <Button
-          variant="outline"
-          disabled={busy || !manager}
-          onclick={() => edit(null)}
-          ><PlusIcon aria-hidden="true" />{pending
-            ? "Resume Add"
-            : "Add folder"}</Button
-        >
+        {#if !repository}<Button
+            variant="outline"
+            disabled={busy || !manager}
+            onclick={() => edit(null)}
+            ><PlusIcon aria-hidden="true" />{pending
+              ? "Resume Add"
+              : "Add folder"}</Button
+          >{/if}
         <Button
           variant="outline"
           disabled={busy || !manager}

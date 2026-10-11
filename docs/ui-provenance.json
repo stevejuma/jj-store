@@ -2848,6 +2848,34 @@
     {
       "local": "web/src/lib/ui/store-settings/StoreRepositoryIdentity.svelte",
       "reason": "Application-authored extraction of existing Identity and snapshot rows with the maintained CommunityChip composition and public Design Core controls; no Community source is copied."
+    },
+    {
+      "local": "web/src/lib/ui/store-settings/StoreRepositorySettingsView.svelte",
+      "reason": "Application-authored repository Settings navigation composed from maintained StoreViewTabs and released Design Core controls; Community inspected as a presentation reference, with no copied source."
+    },
+    {
+      "local": "web/src/lib/ui/store-settings/StoreRepositorySettingsButton.svelte",
+      "reason": "Application-authored repository Settings navigation composed from maintained StoreViewTabs and released Design Core controls; Community inspected as a presentation reference, with no copied source."
+    },
+    {
+      "local": "web/src/lib/ui/store-settings/repository-settings-model.ts",
+      "reason": "Application-authored repository Settings navigation composed from maintained StoreViewTabs and released Design Core controls; Community inspected as a presentation reference, with no copied source."
+    },
+    {
+      "local": "web/src/lib/ui/store-settings/repository-settings-guard.svelte.ts",
+      "reason": "Application-owned navigation guard for retained Settings drafts, pending commands and editing."
+    },
+    {
+      "local": "web/src/lib/ui/store-settings/repository-settings-guards.ts",
+      "reason": "Application-owned draft guard context for repository Settings."
+    },
+    {
+      "local": "web/src/lib/ui/store-application/store-application-settings.css",
+      "reason": "Application-owned settings layout visibility preserving inspection panel state."
+    },
+    {
+      "local": "web/src/lib/ui/store-application/StoreApplicationHeaderCenter.svelte",
+      "reason": "Application-owned composition of retained repository, Stacks and thread header context."
     }
   ],
   "desktopAppearance": {

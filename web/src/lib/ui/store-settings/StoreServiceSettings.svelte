@@ -18,6 +18,12 @@
     { value: "overview", label: "Overview" },
     { value: "limits", label: "Limits" },
     { value: "launch", label: "Launch" },
+    ...(controller.configuration?.available()
+      ? [
+          { value: "protection", label: "Protection" },
+          { value: "storage", label: "Storage" },
+        ]
+      : []),
   ]}
   onRefresh={controller.configuration?.observe}
 >
@@ -62,5 +68,17 @@
       management={controller.configuration}
       section="service"
     /></Tabs.Content
-  ></StoreSettingsPage
->
+  >
+  <Tabs.Content value="protection"
+    ><StoreConfigurationEditor
+      management={controller.configuration}
+      section="protection"
+    /></Tabs.Content
+  >
+  <Tabs.Content value="storage"
+    ><StoreDeploymentConfiguration
+      management={controller.configuration}
+      section="storage"
+    /></Tabs.Content
+  >
+</StoreSettingsPage>

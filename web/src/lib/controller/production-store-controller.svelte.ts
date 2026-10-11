@@ -1,6 +1,4 @@
-import { ThreadWorkspaces } from "./thread-workspaces.svelte.js";
-import { LocalClient } from "../api/local-client.js";
-import { repositories as loadRepositories } from "../api/repositories.js";
+import { createProductionThreadWorkspaces } from "./production-thread-workspaces.js";
 import { ApiError } from "../api/client.js";
 import { agentsRoute } from "./agents-route-codec.js";
 import { createProductionStacksReaders } from "./production-stacks-history.js";
@@ -122,25 +120,21 @@ export function createProductionStoreController(
     token: () => sessionToken,
     route: () => history.route,
     push: history.push,
+    canOpen: history.canNavigateTo,
     repository: () => source?.repository,
     projects,
     connectRepository,
     restoreRoute,
     fetcher: options.fetcher,
   });
-  const threadWorkspaces = new ThreadWorkspaces(
-    new LocalClient("", options.fetcher),
-    async (result) => {
-      data.repositories = (
-        await loadRepositories(sessionToken, options.fetcher)
-      ).map((r) => ({ ...r }));
-      // Entries and the shared transport have separate caches. Publication
-      // must invalidate the metadata home's reads before refreshing aliases.
-      threadNavigation.invalidate(new Set([result.home]));
-      await sources.refreshThreads(threadNavigation, result.home);
-      await openThreads(result.thread, result.home);
-    },
-  );
+  const threadWorkspaces = createProductionThreadWorkspaces({
+    data,
+    token: () => sessionToken,
+    threadNavigation,
+    sources,
+    openThreads,
+    fetcher: options.fetcher,
+  });
   local.execution.onNavigate = (view, id, relatedId) => {
     void openRoute(agentsRoute(view, id, relatedId));
   };

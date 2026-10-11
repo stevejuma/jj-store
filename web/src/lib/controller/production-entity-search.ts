@@ -5,6 +5,7 @@ export function createEntitySearch(options: {
   token(): string | null;
   route(): StoreRoute;
   push(route: StoreRoute): void;
+  canOpen?(route: StoreRoute): boolean;
   repository(): string | undefined;
   projects: { restore(): Promise<void> };
   connectRepository(repository: string, token: string | null): Promise<void>;
@@ -12,6 +13,7 @@ export function createEntitySearch(options: {
   fetcher?: typeof fetch;
 }) {
   async function openRoute(route: StoreRoute) {
+    if (options.canOpen && !options.canOpen(route)) return;
     options.push(route);
     if (route.agentsHub || (route.threadsHub && !route.repository)) return;
     if (route.page === "projects") await options.projects.restore();

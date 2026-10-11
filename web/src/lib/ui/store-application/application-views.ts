@@ -38,6 +38,10 @@ export const views = {
       "../community-projects/CommunityProjectsRepositoryLog.svelte",
     ),
   ),
+  repositorySettings: lazyView(
+    () => import("../store-settings/StoreRepositorySettingsView.svelte"),
+    viewModuleURL("../store-settings/StoreRepositorySettingsView.svelte"),
+  ),
   settings: lazyView(
     () => import("../store-settings/StoreSettings.svelte"),
     viewModuleURL("../store-settings/StoreSettings.svelte"),

@@ -32,6 +32,7 @@ export function validOptional(
 }
 
 export const repositoryPages = new Set<StorePage>([
+  "settings",
   "stacks",
   "branches",
   "log",
@@ -43,6 +44,8 @@ export const repositoryPages = new Set<StorePage>([
   "threads",
 ]);
 export const repositoryQueryKeys = new Set([
+  "section",
+  "tab",
   "context",
   "stack_tab",
   "stack_history",

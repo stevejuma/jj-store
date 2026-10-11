@@ -7,112 +7,96 @@
     component: Fixture,
     tags: ["visual-pending"],
   });
-  async function expectEmpty(canvasElement: HTMLElement) {
-    const canvas = within(canvasElement);
-    await expect(
-      canvas.getByText("Choose a repository", { exact: true }),
-    ).toBeVisible();
-    await expect(canvas.queryByRole("tab")).not.toBeInTheDocument();
-    await expect(
-      canvas.queryByRole("heading", { name: "Identity and snapshot" }),
-    ).not.toBeInTheDocument();
-    await expect(canvas.queryAllByText("Unavailable")).toHaveLength(0);
-    await expect(
-      canvas.getAllByRole("combobox", { name: "Settings repository" }),
-    ).toHaveLength(1);
-    await expect(
-      canvasElement.querySelector(
-        '[data-ui-component="empty"] svg[aria-hidden="true"]',
-      ),
-    ).toBeVisible();
-  }
 </script>
 
 <Story
-  name="No selection hides unavailable rows and tabs and supports keyboard selection"
+  name="Native categories are scoped with no picker"
   play={async ({ canvasElement }) => {
-    await expectEmpty(canvasElement);
-    const canvas = within(canvasElement),
-      body = within(canvasElement.ownerDocument.body);
-    await userEvent.click(
-      canvas.getByRole("combobox", { name: "Settings repository" }),
-    );
-    await userEvent.type(
-      body.getByRole("combobox", { name: "Select settings repository" }),
-      "Managed",
-    );
-    await userEvent.keyboard("{ArrowDown}{Enter}");
+    const c = within(canvasElement);
     await expect(
-      canvas.getByRole("heading", { name: "Identity and snapshot" }),
+      c.getByRole("heading", { name: "Identity and snapshot" }),
     ).toBeVisible();
-    await expect(canvas.getByRole("tab", { name: "General" })).toHaveAttribute(
+    await expect(
+      c.queryByRole("navigation", { name: "Settings page navigation" }),
+    ).not.toBeInTheDocument();
+    await expect(
+      canvasElement.querySelector(".store-settings__page-title"),
+    ).toBeNull();
+    for (const name of [
+      "General",
+      "Local folders",
+      "Search",
+      "Storage",
+      "Sync",
+      "Advanced",
+    ])
+      await expect(c.getByRole("tab", { name })).toBeVisible();
+    await expect(
+      c.queryByRole("combobox", { name: "Settings repository" }),
+    ).not.toBeInTheDocument();
+    await expect(c.getByText("Server Hosted", { exact: true })).toHaveAttribute(
+      "data-chip-tone",
+      "accent",
+    );
+  }}
+/>
+<Story
+  name="Local JJ omits unsupported management"
+  args={{ local: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await expect(c.getByText("Local JJ", { exact: true })).toHaveAttribute(
+      "data-chip-tone",
+      "success",
+    );
+    for (const name of ["Search", "Storage", "Sync", "Protection"])
+      await expect(c.queryByRole("tab", { name })).not.toBeInTheDocument();
+    await expect(c.queryByText("Unavailable")).not.toBeInTheDocument();
+  }}
+/>
+<Story
+  name="Reader search link resolves to Health"
+  args={{ reader: true, section: "search", tab: "scopes" }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await expect(await c.findByRole("tab", { name: "Health" })).toHaveAttribute(
       "aria-selected",
       "true",
     );
     await expect(
-      canvas.getByText("Server Hosted", { exact: true }),
-    ).toBeVisible();
+      c.getByRole("status", { name: "Settings route" }),
+    ).toHaveTextContent("settings:search:health");
     await expect(
-      canvas.queryByText("Choose a repository", { exact: true }),
+      c.queryByRole("tab", { name: "Configuration" }),
     ).not.toBeInTheDocument();
   }}
 />
 <Story
-  name="Projects context ignores retained repository details"
-  args={{ retainedRepository: true }}
-  play={async ({ canvasElement }) => await expectEmpty(canvasElement)}
-/>
-<Story
-  name="Local JJ identity has a distinct icon and tone"
-  args={{ initialRepository: "local-jj" }}
+  name="Native folder draft survives categories"
   play={async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    const chip = canvas.getByText("Local JJ", { exact: true });
-    await expect(chip).toHaveAttribute("data-chip-tone", "success");
-    await expect(chip.querySelector('svg[aria-hidden="true"]')).toBeVisible();
-    await expect(
-      canvas.getByText("Folder repository", { exact: true }),
-    ).toBeVisible();
-  }}
-/>
-<Story
-  name="Server Hosted identity has a distinct icon and tone"
-  args={{ initialRepository: "jj-store" }}
-  play={async ({ canvasElement }) => {
-    const chip = within(canvasElement).getByText("Server Hosted", {
-      exact: true,
-    });
-    await expect(chip).toHaveAttribute("data-chip-tone", "accent");
-    await expect(chip.querySelector('svg[aria-hidden="true"]')).toBeVisible();
-  }}
-/>
-<Story
-  name="Pending folder draft prevents repository selection"
-  args={{ blocked: true }}
-  play={async ({ canvasElement }) => {
-    await expectEmpty(canvasElement);
-    await expect(
-      within(canvasElement).getByRole("combobox", {
-        name: "Settings repository",
-      }),
-    ).toBeDisabled();
-  }}
-/>
-<Story
-  name="Failed repository selection retains the empty state"
-  args={{ failSelection: true }}
-  play={async ({ canvasElement }) => {
-    const canvas = within(canvasElement),
-      body = within(canvasElement.ownerDocument.body);
-    await userEvent.click(
-      canvas.getByRole("combobox", { name: "Settings repository" }),
+    const c = within(canvasElement);
+    await userEvent.click(c.getByRole("tab", { name: "Local folders" }));
+    await userEvent.type(
+      c.getByRole("textbox", { name: "Folder path" }),
+      "/retained/draft",
     );
-    await userEvent.click(
-      body.getByRole("option", { name: /Managed repository/ }),
+    await userEvent.click(c.getByRole("tab", { name: "General" }));
+    await userEvent.click(c.getByRole("tab", { name: "Local folders" }));
+    await expect(c.getByRole("textbox", { name: "Folder path" })).toHaveValue(
+      "/retained/draft",
     );
+  }}
+/>
+<Story
+  name="Unsupported category returns to General"
+  args={{ local: true, section: "storage" }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
     await expect(
-      await body.findByText("The repository request could not be completed."),
-    ).toBeVisible();
-    await expectEmpty(canvasElement);
+      await c.findByRole("tab", { name: "General" }),
+    ).toHaveAttribute("aria-selected", "true");
+    await expect(
+      c.getByRole("status", { name: "Settings route" }),
+    ).toHaveTextContent("settings:general:");
   }}
 />

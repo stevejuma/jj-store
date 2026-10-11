@@ -1,3 +1,5 @@
+import { createInMemoryFileActions } from "./in-memory-store-file-actions.js";
+import { createStoreNavigationGuards } from "../../web/src/lib/controller/store-navigation-guards.js";
 import { createInMemoryStoreNavigation } from "./in-memory-store-navigation.js";
 import type { FileListingViewMode } from "@lapismd/design-core/diff";
 import * as fixture from "../fixtures/repository.js";
@@ -64,8 +66,13 @@ export function createInMemoryStoreController(
       : undefined,
   );
   const conflictController = createInMemoryStoreConflicts(() => route);
+  const navigationGuards = createStoreNavigationGuards(() => route);
   function push(next: StoreContract.StoreRoute) {
-    if (JSON.stringify(next) === JSON.stringify(route)) return;
+    if (
+      JSON.stringify(next) === JSON.stringify(route) ||
+      navigationGuards.reason(next)
+    )
+      return;
     history = [...history.slice(0, index + 1), next];
     index++;
   }
@@ -105,6 +112,7 @@ export function createInMemoryStoreController(
   });
   const actions: StoreContract.StoreController["actions"] = {
     ...session.actions,
+    setNavigationGuard: navigationGuards.setNavigationGuard,
     destroy() {},
     async refresh() {},
     async selectOperation() {},
@@ -156,38 +164,12 @@ export function createInMemoryStoreController(
         route.page === "oplog" ? null : (revision?.changeId ?? null);
       push(storeRoute.revisionSelectedRoute(route, id, changeId, context));
     },
-    selectFile(path) {
-      if (
-        path &&
-        route.page !== "oplog" &&
-        !snapshot?.files.some((file) => file.path === path)
-      )
-        throw new Error("File absent from selected snapshot");
-      push({
-        ...route,
-        path,
-        directory: path
-          ? path.split("/").slice(0, -1).join("/")
-          : route.directory,
-        reviewThreadId:
-          path && route.commitId
-            ? collaboration.pathReview(route.commitId, path)
-            : path && route.inspectedOperationId
-              ? collaboration.operationPathReview(
-                  route.inspectedOperationId,
-                  path,
-                )
-              : null,
-      });
-    },
-    selectDirectory(directory) {
-      if (
-        directory &&
-        !snapshot?.files.some((file) => file.path.startsWith(`${directory}/`))
-      )
-        throw new Error("Directory absent from selected snapshot");
-      push({ ...route, directory, path: null });
-    },
+    ...createInMemoryFileActions({
+      route: () => route,
+      snapshot: () => snapshot,
+      push,
+      collaboration,
+    }),
     ...collaboration.actions,
     selectRef(value) {
       const choice = repositoryData.choices.find(

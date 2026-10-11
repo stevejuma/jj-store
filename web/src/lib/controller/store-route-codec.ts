@@ -1,5 +1,5 @@
-import { readThreadsHash, threadsRouteToHash } from "./threads-route-codec.js";
-import { readAgentsHash, agentsRouteToHash } from "./agents-route-codec.js";
+import { readThreadsHash } from "./threads-route-codec.js";
+import { readAgentsHash } from "./agents-route-codec.js";
 import {
   safeLabel,
   safePath,
@@ -8,20 +8,13 @@ import {
   repositoryPages,
   repositoryQueryKeys,
 } from "./store-route-fields.js";
-import {
-  historyQueryFromParams,
-  historyQueryToParams,
-} from "./history-query-route.js";
-import {
-  projectsRouteFromHash,
-  projectsRouteToHash,
-} from "./projects-route-codec.js";
+import { historyQueryFromParams } from "./history-query-route.js";
+import { projectsRouteFromHash } from "./projects-route-codec.js";
 import type { StorePage } from "../ui/community-navigation/model.js";
 import type { StoreRoute } from "./contracts.js";
-import {
-  writeStacksRouteFields,
-  readStacksRouteFields,
-} from "./store-stacks-route-codec.js";
+import { readStacksRouteFields } from "./store-stacks-route-codec.js";
+
+import { readRepositorySettings } from "./repository-settings-route-codec.js";
 
 const repositoryId = /^[0-9a-f]{32}$/u;
 const commitObjectId = /^(?:[0-9a-f]{40}|[0-9a-f]{128})$/u;
@@ -34,47 +27,7 @@ export type StoreRouteHashResult =
   | { kind: "invalid"; message: string }
   | { kind: "route"; route: StoreRoute };
 
-export function storeRouteToHash(route: StoreRoute): string | null {
-  if (route.threadsHub && route.page === "threads")
-    return threadsRouteToHash(route);
-  if (route.agentsHub && route.page === "agents")
-    return agentsRouteToHash(route);
-  if (route.projectsHub && route.page === "projects")
-    return projectsRouteToHash(route);
-  if (!repositoryId.test(route.repository) || !repositoryPages.has(route.page))
-    return null;
-  const query = new URLSearchParams();
-  if (!writeStacksRouteFields(route, query)) return null;
-  historyQueryToParams(query, route);
-  if (route.snapshotOperationId) query.set("at_op", route.snapshotOperationId);
-  if (route.workspace) query.set("workspace", route.workspace);
-  if (route.bookmark) query.set("bookmark", route.bookmark);
-  if (route.commitId) query.set("commit", route.commitId);
-  if (route.evolutionCommitId) query.set("evolution", route.evolutionCommitId);
-  if (route.changeId) query.set("change", route.changeId);
-  if (route.inspectedOperationId)
-    query.set("operation", route.inspectedOperationId);
-  if (route.comparisonParentId) query.set("parent", route.comparisonParentId);
-  if (route.comparisonGroupId) query.set("group", route.comparisonGroupId);
-  if (route.path) query.set("file", route.path);
-  if (
-    route.fileDisplay &&
-    route.page === "files" &&
-    route.path &&
-    route.commitId
-  )
-    query.set("file_view", route.fileDisplay);
-  if (route.directory) query.set("directory", route.directory);
-  if (route.agentSessionId) query.set("session", route.agentSessionId);
-  if (route.threadId) query.set("thread", route.threadId);
-  if (route.commentId) query.set("comment", route.commentId);
-  if (route.replyId) query.set("reply", route.replyId);
-  if (route.reviewThreadId) query.set("thread", route.reviewThreadId);
-  if (route.projectId) query.set("project", route.projectId);
-  if (route.taskId) query.set("task", route.taskId);
-  const suffix = query.toString();
-  return `#/repos/${route.repository}/${route.page}${suffix ? `?${suffix}` : ""}`;
-}
+export { storeRouteToHash } from "./store-route-writer.js";
 
 export function storeRouteFromHash(hash: string): StoreRouteHashResult {
   const threads = readThreadsHash(hash);
@@ -107,6 +60,17 @@ export function storeRouteFromHash(hash: string): StoreRouteHashResult {
   if ([...query.keys()].some((key) => !repositoryQueryKeys.has(key)))
     return { kind: "invalid", message: "Unknown repository route field." };
 
+  if (page === "settings") {
+    const route = readRepositorySettings(repository, query);
+    return route
+      ? { kind: "route", route }
+      : { kind: "invalid", message: "Invalid repository settings route." };
+  }
+  if (query.has("section") || query.has("tab"))
+    return {
+      kind: "invalid",
+      message: "Settings fields require a settings page.",
+    };
   const stacksFields = readStacksRouteFields(query, page);
   if (!stacksFields)
     return { kind: "invalid", message: "Invalid Stacks navigation context." };

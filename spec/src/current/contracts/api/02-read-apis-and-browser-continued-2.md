@@ -68,9 +68,11 @@ composer. There is no task discussion side panel or Open task discussion action;
 existing WorkStore commands, snapshots and pending identities remain unchanged.
 The themed repository/edit/subtask buttons retain those callbacks and access
 checks. Centering an empty Threads listing changes no list read, native identity
-or create capability. Settings content navigation begins with one section title
-and leaves return navigation to the existing sidebar, preserving the repository
-route and snapshot.
+or create capability. Global Settings retains transient sidebar return
+navigation. Repository Settings adds client-only settings/category/subtab URL
+fields with an exact retained operation, scoped Back and capability filtering.
+Its reads reuse existing APIs and do not load code or repin snapshots; no wire
+format or authorization changes.
 
 Local Settings present registration, Search configuration and Sync information
 in bordered rows with labels/descriptions before controls. Unsupported

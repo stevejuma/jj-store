@@ -23,20 +23,23 @@ Branches, Workspace, Commits and Op Log using the shared body-tab styling and
 accessible overflow. The Details toggle, centered workspace picker and existing
 Stacks actions remain available across all four views. Commits and Op Log reuse
 repository-wide history and its exact operation/selection reads. The existing
-repository Branches page stays separate. The right sidebar retains workspace
-Settings but suppresses ordinary repository navigation and actions. Its
-far-right rail uses the repository page-heading and compact Details navigation
-composition with Branches, Workspace, Commits and Op Log links, retaining
-focused Stacks routes and marking the current view. It omits the introductory
-workspace, target, count, folder and selected-item metadata list; selections
-remain in the body and workspace identity/configuration remain in the picker,
-footer and Settings. A separate Actions section reuses compact sidebar icon
-buttons for workspace settings, refresh and explicit saved-membership
-reconciliation when needed. Actions appear only while applicable under existing
-capability, active-workspace, conflict, membership and pending-command guards;
-an empty section is omitted. Resolve conflicts opens the same capability-gated
-workspace editor from this rail and the local-workspace notification across all
-four focused tabs, retaining the selected view and diffs. Unavailable or pending
+repository Branches page stays separate. The body header retains the separate
+trailing Repository settings gear across all four views. It opens the scoped
+Settings route and returns to the exact Stacks context. The right sidebar
+retains the separately labelled Workspace settings action but suppresses
+ordinary repository navigation and actions. Its far-right rail uses the
+repository page-heading and compact Details navigation composition with
+Branches, Workspace, Commits and Op Log links, retaining focused Stacks routes
+and marking the current view. It omits the introductory workspace, target,
+count, folder and selected-item metadata list; selections remain in the body and
+workspace identity/configuration remain in the picker, footer and Settings. A
+separate Actions section reuses compact sidebar icon buttons for Workspace
+settings, refresh and explicit saved-membership reconciliation when needed.
+Actions appear only while applicable under existing capability,
+active-workspace, conflict, membership and pending-command guards; an empty
+section is omitted. Resolve conflicts opens the same capability-gated workspace
+editor from this rail and the local-workspace notification across all four
+focused tabs, retaining the selected view and diffs. Unavailable or pending
 commands cannot execute through either entry point. Resolved conflicts clear
 their condition notice and remove resolution actions. The notification's Resolve
 conflicts action uses the public secondary variant with a themed background at

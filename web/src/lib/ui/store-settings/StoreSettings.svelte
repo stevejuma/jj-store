@@ -7,17 +7,10 @@
   import { storeErrorMessage } from "../../controller/store-error.js";
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import StoreAppearance from "../store-appearance/StoreAppearance.svelte";
-  import StoreRepositorySettings from "./StoreRepositorySettings.svelte";
-  import StoreSyncReconciliation from "./StoreSyncReconciliation.svelte";
-  import StoreStorageSettings from "./StoreStorageSettings.svelte";
-  import StoreSyncSettings from "./StoreSyncSettings.svelte";
-  import StoreSearchSettings from "./StoreSearchSettings.svelte";
   import StoreComputeSettings from "./StoreComputeSettings.svelte";
   import StoreAgentSettings from "./StoreAgentSettings.svelte";
   import StoreServiceSettings from "./StoreServiceSettings.svelte";
   import type { StoreSettingsSection } from "./model.js";
-  import StoreConfigurationEditor from "./StoreConfigurationEditor.svelte";
-  import StoreDeploymentConfiguration from "./StoreDeploymentConfiguration.svelte";
   import StoreSettingsPage from "./StoreSettingsPage.svelte";
 
   let {
@@ -51,7 +44,7 @@
   $effect(() => {
     const selected = section;
     repository;
-    if (["appearance", "agents", "search"].includes(selected)) return;
+    if (["appearance", "agents", "compute"].includes(selected)) return;
     return untrack(() => observeStoreSettings(controller, selected));
   });
 </script>
@@ -84,52 +77,6 @@
       />
     {:else if section === "compute"}
       <StoreComputeSettings management={controller.execution?.compute} />
-    {:else if section === "repository"}
-      <StoreRepositorySettings {controller} {onClose} />
-    {:else if section === "storage"}
-      <StoreStorageSettings
-        settings={controller.state.settings.storageSettings}
-        supported={Boolean(
-          controller.state.settings.capabilities?.local_storage_management &&
-          !controller.state.route.projectsHub &&
-          controller.state.route.repository === controller.state.repository.id,
-        )}
-        onRefresh={controller.actions.refreshStorage}
-        onStart={controller.actions.startStorage}
-        onRefreshConfiguration={controller.configuration?.observe}
-        configurationBusy={controller.configuration?.state.saving ?? false}
-        onRetry={controller.actions.retryStorage}
-        >{#snippet configuration()}<StoreDeploymentConfiguration
-            management={controller.configuration}
-            section="storage"
-          />{/snippet}</StoreStorageSettings
-      >
-    {:else if section === "sync"}
-      <StoreSyncSettings
-        settings={controller.state.settings.syncSettings}
-        supported={Boolean(
-          controller.state.settings.capabilities?.local_sync_management,
-        )}
-        onRefresh={controller.actions.refreshSyncSettings}
-        onRefreshConfiguration={controller.configuration?.observe}
-        configurationBusy={controller.configuration?.state.saving ?? false}
-        onControl={controller.actions.controlSync}
-        onWait={controller.actions.waitForSync}
-        onStopWait={controller.actions.stopSyncWait}
-        >{#snippet configuration()}<StoreConfigurationEditor
-            management={controller.configuration}
-            section="sync"
-            repository={controller.state.repository.profile === "git_sha1_jj045"
-              ? ""
-              : controller.state.repository.id}
-            repositoryName={controller.state.repository.name}
-          />{/snippet}
-        {#snippet reconciliation()}<StoreSyncReconciliation
-            {controller}
-          />{/snippet}</StoreSyncSettings
-      >
-    {:else}
-      <StoreSearchSettings {controller} />
     {/if}
   </AppShell.Body.Content>
 </AppShell.Body>

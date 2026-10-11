@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import StoreLazyView from "./StoreLazyView.svelte";
   import { views } from "./application-views.js";
   import type {
@@ -12,6 +13,7 @@
     stackWorkspace,
     current,
     settingsOpen,
+    settingsNavigationNotice = "",
     conflictOpen = $bindable(false),
     searchOpen = $bindable(false),
     conflictReturnFocus,
@@ -20,6 +22,7 @@
     stackWorkspace?: StackWorkspaceController;
     current: StoreRoute;
     settingsOpen: boolean;
+    settingsNavigationNotice?: string;
     conflictOpen?: boolean;
     searchOpen?: boolean;
     conflictReturnFocus: HTMLElement | null;
@@ -57,3 +60,9 @@
         bind:open={searchOpen}
       />{/snippet}</StoreLazyView
   >{/if}
+
+<StoreNotice
+  noticeKey="repository-settings-navigation"
+  title="Navigation paused"
+  message={settingsNavigationNotice}
+/>

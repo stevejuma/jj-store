@@ -3,8 +3,11 @@
 The left sidebar retains repository discovery and search. Branches, JJ Log, Op
 Log, Agents, Reviews and Projects move into a Details menu below the right-rail
 page heading and create action, using Community repository-rail icon rows and
-current-page semantics. Settings replaces that rail as before. Selecting a view
-on mobile returns to the main content stage.
+current-page semantics. Global Settings hides repository controls. Repository
+Settings opens from a trailing icon-only body-header gear and hides the rail
+while retaining its open/collapsed state for return. Category and actual subtab
+rows share accessible overflow; repeated headings and description-only rows are
+omitted. Selecting a view on mobile returns to the main content stage.
 
 The Workspace section header has no top or bottom margin and retains its
 horizontal inset.

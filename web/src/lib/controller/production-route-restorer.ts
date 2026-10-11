@@ -122,6 +122,10 @@ export async function restoreProductionStoreRoute(
 ) {
   data.status.error = "";
   data.status.navigation = "loading";
+  if (desired.page === "settings") {
+    data.status.navigation = "ready";
+    return;
+  }
   if (desired.page === "stacks") {
     await reads.restoreStacks?.();
     if (history.route === desired)

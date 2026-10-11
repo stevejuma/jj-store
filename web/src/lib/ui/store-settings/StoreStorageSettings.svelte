@@ -16,6 +16,9 @@
   import StoreStoragePosition from "./StoreStoragePosition.svelte";
   import StoreStorageOperation from "./StoreStorageOperation.svelte";
   let {
+    value,
+    embedded = false,
+    onSelect,
     settings,
     supported,
     onRefresh,
@@ -25,6 +28,9 @@
     onRefreshConfiguration,
     configurationBusy = false,
   }: {
+    value?: string;
+    embedded?: boolean;
+    onSelect?: (value: string) => void;
     settings: StorageSettings;
     supported: boolean;
     onRefresh: () => Promise<void>;
@@ -35,6 +41,7 @@
     configurationBusy?: boolean;
   } = $props();
   let active = $state("overview");
+  const selected = $derived(value ?? active);
   const report = $derived(settings.operation);
   const blocked = $derived(
     settings.changing ||
@@ -46,15 +53,17 @@
 </script>
 
 <StoreSettingsPage
+  {embedded}
   section="storage"
-  bind:value={active}
-  onRefresh={active === "configuration"
+  value={selected}
+  onSelect={onSelect ?? ((next) => (active = next))}
+  onRefresh={selected === "configuration"
     ? onRefreshConfiguration
     : supported
       ? onRefresh
       : undefined}
-  refreshLabel={active === "maintenance" ? "Check status" : "Refresh storage"}
-  refreshDisabled={active === "configuration"
+  refreshLabel={selected === "maintenance" ? "Check status" : "Refresh storage"}
+  refreshDisabled={selected === "configuration"
     ? configurationBusy
     : settings.changing}
   tabs={[

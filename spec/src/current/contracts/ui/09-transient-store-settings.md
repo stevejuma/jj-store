@@ -31,28 +31,47 @@ inactive history import shows accepted boundary publication independently from
 live-tail coverage. Users may inspect a previous import request ID without
 selecting a different source, including when its receipt is unavailable.
 
-Settings opens from the existing profile menu and replaces the repository
-navigation and body with a jj-store-owned settings sidebar and selected section.
-The repository right rail MUST also expose a gear-icon Settings row under
-Details. It opens the Repository section with the current repository selected,
-without reopening the repository or changing its operation, commit, file,
-workspace or browser history. Keyboard activation and the mobile details rail
-use the same transient destination and Back behavior. The sidebar contains
-Appearance, Local service, Agents, Repository, Search, Storage and Sync. The
-content navigation begins with its section icon and single page title, followed
-by section tabs when present. All Settings pages add a one-rem gap after the
-title and one-rem top padding before body content. It has no return button; Back
-to jj-store remains in the settings sidebar, including the mobile navigation
-stage. Appearance begins with Theme after the shared body padding, without an
-introductory description or duplicate page heading. Repository tabs, header
-actions and the details sidebar are absent until Back to jj-store restores the
-same repository route and resumes queued updates. Settings never writes its
-destination or section to the hash, browser history or storage. A fresh
-component starts on Local service; section selection lasts only for that
-component lifetime. Mobile selection returns to the content stage and retains a
-control that reopens settings navigation. On desktop, collapsing the settings
-sidebar retains Back, Local service, Agents, Repository and Search as labelled
-icon controls without clipped text; expanding it restores their visible labels.
+Global Settings opens from the profile menu and contains only Appearance, Local
+service, Agents and Compute. Local service owns installation-wide Protection,
+authority storage and backup configuration, and folder registration. Its
+destination and selected section remain transient, outside URL/history/storage.
+Back to jj-store restores the retained application route and resumes updates.
+
+Repository Settings opens through an icon-only gear at the far right of the
+repository body tab/header row, including focused Stacks views. It replaces
+repository tabs with Back and capability/permission-filtered General, Local
+folders, Search, Storage, Sync and Advanced categories. The left navigation
+retains repository selection. Browsing controls and the Details rail are hidden;
+return restores the rail's prior state. No repository picker or selection empty
+page is offered. General retains the repository type chip and eligible
+conversion. Local folders shows only this repository's binding/link controls;
+Add folder is installation-wide. Search, Storage and Sync retain supported
+subtabs. Advanced contains capability/limit facts and eligible graph
+preparation. Workspace settings remains a separately labelled Stacks action.
+
+Repository settings routes use `#/repos/{id}/settings?section=search&tab=scopes`
+with an optional retained `at_op`. Missing section defaults to General; missing
+subtab defaults to the supported first tab. Category/subtab navigation pushes
+history and restores through reload/Back/Forward. Duplicate, malformed and
+incompatible fields fail closed. After capability discovery, unsupported valid
+destinations replace history with a supported default and one informational
+notice. The Back control retains the exact session entry route including code,
+workspace and Stacks selections; a direct/reloaded link falls back to Overview
+at the retained operation. Settings transitions perform no graph/file loading or
+automatic repinning. Controller owners, drafts and exact pending identities
+survive same-repository transitions; hidden polling stops and owner changes
+retain editing, pending-command and authorization guards. Settings response
+ownership follows the connected repository, independently of code-read selection
+generations. Same-repository history/return cannot discard a command reply or
+abort its exact index task; owner replacement still clears tasks and rejects
+late replies.
+
+Global Settings retains its icon/title, spacing and public controls. Repository
+Settings omits repeated category headings and title-only strips; a second row
+contains only real subtabs. Contextual refresh belongs to the category row.
+Observation subscriptions depend on the stable selected category, so completing
+status reads cannot restart them or flicker loaded content. Global collapsed
+navigation remains accessible through labelled icon controls.
 
 Local service reports access mode, authoritative-storage readiness, HTTP and SSE
 state and automatic update status. Repository reports the retained discovery
@@ -112,7 +131,7 @@ dialog. Keyboard navigation opens and closes dialogs without leaving page
 interaction blocked.
 
 The catalog uses Storybook 10.5.7, Svelte CSF 5.1.2, Vitest browser 4.1.11 and
-Design Core ^0.2.0 with the existing Svelte 5/Vite 8 toolchain. Direct
+Design Core ^0.3.1 with the existing Svelte 5/Vite 8 toolchain. Direct
 adaptations retain provenance and Apache-2.0 attribution. Shared primitives
 remain public Design Core imports. Stories are visual-pending until human
 review.
@@ -131,30 +150,23 @@ expose no link action. Repository switching/disconnection clears drafts and
 ignores late requests. Folder paths wrap on mobile, and form actions remain
 keyboard accessible.
 
-Repository settings groups General, Local folders and Advanced values in
-keyboard-accessible tabs with horizontal overflow on narrow screens. Tab changes
-do not discard folder drafts. Until an explicit repository is selected, the
-Repository page MUST show the public shadcn Empty composition with a repository
-icon, selection guidance and one inline repository picker, without subsection
-tabs, refresh actions or unavailable identity rows. Projects context MUST NOT
-substitute a previously retained repository. Selection uses the existing
-authorized open action and retains draft/pending-command guards and failures.
-After selection, Identity and snapshot MUST include an icon-bearing type chip:
-Local JJ for the registered Git-backed folder profile and Server Hosted for
-native server-managed storage, including a LocalTrusted service. Chip tones
-distinguish these types without relying on colour alone. Read-only Settings
-values use an owned reusable row composed with public Design Core controls.
-Copying is explicitly enabled for identifiers and hashes, or implicitly
-available when the value has an internal Open action. Ordinary names, statuses,
-counts and descriptive values remain plain text without copy controls or
-row-click behavior. Clicking any part of a copyable row or activating its copy
-button with Enter or Space copies the full value, with circular tick feedback
-and an announced failure/retry state. The entire copy target remains stable
-throughout a pointer press, including on labels and values. Each successful copy
-animates the tick unless reduced motion is enabled. Long values truncate in the
-available space; missing values retain their availability label without a copy
-action. A separate trailing Open action is offered only for valid app
-destinations and does not copy. Rows without Open reserve the same trailing
+Repository categories and subtabs use keyboard-accessible shared body navigation
+with responsive overflow. Category changes retain folder drafts. Identity and
+snapshot includes an icon-bearing type chip: Local JJ for registered Git-backed
+folders and Server Hosted for native server-managed storage, including
+LocalTrusted. Chip tones distinguish types without relying on colour alone.
+Read-only Settings values use an owned reusable row composed with public Design
+Core controls. Copying is explicitly enabled for identifiers and hashes, or
+implicitly available when the value has an internal Open action. Ordinary names,
+statuses, counts and descriptive values remain plain text without copy controls
+or row-click behavior. Clicking any part of a copyable row or activating its
+copy button with Enter or Space copies the full value, with circular tick
+feedback and an announced failure/retry state. The entire copy target remains
+stable throughout a pointer press, including on labels and values. Each
+successful copy animates the tick unless reduced motion is enabled. Long values
+truncate in the available space; missing values retain their availability label
+without a copy action. A separate trailing Open action is offered only for valid
+app destinations and does not copy. Rows without Open reserve the same trailing
 action space so their copy buttons align with rows that have a link. This empty
 space adds no focusable control. Settings navigation preserves drafts and
 pending-action guards. Feedback clears when the value changes or the row is

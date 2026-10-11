@@ -18,6 +18,11 @@ not a completion gate selection.
 | [E-M13-028](../../../../../history/2026/10/04/E-M13-028/index.md) | 2026-10-04 | pass            | Original outcome |
 | [E-M13-029](../../../../../history/2026/10/04/E-M13-029/index.md) | 2026-10-04 | pass            | Original outcome |
 
+|
+[E-SETTINGS-SPLIT-001](../../../../../history/2026/10/11/E-SETTINGS-SPLIT-001/index.md)
+| 2026-10-11 | pending | Scoped Settings acceptance passes; inherited
+diagnostics and visual review remain separate |
+
 <!-- generated-navigation -->
 
 ## Pages

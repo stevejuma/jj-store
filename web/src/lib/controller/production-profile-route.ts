@@ -34,6 +34,10 @@ export function createProfileRouteRestorer(context: {
       !validateRepositoryRoute(context.data, route, source)
     )
       return;
+    if (route.page === "settings") {
+      context.data.status.navigation = "ready";
+      return;
+    }
     clearProductionStoreView(context.data);
     await context.restore();
   };

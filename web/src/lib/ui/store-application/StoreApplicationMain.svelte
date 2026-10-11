@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreRepositorySettingsButton from "../store-settings/StoreRepositorySettingsButton.svelte";
   import StoreLazyView from "./StoreLazyView.svelte";
   import StorePageSkeleton from "./StorePageSkeleton.svelte";
   import { views } from "./application-views.js";
@@ -33,7 +34,7 @@
     current,
     settingsOpen,
     settingsSection,
-    settingsRepository,
+    openRepositorySettings,
     closeSettings,
     linkFolder,
     conflictOpen,
@@ -52,7 +53,7 @@
     current: StoreRoute;
     settingsOpen: boolean;
     settingsSection: StoreSettingsSection;
-    settingsRepository: Snippet;
+    openRepositorySettings(): void;
     closeSettings(): void;
     linkFolder(): void;
     conflictOpen: boolean;
@@ -65,6 +66,9 @@
     children?: Snippet<[StorePage, string]>;
     agents?: Snippet;
   } = $props();
+  const repositorySettingsOpen = $derived(
+    current.page === "settings" && !settingsOpen,
+  );
   const focusedStacks = $derived(isStacksRoute(current));
   const stacksPreparing = $derived(
     controller.stackWorkspaceLoading ||
@@ -96,6 +100,7 @@
       current.page !== "threads" &&
       !focusedStacks &&
       !settingsOpen &&
+      current.page !== "settings" &&
       !conflictOpen &&
       !(
         current.page === "projects" &&
@@ -110,11 +115,31 @@
       void controller.actions.refresh();
     }}
   >
+    {#key current.repository}
+      <div
+        hidden={!repositorySettingsOpen}
+        class="store-repository-settings-host"
+      >
+        <AppShell.Body layout="regions" label="Repository settings"
+          ><div class="store-application__body-frame">
+            <StoreLazyView
+              load={views.repositorySettings}
+              label="Repository settings"
+              active={repositorySettingsOpen}
+            >
+              {#snippet content(View)}<View
+                  {controller}
+                  visible={repositorySettingsOpen}
+                />{/snippet}
+            </StoreLazyView>
+          </div></AppShell.Body
+        >
+      </div>
+    {/key}
     {#if settingsOpen}
       {#if shell.mobile.resolvedMode === "mobile"}
         <AppShell.Toolbar>
           <AppShell.Sidebar.Toggle side="left" sidebarName="settings" />
-          {@render settingsRepository()}
         </AppShell.Toolbar>
       {/if}
       <StoreLazyView load={views.settings} label="Settings"
@@ -124,6 +149,8 @@
             onClose={closeSettings}
           />{/snippet}</StoreLazyView
       >
+    {:else if repositorySettingsOpen}
+      <!-- Repository settings is retained in the sibling body above. -->
     {:else if current.agentsHub}{@render agents?.()}
     {:else if current.page === "threads"}<StoreLazyView
         load={views.threads}
@@ -172,7 +199,15 @@
                 local={controller.state.repository.profile === "git_sha1_jj045"}
                 stacks={stacksAvailable}
                 onSelect={selectPage}
-              />{/if}
+                >{#snippet actions()}<div
+                    class="store-repository-settings-action"
+                  >
+                    <StoreRepositorySettingsButton
+                      disabled={workspaceBlocked}
+                      onOpen={openRepositorySettings}
+                    />
+                  </div>{/snippet}</StoreRepositoryTabs
+              >{/if}
             {#if current.page !== "reviews"}<StoreWorkspaceSectionHeader
                 {controller}
                 disabled={workspaceBlocked}
@@ -189,6 +224,7 @@
                       />{/snippet}{#snippet content(View)}<View
                         {controller}
                         workspace={stackWorkspace}
+                        onRepositorySettings={openRepositorySettings}
                       >
                         {#snippet history()}
                           {#if children}{@render children(
@@ -221,3 +257,17 @@
     {/if}
   </StoreTerminalWorkspace>
 </AppShell.Main>
+
+<style>
+  .store-repository-settings-host[hidden] {
+    display: none;
+  }
+  .store-repository-settings-host {
+    min-width: 0;
+    flex: 1;
+    overflow: auto;
+  }
+  .store-repository-settings-action {
+    margin-inline-start: auto;
+  }
+</style>
