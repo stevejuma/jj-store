@@ -120,3 +120,46 @@
     await expect(c.getByText(/Matches saved settings/)).toBeVisible();
   }}
 />
+
+<Story
+  name="Repository configuration uses bottom actions"
+  args={{ embedded: true, section: "configuration" }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    const row = c
+      .getByRole("button", { name: "Save settings" })
+      .closest<HTMLElement>(".store-settings__action-row")!;
+    const description = row.querySelector("p")!,
+      actions = row.querySelector(".store-settings__actions")!;
+    await expect(description.getBoundingClientRect().right).toBeLessThanOrEqual(
+      actions.getBoundingClientRect().left,
+    );
+    const options = c.getByRole("region", { name: "Search options" });
+    await expect(options).toContainElement(row);
+    await expect(
+      c.getByRole("region", { name: "Index status" }),
+    ).not.toContainElement(row);
+    await expect(
+      c.getByRole("region", { name: "Index maintenance" }),
+    ).toContainElement(c.getByRole("button", { name: "Rebuild text index" }));
+    await expect(actions.lastElementChild).toBe(
+      c.getByRole("button", { name: "Save settings" }),
+    );
+    await expect(canvasElement.querySelector("dl button")).toBeNull();
+    await expect(
+      c
+        .getByRole("spinbutton", { name: "Index budget (MiB)" })
+        .getBoundingClientRect().width,
+    ).toBeLessThanOrEqual(180);
+    await userEvent.click(
+      c.getByRole("switch", { name: "Enable text search" }),
+    );
+    await expect(
+      c.getByRole("button", { name: "Save settings" }),
+    ).toBeEnabled();
+    await userEvent.click(c.getByRole("button", { name: "Cancel changes" }));
+    await expect(
+      c.getByRole("switch", { name: "Enable text search" }),
+    ).toBeChecked();
+  }}
+/>

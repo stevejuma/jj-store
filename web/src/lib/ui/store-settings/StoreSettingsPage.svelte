@@ -1,5 +1,13 @@
 <script lang="ts">
-  import type { Snippet } from "svelte";
+  import type { Component, Snippet } from "svelte";
+  import { provideSettingsPresentation } from "./settings-presentation.js";
+  import FileTextIcon from "@lucide/svelte/icons/file-text";
+  import WrenchIcon from "@lucide/svelte/icons/wrench";
+  import SlidersHorizontalIcon from "@lucide/svelte/icons/sliders-horizontal";
+  import ListFilterIcon from "@lucide/svelte/icons/list-filter";
+  import Settings2Icon from "@lucide/svelte/icons/settings-2";
+  import ActivityIcon from "@lucide/svelte/icons/activity";
+  import ChartNoAxesCombinedIcon from "@lucide/svelte/icons/chart-no-axes-combined";
   import BotIcon from "@lucide/svelte/icons/bot";
   import PaletteIcon from "@lucide/svelte/icons/palette";
   import DatabaseIcon from "@lucide/svelte/icons/database";
@@ -7,6 +15,7 @@
   import SearchIcon from "@lucide/svelte/icons/search";
   import ServerIcon from "@lucide/svelte/icons/server";
   import * as Tabs from "@lapismd/design-core/shadcn/tabs";
+  import { ScrollArea } from "@lapismd/design-core/shadcn/scroll-area";
   import * as Tooltip from "@lapismd/design-core/shadcn/tooltip";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import StoreViewTabs from "../store-application/StoreViewTabs.svelte";
@@ -25,7 +34,12 @@
     children,
   }: {
     section: StoreSettingsPageSection;
-    tabs?: readonly { value: string; label: string; disabled?: boolean }[];
+    tabs?: readonly {
+      value: string;
+      label: string;
+      disabled?: boolean;
+      Icon?: Component;
+    }[];
     value?: string;
     onRefresh?: () => Promise<void>;
     refreshLabel?: string;
@@ -35,6 +49,25 @@
     children: Snippet;
   } = $props();
 
+  provideSettingsPresentation({
+    get value() {
+      return embedded ? "repository" : "default";
+    },
+  });
+  const tabIcons: Record<string, Component> = {
+    overview: FileTextIcon,
+    maintenance: WrenchIcon,
+    configuration: SlidersHorizontalIcon,
+    scopes: ListFilterIcon,
+    advanced: Settings2Icon,
+    health: ActivityIcon,
+    progress: ChartNoAxesCombinedIcon,
+  };
+  const presentedTabs = $derived(
+    embedded
+      ? tabs.map((tab) => ({ ...tab, Icon: tab.Icon ?? tabIcons[tab.value] }))
+      : tabs,
+  );
   const titleId = $props.id();
   const title = $derived(
     section === "appearance"
@@ -75,16 +108,43 @@
 </script>
 
 {#snippet content()}
-  <div class="store-settings" aria-labelledby={titleId}>
+  <div
+    class="store-settings"
+    class:store-settings--repository={embedded}
+    aria-labelledby={titleId}
+  >
+    {#if embedded && section === "advanced"}<header
+        class="store-settings__content-heading"
+      >
+        <h1 id={titleId}>Repository capabilities</h1>
+        <p>
+          Technical details about this repository, including indexing, API
+          support and operational limits.
+        </p>
+      </header>{/if}
     {@render children()}
   </div>
+{/snippet}
+
+{#snippet body()}
+  {#if embedded}
+    <ScrollArea
+      class="store-settings__scroll"
+      aria-label={`${title} settings content`}
+    >
+      {@render content()}
+    </ScrollArea>
+  {:else}
+    {@render content()}
+  {/if}
 {/snippet}
 
 {#snippet navigation()}
   <StoreViewTabs
     inheritContext
     {value}
-    sections={tabs}
+    sections={presentedTabs}
+    presentation={embedded ? "line" : "pill"}
     onSelect={(next) => {
       if (onSelect) onSelect(next);
       else value = next;
@@ -125,7 +185,12 @@
   </StoreViewTabs>
 {/snippet}
 
-{#if embedded}<h1 id={titleId} class="store-settings__sr-only">{title}</h1>{/if}
+{#if embedded && section !== "advanced"}<h1
+    id={titleId}
+    class="store-settings__sr-only"
+  >
+    {title}
+  </h1>{/if}
 {#if tabs.length}
   <Tabs.Root
     {value}
@@ -133,14 +198,16 @@
       if (onSelect) onSelect(next);
       else value = next;
     }}
-    class="store-settings__tabs"
+    class={embedded
+      ? "store-settings__tabs store-settings__tabs--repository"
+      : "store-settings__tabs"}
   >
     {@render navigation()}
-    {@render content()}
+    {@render body()}
   </Tabs.Root>
 {:else}
   {#if !embedded}{@render navigation()}{/if}
-  {@render content()}
+  {@render body()}
 {/if}
 
 <style>

@@ -1,0 +1,165 @@
+/* Opt-in repository presentation; legacy global forms retain their styles. */
+.store-settings__tabs--repository,
+.store-settings__scroll {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+.store-settings__tabs--repository {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.store-settings--repository {
+  --store-settings-label-width: minmax(10rem, 0.8fr);
+}
+.store-settings--repository .store-settings__section {
+  margin-block-start: 1rem;
+}
+.store-settings--repository .store-settings-card {
+  min-width: 0;
+  gap: 0;
+}
+.store-settings-card__content {
+  display: grid;
+  gap: 0;
+  min-width: 0;
+}
+.store-settings-card__content .store-settings__rows {
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  overflow: visible;
+}
+.store-settings--repository
+  .store-settings__rows
+  > div:not([data-slot="field-group"]):not(.store-readonly-row):not(
+    .store-settings__action-row
+  ),
+.store-settings--repository .store-settings__summary-rows > div {
+  padding: 0.65rem 1rem;
+}
+.store-settings--repository .store-settings__option-row {
+  padding: 0.75rem 1rem;
+}
+.store-settings--repository .store-settings__editable-rows {
+  gap: 0;
+}
+.store-settings--repository .store-settings__actions {
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  max-width: none;
+}
+.store-settings--repository .store-settings-footer {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  border: 0;
+  border-block-start: 1px solid var(--border);
+  border-radius: 0;
+}
+.store-settings-footer__description {
+  min-width: 0;
+}
+.store-settings--repository .store-settings-footer__description {
+  flex: 1 1 16rem;
+}
+.store-settings--repository .store-settings-footer > .store-settings__actions {
+  flex: 0 1 auto;
+  max-width: none;
+  margin-inline-start: auto;
+}
+.store-settings--repository .store-settings-footer--standalone {
+  border-block-start: 0;
+}
+.store-settings--repository
+  .store-settings-card__content
+  > .store-settings-footer:first-child {
+  border-block-start: 0;
+}
+.store-settings--repository .store-settings__rows--controls > div {
+  grid-template-columns: minmax(0, 1fr);
+}
+.store-settings--repository .store-settings__rows--controls dd {
+  padding-block-end: 0.25rem;
+}
+.store-settings--repository .store-settings__input {
+  width: min(26rem, 100%);
+}
+.store-settings--repository .store-settings__input[type="number"] {
+  width: min(11rem, 100%);
+}
+.store-settings--repository .store-settings__option-row {
+  display: grid;
+  grid-template-columns: var(--store-settings-label-width) minmax(0, 1.5fr);
+  align-items: center;
+  gap: 1rem;
+}
+.store-settings--repository .store-settings__option-row > :last-child {
+  justify-self: end;
+}
+.store-settings--repository .store-workspace-link-form__footer {
+  padding-inline: 1rem;
+}
+@media (max-width: 40rem) {
+  .store-settings--repository .store-settings__option-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.5rem;
+  }
+  .store-settings--repository .store-settings__option-row > :last-child {
+    justify-self: start;
+  }
+  .store-settings--repository .store-settings-footer__description {
+    flex-basis: 100%;
+  }
+  .store-settings--repository
+    .store-settings-footer
+    > .store-settings__actions {
+    width: 100%;
+  }
+  .store-settings--repository .store-settings__actions > button {
+    max-width: 100%;
+    white-space: normal;
+    height: auto;
+    min-height: 2rem;
+  }
+}
+
+.store-settings__content-heading {
+  margin-block-end: 1rem;
+}
+.store-settings__content-heading h1 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+.store-settings__content-heading p {
+  margin: 0.3rem 0 0;
+  color: var(--muted-foreground);
+  font-size: var(--community-text-secondary);
+}
+
+.store-settings-card__header {
+  padding: 0.85rem 1rem;
+  background: color-mix(in srgb, var(--muted) 35%, var(--card));
+  border-block-end: 1px solid var(--border);
+}
+.store-settings--repository .store-settings-card__content > dl + dl,
+.store-settings--repository .store-settings-card__content > h3 {
+  border-block-start: 1px solid var(--border);
+}
+.store-settings--repository .store-settings-card__content > h3 {
+  margin: 0;
+  padding: 0.65rem 1rem;
+  font-size: var(--community-text-secondary);
+  font-weight: 600;
+  background: color-mix(in srgb, var(--muted) 25%, var(--card));
+}
+.store-settings--repository .store-settings-card__content > p {
+  padding-inline: 1rem;
+}

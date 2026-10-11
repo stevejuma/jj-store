@@ -9,10 +9,12 @@
   import { searchSettingsValue } from "./search-settings.js";
   import "../../web/src/lib/ui/store-settings/StoreSettings.css";
   let {
+    embedded = false,
     supported = true,
     fail = false,
     section = "scopes",
   }: {
+    embedded?: boolean;
     supported?: boolean;
     fail?: boolean;
     section?: "configuration" | "scopes" | "advanced";
@@ -29,6 +31,7 @@
 </script>
 
 <StoreSettingsPage
+  {embedded}
   section="search"
   onRefresh={async () => {
     settings.state = "ready";

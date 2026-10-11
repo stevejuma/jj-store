@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { settingsPresentation } from "./settings-presentation.js";
+  import StoreSettingsFooter from "./StoreSettingsFooter.svelte";
   import StoreReadOnlyRow from "./StoreReadOnlyRow.svelte";
   import SaveIcon from "@lucide/svelte/icons/save";
   import XIcon from "@lucide/svelte/icons/x";
@@ -17,6 +19,7 @@
     disabled: boolean;
     onStart: (action: StorageAction) => Promise<void>;
   } = $props();
+  const presentation = settingsPresentation();
   const words = (value: string) => value.replaceAll("_", " ");
 </script>
 
@@ -61,35 +64,35 @@
     copyLabel="Maintenance request"
   />
 </dl>
-<header class="store-settings__section-heading">
+<div class="store-settings__section-heading">
   <h2>Captured target</h2>
-</header>
+</div>
 <StoreStoragePosition position={report.target} />
 {#if report.kind === "checkpoint" && ["prepared", "unknown"].includes(report.phase)}
-  <div class="store-settings__action-row">
-    <div>
-      <strong>Publish captured checkpoint</strong>
-      <p>
-        Publishing keeps newer changes and retained history. This target stays
-        fixed across retries.
-      </p>
-    </div>
-    <div class="store-settings__actions">
-      <Button {disabled} onclick={() => void onStart("publish_checkpoint")}
-        ><SaveIcon
-          data-icon="inline-start"
-          aria-hidden="true"
-        />{report.phase === "prepared"
-          ? "Publish checkpoint"
-          : "Retry checkpoint"}</Button
-      >
-      {#if report.phase === "prepared"}<Button
-          variant="outline"
-          {disabled}
-          onclick={() => void onStart("cancel_checkpoint")}
-          ><XIcon data-icon="inline-start" aria-hidden="true" />Cancel
-          checkpoint</Button
-        >{/if}
-    </div>
-  </div>
+  {#snippet publish()}
+    <Button {disabled} onclick={() => void onStart("publish_checkpoint")}
+      ><SaveIcon data-icon="inline-start" aria-hidden="true" />{report.phase ===
+      "prepared"
+        ? "Publish checkpoint"
+        : "Retry checkpoint"}</Button
+    >
+  {/snippet}
+  {#snippet cancel()}
+    {#if report.phase === "prepared"}<Button
+        variant="outline"
+        {disabled}
+        onclick={() => void onStart("cancel_checkpoint")}
+        ><XIcon data-icon="inline-start" aria-hidden="true" />Cancel checkpoint</Button
+      >{/if}
+  {/snippet}
+  <StoreSettingsFooter>
+    {#snippet description()}<div>
+        <strong>Publish captured checkpoint</strong>
+        <p>
+          Publishing keeps newer changes and retained history. This target stays
+          fixed across retries.
+        </p>
+      </div>{/snippet}
+    {#if presentation.value === "repository"}{@render cancel()}{@render publish()}{:else}{@render publish()}{@render cancel()}{/if}
+  </StoreSettingsFooter>
 {/if}

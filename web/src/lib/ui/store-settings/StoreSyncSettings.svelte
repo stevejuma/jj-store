@@ -1,4 +1,7 @@
 <script lang="ts">
+  import StoreSettingsFooter from "./StoreSettingsFooter.svelte";
+  import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
+  import StoreSettingsCard from "./StoreSettingsCard.svelte";
   import StoreReadOnlyRow from "./StoreReadOnlyRow.svelte";
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import StoreSettingsNotice from "./StoreSettingsNotice.svelte";
@@ -91,13 +94,12 @@
     >
   {:else}
     <Tabs.Content value="overview">
-      <section class="store-settings__section" aria-labelledby="sync-overview">
-        <header class="store-settings__section-heading">
-          <div>
-            <h2 id="sync-overview">Upstream sync</h2>
-            <p>Status updates automatically.</p>
-          </div>
-        </header>
+      <StoreSettingsCard
+        id="sync-overview"
+        title="Upstream sync"
+        description="Status updates automatically."
+        Icon={RefreshCwIcon}
+      >
         {#if busy}<StoreSettingsNotice>
             {settings.changing ? "Updating sync…" : "Loading sync status…"}
           </StoreSettingsNotice>{/if}
@@ -134,58 +136,51 @@
             </div>
           </dl>
           {#if reconciliation}{@render reconciliation()}{/if}
-          <div class="store-settings__action-row">
-            <div>
-              <strong>Sync controls</strong>
-              <p>
-                Pause lasts until resumed or the service restarts. Local
-                repository work stays available.
-              </p>
-            </div>
-            <div class="store-settings__actions">
-              <Button
-                variant="outline"
-                disabled={busy || settings.state !== "ready"}
-                onclick={() =>
-                  void onControl(
-                    worker.phase === "paused" ? "resume" : "pause",
-                  )}
-                >{#if worker.phase === "paused"}<PlayIcon
-                    data-icon="inline-start"
-                    aria-hidden="true"
-                  />{:else}<PauseIcon
-                    data-icon="inline-start"
-                    aria-hidden="true"
-                  />{/if}{worker.phase === "paused"
-                  ? "Resume sync"
-                  : "Pause sync"}</Button
-              >
-              <Button
-                variant="outline"
-                disabled={busy ||
-                  settings.state !== "ready" ||
-                  worker.phase === "paused"}
-                onclick={() => void onControl("retry")}
-                ><RotateCwIcon
+          <StoreSettingsFooter>
+            {#snippet description()}<div>
+                <strong>Sync controls</strong>
+                <p>
+                  Pause lasts until resumed or the service restarts. Local
+                  repository work stays available.
+                </p>
+              </div>{/snippet}
+
+            <Button
+              variant="outline"
+              disabled={busy || settings.state !== "ready"}
+              onclick={() =>
+                void onControl(worker.phase === "paused" ? "resume" : "pause")}
+              >{#if worker.phase === "paused"}<PlayIcon
                   data-icon="inline-start"
                   aria-hidden="true"
-                />Retry sync</Button
-              >
-            </div>
-          </div>
+                />{:else}<PauseIcon
+                  data-icon="inline-start"
+                  aria-hidden="true"
+                />{/if}{worker.phase === "paused"
+                ? "Resume sync"
+                : "Pause sync"}</Button
+            >
+            <Button
+              variant="outline"
+              disabled={busy ||
+                settings.state !== "ready" ||
+                worker.phase === "paused"}
+              onclick={() => void onControl("retry")}
+              ><RotateCwIcon data-icon="inline-start" aria-hidden="true" />Retry
+              sync</Button
+            >
+          </StoreSettingsFooter>
         {/if}
-      </section>
+      </StoreSettingsCard>
     </Tabs.Content>
     <Tabs.Content value="progress">
       {#if worker}
-        <section
-          class="store-settings__section"
-          aria-labelledby="sync-progress"
+        <StoreSettingsCard
+          id="sync-progress"
+          title="Replication progress"
+          description="Local and peer positions belong to separate histories."
+          Icon={RefreshCwIcon}
         >
-          <header>
-            <h2 id="sync-progress">Replication progress</h2>
-            <p>Local and peer positions belong to separate histories.</p>
-          </header>
           <StoreSyncWait wait={settings.wait} {onWait} {onStopWait} />
           <dl class="store-settings__rows">
             <StoreReadOnlyRow
@@ -252,7 +247,7 @@
               </dl>
             {:else}<p>Unavailable</p>{/if}
           {/each}
-        </section>
+        </StoreSettingsCard>
       {/if}
     </Tabs.Content>
     <StoreNotice

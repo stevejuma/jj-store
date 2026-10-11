@@ -5,10 +5,16 @@
   import { emptySyncSettings } from "../../web/src/lib/controller/sync-settings.js";
   import type { SyncSettings } from "../../web/src/lib/controller/sync-settings.js";
   let {
+    embedded = false,
     supported = true,
     configured = true,
     failed = false,
-  } = $props<{ supported?: boolean; configured?: boolean; failed?: boolean }>();
+  } = $props<{
+    embedded?: boolean;
+    supported?: boolean;
+    configured?: boolean;
+    failed?: boolean;
+  }>();
   let settings = $state<SyncSettings>(
     untrack(() => ({
       ...emptySyncSettings(),
@@ -26,6 +32,7 @@
 
 <div>
   <StoreSyncSettings
+    {embedded}
     {settings}
     {supported}
     onRefresh={async () => {

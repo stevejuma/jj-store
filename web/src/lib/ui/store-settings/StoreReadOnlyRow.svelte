@@ -1,5 +1,11 @@
 <script lang="ts">
-  import { onDestroy } from "svelte";
+  import StoreSettingsIcon from "./StoreSettingsIcon.svelte";
+  import { settingsRowIcons } from "./settings-row-icons.js";
+  import { onDestroy, type Component } from "svelte";
+  import {
+    settingsPresentation,
+    type SettingsPresentation,
+  } from "./settings-presentation.js";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import Copy from "@lucide/svelte/icons/copy";
   import Check from "@lucide/svelte/icons/circle-check";
@@ -20,6 +26,8 @@
     onOpen,
     openLabel = `Open ${label}`,
     openDisabled = false,
+    presentation,
+    Icon,
   }: {
     label: string;
     copyLabel?: string;
@@ -35,7 +43,14 @@
     onOpen?: () => void;
     openLabel?: string;
     openDisabled?: boolean;
+    presentation?: SettingsPresentation;
+    Icon?: Component;
   } = $props();
+  const inheritedPresentation = settingsPresentation();
+  const compact = $derived(
+    (presentation ?? inheritedPresentation.value) === "repository",
+  );
+  const RowIcon = $derived(Icon ?? settingsRowIcons[label]);
   const text = $derived(value == null ? "" : String(value));
   const canCopy = $derived(copyable || !!onOpen);
   let feedback = $state<"" | "copied" | "failed">("");
@@ -76,12 +91,23 @@
   this={standalone ? "dl" : "div"}
   class="store-readonly-row"
   class:store-readonly-row--stacked={stacked}
+  class:store-readonly-row--compact={compact}
+  class:store-readonly-row--copyable={canCopy}
 >
   <dt>
-    {label}{#if description}<p>{description}</p>{/if}
+    {#if RowIcon && compact}<span class="store-readonly-row__icon"
+        ><StoreSettingsIcon Icon={RowIcon} {tone} /></span
+      >{/if}
+    <span
+      >{label}{#if description}<p>{description}</p>{/if}</span
+    >
   </dt>
   <dd>
-    <span class="store-readonly-row__value" data-tone={tone} role={live}
+    <span
+      class="store-readonly-row__value"
+      data-tone={tone}
+      role={live}
+      title={canCopy && text ? text : undefined}
       >{text ? (display ?? text) : emptyLabel}</span
     >
     {#if text && canCopy}
@@ -89,7 +115,7 @@
         {#if onOpen}<Button
             type="button"
             variant="ghost"
-            size="icon-sm"
+            size={compact ? "icon-xs" : "icon-sm"}
             class="store-readonly-row__open"
             aria-label={openLabel}
             title={openLabel}
@@ -99,10 +125,10 @@
         <Button
           type="button"
           variant="ghost"
-          size="icon-sm"
+          size={compact ? "icon-xs" : "icon-sm"}
           class="store-readonly-row__copy"
           aria-label={`Copy full ${copyLabel}: ${text}`}
-          title={`Copy ${copyLabel}`}
+          title={compact ? `Copy ${copyLabel}: ${text}` : `Copy ${copyLabel}`}
           data-copied={feedback === "copied" || undefined}
           data-copy-failed={feedback === "failed" || undefined}
           onclick={() => void copy()}
@@ -136,6 +162,27 @@
     margin: 0;
     padding: 0.85rem 1rem;
   }
+  .store-readonly-row--compact {
+    padding: 0.65rem 1rem;
+  }
+  .store-readonly-row--compact:not(.store-readonly-row--copyable)
+    .store-readonly-row__value {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .store-readonly-row--compact dt {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .store-readonly-row__icon {
+    display: inline-flex;
+    flex: none;
+    color: var(--muted-foreground);
+  }
+
   dt {
     min-width: 0;
     font-size: var(--community-text-secondary);

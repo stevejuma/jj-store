@@ -14,7 +14,9 @@
     reader = false,
     section = "general",
     tab,
+    narrow = false,
   }: {
+    narrow?: boolean;
     local?: boolean;
     reader?: boolean;
     section?:
@@ -87,7 +89,7 @@
   };
 </script>
 
-<main>
+<main style:width={narrow ? "390px" : "100%"} style:max-width="100%">
   <StoreRepositorySettingsView {controller} /><output
     aria-label="Settings route"
     >{route.page}:{route.repositorySettingsSection}:{route.repositorySettingsTab ??

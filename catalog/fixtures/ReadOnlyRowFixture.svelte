@@ -7,11 +7,13 @@
     onOpen,
     copyable = true,
     lifecycle = false,
+    presentation = "default",
   }: {
     value?: string | number | null;
     onOpen?: () => void;
     copyable?: boolean;
     lifecycle?: boolean;
+    presentation?: "default" | "repository";
   } = $props();
   let replaced = $state(false),
     shown = $state(true);
@@ -24,6 +26,7 @@
         value={replaced ? "replacement" : value}
         {onOpen}
         {copyable}
+        {presentation}
       />{/if}
   </dl>
   {#if lifecycle}<Button onclick={() => (replaced = true)}>Replace value</Button

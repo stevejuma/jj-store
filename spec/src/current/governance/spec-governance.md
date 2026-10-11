@@ -198,3 +198,16 @@ supplies shared controls. Extracted header/layout helpers are declared in
 provenance. Settings navigation changes client URL/session state only; server
 API, configuration formats, authorization and repository authority are
 unchanged.
+
+E-SETTINGS-REFRESH-001 retains JST-GOV-002/008 ownership. Settings cards,
+headings, icons, action footers and extracted field/registration presentation
+are application-authored under `web/src/lib` and recorded in provenance. They
+compose released Design Core primitives and retain the installed registry
+versions. No Community source, catalog runtime dependency, package patch or
+local substitution is introduced.
+
+For E-SETTINGS-REFRESH-001, the user's explicit 2026-10-11 direction authorizes
+application-scoped CSS for repository line-tab selection. It targets public
+`data-state` attributes and theme tokens while retaining released Design Core
+components, keyboard behavior and package versions. This narrow exception does
+not authorize dependency patches, source aliases or local package overrides.

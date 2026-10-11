@@ -153,3 +153,37 @@
     await expect(c.queryByRole("button", { name: "Save settings" })).toBeNull();
   }}
 />
+
+<Story
+  name="Repository sync uses grouped cards and one shared save footer"
+  args={{ section: "sync", embedded: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    const add = await c.findByRole("button", { name: "Add upstream" });
+    const status = c.getByRole("region", { name: "Current status" });
+    const upstream = c.getByRole("region", { name: "Upstream configuration" });
+    await expect(status).toContainElement(c.getByText("Credential reference"));
+    await expect(upstream).toContainElement(add);
+    await expect(add.closest(".store-settings-footer")).not.toBeNull();
+    await userEvent.click(add);
+    const input = c.getByRole("textbox", { name: "Upstream origin" });
+    await userEvent.type(input, "https://peer.example.test");
+    await expect(c.getByRole("region", { name: "Sync limits" })).toBeVisible();
+    const save = c.getByRole("button", { name: "Save settings" });
+    const cancel = c.getByRole("button", { name: "Cancel changes" });
+    await expect(save.parentElement!.lastElementChild).toBe(save);
+    await expect(save.closest("form")).toContainElement(input);
+    await expect(
+      save.closest("form")!.querySelectorAll('button[type="submit"]'),
+    ).toHaveLength(1);
+    await expect(canvasElement.querySelector("dl button")).toBeNull();
+    await expect(cancel.getBoundingClientRect().right).toBeLessThanOrEqual(
+      save.getBoundingClientRect().left,
+    );
+    await userEvent.click(cancel);
+    await expect(c.getByRole("button", { name: "Add upstream" })).toBeVisible();
+    await expect(
+      c.queryByRole("textbox", { name: "Upstream origin" }),
+    ).toBeNull();
+  }}
+/>

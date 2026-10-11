@@ -18,6 +18,11 @@ not a completion gate selection.
 | 2026-10-11 | pending | Scoped Settings acceptance passes; inherited
 diagnostics and visual review remain separate |
 
+[E-SETTINGS-REFRESH-001](../../../../../history/2026/10/11/E-SETTINGS-REFRESH-001/index.md)
+reviews M4.18 without changing its status. Shared repository presentation and
+action placement retain the existing behavioural contract; release and inherited
+diagnostics remain explicit.
+
 <!-- generated-navigation -->
 
 ## Pages

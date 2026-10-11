@@ -131,3 +131,20 @@
     ).not.toBeInTheDocument();
   }}
 />
+
+<Story
+  name="Repository progress retains captured targets"
+  args={{ embedded: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await userEvent.click(c.getByRole("tab", { name: "Progress" }));
+    await userEvent.click(
+      c.getByRole("button", { name: "Wait for current sync" }),
+    );
+    await expect(c.getByText("Captured target is still pending")).toBeVisible();
+    await userEvent.click(c.getByRole("tab", { name: "Overview" }));
+    await userEvent.click(c.getByRole("tab", { name: "Progress" }));
+    await userEvent.click(c.getByRole("button", { name: "Continue waiting" }));
+    await expect(c.getByText("Captured target reached")).toBeVisible();
+  }}
+/>

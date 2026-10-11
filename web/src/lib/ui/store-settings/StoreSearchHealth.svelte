@@ -1,4 +1,6 @@
 <script lang="ts">
+  import ActivityIcon from "@lucide/svelte/icons/activity";
+  import StoreSettingsCard from "./StoreSettingsCard.svelte";
   import StoreReadOnlyRow from "./StoreReadOnlyRow.svelte";
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import StoreSettingsNotice from "./StoreSettingsNotice.svelte";
@@ -15,13 +17,12 @@
       : value.toLocaleString("en-GB");
 </script>
 
-<section class="store-settings__section" aria-labelledby="search-health">
-  <header class="store-settings__section-heading">
-    <div>
-      <h2 id="search-health">Text-search health</h2>
-      <p>Positions update automatically while Settings is open.</p>
-    </div>
-  </header>
+<StoreSettingsCard
+  id="search-health"
+  title="Text-search health"
+  description="Positions update automatically while Settings is open."
+  Icon={ActivityIcon}
+>
   {#if !capabilities?.search}
     <StoreSettingsEmpty
       Icon={SearchXIcon}
@@ -79,4 +80,4 @@
     pending={settings.searchStatusState === "loading" ||
       settings.searchStatusState === "refreshing"}
   />
-</section>
+</StoreSettingsCard>

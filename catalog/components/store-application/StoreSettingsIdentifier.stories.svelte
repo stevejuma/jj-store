@@ -143,3 +143,48 @@
     }
   }}
 />
+
+<Story
+  name="Repository copyable values truncate and copy the exact full identifier"
+  args={{ presentation: "repository", onOpen: open }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement),
+      write = fn(async (_value: string) => {}),
+      restore = clipboard(write);
+    const main = canvasElement.querySelector("main")!;
+    main.style.width = "320px";
+    try {
+      const text = c.getByText(value, { exact: true });
+      await expect(getComputedStyle(text).whiteSpace).toBe("nowrap");
+      await expect(getComputedStyle(text).textOverflow).toBe("ellipsis");
+      await expect(text).toHaveAttribute("title", value);
+      await expect(text.getBoundingClientRect().height).toBeLessThanOrEqual(
+        parseFloat(getComputedStyle(text).lineHeight),
+      );
+      const copy = c.getByRole("button", {
+        name: `Copy full Operation ID: ${value}`,
+      });
+      const link = c.getByRole("button", { name: "Open Operation ID" });
+      await expect(copy).toHaveAttribute("data-size", "icon-xs");
+      await expect(link).toHaveAttribute("data-size", "icon-xs");
+      const centre = (element: Element) => {
+        const bounds = element.getBoundingClientRect();
+        return bounds.top + bounds.height / 2;
+      };
+      await expect(Math.abs(centre(text) - centre(copy))).toBeLessThan(1);
+      await expect(Math.abs(centre(text) - centre(link))).toBeLessThan(1);
+      await expect(copy.getBoundingClientRect().height).toBeLessThanOrEqual(24);
+      await userEvent.click(copy);
+      await expect(write).toHaveBeenCalledWith(value);
+      await expect(copy).toHaveAttribute("data-copied", "true");
+      await userEvent.click(
+        c.getByRole("button", { name: "Open Operation ID" }),
+      );
+      await expect(open).toHaveBeenCalledOnce();
+      await expect(write).toHaveBeenCalledTimes(1);
+      await expect(main.scrollWidth).toBeLessThanOrEqual(320);
+    } finally {
+      restore();
+    }
+  }}
+/>

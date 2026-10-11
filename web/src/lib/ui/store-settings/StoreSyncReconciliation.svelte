@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreSettingsFooter from "./StoreSettingsFooter.svelte";
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as Dialog from "@lapismd/design-core/shadcn/dialog";
@@ -55,11 +56,11 @@
 </script>
 
 {#if available}
-  <div class="store-settings__action-row">
-    <div>
-      <strong>Operation reconciliation</strong>
-      <p>Review and merge the current operation heads.</p>
-    </div>
+  <StoreSettingsFooter>
+    {#snippet description()}<div>
+        <strong>Operation reconciliation</strong>
+        <p>Review and merge the current operation heads.</p>
+      </div>{/snippet}
     <Button
       variant="outline"
       disabled={loading || (unresolved && !resume)}
@@ -68,7 +69,7 @@
         ? "Recover reconciliation"
         : "Reconcile operations"}</Button
     >
-  </div>
+  </StoreSettingsFooter>
 {/if}
 <StoreNotice
   noticeKey="reconciliation"

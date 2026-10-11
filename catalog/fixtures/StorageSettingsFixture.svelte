@@ -7,9 +7,11 @@
     type StorageAction,
   } from "../../web/src/lib/controller/storage-settings.js";
   let {
+    embedded = false,
     supported = true,
     phase = "prepared",
   }: {
+    embedded?: boolean;
     supported?: boolean;
     phase?: "prepared" | "incomplete" | "unknown" | "interrupted";
   } = $props();
@@ -59,6 +61,7 @@
 </script>
 
 <StoreStorageSettings
+  {embedded}
   {settings}
   {supported}
   onStart={start}

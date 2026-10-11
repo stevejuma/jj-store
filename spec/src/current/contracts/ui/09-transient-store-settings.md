@@ -91,26 +91,29 @@ overflow; status meaning is always present as text as well as color.
 Local service lists Git-backed JJ registrations in the same bordered Settings
 rows as service status, with the name, wrapping path and availability on the
 left and Reconnect/Remove actions on the right. Registration guidance sits left
-of Add/Refresh actions in a matching settings row. Search status and editable
-enablement/budget or file-scope controls share one bordered group, with labels
-and descriptions left and controls right. Save/Cancel, index maintenance and
-sync controls use that same description-left/action-right composition. Each
-Settings action group stacks vertically, with its buttons stretching to equal
-width; Appearance option groups retain their horizontal layout. The native
-folder-link form instead keeps Cancel and Link folder in a bottom button row
-aligned to the right, below its guidance and a public Separator, within the same
-bordered group as Folder path. Its controls wrap at narrow widths. Rows stack
-their label and control columns on narrow screens. Standalone guidance, loading
-and status messages use public Design Core Alert composition with an information
-icon and polite status semantics; transient operational errors use the
-application notification service. Descriptions and status values already
-contained in rows remain within those rows. Capture policy, harness diagnostics,
-source coverage and import inspection use the same bordered, divided two-column
-Settings rows. Source descriptions and repository bindings sit left; coverage,
-inputs and vertically stacked equal-width actions sit right. Capture refresh
-occupies the far-right page header. Closing or leaving Agents stops visible
-capture polling while preserving pending commands and request-ID drafts. Agents
-is installation-scoped and has no repository picker.
+of Add/Refresh actions in a matching settings row. Repository Search separates
+index status, editable options and index maintenance into cards following the
+shared
+[settings/form convention](28-complete-supported-configuration-settings.md).
+Labels and descriptions stay left and editable controls right. Save/Cancel and
+maintenance commands occupy separate bottom footers with explanatory text left
+and buttons right, primary action last. Global Settings action groups stack
+vertically, with its buttons stretching to equal width; Appearance option groups
+retain their horizontal layout. The native folder-link form instead keeps Cancel
+and Link folder in a bottom button row aligned to the right, below its guidance
+and a public Separator, within the same bordered group as Folder path. Its
+controls wrap at narrow widths. Rows stack their label and control columns on
+narrow screens. Standalone guidance, loading and status messages use public
+Design Core Alert composition with an information icon and polite status
+semantics; transient operational errors use the application notification
+service. Descriptions and status values already contained in rows remain within
+those rows. Capture policy, harness diagnostics, source coverage and import
+inspection use the same bordered, divided two-column Settings rows. Source
+descriptions and repository bindings sit left; coverage, inputs and vertically
+stacked equal-width actions sit right. Capture refresh occupies the far-right
+page header. Closing or leaving Agents stops visible capture polling while
+preserving pending commands and request-ID drafts. Agents is installation-scoped
+and has no repository picker.
 
 Unsupported capture, Search, Sync and local-folder management use the public
 shadcn Empty composition with a suitable icon, explicit availability text and no
@@ -163,14 +166,14 @@ or row-click behavior. Clicking any part of a copyable row or activating its
 copy button with Enter or Space copies the full value, with circular tick
 feedback and an announced failure/retry state. The entire copy target remains
 stable throughout a pointer press, including on labels and values. Each
-successful copy animates the tick unless reduced motion is enabled. Long values
-truncate in the available space; missing values retain their availability label
-without a copy action. A separate trailing Open action is offered only for valid
-app destinations and does not copy. Rows without Open reserve the same trailing
-action space so their copy buttons align with rows that have a link. This empty
-space adds no focusable control. Settings navigation preserves drafts and
-pending-action guards. Feedback clears when the value changes or the row is
-removed.
+successful copy animates the tick unless reduced motion is enabled. Legacy and
+repository copyable values stay on one line with an ellipsis and expose the full
+value on hover and to Copy; descriptive values and capability lists wrap;
+missing values retain their availability label without a copy action. A separate
+trailing Open action is offered only for valid app destinations and does not
+copy. Rows without Open reserve no empty navigation action slot. Settings
+navigation preserves drafts and pending-action guards. Feedback clears when the
+value changes or the row is removed.
 
 The optional native folder picker joins Folder path to a Git-icon Browse button.
 The path/Browse group fills its available control column, with the input taking
@@ -182,3 +185,20 @@ separate validation/save action. Cancel preserves the draft; failures retain
 manual entry and explain the fallback. While picking, repeated browse and link
 actions are disabled. Repository changes discard late selections. Unsupported
 platforms keep the manual form.
+
+Repository presentation uses full-width, single-column small Design Core cards,
+compact divided rows and bottom-right action footers, with optional explanatory
+text to their left. Labels and controls stack at narrow widths; buttons wrap
+without clipping. General, Local folders, Search, Storage, Sync and Advanced
+retain their existing controls and filters. Advanced has a contextual Repository
+capabilities heading and separate graph, capability and limit cards. It adds no
+duplicate category navigation or title-only strip. Secondary tabs use public
+line tabs with compact icons, left-aligned labels, bold active text and a
+thicker theme-accent underline; primary tabs retain pills. Both navigation rows
+remain outside the bounded Design Core Scroll Area that owns repository settings
+content scrolling. Subtabs follow the primary row without extra top padding.
+Card headers adjoin their first row without an intervening gap. Overflow probes
+include icons and match visible tab presentation. The shared presentation is
+opt-in: global Settings and unrelated row/tab consumers retain their legacy
+defaults. Drafts, pending commands, exact copy/Open targets, automatic updates
+and route/history contracts are unchanged.

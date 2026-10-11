@@ -18,3 +18,9 @@ migration reason. They are not generic TOML or filesystem editing capabilities.
 Search configuration also includes bounded polling, timeout and snapshot
 interval fields. Its existing conditional save and explicit Apply worker
 replacement activate these fields with the other search configuration.
+
+E-SETTINGS-REFRESH-001 retains JST-API-001/004 configuration, admission and
+authorization contracts. Repository cards, action footers, tab styling and the
+bounded content Scroll Area are client presentation only. Existing conditional
+saves, Apply/restart requirements, stale-response rejection and exact pending
+request identities are unchanged; no API or persisted format is added.

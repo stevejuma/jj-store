@@ -100,3 +100,75 @@
     ).toHaveTextContent("settings:general:");
   }}
 />
+
+<Story
+  name="Advanced uses compact cards with complete capability values"
+  args={{ section: "advanced" }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await expect(
+      c.getByRole("heading", { name: "Repository capabilities", level: 1 }),
+    ).toBeVisible();
+    for (const name of [
+      "Graph index",
+      "Capabilities",
+      "Read and event limits",
+    ]) {
+      const card = c.getByRole("region", { name });
+      await expect(card).toHaveAttribute("data-slot", "card");
+      await expect(card.querySelector("h2")).toBeVisible();
+    }
+    const value = c
+      .getByText("Typed mutations")
+      .closest(".store-readonly-row")!
+      .querySelector(".store-readonly-row__value")!;
+    await expect(getComputedStyle(value).whiteSpace).toBe("normal");
+    await expect(
+      canvasElement.querySelector('[data-presentation="line"]'),
+    ).toBeNull();
+    await expect(
+      c.queryByRole("button", { name: /Copy full Typed mutations/ }),
+    ).not.toBeInTheDocument();
+  }}
+/>
+<Story
+  name="Secondary line tabs retain primary pills and keyboard routing"
+  args={{ section: "storage" }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    const navigation = c.getByRole("navigation", {
+      name: "Settings page navigation",
+    });
+    const overview = within(navigation).getByRole("tab", { name: "Overview" });
+    await expect(overview.querySelector("svg")).toBeVisible();
+    await expect(overview.closest('[data-slot="tabs-list"]')).toHaveAttribute(
+      "data-variant",
+      "line",
+    );
+    await expect(
+      c.getByRole("tab", { name: "Storage" }).closest("[data-presentation]"),
+    ).toHaveAttribute("data-presentation", "pill");
+    const indicator = getComputedStyle(overview, "::after");
+    await expect(indicator.opacity).toBe("1");
+    await expect(parseFloat(indicator.height)).toBeGreaterThan(0);
+    overview.focus();
+    await userEvent.keyboard("{ArrowRight}");
+    await expect(
+      c.getByRole("status", { name: "Settings route" }),
+    ).toHaveTextContent("settings:storage:maintenance");
+  }}
+/>
+<Story
+  name="Narrow folder layout retains full input and bottom actions"
+  args={{ section: "folders", narrow: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    const input = c.getByRole("textbox", { name: "Folder path" });
+    await userEvent.type(input, "/a/very/long/repository/folder/draft");
+    await expect(input).toHaveValue("/a/very/long/repository/folder/draft");
+    const card = c.getByRole("region", { name: "Local folders" });
+    await expect(card.getBoundingClientRect().width).toBeLessThanOrEqual(390);
+    await userEvent.click(c.getByRole("button", { name: "Cancel" }));
+    await expect(input).toHaveValue("");
+  }}
+/>

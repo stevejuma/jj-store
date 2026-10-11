@@ -91,3 +91,24 @@
     ).not.toBeInTheDocument();
   }}
 />
+
+<Story
+  name="Repository overview separates readiness and position"
+  args={{ embedded: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await expect(
+      c.getByRole("region", { name: "Storage readiness" }),
+    ).toHaveAttribute("data-slot", "card");
+    await expect(
+      c.getByRole("region", { name: "Published position" }),
+    ).toHaveAttribute("data-slot", "card");
+    await userEvent.click(c.getByRole("tab", { name: "Maintenance" }));
+    await expect(
+      c.getByRole("button", { name: "Publish checkpoint" }),
+    ).toBeEnabled();
+    await expect(
+      c.getByRole("region", { name: "Maintenance operation" }),
+    ).toHaveAttribute("data-slot", "card");
+  }}
+/>

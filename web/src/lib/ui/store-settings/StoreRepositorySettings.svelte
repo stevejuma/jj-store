@@ -1,4 +1,6 @@
 <script lang="ts">
+  import BoxIcon from "@lucide/svelte/icons/box";
+  import StoreSettingsCard from "./StoreSettingsCard.svelte";
   import StoreRepositoryIdentity from "./StoreRepositoryIdentity.svelte";
   import StoreReadOnlyRow from "./StoreReadOnlyRow.svelte";
   import StoreRepositoryConversion from "./StoreRepositoryConversion.svelte";
@@ -109,11 +111,12 @@
       />{/if}
 
     {#if capabilities}
-      <section
-        class="store-settings__section"
-        aria-labelledby="repository-capabilities"
+      <StoreSettingsCard
+        id="repository-capabilities"
+        title="Capabilities"
+        description="Supported features and operational characteristics."
+        Icon={BoxIcon}
       >
-        <header><h2 id="repository-capabilities">Capabilities</h2></header>
         <dl class="store-settings__rows">
           <StoreReadOnlyRow
             label="Native profile"
@@ -148,14 +151,13 @@
             value={`${number(capabilities.conflict_upload_bytes)} bytes`}
           />
         </dl>
-      </section>
-      {#if "limits" in capabilities}<section
-          class="store-settings__section"
-          aria-labelledby="repository-limits"
+      </StoreSettingsCard>
+      {#if "limits" in capabilities}<StoreSettingsCard
+          id="repository-limits"
+          title="Read and event limits"
+          description="Limits for read operations, event streams and related resources."
+          Icon={BoxIcon}
         >
-          <header>
-            <h2 id="repository-limits">Read and event limits</h2>
-          </header>
           <dl class="store-settings__rows">
             <StoreReadOnlyRow
               label="Requests / workers"
@@ -182,7 +184,7 @@
               value={`${number(capabilities.event_limits.page)} / ${number(capabilities.event_limits.poll_millis)} ms`}
             />
           </dl>
-        </section>{/if}
+        </StoreSettingsCard>{/if}
     {/if}
   {/if}
 </StoreSettingsPage>

@@ -2876,6 +2876,42 @@
     {
       "local": "web/src/lib/ui/store-application/StoreApplicationHeaderCenter.svelte",
       "reason": "Application-owned composition of retained repository, Stacks and thread header context."
+    },
+    {
+      "local": "web/src/lib/ui/store-settings/StoreSettingsCard.svelte",
+      "reason": "Application-authored opt-in repository Settings presentation composed with released Design Core Card and Tabs primitives; Community inspected as a design reference, with no copied source."
+    },
+    {
+      "local": "web/src/lib/ui/store-settings/StoreSettingsHeading.svelte",
+      "reason": "Application-authored opt-in repository Settings presentation composed with released Design Core Card and Tabs primitives; Community inspected as a design reference, with no copied source."
+    },
+    {
+      "local": "web/src/lib/ui/store-settings/StoreSettingsFooter.svelte",
+      "reason": "Application-authored opt-in repository Settings presentation composed with released Design Core Card and Tabs primitives; Community inspected as a design reference, with no copied source."
+    },
+    {
+      "local": "web/src/lib/ui/store-settings/settings-presentation.ts",
+      "reason": "Application-authored opt-in repository Settings presentation composed with released Design Core Card and Tabs primitives; Community inspected as a design reference, with no copied source."
+    },
+    {
+      "local": "web/src/lib/ui/store-settings/repository-settings.css",
+      "reason": "Application-authored opt-in repository Settings presentation composed with released Design Core Card and Tabs primitives; Community inspected as a design reference, with no copied source."
+    },
+    {
+      "local": "web/src/lib/ui/store-settings/StoreSettingsIcon.svelte",
+      "reason": "Application-authored semantic icon presentation and technical Settings metadata using released Lucide icons and theme tokens."
+    },
+    {
+      "local": "web/src/lib/ui/store-settings/settings-row-icons.ts",
+      "reason": "Application-authored semantic icon presentation and technical Settings metadata using released Lucide icons and theme tokens."
+    },
+    {
+      "local": "web/src/lib/ui/store-settings/StoreLocalFolderBinding.svelte",
+      "reason": "Owned presentation of existing registrations and action snippets; global rows keep their original layout while repository controls occupy a footer."
+    },
+    {
+      "local": "web/src/lib/ui/store-settings/StoreSearchFields.svelte",
+      "reason": "Owned extraction of existing Search fields; presentation composes released Design Core controls and retains the original draft callbacks and validation."
     }
   ],
   "desktopAppearance": {

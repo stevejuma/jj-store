@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed owned Empty fallbacks, continuous project rows, exact repository-bound agent avatars and expandable stored-session reviews with unchanged authorization, anchors, drafts and receipt recovery. Guide sections now distinguish these interactions and their capability limits.",
-      "fingerprint": "8c4148b4b1a5f9338c8cd55d2c67b19d41e9b3ce7ba7cd7157651245cb23e6a6"
+      "reason": "Reviewed repository settings cards, footer actions, fixed primary and secondary navigation, bounded Scroll Area, exact identifier copy and global/repository configuration locations; controller ownership, authorization, drafts and persisted formats remain unchanged.",
+      "fingerprint": "01efd30a821f8ceb1ddd32aff13a3862feff8a9e32e4f73364a398faabb8d17d"
     }
   },
   {

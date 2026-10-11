@@ -114,3 +114,10 @@ rejection from fatal worker failure and preserves failed-history recapture.
 Source fingerprints are reviewed for the changed server/application trees.
 Focused and real-demo acceptance does not imply broader adapter, desktop or
 release qualification.
+
+E-SETTINGS-REFRESH-001 retains JST-DOC-001/002/003 delivery and review gates.
+The Settings guide and configuration reference identify global and repository
+locations, fixed category/subtab navigation, section action footers and exact
+copy behavior with truncated identifiers. Source review covers the application
+presentation; this does not qualify additional APIs, storage or release
+profiles.

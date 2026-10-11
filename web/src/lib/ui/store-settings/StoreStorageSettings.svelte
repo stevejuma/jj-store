@@ -1,4 +1,6 @@
 <script lang="ts">
+  import StoreSettingsFooter from "./StoreSettingsFooter.svelte";
+  import StoreSettingsCard from "./StoreSettingsCard.svelte";
   import StoreReadOnlyRow from "./StoreReadOnlyRow.svelte";
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import DatabaseIcon from "@lucide/svelte/icons/database";
@@ -97,16 +99,16 @@
         {settings.error}
       </p>{/if}
     <Tabs.Content value="overview">
-      <section
-        class="store-settings__section"
-        aria-labelledby="storage-overview"
+      <StoreSettingsCard
+        id="storage-overview"
+        title="Storage readiness"
+        Icon={DatabaseIcon}
       >
-        <header class="store-settings__section-heading">
-          <h2 id="storage-overview">Storage readiness</h2>
-        </header>
         <dl class="store-settings__rows">
           <StoreReadOnlyRow
             label="Status"
+            tone={settings.value?.ready ? "ready" : undefined}
+            Icon={ShieldCheckIcon}
             description="Status updates automatically. Integrity checks run only when requested."
             live="status"
             value={settings.value
@@ -118,62 +120,38 @@
                 : "Loading storage status…"}
           />
           {#if settings.value}
-            <div>
-              <dt>Checkpoint coverage</dt>
-              <dd>
-                {settings.value.checkpoint
-                  ? `Selected checkpoint covers position ${settings.value.checkpoint.position.toLocaleString("en-GB")}. Current position is ${settings.value.current.position.toLocaleString("en-GB")}.`
-                  : "No checkpoint is selected."}
-              </dd>
-            </div>
-            <div>
-              <dt>Integrity and retention</dt>
-              <dd>
-                A readable manifest does not establish full data integrity.
-                Checkpoints retain repository data and publication history.
-              </dd>
-            </div>
+            <StoreReadOnlyRow
+              label="Checkpoint coverage"
+              Icon={DatabaseIcon}
+              value={settings.value.checkpoint
+                ? `Selected checkpoint covers position ${settings.value.checkpoint.position.toLocaleString("en-GB")}. Current position is ${settings.value.current.position.toLocaleString("en-GB")}.`
+                : "No checkpoint is selected."}
+            />
+            <StoreReadOnlyRow
+              label="Integrity and retention"
+              Icon={ShieldCheckIcon}
+              value="A readable manifest does not establish full data integrity. Checkpoints retain repository data and publication history."
+            />
           {/if}
         </dl>
-        {#if settings.value}<StoreStoragePosition
+        {#if !embedded && settings.value}<StoreStoragePosition
             position={settings.value.current}
           />{/if}
-      </section>
+      </StoreSettingsCard>
+      {#if embedded && settings.value}<StoreSettingsCard
+          id="storage-position"
+          title="Published position"
+          Icon={DatabaseIcon}
+        >
+          <StoreStoragePosition position={settings.value.current} />
+        </StoreSettingsCard>{/if}
     </Tabs.Content>
     <Tabs.Content value="maintenance">
-      <section
-        class="store-settings__section"
-        aria-labelledby="storage-maintenance"
+      <StoreSettingsCard
+        id="storage-maintenance"
+        title="Repository maintenance"
+        Icon={DatabaseIcon}
       >
-        <header class="store-settings__section-heading">
-          <h2 id="storage-maintenance">Repository maintenance</h2>
-        </header>
-        <div class="store-settings__action-row">
-          <div>
-            <strong>Integrity and checkpoints</strong>
-            <p>
-              Operations continue on the local service when Settings closes.
-            </p>
-          </div>
-          <div class="store-settings__actions">
-            <Button
-              variant="outline"
-              disabled={blocked || !settings.value}
-              onclick={() => void onStart("check")}
-              ><ShieldCheckIcon
-                data-icon="inline-start"
-                aria-hidden="true"
-              />Check integrity</Button
-            >
-            <Button
-              variant="outline"
-              disabled={blocked || !settings.value}
-              onclick={() => void onStart("prepare_checkpoint")}
-              ><SaveIcon data-icon="inline-start" aria-hidden="true" />Prepare
-              checkpoint</Button
-            >
-          </div>
-        </div>
         {#if settings.value}<dl class="store-settings__rows">
             <div>
               <dt>Check limits</dt>
@@ -186,25 +164,55 @@
               </dd>
             </div>
           </dl>{/if}
-        {#if settings.pending && !settings.changing}
-          <div class="store-settings__action-row">
-            <div>
-              <strong>Pending request</strong>
-              <p role="status">
-                The response was not confirmed. Retry uses the same request and
-                target.
+        <StoreSettingsFooter>
+          {#snippet description()}<div>
+              <strong>Integrity and checkpoints</strong>
+              <p>
+                Operations continue on the local service when Settings closes.
               </p>
-            </div>
-            <div class="store-settings__actions">
-              <Button variant="outline" onclick={() => void onRetry()}
-                ><RefreshCwIcon
-                  data-icon="inline-start"
-                  aria-hidden="true"
-                />Retry original request</Button
-              >
-            </div>
-          </div>
+            </div>{/snippet}
+
+          <Button
+            variant="outline"
+            disabled={blocked || !settings.value}
+            onclick={() => void onStart("check")}
+            ><ShieldCheckIcon
+              data-icon="inline-start"
+              aria-hidden="true"
+            />Check integrity</Button
+          >
+          <Button
+            variant="outline"
+            disabled={blocked || !settings.value}
+            onclick={() => void onStart("prepare_checkpoint")}
+            ><SaveIcon data-icon="inline-start" aria-hidden="true" />Prepare
+            checkpoint</Button
+          >
+        </StoreSettingsFooter>
+        {#if settings.pending && !settings.changing}
+          <StoreSettingsFooter>
+            {#snippet description()}<div>
+                <strong>Pending request</strong>
+                <p role="status">
+                  The response was not confirmed. Retry uses the same request
+                  and target.
+                </p>
+              </div>{/snippet}
+
+            <Button variant="outline" onclick={() => void onRetry()}
+              ><RefreshCwIcon
+                data-icon="inline-start"
+                aria-hidden="true"
+              />Retry original request</Button
+            >
+          </StoreSettingsFooter>
         {/if}
+      </StoreSettingsCard>
+      <StoreSettingsCard
+        id="storage-report"
+        title="Maintenance operation"
+        Icon={ShieldCheckIcon}
+      >
         {#if report}<StoreStorageOperation
             {report}
             disabled={settings.changing || Boolean(settings.pending)}
@@ -216,7 +224,7 @@
               <dd>No maintenance operation has been requested.</dd>
             </div>
           </dl>{/if}
-      </section>
+      </StoreSettingsCard>
     </Tabs.Content>
   {/if}
 </StoreSettingsPage>

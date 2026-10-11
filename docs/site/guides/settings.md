@@ -10,6 +10,30 @@ search health, folder registrations and configuration do not repeatedly fetch
 while unchanged. Feed recovery reconciles missed changes; unavailable feeds use
 bounded fallback only while visible.
 
+## Where to find settings
+
+Open **Settings** from the profile menu for Appearance, Local service, Agents
+and Compute. Local service includes installation-wide Protection and Storage
+configuration, folder registration and Add folder.
+
+Use the **Repository settings** gear at the far right of a repository's tab row
+for General, Local folders, Search, Storage, Sync and Advanced. Available
+categories and actions depend on that repository's type, capabilities and your
+permissions. Local folders lists only this repository's registration or links.
+General identifies Local JJ or Server Hosted repositories.
+
+Category and subtab selections are part of the repository URL. Both navigation
+rows stay visible while the content scrolls. Back returns to the view you
+entered from and restores its Details panel. Opening a shared settings link
+directly returns to Overview at the retained operation instead.
+
+Settings group status, editable fields and maintenance separately. Save/Cancel
+and maintenance commands sit in their respective section footers. Search shows
+Index status, Search options and Index maintenance; Sync separates status,
+upstream fields and limits. Copyable identifiers use a single line with an
+ellipsis: hovering reveals the full value, and Copy always copies it exactly.
+The adjacent Open action navigates independently.
+
 ## Saved and effective settings
 
 Where settings expose both saved and effective values, saved configuration is
@@ -66,10 +90,10 @@ resolve a reported maintenance condition.
 ## Local Stacks workspace settings
 
 For a registered ordinary JJ repository, open **Stacks → Workspace actions →
-Settings**. The Details table starts with the copyable Workspace ID, followed by
-the active workspace name and target branch. The branch picker searches
-available unambiguous heads. Save reviews the exact change; Cancel leaves the
-saved configuration unchanged.
+Workspace settings**. The Details table starts with the copyable Workspace ID,
+followed by the active workspace name and target branch. The branch picker
+searches available unambiguous heads. Save reviews the exact change; Cancel
+leaves the saved configuration unchanged.
 
 Deleting a workspace requires confirmation. It removes the saved workspace
 configuration, preserving the checkout, branches, commits and unfinished native

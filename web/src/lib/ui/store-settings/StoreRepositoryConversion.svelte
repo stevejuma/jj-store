@@ -1,4 +1,7 @@
 <script lang="ts">
+  import StoreSettingsFooter from "./StoreSettingsFooter.svelte";
+  import DatabaseIcon from "@lucide/svelte/icons/database";
+  import StoreSettingsCard from "./StoreSettingsCard.svelte";
   import { onDestroy } from "svelte";
   import * as Dialog from "@lapismd/design-core/shadcn/dialog";
   import * as Field from "@lapismd/design-core/shadcn/field";
@@ -200,33 +203,35 @@
 </script>
 
 {#if enabled}
-  <section class="store-settings__section" aria-labelledby={`${id}-heading`}>
-    <header><h2 id={`${id}-heading`}>Repository storage</h2></header>
-    <div class="store-settings__action-row">
-      <div>
-        <strong>{local ? "Server storage" : "Local Git-backed JJ"}</strong>
-        <p>
-          {local
-            ? "Use this installation's server storage for code and collaboration."
-            : "Create a local Git-backed JJ folder with code and collaboration."}
-        </p>
-      </div>
-      <div class="store-settings__actions">
-        <Button variant="outline" disabled={busy || !manager} onclick={show}
-          >{pending
-            ? "Continue conversion"
-            : local
-              ? "Use server storage"
-              : "Use local Git-backed JJ"}</Button
-        >
-        {#if hasReport}<Button
-            variant="ghost"
-            disabled={busy || !manager}
-            onclick={() => run(true, true)}>Last conversion report</Button
-          >{/if}
-      </div>
-    </div>
-  </section>
+  <StoreSettingsCard
+    id={`${id}-heading`}
+    title="Repository storage"
+    Icon={DatabaseIcon}
+  >
+    <StoreSettingsFooter>
+      {#snippet description()}<div>
+          <strong>{local ? "Server storage" : "Local Git-backed JJ"}</strong>
+          <p>
+            {local
+              ? "Use this installation's server storage for code and collaboration."
+              : "Create a local Git-backed JJ folder with code and collaboration."}
+          </p>
+        </div>{/snippet}
+
+      <Button variant="outline" disabled={busy || !manager} onclick={show}
+        >{pending
+          ? "Continue conversion"
+          : local
+            ? "Use server storage"
+            : "Use local Git-backed JJ"}</Button
+      >
+      {#if hasReport}<Button
+          variant="ghost"
+          disabled={busy || !manager}
+          onclick={() => run(true, true)}>Last conversion report</Button
+        >{/if}
+    </StoreSettingsFooter>
+  </StoreSettingsCard>
 {/if}
 <StoreNotice
   noticeKey={`repository-conversion:${manager?.pending?.request_id ?? id}`}

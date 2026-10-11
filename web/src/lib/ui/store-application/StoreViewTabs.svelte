@@ -1,11 +1,11 @@
 <script lang="ts">
-  // Width fitting follows CommunityProjectsRepositoryDocuments; pill styling is retained.
+  // Width fitting follows CommunityProjectsRepositoryDocuments; presentation is opt-in.
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as DropdownMenu from "@lapismd/design-core/shadcn/dropdown-menu";
   import * as Tabs from "@lapismd/design-core/shadcn/tabs";
   import ChevronDownIcon from "@lucide/svelte/icons/chevron-down";
   import { onMount, untrack } from "svelte";
-  import type { Snippet } from "svelte";
+  import type { Component, Snippet } from "svelte";
   import "./view-tabs.css";
   let {
     value,
@@ -18,9 +18,15 @@
     trailing,
     inheritContext = false,
     hideTabs = false,
+    presentation = "pill",
   }: {
     value: string;
-    sections: readonly { value: string; label: string; disabled?: boolean }[];
+    sections: readonly {
+      value: string;
+      label: string;
+      disabled?: boolean;
+      Icon?: Component;
+    }[];
     onSelect(value: string): void;
     label?: string;
     navigationLabel?: string;
@@ -29,6 +35,7 @@
     trailing?: Snippet;
     inheritContext?: boolean;
     hideTabs?: boolean;
+    presentation?: "pill" | "line";
   } = $props();
   let space: HTMLElement | null = $state(null);
   let tabList: HTMLElement | null = $state(null);
@@ -80,6 +87,7 @@
     probeList;
     probeMore;
     hideTabs;
+    presentation;
     untrack(fitTabs);
   });
   $effect(() => {
@@ -103,12 +111,20 @@
 {#snippet controls()}
   <div class="store-application__tab-measure" aria-hidden="true" inert>
     <Tabs.Root {value} class="store-application__tab-probes">
-      <Tabs.List bind:ref={probeList} class="store-application__tab-list">
+      <Tabs.List
+        bind:ref={probeList}
+        variant={presentation === "line" ? "line" : "default"}
+        class="store-application__tab-list"
+      >
         {#each sections as item (item.value)}
           <Tabs.Trigger
             class="store-application__tab-trigger"
             value={item.value}
-            disabled>{item.label}</Tabs.Trigger
+            disabled
+            >{#if item.Icon}<item.Icon
+                data-icon="inline-start"
+                aria-hidden="true"
+              />{/if}{item.label}</Tabs.Trigger
           >
         {/each}
       </Tabs.List>
@@ -128,6 +144,7 @@
     <div class="store-application__tab-space" bind:this={space}>
       <Tabs.List
         bind:ref={tabList}
+        variant={presentation === "line" ? "line" : "default"}
         class="store-application__tab-list"
         aria-label={label}
         data-empty={visibleCount === 0 ? "" : undefined}
@@ -138,7 +155,11 @@
             class="store-application__tab-trigger"
             value={item.value}
             disabled={disabled || item.disabled}
-            title={item.label}>{item.label}</Tabs.Trigger
+            title={item.label}
+            >{#if item.Icon}<item.Icon
+                data-icon="inline-start"
+                aria-hidden="true"
+              />{/if}{item.label}</Tabs.Trigger
           >
         {/each}
       </Tabs.List>
@@ -175,7 +196,9 @@
                   disabled={item.disabled}
                   aria-current={value === item.value ? "page" : undefined}
                   onSelect={() => select(item.value)}
-                  >{item.label}</DropdownMenu.Item
+                  >{#if item.Icon}<item.Icon
+                      aria-hidden="true"
+                    />{/if}{item.label}</DropdownMenu.Item
                 >
               {/each}
             </DropdownMenu.Group>
@@ -189,6 +212,7 @@
 
 <div
   class="store-application__tabs"
+  data-presentation={presentation}
   role={navigationLabel ? "navigation" : undefined}
   aria-label={navigationLabel}
 >

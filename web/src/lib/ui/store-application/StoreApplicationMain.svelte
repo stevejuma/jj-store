@@ -263,9 +263,12 @@
     display: none;
   }
   .store-repository-settings-host {
+    display: flex;
+    flex-direction: column;
     min-width: 0;
+    min-height: 0;
     flex: 1;
-    overflow: auto;
+    overflow: hidden;
   }
   .store-repository-settings-action {
     margin-inline-start: auto;

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { settingsPresentation } from "./settings-presentation.js";
+  import StoreSettingsFooter from "./StoreSettingsFooter.svelte";
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import StoreReadOnlyRow from "./StoreReadOnlyRow.svelte";
@@ -14,6 +16,7 @@
     onWait: (capture: boolean) => Promise<void>;
     onStopWait: () => void;
   } = $props();
+  const presentation = settingsPresentation();
   const busy = $derived(wait.state === "capturing" || wait.state === "waiting");
   const labels = {
     idle: "No target captured",
@@ -27,13 +30,14 @@
   };
 </script>
 
-<div class="store-settings__action-row">
-  <div>
-    <strong>Captured sync target</strong>
-    <p role="status">{labels[wait.state]}</p>
-    <p>New repository writes do not move this target.</p>
-  </div>
-  <div class="store-settings__actions">
+{#snippet actions()}
+  <StoreSettingsFooter>
+    {#snippet description()}<div>
+        <strong>Captured sync target</strong>
+        <p role="status">{labels[wait.state]}</p>
+        <p>New repository writes do not move this target.</p>
+      </div>{/snippet}
+
     <Button variant="outline" disabled={busy} onclick={() => void onWait(true)}
       ><RefreshCwIcon
         data-icon="inline-start"
@@ -47,8 +51,9 @@
         variant="outline"
         onclick={() => void onWait(false)}>Continue waiting</Button
       >{/if}
-  </div>
-</div>
+  </StoreSettingsFooter>
+{/snippet}
+{#if presentation.value !== "repository"}{@render actions()}{/if}
 {#if wait.barrier}
   <dl class="store-settings__rows">
     {#each [{ label: "Push target", replica: wait.barrier.local_replica, epoch: wait.barrier.push_epoch, through: wait.barrier.push_through }, { label: "Pull target", replica: wait.barrier.peer_replica, epoch: wait.barrier.pull_epoch, through: wait.barrier.pull_through }] as target}
@@ -69,6 +74,7 @@
     {/each}
   </dl>
 {/if}
+{#if presentation.value === "repository"}{@render actions()}{/if}
 <StoreNotice
   noticeKey="sync-wait"
   title="Sync wait failed"

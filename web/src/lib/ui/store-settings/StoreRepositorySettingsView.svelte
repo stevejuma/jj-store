@@ -168,7 +168,10 @@
     <Skeleton class="h-12" /><Skeleton class="h-24" />
   </div>{/if}
 {#each visited as section (section)}
-  <div hidden={!visible || destination.section !== section}>
+  <div
+    class="store-repository-settings__page"
+    hidden={!visible || destination.section !== section}
+  >
     {#if ["general", "folders", "advanced"].includes(section)}
       <StoreRepositorySettings
         {controller}
@@ -224,6 +227,14 @@
 {/each}
 
 <style>
+  .store-repository-settings__page {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+  }
   .store-repository-settings__loading {
     padding: 1rem;
     display: flex;

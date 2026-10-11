@@ -17,6 +17,16 @@ formats are rejected. Relative paths resolve against the configuration file, not
 the shell's current directory. Secret values are never accepted in TOML; use the
 supported environment or OS-credential references.
 
+## Configuration locations in the app
+
+Profile-menu **Settings → Local service** owns installation resource limits,
+Protection, authority storage and backup inventory. Repository settings opens
+from the repository page's gear: **Search** edits that repository's search
+configuration, and **Sync → Configuration** edits its upstream and worker
+limits. These locations retain the same installation-owned configuration file,
+save permissions and Apply/restart requirements. Moving a control does not move
+its persisted data or introduce a new configuration format.
+
 ## Top-level fields
 
 | Key                                  | Meaning                                                                 |

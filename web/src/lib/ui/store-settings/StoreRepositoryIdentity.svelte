@@ -1,4 +1,7 @@
 <script lang="ts">
+  import DatabaseIcon from "@lucide/svelte/icons/database";
+  import GitCommitIcon from "@lucide/svelte/icons/git-commit-horizontal";
+  import StoreSettingsCard from "./StoreSettingsCard.svelte";
   import type { StoreController } from "../../controller/contracts.js";
   import StoreReadOnlyRow from "./StoreReadOnlyRow.svelte";
   import CommunityChip from "../community-chip/CommunityChip.svelte";
@@ -24,10 +27,12 @@
       : value.toLocaleString("en-GB");
 </script>
 
-<section class="store-settings__section" aria-labelledby="repository-identity">
-  <header class="store-repository-identity__header">
-    <h2 id="repository-identity">Identity and snapshot</h2>
-    <CommunityChip
+<StoreSettingsCard
+  id="repository-identity"
+  title="Identity and snapshot"
+  Icon={DatabaseIcon}
+>
+  {#snippet badge()}<CommunityChip
       variant="subtle"
       tone={isLocal ? "success" : "accent"}
       size="compact"
@@ -39,8 +44,8 @@
             aria-hidden="true"
           />{:else}<ServerIcon aria-hidden="true" />{/if}{/snippet}
       {isLocal ? "Local JJ" : "Server Hosted"}
-    </CommunityChip>
-  </header>
+    </CommunityChip>{/snippet}
+
   <dl class="store-settings__rows">
     <StoreReadOnlyRow label="Name" value={view.repository.name} />
     <StoreReadOnlyRow
@@ -69,6 +74,7 @@
       <StoreReadOnlyRow
         copyable
         label={`Operation head ${index + 1}`}
+        Icon={GitCommitIcon}
         value={head}
         onOpen={controller.actions.openRoute
           ? () => void onOpen(head)
@@ -120,13 +126,4 @@
         display={number(native?.code_state_version)}
       />{/if}
   </dl>
-</section>
-
-<style>
-  .store-repository-identity__header {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-  }
-</style>
+</StoreSettingsCard>

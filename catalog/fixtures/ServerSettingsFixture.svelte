@@ -13,7 +13,13 @@
     section = "service",
     supported = true,
     unknown = false,
-  }: { section?: Section; supported?: boolean; unknown?: boolean } = $props();
+    embedded = false,
+  }: {
+    section?: Section;
+    supported?: boolean;
+    unknown?: boolean;
+    embedded?: boolean;
+  } = $props();
   let value = serverSettingsValue();
   const management = createServerSettings({
     available: () => supported,
@@ -43,6 +49,7 @@
 </script>
 
 <StoreSettingsPage
+  {embedded}
   section={section === "service"
     ? "service"
     : section === "sync"

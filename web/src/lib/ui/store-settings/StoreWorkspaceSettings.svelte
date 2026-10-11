@@ -1,4 +1,8 @@
 <script lang="ts">
+  import { settingsPresentation } from "./settings-presentation.js";
+  import StoreSettingsFooter from "./StoreSettingsFooter.svelte";
+  import FolderGitIcon from "@lucide/svelte/icons/folder-git-2";
+  import StoreSettingsCard from "./StoreSettingsCard.svelte";
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import LinkIcon from "@lucide/svelte/icons/link";
   import XIcon from "@lucide/svelte/icons/x";
@@ -24,6 +28,7 @@
     pickerSupported: boolean;
     onBrowse: () => Promise<void>;
   } = $props();
+  const presentation = settingsPresentation();
   const busy = $derived(
     settings.workspaceLinking ||
       settings.workspacePicking ||
@@ -31,13 +36,11 @@
   );
 </script>
 
-<section
-  class="store-settings__section"
-  aria-labelledby="repository-local-folders"
+<StoreSettingsCard
+  id="repository-local-folders"
+  title="Local folders"
+  Icon={FolderGitIcon}
 >
-  <header class="store-settings__section-heading">
-    <h2 id="repository-local-folders">Local folders</h2>
-  </header>
   {#if !supported}
     <StoreSettingsEmpty
       Icon={GitBranchIcon}
@@ -92,6 +95,20 @@
         void onLink();
       }}
     >
+      {#snippet linkActions()}
+        <Button
+          type="button"
+          variant="outline"
+          disabled={busy || !settings.workspacePath}
+          onclick={() => onPath("")}
+          ><XIcon data-icon="inline-start" aria-hidden="true" />Cancel</Button
+        >
+        <Button
+          type="submit"
+          disabled={busy || !settings.workspaceLinks || !settings.workspacePath}
+          ><LinkIcon data-icon="inline-start" aria-hidden="true" />Link folder</Button
+        >
+      {/snippet}
       <div class="store-settings__rows">
         <Field.Group class="store-workspace-link-form">
           <Field.Field
@@ -137,33 +154,23 @@
               {/if}
             </InputGroup.Root>
           </Field.Field>
-          <Separator />
-          <footer class="store-workspace-link-form__footer">
-            <div>
-              <strong>Link an existing folder</strong>
-              <p>Linking preserves files and repository history.</p>
-            </div>
-            <div class="store-workspace-link-form__actions">
-              <Button
-                type="button"
-                variant="outline"
-                disabled={busy || !settings.workspacePath}
-                onclick={() => onPath("")}
-                ><XIcon
-                  data-icon="inline-start"
-                  aria-hidden="true"
-                />Cancel</Button
-              >
-              <Button
-                type="submit"
-                disabled={busy ||
-                  !settings.workspaceLinks ||
-                  !settings.workspacePath}
-                ><LinkIcon data-icon="inline-start" aria-hidden="true" />Link
-                folder</Button
-              >
-            </div>
-          </footer>
+          {#if presentation.value === "repository"}<StoreSettingsFooter>
+              {#snippet description()}<div>
+                  <strong>Link an existing folder</strong>
+                  <p>Linking preserves files and repository history.</p>
+                </div>{/snippet}
+              {@render linkActions()}
+            </StoreSettingsFooter>{:else}
+            <Separator />
+            <footer class="store-workspace-link-form__footer">
+              <div>
+                <strong>Link an existing folder</strong>
+                <p>Linking preserves files and repository history.</p>
+              </div>
+              <div class="store-workspace-link-form__actions">
+                {@render linkActions()}
+              </div>
+            </footer>{/if}
         </Field.Group>
       </div>
       {#if settings.workspaceValidation}<p role="alert">
@@ -183,7 +190,7 @@
       pending={busy}
     />
   {/if}
-</section>
+</StoreSettingsCard>
 
 <style>
   :global(.store-workspace-link-form) {

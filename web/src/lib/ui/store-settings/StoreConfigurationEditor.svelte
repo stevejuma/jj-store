@@ -1,4 +1,10 @@
 <script lang="ts">
+  import SaveIcon from "@lucide/svelte/icons/save";
+  import XIcon from "@lucide/svelte/icons/x";
+  import { settingsPresentation } from "./settings-presentation.js";
+  import StoreSettingsFooter from "./StoreSettingsFooter.svelte";
+  import SlidersHorizontalIcon from "@lucide/svelte/icons/sliders-horizontal";
+  import StoreSettingsCard from "./StoreSettingsCard.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import StoreConfigurationFields from "./StoreConfigurationFields.svelte";
@@ -19,6 +25,8 @@
     repository?: string;
     repositoryName?: string;
   } = $props();
+  const presentation = settingsPresentation();
+  const repositoryPresentation = $derived(presentation.value === "repository");
   const edit = $derived(management?.state.drafts[section]);
   const busy = $derived(management?.state.saving ?? false);
   const pending = $derived(
@@ -37,16 +45,13 @@
   );
 </script>
 
-<section class="store-settings__section" aria-labelledby={`config-${section}`}>
-  <header class="store-settings__section-heading">
-    <div>
-      <h2 id={`config-${section}`}>{title}</h2>
-      <p>
-        Local administrator settings. Changes apply after server restart; in the
-        desktop app, Quit and reopen.
-      </p>
-    </div>
-  </header>
+<StoreSettingsCard
+  id={`config-${section}`}
+  layout="page"
+  {title}
+  description="Local administrator settings. Changes apply after server restart; in the desktop app, Quit and reopen."
+  Icon={SlidersHorizontalIcon}
+>
   {#if !management?.available()}<p>
       Configuration editing requires a local service with administrator access.
     </p>
@@ -73,23 +78,26 @@
           void management.save(section);
         }}
       >
-        <div class="store-settings__rows">
-          <dl class="store-settings__summary-rows">
-            <div>
-              <dt>Saved and running</dt>
-              <dd>
-                <span role="status">
-                  {pending
-                    ? "Saved changes need a server restart."
-                    : "Saved settings match the running configuration."}
-                </span>
-              </dd>
-            </div>
-          </dl>
+        <div
+          class={repositoryPresentation ? undefined : "store-settings__rows"}
+        >
+          {#if !repositoryPresentation}<dl class="store-settings__summary-rows">
+              <div>
+                <dt>Saved and running</dt>
+                <dd>
+                  <span role="status">
+                    {pending
+                      ? "Saved changes need a server restart."
+                      : "Saved settings match the running configuration."}
+                  </span>
+                </dd>
+              </div>
+            </dl>{/if}
           {#if section === "sync"}<StoreSyncConfiguration
               {management}
               {repository}
               {repositoryName}
+              pending={Boolean(pending)}
             />{:else}<StoreConfigurationFields {management} {section} />{/if}
           {#if edit.validation}<p role="alert">{edit.validation}</p>{/if}
           {#if edit.conflict}<p role="status">
@@ -101,34 +109,41 @@
               The save response was not confirmed. Refresh to inspect the saved
               configuration before another save.
             </p>{/if}
-          <div
-            class="store-settings__action-row store-settings__action-row--joined"
-          >
-            <div>
-              <strong>Save configuration</strong>
-              <p>Current workers keep their running settings until restart.</p>
-            </div>
-            <div class="store-settings__actions">
-              <Button
-                type="submit"
-                disabled={busy ||
-                  !edit.dirty ||
-                  edit.conflict ||
-                  Boolean(edit.unknown)}>Save settings</Button
-              >
-              <Button
-                type="button"
-                variant="outline"
-                disabled={busy ||
-                  !edit.dirty ||
-                  (Boolean(edit.unknown) && !edit.unknownObserved)}
-                onclick={() => management.cancel(section)}
-                >{edit.conflict || edit.unknown
-                  ? "Use latest saved settings"
-                  : "Cancel changes"}</Button
-              >
-            </div>
-          </div>
+          {#snippet saveButton()}<Button
+              type="submit"
+              disabled={busy ||
+                !edit.dirty ||
+                edit.conflict ||
+                Boolean(edit.unknown)}
+              >{#if repositoryPresentation}<SaveIcon
+                  data-icon="inline-start"
+                  aria-hidden="true"
+                />{/if}Save settings</Button
+            >{/snippet}
+          {#snippet cancelButton()}<Button
+              type="button"
+              variant="outline"
+              disabled={busy ||
+                !edit.dirty ||
+                (Boolean(edit.unknown) && !edit.unknownObserved)}
+              onclick={() => management.cancel(section)}
+              >{#if repositoryPresentation}<XIcon
+                  data-icon="inline-start"
+                  aria-hidden="true"
+                />{/if}{edit.conflict || edit.unknown
+                ? "Use latest saved settings"
+                : "Cancel changes"}</Button
+            >{/snippet}
+          <StoreSettingsFooter joined standalone>
+            {#snippet description()}<div>
+                <strong>Save configuration</strong>
+                <p>
+                  Current workers keep their running settings until restart.
+                </p>
+              </div>{/snippet}
+
+            {#if repositoryPresentation}{@render cancelButton()}{@render saveButton()}{:else}{@render saveButton()}{@render cancelButton()}{/if}
+          </StoreSettingsFooter>
         </div>
       </form>
       {#if edit.conflict || edit.unknown}<details>
@@ -145,7 +160,7 @@
           : "Refresh settings to load configuration."}
       </p>{/if}
   {/if}
-</section>
+</StoreSettingsCard>
 
 <style>
   .store-settings__configuration-preview {
