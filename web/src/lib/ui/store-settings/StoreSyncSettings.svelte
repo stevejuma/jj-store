@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreSettingsSkeleton from "./StoreSettingsSkeleton.svelte";
   import StoreSettingsFooter from "./StoreSettingsFooter.svelte";
   import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
   import StoreSettingsCard from "./StoreSettingsCard.svelte";
@@ -51,6 +52,11 @@
   } = $props();
   let active = $state("overview");
   const selected = $derived(value ?? active);
+  const initialLoading = $derived(
+    embedded &&
+      !settings.value &&
+      ["idle", "loading", "refreshing"].includes(settings.state),
+  );
   const worker = $derived(settings.value?.worker);
   const busy = $derived(
     settings.changing || ["loading", "refreshing"].includes(settings.state),
@@ -94,87 +100,101 @@
     >
   {:else}
     <Tabs.Content value="overview">
-      <StoreSettingsCard
-        id="sync-overview"
-        title="Upstream sync"
-        description="Status updates automatically."
-        Icon={RefreshCwIcon}
-      >
-        {#if busy}<StoreSettingsNotice>
-            {settings.changing ? "Updating sync…" : "Loading sync status…"}
-          </StoreSettingsNotice>{/if}
-        {#if settings.value && !settings.value.configured}
-          <dl class="store-settings__rows">
-            <StoreReadOnlyRow
-              label="Upstream"
-              value="No upstream is configured. Repository work remains local."
-            />
-          </dl>
-        {:else if worker}
-          <dl class="store-settings__rows">
-            <StoreReadOnlyRow label="Worker" value={words(worker.phase)} />
-            <StoreReadOnlyRow
-              label="Local repository"
-              value={worker.local_ready ? "Ready" : "Unavailable"}
-            />
-            <StoreReadOnlyRow
-              label="Offline access"
-              value={worker.offline_ready ? "Ready" : "Unavailable"}
-            />
-            <StoreReadOnlyRow
-              label="Operation heads"
-              value={worker.operation_heads}
-              display={number(worker.operation_heads)}
-            />
-            <div>
-              <dt>Reconciliation</dt>
-              <dd>
-                {worker.reconciliation_required
-                  ? "Required — review the operation heads and use Reconcile operations in repository actions."
-                  : "Not required"}
-              </dd>
-            </div>
-          </dl>
-          {#if reconciliation}{@render reconciliation()}{/if}
-          <StoreSettingsFooter>
-            {#snippet description()}<div>
-                <strong>Sync controls</strong>
-                <p>
-                  Pause lasts until resumed or the service restarts. Local
-                  repository work stays available.
-                </p>
-              </div>{/snippet}
+      {#if initialLoading}<StoreSettingsSkeleton
+          section="sync"
+          tab="overview"
+          label="Loading sync overview"
+        />{:else}
+        <StoreSettingsCard
+          id="sync-overview"
+          title="Upstream sync"
+          description="Status updates automatically."
+          Icon={RefreshCwIcon}
+        >
+          {#if busy}<StoreSettingsNotice>
+              {settings.changing ? "Updating sync…" : "Loading sync status…"}
+            </StoreSettingsNotice>{/if}
+          {#if settings.value && !settings.value.configured}
+            <dl class="store-settings__rows">
+              <StoreReadOnlyRow
+                label="Upstream"
+                value="No upstream is configured. Repository work remains local."
+              />
+            </dl>
+          {:else if worker}
+            <dl class="store-settings__rows">
+              <StoreReadOnlyRow label="Worker" value={words(worker.phase)} />
+              <StoreReadOnlyRow
+                label="Local repository"
+                value={worker.local_ready ? "Ready" : "Unavailable"}
+              />
+              <StoreReadOnlyRow
+                label="Offline access"
+                value={worker.offline_ready ? "Ready" : "Unavailable"}
+              />
+              <StoreReadOnlyRow
+                label="Operation heads"
+                value={worker.operation_heads}
+                display={number(worker.operation_heads)}
+              />
+              <div>
+                <dt>Reconciliation</dt>
+                <dd>
+                  {worker.reconciliation_required
+                    ? "Required — review the operation heads and use Reconcile operations in repository actions."
+                    : "Not required"}
+                </dd>
+              </div>
+            </dl>
+            {#if reconciliation}{@render reconciliation()}{/if}
+            <StoreSettingsFooter>
+              {#snippet description()}<div>
+                  <strong>Sync controls</strong>
+                  <p>
+                    Pause lasts until resumed or the service restarts. Local
+                    repository work stays available.
+                  </p>
+                </div>{/snippet}
 
-            <Button
-              variant="outline"
-              disabled={busy || settings.state !== "ready"}
-              onclick={() =>
-                void onControl(worker.phase === "paused" ? "resume" : "pause")}
-              >{#if worker.phase === "paused"}<PlayIcon
+              <Button
+                variant="outline"
+                disabled={busy || settings.state !== "ready"}
+                onclick={() =>
+                  void onControl(
+                    worker.phase === "paused" ? "resume" : "pause",
+                  )}
+                >{#if worker.phase === "paused"}<PlayIcon
+                    data-icon="inline-start"
+                    aria-hidden="true"
+                  />{:else}<PauseIcon
+                    data-icon="inline-start"
+                    aria-hidden="true"
+                  />{/if}{worker.phase === "paused"
+                  ? "Resume sync"
+                  : "Pause sync"}</Button
+              >
+              <Button
+                variant="outline"
+                disabled={busy ||
+                  settings.state !== "ready" ||
+                  worker.phase === "paused"}
+                onclick={() => void onControl("retry")}
+                ><RotateCwIcon
                   data-icon="inline-start"
                   aria-hidden="true"
-                />{:else}<PauseIcon
-                  data-icon="inline-start"
-                  aria-hidden="true"
-                />{/if}{worker.phase === "paused"
-                ? "Resume sync"
-                : "Pause sync"}</Button
-            >
-            <Button
-              variant="outline"
-              disabled={busy ||
-                settings.state !== "ready" ||
-                worker.phase === "paused"}
-              onclick={() => void onControl("retry")}
-              ><RotateCwIcon data-icon="inline-start" aria-hidden="true" />Retry
-              sync</Button
-            >
-          </StoreSettingsFooter>
-        {/if}
-      </StoreSettingsCard>
+                />Retry sync</Button
+              >
+            </StoreSettingsFooter>
+          {/if}
+        </StoreSettingsCard>
+      {/if}
     </Tabs.Content>
     <Tabs.Content value="progress">
-      {#if worker}
+      {#if initialLoading}<StoreSettingsSkeleton
+          section="sync"
+          tab="progress"
+          label="Loading sync progress"
+        />{:else if worker}
         <StoreSettingsCard
           id="sync-progress"
           title="Replication progress"

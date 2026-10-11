@@ -127,3 +127,8 @@ guide explains display units, exact canonical values and conditional draft-only
 Reset, with distinct Search Apply and Sync restart semantics. Application source
 review covers the shared numeric row and its repository consumers; global
 Settings, native storage and packaged-release qualification are unchanged.
+
+E-SETTINGS-SKELETON-001 retains JST-DOC-001/002/003 delivery gates. The Settings
+guide distinguishes representative initial placeholders from retained content
+during background refresh. Application source review covers repository Settings
+only; API formats, configuration and packaged-release gates remain unchanged.

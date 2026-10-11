@@ -25,6 +25,11 @@ packaged platform and release gates are unchanged.
 reviews numeric-entry guidance with application source and documentation checks.
 M19 remains Partial; packaged platform and release gates are unchanged.
 
+[E-SETTINGS-SKELETON-001](../../../../../history/2026/10/11/E-SETTINGS-SKELETON-001/index.md)
+reviews M19 without changing its status. Repository Settings initial loading now
+matches the selected category and subtab; existing lifecycle, pending commands
+and configuration contracts remain unchanged. Wider gates remain open.
+
 <!-- generated-navigation -->
 
 ## Pages

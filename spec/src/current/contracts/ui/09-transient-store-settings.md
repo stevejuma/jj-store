@@ -73,6 +73,16 @@ Observation subscriptions depend on the stable selected category, so completing
 status reads cannot restart them or flicker loaded content. Global collapsed
 navigation remains accessible through labelled icon controls.
 
+Initial repository Settings reads use category/subtab-specific skeletons that
+match card headers, aligned property rows, editable controls and bottom action
+footers. Known profile differences are retained, with no invented interactive
+controls or values. Each pending region has one accessible loading status;
+decorative placeholders are hidden from assistive technology and respect reduced
+motion. Navigation stays above the bounded Scroll Area and narrow layouts stack
+without overflow. Skeletons replace only data that has not loaded: background
+refresh retains existing values, empty results, drafts and pending commands.
+Global Settings keeps its existing loading presentation.
+
 Local service reports access mode, authoritative-storage readiness, HTTP and SSE
 state and automatic update status. Repository reports the retained discovery
 permission, repository and operation identities, conflicts, captured authority,

@@ -34,6 +34,10 @@ upstream fields and limits. Copyable identifiers use a single line with an
 ellipsis: hovering reveals the full value, and Copy always copies it exactly.
 The adjacent Open action navigates independently.
 
+While repository settings first load, placeholders follow the selected page’s
+cards and fields. Later refreshes keep existing values and unsaved drafts on
+screen.
+
 ## Saved and effective settings
 
 Where settings expose both saved and effective values, saved configuration is

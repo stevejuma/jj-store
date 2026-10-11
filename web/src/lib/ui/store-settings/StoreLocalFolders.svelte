@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreSettingsSkeleton from "./StoreSettingsSkeleton.svelte";
   import StoreLocalFolderBinding from "./StoreLocalFolderBinding.svelte";
   import StoreSettingsFooter from "./StoreSettingsFooter.svelte";
   import StoreSettingsCard from "./StoreSettingsCard.svelte";
@@ -49,6 +50,7 @@
     if (repository && draftGuard) draftGuard.folders = "";
   });
   let manager = $state<LocalFolderManager>();
+  let bindingsLoaded = $state(false);
   let bindings = $state<Model<"LocalBinding">[]>([]);
   let open = $state(false),
     path = $state(""),
@@ -78,6 +80,7 @@
   }
   async function list() {
     bindings = (await manager!.list()).bindings;
+    bindingsLoaded = true;
   }
   async function changed() {
     await list();
@@ -243,7 +246,13 @@
     Icon={FolderGitIcon}
   >
     {#if !repository}{@render folderManagement()}{/if}
-    {#if visibleBindings.length}
+    {#if repository && !bindingsLoaded && !message}
+      <StoreSettingsSkeleton
+        section="folders"
+        rows={4}
+        label="Loading registered folder"
+      />
+    {:else if visibleBindings.length}
       <svelte:element
         this={repository ? "div" : "dl"}
         class={repository

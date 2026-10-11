@@ -112,3 +112,46 @@
     ).toHaveAttribute("data-slot", "card");
   }}
 />
+
+<Story
+  name="Repository initial load follows subtabs and refresh retains captured target"
+  args={{ embedded: true, loading: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await expect(
+      c.getByRole("status", { name: "Loading storage overview" }),
+    ).toBeVisible();
+    await userEvent.click(c.getByRole("tab", { name: "Maintenance" }));
+    await expect(
+      c.getByRole("status", { name: "Loading storage maintenance" }),
+    ).toBeVisible();
+    await expect(
+      c.queryByRole("button", { name: "Check integrity" }),
+    ).not.toBeInTheDocument();
+    await userEvent.click(c.getByRole("button", { name: "Finish loading" }));
+    const publish = c.getByRole("button", { name: "Publish checkpoint" });
+    await expect(publish).toBeVisible();
+    await userEvent.click(
+      c.getByRole("button", { name: "Start background refresh" }),
+    );
+    await expect(publish).toBeVisible();
+    await expect(
+      c.queryByRole("status", { name: "Loading storage maintenance" }),
+    ).not.toBeInTheDocument();
+  }}
+/>
+
+<Story
+  name="Retained checkpoint report is never replaced by initial placeholders"
+  args={{ embedded: true, loading: true, retainedOperation: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await userEvent.click(c.getByRole("tab", { name: "Maintenance" }));
+    await expect(
+      c.getByRole("button", { name: "Publish checkpoint" }),
+    ).toBeVisible();
+    await expect(
+      c.queryByRole("status", { name: "Loading storage maintenance" }),
+    ).not.toBeInTheDocument();
+  }}
+/>

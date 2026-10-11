@@ -14,13 +14,16 @@
     supported = true,
     unknown = false,
     embedded = false,
+    loading = false,
   }: {
     section?: Section;
     supported?: boolean;
     unknown?: boolean;
     embedded?: boolean;
+    loading?: boolean;
   } = $props();
   let value = serverSettingsValue();
+  let finishRead: (() => void) | undefined;
   const management = createServerSettings({
     available: () => supported,
     client: {
@@ -38,6 +41,8 @@
             restart_required: true,
           };
         }
+        if (loading && !body)
+          await new Promise<void>((resolve) => (finishRead = resolve));
         return copy(value);
       }) as never,
     },
@@ -47,6 +52,13 @@
     return () => management.destroy();
   });
 </script>
+
+{#if loading}
+  <button onclick={() => finishRead?.()}>Finish loading</button>
+  <button onclick={() => void management.observe()}
+    >Start background refresh</button
+  >
+{/if}
 
 <StoreSettingsPage
   {embedded}

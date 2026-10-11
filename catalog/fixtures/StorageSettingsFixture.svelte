@@ -8,10 +8,14 @@
   } from "../../web/src/lib/controller/storage-settings.js";
   let {
     embedded = false,
+    loading = false,
+    retainedOperation = false,
     supported = true,
     phase = "prepared",
   }: {
     embedded?: boolean;
+    loading?: boolean;
+    retainedOperation?: boolean;
     supported?: boolean;
     phase?: "prepared" | "incomplete" | "unknown" | "interrupted";
   } = $props();
@@ -50,6 +54,13 @@
       },
     })),
   );
+  const loaded = untrack(() => structuredClone($state.snapshot(settings)));
+  if (untrack(() => loading))
+    settings = {
+      ...emptyStorageSettings(),
+      state: "loading",
+      operation: untrack(() => retainedOperation) ? loaded.operation : null,
+    };
   async function start(action: StorageAction) {
     if (settings.operation)
       settings.operation = {
@@ -59,6 +70,15 @@
       };
   }
 </script>
+
+{#if loading}
+  <button onclick={() => (settings = structuredClone(loaded))}
+    >Finish loading</button
+  >
+  <button onclick={() => (settings.state = "refreshing")}
+    >Start background refresh</button
+  >
+{/if}
 
 <StoreStorageSettings
   {embedded}

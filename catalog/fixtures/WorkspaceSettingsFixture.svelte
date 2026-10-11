@@ -1,14 +1,19 @@
 <script lang="ts">
+  import { untrack } from "svelte";
   import StoreSettingsPage from "../../web/src/lib/ui/store-settings/StoreSettingsPage.svelte";
   import StoreWorkspaceSettings from "../../web/src/lib/ui/store-settings/StoreWorkspaceSettings.svelte";
   import { emptyWorkspaceLinks } from "../../web/src/lib/controller/workspace-link-types.js";
   import "../../web/src/lib/ui/store-settings/StoreSettings.css";
   let {
     supported = true,
+    embedded = false,
+    loading = false,
     pickerSupported = true,
     selection = "selected",
   }: {
     supported?: boolean;
+    embedded?: boolean;
+    loading?: boolean;
     pickerSupported?: boolean;
     selection?: "selected" | "cancelled" | "failed";
   } = $props();
@@ -26,6 +31,13 @@
     ],
   };
   settings.workspaceLinksState = "ready";
+  const loaded = untrack(() =>
+    structuredClone($state.snapshot(settings.workspaceLinks)),
+  );
+  if (untrack(() => loading)) {
+    settings.workspaceLinks = null;
+    settings.workspaceLinksState = "loading";
+  }
   async function link() {
     settings.workspaceLinking = true;
     settings.workspaceLinksError = "";
@@ -48,7 +60,19 @@
 </script>
 
 <main>
+  {#if loading}
+    <button
+      onclick={() => {
+        settings.workspaceLinks = loaded;
+        settings.workspaceLinksState = "ready";
+      }}>Finish loading</button
+    >
+    <button onclick={() => (settings.workspaceLinksState = "refreshing")}
+      >Start background refresh</button
+    >
+  {/if}
   <StoreSettingsPage
+    {embedded}
     section="repository"
     refreshLabel="Refresh folders"
     onRefresh={supported ? async () => {} : undefined}

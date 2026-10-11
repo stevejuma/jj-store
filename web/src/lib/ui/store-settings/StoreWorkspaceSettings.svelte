@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreSettingsSkeleton from "./StoreSettingsSkeleton.svelte";
   import { settingsPresentation } from "./settings-presentation.js";
   import StoreSettingsFooter from "./StoreSettingsFooter.svelte";
   import FolderGitIcon from "@lucide/svelte/icons/folder-git-2";
@@ -48,7 +49,13 @@
       description="Local folder management is not available for this connection."
     />
   {:else}
-    {#if settings.workspaceLinks?.links.length}
+    {#if presentation.value === "repository" && !settings.workspaceLinks && ["idle", "loading", "refreshing"].includes(settings.workspaceLinksState)}
+      <StoreSettingsSkeleton
+        section="folders"
+        rows={2}
+        label="Loading local folders"
+      />
+    {:else if settings.workspaceLinks?.links.length}
       <dl class="store-settings__rows" aria-label="Linked local folders">
         {#each settings.workspaceLinks.links as link (link.id)}
           <div>
@@ -75,7 +82,9 @@
         </div>
       </dl>
     {/if}
-    {#if busy}<dl class="store-settings__rows">
+    {#if busy && (presentation.value !== "repository" || settings.workspaceLinking || settings.workspacePicking)}<dl
+        class="store-settings__rows"
+      >
         <div>
           <dt>Folder status</dt>
           <dd>

@@ -23,6 +23,11 @@ unit entry, optional sliders and conditional draft-only reset. Canonical values,
 validation bounds, save/Apply and permissions remain unchanged. The enclosing
 Jujutsu change owns this evidence; no visual or lifecycle gate is promoted.
 
+[E-SETTINGS-SKELETON-001](../../../../../history/2026/10/11/E-SETTINGS-SKELETON-001/index.md)
+reviews M14.4 without changing its status. Repository Settings initial loading
+now matches the selected category and subtab; existing lifecycle, pending
+commands and configuration contracts remain unchanged. Wider gates remain open.
+
 <!-- generated-navigation -->
 
 ## Pages

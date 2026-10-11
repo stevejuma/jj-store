@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreSettingsSkeleton from "./StoreSettingsSkeleton.svelte";
   import SaveIcon from "@lucide/svelte/icons/save";
   import XIcon from "@lucide/svelte/icons/x";
   import { settingsPresentation } from "./settings-presentation.js";
@@ -154,6 +155,13 @@
               2,
             )}</pre>
         </details>{/if}
+    {:else if repositoryPresentation && section === "sync" && management.state.loading}
+      <StoreSettingsSkeleton
+        section="sync"
+        tab="configuration"
+        heading={false}
+        label="Loading sync configuration"
+      />
     {:else}<p role="status">
         {management.state.loading
           ? "Loading configuration…"

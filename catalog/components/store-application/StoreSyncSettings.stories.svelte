@@ -148,3 +148,27 @@
     await expect(c.getByText("Captured target reached")).toBeVisible();
   }}
 />
+
+<Story
+  name="Repository initial load preserves sync controls during later refresh"
+  args={{ embedded: true, loading: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await expect(
+      c.getByRole("status", { name: "Loading sync overview" }),
+    ).toBeVisible();
+    await expect(
+      c.queryByRole("button", { name: "Pause sync" }),
+    ).not.toBeInTheDocument();
+    await userEvent.click(c.getByRole("button", { name: "Finish loading" }));
+    const pause = c.getByRole("button", { name: "Pause sync" });
+    await expect(pause).toBeVisible();
+    await userEvent.click(
+      c.getByRole("button", { name: "Start background refresh" }),
+    );
+    await expect(pause).toBeVisible();
+    await expect(
+      c.queryByRole("status", { name: "Loading sync overview" }),
+    ).not.toBeInTheDocument();
+  }}
+/>

@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed shared numeric entry for Search budget, worker limits and Sync; exact unit conversions, conditional icon reset, hover and joined focus styling. Consolidated app form guidance in the UI guide and spec; existing API formats, permissions and Save/Apply or restart semantics remain unchanged.",
-      "fingerprint": "650334066e1bbca9be33209c4651dc3fea3a4ea927453e151b82bce08107c895"
+      "reason": "Reviewed repository settings module, discovery and initial-data skeletons; background refresh preserves loaded values, empty folder results, drafts and exact pending reports. The Settings guide reflects this presentation without changing routes, owners, APIs or configuration.",
+      "fingerprint": "a930d1badc27b131e071d3ce4ef495d6b3d0d89d1148f88174a2a336ed6a4993"
     }
   },
   {

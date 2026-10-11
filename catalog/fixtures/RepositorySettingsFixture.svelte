@@ -15,8 +15,12 @@
     section = "general",
     tab,
     narrow = false,
+    loading = false,
+    healthLoading = false,
   }: {
     narrow?: boolean;
+    loading?: boolean;
+    healthLoading?: boolean;
     local?: boolean;
     reader?: boolean;
     section?:
@@ -39,6 +43,7 @@
       repositorySettingsTab: tab,
     })),
   );
+  let discovering = $state(untrack(() => loading));
   let folderPath = $state("");
   const navigation = createRepositorySettingsNavigation({
     route: () => route,
@@ -66,14 +71,19 @@
         settings: {
           ...base.state.settings,
           workspacePath: folderPath,
-          capabilities: {
-            ...capabilities,
-            search: !local,
-            index_tasks: !local,
-            local_workspace_links: !local && !reader,
-            local_storage_management: !local && !reader,
-            local_sync_management: !local && !reader,
-          },
+          ...(healthLoading
+            ? { searchStatus: null, searchStatusState: "loading" as const }
+            : {}),
+          capabilities: discovering
+            ? null
+            : {
+                ...capabilities,
+                search: !local,
+                index_tasks: !local,
+                local_workspace_links: !local && !reader,
+                local_storage_management: !local && !reader,
+                local_sync_management: !local && !reader,
+              },
         },
       };
     },
@@ -90,6 +100,9 @@
 </script>
 
 <main style:width={narrow ? "390px" : "100%"} style:max-width="100%">
+  {#if loading}<button onclick={() => (discovering = false)}
+      >Finish discovery</button
+    >{/if}
   <StoreRepositorySettingsView {controller} /><output
     aria-label="Settings route"
     >{route.page}:{route.repositorySettingsSection}:{route.repositorySettingsTab ??

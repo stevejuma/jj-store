@@ -172,3 +172,44 @@
     await expect(input).toHaveValue("");
   }}
 />
+
+<Story
+  name="Discovery retains Back and replaces placeholders with repository categories"
+  args={{ loading: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await expect(
+      c.getByRole("status", { name: "Loading repository settings" }),
+    ).toBeVisible();
+    await expect(
+      c.getByRole("button", { name: "Back to repository" }),
+    ).toBeEnabled();
+    await expect(c.queryAllByRole("tab")).toHaveLength(0);
+    await userEvent.click(c.getByRole("button", { name: "Finish discovery" }));
+    await expect(
+      c.getByRole("heading", { name: "Identity and snapshot" }),
+    ).toBeVisible();
+    await expect(
+      c.queryByRole("status", { name: "Loading repository settings" }),
+    ).not.toBeInTheDocument();
+    await expect(c.getByRole("tab", { name: "General" })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+  }}
+/>
+
+<Story
+  name="Reader Search health skeleton stays within its card"
+  args={{ reader: true, section: "search", tab: "health", healthLoading: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    const loading = c.getByRole("status", { name: "Loading search health" });
+    await expect(loading).toBeVisible();
+    await expect(loading.closest('[data-slot="card"]')).not.toBeNull();
+    await expect(loading.querySelector('[data-slot="card"]')).toBeNull();
+    await expect(
+      c.queryByRole("button", { name: "Save settings" }),
+    ).not.toBeInTheDocument();
+  }}
+/>

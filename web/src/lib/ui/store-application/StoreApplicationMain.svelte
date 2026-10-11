@@ -1,6 +1,7 @@
 <script lang="ts">
   import StoreRepositorySettingsButton from "../store-settings/StoreRepositorySettingsButton.svelte";
   import StoreLazyView from "./StoreLazyView.svelte";
+  import StoreRepositorySettingsLoading from "../store-settings/StoreRepositorySettingsLoading.svelte";
   import StorePageSkeleton from "./StorePageSkeleton.svelte";
   import { views } from "./application-views.js";
   import {
@@ -127,6 +128,12 @@
               label="Repository settings"
               active={repositorySettingsOpen}
             >
+              {#snippet loading()}<StoreRepositorySettingsLoading
+                  section={current.repositorySettingsSection}
+                  tab={current.repositorySettingsTab}
+                  local={controller.state.repository.profile ===
+                    "git_sha1_jj045"}
+                />{/snippet}
               {#snippet content(View)}<View
                   {controller}
                   visible={repositorySettingsOpen}

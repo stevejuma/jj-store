@@ -163,3 +163,27 @@
     ).toBeEnabled();
   }}
 />
+
+<Story
+  name="Repository folder loading retains form and refresh retains links"
+  args={{ embedded: true, loading: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await expect(
+      c.getByRole("status", { name: "Loading local folders" }),
+    ).toBeVisible();
+    const input = c.getByRole("textbox", { name: "Folder path" });
+    await expect(input).toBeDisabled();
+    await userEvent.click(c.getByRole("button", { name: "Finish loading" }));
+    await userEvent.type(input, "/retained/workspace");
+    await expect(c.getByText("/workspaces/moved-project")).toBeVisible();
+    await userEvent.click(
+      c.getByRole("button", { name: "Start background refresh" }),
+    );
+    await expect(c.getByText("/workspaces/moved-project")).toBeVisible();
+    await expect(input).toHaveValue("/retained/workspace");
+    await expect(
+      c.queryByRole("status", { name: "Loading local folders" }),
+    ).not.toBeInTheDocument();
+  }}
+/>

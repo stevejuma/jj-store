@@ -1,4 +1,6 @@
 <script lang="ts">
+  import StoreSettingsSkeleton from "./StoreSettingsSkeleton.svelte";
+  import { settingsPresentation } from "./settings-presentation.js";
   import ActivityIcon from "@lucide/svelte/icons/activity";
   import StoreSettingsCard from "./StoreSettingsCard.svelte";
   import StoreReadOnlyRow from "./StoreReadOnlyRow.svelte";
@@ -8,6 +10,7 @@
   import StoreSettingsEmpty from "./StoreSettingsEmpty.svelte";
   import type { StoreController } from "../../controller/contracts.js";
   let { controller }: { controller: StoreController } = $props();
+  const presentation = settingsPresentation();
   const settings = $derived(controller.state.settings);
   const capabilities = $derived(settings.capabilities);
   const search = $derived(settings.searchStatus);
@@ -28,6 +31,13 @@
       Icon={SearchXIcon}
       title="Search unavailable"
       description="Search is not configured for this repository."
+    />
+  {:else if presentation.value === "repository" && !search && ["idle", "loading", "refreshing"].includes(settings.searchStatusState)}
+    <StoreSettingsSkeleton
+      rows={6}
+      section="search"
+      tab="health"
+      label="Loading search health"
     />
   {:else if settings.searchStatusState === "loading" && !search}
     <StoreSettingsNotice>Loading search status…</StoreSettingsNotice>

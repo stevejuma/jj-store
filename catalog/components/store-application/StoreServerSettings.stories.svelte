@@ -231,3 +231,31 @@
     await expect(polling).toHaveValue(5);
   }}
 />
+
+<Story
+  name="Repository sync loading retains the same configuration draft during refresh"
+  args={{ section: "sync", embedded: true, loading: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await expect(
+      await c.findByRole("status", { name: "Loading sync configuration" }),
+    ).toBeVisible();
+    await userEvent.click(c.getByRole("button", { name: "Finish loading" }));
+    await userEvent.click(
+      await c.findByRole("button", { name: "Add upstream" }),
+    );
+    const input = c.getByRole("textbox", { name: "Upstream origin" });
+    await userEvent.clear(input);
+    await userEvent.type(input, "https://retained.example");
+    await userEvent.click(
+      c.getByRole("button", { name: "Start background refresh" }),
+    );
+    await expect(input).toBeVisible();
+    await expect(input).toHaveValue("https://retained.example");
+    await expect(
+      c.queryByRole("status", { name: "Loading sync configuration" }),
+    ).not.toBeInTheDocument();
+    await userEvent.click(c.getByRole("button", { name: "Finish loading" }));
+    await expect(input).toHaveValue("https://retained.example");
+  }}
+/>

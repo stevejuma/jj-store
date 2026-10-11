@@ -6,11 +6,13 @@
   import type { SyncSettings } from "../../web/src/lib/controller/sync-settings.js";
   let {
     embedded = false,
+    loading = false,
     supported = true,
     configured = true,
     failed = false,
   } = $props<{
     embedded?: boolean;
+    loading?: boolean;
     supported?: boolean;
     configured?: boolean;
     failed?: boolean;
@@ -28,7 +30,19 @@
       changing: false,
     })),
   );
+  const loaded = untrack(() => structuredClone($state.snapshot(settings)));
+  if (untrack(() => loading))
+    settings = { ...emptySyncSettings(), state: "loading" };
 </script>
+
+{#if loading}
+  <button onclick={() => (settings = structuredClone(loaded))}
+    >Finish loading</button
+  >
+  <button onclick={() => (settings.state = "refreshing")}
+    >Start background refresh</button
+  >
+{/if}
 
 <div>
   <StoreSyncSettings

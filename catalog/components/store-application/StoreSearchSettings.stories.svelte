@@ -235,3 +235,27 @@
     await expect(budget).toHaveValue(1);
   }}
 />
+
+<Story
+  name="Repository loading becomes a retained editable draft during refresh"
+  args={{ embedded: true, loading: true, section: "configuration" }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await expect(
+      c.getByRole("status", { name: "Loading search settings" }),
+    ).toBeVisible();
+    await expect(c.queryByRole("switch")).not.toBeInTheDocument();
+    await userEvent.click(c.getByRole("button", { name: "Finish loading" }));
+    const budget = c.getByRole("spinbutton", { name: "Index budget" });
+    await userEvent.clear(budget);
+    await userEvent.type(budget, "256");
+    await userEvent.click(
+      c.getByRole("button", { name: "Start background refresh" }),
+    );
+    await expect(budget).toBeVisible();
+    await expect(budget).toHaveValue(256);
+    await expect(
+      c.queryByRole("status", { name: "Loading search settings" }),
+    ).not.toBeInTheDocument();
+  }}
+/>

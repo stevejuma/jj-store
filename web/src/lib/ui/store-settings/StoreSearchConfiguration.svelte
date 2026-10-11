@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreSettingsSkeleton from "./StoreSettingsSkeleton.svelte";
   import StoreSearchFields from "./StoreSearchFields.svelte";
   import StoreReadOnlyRow from "./StoreReadOnlyRow.svelte";
   import ActivityIcon from "@lucide/svelte/icons/activity";
@@ -195,6 +196,13 @@
           >
         </StoreSettingsFooter>
       </StoreSettingsCard>
+    {:else if repository && ["idle", "loading", "refreshing"].includes(settings.state)}
+      <StoreSettingsSkeleton
+        section="search"
+        tab={section}
+        heading={false}
+        label="Loading search settings"
+      />
     {:else if settings.changing}<StoreSettingsNotice
         >Loading search settings…</StoreSettingsNotice
       >{/if}

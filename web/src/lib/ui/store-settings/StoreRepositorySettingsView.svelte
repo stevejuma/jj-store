@@ -20,6 +20,7 @@
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as Tooltip from "@lapismd/design-core/shadcn/tooltip";
+  import StoreRepositorySettingsLoading from "./StoreRepositorySettingsLoading.svelte";
   import { Skeleton } from "@lapismd/design-core/shadcn/skeleton";
   import RefreshIcon from "@lucide/svelte/icons/refresh-cw";
   import ArrowLeftIcon from "@lucide/svelte/icons/arrow-left";
@@ -125,7 +126,16 @@
         </Tooltip.Trigger><Tooltip.Content>Back to repository</Tooltip.Content
         ></Tooltip.Root
       ></Tooltip.Provider
-    >{/snippet}
+    >
+    {#if !ready}<div
+        class="store-repository-settings__pending-tabs"
+        aria-hidden="true"
+      >
+        {#each Array(view.repository.profile === "git_sha1_jj045" ? 3 : 6) as _}
+          <Skeleton class="store-repository-settings__pending-tab" />
+        {/each}
+      </div>{/if}
+  {/snippet}
   {#snippet trailing()}{#if refresh}<div
         class="store-repository-settings__actions"
       >
@@ -160,17 +170,16 @@
   severity="info"
   lifetime="timed"
 />
-{#if !ready}<div
-    role="status"
-    aria-label="Loading repository settings"
-    class="store-repository-settings__loading"
-  >
-    <Skeleton class="h-12" /><Skeleton class="h-24" />
-  </div>{/if}
+{#if !ready}<StoreRepositorySettingsLoading
+    primary={false}
+    section={view.route.repositorySettingsSection}
+    tab={view.route.repositorySettingsTab}
+    local={view.repository.profile === "git_sha1_jj045"}
+  />{/if}
 {#each visited as section (section)}
   <div
     class="store-repository-settings__page"
-    hidden={!visible || destination.section !== section}
+    hidden={!visible || !ready || destination.section !== section}
   >
     {#if ["general", "folders", "advanced"].includes(section)}
       <StoreRepositorySettings
@@ -235,11 +244,17 @@
     min-height: 0;
     overflow: hidden;
   }
-  .store-repository-settings__loading {
-    padding: 1rem;
+  .store-repository-settings__pending-tabs {
     display: flex;
-    flex-direction: column;
-    gap: 1rem;
+    gap: 0.5rem;
+    min-width: 0;
+    overflow: hidden;
+  }
+  :global(.store-repository-settings__pending-tab) {
+    height: 1.8rem;
+    width: 5rem;
+    flex: none;
+    border-radius: 999px;
   }
   [hidden] {
     display: none;

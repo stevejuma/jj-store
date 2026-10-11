@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreSettingsSkeleton from "./StoreSettingsSkeleton.svelte";
   import StoreSettingsFooter from "./StoreSettingsFooter.svelte";
   import StoreSettingsCard from "./StoreSettingsCard.svelte";
   import StoreReadOnlyRow from "./StoreReadOnlyRow.svelte";
@@ -44,6 +45,13 @@
   } = $props();
   let active = $state("overview");
   const selected = $derived(value ?? active);
+  const initialLoading = $derived(
+    embedded &&
+      !settings.value &&
+      !settings.operation &&
+      !settings.pending &&
+      ["idle", "loading", "refreshing"].includes(settings.state),
+  );
   const report = $derived(settings.operation);
   const blocked = $derived(
     settings.changing ||
@@ -99,132 +107,145 @@
         {settings.error}
       </p>{/if}
     <Tabs.Content value="overview">
-      <StoreSettingsCard
-        id="storage-overview"
-        title="Storage readiness"
-        Icon={DatabaseIcon}
-      >
-        <dl class="store-settings__rows">
-          <StoreReadOnlyRow
-            label="Status"
-            tone={settings.value?.ready ? "ready" : undefined}
-            Icon={ShieldCheckIcon}
-            description="Status updates automatically. Integrity checks run only when requested."
-            live="status"
-            value={settings.value
-              ? settings.value.ready
-                ? "Selected manifest is readable"
-                : "Storage unavailable"
-              : settings.state === "failed"
-                ? "Storage status could not be read."
-                : "Loading storage status…"}
-          />
-          {#if settings.value}
-            <StoreReadOnlyRow
-              label="Checkpoint coverage"
-              Icon={DatabaseIcon}
-              value={settings.value.checkpoint
-                ? `Selected checkpoint covers position ${settings.value.checkpoint.position.toLocaleString("en-GB")}. Current position is ${settings.value.current.position.toLocaleString("en-GB")}.`
-                : "No checkpoint is selected."}
-            />
-            <StoreReadOnlyRow
-              label="Integrity and retention"
-              Icon={ShieldCheckIcon}
-              value="A readable manifest does not establish full data integrity. Checkpoints retain repository data and publication history."
-            />
-          {/if}
-        </dl>
-        {#if !embedded && settings.value}<StoreStoragePosition
-            position={settings.value.current}
-          />{/if}
-      </StoreSettingsCard>
-      {#if embedded && settings.value}<StoreSettingsCard
-          id="storage-position"
-          title="Published position"
+      {#if initialLoading}<StoreSettingsSkeleton
+          section="storage"
+          tab="overview"
+          label="Loading storage overview"
+        />{:else}
+        <StoreSettingsCard
+          id="storage-overview"
+          title="Storage readiness"
           Icon={DatabaseIcon}
         >
-          <StoreStoragePosition position={settings.value.current} />
-        </StoreSettingsCard>{/if}
+          <dl class="store-settings__rows">
+            <StoreReadOnlyRow
+              label="Status"
+              tone={settings.value?.ready ? "ready" : undefined}
+              Icon={ShieldCheckIcon}
+              description="Status updates automatically. Integrity checks run only when requested."
+              live="status"
+              value={settings.value
+                ? settings.value.ready
+                  ? "Selected manifest is readable"
+                  : "Storage unavailable"
+                : settings.state === "failed"
+                  ? "Storage status could not be read."
+                  : "Loading storage status…"}
+            />
+            {#if settings.value}
+              <StoreReadOnlyRow
+                label="Checkpoint coverage"
+                Icon={DatabaseIcon}
+                value={settings.value.checkpoint
+                  ? `Selected checkpoint covers position ${settings.value.checkpoint.position.toLocaleString("en-GB")}. Current position is ${settings.value.current.position.toLocaleString("en-GB")}.`
+                  : "No checkpoint is selected."}
+              />
+              <StoreReadOnlyRow
+                label="Integrity and retention"
+                Icon={ShieldCheckIcon}
+                value="A readable manifest does not establish full data integrity. Checkpoints retain repository data and publication history."
+              />
+            {/if}
+          </dl>
+          {#if !embedded && settings.value}<StoreStoragePosition
+              position={settings.value.current}
+            />{/if}
+        </StoreSettingsCard>
+        {#if embedded && settings.value}<StoreSettingsCard
+            id="storage-position"
+            title="Published position"
+            Icon={DatabaseIcon}
+          >
+            <StoreStoragePosition position={settings.value.current} />
+          </StoreSettingsCard>{/if}
+      {/if}
     </Tabs.Content>
     <Tabs.Content value="maintenance">
-      <StoreSettingsCard
-        id="storage-maintenance"
-        title="Repository maintenance"
-        Icon={DatabaseIcon}
-      >
-        {#if settings.value}<dl class="store-settings__rows">
-            <div>
-              <dt>Check limits</dt>
-              <dd>
-                Check limits: {settings.value.limits.entries.toLocaleString(
-                  "en-GB",
-                )} entries, {settings.value.limits.bytes.toLocaleString(
-                  "en-GB",
-                )} bytes, {Number(settings.value.limits.timeout_millis) / 1000} seconds.
-              </dd>
-            </div>
-          </dl>{/if}
-        <StoreSettingsFooter>
-          {#snippet description()}<div>
-              <strong>Integrity and checkpoints</strong>
-              <p>
-                Operations continue on the local service when Settings closes.
-              </p>
-            </div>{/snippet}
-
-          <Button
-            variant="outline"
-            disabled={blocked || !settings.value}
-            onclick={() => void onStart("check")}
-            ><ShieldCheckIcon
-              data-icon="inline-start"
-              aria-hidden="true"
-            />Check integrity</Button
-          >
-          <Button
-            variant="outline"
-            disabled={blocked || !settings.value}
-            onclick={() => void onStart("prepare_checkpoint")}
-            ><SaveIcon data-icon="inline-start" aria-hidden="true" />Prepare
-            checkpoint</Button
-          >
-        </StoreSettingsFooter>
-        {#if settings.pending && !settings.changing}
+      {#if initialLoading}<StoreSettingsSkeleton
+          section="storage"
+          tab="maintenance"
+          label="Loading storage maintenance"
+        />{:else}
+        <StoreSettingsCard
+          id="storage-maintenance"
+          title="Repository maintenance"
+          Icon={DatabaseIcon}
+        >
+          {#if settings.value}<dl class="store-settings__rows">
+              <div>
+                <dt>Check limits</dt>
+                <dd>
+                  Check limits: {settings.value.limits.entries.toLocaleString(
+                    "en-GB",
+                  )} entries, {settings.value.limits.bytes.toLocaleString(
+                    "en-GB",
+                  )} bytes, {Number(settings.value.limits.timeout_millis) /
+                    1000} seconds.
+                </dd>
+              </div>
+            </dl>{/if}
           <StoreSettingsFooter>
             {#snippet description()}<div>
-                <strong>Pending request</strong>
-                <p role="status">
-                  The response was not confirmed. Retry uses the same request
-                  and target.
+                <strong>Integrity and checkpoints</strong>
+                <p>
+                  Operations continue on the local service when Settings closes.
                 </p>
               </div>{/snippet}
 
-            <Button variant="outline" onclick={() => void onRetry()}
-              ><RefreshCwIcon
+            <Button
+              variant="outline"
+              disabled={blocked || !settings.value}
+              onclick={() => void onStart("check")}
+              ><ShieldCheckIcon
                 data-icon="inline-start"
                 aria-hidden="true"
-              />Retry original request</Button
+              />Check integrity</Button
+            >
+            <Button
+              variant="outline"
+              disabled={blocked || !settings.value}
+              onclick={() => void onStart("prepare_checkpoint")}
+              ><SaveIcon data-icon="inline-start" aria-hidden="true" />Prepare
+              checkpoint</Button
             >
           </StoreSettingsFooter>
-        {/if}
-      </StoreSettingsCard>
-      <StoreSettingsCard
-        id="storage-report"
-        title="Maintenance operation"
-        Icon={ShieldCheckIcon}
-      >
-        {#if report}<StoreStorageOperation
-            {report}
-            disabled={settings.changing || Boolean(settings.pending)}
-            {onStart}
-          />
-        {:else}<dl class="store-settings__rows">
-            <div>
-              <dt>Operation</dt>
-              <dd>No maintenance operation has been requested.</dd>
-            </div>
-          </dl>{/if}
-      </StoreSettingsCard>
+          {#if settings.pending && !settings.changing}
+            <StoreSettingsFooter>
+              {#snippet description()}<div>
+                  <strong>Pending request</strong>
+                  <p role="status">
+                    The response was not confirmed. Retry uses the same request
+                    and target.
+                  </p>
+                </div>{/snippet}
+
+              <Button variant="outline" onclick={() => void onRetry()}
+                ><RefreshCwIcon
+                  data-icon="inline-start"
+                  aria-hidden="true"
+                />Retry original request</Button
+              >
+            </StoreSettingsFooter>
+          {/if}
+        </StoreSettingsCard>
+        <StoreSettingsCard
+          id="storage-report"
+          title="Maintenance operation"
+          Icon={ShieldCheckIcon}
+        >
+          {#if report}<StoreStorageOperation
+              {report}
+              disabled={settings.changing || Boolean(settings.pending)}
+              {onStart}
+            />
+          {:else}<dl class="store-settings__rows">
+              <div>
+                <dt>Operation</dt>
+                <dd>No maintenance operation has been requested.</dd>
+              </div>
+            </dl>{/if}
+        </StoreSettingsCard>
+      {/if}
     </Tabs.Content>
   {/if}
 </StoreSettingsPage>
