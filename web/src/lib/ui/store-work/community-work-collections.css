@@ -68,6 +68,17 @@
   min-width: 0;
 }
 
+/* Home repositories share one visible collection; inset only its outer edges. */
+.community-projects__collection-group
+  .community-projects__project-list:not(:first-child) {
+  padding-block-start: 0;
+}
+
+.community-projects__collection-group
+  .community-projects__project-list:not(:last-child) {
+  padding-block-end: 0;
+}
+
 .community-projects__collection-group .community-projects__list,
 .community-projects__collection-group .community-projects__task-list {
   padding: 0.45rem 1rem;

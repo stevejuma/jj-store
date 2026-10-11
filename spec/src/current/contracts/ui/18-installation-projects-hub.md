@@ -9,6 +9,12 @@ discovery failure is visible and does not imply a complete catalog. Creation
 selects an existing writable home. Empty setup guidance points to the CLI;
 repository creation and registration forms remain deferred.
 
+Mine and Other projects form continuous visual collections across their home
+repositories. Adjacent home lists do not add padding between project rows; the
+collection retains its opening and trailing insets in List and Grid layouts.
+Home-specific identity, authorization, loading, paging and selection remain
+independent under JST-UI-015.
+
 Project views default to Tasks and order their tabs Activity, Tasks, Reviews and
 Repositories. Search and task state, linked-repository and home filters apply
 before server pagination. Project rows show linked repositories and active/done
