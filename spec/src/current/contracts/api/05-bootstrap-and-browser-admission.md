@@ -28,15 +28,19 @@ heads.
 
 The transient Settings presentation composes only existing bootstrap, repository
 discovery, capabilities, snapshot, search-status and index-task contracts. The
-production controller retains each discovered repository's effective permission
-and exposes the already captured capabilities and snapshot authority to
-presentation. Search status is requested only when search is advertised, and its
-failure does not replace repository content or connection state. Index
-preparation submits the operation reported by an index-lag response when
-present, otherwise the explicitly selected snapshot operation; concurrent
-unselected heads cannot start a task. Repository switching, disconnection and
-revocation close the source session, abort outstanding requests and clear this
-settings projection. This UI adds no server route, schema or generated contract.
+repository Details Settings action selects the transient Repository section over
+the already connected repository. JST-API-005/008 remain unchanged: the action
+adds no repository-open request, endpoint, authorization or persisted route and
+retains the exact selected snapshot and code context. The production controller
+retains each discovered repository's effective permission and exposes the
+already captured capabilities and snapshot authority to presentation. Search
+status is requested only when search is advertised, and its failure does not
+replace repository content or connection state. Index preparation submits the
+operation reported by an index-lag response when present, otherwise the
+explicitly selected snapshot operation; concurrent unselected heads cannot start
+a task. Repository switching, disconnection and revocation close the source
+session, abort outstanding requests and clear this settings projection. This UI
+adds no server route, schema or generated contract.
 
 The sidebar Add project action uses the existing permission-gated WorkStore
 create dialog and home selector. Sidebar repository-add actions reuse the same

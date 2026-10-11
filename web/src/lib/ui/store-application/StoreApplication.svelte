@@ -157,8 +157,9 @@
     if (editorOpen) return;
     controller.actions.navigate(delta);
   }
-  function openSettings() {
+  function openSettings(section?: StoreSettingsSection) {
     if (editorOpen) return;
+    if (section) settingsSection = section;
     settingsOpen = true;
     if (shell.mobile.resolvedMode === "mobile") shell.mobile.showMain();
   }
@@ -263,10 +264,7 @@
     {selectPage}
     {children}
     {agents}
-    linkFolder={() => {
-      openSettings();
-      selectSettings("repository");
-    }}
+    linkFolder={() => openSettings("repository")}
   />
   {#if !settingsOpen && current.agentsHub && controller.execution && !controller.execution.chat.open}<StoreLazyView
       load={views.agentDetails}
@@ -283,6 +281,7 @@
       {stackWorkspace}
       {shell}
       onSelectPage={selectPage}
+      onRepositorySettings={() => openSettings("repository")}
       threadFocused={threadPanel.focused}
     />{/if}
   <StoreFocusedDiscussion

@@ -2,6 +2,7 @@
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import StoreApplication from "../../fixtures/StoreApplicationFixture.svelte";
+  import { IDS } from "../../fixtures/repository.js";
   const { Story } = defineMeta({
     title: "JJ Store/Settings/Navigation",
     component: StoreApplication,
@@ -20,7 +21,76 @@
     );
     await canvas.findByRole("heading", { name: "Local service", level: 1 });
   }
+  async function openRepositorySettings(
+    canvasElement: HTMLElement,
+    mobile = false,
+  ) {
+    const canvas = within(canvasElement);
+    const window = canvasElement.ownerDocument.defaultView!;
+    const beforeHash = window.location.hash;
+    const beforeHistory = window.history.length;
+    await userEvent.click(
+      canvas.getByRole("button", {
+        name: mobile ? "Open details sidebar" : "Toggle details",
+      }),
+    );
+    const rail = await canvas.findByRole("navigation", {
+      name: "Repository views",
+    });
+    const settings = within(rail).getByRole("button", {
+      name: "Repository settings",
+    });
+    await expect(settings).toHaveTextContent("Settings");
+    settings.focus();
+    await userEvent.keyboard("{Enter}");
+    await expect(
+      await canvas.findByRole(
+        "heading",
+        { name: "Repository", level: 1 },
+        { timeout: 10000 },
+      ),
+    ).toBeVisible();
+    await expect(
+      canvas.getByRole("combobox", { name: "Settings repository" }),
+    ).toHaveTextContent("jj-store");
+    await expect(
+      canvas.getByRole("button", {
+        name: `Copy full Selected operation: ${IDS.opLeft}`,
+      }),
+    ).toBeVisible();
+    await expect(canvas.getByRole("tab", { name: "General" })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    await expect(window.location.hash).toBe(beforeHash);
+    await expect(window.history.length).toBe(beforeHistory);
+    if (mobile)
+      await userEvent.click(
+        canvas.getByRole("button", { name: "Open settings sidebar" }),
+      );
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Back to jj-store" }),
+    );
+    await expect(
+      await canvas.findByText("jj-store · Overview", { exact: true }),
+    ).toBeVisible();
+    await expect(window.location.hash).toBe(beforeHash);
+    await expect(window.history.length).toBe(beforeHistory);
+  }
 </script>
+
+<Story
+  name="Repository rail opens selected repository settings"
+  args={{ initialPage: "files" }}
+  play={async ({ canvasElement }) =>
+    await openRepositorySettings(canvasElement)}
+/>
+<Story
+  name="Mobile repository rail opens selected repository settings"
+  args={{ initialPage: "files", displayMode: "mobile" }}
+  play={async ({ canvasElement }) =>
+    await openRepositorySettings(canvasElement, true)}
+/>
 
 <Story
   name="Consistent title and body spacing across Settings pages"

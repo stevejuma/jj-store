@@ -1,18 +1,21 @@
 <script lang="ts">
   // Adapted from CommunityProjectsRepositoryRail's Details rows.
   import { Button } from "@lapismd/design-core/shadcn/button";
+  import SettingsIcon from "@lucide/svelte/icons/settings";
   import { navigationItemIcon } from "../community-navigation/icons.js";
   import type { StorePage } from "../community-navigation/model.js";
   import { repositoryRailSections } from "./repository-sections.js";
   let {
     page,
     onSelect,
+    onSettings,
     sections = repositoryRailSections,
     label = "Repository views",
     disabled = false,
   }: {
     page: StorePage;
     onSelect(page: StorePage): void;
+    onSettings?: () => void;
     sections?: readonly { page: StorePage; label: string }[];
     label?: string;
     disabled?: boolean;
@@ -39,6 +42,18 @@
       <span>{item.label}</span>
     </Button>
   {/each}
+  {#if onSettings}
+    <Button
+      variant="ghost"
+      class="store-repository-navigation__item"
+      {disabled}
+      aria-label="Repository settings"
+      onclick={onSettings}
+    >
+      <SettingsIcon data-icon="inline-start" aria-hidden="true" />
+      <span>Settings</span>
+    </Button>
+  {/if}
 </nav>
 
 <style>

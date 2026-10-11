@@ -21,6 +21,7 @@
     stackWorkspace,
     shell,
     onSelectPage,
+    onRepositorySettings,
     threadFocused = false,
   }: {
     controller: StoreController;
@@ -28,6 +29,7 @@
     threadFocused?: boolean;
     shell: AppShellController;
     onSelectPage: StoreController["actions"]["selectPage"];
+    onRepositorySettings(): void;
   } = $props();
   const inspection = useConversationInspection();
   const chatOpen = $derived(controller.execution?.chat.open === true);
@@ -253,4 +255,5 @@
   {stackWorkspace}
   {shell}
   {onSelectPage}
+  {onRepositorySettings}
 />
