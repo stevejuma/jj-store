@@ -1,6 +1,6 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
-  import { expect, userEvent, within } from "storybook/test";
+  import { expect, userEvent, waitFor, within } from "storybook/test";
   import SearchSettingsFixture from "../../fixtures/SearchSettingsFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Settings/Search configuration",
@@ -110,6 +110,9 @@
     const polling = c.getByRole("spinbutton", {
       name: "Polling interval (ms)",
     });
+    await waitFor(() =>
+      expect(getComputedStyle(polling).pointerEvents).toBe("auto"),
+    );
     await userEvent.clear(polling);
     await userEvent.type(polling, "2500");
     await userEvent.click(c.getByRole("button", { name: "Save settings" }));
@@ -148,7 +151,7 @@
     await expect(canvasElement.querySelector("dl button")).toBeNull();
     await expect(
       c
-        .getByRole("spinbutton", { name: "Index budget (MiB)" })
+        .getByRole("spinbutton", { name: "Index budget" })
         .getBoundingClientRect().width,
     ).toBeLessThanOrEqual(180);
     await userEvent.click(
@@ -161,5 +164,74 @@
     await expect(
       c.getByRole("switch", { name: "Enable text search" }),
     ).toBeChecked();
+  }}
+/>
+
+<Story
+  name="Repository worker units save canonical values"
+  args={{ embedded: true, section: "advanced" }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement),
+      page = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      c.getByRole("button", { name: "Polling interval unit" }),
+    );
+    await userEvent.click(page.getByRole("option", { name: "sec" }));
+    await expect(
+      c.getByRole("button", { name: "Save settings" }),
+    ).toBeDisabled();
+    await waitFor(() => expect(page.queryByRole("listbox")).toBeNull());
+    const polling = c.getByRole("spinbutton", {
+      name: "Polling interval",
+    });
+    await waitFor(() =>
+      expect(getComputedStyle(polling).pointerEvents).toBe("auto"),
+    );
+    await userEvent.clear(polling);
+    await userEvent.type(polling, "2.5");
+    await expect(c.getByText("Exact value: 2,500 ms")).toBeVisible();
+    await userEvent.click(c.getByRole("button", { name: "Save settings" }));
+    await expect(c.getByText(/Saved changes need applying/)).toBeVisible();
+    await userEvent.click(
+      c.getByRole("button", { name: "Apply saved settings" }),
+    );
+    await expect(c.getByText(/Currently active: 2,500 ms/)).toBeVisible();
+    await userEvent.click(
+      c.getByRole("button", { name: "Reset Polling interval to default" }),
+    );
+    await expect(polling).toHaveValue(1);
+    await userEvent.click(c.getByRole("button", { name: "Cancel changes" }));
+    await expect(polling).toHaveValue(2.5);
+  }}
+/>
+
+<Story
+  name="Repository index budget uses exact binary units"
+  args={{ embedded: true, section: "configuration" }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement),
+      page = within(canvasElement.ownerDocument.body);
+    const budget = c.getByRole("spinbutton", { name: "Index budget" });
+    await expect(budget).toHaveValue(512);
+    await userEvent.click(c.getByRole("button", { name: "Index budget unit" }));
+    await userEvent.click(page.getByRole("option", { name: "GiB" }));
+    await waitFor(() =>
+      expect(getComputedStyle(budget).pointerEvents).toBe("auto"),
+    );
+    await expect(budget).toHaveValue(0.5);
+    await expect(
+      c.getByRole("button", { name: "Save settings" }),
+    ).toBeDisabled();
+    await userEvent.clear(budget);
+    await userEvent.type(budget, "1");
+    await expect(c.getByText("Exact value: 1,073,741,824 bytes")).toBeVisible();
+    await userEvent.click(c.getByRole("button", { name: "Save settings" }));
+    await expect(c.getByText(/Saved changes need applying/)).toBeVisible();
+    await userEvent.click(
+      c.getByRole("button", { name: "Reset Index budget to default" }),
+    );
+    await expect(budget).toHaveValue(0.5);
+    await userEvent.click(c.getByRole("button", { name: "Cancel changes" }));
+    await expect(budget).toHaveValue(1);
   }}
 />

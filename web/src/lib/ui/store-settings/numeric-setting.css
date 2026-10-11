@@ -1,0 +1,118 @@
+.store-numeric-setting__controls {
+  display: grid;
+  gap: 0.5rem;
+  width: min(18rem, 100%);
+  min-width: 0;
+}
+.store-numeric-setting__entry {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.store-numeric-setting__input {
+  flex: 1 1 12rem;
+  max-width: 15.5rem;
+}
+.store-numeric-setting__input input {
+  min-width: 0;
+  width: 100%;
+  font-variant-numeric: tabular-nums;
+}
+.store-numeric-setting__unit[data-slot] {
+  align-self: stretch;
+  flex: none;
+  margin: 0;
+  padding: 0;
+  gap: 0;
+  border-inline-start: 1px solid var(--input);
+  background: color-mix(in srgb, var(--primary) 7%, var(--background));
+  border-radius: 0 calc(var(--radius) * 0.8) calc(var(--radius) * 0.8) 0;
+}
+.store-numeric-setting__unit-trigger[data-slot] {
+  height: 100%;
+  min-width: 4.5rem;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  color: var(--primary);
+}
+.store-numeric-setting__unit [data-slot="input-group-text"] {
+  padding-inline: 0.75rem;
+  font-size: 0.8rem;
+}
+.store-numeric-setting__default,
+.store-numeric-setting__state,
+.store-numeric-setting__error,
+.store-numeric-setting__range {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+.store-numeric-setting__state {
+  text-align: end;
+  overflow-wrap: anywhere;
+}
+.store-numeric-setting__state:empty {
+  display: none;
+}
+.store-numeric-setting__range {
+  display: flex;
+  justify-content: space-between;
+}
+.store-numeric-setting__error {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--destructive);
+}
+.store-numeric-setting__error svg {
+  width: 1rem;
+  height: 1rem;
+  flex: none;
+}
+.store-numeric-setting[data-density="compact"] {
+  padding-block: 0.5rem;
+}
+.store-numeric-setting__input:focus-within {
+  outline: none;
+  border-color: var(--input);
+  box-shadow: 0 0 0 3px
+    color-mix(in srgb, var(--store-numeric-ring, var(--ring)) 50%, transparent);
+}
+@media (max-width: 40rem) {
+  .store-numeric-setting__controls {
+    width: 100%;
+  }
+  .store-numeric-setting__input {
+    max-width: none;
+  }
+}
+
+.store-numeric-setting__reset[data-ui-part] {
+  align-self: stretch;
+  height: auto;
+  width: 2rem;
+  border-inline-start: 1px solid var(--input);
+  border-radius: 0 calc(var(--radius) * 0.8) calc(var(--radius) * 0.8) 0;
+  background: var(--background);
+}
+.store-numeric-setting__unit:has(.store-numeric-setting__reset)
+  .store-numeric-setting__unit-trigger {
+  border-radius: 0;
+}
+
+.store-numeric-setting__input:has([aria-invalid="true"]) {
+  --store-numeric-ring: var(--destructive);
+}
+.store-numeric-setting__input :is(input, button):focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.store-numeric-setting__unit-trigger[data-slot]:hover:not(:disabled),
+.store-numeric-setting__reset[data-ui-part]:hover:not(:disabled) {
+  background: var(--muted);
+  color: var(--foreground);
+}

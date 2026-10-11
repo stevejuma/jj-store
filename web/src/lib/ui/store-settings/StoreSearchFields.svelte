@@ -1,4 +1,11 @@
 <script lang="ts">
+  import StoreNumericSettingRow from "./StoreNumericSettingRow.svelte";
+  import {
+    bytesUnits,
+    canonicalNumericValue,
+    displayNumericValue,
+  } from "./numeric-setting.js";
+  import { settingsPresentation } from "./settings-presentation.js";
   import * as Field from "@lapismd/design-core/shadcn/field";
   import { Input } from "@lapismd/design-core/shadcn/input";
   import { Textarea } from "@lapismd/design-core/shadcn/textarea";
@@ -21,6 +28,7 @@
     section: "configuration" | "scopes" | "advanced";
     onDraft: (patch: Partial<SearchDraft>) => void;
   } = $props();
+  const presentation = settingsPresentation();
 </script>
 
 <Field.Group class="store-settings__editable-rows">
@@ -91,25 +99,42 @@
       {onDraft}
     />{/if}
   {#if section === "configuration"}
-    <Field.Field orientation="responsive" class="store-settings__option-row">
-      <Field.Content
-        ><Field.Label for="search-budget">Index budget (MiB)</Field.Label>
-        <Field.Description id="search-budget-help"
-          >Set the text index budget in mebibytes.</Field.Description
-        >
-      </Field.Content><Input
-        class="store-settings__input"
+    {#if presentation.value === "repository"}
+      <StoreNumericSettingRow
         id="search-budget"
-        aria-describedby="search-budget-help"
-        type="number"
-        min="0.000001"
-        max="2048"
-        step="any"
-        required
+        label="Index budget"
+        description="Maximum storage used by the text search index."
+        units={bytesUnits}
+        preferredUnit="MiB"
+        value={canonicalNumericValue(draft.budget, bytesUnits[2])}
+        min={1}
+        max={2147483648}
+        defaultValue={536870912}
         disabled={busy}
-        value={draft.budget}
-        oninput={(event) => onDraft({ budget: event.currentTarget.value })}
-      /></Field.Field
-    >
+        onValueChange={(value) =>
+          onDraft({ budget: displayNumericValue(value, bytesUnits[2]).text })}
+      />
+    {:else}
+      <Field.Field orientation="responsive" class="store-settings__option-row">
+        <Field.Content
+          ><Field.Label for="search-budget">Index budget (MiB)</Field.Label>
+          <Field.Description id="search-budget-help"
+            >Set the text index budget in mebibytes.</Field.Description
+          >
+        </Field.Content><Input
+          class="store-settings__input"
+          id="search-budget"
+          aria-describedby="search-budget-help"
+          type="number"
+          min="0.000001"
+          max="2048"
+          step="any"
+          required
+          disabled={busy}
+          value={draft.budget}
+          oninput={(event) => onDraft({ budget: event.currentTarget.value })}
+        /></Field.Field
+      >
+    {/if}
   {/if}
 </Field.Group>

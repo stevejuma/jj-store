@@ -17,10 +17,14 @@ not a completion gate selection.
 | [E-CHAT-MAIN-001](../../../../../history/2026/10/09/E-CHAT-MAIN-001/index.md) | 2026-10-09 | pending         | Original outcome |
 | [E-UI-MENU-001](../../../../../history/2026/10/09/E-UI-MENU-001/index.md)     | 2026-10-09 | pending         | Original outcome |
 
-<!-- generated-navigation -->
-
-## Pages
-
 E-SETTINGS-REFRESH-001 reviews Settings/configuration-location guidance with
 strict documentation build and source-review evidence. M19 remains Partial;
 packaged platform and release gates are unchanged.
+
+[E-NUMERIC-SETTINGS-001](../../../../../history/2026/10/11/E-NUMERIC-SETTINGS-001/index.md)
+reviews numeric-entry guidance with application source and documentation checks.
+M19 remains Partial; packaged platform and release gates are unchanged.
+
+<!-- generated-navigation -->
+
+## Pages

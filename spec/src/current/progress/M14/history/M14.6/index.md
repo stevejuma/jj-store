@@ -18,6 +18,12 @@ reviews M14.6 without changing its status. Shared repository presentation and
 action placement retain the existing behavioural contract; release and inherited
 diagnostics remain explicit.
 
+[E-NUMERIC-SETTINGS-001](../../../../../history/2026/10/11/E-NUMERIC-SETTINGS-001/index.md)
+reviews M14.6 (In progress, unchanged): all eleven bounded Sync inputs use
+shared unit entry and conditional draft-only reset. Saved/running configuration,
+WorkStore restrictions and next-startup semantics remain unchanged. Remaining
+sync integration and platform gates remain open.
+
 <!-- generated-navigation -->
 
 ## Pages

@@ -36,6 +36,30 @@ the centre. Editable rows put labels and help on the left and controls on the
 right; numeric inputs use a content-appropriate width rather than stretching
 across the column.
 
+Shared numeric settings rows combine a number input with an attached unit
+selector, using exact canonical integer values for configuration. Repository
+Search (index budget and worker limits) and Sync configuration adopt time units
+(ms, sec, min), binary size units (bytes, KiB, MiB, GiB), and fixed count units.
+Changing the display unit does not modify a draft or enable Save. Fractional
+canonical values, unsafe values and values outside existing bounds remain
+invalid; never silently round or clamp them. Repeating display conversions are
+marked approximate beside the exact canonical value. Labels, help, bounds,
+validation and read-only/disabled states remain accessible. Optional sliders
+operate on the existing canonical range. Optional per-field icon-only Reset
+forms the trailing segment of the input after its unit selector, with an
+accessible label and tooltip. Show Reset only while the draft differs from its
+authoritative default, including empty or invalid entries; hide it after reset
+and return focus to the input. The split control retains a complete neutral
+outer border; focus draws one ring around the whole control, without additional
+inner rings or a highlighted border. Unit selectors and Reset use subtle
+theme-based hover states; disabled controls remain subdued. Reset restores only
+the documented default in the draft; it never saves or applies. Defaults beside
+field descriptions remain distinct from saved/running state. Omit redundant
+"Using default value" and "Changed from default" labels under inputs; retain the
+exact-value helper for converted units. Compact and responsive layouts use the
+same component; property-local Reset is an input action, like Browse or Copy.
+Global fields retain their existing presentation until explicitly adopted.
+
 Commands belong in a dedicated footer at the bottom of their relevant section,
 never in ordinary key-value rows or centred beneath content. Footer text is
 optional and sits on the left; related buttons align right with the primary
@@ -54,12 +78,12 @@ mockup-only sync settings or commands are introduced. Storage and Advanced
 follow the same status/maintenance separation and footer convention.
 
 Primary navigation retains pills; real secondary tabs use compact icons,
-left-aligned labels and a thick active underline in the theme accent colour.
-Active labels are bold. The secondary strip uses the body horizontal padding; no
-title-only strip is shown. Primary and secondary navigation stay outside the
-bounded Design Core Scroll Area used by repository settings. Card headers meet
-the first row without extra spacing. Keyboard selection and overflow remain
-unchanged.
+left-aligned labels and a 3px active underline in the theme accent colour,
+overlapping the strip bottom divider. Active labels are bold. The secondary
+strip uses the body horizontal padding; no title-only strip is shown. Primary
+and secondary navigation stay outside the bounded Design Core Scroll Area used
+by repository settings. Card headers meet the first row without extra spacing.
+Keyboard selection and overflow remain unchanged.
 
 Presentation changes MUST retain validation, capability and permission filters,
 disabled states, loading feedback, confirmation flows and all original request
@@ -70,3 +94,9 @@ restoration and authorization contracts remain unchanged.
 Shared read-only form rows place navigation to the left of Copy. Copy stays at
 the far right, and rows without navigation reserve no empty action slot. Exact
 copy values and independent navigation hit targets remain unchanged.
+
+Use the same joined focus treatment for Folder path/Browse controls. Browse
+remains an independently accessible input action; selecting a folder only edits
+the draft, and Link/Save remains separate. All new and refreshed app forms use
+these guidelines and the matching `web/src/lib/ui/AGENTS.md` implementation
+guide.

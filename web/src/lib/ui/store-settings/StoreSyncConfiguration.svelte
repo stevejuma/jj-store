@@ -1,4 +1,6 @@
 <script lang="ts">
+  import StoreNumericSettingNumberRow from "./StoreNumericSettingNumberRow.svelte";
+  import { syncNumericFields } from "./sync-numeric-fields.js";
   import StoreSettingsCard from "./StoreSettingsCard.svelte";
   import ActivityIcon from "@lucide/svelte/icons/activity";
   import NetworkIcon from "@lucide/svelte/icons/network";
@@ -60,35 +62,54 @@
 
 {#snippet limits(configured: SyncEntry)}
   {#each syncFields as field}
-    <Field.Field orientation="responsive" class="store-settings__option-row">
-      <Field.Content
-        ><Field.Label for={`sync-${field.key}`}>{field.label}</Field.Label>
-        <Field.Description
-          >Running: {management.state.value?.effective.sync
-            .find((e) => e.repository === repository)
-            ?.limits[field.key].toLocaleString("en-GB") ??
-            "No running upstream"}</Field.Description
-        >
-      </Field.Content>
-      <Input
-        class="store-settings__input"
+    {#if presentation.value === "repository"}
+      {@const numeric = syncNumericFields[field.key]}
+      <StoreNumericSettingNumberRow
         id={`sync-${field.key}`}
-        type="number"
+        label={numeric.label}
+        units={numeric.units}
+        description={`Running: ${management.state.value?.effective.sync.find((e) => e.repository === repository)?.limits[field.key].toLocaleString("en-GB") ?? "No running upstream"}`}
+        value={configured.limits[field.key]}
         min={field.min}
         max={field.max}
-        step="1"
-        required
+        defaultValue={management.state.value?.sync_defaults[field.key]}
         disabled={blocked}
-        value={String(configured.limits[field.key])}
-        oninput={(event) =>
+        onValueChange={(value) =>
           update({
-            limits: {
-              ...copy(configured.limits),
-              [field.key]: Number(event.currentTarget.value),
-            },
+            limits: { ...copy(configured.limits), [field.key]: value },
           })}
       />
-    </Field.Field>
+    {:else}
+      <Field.Field orientation="responsive" class="store-settings__option-row">
+        <Field.Content
+          ><Field.Label for={`sync-${field.key}`}>{field.label}</Field.Label>
+          <Field.Description
+            >Running: {management.state.value?.effective.sync
+              .find((e) => e.repository === repository)
+              ?.limits[field.key].toLocaleString("en-GB") ??
+              "No running upstream"}</Field.Description
+          >
+        </Field.Content>
+        <Input
+          class="store-settings__input"
+          id={`sync-${field.key}`}
+          type="number"
+          min={field.min}
+          max={field.max}
+          step="1"
+          required
+          disabled={blocked}
+          value={String(configured.limits[field.key])}
+          oninput={(event) =>
+            update({
+              limits: {
+                ...copy(configured.limits),
+                [field.key]: Number(event.currentTarget.value),
+              },
+            })}
+        />
+      </Field.Field>
+    {/if}
   {/each}
 {/snippet}
 

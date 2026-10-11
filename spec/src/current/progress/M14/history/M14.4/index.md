@@ -17,6 +17,12 @@ reviews M14.4 without changing its status. Shared repository presentation and
 action placement retain the existing behavioural contract; release and inherited
 diagnostics remain explicit.
 
+[E-NUMERIC-SETTINGS-001](../../../../../history/2026/10/11/E-NUMERIC-SETTINGS-001/index.md)
+reviews M14.4 (Done, unchanged): Search budget and worker limits adopt shared
+unit entry, optional sliders and conditional draft-only reset. Canonical values,
+validation bounds, save/Apply and permissions remain unchanged. The enclosing
+Jujutsu change owns this evidence; no visual or lifecycle gate is promoted.
+
 <!-- generated-navigation -->
 
 ## Pages

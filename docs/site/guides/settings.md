@@ -211,3 +211,15 @@ out stops dependent workers and clears local credentials. Manage usage opens
 ChatGPT plan usage settings. See the
 [connection guide](agent-execution.md#connect-a-chatgpt-subscription) for scope
 and the separate live-account qualification gates.
+
+## Numeric settings
+
+Numeric inputs in repository **Search** and **Sync → Configuration** accept
+convenient display units. Use the attached selector for milliseconds, seconds,
+minutes, bytes, KiB, MiB or GiB where available. Switching units does not edit
+the draft. The exact base value is shown beside converted entries, and invalid
+fractions or out-of-range values cannot be saved. The icon-only **Reset**
+appears after the units when the draft differs from its documented default. It
+restores that default in your draft and then disappears. Search retains **Save
+settings** and **Apply saved settings**; Sync changes take effect at the next
+server startup.

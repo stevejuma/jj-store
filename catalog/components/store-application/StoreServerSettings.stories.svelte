@@ -1,6 +1,6 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
-  import { expect, userEvent, within } from "storybook/test";
+  import { expect, userEvent, waitFor, within } from "storybook/test";
   import ServerSettingsFixture from "../../fixtures/ServerSettingsFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Settings/Server configuration",
@@ -185,5 +185,49 @@
     await expect(
       c.queryByRole("textbox", { name: "Upstream origin" }),
     ).toBeNull();
+  }}
+/>
+
+<Story
+  name="Repository sync units retain numeric saves and invalid drafts"
+  args={{ section: "sync", embedded: true }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement),
+      page = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      await c.findByRole("button", { name: "Add upstream" }),
+    );
+    await userEvent.type(
+      c.getByRole("textbox", { name: "Upstream origin" }),
+      "https://peer.example.test",
+    );
+    await userEvent.click(
+      c.getByRole("button", { name: "Polling interval unit" }),
+    );
+    await userEvent.click(page.getByRole("option", { name: "sec" }));
+    const polling = c.getByRole("spinbutton", { name: "Polling interval" });
+    await waitFor(() =>
+      expect(getComputedStyle(polling).pointerEvents).toBe("auto"),
+    );
+    await expect(polling).toHaveValue(5);
+    await userEvent.clear(polling);
+    await userEvent.type(polling, "2.5");
+    await expect(c.getByText("Exact value: 2,500 ms")).toBeVisible();
+    await userEvent.click(c.getByRole("button", { name: "Save settings" }));
+    await expect(
+      c.getByText("Saved changes need a server restart."),
+    ).toBeVisible();
+    await userEvent.clear(polling);
+    await userEvent.type(polling, "0.0001");
+    await expect(polling).toHaveValue(0.0001);
+    await expect(polling).toHaveAttribute("aria-invalid", "true");
+    await userEvent.click(c.getByRole("button", { name: "Save settings" }));
+    await expect(polling).toHaveValue(0.0001);
+    await userEvent.click(c.getByRole("button", { name: "Cancel changes" }));
+    await expect(polling).toHaveValue(2.5);
+    await userEvent.click(
+      c.getByRole("button", { name: "Reset Polling interval to default" }),
+    );
+    await expect(polling).toHaveValue(5);
   }}
 />

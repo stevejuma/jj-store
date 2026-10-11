@@ -24,3 +24,9 @@ authorization contracts. Repository cards, action footers, tab styling and the
 bounded content Scroll Area are client presentation only. Existing conditional
 saves, Apply/restart requirements, stale-response rejection and exact pending
 request identities are unchanged; no API or persisted format is added.
+
+E-NUMERIC-SETTINGS-001 retains JST-API-001/004 canonical integer units, ranges,
+conditional save and authorization contracts. Repository numeric units and
+per-field Reset modify draft presentation only. Search Save/Apply and Sync
+save/next-startup semantics, request identities and configuration formats remain
+unchanged; invalid converted drafts cannot be silently rounded into valid saves.
