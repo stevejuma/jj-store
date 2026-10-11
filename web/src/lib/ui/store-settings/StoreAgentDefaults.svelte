@@ -1,4 +1,7 @@
 <script lang="ts">
+  import StoreSettingsFooter from "./StoreSettingsFooter.svelte";
+  import StoreSettingsCard from "./StoreSettingsCard.svelte";
+  import SectionIcon from "@lucide/svelte/icons/bot";
   import StoreAgentChatGptAccounts from "./StoreAgentChatGptAccounts.svelte";
   import StoreConversationMetadataSettings from "./StoreConversationMetadataSettings.svelte";
   import StoreAgentMentionPreference from "./StoreAgentMentionPreference.svelte";
@@ -37,16 +40,15 @@
 </script>
 
 {#if manager && draft}
-  <StoreAgentMentionPreference settings={manager.settings} />
-  <section
-    class="store-settings__section"
-    aria-labelledby={`${id}-preferences`}
+  <StoreSettingsCard
+    id={`${id}-preferences`}
+    title="Preferences"
+    Icon={SectionIcon}
   >
-    <header class="store-settings__section-heading">
-      <h2 id={`${id}-preferences`}>Preferences</h2>
-    </header>
-    <Field.Group class="community-settings__option-group">
+    <Field.Group class="store-settings__editable-rows">
+      <StoreAgentMentionPreference settings={manager.settings} />
       <StoreWorkField
+        class="store-settings__option-row"
         label="Keep awake while agents are active"
         id={`${id}-awake`}
         description="Desktop only. Releases when agents stop or after one hour without agent activity."
@@ -57,23 +59,25 @@
           disabled={busy || !isMacDesktopWindow()}
         />
       </StoreWorkField>
+      <StoreSettingsDisclosure
+        label="Conversation metadata"
+        description="Generate a title, summary, keywords and goals after the first completed exchange. Later updates are refreshed manually."
+        inset={false}
+      >
+        <StoreConversationMetadataSettings {manager} embedded />
+      </StoreSettingsDisclosure>
     </Field.Group>
-  </section>
+  </StoreSettingsCard>
 {/if}
 {@render runtimeSection?.()}
 {#if manager}<StoreAgentChatGptAccounts accounts={manager.chatgpt} />{/if}
-{#if manager}<StoreConversationMetadataSettings {manager} />{/if}
 {#if manager && draft}
-  <section class="store-settings__section" aria-labelledby={`${id}-defaults`}>
-    <header class="store-settings__section-heading">
-      <div>
-        <h2 id={`${id}-defaults`}>Agent defaults</h2>
-        <p>
-          Runtime preferences and environment settings inherited by new local
-          agents. Agent overrides take priority.
-        </p>
-      </div>
-    </header>
+  <StoreSettingsCard
+    id={`${id}-defaults`}
+    title="Agent defaults"
+    Icon={SectionIcon}
+    description="Runtime preferences and environment settings inherited by new local agents. Agent overrides take priority."
+  >
     <StoreAgentConfiguration
       {manager}
       bind:draft
@@ -93,10 +97,23 @@
           />
         </StoreSettingsDisclosure>
       </Field.Group>
-      <div
-        class="store-settings__action-row store-settings__action-row--joined"
-      >
-        <p>Saved changes take effect on the next start.</p>
+      <StoreSettingsFooter>
+        {#snippet description()}<p>
+            Saved changes take effect on the next start.
+          </p>{/snippet}
+        {#if manager.settings.pending}<Button
+            variant="outline"
+            onclick={() => manager!.settings.retry()}
+            >Check retained save</Button
+          >{/if}
+        {#if manager.settings.value && manager.settings.value.revision !== draft.revision && !manager.settings.pending}
+          <Button
+            variant="outline"
+            onclick={() => {
+              draft!.revision = manager!.settings.value!.revision;
+            }}>Keep draft and use latest version</Button
+          >
+        {/if}
         <Button
           disabled={busy}
           onclick={async () => {
@@ -107,24 +124,12 @@
             }
           }}>Save defaults</Button
         >
-      </div>
+      </StoreSettingsFooter>
     </StoreAgentConfiguration>
     <StoreNotice
       noticeKey="agent-defaults-command"
       title="Agent defaults need attention"
       message={manager.settings.error}
     />
-    {#if manager.settings.pending}<Button
-        variant="outline"
-        onclick={() => manager!.settings.retry()}>Check retained save</Button
-      >{/if}
-    {#if manager.settings.value && manager.settings.value.revision !== draft.revision && !manager.settings.pending}
-      <Button
-        variant="outline"
-        onclick={() => {
-          draft!.revision = manager!.settings.value!.revision;
-        }}>Keep draft and use latest version</Button
-      >
-    {/if}
-  </section>
+  </StoreSettingsCard>
 {/if}

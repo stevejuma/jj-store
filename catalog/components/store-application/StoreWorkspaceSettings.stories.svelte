@@ -19,9 +19,7 @@
     ).toBeVisible();
     await expect(input.closest(".store-settings__rows")).not.toBeNull();
     await expect(
-      within(
-        canvas.getByRole("navigation", { name: "Settings page navigation" }),
-      ).getByRole("button", { name: "Refresh folders" }),
+      canvas.getByRole("button", { name: "Refresh folders" }),
     ).toHaveTextContent("");
     const link = canvas.getByRole("button", { name: "Link folder" });
     const cancel = canvas.getByRole("button", { name: /^Cancel$/ });

@@ -14,7 +14,11 @@ bounded fallback only while visible.
 
 Open **Settings** from the profile menu for Appearance, Local service, Agents
 and Compute. Local service includes installation-wide Protection and Storage
-configuration, folder registration and Add folder.
+configuration, folder registration and Add folder. Appearance separates Theme
+and Preferences into subtabs; changes still save immediately on this device.
+Link previews and Thread layout have their own cards under Preferences. Launch
+and Storage group their read-only inventory by purpose. Use Copy beside a
+configured path or endpoint to copy the complete value.
 
 Use the **Repository settings** gear at the far right of a repository's tab row
 for General, Local folders, Search, Storage, Sync and Advanced. Available
@@ -34,9 +38,13 @@ upstream fields and limits. Copyable identifiers use a single line with an
 ellipsis: hovering reveals the full value, and Copy always copies it exactly.
 The adjacent Open action navigates independently.
 
-While repository settings first load, placeholders follow the selected page’s
-cards and fields. Later refreshes keep existing values and unsaved drafts on
-screen.
+Both global and repository Settings use full-width cards, aligned rows and
+section footers. Subtabs use icons and an underline; their navigation stays
+visible while the content scrolls. Global selections are temporary and do not
+change the URL.
+
+While settings first load, placeholders follow the selected page’s cards and
+fields. Later refreshes keep existing values and unsaved drafts on screen.
 
 ## Saved and effective settings
 
@@ -137,10 +145,10 @@ Automatically mention agents is opt-in and retains exact recipients for replies.
 
 ### Configure automatic mentions
 
-The switch in the agent picker and Settings → Agents controls the same saved
-preference; changes save immediately. Turning it off pauses automatic mentions
-and preserves your draft and selected agents. Remove a tag or unpin it to stop
-including that agent.
+The switch in the agent picker and Settings → Agents → Runtimes → Preferences
+controls the same saved preference; changes save immediately. Turning it off
+pauses automatic mentions and preserves your draft and selected agents. Remove a
+tag or unpin it to stop including that agent.
 
 ### Check readiness when sending
 
@@ -199,10 +207,12 @@ entire pending prompt.
 
 ### Choose a separate metadata model
 
-Conversation metadata has its own provider/model under **Agents**. It defaults
-to unconfigured. These settings apply to future metadata jobs and never change a
-coding agent's model, start managed compute or trigger historical backfill.
-Credential environment entries retain the existing installation custody rules.
+Expand **Conversation metadata** in **Agents → Runtimes → Preferences** to
+choose its provider and model. It defaults to unconfigured. Collapsing the
+section retains unsaved edits. These settings apply to future metadata jobs and
+never change a coding agent's model, start managed compute or trigger historical
+backfill. Credential environment entries retain the existing installation
+custody rules.
 
 ## ChatGPT accounts
 
@@ -218,7 +228,9 @@ and the separate live-account qualification gates.
 
 ## Numeric settings
 
-Numeric inputs in repository **Search** and **Sync → Configuration** accept
+Numeric inputs in repository **Search** and **Sync → Configuration**, global
+**Local service → Limits**, **Agents → Configuration** and **Compute →
+Resources** use the shared joined control. Fields with multiple units accept
 convenient display units. Use the attached selector for milliseconds, seconds,
 minutes, bytes, KiB, MiB or GiB where available. Switching units does not edit
 the draft. The exact base value is shown beside converted entries, and invalid
@@ -226,4 +238,6 @@ fractions or out-of-range values cannot be saved. The icon-only **Reset**
 appears after the units when the draft differs from its documented default. It
 restores that default in your draft and then disappears. Search retains **Save
 settings** and **Apply saved settings**; Sync changes take effect at the next
-server startup.
+server startup. Global service/capture changes also require restart. Compute
+memory keeps its GB unit and accepts an empty value for automatic allocation.
+Reset is offered only where an authoritative default is available.

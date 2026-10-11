@@ -1,4 +1,6 @@
 <script lang="ts">
+  import StoreSettingsCard from "./StoreSettingsCard.svelte";
+  import StoreSettingsFooter from "./StoreSettingsFooter.svelte";
   import InfoIcon from "@lucide/svelte/icons/info";
   import RotateCwIcon from "@lucide/svelte/icons/rotate-cw";
   import SearchIcon from "@lucide/svelte/icons/search";
@@ -51,51 +53,52 @@
   );
 </script>
 
-<section class="store-settings__section" aria-label="Agent capture settings">
+<div
+  class="store-settings-group"
+  role="region"
+  aria-label="Agent capture settings"
+>
   {#if section === "capture"}
-    <header><h2>Agent transcript capture</h2></header>
-    <div class="store-settings__rows store-settings__rows--controls">
-      <div>
-        <div>
-          <strong>Automatic transcript capture</strong>
-          <p class="store-settings__row-description">
-            Watch configured harness locations for active sessions linked to
-            this server. Settings apply to the whole local service. Status and
-            published Agents update automatically.
-          </p>
-          <p class="store-settings__row-description">
-            Pause policy persists across restarts. Worker status updates every
-            five seconds while this view is open.
-          </p>
-        </div>
-        <div class="store-settings__actions">
-          <Button
-            variant="outline"
-            disabled={!ready}
-            onclick={() =>
-              management?.control(
-                state?.value?.policy?.paused ? "resume" : "pause",
-              )}
-          >
-            {#if state?.value?.policy?.paused}<PlayIcon
-                data-icon="inline-start"
-                aria-hidden="true"
-              />{:else}<PauseIcon
-                data-icon="inline-start"
-                aria-hidden="true"
-              />{/if}
-            {state?.value?.policy?.paused ? "Resume capture" : "Pause capture"}
-          </Button>
-          <Button
-            variant="outline"
-            disabled={!ready || state?.value?.policy?.paused}
-            onclick={() => management?.rescan()}
-            ><RefreshCwIcon data-icon="inline-start" aria-hidden="true" />Rescan
-            capture</Button
-          >
-        </div>
-      </div>
-    </div>
+    <StoreSettingsCard
+      id="capture-policy"
+      title="Agent transcript capture"
+      Icon={BotIcon}
+      description="Watch configured harness locations for active sessions linked to this server. Settings apply to the whole local service. Status and published Agents update automatically."
+    >
+      <StoreSettingsFooter>
+        {#snippet description()}<div>
+            <strong>Automatic transcript capture</strong>
+            <p>
+              Pause policy persists across restarts. Worker status updates every
+              five seconds while this view is open.
+            </p>
+          </div>{/snippet}
+        <Button
+          variant="outline"
+          disabled={!ready}
+          onclick={() =>
+            management?.control(
+              state?.value?.policy?.paused ? "resume" : "pause",
+            )}
+        >
+          {#if state?.value?.policy?.paused}<PlayIcon
+              data-icon="inline-start"
+              aria-hidden="true"
+            />{:else}<PauseIcon
+              data-icon="inline-start"
+              aria-hidden="true"
+            />{/if}
+          {state?.value?.policy?.paused ? "Resume capture" : "Pause capture"}
+        </Button>
+        <Button
+          variant="outline"
+          disabled={!ready || state?.value?.policy?.paused}
+          onclick={() => management?.rescan()}
+          ><RefreshCwIcon data-icon="inline-start" aria-hidden="true" />Rescan
+          capture</Button
+        >
+      </StoreSettingsFooter></StoreSettingsCard
+    >
   {/if}
   {#if !management?.supported || !state}
     <StoreSettingsEmpty
@@ -128,7 +131,6 @@
             }}
           />
         {:else if section === "diagnostics"}
-          <header><h2>Worker diagnostics</h2></header>
           <StoreCaptureDiagnostics value={state.value} />
         {/if}
       {:else if state.value}
@@ -169,31 +171,30 @@
             does not prove the original command failed.</Alert.Description
           ></Alert.Root
         >
-        <div class="store-settings__action-row">
-          <div>
-            <CopyableValue
-              label="Capture request ID"
-              value={state.pending.command.request_id}
-            />
-          </div>
-          <div class="store-settings__actions">
-            <Button
+        <StoreSettingsFooter>
+          {#snippet description()}<div>
+              <CopyableValue
+                label="Capture request ID"
+                value={state.pending!.command.request_id}
+              />
+            </div>{/snippet}
+
+          <Button
+            variant="outline"
+            disabled={state.busy || state.settings.value?.restart_required}
+            onclick={() => management.retry()}
+            ><RotateCwIcon data-icon="inline-start" aria-hidden="true" />Retry
+            original capture request</Button
+          >
+          {#if state.pending.kind === "import"}<Button
               variant="outline"
-              disabled={state.busy || state.settings.value?.restart_required}
-              onclick={() => management.retry()}
-              ><RotateCwIcon data-icon="inline-start" aria-hidden="true" />Retry
-              original capture request</Button
-            >
-            {#if state.pending.kind === "import"}<Button
-                variant="outline"
-                disabled={state.busy}
-                onclick={() =>
-                  management.inspectImport(state.pending!.command.request_id)}
-                ><SearchIcon data-icon="inline-start" aria-hidden="true" />Check
-                original import receipt</Button
-              >{/if}
-          </div>
-        </div>
+              disabled={state.busy}
+              onclick={() =>
+                management.inspectImport(state.pending!.command.request_id)}
+              ><SearchIcon data-icon="inline-start" aria-hidden="true" />Check
+              original import receipt</Button
+            >{/if}
+        </StoreSettingsFooter>
       {/if}
       {#if section === "capture" && state.controlOutcome}<StoreSettingsNotice>
           Original policy receipt: {state.controlOutcome.receipt.paused
@@ -222,4 +223,4 @@
       pending={state.busy || !!state.pending}
     />
   {/if}
-</section>
+</div>

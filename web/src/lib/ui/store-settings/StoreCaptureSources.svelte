@@ -1,4 +1,6 @@
 <script lang="ts">
+  import StoreSettingsCard from "./StoreSettingsCard.svelte";
+  import SectionIcon from "@lucide/svelte/icons/list-filter";
   import StoreSettingsNotice from "./StoreSettingsNotice.svelte";
   import StoreCaptureLoading from "./StoreCaptureLoading.svelte";
   import DownloadIcon from "@lucide/svelte/icons/download";
@@ -71,19 +73,12 @@
   );
 </script>
 
-<section
-  class="store-settings__section"
-  aria-labelledby="capture-source-heading"
+<StoreSettingsCard
+  id="capture-source-heading"
+  title="Source coverage"
+  Icon={SectionIcon}
+  description="Sources update automatically. Import history enrolls an inactive source; the server checks repository access."
 >
-  <header class="store-settings__section-heading">
-    <div>
-      <h2 id="capture-source-heading">Source coverage</h2>
-      <p>
-        Sources update automatically. Import history enrolls an inactive source;
-        the server checks repository access.
-      </p>
-    </div>
-  </header>
   <StoreCaptureSourceFilters
     bind:harness
     bind:statuses
@@ -198,7 +193,7 @@
       </Table.Root>
     {/if}
   </div>
-</section>
+</StoreSettingsCard>
 
 <style>
   .store-capture-sources__table {

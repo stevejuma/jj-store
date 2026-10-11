@@ -94,17 +94,62 @@
       ).getByRole("button", { name: "Agents" }),
     );
     await c.findByRole("button", { name: "Save defaults" });
+    const toggle = c.getByRole("switch", {
+      name: "Automatically mention agents",
+    });
+    const toggleRow = toggle.closest(".store-settings__option-row")!;
+    await expect(
+      toggleRow.getBoundingClientRect().right -
+        toggle.getBoundingClientRect().right,
+    ).toBeLessThanOrEqual(17);
+    await expect(
+      toggleRow
+        .querySelector('[data-slot="field-content"]')!
+        .getBoundingClientRect().width,
+    ).toBeGreaterThan(toggleRow.getBoundingClientRect().width * 0.75);
+    const metadata = within(
+      c.getByRole("region", { name: "Preferences" }),
+    ).getByRole("button", { name: "Conversation metadata" });
+    await expect(metadata).toHaveAttribute("aria-expanded", "false");
+    metadata.focus();
+    await userEvent.keyboard("{Enter}");
+    await expect(metadata).toHaveAttribute("aria-expanded", "true");
+    for (const name of ["Metadata model", "Model"]) {
+      const picker = c.getByRole("combobox", { name });
+      await expect(picker.getBoundingClientRect().width).toBeLessThanOrEqual(
+        320,
+      );
+      await expect(picker.getBoundingClientRect().right).toBe(
+        picker.parentElement!.getBoundingClientRect().right,
+      );
+    }
+    const metadataRegion = within(
+      c.getByRole("region", { name: "Conversation metadata settings" }),
+    );
+    await userEvent.click(
+      metadataRegion.getByRole("button", {
+        name: "Metadata provider environment",
+      }),
+    );
+    const metadataDraft = metadataRegion.getByRole("textbox", {
+      name: "Environment variable name",
+    });
+    await userEvent.type(metadataDraft, "RETAINED_METADATA_DRAFT");
+    metadata.focus();
+    await userEvent.keyboard(" ");
+    await expect(metadataDraft).not.toBeVisible();
+    await userEvent.keyboard("{Enter}");
+    await expect(metadataDraft).toHaveValue("RETAINED_METADATA_DRAFT");
+    await userEvent.click(metadata);
     const headings = c.getAllByRole("heading", { level: 2 });
     await expect(headings.map((h) => h.textContent?.trim())).toEqual([
-      "Conversations",
       "Preferences",
       "Agent runtimes",
       "ChatGPT accounts",
-      "Conversation metadata",
       "Agent defaults",
     ]);
     for (const h of headings) {
-      const header = h.closest("header")!;
+      const header = h.closest(".store-settings-card__header")!;
       await expect(header).not.toBeNull();
       await expect(
         parseFloat(getComputedStyle(header).paddingTop),
@@ -112,7 +157,7 @@
       await expect(
         parseFloat(getComputedStyle(header).paddingBottom),
       ).toBeGreaterThanOrEqual(8);
-      await expect(getComputedStyle(h).fontWeight).toBe("650");
+      await expect(getComputedStyle(h).fontWeight).toBe("600");
     }
     const defaults = within(c.getByRole("region", { name: "Agent defaults" }));
     const table = c

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import StoreSettingsPage from "../../web/src/lib/ui/store-settings/StoreSettingsPage.svelte";
+  import StoreDeploymentConfiguration from "../../web/src/lib/ui/store-settings/StoreDeploymentConfiguration.svelte";
   import StoreConfigurationEditor from "../../web/src/lib/ui/store-settings/StoreConfigurationEditor.svelte";
   import { createServerSettings } from "../../web/src/lib/controller/server-settings.svelte.js";
   import {
@@ -10,12 +11,14 @@
   } from "../../web/src/lib/controller/server-configuration.js";
   import { serverSettingsValue } from "./server-settings.js";
   let {
+    inventorySection,
     section = "service",
     supported = true,
     unknown = false,
     embedded = false,
     loading = false,
   }: {
+    inventorySection?: "service" | "storage";
     section?: Section;
     supported?: boolean;
     unknown?: boolean;
@@ -69,10 +72,13 @@
       : "repository"}
   onRefresh={management.observe}
 >
-  <StoreConfigurationEditor
-    {management}
-    {section}
-    repository={"01".repeat(16)}
-    repositoryName="Local project"
-  />
+  {#if inventorySection}<StoreDeploymentConfiguration
+      {management}
+      section={inventorySection}
+    />{:else}<StoreConfigurationEditor
+      {management}
+      {section}
+      repository={"01".repeat(16)}
+      repositoryName="Local project"
+    />{/if}
 </StoreSettingsPage>

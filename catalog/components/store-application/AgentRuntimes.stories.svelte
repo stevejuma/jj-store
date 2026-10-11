@@ -58,7 +58,7 @@
     );
     expect(Math.max(...edges) - Math.min(...edges)).toBeLessThanOrEqual(1);
     for (const control of controls) {
-      const actions = control.closest<HTMLElement>(".store-runtime__actions")!;
+      const actions = control.closest<HTMLElement>(".store-settings__actions")!;
       expect(
         Math.abs(
           actions.getBoundingClientRect().right -
@@ -66,6 +66,23 @@
         ),
       ).toBeLessThanOrEqual(1);
     }
+    for (const control of controls) {
+      const row = control.closest<HTMLElement>(".store-settings-footer")!;
+      const summary = row.querySelector<HTMLElement>(
+        ".store-runtime__summary",
+      )!;
+      await expect(summary.getBoundingClientRect().width).toBeGreaterThan(
+        row.getBoundingClientRect().width * 0.65,
+      );
+      await expect(summary.getBoundingClientRect().right).toBeLessThan(
+        control.getBoundingClientRect().left,
+      );
+      await expect(control.getBoundingClientRect().top).toBeLessThan(
+        summary.getBoundingClientRect().bottom,
+      );
+    }
+    const list = canvasElement.querySelector(".store-runtime__list")!;
+    await expect(getComputedStyle(list).rowGap).toBe("0px");
     controls[1].focus();
     await userEvent.keyboard("{Enter}");
     const page = within(document.body);
@@ -86,7 +103,7 @@
   play={async ({ canvasElement }) => {
     const c = await open(canvasElement);
     const label = c.getByText("JJ Agent", { exact: true });
-    const row = label.closest<HTMLElement>('[data-slot="field"]')!;
+    const row = label.closest<HTMLElement>(".store-settings-footer")!;
     await expect(
       row.querySelector('img[src="/agent-icons/jj-store.svg"]'),
     ).not.toBeNull();

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { settingsPresentation } from "./settings-presentation.js";
   import type { Snippet } from "svelte";
   import type { Model } from "../../api/client.js";
   import StoreSettingsFooter from "./StoreSettingsFooter.svelte";
@@ -14,9 +15,10 @@
     repository: boolean;
     children: Snippet;
   } = $props();
+  const presentation = settingsPresentation();
 </script>
 
-{#if repository}
+{#if repository || presentation.value !== "default"}
   <dl class="store-settings__rows">
     <StoreReadOnlyRow label="Name" value={binding.name} />
     <StoreReadOnlyRow

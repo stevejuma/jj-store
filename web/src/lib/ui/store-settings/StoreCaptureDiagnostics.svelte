@@ -1,4 +1,8 @@
 <script lang="ts">
+  import StoreReadOnlyRow from "./StoreReadOnlyRow.svelte";
+  import StoreSettingsCard from "./StoreSettingsCard.svelte";
+  import ActivityIcon from "@lucide/svelte/icons/activity";
+  import BotIcon from "@lucide/svelte/icons/bot";
   import type { Model } from "../../api/client.js";
   import { captureProfiles } from "../../controller/capture-types.js";
   let { value }: { value: Model<"CaptureStatus"> } = $props();
@@ -7,112 +11,88 @@
     n === null ? "None reported" : n.toLocaleString("en-GB");
 </script>
 
-<dl class="store-settings__rows">
-  <div>
-    <dt>Device policy</dt>
-    <dd>
+<StoreSettingsCard
+  id="capture-worker"
+  title="Worker diagnostics"
+  Icon={ActivityIcon}
+>
+  <dl class="store-settings__rows">
+    <StoreReadOnlyRow label="Device policy">
       {value.policy
         ? value.policy.paused
           ? "Paused"
           : "Enabled"
         : "Unavailable"}
-    </dd>
-  </div>
-  <div>
-    <dt>Worker phase</dt>
-    <dd>{runtime?.phase ?? "Unavailable"}</dd>
-  </div>
-  {#if runtime}
-    <div>
-      <dt>Discovery</dt>
-      <dd>
+    </StoreReadOnlyRow>
+    <StoreReadOnlyRow label="Worker phase"
+      >{runtime?.phase ?? "Unavailable"}</StoreReadOnlyRow
+    >
+    {#if runtime}
+      <StoreReadOnlyRow label="Discovery">
         {runtime.discovery.phase} · {runtime.discovery.rescan_pending
           ? "Rescan pending"
           : "No rescan pending"}
-      </dd>
-    </div>
-    <div>
-      <dt>Roots</dt>
-      <dd>
+      </StoreReadOnlyRow>
+      <StoreReadOnlyRow label="Roots">
         {number(runtime.discovery.available_roots)} available · {number(
           runtime.discovery.unavailable_roots,
         )} unavailable · {number(runtime.discovery.unchecked_roots)} unchecked
-      </dd>
-    </div>
-    <div>
-      <dt>Sources</dt>
-      <dd>
+      </StoreReadOnlyRow>
+      <StoreReadOnlyRow label="Sources">
         {number(runtime.observed_sources)} observed · {number(
           runtime.awaiting_activity,
         )} awaiting activity · {number(runtime.caught_up)} caught up · {number(
           runtime.running_sources,
         )} running
-      </dd>
-    </div>
-    <div>
-      <dt>Source health</dt>
-      <dd>
+      </StoreReadOnlyRow>
+      <StoreReadOnlyRow label="Source health">
         {number(runtime.degraded_sources)} degraded · {number(
           runtime.unavailable,
         )} unavailable observations{runtime.source_limit_reached
           ? " · Source limit reached"
           : ""}
-      </dd>
-    </div>
-    <div>
-      <dt>Publication backlog</dt>
-      <dd>
+      </StoreReadOnlyRow>
+      <StoreReadOnlyRow label="Publication backlog">
         {number(runtime.pending_batches)} batches · {number(
           runtime.pending_capacity_bytes,
         )} bytes
-      </dd>
-    </div>
-    <div>
-      <dt>Required ingress capacity</dt>
-      <dd>
+      </StoreReadOnlyRow>
+      <StoreReadOnlyRow label="Required ingress capacity">
         {number(runtime.ingress_required_capacity_bytes)} · {number(
           runtime.ingress_capacity_refusals,
         )} refusals
-      </dd>
-    </div>
-    <div>
-      <dt>Required publication capacity</dt>
-      <dd>{number(runtime.delivery_required_capacity_bytes)}</dd>
-    </div>
-  {/if}
-</dl>
+      </StoreReadOnlyRow>
+      <StoreReadOnlyRow label="Required publication capacity"
+        >{number(runtime.delivery_required_capacity_bytes)}</StoreReadOnlyRow
+      >
+    {/if}
+  </dl>
+</StoreSettingsCard>
 {#if runtime}
   {#each runtime.harnesses as harness (harness.profile)}
-    <section
-      class="store-settings__section"
-      aria-label={`${captureProfiles[harness.profile]} coverage`}
+    <StoreSettingsCard
+      id={`capture-harness-${harness.profile}`}
+      title={`${captureProfiles[harness.profile]} ${harness.product_version}`}
+      label={`${captureProfiles[harness.profile]} coverage`}
+      Icon={BotIcon}
     >
-      <header>
-        <h3>{captureProfiles[harness.profile]} {harness.product_version}</h3>
-      </header>
       <dl class="store-settings__rows">
-        <div>
-          <dt>Configured roots</dt>
-          <dd>
-            {number(harness.roots)} configured roots · {number(
-              harness.available_roots,
-            )} available · {number(harness.unavailable_roots)} unavailable · {number(
-              harness.unchecked_roots,
-            )} unchecked
-          </dd>
-        </div>
-        <div>
-          <dt>Tracked sources</dt>
-          <dd>
-            {number(harness.tracked)} tracked sources · {number(
-              harness.observed_sources,
-            )} observed · {number(harness.awaiting_activity)} awaiting activity ·
-            {number(harness.caught_up)} caught up · {number(
-              harness.running_sources,
-            )} running · {number(harness.degraded_sources)} degraded
-          </dd>
-        </div>
+        <StoreReadOnlyRow label="Configured roots">
+          {number(harness.roots)} configured roots · {number(
+            harness.available_roots,
+          )} available · {number(harness.unavailable_roots)} unavailable · {number(
+            harness.unchecked_roots,
+          )} unchecked
+        </StoreReadOnlyRow>
+        <StoreReadOnlyRow label="Tracked sources">
+          {number(harness.tracked)} tracked sources · {number(
+            harness.observed_sources,
+          )} observed · {number(harness.awaiting_activity)} awaiting activity ·
+          {number(harness.caught_up)} caught up · {number(
+            harness.running_sources,
+          )} running · {number(harness.degraded_sources)} degraded
+        </StoreReadOnlyRow>
       </dl>
-    </section>
+    </StoreSettingsCard>
   {/each}
 {/if}

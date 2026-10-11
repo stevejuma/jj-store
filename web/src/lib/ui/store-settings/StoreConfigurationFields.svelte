@@ -1,6 +1,7 @@
 <script lang="ts">
   import * as Field from "@lapismd/design-core/shadcn/field";
-  import { Input } from "@lapismd/design-core/shadcn/input";
+  import StoreNumericSettingNumberRow from "./StoreNumericSettingNumberRow.svelte";
+  import { bytesUnits, countUnits, secondsUnits } from "./numeric-setting.js";
   import { Textarea } from "@lapismd/design-core/shadcn/textarea";
   import {
     serviceFields,
@@ -39,32 +40,27 @@
 <Field.Group class="store-settings__editable-rows">
   {#if section === "service"}
     {#each serviceFields as field}
-      <Field.Field orientation="responsive" class="store-settings__option-row">
-        <Field.Content
-          ><Field.Label for={`service-${field.key}`}>{field.label}</Field.Label>
-          <Field.Description
-            >Running: {management.state.value?.effective.service[
-              field.key
-            ].toLocaleString("en-GB")}</Field.Description
-          >
-        </Field.Content>
-        <Input
-          class="store-settings__input"
-          id={`service-${field.key}`}
-          type="number"
-          min={field.min}
-          max={field.max}
-          step="1"
-          required
-          {disabled}
-          value={String(service[field.key])}
-          oninput={(event) =>
-            management.configure("service", {
-              ...copy(service),
-              [field.key]: Number(event.currentTarget.value),
-            })}
-        />
-      </Field.Field>
+      <StoreNumericSettingNumberRow
+        id={`service-${field.key}`}
+        label={field.label}
+        min={field.min}
+        max={field.max}
+        {disabled}
+        units={field.key === "request_seconds"
+          ? secondsUnits
+          : field.key === "max_blob_bytes"
+            ? bytesUnits
+            : countUnits(
+                field.key === "inventory_nodes" ? "nodes" : "requests",
+              )}
+        value={service[field.key]}
+        description={`Running: ${management.state.value?.effective.service[field.key].toLocaleString("en-GB")}`}
+        onValueChange={(value) =>
+          management.configure("service", {
+            ...copy(service),
+            [field.key]: value,
+          })}
+      />
     {/each}
   {:else}
     {#each [{ key: "bookmarks", label: "Protected bookmarks", help: "One exact bookmark name per line." }, { key: "commits", label: "Protected commits", help: "One full 128-character commit ID per line." }] as field}

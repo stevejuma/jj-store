@@ -16,9 +16,9 @@ replayed. Operational feedback uses JST-UI-019 notifications under a stable
 installation scope; repository navigation cannot replay an unchanged dismissed
 condition. Editors are installation-owned and unavailable on
 authenticated/non-Admin connections. The presentation convention below governs
-new and refreshed Settings and forms across the app. This slice adopts it in
-repository Settings; existing global Settings keeps its presentation until its
-separate refresh.
+new and refreshed Settings and forms across the app. Repository and global
+Settings both adopt it; unrelated consumers retain their explicit default
+presentation.
 
 ## Settings and form presentation
 
@@ -34,7 +34,12 @@ and Copy retain the exact full value. Descriptive paths and capability lists
 wrap. Icons, labels, values and compact copy/Open controls align vertically at
 the centre. Editable rows put labels and help on the left and controls on the
 right; numeric inputs use a content-appropriate width rather than stretching
-across the column.
+across the column. Align controls inside full-width wrappers to the trailing
+edge too. Dropdowns use a maximum 20rem width, shrinking with the available
+column rather than stretching across it. Toggle descriptions occupy the
+remaining width; runtime management rows place the description left and actions
+right in one shared action-row composition, with no empty inter-item gaps.
+Harness groups have full-width separators between collapsed and expanded rows.
 
 Shared numeric settings rows combine a number input with an attached unit
 selector, using exact canonical integer values for configuration. Repository
@@ -58,14 +63,22 @@ field descriptions remain distinct from saved/running state. Omit redundant
 "Using default value" and "Changed from default" labels under inputs; retain the
 exact-value helper for converted units. Compact and responsive layouts use the
 same component; property-local Reset is an input action, like Browse or Copy.
-Global fields retain their existing presentation until explicitly adopted.
+Local service limits, Agents capture limits and Compute memory use the same
+joined numerical control. Preserve optional automatic/unset semantics for
+Compute memory: empty remains null, not zero. Do not invent Reset defaults when
+the service advertises no authoritative default. Immediate preferences still
+save immediately; configuration commands keep their existing explicit save and
+restart semantics.
 
 Commands belong in a dedicated footer at the bottom of their relevant section,
 never in ordinary key-value rows or centred beneath content. Footer text is
 optional and sits on the left; related buttons align right with the primary
 action last and secondary actions immediately before it. Maintenance commands
 remain separate from Save/Cancel. A form spanning several sections uses one
-shared save footer. On narrow screens, label/control columns stack and footer
+shared save footer, separated from the previous card by the same 1rem gap even
+inside a wrapper. Every inline banner has 1rem clearance above and below,
+including standalone notices between cards; banners within cards also have 1rem
+horizontal insets. On narrow screens, label/control columns stack and footer
 buttons wrap or stack without overflow. Existing inline copy/Open controls and
 input Browse addons remain attached to the value they act on.
 
@@ -82,8 +95,10 @@ left-aligned labels and a 3px active underline in the theme accent colour,
 overlapping the strip bottom divider. Active labels are bold. The secondary
 strip uses the body horizontal padding; no title-only strip is shown. Primary
 and secondary navigation stay outside the bounded Design Core Scroll Area used
-by repository settings. Card headers meet the first row without extra spacing.
-Keyboard selection and overflow remain unchanged.
+by repository and global settings. Card headers meet the first row without extra
+spacing. Keyboard selection and overflow remain unchanged. Global Settings
+retains its transient sidebar categories and a fixed page heading with
+contextual Refresh. Appearance uses Theme and Preferences subtabs.
 
 Presentation changes MUST retain validation, capability and permission filters,
 disabled states, loading feedback, confirmation flows and all original request
@@ -100,3 +115,28 @@ remains an independently accessible input action; selecting a folder only edits
 the draft, and Link/Save remains separate. All new and refreshed app forms use
 these guidelines and the matching `web/src/lib/ui/AGENTS.md` implementation
 guide.
+
+Initial loading placeholders follow the selected settings page's card, row,
+control and footer geometry, with a single named busy status and decorative
+placeholders hidden from assistive technology. Respect reduced motion and mobile
+stacking. Background reads retain loaded content, empty results, drafts and
+pending identities instead of replacing them with skeletons.
+
+Global Appearance uses the shared Theme and Preferences cards while keeping
+previews and device-local immediate saves. Local service separates status,
+folder registrations, resource/protection editors and deployment inventory.
+Launch groups server/network, installation files, and identity/access. Storage
+groups connection, runtime/data, identity/credential references, and backup
+inventory. Common setup/migration reasons belong in headers; rows retain
+saved/running differences. Configured paths and endpoints have exact Copy
+controls, while absent values and ordinary scalar properties remain plain text.
+Agents uses consistent preference, runtime, account, capture, source and
+diagnostic groups. Runtimes consolidates conversation and device preferences in
+one Preferences card. Conversation metadata expands there, initially closed;
+collapsing keeps its editor mounted and retains drafts, pending identities and
+existing Save/Disable semantics. Compute separates model operations,
+hardware/resource configuration and peer management. Per-item maintenance
+remains scoped to its item; commands occupy footers while Copy/Open, Browse and
+Reset stay with their values. No new settings, API contracts, configuration
+formats, authorizations or controller owners are introduced by this
+presentation.

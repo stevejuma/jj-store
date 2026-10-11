@@ -1,4 +1,11 @@
 <script lang="ts">
+  import ShieldIcon from "@lucide/svelte/icons/shield";
+  import RocketIcon from "@lucide/svelte/icons/arrow-up";
+  import GaugeIcon from "@lucide/svelte/icons/gauge";
+  import FolderSearchIcon from "@lucide/svelte/icons/folder";
+  import DownloadIcon from "@lucide/svelte/icons/download";
+  import CpuIcon from "@lucide/svelte/icons/server";
+  import NetworkIcon from "@lucide/svelte/icons/network";
   import type { Component, Snippet } from "svelte";
   import { provideSettingsPresentation } from "./settings-presentation.js";
   import FileTextIcon from "@lucide/svelte/icons/file-text";
@@ -51,10 +58,24 @@
 
   provideSettingsPresentation({
     get value() {
-      return embedded ? "repository" : "default";
+      return embedded ? "repository" : "global";
     },
   });
   const tabIcons: Record<string, Component> = {
+    theme: PaletteIcon,
+    preferences: SlidersHorizontalIcon,
+    limits: GaugeIcon,
+    launch: RocketIcon,
+    protection: ShieldIcon,
+    storage: DatabaseIcon,
+    runtimes: BotIcon,
+    capture: ActivityIcon,
+    sources: FolderSearchIcon,
+    imports: DownloadIcon,
+    diagnostics: ActivityIcon,
+    models: BotIcon,
+    resources: CpuIcon,
+    sharing: NetworkIcon,
     overview: FileTextIcon,
     maintenance: WrenchIcon,
     configuration: SlidersHorizontalIcon,
@@ -64,9 +85,7 @@
     progress: ChartNoAxesCombinedIcon,
   };
   const presentedTabs = $derived(
-    embedded
-      ? tabs.map((tab) => ({ ...tab, Icon: tab.Icon ?? tabIcons[tab.value] }))
-      : tabs,
+    tabs.map((tab) => ({ ...tab, Icon: tab.Icon ?? tabIcons[tab.value] })),
   );
   const titleId = $props.id();
   const title = $derived(
@@ -111,6 +130,7 @@
   <div
     class="store-settings"
     class:store-settings--repository={embedded}
+    class:store-settings--global={!embedded}
     aria-labelledby={titleId}
   >
     {#if embedded && section === "advanced"}<header
@@ -127,16 +147,12 @@
 {/snippet}
 
 {#snippet body()}
-  {#if embedded}
-    <ScrollArea
-      class="store-settings__scroll"
-      aria-label={`${title} settings content`}
-    >
-      {@render content()}
-    </ScrollArea>
-  {:else}
+  <ScrollArea
+    class="store-settings__scroll"
+    aria-label={`${title} settings content`}
+  >
     {@render content()}
-  {/if}
+  </ScrollArea>
 {/snippet}
 
 {#snippet navigation()}
@@ -144,47 +160,39 @@
     inheritContext
     {value}
     sections={presentedTabs}
-    presentation={embedded ? "line" : "pill"}
+    presentation="line"
     onSelect={(next) => {
       if (onSelect) onSelect(next);
       else value = next;
     }}
     label={`${title} settings sections`}
     navigationLabel="Settings page navigation"
-  >
-    {#snippet leading()}
-      {#if !embedded}<h1 id={titleId} class="store-settings__page-title">
-          <PageIcon aria-hidden="true" /><span>{title}</span>
-        </h1>{/if}
-    {/snippet}
-    {#snippet trailing()}
-      {#if onRefresh && !embedded}
-        <div class="store-settings__nav-actions">
-          <Tooltip.Provider>
-            <Tooltip.Root>
-              <Tooltip.Trigger>
-                {#snippet child({ props })}
-                  <Button
-                    {...props}
-                    variant="ghost"
-                    size="icon-sm"
-                    aria-label={refreshLabel}
-                    disabled={refreshDisabled}
-                    onclick={() => void onRefresh?.()}
-                  >
-                    <RefreshCwIcon aria-hidden="true" />
-                  </Button>
-                {/snippet}
-              </Tooltip.Trigger>
-              <Tooltip.Content>{refreshLabel}</Tooltip.Content>
-            </Tooltip.Root>
-          </Tooltip.Provider>
-        </div>
-      {/if}
-    {/snippet}
-  </StoreViewTabs>
+  ></StoreViewTabs>
 {/snippet}
 
+{#if !embedded}
+  <header class="store-settings__global-header">
+    <h1 id={titleId} class="store-settings__page-title">
+      <PageIcon aria-hidden="true" /><span>{title}</span>
+    </h1>
+    {#if onRefresh}<Tooltip.Provider
+        ><Tooltip.Root
+          ><Tooltip.Trigger>
+            {#snippet child({ props })}<Button
+                {...props}
+                variant="ghost"
+                size="icon-sm"
+                aria-label={refreshLabel}
+                disabled={refreshDisabled}
+                onclick={() => void onRefresh?.()}
+                ><RefreshCwIcon aria-hidden="true" /></Button
+              >{/snippet}
+          </Tooltip.Trigger><Tooltip.Content>{refreshLabel}</Tooltip.Content
+          ></Tooltip.Root
+        ></Tooltip.Provider
+      >{/if}
+  </header>
+{/if}
 {#if embedded && section !== "advanced"}<h1
     id={titleId}
     class="store-settings__sr-only"
@@ -198,15 +206,12 @@
       if (onSelect) onSelect(next);
       else value = next;
     }}
-    class={embedded
-      ? "store-settings__tabs store-settings__tabs--repository"
-      : "store-settings__tabs"}
+    class="store-settings__tabs store-settings__tabs--modern"
   >
     {@render navigation()}
     {@render body()}
   </Tabs.Root>
 {:else}
-  {#if !embedded}{@render navigation()}{/if}
   {@render body()}
 {/if}
 
@@ -226,7 +231,10 @@
     padding: 1rem 1rem 4rem;
     box-sizing: border-box;
   }
-  .store-settings :global(.store-settings__section:first-child) {
+  .store-settings
+    :global(
+      .store-settings__section:first-child:not(.store-settings-save-card)
+    ) {
     margin-block-start: 0;
   }
   .store-settings__page-title {
@@ -244,9 +252,15 @@
     width: 1rem;
     height: 1rem;
   }
-  .store-settings__nav-actions {
+  .store-settings__global-header {
+    display: flex;
     flex: none;
-    margin-inline-start: auto;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 3rem;
+    padding: 0.5rem 1rem;
+    gap: 0.5rem;
+    border-bottom: 1px solid var(--border);
   }
   @media (max-width: 40rem) {
     .store-settings {

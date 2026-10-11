@@ -25,6 +25,7 @@
     defaultValue,
     disabled = false,
     readonly = false,
+    optional = false,
     error = "",
     slider = false,
     density = "regular",
@@ -41,6 +42,8 @@
     defaultValue?: number;
     disabled?: boolean;
     readonly?: boolean;
+    /** Empty retains an existing automatic/null setting. */
+    optional?: boolean;
     error?: string;
     slider?: boolean;
     density?: "regular" | "compact";
@@ -59,13 +62,18 @@
       : display.text,
   );
   const validation = $derived(
-    error || numericSettingError(value, min, max, units[0].label),
+    error ||
+      (optional && !value.trim()
+        ? ""
+        : numericSettingError(value, min, max, units[0].label)),
   );
   const changed = $derived(
     defaultValue !== undefined &&
       (value.trim() === "" || Number(value) !== defaultValue),
   );
-  const showExact = $derived(!validation && unit.id !== units[0].id);
+  const showExact = $derived(
+    !!value.trim() && !validation && unit.id !== units[0].id,
+  );
   const blocked = $derived(disabled || readonly);
   const helpId = $derived(`${id}-help`);
   const stateId = $derived(`${id}-state`);
@@ -105,7 +113,7 @@
           bind:ref={input}
           {id}
           type="number"
-          required
+          required={!optional}
           step="any"
           min={Number(displayNumericValue(String(min), unit).text)}
           max={Number(displayNumericValue(String(max), unit).text)}

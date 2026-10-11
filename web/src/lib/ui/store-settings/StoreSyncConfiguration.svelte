@@ -62,7 +62,7 @@
 
 {#snippet limits(configured: SyncEntry)}
   {#each syncFields as field}
-    {#if presentation.value === "repository"}
+    {#if presentation.value !== "default"}
       {@const numeric = syncNumericFields[field.key]}
       <StoreNumericSettingNumberRow
         id={`sync-${field.key}`}
@@ -121,7 +121,7 @@
   Icon={ActivityIcon}
 >
   <dl class="store-settings__summary-rows">
-    {#if presentation.value === "repository"}<div>
+    {#if presentation.value !== "default"}<div>
         <dt>Saved and running</dt>
         <dd>
           <span role="status"
@@ -195,7 +195,7 @@
           onCheckedChange={(insecure_loopback) => update({ insecure_loopback })}
         />
       </Field.Field>
-      {#if presentation.value !== "repository"}{@render limits(entry)}{/if}
+      {#if presentation.value === "default"}{@render limits(entry)}{/if}
     </Field.Group>
   {/if}
   <StoreSettingsFooter joined>
@@ -213,7 +213,7 @@
             "sync",
             entries.filter((e) => e.repository !== repository).map(copy),
           )}
-        >{#if presentation.value === "repository"}<UnlinkIcon
+        >{#if presentation.value !== "default"}<UnlinkIcon
             data-icon="inline-start"
             aria-hidden="true"
           />{/if}Remove upstream</Button
@@ -225,14 +225,14 @@
           !/^[0-9a-f]{32}$/.test(repository) ||
           entries.length >= 8}
         onclick={add}
-        >{#if presentation.value === "repository"}<PlusIcon
+        >{#if presentation.value !== "default"}<PlusIcon
             data-icon="inline-start"
             aria-hidden="true"
           />{/if}Add upstream</Button
       >{/if}
   </StoreSettingsFooter>
 </StoreSettingsCard>
-{#if entry && presentation.value === "repository"}<StoreSettingsCard
+{#if entry && presentation.value !== "default"}<StoreSettingsCard
     repositoryOnly
     id="sync-limits"
     title="Sync limits"

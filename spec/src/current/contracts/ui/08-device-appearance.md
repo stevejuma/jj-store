@@ -9,10 +9,16 @@ Focus/Split discussions. Preferences are device-local and app-wide; Settings
 location remains transient. Defaults are System/Buzz, default font, Comfy
 density, Compact links, Split replies, glass off and subtle active tabs.
 
-Appearance inherits the Settings font family and uses the same section-heading
-size, weight, foreground and left alignment as other Settings pages. Row labels
-and descriptions share their secondary text size; labels retain the same weight
-as read-only Settings rows and descriptions use regular muted text. Device font
+Appearance uses the shared full-width Theme and Preferences cards with tinted
+headers, relevant icons and edge-to-edge dividers, under Theme and Preferences
+subtabs. Preferences, Link previews and Thread layout are sibling cards; each
+preview stays beside its own control rather than nesting inside Preferences. Tab
+selection is session-only and preferences still save immediately. Labels/help
+and controls align with other Settings rows and stack on narrow screens. It
+inherits the Settings font family and uses the same section-heading size,
+weight, foreground and left alignment as other Settings pages. Row labels and
+descriptions share their secondary text size; labels retain the same weight as
+read-only Settings rows and descriptions use regular muted text. Device font
 preferences still scale controls and previews without changing saved settings.
 
 The browser tab uses the accepted blue-jay and gear application artwork as its

@@ -1,4 +1,7 @@
 <script lang="ts">
+  import StoreSettingsFooter from "./StoreSettingsFooter.svelte";
+  import StoreSettingsCard from "./StoreSettingsCard.svelte";
+  import SectionIcon from "@lucide/svelte/icons/box";
   import * as Field from "@lapismd/design-core/shadcn/field";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { Input } from "@lapismd/design-core/shadcn/input";
@@ -31,10 +34,7 @@
   const progress = $derived(object(status.progress));
 </script>
 
-<section class="store-settings__section" aria-labelledby={`${id}-models`}>
-  <header class="store-settings__section-heading">
-    <h2 id={`${id}-models`}>Local models</h2>
-  </header>
+<StoreSettingsCard id={`${id}-models`} title="Local models" Icon={SectionIcon}>
   <div class="store-settings__rows">
     <dl class="store-settings__summary-rows">
       <StoreReadOnlyRow label="Status" value={status.state} live="status" />
@@ -86,58 +86,57 @@
         />
       </StoreWorkField>
     </Field.Group>
-    <div
-      class="store-settings__action-row store-settings__action-row--joined store-settings__action-row--full-width"
-    >
-      <div>
-        <strong>Run a local model</strong>
-        <p>
-          Prepare the runtime, download weights, then start inference. Downloads
-          stay on this machine.
-        </p>
-      </div>
-      <div class="store-settings__actions store-settings__actions--wrapping">
-        <Button
-          variant="outline"
-          disabled={blocked || !status.supported}
-          onclick={() => management?.command({ action: "prepare" })}
-          >Prepare runtime</Button
-        >
-        <Button
-          variant="outline"
-          disabled={blocked || !draft.model || status.state === "serving"}
-          onclick={async () => {
-            if (await onConfigure())
-              await management?.command({ action: "download" });
-          }}>Download model</Button
-        >
-        <Button
-          disabled={blocked ||
-            !status.runtime_prepared ||
-            !status.models.some(
-              (model) => model.id === draft.model && model.installed,
-            ) ||
-            status.state === "serving"}
-          onclick={async () => {
-            if (await onConfigure())
-              await management?.command({ action: "start" });
-          }}>Start model</Button
-        >
-        <Button
-          variant="outline"
-          disabled={management?.busy || status.state === "off"}
-          onclick={() => management?.command({ action: "stop" })}
-          >Stop compute</Button
-        >
-      </div>
-    </div>
-  </div>
-</section>
+    <StoreSettingsFooter>
+      {#snippet description()}<div>
+          <strong>Run a local model</strong>
+          <p>
+            Prepare the runtime, download weights, then start inference.
+            Downloads stay on this machine.
+          </p>
+        </div>{/snippet}
 
-<section class="store-settings__section" aria-labelledby={`${id}-storage`}>
-  <header class="store-settings__section-heading">
-    <h2 id={`${id}-storage`}>Model storage</h2>
-  </header>
+      <Button
+        variant="outline"
+        disabled={blocked || !status.supported}
+        onclick={() => management?.command({ action: "prepare" })}
+        >Prepare runtime</Button
+      >
+      <Button
+        variant="outline"
+        disabled={blocked || !draft.model || status.state === "serving"}
+        onclick={async () => {
+          if (await onConfigure())
+            await management?.command({ action: "download" });
+        }}>Download model</Button
+      >
+
+      <Button
+        variant="outline"
+        disabled={management?.busy || status.state === "off"}
+        onclick={() => management?.command({ action: "stop" })}
+        >Stop compute</Button
+      >
+      <Button
+        disabled={blocked ||
+          !status.runtime_prepared ||
+          !status.models.some(
+            (model) => model.id === draft.model && model.installed,
+          ) ||
+          status.state === "serving"}
+        onclick={async () => {
+          if (await onConfigure())
+            await management?.command({ action: "start" });
+        }}>Start model</Button
+      >
+    </StoreSettingsFooter>
+  </div>
+</StoreSettingsCard>
+
+<StoreSettingsCard
+  id={`${id}-storage`}
+  title="Model storage"
+  Icon={SectionIcon}
+>
   <div class="store-settings__rows">
     <Field.Group class="store-settings__editable-rows">
       <StoreWorkField
@@ -157,42 +156,38 @@
         />
       </StoreWorkField>
     </Field.Group>
-    <div class="store-settings__action-row store-settings__action-row--joined">
-      <div>
-        <strong>Import model weights</strong>
-        <p>Imported models remain available after restart.</p>
-      </div>
-      <div class="store-settings__actions">
+    <StoreSettingsFooter>
+      {#snippet description()}<div>
+          <strong>Import model weights</strong>
+          <p>Imported models remain available after restart.</p>
+        </div>{/snippet}
+
+      <Button
+        variant="outline"
+        disabled={blocked ||
+          management?.modelPicking ||
+          !importPath ||
+          status.state === "serving"}
+        onclick={() =>
+          management?.command({ action: "import", path: importPath })}
+        >Import model</Button
+      >
+    </StoreSettingsFooter>
+    {#each status.models.filter((model) => model.installed) as model (model.id)}
+      <StoreSettingsFooter>
+        {#snippet description()}<div>
+            <strong>{model.name}</strong>
+            <p>Installed model weights on this machine.</p>
+          </div>{/snippet}
+
         <Button
           variant="outline"
-          disabled={blocked ||
-            management?.modelPicking ||
-            !importPath ||
-            status.state === "serving"}
+          disabled={blocked || status.state === "serving"}
           onclick={() =>
-            management?.command({ action: "import", path: importPath })}
-          >Import model</Button
+            management?.command({ action: "remove", model: model.id })}
+          >Remove weights</Button
         >
-      </div>
-    </div>
-    {#each status.models.filter((model) => model.installed) as model (model.id)}
-      <div
-        class="store-settings__action-row store-settings__action-row--joined"
-      >
-        <div>
-          <strong>{model.name}</strong>
-          <p>Installed model weights on this machine.</p>
-        </div>
-        <div class="store-settings__actions">
-          <Button
-            variant="outline"
-            disabled={blocked || status.state === "serving"}
-            onclick={() =>
-              management?.command({ action: "remove", model: model.id })}
-            >Remove weights</Button
-          >
-        </div>
-      </div>
+      </StoreSettingsFooter>
     {/each}
   </div>
   <StoreNotice
@@ -200,4 +195,4 @@
     title="Model file picker unavailable"
     message={management?.modelPickerError}
   />
-</section>
+</StoreSettingsCard>

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import StoreSettingsCard from "./StoreSettingsCard.svelte";
+  import StoreSettingsFooter from "./StoreSettingsFooter.svelte";
   import { untrack } from "svelte";
   import * as Field from "@lapismd/design-core/shadcn/field";
   import * as Dialog from "@lapismd/design-core/shadcn/dialog";
@@ -48,22 +50,12 @@
     if (active) void management?.refresh();
   }}
 />
-<section class="store-settings__section" aria-labelledby="agent-runtimes-title">
-  <header class="store-settings__section-heading">
-    <div>
-      <h2 id="agent-runtimes-title">Agent runtimes</h2>
-      <p>Choose which agent tools jj-store can use on this device.</p>
-    </div>
-    {#if management?.available()}<Button
-        variant="outline"
-        size="sm"
-        onclick={() => void management?.refresh()}
-        disabled={management.refreshing}
-      >
-        <RefreshCwIcon data-icon="inline-start" />Check again
-      </Button>
-    {/if}
-  </header>
+<StoreSettingsCard
+  id="agent-runtimes-title"
+  title="Agent runtimes"
+  description="Choose which agent tools jj-store can use on this device."
+  Icon={DownloadIcon}
+>
   {#if !management || !management.available()}
     <StoreSettingsEmpty
       Icon={DownloadIcon}
@@ -92,73 +84,69 @@
     />
     {#if value}
       <div class="store-settings__rows">
-        <Field.Group class="store-settings__editable-rows">
+        <Field.Group class="store-settings__editable-rows store-runtime__list">
           {#each value.runtimes as runtime (runtime.id)}
             {@const status = management.error ? "unknown" : runtime.state}
-            <Field.Field
-              orientation="horizontal"
-              class="store-settings__option-row"
-            >
-              <Field.Content>
-                <StoreAgentRuntimeSummary {runtime} {status} />
-              </Field.Content>
-              <div class="store-runtime__actions">
-                {#if runtime.action && runtime.state !== "ready"}
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={blocked}
-                    onclick={() => request(runtime)}
-                    aria-label={`${runtime.action === "update" ? "Update" : "Install"} ${runtime.label} runtime`}
-                  >
-                    <DownloadIcon data-icon="inline-start" />{runtime.action ===
-                    "update"
-                      ? "Update"
-                      : "Install"}
-                  </Button>
-                {:else if runtime.id === "cursor"}
-                  <a
-                    data-ui-component="button"
-                    data-slot="button"
-                    data-variant="outline"
-                    data-size="sm"
-                    href={runtime.guide_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    <ExternalLinkIcon
-                      data-icon="inline-start"
-                    />{runtime.state === "ready"
-                      ? "Update guide"
-                      : "Install guide"}
-                  </a>
-                {/if}
-                <DropdownMenu.Root>
-                  <DropdownMenu.Trigger>
-                    {#snippet child({ props })}<Button
-                        {...props}
-                        variant="ghost"
-                        size="icon-sm"
-                        aria-label={`${runtime.label} runtime options`}
-                        ><EllipsisVerticalIcon /></Button
-                      >{/snippet}
-                  </DropdownMenu.Trigger>
-                  <DropdownMenu.Content align="end"
-                    ><DropdownMenu.Group>
-                      <DropdownMenu.Item>
-                        {#snippet child({ props })}<a
-                            {...props}
-                            href={runtime.guide_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            ><ExternalLinkIcon />Setup guide</a
-                          >{/snippet}
-                      </DropdownMenu.Item>
-                    </DropdownMenu.Group></DropdownMenu.Content
-                  >
-                </DropdownMenu.Root>
-              </div>
-            </Field.Field>
+            <StoreSettingsFooter>
+              {#snippet description()}<StoreAgentRuntimeSummary
+                  {runtime}
+                  {status}
+                />{/snippet}
+              {#if runtime.action && runtime.state !== "ready"}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={blocked}
+                  onclick={() => request(runtime)}
+                  aria-label={`${runtime.action === "update" ? "Update" : "Install"} ${runtime.label} runtime`}
+                >
+                  <DownloadIcon data-icon="inline-start" />{runtime.action ===
+                  "update"
+                    ? "Update"
+                    : "Install"}
+                </Button>
+              {:else if runtime.id === "cursor"}
+                <a
+                  data-ui-component="button"
+                  data-slot="button"
+                  data-variant="outline"
+                  data-size="sm"
+                  href={runtime.guide_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <ExternalLinkIcon
+                    data-icon="inline-start"
+                  />{runtime.state === "ready"
+                    ? "Update guide"
+                    : "Install guide"}
+                </a>
+              {/if}
+              <DropdownMenu.Root>
+                <DropdownMenu.Trigger>
+                  {#snippet child({ props })}<Button
+                      {...props}
+                      variant="ghost"
+                      size="icon-sm"
+                      aria-label={`${runtime.label} runtime options`}
+                      ><EllipsisVerticalIcon /></Button
+                    >{/snippet}
+                </DropdownMenu.Trigger>
+                <DropdownMenu.Content align="end"
+                  ><DropdownMenu.Group>
+                    <DropdownMenu.Item>
+                      {#snippet child({ props })}<a
+                          {...props}
+                          href={runtime.guide_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          ><ExternalLinkIcon />Setup guide</a
+                        >{/snippet}
+                    </DropdownMenu.Item>
+                  </DropdownMenu.Group></DropdownMenu.Content
+                >
+              </DropdownMenu.Root>
+            </StoreSettingsFooter>
           {/each}
         </Field.Group>
       </div>
@@ -204,10 +192,10 @@
         aria-label="Loading agent runtimes"
         aria-busy="true"
       >
-        <Field.Group class="store-settings__editable-rows">
+        <Field.Group class="store-settings__editable-rows store-runtime__list">
           {#each [0, 1] as row (row)}<Field.Field
               orientation="horizontal"
-              class="store-settings__option-row"
+              class="store-settings__option-row store-runtime__row"
             >
               <Field.Content>
                 <div class="store-runtime__summary">
@@ -223,6 +211,17 @@
         </Field.Group>
       </div>
     {/if}
+    <StoreSettingsFooter>
+      {#if management?.available()}<Button
+          variant="outline"
+          size="sm"
+          onclick={() => void management?.refresh()}
+          disabled={management.refreshing}
+        >
+          <RefreshCwIcon data-icon="inline-start" />Check again
+        </Button>
+      {/if}
+    </StoreSettingsFooter>
     <Dialog.Root bind:open={confirm}>
       <Dialog.Content>
         <Dialog.Header
@@ -249,4 +248,4 @@
       </Dialog.Content>
     </Dialog.Root>
   {/if}
-</section>
+</StoreSettingsCard>

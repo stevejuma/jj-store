@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed repository settings module, discovery and initial-data skeletons; background refresh preserves loaded values, empty folder results, drafts and exact pending reports. The Settings guide reflects this presentation without changing routes, owners, APIs or configuration.",
-      "fingerprint": "a930d1badc27b131e071d3ce4ef495d6b3d0d89d1148f88174a2a336ed6a4993"
+      "reason": "Global Settings presentation and consolidated preferences; save and authorization contracts retained",
+      "fingerprint": "8ba1fcb59e847e1b4228f75b17cefabe1ca3bf21f9fc891756027aefe183dbe7"
     }
   },
   {

@@ -1,4 +1,8 @@
 <script lang="ts">
+  import StoreReadOnlyRow from "./StoreReadOnlyRow.svelte";
+  import StoreSettingsFooter from "./StoreSettingsFooter.svelte";
+  import StoreSettingsCard from "./StoreSettingsCard.svelte";
+  import SectionIcon from "@lucide/svelte/icons/download";
   import StoreSettingsNotice from "./StoreSettingsNotice.svelte";
   import SearchIcon from "@lucide/svelte/icons/search";
   import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
@@ -14,11 +18,11 @@
   const busy = $derived(management.state.busy || !management.supported);
 </script>
 
-<section
-  class="store-settings__section"
-  aria-labelledby="capture-import-heading"
+<StoreSettingsCard
+  id="capture-import-heading"
+  title="History import progress"
+  Icon={SectionIcon}
 >
-  <header><h2 id="capture-import-heading">History import progress</h2></header>
   <Field.Group>
     <div class="store-settings__rows">
       <Field.Group class="store-settings__editable-rows">
@@ -49,93 +53,68 @@
         </Field.Field>
       </Field.Group>
     </div>
-    <div class="store-settings__action-row">
-      <div>
-        <strong>Inspect history import</strong>
-        <p>
-          Check the accepted boundary and publication progress for the original
-          request.
-        </p>
-      </div>
-      <div class="store-settings__actions">
-        <Button
+    <StoreSettingsFooter>
+      {#snippet description()}<div>
+          <strong>Inspect history import</strong>
+          <p>
+            Check the accepted boundary and publication progress for the
+            original request.
+          </p>
+        </div>{/snippet}
+
+      <Button
+        variant="outline"
+        disabled={busy || !captureId(requestId)}
+        onclick={() => management.inspectImport(requestId)}
+        ><SearchIcon data-icon="inline-start" aria-hidden="true" />Inspect
+        import request</Button
+      >
+      {#if result}<Button
           variant="outline"
-          disabled={busy || !captureId(requestId)}
-          onclick={() => management.inspectImport(requestId)}
-          ><SearchIcon data-icon="inline-start" aria-hidden="true" />Inspect
-          import request</Button
-        >
-        {#if result}<Button
-            variant="outline"
-            disabled={busy}
-            onclick={() => management.inspectImport(result.request_id)}
-            ><RefreshCwIcon
-              data-icon="inline-start"
-              aria-hidden="true"
-            />Refresh import status</Button
-          >{/if}
-      </div>
-    </div>
+          disabled={busy}
+          onclick={() => management.inspectImport(result.request_id)}
+          ><RefreshCwIcon data-icon="inline-start" aria-hidden="true" />Refresh
+          import status</Button
+        >{/if}
+    </StoreSettingsFooter>
   </Field.Group>
   {#if result}
     <dl class="store-settings__rows">
-      <div>
-        <dt>Import request</dt>
-        <dd>
-          <CopyableValue label="Import request ID" value={result.request_id} />
-        </dd>
-      </div>
-      <div>
-        <dt>History acceptance</dt>
-        <dd>{result.receipt ? "Accepted" : "No receipt available"}</dd>
-      </div>
-      <div>
-        <dt>History publication</dt>
-        <dd>
-          {result.progress.phase}{result.progress.boundary_available
-            ? " · Boundary available"
-            : " · Boundary unavailable"}
-        </dd>
-      </div>
-      {#if result.receipt}<div>
-          <dt>Accepted boundary</dt>
-          <dd>
-            {result.receipt.complete_byte_offset.toLocaleString("en-GB")} bytes ·
-            {result.receipt.complete_records.toLocaleString("en-GB")} records
-          </dd>
-        </div>{/if}
-      <div>
-        <dt>History captured / published</dt>
-        <dd>
-          {result.progress.captured_byte_offset.toLocaleString("en-GB")} / {result.progress.committed_byte_offset.toLocaleString(
-            "en-GB",
-          )} bytes
-        </dd>
-      </div>
-      <div>
-        <dt>Live tail coverage</dt>
-        <dd>{result.progress.tail_phase}</dd>
-      </div>
+      <StoreReadOnlyRow label="Import request">
+        <CopyableValue label="Import request ID" value={result.request_id} />
+      </StoreReadOnlyRow>
+      <StoreReadOnlyRow label="History acceptance"
+        >{result.receipt
+          ? "Accepted"
+          : "No receipt available"}</StoreReadOnlyRow
+      >
+      <StoreReadOnlyRow label="History publication">
+        {result.progress.phase}{result.progress.boundary_available
+          ? " · Boundary available"
+          : " · Boundary unavailable"}
+      </StoreReadOnlyRow>
+      {#if result.receipt}<StoreReadOnlyRow label="Accepted boundary">
+          {result.receipt.complete_byte_offset.toLocaleString("en-GB")} bytes ·
+          {result.receipt.complete_records.toLocaleString("en-GB")} records
+        </StoreReadOnlyRow>{/if}
+      <StoreReadOnlyRow label="History captured / published">
+        {result.progress.captured_byte_offset.toLocaleString("en-GB")} / {result.progress.committed_byte_offset.toLocaleString(
+          "en-GB",
+        )} bytes
+      </StoreReadOnlyRow>
+      <StoreReadOnlyRow label="Live tail coverage"
+        >{result.progress.tail_phase}</StoreReadOnlyRow
+      >
       {#if result.progress.tail}
-        <div>
-          <dt>Tail captured / published</dt>
-          <dd>
-            {result.progress.tail.captured_byte_offset.toLocaleString("en-GB")} /
-            {result.progress.tail.committed_byte_offset.toLocaleString("en-GB")} bytes
-          </dd>
-        </div>
-        <div>
-          <dt>Tail evidence</dt>
-          <dd>
-            {result.progress.tail.history_available
-              ? "Available"
-              : "Unavailable"} · {result.progress.tail.outstanding_ranges.toLocaleString(
-              "en-GB",
-            )} outstanding ranges · {result.progress.tail.receipts.toLocaleString(
-              "en-GB",
-            )} receipts
-          </dd>
-        </div>
+        <StoreReadOnlyRow label="Tail captured / published">
+          {result.progress.tail.captured_byte_offset.toLocaleString("en-GB")} /
+          {result.progress.tail.committed_byte_offset.toLocaleString("en-GB")} bytes
+        </StoreReadOnlyRow>
+        <StoreReadOnlyRow label="Tail evidence">
+          {result.progress.tail.history_available ? "Available" : "Unavailable"} ·
+          {result.progress.tail.outstanding_ranges.toLocaleString("en-GB")} outstanding
+          ranges · {result.progress.tail.receipts.toLocaleString("en-GB")} receipts
+        </StoreReadOnlyRow>
       {/if}
     </dl>
     <StoreSettingsNotice>
@@ -148,4 +127,4 @@
       {/if}
     </StoreSettingsNotice>
   {/if}
-</section>
+</StoreSettingsCard>

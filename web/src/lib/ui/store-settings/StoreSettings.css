@@ -42,7 +42,7 @@
 
 .store-settings__rows
   > div:not([data-slot="field-group"]):not(.store-readonly-row):not(
-    .store-settings__action-row--joined
+    .store-settings__action-row
   ):not(.store-capture-harness),
 .store-settings__summary-rows > div {
   display: grid;
@@ -194,7 +194,7 @@
 @media (max-width: 40rem) {
   .store-settings__rows
     > div:not([data-slot="field-group"]):not(.store-readonly-row):not(
-      .store-settings__action-row--joined
+      .store-settings__action-row
     ):not(.store-capture-harness),
   .store-settings__summary-rows > div {
     grid-template-columns: minmax(0, 1fr);

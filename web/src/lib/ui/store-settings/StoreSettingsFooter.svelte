@@ -24,7 +24,7 @@
   <div class="store-settings__actions">{@render children()}</div>
 {/snippet}
 
-{#if presentation.value === "repository"}
+{#if presentation.value !== "default"}
   {#if standalone}
     <Card.Root
       size="sm"

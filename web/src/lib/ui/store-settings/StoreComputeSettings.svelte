@@ -1,10 +1,14 @@
 <script lang="ts">
+  import StoreSettingsSkeleton from "./StoreSettingsSkeleton.svelte";
+  import StoreSettingsFooter from "./StoreSettingsFooter.svelte";
+  import StoreSettingsCard from "./StoreSettingsCard.svelte";
+  import SectionIcon from "@lucide/svelte/icons/gauge";
   import { untrack } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as Tabs from "@lapismd/design-core/shadcn/tabs";
   import * as Field from "@lapismd/design-core/shadcn/field";
-  import { Input } from "@lapismd/design-core/shadcn/input";
-  import StoreWorkField from "../store-work/StoreWorkField.svelte";
+  import StoreNumericSettingRow from "./StoreNumericSettingRow.svelte";
+  import { countUnits } from "./numeric-setting.js";
   import StoreSettingsPage from "./StoreSettingsPage.svelte";
   import StoreComputeHardware from "./StoreComputeHardware.svelte";
   import StoreComputeModels from "./StoreComputeModels.svelte";
@@ -86,38 +90,34 @@
     </Tabs.Content>
     <Tabs.Content value="resources">
       <StoreComputeHardware value={status.hardware} />
-      <section
-        class="store-settings__section"
-        aria-labelledby={`${id}-resources`}
+      <StoreSettingsCard
+        id={`${id}-resources`}
+        title="Resource limits"
+        Icon={SectionIcon}
       >
-        <header class="store-settings__section-heading">
-          <h2 id={`${id}-resources`}>Resource limits</h2>
-        </header>
         <div class="store-settings__rows">
           <Field.Group class="store-settings__editable-rows">
-            <StoreWorkField
-              class="store-settings__option-row"
+            <StoreNumericSettingRow
               label="Maximum memory / VRAM"
               id={`${id}-memory`}
-              description="GB. One loaded model and two concurrent inference requests per host."
-            >
-              <Input
-                id={`${id}-memory`}
-                type="number"
-                min={1}
-                max={1024}
-                value={draft.memory_gb ?? ""}
-                disabled={blocked || status.state === "serving"}
-                oninput={(event) => {
-                  draft!.memory_gb = event.currentTarget.value
-                    ? Number(event.currentTarget.value)
-                    : null;
-                }}
-              />
-            </StoreWorkField>
+              description="One loaded model and two concurrent inference requests per host. Leave empty for automatic memory allocation."
+              min={1}
+              max={1024}
+              optional
+              units={countUnits("GB")}
+              value={draft.memory_gb === null ? "" : String(draft.memory_gb)}
+              disabled={blocked || status.state === "serving"}
+              onValueChange={(value) => {
+                draft!.memory_gb = value.trim()
+                  ? Number.isSafeInteger(Number(value))
+                    ? Number(value)
+                    : -1
+                  : null;
+              }}
+            />
           </Field.Group>
         </div>
-      </section>
+      </StoreSettingsCard>
     </Tabs.Content>
     <Tabs.Content value="sharing">
       <StoreComputePeers
@@ -128,21 +128,27 @@
         onConfigure={configure}
       />
     </Tabs.Content>
-    <section class="store-settings__section" aria-label="Compute configuration">
-      <div class="store-settings__action-row">
-        <div>
-          <strong>Save compute configuration</strong>
-          <p>
-            Save resource limits and peer selection. Local models never fall
-            back to cloud inference.
-          </p>
-        </div>
-        <div class="store-settings__actions">
-          <Button disabled={blocked} onclick={configure}
-            >Save compute settings</Button
-          >
-        </div>
-      </div>
-    </section>
-  {/if}
+    <div role="region" aria-label="Compute configuration">
+      <StoreSettingsFooter standalone>
+        {#snippet description()}<div>
+            <strong>Save compute configuration</strong>
+            <p>
+              Save resource limits and peer selection. Local models never fall
+              back to cloud inference.
+            </p>
+          </div>{/snippet}
+
+        <Button disabled={blocked} onclick={configure}
+          >Save compute settings</Button
+        >
+      </StoreSettingsFooter>
+    </div>
+  {:else if !management?.error && management}<StoreSettingsSkeleton
+      heading={false}
+      label="Loading compute settings"
+      cards={[
+        { rows: ["fact", "fact", "input", "input"], actions: 4 },
+        { rows: ["input"], actions: 1 },
+      ]}
+    />{/if}
 </StoreSettingsPage>

@@ -1,4 +1,8 @@
 <script lang="ts">
+  import StoreSettingsCard from "../store-settings/StoreSettingsCard.svelte";
+  import SectionIcon from "@lucide/svelte/icons/sliders-horizontal";
+  import LinkIcon from "@lucide/svelte/icons/link";
+  import MessageCircleIcon from "@lucide/svelte/icons/message-circle";
   import Eye from "@lucide/svelte/icons/eye";
   import { useAppearance } from "../../appearance/store.svelte.js";
   import type {
@@ -16,9 +20,12 @@
   let threads = $state<ThreadLayout | null>(null);
 </script>
 
-<section class="appearance-group" aria-label="Preferences">
-  <h2>Preferences</h2>
-  <div class="appearance-card">
+<StoreSettingsCard
+  id="appearance-preferences"
+  title="Preferences"
+  Icon={SectionIcon}
+>
+  <div class="appearance-card appearance-card--settings">
     <AppearanceRow
       title="Conversation view"
       description="Document or Classic for agent conversations, threads and replies"
@@ -88,8 +95,12 @@
         </div>
       </div>
     </div>
+  </div>
+</StoreSettingsCard>
+<StoreSettingsCard id="appearance-links" title="Link previews" Icon={LinkIcon}>
+  <div class="appearance-card appearance-card--settings">
     <AppearanceRow
-      title="Link previews"
+      title="Display style"
       description={(links ?? store.saved.links) === "rich"
         ? "Larger cards using the link text and address already in the message"
         : "Compact cards that keep conversations easy to scan"}
@@ -148,8 +159,16 @@
         </div>
       </div>
     </div>
+  </div>
+</StoreSettingsCard>
+<StoreSettingsCard
+  id="appearance-threads"
+  title="Thread layout"
+  Icon={MessageCircleIcon}
+>
+  <div class="appearance-card appearance-card--settings">
     <AppearanceRow
-      title="Thread layout"
+      title="Discussion placement"
       description={(threads ?? store.saved.threads) === "focus"
         ? "Discussions open over the conversation"
         : "Discussions open in a side panel next to the conversation"}
@@ -178,4 +197,4 @@
       </div>
     </div>
   </div>
-</section>
+</StoreSettingsCard>

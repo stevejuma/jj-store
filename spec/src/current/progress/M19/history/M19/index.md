@@ -28,7 +28,10 @@ M19 remains Partial; packaged platform and release gates are unchanged.
 [E-SETTINGS-SKELETON-001](../../../../../history/2026/10/11/E-SETTINGS-SKELETON-001/index.md)
 reviews M19 without changing its status. Repository Settings initial loading now
 matches the selected category and subtab; existing lifecycle, pending commands
-and configuration contracts remain unchanged. Wider gates remain open.
+and configuration contracts remain unchanged. Wider gates remain open. |
+[E-GLOBAL-SETTINGS-001](../../../../../history/2026/10/11/E-GLOBAL-SETTINGS-001/index.md)
+| 2026-10-11 | pending | Focused global presentation; inherited diagnostics
+remain separate |
 
 <!-- generated-navigation -->
 

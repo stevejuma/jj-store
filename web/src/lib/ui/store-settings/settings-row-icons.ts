@@ -1,3 +1,10 @@
+import Cpu from "@lucide/svelte/icons/server";
+import Palette from "@lucide/svelte/icons/palette";
+import SunMoon from "@lucide/svelte/icons/sun-moon";
+import Type from "@lucide/svelte/icons/file-text";
+import Layout from "@lucide/svelte/icons/columns-2";
+import Link from "@lucide/svelte/icons/link";
+import Folder from "@lucide/svelte/icons/folder";
 import FileText from "@lucide/svelte/icons/file-text";
 import Shield from "@lucide/svelte/icons/shield";
 import Box from "@lucide/svelte/icons/box";
@@ -15,6 +22,50 @@ import Hash from "@lucide/svelte/icons/hash";
 import type { Component } from "svelte";
 
 export const settingsRowIcons: Readonly<Record<string, Component>> = {
+  "Access mode": Shield,
+  "Authoritative storage": Database,
+  "HTTP connection": Network,
+  "Live events": Radio,
+  "Live updates": Activity,
+  "Saved and running": Activity,
+  "Saved capture": Database,
+  "Currently configured": Activity,
+  Status: Activity,
+  "Native runtime": Box,
+  Progress: Activity,
+  System: Box,
+  CPU: Cpu,
+  Memory: Database,
+  "Machine identity": Hash,
+  "Device policy": Shield,
+  "Worker phase": Activity,
+  Discovery: Activity,
+  Roots: Folder,
+  Sources: FileText,
+  "Source health": Activity,
+  "Publication backlog": Database,
+  "Required ingress capacity": Gauge,
+  "Required publication capacity": Gauge,
+  "Configured roots": Folder,
+  "Tracked sources": FileText,
+  "History acceptance": Shield,
+  "History publication": Database,
+  "Accepted boundary": Gauge,
+  "History captured / published": Database,
+  "Live tail coverage": Activity,
+  "Tail captured / published": Database,
+  "Tail evidence": FileText,
+  "Color mode": SunMoon,
+  "Theme style": Palette,
+  "Accent color": Palette,
+  "Glass background": Layout,
+  "Glass opacity": Layout,
+  "Prominent active tab": Layout,
+  "Conversation view": Layout,
+  "Font size": Type,
+  "Conversation density": Layout,
+  "Link previews": Link,
+  "Thread layout": Layout,
   Name: Box,
   Saved: Database,
   "Currently active": Activity,

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import StoreSettingsCard from "./StoreSettingsCard.svelte";
+  import SectionIcon from "@lucide/svelte/icons/server";
   import { object } from "../../controller/agent-execution-types.js";
   import StoreReadOnlyRow from "./StoreReadOnlyRow.svelte";
   let { value }: { value: unknown } = $props();
@@ -6,10 +8,7 @@
   const id = $props.id();
 </script>
 
-<section class="store-settings__section" aria-labelledby={`${id}-machine`}>
-  <header class="store-settings__section-heading">
-    <h2 id={`${id}-machine`}>This machine</h2>
-  </header>
+<StoreSettingsCard id={`${id}-machine`} title="This machine" Icon={SectionIcon}>
   <dl class="store-settings__rows">
     <StoreReadOnlyRow
       label="System"
@@ -26,4 +25,4 @@
         : "Unavailable"}
     />
   </dl>
-</section>
+</StoreSettingsCard>

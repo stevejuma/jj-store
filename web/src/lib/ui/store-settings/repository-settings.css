@@ -1,23 +1,24 @@
-/* Opt-in repository presentation; legacy global forms retain their styles. */
-.store-settings__tabs--repository,
+/* Shared modern Settings presentation; unrelated consumers retain defaults. */
+.store-settings__tabs--modern,
 .store-settings__scroll {
   flex: 1;
   min-width: 0;
   min-height: 0;
   overflow: hidden;
 }
-.store-settings__tabs--repository {
+.store-settings__tabs--modern {
   display: flex;
   flex-direction: column;
   gap: 0;
 }
-.store-settings--repository {
+:is(.store-settings--repository, .store-settings--global) {
   --store-settings-label-width: minmax(10rem, 0.8fr);
 }
-.store-settings--repository .store-settings__section {
+:is(.store-settings--repository, .store-settings--global)
+  .store-settings__section {
   margin-block-start: 1rem;
 }
-.store-settings--repository .store-settings-card {
+:is(.store-settings--repository, .store-settings--global) .store-settings-card {
   min-width: 0;
   gap: 0;
 }
@@ -26,34 +27,46 @@
   gap: 0;
   min-width: 0;
 }
+:is(.store-settings--repository, .store-settings--global)
+  .store-settings__editable-rows
+  > [data-slot="field"]
+  + .store-settings-disclosure {
+  border-block-start: 1px solid var(--border);
+}
 .store-settings-card__content .store-settings__rows {
   border: 0;
   border-radius: 0;
   background: transparent;
   overflow: visible;
 }
-.store-settings--repository
+:is(.store-settings--repository, .store-settings--global)
   .store-settings__rows
   > div:not([data-slot="field-group"]):not(.store-readonly-row):not(
     .store-settings__action-row
   ),
-.store-settings--repository .store-settings__summary-rows > div {
+:is(.store-settings--repository, .store-settings--global)
+  .store-settings__summary-rows
+  > div {
   padding: 0.65rem 1rem;
 }
-.store-settings--repository .store-settings__option-row {
+:is(.store-settings--repository, .store-settings--global)
+  .store-settings__option-row {
   padding: 0.75rem 1rem;
 }
-.store-settings--repository .store-settings__editable-rows {
+:is(.store-settings--repository, .store-settings--global)
+  .store-settings__editable-rows {
   gap: 0;
 }
-.store-settings--repository .store-settings__actions {
+:is(.store-settings--repository, .store-settings--global)
+  .store-settings__actions {
   flex-direction: row;
   flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
   max-width: none;
 }
-.store-settings--repository .store-settings-footer {
+:is(.store-settings--repository, .store-settings--global)
+  .store-settings-footer {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -66,63 +79,87 @@
 .store-settings-footer__description {
   min-width: 0;
 }
-.store-settings--repository .store-settings-footer__description {
+:is(.store-settings--repository, .store-settings--global)
+  .store-settings-footer__description {
   flex: 1 1 16rem;
 }
-.store-settings--repository .store-settings-footer > .store-settings__actions {
+:is(.store-settings--repository, .store-settings--global)
+  .store-settings-footer
+  > .store-settings__actions {
   flex: 0 1 auto;
   max-width: none;
   margin-inline-start: auto;
 }
-.store-settings--repository .store-settings-footer--standalone {
+:is(.store-settings--repository, .store-settings--global)
+  .store-settings-footer--standalone {
   border-block-start: 0;
 }
-.store-settings--repository
+:is(.store-settings--repository, .store-settings--global)
   .store-settings-card__content
+  > .store-settings-footer:first-child,
+:is(.store-settings--repository, .store-settings--global)
+  .store-settings-card__content
+  > [data-slot="field-group"]:first-child
   > .store-settings-footer:first-child {
   border-block-start: 0;
 }
-.store-settings--repository .store-settings__rows--controls > div {
+:is(.store-settings--repository, .store-settings--global)
+  .store-settings__rows--controls
+  > div {
   grid-template-columns: minmax(0, 1fr);
 }
-.store-settings--repository .store-settings__rows--controls dd {
+:is(.store-settings--repository, .store-settings--global)
+  .store-settings__rows--controls
+  dd {
   padding-block-end: 0.25rem;
 }
-.store-settings--repository .store-settings__input {
+:is(.store-settings--repository, .store-settings--global)
+  .store-settings__input {
   width: min(26rem, 100%);
 }
-.store-settings--repository .store-settings__input[type="number"] {
+:is(.store-settings--repository, .store-settings--global)
+  .store-settings__input[type="number"] {
   width: min(11rem, 100%);
 }
-.store-settings--repository .store-settings__option-row {
+:is(.store-settings--repository, .store-settings--global)
+  .store-settings__option-row {
   display: grid;
   grid-template-columns: var(--store-settings-label-width) minmax(0, 1.5fr);
   align-items: center;
   gap: 1rem;
 }
-.store-settings--repository .store-settings__option-row > :last-child {
+:is(.store-settings--repository, .store-settings--global)
+  .store-settings__option-row
+  > :last-child {
   justify-self: end;
 }
-.store-settings--repository .store-workspace-link-form__footer {
+:is(.store-settings--repository, .store-settings--global)
+  .store-workspace-link-form__footer {
   padding-inline: 1rem;
 }
 @media (max-width: 40rem) {
-  .store-settings--repository .store-settings__option-row {
+  :is(.store-settings--repository, .store-settings--global)
+    .store-settings__option-row {
     grid-template-columns: minmax(0, 1fr);
     gap: 0.5rem;
   }
-  .store-settings--repository .store-settings__option-row > :last-child {
+  :is(.store-settings--repository, .store-settings--global)
+    .store-settings__option-row
+    > :last-child {
     justify-self: start;
   }
-  .store-settings--repository .store-settings-footer__description {
+  :is(.store-settings--repository, .store-settings--global)
+    .store-settings-footer__description {
     flex-basis: 100%;
   }
-  .store-settings--repository
+  :is(.store-settings--repository, .store-settings--global)
     .store-settings-footer
     > .store-settings__actions {
     width: 100%;
   }
-  .store-settings--repository .store-settings__actions > button {
+  :is(.store-settings--repository, .store-settings--global)
+    .store-settings__actions
+    > button {
     max-width: 100%;
     white-space: normal;
     height: auto;
@@ -149,17 +186,145 @@
   background: color-mix(in srgb, var(--muted) 35%, var(--card));
   border-block-end: 1px solid var(--border);
 }
-.store-settings--repository .store-settings-card__content > dl + dl,
-.store-settings--repository .store-settings-card__content > h3 {
+:is(.store-settings--repository, .store-settings--global)
+  .store-settings-card__content
+  > dl
+  + dl,
+:is(.store-settings--repository, .store-settings--global)
+  .store-settings-card__content
+  > h3 {
   border-block-start: 1px solid var(--border);
 }
-.store-settings--repository .store-settings-card__content > h3 {
+:is(.store-settings--repository, .store-settings--global)
+  .store-settings-card__content
+  > h3 {
   margin: 0;
   padding: 0.65rem 1rem;
   font-size: var(--community-text-secondary);
   font-weight: 600;
   background: color-mix(in srgb, var(--muted) 25%, var(--card));
 }
-.store-settings--repository .store-settings-card__content > p {
+:is(.store-settings--repository, .store-settings--global)
+  .store-settings-card__content
+  > p {
   padding-inline: 1rem;
+}
+
+.store-settings--global
+  [data-ui-part="agent-configuration-fields"]
+  > [data-slot="field-group"]
+  > [data-slot="field"] {
+  display: grid;
+  grid-template-columns: var(--store-settings-label-width) minmax(0, 1.5fr);
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+}
+.store-settings--global
+  .store-settings-card__content
+  > [data-slot="field-group"] {
+  gap: 0;
+}
+.store-settings--global .store-capture-sources__filters,
+.store-settings--global .store-capture-sources__footer {
+  padding: 0.85rem 1rem;
+}
+.store-settings--global .store-capture-sources__footer {
+  border-top: 1px solid var(--border);
+}
+.store-settings--global
+  [data-ui-part="agent-configuration-fields"]
+  > [data-slot="field-group"]
+  > [data-slot="field"]
+  + [data-slot="field"] {
+  border-top: 1px solid var(--border);
+}
+@media (max-width: 40rem) {
+  .store-settings--global
+    [data-ui-part="agent-configuration-fields"]
+    > [data-slot="field-group"]
+    > [data-slot="field"] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+.store-settings--global .store-settings__form-sections {
+  gap: 0;
+}
+
+/* Every inline banner has clearance, including notices between cards. */
+:is(.store-settings--repository, .store-settings--global) [data-slot="alert"] {
+  margin-block: 1rem;
+}
+/* Notices inside cards are also inset from edge-to-edge rows and footers. */
+:is(.store-settings--repository, .store-settings--global)
+  .store-settings-card__content
+  > [data-slot="alert"] {
+  margin: 1rem;
+  width: auto;
+}
+
+/* Right-align controls inside the shared WorkField wrapper as well as the row. */
+:is(.store-settings--repository, .store-settings--global)
+  .store-settings__option-row
+  > .store-work__control,
+.store-settings--global
+  [data-ui-part="agent-configuration-fields"]
+  .store-work__control {
+  display: flex;
+  justify-content: flex-end;
+  min-width: 0;
+}
+:is(.store-settings--repository, .store-settings--global)
+  .store-settings__option-row:has([role="switch"]) {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+.store-settings--global .store-runtime__row {
+  grid-template-columns: minmax(0, 1fr);
+}
+.store-settings--global .store-runtime__row > [data-slot="field-content"] {
+  width: 100%;
+  justify-self: stretch;
+}
+.store-settings--global .store-runtime__list {
+  gap: 0;
+}
+@media (max-width: 40rem) {
+  :is(.store-settings--repository, .store-settings--global)
+    .store-settings__option-row
+    > .store-work__control,
+  .store-settings--global
+    [data-ui-part="agent-configuration-fields"]
+    .store-work__control {
+    justify-content: flex-start;
+  }
+}
+
+.store-settings--global
+  .store-runtime__list
+  > .store-settings-footer:first-child {
+  border-block-start: 0;
+}
+.store-settings--global
+  .store-runtime__list
+  .store-settings-footer__description {
+  flex: 1 1 24rem;
+}
+.store-settings--global .store-capture-harness + .store-capture-harness {
+  border-block-start: 1px solid var(--border);
+}
+.store-settings--global .store-capture-harness__content {
+  padding-inline-start: 0;
+}
+
+/* Pickers use a bounded control width, not the entire value column. */
+:is(.store-settings--repository, .store-settings--global)
+  .store-work__control
+  > :is([data-slot="select-trigger"], [role="combobox"]),
+:is(.store-settings--repository, .store-settings--global)
+  .store-settings__option-row
+  > :is([data-slot="select-trigger"], [role="combobox"]) {
+  width: min(20rem, 100%);
+  max-width: 100%;
+  min-width: 0;
 }

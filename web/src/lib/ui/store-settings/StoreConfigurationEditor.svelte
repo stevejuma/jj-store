@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreReadOnlyRow from "./StoreReadOnlyRow.svelte";
   import StoreSettingsSkeleton from "./StoreSettingsSkeleton.svelte";
   import SaveIcon from "@lucide/svelte/icons/save";
   import XIcon from "@lucide/svelte/icons/x";
@@ -27,7 +28,7 @@
     repositoryName?: string;
   } = $props();
   const presentation = settingsPresentation();
-  const repositoryPresentation = $derived(presentation.value === "repository");
+  const modernPresentation = $derived(presentation.value !== "default");
   const edit = $derived(management?.state.drafts[section]);
   const busy = $derived(management?.state.saving ?? false);
   const pending = $derived(
@@ -79,10 +80,8 @@
           void management.save(section);
         }}
       >
-        <div
-          class={repositoryPresentation ? undefined : "store-settings__rows"}
-        >
-          {#if !repositoryPresentation}<dl class="store-settings__summary-rows">
+        <div class={modernPresentation ? undefined : "store-settings__rows"}>
+          {#if !modernPresentation}<dl class="store-settings__summary-rows">
               <div>
                 <dt>Saved and running</dt>
                 <dd>
@@ -99,7 +98,36 @@
               {repository}
               {repositoryName}
               pending={Boolean(pending)}
-            />{:else}<StoreConfigurationFields {management} {section} />{/if}
+            />{:else}
+            <StoreSettingsCard
+              id={`config-${section}-status`}
+              title="Configuration status"
+              Icon={SlidersHorizontalIcon}
+              repositoryOnly
+            >
+              <dl class="store-settings__rows">
+                <StoreReadOnlyRow
+                  label="Saved and running"
+                  live="status"
+                  value={pending
+                    ? "Saved changes need a server restart."
+                    : "Saved settings match the running configuration."}
+                />
+              </dl>
+            </StoreSettingsCard>
+            <StoreSettingsCard
+              id={`config-${section}-fields`}
+              title={section === "service"
+                ? "Resource limits"
+                : "Protection rules"}
+              Icon={SlidersHorizontalIcon}
+              repositoryOnly
+              ><StoreConfigurationFields
+                {management}
+                {section}
+              /></StoreSettingsCard
+            >
+          {/if}
           {#if edit.validation}<p role="alert">{edit.validation}</p>{/if}
           {#if edit.conflict}<p role="status">
               The saved file changed while you were editing. Your draft is
@@ -116,7 +144,7 @@
                 !edit.dirty ||
                 edit.conflict ||
                 Boolean(edit.unknown)}
-              >{#if repositoryPresentation}<SaveIcon
+              >{#if modernPresentation}<SaveIcon
                   data-icon="inline-start"
                   aria-hidden="true"
                 />{/if}Save settings</Button
@@ -128,7 +156,7 @@
                 !edit.dirty ||
                 (Boolean(edit.unknown) && !edit.unknownObserved)}
               onclick={() => management.cancel(section)}
-              >{#if repositoryPresentation}<XIcon
+              >{#if modernPresentation}<XIcon
                   data-icon="inline-start"
                   aria-hidden="true"
                 />{/if}{edit.conflict || edit.unknown
@@ -143,7 +171,7 @@
                 </p>
               </div>{/snippet}
 
-            {#if repositoryPresentation}{@render cancelButton()}{@render saveButton()}{:else}{@render saveButton()}{@render cancelButton()}{/if}
+            {#if modernPresentation}{@render cancelButton()}{@render saveButton()}{:else}{@render saveButton()}{@render cancelButton()}{/if}
           </StoreSettingsFooter>
         </div>
       </form>
@@ -155,12 +183,24 @@
               2,
             )}</pre>
         </details>{/if}
-    {:else if repositoryPresentation && section === "sync" && management.state.loading}
+    {:else if modernPresentation && management.state.loading}
       <StoreSettingsSkeleton
         section="sync"
+        cards={section === "sync"
+          ? undefined
+          : [
+              { rows: ["fact"] },
+              {
+                rows:
+                  section === "service"
+                    ? ["numeric", "numeric", "numeric", "numeric"]
+                    : ["textarea", "textarea"],
+                actions: 2,
+              },
+            ]}
         tab="configuration"
         heading={false}
-        label="Loading sync configuration"
+        label={`Loading ${section === "sync" ? "sync" : section === "service" ? "service" : "protection"} configuration`}
       />
     {:else}<p role="status">
         {management.state.loading

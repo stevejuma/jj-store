@@ -66,12 +66,14 @@ generations. Same-repository history/return cannot discard a command reply or
 abort its exact index task; owner replacement still clears tasks and rejects
 late replies.
 
-Global Settings retains its icon/title, spacing and public controls. Repository
-Settings omits repeated category headings and title-only strips; a second row
-contains only real subtabs. Contextual refresh belongs to the category row.
-Observation subscriptions depend on the stable selected category, so completing
-status reads cannot restart them or flicker loaded content. Global collapsed
-navigation remains accessible through labelled icon controls.
+Global Settings retains its public controls and sidebar. Its fixed page heading
+and contextual Refresh sit above actual icon-and-underline subtabs; Appearance
+has no title-only navigation strip. Repository Settings omits repeated category
+headings and title-only strips; a second row contains only real subtabs.
+Contextual refresh belongs to the category row. Observation subscriptions depend
+on the stable selected category, so completing status reads cannot restart them
+or flicker loaded content. Global collapsed navigation remains accessible
+through labelled icon controls.
 
 Initial repository Settings reads use category/subtab-specific skeletons that
 match card headers, aligned property rows, editable controls and bottom action
@@ -81,7 +83,9 @@ decorative placeholders are hidden from assistive technology and respect reduced
 motion. Navigation stays above the bounded Scroll Area and narrow layouts stack
 without overflow. Skeletons replace only data that has not loaded: background
 refresh retains existing values, empty results, drafts and pending commands.
-Global Settings keeps its existing loading presentation.
+Global Settings follows the same loading conventions for its initial
+configuration and compute reads, retaining loaded values during background
+refresh.
 
 Local service reports access mode, authoritative-storage readiness, HTTP and SSE
 state and automatic update status. Repository reports the retained discovery
@@ -98,32 +102,27 @@ Completing it does not refresh or repair the text-search projection. Long
 identities, capability lists and numeric limits wrap without horizontal
 overflow; status meaning is always present as text as well as color.
 
-Local service lists Git-backed JJ registrations in the same bordered Settings
-rows as service status, with the name, wrapping path and availability on the
-left and Reconnect/Remove actions on the right. Registration guidance sits left
-of Add/Refresh actions in a matching settings row. Repository Search separates
-index status, editable options and index maintenance into cards following the
-shared
-[settings/form convention](28-complete-supported-configuration-settings.md).
-Labels and descriptions stay left and editable controls right. Save/Cancel and
-maintenance commands occupy separate bottom footers with explanatory text left
-and buttons right, primary action last. Global Settings action groups stack
-vertically, with its buttons stretching to equal width; Appearance option groups
-retain their horizontal layout. The native folder-link form instead keeps Cancel
-and Link folder in a bottom button row aligned to the right, below its guidance
-and a public Separator, within the same bordered group as Folder path. Its
-controls wrap at narrow widths. Rows stack their label and control columns on
-narrow screens. Standalone guidance, loading and status messages use public
-Design Core Alert composition with an information icon and polite status
-semantics; transient operational errors use the application notification
-service. Descriptions and status values already contained in rows remain within
-those rows. Capture policy, harness diagnostics, source coverage and import
-inspection use the same bordered, divided two-column Settings rows. Source
-descriptions and repository bindings sit left; coverage, inputs and vertically
-stacked equal-width actions sit right. Capture refresh occupies the far-right
-page header. Closing or leaving Agents stops visible capture polling while
-preserving pending commands and request-ID drafts. Agents is installation-scoped
-and has no repository picker.
+Local service lists Git-backed JJ registrations using shared cards with compact
+name, wrapping path and availability rows. Reconnect/Remove occupy a footer for
+their registration; app-wide Add/Refresh occupy a separate management footer.
+Global and repository Settings follow the shared
+[settings/form convention](28-complete-supported-configuration-settings.md):
+labels/help left, controls right, full-width dividers, tinted card headers and
+relevant icons. Save/Cancel and maintenance commands occupy separate bottom
+footers with optional explanation left and wrapping buttons right, primary last.
+The folder-link form keeps Cancel/Link in the footer below its path and
+guidance. Rows stack on narrow screens. Appearance option groups retain their
+existing choices, previews and immediate saves.
+
+Standalone guidance and contextual status use public Design Core Alert
+composition with an information icon and polite semantics; transient operational
+errors use the application notification service. Capture policy, harness
+diagnostics, source coverage and import inspection use the same cards and
+divided rows. Source filters and their table retain selection and command
+guards; per-source operations stay attached to the source. Capture refresh
+occupies the far-right fixed page header. Closing or leaving Agents stops
+visible capture polling while preserving pending commands and request-ID drafts.
+Agents is installation-scoped and has no repository picker.
 
 Unsupported capture, Search, Sync and local-folder management use the public
 shadcn Empty composition with a suitable icon, explicit availability text and no
@@ -209,6 +208,6 @@ remain outside the bounded Design Core Scroll Area that owns repository settings
 content scrolling. Subtabs follow the primary row without extra top padding.
 Card headers adjoin their first row without an intervening gap. Overflow probes
 include icons and match visible tab presentation. The shared presentation is
-opt-in: global Settings and unrelated row/tab consumers retain their legacy
+selected by both Settings hosts; unrelated row/tab consumers retain their
 defaults. Drafts, pending commands, exact copy/Open targets, automatic updates
 and route/history contracts are unchanged.

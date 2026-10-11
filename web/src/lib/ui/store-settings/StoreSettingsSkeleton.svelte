@@ -3,6 +3,7 @@
   import * as Card from "@lapismd/design-core/shadcn/card";
   import type { RepositorySettingsSection } from "../../controller/repository-settings-navigation.js";
   import {
+    type SettingsSkeletonCard,
     settingsSkeletonCards,
     settingsSkeletonHeading,
   } from "./settings-skeleton.js";
@@ -14,6 +15,7 @@
     local = false,
     heading = true,
     rows,
+    cards,
     label = "Loading repository settings",
   }: {
     section?: RepositorySettingsSection;
@@ -22,6 +24,8 @@
     heading?: boolean;
     /** Skeletonize a pending row group inside an already visible card. */
     rows?: number;
+    /** Geometry supplied by global Settings without coupling repository routes. */
+    cards?: SettingsSkeletonCard[];
     label?: string;
   } = $props();
 </script>
@@ -45,7 +49,7 @@
             class="store-settings-skeleton__description"
           />
         </div>{/if}
-      {#each settingsSkeletonCards(section, tab, local) as card}
+      {#each cards ?? settingsSkeletonCards(section, tab, local) as card}
         <Card.Root
           size="sm"
           style="--card-spacing: 0"

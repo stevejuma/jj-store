@@ -132,3 +132,9 @@ E-SETTINGS-SKELETON-001 retains JST-DOC-001/002/003 delivery gates. The Settings
 guide distinguishes representative initial placeholders from retained content
 during background refresh. Application source review covers repository Settings
 only; API formats, configuration and packaged-release gates remain unchanged.
+
+E-GLOBAL-SETTINGS-001 retains JST-DOC-001/002/003 delivery and review gates. The
+Settings guide now covers shared global/repository form presentation, Appearance
+subtabs, grouped deployment inventory and unit-aware global fields. Application
+source review retains transient global navigation, immediate device preferences,
+explicit configuration saves and unchanged configuration formats.

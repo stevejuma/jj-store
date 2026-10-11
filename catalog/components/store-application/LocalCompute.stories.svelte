@@ -46,7 +46,7 @@
 />
 
 <Story
-  name="Joined model commands below description in a fixed width wrapping row"
+  name="Model commands use right-aligned wrapping section footers"
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
     await c.findByLabelText("Model");
@@ -69,43 +69,25 @@
     for (const width of [1280, 390]) {
       await page.viewport(width, 844);
       try {
-        const title = c.getByRole("heading", { name: "Compute", level: 1 });
-        await expect(
-          c.getByRole("tab", { name: "Models" }).getBoundingClientRect().left -
-            title.getBoundingClientRect().right,
-        ).toBeGreaterThanOrEqual(20);
-        await expect(
-          getComputedStyle(canvasElement.querySelector(".store-settings")!)
-            .paddingTop,
-        ).toBe("16px");
         const run = c
           .getByRole("button", { name: "Prepare runtime" })
-          .closest(".store-settings__action-row")!;
-        const description = run.querySelector("p")!;
+          .closest(".store-settings-footer")!;
         const actions = run.querySelector(".store-settings__actions")!;
-        await expect(
-          actions.getBoundingClientRect().top -
-            description.getBoundingClientRect().bottom,
-        ).toBeGreaterThanOrEqual(12);
-        const actionWidth = actions.getBoundingClientRect().width;
-        await expect(actionWidth).toBeGreaterThan(
-          run.getBoundingClientRect().width - 40,
-        );
-        const buttons = within(actions as HTMLElement).getAllByRole("button");
         await expect(getComputedStyle(actions).flexDirection).toBe("row");
         await expect(getComputedStyle(actions).flexWrap).toBe("wrap");
-        for (const button of buttons)
-          await expect(Math.round(button.getBoundingClientRect().width)).toBe(
-            160,
-          );
-        if (width === 1280)
-          await expect(buttons[3].getBoundingClientRect().top).toBe(
-            buttons[0].getBoundingClientRect().top,
-          );
-        else
-          await expect(buttons[3].getBoundingClientRect().top).toBeGreaterThan(
-            buttons[0].getBoundingClientRect().top,
-          );
+        await expect(actions.lastElementChild).toBe(
+          c.getByRole("button", { name: "Start model" }),
+        );
+        for (const button of within(actions as HTMLElement).getAllByRole(
+          "button",
+        )) {
+          await expect(
+            button.getBoundingClientRect().right,
+          ).toBeLessThanOrEqual(run.getBoundingClientRect().right);
+          await expect(
+            button.getBoundingClientRect().left,
+          ).toBeGreaterThanOrEqual(run.getBoundingClientRect().left);
+        }
         await expect(
           canvasElement.ownerDocument.documentElement.scrollWidth,
         ).toBeLessThanOrEqual(width);
@@ -129,7 +111,7 @@
     await userEvent.click(c.getByRole("tab", { name: "Resources" }));
     await expect(c.getByRole("tabpanel", { name: "Resources" })).toBeVisible();
     await expect(c.queryByRole("heading", { name: "Local models" })).toBeNull();
-    const memory = c.getByLabelText("Maximum memory / VRAM");
+    const memory = c.getByRole("spinbutton", { name: "Maximum memory / VRAM" });
     await userEvent.clear(memory);
     await userEvent.type(memory, "6");
     await userEvent.click(c.getByRole("tab", { name: "Sharing" }));
@@ -165,7 +147,7 @@
 />
 
 <Story
-  name="Narrow settings retain bounded identities and stacked actions"
+  name="Narrow settings retain bounded identities and wrapping footers"
   args={{ paired: true }}
   play={async ({ canvasElement }) => {
     await page.viewport(390, 844);
@@ -201,12 +183,12 @@
         ".store-settings__action-row",
       )) {
         if (row.closest("[hidden]")) continue;
-        await expect(getComputedStyle(row).flexDirection).toBe("column");
-        const buttons = within(row as HTMLElement).getAllByRole("button");
-        for (const button of buttons)
-          await expect(Math.round(button.getBoundingClientRect().width)).toBe(
-            Math.round(buttons[0].getBoundingClientRect().width),
-          );
+        const actions = row.querySelector(".store-settings__actions")!;
+        await expect(getComputedStyle(actions).flexWrap).toBe("wrap");
+        for (const button of within(row as HTMLElement).getAllByRole("button"))
+          await expect(
+            button.getBoundingClientRect().right,
+          ).toBeLessThanOrEqual(390);
       }
     } finally {
       await page.viewport(1280, 800);
@@ -240,28 +222,17 @@
     await expect(getComputedStyle(group).borderRightWidth).toBe("0px");
     await expect(getComputedStyle(group).borderBottomWidth).toBe("0px");
     await expect(getComputedStyle(group.parentElement!).borderLeftWidth).toBe(
-      "1px",
+      "0px",
     );
     for (const row of canvasElement.querySelectorAll(
       ".store-settings__action-row",
     )) {
       if (row.closest("[hidden]")) continue;
-      if (row.classList.contains("store-settings__action-row--joined")) {
-        await expect(getComputedStyle(row).borderLeftWidth).toBe("0px");
-        await expect(getComputedStyle(row).borderRightWidth).toBe("0px");
-        await expect(getComputedStyle(row).borderBottomWidth).toBe("0px");
-      } else {
-        await expect(
-          row.parentElement!.closest(".store-settings__rows"),
-        ).toBeNull();
-      }
+      await expect(row).toHaveClass("store-settings-footer");
+      await expect(getComputedStyle(row).borderLeftWidth).toBe("0px");
+      await expect(getComputedStyle(row).borderRightWidth).toBe("0px");
       const actions = row.querySelector(".store-settings__actions")!;
-      await expect(actions).not.toBeNull();
-      await expect(getComputedStyle(actions).flexDirection).toBe(
-        actions.classList.contains("store-settings__actions--wrapping")
-          ? "row"
-          : "column",
-      );
+      await expect(getComputedStyle(actions).flexDirection).toBe("row");
     }
   }}
 />
@@ -409,5 +380,55 @@
           .action.settings.target_peer,
       ).toBeNull(),
     );
+  }}
+/>
+
+<Story
+  name="Automatic memory remains optional with a joined fixed unit"
+  args={{ memoryLimit: null }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await userEvent.click(c.getByRole("tab", { name: "Resources" }));
+    const input = await c.findByRole("spinbutton", {
+      name: "Maximum memory / VRAM",
+    });
+    await expect(input).toHaveValue(null);
+    await expect(input).not.toBeRequired();
+    await expect(input).not.toHaveAttribute("aria-invalid", "true");
+    await userEvent.type(input, "6");
+    await userEvent.clear(input);
+    await userEvent.click(c.getByRole("tab", { name: "Models" }));
+    await userEvent.click(
+      c.getByRole("button", { name: "Save compute settings" }),
+    );
+    await waitFor(() =>
+      expect(
+        JSON.parse(c.getByLabelText("Compute commands").textContent ?? "[]"),
+      ).toMatchObject([
+        { action: { action: "configure", settings: { memory_gb: null } } },
+      ]),
+    );
+  }}
+/>
+<Story name="Dark compute settings" globals={{ colorMode: "dark" }} />
+
+<Story
+  name="Shared save footer stays separated on every Compute tab"
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await c.findByRole("button", { name: "Save compute settings" });
+    for (const name of ["Models", "Resources", "Sharing"]) {
+      await userEvent.click(c.getByRole("tab", { name }));
+      const panel = c.getByRole("tabpanel", { name });
+      const cards = panel.querySelectorAll(".store-settings__section");
+      const previous = cards[cards.length - 1];
+      const footer = c
+        .getByRole("button", { name: "Save compute settings" })
+        .closest(".store-settings-save-card")!;
+      await expect(
+        footer.getBoundingClientRect().top -
+          previous.getBoundingClientRect().bottom,
+      ).toBe(16);
+    }
   }}
 />

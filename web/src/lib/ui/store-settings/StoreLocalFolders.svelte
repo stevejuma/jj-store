@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { settingsPresentation } from "./settings-presentation.js";
   import StoreSettingsSkeleton from "./StoreSettingsSkeleton.svelte";
   import StoreLocalFolderBinding from "./StoreLocalFolderBinding.svelte";
   import StoreSettingsFooter from "./StoreSettingsFooter.svelte";
@@ -166,6 +167,8 @@
     open = false;
     await changed();
   }
+  const presentation = settingsPresentation();
+  const modern = $derived(presentation.value !== "default");
 </script>
 
 {#snippet bindingActions(binding: Model<"LocalBinding">)}
@@ -245,7 +248,7 @@
     title="Git-backed JJ folders"
     Icon={FolderGitIcon}
   >
-    {#if !repository}{@render folderManagement()}{/if}
+    {#if !repository && !modern}{@render folderManagement()}{/if}
     {#if repository && !bindingsLoaded && !message}
       <StoreSettingsSkeleton
         section="folders"
@@ -254,8 +257,8 @@
       />
     {:else if visibleBindings.length}
       <svelte:element
-        this={repository ? "div" : "dl"}
-        class={repository
+        this={repository || modern ? "div" : "dl"}
+        class={repository || modern
           ? undefined
           : "store-settings__rows store-settings__rows--controls"}
       >
@@ -270,7 +273,7 @@
         title="No Git-backed JJ folders"
         description="Add an existing JJ folder to browse its code and projects."
       />{/if}
-    {#if repository}{@render folderManagement()}{/if}
+    {#if repository || modern}{@render folderManagement()}{/if}
     <StoreSettingsNotice>
       Removing a registration preserves the folder and project links.
     </StoreSettingsNotice>

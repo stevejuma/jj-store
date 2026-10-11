@@ -30,6 +30,29 @@ export function serverSettingsValue(): ServerSettings {
       timeout_seconds: 30,
     },
     inventory: [
+      ...[
+        ["service", "state_dir", "/private/example/local"],
+        [
+          "service",
+          "access.catalog",
+          "/private/example/local/repositories.json",
+        ],
+        ["service", "access.mode", "local-trusted"],
+        ["service", "tls", "Not configured"],
+        ["storage", "storage.mode", "embedded-rustfs"],
+        [
+          "storage",
+          "storage.credentials",
+          "/private/example/credential-reference.json",
+        ],
+        ["storage", "backup", "None"],
+      ].map(([section, name, saved]) => ({
+        section,
+        name,
+        saved,
+        effective: saved,
+        reason: "Managed by setup.",
+      })),
       {
         section: "service",
         name: "bind",

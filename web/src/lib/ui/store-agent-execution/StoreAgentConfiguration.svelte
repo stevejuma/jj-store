@@ -1,4 +1,5 @@
 <script lang="ts">
+  import StoreSettingsFooter from "../store-settings/StoreSettingsFooter.svelte";
   import { untrack, onDestroy, type Snippet } from "svelte";
   import * as Field from "@lapismd/design-core/shadcn/field";
   import { Input } from "@lapismd/design-core/shadcn/input";
@@ -274,19 +275,17 @@
         disabled={pending}
       />{/if}
   </Field.Group>
-  <div class="store-settings__action-row store-settings__action-row--joined">
-    <div><p role="status">{source} {status}</p></div>
-    <div class="store-settings__actions">
-      <Button
-        type="button"
-        variant="outline"
-        size="sm"
-        disabled={pending ||
-          !runner?.available ||
-          manager.catalogs.loading[scope]}
-        onclick={() => load(true)}>{retryLabel}</Button
-      >
-    </div>
-  </div>
+  <StoreSettingsFooter joined>
+    {#snippet description()}<p role="status">{source} {status}</p>{/snippet}
+    <Button
+      type="button"
+      variant="outline"
+      size="sm"
+      disabled={pending ||
+        !runner?.available ||
+        manager.catalogs.loading[scope]}
+      onclick={() => load(true)}>{retryLabel}</Button
+    >
+  </StoreSettingsFooter>
   {@render children?.()}
 </div>

@@ -120,15 +120,20 @@
         ...canvasElement.querySelectorAll<HTMLElement>(".store-settings"),
       ].find((element) => element.checkVisibility())!;
       await expect(getComputedStyle(content).paddingTop).toBe("16px");
-      const navigation = c.getByRole("navigation", {
+      const navigation = c.queryByRole("navigation", {
         name: "Settings page navigation",
       });
-      const firstTab = within(navigation).queryAllByRole("tab")[0];
-      if (firstTab)
-        await expect(
-          firstTab.getBoundingClientRect().left -
-            title.getBoundingClientRect().right,
-        ).toBeGreaterThanOrEqual(20);
+      const scroll = content.closest("[data-slot='scroll-area']")!;
+      await expect(scroll).not.toContainElement(title);
+      {
+        await expect(scroll).not.toContainElement(navigation);
+        const tab = within(navigation!).getAllByRole("tab")[0];
+        await expect(tab.querySelector("svg")).not.toBeNull();
+        await expect(tab.getBoundingClientRect().left).toBeGreaterThanOrEqual(
+          content.getBoundingClientRect().left + 15,
+        );
+        await expect(getComputedStyle(tab).fontWeight).toBe("600");
+      }
     }
   }}
 />
@@ -187,18 +192,17 @@
     await expect(
       canvas.queryByText("Choose how jj-store looks and feels."),
     ).toBeNull();
-    const navigation = canvas.getByRole("navigation", {
-      name: "Settings page navigation",
-    });
-    const theme = canvas.getByRole("heading", { name: "Theme" });
-    await expect(
-      theme.getBoundingClientRect().top -
-        navigation.getBoundingClientRect().bottom,
-    ).toBeGreaterThanOrEqual(16);
-    await expect(
-      theme.getBoundingClientRect().top -
-        navigation.getBoundingClientRect().bottom,
-    ).toBeLessThan(24);
+    await expect(canvas.getByRole("tab", { name: "Theme" })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    const card = canvas.getByRole("region", { name: "Theme" });
+    const header = card.querySelector(".store-settings-card__header")!;
+    await expect(header).toContainElement(
+      canvas.getByRole("heading", { name: "Theme" }),
+    );
+    await expect(getComputedStyle(header).borderBottomWidth).toBe("1px");
+    await expect(card.querySelector(".appearance-card")).not.toBeNull();
   }}
 />
 

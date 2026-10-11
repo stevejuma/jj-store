@@ -1,7 +1,7 @@
 <script lang="ts">
   import StoreSettingsIcon from "./StoreSettingsIcon.svelte";
   import { settingsRowIcons } from "./settings-row-icons.js";
-  import { onDestroy, type Component } from "svelte";
+  import { onDestroy, type Component, type Snippet } from "svelte";
   import {
     settingsPresentation,
     type SettingsPresentation,
@@ -16,6 +16,7 @@
     copyLabel = label,
     copyable = false,
     value,
+    children,
     display,
     emptyLabel = "Unavailable",
     description,
@@ -32,7 +33,8 @@
     label: string;
     copyLabel?: string;
     copyable?: boolean;
-    value: string | number | bigint | null | undefined;
+    value?: string | number | bigint | null | undefined;
+    children?: Snippet;
     display?: string;
     emptyLabel?: string;
     description?: string;
@@ -48,7 +50,7 @@
   } = $props();
   const inheritedPresentation = settingsPresentation();
   const compact = $derived(
-    (presentation ?? inheritedPresentation.value) === "repository",
+    (presentation ?? inheritedPresentation.value) !== "default",
   );
   const RowIcon = $derived(Icon ?? settingsRowIcons[label]);
   const text = $derived(value == null ? "" : String(value));
@@ -108,7 +110,9 @@
       data-tone={tone}
       role={live}
       title={canCopy && text ? text : undefined}
-      >{text ? (display ?? text) : emptyLabel}</span
+      >{#if children}{@render children()}{:else}{text
+          ? (display ?? text)
+          : emptyLabel}{/if}</span
     >
     {#if text && canCopy}
       <span class="store-readonly-row__actions">

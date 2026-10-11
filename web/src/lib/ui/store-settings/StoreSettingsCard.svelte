@@ -6,6 +6,7 @@
   import "./repository-settings.css";
   let {
     id,
+    label,
     title,
     description,
     Icon,
@@ -15,6 +16,7 @@
     repositoryOnly = false,
   }: {
     id: string;
+    label?: string;
     title: string;
     description?: string;
     Icon?: Component;
@@ -28,19 +30,20 @@
   const presentation = settingsPresentation();
 </script>
 
-{#if presentation.value === "repository" && layout === "page"}
+{#if presentation.value !== "default" && layout === "page"}
   <div class="store-settings__content-heading">
     <h1 {id}>{title}</h1>
     {#if description}<p>{description}</p>{/if}
   </div>
   {@render children()}
-{:else if presentation.value === "repository"}
+{:else if presentation.value !== "default"}
   <Card.Root
     size="sm"
     style="--card-spacing: 0"
     class="store-settings__section store-settings-card"
     role="region"
-    aria-labelledby={id}
+    aria-label={label}
+    aria-labelledby={label ? undefined : id}
   >
     <div class="store-settings-card__header">
       <Card.Header>
@@ -62,7 +65,11 @@
 {:else if repositoryOnly}
   {@render children()}
 {:else}
-  <section class="store-settings__section" aria-labelledby={id}>
+  <section
+    class="store-settings__section"
+    aria-label={label}
+    aria-labelledby={label ? undefined : id}
+  >
     <header class="store-settings__section-heading">
       <div>
         <h2 {id}>{title}</h2>

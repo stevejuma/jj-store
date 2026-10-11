@@ -5,15 +5,18 @@
   import ChevronRightIcon from "@lucide/svelte/icons/chevron-right";
   let {
     label = "Advanced",
+    description,
     open = $bindable(false),
     inset = true,
     children,
   }: {
     label?: string;
+    description?: string;
     open?: boolean;
     inset?: boolean;
     children: Snippet;
   } = $props();
+  const descriptionId = $props.id();
 </script>
 
 <Collapsible.Root class="store-settings-disclosure" bind:open>
@@ -23,9 +26,17 @@
         {...props}
         type="button"
         variant="ghost"
+        aria-label={label}
+        aria-describedby={description ? descriptionId : undefined}
         class="store-settings-disclosure__trigger"
       >
-        <span>{label}</span>
+        <span class="store-settings-disclosure__label">
+          <span>{label}</span>
+          {#if description}<span
+              id={descriptionId}
+              class="store-settings-disclosure__description">{description}</span
+            >{/if}
+        </span>
         <ChevronRightIcon data-icon="inline-end" aria-hidden="true" />
       </Button>
     {/snippet}
@@ -45,6 +56,18 @@
 </Collapsible.Root>
 
 <style>
+  .store-settings-disclosure__label {
+    display: grid;
+    gap: 0.25rem;
+    min-width: 0;
+    text-align: start;
+    white-space: normal;
+  }
+  .store-settings-disclosure__description {
+    color: var(--muted-foreground);
+    font-size: var(--community-text-secondary);
+    font-weight: 400;
+  }
   :global(.store-settings-disclosure) {
     min-width: 0;
   }

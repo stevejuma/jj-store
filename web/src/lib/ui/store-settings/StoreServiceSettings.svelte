@@ -1,4 +1,6 @@
 <script lang="ts">
+  import StoreSettingsCard from "./StoreSettingsCard.svelte";
+  import SectionIcon from "@lucide/svelte/icons/server";
   import * as Tabs from "@lapismd/design-core/shadcn/tabs";
   import StoreSettingsPage from "./StoreSettingsPage.svelte";
   import StoreConfigurationEditor from "./StoreConfigurationEditor.svelte";
@@ -28,8 +30,11 @@
   onRefresh={controller.configuration?.observe}
 >
   <Tabs.Content value="overview">
-    <section class="store-settings__section" aria-labelledby="service-status">
-      <header><h2 id="service-status">Service status</h2></header>
+    <StoreSettingsCard
+      id="service-status"
+      title="Service status"
+      Icon={SectionIcon}
+    >
       <dl class="store-settings__rows">
         <StoreReadOnlyRow
           label="Access mode"
@@ -52,7 +57,7 @@
           value={view.status.refreshAvailable ? "Updating…" : "Current"}
         />
       </dl>
-    </section>
+    </StoreSettingsCard>
 
     {#if view.accessMode === "local_trusted"}<StoreLocalFolders
         {controller}

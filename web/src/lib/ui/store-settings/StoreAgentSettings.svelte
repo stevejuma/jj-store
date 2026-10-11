@@ -64,9 +64,3 @@
     />
   {/if}
 </StoreSettingsPage>
-
-<style>
-  .store-agent-settings-runtimes :global(.store-settings__section-heading) {
-    padding-block: 0.5rem;
-  }
-</style>

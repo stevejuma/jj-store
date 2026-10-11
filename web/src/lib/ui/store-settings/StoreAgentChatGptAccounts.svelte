@@ -1,4 +1,7 @@
 <script lang="ts">
+  import StoreSettingsFooter from "./StoreSettingsFooter.svelte";
+  import StoreSettingsCard from "./StoreSettingsCard.svelte";
+  import SectionIcon from "@lucide/svelte/icons/shield-check";
   import { onMount } from "svelte";
   import * as Field from "@lapismd/design-core/shadcn/field";
   import { Button } from "@lapismd/design-core/shadcn/button";
@@ -15,16 +18,16 @@
   );
 </script>
 
-<section class="store-settings__section" aria-labelledby={`${id}-accounts`}>
-  <header class="store-settings__section-heading">
-    <div>
-      <h2 id={`${id}-accounts`}>ChatGPT accounts</h2>
-      <p>Connect your ChatGPT plan and choose an account for each JJ Agent.</p>
-    </div>
-  </header>
-  <Field.Group class="community-settings__option-group">
+<StoreSettingsCard
+  id={`${id}-accounts`}
+  title="ChatGPT accounts"
+  Icon={SectionIcon}
+  description="Connect your ChatGPT plan and choose an account for each JJ Agent."
+>
+  <Field.Group class="store-settings__editable-rows">
     {#each accounts.value?.accounts ?? [] as account (account.id)}
       <StoreWorkField
+        class="store-settings__option-row"
         label={account.email ?? account.label}
         description={account.label}
       >
@@ -36,38 +39,36 @@
             : "Signed out"}</span
         >
       </StoreWorkField>
-      <div
-        class="store-settings__action-row store-settings__action-row--full-width"
-      >
-        <p>Account {account.id.slice(0, 8)}. Shared plan limits apply.</p>
-        <div class="store-settings__actions store-settings__actions--wrapping">
-          <Button
+      <StoreSettingsFooter>
+        {#snippet description()}<p>
+            Account {account.id.slice(0, 8)}. Shared plan limits apply.
+          </p>{/snippet}
+
+        <Button
+          variant="outline"
+          disabled={accounts.busy ||
+            !!accounts.pending ||
+            authorizing.some((a) => a.account === account.id)}
+          onclick={() => accounts.connect(account.id)}>Reconnect</Button
+        >
+        {#if account.connected}<Button
             variant="outline"
-            disabled={accounts.busy ||
-              !!accounts.pending ||
-              authorizing.some((a) => a.account === account.id)}
-            onclick={() => accounts.connect(account.id)}>Reconnect</Button
-          >
-          {#if account.connected}<Button
-              variant="outline"
-              disabled={accounts.busy || !!accounts.pending}
-              onclick={() => accounts.signOut(account.id)}>Sign out</Button
-            >{/if}
-        </div>
-      </div>
+            disabled={accounts.busy || !!accounts.pending}
+            onclick={() => accounts.signOut(account.id)}>Sign out</Button
+          >{/if}
+      </StoreSettingsFooter>
     {/each}
     {#each authorizing as attempt (attempt.id)}
-      <div
-        class="store-settings__action-row store-settings__action-row--full-width"
-        role="status"
-      >
-        <p>Complete sign-in in your browser.</p>
+      <StoreSettingsFooter>
+        {#snippet description()}<p>
+            Complete sign-in in your browser.
+          </p>{/snippet}
         <Button
           variant="outline"
           disabled={accounts.busy || !!accounts.pending}
           onclick={() => accounts.cancel(attempt.id)}>Cancel sign-in</Button
         >
-      </div>
+      </StoreSettingsFooter>
     {/each}
     {#each accounts.value?.attempts.filter((a) => a.error) ?? [] as attempt (attempt.id)}
       <StoreWorkField label="Connection status"
@@ -80,59 +81,56 @@
         ></StoreWorkField
       >
     {/each}
-    <div
-      class="store-settings__action-row store-settings__action-row--full-width"
-    >
-      <p>
-        {accounts.value?.supported === false
-          ? "ChatGPT plan connections require local macOS."
-          : "Usage counts toward your eligible ChatGPT subscription."}
-      </p>
-      <div class="store-settings__actions store-settings__actions--wrapping">
-        <Button
-          disabled={!accounts.value?.supported ||
-            accounts.busy ||
-            !!accounts.pending}
-          onclick={() => accounts.connect()}>Continue with ChatGPT</Button
-        >
-        <Button
-          variant="outline"
-          disabled={accounts.busy}
-          onclick={() => accounts.refresh()}>Check accounts</Button
-        >
-        <a
-          class="chatgpt-usage"
-          data-ui-component="button"
-          data-slot="button"
-          data-variant="outline"
-          data-size="default"
-          href="https://chatgpt.com/settings/usage"
-          target="_blank"
-          rel="noopener noreferrer">Manage usage</a
-        >
-      </div>
-    </div>
-    {#if accounts.pending}<div
-        class="store-settings__action-row store-settings__action-row--full-width"
+    <StoreSettingsFooter>
+      {#snippet description()}<p>
+          {accounts.value?.supported === false
+            ? "ChatGPT plan connections require local macOS."
+            : "Usage counts toward your eligible ChatGPT subscription."}
+        </p>{/snippet}
+
+      <Button
+        variant="outline"
+        disabled={accounts.busy}
+        onclick={() => accounts.refresh()}>Check accounts</Button
       >
-        <p>The connection request needs checking.</p>
+      <a
+        class="chatgpt-usage"
+        data-ui-component="button"
+        data-slot="button"
+        data-variant="outline"
+        data-size="default"
+        href="https://chatgpt.com/settings/usage"
+        target="_blank"
+        rel="noopener noreferrer">Manage usage</a
+      >
+      <Button
+        disabled={!accounts.value?.supported ||
+          accounts.busy ||
+          !!accounts.pending}
+        onclick={() => accounts.connect()}>Continue with ChatGPT</Button
+      >
+    </StoreSettingsFooter>
+    {#if accounts.pending}<StoreSettingsFooter>
+        {#snippet description()}<p>
+            The connection request needs checking.
+          </p>{/snippet}
         <Button
           variant="outline"
           disabled={accounts.busy}
           onclick={() => accounts.retry()}>Check connection request</Button
         >
-      </div>{/if}
+      </StoreSettingsFooter>{/if}
   </Field.Group>
   <StoreNotice
     noticeKey="agent-chatgpt-accounts"
     title="ChatGPT connection needs attention"
     message={accounts.error}
   />
-</section>
+</StoreSettingsCard>
 
 <style>
   .chatgpt-usage {
-    flex: 0 0 10rem;
+    flex: none;
     max-width: 100%;
   }
 </style>

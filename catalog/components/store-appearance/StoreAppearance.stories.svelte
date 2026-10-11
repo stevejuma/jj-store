@@ -83,13 +83,15 @@
     await expect(
       c.queryByText("Choose how jj-store looks and feels."),
     ).toBeNull();
+    await expect(c.getByRole("tab", { name: "Theme" })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
     await expect(
-      Array.from(
-        c
-          .getByRole("navigation", { name: "Settings page navigation" })
-          .querySelector(".store-application__tab-root")!.children,
-      ).find((child) => !child.hasAttribute("inert")),
-    ).toBe(c.getByRole("heading", { name: "Appearance", level: 1 }));
+      c
+        .getByRole("region", { name: "Theme" })
+        .querySelector(".store-settings-card__header"),
+    ).not.toBeNull();
     await expect(c.queryByRole("button", { name: "Back to app" })).toBeNull();
     await userEvent.click(c.getByRole("button", { name: /Theme style,/ }));
     await expect(
@@ -147,6 +149,7 @@
     );
     await userEvent.click(reset);
     await expect(slider).toHaveAttribute("aria-valuenow", "65");
+    await userEvent.click(c.getByRole("tab", { name: "Preferences" }));
     await userEvent.click(c.getByRole("radio", { name: "Larger" }));
     await userEvent.click(c.getByRole("radio", { name: "Spacious" }));
     await userEvent.click(c.getByRole("radio", { name: "Rich" }));
@@ -167,6 +170,10 @@
     await expect(
       c.getByText("https://example.com/code", { exact: true }),
     ).toBeVisible();
+    await userEvent.click(c.getByRole("tab", { name: "Theme" }));
+    await expect(
+      c.queryByRole("region", { name: "Preferences" }),
+    ).not.toBeInTheDocument();
     await userEvent.click(c.getByRole("radio", { name: "Light" }));
     await expect(
       c.getAllByRole("button", { name: /Use .* theme/ }),
@@ -188,6 +195,26 @@
   name="Preview and keyboard selection"
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
+    const theme = c.getByRole("tab", { name: "Theme" });
+    theme.focus();
+    await userEvent.keyboard("{ArrowRight}{Enter}");
+    await expect(c.getByRole("tab", { name: "Preferences" })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+    const linkCard = c.getByRole("region", { name: "Link previews" });
+    const threadCard = c.getByRole("region", { name: "Thread layout" });
+    const preferences = c.getByRole("region", { name: "Preferences" });
+    await expect(preferences).not.toContainElement(linkCard);
+    await expect(preferences).not.toContainElement(threadCard);
+    await expect(linkCard.parentElement).toBe(preferences.parentElement);
+    await expect(threadCard.parentElement).toBe(preferences.parentElement);
+    await expect(linkCard).toContainElement(
+      c.getByRole("radiogroup", { name: "Link previews" }),
+    );
+    await expect(threadCard).toContainElement(
+      c.getByRole("radiogroup", { name: "Thread layout" }),
+    );
     const before = saved(canvasElement);
     await userEvent.hover(c.getByRole("radio", { name: "Smaller" }));
     await waitFor(() =>

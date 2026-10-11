@@ -1,14 +1,16 @@
 <script lang="ts">
+  import StoreSettingsCard from "./StoreSettingsCard.svelte";
+  import SectionIcon from "@lucide/svelte/icons/folder";
   import type { Model } from "../../api/client.js";
   import { captureProfiles } from "../../controller/capture-types.js";
   let { value }: { value: Model<"CaptureStatus"> } = $props();
 </script>
 
-<section
-  class="store-settings__section"
-  aria-labelledby="capture-locations-heading"
+<StoreSettingsCard
+  id="capture-locations-heading"
+  title="Harness locations"
+  Icon={SectionIcon}
 >
-  <header><h2 id="capture-locations-heading">Harness locations</h2></header>
   <dl class="store-settings__rows">
     {#each value.runtime?.harnesses ?? [] as harness (harness.profile)}
       <div>
@@ -36,4 +38,4 @@
         </dd>
       </div>{/each}
   </dl>
-</section>
+</StoreSettingsCard>

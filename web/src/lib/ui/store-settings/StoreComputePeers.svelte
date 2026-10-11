@@ -1,4 +1,7 @@
 <script lang="ts">
+  import StoreSettingsFooter from "./StoreSettingsFooter.svelte";
+  import StoreSettingsCard from "./StoreSettingsCard.svelte";
+  import SectionIcon from "@lucide/svelte/icons/network";
   import * as Field from "@lapismd/design-core/shadcn/field";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { Input } from "@lapismd/design-core/shadcn/input";
@@ -52,10 +55,11 @@
 </script>
 
 {#if draft}
-  <section class="store-settings__section" aria-labelledby={`${id}-sharing`}>
-    <header class="store-settings__section-heading">
-      <h2 id={`${id}-sharing`}>Shared compute</h2>
-    </header>
+  <StoreSettingsCard
+    id={`${id}-sharing`}
+    title="Shared compute"
+    Icon={SectionIcon}
+  >
     <div class="store-settings__rows">
       <dl class="store-settings__summary-rows">
         <StoreReadOnlyRow
@@ -120,20 +124,19 @@
       </Field.Group>
     </div>
     {#each Object.entries(draft.peers) as [identity, peer] (identity)}
-      <div class="store-settings__action-row">
-        <div>
-          <strong>{peer.name}</strong>
-          <p class="store-compute-peer-identity">{identity}</p>
-        </div>
-        <div class="store-settings__actions">
-          <Button
-            variant="outline"
-            disabled={blocked}
-            onclick={() => management?.command({ action: "revoke", identity })}
-            >Unpair</Button
-          >
-        </div>
-      </div>
+      <StoreSettingsFooter>
+        {#snippet description()}<div>
+            <strong>{peer.name}</strong>
+            <p class="store-compute-peer-identity">{identity}</p>
+          </div>{/snippet}
+
+        <Button
+          variant="outline"
+          disabled={blocked}
+          onclick={() => management?.command({ action: "revoke", identity })}
+          >Unpair</Button
+        >
+      </StoreSettingsFooter>
     {/each}
     <div class="store-settings__rows">
       <Field.Group class="store-settings__editable-rows">
@@ -165,22 +168,21 @@
         </StoreWorkField>
       </Field.Group>
     </div>
-    <div class="store-settings__action-row">
-      <div>
-        <strong>Pair a trusted machine</strong>
-        <p>Verify the machine identity before granting inference access.</p>
-        {#if validation}<Field.Error id={`${id}-validation`}
-            >{validation}</Field.Error
-          >{/if}
-      </div>
-      <div class="store-settings__actions">
-        <Button
-          variant="outline"
-          disabled={blocked || !peerName || !invitation}
-          onclick={pair}>Pair machine</Button
-        >
-      </div>
-    </div>
+    <StoreSettingsFooter>
+      {#snippet description()}<div>
+          <strong>Pair a trusted machine</strong>
+          <p>Verify the machine identity before granting inference access.</p>
+          {#if validation}<Field.Error id={`${id}-validation`}
+              >{validation}</Field.Error
+            >{/if}
+        </div>{/snippet}
+
+      <Button
+        variant="outline"
+        disabled={blocked || !peerName || !invitation}
+        onclick={pair}>Pair machine</Button
+      >
+    </StoreSettingsFooter>
     <div class="store-settings__rows">
       <Field.Group class="store-settings__editable-rows">
         <StoreSettingsDisclosure>
@@ -207,7 +209,7 @@
         </StoreSettingsDisclosure>
       </Field.Group>
     </div>
-  </section>
+  </StoreSettingsCard>
 {/if}
 
 <style>

@@ -20,9 +20,7 @@
         .closest(".store-settings__rows"),
     ).not.toBeNull();
     await expect(
-      within(
-        c.getByRole("navigation", { name: "Settings page navigation" }),
-      ).getByRole("button", { name: "Refresh storage" }),
+      c.getByRole("button", { name: "Refresh storage" }),
     ).toHaveTextContent("");
     c.getByRole("tab", { name: "Overview" }).focus();
     await userEvent.keyboard("{ArrowRight}");

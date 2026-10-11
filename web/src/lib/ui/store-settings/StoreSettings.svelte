@@ -11,7 +11,6 @@
   import StoreAgentSettings from "./StoreAgentSettings.svelte";
   import StoreServiceSettings from "./StoreServiceSettings.svelte";
   import type { StoreSettingsSection } from "./model.js";
-  import StoreSettingsPage from "./StoreSettingsPage.svelte";
 
   let {
     controller,
@@ -50,11 +49,13 @@
 </script>
 
 <AppShell.Body layout="regions" label="Store settings">
-  <AppShell.Body.Content label="Settings content">
+  <div
+    class="store-global-settings-body"
+    role="region"
+    aria-label="Settings content"
+  >
     {#if section === "appearance"}
-      <StoreSettingsPage section="appearance"
-        ><StoreAppearance /></StoreSettingsPage
-      >
+      <StoreAppearance />
     {:else if section === "service"}
       <StoreServiceSettings {controller} />
     {:else if section === "agents"}
@@ -78,5 +79,16 @@
     {:else if section === "compute"}
       <StoreComputeSettings management={controller.execution?.compute} />
     {/if}
-  </AppShell.Body.Content>
+  </div>
 </AppShell.Body>
+
+<style>
+  .store-global-settings-body {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+  }
+</style>

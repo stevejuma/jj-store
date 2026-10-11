@@ -1,4 +1,6 @@
 <script lang="ts">
+  import StoreSettingsCard from "../store-settings/StoreSettingsCard.svelte";
+  import SectionIcon from "@lucide/svelte/icons/palette";
   import SunMoon from "@lucide/svelte/icons/sun-moon";
   import Sun from "@lucide/svelte/icons/sun";
   import Moon from "@lucide/svelte/icons/moon";
@@ -52,9 +54,8 @@
   );
 </script>
 
-<section class="appearance-group" aria-label="Theme">
-  <h2>Theme</h2>
-  <div class="appearance-card">
+<StoreSettingsCard id="appearance-theme" title="Theme" Icon={SectionIcon}>
+  <div class="appearance-card appearance-card--settings">
     <AppearanceRow
       title="Color mode"
       description="Follow your system or choose a light or dark appearance."
@@ -159,4 +160,4 @@
         /></AppearanceRow
       >{/if}
   </div>
-</section>
+</StoreSettingsCard>

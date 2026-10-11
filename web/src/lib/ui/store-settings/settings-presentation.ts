@@ -1,6 +1,6 @@
 import { getContext, setContext } from "svelte";
 
-export type SettingsPresentation = "default" | "repository";
+export type SettingsPresentation = "default" | "repository" | "global";
 const key = Symbol("store-settings-presentation");
 type PresentationOwner = { readonly value: SettingsPresentation };
 

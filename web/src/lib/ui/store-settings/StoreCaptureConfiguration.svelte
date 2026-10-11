@@ -1,12 +1,19 @@
 <script lang="ts">
+  import StoreSettingsFooter from "./StoreSettingsFooter.svelte";
   import * as Field from "@lapismd/design-core/shadcn/field";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { Switch } from "@lapismd/design-core/shadcn/switch";
-  import { Input } from "@lapismd/design-core/shadcn/input";
+  import StoreSettingsCard from "./StoreSettingsCard.svelte";
+  import StoreReadOnlyRow from "./StoreReadOnlyRow.svelte";
+  import StoreNumericSettingRow from "./StoreNumericSettingRow.svelte";
+  import { secondsUnits, bytesUnits, countUnits } from "./numeric-setting.js";
+  import ActivityIcon from "@lucide/svelte/icons/activity";
+  import SlidersIcon from "@lucide/svelte/icons/sliders-horizontal";
+  import BotIcon from "@lucide/svelte/icons/bot";
   import StoreCaptureHarnessConfiguration from "./StoreCaptureHarnessConfiguration.svelte";
   import StoreSettingsNotice from "./StoreSettingsNotice.svelte";
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
-  import StoreCaptureLoading from "./StoreCaptureLoading.svelte";
+  import StoreSettingsSkeleton from "./StoreSettingsSkeleton.svelte";
   import type { CaptureManagement } from "../../controller/capture-types.js";
   import type { CaptureDraft } from "../../controller/capture-configuration.js";
   let { management }: { management: CaptureManagement } = $props();
@@ -50,18 +57,12 @@
   ];
 </script>
 
-<section
-  class="store-settings__section"
-  aria-labelledby="capture-configuration-title"
+<StoreSettingsCard
+  id="capture-configuration-title"
+  title="Capture configuration"
+  layout="page"
+  description="Settings apply to this local installation after the server restarts."
 >
-  <header class="store-settings__section-heading">
-    <div>
-      <h2 id="capture-configuration-title">Capture configuration</h2>
-      <p>
-        Settings apply to this local installation after the server restarts.
-      </p>
-    </div>
-  </header>
   {#if settings.value && settings.draft}
     <form
       onsubmit={(event) => {
@@ -69,25 +70,28 @@
         void management.saveConfiguration();
       }}
     >
-      <Field.Group>
-        <h3 class="store-capture-configuration__heading">Global settings</h3>
-        <div class="store-settings__rows">
-          <dl class="store-settings__summary-rows">
-            <div>
-              <dt>Saved capture</dt>
-              <dd>{settings.value.desired.enabled ? "Enabled" : "Disabled"}</dd>
-            </div>
-            <div>
-              <dt>Currently configured</dt>
-              <dd>
-                {settings.value.effective.enabled
-                  ? "Enabled"
-                  : "Disabled"}{settings.value.restart_required
-                  ? " · Restart required"
-                  : " · Matches saved settings"}
-              </dd>
-            </div>
-          </dl>
+      <Field.Group class="store-settings__form-sections">
+        <StoreSettingsCard
+          id="capture-config-status"
+          title="Capture status"
+          Icon={ActivityIcon}
+        >
+          <dl class="store-settings__rows">
+            <StoreReadOnlyRow
+              label="Saved capture"
+              value={settings.value.desired.enabled ? "Enabled" : "Disabled"}
+            />
+            <StoreReadOnlyRow
+              label="Currently configured"
+              value={`${settings.value.effective.enabled ? "Enabled" : "Disabled"} · ${settings.value.restart_required ? "Restart required" : "Matches saved settings"}`}
+            />
+          </dl></StoreSettingsCard
+        >
+        <StoreSettingsCard
+          id="capture-config-options"
+          title="Capture options"
+          Icon={SlidersIcon}
+        >
           <Field.Group class="store-settings__editable-rows">
             <Field.Field
               orientation="horizontal"
@@ -110,41 +114,30 @@
               />
             </Field.Field>
             {#each limits as f}
-              <Field.Field
-                orientation="responsive"
-                class="store-settings__option-row"
-              >
-                <Field.Content
-                  ><Field.Label for={`capture-${f.key}`}>{f.label}</Field.Label
-                  ><Field.Description id={`capture-${f.key}-help`}
-                    >{f.help}</Field.Description
-                  ></Field.Content
-                >
-                <Input
-                  class="store-settings__input"
-                  id={`capture-${f.key}`}
-                  aria-describedby={`capture-${f.key}-help`}
-                  type="number"
-                  min="1"
-                  max={f.max}
-                  step="1"
-                  required
-                  value={settings.draft[f.key]}
-                  disabled={busy}
-                  oninput={(event) =>
-                    management.configure({
-                      [f.key]: event.currentTarget.value,
-                    })}
-                />
-              </Field.Field>
+              <StoreNumericSettingRow
+                id={`capture-${f.key}`}
+                label={f.label}
+                description={f.help}
+                min={1}
+                max={f.max}
+                disabled={busy}
+                value={settings.draft[f.key]}
+                units={f.key === "interval"
+                  ? secondsUnits
+                  : f.key === "bytes"
+                    ? bytesUnits
+                    : countUnits(f.key === "readers" ? "readers" : "sources")}
+                onValueChange={(value) =>
+                  management.configure({ [f.key]: value })}
+              />
             {/each}
           </Field.Group>
-        </div>
-        <h3 class="store-capture-configuration__heading">Harnesses</h3>
-        <div
-          class="store-settings__rows"
-          role="group"
-          aria-label="Harness configuration"
+        </StoreSettingsCard>
+        <StoreSettingsCard
+          id="capture-config-harnesses"
+          title="Harnesses"
+          Icon={BotIcon}
+          label="Harness configuration"
         >
           <StoreCaptureHarnessConfiguration {management} {busy} />
           <StoreCaptureHarnessConfiguration
@@ -157,35 +150,34 @@
             {busy}
             harness="open_code"
           />
-        </div>
-        <div class="store-settings__action-row">
-          <div>
-            <strong>Save configuration</strong>
-            <p>
-              Restart the local server to activate saved changes. In the desktop
-              app, quit and reopen the app. Existing capture history and pause
-              policy are retained.
-            </p>
-          </div>
-          <div class="store-settings__actions">
-            <Button
-              type="submit"
-              disabled={busy || !settings.dirty || settings.conflict}
-              >Save configuration</Button
-            >
-            <Button
-              type="button"
-              variant="outline"
-              disabled={settings.saving ||
-                !settings.dirty ||
-                (!!settings.unknown && !settings.unknownObserved)}
-              onclick={() => management.cancelConfiguration()}
-              >{settings.conflict || settings.unknown
-                ? "Use saved configuration"
-                : "Cancel changes"}</Button
-            >
-          </div>
-        </div>
+        </StoreSettingsCard>
+        <StoreSettingsFooter standalone>
+          {#snippet description()}<div>
+              <strong>Save configuration</strong>
+              <p>
+                Restart the local server to activate saved changes. In the
+                desktop app, quit and reopen the app. Existing capture history
+                and pause policy are retained.
+              </p>
+            </div>{/snippet}
+
+          <Button
+            type="button"
+            variant="outline"
+            disabled={settings.saving ||
+              !settings.dirty ||
+              (!!settings.unknown && !settings.unknownObserved)}
+            onclick={() => management.cancelConfiguration()}
+            >{settings.conflict || settings.unknown
+              ? "Use saved configuration"
+              : "Cancel changes"}</Button
+          >
+          <Button
+            type="submit"
+            disabled={busy || !settings.dirty || settings.conflict}
+            >Save configuration</Button
+          >
+        </StoreSettingsFooter>
       </Field.Group>
     </form>
     {#if settings.validation}<p role="alert">{settings.validation}</p>{/if}
@@ -201,7 +193,15 @@
       >{/if}
   {:else if settings.error}<StoreSettingsNotice
       >Capture configuration is unavailable. Refresh settings to retry.</StoreSettingsNotice
-    >{:else}<StoreCaptureLoading label="Loading capture configuration" />{/if}
+    >{:else}<StoreSettingsSkeleton
+      heading={false}
+      label="Loading capture configuration"
+      cards={[
+        { rows: ["fact", "fact"] },
+        { rows: ["toggle", "numeric", "numeric", "numeric", "numeric"] },
+        { rows: ["input", "input", "input"], actions: 2 },
+      ]}
+    />{/if}
   <StoreNotice
     scope="installation-capture"
     noticeKey="capture-settings-error"
@@ -217,12 +217,4 @@
     severity="info"
     lifetime="timed"
   />
-</section>
-
-<style>
-  .store-capture-configuration__heading {
-    margin: 0;
-    font-size: var(--community-text-body);
-    font-weight: 550;
-  }
-</style>
+</StoreSettingsCard>

@@ -113,21 +113,17 @@ export const captureSettingsLayout = async ({
   ).toBeVisible();
   const refresh = c.getByRole("button", { name: "Refresh capture" });
   await expect(
-    c.getByRole("navigation", { name: "Settings page navigation" }),
+    c.getByRole("heading", { name: "Agents", level: 1 }).parentElement,
   ).toContainElement(refresh);
   await userEvent.click(c.getByRole("tab", { name: "Capture" }));
   const pause = c.getByRole("button", { name: "Pause capture" });
   const rescan = c.getByRole("button", { name: "Rescan capture" });
   const actions = pause.closest(".store-settings__actions")!;
-  await expect(actions.parentElement?.parentElement).toHaveClass(
-    "store-settings__rows",
-  );
-  await expect(getComputedStyle(actions).flexDirection).toBe("column");
-  await expect(pause.getBoundingClientRect().width).toBe(
-    rescan.getBoundingClientRect().width,
-  );
-  await expect(rescan.getBoundingClientRect().top).toBeGreaterThan(
-    pause.getBoundingClientRect().bottom,
+  await expect(actions.parentElement).toHaveClass("store-settings-footer");
+  await expect(getComputedStyle(actions).flexDirection).toBe("row");
+  await expect(getComputedStyle(actions).flexWrap).toBe("wrap");
+  await expect(pause.closest(".store-settings-card")).toBe(
+    rescan.closest(".store-settings-card"),
   );
   await userEvent.click(c.getByRole("tab", { name: "Sources" }));
   const sourceAction = c.getByRole("button", { name: /Import history for/ });

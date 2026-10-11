@@ -335,7 +335,7 @@
     const actions = c
       .getByRole("button", { name: "Cancel changes" })
       .closest(".store-settings__actions")!;
-    await expect(getComputedStyle(actions).flexDirection).toBe("column");
+    await expect(getComputedStyle(actions).flexDirection).toBe("row");
   })}
 />
 <Story
