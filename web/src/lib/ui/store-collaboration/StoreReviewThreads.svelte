@@ -12,6 +12,7 @@
   import CommunityProjectsColumnAlert from "../community-projects/CommunityProjectsColumnAlert.svelte";
   import StoreWorkReviewRow from "../store-work/StoreWorkReviewRow.svelte";
   import StoreWorkEmpty from "../store-work/StoreWorkEmpty.svelte";
+  import StoreContentEmpty from "../store-application/StoreContentEmpty.svelte";
   import StoreCollaborationSkeleton from "./StoreCollaborationSkeleton.svelte";
   import StoreReviewDetail from "./StoreReviewDetail.svelte";
   import StoreReviewDetailSkeleton from "./StoreReviewDetailSkeleton.svelte";
@@ -123,9 +124,9 @@
     {:else if detail}{#key detail.thread.thread_id}<StoreReviewDetail
           {controller}
         />{/key}
-    {:else}<CommunityProjectsColumnAlert
+    {:else}<StoreContentEmpty
+        Icon={GitPullRequestIcon}
         title="Review unavailable"
-        inset="collection"
         description={view.status.error ||
           "The selected review could not be loaded."}
       />{/if}

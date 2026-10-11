@@ -5,6 +5,8 @@
   import MoreIcon from "@lucide/svelte/icons/ellipsis";
   import UsersIcon from "@lucide/svelte/icons/users";
   import RefreshIcon from "@lucide/svelte/icons/refresh-cw";
+  import MessagesIcon from "@lucide/svelte/icons/messages-square";
+  import StoreContentEmpty from "../store-application/StoreContentEmpty.svelte";
   import CommunityInbox from "../community-inbox/CommunityInbox.svelte";
   import CommunitySkeleton from "../community-skeleton/CommunitySkeleton.svelte";
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
@@ -33,6 +35,10 @@
   );
   const detail = $derived(threads?.detail);
   const id = $derived(controller.state.route.threadId);
+  const missingDetail = $derived(
+    !!id && (!detail || detail.thread.value.thread_id !== id),
+  );
+  const unavailable = $derived(missingDetail && threads?.status === "failed");
   const selected = $derived(
     id ? `${controller.state.route.repository}:${id}` : null,
   );
@@ -129,14 +135,17 @@
   <StoreNotice
     noticeKey="thread-inbox"
     title="Thread action needs attention"
-    message={threads?.pending
+    message={threads?.pending || unavailable
       ? ""
       : (threads?.error ?? controller.state.status.error)}
   />
-  {#if id && (!detail || detail.thread.value.thread_id !== id)}
-    {#if threads?.status === "failed"}<p role="status">
-        This Thread is unavailable. {threads.error}
-      </p>{:else}<CommunitySkeleton
+  {#if missingDetail}
+    {#if unavailable}<StoreContentEmpty
+        Icon={MessagesIcon}
+        title="Thread unavailable"
+        description={threads?.error ||
+          "This Thread is unavailable or no longer accessible."}
+      />{:else}<CommunitySkeleton
         layout="messages"
         label="Loading Thread"
         padded

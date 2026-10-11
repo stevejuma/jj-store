@@ -34,6 +34,15 @@ retains its existing placement. General request failures and confirmations use
 toasts without duplicating inline announcements. Actions retain exact command
 identity and never change repository state merely because a toast is dismissed.
 
+Unavailable body content uses the public Design Core shadcn Empty composition
+with a contextual icon, title and description under JST-UI-019. Missing agent
+sessions, unsupported device execution, selected Threads/reviews and workspace
+file previews share this treatment. Loading remains a skeleton, retained content
+stays visible during refresh, and existing navigation, refresh and close
+controls remain reachable. A missing Thread's read error is explained in its
+empty body without repeating the same error in a toast. Contextual field or
+operation failures alongside usable content retain their existing placement.
+
 The application clears protected notification state on session changes and
 teardown. New notification records are independent of transport and DOM;
 optional subscribers receive plain data for a future selective desktop adapter.

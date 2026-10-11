@@ -7,6 +7,8 @@
   import RefreshIcon from "@lucide/svelte/icons/refresh-cw";
   import SessionsIcon from "@lucide/svelte/icons/messages-square";
   import MoreIcon from "@lucide/svelte/icons/ellipsis-vertical";
+  import BotIcon from "@lucide/svelte/icons/bot";
+  import StoreContentEmpty from "../store-application/StoreContentEmpty.svelte";
   import CommunitySkeleton from "../community-skeleton/CommunitySkeleton.svelte";
   import CommunityAgentProcessingControl from "../community-agent-processing-control/CommunityAgentProcessingControl.svelte";
   import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
@@ -87,13 +89,11 @@
     </div>
   </header>
   {#if !available}<div class="agents__grid">{@render sessionsCard()}</div>
-    <div class="agents__empty">
-      <h2>Agent execution unavailable</h2>
-      <p>
-        Local agent management requires an enabled local execution service on
-        this device.
-      </p>
-    </div>
+    <StoreContentEmpty
+      Icon={BotIcon}
+      title="Agent execution unavailable"
+      description="Local agent management requires an enabled local execution service on this device."
+    />
   {:else if !value && !unknown}<div class="agents__grid">
       {@render sessionsCard()}{@render addCard()}<CommunitySkeleton
         layout="gallery"

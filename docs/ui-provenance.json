@@ -2832,6 +2832,10 @@
     {
       "local": "web/src/lib/ui/store-agent-chat/QueuedPromptText.svelte",
       "reason": "Application-authored presentation-only queued prompt preview; reuses the owned diff disclosure styles and retains full captured submission text."
+    },
+    {
+      "local": "web/src/lib/ui/store-application/StoreContentEmpty.svelte",
+      "reason": "Application-authored unavailable-content composition using public Design Core Empty primitives and Lucide icons; no Community source is copied."
     }
   ],
   "desktopAppearance": {

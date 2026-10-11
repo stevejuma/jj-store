@@ -371,6 +371,11 @@ presentation only; menu actions, selection and execution requests are unchanged.
 
 ## ChatGPT plan accounts
 
+E-UI-UNAVAILABLE-001 confirms JST-API-001 unchanged: unavailable session,
+Thread/review and workspace-file bodies now use icon-bearing Empty presentation.
+Selection, loading, refresh, close, authorization, request identity and retained
+content contracts are unchanged. No API schema or generated transport changes.
+
 JST-API-001 adds LocalTrusted Admin GET /v1/local/agents/chatgpt and POST
 /v1/local/agents/chatgpt for sanitized account/authorization state and explicit
 connect, cancel and sign-out commands. The application opens its fixed system

@@ -1,5 +1,10 @@
 # Change map
 
+E-UI-UNAVAILABLE-001 retains JST-UI-015/019 ownership: the application-authored
+unavailable-content composition uses released Design Core Empty primitives.
+Maintained Community derivations keep their recorded source attribution; no
+Community source or catalog runtime dependency is introduced.
+
 E-AGENT-STATE-001 retains JST-GOV-002/008 ownership: the shared agent footer and
 history-state helpers are application-authored production components declared in
 provenance. Community and Design Core remain inspected presentation references;

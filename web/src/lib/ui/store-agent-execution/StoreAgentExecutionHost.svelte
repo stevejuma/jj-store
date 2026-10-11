@@ -11,6 +11,9 @@
   import CommunityAgents from "../community-agents/CommunityAgents.svelte";
   import CommunityInbox from "../community-inbox/CommunityInbox.svelte";
   import CommunitySkeleton from "../community-skeleton/CommunitySkeleton.svelte";
+  import StoreContentEmpty from "../store-application/StoreContentEmpty.svelte";
+  import BotIcon from "@lucide/svelte/icons/bot";
+  import MessagesIcon from "@lucide/svelte/icons/messages-square";
   import StoreAgentLauncher from "./StoreAgentLauncher.svelte";
   import StoreAgentConversation from "./StoreAgentConversation.svelte";
   import StoreAgentChatActions from "./StoreAgentChatActions.svelte";
@@ -175,9 +178,11 @@
         session={route.agentView === "session" ? chat : undefined}
         agentId={route.setupId ?? undefined}
       />{/snippet}
-    {#if !manager.available()}<p role="status">
-        Agent execution is unavailable on this device.
-      </p>
+    {#if !manager.available()}<StoreContentEmpty
+        Icon={BotIcon}
+        title="Agent execution unavailable"
+        description="Agent execution is unavailable on this device."
+      />
     {:else if route.agentView === "new"}<StoreAgentLauncher {manager} />
     {:else if manager.session && manager.session.id === route.executionSessionId}<StoreAgentConversation
         {controller}
@@ -189,9 +194,11 @@
         padded
         label="Loading session"
       />
-    {:else}<p role="status">
-        This session is unavailable or no longer accessible.
-      </p>{/if}
+    {:else}<StoreContentEmpty
+        Icon={MessagesIcon}
+        title="Session unavailable"
+        description="This session is unavailable or no longer accessible."
+      />{/if}
     {#if route.agentView !== "session"}<StoreAgentRequestRecovery
         {manager}
       />{/if}
@@ -216,9 +223,11 @@
           onDelete={(agent) => (deleting = agent)}
           onRefresh={() => void manager.refresh()}
         />
-      {:else if !manager.available()}<p role="status">
-          Agent execution is unavailable on this device.
-        </p>
+      {:else if !manager.available()}<StoreContentEmpty
+          Icon={BotIcon}
+          title="Agent execution unavailable"
+          description="Agent execution is unavailable on this device."
+        />
       {/if}
       <StoreAgentRequestRecovery {manager} />
     </AppShell.Body.Content>

@@ -4,6 +4,8 @@
   import StoreViewTabs from "../store-application/StoreViewTabs.svelte";
   import CommunityDiffControls from "../community-diff-controls/CommunityDiffControls.svelte";
   import FileIcon from "@lucide/svelte/icons/file";
+  import FileWarningIcon from "@lucide/svelte/icons/file-warning";
+  import StoreContentEmpty from "../store-application/StoreContentEmpty.svelte";
   import XIcon from "@lucide/svelte/icons/x";
   import MessageSquarePlus from "@lucide/svelte/icons/message-square-plus";
   import {
@@ -89,9 +91,13 @@
         path={path ?? "workspace file"}
         isMarkdown={isMarkdownRepositoryPath(path ?? "")}
       />
-    {:else if browser.fileError || file?.unavailable}<p role="status">
-        {browser.fileError || file?.unavailable}
-      </p>
+    {:else if browser.fileError || file?.unavailable}<StoreContentEmpty
+        Icon={FileWarningIcon}
+        title="File unavailable"
+        description={browser.fileError ||
+          file?.unavailable ||
+          "The selected file could not be loaded."}
+      />
     {:else if file}
       {#if changed && browser.presentation === "diff"}
         <FileDiff
