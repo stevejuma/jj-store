@@ -1,5 +1,10 @@
 # Change map
 
+E-PROJECT-AGENTS-001 retains JST-UI-015 ownership: repository session selection
+and row composition are application-authored. They reuse maintained avatar/row
+presentation and exact admitted associations without a Community runtime or
+catalog dependency.
+
 E-UI-UNAVAILABLE-001 retains JST-UI-015/019 ownership: the application-authored
 unavailable-content composition uses released Design Core Empty primitives.
 Maintained Community derivations keep their recorded source attribution; no

@@ -257,3 +257,15 @@ pill tabs, keeping a leading prefix and trailing More menu as the available
 width shrinks. Search and filter actions retain their existing semantics and
 panel relationships; opening search fills the navigation row. This presentation
 adds no discovery, read, polling or mutation work.
+
+Interactive sessions appear as avatar rows inside their authorized repository's
+existing Agents collection, without a separate recent-runs section. Explicit
+code bindings determine the groups, including each accessible binding of a
+multi-repository session; legacy unbound sessions use their primary repository.
+The unfiltered installation view also includes accessible repositories with only
+interactive sessions, without adding captured-session reads. Project/home/code
+filters retain their existing scope. Group counts include interactive rows;
+exact admitted recorded aliases render once. Avatar presence carries connection
+state without a duplicate Online badge. Row activation retains the existing
+exact interactive-session navigation, and recorded rows retain their response
+selection, paging and availability feedback.

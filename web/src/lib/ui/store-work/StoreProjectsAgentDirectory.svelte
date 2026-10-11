@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { onMount } from "svelte";
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import type { StoreController } from "../../controller/contracts.js";
   import { agentMember } from "../../collaboration/presentation.js";
@@ -10,6 +11,10 @@
   import CommunityProjectsVirtualRows from "../community-projects/CommunityProjectsVirtualRows.svelte";
   import StoreCollaborationSkeleton from "../store-collaboration/StoreCollaborationSkeleton.svelte";
   import StoreAgentSessionRow from "../store-collaboration/StoreAgentSessionRow.svelte";
+  import StoreAgentExecutionDirectory from "../store-agent-execution/StoreAgentExecutionDirectory.svelte";
+  import { repositoryExecutionSessions } from "../store-agent-execution/repository-sessions.js";
+  import { managedRecordedAgent } from "../../collaboration/managed-agent.js";
+  import type { ProjectAgentHome } from "../../controller/projects-agents.svelte.js";
   let {
     controller,
     onSelect,
@@ -43,6 +48,35 @@
     ),
   );
   const query = $derived((route.workQuery ?? "").trim().toLowerCase());
+  const execution = $derived(controller.execution);
+  const homes = $derived.by(() => {
+    const homes: ProjectAgentHome[] = [...hub.agents.homes];
+    if (
+      !execution?.available() ||
+      route.projectId ||
+      route.workHome ||
+      route.workRepository
+    )
+      return homes;
+    for (const repository of controller.state.repositories)
+      if (
+        !homes.some((home) => home.repository.id === repository.id) &&
+        repositoryExecutionSessions(execution.value, repository.id).length
+      )
+        homes.push({
+          repository,
+          sessions: [],
+          snapshot: null,
+          cursor: null,
+          loading: false,
+          unsupported: false,
+          error: "",
+        });
+    return homes;
+  });
+  onMount(() => {
+    void execution?.ensure();
+  });
 </script>
 
 <section aria-label="Project agent sessions">
@@ -73,7 +107,7 @@
         onclick={() => hub.restore()}>Load more project links</Button
       >{/if}
   {/each}
-  {#if !hub.loading && !hub.agents.homes.length}<Empty.Root
+  {#if !hub.loading && !homes.length}<Empty.Root
       ><Empty.Header
         ><Empty.Media variant="icon"><BotIcon aria-hidden="true" /></Empty.Media
         ><Empty.Title>No project repositories available</Empty.Title
@@ -83,7 +117,14 @@
         ></Empty.Header
       ></Empty.Root
     >{/if}
-  {#each hub.agents.homes as home (home.repository.id)}
+  {#each homes as home (home.repository.id)}
+    {@const liveCount = execution?.available()
+      ? repositoryExecutionSessions(
+          execution.value,
+          home.repository.id,
+          home.sessions,
+        ).length
+      : 0}
     <section
       aria-label={`Agents in ${home.repository.name}`}
       aria-busy={home.loading}
@@ -91,9 +132,15 @@
       <StoreWorkCollection
         id={`agents:${home.repository.id}`}
         title={home.repository.name}
-        count={home.sessions.length}
+        count={home.sessions.length + liveCount}
         Icon={GitBranchIcon}
       >
+        <StoreAgentExecutionDirectory
+          manager={execution}
+          context={{ repository: home.repository.id }}
+          recorded={home.sessions}
+          {query}
+        />
         {#if home.unsupported}<Empty.Root
             ><Empty.Header
               ><Empty.Media variant="icon"
@@ -144,6 +191,11 @@
             >
               {#snippet row(session)}<StoreAgentSessionRow
                   {session}
+                  managed={managedRecordedAgent(
+                    home.repository.id,
+                    session,
+                    execution?.value?.sessions,
+                  )}
                   collection
                   selectedId={route.workAgentRepository === home.repository.id
                     ? route.agentSessionId
@@ -152,7 +204,7 @@
                 />{/snippet}
             </CommunityProjectsVirtualRows>
           </div>
-          {#if !home.sessions.length && !home.error}<Empty.Root
+          {#if !home.sessions.length && !liveCount && !home.error}<Empty.Root
               ><Empty.Header
                 ><Empty.Media variant="icon"
                   ><BotIcon aria-hidden="true" /></Empty.Media

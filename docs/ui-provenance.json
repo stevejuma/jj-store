@@ -2836,6 +2836,14 @@
     {
       "local": "web/src/lib/ui/store-application/StoreContentEmpty.svelte",
       "reason": "Application-authored unavailable-content composition using public Design Core Empty primitives and Lucide icons; no Community source is copied."
+    },
+    {
+      "local": "web/src/lib/ui/store-agent-execution/repository-sessions.ts",
+      "reason": "Application-authored presentation selection from explicit execution bindings and admitted recorded aliases; no Community source is copied or permission inferred."
+    },
+    {
+      "local": "web/src/lib/ui/store-agent-execution/StoreAgentExecutionDirectory.svelte",
+      "reason": "Application-authored interactive session rows composed from maintained owned avatars and collaboration-row styles; exact navigation consumes existing execution state."
     }
   ],
   "desktopAppearance": {

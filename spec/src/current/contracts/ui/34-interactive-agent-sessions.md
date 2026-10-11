@@ -11,6 +11,9 @@ or the filtered inbox when no session is active. An explicit session selection
 keeps its exact history. Legacy `#/agents/activity?agent=<id>` routes redirect
 to this inbox behavior. Empty history never redirects to launch preparation.
 Existing repository Agents routes retain operation-pinned recorded activity.
+Under JST-UI-015, Repository and Projects Agents collections show bound
+interactive sessions as avatar rows; avatar presence replaces the Online badge.
+Exact session navigation and recorded-source authority remain unchanged.
 
 Community gallery, avatar/presence, editor, navigation, activity and composer
 presentation is copied and maintained under web/src/lib with source revision and

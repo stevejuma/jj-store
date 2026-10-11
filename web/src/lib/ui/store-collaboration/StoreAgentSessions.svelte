@@ -12,10 +12,20 @@
   import StoreAgentSessionRow from "./StoreAgentSessionRow.svelte";
   import StoreAgentExecutionDirectory from "../store-agent-execution/StoreAgentExecutionDirectory.svelte";
   import { managedRecordedAgent } from "../../collaboration/managed-agent.js";
+  import { repositoryExecutionSessions } from "../store-agent-execution/repository-sessions.js";
   import "./store-collaboration.css";
 
   let { controller }: { controller: StoreController } = $props();
   const view = $derived(controller.state);
+  const liveCount = $derived(
+    controller.execution?.available()
+      ? repositoryExecutionSessions(
+          controller.execution.value,
+          view.repository.id,
+          view.agentSessions,
+        ).length
+      : 0,
+  );
   let search = $state("");
   const filtered = $derived(
     view.agentSessions.filter((session) =>
@@ -37,16 +47,18 @@
   aria-busy={view.status.agents === "loading"}
 >
   <ScrollArea type="hover" class="store-agent-sessions__scroll">
-    <StoreAgentExecutionDirectory
-      manager={controller.execution}
-      context={{ repository: view.repository.id }}
-    />
     <StoreWorkCollection
       id="agents"
       title="Agent sessions"
-      count={view.agentSessions.length}
+      count={view.agentSessions.length + liveCount}
       Icon={BotIcon}
     >
+      <StoreAgentExecutionDirectory
+        manager={controller.execution}
+        context={{ repository: view.repository.id }}
+        recorded={view.agentSessions}
+        query={search}
+      />
       {#if view.status.error}
         <CommunityProjectsColumnAlert
           title="Agent activity unavailable"
@@ -57,7 +69,7 @@
       {/if}
       {#if (view.status.connection === "connecting" || view.status.navigation === "loading" || view.status.agents === "loading") && view.agentSessions.length === 0}
         <StoreCollaborationSkeleton label="Loading agent sessions" agents />
-      {:else if view.agentSessions.length === 0}
+      {:else if view.agentSessions.length === 0 && !liveCount}
         <Empty.Root class="store-collaboration__empty">
           <Empty.Header
             ><Empty.Media variant="icon"

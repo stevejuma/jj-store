@@ -371,6 +371,13 @@ presentation only; menu actions, selection and execution requests are unchanged.
 
 ## ChatGPT plan accounts
 
+E-PROJECT-AGENTS-001 confirms JST-API-001 unchanged: repository grouping and
+avatar rows consume existing execution session bindings and exact recorded
+aliases. No scope is granted by presentation; only already accessible repository
+identities can gain a row. Session navigation, captured reads, execution
+commands and publication contracts are unchanged; no transport generation is
+required.
+
 E-UI-UNAVAILABLE-001 confirms JST-API-001 unchanged: unavailable session,
 Thread/review and workspace-file bodies now use icon-bearing Empty presentation.
 Selection, loading, refresh, close, authorization, request identity and retained
