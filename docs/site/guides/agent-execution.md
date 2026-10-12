@@ -22,6 +22,13 @@ providers and credentials stay operator-controlled. Native repositories must
 already exist on that server. M27 records fixture, installed-runtime, real
 storage, desktop and platform acceptance separately.
 
+The isolated `scripts/remote-agents-acceptance.py` harness uses two real RustFS
+installations, freshly built server/UI assets and synthetic credentials. It
+checks gateway freshness, profile/avatar isolation, agent publication,
+revocation and restart recovery, then removes its own data and processes. Its
+deterministic ACP process qualifies integration independently of installed
+providers or shared deployment release.
+
 Prepare the service and tooling, then save the agent configuration you want to
 use.
 

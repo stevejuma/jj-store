@@ -33,6 +33,12 @@ that installation. Appearance remains device-owned. Public selection and
 destinations resume after restart; sign in again because credentials are
 memory-only. Unknown connections require explicit recovery.
 
+The gateway's activity WebSocket uses the registered remote origin and retained
+installation identity. It never forwards the local browser's Origin or local
+authority. Keep the remote `public_url` consistent with its registered address;
+normal Host/Origin, token and repository admission still apply. Replacing the
+installation at an address invalidates the old connection session.
+
 Authenticated servers can opt into operator-owned `[remote_agents]` definitions,
 paired executable paths and per-agent principal allowlists. Repository Write
 grants remain independent. Remote callers select existing native WorkStore homes

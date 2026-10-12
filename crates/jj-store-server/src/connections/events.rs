@@ -41,6 +41,11 @@ impl Manager {
             .as_str()
             .into_client_request()
             .map_err(|_| Error::Invalid)?;
+        // Use the registered remote authority, never the local browser's Origin.
+        request.headers_mut().insert(
+            "origin",
+            connection.origin.parse().map_err(|_| Error::Invalid)?,
+        );
         request.headers_mut().insert(
             "sec-websocket-protocol",
             "jj-store-events-v1".parse().map_err(|_| Error::Invalid)?,

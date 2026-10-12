@@ -96,8 +96,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Documented bounded server preparation for profile and custom emoji sources, retained asset limits, explicit selection saves and unchanged deployment files. Reviewed the final formatted authenticated remote-agent configuration, lifecycle composition, static allowlists and executable/secret references; updated configuration, transport and agent guides with separate qualification gates.",
-      "fingerprint": "fde0665534ef453db778b0d3508229dc0de36d3af0e8c8289a6be140bae99af1"
+      "reason": "Documented bounded server preparation for profile and custom emoji sources, retained asset limits, explicit selection saves and unchanged deployment files. Reviewed the final formatted authenticated remote-agent configuration, lifecycle composition, static allowlists and executable/secret references; updated configuration, transport and agent guides with separate qualification gates. Reviewed the registered remote Origin correction, unchanged admission and installation identity fence; documented actual gateway freshness and the separate real-storage deterministic-ACP acceptance harness.",
+      "fingerprint": "5691581244677b1fd482afbf0027525fa258bb3679aa9cd6588f19345f2ae3ae"
     }
   },
   {

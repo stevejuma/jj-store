@@ -1,4 +1,6 @@
 //! Registered-origin gateway. No browser CORS or LocalTrusted authority upstream.
+#[cfg(test)]
+mod event_tests;
 mod events;
 #[cfg(test)]
 mod tests;

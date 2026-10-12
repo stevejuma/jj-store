@@ -7,6 +7,15 @@ production-App acceptance harness uses deterministic APIs and an isolated Vite
 process, preserving existing services/data. This fixture evidence does not
 qualify installed agents, desktop packaging or real-storage deployment gates.
 
+E-REMOTE-AGENTS-002 adds isolated macOS two-instance real RustFS and cold
+built-App acceptance with synthetic credentials and a deterministic ACP process.
+The application-owned harnesses exercise actual API/Origin admission,
+publication, revocation and restart recovery and own all temporary state/process
+cleanup. The registered-Origin correction retains JST-SEC-009/JST-API-011
+authority; JST-GOV-002/008 ownership and released dependencies remain unchanged.
+Installed providers, Linux real storage and desktop delivery remain separate
+gates.
+
 E-PROJECT-AGENTS-001 retains JST-UI-015 ownership: repository session selection
 and row composition are application-authored. They reuse maintained avatar/row
 presentation and exact admitted associations without a Community runtime or

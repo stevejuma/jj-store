@@ -20,6 +20,12 @@ refused. Source and response bodies, connections and stream lifetimes are
 bounded. Tokens and ephemeral connection handles never enter persisted metadata
 or URLs.
 
+Gateway freshness uses the remote's registered origin for its WebSocket Origin
+header, its retained installation fence and the existing first-frame bearer
+handshake. The local browser's Origin, cookies and LocalTrusted authority are
+never forwarded. Production two-instance acceptance must exercise this admission
+path; a permissive transport fixture cannot qualify it.
+
 Remote agents are disabled by default and configured by operators. Execution is
 for trusted collaborators, not hostile-user OS isolation. Model/tool
 definitions, secrets, installs and machine-wide lifecycle remain

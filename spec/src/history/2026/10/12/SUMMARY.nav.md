@@ -7,3 +7,5 @@
  {{#include E-PROFILE-AVATAR-002/SUMMARY.nav.md}}
 - [E-REMOTE-AGENTS-001](E-REMOTE-AGENTS-001/index.md)
   {{#include E-REMOTE-AGENTS-001/SUMMARY.nav.md}}
+- [E-REMOTE-AGENTS-002](E-REMOTE-AGENTS-002/index.md)
+  {{#include E-REMOTE-AGENTS-002/SUMMARY.nav.md}}

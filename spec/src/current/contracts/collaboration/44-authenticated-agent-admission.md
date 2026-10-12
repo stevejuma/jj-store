@@ -19,3 +19,9 @@ personal-home behavior retain their existing contracts.
 This profile supports trusted collaborators on the configured server. Client
 agent advertising, relay routing, WebRTC, personal provisioning and remote
 machine administration remain outside M27.
+
+E-REMOTE-AGENTS-002 verifies these unchanged publication and recovery contracts
+on macOS with real RustFS and a deterministic ACP process. Native code-grant
+revocation and installation identity revocation are tested independently.
+Published AgentStore history survives restart with the original completed
+request and one started event. This evidence does not qualify a real provider.

@@ -29,6 +29,18 @@ provisioning and Git transfer are outside this profile. It provides no hostile
 user OS sandbox. Source/fixture checks and installed-runtime qualification are
 recorded separately in M27.
 
+For isolated gateway qualification, build the production binaries and UI, then
+run
+`python3 scripts/remote-agents-acceptance.py --server /absolute/path/to/jj-store --jj /absolute/path/to/jj --rustfs /absolute/path/to/jj-store-rustfs --web /absolute/path/to/web/dist`
+from this repository. The harness provisions private disposable installations,
+real RustFS volumes and synthetic credentials; it exercises the built browser,
+authorized remote execution, publication, revocation, identity fencing and
+restart recovery. It removes its own state and processes and does not restart a
+development installation. An optional
+`--privacy-cache /absolute/path/to/privacy-cache` copies that rule cache into
+its disposable root. The deterministic ACP process proves integration, not
+installed provider or production deployment qualification.
+
 ## Local agent sessions
 
 The Agents views and repository, project and task actions can start Codex or
