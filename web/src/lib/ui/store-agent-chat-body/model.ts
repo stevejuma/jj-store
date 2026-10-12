@@ -8,6 +8,7 @@ import type { CommunityMemberModel } from "../community-workspace/model.js";
 
 /** Immutable captured content; IDs and revisions belong to the caller. */
 export interface ChatBodyBlock {
+  emojis?: readonly import("../../community/workspace-model.js").CommunityEmojiReference[];
   id: string;
   revision: string;
   kind: "markdown" | "code" | "patch" | "custom" | "context";

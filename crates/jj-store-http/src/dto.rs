@@ -10,6 +10,7 @@ pub(crate) struct Capabilities {
     pub version: u32,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub native_authority: Option<bool>,
+    pub installation_directory: bool,
     pub native_profile: &'static str,
     pub authentication: &'static str,
     pub read_api: bool,
@@ -145,6 +146,7 @@ impl From<&Config> for Capabilities {
             version: 1,
             application_events: config.registry.as_ref().map(|_| true),
             native_authority: Some(config.native_authority),
+            installation_directory: config.directory.is_some(),
             native_profile: reads::NATIVE_PROFILE,
             authentication: match config.access {
                 Access::Authenticated => "repository_bearer",

@@ -10,7 +10,14 @@ import type {
 } from "../controller/thread-types.js";
 import { principalMember } from "./presentation.js";
 export const targetKey = (target: ReactionTarget) => pretty(target);
-export function channelMessages(events: readonly Model<"ThreadEventItemV1">[]) {
+export function channelMessages(
+  events: readonly Model<"ThreadEventItemV1">[],
+  urls: Record<string, string> = {},
+  member: (
+    id: string,
+    fallback: CommunityMemberModel,
+  ) => CommunityMemberModel = (_, fallback) => fallback,
+) {
   const latest = new Map<string, Model<"ThreadEventItemV1">>();
   for (const event of events)
     if (event.message && !latest.has(event.message.message_id))
@@ -28,7 +35,7 @@ export function channelMessages(events: readonly Model<"ThreadEventItemV1">[]) {
   const messages: CommunityMessageModel[] = [];
   for (const e of [...latest.values()].reverse()) {
     const m = e.message!;
-    members.set(m.actor, principalMember(m.actor));
+    members.set(m.actor, member(m.actor, principalMember(m.actor)));
     if (!m.body || e.value.event.type !== "message") continue;
     targets[m.message_id] = {
       type: "human_message",
@@ -40,6 +47,12 @@ export function channelMessages(events: readonly Model<"ThreadEventItemV1">[]) {
       id: m.message_id,
       authorId: m.actor,
       content: m.body,
+      customEmojis: Object.entries(e.emojis ?? {})
+        .filter(([, definition]) => urls[definition.preview.id])
+        .map(([shortcode, definition]) => ({
+          shortcode,
+          url: urls[definition.preview.id]!,
+        })),
       createdAt: new Date(Number(m.accepted_at_millis)).toISOString(),
       timestamp: new Date(Number(m.accepted_at_millis)).toLocaleTimeString([], {
         hour: "2-digit",

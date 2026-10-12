@@ -129,6 +129,8 @@ export async function initializeProductionStore(options: {
       bootstrap.capabilities.local_repository_conversion === true;
     options.data.nativeRepositoryCreation =
       bootstrap.capabilities.local_native_repository_creation === true;
+    options.data.directorySupported =
+      bootstrap.capabilities.installation_directory === true;
     options.data.settingsSupported =
       bootstrap.capabilities.local_settings_management === true;
     options.data.captureSupported =
@@ -264,7 +266,13 @@ export function createProductionConnectionScope(
   denied: () => void,
 ) {
   const freshness = new ApplicationFreshness(fetcher, denied);
-  const local = createLocalConfiguration(data, fetcher, freshness);
+  const local = createLocalConfiguration(
+    data,
+    fetcher,
+    freshness,
+    token,
+    denied,
+  );
   const scopes = controllerAbortScopes();
   return {
     ...repositoryReaders(() => data.repositories, token, fetcher, denied),
@@ -275,5 +283,20 @@ export function createProductionConnectionScope(
       local.destroy();
       destroyProductionStoreLifecycle(scopes.lifecycle, disconnect, history);
     },
+  };
+}
+
+/** Every acquired repository transport uses the current admitted catalog and session. */
+export function authorizedRepositoryReader(
+  data: ProductionStoreState,
+  sources: import("./repository-sources.js").RepositorySources,
+  token: () => string | null,
+) {
+  return (id: string) => {
+    const repository = data.repositories.find(
+      (candidate) => candidate.id === id,
+    );
+    if (!repository) throw new ApiError("access_denied");
+    return sources.acquire(repository, token());
   };
 }

@@ -178,6 +178,7 @@ async fn http_threads_reactions_keep_exact_targets_assets_signed_roots_and_recei
         &command(
             204,
             json!(ThreadCommandV1::Message {
+                emojis: Vec::new(),
                 reply_to: None,
                 thread_id,
                 expected_thread,
@@ -198,6 +199,7 @@ async fn http_threads_reactions_keep_exact_targets_assets_signed_roots_and_recei
     let reaction_req = command(
         205,
         json!(ReactionCommandV1::Set {
+            emoji: None,
             target: target.clone(),
             observed: BTreeSet::new(),
             value: ReactionValueV1::Emoji {
@@ -215,6 +217,7 @@ async fn http_threads_reactions_keep_exact_targets_assets_signed_roots_and_recei
         &command(
             206,
             json!(ThreadCommandV1::Message {
+                emojis: Vec::new(),
                 reply_to: None,
                 thread_id,
                 expected_thread: serde_json::from_value(result["version"].clone()).unwrap(),
@@ -285,6 +288,7 @@ async fn http_threads_reactions_keep_exact_targets_assets_signed_roots_and_recei
         &command(
             208,
             json!(ReactionCommandV1::Set {
+                emoji: None,
                 target: ReactionTargetV1::Thread { thread_id },
                 observed: BTreeSet::new(),
                 value: ReactionValueV1::Custom {

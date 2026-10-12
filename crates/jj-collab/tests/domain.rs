@@ -19,6 +19,7 @@ fn shared_reaction_projector_retains_conflicts_until_exact_explicit_resolution()
     let base = slot();
     let empty = ReactionStateV1::empty();
     let set = |value| ReactionCommandV1::Set {
+        emoji: None,
         target: base.target.clone(),
         value,
         observed: BTreeSet::new(),
@@ -61,6 +62,7 @@ fn shared_reaction_projector_retains_conflicts_until_exact_explicit_resolution()
     };
     let observed = slot.resolve(&graph.objects).unwrap().active;
     let implicit = ReactionCommandV1::Set {
+        emoji: None,
         target: base.target.clone(),
         value: ReactionValueV1::Like,
         observed: observed.clone(),
@@ -566,6 +568,7 @@ fn human_message_edits_keep_old_revisions_and_archiving_preserves_assignments() 
     let (state, first) = run_thread(
         &state,
         ThreadCommandV1::Message {
+            emojis: Vec::new(),
             reply_to: None,
             thread_id,
             expected_thread: created.version,
@@ -580,6 +583,7 @@ fn human_message_edits_keep_old_revisions_and_archiving_preserves_assignments() 
     let (state, edited) = run_thread(
         &state,
         ThreadCommandV1::Message {
+            emojis: Vec::new(),
             reply_to: None,
             thread_id,
             expected_thread: first.version,
@@ -618,6 +622,7 @@ fn human_message_edits_keep_old_revisions_and_archiving_preserves_assignments() 
         &mut graph,
     );
     let next = ThreadCommandV1::Message {
+        emojis: Vec::new(),
         reply_to: None,
         thread_id,
         expected_thread: archived.version,
@@ -661,6 +666,7 @@ fn bounded_radix_updates_preserve_prior_snapshots_and_validate_keys() {
         let mut id = [0; 16];
         id[..2].copy_from_slice(&n.to_be_bytes());
         let object = CollabObjectV1::HumanMessageRevision(HumanMessageRevisionV1 {
+            emojis: Default::default(),
             reply_to: None,
             schema_version: 1,
             message_id: HumanMessageId::new(id),

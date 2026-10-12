@@ -426,6 +426,9 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         "null"
       ]
     },
+    "installation_directory": {
+      "type": "boolean"
+    },
     "native_profile": {
       "type": "string"
     },
@@ -559,6 +562,7 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
   },
   "required": [
     "version",
+    "installation_directory",
     "native_profile",
     "authentication",
     "read_api",
@@ -3455,6 +3459,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
   "type": "object",
   "additionalProperties": false,
   "properties": {
+    "emojis": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/components/schemas/CollabObjectRef"
+      }
+    },
     "schema_version": {
       "type": "integer",
       "format": "uint32",
@@ -7770,6 +7780,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 {
   "type": "object",
   "properties": {
+    "emojis": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/components/schemas/CustomEmojiVersionV1"
+      }
+    },
     "link": {
       "anyOf": [
         {
@@ -7802,6 +7818,86 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "reference",
     "value"
   ]
+}
+```
+
+## CustomEmojiVersionV1
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "source": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "schema_version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "emoji_id": {
+      "$ref": "#/components/schemas/CustomEmojiId"
+    },
+    "shortcode": {
+      "type": "string"
+    },
+    "label": {
+      "type": "string"
+    },
+    "actor": {
+      "$ref": "#/components/schemas/PrincipalId"
+    },
+    "accepted_at_millis": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "previous": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/CollabObjectRef"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "asset": {
+      "$ref": "#/components/schemas/CollabObjectRef"
+    },
+    "preview": {
+      "$ref": "#/components/schemas/CollabObjectRef"
+    },
+    "retired": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "schema_version",
+    "emoji_id",
+    "shortcode",
+    "label",
+    "actor",
+    "accepted_at_millis",
+    "previous",
+    "asset",
+    "preview",
+    "retired"
+  ]
+}
+```
+
+## CustomEmojiId
+
+```text
+{
+  "type": "string",
+  "pattern": "^[0-9a-f]{32}$",
+  "minLength": 32,
+  "maxLength": 32
 }
 ```
 
@@ -8390,17 +8486,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 }
 ```
 
-## CustomEmojiId
-
-```text
-{
-  "type": "string",
-  "pattern": "^[0-9a-f]{32}$",
-  "minLength": 32,
-  "maxLength": 32
-}
-```
-
 ## ReactionActorRowV1
 
 ```text
@@ -8436,69 +8521,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "active",
     "value",
     "conflict"
-  ]
-}
-```
-
-## CustomEmojiVersionV1
-
-```text
-{
-  "type": "object",
-  "additionalProperties": false,
-  "properties": {
-    "schema_version": {
-      "type": "integer",
-      "format": "uint32",
-      "minimum": 0
-    },
-    "emoji_id": {
-      "$ref": "#/components/schemas/CustomEmojiId"
-    },
-    "shortcode": {
-      "type": "string"
-    },
-    "label": {
-      "type": "string"
-    },
-    "actor": {
-      "$ref": "#/components/schemas/PrincipalId"
-    },
-    "accepted_at_millis": {
-      "type": "integer",
-      "format": "int64"
-    },
-    "previous": {
-      "anyOf": [
-        {
-          "$ref": "#/components/schemas/CollabObjectRef"
-        },
-        {
-          "type": "null"
-        }
-      ]
-    },
-    "asset": {
-      "$ref": "#/components/schemas/CollabObjectRef"
-    },
-    "preview": {
-      "$ref": "#/components/schemas/CollabObjectRef"
-    },
-    "retired": {
-      "type": "boolean"
-    }
-  },
-  "required": [
-    "schema_version",
-    "emoji_id",
-    "shortcode",
-    "label",
-    "actor",
-    "accepted_at_millis",
-    "previous",
-    "asset",
-    "preview",
-    "retired"
   ]
 }
 ```
@@ -14455,6 +14477,8 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "capture",
     "configuration",
     "discovery",
+    "profiles",
+    "emoji_library",
     "workspaces",
     "conversion"
   ]
@@ -24216,6 +24240,350 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "saved",
     "effective",
     "reason"
+  ]
+}
+```
+
+## EmojiSelection
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "snapshot": {
+      "$ref": "#/components/schemas/EmojiSnapshotV1"
+    },
+    "value": {
+      "$ref": "#/components/schemas/ReactionValueV1"
+    }
+  },
+  "required": [
+    "snapshot",
+    "value"
+  ]
+}
+```
+
+## EmojiSnapshotV1
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "source": {
+      "type": "string"
+    },
+    "shortcode": {
+      "type": "string"
+    },
+    "bytes": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "format": "uint8",
+        "minimum": 0,
+        "maximum": 255
+      }
+    }
+  },
+  "required": [
+    "source",
+    "shortcode",
+    "bytes"
+  ]
+}
+```
+
+## UserProfile
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "principal": {
+      "$ref": "#/components/schemas/PrincipalId"
+    },
+    "revision": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "details": {
+      "$ref": "#/components/schemas/ProfileDetails"
+    }
+  },
+  "required": [
+    "principal",
+    "revision",
+    "details"
+  ]
+}
+```
+
+## ProfileDetails
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "display_name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "email": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "avatar": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "blob:<sha256>, HTTPS URL, emoji or fixed Community emoji SVG."
+    }
+  },
+  "required": [
+    "display_name",
+    "description",
+    "email",
+    "avatar"
+  ]
+}
+```
+
+## PublicProfile
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "principal": {
+      "$ref": "#/components/schemas/PrincipalId"
+    },
+    "display_name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "avatar": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "principal",
+    "display_name",
+    "description",
+    "avatar"
+  ]
+}
+```
+
+## LibraryEmoji
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "$ref": "#/components/schemas/RequestId"
+    },
+    "owner": {
+      "$ref": "#/components/schemas/PrincipalId"
+    },
+    "revision": {
+      "type": "string"
+    },
+    "shortcode": {
+      "type": "string"
+    },
+    "asset": {
+      "type": "string"
+    },
+    "preview": {
+      "type": "string"
+    },
+    "retired": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "id",
+    "owner",
+    "revision",
+    "shortcode",
+    "asset",
+    "preview",
+    "retired"
+  ]
+}
+```
+
+## DirectoryReceipt
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "request_id": {
+      "$ref": "#/components/schemas/RequestId"
+    },
+    "result": {
+      "$ref": "#/components/schemas/DirectoryResult"
+    }
+  },
+  "required": [
+    "request_id",
+    "result"
+  ]
+}
+```
+
+## DirectoryResult
+
+```text
+{
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "profile": {
+          "$ref": "#/components/schemas/UserProfile"
+        },
+        "type": {
+          "type": "string",
+          "const": "profile"
+        }
+      },
+      "required": [
+        "type",
+        "profile"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "asset": {
+          "type": "string"
+        },
+        "preview": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "const": "media"
+        }
+      },
+      "required": [
+        "type",
+        "asset",
+        "preview"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "emoji": {
+          "$ref": "#/components/schemas/LibraryEmoji"
+        },
+        "type": {
+          "type": "string",
+          "const": "emoji"
+        }
+      },
+      "required": [
+        "type",
+        "emoji"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "token": {
+          "$ref": "#/components/schemas/TokenId"
+        },
+        "principal": {
+          "$ref": "#/components/schemas/PrincipalId"
+        },
+        "revoked": {
+          "type": "boolean"
+        },
+        "type": {
+          "type": "string",
+          "const": "identity"
+        }
+      },
+      "required": [
+        "type",
+        "token",
+        "principal",
+        "revoked"
+      ]
+    }
+  ]
+}
+```
+
+## TokenId
+
+```text
+{
+  "type": "string",
+  "pattern": "^[0-9a-f]{32}$",
+  "minLength": 32,
+  "maxLength": 32
+}
+```
+
+## IdentityBinding
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "revoked": {
+      "type": "boolean"
+    },
+    "token": {
+      "$ref": "#/components/schemas/TokenId"
+    },
+    "principal": {
+      "$ref": "#/components/schemas/PrincipalId"
+    },
+    "expires_at": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "format": "uint64",
+      "minimum": 0
+    }
+  },
+  "required": [
+    "revoked",
+    "token",
+    "principal",
+    "expires_at"
   ]
 }
 ```

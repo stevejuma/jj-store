@@ -5,6 +5,7 @@ import {
   fileCodeLanguage,
   numberedCodeHighlights,
 } from "./captured-code.js";
+import { emojiDecorations } from "./emoji-decorations.js";
 import { inlineReferences } from "./inline-references.js";
 import { readingDecorations } from "./markdown-decorations.js";
 import { commentDecorations } from "./comment-widgets.js";
@@ -35,7 +36,10 @@ export function readingExtensions(
         })
       : undefined;
   const referenceDecorations = Decoration.set(
-    references.map((r) => r.decoration),
+    [
+      ...references.map((r) => r.decoration),
+      ...emojiDecorations(block.text, block.emojis),
+    ],
     true,
   );
   const open = (view: EditorView, initial = "") => {

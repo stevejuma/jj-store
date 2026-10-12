@@ -169,6 +169,7 @@ fn annotation_owner_remains_internal_after_message_and_reload() {
         .unwrap()
         .apply(
             &ThreadCommandV1::Message {
+                emojis: Vec::new(),
                 thread_id: id,
                 expected_thread: created.version,
                 message_id: HumanMessageId::new([4; 16]),

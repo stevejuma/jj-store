@@ -23,6 +23,7 @@ fn replies_retain_exact_parent_and_reject_cross_thread_or_self_links() {
     let (root, parent) = state
         .apply(
             &ThreadCommandV1::Message {
+                emojis: Vec::new(),
                 thread_id: thread,
                 expected_thread: created.version,
                 message_id: HumanMessageId::new([4; 16]),
@@ -38,6 +39,7 @@ fn replies_retain_exact_parent_and_reject_cross_thread_or_self_links() {
         .unwrap();
     let state = ThreadStateV1::read(root, &graph).unwrap();
     let reply = ThreadCommandV1::Message {
+        emojis: Vec::new(),
         thread_id: thread,
         expected_thread: parent.version,
         message_id: HumanMessageId::new([6; 16]),

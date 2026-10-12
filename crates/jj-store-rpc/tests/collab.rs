@@ -355,6 +355,7 @@ async fn unix_rpc_keeps_exact_feedback_assets_pages_and_receipts_across_transpor
                 4,
                 CollabCommandV1::Thread {
                     intent: ThreadCommandV1::Message {
+                        emojis: Vec::new(),
                         reply_to: None,
                         thread_id: first.thread_id,
                         expected_thread: first.version,
@@ -387,6 +388,7 @@ async fn unix_rpc_keeps_exact_feedback_assets_pages_and_receipts_across_transpor
             5,
             CollabCommandV1::Reaction {
                 intent: ReactionCommandV1::Set {
+                    emoji: None,
                     target: target.clone(),
                     value: ReactionValueV1::Emoji {
                         sequence: "👩🏽‍💻".into(),
@@ -416,6 +418,7 @@ async fn unix_rpc_keeps_exact_feedback_assets_pages_and_receipts_across_transpor
                 6,
                 CollabCommandV1::Thread {
                     intent: ThreadCommandV1::Message {
+                        emojis: Vec::new(),
                         reply_to: None,
                         thread_id: first.thread_id,
                         expected_thread: message.version,

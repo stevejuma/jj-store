@@ -82,6 +82,7 @@ async fn pinned_target_reader_hides_staged_objects_and_current_tombstoned_histor
         .unwrap()
         .apply(
             &ThreadCommandV1::Message {
+                emojis: Vec::new(),
                 reply_to: None,
                 thread_id: created.thread_id,
                 expected_thread: created.version,
@@ -133,6 +134,7 @@ async fn pinned_target_reader_hides_staged_objects_and_current_tombstoned_histor
         .unwrap()
         .apply(
             &ThreadCommandV1::Message {
+                emojis: Vec::new(),
                 reply_to: None,
                 thread_id: created.thread_id,
                 expected_thread: message.version,
@@ -190,6 +192,7 @@ async fn target_reader_closure_excludes_unselected_collab_and_agent_bytes() {
     let orphan = graph
         .stage(CollabObjectV1::HumanMessageRevision(
             HumanMessageRevisionV1 {
+                emojis: Default::default(),
                 reply_to: None,
                 schema_version: 1,
                 message_id: HumanMessageId::new([9; 16]),
@@ -489,6 +492,7 @@ async fn cold_receipts_checkpoint_and_manifest_last_copy_retain_human_revision_r
     let (thread_root, message) = state
         .apply(
             &ThreadCommandV1::Message {
+                emojis: Vec::new(),
                 reply_to: None,
                 thread_id: created.thread_id,
                 expected_thread: created.version,
@@ -610,6 +614,7 @@ async fn custom_emoji_assets_and_static_previews_survive_native_copy() {
     let emoji_id = CustomEmojiId::new([9; 16]);
     let definition = graph
         .stage(CollabObjectV1::CustomEmojiVersion(CustomEmojiVersionV1 {
+            source: None,
             schema_version: 1,
             emoji_id,
             shortcode: "ship_it".into(),

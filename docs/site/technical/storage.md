@@ -59,3 +59,17 @@ Do not edit bucket keys, manifests or private Git refs manually. They encode
 cross-object relationships that normal file copying cannot validate. Use the
 application's explicit maintenance controls and retain unknown outcomes for
 recovery. [Publication](publication.md) explains the commit point.
+
+## Installation directory
+
+Profiles, token bindings and the custom emoji library use an independent
+`installations/<installation>/directory/manifest.json` selector in the
+configured object store. Canonical format-1 typed JSON envelopes are addressed
+by SHA-256 under `objects/<digest>.json`; original raster bytes and static
+previews live under `media/<digest>`. Only the conditional manifest write
+selects a root. Actor/request-bound receipts remain selected across restart, and
+unknown writes recover by their original intent. Startup audits selected records
+and media existence; authorized media reads verify their content digests. Limits
+are 4096 entries per category, 8192 receipts and 4 MiB per JSON object. No
+cleanup, multi-writer service, local JSON fallback or automatic migration is
+enabled.

@@ -55,3 +55,5 @@
   {{#include M24/SUMMARY.nav.md}}
 - [M25 local compute, agent configuration and sent context](M25/index.md)
   {{#include M25/SUMMARY.nav.md}}
+- [M26 installation profiles and custom emoji](M26/index.md)
+  {{#include M26/SUMMARY.nav.md}}

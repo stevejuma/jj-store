@@ -42,6 +42,7 @@ function captured(overrides: Partial<AgentSession> = {}): AgentSession {
     connected: false,
     state: "ended",
     recorded_session_ids: [recordedId],
+    repository_bindings: [],
     workspace_name: "agent/workspace 日本語",
     ...overrides,
   } as AgentSession;

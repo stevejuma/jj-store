@@ -33,6 +33,10 @@ export async function submitThreadConversation(
       throw new Error("Reply parent is unavailable.");
     batch.reply_to = target.revision;
   }
+  if (controller?.directory?.available())
+    batch.emojis = await controller.directory.snapshots(
+      [batch.text ?? "", ...batch.comments.map((c) => c.body)].join("\n"),
+    );
   const agents = mentionedAgentIds(submission.text);
   if (agents.length) {
     const manager = controller?.execution;

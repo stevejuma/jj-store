@@ -133,6 +133,7 @@ async fn workspace_comments_freeze_group_publish_and_recover_without_duplicate_r
             text: String::new(),
             max_duration_ms: 5000,
             comments: Some(Box::new(ConversationSubmissionV1 {
+                emojis: Vec::new(),
                 thread_id: thread,
                 expected_thread: result.version,
                 text: None,

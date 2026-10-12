@@ -51,3 +51,10 @@ The execution inbox selects this transport from the captured session profile;
 saving a reply or reaction never prompts, resumes or snapshots code. This slice
 requires cold registered-folder proof and does not qualify native reducer 3 or
 the broader M13/M15 completion gates.
+
+Installation emoji snapshots use those same complete-closure inventories and
+original companion receipts when explicitly authored into messages or reactions.
+Repository bytes and retained Git reachability carry the definition and assets;
+a later library edit or retirement cannot rewrite history. The user-thread
+sidebar catalog excludes agent discussion threads, which remain directly
+addressable and retain their original event pagination.

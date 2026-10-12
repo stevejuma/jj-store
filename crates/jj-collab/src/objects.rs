@@ -132,7 +132,12 @@ impl CollabObjectV1 {
                     _ => None,
                 })
                 .collect(),
-            Self::HumanMessageRevision(v) => v.previous.into_iter().chain(v.reply_to).collect(),
+            Self::HumanMessageRevision(v) => v
+                .previous
+                .into_iter()
+                .chain(v.reply_to)
+                .chain(v.emojis.values().copied())
+                .collect(),
             Self::ThreadLink(v) => {
                 let mut dependencies: BTreeSet<_> = v.previous.into_iter().collect();
                 if let ThreadLinkTargetV1::CaptureGap { binding, .. } = &v.target {

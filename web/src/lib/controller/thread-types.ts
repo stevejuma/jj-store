@@ -57,7 +57,11 @@ export interface ThreadTransport {
 export type ThreadsController = ReturnType<
   typeof import("./production-threads.svelte.js").createThreadsController
 >;
-export type ReactionsController = Pick<
+export type ReactionsController = {
+  setProfiles?(
+    value: import("./directory.svelte.js").DirectoryManagement | undefined,
+  ): void;
+} & Pick<
   ThreadsController,
   | "busy"
   | "pending"

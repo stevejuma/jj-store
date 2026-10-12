@@ -247,6 +247,29 @@ pub(super) async fn prepare(
     } else {
         None
     };
+    let directory = storage
+        .as_ref()
+        .map(|s| {
+            crate::directory::Manager::new(
+                s.store(),
+                identity.installation.clone(),
+                match &http_access {
+                    HttpAccess::LocalTrusted {
+                        principal,
+                        permission: jj_store_service::auth::Permission::Admin,
+                    } => Some(*principal),
+                    _ => None,
+                },
+            )
+        })
+        .transpose()
+        .map_err(|_| Error::Config("installation directory"))?;
+    if let Some(manager) = &directory {
+        match manager.audit().await {
+            Ok(()) | Err(jj_store_service::directory::Error::Unavailable) => {}
+            Err(_) => return Err(Error::Config("installation directory closure")),
+        }
+    }
     let http = HttpApi::with_search(
         host,
         state.join("native-reads"),
@@ -255,7 +278,12 @@ pub(super) async fn prepare(
                 .map_err(|_| Error::Config("public URL"))?
                 .origin()
                 .ascii_serialization(),
-            access: http_access,
+            access: http_access.clone(),
+            directory: directory
+                .map(|m| Arc::new(m) as Arc<dyn jj_store_service::directory::Directory>),
+            directory_operators: Some(Arc::new(policy::PolicyFile::new(
+                config.operator_policy.clone(),
+            )?)),
             registry: Some(registry as Arc<dyn jj_store_service::registry::RepositoryRegistry>),
             local_search: local_search
                 .clone()

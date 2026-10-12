@@ -1,6 +1,8 @@
 import type { StoreRoute } from "./store-route-types.js";
 
 export const globalSettingsTabs = {
+  profile: ["details"],
+  "custom-emoji": ["library"],
   appearance: ["theme", "preferences"],
   service: ["overview", "limits", "launch", "protection", "storage"],
   agents: [

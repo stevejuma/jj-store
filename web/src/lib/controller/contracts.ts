@@ -158,6 +158,7 @@ export interface StoreController {
   readonly stackWorkspace?: import("./stack-workspace/controller.svelte.js").StackWorkspaceController;
   readonly freshness?: import("./application-freshness.js").ApplicationFreshness;
   readonly historyQuery?: import("./history-query-types.js").HistoryQueryController;
+  readonly directory?: import("./directory.svelte.js").DirectoryManagement;
   readonly configuration?: import("./server-settings.svelte.js").ServerSettingsManagement;
   readonly capture?: import("./capture-types.js").CaptureManagement;
   readonly execution?: import("./agent-execution.svelte.js").AgentExecution;

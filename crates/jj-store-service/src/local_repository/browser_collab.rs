@@ -231,6 +231,7 @@ impl LocalRepository {
                     };
                     cursor = value.previous;
                     events.push(ThreadEventItemV1 {
+                        emojis: message_emoji_definitions(message.as_ref(), &store.graph)?,
                         reference,
                         value,
                         message,
@@ -360,11 +361,19 @@ impl LocalRepository {
             .as_ref()
             .map_or(m::RepositoryId::new([0; 16]), |p| p.repository());
         let reactions = self.reaction_store_at(pin.as_ref(), repository).await?;
-        let CollabObjectV1::ImageAsset(asset) = reactions.object(CollabObjectRef {
+        let reference = CollabObjectRef {
             kind: CollabObjectKind::ImageAsset,
             id,
-        })?
-        else {
+        };
+        let threads = self.thread_store_at(pin.as_ref()).await?;
+        let object = reactions
+            .graph
+            .objects
+            .get(&reference)
+            .or_else(|| threads.graph.objects.get(&reference))
+            .cloned()
+            .ok_or(LocalError::NotFound)?;
+        let CollabObjectV1::ImageAsset(asset) = object else {
             return Err(LocalError::Corrupt);
         };
         self.inbox_threads(expected).await?;

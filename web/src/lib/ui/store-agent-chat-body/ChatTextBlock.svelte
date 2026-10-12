@@ -70,6 +70,7 @@
       block.lineNumbered,
       block.wholeSection,
       block.commentable,
+      block.emojis,
       fileView,
     ]);
     if (view && signature !== configured) {

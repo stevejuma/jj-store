@@ -113,6 +113,8 @@ pub struct ThreadPageV1 {
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 pub struct ThreadEventItemV1 {
+    #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
+    pub emojis: BTreeMap<String, CustomEmojiVersionV1>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub link: Option<ThreadLinkV1>,
     pub message: Option<HumanMessageRevisionV1>,
@@ -433,6 +435,8 @@ impl PinnedCollabRead {
                 None
             };
             events.push(ThreadEventItemV1 {
+                emojis: message_emoji_definitions(message.as_ref(), &self.thread.graph)
+                    .map_err(model)?,
                 link,
                 message,
                 reference,
@@ -651,6 +655,7 @@ impl PinnedCollabRead {
             .graph
             .objects
             .get(&reference)
+            .or_else(|| self.thread.graph.objects.get(&reference))
             .ok_or(Error::NotFound)?
         else {
             return Err(Error::Corrupt);

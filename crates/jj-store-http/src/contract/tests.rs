@@ -302,6 +302,15 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
     );
     let paths = doc["paths"].as_object().unwrap();
     for path in [
+        "/v1/directory/profile",
+        "/v1/directory/profiles",
+        "/v1/directory/emojis",
+        "/v1/directory/emoji-snapshot/{id}",
+        "/v1/directory/commands",
+        "/v1/directory/commands/{request_id}",
+        "/v1/directory/media/{digest}",
+        "/v1/directory/identities",
+        "/v1/directory/identity-revoke",
         "/v1/local/capture",
         "/v1/local/capture/sources",
         "/v1/local/capture/control",
@@ -325,20 +334,20 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
     ] {
         assert!(paths.contains_key(path), "missing integrated route: {path}");
     }
-    assert_eq!(paths.len(), 167);
+    assert_eq!(paths.len(), 177);
     assert_eq!(
         paths
             .keys()
             .filter(|name| name.starts_with("/v1/local/"))
             .count(),
-        82
+        83
     );
     assert_eq!(
         paths
             .keys()
             .filter(|name| !name.starts_with("/v1/local/"))
             .count(),
-        85
+        94
     );
     let mut ids = std::collections::BTreeSet::new();
     for (name, path) in paths {
@@ -370,6 +379,15 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
                         .all(|parameter| parameter["in"] == "query")
                 );
                 assert_eq!(operation["security"], json!([{"repositoryBearer":[]},{}]));
+            } else if name.starts_with("/v1/directory/") {
+                assert_eq!(operation["security"], json!([{"repositoryBearer":[]},{}]));
+                assert!(
+                    operation["parameters"]
+                        .as_array()
+                        .unwrap()
+                        .iter()
+                        .all(|p| p["name"] != "repo")
+                );
             } else if name.starts_with("/v1/local/") {
                 assert_eq!(operation["security"], json!([{}]));
                 assert_eq!(operation["tags"], json!(["local"]));

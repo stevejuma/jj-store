@@ -155,6 +155,7 @@ async fn thread_directory_keeps_latest_message_preview_after_rename() {
         .command(
             11,
             ThreadCommandV1::Message {
+                emojis: Vec::new(),
                 thread_id: THREAD,
                 expected_thread: thread.version,
                 message_id: HumanMessageId::new([11; 16]),
@@ -199,6 +200,7 @@ async fn current_full_bodies_edits_tombstones_and_scopes_are_manifest_selected()
         .command(
             11,
             ThreadCommandV1::Message {
+                emojis: Vec::new(),
                 thread_id: THREAD,
                 expected_thread: thread.version,
                 message_id: HumanMessageId::new([11; 16]),
@@ -212,6 +214,7 @@ async fn current_full_bodies_edits_tombstones_and_scopes_are_manifest_selected()
         .command(
             12,
             ThreadCommandV1::Message {
+                emojis: Vec::new(),
                 thread_id: THREAD,
                 expected_thread: first.version,
                 message_id: HumanMessageId::new([12; 16]),
@@ -261,6 +264,7 @@ async fn current_full_bodies_edits_tombstones_and_scopes_are_manifest_selected()
         .command(
             13,
             ThreadCommandV1::Message {
+                emojis: Vec::new(),
                 thread_id: THREAD,
                 expected_thread: reply.version,
                 message_id: HumanMessageId::new([11; 16]),
@@ -273,6 +277,7 @@ async fn current_full_bodies_edits_tombstones_and_scopes_are_manifest_selected()
     f.command(
         14,
         ThreadCommandV1::Message {
+            emojis: Vec::new(),
             thread_id: THREAD,
             expected_thread: current.version,
             message_id: HumanMessageId::new([12; 16]),
@@ -332,6 +337,7 @@ async fn recent_entities_and_cursor_binding_survive_writes_and_expire() {
         .command(
             11,
             ThreadCommandV1::Message {
+                emojis: Vec::new(),
                 thread_id: THREAD,
                 expected_thread: thread.version,
                 message_id: HumanMessageId::new([11; 16]),

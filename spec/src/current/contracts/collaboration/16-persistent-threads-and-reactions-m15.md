@@ -173,3 +173,14 @@ existing exact ToolInvocation or ToolOutput target. These use the same validated
 ThreadVersion field and command as agent-message discussions, without new
 object/event formats. Resolution still verifies selected evidence, authorization
 and supported collaboration profiles before acceptance.
+
+M26 permits an optional bounded installation-library snapshot on a human message
+or Set reaction. The snapshot is portable data, not a grant or identity
+assertion. Its source, shortcode and validated bytes derive an immutable,
+source-namespaced definition and complete source/static-preview closure. Message
+revisions bind shortcodes to exact definitions; Set validates the supplied exact
+value against its snapshot. Both providers select these assets with the authored
+use through their existing receipt/CAS boundary. Absent optional fields preserve
+legacy canonical bytes. Snapshot definitions are excluded from the editable
+repository library. Directory retirement blocks new selection preparation;
+already-prepared requests remain self-contained and replayable.

@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { createMessageDeletion } from "./message-deletion.svelte.js";
+  import { useProfileMembers } from "../../profiles/context.svelte.js";
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import { useAppearance } from "../../appearance/store.svelte.js";
   const appearance = useAppearance();
@@ -35,7 +37,7 @@
   let {
     message,
     promptElements = false,
-    author,
+    author: suppliedMember,
     members = [],
     rooms = [],
     isContinuation = false,
@@ -66,14 +68,17 @@
     metadataSupplement,
     avatarShape,
   }: CommunityMessageProps = $props();
+  const profiles = useProfileMembers(() => [suppliedMember]);
+  const author = $derived(profiles.values[0]!);
   const resolvedAvatarShape = $derived(
     avatarShape ?? communityMemberAvatarShape(author),
   );
 
   const hover = createMessageActionHover();
-  let deleteOpen = $state(false);
-  let deletePending = $state(false);
-  let deleteError = $state("");
+  const deletion = createMessageDeletion(
+    () => onDelete,
+    () => message.id,
+  );
   let reportOpen = $state(false);
 
   const isSelected = $derived(
@@ -96,23 +101,6 @@
   const canCopyEvent = $derived(
     message.activity === undefined && onCopyEvent !== undefined,
   );
-
-  async function confirmDelete(): Promise<void> {
-    if (onDelete === undefined || deletePending) return;
-    deletePending = true;
-    deleteError = "";
-    try {
-      await onDelete(message.id);
-      deleteOpen = false;
-    } catch (cause) {
-      deleteError =
-        cause instanceof Error
-          ? cause.message
-          : "The message could not be deleted";
-    } finally {
-      deletePending = false;
-    }
-  }
 </script>
 
 <Message
@@ -224,7 +212,7 @@
       {onEdit}
       onDelete={onDelete
         ? () => {
-            deleteOpen = true;
+            deletion.open = true;
           }
         : undefined}
       onReport={onReport
@@ -287,13 +275,10 @@
 
 {#if onDelete}
   <ConfirmDialog
-    bind:open={deleteOpen}
-    pending={deletePending}
+    bind:open={deletion.open}
+    pending={deletion.pending}
     destructive
-    onConfirm={async () => {
-      await confirmDelete();
-      return !deleteError;
-    }}
+    onConfirm={deletion.confirm}
   >
     {#snippet title()}Delete message?{/snippet}
     {#snippet description()}
@@ -301,14 +286,14 @@
       undone.
     {/snippet}
     {#snippet confirmLabel()}
-      {deletePending ? "Deleting…" : "Delete message"}
+      {deletion.pending ? "Deleting…" : "Delete message"}
     {/snippet}
 
     <StoreNotice
       noticeKey={`delete-message:${message.id}`}
       title="Could not delete message"
-      message={deleteError}
-      pending={deletePending}
+      message={deletion.error}
+      pending={deletion.pending}
     />
   </ConfirmDialog>
 {/if}

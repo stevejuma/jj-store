@@ -72,6 +72,7 @@ export function createWorkReactions(options: {
     execute: actions.execute,
   });
   return {
+    setProfiles: reactions.setProfiles,
     get busy() {
       return actions.busy;
     },

@@ -21,14 +21,17 @@ export function createProductionConnect(context: {
 }) {
   return async (repository: string, token: string | null) => {
     const { data, projects } = context;
-    if (context.route().globalSettings) {
+    const authenticating =
+      data.accessMode === "authenticated" && token !== null;
+    if (!authenticating && context.route().globalSettings) {
       data.status.connection = "disconnected";
       data.status.navigation = "ready";
       return;
     }
     if (
-      context.route().agentsHub ||
-      (context.route().threadsHub && !context.route().repository)
+      !authenticating &&
+      (context.route().agentsHub ||
+        (context.route().threadsHub && !context.route().repository))
     ) {
       data.status.connection = "disconnected";
       return;
@@ -63,6 +66,11 @@ export function createProductionConnect(context: {
       data.repositories = repositories.map((candidate) => ({ ...candidate }));
       data.status.repositories = data.repositories.length ? "ready" : "empty";
       context.token(token);
+      if (context.route().globalSettings) {
+        data.status.connection = "disconnected";
+        data.status.navigation = "ready";
+        return;
+      }
       const requested = data.repositories.find(
         (candidate) =>
           candidate.id === (repository.trim() || context.route().repository),

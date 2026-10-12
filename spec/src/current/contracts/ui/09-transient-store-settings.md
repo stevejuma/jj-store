@@ -31,19 +31,20 @@ inactive history import shows accepted boundary publication independently from
 live-tail coverage. Users may inspect a previous import request ID without
 selecting a different source, including when its receipt is unavailable.
 
-Global Settings opens from the profile menu and contains only Appearance, Local
-service, Agents and Compute. Local service owns installation-wide Protection,
-authority storage and backup configuration, and folder registration. Its
-destination is recorded as `#/settings?section=agents&tab=runtimes`. Missing
-fields select Local service / Overview; unknown, duplicate and incompatible
-fields fail closed. Category and tab changes participate in history. Reload and
-shared links restore the selected destination; a root app startup resumes the
-last open Settings section/tab from a validated device preference. Explicit URLs
-take precedence, leaving Settings clears the startup preference, and no
-credentials, drafts or repository selections are stored there. Back to jj-store
-restores the exact retained session application route and resumes updates; a
-fresh settings link falls back to Projects. Global Settings navigation does not
-perform ordinary graph/file reads or replace controller owners.
+Global Settings opens from the profile menu and contains Profile, Custom emoji,
+Appearance, Local service, Agents and Compute. Local service owns
+installation-wide Protection, authority storage and backup configuration, and
+folder registration. Its destination is recorded as
+`#/settings?section=agents&tab=runtimes`. Missing fields select Local service /
+Overview; unknown, duplicate and incompatible fields fail closed. Category and
+tab changes participate in history. Reload and shared links restore the selected
+destination; a root app startup resumes the last open Settings section/tab from
+a validated device preference. Explicit URLs take precedence, leaving Settings
+clears the startup preference, and no credentials, drafts or repository
+selections are stored there. Back to jj-store restores the exact retained
+session application route and resumes updates; a fresh settings link falls back
+to Projects. Global Settings navigation does not perform ordinary graph/file
+reads or replace controller owners.
 
 Repository Settings opens through an icon-only gear at the far right of the
 repository body tab/header row, including focused Stacks views. It replaces
@@ -221,3 +222,12 @@ include icons and match visible tab presentation. The shared presentation is
 selected by both Settings hosts; unrelated row/tab consumers retain their
 defaults. Drafts, pending commands, exact copy/Open targets, automatic updates
 and route/history contracts are unchanged.
+
+M26 Profile and Custom emoji use the installation directory capability. The
+controller retains both drafts and exact pending requests through navigation,
+revalidates session epochs before admitting asynchronous reads, and refreshes
+after committed saves, installation freshness events and bounded fallback.
+Descriptions use the maintained Markdown form editor; image uploads return
+owner-only draft media until explicitly selected by a save. Field validation and
+unknown-outcome recovery stay beside their controls. Email is owner-only; shared
+profile projections supply display name, description and resolved avatar.

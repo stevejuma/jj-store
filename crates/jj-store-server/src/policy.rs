@@ -84,10 +84,18 @@ impl PolicyFile {
         Ok(())
     }
     pub fn initialize(&self, principal: PrincipalId, token: &BearerToken) -> Result<()> {
+        self.initialize_permission(principal, token, Permission::CreateRepository)
+    }
+    pub fn initialize_permission(
+        &self,
+        principal: PrincipalId,
+        token: &BearerToken,
+        permission: Permission,
+    ) -> Result<()> {
         let _lock = self.lock()?;
         let mut policy = TokenPolicy::new(Scope::Operator);
         policy
-            .grant(token, principal, Permission::CreateRepository, None)
+            .grant(token, principal, permission, None)
             .map_err(|_| Error::Config("operator grant"))?;
         if self.path.exists() {
             if self
@@ -107,10 +115,18 @@ impl PolicyFile {
         self.persist(&policy)
     }
     pub fn grant(&self, principal: PrincipalId, token: &BearerToken) -> Result<()> {
+        self.grant_permission(principal, token, Permission::CreateRepository)
+    }
+    pub fn grant_permission(
+        &self,
+        principal: PrincipalId,
+        token: &BearerToken,
+        permission: Permission,
+    ) -> Result<()> {
         let _lock = self.lock()?;
         let mut policy = self.read()?;
         policy
-            .grant(token, principal, Permission::CreateRepository, None)
+            .grant(token, principal, permission, None)
             .map_err(|_| Error::Config("operator grant conflicts or exceeds limit"))?;
         self.persist(&policy)
     }

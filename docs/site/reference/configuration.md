@@ -200,3 +200,13 @@ a fixed endpoint and does not accept API-key or endpoint overrides. Model and
 effort defaults apply only to the same provider/account. Configure conversation
 metadata independently, and explicitly restart after saved launch configuration
 changes.
+
+Object-backed servers advertise installation profiles and custom emoji without a
+new TOML section. The configured object store and installation identity
+determine the directory namespace. Startup verifies reachable selected
+records/media closure. A temporary store outage preserves server startup while
+personal settings remain unavailable; corrupt selected records fail closed.
+Reads do not create default profile objects. `operator_policy` continues to name
+a private local policy file and controls create-repository or manage-identities
+capabilities. Profile details and token identity bindings live in the object
+store. Filesystem-only servers advertise this capability as unavailable.

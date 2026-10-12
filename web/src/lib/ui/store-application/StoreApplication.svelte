@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { provideProfiles } from "../../profiles/context.svelte.js";
   import { ownRepositorySettingsGuard } from "../store-settings/repository-settings-guard.svelte.js";
   import StoreApplicationHeaderCenter from "./StoreApplicationHeaderCenter.svelte";
   import StoreApplicationAgents from "./StoreApplicationAgents.svelte";
@@ -63,6 +64,7 @@
     desktopChrome = untrack(isMacDesktopWindow),
     children,
   }: StoreApplicationProps = $props();
+  provideProfiles(() => controller.directory);
   import { ownApplicationAppearance as ownAppearance } from "../../appearance/runtime.svelte.js";
   const appearance = ownAppearance(
     () => controller.state.route.repository,

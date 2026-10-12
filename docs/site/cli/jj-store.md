@@ -1426,6 +1426,83 @@ Usage: jj-store token retry [OPTIONS] --repo-id <REPO_ID> --request <REQUEST>
 | `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
 | `-h, --help` | Print help (see a summary with '-h') |  |
 
+## jj-store identity
+
+Administer installation-owned profile identities
+
+```text
+Usage: jj-store identity [OPTIONS] --endpoint <ENDPOINT> <COMMAND>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `--endpoint <ENDPOINT>` | Explicit server endpoint. Credentials must never appear in the URL; TLS and loopback policy still apply. Required. |  |
+| `--insecure-loopback <INSECURE_LOOPBACK>` | Explicitly permit the supported plain-HTTP literal-loopback connection; does not disable admission for other hosts. | Default: false; Values: true, false |
+| `--ca-certificate <CA_CERTIFICATE>` | Path to the CA certificate used to verify the configured TLS endpoint. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store identity list
+
+```text
+Usage: jj-store identity --endpoint <ENDPOINT> list [OPTIONS]
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store identity grant
+
+```text
+Usage: jj-store identity --endpoint <ENDPOINT> grant [OPTIONS] --principal <PRINCIPAL> --request <REQUEST>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `--principal <PRINCIPAL>` | Stable principal identity receiving the authorization grant. Required. |  |
+| `--expires-at <EXPIRES_AT>` | Optional token expiry timestamp as Unix seconds. Omission leaves expiry unspecified. |  |
+| `--token-stdin <TOKEN_STDIN>` | Read the required credential from standard input rather than putting a secret in command arguments. | Default: false; Values: true, false |
+| `--request <REQUEST>` | Private path to the durable secret-free request journal. Status and retry reuse this exact journal. Required. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store identity revoke
+
+```text
+Usage: jj-store identity --endpoint <ENDPOINT> revoke [OPTIONS] --token-id <TOKEN_ID> --request <REQUEST>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `--token-id <TOKEN_ID>` | Public credential identity to revoke; this is not the bearer secret. Required. |  |
+| `--request <REQUEST>` | Private path to the durable secret-free request journal. Status and retry reuse this exact journal. Required. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
+## jj-store identity status
+
+```text
+Usage: jj-store identity --endpoint <ENDPOINT> status [OPTIONS] --request <REQUEST>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `--request <REQUEST>` | Private path to the durable secret-free request journal. Status and retry reuse this exact journal. Required. |  |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
 ## jj-store repository
 
 Verify repository authority and update LocalTrusted discovery metadata
@@ -1717,10 +1794,13 @@ Usage: jj-store doctor [OPTIONS] --config <CONFIG> --repo-id <REPO_ID>
 
 ### Operator credentials
 
-The local operator policy authorizes repository creation. It never grants access
-to repository contents. `operator init` creates a policy; an identical retry is
-safe. `operator grant` adds an explicitly selected credential. `operator list`
-shows public grant metadata, and `operator revoke` removes one token ID.
+The local operator policy authorizes repository creation or installation
+identity management through separate capabilities.
+`--permission manage-identities` selects identity management; the default is
+`create-repository`. It never grants access to repository contents.
+`operator init` creates a policy; an identical retry is safe. `operator grant`
+adds an explicitly selected credential. `operator list` shows public grant
+metadata, and `operator revoke` removes one token ID.
 
 Provision with a canonical `--endpoint`, an explicit `--principal` identity, and
 `--policy PATH` outside checkouts. `JJ_STORE_OPERATOR_TOKEN` supplies an
@@ -1739,6 +1819,16 @@ Use `jj-store token generate` once when one manual credential should access
 several repositories. Grant it separately through each repository policy; the
 installation registry uses its public token ID only to find candidates and each
 repository reauthorizes the complete credential.
+
+Use `jj-store identity --endpoint ENDPOINT` to list, grant or revoke
+installation identity bindings. A grant binds an existing user token to a
+profile principal; repository grants remain independent. Supply the user token
+on stdin with `grant --principal ID --token-stdin --request PATH`. The operator
+credential comes from the platform facility or `JJ_STORE_OPERATOR_TOKEN`.
+Mutation journals stay outside checkouts, contain only public intent, and retain
+the original request ID. `status --request PATH` and a retry with the same
+journal recover uncertain outcomes. Revoked token IDs cannot be reassigned to
+another principal.
 
 
 ```text
@@ -1766,6 +1856,7 @@ Usage: jj-store operator init [OPTIONS] --policy <POLICY> --endpoint <ENDPOINT> 
 | `--endpoint <ENDPOINT>` | Explicit server endpoint. Credentials must never appear in the URL; TLS and loopback policy still apply. Required. |  |
 | `--insecure-loopback <INSECURE_LOOPBACK>` | Explicitly permit the supported plain-HTTP literal-loopback connection; does not disable admission for other hosts. | Default: false; Values: true, false |
 | `--principal <PRINCIPAL>` | Stable principal identity receiving the authorization grant. Required. |  |
+| `--permission <PERMISSION>` | Repository permission to grant; administration requires the applicable authority. | Default: create-repository; Values: create-repository, manage-identities |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
 | `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
 | `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
@@ -1785,6 +1876,7 @@ Usage: jj-store operator grant [OPTIONS] --policy <POLICY> --endpoint <ENDPOINT>
 | `--endpoint <ENDPOINT>` | Explicit server endpoint. Credentials must never appear in the URL; TLS and loopback policy still apply. Required. |  |
 | `--insecure-loopback <INSECURE_LOOPBACK>` | Explicitly permit the supported plain-HTTP literal-loopback connection; does not disable admission for other hosts. | Default: false; Values: true, false |
 | `--principal <PRINCIPAL>` | Stable principal identity receiving the authorization grant. Required. |  |
+| `--permission <PERMISSION>` | Repository permission to grant; administration requires the applicable authority. | Default: create-repository; Values: create-repository, manage-identities |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
 | `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
 | `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |

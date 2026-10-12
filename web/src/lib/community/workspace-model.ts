@@ -79,6 +79,7 @@ export interface CommunityWorkspaceNavigationSectionModel {
 }
 
 export interface CommunityMemberModel {
+  about?: string;
   /** Exact saved ACP setup association; never inferred from a name or avatar. */
   acpAgentId?: string;
   id: string;
@@ -127,6 +128,7 @@ export interface CommunityMessageActivity {
 }
 
 export interface CommunityMessageModel {
+  customEmojis?: readonly CommunityEmojiReference[];
   id: string;
   authorId: string;
   content: string;

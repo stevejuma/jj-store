@@ -80,6 +80,7 @@ impl Document {
             "kind" => {
                 json!({"type":"string", "enum":["commit","tree","file","symlink","copy","view","operation"]})
             }
+            "digest" => json!({"type":"string", "pattern":"^[0-9a-f]{64}$"}),
             "task" => {
                 json!({"type":"string", "description":"Opaque process-local task ID; grants no access."})
             }
@@ -467,6 +468,7 @@ pub fn openapi() -> Value {
     crate::capture_management::document(&mut document);
     crate::agent_execution::document(&mut document);
     crate::server_settings::document(&mut document);
+    crate::directory::document(&mut document);
     document.finish()
 }
 

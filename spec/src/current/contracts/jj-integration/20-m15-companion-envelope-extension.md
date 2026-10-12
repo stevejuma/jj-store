@@ -7,3 +7,9 @@ single original receipt naming all changed selections. Version 1 receipts and
 commits remain byte-identical and readable. All selected domain blobs and
 retained immutable object blobs have actual Git reachability; hashes in JSON are
 not retention. No ordinary Git transport or code operation is implicit.
+
+Explicit M26 emoji snapshots travel through the existing typed collaboration RPC
+command and receipt contracts. Definitions and raster assets stay in the
+selected Thread/Reaction closure. Snapshot provenance grants no code access and
+requires no live installation-directory lookup during replay or repository
+reads.

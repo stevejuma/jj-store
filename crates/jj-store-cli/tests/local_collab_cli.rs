@@ -259,6 +259,7 @@ fn cold_message_revisions_keep_feedback_exact_and_replacements_require_observed_
     let device = root.path().join("device");
     let created = create(&path, &device, 1);
     let intent = ThreadCommandV1::Message {
+        emojis: Vec::new(),
         reply_to: None,
         thread_id: ThreadId::new([1; 16]),
         expected_thread: reference(&created, "version"),
@@ -299,6 +300,7 @@ fn cold_message_revisions_keep_feedback_exact_and_replacements_require_observed_
         &device,
         4,
         &ThreadCommandV1::Message {
+            emojis: Vec::new(),
             reply_to: None,
             thread_id: ThreadId::new([1; 16]),
             expected_thread: reference(&first, "version"),

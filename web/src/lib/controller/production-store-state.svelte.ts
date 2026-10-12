@@ -53,6 +53,7 @@ export interface ProductionStoreState extends WorkspaceLinkSettings {
   captureSupported: boolean;
   executionSupported: boolean;
   settingsSupported: boolean;
+  directorySupported: boolean;
   backups: Model<"BackupStatus">[];
   heads: string[];
   repositories: StoreRepositorySummary[];
@@ -166,6 +167,7 @@ export function createProductionStoreState(): ProductionStoreState {
     captureSupported: false,
     executionSupported: false,
     settingsSupported: false,
+    directorySupported: false,
     backups: [],
     heads: [],
     repositories: [],

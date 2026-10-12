@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { useProfileDirectory } from "../../profiles/context.svelte.js";
   import { MessageMetadata } from "@lapismd/design-core/ai/chat";
   import { targetKey } from "../../collaboration/thread-presentation.js";
   import CommunityReactions from "../community-reactions/CommunityReactions.svelte";
@@ -67,6 +68,10 @@
       /* Targeted controller feedback is rendered below. */
     }
   }
+  const directory = useProfileDirectory();
+  $effect(() => {
+    threads?.setProfiles?.(directory?.directory);
+  });
 </script>
 
 <div

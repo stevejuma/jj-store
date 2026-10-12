@@ -14,11 +14,13 @@ export function createThreadsIntegration(options: {
     repository: string,
     token: string | null,
   ) => Promise<void>;
+  profiles?: import("./directory.svelte.js").DirectoryManagement;
   refreshDirectory?: (home: string) => Promise<void>;
 }) {
   const { data, history } = options;
   const threads = createThreadsController({
     directory: false,
+    profiles: options.profiles,
     source: () => {
       const t = options.source()?.threads;
       if (!t) throw new ApiError("threads_unavailable");

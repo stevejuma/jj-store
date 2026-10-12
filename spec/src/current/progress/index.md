@@ -6,6 +6,7 @@ evidence; generated histories do not promote tasks.
 Read the selected milestone and its generated history. Every protected slice
 adds a Markdown record and an explicit milestone review.
 <!-- generated-navigation -->
+
 ## Pages
 
 - [Historical task mappings](task-mapping.md)
@@ -37,3 +38,4 @@ adds a Markdown record and an explicit milestone review.
 - [M23 interactive agent execution](M23/index.md)
 - [M24 reusable ACP agents and contextual conversations](M24/index.md)
 - [M25 local compute, agent configuration and sent context](M25/index.md)
+- [M26 installation profiles and custom emoji](M26/index.md)

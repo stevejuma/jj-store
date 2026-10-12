@@ -172,6 +172,7 @@ impl Reader {
         self.graph
             .stage(CollabObjectV1::HumanMessageRevision(
                 HumanMessageRevisionV1 {
+                    emojis: Default::default(),
                     reply_to: None,
                     schema_version: 1,
                     message_id: mid(),

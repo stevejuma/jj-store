@@ -15,6 +15,7 @@ export type CatalogSearchSettings =
   "fresh" | "degraded" | "unavailable" | "failed";
 
 const capabilities = (search: boolean): Capabilities => ({
+  installation_directory: false,
   version: 1,
   native_profile: "jj-store-native-v1",
   authentication: "repository_bearer",

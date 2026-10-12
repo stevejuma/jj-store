@@ -28,12 +28,14 @@ export class CommunityEmojiWidget extends WidgetType {
   }
 }
 
-export function communityEmojiMatches(
+export function communityEmojiMatches<
+  T extends Pick<CommunityCustomEmoji, "shortcode" | "url">,
+>(
   value: string,
-  emojis: readonly CommunityCustomEmoji[],
-): Array<{ from: number; to: number; emoji: CommunityCustomEmoji }> {
+  emojis: readonly T[],
+): Array<{ from: number; to: number; emoji: T }> {
   const normalizedValue = value.toLocaleLowerCase();
-  const byShortcode = new Map<string, CommunityCustomEmoji[]>();
+  const byShortcode = new Map<string, T[]>();
   for (const emoji of emojis) {
     const shortcode = emoji.shortcode.trim().toLocaleLowerCase();
     if (shortcode === "" || !isSafeCommunityEmojiUrl(emoji.url)) continue;
@@ -43,7 +45,7 @@ export function communityEmojiMatches(
   const matches: Array<{
     from: number;
     to: number;
-    emoji: CommunityCustomEmoji;
+    emoji: T;
   }> = [];
   for (const entries of byShortcode.values()) {
     if (entries.length !== 1) continue;

@@ -277,3 +277,13 @@ preserve unknown outcomes. Each attached repository needs independent access.
 Ordinary repository endpoints admit bounded annotation containers without agent
 execution; supervisor-owned conversation creation and Codebase edits remain
 installation-local.
+
+Installation directory routes require an admitted LocalTrusted administrator or
+an enrolled bearer identity, independent of repository grants.
+Revision-conditional commands return actor-bound durable receipts; unknown
+outcomes retain the exact request for status or replay. Identity administration
+uses the separate manage-identities operator capability. Public profile lookups
+omit email and verifiers. Raster assets travel through authenticated binary
+responses and in-memory image URLs. Portable emoji snapshots are part of the
+original typed repository command and publish their closure with messages or
+reactions.

@@ -299,3 +299,10 @@ search transport dependency; the server starts configured writers separately.
 The server composes owned adapter/Tantivy interfaces for configured background
 search. Indexers and their cancellation guards are owned by the foreground
 server lifecycle. Publication and native storage do not depend on these workers.
+
+Installation directory contracts belong to the service boundary; the server
+implements them using the configured object store. Its format-1 SHA-256 records,
+raster media and CAS-selected installation manifest are independent of
+repository WAL roots. The pure collaboration model accepts explicit immutable
+emoji snapshots without importing that directory, HTTP, credentials or
+presentation.

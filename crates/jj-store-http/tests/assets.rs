@@ -99,7 +99,7 @@ async fn browser_assets_are_allowlisted_preloaded_and_sandboxed() {
         .unwrap();
     assert!(csp.contains("script-src 'self'"));
     assert!(csp.contains("font-src 'self'"));
-    assert!(csp.contains("img-src 'self' data: https:"));
+    assert!(csp.contains("img-src 'self' data: https: blob:"));
     assert!(csp.contains("style-src 'self' 'sha256-+A14ONesVdzkn6nr37Osn+rUqNz4oFGZFDbLXrlae04='"));
     assert!(!csp.contains("unsafe-inline"));
     assert!(

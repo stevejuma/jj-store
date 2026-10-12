@@ -169,6 +169,8 @@ impl ThreadEventV1 {
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct HumanMessageRevisionV1 {
+    #[serde(default, skip_serializing_if = "std::collections::BTreeMap::is_empty")]
+    pub emojis: std::collections::BTreeMap<String, CollabObjectRef>,
     pub schema_version: u32,
     pub message_id: HumanMessageId,
     pub thread_id: ThreadId,
@@ -182,6 +184,15 @@ pub struct HumanMessageRevisionV1 {
 impl HumanMessageRevisionV1 {
     pub fn validate(&self) -> Result<()> {
         schema(self.schema_version)?;
+        if self.emojis.len() > 32 {
+            return Err(Error::Limit);
+        }
+        for (name, reference) in &self.emojis {
+            if !label(name, 64) {
+                return Err(Error::Invalid("message emoji"));
+            }
+            expect(*reference, CollabObjectKind::CustomEmojiVersion)?;
+        }
         if let Some(parent) = self.reply_to {
             expect(parent, CollabObjectKind::HumanMessageRevision)?;
         }

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { useProfileAuthors } from "../../profiles/context.svelte.js";
   import ChatHistoryStatus from "./ChatHistoryStatus.svelte";
   import { SystemMessage } from "@lapismd/design-core/ai/chat";
   import CommunityMessageMeta from "../community-message/CommunityMessageMeta.svelte";
@@ -98,6 +99,7 @@
     }
     previousLast = last;
   });
+  const presentedItems = useProfileAuthors(() => items);
 </script>
 
 {#snippet reactionBar(item: import("./model.js").ChatBodyItem)}
@@ -132,7 +134,7 @@
         aria-busy={loading}
       >
         <ol class="chat-document">
-          {#each items as item (item.id)}
+          {#each presentedItems.values as item (item.id)}
             <li data-chat-item={item.id} data-kind={item.kind} tabindex="-1">
               {#if item.dayLabel}<SystemMessage variant="divider"
                   >{item.dayLabel}</SystemMessage

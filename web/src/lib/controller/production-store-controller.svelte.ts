@@ -1,5 +1,4 @@
 import { createProductionThreadWorkspaces } from "./production-thread-workspaces.js";
-import { ApiError } from "../api/client.js";
 import { agentsRoute } from "./agents-route-codec.js";
 import { createProductionStacksReaders } from "./production-stacks-history.js";
 import { createReadScope } from "./read-scope.js";
@@ -28,6 +27,7 @@ import {
   resetConnectionView,
   authorizationReady,
   createProductionConnectionScope,
+  authorizedRepositoryReader,
 } from "./production-store-lifecycle.svelte.js";
 import { createProductionStoreActions } from "./production-store-actions.js";
 import { createProductionCommandServices } from "./production-command-services.js";
@@ -38,7 +38,7 @@ export function createProductionStoreController(
   const history = createStoreRouteHistory(options.browser);
   const data = createProductionStoreState();
   let source: StoreDataSource | null = null,
-    sessionToken: string | null = null;
+    sessionToken = $state<string | null>(null);
   let session = 0;
   const connection = createProductionConnectionScope(
     data,
@@ -84,6 +84,7 @@ export function createProductionStoreController(
     freshness,
   );
   const threadsIntegration = createThreadsIntegration({
+    profiles: local.directory,
     source: () => source,
     data,
     history,
@@ -135,9 +136,8 @@ export function createProductionStoreController(
     openThreads,
     fetcher: options.fetcher,
   });
-  local.execution.onNavigate = (view, id, relatedId) => {
+  local.execution.onNavigate = (view, id, relatedId) =>
     void openRoute(agentsRoute(view, id, relatedId));
-  };
   function disconnect(message = "", denied = false, preserveSession = false) {
     const repositoryStatus = data.status.repositories;
     invalidate();
@@ -307,11 +307,11 @@ export function createProductionStoreController(
       projects,
       threadNavigation,
       threadWorkspaces,
-      acquireRepository: (id) => {
-        const repo = data.repositories.find((r) => r.id === id);
-        if (!repo) throw new ApiError("access_denied");
-        return sources.acquire(repo, sessionToken);
-      },
+      acquireRepository: authorizedRepositoryReader(
+        data,
+        sources,
+        () => sessionToken,
+      ),
       now: options.now,
       globalSearch,
       referenceSearch,

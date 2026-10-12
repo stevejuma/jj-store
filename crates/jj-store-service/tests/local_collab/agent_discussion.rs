@@ -24,6 +24,7 @@ async fn saved_agent_replies_and_reactions_survive_restart_and_keep_exact_target
             100 + i as u8,
             LocalCollabCommand::Thread {
                 intent: ThreadCommandV1::Message {
+                    emojis: Vec::new(),
                     thread_id: created.thread_id,
                     expected_thread: created.version,
                     message_id: HumanMessageId::new([100 + i as u8; 16]),
@@ -51,6 +52,21 @@ async fn saved_agent_replies_and_reactions_survive_restart_and_keep_exact_target
                 .len(),
             1
         );
+    }
+    // The sidebar catalog contains user threads; agent discussions are direct targets.
+    for id in [160, 161] {
+        repo.apply_collab_command(&request(
+            id,
+            LocalCollabCommand::Thread {
+                intent: ThreadCommandV1::Create {
+                    thread_id: ThreadId::new([id; 16]),
+                    title: "User thread for pagination".into(),
+                    baseline: None,
+                },
+            },
+        ))
+        .await
+        .unwrap();
     }
     let reopened = reopen(&root.path().join("repo"));
     let selection = reopened.inbox_selection().await.unwrap();
@@ -153,6 +169,7 @@ async fn saved_agent_replies_and_reactions_survive_restart_and_keep_exact_target
             121,
             LocalCollabCommand::Thread {
                 intent: ThreadCommandV1::Message {
+                    emojis: Vec::new(),
                     thread_id: reply.thread_id,
                     expected_thread: thread.state.threads[&reply.thread_id],
                     message_id: reply.message.message_id,
@@ -315,6 +332,7 @@ async fn tool_feedback_targets_selected_output_and_retains_replies_and_reactions
         76,
         LocalCollabCommand::Thread {
             intent: ThreadCommandV1::Message {
+                emojis: Vec::new(),
                 thread_id: created.thread_id,
                 expected_thread: created.version,
                 message_id: HumanMessageId::new([76; 16]),

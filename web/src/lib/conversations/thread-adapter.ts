@@ -42,6 +42,7 @@ export function threadConversationProjection(
       "Message",
       message.content,
     );
+    for (const block of blocks) block.emojis = message.customEmojis;
     for (const block of blocks)
       result.sources.set(block.id, {
         target,

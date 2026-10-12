@@ -169,6 +169,7 @@ fn react(
         n,
         CollabCommandV1::Reaction {
             intent: ReactionCommandV1::Set {
+                emoji: None,
                 target,
                 observed,
                 value,
@@ -187,6 +188,7 @@ fn message(
         n,
         CollabCommandV1::Thread {
             intent: ThreadCommandV1::Message {
+                emojis: Vec::new(),
                 reply_to: None,
                 thread_id: created.thread_id,
                 expected_thread: created.version,
@@ -791,6 +793,7 @@ async fn conversation_submission_is_atomic_receipt_backed_and_rejects_forged_ran
         quote: "🦀".into(),
     };
     let mut submission = ConversationSubmissionV1 {
+        emojis: Vec::new(),
         workspace_comments: vec![],
         reply_to: None,
         thread_id: parent.thread_id,
@@ -918,6 +921,7 @@ async fn qualified_reviews_require_an_explicit_reader_without_foreign_dependenci
         CollabCommandV1::Thread {
             intent: ThreadCommandV1::Submit {
                 submission: Box::new(ConversationSubmissionV1 {
+                    emojis: Vec::new(),
                     workspace_comments: vec![],
                     thread_id: parent.thread_id,
                     expected_thread: parent.version,
@@ -970,4 +974,90 @@ async fn qualified_reviews_require_an_explicit_reader_without_foreign_dependenci
         matches!(store.graph.get(batch).unwrap(), CollabObjectV1::ThreadLink(ThreadLinkV1 { target: ThreadLinkTargetV1::CommentBatch { comments, .. }, .. }) if comments == &vec![target])
     );
     assert_eq!(pin.manifest().review_root, before.review_root);
+}
+#[tokio::test]
+async fn library_snapshot_message_and_reaction_publish_complete_closures_and_replay() {
+    let (storage, guard, c) = fixture().await;
+    let created = thread_result(&publish(&c, &thread(101)).await);
+    let mut bytes = std::io::Cursor::new(Vec::new());
+    image::DynamicImage::ImageRgba8(image::RgbaImage::from_pixel(
+        1,
+        1,
+        image::Rgba([0, 255, 0, 255]),
+    ))
+    .write_to(&mut bytes, image::ImageFormat::Png)
+    .unwrap();
+    let snapshot = EmojiSnapshotV1 {
+        source: format!(
+            "installation:{}:{}:{}",
+            "ab".repeat(16),
+            "cd".repeat(16),
+            "ef".repeat(32)
+        ),
+        shortcode: "party".into(),
+        bytes: bytes.into_inner(),
+    };
+    let message = command_request(
+        102,
+        CollabCommandV1::Thread {
+            intent: ThreadCommandV1::Submit {
+                submission: Box::new(ConversationSubmissionV1 {
+                    emojis: vec![snapshot.clone()],
+                    thread_id: created.thread_id,
+                    expected_thread: created.version,
+                    message_id: Some(HumanMessageId::new([102; 16])),
+                    text: Some("Hello :party:".into()),
+                    reply_to: None,
+                    comments: vec![],
+                    references: vec![],
+                    workspace_comments: vec![],
+                }),
+            },
+        },
+    );
+    let accepted = publish(&c, &message).await;
+    let selected = c.read().await.unwrap();
+    let published = c
+        .native_thread_store(selected.manifest().thread_root.unwrap())
+        .await
+        .unwrap();
+    let revision = published.state.messages[&HumanMessageId::new([102; 16])];
+    let value = snapshot.stage(&mut CollabGraphV1::default()).unwrap();
+    let mut reaction = react(
+        103,
+        ReactionTargetV1::HumanMessage {
+            thread_id: created.thread_id,
+            message_id: HumanMessageId::new([102; 16]),
+            revision,
+        },
+        BTreeSet::new(),
+        value,
+    );
+    let CollabCommandV1::Reaction {
+        intent: ReactionCommandV1::Set { emoji, .. },
+    } = &mut reaction.command
+    else {
+        panic!()
+    };
+    *emoji = Some(snapshot);
+    let reacted = publish(&c, &reaction).await;
+    drop(c);
+    let cold = coordinator(storage, guard);
+    assert_eq!(publish(&cold, &message).await, accepted);
+    assert_eq!(publish(&cold, &reaction).await, reacted);
+    let pin = cold.read().await.unwrap();
+    let threads = cold
+        .native_thread_store(pin.manifest().thread_root.unwrap())
+        .await
+        .unwrap();
+    let CollabObjectV1::HumanMessageRevision(message) = threads.graph.get(revision).unwrap() else {
+        panic!()
+    };
+    let definitions = message_emoji_definitions(Some(message), &threads.graph).unwrap();
+    assert!(threads.graph.get(definitions["party"].preview).is_ok());
+    let reactions = cold
+        .native_reaction_store(pin.manifest().reaction_root.unwrap())
+        .await
+        .unwrap();
+    assert!(reactions.graph.get(definitions["party"].asset).is_ok());
 }

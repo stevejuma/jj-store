@@ -14,6 +14,7 @@ import { boundedReads } from "./bounded-reads.js";
 import { createReactionLibrary } from "./reaction-library.svelte.js";
 import { collabRequestId } from "./collab-actions.svelte.js";
 export function createMessageReactions(options: {
+  profiles?: import("./directory.svelte.js").DirectoryManagement;
   source: () => ThreadTransport;
   principal: () => string;
   generation: () => number;
@@ -23,6 +24,7 @@ export function createMessageReactions(options: {
     request: ThreadRequest | ReactionRequest,
   ) => Promise<void>;
 }) {
+  let profiles = options.profiles;
   let reactions = $state<Record<string, ReactionItems>>({});
   let errors = $state<Record<string, string>>({});
   let revision = $state(0),
@@ -60,6 +62,8 @@ export function createMessageReactions(options: {
         : p.items;
       if (!p.next_cursor) {
         reactions = { ...reactions, [key]: combined };
+        if (profiles?.available())
+          await profiles.loadProfiles(combined.actors.map((a) => a.actor));
         return;
       }
       cursor = p.next_cursor;
@@ -96,7 +100,11 @@ export function createMessageReactions(options: {
         library.versions[d.emoji_id]?.id === value.version.id,
     );
     return d
-      ? { emoji: d.shortcode, url: library.urls[d.emoji_id], label: d.label }
+      ? {
+          emoji: d.source ? d.label : d.shortcode,
+          url: library.urls[d.emoji_id],
+          label: d.label,
+        }
       : { emoji: ":custom:", label: "Retained custom reaction" };
   };
   const glyph = (v: Model<"ReactionValueV1">) =>
@@ -130,14 +138,20 @@ export function createMessageReactions(options: {
             !d.retired,
         )
       : undefined;
-    if (customEmoji && !d && !fromBar)
+    const selection =
+      customEmoji && !d && !fromBar && profiles?.available()
+        ? await profiles.selection(customEmoji)
+        : undefined;
+    if (customEmoji && !d && !fromBar && !selection)
       throw new ApiError("custom_emoji_unavailable");
+    if (!options.valid(ticket, transport)) return;
     const barValue = fromBar
       ? actor?.value && glyph(actor.value) === emoji
         ? actor.value
         : items.reactions.find((r) => glyph(r.value) === emoji)?.value
       : undefined;
     const value: Model<"ReactionValueV1"> =
+      selection?.value ??
       barValue ??
       (d
         ? {
@@ -153,7 +167,13 @@ export function createMessageReactions(options: {
     const selected = actor?.value && pretty(actor.value) === pretty(value);
     const command: ReactionRequest["command"] = selected
       ? { type: "clear", target, observed: actor.active }
-      : { type: "set", target, value, observed: actor?.active ?? [] };
+      : {
+          type: "set",
+          target,
+          value,
+          observed: actor?.active ?? [],
+          ...(selection ? { emoji: selection.snapshot } : {}),
+        };
     await options.execute("reactions", {
       version: 1,
       request_id: collabRequestId(),
@@ -186,11 +206,20 @@ export function createMessageReactions(options: {
     library.invalidate();
   }
   return {
+    setProfiles(value: typeof profiles) {
+      profiles = value;
+    },
     get revision() {
       return revision;
     },
     get emojis() {
-      return library.emojis;
+      const global = profiles?.emojis ?? [];
+      return [
+        ...global,
+        ...library.emojis.filter(
+          (e) => !global.some((g) => g.shortcode === e.shortcode),
+        ),
+      ];
     },
     getError(target: ReactionTarget) {
       return errors[targetKey(target)] ?? "";
@@ -200,7 +229,11 @@ export function createMessageReactions(options: {
     },
     reactionModels(target: ReactionTarget) {
       const items = reactions[targetKey(target)];
-      return items ? reactionModels(items, custom) : [];
+      const models = items ? reactionModels(items, custom) : [];
+      return models.map((m) => ({
+        ...m,
+        actors: m.actors?.map((a) => profiles?.member(a.id, a) ?? a),
+      }));
     },
     loadEmojis: library.load,
     refresh: (target: ReactionTarget) => loadReactions(target, true),

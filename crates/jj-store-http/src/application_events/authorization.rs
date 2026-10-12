@@ -7,6 +7,7 @@ pub(super) struct Authorization {
     scope: String,
     sessions: BTreeMap<m::RepositoryId, Option<Arc<NativeSession>>>,
     local: bool,
+    directory_viewer: Option<m::PrincipalId>,
     viewers: BTreeMap<m::RepositoryId, m::PrincipalId>,
 }
 impl Authorization {
@@ -27,6 +28,7 @@ impl Authorization {
             scope: hex::encode(&mac.finalize().into_bytes()[..16]),
             sessions: BTreeMap::new(),
             viewers: BTreeMap::new(),
+            directory_viewer: None,
             local: matches!(
                 state.config.access,
                 Access::LocalTrusted {
@@ -37,6 +39,11 @@ impl Authorization {
         })
     }
     pub async fn repositories(&mut self, state: &State) -> Result<Vec<(m::RepositoryId, bool)>> {
+        if let Some(directory) = &state.config.directory {
+            if let Ok(caller) = crate::directory::caller(state, &self.headers()) {
+                self.directory_viewer = directory.principal(&caller).await.ok();
+            }
+        }
         let mut headers = HeaderMap::new();
         if let Some(token) = &self.token {
             headers.insert(
@@ -97,7 +104,24 @@ impl Authorization {
         self.viewers = viewers;
         Ok(repositories)
     }
+    fn headers(&self) -> HeaderMap {
+        let mut headers = HeaderMap::new();
+        if let Some(token) = &self.token {
+            headers.insert(
+                header::AUTHORIZATION,
+                format!("Bearer {}", token.expose().as_str())
+                    .parse()
+                    .expect("checked bearer"),
+            );
+        }
+        headers
+    }
     pub fn visible(&self, change: &Change) -> bool {
+        if change.repository.is_none()
+            && matches!(change.domain, Domain::Profiles | Domain::EmojiLibrary)
+        {
+            return self.directory_viewer.is_some();
+        }
         if change.audience.is_some_and(|viewer| {
             change
                 .repository
@@ -113,9 +137,24 @@ impl Authorization {
     }
     pub async fn authorize(
         &self,
-        _state: &State,
+        state: &State,
         repository: Option<m::RepositoryId>,
     ) -> Result<()> {
+        if let Some(principal) = self.directory_viewer {
+            let caller = crate::directory::caller(state, &self.headers())?;
+            if state
+                .config
+                .directory
+                .as_ref()
+                .ok_or_else(Error::denied)?
+                .principal(&caller)
+                .await
+                .map_err(crate::directory::failure)?
+                != principal
+            {
+                return Err(Error::denied());
+            }
+        }
         for (id, session) in &self.sessions {
             if repository.is_some_and(|r| r != *id) {
                 continue;

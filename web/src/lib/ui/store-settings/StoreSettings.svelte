@@ -9,6 +9,8 @@
   import StoreAppearance from "../store-appearance/StoreAppearance.svelte";
   import StoreComputeSettings from "./StoreComputeSettings.svelte";
   import StoreAgentSettings from "./StoreAgentSettings.svelte";
+  import StoreProfileSettings from "./StoreProfileSettings.svelte";
+  import StoreCustomEmojiSettings from "./StoreCustomEmojiSettings.svelte";
   import StoreServiceSettings from "./StoreServiceSettings.svelte";
   import type { StoreSettingsSection } from "./model.js";
 
@@ -47,7 +49,12 @@
   $effect(() => {
     const selected = section;
     repository;
-    if (["appearance", "agents", "compute"].includes(selected)) return;
+    if (
+      ["appearance", "agents", "compute", "profile", "custom-emoji"].includes(
+        selected,
+      )
+    )
+      return;
     return untrack(() => observeStoreSettings(controller, selected));
   });
 </script>
@@ -58,7 +65,11 @@
     role="region"
     aria-label="Settings content"
   >
-    {#if section === "appearance"}
+    {#if section === "profile"}
+      <StoreProfileSettings management={controller.directory} />
+    {:else if section === "custom-emoji"}
+      <StoreCustomEmojiSettings management={controller.directory} />
+    {:else if section === "appearance"}
       <StoreAppearance bind:active={() => selectedTab ?? "theme", selectTab} />
     {:else if section === "service"}
       <StoreServiceSettings

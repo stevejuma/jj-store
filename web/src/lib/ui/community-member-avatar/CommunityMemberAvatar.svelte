@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { useProfileMembers } from "../../profiles/context.svelte.js";
   import { useAgentExecution } from "../store-agent-execution/context.js";
   import {
     agentLiveState,
@@ -13,7 +14,7 @@
   import "./community-member-avatar.css";
 
   let {
-    member,
+    member: suppliedMember,
     size = "medium",
     showPresence = false,
     decorative = false,
@@ -29,6 +30,8 @@
     contrast?: "default" | "strong";
     presence?: CommunityMemberModel["presence"] | "unknown";
   } = $props();
+  const profiles = useProfileMembers(() => [suppliedMember]);
+  const member = $derived(profiles.values[0]!);
 
   const execution = useAgentExecution();
   const liveState = $derived(
@@ -44,7 +47,14 @@
   const hidden = $derived(decorative && !member.acpAgentId);
   const resolvedShape = $derived(shape ?? communityMemberAvatarShape(member));
   const presence = $derived(presenceOverride ?? member.presence ?? "offline");
-  const content = $derived(communityMemberAvatarContent(member));
+  let failed = $state("");
+  const content = $derived(
+    communityMemberAvatarContent(
+      member.avatarUrl === failed
+        ? { ...member, avatarUrl: undefined }
+        : member,
+    ),
+  );
   const fallbackTone = $derived(communityMemberAvatarFallbackTone(member.name));
   const presenceLabel = $derived(
     liveState
@@ -84,7 +94,13 @@
     data-fallback-tone={content.kind === "initials" ? fallbackTone : undefined}
   >
     {#if content.kind === "image"}
-      <img src={content.src} alt="" />
+      <img
+        src={content.src}
+        alt=""
+        onerror={() => {
+          if (content.kind === "image") failed = content.src;
+        }}
+      />
     {:else if content.kind === "emoji"}
       <span data-ui-part="emoji" aria-hidden="true">{content.emoji}</span>
     {:else}

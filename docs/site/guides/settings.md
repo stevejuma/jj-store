@@ -12,13 +12,14 @@ bounded fallback only while visible.
 
 ## Where to find settings
 
-Open **Settings** from the profile menu for Appearance, Local service, Agents
-and Compute. Local service includes installation-wide Protection and Storage
-configuration, folder registration and Add folder. Appearance separates Theme
-and Preferences into subtabs; changes still save immediately on this device.
-Link previews and Thread layout have their own cards under Preferences. Launch
-and Storage group their read-only inventory by purpose. Use Copy beside a
-configured path or endpoint to copy the complete value.
+Open **Settings** from the profile menu for Profile, Custom emoji, Appearance,
+Local service, Agents and Compute. Local service includes installation-wide
+Protection and Storage configuration, folder registration and Add folder.
+Appearance separates Theme and Preferences into subtabs; changes still save
+immediately on this device. Link previews and Thread layout have their own cards
+under Preferences. Launch and Storage group their read-only inventory by
+purpose. Use Copy beside a configured path or endpoint to copy the complete
+value.
 
 Global Settings links record the section and tab, for example
 `#/settings?section=agents&tab=runtimes`. Reload restores that page, and a root
@@ -247,3 +248,22 @@ settings** and **Apply saved settings**; Sync changes take effect at the next
 server startup. Global service/capture changes also require restart. Compute
 memory keeps its GB unit and accepts an empty value for automatic allocation.
 Reset is offered only where an authoritative default is available.
+
+## Profile and custom emoji
+
+Object-backed installations offer the same Profile form to the local
+administrator and enrolled authenticated users. Save a display name and Markdown
+description, optionally add a private email, and choose an uploaded avatar,
+credential-free HTTPS image URL or emoji avatar. Email is visible only to its
+owner. With no explicit avatar, other users see the derived Gravatar image;
+unavailable images fall back to initials. Changes use an observed profile
+revision. Refresh keeps drafts; review a conflicting saved version before
+submitting them again.
+
+Custom emoji accepts PNG, JPEG, GIF and WebP uploads up to 2 MiB, 512 × 512
+pixels and 100 frames. Active shortcodes are unique across the installation.
+Everyone enrolled can use them; owners can edit or remove their own entries.
+Removal prevents new selections while retained Thread messages and reactions
+keep their original definitions and images. Unknown save outcomes retain the
+original request: use Check save status or Retry original save before another
+action. Filesystem-only installations show these settings as unavailable.

@@ -21,6 +21,8 @@ const domains: readonly string[] = [
   "capture",
   "configuration",
   "discovery",
+  "profiles",
+  "emoji_library",
   "workspaces",
   "conversion",
 ];

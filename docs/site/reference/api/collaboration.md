@@ -8238,6 +8238,35 @@ Current repository permission is checked for every request. Commands and status 
                     "submission": {
                       "type": "object",
                       "properties": {
+                        "emojis": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "source": {
+                                "type": "string"
+                              },
+                              "shortcode": {
+                                "type": "string"
+                              },
+                              "bytes": {
+                                "type": "array",
+                                "items": {
+                                  "type": "integer",
+                                  "format": "uint8",
+                                  "minimum": 0,
+                                  "maximum": 255
+                                }
+                              }
+                            },
+                            "additionalProperties": false,
+                            "required": [
+                              "source",
+                              "shortcode",
+                              "bytes"
+                            ]
+                          }
+                        },
                         "thread_id": {
                           "type": "string",
                           "pattern": "^[0-9a-f]{32}$",
@@ -12291,6 +12320,35 @@ Current repository permission is checked for every request. Commands and status 
                 {
                   "type": "object",
                   "properties": {
+                    "emojis": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "source": {
+                            "type": "string"
+                          },
+                          "shortcode": {
+                            "type": "string"
+                          },
+                          "bytes": {
+                            "type": "array",
+                            "items": {
+                              "type": "integer",
+                              "format": "uint8",
+                              "minimum": 0,
+                              "maximum": 255
+                            }
+                          }
+                        },
+                        "additionalProperties": false,
+                        "required": [
+                          "source",
+                          "shortcode",
+                          "bytes"
+                        ]
+                      }
+                    },
                     "thread_id": {
                       "type": "string",
                       "pattern": "^[0-9a-f]{32}$",
@@ -17130,6 +17188,35 @@ Current repository permission is checked for every request. Commands and status 
                 {
                   "type": "object",
                   "properties": {
+                    "emoji": {
+                      "type": [
+                        "object",
+                        "null"
+                      ],
+                      "properties": {
+                        "source": {
+                          "type": "string"
+                        },
+                        "shortcode": {
+                          "type": "string"
+                        },
+                        "bytes": {
+                          "type": "array",
+                          "items": {
+                            "type": "integer",
+                            "format": "uint8",
+                            "minimum": 0,
+                            "maximum": 255
+                          }
+                        }
+                      },
+                      "additionalProperties": false,
+                      "required": [
+                        "source",
+                        "shortcode",
+                        "bytes"
+                      ]
+                    },
                     "target": {
                       "description": "Identity, immutable content and validation witnesses are explicit, never a UI position.",
                       "oneOf": [

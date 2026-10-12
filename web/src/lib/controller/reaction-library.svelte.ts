@@ -95,7 +95,7 @@ export function createReactionLibrary(options: Options) {
     },
     get emojis() {
       return definitions
-        .filter((d) => !d.retired && urls[d.emoji_id])
+        .filter((d) => !d.retired && !d.source && urls[d.emoji_id])
         .map((d) => ({
           shortcode: d.shortcode,
           url: urls[d.emoji_id]!,

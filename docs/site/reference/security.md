@@ -50,10 +50,11 @@ origin. The application and API responses remain protected independently. Help
 never receives repository tokens. Closing it preserves the underlying view and
 in-memory drafts rather than reconnecting the application.
 
-Browser image CSP permits same-origin, HTTPS and data images for Community
-avatars. Agent saves accept credential-free HTTPS image URLs, bounded raster
-data and the fixed Community emoji SVG template. The server does not fetch
-remote avatars. Script, style, connection and frame restrictions remain intact.
+Browser image CSP permits same-origin, HTTPS, data and in-memory blob images for
+Community avatars. Agent saves accept credential-free HTTPS image URLs, bounded
+raster data and the fixed Community emoji SVG template. The server does not
+fetch remote avatars. Script, style, connection and frame restrictions remain
+intact.
 
 ## Local models and paired compute
 
@@ -77,3 +78,32 @@ Keychain; browser status and repository data contain no tokens. Model discovery
 never opens a browser or Keychain authentication prompt. Sign-out reports
 unconfirmed remote revocation separately from local disconnection. Live
 subscription and signed desktop qualification remain separate from fixtures.
+
+## Installation identities
+
+Profile and custom emoji authority is stored in the installation directory in
+the object store. It is separate from repository policies and the device-local
+operator policy. Existing bearer tokens need an explicit installation identity
+binding; a repository principal selected by a grant cannot authorize someone
+else's profile. An enrolled user can edit personal settings with no repository
+grant. Email remains private and token verifiers are never in public responses.
+Revoked token identities retain their original binding and cannot be reassigned.
+
+Provision a manage-identities operator token with `jj-store operator init` or
+`jj-store operator grant --permission manage-identities`; use a separate token
+from create-repository administration. Configure the operator policy outside the
+checkout. Provisioning uses the OS credential facility or
+`JJ_STORE_OPERATOR_TOKEN`. Bind a user token with:
+
+```sh
+jj-store identity --endpoint https://server.example grant --principal PRINCIPAL_ID --token-stdin --request /private/state/enroll-user.json
+```
+
+The credential comes from stdin, never a URL or the request journal. The journal
+retains public intent and the original request ID for status/retry. Use the same
+principal IDs in repository grants when those actors should display this
+profile. `identity list`, `identity revoke --token-id TOKEN_ID --request PATH`
+and `identity status --request PATH` manage and recover bindings. Repository
+creation grants do not grant identity management. LocalTrusted profiles use the
+installation principal without a token; operator enrollment is for authenticated
+serving.

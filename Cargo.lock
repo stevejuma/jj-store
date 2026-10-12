@@ -4242,6 +4242,7 @@ dependencies = [
  "tokio-util 0.7.19",
  "tower",
  "url",
+ "zeroize",
 ]
 
 [[package]]
@@ -4398,6 +4399,7 @@ dependencies = [
  "serde",
  "serde_json",
  "sha2 0.10.9",
+ "subtle",
  "tempfile",
  "thiserror 2.0.21",
  "tokio",

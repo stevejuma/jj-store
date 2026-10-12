@@ -22,6 +22,7 @@ fn prompt_feedback_is_exact_bounded_and_omits_tombstones() {
     };
     let thread_id = ThreadId::new([7; 16]);
     let message = HumanMessageRevisionV1 {
+        emojis: Default::default(),
         schema_version: 1,
         message_id: HumanMessageId::new([8; 16]),
         thread_id,

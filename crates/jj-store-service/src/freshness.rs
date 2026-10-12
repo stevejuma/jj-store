@@ -31,6 +31,8 @@ pub enum Domain {
     Capture,
     Configuration,
     Discovery,
+    Profiles,
+    EmojiLibrary,
     Workspaces,
     Conversion,
 }

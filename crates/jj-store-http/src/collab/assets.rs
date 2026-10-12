@@ -62,7 +62,7 @@ pub(crate) async fn image(
     };
     let pin = state
         .collab
-        .pin(context.session.clone(), reads::ReadScope::Emojis)
+        .pin(context.session.clone(), reads::ReadScope::Assets)
         .await?;
     let asset = pin.image(context.session, reference).await?;
     let media = match asset.media_type {

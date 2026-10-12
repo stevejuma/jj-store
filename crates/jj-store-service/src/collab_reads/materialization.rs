@@ -10,6 +10,7 @@ pub enum ReadScope {
     All,
     Threads,
     Emojis,
+    Assets,
     Reactions(ReactionTargetV1),
 }
 impl ReadScope {
@@ -18,6 +19,7 @@ impl ReadScope {
             Self::All => [true; 5],
             Self::Threads => [true, false, false, false, false],
             Self::Emojis => [false, true, false, false, false],
+            Self::Assets => [true, true, false, false, false],
             Self::Reactions(target) => match target {
                 ReactionTargetV1::Thread { .. } | ReactionTargetV1::HumanMessage { .. } => {
                     [true, true, false, false, false]

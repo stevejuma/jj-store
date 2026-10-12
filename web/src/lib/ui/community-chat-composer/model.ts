@@ -25,7 +25,11 @@ export function isSafeCommunityEmojiUrl(value: string): boolean {
   if (/^data:image\/[a-z0-9.+-]+(?:;[^,]*)?,/iu.test(trimmed)) return true;
   try {
     const url = new URL(trimmed);
-    return url.protocol === "http:" || url.protocol === "https:";
+    return (
+      url.protocol === "http:" ||
+      url.protocol === "https:" ||
+      url.protocol === "blob:"
+    );
   } catch {
     return false;
   }

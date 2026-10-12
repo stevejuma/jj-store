@@ -47,6 +47,7 @@ pub(super) fn read(
             *request_id,
             CollabCommandV1::Reaction {
                 intent: ReactionCommandV1::Set {
+                    emoji: None,
                     target: document(target)?,
                     value: document(value)?,
                     observed: observed

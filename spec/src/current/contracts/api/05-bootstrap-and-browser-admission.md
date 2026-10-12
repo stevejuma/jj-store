@@ -89,3 +89,11 @@ insets and Source syntax highlighting remain presentation-only; recorded and
 draft bytes, safe Markdown previews and edit publication are unchanged.
 Highlighting uses detected filename languages and static token styles under the
 existing production asset policy.
+
+M26 advertises `installation_directory` only for object-backed installations.
+The /v1/directory family shares protocol, authority and browser admission and
+uses an independent installation caller binding. Enrolled tokens with no repo
+grant receive an empty repository discovery page and can edit personal settings.
+Identity administration requires manage-identities operator authorization. The
+profile/library projections and media responses remain bounded, no-store and
+reauthorized; private email is absent from shared profile data.

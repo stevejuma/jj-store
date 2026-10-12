@@ -7,3 +7,10 @@ explicit installation-local Thread configuration and an optional exact send
 witness; they do not remap existing object, operation, repository or agent
 identities. Focused model and generated contract checks qualify this extension
 separately from platform, storage and installed-provider acceptance.
+
+M26 adds optional message/submission emoji snapshot fields and optional custom
+emoji source provenance. Empty fields are omitted, preserving existing canonical
+bytes. Both publication providers retain exact imported definitions and image
+closures. Installation directory format 1 and identity-journal format 1 are new
+independent formats; native manifest and local companion envelope versions do
+not change. Generated profile projections omit private email.

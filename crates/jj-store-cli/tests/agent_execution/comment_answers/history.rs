@@ -34,6 +34,7 @@ pub(super) async fn edit_submitted_comment(
             request_id: RequestId::new([191; 16]),
             command: jj_collab::CollabCommandV1::Thread {
                 intent: jj_collab::ThreadCommandV1::Message {
+                    emojis: Vec::new(),
                     thread_id: original.thread_id,
                     expected_thread: expected,
                     message_id: original.message.message_id,
@@ -135,6 +136,7 @@ pub(super) async fn tombstone_submitted_comment(
             request_id: RequestId::new([192; 16]),
             command: jj_collab::CollabCommandV1::Thread {
                 intent: jj_collab::ThreadCommandV1::Message {
+                    emojis: Vec::new(),
                     thread_id: current.thread_id,
                     expected_thread: expected,
                     message_id: current.message.message_id,

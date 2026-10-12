@@ -19,6 +19,7 @@ pub mod capture_supervisor;
 mod capture_test_fixture;
 pub mod capture_worker;
 pub mod config;
+pub mod directory;
 pub mod installation;
 mod listener;
 pub mod local_repositories;
@@ -78,3 +79,5 @@ pub mod sync_management;
 
 pub mod search_management;
 mod search_worker;
+
+mod presentation_avatar;

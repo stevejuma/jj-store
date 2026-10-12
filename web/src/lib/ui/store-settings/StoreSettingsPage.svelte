@@ -1,4 +1,6 @@
 <script lang="ts">
+  import UserIcon from "@lucide/svelte/icons/user";
+  import SmileIcon from "@lucide/svelte/icons/smile";
   import ShieldIcon from "@lucide/svelte/icons/shield";
   import RocketIcon from "@lucide/svelte/icons/arrow-up";
   import GaugeIcon from "@lucide/svelte/icons/gauge";
@@ -89,40 +91,48 @@
   );
   const titleId = $props.id();
   const title = $derived(
-    section === "appearance"
-      ? "Appearance"
-      : section === "service"
-        ? "Local service"
-        : section === "agents"
-          ? "Agents"
-          : section === "compute"
-            ? "Compute"
-            : section === "repository"
-              ? "General"
-              : section === "folders"
-                ? "Local folders"
-                : section === "advanced"
-                  ? "Advanced"
-                  : section === "storage"
-                    ? "Storage"
-                    : section === "sync"
-                      ? "Sync"
-                      : "Search",
+    section === "profile"
+      ? "Profile"
+      : section === "custom-emoji"
+        ? "Custom emoji"
+        : section === "appearance"
+          ? "Appearance"
+          : section === "service"
+            ? "Local service"
+            : section === "agents"
+              ? "Agents"
+              : section === "compute"
+                ? "Compute"
+                : section === "repository"
+                  ? "General"
+                  : section === "folders"
+                    ? "Local folders"
+                    : section === "advanced"
+                      ? "Advanced"
+                      : section === "storage"
+                        ? "Storage"
+                        : section === "sync"
+                          ? "Sync"
+                          : "Search",
   );
   const PageIcon = $derived(
-    section === "appearance"
-      ? PaletteIcon
-      : section === "service" || section === "compute"
-        ? ServerIcon
-        : section === "agents"
-          ? BotIcon
-          : section === "repository"
-            ? DatabaseIcon
-            : section === "storage"
-              ? DatabaseIcon
-              : section === "sync"
-                ? RefreshCwIcon
-                : SearchIcon,
+    section === "profile"
+      ? UserIcon
+      : section === "custom-emoji"
+        ? SmileIcon
+        : section === "appearance"
+          ? PaletteIcon
+          : section === "service" || section === "compute"
+            ? ServerIcon
+            : section === "agents"
+              ? BotIcon
+              : section === "repository"
+                ? DatabaseIcon
+                : section === "storage"
+                  ? DatabaseIcon
+                  : section === "sync"
+                    ? RefreshCwIcon
+                    : SearchIcon,
   );
 </script>
 

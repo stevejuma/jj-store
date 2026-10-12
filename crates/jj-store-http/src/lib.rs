@@ -9,6 +9,7 @@ mod collab;
 mod collaboration;
 mod content_search;
 pub mod contract;
+mod directory;
 mod dto;
 mod error;
 mod local_browser;
@@ -103,6 +104,8 @@ pub struct Config {
     pub origin: String,
     pub access: Access,
     pub registry: Option<Arc<dyn RepositoryRegistry>>,
+    pub directory: Option<Arc<dyn jj_store_service::directory::Directory>>,
+    pub directory_operators: Option<Arc<dyn jj_store_service::administration::OperatorPolicies>>,
     pub local_repositories: Option<Arc<dyn jj_store_service::local_browser::LocalRepositories>>,
     pub local_search: Option<Arc<dyn jj_store_service::search_management::SearchManager>>,
     pub local_storage: Option<Arc<dyn jj_store_service::storage_management::StorageManager>>,
@@ -135,6 +138,8 @@ impl Default for Config {
             origin: "http://127.0.0.1:7443".into(),
             access: Access::Authenticated,
             registry: None,
+            directory: None,
+            directory_operators: None,
             local_workspaces: None,
             local_repositories: None,
             local_storage: None,
@@ -384,6 +389,7 @@ impl HttpApi {
                 .merge(capture_management::router())
                 .merge(agent_execution::router())
                 .merge(server_settings::router())
+                .merge(directory::router())
                 .with_state(self.0.clone())
                 .layer(middleware::from_fn_with_state(self.0.clone(), admit)),
         )

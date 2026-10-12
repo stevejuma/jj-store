@@ -140,13 +140,33 @@ impl ReactionStateV1 {
         graph: &mut CollabGraphV1,
     ) -> Result<(ReactionRootV1, ReactionCommandResultV1)> {
         command.validate()?;
+        let mut selected = self.clone();
+        if let ReactionCommandV1::Set {
+            emoji: Some(emoji),
+            value,
+            ..
+        } = command
+        {
+            let imported = emoji.stage(graph)?;
+            if &imported != value {
+                return Err(Error::Invalid("emoji selection mismatch"));
+            }
+            let ReactionValueV1::Custom { emoji_id, version } = imported else {
+                unreachable!()
+            };
+            selected.emojis.insert(emoji_id, version);
+            selected.root.emojis = graph.catalog_update(
+                selected.root.emojis,
+                BTreeMap::from([(entity_key("emoji", emoji_id.as_bytes())?, version)]),
+            )?;
+        }
         let value = match command {
             ReactionCommandV1::Set { value, .. } => Some(value),
             ReactionCommandV1::Clear { .. } => None,
             ReactionCommandV1::ResolveConflict { value, .. } => value.as_ref(),
         };
         if let Some(ReactionValueV1::Custom { emoji_id, version }) = value {
-            if self.emojis.get(emoji_id) != Some(version) {
+            if selected.emojis.get(emoji_id) != Some(version) {
                 return Err(Error::Stale);
             }
             let CollabObjectV1::CustomEmojiVersion(emoji) = graph.get(*version)? else {
@@ -185,7 +205,7 @@ impl ReactionStateV1 {
         }
         let state = applied.slot.resolve(&graph.objects)?;
         let reference = graph.stage(CollabObjectV1::ReactionSlot(applied.slot))?;
-        let mut root = self.root.clone();
+        let mut root = selected.root.clone();
         root.slots = graph.catalog_update(root.slots, BTreeMap::from([(key, reference)]))?;
         let result = ReactionCommandResultV1 {
             schema_version: 1,
@@ -214,6 +234,14 @@ impl ReactionStateV1 {
         if self.emojis.get(&id).copied() != expected {
             return Err(Error::Stale);
         }
+        if let Some(reference) = self.emojis.get(&id) {
+            let CollabObjectV1::CustomEmojiVersion(old) = graph.get(*reference)? else {
+                return Err(Error::Invalid("emoji definition"));
+            };
+            if old.source.is_some() {
+                return Err(Error::Invalid("immutable library snapshot"));
+            }
+        }
         let value = match command {
             CustomEmojiCommandV1::Define {
                 shortcode,
@@ -233,6 +261,7 @@ impl ReactionStateV1 {
                 let asset = graph.stage(CollabObjectV1::ImageAsset(asset))?;
                 let preview = graph.stage(CollabObjectV1::ImageAsset(preview))?;
                 CustomEmojiVersionV1 {
+                    source: None,
                     schema_version: 1,
                     emoji_id: id,
                     shortcode: shortcode.clone(),

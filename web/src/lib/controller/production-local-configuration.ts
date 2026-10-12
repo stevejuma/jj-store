@@ -1,3 +1,4 @@
+import { createDirectory } from "./directory.svelte.js";
 import { LocalClient } from "../api/local-client.js";
 import { AgentExecution } from "./agent-execution.svelte.js";
 import { createServerSettings } from "./server-settings.svelte.js";
@@ -7,7 +8,18 @@ export function createLocalConfiguration(
   data: ProductionStoreState,
   fetcher?: typeof fetch,
   freshness?: import("./application-freshness.js").ApplicationFreshness,
+  token: () => string | null = () => null,
+  denied?: () => void,
 ) {
+  const directory = createDirectory({
+    available: () =>
+      data.directorySupported &&
+      (data.accessMode === "local_trusted" || token() !== null),
+    token,
+    denied,
+    fetcher,
+    freshness,
+  });
   const capture = createProductionCaptureManagement(data, fetcher, freshness);
   const execution = new AgentExecution(
     () => data.accessMode === "local_trusted" && data.executionSupported,
@@ -25,11 +37,13 @@ export function createLocalConfiguration(
     capture,
     execution,
     configuration,
+    directory,
     destroy() {
       freshness?.destroy();
       capture.destroy();
       execution.destroy();
       configuration.destroy();
+      directory.destroy();
     },
   };
 }

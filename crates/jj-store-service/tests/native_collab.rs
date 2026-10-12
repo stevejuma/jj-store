@@ -127,6 +127,7 @@ fn react(n: u8, target: ReactionTargetV1, value: ReactionValueV1) -> Request {
         n,
         CollabCommandV1::Reaction {
             intent: ReactionCommandV1::Set {
+                emoji: None,
                 target,
                 observed: BTreeSet::new(),
                 value,
@@ -145,6 +146,7 @@ fn message(
         n,
         CollabCommandV1::Thread {
             intent: ThreadCommandV1::Message {
+                emojis: Vec::new(),
                 reply_to: None,
                 thread_id: version.thread_id,
                 expected_thread: version.version,

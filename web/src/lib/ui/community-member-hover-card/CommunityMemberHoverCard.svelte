@@ -1,10 +1,12 @@
 <script lang="ts">
+  import { useProfileMembers } from "../../profiles/context.svelte.js";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as HoverCard from "@lapismd/design-core/shadcn/hover-card";
   import ActivityIcon from "@lucide/svelte/icons/activity";
   import HandIcon from "@lucide/svelte/icons/hand";
   import MessageCircleIcon from "@lucide/svelte/icons/message-circle";
 
+  import CommunityMarkdownContent from "../community-markdown-content/CommunityMarkdownContent.svelte";
   import CommunityChip from "../community-chip/CommunityChip.svelte";
   import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
   import { communityMemberAvatarShape } from "../community-member-avatar/model.js";
@@ -12,14 +14,14 @@
   import type { CommunityMemberModel } from "../community-workspace/model.js";
 
   let {
-    member,
+    member: suppliedMember,
     onOpenProfile,
     onViewActivity,
     onMessage,
     onWave,
     openDelay = 280,
     trigger = "avatar",
-    triggerLabel = member.name,
+    triggerLabel = suppliedMember.name,
     avatarSize = "medium",
     avatarShape,
   }: {
@@ -34,6 +36,8 @@
     avatarSize?: "xsmall" | "small" | "medium";
     avatarShape?: "circle" | "rounded";
   } = $props();
+  const profiles = useProfileMembers(() => [suppliedMember]);
+  const member = $derived(profiles.values[0]!);
 
   let open = $state(false);
   const resolvedAvatarShape = $derived(
@@ -113,6 +117,7 @@
     {#if member.role}
       <p class="community-member-hover-card__role">{member.role}</p>
     {/if}
+    {#if member.about}<CommunityMarkdownContent content={member.about} />{/if}
 
     <div class="community-member-hover-card__actions">
       {#if onViewActivity}

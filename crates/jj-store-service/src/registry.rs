@@ -32,7 +32,7 @@ impl TryFrom<Permission> for EffectivePermission {
             Permission::Read => Ok(Self::Read),
             Permission::Write => Ok(Self::Write),
             Permission::Admin => Ok(Self::Admin),
-            Permission::CreateRepository => Err(Error::Invalid),
+            Permission::CreateRepository | Permission::ManageIdentities => Err(Error::Invalid),
         }
     }
 }

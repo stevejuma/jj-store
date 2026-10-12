@@ -38,3 +38,12 @@ standalone no-command invocation prints help successfully; ordinary upstream jj
 defaults stay intact. Match jj-nostr presentation semantics without inheriting
 its storage or daemon installation policy. Secrets stay out of argv, output, and
 checked-in config.
+
+M26 adds jj-store identity list/grant/revoke/status for authenticated
+installation bindings. The operator policy remains a private device-owned file
+and gains the independent manage-identities capability; create-repository cannot
+imply it. User secrets enter through existing hidden/stdin/environment
+admission. Request journals outside checkouts retain only public intent and
+stable request IDs, never token secrets. Directory credentials and profile state
+are selected by the installation object manifest, separately from repository
+policies.

@@ -132,6 +132,7 @@ impl Fixture {
             n,
             CollabCommandV1::Reaction {
                 intent: ReactionCommandV1::Set {
+                    emoji: None,
                     target,
                     value: ReactionValueV1::Like,
                     observed: BTreeSet::new(),

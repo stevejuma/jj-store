@@ -1,3 +1,7 @@
+import { threadControllerView } from "./thread-controller-view.js";
+import { prepareThreadEmoji } from "./prepare-thread-emoji.js";
+import { createThreadMedia } from "./thread-media.svelte.js";
+import type { DirectoryManagement } from "./directory.svelte.js";
 import { createThreadDirectory } from "./thread-directory.svelte.js";
 import { createConversationDiscussionReader } from "../conversations/discussion-reader.svelte.js";
 import { createThreadConversations } from "./thread-conversations.svelte.js";
@@ -29,11 +33,12 @@ export function createThreadsController(options: {
   select: (id: string | null) => void;
   selectReply?: (id: string | null) => void;
   directory?: boolean;
+  profiles?: DirectoryManagement;
   onRemoved?: () => Promise<void>;
 }) {
-  const conversationHost = createThreadConversations(options, (request) =>
-    actions.execute("threads", request),
-  );
+  let profiles = options.profiles;
+  const media = createThreadMedia();
+  const conversationHost = createThreadConversations(options, executeThread);
   const discussionRead = createConversationDiscussionReader();
   let generation = 0;
   let committedRequestId = $state("");
@@ -71,6 +76,7 @@ export function createThreadsController(options: {
   });
   const richReactions = createMessageReactions({
     source: options.source,
+    profiles: options.profiles,
     principal: options.principal,
     generation: () => generation,
     valid,
@@ -78,11 +84,28 @@ export function createThreadsController(options: {
   });
   const post = createThreadPost({
     ...options,
-    execute: (request) => actions.execute("threads", request),
+    execute: executeThread,
     pending: () => !!actions.pending,
     open,
   });
-  const projection = $derived(channelMessages(events));
+  function executeThread(request: import("./thread-types.js").ThreadRequest) {
+    const ticket = generation,
+      transport = options.source(),
+      prepared = prepareThreadEmoji(request, profiles);
+    if (prepared)
+      return prepared.then(() => {
+        if (valid(ticket, transport))
+          return actions.execute("threads", request);
+      });
+    return actions.execute("threads", request);
+  }
+  const projection = $derived(
+    channelMessages(
+      events,
+      media.urls,
+      (id, member) => profiles?.member(id, member) ?? member,
+    ),
+  );
   function valid(ticket: number, transport: ThreadTransport) {
     try {
       return ticket === generation && options.source() === transport;
@@ -105,6 +128,7 @@ export function createThreadsController(options: {
       post.clear();
     }
     discussionRead.clear();
+    media.clear();
   }
   const list = directory.list;
   async function read(id: string, more = false) {
@@ -132,6 +156,12 @@ export function createThreadsController(options: {
       detail = d;
       events = more ? [...events, ...loaded.events] : loaded.events;
       eventCursor = loaded.cursor;
+      await media.load(events, transport, () => valid(ticket, transport));
+      if (profiles?.available())
+        await profiles.loadProfiles(
+          events.flatMap((e) => (e.message ? [e.message.actor] : [])),
+        );
+      if (!valid(ticket, transport)) return;
       await discussionRead.load(
         transport,
         events,
@@ -210,83 +240,14 @@ export function createThreadsController(options: {
     detail: () => detail,
     projection: () => projection,
     events: () => events,
-    execute: actions.execute,
+    execute: (_kind, request) => executeThread(request),
   });
-  return {
+  const surface = {
+    setProfiles(value: typeof profiles) {
+      profiles = value;
+      richReactions.setProfiles(value);
+    },
     ...commands,
-    conversations: conversationHost.conversations,
-    get conversationReads() {
-      return conversationHost.conversationReads;
-    },
-    get conversationScope() {
-      return conversationHost.conversationScope;
-    },
-    loadConversation: conversationHost.loadConversation,
-    submitConversation: conversationHost.submitConversation,
-    readConversation: conversationHost.readConversation,
-    ensureConversation: conversationHost.ensureConversation,
-    get discussions() {
-      return discussionRead.discussions;
-    },
-    get discussionError() {
-      return discussionRead.error;
-    },
-    get committedRequestId() {
-      return committedRequestId;
-    },
-    get postedThreadId() {
-      return post.postedThreadId;
-    },
-    get threads() {
-      return directory.threads;
-    },
-    get detail() {
-      return detail;
-    },
-    get events() {
-      return events;
-    },
-    get projection() {
-      return projection;
-    },
-    get status() {
-      return directory.error || error || status === "failed"
-        ? "failed"
-        : directory.loading || conversationLoading
-          ? detail || directory.threads.length
-            ? "refreshing"
-            : "loading"
-          : status;
-    },
-    get error() {
-      return (
-        (actions.errorKind === "reactions" ? "" : actions.error) ||
-        error ||
-        directory.error
-      );
-    },
-    get busy() {
-      return actions.busy;
-    },
-    get pending() {
-      return actions.pending;
-    },
-    get hasMore() {
-      return directory.hasMore;
-    },
-    get hasOlder() {
-      return !!eventCursor;
-    },
-    get emojis() {
-      return richReactions.emojis;
-    },
-    invalidateReactions: richReactions.invalidate,
-    reactionError: richReactions.getError,
-    getReaction: richReactions.getReaction,
-    reactionModels: richReactions.reactionModels,
-    loadEmojis: richReactions.loadEmojis,
-    loadReactions: richReactions.loadReactions,
-    toggle: richReactions.toggle,
     clear,
     list,
     read,
@@ -310,4 +271,27 @@ export function createThreadsController(options: {
     older: () =>
       detail ? read(detail.thread.value.thread_id, true) : Promise.resolve(),
   };
+  return Object.defineProperties(
+    surface,
+    Object.getOwnPropertyDescriptors(
+      threadControllerView({
+        directory,
+        actions,
+        conversationHost,
+        discussionRead,
+        post,
+        richReactions,
+        read: () => ({
+          committedRequestId,
+          detail,
+          events,
+          projection,
+          eventCursor,
+          error,
+          status,
+          conversationLoading,
+        }),
+      }),
+    ),
+  ) as typeof surface & ReturnType<typeof threadControllerView>;
 }

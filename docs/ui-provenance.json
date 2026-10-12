@@ -2598,6 +2598,56 @@
           "license": "Apache-2.0"
         }
       ]
+    },
+    {
+      "local": "web/src/lib/ui/store-settings/StoreProfileSettings.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-settings/CommunitySettings.svelte",
+          "revision": "a5f64a4c7dea2f29b4058aa7666a98c4c0dee656",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/store-settings/StoreCustomEmojiSettings.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-custom-emoji-settings/CommunityCustomEmojiSettings.svelte",
+          "revision": "a5f64a4c7dea2f29b4058aa7666a98c4c0dee656",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/store-settings/profile-settings.css",
+      "sources": [
+        {
+          "path": "src/components/community-settings/CommunitySettings.css",
+          "revision": "a5f64a4c7dea2f29b4058aa7666a98c4c0dee656",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/store-settings/emoji-settings.css",
+      "sources": [
+        {
+          "path": "src/components/community-settings/CommunitySettings.css",
+          "revision": "a5f64a4c7dea2f29b4058aa7666a98c4c0dee656",
+          "license": "Apache-2.0"
+        }
+      ]
+    },
+    {
+      "local": "web/src/lib/ui/community-message/message-deletion.svelte.ts",
+      "sources": [
+        {
+          "path": "src/components/community-message/CommunityMessage.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ]
     }
   ],
   "owned": [
@@ -2912,6 +2962,18 @@
     {
       "local": "web/src/lib/ui/store-settings/StoreSearchFields.svelte",
       "reason": "Owned extraction of existing Search fields; presentation composes released Design Core controls and retains the original draft callbacks and validation."
+    },
+    {
+      "local": "web/src/lib/api/directory-client.ts",
+      "reason": "Application-owned installation directory transport, identity and retained metadata state."
+    },
+    {
+      "local": "web/src/lib/controller/directory.svelte.ts",
+      "reason": "Application-owned installation directory transport, identity and retained metadata state."
+    },
+    {
+      "local": "web/src/lib/controller/prepare-thread-emoji.ts",
+      "reason": "Application-owned preparation of immutable installation emoji snapshots for existing repository command publication."
     }
   ],
   "desktopAppearance": {

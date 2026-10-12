@@ -16,6 +16,7 @@ async fn write(
         request_id,
         LocalCollabCommand::Thread {
             intent: ThreadCommandV1::Message {
+                emojis: Vec::new(),
                 thread_id: thread,
                 expected_thread: state.threads[&thread],
                 message_id: HumanMessageId::new([id; 16]),

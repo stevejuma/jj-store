@@ -211,3 +211,10 @@ application-scoped CSS for repository line-tab selection. It targets public
 `data-state` attributes and theme tokens while retaining released Design Core
 components, keyboard behavior and package versions. This narrow exception does
 not authorize dependency patches, source aliases or local package overrides.
+
+E-PROFILES-001 governs installation profile/library authority, explicit token
+binding, immutable repository emoji snapshots and owned Community Settings
+copies. The isolated profile harness builds the production bundle and serves an
+empty disposable real-RustFS installation in both LocalTrusted and authenticated
+modes. It uses synthetic credentials, checks restart/privacy and owns cleanup;
+it changes no existing deployment, installed binary or visual baseline.

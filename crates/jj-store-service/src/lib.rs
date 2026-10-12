@@ -3,6 +3,7 @@
 pub mod access;
 pub mod administration;
 pub mod auth;
+pub mod directory;
 pub mod events;
 pub mod freshness;
 pub mod guard;

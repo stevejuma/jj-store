@@ -23,6 +23,7 @@ fn fixture() -> (ThreadStateV1, CollabGraphV1, ConversationSubmissionV1) {
         .unwrap()
         .apply(
             &ThreadCommandV1::Message {
+                emojis: Vec::new(),
                 thread_id: parent.thread_id,
                 expected_thread: parent.version,
                 message_id: HumanMessageId::new([1; 16]),
@@ -52,6 +53,7 @@ fn fixture() -> (ThreadStateV1, CollabGraphV1, ConversationSubmissionV1) {
         quote: "Hello".into(),
     };
     let submission = ConversationSubmissionV1 {
+        emojis: Vec::new(),
         workspace_comments: vec![],
         reply_to: None,
         thread_id: parent.thread_id,

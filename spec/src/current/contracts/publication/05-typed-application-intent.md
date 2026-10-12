@@ -33,3 +33,9 @@ lookup.
 The exact Snapshot value exports JSON Schema metadata for the typed HTTP
 service. Schema derivation changes no serialization, hashing, accepted heads or
 durable WAL record format; no HTTP transport dependency enters publication.
+
+M26 optional library snapshots on Message, Conversation Submit and Set reaction
+are part of the original typed intent. They stage immutable source/preview
+closure with the authored use under the unchanged domain receipt and manifest
+CAS. Source names are data-only provenance. Absent optional fields preserve
+legacy encodings; directory edits or retirement cannot alter prepared retries.

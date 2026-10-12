@@ -90,6 +90,13 @@ impl BearerToken {
         }
         output
     }
+    pub fn installation_verifier(&self, installation: &str) -> [u8; 32] {
+        let mut digest = Sha256::new_with_prefix(b"jj-store/installation-token/v1");
+        digest.update(installation.as_bytes());
+        digest.update(self.id.as_bytes());
+        digest.update(self.secret.as_ref());
+        digest.finalize().into()
+    }
     fn verifier(&self, scope: Scope) -> [u8; 32] {
         let mut digest = Sha256::new_with_prefix(b"jj-store/token-verifier/v1");
         match scope {
@@ -123,6 +130,7 @@ pub enum Permission {
     Write,
     Admin,
     CreateRepository,
+    ManageIdentities,
 }
 impl Permission {
     fn allows(self, required: Self) -> bool {
@@ -135,8 +143,10 @@ impl Permission {
     fn valid_for(self, scope: Scope) -> bool {
         matches!(
             (scope, self),
-            (Scope::Operator, Self::CreateRepository)
-                | (Scope::Repository(_), Self::Read | Self::Write | Self::Admin)
+            (
+                Scope::Operator,
+                Self::CreateRepository | Self::ManageIdentities
+            ) | (Scope::Repository(_), Self::Read | Self::Write | Self::Admin)
         )
     }
 }

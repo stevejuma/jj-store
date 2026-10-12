@@ -300,3 +300,10 @@ public Responses endpoint and consumes SSE internally. Exact output replay and
 opaque reasoning live in bounded worker memory; AgentStore capture remains
 sanitized. Account settings and tool-free metadata selection are independent.
 This path has no Codex CLI authentication dependency.
+
+The installation Directory service is independent of repository access policy.
+Its server-owned implementation selects content-addressed profiles, token
+bindings, media and custom emoji through an installation object manifest. HTTP
+and CLI callers share typed admission and durable receipts. Repository providers
+consume portable emoji snapshots as validated data; the directory is never
+repository publication or agent authority.

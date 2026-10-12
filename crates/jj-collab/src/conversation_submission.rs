@@ -19,6 +19,8 @@ pub struct ConversationCommentDraftV1 {
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
 pub struct ConversationSubmissionV1 {
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub emojis: Vec<EmojiSnapshotV1>,
     pub thread_id: ThreadId,
     pub expected_thread: CollabObjectRef,
     /// Ordinary thread messages only; agent prompt text remains in AgentStore.
@@ -33,6 +35,19 @@ pub struct ConversationSubmissionV1 {
 }
 impl ConversationSubmissionV1 {
     pub fn validate(&self) -> Result<()> {
+        validate_snapshots(&self.emojis)?;
+        if self.emojis.iter().any(|e| {
+            !self
+                .text
+                .as_ref()
+                .is_some_and(|b| b.contains(&format!(":{}:", e.shortcode)))
+                && !self
+                    .comments
+                    .iter()
+                    .any(|c| c.body.contains(&format!(":{}:", e.shortcode)))
+        }) {
+            return Err(Error::Invalid("unused submission emoji"));
+        }
         expect(self.expected_thread, CollabObjectKind::ThreadVersion)?;
         if self.comments.len() + self.references.len() + self.workspace_comments.len() > 128
             || self
@@ -213,6 +228,12 @@ impl ThreadStateV1 {
             let result = apply(
                 &mut state,
                 ThreadCommandV1::Message {
+                    emojis: submission
+                        .emojis
+                        .iter()
+                        .filter(|e| c.body.contains(&format!(":{}:", e.shortcode)))
+                        .cloned()
+                        .collect(),
                     thread_id: c.thread_id,
                     expected_thread,
                     message_id: c.message_id,
@@ -234,6 +255,12 @@ impl ThreadStateV1 {
                 apply(
                     &mut state,
                     ThreadCommandV1::Message {
+                        emojis: submission
+                            .emojis
+                            .iter()
+                            .filter(|e| text.contains(&format!(":{}:", e.shortcode)))
+                            .cloned()
+                            .collect(),
                         thread_id: submission.thread_id,
                         expected_thread,
                         message_id,

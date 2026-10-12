@@ -112,3 +112,11 @@ from captured agent identity. It creates no duplicate human message or primary
 Thread assignment. Tombstoned owners are hidden from discovery. Generation
 provenance records its provider, model, prompt version, source snapshots, time
 and partial coverage.
+
+Installation custom emoji are reusable across repositories. Authored Thread
+messages, conversation submissions and reactions retain a validated immutable
+snapshot of each selected emoji with its source and static preview. Repository
+publication selects that closure with the authored use. Directory changes do not
+rewrite history, and retries retain the prepared snapshot. Source metadata is
+presentation provenance and grants no permission. Repository-local libraries
+keep separate identities and meanings.

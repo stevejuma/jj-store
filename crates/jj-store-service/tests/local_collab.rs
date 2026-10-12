@@ -79,6 +79,7 @@ fn react(
         id,
         LocalCollabCommand::Reaction {
             intent: ReactionCommandV1::Set {
+                emoji: None,
                 target,
                 value,
                 observed,
@@ -360,6 +361,7 @@ async fn local_commands_keep_exact_history_preserve_siblings_and_replay_after_gc
         2,
         LocalCollabCommand::Thread {
             intent: ThreadCommandV1::Message {
+                emojis: Vec::new(),
                 reply_to: None,
                 thread_id: created_result.thread_id,
                 expected_thread: created_result.version,
@@ -393,6 +395,7 @@ async fn local_commands_keep_exact_history_preserve_siblings_and_replay_after_gc
         4,
         LocalCollabCommand::Thread {
             intent: ThreadCommandV1::Message {
+                emojis: Vec::new(),
                 reply_to: None,
                 thread_id: first.thread_id,
                 expected_thread: first.version,
@@ -890,6 +893,7 @@ async fn local_reply_parent_and_receipt_survive_gc_and_cold_reopen() {
             92,
             LocalCollabCommand::Thread {
                 intent: ThreadCommandV1::Message {
+                    emojis: Vec::new(),
                     thread_id: created.thread_id,
                     expected_thread: created.version,
                     message_id: HumanMessageId::new([92; 16]),
@@ -906,6 +910,7 @@ async fn local_reply_parent_and_receipt_survive_gc_and_cold_reopen() {
         93,
         LocalCollabCommand::Thread {
             intent: ThreadCommandV1::Message {
+                emojis: Vec::new(),
                 thread_id: parent.thread_id,
                 expected_thread: parent.version,
                 message_id: HumanMessageId::new([93; 16]),
@@ -1111,6 +1116,7 @@ async fn local_conversation_batch_survives_reopen_with_exact_ranges_and_receipt(
             81,
             LocalCollabCommand::Thread {
                 intent: ThreadCommandV1::Message {
+                    emojis: Vec::new(),
                     thread_id: parent.thread_id,
                     expected_thread: parent.version,
                     message_id: HumanMessageId::new([81; 16]),
@@ -1139,6 +1145,7 @@ async fn local_conversation_batch_survives_reopen_with_exact_ranges_and_receipt(
         quote: "🦀".into(),
     };
     let submission = ConversationSubmissionV1 {
+        emojis: Vec::new(),
         workspace_comments: vec![],
         reply_to: None,
         thread_id: parent.thread_id,
@@ -1186,4 +1193,77 @@ async fn local_conversation_batch_survives_reopen_with_exact_ranges_and_receipt(
         cold.metadata_store().read().unwrap().unwrap().commit(),
         before
     );
+}
+#[tokio::test]
+async fn library_snapshots_survive_companion_restart_and_asset_reads() {
+    let (root, repo) = fixture();
+    let created = thread_result(receipt(
+        repo.apply_collab_command(&thread(101)).await.unwrap(),
+    ));
+    let snapshot = EmojiSnapshotV1 {
+        source: format!(
+            "installation:{}:{}:{}",
+            "ab".repeat(16),
+            "cd".repeat(16),
+            "ef".repeat(32)
+        ),
+        shortcode: "party".into(),
+        bytes: png(100),
+    };
+    let message = request(
+        102,
+        LocalCollabCommand::Thread {
+            intent: ThreadCommandV1::Message {
+                emojis: vec![snapshot.clone()],
+                thread_id: created.thread_id,
+                expected_thread: created.version,
+                message_id: HumanMessageId::new([102; 16]),
+                expected_revision: None,
+                reply_to: None,
+                body: Some("Hello :party:".into()),
+            },
+        },
+    );
+    let accepted = receipt(repo.apply_collab_command(&message).await.unwrap());
+    let human = thread_result(accepted.clone());
+    let value = snapshot.stage(&mut CollabGraphV1::default()).unwrap();
+    let reaction = request(
+        103,
+        LocalCollabCommand::Reaction {
+            intent: ReactionCommandV1::Set {
+                emoji: Some(snapshot),
+                target: ReactionTargetV1::HumanMessage {
+                    thread_id: created.thread_id,
+                    message_id: HumanMessageId::new([102; 16]),
+                    revision: human.message.unwrap(),
+                },
+                value,
+                observed: BTreeSet::new(),
+            },
+        },
+    );
+    let reacted = receipt(repo.apply_collab_command(&reaction).await.unwrap());
+    drop(repo);
+    let cold = reopen(&root.path().join("repo"));
+    assert_eq!(
+        receipt(cold.apply_collab_command(&message).await.unwrap()),
+        accepted
+    );
+    assert_eq!(
+        receipt(cold.apply_collab_command(&reaction).await.unwrap()),
+        reacted
+    );
+    let threads = cold.thread_store().await.unwrap();
+    let CollabObjectV1::HumanMessageRevision(message) =
+        threads.object(human.message.unwrap()).unwrap()
+    else {
+        panic!()
+    };
+    let CollabObjectV1::CustomEmojiVersion(definition) =
+        threads.object(message.emojis["party"]).unwrap()
+    else {
+        panic!()
+    };
+    let preview = cold.inbox_asset(definition.preview.id).await.unwrap();
+    assert!(!preview.bytes.is_empty());
 }

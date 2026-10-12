@@ -46,6 +46,8 @@ pub enum ServerCommand {
     /// List, grant, revoke and recover repository token requests
     #[command(long_about=include_str!("../../../docs/cli/tokens.md"))]
     Token(crate::token_commands::TokenArgs),
+    /// Administer installation-owned profile identities
+    Identity(crate::identity_commands::IdentityArgs),
     /// Verify repository authority and update LocalTrusted discovery metadata
     Repository {
         #[command(subcommand)]
@@ -140,6 +142,8 @@ pub enum OperatorCommand {
         insecure_loopback: bool,
         #[arg(long)]
         principal: PrincipalId,
+        #[arg(long, value_enum, default_value = "create-repository")]
+        permission: OperatorPermission,
     },
     /// Add a selected operator credential to an existing policy
     Grant {
@@ -151,6 +155,8 @@ pub enum OperatorCommand {
         insecure_loopback: bool,
         #[arg(long)]
         principal: PrincipalId,
+        #[arg(long, value_enum, default_value = "create-repository")]
+        permission: OperatorPermission,
     },
     /// List public operator grant metadata
     List {
@@ -164,6 +170,19 @@ pub enum OperatorCommand {
         #[arg(long)]
         token_id: TokenId,
     },
+}
+#[derive(Clone, Copy, Debug, clap::ValueEnum)]
+pub enum OperatorPermission {
+    CreateRepository,
+    ManageIdentities,
+}
+impl From<OperatorPermission> for jj_store_service::auth::Permission {
+    fn from(value: OperatorPermission) -> Self {
+        match value {
+            OperatorPermission::CreateRepository => Self::CreateRepository,
+            OperatorPermission::ManageIdentities => Self::ManageIdentities,
+        }
+    }
 }
 fn ui(color: &str) -> AuthorityResult<Ui> {
     let mut config = StackedConfig::empty();
@@ -344,6 +363,10 @@ async fn run(ui: &Ui, cli: ServerCli) -> AuthorityResult<()> {
             loopback_only,
             desktop,
         } => crate::server_process::serve(ui, &config, format, loopback_only, desktop).await,
+        ServerCommand::Identity(args) => {
+            let (value, text) = crate::identity_commands::run(ui, args).await?;
+            emit(ui, format, no_pager, value, &text)
+        }
         ServerCommand::Token(args) => {
             let (value, text) = crate::token_commands::run(ui, args).await?;
             emit(ui, format, no_pager, value, &text)
@@ -478,20 +501,22 @@ async fn run(ui: &Ui, cli: ServerCli) -> AuthorityResult<()> {
                     endpoint,
                     insecure_loopback,
                     principal,
+                    permission,
                 }
                 | OperatorCommand::Grant {
                     policy,
                     endpoint,
                     insecure_loopback,
                     principal,
+                    permission,
                 } => {
                     let endpoint = canonical_endpoint(&endpoint, insecure_loopback)?;
                     let file = PolicyFile::new(policy)?;
                     let token = credentials::operator_provision(&endpoint)?;
                     if initialize {
-                        file.initialize(principal, &token)?;
+                        file.initialize_permission(principal, &token, permission.into())?;
                     } else {
-                        file.grant(principal, &token)?;
+                        file.grant_permission(principal, &token, permission.into())?;
                     }
                     emit(
                         ui,

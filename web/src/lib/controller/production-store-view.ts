@@ -224,6 +224,7 @@ export function productionControllerSurface(
     capture?: StoreController["capture"];
     execution?: StoreController["execution"];
     configuration?: StoreController["configuration"];
+    directory?: StoreController["directory"];
     freshness?: StoreController["freshness"];
   },
   pause?: StoreController["actions"]["setRefreshPaused"],
@@ -241,6 +242,7 @@ export function productionControllerSurface(
     capture: options.capture,
     execution: options.execution,
     configuration: options.configuration,
+    directory: options.directory,
     freshness: options.freshness,
     get threads() {
       return options.threads.available() ? options.threads.threads : undefined;
@@ -253,13 +255,17 @@ export function productionControllerSurface(
     referenceSearch: options.referenceSearch,
     historyQuery: options.historyQuery,
     get state() {
-      return productionSessionView(
+      const view = productionSessionView(
         data,
         history,
         source(),
         token(),
         options.now,
       );
+      const principal = options.directory?.state.profile?.principal;
+      return principal
+        ? { ...view, member: options.directory!.member(principal, view.member) }
+        : view;
     },
     actions: { ...options.actions, setRefreshPaused: pause },
   };

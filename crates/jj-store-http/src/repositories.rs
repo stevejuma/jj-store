@@ -150,7 +150,15 @@ pub(crate) async fn list(
             break;
         }
     }
-    if token.is_some() && cursor.is_none() && repositories.is_empty() {
+    let enrolled = if let (Some(directory), Some(token)) = (&state.config.directory, &token) {
+        directory
+            .principal(&jj_store_service::directory::Caller::Token(token.clone()))
+            .await
+            .is_ok()
+    } else {
+        false
+    };
+    if token.is_some() && cursor.is_none() && repositories.is_empty() && !enrolled {
         return Err(Error::new(
             axum::http::StatusCode::UNAUTHORIZED,
             "invalid_credential",

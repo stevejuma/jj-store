@@ -3,7 +3,7 @@ use super::*;
 use crate::mutations::{Pending, WriteContext};
 use axum::{Extension, Json, extract::rejection::JsonRejection};
 use jj_store_service::collab_mutations as service;
-pub(crate) const MAX_REQUEST_BYTES: usize = 4 * 1024 * 1024;
+pub(crate) const MAX_REQUEST_BYTES: usize = 10 * 1024 * 1024;
 pub(super) type Input<T> = std::result::Result<Json<T>, JsonRejection>;
 pub(super) fn input<T>(value: Input<T>) -> Result<T> {
     value.map(|Json(value)| value).map_err(|e| {

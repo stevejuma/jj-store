@@ -63,6 +63,8 @@ pub enum ThreadCommandV1 {
         action: ThreadActionV1,
     },
     Message {
+        #[serde(default, skip_serializing_if = "Vec::is_empty")]
+        emojis: Vec<EmojiSnapshotV1>,
         thread_id: ThreadId,
         expected_thread: CollabObjectRef,
         message_id: HumanMessageId,
@@ -187,8 +189,17 @@ impl ThreadCommandV1 {
                 expected_revision,
                 reply_to,
                 body,
+                emojis,
                 ..
             } => {
+                validate_snapshots(emojis)?;
+                if emojis.iter().any(|e| {
+                    !body
+                        .as_ref()
+                        .is_some_and(|b| b.contains(&format!(":{}:", e.shortcode)))
+                }) {
+                    return Err(Error::Invalid("unused message emoji"));
+                }
                 expect(*expected_thread, CollabObjectKind::ThreadVersion)?;
                 if let Some(reference) = expected_revision {
                     expect(*reference, CollabObjectKind::HumanMessageRevision)?;
@@ -480,6 +491,7 @@ impl ThreadStateV1 {
                     }
                     ThreadCommandV1::Message {
                         message_id,
+                        emojis,
                         expected_revision,
                         body,
                         reply_to,
@@ -521,8 +533,32 @@ impl ThreadStateV1 {
                                 return Err(Error::Invalid("reply parent membership"));
                             }
                         }
+                        let mut bindings = BTreeMap::new();
+                        if let Some(reference) = expected_revision {
+                            let CollabObjectV1::HumanMessageRevision(old) =
+                                graph.get(*reference)?
+                            else {
+                                return Err(Error::Invalid("message selection"));
+                            };
+                            for (name, reference) in &old.emojis {
+                                if body
+                                    .as_ref()
+                                    .is_some_and(|b| b.contains(&format!(":{name}:")))
+                                {
+                                    bindings.insert(name.clone(), *reference);
+                                }
+                            }
+                        }
+                        for emoji in emojis {
+                            let ReactionValueV1::Custom { version, .. } = emoji.stage(graph)?
+                            else {
+                                unreachable!()
+                            };
+                            bindings.insert(emoji.shortcode.clone(), version);
+                        }
                         let reference = graph.stage(CollabObjectV1::HumanMessageRevision(
                             HumanMessageRevisionV1 {
+                                emojis: bindings,
                                 reply_to: *reply_to,
                                 schema_version: 1,
                                 message_id: *message_id,
@@ -806,6 +842,8 @@ fn stage_event(
 #[serde(tag = "type", rename_all = "snake_case", deny_unknown_fields)]
 pub enum ReactionCommandV1 {
     Set {
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        emoji: Option<EmojiSnapshotV1>,
         target: ReactionTargetV1,
         value: ReactionValueV1,
         observed: std::collections::BTreeSet<CollabObjectRef>,
@@ -832,8 +870,14 @@ impl ReactionCommandV1 {
         self.target().validate()?;
         let observed = match self {
             Self::Set {
-                value, observed, ..
+                value,
+                observed,
+                emoji,
+                ..
             } => {
+                if let Some(emoji) = emoji {
+                    emoji.validate()?;
+                }
                 value.validate()?;
                 observed
             }

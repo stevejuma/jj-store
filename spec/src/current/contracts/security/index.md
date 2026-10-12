@@ -2,6 +2,7 @@
 
 Read the owning topic and requirement before implementation.
 <!-- generated-navigation -->
+
 ## Pages
 
 - [Security and deployment](01-security-and-deployment.md)
@@ -14,3 +15,4 @@ Read the owning topic and requirement before implementation.
 - [Desktop terminal isolation](08-desktop-terminal-isolation.md)
 - [Bundled application documentation](09-bundled-application-documentation.md)
 - [Scoped application freshness](10-scoped-application-freshness.md)
+- [Installation profiles and emoji (M26)](11-installation-profiles-and-emoji.md)

@@ -796,6 +796,7 @@ async fn collaboration_fixture(local: &LocalRepository) {
             86,
             LocalCollabCommand::Reaction {
                 intent: ReactionCommandV1::Set {
+                    emoji: None,
                     target: ReactionTargetV1::Thread {
                         thread_id: ThreadId::new([85; 16]),
                     },

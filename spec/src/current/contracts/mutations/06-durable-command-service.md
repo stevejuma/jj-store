@@ -38,3 +38,10 @@ service. HTTP admission and native command preparation share bounded worker
 capacity with reads. Tagged outcomes retain the original request ID across
 unknown transport outcomes; status is scoped to the authenticated principal. No
 browser mutation controls are introduced by this transport slice.
+
+M26 installation profile/library commands use a separate Directory port and
+installation CAS selector, preserving repository publication authority. Typed
+caller binding, observed revisions and actor/request receipts precede mutation;
+unknown outcomes retain their exact original request and intent. Profiles cannot
+change a repository principal or grant. Portable emoji snapshots are validated
+in jj-collab and use the existing native/local collaboration receipt services.
