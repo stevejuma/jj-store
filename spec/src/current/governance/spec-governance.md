@@ -1,5 +1,13 @@
 # Change map
 
+E-REMOTE-ADMIN-001 adds independent operator agent administration and explicit
+identity/repository access onboarding. Agent management uses freshly loaded
+`manage-agents` policy; saved configuration activation remains restart-bound.
+Native token grants use existing manifest-selected administration and original
+receipts. Storage, WAL, AgentStore and installation directory formats remain
+unchanged. New application-owned forms/controllers compose maintained Settings
+components and released dependencies, with ownership declared in provenance.
+
 M27 adds an application-owned server selector, fixed-origin gateway and
 operator-defined authenticated agent broker. New UI compositions remain under
 `web/src/lib` with ownership declarations; dependencies stay released. The cold

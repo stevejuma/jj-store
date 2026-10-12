@@ -2,6 +2,7 @@
 #![forbid(unsafe_code)]
 #[cfg(all(test, unix))]
 extern crate self as jj_store_server;
+pub mod agent_administration;
 pub mod agent_execution;
 pub mod capture_admission;
 pub mod capture_authority;

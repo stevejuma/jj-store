@@ -1,5 +1,13 @@
 # Credentials and access
 
+Authenticated native servers distinguish `manage-agents` from
+`manage-identities`, repository Admin and agent execution permission. An
+enrolled operator uses **Agents → Manage server access** to save restart-bound
+agent definitions and principal allowlists. Identity enrollment and repository
+Write grants remain separate actions. The gateway forwards those bounded
+authorized APIs; it does not expose LocalTrusted runtime management. See
+[agent sessions](../guides/agent-execution.md).
+
 ## LocalTrusted
 
 LocalTrusted is restricted to an explicitly configured local installation. The

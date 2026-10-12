@@ -1,5 +1,7 @@
 //! Versioned authenticated application API; no direct storage or native JJ types.
 #![forbid(unsafe_code)]
+mod agent_access;
+mod agent_administration;
 mod agent_execution;
 mod application_events;
 pub mod assets;
@@ -105,6 +107,8 @@ pub struct VerifiedRestorePoint {
 pub struct Config {
     pub installation_id: Option<String>,
     pub remote_agents: Option<Arc<dyn jj_store_service::remote_agents::RemoteAgents>>,
+    pub agent_administration:
+        Option<Arc<dyn jj_store_service::agent_administration::Administration>>,
     pub local_connections: Option<Arc<dyn jj_store_service::connections::Connections>>,
     pub origin: String,
     pub access: Access,
@@ -142,6 +146,7 @@ impl Default for Config {
         Self {
             installation_id: None,
             remote_agents: None,
+            agent_administration: None,
             local_connections: None,
             origin: "http://127.0.0.1:7443".into(),
             access: Access::Authenticated,
@@ -400,6 +405,8 @@ impl HttpApi {
                 .merge(directory::router())
                 .merge(connections::router())
                 .merge(remote_agents::router())
+                .merge(agent_administration::router())
+                .merge(agent_access::router())
                 .with_state(self.0.clone())
                 .layer(middleware::from_fn_with_state(self.0.clone(), admit)),
         )

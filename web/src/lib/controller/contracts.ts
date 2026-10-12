@@ -162,6 +162,7 @@ export interface StoreController {
   readonly configuration?: import("./server-settings.svelte.js").ServerSettingsManagement;
   readonly capture?: import("./capture-types.js").CaptureManagement;
   readonly execution?: import("./agent-execution.svelte.js").AgentExecution;
+  readonly agentAdministration?: import("./server-agent-administration.svelte.js").ServerAgentAdministration;
   readonly referenceSearch?: import("./global-search-types.js").GlobalSearchController;
   readonly globalSearch?: import("./global-search-types.js").GlobalSearchController;
   readonly threads?: import("./thread-types.js").ThreadsController;

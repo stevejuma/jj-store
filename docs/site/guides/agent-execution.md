@@ -22,6 +22,27 @@ providers and credentials stay operator-controlled. Native repositories must
 already exist on that server. M27 records fixture, installed-runtime, real
 storage, desktop and platform acceptance separately.
 
+Operators use **Agents → Manage server access** on the selected remote server.
+An enrolled `manage-agents` token can edit definitions and **Who can message
+this agent**. Save retains a conditional revision; restarting the server
+activates the saved configuration. Tools and provider credentials must already
+exist on that host. This dialog cannot install tools or restart the service.
+
+**Access onboarding** enrolls or revokes existing tokens with
+`manage-identities`, and grants repository Write with current repository Admin.
+Use the same enrolled principal for the agent allowlist, conversation home and
+each attached code repository. Operator roles require their appropriate token;
+none implies another. Public profiles and avatars identify users without
+granting access. **Check original outcome** recovers uncertain writes without
+replay.
+
+The installed-provider harness
+`scripts/remote-agent-administration-acceptance.py` adds cold operator-UI
+acceptance and a real Codex edit to two disposable local RustFS servers. Supply
+the already prepared ACP, JJ, server and built UI paths, plus `--tooling-bin`
+for existing Codex tooling. It preserves development state; provider and
+platform gates are recorded separately.
+
 The isolated `scripts/remote-agents-acceptance.py` harness uses two real RustFS
 installations, freshly built server/UI assets and synthetic credentials. It
 checks gateway freshness, profile/avatar isolation, agent publication,
@@ -113,6 +134,11 @@ details or use its menu to Edit, Start, Stop or open chats. ACP avatars show
 live Starting, Idle, Queued, Working, Needs attention, Stopping, Offline, Error
 or Unknown status across the app. Failed status refresh is Unknown; historical
 identity is retained and is associated only by its exact saved agent ID.
+
+Add/Edit agent uses a Settings card for AI configuration, with divided rows,
+right-aligned controls and a model-retry footer. The other fields keep their
+layout. New chat omits the first-prompt context banner; captured context still
+accompanies the prompt.
 
 ### Send while an agent is offline
 

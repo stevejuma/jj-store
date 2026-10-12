@@ -12,6 +12,15 @@ bounded fallback only while visible.
 
 ## Where to find settings
 
+For authenticated remote agent administration, select the server and use
+**Agents → Manage server access**. An enrolled `manage-agents` operator can edit
+definitions and messaging allowlists; Save requires a server restart to
+activate. Access onboarding separately exposes identity enrollment/revocation
+and native repository Write grants according to the current token's permissions.
+The form retains drafts and exact pending intents across tabs, blocks connection
+changes while unsettled, and pauses hidden reads. See
+[agent sessions](agent-execution.md).
+
 Open **Settings** from the profile menu for Profile, Custom emoji, Appearance,
 Local service, Agents and Compute. Local service includes installation-wide
 Protection and Storage configuration, folder registration and Add folder.

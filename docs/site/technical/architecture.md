@@ -1,5 +1,13 @@
 # Architecture
 
+Remote agent administration is an installation service independent of repository
+publication. Its conditional editor replaces only private `remote_agents`
+configuration; effective definitions change on server restart. `manage-agents`
+does not imply identity administration or repository access. Explicit repository
+Write onboarding reuses native authorization, snapshots and durable receipts.
+The selected connection owns browser drafts and recovery intents; inactive
+responses cannot replace another connection's state.
+
 jj-store has two repository providers behind shared application services. Native
 repositories publish immutable objects through a manifest. Existing Git-backed
 JJ folders keep their code authority and select application metadata through a

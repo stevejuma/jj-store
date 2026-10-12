@@ -230,3 +230,10 @@ Reads do not create default profile objects. `operator_policy` continues to name
 a private local policy file and controls create-repository or manage-identities
 capabilities. Profile details and token identity bindings live in the object
 store. Filesystem-only servers advertise this capability as unavailable.
+
+Authenticated native deployments also support `manage-agents` for the
+restart-bound **Agents → Manage server access** editor. It saves only existing
+`remote_agents` configuration with a full-file revision check and shows saved
+and effective values separately. Tools and provider credentials remain on the
+server; the dialog performs no runtime installation or restart. Identity
+enrollment and repository Write grants require their separate permissions.

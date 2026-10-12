@@ -120,7 +120,6 @@
           >
         </Field.Field>
         <div class="agent-editor__runtime-editor">
-          <h3>AI configuration</h3>
           {@render configuration()}
         </div>
         <StoreAgentAdvanced

@@ -133,6 +133,35 @@ test("global settings startup skips repository and project reads", async () => {
   expect(data.status.navigation).toBe("ready");
   history.destroy();
 });
+test.each(["#/agents", "#/threads"])(
+  "reauthentication retains installation destination %s after discovery",
+  async (hash) => {
+    const f = browser(hash),
+      history = createStoreRouteHistory(f.adapter);
+    const data = createProductionStoreState();
+    data.accessMode = "authenticated";
+    const read = vi.fn(async () => {}),
+      token = vi.fn();
+    const connect = createProductionConnect({
+      data,
+      route: () => history.route,
+      projects: { restore: read, openHub: read } as never,
+      connectRepository: read,
+      disconnect: vi.fn(),
+      version: () => 0,
+      discovery: vi.fn(),
+      token,
+      fetcher: async () =>
+        Response.json({ version: 1, generation: 0, repositories: [] }),
+    });
+    await connect("", "enrolled");
+    expect(token).toHaveBeenCalledWith("enrolled");
+    expect(read).not.toHaveBeenCalled();
+    expect(f.adapter.hash()).toBe(hash);
+    expect(data.status.navigation).toBe("ready");
+    history.destroy();
+  },
+);
 test("identical global URLs retain repository navigation guards", () => {
   const a = "ab".repeat(16),
     b = "ef".repeat(16),

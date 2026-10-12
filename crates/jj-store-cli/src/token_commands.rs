@@ -141,6 +141,7 @@ pub async fn run(ui: &Ui, args: TokenArgs) -> AuthorityResult<(Value, String)> {
                         Permission::Admin => "admin",
                         Permission::CreateRepository => "create-repository",
                         Permission::ManageIdentities => "manage-identities",
+                        Permission::ManageAgents => "manage-agents",
                     },
                     t.expires_at
                         .map_or_else(|| "never".into(), |v| format!("{v} (Unix seconds)"))

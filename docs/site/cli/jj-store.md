@@ -1663,7 +1663,7 @@ instructions = "Work only in the admitted repositories."
 runner = "codex"
 
 [remote_agents.agents.setup.preferences]
-mode = "ask"
+mode = "read-only"
 
 [remote_agents.agents.setup.options]
 inherit_defaults = false
@@ -1684,6 +1684,13 @@ Connection tokens and session handles stay in memory. Execution journals retain
 unknown outcomes across restart without replaying prompts. Four workers and 64
 pending admissions are bounded across caller partitions. M27 records Linux and
 macOS qualification independently.
+
+The app's **Agents → Manage server access** editor requires an enrolled token
+with the independent `manage-agents` operator grant. It conditionally saves only
+this section, checks current operator policy, and reports restart requirements.
+Repository Admin, `manage-identities` and execution allowlists do not authorize
+configuration. Executable paths must be absolute in the editor; secret values
+remain forbidden. A stale file revision requires explicit review before saving.
 
 ### Native search configuration
 
@@ -1878,6 +1885,14 @@ the original request ID. `status --request PATH` and a retry with the same
 journal recover uncertain outcomes. Revoked token IDs cannot be reassigned to
 another principal.
 
+Agent configuration uses `--permission manage-agents`. This permission is
+independent of `manage-identities`, `create-repository` and repository Admin.
+Enroll the operator token in the installation directory before using the app's
+capability discovery and configuration editor. Existing policies need no
+migration; older servers cannot parse the new permission and must be upgraded
+before receiving it. Each operator token has one role; use separate credentials
+for identity enrollment and agent configuration when both are needed.
+
 
 ```text
 Usage: jj-store operator [OPTIONS] <COMMAND>
@@ -1904,7 +1919,7 @@ Usage: jj-store operator init [OPTIONS] --policy <POLICY> --endpoint <ENDPOINT> 
 | `--endpoint <ENDPOINT>` | Explicit server endpoint. Credentials must never appear in the URL; TLS and loopback policy still apply. Required. |  |
 | `--insecure-loopback <INSECURE_LOOPBACK>` | Explicitly permit the supported plain-HTTP literal-loopback connection; does not disable admission for other hosts. | Default: false; Values: true, false |
 | `--principal <PRINCIPAL>` | Stable principal identity receiving the authorization grant. Required. |  |
-| `--permission <PERMISSION>` | Repository permission to grant; administration requires the applicable authority. | Default: create-repository; Values: create-repository, manage-identities |
+| `--permission <PERMISSION>` | Repository permission to grant; administration requires the applicable authority. | Default: create-repository; Values: create-repository, manage-identities, manage-agents |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
 | `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
 | `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
@@ -1924,7 +1939,7 @@ Usage: jj-store operator grant [OPTIONS] --policy <POLICY> --endpoint <ENDPOINT>
 | `--endpoint <ENDPOINT>` | Explicit server endpoint. Credentials must never appear in the URL; TLS and loopback policy still apply. Required. |  |
 | `--insecure-loopback <INSECURE_LOOPBACK>` | Explicitly permit the supported plain-HTTP literal-loopback connection; does not disable admission for other hosts. | Default: false; Values: true, false |
 | `--principal <PRINCIPAL>` | Stable principal identity receiving the authorization grant. Required. |  |
-| `--permission <PERMISSION>` | Repository permission to grant; administration requires the applicable authority. | Default: create-repository; Values: create-repository, manage-identities |
+| `--permission <PERMISSION>` | Repository permission to grant; administration requires the applicable authority. | Default: create-repository; Values: create-repository, manage-identities, manage-agents |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
 | `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
 | `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |

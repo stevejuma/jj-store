@@ -20,6 +20,14 @@ This profile supports trusted collaborators on the configured server. Client
 agent advertising, relay routing, WebRTC, personal provisioning and remote
 machine administration remain outside M27.
 
+The operator configuration/sharing editor is a separate administration boundary,
+not an execution operation. It requires independent `manage-agents` permission
+and reports restart-bound activation. Identity enrollment and repository Write
+onboarding retain their separate authorities and existing durable receipts.
+Native conversation homes and code repositories remain explicit prerequisites;
+the editor does not provision homes, upload local dirty files or mirror a
+working copy.
+
 E-REMOTE-AGENTS-002 verifies these unchanged publication and recovery contracts
 on macOS with real RustFS and a deterministic ACP process. Native code-grant
 revocation and installation identity revocation are tested independently.

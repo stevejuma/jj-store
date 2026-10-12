@@ -17,3 +17,13 @@ Configuration documentation names the registered remote WebSocket Origin and
 installation fence without weakening browser or token admission. M27 and
 E-REMOTE-AGENTS-002 identify the macOS real-storage integration scope and the
 separate installed-provider, Linux and desktop gates.
+
+Operator guidance documents Agents → Manage server access, independent enrolled
+`manage-agents` and `manage-identities` roles, restart-bound saved/effective
+definitions and allowlists, and explicit native repository Write onboarding.
+Original-outcome recovery, same-principal grants and public profile/avatar
+identification retain their separate authority. The installed Codex harness uses
+two disposable local real-RustFS instances and existing prepared tooling; no
+provider installation, credential copy or development reset is required.
+Evidence must distinguish a passed operator UI from actual provider
+prompt/publication, restart/revocation, Linux and desktop qualification.

@@ -95,6 +95,38 @@ fn operator_capability_never_implies_repository_access() {
     );
 }
 #[test]
+fn agent_administration_is_an_independent_operator_capability() {
+    let mut operator = TokenPolicy::new(Scope::Operator);
+    let token = operator
+        .issue(ADMIN, Permission::ManageAgents, None)
+        .unwrap();
+    assert!(
+        operator
+            .authorize(&token, Permission::ManageAgents, 0)
+            .is_ok()
+    );
+    for permission in [
+        Permission::ManageIdentities,
+        Permission::CreateRepository,
+        Permission::Admin,
+        Permission::Write,
+    ] {
+        assert!(operator.authorize(&token, permission, 0).is_err());
+    }
+    let mut repository = TokenPolicy::new(Scope::Repository(REPO));
+    assert!(
+        repository
+            .issue(ADMIN, Permission::ManageAgents, None)
+            .is_err()
+    );
+    let admin = repository.issue(ADMIN, Permission::Admin, None).unwrap();
+    assert!(
+        operator
+            .authorize(&admin, Permission::ManageAgents, 0)
+            .is_err()
+    );
+}
+#[test]
 fn malformed_credentials_policies_and_limits_fail_closed() {
     for malformed in [
         "".to_owned(),

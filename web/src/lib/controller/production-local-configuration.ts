@@ -1,5 +1,6 @@
 import { authenticatedAgentFetch } from "../connections/agent-transport.js";
 import { createDirectory } from "./directory.svelte.js";
+import { ServerAgentAdministration } from "./server-agent-administration.svelte.js";
 import { LocalClient } from "../api/local-client.js";
 import { AgentExecution } from "./agent-execution.svelte.js";
 import { createServerSettings } from "./server-settings.svelte.js";
@@ -23,6 +24,11 @@ export function createLocalConfiguration(
     fetcher,
     freshness,
   });
+  const agentAdministration = new ServerAgentAdministration(
+    () => active() && data.accessMode === "authenticated" && token() !== null,
+    token,
+    fetcher,
+  );
   const capture = createProductionCaptureManagement(data, fetcher, freshness);
   const execution = new AgentExecution(
     () =>
@@ -48,12 +54,14 @@ export function createLocalConfiguration(
     execution,
     configuration,
     directory,
+    agentAdministration,
     destroy() {
       freshness?.destroy();
       capture.destroy();
       execution.destroy();
       configuration.destroy();
       directory.destroy();
+      agentAdministration.destroy();
     },
   };
 }

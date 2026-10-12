@@ -1,5 +1,10 @@
 # CLI reference
 
+`jj-store operator grant --permission manage-agents` assigns the independent
+restart-bound agent configuration role. Enroll that token separately before
+using **Agents → Manage server access**. Identity enrollment uses
+`manage-identities`; repository Write onboarding requires repository Admin.
+
 The custom `jj` executable registers application-owned extensions alongside
 upstream JJ commands. `jj-store` provides the paired server and server-free
 local Stacks commands. This reference is generated from their actual parsers,

@@ -24020,6 +24020,188 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 }
 ```
 
+## OperatorAccess
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "agents": {
+      "type": "boolean"
+    },
+    "identities": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "agents",
+    "identities"
+  ]
+}
+```
+
+## ServerAgentAdministrationStatus
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "revision": {
+      "type": "string"
+    },
+    "desired": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/ServerAgentConfiguration"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "effective": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/ServerAgentConfiguration"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "restart_required": {
+      "type": "boolean"
+    },
+    "principals": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/PrincipalId"
+      }
+    }
+  },
+  "required": [
+    "revision",
+    "desired",
+    "effective",
+    "restart_required",
+    "principals"
+  ]
+}
+```
+
+## ServerAgentConfiguration
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "acp_executable": {
+      "type": "string"
+    },
+    "jj_executable": {
+      "type": "string"
+    },
+    "agents": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/ServerAgentDefinition"
+      }
+    }
+  },
+  "required": [
+    "acp_executable",
+    "jj_executable",
+    "agents"
+  ]
+}
+```
+
+## ServerAgentDefinition
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "setup": {
+      "$ref": "#/components/schemas/AgentExecutionSetup"
+    },
+    "principals": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/components/schemas/PrincipalId"
+      }
+    }
+  },
+  "required": [
+    "setup",
+    "principals"
+  ]
+}
+```
+
+## AgentAccessSnapshot
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "epoch": {
+      "$ref": "#/components/schemas/EpochId"
+    },
+    "position": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "code_state_version": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0,
+      "default": 0
+    },
+    "heads": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/components/schemas/OperationId"
+      }
+    }
+  },
+  "required": [
+    "epoch",
+    "position",
+    "code_state_version",
+    "heads"
+  ]
+}
+```
+
+## AgentAccessOutcome
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "request_id": {
+      "$ref": "#/components/schemas/RequestId"
+    },
+    "published": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "request_id",
+    "published"
+  ]
+}
+```
+
 ## LocalServerSettings
 
 ```text

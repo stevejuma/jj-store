@@ -66,7 +66,11 @@ export function createProductionConnect(context: {
       data.repositories = repositories.map((candidate) => ({ ...candidate }));
       data.status.repositories = data.repositories.length ? "ready" : "empty";
       context.token(token);
-      if (context.route().globalSettings) {
+      if (
+        context.route().globalSettings ||
+        context.route().agentsHub ||
+        (context.route().threadsHub && !context.route().repository)
+      ) {
         data.status.connection = "disconnected";
         data.status.navigation = "ready";
         return;

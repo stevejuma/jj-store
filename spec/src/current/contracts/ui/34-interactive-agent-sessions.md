@@ -32,11 +32,11 @@ standard 1rem inset. View sessions precedes Add agent with the same white tile
 and hover treatment, plus a muted background behind its centered icon;
 navigation remains available during loading or unavailable execution. New chat
 uses a Lucide icon above its label alongside the other profile action tiles.
-Add/edit uses the owned Community dialog, image upload/HTTPS URL/colored emoji
-avatar picker, optional description, instructions and combined harness/model
-picker. Legacy plain emoji values remain readable and unchanged until explicitly
-edited. Uploads retain bounded inline image data in private installation state;
-there is no remote upload or server image fetch.
+Add/edit retains the owned Community dialog's avatar, description, instructions
+and harness/model picker. AI configuration alone uses Settings cards, divided
+rows, aligned controls and a retry footer. Other fields and legacy emoji retain
+their presentation. Image/HTTPS/colored emoji avatars retain bounded private
+inline data, with no remote upload or server image fetch.
 
 Online requires a live supervised ACP session whose handshake has completed.
 Working requires a connected running turn. Preparing/opening sessions show
@@ -56,8 +56,8 @@ preserve saved preferences.
 
 Launch chooses an authorized repository and exact revision, creates an isolated
 workspace, negotiates runtime options, then accepts an explicit prompt.
-Repository/project/task actions prefill visible exact context. Session
-navigation, queued follow-ups, tools/plans, exact permission cards,
+Repository/project/task actions retain captured context without a banner.
+Session navigation, queued follow-ups, tools/plans, exact permission cards,
 stop/end/resume and review links retain drafts and pending request identities
 across navigation. Operational feedback uses application toasts and contextual
 recovery controls.

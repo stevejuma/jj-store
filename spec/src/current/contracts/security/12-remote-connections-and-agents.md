@@ -33,6 +33,14 @@ administrator-controlled. Native repositories already present on the remote
 server and existing WorkStore homes are the initial profile. Personal
 provisioning and Git transfer are deferred.
 
+The separate operator editor requires fresh `manage-agents` authorization for
+reads and saves, including before file replacement and response delivery. It
+exposes no local-management API. `manage-identities`, repository Admin and
+execution permission cannot authorize agent configuration. Sharing is a saved
+principal allowlist, with the existing restart activation boundary made visible.
+The fixed-origin gateway admits these bounded operator endpoints and existing
+identity administration; the remote checks their independent capabilities.
+
 Installation token bindings select the caller. Repository token grants must name
 the same principal. Profiles and avatars are presentation, not authorization.
 Sessions, permission decisions, requests, receipts and streams belong to that

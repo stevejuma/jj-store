@@ -21,6 +21,7 @@
   import StoreAgentRuntimeSettings from "./StoreAgentRuntimeSettings.svelte";
   import StoreAgentRequestRecovery from "./StoreAgentRequestRecovery.svelte";
   import StoreAgentSetupEditor from "./StoreAgentSetupEditor.svelte";
+  import StoreServerAgentAdministration from "./StoreServerAgentAdministration.svelte";
   import { agentMember } from "../community-agents/model.js";
   import { sessionItems } from "./session-presentation.js";
   import "./agent-execution.css";
@@ -43,6 +44,14 @@
     editing = $state<AgentSetup | undefined>(),
     deleting = $state<AgentSetup | undefined>();
   const directory = $derived((route.agentView ?? "directory") === "directory");
+  const administration = $derived(controller?.agentAdministration);
+  $effect(() => {
+    if (administration) {
+      administration.directoryOpen = directory;
+      if (directory && administration.available())
+        untrack(() => void administration.discover());
+    }
+  });
   const selectedId = $derived(
     route.agentView === "session" ? route.executionSessionId : undefined,
   );
@@ -108,7 +117,10 @@
         void manager.select(id);
       });
   });
-  onDestroy(() => manager.pauseView());
+  onDestroy(() => {
+    manager.pauseView();
+    if (administration) administration.directoryOpen = false;
+  });
   function edit(agent?: AgentSetup) {
     editing = agent;
     editorOpen = true;
@@ -209,6 +221,16 @@
       label={directory ? "Agents directory" : "Agent workspace"}
     >
       {#if directory}<CommunityAgents
+          onManage={administration?.available() &&
+          (administration.access?.agents ||
+            administration.access?.identities ||
+            controller?.state.repositories.some(
+              (r) => r.permission === "admin",
+            ))
+            ? () => {
+                administration!.open = true;
+              }
+            : undefined}
           management={manager.localManagement()}
           value={manager.value}
           unknown={!!manager.connectionError}
@@ -254,3 +276,7 @@
     deleting = undefined;
   }}
 />
+{#if administration?.available()}<StoreServerAgentAdministration
+    manager={administration}
+    repositories={controller?.state.repositories ?? []}
+  />{/if}

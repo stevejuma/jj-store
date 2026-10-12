@@ -92,6 +92,21 @@
         .getByRole("dialog", { name: "Add server" })
         .querySelector('[data-slot="dialog-description"]'),
     ).toBeNull();
+    const dialog = page.getByRole("dialog", { name: "Add server" });
+    const header = dialog.querySelector(
+      '[data-ui-part="dialog-frame-header"]',
+    )!;
+    const card = page.getByRole("region", { name: "Connection details" });
+    await expect(
+      card.getBoundingClientRect().top - header.getBoundingClientRect().bottom,
+    ).toBe(4);
+    await expect(getComputedStyle(header).paddingBottom).toBe("4px");
+    const viewport = dialog.querySelector(
+      '[data-ui-part="scroll-area-viewport"]',
+    )!;
+    await expect(
+      card.getBoundingClientRect().top - viewport.getBoundingClientRect().top,
+    ).toBeGreaterThan(1);
     await expect(
       page.getByRole("button", { name: /^Connect$/ }),
     ).toBeDisabled();

@@ -175,12 +175,14 @@ pub enum OperatorCommand {
 pub enum OperatorPermission {
     CreateRepository,
     ManageIdentities,
+    ManageAgents,
 }
 impl From<OperatorPermission> for jj_store_service::auth::Permission {
     fn from(value: OperatorPermission) -> Self {
         match value {
             OperatorPermission::CreateRepository => Self::CreateRepository,
             OperatorPermission::ManageIdentities => Self::ManageIdentities,
+            OperatorPermission::ManageAgents => Self::ManageAgents,
         }
     }
 }

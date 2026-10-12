@@ -3,7 +3,7 @@
   import { untrack } from "svelte";
   import CommunityAgentEditorDialog from "../community-agent-editor/CommunityAgentEditorDialog.svelte";
   import { waitForRuntime } from "./runtime-preparation.js";
-  import StoreAgentConfiguration from "./StoreAgentConfiguration.svelte";
+  import StoreAgentConfigurationCard from "./StoreAgentConfigurationCard.svelte";
   import { sameLaunchOptions } from "../../controller/agent-configuration.js";
   import type { AgentExecution } from "../../controller/agent-execution.svelte.js";
   import type {
@@ -165,7 +165,7 @@
         Save changes the agent defaults for future chats. Provider and
         environment changes require an explicit restart.
       </p>{/if}
-    <StoreAgentConfiguration
+    <StoreAgentConfigurationCard
       {manager}
       bind:draft
       secrets={secretDrafts}

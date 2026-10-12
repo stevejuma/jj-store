@@ -35,6 +35,7 @@
 
 <Dialog.Root bind:open={owner.dialog}>
   <DialogFrame
+    class="store-connection-frame"
     title={owner.editing ? "Server connection" : "Add server"}
     aria-describedby={undefined}
     busy={owner.busy}
@@ -135,6 +136,13 @@
 </Dialog.Root>
 
 <style>
+  :global(.store-connection-frame > [data-ui-part="dialog-frame-header"]) {
+    padding-block-start: 1rem;
+    padding-block-end: 0.25rem;
+  }
+  :global(.store-connection-frame [data-ui-part="dialog-frame-body"]) {
+    padding-block-start: 0.25rem;
+  }
   .connection-dialog {
     display: flex;
     flex-direction: column;

@@ -35,3 +35,11 @@ Mutation journals stay outside checkouts, contain only public intent, and retain
 the original request ID. `status --request PATH` and a retry with the same
 journal recover uncertain outcomes. Revoked token IDs cannot be reassigned to
 another principal.
+
+Agent configuration uses `--permission manage-agents`. This permission is
+independent of `manage-identities`, `create-repository` and repository Admin.
+Enroll the operator token in the installation directory before using the app's
+capability discovery and configuration editor. Existing policies need no
+migration; older servers cannot parse the new permission and must be upgraded
+before receiving it. Each operator token has one role; use separate credentials
+for identity enrollment and agent configuration when both are needed.

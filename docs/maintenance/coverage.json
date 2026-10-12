@@ -65,8 +65,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed current-main profile normalization and grouped Settings alongside remote gateway/authenticated agents. Integration retains authorization, published dependencies and exact data; source extractions preserve behavior.",
-      "fingerprint": "97b7ce09bc1e4ab32a3b640306e50cb9490229f8752c7ee3db3c5c13270e8945"
+      "reason": "Reviewed independent ManageAgents authorization and native snapshot/receipt Write onboarding; documented installation editor and unchanged repository publication boundaries.",
+      "fingerprint": "138f655c7be491a5085bc3445847b7c7a97098de789cdb7c9fe93983b84029c5"
     }
   },
   {
@@ -96,8 +96,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed current-main profile normalization and grouped Settings alongside remote gateway/authenticated agents. Integration retains authorization, published dependencies and exact data; source extractions preserve behavior.",
-      "fingerprint": "4ea956c8723be4ed1ef0feb09f015093008d0ba35767e6410affa4e67c9346ac"
+      "reason": "Reviewed conditional remote_agents replacement, full-file revision, private atomic save and saved versus effective activation; documented restart and operator permission boundaries.",
+      "fingerprint": "f951f0bba2d5ae4e2189b981fe5be1ca082bc853b954a3d465d8fe381b745d48"
     }
   },
   {
@@ -109,8 +109,8 @@
       "docs/site/getting-started/work.md"
     ],
     "review": {
-      "reason": "Reviewed M26 object-backed profiles, independent token enrollment and immutable emoji snapshots; updated Settings, security, transport, storage and CLI documentation while preserving existing repository authorization and publication boundaries.",
-      "fingerprint": "c2b03dac6eaa1b7587818a0f6e16e26bd2f777afa3e8136ca49c672c02da8c98"
+      "reason": "Documented the independent manage-agents grant role and its separate installation enrollment, repository Admin and execution allowlist requirements.",
+      "fingerprint": "bee0775e2b69ff6eaa27b01edd0fe7741ad14fa732414a28e08cebec993fc450"
     }
   },
   {
@@ -122,8 +122,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed current-main profile normalization and grouped Settings alongside remote gateway/authenticated agents. Integration retains authorization, published dependencies and exact data; source extractions preserve behavior.",
-      "fingerprint": "b3095ac863b284c687f5fff8e44b0f56a9e29959c051ef7d094f95dee178295c"
+      "reason": "Documented bounded operator and repository agent-access APIs, current authorization, original-intent status and selected-server gateway admission.",
+      "fingerprint": "e7ecb295675e87f5fb7710b88e1be9bac6279a3e0b0cdc22e1adcfa1d0de3fa8"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed browsing, editing, conversion and Settings against merged source. Public sidebar visibility and captured host projections retain selections and drafts; all controller/composer/inbox extractions preserve existing controls, routes and authorization.",
-      "fingerprint": "82500ab830002b54386979fed7ae7b20cdf2b6410b9c43fb65f773f3f8eabdcb"
+      "reason": "Reviewed operator sharing/onboarding forms and exact mode IDs, authenticated Agents/Threads restoration and inset Add server outline. New chat omits only the redundant context banner; the agent editor opts only AI configuration into shared Settings cards/rows/footer, retaining drafts, controls and other fields.",
+      "fingerprint": "6c33a89d0ff3885a494eacd0af1806e3a2b33af2f9211662cac3ec243b4fe16c"
     }
   },
   {
@@ -154,8 +154,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Reviewed current-main profile normalization and grouped Settings alongside remote gateway/authenticated agents. Integration retains authorization, published dependencies and exact data; source extractions preserve behavior.",
-      "fingerprint": "70d1942a3ac66f3566f28c49fa43d739b62afe3a7f856ade3e7fd9f8dbbdf239"
+      "reason": "Reviewed regenerated protocol-1 operator/agent-access schemas and CLI help with independent manage-agents permission, exact read-only Codex mode example, native request identity and original-outcome recovery.",
+      "fingerprint": "5b3ce0c3901f7fba79f7ed0b42292e2100ef1984271bd6521ab7dfb24adad715"
     }
   },
   {

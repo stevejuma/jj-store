@@ -1,5 +1,14 @@
 # Transport semantics
 
+Authenticated operator discovery and restart-bound agent configuration use
+`/v1/operator/access` and `/v1/operator/agents`. Configuration writes require
+`manage-agents` and the exact full-file revision. Repository onboarding uses
+`/v1/repos/{repo}/agent-access` and its original-intent `/status` endpoint,
+requiring current repository Admin and an enrolled token matching the specified
+principal. Unknown grants retain their snapshot and request identity. These
+routes are admitted by the selected-server gateway independently of local
+runtime installation. See [security](security.md).
+
 Device-local remote connections forward supported public HTTP and activity
 requests only to a registered origin. HTTPS, protocol and installation identity
 are checked before use; redirects, arbitrary targets and LocalTrusted authority

@@ -54,7 +54,7 @@ instructions = "Work only in the admitted repositories."
 runner = "codex"
 
 [remote_agents.agents.setup.preferences]
-mode = "ask"
+mode = "read-only"
 
 [remote_agents.agents.setup.options]
 inherit_defaults = false
@@ -75,6 +75,13 @@ Connection tokens and session handles stay in memory. Execution journals retain
 unknown outcomes across restart without replaying prompts. Four workers and 64
 pending admissions are bounded across caller partitions. M27 records Linux and
 macOS qualification independently.
+
+The app's **Agents → Manage server access** editor requires an enrolled token
+with the independent `manage-agents` operator grant. It conditionally saves only
+this section, checks current operator policy, and reports restart requirements.
+Repository Admin, `manage-identities` and execution allowlists do not authorize
+configuration. Executable paths must be absolute in the editor; secret values
+remain forbidden. A stale file revision requires explicit review before saving.
 
 ## Native search configuration
 

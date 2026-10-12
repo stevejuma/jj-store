@@ -8,6 +8,7 @@
   import SessionsIcon from "@lucide/svelte/icons/messages-square";
   import MoreIcon from "@lucide/svelte/icons/ellipsis-vertical";
   import BotIcon from "@lucide/svelte/icons/bot";
+  import ShieldIcon from "@lucide/svelte/icons/shield-user";
   import StoreContentEmpty from "../store-application/StoreContentEmpty.svelte";
   import CommunitySkeleton from "../community-skeleton/CommunitySkeleton.svelte";
   import CommunityAgentProcessingControl from "../community-agent-processing-control/CommunityAgentProcessingControl.svelte";
@@ -33,6 +34,7 @@
     onChat,
     onDelete,
     onRefresh,
+    onManage,
   }: {
     value: AgentStatus | null;
     unknown?: boolean;
@@ -48,6 +50,7 @@
     onChat?(id: string): void;
     onDelete(agent: AgentSetup): void;
     onRefresh(): void;
+    onManage?: () => void;
   } = $props();
 </script>
 
@@ -73,6 +76,9 @@
       </p>
     </div>
     <div class="agents__header-actions">
+      {#if onManage}<Button variant="outline" onclick={onManage}
+          ><ShieldIcon aria-hidden="true" />Manage server access</Button
+        >{/if}
       <Tooltip.Provider>
         <Tooltip.Root>
           <Tooltip.Trigger
@@ -98,7 +104,9 @@
     <StoreContentEmpty
       Icon={BotIcon}
       title="Agent execution unavailable"
-      description="Local agent management requires an enabled local execution service on this device."
+      description={management
+        ? "Local agent management requires an enabled local execution service on this device."
+        : "Remote execution requires enabled server agents and a sharing grant for your principal."}
     />
   {:else if !value && !unknown}<div class="agents__grid">
       {@render sessionsCard()}{#if management}{@render addCard()}{/if}<CommunitySkeleton

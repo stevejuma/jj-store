@@ -10,6 +10,8 @@
   {{#include E-PROFILE-AVATAR-002/SUMMARY.nav.md}}
 - [E-PROFILES-001](E-PROFILES-001/index.md)
   {{#include E-PROFILES-001/SUMMARY.nav.md}}
+- [E-REMOTE-ADMIN-001](E-REMOTE-ADMIN-001/index.md)
+  {{#include E-REMOTE-ADMIN-001/SUMMARY.nav.md}}
 - [E-REMOTE-AGENTS-001](E-REMOTE-AGENTS-001/index.md)
   {{#include E-REMOTE-AGENTS-001/SUMMARY.nav.md}}
 - [E-REMOTE-AGENTS-002](E-REMOTE-AGENTS-002/index.md)

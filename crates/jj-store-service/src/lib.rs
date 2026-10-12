@@ -66,6 +66,7 @@ pub mod conversion;
 
 pub mod stack_workspace;
 
+pub mod agent_administration;
 pub mod connections;
 pub mod qualified_review;
 pub mod remote_agents;

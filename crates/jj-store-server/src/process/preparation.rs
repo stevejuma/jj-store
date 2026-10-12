@@ -293,6 +293,24 @@ pub(super) async fn prepare(
         state.join("native-reads"),
         HttpConfig {
             remote_agents: remote_agents.clone(),
+            agent_administration: if matches!(http_access, HttpAccess::Authenticated)
+                && !matches!(config.storage, crate::config::Storage::Filesystem)
+            {
+                config_path
+                    .zip(directory.clone())
+                    .map(|(path, manager)| {
+                        crate::agent_administration::Manager::new(path, config, Arc::new(manager))
+                            .map(|manager| {
+                                Arc::new(manager)
+                                    as Arc<
+                                        dyn jj_store_service::agent_administration::Administration,
+                                    >
+                            })
+                    })
+                    .transpose()?
+            } else {
+                None
+            },
             installation_id: Some(identity.installation.clone()),
             local_connections: if matches!(
                 http_access,

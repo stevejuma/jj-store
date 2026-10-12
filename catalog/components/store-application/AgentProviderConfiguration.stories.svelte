@@ -107,7 +107,25 @@
     const rows = dialog.querySelector(
       '[data-ui-part="agent-configuration-fields"]',
     )!;
-    await expect(getComputedStyle(rows).borderTopWidth).toBe("1px");
+    const card = within(dialog).getByRole("region", {
+      name: "AI configuration",
+    });
+    await expect(card.contains(rows)).toBe(true);
+    await expect(getComputedStyle(rows).borderTopWidth).toBe("0px");
+    const fields = rows.querySelectorAll('[data-slot="field"]');
+    await expect(getComputedStyle(fields[1]).borderTopWidth).toBe("1px");
+    for (const control of rows.querySelectorAll(".store-work__control"))
+      await expect(getComputedStyle(control).justifyContent).toBe("flex-end");
+    await expect(
+      p
+        .getByRole("textbox", { name: "Agent name" })
+        .closest(".store-settings--global"),
+    ).toBeNull();
+    await expect(
+      p
+        .getByRole("button", { name: "Retry models" })
+        .closest(".store-settings-footer"),
+    ).not.toBeNull();
     await select("LLM provider", "OpenRouter");
     await expect(
       p.getByRole("combobox", { name: "Model" }),

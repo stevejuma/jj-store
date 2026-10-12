@@ -16,6 +16,21 @@ each attached repository. Select a home for a general conversation before Send.
 Agent definitions, instructions, providers and credentials are operator-owned;
 remote callers cannot install or configure runtimes.
 
+Operators can select the remote server, open **Agents → Manage server access**,
+and edit definitions and **Who can message this agent**. This editor requires a
+separate `manage-agents` operator token, enrolled in the installation directory.
+It shows saved and running configuration; a server restart activates changes. It
+changes only the private `remote_agents` configuration, without installing
+runtimes or restarting the host. Public directory profiles and avatars help
+identify principals; they do not grant execution authority.
+
+**Access onboarding** exposes token enrollment/revocation with
+`manage-identities`, and explicit Write grants for native repositories where the
+current token has Admin. The principal and token must match. Grant the existing
+conversation home and each attached code repository separately. Operator tokens
+have independent roles; use the appropriate sign-in for each operation. Unknown
+saves and grants retain the original intent for **Check original outcome**.
+
 Execution and its isolated native workspaces run on the selected remote host.
 Activity streams back through the device gateway. Review and published history
 remain governed by their repository permissions. Switching servers retains
@@ -40,6 +55,18 @@ development installation. An optional
 `--privacy-cache /absolute/path/to/privacy-cache` copies that rule cache into
 its disposable root. The deterministic ACP process proves integration, not
 installed provider or production deployment qualification.
+
+For installed Codex and operator-UI acceptance on the same machine, use
+`python3 scripts/remote-agent-administration-acceptance.py --server /absolute/path/to/jj-store --jj /absolute/path/to/jj --rustfs /absolute/path/to/jj-store-rustfs --acp /absolute/path/to/jj-acp --web /absolute/path/to/web/dist`.
+This provisions two disposable real RustFS instances, synthetic role tokens and
+native repositories, exercises the cold built app, then sends a bounded
+file-edit prompt to the already installed and authenticated Codex provider. It
+does not install a provider or copy its credentials. The optional
+`--privacy-cache` has the same meaning as above. Host/platform and desktop
+delivery are separate qualification gates. Use
+`--tooling-bin /absolute/path/to/prepared/bin` when the installed `codex-acp`
+adapter is in private tooling rather than the ambient PATH. The harness reuses
+that selection without installing or copying credentials.
 
 ## Local agent sessions
 
@@ -82,6 +109,11 @@ Installed adapters are shown separately. After connection, the app shows the
 runner's advertised choices and applied preferences. Choose **Session options →
 Workspace and runtime → Edit execution mode**, then Save agent before sending a
 prompt. Instructions and project/task context accompany the first prompt.
+
+Add/Edit agent presents AI configuration in one Settings card with divided rows,
+right-aligned controls and a separate model-retry footer. The other editor
+fields retain their layout. New chat omits the redundant first-prompt context
+banner; captured context still accompanies the prompt.
 
 The conversation scrolls above a bottom composer row, so growing drafts never
 cover messages. The shared Scroll to latest/New messages control returns to

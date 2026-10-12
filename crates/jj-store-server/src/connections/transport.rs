@@ -21,10 +21,11 @@ fn allowed(path: &str, method: &str) -> bool {
         Some("repos") => {
             (parts.len() == 1 && method == "GET") || parts.get(1).is_some_and(|id| valid_id(id))
         }
-        Some("directory") => !matches!(
-            parts.get(1).copied(),
-            Some("identities" | "identity-revoke")
-        ),
+        Some("directory") => true,
+        Some("operator") => {
+            matches!(parts.as_slice(), ["operator", "access"] if method == "GET")
+                || matches!(parts.as_slice(), ["operator", "agents"])
+        }
         Some("agents") => matches!(
             parts.get(1).copied(),
             None | Some(
@@ -209,7 +210,6 @@ mod tests {
             "local/agents",
             "../bootstrap",
             "repos//files",
-            "directory/identities",
             "https://other/v1/repos",
             "agents/secrets",
         ] {
@@ -220,5 +220,10 @@ mod tests {
             "GET"
         ));
         assert!(allowed("agents/chat", "POST"));
+        assert!(allowed("operator/access", "GET"));
+        assert!(!allowed("operator/access", "POST"));
+        assert!(allowed("operator/agents", "POST"));
+        assert!(!allowed("operator/unknown", "POST"));
+        assert!(allowed("directory/identities", "POST"));
     }
 }

@@ -3095,6 +3095,42 @@
     {
       "local": "web/src/lib/ui/store-collaboration/StoreRecordedMessageMenu.svelte",
       "reason": "Extracted unchanged exact-value copy menu for captured messages and legacy transcript rows."
+    },
+    {
+      "local": "web/src/lib/api/server-administration-client.ts",
+      "reason": "Application-owned operator agent configuration, sharing or access onboarding; composes existing owned Settings forms and released Design Core without Community source imports."
+    },
+    {
+      "local": "web/src/lib/controller/server-agent-administration-types.ts",
+      "reason": "Application-owned operator agent configuration, sharing or access onboarding; composes existing owned Settings forms and released Design Core without Community source imports."
+    },
+    {
+      "local": "web/src/lib/controller/server-agent-administration.svelte.ts",
+      "reason": "Application-owned operator agent configuration, sharing or access onboarding; composes existing owned Settings forms and released Design Core without Community source imports."
+    },
+    {
+      "local": "web/src/lib/ui/store-agent-execution/StoreServerAgentAdministration.svelte",
+      "reason": "Application-owned operator agent configuration, sharing or access onboarding; composes existing owned Settings forms and released Design Core without Community source imports."
+    },
+    {
+      "local": "web/src/lib/ui/store-agent-execution/StoreServerAgentConfiguration.svelte",
+      "reason": "Application-owned operator agent configuration, sharing or access onboarding; composes existing owned Settings forms and released Design Core without Community source imports."
+    },
+    {
+      "local": "web/src/lib/ui/store-agent-execution/StoreServerAgentDefinition.svelte",
+      "reason": "Application-owned operator agent configuration, sharing or access onboarding; composes existing owned Settings forms and released Design Core without Community source imports."
+    },
+    {
+      "local": "web/src/lib/ui/store-agent-execution/StoreServerAccessOnboarding.svelte",
+      "reason": "Application-owned operator agent configuration, sharing or access onboarding; composes existing owned Settings forms and released Design Core without Community source imports."
+    },
+    {
+      "local": "web/src/lib/ui/store-agent-execution/StoreAgentConfigurationCard.svelte",
+      "reason": "Application-owned opt-in AI configuration section for the maintained agent editor; composes existing Settings card, divided runtime fields and footer with released Design Core. Other dialog fields and Advanced retain their presentation."
+    },
+    {
+      "local": "web/src/lib/controller/server-agent-administration-recovery.ts",
+      "reason": "Application-owned original configuration, identity and repository grant outcome recovery; no Community dependency."
     }
   ],
   "desktopAppearance": {

@@ -221,6 +221,17 @@ impl Document {
             "description":"Requires current repository read permission. Unknown query fields are rejected. Source strings are untrusted data. Reads never reconcile or publish native operations.",
             "parameters":parameters, "responses":responses, "x-jj-store-query-schema":query,
             "security":[{"repositoryBearer":[]},{}]});
+        if path.starts_with("/operator/") || path.contains("/agent-access") {
+            operation["tags"] = json!(["administration"]);
+            operation["security"] = json!([{"repositoryBearer":[]}]);
+            operation["description"] = json!(if path == "/operator/access" {
+                "Requires an enrolled installation identity. Reports independent manage-agents and manage-identities operator capabilities; grants no execution or repository authority."
+            } else if path.starts_with("/operator/") {
+                "Requires fresh manage-agents operator permission on an authenticated native deployment. Reads saved and effective definitions and enrolled principals. Conditional saves replace only remote_agents in the private TOML file; activation requires a server restart. Unknown saves must be checked by reading saved state, never blindly replayed."
+            } else {
+                "Requires current native repository Admin permission. Write onboarding requires an enrolled credential for the specified principal. Retain the exact request identity, snapshot and intent; status checks the original native receipt without resubmitting. Agent sharing and installation enrollment remain independent."
+            });
+        }
         if mutation {
             operation["tags"] = json!(["mutations"]);
             operation["description"] = json!(
@@ -476,6 +487,8 @@ pub fn openapi() -> Value {
     crate::agent_execution::document(&mut document);
     crate::connections::document(&mut document);
     crate::remote_agents::document(&mut document);
+    crate::agent_administration::document(&mut document);
+    crate::agent_access::document(&mut document);
     crate::server_settings::document(&mut document);
     crate::directory::document(&mut document);
     document.finish()

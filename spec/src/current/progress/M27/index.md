@@ -1,8 +1,8 @@
 # M27 remote server connections and authenticated agents
 
-| ID  | Status      | Depends | Requirements                       | Gate                                                                      | Next                                                                 | Evidence                                                                                                                       |
-| --- | ----------- | ------- | ---------------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| M27 | In progress | M24,M26 | JST-SEC-009,JST-API-011,JST-UI-022 | Isolated connections, delegated execution and cold Linux/macOS acceptance | Qualify installed providers, Linux real-storage and desktop delivery | E-REMOTE-AGENTS-001,E-REMOTE-AGENTS-002,E-REMOTE-INTEGRATION-001,E-REMOTE-LAND-001,E-SERVER-CONTROLS-001,E-SERVER-CONTROLS-002 |
+| ID  | Status      | Depends | Requirements                       | Gate                                                                      | Next                                                                     | Evidence                                                                                                                                          |
+| --- | ----------- | ------- | ---------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| M27 | In progress | M24,M26 | JST-SEC-009,JST-API-011,JST-UI-022 | Isolated connections, delegated execution and cold Linux/macOS acceptance | Qualify Linux real-storage, desktop delivery and other provider profiles | E-REMOTE-AGENTS-001,E-REMOTE-AGENTS-002,E-REMOTE-INTEGRATION-001,E-REMOTE-LAND-001,E-SERVER-CONTROLS-001,E-SERVER-CONTROLS-002,E-REMOTE-ADMIN-001 |
 
 Implementation was rebased onto the current default workspace, preserving its
 directory/avatar normalization and grouped Settings work. Integration and
@@ -35,6 +35,20 @@ unchanged.
 E-SERVER-CONTROLS-002 corrects compressed Add/More action sizing and moves the
 connection introduction into the card header. Focused sizing, interaction and
 accessibility acceptance passes; the existing M27 gates stay unchanged.
+
+E-REMOTE-ADMIN-001 qualifies independent `manage-agents` configuration/sharing,
+identity enrollment and explicit native Write onboarding. The cold built App
+checks independent roles, drafts, mobile/Axe, reload, history and secret
+non-persistence. Two disposable macOS real-RustFS servers exercise installed
+Codex through the gateway: an isolated file edit, session publication, exact
+restart recovery without prompt replay and identity revocation. This includes
+the authenticated Agents/Threads route-restoration correction and compact
+connection-dialog header spacing. Main development data remains retained.
+
+M27 remains In progress. This installed macOS Codex slice does not qualify
+Linux, desktop delivery, other providers, hostile-user sandboxing, automatic
+home provisioning or Git transfer. Those gates remain separate; no visual
+baseline is updated.
 <!-- generated-navigation -->
 
 ## Pages

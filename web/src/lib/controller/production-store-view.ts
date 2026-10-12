@@ -223,6 +223,7 @@ export function productionControllerSurface(
     historyQuery?: StoreController["historyQuery"];
     capture?: StoreController["capture"];
     execution?: StoreController["execution"];
+    agentAdministration?: StoreController["agentAdministration"];
     configuration?: StoreController["configuration"];
     directory?: StoreController["directory"];
     freshness?: StoreController["freshness"];
@@ -241,6 +242,7 @@ export function productionControllerSurface(
     },
     capture: options.capture,
     execution: options.execution,
+    agentAdministration: options.agentAdministration,
     configuration: options.configuration,
     directory: options.directory,
     freshness: options.freshness,

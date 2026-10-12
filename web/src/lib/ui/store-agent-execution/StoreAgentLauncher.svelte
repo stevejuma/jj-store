@@ -124,9 +124,6 @@
         </div>
       </Empty.Content></Empty.Root
     >
-    {#if manager.context.text}<p>
-        Context for the first prompt: {manager.context.text}
-      </p>{/if}
     {#if !manager.targets.length}<p role="status">
         Register a local JJ folder or link a repository workspace to start a
         chat.

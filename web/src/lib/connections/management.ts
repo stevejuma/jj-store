@@ -83,6 +83,9 @@ export function connectionBlocked(
   return (
     guard?.() === false ||
     !!controller?.execution?.pending ||
+    !!controller?.agentAdministration?.pending ||
+    !!controller?.agentAdministration?.busy ||
+    !!controller?.agentAdministration?.dirty ||
     !!controller?.directory?.state.pending ||
     Object.values(controller?.configuration?.state.drafts ?? {}).some(
       (draft) => draft.unknown,
