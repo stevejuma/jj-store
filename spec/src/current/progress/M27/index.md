@@ -1,14 +1,16 @@
 # M27 remote server connections and authenticated agents
 
-| ID  | Status      | Depends | Requirements                       | Gate                                                                      | Next                                                                 | Evidence                                                         |
-| --- | ----------- | ------- | ---------------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| M27 | In progress | M24,M26 | JST-SEC-009,JST-API-011,JST-UI-022 | Isolated connections, delegated execution and cold Linux/macOS acceptance | Qualify installed providers, Linux real-storage and desktop delivery | E-REMOTE-AGENTS-001,E-REMOTE-AGENTS-002,E-REMOTE-INTEGRATION-001 |
+| ID  | Status      | Depends | Requirements                       | Gate                                                                      | Next                                                                 | Evidence                                                                           |
+| --- | ----------- | ------- | ---------------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| M27 | In progress | M24,M26 | JST-SEC-009,JST-API-011,JST-UI-022 | Isolated connections, delegated execution and cold Linux/macOS acceptance | Qualify installed providers, Linux real-storage and desktop delivery | E-REMOTE-AGENTS-001,E-REMOTE-AGENTS-002,E-REMOTE-INTEGRATION-001,E-REMOTE-LAND-001 |
 
 Implementation was rebased onto the current default workspace, preserving its
 directory/avatar normalization and grouped Settings work. Integration and
 inherited cleanup are recorded in E-REMOTE-INTEGRATION-001 and
-E-LEDGER-CLEANUP-001. Real storage, installed agents, desktop/browser cold runs
-and each platform gate require separate evidence.
+E-LEDGER-CLEANUP-001. E-REMOTE-LAND-001 records landing in default, retiring
+remote-agents and restarting main with all four existing repositories retained.
+Real storage, installed agents, desktop/browser cold runs and each platform gate
+require separate evidence.
 
 The gateway, scoped production owners, authenticated execution/delegation and
 cold production-App fixture checks pass. E-REMOTE-AGENTS-002 adds macOS cold
