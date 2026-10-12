@@ -24,3 +24,15 @@ the RPC layer does not import the review model in production or expose WAL
 coordinators. LocalTrusted calls retain owner-peer verification and
 authenticated calls retain bearer policy. Cursor pins, command authorization,
 receipt replay and outcome classification remain service responsibilities.
+
+E-APP-RELOAD-001 retains operation pins, query caches, cursor owners, native
+identities and JST-JJ-004 read authority. New jobs capture current serving
+time/blob limits from an owned supplier; retained query clones share that
+supplier, while admitted jobs retain their original budget. Supplier changes
+never select a different operation, reconcile heads or create a physical working
+copy. Native RPC admission uses the same current service policy.
+
+Runtime query limits preserve the distinction between the per-object admission
+bound and aggregate preparation work/read budgets. Index preparation captures
+current per-object limits while retaining its governed aggregate budget; an
+aggregate byte ceiling must never be passed as a native object size limit.

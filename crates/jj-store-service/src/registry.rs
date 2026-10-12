@@ -34,7 +34,8 @@ impl TryFrom<Permission> for EffectivePermission {
             Permission::Admin => Ok(Self::Admin),
             Permission::CreateRepository
             | Permission::ManageIdentities
-            | Permission::ManageAgents => Err(Error::Invalid),
+            | Permission::ManageAgents
+            | Permission::ManageConfiguration => Err(Error::Invalid),
         }
     }
 }

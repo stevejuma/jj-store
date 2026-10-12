@@ -90,6 +90,9 @@ impl Manager {
             after_selection: Default::default(),
         })))
     }
+    pub(crate) async fn reload_permit(&self) -> Result<tokio::sync::OwnedMutexGuard<()>, Error> {
+        self.observation_permit().await
+    }
     fn status_selected(
         &self,
         selected: Option<crate::capture_control_state::CaptureControlSnapshot>,

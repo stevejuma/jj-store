@@ -65,6 +65,51 @@ impl Workers {
 mod tests {
     use super::*;
     #[test]
+    fn retained_query_clones_capture_updated_limits_for_new_jobs() {
+        let seconds = Arc::new(std::sync::atomic::AtomicU64::new(30));
+        let graph_seconds = seconds.clone();
+        let content_seconds = seconds.clone();
+        let root = tempfile::tempdir().unwrap();
+        let executors = Executors::new(
+            root.path().to_owned(),
+            Limits::default(),
+            content::Limits::default(),
+            cache::Policy::default(),
+            2,
+        )
+        .unwrap()
+        .with_live_limits(
+            move |mut l| {
+                l.timeout = std::time::Duration::from_secs(
+                    graph_seconds.load(std::sync::atomic::Ordering::SeqCst),
+                );
+                l
+            },
+            move |mut l| {
+                l.timeout = std::time::Duration::from_secs(
+                    content_seconds.load(std::sync::atomic::Ordering::SeqCst),
+                );
+                l
+            },
+        );
+        let retained = executors.clone();
+        let captured = retained.content().current_limits();
+        seconds.store(7, std::sync::atomic::Ordering::SeqCst);
+        assert_eq!(
+            retained.graph().current_limits().timeout,
+            std::time::Duration::from_secs(7)
+        );
+        assert_eq!(
+            retained.content().current_limits().timeout,
+            std::time::Duration::from_secs(7)
+        );
+        assert_eq!(captured.timeout, std::time::Duration::from_secs(30));
+        assert!(Arc::ptr_eq(
+            &executors.workers.permits,
+            &retained.workers.permits
+        ));
+    }
+    #[test]
     fn background_observation_preserves_foreground_admission() {
         let workers = Workers::new(2).unwrap();
         let observing = workers.acquire_observation().unwrap();
@@ -87,6 +132,20 @@ pub struct Executors {
     workers: Workers,
 }
 impl Executors {
+    /// All retained executor clones share the serving owner's live limits. Running jobs keep their captured budget.
+    pub fn with_live_limits(
+        mut self,
+        graph: impl Fn(Limits) -> Limits + Send + Sync + 'static,
+        content: impl Fn(content::Limits) -> content::Limits + Send + Sync + 'static,
+    ) -> Self {
+        self.graph = self.graph.with_live_limits(graph);
+        self.content = self
+            .content
+            .with_live_limits(content)
+            .with_graph(self.graph.clone());
+        self
+    }
+
     pub fn new(
         root: PathBuf,
         graph: Limits,

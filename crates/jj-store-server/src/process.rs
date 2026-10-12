@@ -25,9 +25,12 @@ use tonic::{service::Routes, transport::Server};
 mod authority;
 mod capture;
 mod preparation;
+mod reload;
+mod reload_capture;
 mod running;
 
 pub struct PreparedServer {
+    reload: Option<Arc<reload::Owners>>,
     rpc: PreparedRpc,
     http: HttpApi,
     browser: Option<jj_store_http::assets::BrowserAssets>,

@@ -15,7 +15,7 @@ use std::{
 struct Inner {
     changes: jj_store_service::freshness::Signals,
     path: PathBuf,
-    effective: Config,
+    effective: Arc<std::sync::RwLock<Config>>,
     authority: Authority,
 }
 #[derive(Clone)]
@@ -36,10 +36,16 @@ impl Manager {
         Ok(Self(Arc::new(Inner {
             changes: Default::default(),
             path: policy::outside_checkout(path)?,
-            effective: config.clone(),
+            effective: Arc::new(std::sync::RwLock::new(config.clone())),
             authority: Authority::new(path, config, identity)
                 .map_err(|_| crate::Error::Config("local settings authority"))?,
         })))
+    }
+    pub(crate) fn with_effective(mut self, effective: Arc<std::sync::RwLock<Config>>) -> Self {
+        Arc::get_mut(&mut self.0)
+            .expect("unshared settings")
+            .effective = effective;
+        self
     }
     fn admit(&self, actor: PrincipalId) -> Result<(), Error> {
         self.0
@@ -65,7 +71,7 @@ impl Manager {
     fn report(&self) -> Result<LocalServerSettings, Error> {
         let (revision, config) = self.read()?;
         let desired = wire(&config)?;
-        let effective = wire(&self.0.effective)?;
+        let effective = wire(&*self.0.effective.read().map_err(|_| Error::Unavailable)?)?;
         Ok(LocalServerSettings {
             version: 1,
             revision,
@@ -73,7 +79,10 @@ impl Manager {
             desired,
             effective,
             sync_defaults: convert(&crate::config::ReplicationLimits::default())?,
-            inventory: inventory::values(&config, &self.0.effective)?,
+            inventory: inventory::values(
+                &config,
+                &*self.0.effective.read().map_err(|_| Error::Unavailable)?,
+            )?,
         })
     }
     fn persist(

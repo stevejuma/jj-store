@@ -84,3 +84,5 @@ pub mod search_management;
 mod search_worker;
 
 mod presentation_avatar;
+
+pub mod runtime_reload;

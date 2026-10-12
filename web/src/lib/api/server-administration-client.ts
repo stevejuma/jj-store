@@ -6,15 +6,20 @@ export class ServerAdministrationClient {
     private available: () => boolean,
     private token: () => string | null,
     private fetcher: typeof fetch = fetch,
+    private allowLocal = false,
   ) {}
   async request<T>(path: string, body?: unknown): Promise<T> {
     const credential = this.token();
-    if (this.lifetime.signal.aborted || !this.available() || !credential)
+    if (
+      this.lifetime.signal.aborted ||
+      !this.available() ||
+      (!credential && !this.allowLocal)
+    )
       throw new ApiError("agent_administration_denied");
     const response = await this.fetcher(`/v1/${path}`, {
       method: body === undefined ? "GET" : "POST",
       headers: {
-        authorization: `Bearer ${credential}`,
+        ...(credential ? { authorization: `Bearer ${credential}` } : {}),
         "x-jj-store-protocol": "1",
         ...(body === undefined ? {} : { "content-type": "application/json" }),
       },

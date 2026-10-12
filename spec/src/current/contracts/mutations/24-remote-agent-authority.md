@@ -21,3 +21,11 @@ does not enter storage, model or WAL. Native repository mutations and
 publication use the initiating caller's current authority, never a LocalTrusted
 administrator fallback. Bound read/stream continuation and receipt recovery also
 reauthorize.
+
+JST-MUT-001 configuration reload retains native manifest CAS as publication
+authority. A shared publication lease serializes protection-policy replacement
+with in-flight native/application publication. Old read pins remain valid; new
+publications validate against current protection. Reload receipts are private
+installation state, never repository authority. Remote allowlist changes reach
+existing delegation leases, including tools, streams and publication. Existing
+sessions retain captured runtime definitions; new launches use loaded defaults.

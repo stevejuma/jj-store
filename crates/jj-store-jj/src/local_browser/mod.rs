@@ -231,18 +231,37 @@ pub enum Response {
 }
 #[derive(Clone)]
 pub struct Executor {
+    live_limits: Option<Arc<dyn Fn(Limits) -> Limits + Send + Sync>>,
     workers: crate::query::workers::Workers,
     limits: Limits,
 }
 impl Executor {
+    pub fn with_live_limits(
+        mut self,
+        limits: impl Fn(Limits) -> Limits + Send + Sync + 'static,
+    ) -> Self {
+        self.live_limits = Some(Arc::new(limits));
+        self
+    }
+    fn current_limits(&self) -> Limits {
+        self.live_limits
+            .as_ref()
+            .map_or(self.limits, |f| f(self.limits))
+    }
+
     pub fn new(concurrency: usize) -> Result<Self> {
         Ok(Self {
+            live_limits: None,
             workers: crate::query::workers::Workers::new(concurrency)?,
             limits: Limits::default(),
         })
     }
     pub fn with_workers(workers: crate::query::workers::Workers, limits: Limits) -> Self {
-        Self { workers, limits }
+        Self {
+            live_limits: None,
+            workers,
+            limits,
+        }
     }
     pub async fn heads(&self, access: Arc<dyn Access>) -> Result<Heads> {
         self.heads_with_permit(access, self.workers.acquire()?)
@@ -290,7 +309,7 @@ impl Executor {
         operation: m::OperationId,
         request: Request,
     ) -> Result<Response> {
-        let limits = self.limits;
+        let limits = self.current_limits();
         self.worker(access, move |access, budget| {
             Box::pin(async move {
                 let operation = if let Request::References(r) = &request {
@@ -345,7 +364,7 @@ impl Executor {
         + Send
         + 'static,
     ) -> Result<T> {
-        let budget = Arc::new(Budget::new(self.limits));
+        let budget = Arc::new(Budget::new(self.current_limits()));
         let cancel = budget.cancellation.clone().drop_guard();
         budget.until(access.authorize()).await??;
         let runtime = tokio::runtime::Handle::current();

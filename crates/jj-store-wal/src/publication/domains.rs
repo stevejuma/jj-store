@@ -219,6 +219,7 @@ impl Coordinator {
         intent: IntentDigest,
         captured: Option<RecordDigest>,
     ) -> Result<Receipt> {
+        let _lease = self.guard.publication_lease().await?;
         let mut native_roots = None;
         for _ in 0..self.limits.cas_attempts {
             let base = self.read().await?;

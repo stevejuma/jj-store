@@ -127,6 +127,34 @@ fn agent_administration_is_an_independent_operator_capability() {
     );
 }
 #[test]
+fn configuration_management_is_an_independent_operator_capability() {
+    let mut operator = TokenPolicy::new(Scope::Operator);
+    let token = operator
+        .issue(ADMIN, Permission::ManageConfiguration, None)
+        .unwrap();
+    assert!(
+        operator
+            .authorize(&token, Permission::ManageConfiguration, 0)
+            .is_ok()
+    );
+    for permission in [
+        Permission::ManageAgents,
+        Permission::ManageIdentities,
+        Permission::CreateRepository,
+        Permission::Read,
+        Permission::Write,
+        Permission::Admin,
+    ] {
+        assert!(operator.authorize(&token, permission, 0).is_err());
+    }
+    let mut repository = TokenPolicy::new(Scope::Repository(REPO));
+    assert!(
+        repository
+            .issue(ADMIN, Permission::ManageConfiguration, None)
+            .is_err()
+    );
+}
+#[test]
 fn malformed_credentials_policies_and_limits_fail_closed() {
     for malformed in [
         "".to_owned(),

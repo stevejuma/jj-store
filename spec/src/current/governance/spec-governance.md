@@ -2,11 +2,12 @@
 
 E-REMOTE-ADMIN-001 adds independent operator agent administration and explicit
 identity/repository access onboarding. Agent management uses freshly loaded
-`manage-agents` policy; saved configuration activation remains restart-bound.
-Native token grants use existing manifest-selected administration and original
-receipts. Storage, WAL, AgentStore and installation directory formats remain
-unchanged. New application-owned forms/controllers compose maintained Settings
-components and released dependencies, with ownership declared in provenance.
+`manage-agents` policy; saved configuration activation is now governed by
+E-APP-RELOAD-001. Native token grants use existing manifest-selected
+administration and original receipts. Storage, WAL, AgentStore and installation
+directory formats remain unchanged. New application-owned forms/controllers
+compose maintained Settings components and released dependencies, with ownership
+declared in provenance.
 
 M27 adds an application-owned server selector, fixed-origin gateway and
 operator-defined authenticated agent broker. New UI compositions remain under
@@ -273,3 +274,9 @@ never removes application state, credentials or a live target. Shared tooling
 changes require the full affected launcher, documentation and contract-helper
 tests plus isolated cold UI startup; they do not expand storage/platform/release
 gates.
+
+E-APP-RELOAD-001 adds explicit runtime activation, current shared policy and
+publication fencing, retaining storage/native formats and operation pins. Its
+owned reload UI uses maintained Settings components and released dependencies.
+Isolated acceptance covers real storage and a cold built browser; inherited
+diagnostics, worker deferrals and independent platform gates remain explicit.

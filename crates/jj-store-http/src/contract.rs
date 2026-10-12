@@ -489,6 +489,7 @@ pub fn openapi() -> Value {
     crate::remote_agents::document(&mut document);
     crate::agent_administration::document(&mut document);
     crate::agent_access::document(&mut document);
+    crate::runtime_reload::document(&mut document);
     crate::server_settings::document(&mut document);
     crate::directory::document(&mut document);
     document.finish()

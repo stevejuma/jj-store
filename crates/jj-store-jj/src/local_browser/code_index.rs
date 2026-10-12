@@ -168,7 +168,7 @@ impl Executor {
         let budget = Arc::new(Budget::preparation(&limits, &cancellation));
         let cancel = cancellation.token().drop_guard();
         budget.until(access.authorize()).await??;
-        let capture_limits = self.limits;
+        let capture_limits = self.current_limits();
         let runtime = tokio::runtime::Handle::current();
         let result = tokio::task::spawn_blocking(move || {
             let _permit = permit;
@@ -311,7 +311,7 @@ impl Executor {
         ) {
             return Err(Error::IndexRebuildRequired);
         }
-        let limits = self.limits;
+        let limits = self.current_limits();
         self.worker(access, move |access, budget| {
             Box::pin(async move {
                 if access.repository() != prepared.snapshot.repository
@@ -391,7 +391,7 @@ impl Executor {
         if key.repository != access.repository() || key.operation != prepared.snapshot.operation {
             return Err(Error::NotCommitted);
         }
-        let mut limits = self.limits;
+        let mut limits = self.current_limits();
         limits.max_blob_bytes = crate::query::blame::MAX_FILE_BYTES as u64;
         let executor = Executor::with_workers(self.workers.clone(), limits);
         let permit = self.workers.acquire()?;

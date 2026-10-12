@@ -45,7 +45,15 @@ export function globalSettingsSkeletonCards(
       if (tab === "configuration")
         return [
           facts(2),
-          { rows: ["toggle", "numeric", "numeric", "numeric", "numeric"] },
+          {
+            rows: [
+              "toggle",
+              "numeric-slider",
+              "numeric-slider",
+              "numeric-slider",
+              "numeric-slider",
+            ],
+          },
           { rows: ["disclosure", "disclosure", "disclosure"] },
           footer(),
         ];

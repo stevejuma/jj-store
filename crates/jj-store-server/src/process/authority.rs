@@ -62,6 +62,7 @@ pub(super) async fn prepare(
             Access::Authenticated { .. } => PreparedRpc::Shared(
                 NativeRpc::hosted(host.clone(), rpc_limits)
                     .map_err(|_| Error::Config("RPC limits"))?
+                    .with_runtime_policy(host.runtime_policy().clone())
                     .with_registry(registry.clone())
                     .with_replication_controls(replication.controls()),
             ),
@@ -96,6 +97,7 @@ pub(super) async fn prepare(
                             owner_uid,
                         )
                         .map_err(|_| Error::Config("local RPC access"))?
+                        .with_runtime_policy(host.runtime_policy().clone())
                         .with_registry(registry.clone())
                         .with_replication_controls(replication.controls()),
                         listener,

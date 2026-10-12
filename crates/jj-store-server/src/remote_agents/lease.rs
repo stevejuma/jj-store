@@ -10,7 +10,7 @@ pub(super) struct Lease {
     pub token: Mutex<Option<BearerToken>>,
     pub scope: Mutex<Scope>,
     pub directory: Arc<dyn Directory>,
-    pub configuration: Configuration,
+    pub configuration: Arc<std::sync::RwLock<Option<Configuration>>>,
 }
 impl Lease {
     pub fn scope(&self) -> Result<Scope> {
@@ -37,11 +37,14 @@ impl Lease {
             .await
             .map_err(|_| Error::Denied)?
             != self.principal
-            || self
-                .scope()?
-                .agents
-                .iter()
-                .any(|id| !self.configuration.allows(id, self.principal))
+            || self.scope()?.agents.iter().any(|id| {
+                !self
+                    .configuration
+                    .read()
+                    .ok()
+                    .and_then(|c| c.as_ref().map(|c| c.allows(id, self.principal)))
+                    .unwrap_or(false)
+            })
         {
             return Err(Error::Denied);
         }

@@ -24202,6 +24202,198 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 }
 ```
 
+## RuntimeReloadStatus
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "original": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/RuntimeReloadCommand"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "outcome": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/RuntimeReloadOutcome"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "saved_revision": {
+      "type": "string"
+    },
+    "supported": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/RuntimeReloadDomain"
+      }
+    },
+    "pending": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/RuntimeReloadDomain"
+      }
+    },
+    "generation": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    }
+  },
+  "required": [
+    "original",
+    "outcome",
+    "saved_revision",
+    "supported",
+    "pending",
+    "generation"
+  ]
+}
+```
+
+## RuntimeReloadCommand
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "request_id": {
+      "$ref": "#/components/schemas/RequestId"
+    },
+    "expected_revision": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "domains": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/RuntimeReloadDomain"
+      },
+      "minItems": 1,
+      "maxItems": 8
+    }
+  },
+  "required": [
+    "version",
+    "request_id",
+    "expected_revision",
+    "domains"
+  ]
+}
+```
+
+## RuntimeReloadDomain
+
+```text
+{
+  "type": "string",
+  "enum": [
+    "service",
+    "protection",
+    "sync",
+    "capture",
+    "remote_agents",
+    "search",
+    "agents",
+    "compute"
+  ]
+}
+```
+
+## RuntimeReloadOutcome
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "request_id": {
+      "$ref": "#/components/schemas/RequestId"
+    },
+    "generation": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "state": {
+      "$ref": "#/components/schemas/RuntimeReloadState"
+    },
+    "results": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/RuntimeReloadDomainResult"
+      }
+    }
+  },
+  "required": [
+    "request_id",
+    "generation",
+    "state",
+    "results"
+  ]
+}
+```
+
+## RuntimeReloadState
+
+```text
+{
+  "type": "string",
+  "enum": [
+    "running",
+    "applied",
+    "current",
+    "deferred",
+    "failed",
+    "unknown"
+  ]
+}
+```
+
+## RuntimeReloadDomainResult
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "domain": {
+      "$ref": "#/components/schemas/RuntimeReloadDomain"
+    },
+    "state": {
+      "$ref": "#/components/schemas/RuntimeReloadState"
+    },
+    "reason": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "domain",
+    "state",
+    "reason"
+  ]
+}
+```
+
 ## LocalServerSettings
 
 ```text

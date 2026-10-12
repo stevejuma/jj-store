@@ -16,8 +16,22 @@ pub(super) struct Runtime {
     pub error: Option<String>,
     pub operation: Option<RequestId>,
     pub task: Option<tokio::task::JoinHandle<()>>,
+    pub relay_urls: Vec<String>,
 }
 impl Supervisor {
+    pub(crate) async fn reload_compute_settings(
+        &self,
+    ) -> Result<(jj_store_service::runtime_reload::State, Option<String>)> {
+        let saved = self.read(|s| Ok(s.compute.clone()))?;
+        let runtime = self.0.compute.lock().await;
+        let pending = runtime.sender.as_ref().is_some_and(|s| !s.is_closed())
+            && runtime.relay_urls != saved.relay_urls;
+        Ok(if pending {
+            (jj_store_service::runtime_reload::State::Deferred,Some("Compute is retained. Saved transport relays apply after Stop compute and its next start.".into()))
+        } else {
+            (jj_store_service::runtime_reload::State::Current, None)
+        })
+    }
     pub(super) fn companion(&self, name: &str, environment: &str) -> Result<PathBuf> {
         let selected = std::env::var_os(environment)
             .map(PathBuf::from)

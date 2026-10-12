@@ -4,6 +4,7 @@ type Row =
   | "fact"
   | "input"
   | "numeric"
+  | "numeric-slider"
   | "toggle"
   | "textarea"
   | "disclosure"

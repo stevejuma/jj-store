@@ -173,6 +173,7 @@ impl VerifiedFile {
 }
 #[derive(Clone)]
 pub struct ContentReader {
+    live_limits: Option<Arc<dyn Fn(Limits) -> Limits + Send + Sync>>,
     limits: Limits,
     workers: Workers,
     graph: Option<super::GraphExecutor>,
@@ -187,6 +188,19 @@ pub(super) struct Context {
     pub(super) permit: Option<OwnedSemaphorePermit>,
 }
 impl ContentReader {
+    pub fn with_live_limits(
+        mut self,
+        limits: impl Fn(Limits) -> Limits + Send + Sync + 'static,
+    ) -> Self {
+        self.live_limits = Some(Arc::new(limits));
+        self
+    }
+    pub(super) fn current_limits(&self) -> Limits {
+        self.live_limits
+            .as_ref()
+            .map_or(self.limits, |f| f(self.limits))
+    }
+
     pub fn new(limits: Limits, concurrency: usize) -> Result<Self> {
         Self::with_workers(limits, Workers::new(concurrency)?)
     }
@@ -208,6 +222,7 @@ impl ContentReader {
             return Err(Error::Limit);
         }
         Ok(Self {
+            live_limits: None,
             limits,
             workers,
             graph: None,
@@ -231,7 +246,7 @@ impl ContentReader {
         + 'static,
     ) -> Result<T> {
         let permit = self.workers.acquire()?;
-        let limits = self.limits;
+        let limits = self.current_limits();
         let code_index = self.code_index.clone();
         if let Some(index) = &code_index {
             index.validate(access.as_ref())?;
@@ -369,7 +384,9 @@ impl ContentReader {
                     && request.kind != references::Kind::Workspaces
                     && graph.reference_filters()))
         {
-            return graph.references(store, access, request, self.limits).await;
+            return graph
+                .references(store, access, request, self.current_limits())
+                .await;
         }
         self.execute(store, access, move |context| {
             Box::pin(async move { references::read(context, request).await })

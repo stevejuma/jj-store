@@ -307,7 +307,7 @@ impl Config {
         };
         limits.publication.timeout = timeout;
         limits.policy.timeout = timeout;
-        RepositoryHost::new(
+        let host = RepositoryHost::new(
             store,
             Arc::new(policy::PolicyFile::new(self.operator_policy.clone())?),
             Arc::new(SystemClock),
@@ -318,7 +318,11 @@ impl Config {
             limits,
             self.limits.max_blob_bytes,
         )
-        .map_err(|_| Error::Config("native host limits"))
+        .map_err(|_| Error::Config("native host limits"))?;
+        let mut runtime = host.runtime_policy().current();
+        runtime.concurrent = self.limits.concurrent_requests;
+        host.runtime_policy().replace(runtime);
+        Ok(host)
     }
 }
 

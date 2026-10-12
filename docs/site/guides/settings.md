@@ -14,11 +14,11 @@ bounded fallback only while visible.
 
 For authenticated remote agent administration, select the server and use
 **Agents → Manage server access**. An enrolled `manage-agents` operator can edit
-definitions and messaging allowlists; Save requires a server restart to
-activate. Access onboarding separately exposes identity enrollment/revocation
-and native repository Write grants according to the current token's permissions.
-The form retains drafts and exact pending intents across tabs, blocks connection
-changes while unsettled, and pauses hidden reads. See
+definitions and messaging allowlists; use **Reload saved settings** to activate.
+Access onboarding separately exposes identity enrollment/revocation and native
+repository Write grants according to the current token's permissions. The form
+retains drafts and exact pending intents across tabs, blocks connection changes
+while unsettled, and pauses hidden reads. See
 [agent sessions](agent-execution.md).
 
 Open **Settings** from the profile menu for Profile, Custom emoji, Appearance,
@@ -68,7 +68,7 @@ fields. Later refreshes keep existing values and unsaved drafts on screen.
 
 Where settings expose both saved and effective values, saved configuration is
 what a future activation will use; effective state describes the current
-worker/service. Follow Apply or restart indicators. A successful configuration
+worker/service. Follow Apply or reload indicators. A successful configuration
 save alone does not prove a worker restarted or a long-running operation
 completed.
 
@@ -255,13 +255,21 @@ the draft. The exact base value is shown beside converted entries, and invalid
 fractions or out-of-range values cannot be saved. The icon-only **Reset**
 appears after the units when the draft differs from its documented default. It
 restores that default in your draft and then disappears. Search retains **Save
-settings** and **Apply saved settings**; Sync changes take effect at the next
-server startup. Global service/capture changes also require restart. Compute
-memory keeps its GB unit and accepts an empty value for automatic allocation.
-Its slider covers common 1–64 GB limits in whole-GB increments; typing a larger
-limit expands the slider while preserving the supported 1–1024 GB input range.
-Changing either control edits the draft until **Save compute settings**. Reset
-is offered only where an authoritative default is available.
+settings** and **Apply saved settings**; Sync, global service and capture
+changes activate through **Reload saved settings** without a server restart.
+Compute memory keeps its GB unit and accepts an empty value for automatic
+allocation. Its slider covers common 1–64 GB limits in whole-GB increments;
+typing a larger limit expands the slider while preserving the supported 1–1024
+GB input range. Changing either control edits the draft until **Save compute
+settings**. Reset is offered only where an authoritative default is available.
+
+Capture options in Agents / Configuration offers sliders for readers (1–4),
+discovery interval (1–30 seconds), tracked sources (1–4,096) and pending byte
+capacity (1 byte–64 MiB). The numeric input and unit selector remain available
+for exact entry. Slider endpoint labels follow the selected unit without
+changing the draft or its bounds. Labels are compact, showing zero for very
+small converted minima; exact entry keeps the original minimum. Sliders edit the
+draft; Save configuration and Reload saved settings retain their separate roles.
 
 ## Profile and custom emoji
 
@@ -299,4 +307,6 @@ unavailable.
 
 Global Settings groups Profile, Appearance and Custom emoji under Personal;
 Local service, Agents and Compute appear under App. The app version is at the
-bottom of the sidebar.
+bottom of the sidebar, below Help. The top-right Application menu (vertical
+kebab) contains **Reload saved settings**. It applies saved supported server
+configuration while preserving drafts and the running server.

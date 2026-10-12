@@ -126,7 +126,7 @@
         <dd>
           <span role="status"
             >{pending
-              ? "Saved changes need a server restart."
+              ? "Saved changes need a configuration reload."
               : "Saved settings match the running configuration."}</span
           >
         </dd>
@@ -201,7 +201,10 @@
   <StoreSettingsFooter joined>
     {#snippet description()}<div>
         <strong>{entry ? "Remove upstream" : "Configure an upstream"}</strong>
-        <p>Saved changes apply at the next startup. Saving contacts no peer.</p>
+        <p>
+          Use Reload saved settings to activate changes. Saving contacts no
+          peer.
+        </p>
       </div>{/snippet}
 
     {#if entry}<Button

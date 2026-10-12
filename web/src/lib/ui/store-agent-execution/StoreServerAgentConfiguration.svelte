@@ -56,7 +56,7 @@
         /><StoreReadOnlyRow
           label="Activation"
           value={manager.report.restart_required
-            ? "Server restart required"
+            ? "Configuration reload required"
             : "Saved and running configuration match"}
         />
       </dl>
@@ -84,7 +84,7 @@
             type="button"
             variant="outline"
             {disabled}
-            onclick={() => (manager.draft = null)}>Disable after restart</Button
+            onclick={() => (manager.draft = null)}>Disable after reload</Button
           >{:else}<Button type="button" {disabled} onclick={configure}
             >Configure remote agents</Button
           >{/if}</StoreSettingsFooter
@@ -123,7 +123,7 @@
     <StoreSettingsFooter standalone
       >{#snippet description()}{manager.conflict
           ? "Configuration changed on the server. Review it before retaining your draft against the latest revision."
-          : "Configuration and sharing changes require a server restart."}{/snippet}{#if manager.conflict}<Button
+          : "Configuration and sharing changes require a configuration reload."}{/snippet}{#if manager.conflict}<Button
           type="button"
           variant="outline"
           {disabled}

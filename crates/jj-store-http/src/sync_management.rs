@@ -80,7 +80,7 @@ pub(crate) async fn local_sync_wait(
     }
     request.timeout_millis = request
         .timeout_millis
-        .min((state.config.timeout.as_millis() / 2).max(1) as u64);
+        .min((state.live_config().timeout.as_millis() / 2).max(1) as u64);
     state.json(
         &manager
             .wait(context.id("repo")?, request)

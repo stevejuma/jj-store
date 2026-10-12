@@ -43,3 +43,11 @@ capability discovery and configuration editor. Existing policies need no
 migration; older servers cannot parse the new permission and must be upgraded
 before receiving it. Each operator token has one role; use separate credentials
 for identity enrollment and agent configuration when both are needed.
+
+Runtime configuration activation uses `--permission manage-configuration`. An
+enrolled token with this role can use **Reload saved settings** for service
+limits, protection, sync, search and remote agents. A `manage-agents` operator
+may activate only remote-agent configuration. Neither role grants repository
+access or agent execution, and reload does not provision credentials or change
+listener/storage identity. Existing one-role tokens keep their role; issue and
+enroll a separately authorized credential when another role is needed.

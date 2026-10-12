@@ -29,7 +29,7 @@ struct Inner {
     file: Arc<SettingsFile>,
     host: RepositoryHost,
     root: PathBuf,
-    limits: config::Limits,
+
     access: search::SearchAccess,
     control: Arc<Control>,
     gate: Arc<AsyncMutex<()>>,
@@ -56,7 +56,7 @@ impl Manager {
             file: Arc::new(file),
             host,
             root: config.state_dir.clone(),
-            limits: config.limits.clone(),
+
             access,
             control,
             gate: Arc::new(AsyncMutex::new(())),
@@ -78,6 +78,60 @@ impl Manager {
             registry: OnceLock::new(),
             observer,
         })))
+    }
+    pub(crate) async fn reload(
+        &self,
+        config: &config::Config,
+        revision: &str,
+    ) -> Result<(), Error> {
+        let _permit = self.0.gate.try_lock().map_err(|_| Error::Busy)?;
+        let snapshot = self.snapshot().await?;
+        if snapshot.revision != revision {
+            return Err(Error::Conflict);
+        }
+        let mut repos: std::collections::BTreeSet<_> = self
+            .0
+            .states
+            .lock()
+            .map_err(|_| Error::Unavailable)?
+            .keys()
+            .copied()
+            .collect();
+        repos.extend(config.search.iter().map(|r| r.repository));
+        for repo in repos {
+            let desired = snapshot.configuration(repo);
+            if self
+                .0
+                .states
+                .lock()
+                .map_err(|_| Error::Unavailable)?
+                .get(&repo)
+                .is_some_and(|s| s.effective == desired)
+            {
+                continue;
+            }
+            self.execute(
+                repo,
+                SearchCommand {
+                    version: 1,
+                    expected_revision: revision.into(),
+                    action: SearchAction::Apply,
+                },
+                snapshot.clone(),
+            )
+            .await?;
+            self.0
+                .states
+                .lock()
+                .map_err(|_| Error::Unavailable)?
+                .entry(repo)
+                .or_default()
+                .effective = desired;
+        }
+        self.0
+            .changes
+            .notify(None, jj_store_service::freshness::Domain::Search, None);
+        Ok(())
     }
     pub fn bind(&self, registry: jj_store_http::SearchRegistry) {
         let _ = self.0.registry.set(registry);
@@ -142,7 +196,25 @@ impl Manager {
                 &self.0.host,
                 &self.0.root,
                 &[entry],
-                &self.0.limits,
+                &config::Limits {
+                    request_seconds: self
+                        .0
+                        .host
+                        .runtime_policy()
+                        .current()
+                        .limits
+                        .timeout
+                        .as_secs(),
+                    inventory_nodes: self
+                        .0
+                        .host
+                        .runtime_policy()
+                        .current()
+                        .limits
+                        .inventory_nodes,
+                    max_blob_bytes: self.0.host.runtime_policy().current().max_blob,
+                    concurrent_requests: self.0.host.runtime_policy().current().concurrent,
+                },
                 self.0.access,
                 search::environment,
                 true,

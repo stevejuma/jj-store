@@ -7,7 +7,6 @@
   import ArrowLeftIcon from "@lucide/svelte/icons/arrow-left";
   import ServerIcon from "@lucide/svelte/icons/server";
   import CpuIcon from "@lucide/svelte/icons/cpu";
-  import { version } from "../../../../../package.json";
   import type { StoreSettingsSection } from "./model.js";
   import "./StoreSettingsNavigation.css";
 
@@ -86,11 +85,4 @@
       </section>
     {/each}
   </div>
-  <footer
-    class="store-settings-navigation__version"
-    aria-label={`jj-store version ${version}`}
-    title={`jj-store v${version}`}
-  >
-    v{version}
-  </footer>
 </nav>

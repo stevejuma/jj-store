@@ -254,3 +254,27 @@ existing 2 MiB and 512 × 512 limits. These are fixed upload bounds rather than
 configurable server settings. Decode failures and exhausted bounds publish no
 profile change; selecting an uploaded image still requires the explicit profile
 or emoji save command.
+
+## Saved-runtime reload
+
+**Reload saved settings** retains the server process, listener, storage client,
+installation identity, controller owners and admitted read pins. It validates
+the exact saved-file revision and current caller role before activating each
+supported domain. Protection and agent sharing take the exclusive publication
+lease; existing publication finishes its manifest CAS before policy replacement.
+New requests use current service limits and already-admitted jobs retain their
+budget.
+
+Capture drains its writer and retains its private policy, generations, spools
+and import receipts. Sync drains before replacement, reuses durable peer
+checkpoints and keeps pause state. Search uses its existing Apply lifecycle.
+Active agent definitions and Compute relay changes may remain deferred until
+their next worker/helper start. Per-domain outcomes expose failures or deferred
+work; reload never replays prompts or silently reconstructs listeners/storage.
+An interrupted reload retains its original command for outcome observation.
+Infrastructure and bundle changes remain startup-managed.
+
+On ordinary server shutdown, listener admission stops before owned startup and
+freshness monitors settle. Their retained configuration and storage references
+are released before storage shutdown completes. Reload preserves those owners
+while serving; it does not create a second listener or storage lifetime.

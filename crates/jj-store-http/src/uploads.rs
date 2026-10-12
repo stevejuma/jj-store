@@ -66,6 +66,7 @@ pub(super) async fn stage(
         .map_err(std::io::Error::other);
     let upload = state
         .uploads
+        .with_max_file_bytes(state.live_config().uploads.max_file_bytes)
         .stage(
             context.session,
             binding,

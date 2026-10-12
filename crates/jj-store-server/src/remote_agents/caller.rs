@@ -58,7 +58,11 @@ impl Caller {
                 .find(|s| s.id == id)
             {
                 if session.setup_id.as_ref().is_none_or(|setup| {
-                    !scope.agents.contains(setup) || !self.broker.0.config.allows(setup, actor)
+                    !scope.agents.contains(setup)
+                        || !self
+                            .broker
+                            .configuration()
+                            .is_ok_and(|c| c.allows(setup, actor))
                 }) {
                     return Err(Error::Denied);
                 }
@@ -72,7 +76,7 @@ impl Caller {
 impl Manager for Caller {
     async fn status(&self, actor: PrincipalId) -> Result<Status> {
         self.check(actor).await?;
-        let mut setups = self.broker.0.config.setups(actor);
+        let mut setups = self.broker.configuration()?.setups(actor);
         for setup in &mut setups {
             setup.instructions.clear();
             setup.options = Default::default();
@@ -97,11 +101,12 @@ impl Manager for Caller {
                 status.runtime = value.runtime;
             }
             for mut session in value.sessions {
-                if session
-                    .setup_id
-                    .as_ref()
-                    .is_none_or(|setup| !self.broker.0.config.allows(setup, actor))
-                {
+                if session.setup_id.as_ref().is_none_or(|setup| {
+                    !self
+                        .broker
+                        .configuration()
+                        .is_ok_and(|c| c.allows(setup, actor))
+                }) {
                     continue;
                 }
                 session.workspace.clear();
@@ -132,10 +137,12 @@ impl Manager for Caller {
             || command.agent_ids.is_empty()
             || command.agent_ids.len() > 4
             || command.attachments.len() > 8
-            || command
-                .agent_ids
-                .iter()
-                .any(|id| !self.broker.0.config.allows(id, actor))
+            || command.agent_ids.iter().any(|id| {
+                !self
+                    .broker
+                    .configuration()
+                    .is_ok_and(|c| c.allows(id, actor))
+            })
             || command.attachments.iter().any(|a| a.target_id.is_some())
         {
             return Err(Error::Denied);

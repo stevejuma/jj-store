@@ -44,6 +44,7 @@
     CommunityNavigationItemModel,
   } from "../community-navigation/model.js";
   import CommunityProfileMenu from "../community-profile-menu/CommunityProfileMenu.svelte";
+  import StoreRuntimeReload from "../store-settings/StoreRuntimeReload.svelte";
   import StoreSettingsNavigation from "../store-settings/StoreSettingsNavigation.svelte";
   import StoreApplicationHeaderActions from "./StoreApplicationHeaderActions.svelte";
   import StoreWorkspaceToggle from "../store-agent-workspace/StoreWorkspaceToggle.svelte";
@@ -99,9 +100,7 @@
   $effect(() => {
     controller.actions.setRefreshPaused?.(
       "code-editor",
-      conflictOpen ||
-        Boolean(stackWorkspace?.conflictOpen) ||
-        workspaceGuard.editing,
+      editorOpen || workspaceGuard.editing,
     );
     return () => controller.actions.setRefreshPaused?.("code-editor", false);
   });
@@ -208,6 +207,11 @@
         toggleDetails={() =>
           detailsRail.closed ? detailsRail.open() : detailsRail.close()}
       />{/if}{/snippet}
+  {#snippet headerMenu()}<StoreRuntimeReload
+      manager={controller.reload}
+      menu
+      disabled={editorOpen}
+    />{/snippet}
   <AppShell.Sidebar
     side="left"
     inert={editorOpen}
@@ -224,7 +228,10 @@
         {compact}
         onSelect={selectSettings}
         onClose={closeSettings}
-      /><StoreConnectionFooter {compact} />{:else}<StoreApplicationNavigation
+      /><StoreConnectionFooter
+        {compact}
+        showVersion
+      />{:else}<StoreApplicationNavigation
         {controller}
         bind:sectionOpen={layout.sections}
         bind:itemOpen={layout.items}

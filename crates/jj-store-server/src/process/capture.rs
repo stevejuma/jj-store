@@ -152,6 +152,29 @@ fn prepare_enabled(
     let admission = context
         .admission
         .ok_or(Error::Config("capture verifier unavailable"))?;
+    prepare_retained(
+        config,
+        identity,
+        host,
+        admission,
+        storage.store(),
+        storage.capture_lifetime(),
+        locations,
+        initialize,
+    )
+}
+pub(super) fn prepare_retained(
+    config: &Config,
+    identity: &Identity,
+    host: &RepositoryHost,
+    admission: CaptureAdmission,
+    store: Arc<jj_store_object::s3::S3Store>,
+    lifetime: crate::storage::CaptureStorageLifetime,
+    locations: impl FnOnce() -> Result<CaptureLocations>,
+    initialize: bool,
+) -> Result<ReadyCapture> {
+    config.validate()?;
+    supported(config)?;
     let Access::LocalTrusted { installation, .. } = &config.access else {
         return Err(Error::Config("capture access unavailable"));
     };
@@ -166,6 +189,7 @@ fn prepare_enabled(
     if installation == [0; 16] {
         return Err(Error::Config("capture installation unavailable"));
     }
+    let _store = store;
     let locations = locations()?;
     locations.validate()?;
     for harness in &config.agent_capture.harnesses {
@@ -221,7 +245,7 @@ fn prepare_enabled(
         Duration::from_secs(config.limits.request_seconds.min(300)),
     )?
     .ok_or(Error::Config("capture unexpectedly disabled"))?;
-    supervisor.retain_storage(storage.capture_lifetime())?;
+    supervisor.retain_storage(lifetime)?;
     Ok(ReadyCapture::new(
         supervisor,
         journal,

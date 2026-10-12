@@ -215,7 +215,7 @@ export class ServerAgentAdministration {
         this.baseRevision = this.report.revision;
         this.original = pretty(this.report.desired);
         this.notice =
-          "Saved. Restart the remote server to activate configuration and sharing changes.";
+          "Saved. Use Reload saved settings to activate configuration and sharing changes.";
       } else {
         const result = await this.request<{
           request_id: string;

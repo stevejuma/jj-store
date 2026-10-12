@@ -39,8 +39,11 @@ Use the reported repository ID to add its single `[[replication]]` entry to
 [server configuration guide](../reference/configuration.md). Grant the named credential write
 access on the upstream, load its `JJ_STORE_REPLICATION_TOKEN_...` environment
 variable from the local secret facility, validate the edited configuration, and
-restart the foreground local server. Migration does not add this ongoing
-replication configuration itself.
+use **Reload saved settings** in the app to activate that saved configuration.
+The server and native socket stay online; existing workers drain before
+replacement and retain checkpoints. A subsequent normal startup also loads the
+saved configuration. Migration does not add this ongoing replication
+configuration itself.
 
 Confirm the active worker from the migrated or attached workspace:
 

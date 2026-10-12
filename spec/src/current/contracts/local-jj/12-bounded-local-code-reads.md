@@ -51,6 +51,15 @@ successful handle owns its disposable files. Library handles serve prepared log,
 commit detail and evolution pages; the service owns retained generations and
 task delivery. Large-scale qualification remains a separate gate.
 
+The server explicitly opts registered local readers into its retained runtime
+policy. New reads and preparation jobs capture the current interactive limits;
+already admitted work retains its original limits. Standalone query consumers
+keep their explicitly supplied bounds. Preparation's cumulative byte allowance
+is separate from the captured per-object maximum and MUST NOT be passed as that
+maximum. Reload does not change retained operation/registration selections,
+repair source metadata or publish code/companion state. JST-LOCAL-003/004's
+authorization, identity and operation-pinning requirements remain unchanged.
+
 Preparation MUST NOT invoke GitBackend's implicit extra-metadata import or
 stacked-table reconciliation. It reads compact commit fields from Git and
 performs bounded read-only seeks in captured, checksum-verified JJ 0.45.1 extra

@@ -34,8 +34,10 @@ state lock does not provide distributed fencing.
 
 Remote execution is disabled unless `[remote_agents]` is present. It requires
 authenticated access, native storage and a Unix host. Configure the paired
-custom JJ and ACP executables and operator-owned agents; changes apply at
-restart. Paths resolve relative to this private configuration file.
+custom JJ and ACP executables and operator-owned agents. Saved agent definitions
+and sharing allowlists activate with Reload saved settings. Executable
+identities remain startup-managed. Paths resolve relative to this private
+configuration file.
 
 ```toml
 [remote_agents]
@@ -78,7 +80,8 @@ macOS qualification independently.
 
 The app's **Agents → Manage server access** editor requires an enrolled token
 with the independent `manage-agents` operator grant. It conditionally saves only
-this section, checks current operator policy, and reports restart requirements.
+this section, checks current operator policy, and reports saved/loaded changes.
+Use **Reload saved settings** to activate it without restarting the server.
 Repository Admin, `manage-identities` and execution allowlists do not authorize
 configuration. Executable paths must be absolute in the editor; secret values
 remain forbidden. A stale file revision requires explicit review before saving.
@@ -99,7 +102,8 @@ a native name. With no scopes, only retained metadata is indexed. Source options
 include `index_source`, `include_prefixes`, `exclude_prefixes`,
 `max_text_bytes`, `max_files`, `max_work` and `max_output_bytes`. Paths are
 native prefixes; exclusions affect only the derived index. Changed source
-configuration rebuilds the index at restart before serving it.
+configuration rebuilds the index through explicit Apply or saved-settings reload
+before serving the replacement. A later startup also loads the saved values.
 
 Per-entry defaults are `poll_millis = 1000`, `timeout_seconds = 60`,
 `index_bytes = 536870912` per generation and `snapshot_every = 32` committed

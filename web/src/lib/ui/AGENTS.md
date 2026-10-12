@@ -70,7 +70,17 @@ their explicit default presentation.
   default" labels below inputs; retain the exact-value helper for conversions.
   Reset edits only that field's draft. Save/Apply retain their existing
   semantics. Sliders are optional and use the same canonical range; include an
-  accessible label and endpoints, including zero/off meaning.
+  accessible label and endpoints, including zero/off meaning. All bounded
+  Capture options offer sliders alongside exact number entry; use the
+  established canonical bounds and retain draft-only editing and Save/Cancel
+  behavior.
+- Slider endpoints display both bounds in the selected input unit, including
+  their unit labels. Use compact labels with at most two decimal places; tiny
+  minima display as zero, while a tiny nonzero maximum retains meaningful
+  significant digits. This is label-only rounding: retain exact entry and the
+  canonical range. Allow labels to wrap without overflow. Unit changes remain
+  presentation-only and never alter canonical bounds, steps, draft values or
+  Save availability.
 - Keep the whole joined control's outer border visible, including the right
   edge. Give focus one theme ring around the entire group with a neutral border,
   no extra inner rings and no highlighted border. This also applies to joined

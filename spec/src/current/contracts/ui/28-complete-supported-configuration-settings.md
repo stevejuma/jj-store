@@ -8,17 +8,17 @@ alongside existing scopes/budget). Local service / Launch and Storage
 configuration show the remaining deployment, authority and backup configuration
 in divided read-only rows with explicit launch, migration or deferred-feature
 reasons. No supported operational configuration is omitted.
-Service/protection/sync saves require the next server startup; desktop uses
-Quit/reopen. Search retains explicit Apply. Each section retains its draft and
-base file revision across refresh, tab changes and repository navigation; stale
-observations cannot silently rebase a draft and unknown saves cannot be blindly
-replayed. Operational feedback uses JST-UI-019 notifications under a stable
-installation scope; repository navigation cannot replay an unchanged dismissed
-condition. Editors are installation-owned and unavailable on
-authenticated/non-Admin connections. The presentation convention below governs
-new and refreshed Settings and forms across the app. Repository and global
-Settings both adopt it; unrelated consumers retain their explicit default
-presentation.
+Service/protection/sync saves activate through **Reload saved settings**. Search
+retains explicit Apply and also participates in the shared reload. Each section
+retains its draft and base file revision across refresh, tab changes and
+repository navigation; stale observations cannot silently rebase a draft and
+unknown saves cannot be blindly replayed. Operational feedback uses JST-UI-019
+notifications under a stable installation scope; repository navigation cannot
+replay an unchanged dismissed condition. Editors are installation-owned and
+unavailable on authenticated/non-Admin connections. The presentation convention
+below governs new and refreshed Settings and forms across the app. Repository
+and global Settings both adopt it; unrelated consumers retain their explicit
+default presentation.
 
 ## Settings and form presentation
 
@@ -41,6 +41,15 @@ remaining width; runtime management rows place the description left and actions
 right in one shared action-row composition, with no empty inter-item gaps.
 Harness groups have full-width separators between collapsed and expanded rows.
 
+Agents / Configuration / Capture options exposes a shared slider beside each
+bounded numeric entry: readers 1–4, discovery interval 1–30 seconds, tracked
+sources 1–4,096, and pending capacity 1 byte–64 MiB. Sliders edit only drafts
+and retain exact numeric entry, units, disabled/invalid states and existing
+Save/Cancel semantics. The byte-budget slider uses MiB choices plus its exact
+minimum and draft; it never rounds a typed value on mount, unit changes or
+refresh. Large ranges must use bounded meaningful slider steps rather than
+enumerating every byte. Loading placeholders include the corresponding slider.
+
 Shared numeric settings rows combine a number input with an attached unit
 selector, using exact canonical integer values for configuration. Repository
 Search (index budget and worker limits) and Sync configuration adopt time units
@@ -50,22 +59,27 @@ canonical values, unsafe values and values outside existing bounds remain
 invalid; never silently round or clamp them. Repeating display conversions are
 marked approximate beside the exact canonical value. Labels, help, bounds,
 validation and read-only/disabled states remain accessible. Optional sliders
-operate within the existing canonical range. A narrower convenience range may
-expand to include larger valid typed values without modifying the draft. Compute
-memory uses a 1–64 GB slider in whole-GB increments, expanding to include a
-larger valid limit up to 1024 GB. Mounting or refreshing the slider never
-changes an empty automatic value. Invalid memory drafts prevent configuration
-saves, including from another tab. Optional per-field icon-only Reset forms the
-trailing segment of the input after its unit selector, with an accessible label
-and tooltip. Show Reset only while the draft differs from its authoritative
-default, including empty or invalid entries; hide it after reset and return
-focus to the input. The split control retains a complete neutral outer border;
-focus draws one ring around the whole control, without additional inner rings or
-a highlighted border. Unit selectors and Reset use subtle theme-based hover
-states; disabled controls remain subdued. Reset restores only the documented
-default in the draft; it never saves or applies. Defaults beside field
-descriptions remain distinct from saved/running state. Omit redundant "Using
-default value" and "Changed from default" labels under inputs; retain the
+display both endpoint labels in the selected unit with compact formatting, using
+at most two decimal places. Tiny minima display as zero; a tiny nonzero maximum
+retains meaningful significant digits. This is label-only rounding, while exact
+entry and canonical bounds are retained. Long endpoint labels wrap without
+overflowing. Unit changes never change canonical slider bounds, steps or values.
+Sliders operate within the existing canonical range. A narrower convenience
+range may expand to include larger valid typed values without modifying the
+draft. Compute memory uses a 1–64 GB slider in whole-GB increments, expanding to
+include a larger valid limit up to 1024 GB. Mounting or refreshing the slider
+never changes an empty automatic value. Invalid memory drafts prevent
+configuration saves, including from another tab. Optional per-field icon-only
+Reset forms the trailing segment of the input after its unit selector, with an
+accessible label and tooltip. Show Reset only while the draft differs from its
+authoritative default, including empty or invalid entries; hide it after reset
+and return focus to the input. The split control retains a complete neutral
+outer border; focus draws one ring around the whole control, without additional
+inner rings or a highlighted border. Unit selectors and Reset use subtle
+theme-based hover states; disabled controls remain subdued. Reset restores only
+the documented default in the draft; it never saves or applies. Defaults beside
+field descriptions remain distinct from saved/running state. Omit redundant
+"Using default value" and "Changed from default" labels under inputs; retain the
 exact-value helper for converted units. Compact and responsive layouts use the
 same component; property-local Reset is an input action, like Browse or Copy.
 Local service limits, Agents capture limits and Compute memory use the same
@@ -73,7 +87,7 @@ joined numerical control. Preserve optional automatic/unset semantics for
 Compute memory: empty remains null, not zero. Do not invent Reset defaults when
 the service advertises no authoritative default. Immediate preferences still
 save immediately; configuration commands keep their existing explicit save and
-restart semantics.
+explicit activation semantics.
 
 Commands belong in a dedicated footer at the bottom of their relevant section,
 never in ordinary key-value rows or centred beneath content. Footer text is
@@ -146,3 +160,14 @@ remains scoped to its item; commands occupy footers while Copy/Open, Browse and
 Reset stay with their values. No new settings, API contracts, configuration
 formats, authorizations or controller owners are introduced by this
 presentation.
+
+The right-aligned top-header Application menu uses an icon-only vertical kebab
+and contains **Reload saved settings**; omit this action from body headers. The
+Settings sidebar version appears below Help at the bottom. The shared reload
+action applies saved values for the selected server within the caller's
+discovered authority. It preserves unsaved drafts, controller owners, active
+sessions and original pending identities. Accessible progress distinguishes
+applied, deferred and failed domains; unknown outcomes retain the original
+intent and offer Check original outcome. Refresh remains a read-only action.
+Activation guidance uses reload for operational settings and separate
+migration/lifecycle reasons for read-only infrastructure.

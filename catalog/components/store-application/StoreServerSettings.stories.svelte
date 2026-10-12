@@ -70,7 +70,7 @@
     ).toBeEnabled();
     await userEvent.click(c.getByRole("button", { name: "Save settings" }));
     await expect(
-      c.getByText("Saved changes need a server restart."),
+      c.getByText("Saved changes need a configuration reload."),
     ).toBeVisible();
     const field = input.closest('[data-slot="field"]')!;
     await expect(field.getBoundingClientRect().left).toBeLessThan(
@@ -92,7 +92,7 @@
     await expect(input).toHaveValue("main\nrelease");
     await userEvent.click(c.getByRole("button", { name: "Save settings" }));
     await expect(
-      c.getByText("Saved changes need a server restart."),
+      c.getByText("Saved changes need a configuration reload."),
     ).toBeVisible();
   }}
 />
@@ -113,7 +113,7 @@
     ).toHaveValue(128);
     await userEvent.click(c.getByRole("button", { name: "Save settings" }));
     await expect(
-      c.getByText("Saved changes need a server restart."),
+      c.getByText("Saved changes need a configuration reload."),
     ).toBeVisible();
   }}
 />
@@ -214,7 +214,7 @@
     await expect(c.getByText("Exact value: 2,500 ms")).toBeVisible();
     await userEvent.click(c.getByRole("button", { name: "Save settings" }));
     await expect(
-      c.getByText("Saved changes need a server restart."),
+      c.getByText("Saved changes need a configuration reload."),
     ).toBeVisible();
     await userEvent.clear(polling);
     await userEvent.type(polling, "0.0001");
@@ -283,7 +283,7 @@
     await userEvent.click(save);
     await expect(c.getByText("Running: 33,554,432")).toBeVisible();
     await expect(
-      c.getByText("Saved changes need a server restart."),
+      c.getByText("Saved changes need a configuration reload."),
     ).toBeVisible();
     await userEvent.clear(input);
     await userEvent.type(input, "0.0000001");

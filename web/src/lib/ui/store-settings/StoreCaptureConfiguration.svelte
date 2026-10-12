@@ -62,7 +62,7 @@
   id="capture-configuration-title"
   title="Capture configuration"
   layout="page"
-  description="Settings apply to this local installation after the server restarts."
+  description="Settings apply to this local installation after configuration reload."
 >
   {#if settings.value && settings.draft}
     <form
@@ -84,7 +84,7 @@
             />
             <StoreReadOnlyRow
               label="Currently configured"
-              value={`${settings.value.effective.enabled ? "Enabled" : "Disabled"} · ${settings.value.restart_required ? "Restart required" : "Matches saved settings"}`}
+              value={`${settings.value.effective.enabled ? "Enabled" : "Disabled"} · ${settings.value.restart_required ? "Configuration reload required" : "Matches saved settings"}`}
             />
           </dl></StoreSettingsCard
         >
@@ -121,6 +121,8 @@
                 description={f.help}
                 min={1}
                 max={f.max}
+                slider
+                sliderStep={f.key === "bytes" ? 1048576 : 1}
                 disabled={busy}
                 value={settings.draft[f.key]}
                 units={f.key === "interval"
@@ -156,9 +158,9 @@
           {#snippet description()}<div>
               <strong>Save configuration</strong>
               <p>
-                Restart the local server to activate saved changes. In the
-                desktop app, quit and reopen the app. Existing capture history
-                and pause policy are retained.
+                Use Reload saved settings in the Application menu to activate
+                saved changes. Existing capture history and pause policy are
+                retained.
               </p>
             </div>{/snippet}
 

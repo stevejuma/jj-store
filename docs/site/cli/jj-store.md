@@ -1643,8 +1643,10 @@ state lock does not provide distributed fencing.
 
 Remote execution is disabled unless `[remote_agents]` is present. It requires
 authenticated access, native storage and a Unix host. Configure the paired
-custom JJ and ACP executables and operator-owned agents; changes apply at
-restart. Paths resolve relative to this private configuration file.
+custom JJ and ACP executables and operator-owned agents. Saved agent definitions
+and sharing allowlists activate with Reload saved settings. Executable
+identities remain startup-managed. Paths resolve relative to this private
+configuration file.
 
 ```toml
 [remote_agents]
@@ -1687,7 +1689,8 @@ macOS qualification independently.
 
 The app's **Agents → Manage server access** editor requires an enrolled token
 with the independent `manage-agents` operator grant. It conditionally saves only
-this section, checks current operator policy, and reports restart requirements.
+this section, checks current operator policy, and reports saved/loaded changes.
+Use **Reload saved settings** to activate it without restarting the server.
 Repository Admin, `manage-identities` and execution allowlists do not authorize
 configuration. Executable paths must be absolute in the editor; secret values
 remain forbidden. A stale file revision requires explicit review before saving.
@@ -1708,7 +1711,8 @@ a native name. With no scopes, only retained metadata is indexed. Source options
 include `index_source`, `include_prefixes`, `exclude_prefixes`,
 `max_text_bytes`, `max_files`, `max_work` and `max_output_bytes`. Paths are
 native prefixes; exclusions affect only the derived index. Changed source
-configuration rebuilds the index at restart before serving it.
+configuration rebuilds the index through explicit Apply or saved-settings reload
+before serving the replacement. A later startup also loads the saved values.
 
 Per-entry defaults are `poll_millis = 1000`, `timeout_seconds = 60`,
 `index_bytes = 536870912` per generation and `snapshot_every = 32` committed
@@ -1893,6 +1897,14 @@ migration; older servers cannot parse the new permission and must be upgraded
 before receiving it. Each operator token has one role; use separate credentials
 for identity enrollment and agent configuration when both are needed.
 
+Runtime configuration activation uses `--permission manage-configuration`. An
+enrolled token with this role can use **Reload saved settings** for service
+limits, protection, sync, search and remote agents. A `manage-agents` operator
+may activate only remote-agent configuration. Neither role grants repository
+access or agent execution, and reload does not provision credentials or change
+listener/storage identity. Existing one-role tokens keep their role; issue and
+enroll a separately authorized credential when another role is needed.
+
 
 ```text
 Usage: jj-store operator [OPTIONS] <COMMAND>
@@ -1919,7 +1931,7 @@ Usage: jj-store operator init [OPTIONS] --policy <POLICY> --endpoint <ENDPOINT> 
 | `--endpoint <ENDPOINT>` | Explicit server endpoint. Credentials must never appear in the URL; TLS and loopback policy still apply. Required. |  |
 | `--insecure-loopback <INSECURE_LOOPBACK>` | Explicitly permit the supported plain-HTTP literal-loopback connection; does not disable admission for other hosts. | Default: false; Values: true, false |
 | `--principal <PRINCIPAL>` | Stable principal identity receiving the authorization grant. Required. |  |
-| `--permission <PERMISSION>` | Repository permission to grant; administration requires the applicable authority. | Default: create-repository; Values: create-repository, manage-identities, manage-agents |
+| `--permission <PERMISSION>` | Repository permission to grant; administration requires the applicable authority. | Default: create-repository; Values: create-repository, manage-identities, manage-agents, manage-configuration |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
 | `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
 | `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
@@ -1939,7 +1951,7 @@ Usage: jj-store operator grant [OPTIONS] --policy <POLICY> --endpoint <ENDPOINT>
 | `--endpoint <ENDPOINT>` | Explicit server endpoint. Credentials must never appear in the URL; TLS and loopback policy still apply. Required. |  |
 | `--insecure-loopback <INSECURE_LOOPBACK>` | Explicitly permit the supported plain-HTTP literal-loopback connection; does not disable admission for other hosts. | Default: false; Values: true, false |
 | `--principal <PRINCIPAL>` | Stable principal identity receiving the authorization grant. Required. |  |
-| `--permission <PERMISSION>` | Repository permission to grant; administration requires the applicable authority. | Default: create-repository; Values: create-repository, manage-identities, manage-agents |
+| `--permission <PERMISSION>` | Repository permission to grant; administration requires the applicable authority. | Default: create-repository; Values: create-repository, manage-identities, manage-agents, manage-configuration |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
 | `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
 | `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |

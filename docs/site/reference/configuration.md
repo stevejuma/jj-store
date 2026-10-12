@@ -24,8 +24,8 @@ Protection, authority storage and backup inventory. Repository settings opens
 from the repository page's gear: **Search** edits that repository's search
 configuration, and **Sync → Configuration** edits its upstream and worker
 limits. These locations retain the same installation-owned configuration file,
-save permissions and Apply/restart requirements. Moving a control does not move
-its persisted data or introduce a new configuration format.
+save permissions and explicit activation requirements. Moving a control does not
+move its persisted data or introduce a new configuration format.
 
 **Add server** above Help saves a device-local connection outside repositories.
 Selecting a server scopes its repositories, projects, agents and directory to
@@ -170,16 +170,17 @@ Enabled automatic capture requires writable LocalTrusted native serving;
 filesystem-only mode is not an alternative automatic native worker. The retained
 OpenCode export profile is not enabled by the configured automatic reader UI.
 
-Capture configuration changes require backend restart unless the UI explicitly
-provides an applicable activation action. Runtime Resume does not override a
-disabled saved/effective configuration.
+Use **Reload saved settings** to activate capture configuration. The existing
+worker drains before replacement; generation, pause policy, spools and original
+import receipts remain retained. Runtime Resume does not override a disabled
+saved/effective configuration.
 
 ## Saved settings and unsupported operations
 
 UI settings may expose saved and effective values separately. Follow the field's
-Apply/restart indication. Read-only inventory does not enable storage
-relocation, access-mode transitions, backup execution or launch reconfiguration.
-Retained `[[backup]]` schema is not a qualified backup/restore workflow. Use the
+Apply/reload indication. Read-only inventory does not enable storage relocation,
+access-mode transitions, backup execution or launch reconfiguration. Retained
+`[[backup]]` schema is not a qualified backup/restore workflow. Use the
 [capability reference](capabilities.md) before configuring a deployment profile.
 
 The private retained Stacks reword executor now joins journal, publication and
@@ -231,9 +232,35 @@ a private local policy file and controls create-repository or manage-identities
 capabilities. Profile details and token identity bindings live in the object
 store. Filesystem-only servers advertise this capability as unavailable.
 
-Authenticated native deployments also support `manage-agents` for the
-restart-bound **Agents → Manage server access** editor. It saves only existing
-`remote_agents` configuration with a full-file revision check and shows saved
-and effective values separately. Tools and provider credentials remain on the
-server; the dialog performs no runtime installation or restart. Identity
+Authenticated native deployments also support `manage-agents` for the **Agents →
+Manage server access** editor. It saves only existing `remote_agents`
+configuration with a full-file revision check and shows saved and effective
+values separately. Tools and provider credentials remain on the server; Save
+does not activate changes. **Reload saved settings** activates definitions and
+allowlists without restarting the server or installing tools. Identity
 enrollment and repository Write grants require their separate permissions.
+
+## Reload saved configuration
+
+Use **Reload saved settings** in the top-right **Application menu** (the
+vertical kebab). It applies only supported saved domains on the selected server
+and preserves unsaved drafts. Local administrators can reload service limits,
+protection, sync, search, capture and available agent/Compute settings. On
+authenticated servers, an enrolled `manage-configuration` operator may reload
+service, protection, sync, search and server agents; `manage-agents` permits
+server agents only. Neither permission grants repository access or execution
+authority.
+
+The dialog reports Applied, Current, Deferred or Failed for each domain. Active
+agent launch changes and Compute relay changes wait for their next worker or
+helper start; use the existing worker controls when appropriate. Reload does not
+restart the server, disconnect listeners, install tools or replay prompts.
+Protection and sharing changes fence in-flight publication and apply to retained
+authority owners. If acknowledgement is lost, **Check original outcome**
+observes the same request. Do not submit a new intent while that outcome is
+unknown.
+
+Listener/TLS, identity/access, authority storage, executables and web bundle
+paths remain startup-managed. Backup execution and storage migration are
+separate workflows. The existing `restart_required` API field remains compatible
+and indicates a saved/loaded mismatch for reloadable domains.

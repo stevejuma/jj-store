@@ -84,6 +84,7 @@ pub struct NativeEndpoint {
     protection: Protection,
     limits: SessionLimits,
     max_blob: u64,
+    pub(crate) runtime: Option<Arc<crate::runtime_policy::RuntimePolicy>>,
 }
 impl NativeEndpoint {
     pub fn new(
@@ -106,6 +107,7 @@ impl NativeEndpoint {
             protection,
             limits,
             max_blob,
+            runtime: None,
         })
     }
     pub fn repository(&self) -> m::RepositoryId {
@@ -120,6 +122,9 @@ impl NativeEndpoint {
             self.protection.clone(),
             self.limits,
         )?;
+        if let Some(runtime) = &self.runtime {
+            session = session.with_runtime_policy(self.objects.clone(), runtime.clone())?;
+        }
         session.events = self.events.clone();
         Ok(NativeRequest {
             endpoint: self.clone(),
@@ -138,6 +143,9 @@ impl NativeEndpoint {
             self.protection.clone(),
             self.limits,
         )?;
+        if let Some(runtime) = &self.runtime {
+            session = session.with_runtime_policy(self.objects.clone(), runtime.clone())?;
+        }
         session.events = self.events.clone();
         Ok(NativeRequest {
             endpoint: self.clone(),
@@ -158,6 +166,9 @@ impl NativeEndpoint {
             self.protection.clone(),
             self.limits,
         )?;
+        if let Some(runtime) = &self.runtime {
+            session = session.with_runtime_policy(self.objects.clone(), runtime.clone())?;
+        }
         session.events = self.events.clone();
         Ok(NativeRequest {
             endpoint: self.clone(),

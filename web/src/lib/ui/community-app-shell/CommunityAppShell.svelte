@@ -30,6 +30,7 @@
     onNavigateForward,
     headerCenter,
     headerEnd,
+    headerMenu,
     class: className,
     children,
     ...restProps
@@ -45,6 +46,8 @@
     onNavigateForward?: () => void;
     headerCenter?: Snippet;
     headerEnd?: Snippet;
+    /** Application-wide actions retained across responsive header layouts. */
+    headerMenu?: Snippet;
     children?: Snippet;
   } = $props();
 
@@ -101,75 +104,80 @@
   data-ui-component="community-app-shell"
   data-display-mode={controller.mobile.resolvedMode}
   data-desktop-chrome={desktopChrome ? "macos" : undefined}
+  data-has-header-menu={Boolean(headerMenu) || undefined}
 >
-  {#if !mobileMode || desktopChrome}
+  {#if !mobileMode || desktopChrome || headerMenu}
     <nav
       class="community-app-shell__header"
       aria-label="Application navigation"
       data-tauri-drag-region={desktopChrome ? "deep" : undefined}
       style={`--community-app-shell-header-main-start: ${headerMainStart}px; --community-app-shell-header-main-width: ${headerMainWidth}px`}
     >
-      <div class="community-app-shell__header-start">
-        <span class="community-app-shell__sidebar-action">
-          <Button
-            type="button"
-            variant="default"
-            size="icon-sm"
-            aria-label={controller.left.collapsed
-              ? "Expand left sidebar"
-              : "Collapse left sidebar"}
-            aria-expanded={!controller.left.collapsed}
-            data-ui-part="sidebar-toggle"
-            data-side="left"
-            data-state={controller.left.collapsed ? "collapsed" : "expanded"}
-            title={controller.left.collapsed
-              ? "Expand left sidebar"
-              : "Collapse left sidebar"}
-            onclick={() => controller.left.toggle()}
-          >
-            <CommunitySidebarToggleIcon expanded={!controller.left.collapsed} />
-          </Button>
-        </span>
+      {#if !mobileMode || desktopChrome}
+        <div class="community-app-shell__header-start">
+          <span class="community-app-shell__sidebar-action">
+            <Button
+              type="button"
+              variant="default"
+              size="icon-sm"
+              aria-label={controller.left.collapsed
+                ? "Expand left sidebar"
+                : "Collapse left sidebar"}
+              aria-expanded={!controller.left.collapsed}
+              data-ui-part="sidebar-toggle"
+              data-side="left"
+              data-state={controller.left.collapsed ? "collapsed" : "expanded"}
+              title={controller.left.collapsed
+                ? "Expand left sidebar"
+                : "Collapse left sidebar"}
+              onclick={() => controller.left.toggle()}
+            >
+              <CommunitySidebarToggleIcon
+                expanded={!controller.left.collapsed}
+              />
+            </Button>
+          </span>
 
-        <div
-          class="community-app-shell__history"
-          role="group"
-          aria-label="Navigation history"
-        >
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            aria-label="Back"
-            title="Back"
-            disabled={!canNavigateBack}
-            onclick={() => onNavigateBack?.()}
+          <div
+            class="community-app-shell__history"
+            role="group"
+            aria-label="Navigation history"
           >
-            <ChevronLeftIcon aria-hidden="true" />
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            aria-label="Forward"
-            title="Forward"
-            disabled={!canNavigateForward}
-            onclick={() => onNavigateForward?.()}
-          >
-            <ChevronRightIcon aria-hidden="true" />
-          </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              aria-label="Back"
+              title="Back"
+              disabled={!canNavigateBack}
+              onclick={() => onNavigateBack?.()}
+            >
+              <ChevronLeftIcon aria-hidden="true" />
+            </Button>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              aria-label="Forward"
+              title="Forward"
+              disabled={!canNavigateForward}
+              onclick={() => onNavigateForward?.()}
+            >
+              <ChevronRightIcon aria-hidden="true" />
+            </Button>
+          </div>
         </div>
-      </div>
 
-      {#if headerCenter}
-        <div class="community-app-shell__header-center">
-          {@render headerCenter()}
-        </div>
+        {#if headerCenter}
+          <div class="community-app-shell__header-center">
+            {@render headerCenter()}
+          </div>
+        {/if}
       {/if}
-
-      {#if headerEnd}
+      {#if headerEnd || headerMenu}
         <div class="community-app-shell__header-end">
-          {@render headerEnd()}
+          {#if !mobileMode || desktopChrome}{@render headerEnd?.()}{/if}
+          {@render headerMenu?.()}
         </div>
       {/if}
     </nav>
@@ -203,7 +211,7 @@
     background: var(--muted);
   }
 
-  .community-app-shell[data-display-mode="mobile"] {
+  .community-app-shell[data-display-mode="mobile"]:not([data-has-header-menu]) {
     grid-template-rows: minmax(0, 1fr);
   }
 

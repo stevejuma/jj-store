@@ -108,8 +108,15 @@ def qualify(args, root):
             receipt = request(remote.origin, 'repos/' + repo + '/agent-access/status', intent, operator['credential'])
             assert committed == receipt == dict(request_id=intent['request_id'], published=True)
         request(remote.origin, 'agents', token=user['credential'], expected=403)
-        remote.stop()
-        remote.start()
+        reload_status = request(remote.origin, 'configuration/reload', token=operator['credential'])
+        assert reload_status['supported'] == ['remote_agents']
+        reload_command = dict(version=1, request_id=identity(), expected_revision=reload_status['saved_revision'], domains=['remote_agents'])
+        server_pid = remote.process.pid
+        request(remote.origin, 'configuration/reload', reload_command, operator['credential'])
+        result = eventually(lambda: request(remote.origin, 'configuration/reload/outcome', reload_command, operator['credential']), lambda v: v['state'] != 'running')
+        assert result['state'] == 'applied', result
+        assert remote.process.pid == server_pid and remote.process.poll() is None
+        assert request(remote.origin, 'configuration/reload', reload_command, operator['credential']) == result
         effective = request(remote.origin, 'operator/agents', token=operator['credential'])
         assert not effective['restart_required'] and effective['effective'] == saved['desired']
         request(remote.origin, 'agents', token=outsider['credential'], expected=403)
@@ -182,11 +189,25 @@ def qualify(args, root):
         assert replay['agents'][0]['request_id'] == original and replay['agents'][0]['state'] == 'completed'
         events = gateway('agents/events?session=' + session)['events']
         assert sum(e['payload'].get('type') == 'started' for e in events) == 1
+        sharing = request(remote.origin, 'operator/agents', token=operator['credential'])
+        for agent in sharing['desired']['agents']:
+            agent['principals'] = [p for p in agent['principals'] if p != user_actor]
+        request(remote.origin, 'operator/agents', dict(expected_revision=sharing['revision'], configuration=sharing['desired']), operator['credential'])
+        status = request(remote.origin, 'configuration/reload', token=operator['credential'])
+        revoke = dict(version=1, request_id=identity(), expected_revision=status['saved_revision'], domains=['remote_agents'])
+        pid = remote.process.pid
+        request(remote.origin, 'configuration/reload', revoke, operator['credential'])
+        observed = eventually(lambda: request(remote.origin, 'configuration/reload/outcome', revoke, operator['credential']), lambda v: v['state'] != 'running')
+        assert observed['state'] in ['applied', 'deferred'], observed
+        assert remote.process.pid == pid and remote.process.poll() is None
+        gateway('agents/chat', command, expected=403)
+        gateway('agents/events?session=' + session, expected=403)
+        print('PASS loaded allowlist revocation fences retained session/tool/publication authority without server restart', flush=True)
         request(remote.origin, 'directory/identity-revoke', dict(request_id=identity(), token=user['token_id']), identities['credential'])
         gateway('agents/chat', command, expected=403)
         for path in [local.state / 'connections/connections.json', remote.config]:
             assert user['credential'] not in path.read_text()
-        print('PASS installed Codex via authenticated gateway: isolated edit, publication, restart without replay, revocation', flush=True)
+        print('PASS saved sharing activated without server restart; installed Codex via authenticated gateway: isolated edit, publication, restart without replay, revocation', flush=True)
     finally:
         local.stop()
         remote.stop()

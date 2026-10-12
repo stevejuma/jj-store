@@ -196,6 +196,13 @@ pub struct Uploads {
     slots: Arc<Semaphore>,
 }
 impl Uploads {
+    /// Retain upload admission while applying the bound for a new request.
+    pub fn with_max_file_bytes(&self, max_file_bytes: u64) -> Self {
+        let mut next = self.clone();
+        next.limits.max_file_bytes = max_file_bytes.min(MAX_FILE_BYTES);
+        next
+    }
+
     pub fn new(limits: Limits) -> Result<Self> {
         if !(1..=MAX_FILE_BYTES).contains(&limits.max_file_bytes)
             || !(1..=32).contains(&limits.concurrency)

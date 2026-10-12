@@ -103,6 +103,7 @@ impl Coordinator {
         request: &ApplyOriginsRequestV1,
         intent: IntentDigest,
     ) -> Result<ApplyOriginsResultV1> {
+        let _lease = self.guard.publication_lease().await?;
         let authorization_base = self.read().await?;
         self.guard
             .authorize_replication(&authorization_base, request)

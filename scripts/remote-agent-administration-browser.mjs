@@ -184,7 +184,9 @@ try {
   );
   await dialog.getByRole("button", { name: "Save configuration" }).click();
   assert.equal((await saved).status(), 200);
-  await dialog.getByText("Server restart required", { exact: true }).waitFor();
+  await dialog
+    .getByText("Configuration reload required", { exact: true })
+    .waitFor();
   await page.waitForFunction(
     () =>
       !document.querySelector('[aria-label="Close server agent access"]')

@@ -2,6 +2,13 @@ use super::*;
 use futures::StreamExt;
 const MAX_BODY: usize = 32 * 1024 * 1024;
 fn allowed(path: &str, method: &str) -> bool {
+    if path == "configuration/reload" {
+        return matches!(method, "GET" | "POST");
+    }
+    if path == "configuration/reload/outcome" {
+        return method == "POST";
+    }
+
     if !matches!(method, "GET" | "POST") || path.len() > 16384 || path.contains(['\\', '#']) {
         return false;
     }

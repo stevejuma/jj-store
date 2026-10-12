@@ -147,8 +147,7 @@ export function createServerSettings(options: {
       edit.dirty = false;
       accept(value);
       edit.error = "";
-      edit.message =
-        "Settings saved. Restart the local server to apply changes.";
+      edit.message = "Settings saved. Reload saved settings to apply changes.";
     } catch (cause) {
       if (!available()) return;
       if (

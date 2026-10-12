@@ -138,6 +138,7 @@ impl Supervisor {
             Ok(())
         })?;
         let settings = self.read(|s| Ok(s.compute.clone()))?;
+        runtime.relay_urls = settings.relay_urls.clone();
         let port = if let Some(port) = self.read(|s| Ok(s.compute_peer_port))? {
             port
         } else {

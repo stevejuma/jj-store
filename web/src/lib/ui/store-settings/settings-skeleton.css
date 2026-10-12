@@ -205,3 +205,25 @@
   .store-settings-skeleton__control {
   height: 8rem;
 }
+
+.store-settings-skeleton__value[data-kind="numeric-slider"] {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 4.5rem;
+  width: min(20rem, 100%);
+}
+.store-settings-skeleton__slider {
+  grid-column: 1 / -1;
+  height: 0.3rem;
+  width: 100%;
+  margin-block-start: 0.5rem;
+}
+.store-settings-skeleton__range {
+  display: flex;
+  grid-column: 1 / -1;
+  justify-content: space-between;
+  margin-block-start: 0.4rem;
+}
+.store-settings-skeleton__range > * {
+  height: 0.65rem;
+  width: 3rem;
+}

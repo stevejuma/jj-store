@@ -12,8 +12,8 @@
       "docs/site/concepts/snapshots.md"
     ],
     "review": {
-      "reason": "Reviewed frozen comment batches and repository-qualified file review publication; documented independent child receipts and unchanged manifest/companion authority. Integrated conversation metadata: Reviewed exact AgentStore snapshot membership and receipt-backed metadata publication under unchanged manifest authority.",
-      "fingerprint": "582d7d0a48baf364be5870ee450419ddf9930345e89f0e8721d663cb0ddadd31"
+      "reason": "Reviewed runtime publication leases through manifest CAS; committed object and authority formats are retained.",
+      "fingerprint": "18885803010563aa630afb6c7827480db3e365b552e25ba779f3ffe5ddc8ef39"
     }
   },
   {
@@ -52,8 +52,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed native bounded text-count helper: 256 KiB per side, two million diff cells, read-only operation pins and unchanged checkout authority.",
-      "fingerprint": "c9d447e39c1c62cb19167cfd5eb91819b3dd399f40941409d04aee8f85cd9a1e"
+      "reason": "Reviewed retained query/live per-object limits separately from aggregate index preparation budgets; current jobs capture both and preserve native size ceilings.",
+      "fingerprint": "fce96ee916a358d69ed1dae0449c9431a1705d1160fb8c09c81cc3fe97aa94f0"
     }
   },
   {
@@ -65,8 +65,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed independent ManageAgents authorization and native snapshot/receipt Write onboarding; documented installation editor and unchanged repository publication boundaries.",
-      "fingerprint": "138f655c7be491a5085bc3445847b7c7a97098de789cdb7c9fe93983b84029c5"
+      "reason": "Reviewed freshly enrolled independent reload authority, retained remote leases and current sharing enforcement.",
+      "fingerprint": "83911fcbf0bbade135bc414416a26b030c721c23c89fa8ca8d285adc8f8c91f2"
     }
   },
   {
@@ -96,8 +96,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed conditional remote_agents replacement, full-file revision, private atomic save and saved versus effective activation; documented restart and operator permission boundaries.",
-      "fingerprint": "f951f0bba2d5ae4e2189b981fe5be1ca082bc853b954a3d465d8fe381b745d48"
+      "reason": "Reviewed per-domain activation, retained runtime policy and precise startup-managed limits.",
+      "fingerprint": "792035e15513491e0880ae4000435f7d612d42a28f7bc75238a73f16a3a08c90"
     }
   },
   {
@@ -109,8 +109,8 @@
       "docs/site/getting-started/work.md"
     ],
     "review": {
-      "reason": "Documented the independent manage-agents grant role and its separate installation enrollment, repository Admin and execution allowlist requirements.",
-      "fingerprint": "bee0775e2b69ff6eaa27b01edd0fe7741ad14fa732414a28e08cebec993fc450"
+      "reason": "Reviewed additive configuration operator role and reload guidance without changing persisted TOML formats.",
+      "fingerprint": "99bdec581249f2b8e3bb88e9b08376fd78fa8af3dbcdba35bb363b73a7c549cf"
     }
   },
   {
@@ -122,8 +122,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Documented bounded operator and repository agent-access APIs, current authorization, original-intent status and selected-server gateway admission.",
-      "fingerprint": "e7ecb295675e87f5fb7710b88e1be9bac6279a3e0b0cdc22e1adcfa1d0de3fa8"
+      "reason": "Reviewed receipt-bound reload endpoints, opt-in live limits, preserved default consumers and owned monitor shutdown.",
+      "fingerprint": "a3704deab744fd65ee8bc71212153183d6b77144c268ce60be0d70e7ecc5bdbe"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed operator sharing/onboarding forms and exact mode IDs, authenticated Agents/Threads restoration and inset Add server outline. New chat omits only the redundant context banner; the agent editor opts only AI configuration into shared Settings cards/rows/footer, retaining drafts, controls and other fields.",
-      "fingerprint": "6c33a89d0ff3885a494eacd0af1806e3a2b33af2f9211662cac3ec243b4fe16c"
+      "reason": "Reviewed Capture sliders and normalized selected-unit endpoint labels, unchanged canonical ranges and exact drafts, persistent responsive header menu, loading geometry and lifecycle guards.",
+      "fingerprint": "fe7baf90f85682e0f1be3ceefe46b48655a340bd67acc6b45cd7b063dac67543"
     }
   },
   {
@@ -154,8 +154,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Reviewed regenerated protocol-1 operator/agent-access schemas and CLI help with independent manage-agents permission, exact read-only Codex mode example, native request identity and original-outcome recovery.",
-      "fingerprint": "5b3ce0c3901f7fba79f7ed0b42292e2100ef1984271bd6521ab7dfb24adad715"
+      "reason": "Reviewed typed reload API and exact registered-route generation with compatible saved/runtime status fields.",
+      "fingerprint": "7c4d3cf6ac4ad8d55fa7e37c916e6560a55cedb633e85719ee057a3058cdb60b"
     }
   },
   {

@@ -3131,6 +3131,18 @@
     {
       "local": "web/src/lib/controller/server-agent-administration-recovery.ts",
       "reason": "Application-owned original configuration, identity and repository grant outcome recovery; no Community dependency."
+    },
+    {
+      "local": "web/src/lib/ui/store-settings/StoreRuntimeReload.svelte",
+      "reason": "Application-authored saved-configuration reload presentation and exact-intent validation; composes maintained Settings rows and released Design Core without external source imports."
+    },
+    {
+      "local": "web/src/lib/controller/runtime-reload.svelte.ts",
+      "reason": "Application-authored saved-configuration reload presentation and exact-intent validation; composes maintained Settings rows and released Design Core without external source imports."
+    },
+    {
+      "local": "web/src/lib/controller/runtime-reload-validation.ts",
+      "reason": "Application-authored saved-configuration reload presentation and exact-intent validation; composes maintained Settings rows and released Design Core without external source imports."
     }
   ],
   "desktopAppearance": {

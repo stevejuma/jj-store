@@ -52,7 +52,7 @@
   id={`config-${section}`}
   layout="page"
   {title}
-  description="Local administrator settings. Changes apply after server restart; in the desktop app, Quit and reopen."
+  description="Local administrator settings. Save changes, then use Reload saved settings to apply them while the server stays online."
   Icon={SlidersHorizontalIcon}
 >
   {#if !management?.available()}<p>
@@ -88,7 +88,7 @@
                 <dd>
                   <span role="status">
                     {pending
-                      ? "Saved changes need a server restart."
+                      ? "Saved changes need a configuration reload."
                       : "Saved settings match the running configuration."}
                   </span>
                 </dd>
@@ -111,7 +111,7 @@
                   label="Saved and running"
                   live="status"
                   value={pending
-                    ? "Saved changes need a server restart."
+                    ? "Saved changes need a configuration reload."
                     : "Saved settings match the running configuration."}
                 />
               </dl>
@@ -168,7 +168,8 @@
             {#snippet description()}<div>
                 <strong>Save configuration</strong>
                 <p>
-                  Current workers keep their running settings until restart.
+                  Current workers retain their settings until configuration
+                  reload.
                 </p>
               </div>{/snippet}
 

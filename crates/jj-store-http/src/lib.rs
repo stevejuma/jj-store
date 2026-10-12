@@ -22,6 +22,7 @@ mod remote_agents;
 mod repositories;
 mod review_mutations;
 mod routes;
+mod runtime_reload;
 mod search;
 mod search_management;
 mod server_settings;
@@ -105,6 +106,8 @@ pub struct VerifiedRestorePoint {
 
 #[derive(Clone)]
 pub struct Config {
+    pub runtime_policy: Option<Arc<jj_store_service::runtime_policy::RuntimePolicy>>,
+    pub runtime_reload: Option<Arc<dyn jj_store_service::runtime_reload::Manager>>,
     pub installation_id: Option<String>,
     pub remote_agents: Option<Arc<dyn jj_store_service::remote_agents::RemoteAgents>>,
     pub agent_administration:
@@ -144,6 +147,8 @@ pub struct Config {
 impl Default for Config {
     fn default() -> Self {
         Self {
+            runtime_policy: None,
+            runtime_reload: None,
             installation_id: None,
             remote_agents: None,
             agent_administration: None,
@@ -184,6 +189,7 @@ impl Default for Config {
 struct State {
     freshness: jj_store_service::freshness::Hub,
     event_monitors: application_events::Monitors,
+    startup_monitor: std::sync::Mutex<Option<tokio::task::JoinHandle<()>>>,
     event_generation: String,
     host: Option<RepositoryHost>,
     local_reader: jj_store_service::local_browser::code::Executor,
@@ -214,6 +220,22 @@ struct State {
 }
 #[derive(Clone)]
 pub struct HttpApi(Arc<State>);
+impl State {
+    fn live_config(&self) -> Config {
+        let mut config = self.config.clone();
+        if let Some(policy) = self.config.runtime_policy.as_ref().map(|p| p.current()) {
+            config.timeout = policy.limits.timeout;
+            config.read.timeout = policy.limits.timeout;
+            config.read.max_objects = policy.limits.inventory_nodes;
+            config.graph.timeout = policy.limits.timeout;
+            config.content.timeout = policy.limits.timeout;
+            config.content.max_blob_bytes = policy.max_blob;
+            config.uploads.max_file_bytes = policy.max_blob.min(16 * 1024 * 1024);
+            config.concurrency = policy.concurrent.min(64);
+        }
+        config
+    }
+}
 impl HttpApi {
     pub fn new(
         host: RepositoryHost,
@@ -256,6 +278,23 @@ impl HttpApi {
             config.workers,
         )
         .map_err(|_| "HTTP native query limits")?;
+        let queries = if let Some(policy) = config.runtime_policy.clone() {
+            let content_policy = policy.clone();
+            queries.with_live_limits(
+                move |mut limits| {
+                    limits.timeout = policy.current().limits.timeout;
+                    limits
+                },
+                move |mut limits| {
+                    let p = content_policy.current();
+                    limits.timeout = p.limits.timeout;
+                    limits.max_blob_bytes = p.max_blob;
+                    limits
+                },
+            )
+        } else {
+            queries
+        };
         if indexes.len() > 128 {
             return Err("HTTP search repository limit");
         }
@@ -332,6 +371,16 @@ impl HttpApi {
             queries.workers().clone(),
             config.content,
         );
+        let local_reader = if let Some(policy) = config.runtime_policy.clone() {
+            local_reader.with_live_limits(move |mut limits| {
+                let p = policy.current();
+                limits.timeout = p.limits.timeout;
+                limits.max_blob_bytes = p.max_blob;
+                limits
+            })
+        } else {
+            local_reader
+        };
         let local_tasks = jj_store_service::local_index_tasks::IndexTasks::new(
             local_reader.clone(),
             cache.clone(),
@@ -356,9 +405,11 @@ impl HttpApi {
         };
         let working_tree = jj_store_service::working_tree::Observer::new(local_reader.clone(), 1)
             .map_err(|_| "HTTP physical observation limits")?;
+        let native_runtime = config.runtime_policy.is_some();
         let api = Self(Arc::new(State {
             freshness: jj_store_service::freshness::Hub::new(1024),
             event_monitors: Default::default(),
+            startup_monitor: Default::default(),
             event_generation: hex::encode(&repository_cursor_key[..16]),
             host,
             local_reader,
@@ -366,7 +417,11 @@ impl HttpApi {
             local_tasks,
             code_indexes,
             search,
-            slots: Arc::new(Semaphore::new(config.concurrency)),
+            slots: Arc::new(Semaphore::new(if native_runtime {
+                64
+            } else {
+                config.concurrency
+            })),
             local_jobs: Arc::new(Semaphore::new(config.workers)),
             event_slots: Arc::new(Semaphore::new(config.event_concurrency)),
             config,
@@ -387,8 +442,23 @@ impl HttpApi {
             uploads,
             repository_cursor_key,
         }));
-        application_events::resume_code_indexes(&api.0);
+        *api.0.startup_monitor.lock().expect("HTTP monitor owner") =
+            application_events::resume_code_indexes(&api.0);
         Ok(api)
+    }
+    /// Settle owned freshness tasks after listener admission has stopped.
+    pub async fn shutdown(&self) {
+        let startup = self
+            .0
+            .startup_monitor
+            .lock()
+            .expect("HTTP monitor owner")
+            .take();
+        if let Some(task) = startup {
+            task.abort();
+            let _ = task.await;
+        }
+        self.0.event_monitors.shutdown().await;
     }
     pub fn search_registry(&self) -> SearchRegistry {
         self.0.search.clone()
@@ -402,6 +472,7 @@ impl HttpApi {
                 .merge(capture_management::router())
                 .merge(agent_execution::router())
                 .merge(server_settings::router())
+                .merge(runtime_reload::router())
                 .merge(directory::router())
                 .merge(connections::router())
                 .merge(remote_agents::router())
@@ -648,7 +719,18 @@ async fn admit(
         Ok(p) => p,
         Err(_) => return installation_response(&state, Error::busy().into_response()),
     };
-    let deadline = Instant::now() + state.config.timeout;
+    let _runtime_permit = if !event_route {
+        match &state.config.runtime_policy {
+            Some(policy) => match policy.permit(0) {
+                Some(permit) => Some(permit),
+                None => return installation_response(&state, Error::busy().into_response()),
+            },
+            None => None,
+        }
+    } else {
+        None
+    };
+    let deadline = Instant::now() + state.live_config().timeout;
     if matches!(
         *request.method(),
         axum::http::Method::GET | axum::http::Method::HEAD
@@ -775,7 +857,7 @@ async fn pinned(
 ) -> Result<Arc<reads::CommittedRead>> {
     match context
         .session
-        .open_read(operation, state.config.read)
+        .open_read(operation, state.live_config().read)
         .await?
     {
         reads::OpenRead::Pinned(read) => Ok(Arc::new(read)),
@@ -833,4 +915,64 @@ async fn envelope(
         data: value,
         next_cursor: None,
     })
+}
+
+#[cfg(test)]
+mod runtime_limits_tests {
+    use super::*;
+    struct NoOperators;
+    #[async_trait::async_trait]
+    impl jj_store_service::administration::OperatorPolicies for NoOperators {
+        async fn current(
+            &self,
+        ) -> jj_store_service::auth::Result<jj_store_service::auth::TokenPolicy> {
+            Ok(jj_store_service::auth::TokenPolicy::new(
+                jj_store_service::auth::Scope::Operator,
+            ))
+        }
+    }
+    #[tokio::test]
+    async fn hosted_limits_remain_explicit_until_live_policy_is_selected() {
+        let host = RepositoryHost::new(
+            Arc::new(jj_store_object::memory::MemoryStore::default()),
+            Arc::new(NoOperators),
+            Arc::new(SystemClock),
+            Default::default(),
+            Default::default(),
+            1024 * 1024,
+        )
+        .unwrap();
+        let root = tempfile::tempdir().unwrap();
+        let explicit = Config {
+            concurrency: 1,
+            timeout: Duration::from_secs(2),
+            ..Default::default()
+        };
+        let api = HttpApi::new(host.clone(), root.path().join("fixed"), explicit.clone()).unwrap();
+        assert_eq!(api.0.live_config().timeout, explicit.timeout);
+        assert_eq!(api.0.slots.available_permits(), 1);
+        let policy = host.runtime_policy().clone();
+        let api = HttpApi::new(
+            host,
+            root.path().join("live"),
+            Config {
+                runtime_policy: Some(policy.clone()),
+                ..explicit
+            },
+        )
+        .unwrap();
+        assert_eq!(api.0.slots.available_permits(), 64);
+        let mut updated = policy.current();
+        updated.concurrent = 2;
+        updated.limits.timeout = Duration::from_secs(3);
+        updated.max_blob = 8192;
+        let _lease = policy.publication.write().await;
+        policy.replace(updated);
+        assert_eq!(api.0.live_config().timeout, Duration::from_secs(3));
+        assert_eq!(api.0.live_config().concurrency, 2);
+        assert_eq!(api.0.live_config().content.max_blob_bytes, 8192);
+        let _first = policy.permit(0).unwrap();
+        let _second = policy.permit(0).unwrap();
+        assert!(policy.permit(0).is_none());
+    }
 }

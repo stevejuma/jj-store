@@ -1,3 +1,4 @@
+import { RuntimeReload } from "./runtime-reload.svelte.js";
 import { authenticatedAgentFetch } from "../connections/agent-transport.js";
 import { createDirectory } from "./directory.svelte.js";
 import { ServerAgentAdministration } from "./server-agent-administration.svelte.js";
@@ -49,13 +50,30 @@ export function createLocalConfiguration(
       active() && data.accessMode === "local_trusted" && data.settingsSupported,
     client: new LocalClient("", fetcher),
   });
+  const reload = new RuntimeReload(
+    () =>
+      active() &&
+      (data.accessMode === "local_trusted" ||
+        (data.accessMode === "authenticated" && token() !== null)),
+    token,
+    fetcher,
+    async () => {
+      await Promise.allSettled([
+        configuration.observe(),
+        capture.refresh(),
+        agentAdministration.refresh(),
+      ]);
+    },
+  );
   return {
+    reload,
     capture,
     execution,
     configuration,
     directory,
     agentAdministration,
     destroy() {
+      reload.destroy();
       freshness?.destroy();
       capture.destroy();
       execution.destroy();

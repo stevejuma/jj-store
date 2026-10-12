@@ -24,6 +24,20 @@ impl Drop for Lease {
     }
 }
 impl Monitors {
+    pub(crate) async fn shutdown(&self) {
+        let entries = std::mem::take(&mut *self.0.lock().await);
+        for (_, entry) in entries {
+            entry.task.abort();
+            if let Some(task) = &entry.producers {
+                task.abort();
+            }
+            let _ = entry.task.await;
+            if let Some(task) = entry.producers {
+                let _ = task.await;
+            }
+        }
+    }
+
     pub(crate) async fn activate(
         &self,
         state: &Arc<State>,

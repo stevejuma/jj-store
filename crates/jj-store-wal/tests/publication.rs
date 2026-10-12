@@ -1841,3 +1841,54 @@ async fn maintenance_reuses_captured_target_and_reports_covering_checkpoint() {
     corrupt.captured.revision += 1;
     assert!(restarted.checkpoint_target(&corrupt).await.is_err());
 }
+
+struct ReloadFence(Arc<tokio::sync::RwLock<()>>);
+#[async_trait::async_trait]
+impl PublicationGuard for ReloadFence {
+    async fn publication_lease(&self) -> wal::Result<Option<Box<dyn Send + Sync>>> {
+        Ok(Some(Box::new(self.0.clone().read_owned().await)))
+    }
+    async fn authorize(&self, base: &ManifestSnapshot, request: &Request) -> wal::Result<()> {
+        Permit.authorize(base, request).await
+    }
+    async fn validate_transition(
+        &self,
+        base: &ManifestSnapshot,
+        request: &Request,
+        after: &Snapshot,
+    ) -> wal::Result<()> {
+        Permit.validate_transition(base, request, after).await
+    }
+}
+#[tokio::test]
+async fn configuration_replacement_waits_for_the_original_manifest_cas() {
+    let store = Arc::new(FaultStore::default());
+    let gate = Arc::new(tokio::sync::RwLock::new(()));
+    let c = Arc::new(
+        Coordinator::new(
+            store.clone(),
+            REPO,
+            Arc::new(Source::new()),
+            Arc::new(ReloadFence(gate.clone())),
+            Limits::default(),
+        )
+        .unwrap(),
+    );
+    c.initialize(EpochId::new([2; 16]), b"initial".to_vec())
+        .await
+        .unwrap();
+    store.arm("manifest.json", Fault::HoldBefore);
+    let publication = tokio::spawn({
+        let c = c.clone();
+        async move { c.publish(&request(120, &[0], 1)).await }
+    });
+    store.entered.notified().await;
+    assert!(
+        gate.clone().try_write_owned().is_err(),
+        "reload must not cross an in-flight CAS"
+    );
+    store.release.notify_one();
+    committed(publication.await.unwrap().unwrap());
+    assert!(gate.clone().try_write_owned().is_ok());
+    assert!(c.status(&request(120, &[0], 1)).await.unwrap().is_some());
+}

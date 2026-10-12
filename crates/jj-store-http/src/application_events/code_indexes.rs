@@ -1,15 +1,15 @@
 //! Core-index maintenance is driven by the existing repository monitor.
 use super::*;
 
-pub(crate) fn resume(state: &Arc<State>) {
+pub(crate) fn resume(state: &Arc<State>) -> Option<tokio::task::JoinHandle<()>> {
     if !matches!(state.config.access, Access::LocalTrusted { .. }) {
-        return;
+        return None;
     }
     let Ok(runtime) = tokio::runtime::Handle::try_current() else {
-        return;
+        return None;
     };
     let weak = Arc::downgrade(state);
-    runtime.spawn(async move {
+    Some(runtime.spawn(async move {
         let Some(state) = weak.upgrade() else {
             return;
         };
@@ -23,7 +23,7 @@ pub(crate) fn resume(state: &Arc<State>) {
                     .await;
             }
         }
-    });
+    }))
 }
 pub(super) async fn maintain(
     state: &State,
@@ -95,7 +95,7 @@ pub(super) async fn maintain(
                 };
                 if state.code_indexes.needs(&key) {
                     if let reads::OpenRead::Pinned(read) = session
-                        .open_read(Some(operation), state.config.read)
+                        .open_read(Some(operation), state.live_config().read)
                         .await?
                     {
                         if divergent {

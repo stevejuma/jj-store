@@ -28,6 +28,7 @@ url = "2"
 zeroize = "1"
 
 [dev-dependencies]
+jj-store-object.workspace = true
 tokio-tungstenite = "0.29"
 tempfile = "3"
 tower = { version = "0.5", features = ["util"] }

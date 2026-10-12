@@ -79,6 +79,7 @@ impl Coordinator {
         request: &CollaborationRequest,
         intent: IntentDigest,
     ) -> Result<CollaborationOutcome> {
+        let _lease = self.guard.publication_lease().await?;
         let mut roots = None;
         for _ in 0..self.limits.cas_attempts {
             let base = self.read().await?;

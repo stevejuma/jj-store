@@ -343,6 +343,7 @@ impl ReplicationEndpoint for RemoteEndpoint {
 struct RuntimeState {
     phase: control::Phase,
     handle: Option<WorkerHandle>,
+    observed: Option<jj_store_replication::WorkerStatus>,
     local: Option<ReplicaDescriptor>,
     peer: Option<jj_store_replication::ReplicaNegotiationV1>,
 }
@@ -361,6 +362,7 @@ struct Entry {
     search: Mutex<Option<watch::Receiver<SearchHealth>>>,
 }
 
+#[derive(Clone)]
 pub struct PreparedReplication {
     controls: Arc<ControlPlane>,
 }
@@ -404,6 +406,7 @@ impl PreparedReplication {
                 state: Mutex::new(RuntimeState {
                     phase: control::Phase::Stopped,
                     handle: None,
+                    observed: None,
                     local: None,
                     peer: None,
                 }),
@@ -414,14 +417,77 @@ impl PreparedReplication {
             }
         }
         Ok(Self {
-            controls: Arc::new(ControlPlane { entries }),
+            controls: Arc::new(ControlPlane {
+                entries: std::sync::RwLock::new(entries),
+                changes,
+            }),
         })
     }
 
+    pub(crate) fn replace(&self, next: Self) -> Result<RunningReplication> {
+        let mut entries = std::mem::take(
+            &mut *next
+                .controls
+                .entries
+                .write()
+                .map_err(|_| Error::Service("replication controls"))?,
+        );
+        for entry in entries.values_mut() {
+            Arc::get_mut(entry)
+                .ok_or(Error::Service("replication replacement shared"))?
+                .changes = self.controls.changes.clone();
+        }
+        let mut running = self
+            .controls
+            .entries
+            .write()
+            .map_err(|_| Error::Service("replication controls"))?;
+        for (repo, entry) in &entries {
+            if let Some(old) = running.get(repo) {
+                entry
+                    .paused
+                    .store(old.paused.load(Ordering::SeqCst), Ordering::SeqCst);
+                *entry.search.lock().unwrap() = old.search.lock().unwrap().clone();
+                // Retain issuer-bound observations only for the same peer binding.
+                if entry.remote.upstream == old.remote.upstream
+                    && entry.remote.token_environment == old.remote.token_environment
+                    && entry.remote.options.ca_certificate_pem
+                        == old.remote.options.ca_certificate_pem
+                {
+                    let previous = old
+                        .state
+                        .lock()
+                        .map_err(|_| Error::Service("replication state"))?;
+                    let mut state = entry
+                        .state
+                        .lock()
+                        .map_err(|_| Error::Service("replication state"))?;
+                    state.observed = previous
+                        .handle
+                        .as_ref()
+                        .map(WorkerHandle::status)
+                        .or_else(|| previous.observed.clone());
+                    state.local = previous.local;
+                    state.peer = previous.peer.clone();
+                }
+            }
+        }
+        *running = entries;
+        drop(running);
+        Ok(Self {
+            controls: self.controls.clone(),
+        }
+        .start())
+    }
     pub(crate) fn search_observer(&self) -> crate::search_management::Observer {
         let controls = self.controls.clone();
         Arc::new(move |repo, health| {
-            if let Some(entry) = controls.entries.get(&repo) {
+            if let Some(entry) = controls
+                .entries
+                .read()
+                .expect("replication controls poisoned")
+                .get(&repo)
+            {
                 *entry.search.lock().unwrap() = health;
             }
         })
@@ -435,6 +501,8 @@ impl PreparedReplication {
         let tasks = self
             .controls
             .entries
+            .read()
+            .expect("replication controls poisoned")
             .values()
             .cloned()
             .map(|entry| {
@@ -452,16 +520,16 @@ pub struct RunningReplication {
 }
 
 impl RunningReplication {
-    pub async fn shutdown(mut self) -> Result<()> {
+    pub async fn shutdown(&mut self) -> Result<()> {
         self.shutdown.send_replace(true);
         let deadline = tokio::time::Instant::now() + Duration::from_secs(5);
-        for task in &mut self.tasks {
-            if tokio::time::timeout_at(deadline, &mut *task).await.is_err() {
-                task.abort();
-                return Err(Error::Service("replication shutdown exceeded five seconds"));
-            }
+        while let Some(task) = self.tasks.first_mut() {
+            tokio::time::timeout_at(deadline, task)
+                .await
+                .map_err(|_| Error::Service("replication is still draining"))?
+                .map_err(|_| Error::Service("replication owner lost"))?;
+            self.tasks.remove(0);
         }
-        self.tasks.clear();
         Ok(())
     }
 }
@@ -476,7 +544,8 @@ impl Drop for RunningReplication {
 }
 
 struct ControlPlane {
-    entries: BTreeMap<m::RepositoryId, Arc<Entry>>,
+    entries: std::sync::RwLock<BTreeMap<m::RepositoryId, Arc<Entry>>>,
+    changes: jj_store_service::freshness::Signals,
 }
 
 impl ControlPlane {
@@ -485,6 +554,8 @@ impl ControlPlane {
         repository: m::RepositoryId,
     ) -> std::result::Result<Arc<Entry>, ReplicationControlError> {
         self.entries
+            .read()
+            .expect("replication controls poisoned")
             .get(&repository)
             .cloned()
             .ok_or(ReplicationControlError::NotConfigured)
@@ -496,7 +567,7 @@ impl ReplicationControls for ControlPlane {
     fn freshness(
         &self,
     ) -> Option<tokio::sync::broadcast::Receiver<jj_store_service::freshness::Change>> {
-        freshness::changes(&self.entries)
+        Some(self.changes.subscribe())
     }
     async fn status(
         &self,
@@ -639,6 +710,7 @@ async fn status(
         .handle
         .as_ref()
         .map(WorkerHandle::status)
+        .or_else(|| state.observed.clone())
         .unwrap_or_default();
     let paused = entry.paused.load(Ordering::SeqCst);
     let phase = if paused {
@@ -843,6 +915,7 @@ async fn run_entry(entry: Arc<Entry>, mut shutdown: watch::Receiver<bool>) {
             let mut state = entry.state.lock().expect("replication state");
             state.phase = control::Phase::Running;
             state.handle = Some(handle);
+            state.observed = None;
             state.local = Some(local);
             state.peer = Some(peer);
         }
@@ -854,7 +927,9 @@ async fn run_entry(entry: Arc<Entry>, mut shutdown: watch::Receiver<bool>) {
         freshness::run(&entry, worker, shutdown.clone()).await;
         {
             let mut state = entry.state.lock().expect("replication state");
-            state.handle = None;
+            if let Some(handle) = state.handle.take() {
+                state.observed = Some(handle.status());
+            }
             state.phase = if *shutdown.borrow() {
                 control::Phase::Stopped
             } else {
@@ -885,7 +960,9 @@ async fn wait_retry(entry: &Entry, shutdown: &mut watch::Receiver<bool>) -> bool
 
 fn set_stopped(entry: &Entry) {
     let mut state = entry.state.lock().expect("replication state");
-    state.handle = None;
+    if let Some(handle) = state.handle.take() {
+        state.observed = Some(handle.status());
+    }
     state.phase = control::Phase::Stopped;
     drop(state);
     entry.changes.notify(
@@ -983,13 +1060,15 @@ mod tests {
             state: Mutex::new(RuntimeState {
                 phase: control::Phase::Stopped,
                 handle: None,
+                observed: None,
                 local: None,
                 peer: None,
             }),
             search: Mutex::new(None),
         });
         let controls = ControlPlane {
-            entries: BTreeMap::from([(repository, entry.clone())]),
+            entries: BTreeMap::from([(repository, entry.clone())]).into(),
+            changes: entry.changes.clone(),
         };
         let (shutdown, receiver) = watch::channel(false);
         let task = tokio::spawn(run_entry(entry, receiver));

@@ -37,8 +37,8 @@ The separate operator editor requires fresh `manage-agents` authorization for
 reads and saves, including before file replacement and response delivery. It
 exposes no local-management API. `manage-identities`, repository Admin and
 execution permission cannot authorize agent configuration. Sharing is a saved
-principal allowlist, with the existing restart activation boundary made visible.
-The fixed-origin gateway admits these bounded operator endpoints and existing
+principal allowlist, with explicit saved-runtime reload made visible. The
+fixed-origin gateway admits these bounded operator endpoints and existing
 identity administration; the remote checks their independent capabilities.
 
 Installation token bindings select the caller. Repository token grants must name
@@ -52,3 +52,10 @@ replay prompts.
 
 Qualification covers Linux and macOS independently. Source, fixture and browser
 passes do not replace cold installed-runtime and real-storage acceptance.
+
+Runtime reload requires fresh, independent `manage-configuration` operator
+authority, or LocalTrusted Admin. A `manage-agents` operator can reload only
+remote-agent definitions/sharing. Requests and outcomes remain principal-bound;
+revocation denies subsequent observation and activation. Infrastructure changes
+fail preflight. Saved revision checks and retained receipts prevent blind retry
+after an unknown result; no endpoint stops or restarts the server host.

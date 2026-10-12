@@ -18,7 +18,7 @@ use std::{
 pub struct Manager {
     path: PathBuf,
     policy: policy::PolicyFile,
-    effective: Option<a::Configuration>,
+    effective: Arc<std::sync::RwLock<Config>>,
     directory: Arc<dyn Directory>,
 }
 fn wire<T: serde::de::DeserializeOwned>(value: &impl serde::Serialize) -> Result<T, Error> {
@@ -37,10 +37,13 @@ impl Manager {
         Ok(Self {
             path: policy::outside_checkout(path)?,
             policy: policy::PolicyFile::new(config.operator_policy.clone())?,
-            effective: wire(&config.remote_agents)
-                .map_err(|_| crate::Error::Config("agent administration configuration"))?,
+            effective: Arc::new(std::sync::RwLock::new(config.clone())),
             directory,
         })
+    }
+    pub(crate) fn with_effective(mut self, effective: Arc<std::sync::RwLock<Config>>) -> Self {
+        self.effective = effective;
+        self
     }
     fn authorize(&self, token: &BearerToken) -> Result<jj_store_model::PrincipalId, Error> {
         self.policy
@@ -147,11 +150,18 @@ impl a::Administration for Manager {
             .collect();
         self.authorize(&token)?;
         let desired: Option<a::Configuration> = wire(&config.remote_agents)?;
+        let effective: Option<a::Configuration> = wire(
+            &self
+                .effective
+                .read()
+                .map_err(|_| Error::Unavailable)?
+                .remote_agents,
+        )?;
         Ok(a::Status {
             revision,
-            restart_required: desired != self.effective,
+            restart_required: desired != effective,
             desired,
-            effective: self.effective.clone(),
+            effective,
             principals,
         })
     }

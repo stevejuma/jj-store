@@ -1,6 +1,10 @@
 <script module lang="ts">
-  import { inCapturePanel, expandCodex } from "./capture-panel-play.js";
-  import { unknownConfigurationSave } from "./capture-configuration-play.js";
+  import { inCapturePanel } from "./capture-panel-play.js";
+  import {
+    unknownConfigurationSave,
+    captureOptionSliders,
+    disabledCaptureConfiguration,
+  } from "./capture-configuration-play.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within } from "storybook/test";
   import {
@@ -308,35 +312,7 @@
 <Story
   name="Edit disabled local capture configuration"
   args={{ enabled: false }}
-  play={inCapturePanel(async ({ canvasElement }) => {
-    const c = within(canvasElement);
-    await userEvent.click(c.getByRole("tab", { name: "Configuration" }));
-    const enabled = await c.findByRole("switch", {
-      name: "Enable automatic capture",
-    });
-    await userEvent.click(enabled);
-    await expandCodex(c);
-    const roots = c.getByRole("textbox", { name: "Codex CLI folders" });
-    await userEvent.type(roots, "/tmp/agent-settings/sessions");
-    await userEvent.click(c.getByRole("tab", { name: "Diagnostics" }));
-    await userEvent.click(c.getByRole("button", { name: "Refresh capture" }));
-    await userEvent.click(c.getByRole("tab", { name: "Configuration" }));
-    await expandCodex(c);
-    await expect(
-      c.getByRole("textbox", { name: "Codex CLI folders" }),
-    ).toHaveValue("/tmp/agent-settings/sessions");
-    await userEvent.click(
-      c.getByRole("button", { name: "Save configuration" }),
-    );
-    await expect(c.getByText("Disabled · Restart required")).toBeVisible();
-    await expect(
-      c.getByRole("button", { name: "Save configuration" }),
-    ).toBeDisabled();
-    const actions = c
-      .getByRole("button", { name: "Cancel changes" })
-      .closest(".store-settings__actions")!;
-    await expect(getComputedStyle(actions).flexDirection).toBe("row");
-  })}
+  play={inCapturePanel(disabledCaptureConfiguration)}
 />
 <Story
   name="Stale configuration keeps the draft"
@@ -401,4 +377,9 @@
   name="Source status command searches toggles and combines multiple selections"
   args={{ multipleHarnesses: true }}
   play={inCapturePanel(sourceStatusCommand)}
+/>
+
+<Story
+  name="Capture option sliders retain exact values and draft saves"
+  play={inCapturePanel(captureOptionSliders)}
 />

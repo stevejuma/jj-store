@@ -132,6 +132,7 @@ pub enum Permission {
     CreateRepository,
     ManageIdentities,
     ManageAgents,
+    ManageConfiguration,
 }
 impl Permission {
     fn allows(self, required: Self) -> bool {
@@ -146,7 +147,10 @@ impl Permission {
             (scope, self),
             (
                 Scope::Operator,
-                Self::CreateRepository | Self::ManageIdentities | Self::ManageAgents
+                Self::CreateRepository
+                    | Self::ManageIdentities
+                    | Self::ManageAgents
+                    | Self::ManageConfiguration
             ) | (Scope::Repository(_), Self::Read | Self::Write | Self::Admin)
         )
     }

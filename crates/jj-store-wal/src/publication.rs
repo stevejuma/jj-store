@@ -677,6 +677,10 @@ impl Default for Limits {
 /// identical request so a late retry cannot rerun its original mutation.
 #[async_trait::async_trait]
 pub trait PublicationGuard: Send + Sync {
+    /// Hold trusted runtime policy stable through semantic validation and CAS.
+    async fn publication_lease(&self) -> Result<Option<Box<dyn Send + Sync>>> {
+        Ok(None)
+    }
     async fn authorize(&self, base: &ManifestSnapshot, request: &Request) -> Result<()>;
     async fn authorize_domain(
         &self,
@@ -979,6 +983,7 @@ impl Coordinator {
         intent: IntentDigest,
         git: Option<&[GitRecordV1]>,
     ) -> Result<Receipt> {
+        let _lease = self.guard.publication_lease().await?;
         for _ in 0..self.limits.cas_attempts {
             let base = self.read().await?;
             self.guard.authorize(&base, request).await?;

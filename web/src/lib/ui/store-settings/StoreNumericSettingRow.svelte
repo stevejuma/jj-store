@@ -29,6 +29,7 @@
     error = "",
     slider = false,
     sliderMax,
+    sliderStep = 1,
     density = "regular",
     onValueChange,
   }: {
@@ -49,6 +50,8 @@
     slider?: boolean;
     /** Convenience range; larger valid typed values expand it without edits. */
     sliderMax?: number;
+    /** Canonical slider increment; exact typed values remain selectable. */
+    sliderStep?: number;
     density?: "regular" | "compact";
     onValueChange: (canonical: string) => void;
   } = $props();
@@ -84,6 +87,27 @@
       Math.max(min, sliderMax ?? max, validation ? min : Number(value)),
     ),
   );
+  const sliderMinimum = $derived(sliderLabel(min, true));
+  const sliderMaximum = $derived(sliderLabel(sliderBound));
+  const sliderSteps = $derived.by(() => {
+    if (sliderStep === 1) return 1;
+    const first = Math.ceil(min / sliderStep) * sliderStep;
+    const count = Math.max(
+      0,
+      Math.floor((sliderBound - first) / sliderStep) + 1,
+    );
+    const choices = [
+      min,
+      ...Array.from(
+        { length: count },
+        (_, index) => first + index * sliderStep,
+      ),
+      sliderBound,
+    ];
+    // Including the exact draft avoids the primitive snapping it on mount or refresh.
+    if (!validation && value.trim()) choices.push(Number(value));
+    return [...new Set(choices)].sort((left, right) => left - right);
+  });
   const helpId = $derived(`${id}-help`);
   const stateId = $derived(`${id}-state`);
   const errorId = $derived(`${id}-error`);
@@ -95,6 +119,18 @@
     const canonical = canonicalNumericValue(text, unit);
     edit = { canonical, text, unit: unit.id };
     onValueChange(canonical);
+  }
+  function sliderLabel(bound: number, minimum = false) {
+    const converted = displayNumericValue(String(bound), unit);
+    const value = Number(converted.text);
+    // A tiny minimum can read as zero; keep a nonzero maximum distinguishable.
+    const text = value.toLocaleString(
+      "en-GB",
+      !minimum && value !== 0 && Math.abs(value) < 0.005
+        ? { maximumSignificantDigits: 2 }
+        : { maximumFractionDigits: 2 },
+    );
+    return `${text} ${unit.label}`;
   }
 </script>
 
@@ -186,21 +222,20 @@
         type="single"
         {min}
         max={sliderBound}
-        step={1}
+        step={sliderSteps}
         value={validation || !value.trim() ? min : Number(value)}
         disabled={blocked || Boolean(validation)}
         aria-label={`${label} slider`}
         onValueChange={(next) => {
-          if (!blocked) {
+          const shown = validation || !value.trim() ? min : Number(value);
+          if (!blocked && !validation && next !== shown) {
             edit = undefined;
             onValueChange(String(next));
           }
         }}
       />
       <div class="store-numeric-setting__range">
-        <span>{min.toLocaleString("en-GB")}</span><span
-          >{sliderBound.toLocaleString("en-GB")} {units[0].label}</span
-        >
+        <span>{sliderMinimum}</span><span>{sliderMaximum}</span>
       </div>
       {#if optional && !value.trim()}<p class="store-numeric-setting__state">
           Automatic allocation. Move the slider to choose a limit.

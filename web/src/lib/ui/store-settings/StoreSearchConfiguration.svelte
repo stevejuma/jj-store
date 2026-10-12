@@ -147,7 +147,7 @@
                   <strong>Save configuration</strong>
                   <p>
                     Saving preserves the running configuration until Apply or
-                    service restart.
+                    Reload saved settings.
                   </p>
                 </div>{/snippet}
               {#if repository}{@render cancelButton()}{@render saveButton()}{:else}{@render saveButton()}{@render cancelButton()}{/if}

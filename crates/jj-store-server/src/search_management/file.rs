@@ -12,6 +12,7 @@ use std::{
 pub struct SettingsFile {
     path: PathBuf,
 }
+#[derive(Clone)]
 pub struct Snapshot {
     pub revision: String,
     pub entries: Vec<Repository>,
@@ -123,15 +124,6 @@ impl SettingsFile {
             .resolve_paths(self.path.parent().ok_or(Error::Invalid)?)
             .map_err(|_| Error::Invalid)?;
         config.validate().map_err(|_| Error::Invalid)?;
-        if !matches!(
-            config.access,
-            config::Access::LocalTrusted {
-                permission: jj_store_service::auth::Permission::Admin,
-                ..
-            }
-        ) {
-            return Err(Error::Unavailable);
-        }
         Ok(Snapshot {
             revision: hex::encode(Sha256::digest(&bytes)),
             entries: config.search,

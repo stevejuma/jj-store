@@ -319,3 +319,14 @@ body consumption. The server limits decoded pixels, resizes large images to fit
 bytes; resized animations become static. Use the existing directory command
 status endpoint and original source bytes for uncertain outcomes. The JSON
 upload command and retained-media bounds keep their existing behavior.
+
+## Runtime configuration activation
+
+`GET /v1/configuration/reload` discovers supported and pending domains for the
+current caller. `POST` accepts an exact saved revision, stable request ID and
+explicit domain list. `POST /v1/configuration/reload/outcome` observes that
+original command without resubmitting activation. LocalTrusted Admin or fresh,
+enrolled operator configuration authority is required. Results distinguish
+Running, Applied, Current, Deferred, Failed and Unknown. Unknown acknowledgement
+retains the original identity; reload is independent of repository publication
+receipts and never grants repository or execution access.

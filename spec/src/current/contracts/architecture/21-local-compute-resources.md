@@ -15,3 +15,10 @@ entrypoint owns bounded no-prompt discovery using its existing provider
 adapters; server supervision owns effective configuration, credential custody,
 cache isolation and cancellation. Native storage/model/WAL dependencies remain
 unchanged.
+
+Runtime configuration reload retains listener/storage ownership and agent
+supervisors. Configuration owners expose independent drain/replace boundaries
+for capture, replication and search; protection/limits share current runtime
+policy. Compute and agent process changes respect active work and keep captured
+configuration until their supported replacement boundary. Effective reports
+reflect loaded generations rather than frozen startup copies.

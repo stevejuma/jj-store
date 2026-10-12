@@ -83,6 +83,8 @@ export function connectionBlocked(
   return (
     guard?.() === false ||
     !!controller?.execution?.pending ||
+    !!controller?.reload?.pending ||
+    !!controller?.reload?.busy ||
     !!controller?.agentAdministration?.pending ||
     !!controller?.agentAdministration?.busy ||
     !!controller?.agentAdministration?.dirty ||

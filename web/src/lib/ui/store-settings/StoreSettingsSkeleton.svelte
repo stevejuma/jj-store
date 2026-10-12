@@ -99,9 +99,15 @@
     </div>
     <div class="store-settings-skeleton__value" data-kind={kind}>
       <Skeleton class="store-settings-skeleton__control" />
-      {#if kind === "numeric"}<Skeleton
+      {#if kind === "numeric" || kind === "numeric-slider"}<Skeleton
           class="store-settings-skeleton__unit"
         />{/if}
+      {#if kind === "numeric-slider"}<Skeleton
+          class="store-settings-skeleton__slider"
+        />
+        <div class="store-settings-skeleton__range">
+          <Skeleton /><Skeleton />
+        </div>{/if}
     </div>
   </div>
 {/snippet}

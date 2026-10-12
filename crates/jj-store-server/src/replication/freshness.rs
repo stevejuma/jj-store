@@ -37,11 +37,6 @@ fn stable(mut status: jj_store_replication::WorkerStatus) -> jj_store_replicatio
     status.next_direction = jj_store_replication::Direction::Pull;
     status
 }
-pub(super) fn changes(
-    entries: &BTreeMap<m::RepositoryId, Arc<Entry>>,
-) -> Option<tokio::sync::broadcast::Receiver<jj_store_service::freshness::Change>> {
-    entries.values().next().map(|e| e.changes.subscribe())
-}
 #[cfg(test)]
 mod tests {
     use super::*;

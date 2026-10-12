@@ -12,6 +12,8 @@
     disabled = false,
     readonly = false,
     slider = false,
+    sliderStep = 1,
+    min = 0,
     density = "regular",
     defaultValue = 1000,
     narrow = false,
@@ -21,6 +23,8 @@
     disabled?: boolean;
     readonly?: boolean;
     slider?: boolean;
+    sliderStep?: number;
+    min?: number;
     density?: "regular" | "compact";
     defaultValue?: number;
     narrow?: boolean;
@@ -43,12 +47,13 @@
       description="Configure the worker limit."
       {value}
       units={bytes ? bytesUnits : millisecondsUnits}
-      min={0}
+      {min}
       max={bytes ? 1048576 : 60000}
       {defaultValue}
       {disabled}
       {readonly}
       {slider}
+      {sliderStep}
       {density}
       onValueChange={(next) => {
         value = next;

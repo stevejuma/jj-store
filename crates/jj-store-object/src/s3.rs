@@ -40,6 +40,7 @@ pub struct S3Store {
     client: Client,
     endpoint: Url,
     config: Config,
+    runtime: std::sync::RwLock<(u64, Duration)>,
 }
 impl S3Store {
     pub fn new(config: Config) -> Result<Self> {
@@ -92,7 +93,6 @@ impl S3Store {
         }
         let client = Client::builder()
             .redirect(reqwest::redirect::Policy::none())
-            .connect_timeout(config.timeout)
             .timeout(config.timeout)
             .no_proxy()
             .build()
@@ -100,8 +100,22 @@ impl S3Store {
         Ok(Self {
             client,
             endpoint,
+            runtime: std::sync::RwLock::new((config.max_object_bytes, config.timeout)),
             config,
         })
+    }
+    pub fn reload_limits(&self, max_object_bytes: u64, timeout: Duration) -> Result<()> {
+        if max_object_bytes > staging::MAX_SINGLE_PUT || timeout.is_zero() {
+            return Err(Error::Invalid("storage client limits"));
+        }
+        *self
+            .runtime
+            .write()
+            .map_err(|_| Error::Invalid("storage runtime lock"))? = (max_object_bytes, timeout);
+        Ok(())
+    }
+    fn runtime_limits(&self) -> (u64, Duration) {
+        *self.runtime.read().expect("storage runtime poisoned")
     }
     fn request(
         &self,
@@ -130,20 +144,23 @@ impl S3Store {
             extra,
             Utc::now(),
         );
-        let mut request = self.client.request(method, url);
+        let mut request = self
+            .client
+            .request(method, url)
+            .timeout(self.runtime_limits().1);
         for (name, value) in headers {
             request = request.header(name, value);
         }
         request
     }
-    fn metadata(&self, response: &Response) -> Result<Metadata> {
+    fn metadata(&self, response: &Response, max_object_bytes: u64) -> Result<Metadata> {
         let len = response
             .headers()
             .get("content-length")
             .and_then(|v| v.to_str().ok())
             .and_then(|v| v.parse::<u64>().ok())
             .ok_or(Error::Response("missing content length"))?;
-        if len > self.config.max_object_bytes {
+        if len > max_object_bytes {
             return Err(Error::Limit);
         }
         Ok(Metadata {
@@ -211,6 +228,7 @@ fn read_status(response: &Response, expected: StatusCode) -> Result<()> {
 #[async_trait]
 impl ObjectStore for S3Store {
     async fn head(&self, key: &Key) -> Result<Metadata> {
+        let max_object_bytes = self.runtime_limits().0;
         let response = self
             .request(
                 Method::HEAD,
@@ -222,12 +240,13 @@ impl ObjectStore for S3Store {
             .await
             .map_err(|_| Error::Transport)?;
         read_status(&response, StatusCode::OK)?;
-        self.metadata(&response)
+        self.metadata(&response, max_object_bytes)
     }
     async fn get(&self, key: &Key, range: Option<ByteRange>) -> Result<Download> {
+        let max_object_bytes = self.runtime_limits().0;
         let mut headers = BTreeMap::new();
         if let Some(r) = range {
-            if r.len() > self.config.max_object_bytes {
+            if r.len() > max_object_bytes {
                 return Err(Error::Limit);
             }
             headers.insert("range".into(), format!("bytes={}-{}", r.start, r.end - 1));
@@ -245,7 +264,7 @@ impl ObjectStore for S3Store {
                 StatusCode::OK
             },
         )?;
-        let metadata = self.metadata(&response)?;
+        let metadata = self.metadata(&response, max_object_bytes)?;
         if let Some(r) = range {
             let content = response
                 .headers()
@@ -279,7 +298,7 @@ impl ObjectStore for S3Store {
         condition: Condition,
         upload: &StagedUpload,
     ) -> Result<WriteOutcome> {
-        if upload.len() > self.config.max_object_bytes {
+        if upload.len() > self.runtime_limits().0 {
             return Err(Error::Limit);
         }
         let mut headers = BTreeMap::from([

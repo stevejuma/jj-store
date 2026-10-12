@@ -61,7 +61,7 @@
     />
     <StoreReadOnlyRow
       label="Agent permission"
-      value="Select the principal in the agent's sharing configuration, then restart the server."
+      value="Select the principal in the agent's sharing configuration, then reload saved settings."
     />
     <StoreReadOnlyRow
       label="Repository access"

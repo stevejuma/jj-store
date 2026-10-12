@@ -4230,6 +4230,7 @@ dependencies = [
  "http-body",
  "jj-store-adapters",
  "jj-store-model",
+ "jj-store-object",
  "jj-store-service",
  "jj-store-tantivy",
  "schemars",

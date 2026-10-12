@@ -35,7 +35,7 @@ export function createCaptureSettings(options: {
       settings.dirty = false;
       settings.conflict = false;
       settings.message =
-        "Saved configuration matches the original request. Changes apply after restarting the local server.";
+        "Saved configuration matches the original request. Reload saved settings to apply changes.";
     }
     if (!settings.dirty) {
       settings.draft = captureConfigDraft(value.desired);
@@ -126,7 +126,7 @@ export function createCaptureSettings(options: {
         settings.dirty = false;
         accept(value);
         settings.message = value.restart_required
-          ? "Configuration saved. Restart the local server to apply these changes."
+          ? "Configuration saved. Use Reload saved settings to apply these changes."
           : "Configuration saved. It matches the running configuration.";
       } catch (cause) {
         if (!options.available()) return;

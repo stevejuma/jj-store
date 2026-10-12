@@ -111,8 +111,8 @@
         {management}
       />{:else}
       {#if state.settings.value?.restart_required}<StoreSettingsNotice
-          >Saved capture settings require a local server restart. Runtime
-          controls are unavailable until restart.</StoreSettingsNotice
+          >Saved capture settings require a configuration reload. Runtime
+          controls are unavailable until reload.</StoreSettingsNotice
         >{/if}
       {#if state.value?.enabled}
         {#if section === "capture"}
@@ -142,8 +142,8 @@
             <dt>Enable transcript capture</dt>
             <dd>
               Choose harnesses and enable capture in the Configuration tab, then
-              restart this local backend. Only active sessions in linked
-              repository folders are captured.
+              reload saved settings. Only active sessions in linked repository
+              folders are captured.
             </dd>
           </div>
         </dl>

@@ -45,10 +45,22 @@ impl Default for SessionLimits {
 struct NativeSemantic {
     store: Arc<dyn ObjectStore>,
     native: NativePolicy,
+    dynamic: Option<(
+        Arc<NativeObjects>,
+        Arc<crate::runtime_policy::RuntimePolicy>,
+    )>,
     inventory_nodes: usize,
 }
 #[async_trait::async_trait]
 impl SemanticPolicy for NativeSemantic {
+    async fn publication_lease(&self) -> wal::Result<Option<Box<dyn Send + Sync>>> {
+        match &self.dynamic {
+            Some((_, runtime)) => Ok(Some(Box::new(
+                runtime.publication.clone().read_owned().await,
+            ))),
+            None => Ok(None),
+        }
+    }
     async fn validate(
         &self,
         before: &ManifestSnapshot,
@@ -60,14 +72,28 @@ impl SemanticPolicy for NativeSemantic {
             return Ok(());
         }
         let committed = before
-            .inventory(self.store.clone(), self.inventory_nodes)
+            .inventory(
+                self.store.clone(),
+                self.dynamic
+                    .as_ref()
+                    .map_or(self.inventory_nodes, |(_, runtime)| {
+                        runtime.current().limits.inventory_nodes
+                    }),
+            )
             .await?
             .into_iter()
             .map(|node| node.key)
             .collect();
-        self.native
-            .validate(before, request, after, &committed)
-            .await
+        if let Some((objects, runtime)) = &self.dynamic {
+            let current = runtime.current();
+            NativePolicy::new(objects.clone(), current.protection, current.limits.policy)?
+                .validate(before, request, after, &committed)
+                .await
+        } else {
+            self.native
+                .validate(before, request, after, &committed)
+                .await
+        }
     }
 }
 /// No caller-authored actor and no permissive semantic-policy parameter. Trusted
@@ -83,6 +109,28 @@ pub struct NativeSession {
     pub(crate) limits: SessionLimits,
 }
 impl NativeSession {
+    pub(crate) fn with_runtime_policy(
+        mut self,
+        objects: Arc<NativeObjects>,
+        runtime: Arc<crate::runtime_policy::RuntimePolicy>,
+    ) -> wal::Result<Self> {
+        let current = runtime.current();
+        let semantic = Arc::new(NativeSemantic {
+            store: self.object_store.clone(),
+            native: NativePolicy::new(objects.clone(), current.protection, current.limits.policy)?,
+            inventory_nodes: current.limits.inventory_nodes,
+            dynamic: Some((objects.clone(), runtime)),
+        });
+        self.coordinator = Coordinator::new_with_head_reducer(
+            self.object_store.clone(),
+            self.repository,
+            objects.clone(),
+            Arc::new(AuthenticatedGuard::new(self.access.clone(), semantic)),
+            Arc::new(NativeOperationHeadReducer::new(objects)),
+            current.limits.publication,
+        )?;
+        Ok(self)
+    }
     pub fn new(
         store: Arc<dyn ObjectStore>,
         objects: Arc<NativeObjects>,
@@ -154,6 +202,7 @@ impl NativeSession {
         let semantic = Arc::new(NativeSemantic {
             store: store.clone(),
             native: NativePolicy::new(objects.clone(), protection, limits.policy)?,
+            dynamic: None,
             inventory_nodes: limits.inventory_nodes,
         });
         let guard = Arc::new(AuthenticatedGuard::new(access.clone(), semantic));

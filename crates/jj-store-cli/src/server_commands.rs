@@ -176,6 +176,7 @@ pub enum OperatorPermission {
     CreateRepository,
     ManageIdentities,
     ManageAgents,
+    ManageConfiguration,
 }
 impl From<OperatorPermission> for jj_store_service::auth::Permission {
     fn from(value: OperatorPermission) -> Self {
@@ -183,6 +184,7 @@ impl From<OperatorPermission> for jj_store_service::auth::Permission {
             OperatorPermission::CreateRepository => Self::CreateRepository,
             OperatorPermission::ManageIdentities => Self::ManageIdentities,
             OperatorPermission::ManageAgents => Self::ManageAgents,
+            OperatorPermission::ManageConfiguration => Self::ManageConfiguration,
         }
     }
 }

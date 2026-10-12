@@ -402,6 +402,7 @@ impl Work {
 /// Bounded jobs and operation-specific local caches; no physical working copy.
 #[derive(Clone)]
 pub struct GraphExecutor {
+    live_limits: Option<Arc<dyn Fn(Limits) -> Limits + Send + Sync>>,
     root: PathBuf,
     limits: Limits,
     preparation: preparation::Limits,
@@ -410,6 +411,19 @@ pub struct GraphExecutor {
     residents: Arc<cache::resident::Residents>,
 }
 impl GraphExecutor {
+    pub fn with_live_limits(
+        mut self,
+        limits: impl Fn(Limits) -> Limits + Send + Sync + 'static,
+    ) -> Self {
+        self.live_limits = Some(Arc::new(limits));
+        self
+    }
+    fn current_limits(&self) -> Limits {
+        self.live_limits
+            .as_ref()
+            .map_or(self.limits, |f| f(self.limits))
+    }
+
     pub(super) fn reference_filters(&self) -> bool {
         self.cache_policy.reference_filters()
     }
@@ -436,6 +450,7 @@ impl GraphExecutor {
             return Err(Error::Limit);
         }
         Ok(Self {
+            live_limits: None,
             root,
             limits,
             preparation: Default::default(),
@@ -511,9 +526,10 @@ impl GraphExecutor {
         work: Work,
         cancellation: Cancellation,
     ) -> Result<Output> {
+        let current = self.current_limits();
         let limits = match &work {
-            Work::Prepare => self.preparation.budget(self.limits),
-            Work::Graph(..) => self.limits,
+            Work::Prepare => self.preparation.budget(current),
+            Work::Graph(..) => current,
             Work::References(_, content) => Limits {
                 metadata: content.metadata,
                 max_page: content.max_page,
@@ -521,7 +537,7 @@ impl GraphExecutor {
                 max_object_bytes: content.max_read_bytes,
                 max_output_bytes: content.max_output_bytes,
                 timeout: content.timeout,
-                ..self.limits
+                ..current
             },
         };
         let mut budget = Budget::new(limits)?;
@@ -538,7 +554,7 @@ impl GraphExecutor {
             access
         };
         if let Work::Graph(_, page) = &work
-            && (page.limit == 0 || page.limit > self.limits.max_page)
+            && (page.limit == 0 || page.limit > limits.max_page)
         {
             return Err(Error::Limit);
         }
@@ -550,7 +566,7 @@ impl GraphExecutor {
             let _permit = permit;
             runtime.block_on(tokio::task::LocalSet::new().run_until(async {
                 let result = budget
-                    .until(executor.run(store, access.clone(), work, budget.clone()))
+                    .until(executor.run(store, access.clone(), work, current, budget.clone()))
                     .await?;
                 budget.authorize(access.as_ref()).await?;
                 match result {
@@ -569,6 +585,7 @@ impl GraphExecutor {
         store: Arc<dyn ObjectStore>,
         access: Arc<dyn ReadAccess>,
         work: Work,
+        limits: Limits,
         budget: Arc<Budget>,
     ) -> Result<Output> {
         budget.check()?;
@@ -595,7 +612,7 @@ impl GraphExecutor {
                     NativeObjects::new(
                         Arc::new(ReadStore::new(store, access.clone(), budget.clone(), false)),
                         access.repository(),
-                        self.limits.max_object_bytes,
+                        limits.max_object_bytes,
                     )
                     .map_err(|_| Error::Limit)?,
                 );
@@ -655,7 +672,7 @@ impl GraphExecutor {
                 access.repository(),
                 match &work {
                     Work::References(_, limits) => limits.max_blob_bytes,
-                    _ => self.limits.max_object_bytes,
+                    _ => limits.max_object_bytes,
                 },
             )
             .map_err(|_| Error::Limit)?,

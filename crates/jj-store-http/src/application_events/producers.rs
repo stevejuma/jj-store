@@ -21,6 +21,7 @@ pub(super) fn start(state: &Arc<State>) -> tokio::task::JoinHandle<()> {
     add!(local_search);
     add!(local_capture);
     add!(local_settings);
+    add!(runtime_reload);
     add!(local_workspaces);
     add!(local_repositories);
     add!(local_agents);

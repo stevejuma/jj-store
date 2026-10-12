@@ -35,7 +35,7 @@ struct Participation {
 pub struct Broker(Arc<Inner>);
 struct Inner {
     root: PathBuf,
-    config: Configuration,
+    config: Arc<std::sync::RwLock<Option<Configuration>>>,
     host: RepositoryHost,
     directory: Arc<dyn Directory>,
     registry: Arc<dyn RepositoryRegistry>,
@@ -61,7 +61,18 @@ impl Broker {
         directory: Arc<dyn Directory>,
         registry: Arc<dyn RepositoryRegistry>,
     ) -> Result<Self> {
-        config.validate().map_err(|_| Error::Invalid)?;
+        Self::open_optional(root, Some(config), host, directory, registry)
+    }
+    pub fn open_optional(
+        root: PathBuf,
+        config: Option<Configuration>,
+        host: RepositoryHost,
+        directory: Arc<dyn Directory>,
+        registry: Arc<dyn RepositoryRegistry>,
+    ) -> Result<Self> {
+        if let Some(config) = &config {
+            config.validate().map_err(|_| Error::Invalid)?;
+        }
         let root = crate::policy::outside_checkout(&root).map_err(|_| Error::Invalid)?;
         private(&root)?;
         private(&root.join("sockets"))?;
@@ -86,7 +97,7 @@ impl Broker {
         let (changed, _) = tokio::sync::broadcast::channel(32);
         Ok(Self(Arc::new(Inner {
             root,
-            config,
+            config: Arc::new(std::sync::RwLock::new(config)),
             host,
             directory,
             registry,
@@ -98,6 +109,42 @@ impl Broker {
             dispatch: Default::default(),
             stopping: Default::default(),
         })))
+    }
+    pub fn configuration(&self) -> Result<Configuration> {
+        self.0
+            .config
+            .read()
+            .map_err(|_| Error::Unavailable)?
+            .clone()
+            .ok_or(Error::Denied)
+    }
+    pub fn reload(&self, config: Option<Configuration>) -> Result<()> {
+        if let Some(config) = &config {
+            config.validate().map_err(|_| Error::Invalid)?;
+        }
+        *self.0.config.write().map_err(|_| Error::Unavailable)? = config;
+        Ok(())
+    }
+    pub(crate) async fn revoke_removed(&self) -> Result<()> {
+        let owners = self
+            .0
+            .owners
+            .lock()
+            .await
+            .values()
+            .cloned()
+            .collect::<Vec<_>>();
+        for owner in owners {
+            if owner.lease.check().await.is_err() {
+                owner.stop().await?;
+            }
+        }
+        self.0.freshness.notify(
+            None,
+            jj_store_service::freshness::Domain::AgentExecution,
+            None,
+        );
+        Ok(())
     }
     fn save(&self, scopes: &BTreeMap<String, Scope>) -> Result<()> {
         let mut file =
@@ -265,11 +312,11 @@ impl Broker {
             let supervisor = Supervisor::open(Resources {
                 actor: scope.principal,
                 root,
-                executable: self.0.config.acp_executable.clone(),
-                jj_executable: self.0.config.jj_executable.clone(),
+                executable: self.configuration()?.acp_executable,
+                jj_executable: self.configuration()?.jj_executable,
                 driver: Arc::new(crate::agent_execution::driver::Driver(
                     jj_store_jj::agent_workspaces::Provider {
-                        executable: self.0.config.jj_executable.clone(),
+                        executable: self.configuration()?.jj_executable,
                     },
                 )),
                 folders: None,
@@ -282,7 +329,7 @@ impl Broker {
             supervisor.remote(
                 lease.clone(),
                 self.0.workers.clone(),
-                self.0.config.setups(scope.principal),
+                self.configuration()?.setups(scope.principal),
             )?;
             let serving_lease = lease.clone();
             let rpc = tokio::spawn(async move {
@@ -382,7 +429,7 @@ impl jj_store_service::remote_agents::RemoteAgents for Broker {
             .principal(&jj_store_service::directory::Caller::Token(token.clone()))
             .await
             .map_err(|_| Error::Denied)?;
-        if self.0.config.setups(principal).is_empty() {
+        if self.configuration()?.setups(principal).is_empty() {
             return Err(Error::Denied);
         }
         Ok((

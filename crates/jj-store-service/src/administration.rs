@@ -26,9 +26,7 @@ pub struct RepositoryHost {
     store: Arc<dyn ObjectStore>,
     operators: Arc<dyn OperatorPolicies>,
     clock: Arc<dyn Clock>,
-    protection: Protection,
-    limits: SessionLimits,
-    max_blob: u64,
+    runtime: Arc<crate::runtime_policy::RuntimePolicy>,
 }
 impl RepositoryHost {
     pub fn new(
@@ -53,9 +51,14 @@ impl RepositoryHost {
             store,
             operators,
             clock,
-            protection,
-            limits,
-            max_blob,
+            runtime: crate::runtime_policy::RuntimePolicy::new(
+                crate::runtime_policy::Configuration {
+                    protection,
+                    limits,
+                    max_blob,
+                    concurrent: 8,
+                },
+            ),
         })
     }
     /// Private conversion staging retains configured guards and bounded service limits.
@@ -69,18 +72,23 @@ impl RepositoryHost {
     }
     /// Lazy binding needs no mutable repository directory or bucket listing.
     /// The selected manifest policy establishes existence and access together.
+    pub fn runtime_policy(&self) -> Arc<crate::runtime_policy::RuntimePolicy> {
+        self.runtime.clone()
+    }
     pub fn endpoint(
         &self,
         repository: m::RepositoryId,
     ) -> crate::transport::Result<NativeEndpoint> {
+        let current = self.runtime.current();
         let mut endpoint = NativeEndpoint::new(
             repository,
             self.store.clone(),
             self.clock.clone(),
-            self.protection.clone(),
-            self.limits,
-            self.max_blob,
+            current.protection,
+            current.limits,
+            current.max_blob,
         )?;
+        endpoint.runtime = Some(self.runtime.clone());
         endpoint.events = self.events.clone();
         Ok(endpoint)
     }
@@ -90,7 +98,7 @@ impl RepositoryHost {
         repository: m::RepositoryId,
     ) -> wal::Result<Vec<crate::freshness::Change>> {
         tokio::time::timeout(
-            self.limits.timeout,
+            self.runtime.current().limits.timeout,
             crate::freshness::native::observe(self.store.clone(), repository),
         )
         .await
@@ -106,7 +114,7 @@ impl RepositoryHost {
         epoch: m::EpochId,
         admin: &BearerToken,
     ) -> wal::Result<Snapshot> {
-        tokio::time::timeout(self.limits.timeout, async {
+        tokio::time::timeout(self.runtime.current().limits.timeout, async {
             let operators = self
                 .operators
                 .current()
@@ -127,8 +135,12 @@ impl RepositoryHost {
                 .grant(admin, principal.id(), Permission::Admin, None)
                 .map_err(|_| wal::Error::Denied)?;
             let objects = Arc::new(
-                NativeObjects::new(self.store.clone(), repository, self.max_blob)
-                    .map_err(|_| wal::Error::Limit("native blob limit"))?,
+                NativeObjects::new(
+                    self.store.clone(),
+                    repository,
+                    self.runtime.current().max_blob,
+                )
+                .map_err(|_| wal::Error::Limit("native blob limit"))?,
             );
             let created = create_repository(
                 self.store.clone(),
@@ -138,7 +150,7 @@ impl RepositoryHost {
                 &policy,
                 epoch,
                 self.clock.as_ref(),
-                self.limits.publication,
+                self.runtime.current().limits.publication,
             )
             .await?;
             Ok(created.manifest().snapshot())
@@ -152,17 +164,21 @@ impl RepositoryHost {
         epoch: m::EpochId,
         permission: Permission,
     ) -> wal::Result<Snapshot> {
-        tokio::time::timeout(self.limits.timeout, async {
+        tokio::time::timeout(self.runtime.current().limits.timeout, async {
             let objects = Arc::new(
-                NativeObjects::new(self.store.clone(), repository, self.max_blob)
-                    .map_err(|_| wal::Error::Limit("native blob limit"))?,
+                NativeObjects::new(
+                    self.store.clone(),
+                    repository,
+                    self.runtime.current().max_blob,
+                )
+                .map_err(|_| wal::Error::Limit("native blob limit"))?,
             );
             let created = crate::native::create_repository_local_trusted(
                 self.store.clone(),
                 objects,
                 permission,
                 epoch,
-                self.limits.publication,
+                self.runtime.current().limits.publication,
             )
             .await?;
             Ok(created.manifest().snapshot())

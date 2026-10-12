@@ -56355,6 +56355,647 @@ Requires fresh manage-agents operator permission on an authenticated native depl
 }
 ```
 
+## GET /v1/configuration/reload
+
+Requires current repository read permission. Unknown query fields are rejected. Source strings are untrusted data. Reads never reconcile or publish native operations.
+
+```text
+{
+  "operationId": "runtime_reload_status",
+  "tags": [
+    "reads"
+  ],
+  "description": "Requires current repository read permission. Unknown query fields are rejected. Source strings are untrusted data. Reads never reconcile or publish native operations.",
+  "parameters": [],
+  "responses": {
+    "200": {
+      "description": "Authorized result at the reported snapshot.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/RuntimeReloadStatus"
+          }
+        }
+      }
+    },
+    "400": {
+      "description": "Invalid request, unknown query field or invalid cursor.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "401": {
+      "description": "Missing repository Bearer credential.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "403": {
+      "description": "Access denied, including revoked credentials or disallowed Origin.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "404": {
+      "description": "Object not committed in the selected snapshot or unknown route.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "405": {
+      "description": "Unsupported method.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "408": {
+      "description": "Native query canceled.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "409": {
+      "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "410": {
+      "description": "Index task expired or was lost on server restart.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "413": {
+      "description": "Request or response resource limit exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "415": {
+      "description": "Unsupported request media type or content encoding.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "503": {
+      "description": "Busy, unavailable, corrupt or incomplete history.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "504": {
+      "description": "Request or response deadline exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    }
+  },
+  "x-jj-store-query-schema": {
+    "type": "object",
+    "additionalProperties": false
+  },
+  "security": [
+    {
+      "repositoryBearer": []
+    },
+    {}
+  ]
+}
+```
+
+## HEAD /v1/configuration/reload
+
+Runs the same authorized GET validation and drops the body. No JSON, binary bytes or SSE frames are returned.
+
+```text
+{
+  "operationId": "runtime_reload_status_head",
+  "tags": [
+    "reads"
+  ],
+  "description": "Runs the same authorized GET validation and drops the body. No JSON, binary bytes or SSE frames are returned.",
+  "parameters": [],
+  "responses": {
+    "200": {
+      "description": "Authorized result at the reported snapshot."
+    },
+    "400": {
+      "description": "Invalid request, unknown query field or invalid cursor."
+    },
+    "401": {
+      "description": "Missing repository Bearer credential."
+    },
+    "403": {
+      "description": "Access denied, including revoked credentials or disallowed Origin."
+    },
+    "404": {
+      "description": "Object not committed in the selected snapshot or unknown route."
+    },
+    "405": {
+      "description": "Unsupported method."
+    },
+    "408": {
+      "description": "Native query canceled."
+    },
+    "409": {
+      "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index."
+    },
+    "410": {
+      "description": "Index task expired or was lost on server restart."
+    },
+    "413": {
+      "description": "Request or response resource limit exceeded."
+    },
+    "415": {
+      "description": "Unsupported request media type or content encoding."
+    },
+    "503": {
+      "description": "Busy, unavailable, corrupt or incomplete history."
+    },
+    "504": {
+      "description": "Request or response deadline exceeded."
+    }
+  },
+  "x-jj-store-query-schema": {
+    "type": "object",
+    "additionalProperties": false
+  },
+  "security": [
+    {
+      "repositoryBearer": []
+    },
+    {}
+  ]
+}
+```
+
+## POST /v1/configuration/reload
+
+Requires current repository read permission. Unknown query fields are rejected. Source strings are untrusted data. Reads never reconcile or publish native operations.
+
+```text
+{
+  "operationId": "runtime_reload",
+  "tags": [
+    "reads"
+  ],
+  "description": "Requires current repository read permission. Unknown query fields are rejected. Source strings are untrusted data. Reads never reconcile or publish native operations.",
+  "parameters": [],
+  "responses": {
+    "200": {
+      "description": "Authorized result at the reported snapshot.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/RuntimeReloadOutcome"
+          }
+        }
+      }
+    },
+    "400": {
+      "description": "Invalid request, unknown query field or invalid cursor.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "401": {
+      "description": "Missing repository Bearer credential.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "403": {
+      "description": "Access denied, including revoked credentials or disallowed Origin.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "404": {
+      "description": "Object not committed in the selected snapshot or unknown route.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "405": {
+      "description": "Unsupported method.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "408": {
+      "description": "Native query canceled.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "409": {
+      "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "410": {
+      "description": "Index task expired or was lost on server restart.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "413": {
+      "description": "Request or response resource limit exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "415": {
+      "description": "Unsupported request media type or content encoding.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "503": {
+      "description": "Busy, unavailable, corrupt or incomplete history.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "504": {
+      "description": "Request or response deadline exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    }
+  },
+  "x-jj-store-query-schema": {
+    "type": "object",
+    "additionalProperties": false
+  },
+  "security": [
+    {
+      "repositoryBearer": []
+    },
+    {}
+  ],
+  "requestBody": {
+    "required": true,
+    "content": {
+      "application/json": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "integer",
+              "format": "uint32",
+              "minimum": 0
+            },
+            "request_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{32}$",
+              "minLength": 32,
+              "maxLength": 32
+            },
+            "expected_revision": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "domains": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "service",
+                  "protection",
+                  "sync",
+                  "capture",
+                  "remote_agents",
+                  "search",
+                  "agents",
+                  "compute"
+                ]
+              },
+              "minItems": 1,
+              "maxItems": 8
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "version",
+            "request_id",
+            "expected_revision",
+            "domains"
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
+## POST /v1/configuration/reload/outcome
+
+Requires current repository read permission. Unknown query fields are rejected. Source strings are untrusted data. Reads never reconcile or publish native operations.
+
+```text
+{
+  "operationId": "runtime_reload_outcome",
+  "tags": [
+    "reads"
+  ],
+  "description": "Requires current repository read permission. Unknown query fields are rejected. Source strings are untrusted data. Reads never reconcile or publish native operations.",
+  "parameters": [],
+  "responses": {
+    "200": {
+      "description": "Authorized result at the reported snapshot.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/RuntimeReloadOutcome"
+          }
+        }
+      }
+    },
+    "400": {
+      "description": "Invalid request, unknown query field or invalid cursor.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "401": {
+      "description": "Missing repository Bearer credential.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "403": {
+      "description": "Access denied, including revoked credentials or disallowed Origin.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "404": {
+      "description": "Object not committed in the selected snapshot or unknown route.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "405": {
+      "description": "Unsupported method.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "408": {
+      "description": "Native query canceled.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "409": {
+      "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "410": {
+      "description": "Index task expired or was lost on server restart.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "413": {
+      "description": "Request or response resource limit exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "415": {
+      "description": "Unsupported request media type or content encoding.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "503": {
+      "description": "Busy, unavailable, corrupt or incomplete history.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "504": {
+      "description": "Request or response deadline exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    }
+  },
+  "x-jj-store-query-schema": {
+    "type": "object",
+    "additionalProperties": false
+  },
+  "security": [
+    {
+      "repositoryBearer": []
+    },
+    {}
+  ],
+  "requestBody": {
+    "required": true,
+    "content": {
+      "application/json": {
+        "schema": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "integer",
+              "format": "uint32",
+              "minimum": 0
+            },
+            "request_id": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{32}$",
+              "minLength": 32,
+              "maxLength": 32
+            },
+            "expected_revision": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{64}$"
+            },
+            "domains": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "service",
+                  "protection",
+                  "sync",
+                  "capture",
+                  "remote_agents",
+                  "search",
+                  "agents",
+                  "compute"
+                ]
+              },
+              "minItems": 1,
+              "maxItems": 8
+            }
+          },
+          "additionalProperties": false,
+          "required": [
+            "version",
+            "request_id",
+            "expected_revision",
+            "domains"
+          ]
+        }
+      }
+    }
+  }
+}
+```
+
 ## GET /v1/local/settings
 
 LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay.

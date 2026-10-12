@@ -222,6 +222,16 @@ pub(super) fn launch_digest(setup: &Setup, state: &State) -> Result<String> {
     )
 }
 impl Supervisor {
+    pub(crate) async fn reload_launch_settings(
+        &self,
+    ) -> Result<(jj_store_service::runtime_reload::State, Option<String>)> {
+        let pending = self.live_agents()?.iter().any(|a| a.restart_required);
+        Ok(if pending {
+            (jj_store_service::runtime_reload::State::Deferred, Some("Active agents retain their captured configuration. Saved launch settings apply when their workers next start.".into()))
+        } else {
+            (jj_store_service::runtime_reload::State::Current, None)
+        })
+    }
     pub(super) fn effective_setup(&self, id: &str) -> Result<Setup> {
         self.read(|s| Ok(resolve(s.setups.get(id).ok_or(Error::Stale)?, &s.settings)))
     }

@@ -39,3 +39,7 @@ are part of the original typed intent. They stage immutable source/preview
 closure with the authored use under the unchanged domain receipt and manifest
 CAS. Source names are data-only provenance. Absent optional fields preserve
 legacy encodings; directory edits or retirement cannot alter prepared retries.
+
+Runtime policy reload uses a semantic-guard publication lease across validation
+and manifest CAS. Policy replacement waits for bounded in-flight publications.
+This changes no stored intent, receipt, object or manifest format.

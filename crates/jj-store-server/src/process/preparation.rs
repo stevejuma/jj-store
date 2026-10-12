@@ -53,6 +53,7 @@ pub(super) async fn prepare(
             Identity::load(installation)?.principal(b"search-index"),
         ),
     };
+    let effective = Arc::new(std::sync::RwLock::new(config.clone()));
     let timeout = Duration::from_secs(config.limits.request_seconds);
     let (storage, host, search, indexes, replication, rpc) = authority::prepare(
         config,
@@ -121,14 +122,7 @@ pub(super) async fn prepare(
             as Arc<dyn jj_store_service::local_management::WorkspaceManager>),
         _ => None,
     };
-    let local_search = if matches!(
-        config.access,
-        Access::LocalTrusted {
-            permission: jj_store_service::auth::Permission::Admin,
-            ..
-        }
-    ) && host.is_some()
-    {
+    let local_search = if host.is_some() {
         config_path
             .map(|path| {
                 crate::search_management::Manager::new(
@@ -183,9 +177,6 @@ pub(super) async fn prepare(
         config_path
             .map(|path| capture.management(path, config, &identity))
             .transpose()?
-            .map(|manager| {
-                Arc::new(manager) as Arc<dyn jj_store_service::capture_management::CaptureManager>
-            })
     } else {
         None
     };
@@ -270,28 +261,110 @@ pub(super) async fn prepare(
             Err(_) => return Err(Error::Config("installation directory closure")),
         }
     }
-    let remote_agents = config
-        .remote_agents
-        .as_ref()
-        .map(|configuration| {
-            crate::remote_agents::Broker::open(
+    let remote_broker = if matches!(http_access, HttpAccess::Authenticated)
+        && host.is_some()
+        && (config_path.is_some() || config.remote_agents.is_some())
+    {
+        Some(
+            crate::remote_agents::Broker::open_optional(
                 state.join("remote-agents"),
-                configuration.clone(),
-                host.clone()
-                    .ok_or(Error::Config("remote agents require native storage"))?,
-                Arc::new(directory.clone().ok_or(Error::Config(
-                    "remote agents require installation directory",
-                ))?) as Arc<dyn jj_store_service::directory::Directory>,
+                config.remote_agents.clone(),
+                host.clone().unwrap(),
+                Arc::new(directory.clone().ok_or(Error::Config("remote directory"))?),
                 registry.clone(),
             )
-            .map(|b| Arc::new(b) as Arc<dyn jj_store_service::remote_agents::RemoteAgents>)
-            .map_err(|_| Error::Config("remote agent preparation failed"))
+            .map_err(|_| Error::Config("remote agents"))?,
+        )
+    } else {
+        None
+    };
+    let remote_agents = remote_broker
+        .clone()
+        .map(|b| Arc::new(b) as Arc<dyn jj_store_service::remote_agents::RemoteAgents>);
+    let capture_owner =
+        if let (Some(manager), Some(storage), Some(host), Some(verifier), Some(path)) = (
+            local_capture.clone(),
+            storage.as_ref(),
+            host.clone(),
+            verifier.clone(),
+            config_path,
+        ) {
+            Some(super::reload_capture::CaptureOwner::new(
+                manager,
+                storage,
+                host,
+                crate::capture_admission::CaptureAdmission::new(registry.clone(), verifier)
+                    .excluding_execution(state.join("agent-execution/workspaces")),
+                identity.clone(),
+                path,
+                config,
+            ))
+        } else {
+            None
+        };
+    let runtime_policy = host
+        .as_ref()
+        .map(|h| h.runtime_policy())
+        .unwrap_or_else(|| {
+            let mut limits = jj_store_service::native::SessionLimits::default();
+            limits.timeout = timeout;
+            limits.publication.timeout = timeout;
+            limits.policy.timeout = timeout;
+            limits.inventory_nodes = config.limits.inventory_nodes;
+            jj_store_service::runtime_policy::RuntimePolicy::new(
+                jj_store_service::runtime_policy::Configuration {
+                    protection: jj_store_jj::policy::Protection::default(),
+                    limits,
+                    max_blob: config.limits.max_blob_bytes,
+                    concurrent: config.limits.concurrent_requests,
+                },
+            )
+        });
+    let reload_owners = config_path.map(|path| {
+        Arc::new(super::reload::Owners {
+            effective: effective.clone(),
+            policy: runtime_policy.clone(),
+            capture: capture_owner.clone(),
+            remote: remote_broker,
+            agents: agents.clone(),
+            search: local_search.clone(),
+            replication: replication.clone(),
+            host: host.clone(),
+            store: storage.as_ref().map(|s| s.store()),
+            path: path.to_owned(),
+            running_replication: Default::default(),
+            gate: Default::default(),
+            stopping: Default::default(),
         })
-        .transpose()?;
+    });
+    let runtime_reload = config_path
+        .zip(reload_owners.clone())
+        .map(|(path, owners)| {
+            crate::runtime_reload::Coordinator::new(
+                path,
+                config,
+                &identity,
+                effective.clone(),
+                directory
+                    .clone()
+                    .map(|m| Arc::new(m) as Arc<dyn jj_store_service::directory::Directory>),
+                owners,
+            )
+        })
+        .transpose()?
+        .map(|m| m as Arc<dyn jj_store_service::runtime_reload::Manager>);
+    let local_capture = if let Some(owner) = capture_owner {
+        Some(owner as Arc<dyn jj_store_service::capture_management::CaptureManager>)
+    } else {
+        local_capture
+            .map(|m| Arc::new(m) as Arc<dyn jj_store_service::capture_management::CaptureManager>)
+    };
     let http = HttpApi::with_search(
         host,
         state.join("native-reads"),
         HttpConfig {
+            runtime_reload,
+            runtime_policy: Some(runtime_policy),
             remote_agents: remote_agents.clone(),
             agent_administration: if matches!(http_access, HttpAccess::Authenticated)
                 && !matches!(config.storage, crate::config::Storage::Filesystem)
@@ -300,6 +373,7 @@ pub(super) async fn prepare(
                     .zip(directory.clone())
                     .map(|(path, manager)| {
                         crate::agent_administration::Manager::new(path, config, Arc::new(manager))
+                            .map(|manager| manager.with_effective(effective.clone()))
                             .map(|manager| {
                                 Arc::new(manager)
                                     as Arc<
@@ -343,6 +417,15 @@ pub(super) async fn prepare(
             registry: Some(registry as Arc<dyn jj_store_service::registry::RepositoryRegistry>),
             local_search: local_search
                 .clone()
+                .filter(|_| {
+                    matches!(
+                        http_access,
+                        HttpAccess::LocalTrusted {
+                            permission: jj_store_service::auth::Permission::Admin,
+                            ..
+                        }
+                    )
+                })
                 .map(|m| m as Arc<dyn jj_store_service::search_management::SearchManager>),
             local_sync: matches!(
                 config.access,
@@ -366,7 +449,10 @@ pub(super) async fn prepare(
                 }
             ) {
                 config_path
-                    .map(|path| crate::server_settings::Manager::new(path, config, &identity))
+                    .map(|path| {
+                        crate::server_settings::Manager::new(path, config, &identity)
+                            .map(|m| m.with_effective(effective.clone()))
+                    })
                     .transpose()?
                     .map(|m| {
                         Arc::new(m)
@@ -420,13 +506,14 @@ pub(super) async fn prepare(
         .map_err(Error::Config)?;
     let listener = tokio::net::TcpListener::bind(config.bind).await?;
     Ok(PreparedServer {
+        reload: reload_owners,
         rpc,
         http,
         browser,
         development_browser_annotations: config.development_browser_annotations,
         listener,
         tls,
-        concurrent: config.limits.concurrent_requests,
+        concurrent: 64,
         timeout,
         search,
         replication,

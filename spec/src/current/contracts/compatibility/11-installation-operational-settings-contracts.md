@@ -62,3 +62,11 @@ operation and lexical row count. Text lengths, lowercase text and sparse/dense
 WAL, receipt, cursor or public DTO format. Upstream JJ format6 index files
 remain byte-identical and independently verified. Cache loss uses existing
 preparation; this local artifact is never imported into source JJ metadata.
+
+E-APP-RELOAD-001 adds version-1 runtime reload/status/outcome DTOs and the
+independent operator `manage-configuration` role. Format-2 TOML, native object,
+manifest, WAL, capture and agent journals are unchanged. Legacy
+`restart_required` response fields remain wire-compatible: for reloadable
+configuration they indicate a saved/loaded mismatch, cleared after successful
+activation. The private principal-bound reload receipt journal retains exact
+commands and unknown outcomes; it never replays interrupted activation.

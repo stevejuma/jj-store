@@ -16,6 +16,9 @@ use std::sync::Arc;
 /// approval; this crate intentionally supplies no allow-all implementation.
 #[async_trait::async_trait]
 pub trait SemanticPolicy: Send + Sync {
+    async fn publication_lease(&self) -> wal::Result<Option<Box<dyn Send + Sync>>> {
+        Ok(None)
+    }
     async fn validate(
         &self,
         before: &ManifestSnapshot,
@@ -57,6 +60,9 @@ impl AuthenticatedGuard {
 }
 #[async_trait::async_trait]
 impl PublicationGuard for AuthenticatedGuard {
+    async fn publication_lease(&self) -> wal::Result<Option<Box<dyn Send + Sync>>> {
+        self.semantic.publication_lease().await
+    }
     async fn authorize(&self, snapshot: &ManifestSnapshot, request: &Request) -> wal::Result<()> {
         self.actor(snapshot, request).await.map(|_| ())
     }

@@ -60,6 +60,15 @@
 .store-numeric-setting__range {
   display: flex;
   justify-content: space-between;
+  gap: 0.5rem;
+}
+.store-numeric-setting__range span {
+  min-width: 0;
+  max-width: calc(50% - 0.25rem);
+  overflow-wrap: anywhere;
+}
+.store-numeric-setting__range span:last-child {
+  text-align: end;
 }
 .store-numeric-setting__error {
   display: flex;

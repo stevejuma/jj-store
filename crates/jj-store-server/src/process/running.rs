@@ -6,8 +6,12 @@ impl PreparedServer {
         let publication = self.agents.as_ref().map(|a| a.start_publication());
         let agents = self.agents.clone();
         let remote_agents = self.remote_agents.clone();
+        let reload = self.reload.clone();
         let shutdown = async move {
             shutdown.await;
+            if let Some(owners) = reload {
+                let _ = owners.shutdown().await;
+            }
             if let Some(remote) = remote_agents {
                 let _ = remote.shutdown().await;
             }
@@ -15,13 +19,18 @@ impl PreparedServer {
                 let _ = agents.shutdown().await;
             }
         };
-        let mut capture = self.capture.start();
+        let mut capture = Some(self.capture.start());
         let search = if let Some(search) = self.search {
             Some(search.start().await)
         } else {
             None
         };
-        let replication = self.replication.map(|r| r.start());
+        let mut replication = self.replication.map(|r| r.start());
+        if let Some(owners) = &self.reload {
+            owners
+                .attach(capture.take().unwrap(), replication.take())
+                .await;
+        }
         let (tx, rx) = tokio::sync::oneshot::channel();
         let (mut router, local_rpc) = match self.rpc {
             PreparedRpc::Disabled => (self.http.router().fallback(unknown_route), None),
@@ -78,8 +87,14 @@ impl PreparedServer {
         if let Some(publication) = publication {
             publication.abort();
         }
-        let capture_stopped = capture.shutdown().await;
-        let replication = if let Some(replication) = replication {
+        let capture_stopped = if let Some(owners) = &self.reload {
+            owners.shutdown().await
+        } else if let Some(capture) = &mut capture {
+            capture.shutdown().await
+        } else {
+            Ok(())
+        };
+        let replication = if let Some(mut replication) = replication {
             replication.shutdown().await
         } else {
             Ok(())
@@ -89,6 +104,7 @@ impl PreparedServer {
         } else {
             Ok(())
         };
+        self.http.shutdown().await;
         let storage = if let Some(storage) = self.storage {
             storage.shutdown().await
         } else {

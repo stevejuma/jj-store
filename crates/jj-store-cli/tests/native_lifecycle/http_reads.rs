@@ -170,9 +170,11 @@ async fn http_contract_capture_matches_registered_routes() {
     let task_id = task["id"].as_str().unwrap().to_owned();
     record("index/tasks", "post", 202, "application/json", task);
     let mut done = false;
+    let mut last_task = Value::Null;
     for _ in 0..100 {
         let (status, task) = json(&router, &f.f.reader, &format!("index/tasks/{task_id}")).await;
         assert_eq!(status, StatusCode::OK);
+        last_task = task.clone();
         if task["status"] == "ready" {
             record("index/tasks/{task}", "get", 200, "application/json", task);
             done = true;
@@ -180,7 +182,7 @@ async fn http_contract_capture_matches_registered_routes() {
         }
         tokio::time::sleep(Duration::from_millis(10)).await;
     }
-    assert!(done, "small index fixture did not complete");
+    assert!(done, "small index fixture did not complete: {last_task}");
     let mut cancel = request(&f.f.reader, &format!("index/tasks/{task_id}/cancel"));
     *cancel.method_mut() = axum::http::Method::POST;
     let response = router.clone().oneshot(cancel).await.unwrap();

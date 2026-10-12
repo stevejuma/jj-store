@@ -81,3 +81,10 @@ receipts. Referenced session snapshots must belong to the selected AgentStore
 closure and their session identities must match. Native/local source validation
 rejects unpublished or foreign snapshots. Metadata jobs never become canonical
 repository state; uncertain publication retains its original request identity.
+
+Runtime protection and remote-sharing replacement take the serving owner's
+exclusive publication lease. Native/application publication, collaboration
+enablement and replication import/seed retain the read lease through manifest
+CAS, so loaded policy cannot change between validation and selection. Reload
+receipts are private installation state; manifest CAS remains the only
+repository publication authority.

@@ -70,7 +70,7 @@
   title={definition.setup.name || "New agent"}
   label={`Agent definition ${definition.setup.id}`}
   Icon={BotIcon}
-  description="Runtime definitions apply to future sessions after server restart."
+  description="Runtime definitions apply to future sessions after configuration reload."
 >
   <dl>
     <StoreReadOnlyRow label="Agent ID" value={definition.setup.id} copyable />
@@ -194,7 +194,7 @@
   title={`Who can message ${definition.setup.name || "this agent"}`}
   label={`Sharing for agent ${definition.setup.id}`}
   Icon={UsersIcon}
-  description="Selected principals also need independent Write access to the conversation home and attached code repositories. Sharing changes activate at restart."
+  description="Selected principals also need independent Write access to the conversation home and attached code repositories. Sharing changes activate at reload."
 >
   <Field.Group class="store-settings__editable-rows">
     {#each choices as principal (principal)}

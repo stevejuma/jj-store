@@ -227,3 +227,103 @@
     }
   }}
 />
+
+<Story
+  name="Coarse slider preserves exact typed drafts"
+  args={{ bytes: true, slider: true, sliderStep: 65536, value: "1536" }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await expect(c.getByTestId("canonical")).toHaveTextContent("1536");
+    await expect(c.getByTestId("changes")).toHaveTextContent("0");
+    const slider = c.getByRole("slider", {
+      name: "Maximum text file size slider",
+    });
+    await expect(slider).toHaveAttribute("aria-valuenow", "1536");
+    const entry = c.getByRole("spinbutton");
+    await userEvent.clear(entry);
+    await userEvent.type(entry, "1793");
+    await expect(c.getByTestId("canonical")).toHaveTextContent("1793");
+    await expect(slider).toHaveAttribute("aria-valuenow", "1793");
+    slider.focus();
+    await userEvent.keyboard("{End}");
+    await expect(c.getByTestId("canonical")).toHaveTextContent("1048576");
+  }}
+/>
+
+<Story
+  name="Slider labels follow time units without changing the draft"
+  args={{ slider: true, min: 1 }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement),
+      page = within(canvasElement.ownerDocument.body);
+    const range = canvasElement.querySelector(".store-numeric-setting__range")!;
+    const slider = c.getByRole("slider", { name: "Polling interval slider" });
+    await expect(range).toHaveTextContent("1 ms");
+    await expect(range).toHaveTextContent("60,000 ms");
+    for (const [unit, minimum, maximum] of [
+      ["sec", "0 sec", "60 sec"],
+      ["min", "0 min", "1 min"],
+      ["ms", "1 ms", "60,000 ms"],
+    ]) {
+      await waitFor(() =>
+        expect(
+          getComputedStyle(
+            c.getByRole("button", { name: "Polling interval unit" }),
+          ).pointerEvents,
+        ).toBe("auto"),
+      );
+      await userEvent.click(
+        c.getByRole("button", { name: "Polling interval unit" }),
+      );
+      await userEvent.click(page.getByRole("option", { name: unit }));
+      await waitFor(() => expect(page.queryByRole("listbox")).toBeNull());
+      await expect(range.children[0]).toHaveTextContent(minimum);
+      await expect(range.children[1]).toHaveTextContent(maximum);
+      await expect(slider).toHaveAttribute("aria-valuemin", "1");
+      await expect(slider).toHaveAttribute("aria-valuemax", "60000");
+      await expect(slider).toHaveAttribute("aria-valuenow", "1000");
+      await expect(c.getByTestId("canonical")).toHaveTextContent("1000");
+      await expect(c.getByTestId("changes")).toHaveTextContent("0");
+    }
+  }}
+/>
+
+<Story
+  name="Narrow byte slider labels follow units without overflow"
+  args={{
+    bytes: true,
+    slider: true,
+    sliderStep: 65536,
+    min: 1,
+    narrow: true,
+    value: "1536",
+  }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement),
+      page = within(canvasElement.ownerDocument.body);
+    const range = canvasElement.querySelector(".store-numeric-setting__range")!;
+    for (const [unit, minimum, maximum] of [
+      ["KiB", "0 KiB", "1,024 KiB"],
+      ["MiB", "0 MiB", "1 MiB"],
+      ["GiB", "0 GiB", "0.00098 GiB"],
+    ]) {
+      await waitFor(() =>
+        expect(
+          getComputedStyle(
+            c.getByRole("button", { name: "Maximum text file size unit" }),
+          ).pointerEvents,
+        ).toBe("auto"),
+      );
+      await userEvent.click(
+        c.getByRole("button", { name: "Maximum text file size unit" }),
+      );
+      await userEvent.click(page.getByRole("option", { name: unit }));
+      await waitFor(() => expect(page.queryByRole("listbox")).toBeNull());
+      await expect(range.children[0]).toHaveTextContent(minimum);
+      await expect(range.children[1]).toHaveTextContent(maximum);
+      await expect(range.scrollWidth).toBeLessThanOrEqual(range.clientWidth);
+      await expect(c.getByTestId("canonical")).toHaveTextContent("1536");
+      await expect(c.getByTestId("changes")).toHaveTextContent("0");
+    }
+  }}
+/>

@@ -129,6 +129,7 @@ pub struct NativeRpc {
     host: Option<RepositoryHost>,
     slots: Arc<Semaphore>,
     limits: Limits,
+    runtime_policy: Option<Arc<jj_store_service::runtime_policy::RuntimePolicy>>,
     access: RpcAccess,
     registry: Option<Arc<dyn RepositoryRegistry>>,
     review_threads: Arc<ReviewThreadPager>,
@@ -159,7 +160,24 @@ enum RequestAccess {
         permission: Permission,
     },
 }
+struct RequestPermit {
+    _slot: OwnedSemaphorePermit,
+    _runtime: Option<jj_store_service::runtime_policy::Permit>,
+}
 impl NativeRpc {
+    fn live_limits(&self) -> Limits {
+        self.runtime_policy
+            .as_ref()
+            .map(|policy| {
+                let p = policy.current();
+                Limits {
+                    concurrent: p.concurrent,
+                    timeout: p.limits.timeout,
+                    object_bytes: p.max_blob + m::envelope::HEADER_LEN as u64,
+                }
+            })
+            .unwrap_or(self.limits)
+    }
     pub fn new(repositories: Vec<NativeEndpoint>, limits: Limits) -> Result<Self, Status> {
         if limits.concurrent == 0
             || limits.concurrent > 1024
@@ -186,6 +204,7 @@ impl NativeRpc {
             host: None,
             slots: Arc::new(Semaphore::new(limits.concurrent)),
             limits,
+            runtime_policy: None,
             access: RpcAccess::Authenticated,
             registry: None,
             review_threads: Arc::new(
@@ -226,6 +245,16 @@ impl NativeRpc {
         let mut rpc = Self::new(Vec::new(), limits)?;
         rpc.host = Some(host);
         Ok(rpc)
+    }
+    /// Opt into live resource limits owned by the retained application server.
+    /// Ordinary hosted consumers keep their explicitly supplied limits.
+    pub fn with_runtime_policy(
+        mut self,
+        policy: Arc<jj_store_service::runtime_policy::RuntimePolicy>,
+    ) -> Self {
+        self.runtime_policy = Some(policy);
+        self.slots = Arc::new(Semaphore::new(64));
+        self
     }
     pub fn with_registry(mut self, registry: Arc<dyn RepositoryRegistry>) -> Self {
         self.registry = Some(registry);
@@ -298,11 +327,25 @@ impl NativeRpc {
             .await?;
         Ok(())
     }
-    fn permit(&self) -> Result<OwnedSemaphorePermit, Status> {
-        self.slots
+    fn permit(&self) -> Result<RequestPermit, Status> {
+        let runtime = if let Some(policy) = &self.runtime_policy {
+            Some(
+                policy
+                    .permit(1)
+                    .ok_or_else(|| Status::resource_exhausted("native request concurrency"))?,
+            )
+        } else {
+            None
+        };
+        let slot = self
+            .slots
             .clone()
             .try_acquire_owned()
-            .map_err(|_| Status::resource_exhausted("native request concurrency"))
+            .map_err(|_| Status::resource_exhausted("native request concurrency"))?;
+        Ok(RequestPermit {
+            _slot: slot,
+            _runtime: runtime,
+        })
     }
     fn registry_error(error: registry::Error) -> Status {
         match error {
@@ -397,7 +440,7 @@ impl NativeRpc {
         work: impl Future<Output = Result<T, Status>>,
     ) -> Result<Response<T>, Status> {
         let _permit = self.permit()?;
-        tokio::time::timeout(self.limits.timeout, work)
+        tokio::time::timeout(self.live_limits().timeout, work)
             .await
             .map_err(|_| {
                 Status::deadline_exceeded(
@@ -695,7 +738,8 @@ impl NativeStore for NativeRpc {
                 crate::copy_families::request(&body, session.copy_family_limits())?;
             let deadline = started
                 .checked_add(
-                    Duration::from_millis(body.timeout_millis as u64).min(self.limits.timeout),
+                    Duration::from_millis(body.timeout_millis as u64)
+                        .min(self.live_limits().timeout),
                 )
                 .ok_or_else(|| Status::deadline_exceeded("copy family deadline"))?;
             let family = session
@@ -1336,7 +1380,7 @@ impl NativeStore for NativeRpc {
         request: Request<wire::ControlRecordRequest>,
     ) -> Result<Response<Self::ReadControlRecordStream>, Status> {
         let permit = self.permit()?;
-        let deadline = Instant::now() + self.limits.timeout;
+        let deadline = Instant::now() + self.live_limits().timeout;
         let session = self.bind(
             &request.get_ref().repository,
             self.request_access(&request)?,
@@ -1347,7 +1391,7 @@ impl NativeStore for NativeRpc {
             .map_err(|_| Status::deadline_exceeded("control record download deadline"))?
             .map_err(service_error)?;
         if bytes.len() as u64 > replication::MAX_RECORD_BYTES
-            || bytes.len() as u64 > self.limits.object_bytes
+            || bytes.len() as u64 > self.live_limits().object_bytes
         {
             return Err(Status::resource_exhausted("control record byte limit"));
         }
@@ -1409,7 +1453,7 @@ impl NativeStore for NativeRpc {
             let reference = record(start.record)?;
             if start.length == 0
                 || start.length > replication::MAX_RECORD_BYTES
-                || start.length > self.limits.object_bytes
+                || start.length > self.live_limits().object_bytes
             {
                 return Err(Status::resource_exhausted("control upload byte limit"));
             }
@@ -1467,7 +1511,7 @@ impl NativeStore for NativeRpc {
         let key = object(request.into_inner().object)?;
         self.bounded(async {
             let metadata = session.head(key).await.map_err(service_error)?;
-            if metadata.len > self.limits.object_bytes {
+            if metadata.len > self.live_limits().object_bytes {
                 return Err(Status::resource_exhausted("object byte limit"));
             }
             Ok(wire::ObjectMetadata {
@@ -1483,7 +1527,7 @@ impl NativeStore for NativeRpc {
         request: Request<wire::ObjectRequest>,
     ) -> Result<Response<Self::ReadObjectStream>, Status> {
         let permit = self.permit()?;
-        let deadline = Instant::now() + self.limits.timeout;
+        let deadline = Instant::now() + self.live_limits().timeout;
         let session = self.bind(
             &request.get_ref().repository,
             self.request_access(&request)?,
@@ -1493,7 +1537,7 @@ impl NativeStore for NativeRpc {
             .await
             .map_err(|_| Status::deadline_exceeded("native download deadline"))?
             .map_err(service_error)?;
-        if download.metadata.len > self.limits.object_bytes {
+        if download.metadata.len > self.live_limits().object_bytes {
             return Err(Status::resource_exhausted("object byte limit"));
         }
         let (tx, mut rx) = tokio::sync::mpsc::channel(1);
@@ -1571,7 +1615,7 @@ impl NativeStore for NativeRpc {
             session.authorize(true).await.map_err(service_error)?;
             let key = object(start.object)?;
             if start.length < m::envelope::HEADER_LEN as u64
-                || start.length > self.limits.object_bytes
+                || start.length > self.live_limits().object_bytes
             {
                 return Err(Status::resource_exhausted("upload byte limit"));
             }
@@ -1607,5 +1651,60 @@ impl NativeStore for NativeRpc {
             })
         })
         .await
+    }
+}
+
+#[cfg(test)]
+mod runtime_limits_tests {
+    use super::*;
+    struct NoOperators;
+    #[tonic::async_trait]
+    impl jj_store_service::administration::OperatorPolicies for NoOperators {
+        async fn current(
+            &self,
+        ) -> jj_store_service::auth::Result<jj_store_service::auth::TokenPolicy> {
+            Ok(jj_store_service::auth::TokenPolicy::new(
+                jj_store_service::auth::Scope::Operator,
+            ))
+        }
+    }
+    #[tokio::test]
+    async fn hosted_limits_remain_explicit_until_live_policy_is_selected() {
+        let host = RepositoryHost::new(
+            Arc::new(jj_store_object::memory::MemoryStore::default()),
+            Arc::new(NoOperators),
+            Arc::new(SystemClock),
+            Default::default(),
+            Default::default(),
+            1024 * 1024,
+        )
+        .unwrap();
+        let explicit = Limits {
+            concurrent: 1,
+            timeout: Duration::from_secs(2),
+            object_bytes: 4096,
+        };
+        let rpc = NativeRpc::hosted(host.clone(), explicit).unwrap();
+        assert_eq!(rpc.live_limits().timeout, explicit.timeout);
+        assert_eq!(rpc.live_limits().object_bytes, explicit.object_bytes);
+        let held = rpc.permit().unwrap();
+        assert!(rpc.permit().is_err());
+        drop(held);
+        let policy = host.runtime_policy().clone();
+        let rpc = rpc.with_runtime_policy(policy.clone());
+        let mut updated = policy.current();
+        updated.concurrent = 2;
+        updated.limits.timeout = Duration::from_secs(3);
+        updated.max_blob = 8192;
+        let _lease = policy.publication.write().await;
+        policy.replace(updated);
+        assert_eq!(rpc.live_limits().timeout, Duration::from_secs(3));
+        assert_eq!(
+            rpc.live_limits().object_bytes,
+            8192 + m::envelope::HEADER_LEN as u64
+        );
+        let _first = rpc.permit().unwrap();
+        let _second = rpc.permit().unwrap();
+        assert!(rpc.permit().is_err());
     }
 }
