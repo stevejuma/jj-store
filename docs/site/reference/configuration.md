@@ -27,6 +27,20 @@ limits. These locations retain the same installation-owned configuration file,
 save permissions and Apply/restart requirements. Moving a control does not move
 its persisted data or introduce a new configuration format.
 
+**Add server** above Help saves a device-local connection outside repositories.
+Selecting a server scopes its repositories, projects, agents and directory to
+that installation. Appearance remains device-owned. Public selection and
+destinations resume after restart; sign in again because credentials are
+memory-only. Unknown connections require explicit recovery.
+
+Authenticated servers can opt into operator-owned `[remote_agents]` definitions,
+paired executable paths and per-agent principal allowlists. Repository Write
+grants remain independent. Remote callers select existing native WorkStore homes
+and native attachments; runtime configuration stays operator-owned. See
+[server configuration](../cli/jj-store.md#authenticated-remote-agents) for the
+configuration shape. M27 retains separate installed-runtime, storage and
+platform gates.
+
 ## Top-level fields
 
 | Key                                  | Meaning                                                                 |

@@ -1,5 +1,36 @@
 # Interactive agent sessions
 
+## Agents on a remote server
+
+Use **Add server** above Help in the sidebar to register an authenticated server
+address and sign in with its access token. Select its chip to browse that
+server's repositories, projects, profiles and allowed agents within this app.
+Local remains the first-use default. Selection and destinations resume after
+restart; credentials do not. Sign in again to unlock a restored connection.
+
+The operator must enable `remote_agents` in that server's private configuration
+and include your installation principal in each agent's allowlist. Repository
+Write access alone does not grant execution. Your token must also have Write
+access, under that same principal, to the existing native WorkStore home and
+each attached repository. Select a home for a general conversation before Send.
+Agent definitions, instructions, providers and credentials are operator-owned;
+remote callers cannot install or configure runtimes.
+
+Execution and its isolated native workspaces run on the selected remote host.
+Activity streams back through the device gateway. Review and published history
+remain governed by their repository permissions. Switching servers retains
+unsent drafts and pauses hidden readers; it does not stop a remote job. An
+unknown request outcome retains its original identity for recovery. Restart does
+not replay prompts. Shared links use the remote server's canonical origin.
+
+The initial remote profile supports trusted collaborators on Unix hosts with
+native repositories already present. Filesystem repositories, automatic home
+provisioning and Git transfer are outside this profile. It provides no hostile
+user OS sandbox. Source/fixture checks and installed-runtime qualification are
+recorded separately in M27.
+
+## Local agent sessions
+
 The Agents views and repository, project and task actions can start Codex or
 Cursor sessions on this device. Register an ordinary Git-backed JJ folder, or
 link a native repository workspace, then choose its exact starting revision. The

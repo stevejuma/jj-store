@@ -100,7 +100,7 @@ fn manager(state: &State) -> Result<(&agents::AgentManager, m::PrincipalId)> {
         principal,
     ))
 }
-fn failure(error: agents::Error) -> Error {
+pub(super) fn failure(error: agents::Error) -> Error {
     let (status, code) = match error {
         agents::Error::Denied => (StatusCode::FORBIDDEN, "agent_execution_denied"),
         agents::Error::Invalid => (StatusCode::BAD_REQUEST, "invalid_agent_execution"),
@@ -120,7 +120,7 @@ fn failure(error: agents::Error) -> Error {
     };
     Error::new(status, code)
 }
-fn body<T>(body: std::result::Result<Json<T>, JsonRejection>) -> Result<T> {
+pub(super) fn body<T>(body: std::result::Result<Json<T>, JsonRejection>) -> Result<T> {
     body.map(|Json(value)| value).map_err(|e| {
         if e.status() == StatusCode::PAYLOAD_TOO_LARGE {
             Error::limit()

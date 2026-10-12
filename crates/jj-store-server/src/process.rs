@@ -40,6 +40,7 @@ pub struct PreparedServer {
     replication: Option<crate::replication::PreparedReplication>,
     capture: capture::PreparedCapture,
     agents: Option<crate::agent_execution::Supervisor>,
+    remote_agents: Option<Arc<dyn jj_store_service::remote_agents::RemoteAgents>>,
     storage: Option<AuthoritativeStorage>,
     _state_lock: Option<File>,
 }

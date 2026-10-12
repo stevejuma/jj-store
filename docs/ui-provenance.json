@@ -2974,6 +2974,26 @@
     {
       "local": "web/src/lib/controller/prepare-thread-emoji.ts",
       "reason": "Application-owned preparation of immutable installation emoji snapshots for existing repository command publication."
+    },
+    {
+      "local": "web/src/lib/ui/store-connections/StoreServerSwitcher.svelte",
+      "reason": "Application-authored server selection and connection forms using maintained Community navigation conventions and released Design Core controls. No Community source copied."
+    },
+    {
+      "local": "web/src/lib/ui/store-connections/StoreConnectionDialog.svelte",
+      "reason": "Application-authored server selection and connection forms using maintained Community navigation conventions and released Design Core controls. No Community source copied."
+    },
+    {
+      "local": "web/src/lib/ui/store-connections/presentation.ts",
+      "reason": "Application-authored server selection and connection forms using maintained Community navigation conventions and released Design Core controls. No Community source copied."
+    },
+    {
+      "local": "web/src/lib/ui/store-connections/navigation.svelte.ts",
+      "reason": "Application-owned connection switching guards and profile actions. No external source copied."
+    },
+    {
+      "local": "web/src/lib/ui/store-connections/StoreConnectionFooter.svelte",
+      "reason": "Application-owned sidebar composition reuses the server selector and Help without external source dependencies."
     }
   ],
   "desktopAppearance": {

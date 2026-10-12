@@ -33,18 +33,7 @@ impl Supervisor {
             self.authorized(repository, profile, true).await?;
             if profile == "native" {
                 let pin = self
-                    .0
-                    .resources
-                    .host
-                    .as_ref()
-                    .ok_or(Error::Unavailable)?
-                    .endpoint(repository)
-                    .map_err(|_| Error::Denied)?
-                    .bind_local_trusted(
-                        self.0.resources.actor,
-                        jj_store_service::auth::Permission::Admin,
-                    )
-                    .map_err(|_| Error::Denied)?
+                    .native_request(repository)?
                     .into_session()
                     .snapshot()
                     .await
@@ -58,6 +47,9 @@ impl Supervisor {
                 profile.into(),
                 self.home_workspace(repository, profile).await?,
             ));
+        }
+        if self.remote_mode() {
+            return Err(Error::Denied);
         }
         let home = if let Some(home) = self.read(|s| Ok(s.personal_home.clone()))? {
             home
@@ -277,18 +269,7 @@ impl Supervisor {
                 .await;
         }
         let snapshot = self
-            .0
-            .resources
-            .host
-            .as_ref()
-            .ok_or(Error::Unavailable)?
-            .endpoint(repository)
-            .map_err(|_| Error::Unavailable)?
-            .bind_local_trusted(
-                self.0.resources.actor,
-                jj_store_service::auth::Permission::Admin,
-            )
-            .map_err(|_| Error::Denied)?
+            .native_request(repository)?
             .into_session()
             .snapshot()
             .await

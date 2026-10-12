@@ -65,7 +65,7 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed the shared normalized image command and original-source receipt binding; repository command and publication semantics remain unchanged.",
+      "reason": "Reviewed the shared normalized image command and original-source receipt binding; repository command and publication semantics remain unchanged. Documented fixed-origin gateway ownership and private delegated Unix native access, with unchanged native wire/manifest authority and separate current repository grants.",
       "fingerprint": "5c83eeb24579654648f20063cb568b714d28eaf1b7c07806e0bcb85189de5079"
     }
   },
@@ -96,7 +96,7 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Documented bounded server preparation for profile and custom emoji sources, retained asset limits, explicit selection saves and unchanged deployment files.",
+      "reason": "Documented bounded server preparation for profile and custom emoji sources, retained asset limits, explicit selection saves and unchanged deployment files. Reviewed the final formatted authenticated remote-agent configuration, lifecycle composition, static allowlists and executable/secret references; updated configuration, transport and agent guides with separate qualification gates.",
       "fingerprint": "fde0665534ef453db778b0d3508229dc0de36d3af0e8c8289a6be140bae99af1"
     }
   },
@@ -122,7 +122,7 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Documented the personal binary image upload route, octet-stream admission before body consumption and existing privacy, status and origin boundaries.",
+      "reason": "Documented the personal binary image upload route, octet-stream admission before body consumption and existing privacy, status and origin boundaries. Reviewed authenticated agent route inventory, bearer-only admission and integer-sequence SSE contract; refreshed installation API reference.",
       "fingerprint": "0382940d4afc0de8ab71a3b61f3a3ecb546c4748f07251b12a418efe8fdd1775"
     }
   },
@@ -136,7 +136,7 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed profile and emoji binary normalization, deferred emoji saves, grouped Settings navigation and the Compute integer GB slider with automatic allocation and larger typed limits.",
+      "reason": "Reviewed profile and emoji binary normalization, deferred emoji saves, grouped Settings navigation and the Compute integer GB slider with automatic allocation and larger typed limits. Reviewed remote Settings navigation filtering, device Appearance, protected server profiles, LocalTrusted-only administration and retained mobile/settings ownership through scoped helpers.",
       "fingerprint": "370da347ba26c7ccd0d027f01377c8bb4ababbe5e5a516a46f28befd72ec726d"
     }
   },
@@ -154,7 +154,7 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Regenerated installation and type references for the shared binary image upload route and typed normalization command; existing legacy image intent formats remain unchanged.",
+      "reason": "Regenerated installation and type references for the shared binary image upload route and typed normalization command; existing legacy image intent formats remain unchanged. Reviewed generated connection and authenticated agent APIs, bearer-only security, caller-owned outcomes and integer-sequence SSE schemas against route tests.",
       "fingerprint": "788eb34ca937271bcfc35a3ec911122381386f9079a1655c75aa7d3f254c073e"
     }
   },

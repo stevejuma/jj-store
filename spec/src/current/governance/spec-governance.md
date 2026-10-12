@@ -1,5 +1,12 @@
 # Change map
 
+M27 adds an application-owned server selector, fixed-origin gateway and
+operator-defined authenticated agent broker. New UI compositions remain under
+`web/src/lib` with ownership declarations; dependencies stay released. The cold
+production-App acceptance harness uses deterministic APIs and an isolated Vite
+process, preserving existing services/data. This fixture evidence does not
+qualify installed agents, desktop packaging or real-storage deployment gates.
+
 E-PROJECT-AGENTS-001 retains JST-UI-015 ownership: repository session selection
 and row composition are application-authored. They reuse maintained avatar/row
 presentation and exact admitted associations without a Community runtime or

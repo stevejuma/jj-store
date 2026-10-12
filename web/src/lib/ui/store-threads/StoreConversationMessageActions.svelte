@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { serverConnections } from "../../connections/context.js";
+  const connections = serverConnections();
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as DropdownMenu from "@lapismd/design-core/shadcn/dropdown-menu";
   import MoreIcon from "@lucide/svelte/icons/ellipsis";
@@ -82,7 +84,8 @@
     });
     if (hash)
       void navigator.clipboard.writeText(
-        new URL(hash, window.location.href).href,
+        connections?.shareUrl(hash, window.location.href) ??
+          new URL(hash, window.location.href).href,
       );
   }
 </script>

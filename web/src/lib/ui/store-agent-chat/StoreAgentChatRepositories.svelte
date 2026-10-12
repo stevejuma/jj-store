@@ -34,6 +34,28 @@
           : "Repository context"}
   </p>
   <Field.Group class="community-settings__option-group">
+    {#if !manager.localManagement() && chat.draft?.origin.scope === "personal"}
+      <StoreWorkField label="Conversation home" bordered={false}>
+        <StoreRepositoryPicker
+          variant="ghost"
+          label="Conversation home"
+          controlled
+          repositories={controller.state.repositories.filter(
+            (r) => r.profile === "native" && r.permission !== "read",
+          )}
+          value={chat.draft.origin.home ?? ""}
+          disabled={disabled || chat.sessions.length > 0}
+          emptyLabel="Choose WorkStore home"
+          onChange={(value) => {
+            if (chat.draft && !disabled) chat.draft.origin.home = value || null;
+          }}
+        />
+      </StoreWorkField>
+      <p>
+        Choose an existing project or discussion repository to store this
+        conversation.
+      </p>
+    {/if}
     {#each chat.draft?.attachments ?? [] as attachment (attachment.repository)}
       {@const repository = repositories.find(
         (r) => r.id === attachment.repository,

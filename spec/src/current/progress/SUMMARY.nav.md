@@ -57,3 +57,5 @@
   {{#include M25/SUMMARY.nav.md}}
 - [M26 installation profiles and custom emoji](M26/index.md)
   {{#include M26/SUMMARY.nav.md}}
+- [M27 remote server connections and authenticated agents](M27/index.md)
+  {{#include M27/SUMMARY.nav.md}}

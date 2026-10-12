@@ -15,11 +15,24 @@ pub trait AccessPolicy: Send + Sync {
     ) -> wal::Result<AccessPrincipal>;
 }
 
+/// Additional caller and repository scope enforced at each read and publication.
+/// Implementations hold credentials only in memory; they never replace repository grants.
+#[async_trait::async_trait]
+pub trait Delegation: Send + Sync {
+    fn credential(&self, repository: RepositoryId) -> auth::Result<BearerToken>;
+    async fn principal(
+        &self,
+        repository: RepositoryId,
+        required: Permission,
+    ) -> auth::Result<PrincipalId>;
+}
+
 struct AuthenticatedAccessPolicy {
     repository: RepositoryId,
     store: Arc<dyn ObjectStore>,
     token: BearerToken,
     clock: Arc<dyn Clock>,
+    delegation: Option<Arc<dyn Delegation>>,
 }
 
 #[async_trait::async_trait]
@@ -39,13 +52,23 @@ impl AccessPolicy for AuthenticatedAccessPolicy {
         let data = snapshot.settings(self.store.clone()).await?;
         let policy =
             TokenPolicy::decode(&data, Scope::Repository(self.repository)).map_err(map_auth)?;
-        policy
+        let principal = policy
             .authorize(
                 &self.token,
                 required,
                 self.clock.unix_seconds().map_err(map_auth)?,
             )
-            .map_err(map_auth)
+            .map_err(map_auth)?;
+        if let Some(delegation) = &self.delegation {
+            let caller = delegation
+                .principal(self.repository, required)
+                .await
+                .map_err(map_auth)?;
+            if caller != principal.id() {
+                return Err(wal::Error::Denied);
+            }
+        }
+        Ok(principal)
     }
 }
 
@@ -106,12 +129,34 @@ impl RepositoryAccess {
             store: store.clone(),
             token,
             clock,
+            delegation: None,
         });
         Self {
             repository,
             store,
             policy,
         }
+    }
+
+    pub fn delegated(
+        repository: RepositoryId,
+        store: Arc<dyn ObjectStore>,
+        clock: Arc<dyn Clock>,
+        delegation: Arc<dyn Delegation>,
+    ) -> auth::Result<Self> {
+        let token = delegation.credential(repository)?;
+        let policy = Arc::new(AuthenticatedAccessPolicy {
+            repository,
+            store: store.clone(),
+            token,
+            clock,
+            delegation: Some(delegation),
+        });
+        Ok(Self {
+            repository,
+            store,
+            policy,
+        })
     }
 
     pub fn local_trusted(

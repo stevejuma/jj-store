@@ -7,6 +7,7 @@ mod body;
 mod capture_management;
 mod collab;
 mod collaboration;
+mod connections;
 mod content_search;
 pub mod contract;
 mod directory;
@@ -15,6 +16,7 @@ mod error;
 mod local_browser;
 mod local_management;
 mod mutations;
+mod remote_agents;
 mod repositories;
 mod review_mutations;
 mod routes;
@@ -101,6 +103,9 @@ pub struct VerifiedRestorePoint {
 
 #[derive(Clone)]
 pub struct Config {
+    pub installation_id: Option<String>,
+    pub remote_agents: Option<Arc<dyn jj_store_service::remote_agents::RemoteAgents>>,
+    pub local_connections: Option<Arc<dyn jj_store_service::connections::Connections>>,
     pub origin: String,
     pub access: Access,
     pub registry: Option<Arc<dyn RepositoryRegistry>>,
@@ -135,6 +140,9 @@ pub struct Config {
 impl Default for Config {
     fn default() -> Self {
         Self {
+            installation_id: None,
+            remote_agents: None,
+            local_connections: None,
             origin: "http://127.0.0.1:7443".into(),
             access: Access::Authenticated,
             registry: None,
@@ -390,6 +398,8 @@ impl HttpApi {
                 .merge(agent_execution::router())
                 .merge(server_settings::router())
                 .merge(directory::router())
+                .merge(connections::router())
+                .merge(remote_agents::router())
                 .with_state(self.0.clone())
                 .layer(middleware::from_fn_with_state(self.0.clone(), admit)),
         )
@@ -408,6 +418,17 @@ fn secure(mut response: Response) -> Response {
     );
     response
 }
+fn installation_response(state: &State, response: Response) -> Response {
+    let mut response = secure(response);
+    if let Some(id) = &state.config.installation_id
+        && let Ok(value) = id.parse()
+    {
+        response
+            .headers_mut()
+            .insert("x-jj-store-installation", value);
+    }
+    response
+}
 async fn admit(
     ExtractState(state): ExtractState<Arc<State>>,
     mut request: axum::extract::Request,
@@ -416,7 +437,12 @@ async fn admit(
     let websocket = request
         .extensions()
         .get::<axum::extract::MatchedPath>()
-        .is_some_and(|p| p.as_str() == "/v1/events/ws");
+        .is_some_and(|p| {
+            matches!(
+                p.as_str(),
+                "/v1/events/ws" | "/v1/local/connections/{id}/events"
+            )
+        });
     for (name, value) in request.headers_mut().iter_mut() {
         if name == header::AUTHORIZATION {
             value.set_sensitive(true);
@@ -453,6 +479,21 @@ async fn admit(
                     .is_none_or(|value| value.as_bytes() != expected_authority.as_bytes())
             {
                 return Err(Error::denied());
+            }
+            let expected = request.headers().get_all("x-jj-store-target-installation");
+            if expected.iter().count() > 1
+                || expected.iter().next().is_some_and(|v| {
+                    state
+                        .config
+                        .installation_id
+                        .as_ref()
+                        .is_none_or(|id| v.as_bytes() != id.as_bytes())
+                })
+            {
+                return Err(Error::new(
+                    StatusCode::CONFLICT,
+                    "connection_identity_changed",
+                ));
             }
             let protocol = request.headers().get_all(PROTOCOL_HEADER);
             if websocket {
@@ -570,7 +611,7 @@ async fn admit(
         check()
     };
     if let Err(error) = checked {
-        return secure(error.into_response());
+        return installation_response(&state, error.into_response());
     }
     let event_route = request.method() == axum::http::Method::GET
         && request
@@ -583,8 +624,14 @@ async fn admit(
                         | "/v1/repos/{repo}/events"
                         | "/v1/local/repos/{repo}/events"
                         | "/v1/local/agents/stream"
+                        | "/v1/agents/stream"
                 )
             });
+    let event_route = event_route
+        || (request.method() == axum::http::Method::GET
+            && request.uri().path().starts_with("/v1/local/connections/")
+            && (request.uri().path().ends_with("/events")
+                || request.uri().path().ends_with("/agents/stream")));
     let slots = if event_route {
         &state.event_slots
     } else {
@@ -592,7 +639,7 @@ async fn admit(
     };
     let permit = match slots.clone().try_acquire_owned() {
         Ok(p) => p,
-        Err(_) => return secure(Error::busy().into_response()),
+        Err(_) => return installation_response(&state, Error::busy().into_response()),
     };
     let deadline = Instant::now() + state.config.timeout;
     if matches!(
@@ -605,8 +652,8 @@ async fn admit(
         let body = std::mem::replace(request.body_mut(), Body::empty());
         match tokio::time::timeout_at(deadline, axum::body::to_bytes(body, 0)).await {
             Ok(Ok(_)) => {}
-            Ok(Err(_)) => return secure(Error::invalid().into_response()),
-            Err(_) => return secure(Error::timeout().into_response()),
+            Ok(Err(_)) => return installation_response(&state, Error::invalid().into_response()),
+            Err(_) => return installation_response(&state, Error::timeout().into_response()),
         }
     }
     let pending = mutations::Pending::default();
@@ -621,7 +668,7 @@ async fn admit(
             if head {
                 *response.body_mut() = Body::empty();
             }
-            return secure(response);
+            return installation_response(&state, response);
         }
     };
     let delivery_deadline = if event_route && response.status().is_success() {
@@ -629,7 +676,10 @@ async fn admit(
     } else {
         deadline
     };
-    secure(response.map(|body| Body::new(body::Guard::new(body, permit, delivery_deadline))))
+    installation_response(
+        &state,
+        response.map(|body| Body::new(body::Guard::new(body, permit, delivery_deadline))),
+    )
 }
 struct Context {
     session: Arc<NativeSession>,

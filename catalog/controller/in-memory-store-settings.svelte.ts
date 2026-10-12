@@ -16,6 +16,8 @@ export type CatalogSearchSettings =
 
 const capabilities = (search: boolean): Capabilities => ({
   installation_directory: false,
+  server_connections: false,
+  authenticated_agent_execution: false,
   version: 1,
   native_profile: "jj-store-native-v1",
   authentication: "repository_bearer",

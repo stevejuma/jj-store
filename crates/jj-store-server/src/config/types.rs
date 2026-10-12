@@ -6,6 +6,8 @@ use std::{collections::BTreeSet, net::SocketAddr, path::PathBuf};
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Config {
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub remote_agents: Option<crate::remote_agents::Configuration>,
     #[serde(
         default,
         skip_serializing_if = "crate::capture_config::AgentCaptureConfig::is_default"

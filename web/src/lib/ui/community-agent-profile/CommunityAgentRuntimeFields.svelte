@@ -7,6 +7,7 @@
     thinking,
     mode,
     disabled = false,
+    editable = true,
     harnessEditable = true,
     onEdit,
   }: {
@@ -15,6 +16,7 @@
     thinking: string;
     mode: string;
     disabled?: boolean;
+    editable?: boolean;
     harnessEditable?: boolean;
     onEdit: () => void;
   } = $props();
@@ -26,17 +28,19 @@
   aria-label="Runtime defaults"
 >
   {#each [{ label: "Agent harness", value: harness }, { label: "Model", value: model }, { label: "Thinking", value: thinking }, { label: "Execution mode", value: mode }] as field (field.label)}
-    <Button
-      type="button"
-      variant="ghost"
-      class="agent-profile__runtime-field"
-      disabled={disabled ||
-        (field.label === "Agent harness" && !harnessEditable)}
-      aria-label={`Edit ${field.label.toLowerCase()}`}
-      onclick={onEdit}
-    >
-      <span><span>{field.label}</span><strong>{field.value}</strong></span
-      ><PencilIcon aria-hidden="true" />
-    </Button>
+    {#if editable}<Button
+        type="button"
+        variant="ghost"
+        class="agent-profile__runtime-field"
+        disabled={disabled ||
+          (field.label === "Agent harness" && !harnessEditable)}
+        aria-label={`Edit ${field.label.toLowerCase()}`}
+        onclick={onEdit}
+      >
+        <span><span>{field.label}</span><strong>{field.value}</strong></span
+        ><PencilIcon aria-hidden="true" />
+      </Button>{:else}<div class="agent-profile__runtime-field">
+        <span><span>{field.label}</span><strong>{field.value}</strong></span>
+      </div>{/if}
   {/each}
 </div>

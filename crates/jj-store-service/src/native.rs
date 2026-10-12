@@ -103,6 +103,25 @@ impl NativeSession {
         ));
         Self::with_access(store, objects, access, clock, protection, limits)
     }
+    pub fn new_delegated(
+        store: Arc<dyn ObjectStore>,
+        objects: Arc<NativeObjects>,
+        delegation: Arc<dyn crate::access::Delegation>,
+        clock: Arc<dyn Clock>,
+        protection: Protection,
+        limits: SessionLimits,
+    ) -> wal::Result<Self> {
+        let access = Arc::new(
+            RepositoryAccess::delegated(
+                objects.scope().repository(),
+                store.clone(),
+                clock.clone(),
+                delegation,
+            )
+            .map_err(|_| wal::Error::Denied)?,
+        );
+        Self::with_access(store, objects, access, clock, protection, limits)
+    }
     pub fn new_local_trusted(
         store: Arc<dyn ObjectStore>,
         objects: Arc<NativeObjects>,

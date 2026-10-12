@@ -136,7 +136,8 @@ export async function initializeProductionStore(options: {
     options.data.captureSupported =
       bootstrap.capabilities.local_capture_management === true;
     options.data.executionSupported =
-      bootstrap.capabilities.local_agent_execution === true;
+      bootstrap.capabilities.local_agent_execution === true ||
+      bootstrap.capabilities.authenticated_agent_execution === true;
     options.data.backups = [...bootstrap.backups];
     await options.events?.(
       bootstrap.capabilities.application_events === true,
@@ -264,6 +265,7 @@ export function createProductionConnectionScope(
   fetcher: typeof fetch | undefined,
   token: () => string | null,
   denied: () => void,
+  active?: () => boolean,
 ) {
   const freshness = new ApplicationFreshness(fetcher, denied);
   const local = createLocalConfiguration(
@@ -272,6 +274,7 @@ export function createProductionConnectionScope(
     freshness,
     token,
     denied,
+    active,
   );
   const scopes = controllerAbortScopes();
   return {

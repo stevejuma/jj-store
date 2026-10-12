@@ -88,6 +88,8 @@ pub struct Supervisor(Arc<Inner>);
 struct Inner {
     chatgpt: chatgpt::Runtime,
     resources: Resources,
+    delegation: Mutex<Option<Arc<dyn jj_store_service::access::Delegation>>>,
+    worker_slots: Mutex<Option<Arc<tokio::sync::Semaphore>>>,
     state: Mutex<State>,
     runtimes: Mutex<BTreeMap<String, mpsc::Sender<Value>>>,
     fleet: Mutex<BTreeMap<String, fleet::Worker>>,
@@ -162,6 +164,8 @@ impl Supervisor {
         let supervisor = Self(Arc::new(Inner {
             chatgpt: Default::default(),
             resources,
+            delegation: Mutex::new(None),
+            worker_slots: Mutex::new(None),
             state: Mutex::new(state),
             runtimes: Mutex::new(BTreeMap::new()),
             fleet: Mutex::new(BTreeMap::new()),
@@ -195,6 +199,64 @@ impl Supervisor {
         }));
         supervisor.prepare_privacy();
         Ok(supervisor)
+    }
+    pub(crate) fn pending_prompts(&self) -> usize {
+        self.read(|s| {
+            Ok(s.intents
+                .values()
+                .filter(|i| {
+                    matches!(
+                        i.outcome.state.as_str(),
+                        "queued" | "dispatching" | "started"
+                    )
+                })
+                .count())
+        })
+        .unwrap_or(64)
+    }
+    pub(crate) fn remote(
+        &self,
+        delegation: Arc<dyn jj_store_service::access::Delegation>,
+        slots: Arc<tokio::sync::Semaphore>,
+        setups: Vec<Setup>,
+    ) -> Result<()> {
+        *self.0.delegation.lock().map_err(|_| Error::Unavailable)? = Some(delegation);
+        *self.0.worker_slots.lock().map_err(|_| Error::Unavailable)? = Some(slots);
+        self.update(|s| {
+            s.setups = setups.into_iter().map(|s| (s.id.clone(), s)).collect();
+            s.warm_agents.clear();
+            Ok(())
+        })
+    }
+    fn remote_mode(&self) -> bool {
+        self.0.delegation.lock().map_or(true, |d| d.is_some())
+    }
+    pub(crate) fn native_request(
+        &self,
+        repository: RepositoryId,
+    ) -> Result<jj_store_service::transport::NativeRequest> {
+        let endpoint = self
+            .0
+            .resources
+            .host
+            .as_ref()
+            .ok_or(Error::Unavailable)?
+            .endpoint(repository)
+            .map_err(|_| Error::Denied)?;
+        match self
+            .0
+            .delegation
+            .lock()
+            .map_err(|_| Error::Unavailable)?
+            .clone()
+        {
+            Some(authority) => endpoint.bind_delegated(authority),
+            None => endpoint.bind_local_trusted(
+                self.0.resources.actor,
+                jj_store_service::auth::Permission::Admin,
+            ),
+        }
+        .map_err(|_| Error::Denied)
     }
     fn prepare_privacy(&self) {
         let this = self.clone();
@@ -292,6 +354,50 @@ impl Supervisor {
             );
         }
         Ok(result)
+    }
+    pub(crate) fn remote_request_known(
+        &self,
+        request: RequestId,
+        command: &impl serde::Serialize,
+    ) -> Result<bool> {
+        Ok(self
+            .duplicate(request, &journal::digest(command)?)?
+            .is_some())
+    }
+    pub(crate) fn remote_origin_matches(
+        &self,
+        command: &jj_store_service::agent_execution::conversations::Send,
+    ) -> Result<()> {
+        self.read(|state| {
+            if let Some(old) = state.conversations.get(&command.conversation_id) {
+                if old.origin.scope != command.origin.scope
+                    || old.origin.home != command.origin.home
+                    || old.origin.thread != command.origin.thread
+                    || old.origin.agent_target != command.origin.agent_target
+                {
+                    return Err(Error::Stale);
+                }
+            }
+            Ok(())
+        })
+    }
+    pub(crate) fn validate_remote_options(options: &settings::RuntimeOptions) -> Result<()> {
+        configuration::validate(options)
+    }
+    pub(crate) fn validate_remote_setup(setup: &Setup) -> Result<()> {
+        if !label(&setup.id, 64)
+            || !label(&setup.name, 128)
+            || !avatar::valid(&setup.avatar)
+            || setup.description.chars().count() > 280
+            || setup.description.contains('\0')
+            || setup.instructions.len() > 32768
+            || setup.instructions.contains('\0')
+            || !matches!(setup.runner.as_str(), "codex" | "cursor" | "local")
+        {
+            return Err(Error::Invalid);
+        }
+        preferences(&setup.preferences)?;
+        Self::validate_remote_options(&setup.options)
     }
     fn duplicate(&self, request: RequestId, digest: &str) -> Result<Option<Outcome>> {
         self.read(|s| match s.intents.get(&request) {

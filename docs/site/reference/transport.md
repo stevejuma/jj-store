@@ -1,5 +1,17 @@
 # Transport semantics
 
+Device-local remote connections forward supported public HTTP and activity
+requests only to a registered origin. HTTPS, protocol and installation identity
+are checked before use; redirects, arbitrary targets and LocalTrusted authority
+are refused. Tokens and connection handles remain in memory. Browser admission,
+CSP and repository authorization remain enforced on both sides.
+
+Authenticated agent APIs additionally enforce operator agent/principal
+allowlists. Private native Unix sockets delegate the initiating principal's
+current repository grants to admitted workspaces, without process-supplied
+credentials or administrator fallback. Existing native wire and publication
+formats remain unchanged.
+
 The application exposes HTTP under `/v1` and native RPC through the configured
 connection. [HTTP reference](http-api.md) is generated from the registered
 OpenAPI contract. Native RPC serves the custom JJ integration; both transports

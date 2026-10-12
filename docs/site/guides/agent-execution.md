@@ -6,6 +6,22 @@ and conversation metadata.
 
 ## Enable execution
 
+### Use an agent on another server
+
+Choose **Add server** above Help and sign in to an authenticated server. Select
+its chip to view that server's repositories, projects and allowed agents. Your
+token's installation principal must appear in the operator's agent allowlist and
+independently have Write access to the existing native WorkStore home and every
+attached repository. Select a home before sending a general conversation.
+
+The remote host runs the workspace and agent; its activity streams back to this
+app. Switching retains unsent drafts and pauses hidden readers. Unknown outcomes
+keep their original request identity; restart never replays prompts. Restored
+connections require sign-in again. Remote definitions, runtime installs,
+providers and credentials stay operator-controlled. Native repositories must
+already exist on that server. M27 records fixture, installed-runtime, real
+storage, desktop and platform acceptance separately.
+
 Prepare the service and tooling, then save the agent configuration you want to
 use.
 

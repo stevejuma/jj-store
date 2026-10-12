@@ -6,3 +6,4 @@
 - [Ordinary local Stacks documentation](06-ordinary-local-stacks-documentation.md)
 - [Local Stacks command documentation](07-local-stacks-command-documentation.md)
 - [Interactive agent execution manual](08-interactive-agent-execution.md)
+- [Remote connection documentation](09-remote-agent-connections.md)

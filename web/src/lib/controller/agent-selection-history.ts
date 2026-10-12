@@ -35,7 +35,11 @@ export class AgentSelectionHistory {
   }
   private followSharedFeed() {
     this.updates ??= watchAgentChanges(this.manager.freshness, {
-      active: () => this.alive && this.manager.open && !!this.manager.selected,
+      active: () =>
+        this.alive &&
+        this.manager.available() &&
+        this.manager.open &&
+        !!this.manager.selected,
       matches: () => false,
       reset: () => {
         this.history.clear();

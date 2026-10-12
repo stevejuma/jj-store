@@ -300,6 +300,14 @@ impl Supervisor {
                 return Ok(());
             }
         }
+        let worker_permit = self
+            .0
+            .worker_slots
+            .lock()
+            .map_err(|_| Error::Unavailable)?
+            .as_ref()
+            .map(|slots| slots.clone().try_acquire_owned().map_err(|_| Error::Limit))
+            .transpose()?;
         let root = self.0.resources.root.join("workspaces");
         let mut command = Command::new(&self.0.resources.executable);
         command.arg("serve");
@@ -388,6 +396,7 @@ impl Supervisor {
         let id = id.to_owned();
         let task_id = format!("fleet/{id}");
         let task = tokio::spawn(async move {
+            let _worker_permit = worker_permit;
             let _chatgpt_lease = chatgpt_lease;
             this.run_worker(&id, generation, child, receiver, stopping)
                 .await;

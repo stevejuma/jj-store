@@ -12,7 +12,9 @@ export interface StoreRouteBrowser {
   listen(listener: () => void): () => void;
 }
 
-export function browserNavigation(): StoreRouteBrowser | undefined {
+export function browserNavigation(
+  restoreSettings = true,
+): StoreRouteBrowser | undefined {
   if (typeof window === "undefined") return undefined;
   let storage: Storage | undefined;
   try {
@@ -20,7 +22,9 @@ export function browserNavigation(): StoreRouteBrowser | undefined {
   } catch {
     /* Optional device preference. */
   }
-  const resumed = resumeGlobalSettingsHash(window.location.hash, storage);
+  const resumed = restoreSettings
+    ? resumeGlobalSettingsHash(window.location.hash, storage)
+    : window.location.hash;
   if (resumed !== window.location.hash)
     window.history.replaceState(null, "", resumed);
   rememberGlobalSettingsHash(resumed, storage);

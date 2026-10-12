@@ -178,6 +178,8 @@ export interface StoreController {
 
 /** Host-owned transport and routing inputs; defaults retain ordinary browser startup. */
 export type ProductionStoreControllerOptions = {
+  active?: () => boolean;
+  authorizationLost?: () => void;
   fetcher?: typeof fetch;
   now?: () => number;
   browser?: import("./store-route-history.svelte.js").StoreRouteBrowser;

@@ -1,4 +1,5 @@
 export interface InMemoryStoreControllerOptions {
+  accessMode?: "authenticated" | "local_trusted";
   workingCopies?: readonly import("../../web/src/lib/projects/repository-log.js").RepositoryWorkingCopy[];
   large?: boolean;
   mutationOutcome?: "committed" | "unknown";

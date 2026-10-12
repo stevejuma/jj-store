@@ -9,3 +9,4 @@
 - [Bundled application documentation](09-bundled-application-documentation.md)
 - [Scoped application freshness](10-scoped-application-freshness.md)
 - [Installation profiles and emoji (M26)](11-installation-profiles-and-emoji.md)
+- [Remote connections and agent execution (M27)](12-remote-connections-and-agents.md)

@@ -39,3 +39,4 @@ adds a Markdown record and an explicit milestone review.
 - [M24 reusable ACP agents and contextual conversations](M24/index.md)
 - [M25 local compute, agent configuration and sent context](M25/index.md)
 - [M26 installation profiles and custom emoji](M26/index.md)
+- [M27 remote server connections and authenticated agents](M27/index.md)

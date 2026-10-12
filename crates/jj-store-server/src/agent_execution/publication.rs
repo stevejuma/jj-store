@@ -16,7 +16,7 @@ pub(super) fn identity(value: &str) -> [u8; 16] {
         .expect("digest")
 }
 impl Supervisor {
-    pub(super) async fn publish(&self) -> Result<()> {
+    pub(crate) async fn publish(&self) -> Result<()> {
         let _guard = self.0.publication.lock().await;
         let sessions = self.read(|s| Ok(s.sessions.values().cloned().collect::<Vec<_>>()))?;
         for saved in sessions {
@@ -195,19 +195,7 @@ impl Supervisor {
                 .await
                 .map_err(|error| self.publication_failure(&saved.view.id, &*error))?
         } else {
-            let publisher = self
-                .0
-                .resources
-                .host
-                .as_ref()
-                .ok_or(Error::Unavailable)?
-                .endpoint(saved.view.repository)
-                .map_err(|_| Error::Denied)?
-                .bind_local_trusted(
-                    self.0.resources.actor,
-                    jj_store_service::auth::Permission::Admin,
-                )
-                .map_err(|_| Error::Denied)?;
+            let publisher = self.native_request(saved.view.repository)?;
             drain_capture_spool(&mut spool, saved.view.repository, &publisher)
                 .await
                 .map_err(|error| self.publication_failure(&saved.view.id, &*error))?

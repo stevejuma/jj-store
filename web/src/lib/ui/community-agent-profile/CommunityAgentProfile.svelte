@@ -28,6 +28,7 @@
     status,
     unknown = false,
     pending = false,
+    management = true,
     onEdit,
     onStart,
     onActivity,
@@ -40,6 +41,7 @@
     status: AgentStatus | null;
     unknown?: boolean;
     pending?: boolean;
+    management?: boolean;
     onEdit: () => void;
     onStart: () => void;
     onActivity: () => void;
@@ -74,19 +76,19 @@
       presence={presence.presence}
     />
     <h2>
-      <Button
-        type="button"
-        variant="ghost"
-        class="agent-profile__name-edit"
-        aria-label={`Edit ${agent.name}`}
-        disabled={pending || unknown}
-        onclick={onEdit}
-      >
-        <span>{agent.name}</span><span
-          class="agent-profile__name-edit-icon"
-          aria-hidden="true"><PencilIcon /></span
+      {#if management}<Button
+          type="button"
+          variant="ghost"
+          class="agent-profile__name-edit"
+          aria-label={`Edit ${agent.name}`}
+          disabled={pending || unknown}
+          onclick={onEdit}
         >
-      </Button>
+          <span>{agent.name}</span><span
+            class="agent-profile__name-edit-icon"
+            aria-hidden="true"><PencilIcon /></span
+          >
+        </Button>{:else}{agent.name}{/if}
     </h2>
     <div class="agent-profile__signals">
       {#if presence.label === "Working"}<Reasoning
@@ -99,15 +101,15 @@
     </div>
   </header>
   <CommunityProfileActions label="Agent profile actions" compact>
-    {#if ["Starting", "Idle", "Online", "Working", "Queued", "Needs attention", "Stopping"].includes(presence.label)}<Button
-        disabled={pending || unknown}
-        onclick={() => onStop(agent.id)}
-        ><StopIcon aria-hidden="true" />Stop agent</Button
-      >
-    {:else}<Button
-        disabled={pending || unknown || !harness?.available}
-        onclick={onStart}><PlayIcon aria-hidden="true" />Start agent</Button
-      >{/if}
+    {#if management}{#if ["Starting", "Idle", "Online", "Working", "Queued", "Needs attention", "Stopping"].includes(presence.label)}<Button
+          disabled={pending || unknown}
+          onclick={() => onStop(agent.id)}
+          ><StopIcon aria-hidden="true" />Stop agent</Button
+        >
+      {:else}<Button
+          disabled={pending || unknown || !harness?.available}
+          onclick={onStart}><PlayIcon aria-hidden="true" />Start agent</Button
+        >{/if}{/if}
     {#if onChat}<Button variant="secondary" disabled={pending} onclick={onChat}
         ><NewChatIcon data-icon="inline-start" aria-hidden="true" />New chat</Button
       >{/if}
@@ -169,9 +171,10 @@
             <CpuIcon aria-hidden="true" />
             <div class="agent-profile__info-value">
               <strong>Agent harness</strong><span
-                >{harness?.label ?? agent.runner} · {harness?.available
-                  ? "Installed"
-                  : "Unavailable"}</span
+                >{harness?.label ?? agent.runner}{#if management}
+                  · {harness?.available
+                    ? "Installed"
+                    : "Unavailable"}{/if}</span
               >
             </div>
           </li>
@@ -193,6 +196,7 @@
           thinking={agent.preferences.effort || "Harness default"}
           mode={agent.preferences.mode || "Choose after connecting"}
           disabled={pending || unknown}
+          editable={management}
           {onEdit}
         />
         <p>

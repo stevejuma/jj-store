@@ -8,7 +8,7 @@
     title: "JJ Store/Settings/Navigation",
     component: StoreApplication,
     tags: ["visual-pending"],
-    args: { initiallyCollapsed: false },
+    args: { initiallyCollapsed: false, accessMode: "local_trusted" },
   });
   async function openSettings(canvasElement: HTMLElement) {
     const canvas = within(canvasElement);

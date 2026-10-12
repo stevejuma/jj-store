@@ -570,18 +570,22 @@ impl Supervisor {
                 .driver
                 .materialize(a.repository, root.join(a.repository.to_string()), socket)
                 .await?;
-            let proof = self
-                .0
-                .resources
-                .verifier
-                .as_ref()
-                .ok_or(Error::Unavailable)?
-                .inspect(source.path.to_str().ok_or(Error::Invalid)?)
-                .map_err(|_| Error::Stale)?;
-            if proof.repository != a.repository
-                || proof.profile != jj_store_service::local_management::WorkspaceProfile::Native
-            {
-                return Err(Error::Stale);
+            if !self.remote_mode() {
+                let proof = self
+                    .0
+                    .resources
+                    .verifier
+                    .as_ref()
+                    .ok_or(Error::Unavailable)?
+                    .inspect(source.path.to_str().ok_or(Error::Invalid)?)
+                    .map_err(|_| Error::Stale)?;
+                if proof.repository != a.repository
+                    || proof.profile != jj_store_service::local_management::WorkspaceProfile::Native
+                {
+                    return Err(Error::Stale);
+                }
+            } else {
+                self.0.resources.driver.verify(&source).await?;
             }
             targets.push(Target {
                 id: format!("managed-{}", a.repository),

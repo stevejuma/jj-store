@@ -35,7 +35,9 @@
       onclick={() => controller.actions.refresh()}
       ><RefreshCwIcon aria-hidden="true" /></Button
     >{/if}
-  <StoreTerminalToggle {disabled} />
+  {#if controller.state.accessMode === "local_trusted"}<StoreTerminalToggle
+      {disabled}
+    />{/if}
 {/if}
 {#if controller.execution}<Button
     variant="ghost"

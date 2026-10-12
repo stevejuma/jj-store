@@ -141,6 +141,10 @@ pub struct NativeRpc {
 #[derive(Clone)]
 enum RpcAccess {
     Authenticated,
+    Delegated {
+        authority: Arc<dyn jj_store_service::access::Delegation>,
+        owner_uid: u32,
+    },
     LocalTrusted {
         principal: m::PrincipalId,
         permission: Permission,
@@ -149,6 +153,7 @@ enum RpcAccess {
 }
 enum RequestAccess {
     Authenticated(BearerToken),
+    Delegated(Arc<dyn jj_store_service::access::Delegation>),
     LocalTrusted {
         principal: m::PrincipalId,
         permission: Permission,
@@ -248,6 +253,20 @@ impl NativeRpc {
         };
         Ok(rpc)
     }
+    /// Private same-UID endpoint, bounded by the initiating caller's current grants.
+    pub fn delegated(
+        host: RepositoryHost,
+        limits: Limits,
+        authority: Arc<dyn jj_store_service::access::Delegation>,
+        owner_uid: u32,
+    ) -> Result<Self, Status> {
+        let mut rpc = Self::hosted(host, limits)?;
+        rpc.access = RpcAccess::Delegated {
+            authority,
+            owner_uid,
+        };
+        Ok(rpc)
+    }
     pub fn service(self) -> NativeStoreServer<Self> {
         NativeStoreServer::new(self)
             .max_decoding_message_size(REQUEST_BYTES)
@@ -304,9 +323,23 @@ impl NativeRpc {
         BearerToken::parse(value).map_err(|_| Status::unauthenticated("invalid bearer credential"))
     }
     fn request_access<T>(&self, request: &Request<T>) -> Result<RequestAccess, Status> {
-        match self.access {
+        match &self.access {
             RpcAccess::Authenticated => {
                 Self::credential(request.metadata()).map(RequestAccess::Authenticated)
+            }
+            RpcAccess::Delegated {
+                authority,
+                owner_uid,
+            } => {
+                let uid = request
+                    .extensions()
+                    .get::<tonic::transport::server::UdsConnectInfo>()
+                    .and_then(|i| i.peer_cred)
+                    .map(|c| c.uid());
+                if uid != Some(*owner_uid) || request.metadata().contains_key("authorization") {
+                    return Err(Status::permission_denied("delegated peer access denied"));
+                }
+                Ok(RequestAccess::Delegated(authority.clone()))
             }
             RpcAccess::LocalTrusted {
                 principal,
@@ -323,12 +356,12 @@ impl NativeRpc {
                     .get::<tonic::transport::server::UdsConnectInfo>()
                     .and_then(|info| info.peer_cred)
                     .map(|credential| credential.uid());
-                if uid != Some(owner_uid) {
+                if uid != Some(*owner_uid) {
                     return Err(Status::permission_denied("local peer access denied"));
                 }
                 Ok(RequestAccess::LocalTrusted {
-                    principal,
-                    permission,
+                    principal: *principal,
+                    permission: *permission,
                 })
             }
         }
@@ -345,6 +378,9 @@ impl NativeRpc {
                 .ok_or_else(|| Status::permission_denied("repository access denied"))?,
         };
         match access {
+            RequestAccess::Delegated(authority) => {
+                endpoint.bind_delegated(authority).map_err(service_error)
+            }
             RequestAccess::Authenticated(credential) => {
                 endpoint.bind(credential).map_err(service_error)
             }
@@ -407,6 +443,11 @@ impl NativeStore for NativeRpc {
         request: Request<wire::CreateRepositoryRequest>,
     ) -> Result<Response<wire::Snapshot>, Status> {
         let access = self.request_access(&request)?;
+        if matches!(access, RequestAccess::Delegated(_)) {
+            return Err(Status::permission_denied(
+                "delegated repository creation denied",
+            ));
+        }
         let mut request = request.into_inner();
         let repository = m::RepositoryId::from_slice(&request.repository)
             .map_err(|_| Status::invalid_argument("repository ID length"))?;
@@ -429,6 +470,9 @@ impl NativeStore for NativeRpc {
                     .map_err(Self::registry_error)?;
             }
             let (snapshot, initial_token) = match access {
+                RequestAccess::Delegated(_) => {
+                    return Err(Status::permission_denied("delegated creation denied"));
+                }
                 RequestAccess::Authenticated(token) => {
                     let credential = admin::parse_secret(&mut request.admin_credential)?;
                     let token_id = credential.id();

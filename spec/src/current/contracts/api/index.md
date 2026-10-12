@@ -2,6 +2,7 @@
 
 Read the owning topic and requirement before implementation.
 <!-- generated-navigation -->
+
 ## Pages
 
 - [Read APIs and browser](01-read-apis-and-browser.md)
@@ -48,3 +49,4 @@ Read the owning topic and requirement before implementation.
 - [Installation agent settings and compute](42-compute-and-agent-settings.md)
 - [Conversation metadata API](43-conversation-metadata.md)
 - [Intentional Thread workspace API](44-thread-workspaces.md)
+- [Remote application connections](45-remote-connections-and-agents.md)

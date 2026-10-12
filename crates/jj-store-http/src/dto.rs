@@ -7,6 +7,8 @@ use serde::Serialize;
 
 #[derive(Serialize, JsonSchema)]
 pub(crate) struct Capabilities {
+    pub server_connections: bool,
+    pub authenticated_agent_execution: bool,
     pub version: u32,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub native_authority: Option<bool>,
@@ -67,6 +69,7 @@ pub(crate) struct StorageState {
 
 #[derive(Serialize, JsonSchema)]
 pub(crate) struct Bootstrap {
+    pub installation_id: Option<String>,
     pub version: u32,
     pub access_mode: AccessMode,
     pub capabilities: Capabilities,
@@ -81,6 +84,7 @@ impl From<&Config> for Bootstrap {
             Access::LocalTrusted { .. } => AccessMode::LocalTrusted,
         };
         Self {
+            installation_id: config.installation_id.clone(),
             version: 1,
             access_mode,
             capabilities: Capabilities::from(config),
@@ -143,6 +147,8 @@ pub(crate) struct LogContext {
 impl From<&Config> for Capabilities {
     fn from(config: &Config) -> Self {
         Self {
+            server_connections: config.local_connections.is_some(),
+            authenticated_agent_execution: config.remote_agents.is_some(),
             version: 1,
             application_events: config.registry.as_ref().map(|_| true),
             native_authority: Some(config.native_authority),

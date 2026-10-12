@@ -172,7 +172,9 @@ export class ApplicationFreshness {
     const abort = new AbortController();
     const automatic = createAutomaticRefresh({
       active: () =>
-        (!this.supported || this.healthy) && (options.active?.() ?? true),
+        this.state !== "stopped" &&
+        (!this.supported || this.healthy) &&
+        (options.active?.() ?? true),
       refresh: options.refresh,
 
       report: () => {},

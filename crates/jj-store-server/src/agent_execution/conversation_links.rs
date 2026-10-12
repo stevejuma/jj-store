@@ -163,19 +163,6 @@ impl Supervisor {
         &self,
         repository: RepositoryId,
     ) -> Result<Arc<jj_store_service::native::NativeSession>> {
-        Ok(self
-            .0
-            .resources
-            .host
-            .as_ref()
-            .ok_or(Error::Unavailable)?
-            .endpoint(repository)
-            .map_err(|_| Error::Denied)?
-            .bind_local_trusted(
-                self.0.resources.actor,
-                jj_store_service::auth::Permission::Admin,
-            )
-            .map_err(|_| Error::Denied)?
-            .into_session())
+        Ok(self.native_request(repository)?.into_session())
     }
 }

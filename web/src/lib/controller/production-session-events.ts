@@ -4,12 +4,30 @@ import {
   startProductionStoreLifecycle,
 } from "./production-store-lifecycle.svelte.js";
 import type { ApplicationFreshness } from "./application-freshness.js";
+export function startConnectionEvents(
+  options: Omit<
+    Parameters<typeof startProductionSessionEvents>[0],
+    "automatic"
+  > &
+    Parameters<typeof startProductionSessionEvents>[0]["automatic"],
+  freshness: ApplicationFreshness,
+) {
+  const { projects, threads, sources, active, refresh, ...lifecycle } = options;
+  return startProductionSessionEvents(
+    {
+      ...lifecycle,
+      automatic: { projects, threads, sources, active, refresh },
+    },
+    freshness,
+  );
+}
 /** Subscribe before the lifecycle discovers repositories or captures selected content. */
 export function startProductionSessionEvents(
   options: Omit<
     Parameters<typeof startProductionStoreLifecycle>[0],
     "events"
   > & {
+    connectionActive?(): boolean;
     automatic: Omit<
       Parameters<typeof createProductionAutomaticRefresh>[0],
       "data" | "route" | "source" | "signal" | "freshness" | "report"
@@ -30,7 +48,8 @@ export function startProductionSessionEvents(
     ...options,
     events: async (supported, token) => {
       freshness.advertise(supported);
-      if (token !== undefined) await freshness.configure(supported, token);
+      if (token !== undefined && (options.connectionActive?.() ?? true))
+        await freshness.configure(supported, token);
     },
   });
   return automatic;

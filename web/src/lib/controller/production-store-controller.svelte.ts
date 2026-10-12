@@ -1,15 +1,18 @@
-import { createProductionThreadWorkspaces } from "./production-thread-workspaces.js";
+import {
+  connectionActivity,
+  connectionEvents,
+} from "./production-connection-activity.js";
+import { connectionViews } from "./production-connection-views.js";
 import { agentsRoute } from "./agents-route-codec.js";
 import { createProductionStacksReaders } from "./production-stacks-history.js";
 import { createReadScope } from "./read-scope.js";
 import { connectRepositorySource } from "./production-repository-connect.js";
-import { createEntitySearch } from "./production-entity-search.js";
 import { createProductionRefresh } from "./production-store-refresh.js";
 import { createThreadsIntegration } from "./production-threads-integration.js";
 import { createProfileRouteRestorer } from "./production-profile-route.js";
 import { createProductionProjects } from "./production-projects-integration.js";
 import { createProductionConnect } from "./production-store-connect.js";
-import { startProductionSessionEvents } from "./production-session-events.js";
+import { startConnectionEvents } from "./production-session-events.js";
 
 import type {
   StoreController,
@@ -45,24 +48,24 @@ export function createProductionStoreController(
     options.fetcher,
     () => sessionToken,
     () => disconnect("Access denied", true),
+    options.active,
   );
   const { sources, threadNavigation, local, freshness, lifecycle } = connection;
   let { feed, discovery } = connection;
   const { invalidate, signal, version } = createReadScope();
-  const follow = (active: StoreDataSource) =>
-    automatic.follow(active, (feed = new AbortController()).signal);
+  const follow = (active: StoreDataSource) => {
+    if (options.active?.() ?? true)
+      automatic.follow(active, (feed = new AbortController()).signal);
+  };
   const activeSource = () => requireProductionSource(source);
   const current = (ticket: number, active: StoreDataSource) =>
     ticket === version() && active === source;
+  const reads = { data, history, source: activeSource };
+  const snapshots = { ...reads, version, signal, current };
   const { reader, historyQuery, stacks } = createProductionStacksReaders({
-    data,
-    history,
-    source: activeSource,
+    ...snapshots,
     localSource: () => source,
-    version,
     begin: invalidate,
-    signal,
-    current,
     fetcher: options.fetcher,
   });
 
@@ -105,37 +108,26 @@ export function createProductionStoreController(
   });
 
   const { search, settings } = createProductionReadServices({
-    data,
-    history,
-    source: activeSource,
-    version,
-    signal,
-    current,
+    ...snapshots,
     restoreRoute,
     restore: restoreRoute,
     freshness,
   });
 
-  const { openRoute, globalSearch, referenceSearch } = createEntitySearch({
-    repositories: () => data.repositories,
-    token: () => sessionToken,
-    route: () => history.route,
-    push: history.push,
-    canOpen: history.canNavigateTo,
-    repository: () => source?.repository,
-    projects,
-    connectRepository,
-    restoreRoute,
-    fetcher: options.fetcher,
-  });
-  const threadWorkspaces = createProductionThreadWorkspaces({
-    data,
-    token: () => sessionToken,
-    threadNavigation,
-    sources,
-    openThreads,
-    fetcher: options.fetcher,
-  });
+  const { openRoute, globalSearch, referenceSearch, threadWorkspaces } =
+    connectionViews({
+      data,
+      history,
+      token: () => sessionToken,
+      source: () => source,
+      projects,
+      connectRepository,
+      restoreRoute,
+      threadNavigation,
+      sources,
+      openThreads,
+      fetcher: options.fetcher,
+    });
   local.execution.onNavigate = (view, id, relatedId) =>
     void openRoute(agentsRoute(view, id, relatedId));
   function disconnect(message = "", denied = false, preserveSession = false) {
@@ -163,6 +155,7 @@ export function createProductionStoreController(
     globalSearch.clear();
     referenceSearch.clear();
     resetConnectionView(data, message, denied);
+    if (denied) options.authorizationLost?.();
     if (preserveSession) data.status.repositories = repositoryStatus;
     else if (data.accessMode === "authenticated") {
       sessionToken = null;
@@ -209,19 +202,13 @@ export function createProductionStoreController(
     connectRepository,
     disconnect,
     version,
-    discovery: (abort) => {
-      discovery = abort;
-    },
-    token: (token) => {
-      sessionToken = token;
-    },
+    discovery: (abort) => (discovery = abort),
+    token: (token) => (sessionToken = token),
     fetcher: options.fetcher,
-    events: (token) => freshness.configure(freshness.supported, token),
+    events: connectionEvents(freshness, options.active),
   });
   const { refresh, selectOperation } = createProductionRefresh({
-    data,
-    history,
-    source: activeSource,
+    ...reads,
     projects,
     threads: threadsIntegration,
     search,
@@ -234,10 +221,8 @@ export function createProductionStoreController(
     follow,
   });
   const { mutations, conflictUploads } = createProductionCommandServices({
-    data,
-    source: activeSource,
+    ...reads,
     current: (active) => active === source,
-    history,
     refresh,
   });
   const { selectRevision, branchActions } = createProductionSelections({
@@ -248,9 +233,7 @@ export function createProductionStoreController(
   });
 
   const actions = createProductionStoreActions({
-    data,
-    source: activeSource,
-    history,
+    ...reads,
     reader,
     search,
     mutations,
@@ -274,7 +257,7 @@ export function createProductionStoreController(
     invalidate,
   });
 
-  const automatic = startProductionSessionEvents(
+  const automatic = startConnectionEvents(
     {
       data,
       history,
@@ -284,13 +267,13 @@ export function createProductionStoreController(
       restore: restoreRoute,
       fetcher: options.fetcher,
       signal: lifecycle.signal,
-      automatic: {
-        projects,
-        threads,
-        sources,
-        active: () => authorizationReady(data, sessionToken),
-        refresh: (changes) => refresh(true, changes),
-      },
+      connectionActive: options.active,
+      projects,
+      threads,
+      sources,
+      active: () =>
+        (options.active?.() ?? true) && authorizationReady(data, sessionToken),
+      refresh: (changes) => refresh(true, changes),
     },
     freshness,
   );
@@ -317,7 +300,22 @@ export function createProductionStoreController(
       referenceSearch,
       ...local,
       freshness,
-      actions: { ...actions, openThreads, openRoute },
+      actions: {
+        ...actions,
+        openThreads,
+        openRoute,
+        setConnectionActive: connectionActivity(
+          automatic.pause,
+          () => feed,
+          stopProjectEvents,
+          () => source,
+          () => history.route.page !== "settings",
+          follow,
+          freshness,
+          () => sessionToken,
+          local.execution,
+        ),
+      },
     },
     automatic.pause,
   );

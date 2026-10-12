@@ -66,12 +66,13 @@
   <section aria-labelledby={`${sectionId}-agent`}>
     <h2 id={`${sectionId}-agent`}>Agent settings</h2>
     <CommunityAgentRuntimeFields
+      editable={manager.localManagement()}
       {harness}
       model={preferences.model || "Harness default"}
       thinking={preferences.effort || "Harness default"}
       mode={preferences.mode || "Choose execution mode"}
       disabled={blocked}
-      harnessEditable={!!agent}
+      harnessEditable={!!agent && manager.localManagement()}
       onEdit={() => (editorOpen = true)}
     />
   </section>

@@ -209,6 +209,7 @@
       label={directory ? "Agents directory" : "Agent workspace"}
     >
       {#if directory}<CommunityAgents
+          management={manager.localManagement()}
           value={manager.value}
           unknown={!!manager.connectionError}
           available={manager.available()}

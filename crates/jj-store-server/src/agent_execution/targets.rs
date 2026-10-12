@@ -15,18 +15,7 @@ impl Supervisor {
                 .open(repository)
                 .map_err(|_| Error::Denied)?;
         } else {
-            self.0
-                .resources
-                .host
-                .as_ref()
-                .ok_or(Error::Unavailable)?
-                .endpoint(repository)
-                .map_err(|_| Error::Denied)?
-                .bind_local_trusted(
-                    self.0.resources.actor,
-                    jj_store_service::auth::Permission::Admin,
-                )
-                .map_err(|_| Error::Denied)?
+            self.native_request(repository)?
                 .authorize(write)
                 .await
                 .map_err(|_| Error::Denied)?;

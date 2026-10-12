@@ -13,6 +13,19 @@ export function applicationEventTransport(
   deliver: (event: ApplicationEvent, id: string) => void,
   fetcher?: typeof fetch,
 ) {
+  const connection = (
+    fetcher as
+      | (typeof fetch & { connectionEvents?: { path: string; handle: string } })
+      | undefined
+  )?.connectionEvents;
+  if (connection)
+    return websocketApplicationEvents(
+      connection.handle,
+      after,
+      signal,
+      deliver,
+      connection.path,
+    );
   return fetcher
     ? applicationEvents(token, after, signal, deliver, fetcher)
     : websocketApplicationEvents(token, after, signal, deliver);
@@ -23,10 +36,11 @@ export function websocketApplicationEvents(
   after: string | undefined,
   signal: AbortSignal,
   deliver: (event: ApplicationEvent, id: string) => void,
+  path = "/v1/events/ws",
 ): Promise<void> {
   if (signal.aborted) return Promise.reject(signal.reason);
   return new Promise((resolve, reject) => {
-    const url = new URL("/v1/events/ws", location.href);
+    const url = new URL(path, location.href);
     url.protocol = url.protocol === "https:" ? "wss:" : "ws:";
     const socket = new WebSocket(url, "jj-store-events-v1");
     let finished = false,

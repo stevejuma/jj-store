@@ -233,7 +233,7 @@ pub(super) async fn prepare(
                 )),
                 folders: local_repositories.clone(),
                 workspaces: local_workspaces.clone(),
-                verifier,
+                verifier: verifier.clone(),
                 registry: registry.clone(),
                 host: host.clone(),
                 native_socket: match &config.access {
@@ -270,10 +270,48 @@ pub(super) async fn prepare(
             Err(_) => return Err(Error::Config("installation directory closure")),
         }
     }
+    let remote_agents = config
+        .remote_agents
+        .as_ref()
+        .map(|configuration| {
+            crate::remote_agents::Broker::open(
+                state.join("remote-agents"),
+                configuration.clone(),
+                host.clone()
+                    .ok_or(Error::Config("remote agents require native storage"))?,
+                Arc::new(directory.clone().ok_or(Error::Config(
+                    "remote agents require installation directory",
+                ))?) as Arc<dyn jj_store_service::directory::Directory>,
+                registry.clone(),
+            )
+            .map(|b| Arc::new(b) as Arc<dyn jj_store_service::remote_agents::RemoteAgents>)
+            .map_err(|_| Error::Config("remote agent preparation failed"))
+        })
+        .transpose()?;
     let http = HttpApi::with_search(
         host,
         state.join("native-reads"),
         HttpConfig {
+            remote_agents: remote_agents.clone(),
+            installation_id: Some(identity.installation.clone()),
+            local_connections: if matches!(
+                http_access,
+                HttpAccess::LocalTrusted {
+                    permission: jj_store_service::auth::Permission::Admin,
+                    ..
+                }
+            ) {
+                Some(Arc::new(
+                    crate::connections::Manager::open(
+                        state.join("connections"),
+                        config.insecure_loopback,
+                    )
+                    .map_err(|_| Error::Config("connection registry"))?,
+                )
+                    as Arc<dyn jj_store_service::connections::Connections>)
+            } else {
+                None
+            },
             origin: url::Url::parse(&config.public_url)
                 .map_err(|_| Error::Config("public URL"))?
                 .origin()
@@ -376,6 +414,7 @@ pub(super) async fn prepare(
         replication,
         capture,
         agents,
+        remote_agents,
         storage,
         _state_lock: state_lock,
     })

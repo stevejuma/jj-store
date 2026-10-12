@@ -332,23 +332,35 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
         "/v1/repos/{repo}/work/activity",
         "/v1/local/repos/{repo}/work/activity",
         "/v1/directory/image-uploads/{request_id}",
+       "/v1/local/connections",
+       "/v1/local/connections/connect",
+       "/v1/local/connections/disconnect",
+       "/v1/agents",
+       "/v1/agents/targets",
+       "/v1/agents/chat",
+       "/v1/agents/command",
+       "/v1/agents/workspace/inspect",
+       "/v1/agents/outcome",
+       "/v1/agents/events",
+       "/v1/agents/feedback",
+       "/v1/agents/stream",
     ] {
         assert!(paths.contains_key(path), "missing integrated route: {path}");
     }
-    assert_eq!(paths.len(), 178);
+    assert_eq!(paths.len(), 190);
     assert_eq!(
         paths
             .keys()
             .filter(|name| name.starts_with("/v1/local/"))
             .count(),
-        83
+        86
     );
     assert_eq!(
         paths
             .keys()
             .filter(|name| !name.starts_with("/v1/local/"))
             .count(),
-        95
+        104
     );
     let mut ids = std::collections::BTreeSet::new();
     for (name, path) in paths {
@@ -392,6 +404,16 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
             } else if name.starts_with("/v1/local/") {
                 assert_eq!(operation["security"], json!([{}]));
                 assert_eq!(operation["tags"], json!(["local"]));
+            } else if name.starts_with("/v1/agents") {
+                assert_eq!(operation["security"], json!([{"repositoryBearer":[]}]));
+                assert_eq!(operation["tags"], json!(["agents"]));
+                assert!(
+                    operation["parameters"]
+                        .as_array()
+                        .unwrap()
+                        .iter()
+                        .all(|p| p["name"] != "repo")
+                );
             } else {
                 assert_eq!(operation["parameters"][0]["name"], "repo");
                 assert_eq!(operation["security"], json!([{"repositoryBearer":[]},{}]));
@@ -403,6 +425,20 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
             }
         }
     }
+    let activity = &paths["/v1/agents/stream"]["get"];
+    assert_eq!(activity["parameters"][1]["name"], "after");
+    assert_eq!(activity["parameters"][1]["schema"]["type"], "integer");
+    assert!(
+        activity["parameters"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .all(|p| p["name"] != "Last-Event-ID")
+    );
+    assert_eq!(
+        activity["responses"]["200"]["content"]["text/event-stream"]["x-sse-events"],
+        json!({"agent-activity":"activity"})
+    );
     let events = &paths["/v1/repos/{repo}/events"]["get"]["responses"]["200"]["content"];
     assert!(events.get("application/json").is_none());
     assert!(

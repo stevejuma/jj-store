@@ -13,7 +13,7 @@ jj-store-model.workspace = true
 jj-store-service.workspace = true
 jj-store-tantivy.workspace = true
 jj-store-adapters.workspace = true
-axum = { version = "0.8", default-features = false, features = ["json", "query", "tokio", "http1", "http2", "matched-path", "ws"] }
+axum = { version = "0.8", default-features = false, features = ["json", "query", "tokio", "http1", "http2", "matched-path", "original-uri", "ws"] }
 http-body = "1"
 tokio-util = { version = "0.7", features = ["io"] }
 futures = "0.3"

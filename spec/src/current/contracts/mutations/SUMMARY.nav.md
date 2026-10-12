@@ -21,3 +21,4 @@
 - [Local stacks protocol ownership](21-local-stacks-protocol-ownership.md)
 - [Interactive agent execution](22-interactive-agent-execution.md)
 - [Installation agent configuration interfaces](23-installation-agent-configuration.md)
+- [Remote execution authority](24-remote-agent-authority.md)

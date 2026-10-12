@@ -19,3 +19,4 @@
 - [Ordinary local stack workspace composition](19-ordinary-local-stack-workspace-composition.md)
 - [Interactive agent execution](20-interactive-agent-execution.md)
 - [Local compute resources](21-local-compute-resources.md)
+- [Remote connection ownership](14-remote-connection-ownership.md)

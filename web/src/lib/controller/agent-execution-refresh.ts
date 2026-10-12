@@ -120,6 +120,7 @@ export class AgentExecutionRefresh {
     });
   }
   settings() {
+    if (!this.manager.localManagement()) return Promise.resolve(true);
     return this.read("settings", async () => {
       const accepted = await this.manager.settings.refresh();
       void this.manager.chatgpt.refresh();

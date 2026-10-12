@@ -126,6 +126,24 @@ impl NativeEndpoint {
             session,
         })
     }
+    pub fn bind_delegated(
+        &self,
+        delegation: Arc<dyn crate::access::Delegation>,
+    ) -> Result<NativeRequest> {
+        let mut session = NativeSession::new_delegated(
+            self.store.clone(),
+            self.objects.clone(),
+            delegation,
+            self.clock.clone(),
+            self.protection.clone(),
+            self.limits,
+        )?;
+        session.events = self.events.clone();
+        Ok(NativeRequest {
+            endpoint: self.clone(),
+            session,
+        })
+    }
     pub fn bind_local_trusted(
         &self,
         principal: m::PrincipalId,

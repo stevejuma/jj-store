@@ -199,7 +199,7 @@ export function createInMemoryStoreController(
   return {
     get state(): StoreContract.StoreControllerState {
       return {
-        accessMode: "authenticated",
+        accessMode: options.accessMode ?? "authenticated",
         storageReady: true,
         backups: [],
         route,

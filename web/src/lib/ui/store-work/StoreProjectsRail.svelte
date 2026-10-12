@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { serverConnections } from "../../connections/context.js";
+  const connections = serverConnections();
   // CommunityProjectsTaskDetails and CommunityApplication overview rows (Apache-2.0).
   import type { Component } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
@@ -19,7 +21,8 @@
   let copied = $state(false);
   async function copy() {
     await navigator.clipboard.writeText(
-      new URL(location.hash, location.href).href,
+      connections?.shareUrl(location.hash, location.href) ??
+        new URL(location.hash, location.href).href,
     );
     copied = true;
   }

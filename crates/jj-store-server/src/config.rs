@@ -45,6 +45,10 @@ impl Config {
         }
         self.web_root = self.web_root.take().map(|root| base.join(root));
         self.agent_capture.resolve_paths(base);
+        if let Some(remote) = &mut self.remote_agents {
+            remote.acp_executable = base.join(&remote.acp_executable);
+            remote.jj_executable = base.join(&remote.jj_executable);
+        }
         for replication in &mut self.replication {
             replication.ca_certificate = replication
                 .ca_certificate
@@ -90,6 +94,16 @@ impl Config {
 
     pub fn validate(&self) -> Result<()> {
         self.validate_common()?;
+        if let Some(remote) = &self.remote_agents {
+            remote.validate()?;
+            if !matches!(self.access, Access::Authenticated { .. })
+                || matches!(self.storage, Storage::Filesystem)
+            {
+                return Err(Error::Config(
+                    "remote execution requires authenticated native authority",
+                ));
+            }
+        }
         self.agent_capture.validate(&self.access, &self.storage)?;
         match &self.storage {
             Storage::Filesystem => {

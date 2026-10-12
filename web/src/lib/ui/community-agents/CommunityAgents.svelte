@@ -22,6 +22,7 @@
     value,
     unknown = false,
     available = true,
+    management = true,
     busy = false,
     onAdd,
     onEdit,
@@ -36,6 +37,7 @@
     value: AgentStatus | null;
     unknown?: boolean;
     available?: boolean;
+    management?: boolean;
     busy?: boolean;
     onAdd(): void;
     onEdit(agent: AgentSetup): void;
@@ -64,7 +66,11 @@
   <header>
     <div>
       <h1>Agents</h1>
-      <p>Your agents on this device.</p>
+      <p>
+        {management
+          ? "Your agents on this device."
+          : "Agents available on this server."}
+      </p>
     </div>
     <div class="agents__header-actions">
       <Tooltip.Provider>
@@ -95,7 +101,7 @@
       description="Local agent management requires an enabled local execution service on this device."
     />
   {:else if !value && !unknown}<div class="agents__grid">
-      {@render sessionsCard()}{@render addCard()}<CommunitySkeleton
+      {@render sessionsCard()}{#if management}{@render addCard()}{/if}<CommunitySkeleton
         layout="gallery"
         galleryVariant="agents"
         inlineGallery
@@ -109,7 +115,7 @@
       </p>{/if}
     <div class="agents__grid">
       {@render sessionsCard()}
-      {@render addCard()}
+      {#if management}{@render addCard()}{/if}
       {#each value?.setups ?? [] as agent (agent.id)}
         {@const status = agentAvailability(
           agent.id,
@@ -141,7 +147,7 @@
                 showPresence
                 presence={status.presence}
               />
-              {#if status.label === "Offline" || (live && onStop && !unknown)}<div
+              {#if management && (status.label === "Offline" || (live && onStop && !unknown))}<div
                   class="agents__processing"
                 >
                   <CommunityAgentProcessingControl
@@ -178,15 +184,15 @@
             >
             <DropdownMenu.Content class="agents__card-actions" align="end"
               ><DropdownMenu.Group>
-                <DropdownMenu.Item
-                  disabled={busy ||
-                    unknown ||
-                    value?.runtime !== "ready" ||
-                    !value?.runners.find((r) => r.id === agent.runner)
-                      ?.available}
-                  onSelect={() => onStart(agent.id)}
-                  >Start agent</DropdownMenu.Item
-                >
+                {#if management}<DropdownMenu.Item
+                    disabled={busy ||
+                      unknown ||
+                      value?.runtime !== "ready" ||
+                      !value?.runners.find((r) => r.id === agent.runner)
+                        ?.available}
+                    onSelect={() => onStart(agent.id)}
+                    >Start agent</DropdownMenu.Item
+                  >{/if}
                 {#if onChat}<DropdownMenu.Item
                     onSelect={() => onChat?.(agent.id)}
                     >New chat</DropdownMenu.Item
@@ -194,22 +200,22 @@
                 <DropdownMenu.Item onSelect={() => onSessions(agent.id)}
                   >View chats</DropdownMenu.Item
                 >
-                <DropdownMenu.Item onSelect={() => onEdit(agent)}
-                  >Edit agent</DropdownMenu.Item
-                >
-                <DropdownMenu.Item
-                  variant="destructive"
-                  disabled={busy || unknown}
-                  onSelect={() => onDelete(agent)}
-                  >Delete agent</DropdownMenu.Item
-                >
+                {#if management}<DropdownMenu.Item
+                    onSelect={() => onEdit(agent)}>Edit agent</DropdownMenu.Item
+                  >
+                  <DropdownMenu.Item
+                    variant="destructive"
+                    disabled={busy || unknown}
+                    onSelect={() => onDelete(agent)}
+                    >Delete agent</DropdownMenu.Item
+                  >{/if}
               </DropdownMenu.Group></DropdownMenu.Content
             >
           </DropdownMenu.Root>
         </div>
       {/each}
     </div>
-    {#if value && !value.setups.length && !unknown}<p>
+    {#if management && value && !value.setups.length && !unknown}<p>
         No agents yet. Add an agent to save its instructions and runtime
         preferences.
       </p>{/if}

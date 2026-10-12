@@ -30,3 +30,4 @@
 - [Local Stacks operation descriptions](30-local-stacks-operation-descriptions.md)
 - [Direct local Stacks CLI](31-direct-local-stacks-cli.md)
 - [Interactive agent execution](32-interactive-agent-workspaces.md)
+- [Delegated native workspaces](33-delegated-agent-workspaces.md)

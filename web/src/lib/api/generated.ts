@@ -2938,6 +2938,218 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/v1/local/connections": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    get: operations["local_connections"];
+    put?: never;
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    post: operations["local_connections_edit"];
+    delete?: never;
+    options?: never;
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    head: operations["local_connections_head"];
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/local/connections/connect": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    post: operations["local_connections_connect"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/local/connections/disconnect": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description LocalTrusted loopback administration only. Exact protocol, authority, Origin and Fetch Metadata admission applies before reading or changing device state. Filesystem code queries pin an explicit operation and never publish heads, refs or checkout files. Registration and collaboration writes retain original request identities for unknown outcomes and replay. */
+    post: operations["local_connections_disconnect"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/agents": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description Authenticated execution only. Requires operator-enabled agent admission for the token's principal and independent current native repository grants. Requests, sessions, outcomes and streams are caller-owned. Unknown query fields are rejected. Retain the original request identity across transport failure; reconnect never replays commands. Installation configuration remains LocalTrusted only. */
+    get: operations["agents_status"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    /** @description Authenticated execution only. Requires operator-enabled agent admission for the token's principal and independent current native repository grants. Requests, sessions, outcomes and streams are caller-owned. Unknown query fields are rejected. Retain the original request identity across transport failure; reconnect never replays commands. Installation configuration remains LocalTrusted only. */
+    head: operations["agents_status_head"];
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/agents/targets": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description Authenticated execution only. Requires operator-enabled agent admission for the token's principal and independent current native repository grants. Requests, sessions, outcomes and streams are caller-owned. Unknown query fields are rejected. Retain the original request identity across transport failure; reconnect never replays commands. Installation configuration remains LocalTrusted only. */
+    get: operations["agents_targets"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    /** @description Authenticated execution only. Requires operator-enabled agent admission for the token's principal and independent current native repository grants. Requests, sessions, outcomes and streams are caller-owned. Unknown query fields are rejected. Retain the original request identity across transport failure; reconnect never replays commands. Installation configuration remains LocalTrusted only. */
+    head: operations["agents_targets_head"];
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/agents/chat": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description Authenticated execution only. Requires operator-enabled agent admission for the token's principal and independent current native repository grants. Requests, sessions, outcomes and streams are caller-owned. Unknown query fields are rejected. Retain the original request identity across transport failure; reconnect never replays commands. Installation configuration remains LocalTrusted only. */
+    post: operations["agents_chat"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/agents/command": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description Authenticated execution only. Requires operator-enabled agent admission for the token's principal and independent current native repository grants. Requests, sessions, outcomes and streams are caller-owned. Unknown query fields are rejected. Retain the original request identity across transport failure; reconnect never replays commands. Installation configuration remains LocalTrusted only. */
+    post: operations["agents_command"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/agents/workspace/inspect": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description Authenticated execution only. Requires operator-enabled agent admission for the token's principal and independent current native repository grants. Requests, sessions, outcomes and streams are caller-owned. Unknown query fields are rejected. Retain the original request identity across transport failure; reconnect never replays commands. Installation configuration remains LocalTrusted only. */
+    post: operations["agents_workspace_inspect"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/agents/outcome": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description Authenticated execution only. Requires operator-enabled agent admission for the token's principal and independent current native repository grants. Requests, sessions, outcomes and streams are caller-owned. Unknown query fields are rejected. Retain the original request identity across transport failure; reconnect never replays commands. Installation configuration remains LocalTrusted only. */
+    get: operations["agents_outcome"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    /** @description Authenticated execution only. Requires operator-enabled agent admission for the token's principal and independent current native repository grants. Requests, sessions, outcomes and streams are caller-owned. Unknown query fields are rejected. Retain the original request identity across transport failure; reconnect never replays commands. Installation configuration remains LocalTrusted only. */
+    head: operations["agents_outcome_head"];
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/agents/events": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description Authenticated execution only. Requires operator-enabled agent admission for the token's principal and independent current native repository grants. Requests, sessions, outcomes and streams are caller-owned. Unknown query fields are rejected. Retain the original request identity across transport failure; reconnect never replays commands. Installation configuration remains LocalTrusted only. */
+    get: operations["agents_events"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    /** @description Authenticated execution only. Requires operator-enabled agent admission for the token's principal and independent current native repository grants. Requests, sessions, outcomes and streams are caller-owned. Unknown query fields are rejected. Retain the original request identity across transport failure; reconnect never replays commands. Installation configuration remains LocalTrusted only. */
+    head: operations["agents_events_head"];
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/agents/feedback": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description Authenticated execution only. Requires operator-enabled agent admission for the token's principal and independent current native repository grants. Requests, sessions, outcomes and streams are caller-owned. Unknown query fields are rejected. Retain the original request identity across transport failure; reconnect never replays commands. Installation configuration remains LocalTrusted only. */
+    get: operations["agents_feedback"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    /** @description Authenticated execution only. Requires operator-enabled agent admission for the token's principal and independent current native repository grants. Requests, sessions, outcomes and streams are caller-owned. Unknown query fields are rejected. Retain the original request identity across transport failure; reconnect never replays commands. Installation configuration remains LocalTrusted only. */
+    head: operations["agents_feedback_head"];
+    patch?: never;
+    trace?: never;
+  };
+  "/v1/agents/stream": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    /** @description Authenticated execution only. Requires operator-enabled agent admission for the token's principal and independent current native repository grants. Requests, sessions, outcomes and streams are caller-owned. Unknown query fields are rejected. Retain the original request identity across transport failure; reconnect never replays commands. Installation configuration remains LocalTrusted only. */
+    get: operations["agents_stream"];
+    put?: never;
+    post?: never;
+    delete?: never;
+    options?: never;
+    /** @description Authenticated execution only. Requires operator-enabled agent admission for the token's principal and independent current native repository grants. Requests, sessions, outcomes and streams are caller-owned. Unknown query fields are rejected. Retain the original request identity across transport failure; reconnect never replays commands. Installation configuration remains LocalTrusted only. */
+    head: operations["agents_stream_head"];
+    patch?: never;
+    trace?: never;
+  };
   "/v1/local/settings": {
     parameters: {
       query?: never;
@@ -3209,6 +3421,7 @@ export interface components {
     };
     RecordDigest: string;
     Bootstrap: {
+      installation_id: string | null;
       /** Format: uint32 */
       version: number;
       access_mode: components["schemas"]["AccessMode"];
@@ -3219,6 +3432,8 @@ export interface components {
     /** @enum {string} */
     AccessMode: "authenticated" | "local_trusted";
     Capabilities: {
+      server_connections: boolean;
+      authenticated_agent_execution: boolean;
       /** Format: uint32 */
       version: number;
       native_authority?: boolean | null;
@@ -8474,6 +8689,17 @@ export interface components {
       observed_at_millis: number | null;
       payload: unknown;
       committed: boolean;
+    };
+    Connection: {
+      id: string;
+      name: string;
+      origin: string;
+      installation: string;
+    };
+    Connected: {
+      connection: components["schemas"]["Connection"];
+      handle: string;
+      principal: components["schemas"]["PrincipalId"];
     };
     LocalServerSettings: {
       /** Format: uint32 */
@@ -55771,6 +55997,4611 @@ export interface operations {
     };
   };
   local_agents_stream_head: {
+    parameters: {
+      query: {
+        session: string;
+        after?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  local_connections: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Connection"][];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  local_connections_edit: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json":
+          | {
+              id: string;
+              name: string;
+              /** @constant */
+              action: "rename";
+            }
+          | {
+              id: string;
+              /** @constant */
+              action: "remove";
+            };
+      };
+    };
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Connection"][];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  local_connections_head: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  local_connections_connect: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          id?: string | null;
+          name: string;
+          origin: string;
+          token: string;
+        };
+      };
+    };
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["Connected"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  local_connections_disconnect: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          handle: string;
+        };
+      };
+    };
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": unknown;
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  agents_status: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AgentExecutionStatus"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  agents_status_head: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  agents_targets: {
+    parameters: {
+      query?: {
+        repository?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AgentExecutionTarget"][];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  agents_targets_head: {
+    parameters: {
+      query?: {
+        repository?: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  agents_chat: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          /** Format: uint32 */
+          version: number;
+          request_id: string;
+          conversation_id: string;
+          origin: {
+            scope: string;
+            home?: string | null;
+            thread?: string | null;
+            /** @default null */
+            agent_target?:
+              | (
+                  | {
+                      thread_id: string;
+                      /** @constant */
+                      type: "thread";
+                    }
+                  | {
+                      thread_id: string;
+                      message_id: string;
+                      revision: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "thread_version"
+                          | "conversation_metadata"
+                          | "thread_event"
+                          | "human_message_revision"
+                          | "thread_link"
+                          | "reaction"
+                          | "reaction_retraction"
+                          | "reaction_slot"
+                          | "custom_emoji_version"
+                          | "image_asset";
+                        id: string;
+                      };
+                      /** @constant */
+                      type: "human_message";
+                    }
+                  | {
+                      session_id: string;
+                      message_id: string;
+                      event_id: string;
+                      batch: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "session_snapshot"
+                          | "turn_snapshot"
+                          | "message_snapshot"
+                          | "tool_snapshot"
+                          | "intent"
+                          | "observation_batch"
+                          | "event_batch"
+                          | "transcript_manifest"
+                          | "transcript_page"
+                          | "transcript_chunk"
+                          | "content"
+                          | "checkpoint_version"
+                          | "association"
+                          | "alias"
+                          | "relation_page"
+                          | "source_state"
+                          | "projection_catalog"
+                          | "catalog_conflict";
+                        id: string;
+                      };
+                      content: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "session_snapshot"
+                          | "turn_snapshot"
+                          | "message_snapshot"
+                          | "tool_snapshot"
+                          | "intent"
+                          | "observation_batch"
+                          | "event_batch"
+                          | "transcript_manifest"
+                          | "transcript_page"
+                          | "transcript_chunk"
+                          | "content"
+                          | "checkpoint_version"
+                          | "association"
+                          | "alias"
+                          | "relation_page"
+                          | "source_state"
+                          | "projection_catalog"
+                          | "catalog_conflict";
+                        id: string;
+                      };
+                      /** @constant */
+                      type: "agent_message";
+                    }
+                  | {
+                      session_id: string;
+                      tool_id: string;
+                      snapshot: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "session_snapshot"
+                          | "turn_snapshot"
+                          | "message_snapshot"
+                          | "tool_snapshot"
+                          | "intent"
+                          | "observation_batch"
+                          | "event_batch"
+                          | "transcript_manifest"
+                          | "transcript_page"
+                          | "transcript_chunk"
+                          | "content"
+                          | "checkpoint_version"
+                          | "association"
+                          | "alias"
+                          | "relation_page"
+                          | "source_state"
+                          | "projection_catalog"
+                          | "catalog_conflict";
+                        id: string;
+                      };
+                      /** @constant */
+                      type: "tool_invocation";
+                    }
+                  | {
+                      session_id: string;
+                      tool_id: string;
+                      snapshot: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "session_snapshot"
+                          | "turn_snapshot"
+                          | "message_snapshot"
+                          | "tool_snapshot"
+                          | "intent"
+                          | "observation_batch"
+                          | "event_batch"
+                          | "transcript_manifest"
+                          | "transcript_page"
+                          | "transcript_chunk"
+                          | "content"
+                          | "checkpoint_version"
+                          | "association"
+                          | "alias"
+                          | "relation_page"
+                          | "source_state"
+                          | "projection_catalog"
+                          | "catalog_conflict";
+                        id: string;
+                      };
+                      content: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "session_snapshot"
+                          | "turn_snapshot"
+                          | "message_snapshot"
+                          | "tool_snapshot"
+                          | "intent"
+                          | "observation_batch"
+                          | "event_batch"
+                          | "transcript_manifest"
+                          | "transcript_page"
+                          | "transcript_chunk"
+                          | "content"
+                          | "checkpoint_version"
+                          | "association"
+                          | "alias"
+                          | "relation_page"
+                          | "source_state"
+                          | "projection_catalog"
+                          | "catalog_conflict";
+                        id: string;
+                      };
+                      /** @constant */
+                      type: "tool_output";
+                    }
+                  | {
+                      thread_id: string;
+                      /** @constant */
+                      type: "review_thread";
+                    }
+                  | {
+                      thread_id: string;
+                      comment_id: string;
+                      revision: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "anchor"
+                          | "comment_body"
+                          | "comment_revision"
+                          | "thread_event"
+                          | "event_page"
+                          | "thread_snapshot"
+                          | "relation_page"
+                          | "status_page";
+                        id: string;
+                      };
+                      /** @constant */
+                      type: "review_comment";
+                    }
+                  | {
+                      repository: string;
+                      thread_id: string;
+                      comment_id: string;
+                      revision: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "anchor"
+                          | "comment_body"
+                          | "comment_revision"
+                          | "thread_event"
+                          | "event_page"
+                          | "thread_snapshot"
+                          | "relation_page"
+                          | "status_page";
+                        id: string;
+                      };
+                      /** @constant */
+                      type: "repository_review_comment";
+                    }
+                  | {
+                      task_id: string;
+                      comment_id: string;
+                      /** Format: uint64 */
+                      version: number;
+                      /** @constant */
+                      type: "work_comment";
+                    }
+                  | {
+                      session_id: string;
+                      checkpoint_id: string;
+                      version: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "session_snapshot"
+                          | "turn_snapshot"
+                          | "message_snapshot"
+                          | "tool_snapshot"
+                          | "intent"
+                          | "observation_batch"
+                          | "event_batch"
+                          | "transcript_manifest"
+                          | "transcript_page"
+                          | "transcript_chunk"
+                          | "content"
+                          | "checkpoint_version"
+                          | "association"
+                          | "alias"
+                          | "relation_page"
+                          | "source_state"
+                          | "projection_catalog"
+                          | "catalog_conflict";
+                        id: string;
+                      };
+                      /** @constant */
+                      type: "agent_checkpoint";
+                    }
+                )
+              | null;
+            context: string;
+          };
+          thread_codebase?: {
+            /** @enum {string} */
+            kind:
+              | "index_page"
+              | "thread_version"
+              | "conversation_metadata"
+              | "thread_event"
+              | "human_message_revision"
+              | "thread_link"
+              | "reaction"
+              | "reaction_retraction"
+              | "reaction_slot"
+              | "custom_emoji_version"
+              | "image_asset";
+            id: string;
+          } | null;
+          agent_ids: string[];
+          attachments: {
+            repository: string;
+            target_id?: string | null;
+            operation?: string | null;
+            commit?: string | null;
+          }[];
+          text: string;
+          /** @default null */
+          comments?: {
+            emojis?: {
+              source: string;
+              shortcode: string;
+              bytes: number[];
+            }[];
+            thread_id: string;
+            expected_thread: {
+              /** @enum {string} */
+              kind:
+                | "index_page"
+                | "thread_version"
+                | "conversation_metadata"
+                | "thread_event"
+                | "human_message_revision"
+                | "thread_link"
+                | "reaction"
+                | "reaction_retraction"
+                | "reaction_slot"
+                | "custom_emoji_version"
+                | "image_asset";
+              id: string;
+            };
+            /** @description Ordinary thread messages only; agent prompt text remains in AgentStore. */
+            message_id?: string | null;
+            text?: string | null;
+            reply_to?: {
+              /** @enum {string} */
+              kind:
+                | "index_page"
+                | "thread_version"
+                | "conversation_metadata"
+                | "thread_event"
+                | "human_message_revision"
+                | "thread_link"
+                | "reaction"
+                | "reaction_retraction"
+                | "reaction_slot"
+                | "custom_emoji_version"
+                | "image_asset";
+              id: string;
+            } | null;
+            comments: {
+              thread_id: string;
+              expected_thread?: {
+                /** @enum {string} */
+                kind:
+                  | "index_page"
+                  | "thread_version"
+                  | "conversation_metadata"
+                  | "thread_event"
+                  | "human_message_revision"
+                  | "thread_link"
+                  | "reaction"
+                  | "reaction_retraction"
+                  | "reaction_slot"
+                  | "custom_emoji_version"
+                  | "image_asset";
+                id: string;
+              } | null;
+              source: {
+                /** @description Identity, immutable content and validation witnesses are explicit, never a UI position. */
+                target:
+                  | {
+                      thread_id: string;
+                      /** @constant */
+                      type: "thread";
+                    }
+                  | {
+                      thread_id: string;
+                      message_id: string;
+                      revision: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "thread_version"
+                          | "conversation_metadata"
+                          | "thread_event"
+                          | "human_message_revision"
+                          | "thread_link"
+                          | "reaction"
+                          | "reaction_retraction"
+                          | "reaction_slot"
+                          | "custom_emoji_version"
+                          | "image_asset";
+                        id: string;
+                      };
+                      /** @constant */
+                      type: "human_message";
+                    }
+                  | {
+                      session_id: string;
+                      message_id: string;
+                      event_id: string;
+                      batch: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "session_snapshot"
+                          | "turn_snapshot"
+                          | "message_snapshot"
+                          | "tool_snapshot"
+                          | "intent"
+                          | "observation_batch"
+                          | "event_batch"
+                          | "transcript_manifest"
+                          | "transcript_page"
+                          | "transcript_chunk"
+                          | "content"
+                          | "checkpoint_version"
+                          | "association"
+                          | "alias"
+                          | "relation_page"
+                          | "source_state"
+                          | "projection_catalog"
+                          | "catalog_conflict";
+                        id: string;
+                      };
+                      content: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "session_snapshot"
+                          | "turn_snapshot"
+                          | "message_snapshot"
+                          | "tool_snapshot"
+                          | "intent"
+                          | "observation_batch"
+                          | "event_batch"
+                          | "transcript_manifest"
+                          | "transcript_page"
+                          | "transcript_chunk"
+                          | "content"
+                          | "checkpoint_version"
+                          | "association"
+                          | "alias"
+                          | "relation_page"
+                          | "source_state"
+                          | "projection_catalog"
+                          | "catalog_conflict";
+                        id: string;
+                      };
+                      /** @constant */
+                      type: "agent_message";
+                    }
+                  | {
+                      session_id: string;
+                      tool_id: string;
+                      snapshot: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "session_snapshot"
+                          | "turn_snapshot"
+                          | "message_snapshot"
+                          | "tool_snapshot"
+                          | "intent"
+                          | "observation_batch"
+                          | "event_batch"
+                          | "transcript_manifest"
+                          | "transcript_page"
+                          | "transcript_chunk"
+                          | "content"
+                          | "checkpoint_version"
+                          | "association"
+                          | "alias"
+                          | "relation_page"
+                          | "source_state"
+                          | "projection_catalog"
+                          | "catalog_conflict";
+                        id: string;
+                      };
+                      /** @constant */
+                      type: "tool_invocation";
+                    }
+                  | {
+                      session_id: string;
+                      tool_id: string;
+                      snapshot: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "session_snapshot"
+                          | "turn_snapshot"
+                          | "message_snapshot"
+                          | "tool_snapshot"
+                          | "intent"
+                          | "observation_batch"
+                          | "event_batch"
+                          | "transcript_manifest"
+                          | "transcript_page"
+                          | "transcript_chunk"
+                          | "content"
+                          | "checkpoint_version"
+                          | "association"
+                          | "alias"
+                          | "relation_page"
+                          | "source_state"
+                          | "projection_catalog"
+                          | "catalog_conflict";
+                        id: string;
+                      };
+                      content: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "session_snapshot"
+                          | "turn_snapshot"
+                          | "message_snapshot"
+                          | "tool_snapshot"
+                          | "intent"
+                          | "observation_batch"
+                          | "event_batch"
+                          | "transcript_manifest"
+                          | "transcript_page"
+                          | "transcript_chunk"
+                          | "content"
+                          | "checkpoint_version"
+                          | "association"
+                          | "alias"
+                          | "relation_page"
+                          | "source_state"
+                          | "projection_catalog"
+                          | "catalog_conflict";
+                        id: string;
+                      };
+                      /** @constant */
+                      type: "tool_output";
+                    }
+                  | {
+                      thread_id: string;
+                      /** @constant */
+                      type: "review_thread";
+                    }
+                  | {
+                      thread_id: string;
+                      comment_id: string;
+                      revision: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "anchor"
+                          | "comment_body"
+                          | "comment_revision"
+                          | "thread_event"
+                          | "event_page"
+                          | "thread_snapshot"
+                          | "relation_page"
+                          | "status_page";
+                        id: string;
+                      };
+                      /** @constant */
+                      type: "review_comment";
+                    }
+                  | {
+                      repository: string;
+                      thread_id: string;
+                      comment_id: string;
+                      revision: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "anchor"
+                          | "comment_body"
+                          | "comment_revision"
+                          | "thread_event"
+                          | "event_page"
+                          | "thread_snapshot"
+                          | "relation_page"
+                          | "status_page";
+                        id: string;
+                      };
+                      /** @constant */
+                      type: "repository_review_comment";
+                    }
+                  | {
+                      task_id: string;
+                      comment_id: string;
+                      /** Format: uint64 */
+                      version: number;
+                      /** @constant */
+                      type: "work_comment";
+                    }
+                  | {
+                      session_id: string;
+                      checkpoint_id: string;
+                      version: {
+                        /** @enum {string} */
+                        kind:
+                          | "index_page"
+                          | "session_snapshot"
+                          | "turn_snapshot"
+                          | "message_snapshot"
+                          | "tool_snapshot"
+                          | "intent"
+                          | "observation_batch"
+                          | "event_batch"
+                          | "transcript_manifest"
+                          | "transcript_page"
+                          | "transcript_chunk"
+                          | "content"
+                          | "checkpoint_version"
+                          | "association"
+                          | "alias"
+                          | "relation_page"
+                          | "source_state"
+                          | "projection_catalog"
+                          | "catalog_conflict";
+                        id: string;
+                      };
+                      /** @constant */
+                      type: "agent_checkpoint";
+                    };
+                /** @description JSON pointer to an exact string in captured JSON; None selects plain text. */
+                part?: string | null;
+                selection?: {
+                  /** @enum {string} */
+                  encoding: "utf8";
+                  start_byte: string;
+                  end_byte: string;
+                  selected_sha256: string;
+                } | null;
+                /** @description Retained display evidence, validated against the selected bytes. */
+                quote: string;
+              };
+              message_id: string;
+              expected_revision?: {
+                /** @enum {string} */
+                kind:
+                  | "index_page"
+                  | "thread_version"
+                  | "conversation_metadata"
+                  | "thread_event"
+                  | "human_message_revision"
+                  | "thread_link"
+                  | "reaction"
+                  | "reaction_retraction"
+                  | "reaction_slot"
+                  | "custom_emoji_version"
+                  | "image_asset";
+                id: string;
+              } | null;
+              reply_to?: {
+                /** @enum {string} */
+                kind:
+                  | "index_page"
+                  | "thread_version"
+                  | "conversation_metadata"
+                  | "thread_event"
+                  | "human_message_revision"
+                  | "thread_link"
+                  | "reaction"
+                  | "reaction_retraction"
+                  | "reaction_slot"
+                  | "custom_emoji_version"
+                  | "image_asset";
+                id: string;
+              } | null;
+              body: string;
+            }[];
+            references: (
+              | {
+                  thread_id: string;
+                  /** @constant */
+                  type: "thread";
+                }
+              | {
+                  thread_id: string;
+                  message_id: string;
+                  revision: {
+                    /** @enum {string} */
+                    kind:
+                      | "index_page"
+                      | "thread_version"
+                      | "conversation_metadata"
+                      | "thread_event"
+                      | "human_message_revision"
+                      | "thread_link"
+                      | "reaction"
+                      | "reaction_retraction"
+                      | "reaction_slot"
+                      | "custom_emoji_version"
+                      | "image_asset";
+                    id: string;
+                  };
+                  /** @constant */
+                  type: "human_message";
+                }
+              | {
+                  session_id: string;
+                  message_id: string;
+                  event_id: string;
+                  batch: {
+                    /** @enum {string} */
+                    kind:
+                      | "index_page"
+                      | "session_snapshot"
+                      | "turn_snapshot"
+                      | "message_snapshot"
+                      | "tool_snapshot"
+                      | "intent"
+                      | "observation_batch"
+                      | "event_batch"
+                      | "transcript_manifest"
+                      | "transcript_page"
+                      | "transcript_chunk"
+                      | "content"
+                      | "checkpoint_version"
+                      | "association"
+                      | "alias"
+                      | "relation_page"
+                      | "source_state"
+                      | "projection_catalog"
+                      | "catalog_conflict";
+                    id: string;
+                  };
+                  content: {
+                    /** @enum {string} */
+                    kind:
+                      | "index_page"
+                      | "session_snapshot"
+                      | "turn_snapshot"
+                      | "message_snapshot"
+                      | "tool_snapshot"
+                      | "intent"
+                      | "observation_batch"
+                      | "event_batch"
+                      | "transcript_manifest"
+                      | "transcript_page"
+                      | "transcript_chunk"
+                      | "content"
+                      | "checkpoint_version"
+                      | "association"
+                      | "alias"
+                      | "relation_page"
+                      | "source_state"
+                      | "projection_catalog"
+                      | "catalog_conflict";
+                    id: string;
+                  };
+                  /** @constant */
+                  type: "agent_message";
+                }
+              | {
+                  session_id: string;
+                  tool_id: string;
+                  snapshot: {
+                    /** @enum {string} */
+                    kind:
+                      | "index_page"
+                      | "session_snapshot"
+                      | "turn_snapshot"
+                      | "message_snapshot"
+                      | "tool_snapshot"
+                      | "intent"
+                      | "observation_batch"
+                      | "event_batch"
+                      | "transcript_manifest"
+                      | "transcript_page"
+                      | "transcript_chunk"
+                      | "content"
+                      | "checkpoint_version"
+                      | "association"
+                      | "alias"
+                      | "relation_page"
+                      | "source_state"
+                      | "projection_catalog"
+                      | "catalog_conflict";
+                    id: string;
+                  };
+                  /** @constant */
+                  type: "tool_invocation";
+                }
+              | {
+                  session_id: string;
+                  tool_id: string;
+                  snapshot: {
+                    /** @enum {string} */
+                    kind:
+                      | "index_page"
+                      | "session_snapshot"
+                      | "turn_snapshot"
+                      | "message_snapshot"
+                      | "tool_snapshot"
+                      | "intent"
+                      | "observation_batch"
+                      | "event_batch"
+                      | "transcript_manifest"
+                      | "transcript_page"
+                      | "transcript_chunk"
+                      | "content"
+                      | "checkpoint_version"
+                      | "association"
+                      | "alias"
+                      | "relation_page"
+                      | "source_state"
+                      | "projection_catalog"
+                      | "catalog_conflict";
+                    id: string;
+                  };
+                  content: {
+                    /** @enum {string} */
+                    kind:
+                      | "index_page"
+                      | "session_snapshot"
+                      | "turn_snapshot"
+                      | "message_snapshot"
+                      | "tool_snapshot"
+                      | "intent"
+                      | "observation_batch"
+                      | "event_batch"
+                      | "transcript_manifest"
+                      | "transcript_page"
+                      | "transcript_chunk"
+                      | "content"
+                      | "checkpoint_version"
+                      | "association"
+                      | "alias"
+                      | "relation_page"
+                      | "source_state"
+                      | "projection_catalog"
+                      | "catalog_conflict";
+                    id: string;
+                  };
+                  /** @constant */
+                  type: "tool_output";
+                }
+              | {
+                  thread_id: string;
+                  /** @constant */
+                  type: "review_thread";
+                }
+              | {
+                  thread_id: string;
+                  comment_id: string;
+                  revision: {
+                    /** @enum {string} */
+                    kind:
+                      | "index_page"
+                      | "anchor"
+                      | "comment_body"
+                      | "comment_revision"
+                      | "thread_event"
+                      | "event_page"
+                      | "thread_snapshot"
+                      | "relation_page"
+                      | "status_page";
+                    id: string;
+                  };
+                  /** @constant */
+                  type: "review_comment";
+                }
+              | {
+                  repository: string;
+                  thread_id: string;
+                  comment_id: string;
+                  revision: {
+                    /** @enum {string} */
+                    kind:
+                      | "index_page"
+                      | "anchor"
+                      | "comment_body"
+                      | "comment_revision"
+                      | "thread_event"
+                      | "event_page"
+                      | "thread_snapshot"
+                      | "relation_page"
+                      | "status_page";
+                    id: string;
+                  };
+                  /** @constant */
+                  type: "repository_review_comment";
+                }
+              | {
+                  task_id: string;
+                  comment_id: string;
+                  /** Format: uint64 */
+                  version: number;
+                  /** @constant */
+                  type: "work_comment";
+                }
+              | {
+                  session_id: string;
+                  checkpoint_id: string;
+                  version: {
+                    /** @enum {string} */
+                    kind:
+                      | "index_page"
+                      | "session_snapshot"
+                      | "turn_snapshot"
+                      | "message_snapshot"
+                      | "tool_snapshot"
+                      | "intent"
+                      | "observation_batch"
+                      | "event_batch"
+                      | "transcript_manifest"
+                      | "transcript_page"
+                      | "transcript_chunk"
+                      | "content"
+                      | "checkpoint_version"
+                      | "association"
+                      | "alias"
+                      | "relation_page"
+                      | "source_state"
+                      | "projection_catalog"
+                      | "catalog_conflict";
+                    id: string;
+                  };
+                  /** @constant */
+                  type: "agent_checkpoint";
+                }
+            )[];
+            workspace_comments?: {
+              id: string;
+              source: {
+                session: string;
+                repository: string;
+                workspace: string;
+                path: string;
+                operation: string;
+                commit: string;
+                content_sha256: string;
+                current_fingerprint?: string | null;
+                selection?: {
+                  /** @enum {string} */
+                  encoding: "utf8";
+                  start_byte: string;
+                  end_byte: string;
+                  selected_sha256: string;
+                } | null;
+                diff?: {
+                  before_operation: string;
+                  before_commit: string;
+                  after_operation: string;
+                  after_commit: string;
+                  /** @enum {string} */
+                  side: "before" | "after";
+                } | null;
+              };
+              body: string;
+              /** @description Existing exact revision; append to its discussion, or edit it explicitly. */
+              previous?:
+                | (
+                    | {
+                        thread_id: string;
+                        /** @constant */
+                        type: "thread";
+                      }
+                    | {
+                        thread_id: string;
+                        message_id: string;
+                        revision: {
+                          /** @enum {string} */
+                          kind:
+                            | "index_page"
+                            | "thread_version"
+                            | "conversation_metadata"
+                            | "thread_event"
+                            | "human_message_revision"
+                            | "thread_link"
+                            | "reaction"
+                            | "reaction_retraction"
+                            | "reaction_slot"
+                            | "custom_emoji_version"
+                            | "image_asset";
+                          id: string;
+                        };
+                        /** @constant */
+                        type: "human_message";
+                      }
+                    | {
+                        session_id: string;
+                        message_id: string;
+                        event_id: string;
+                        batch: {
+                          /** @enum {string} */
+                          kind:
+                            | "index_page"
+                            | "session_snapshot"
+                            | "turn_snapshot"
+                            | "message_snapshot"
+                            | "tool_snapshot"
+                            | "intent"
+                            | "observation_batch"
+                            | "event_batch"
+                            | "transcript_manifest"
+                            | "transcript_page"
+                            | "transcript_chunk"
+                            | "content"
+                            | "checkpoint_version"
+                            | "association"
+                            | "alias"
+                            | "relation_page"
+                            | "source_state"
+                            | "projection_catalog"
+                            | "catalog_conflict";
+                          id: string;
+                        };
+                        content: {
+                          /** @enum {string} */
+                          kind:
+                            | "index_page"
+                            | "session_snapshot"
+                            | "turn_snapshot"
+                            | "message_snapshot"
+                            | "tool_snapshot"
+                            | "intent"
+                            | "observation_batch"
+                            | "event_batch"
+                            | "transcript_manifest"
+                            | "transcript_page"
+                            | "transcript_chunk"
+                            | "content"
+                            | "checkpoint_version"
+                            | "association"
+                            | "alias"
+                            | "relation_page"
+                            | "source_state"
+                            | "projection_catalog"
+                            | "catalog_conflict";
+                          id: string;
+                        };
+                        /** @constant */
+                        type: "agent_message";
+                      }
+                    | {
+                        session_id: string;
+                        tool_id: string;
+                        snapshot: {
+                          /** @enum {string} */
+                          kind:
+                            | "index_page"
+                            | "session_snapshot"
+                            | "turn_snapshot"
+                            | "message_snapshot"
+                            | "tool_snapshot"
+                            | "intent"
+                            | "observation_batch"
+                            | "event_batch"
+                            | "transcript_manifest"
+                            | "transcript_page"
+                            | "transcript_chunk"
+                            | "content"
+                            | "checkpoint_version"
+                            | "association"
+                            | "alias"
+                            | "relation_page"
+                            | "source_state"
+                            | "projection_catalog"
+                            | "catalog_conflict";
+                          id: string;
+                        };
+                        /** @constant */
+                        type: "tool_invocation";
+                      }
+                    | {
+                        session_id: string;
+                        tool_id: string;
+                        snapshot: {
+                          /** @enum {string} */
+                          kind:
+                            | "index_page"
+                            | "session_snapshot"
+                            | "turn_snapshot"
+                            | "message_snapshot"
+                            | "tool_snapshot"
+                            | "intent"
+                            | "observation_batch"
+                            | "event_batch"
+                            | "transcript_manifest"
+                            | "transcript_page"
+                            | "transcript_chunk"
+                            | "content"
+                            | "checkpoint_version"
+                            | "association"
+                            | "alias"
+                            | "relation_page"
+                            | "source_state"
+                            | "projection_catalog"
+                            | "catalog_conflict";
+                          id: string;
+                        };
+                        content: {
+                          /** @enum {string} */
+                          kind:
+                            | "index_page"
+                            | "session_snapshot"
+                            | "turn_snapshot"
+                            | "message_snapshot"
+                            | "tool_snapshot"
+                            | "intent"
+                            | "observation_batch"
+                            | "event_batch"
+                            | "transcript_manifest"
+                            | "transcript_page"
+                            | "transcript_chunk"
+                            | "content"
+                            | "checkpoint_version"
+                            | "association"
+                            | "alias"
+                            | "relation_page"
+                            | "source_state"
+                            | "projection_catalog"
+                            | "catalog_conflict";
+                          id: string;
+                        };
+                        /** @constant */
+                        type: "tool_output";
+                      }
+                    | {
+                        thread_id: string;
+                        /** @constant */
+                        type: "review_thread";
+                      }
+                    | {
+                        thread_id: string;
+                        comment_id: string;
+                        revision: {
+                          /** @enum {string} */
+                          kind:
+                            | "index_page"
+                            | "anchor"
+                            | "comment_body"
+                            | "comment_revision"
+                            | "thread_event"
+                            | "event_page"
+                            | "thread_snapshot"
+                            | "relation_page"
+                            | "status_page";
+                          id: string;
+                        };
+                        /** @constant */
+                        type: "review_comment";
+                      }
+                    | {
+                        repository: string;
+                        thread_id: string;
+                        comment_id: string;
+                        revision: {
+                          /** @enum {string} */
+                          kind:
+                            | "index_page"
+                            | "anchor"
+                            | "comment_body"
+                            | "comment_revision"
+                            | "thread_event"
+                            | "event_page"
+                            | "thread_snapshot"
+                            | "relation_page"
+                            | "status_page";
+                          id: string;
+                        };
+                        /** @constant */
+                        type: "repository_review_comment";
+                      }
+                    | {
+                        task_id: string;
+                        comment_id: string;
+                        /** Format: uint64 */
+                        version: number;
+                        /** @constant */
+                        type: "work_comment";
+                      }
+                    | {
+                        session_id: string;
+                        checkpoint_id: string;
+                        version: {
+                          /** @enum {string} */
+                          kind:
+                            | "index_page"
+                            | "session_snapshot"
+                            | "turn_snapshot"
+                            | "message_snapshot"
+                            | "tool_snapshot"
+                            | "intent"
+                            | "observation_batch"
+                            | "event_batch"
+                            | "transcript_manifest"
+                            | "transcript_page"
+                            | "transcript_chunk"
+                            | "content"
+                            | "checkpoint_version"
+                            | "association"
+                            | "alias"
+                            | "relation_page"
+                            | "source_state"
+                            | "projection_catalog"
+                            | "catalog_conflict";
+                          id: string;
+                        };
+                        /** @constant */
+                        type: "agent_checkpoint";
+                      }
+                  )
+                | null;
+              /** @default false */
+              edit?: boolean;
+            }[];
+          } | null;
+          /** Format: uint64 */
+          max_duration_ms: number;
+        };
+      };
+    };
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AgentConversationOutcome"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  agents_command: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          /** Format: uint32 */
+          version: number;
+          request_id: string;
+          session_id: string;
+          action:
+            | {
+                preferences: {
+                  model?: string | null;
+                  effort?: string | null;
+                  mode?: string | null;
+                };
+                /** @constant */
+                action: "configure";
+              }
+            | {
+                comments?: {
+                  emojis?: {
+                    source: string;
+                    shortcode: string;
+                    bytes: number[];
+                  }[];
+                  thread_id: string;
+                  expected_thread: {
+                    /** @enum {string} */
+                    kind:
+                      | "index_page"
+                      | "thread_version"
+                      | "conversation_metadata"
+                      | "thread_event"
+                      | "human_message_revision"
+                      | "thread_link"
+                      | "reaction"
+                      | "reaction_retraction"
+                      | "reaction_slot"
+                      | "custom_emoji_version"
+                      | "image_asset";
+                    id: string;
+                  };
+                  /** @description Ordinary thread messages only; agent prompt text remains in AgentStore. */
+                  message_id?: string | null;
+                  text?: string | null;
+                  reply_to?: {
+                    /** @enum {string} */
+                    kind:
+                      | "index_page"
+                      | "thread_version"
+                      | "conversation_metadata"
+                      | "thread_event"
+                      | "human_message_revision"
+                      | "thread_link"
+                      | "reaction"
+                      | "reaction_retraction"
+                      | "reaction_slot"
+                      | "custom_emoji_version"
+                      | "image_asset";
+                    id: string;
+                  } | null;
+                  comments: {
+                    thread_id: string;
+                    expected_thread?: {
+                      /** @enum {string} */
+                      kind:
+                        | "index_page"
+                        | "thread_version"
+                        | "conversation_metadata"
+                        | "thread_event"
+                        | "human_message_revision"
+                        | "thread_link"
+                        | "reaction"
+                        | "reaction_retraction"
+                        | "reaction_slot"
+                        | "custom_emoji_version"
+                        | "image_asset";
+                      id: string;
+                    } | null;
+                    source: {
+                      /** @description Identity, immutable content and validation witnesses are explicit, never a UI position. */
+                      target:
+                        | {
+                            thread_id: string;
+                            /** @constant */
+                            type: "thread";
+                          }
+                        | {
+                            thread_id: string;
+                            message_id: string;
+                            revision: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "thread_version"
+                                | "conversation_metadata"
+                                | "thread_event"
+                                | "human_message_revision"
+                                | "thread_link"
+                                | "reaction"
+                                | "reaction_retraction"
+                                | "reaction_slot"
+                                | "custom_emoji_version"
+                                | "image_asset";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "human_message";
+                          }
+                        | {
+                            session_id: string;
+                            message_id: string;
+                            event_id: string;
+                            batch: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                            content: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "agent_message";
+                          }
+                        | {
+                            session_id: string;
+                            tool_id: string;
+                            snapshot: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "tool_invocation";
+                          }
+                        | {
+                            session_id: string;
+                            tool_id: string;
+                            snapshot: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                            content: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "tool_output";
+                          }
+                        | {
+                            thread_id: string;
+                            /** @constant */
+                            type: "review_thread";
+                          }
+                        | {
+                            thread_id: string;
+                            comment_id: string;
+                            revision: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "anchor"
+                                | "comment_body"
+                                | "comment_revision"
+                                | "thread_event"
+                                | "event_page"
+                                | "thread_snapshot"
+                                | "relation_page"
+                                | "status_page";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "review_comment";
+                          }
+                        | {
+                            repository: string;
+                            thread_id: string;
+                            comment_id: string;
+                            revision: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "anchor"
+                                | "comment_body"
+                                | "comment_revision"
+                                | "thread_event"
+                                | "event_page"
+                                | "thread_snapshot"
+                                | "relation_page"
+                                | "status_page";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "repository_review_comment";
+                          }
+                        | {
+                            task_id: string;
+                            comment_id: string;
+                            /** Format: uint64 */
+                            version: number;
+                            /** @constant */
+                            type: "work_comment";
+                          }
+                        | {
+                            session_id: string;
+                            checkpoint_id: string;
+                            version: {
+                              /** @enum {string} */
+                              kind:
+                                | "index_page"
+                                | "session_snapshot"
+                                | "turn_snapshot"
+                                | "message_snapshot"
+                                | "tool_snapshot"
+                                | "intent"
+                                | "observation_batch"
+                                | "event_batch"
+                                | "transcript_manifest"
+                                | "transcript_page"
+                                | "transcript_chunk"
+                                | "content"
+                                | "checkpoint_version"
+                                | "association"
+                                | "alias"
+                                | "relation_page"
+                                | "source_state"
+                                | "projection_catalog"
+                                | "catalog_conflict";
+                              id: string;
+                            };
+                            /** @constant */
+                            type: "agent_checkpoint";
+                          };
+                      /** @description JSON pointer to an exact string in captured JSON; None selects plain text. */
+                      part?: string | null;
+                      selection?: {
+                        /** @enum {string} */
+                        encoding: "utf8";
+                        start_byte: string;
+                        end_byte: string;
+                        selected_sha256: string;
+                      } | null;
+                      /** @description Retained display evidence, validated against the selected bytes. */
+                      quote: string;
+                    };
+                    message_id: string;
+                    expected_revision?: {
+                      /** @enum {string} */
+                      kind:
+                        | "index_page"
+                        | "thread_version"
+                        | "conversation_metadata"
+                        | "thread_event"
+                        | "human_message_revision"
+                        | "thread_link"
+                        | "reaction"
+                        | "reaction_retraction"
+                        | "reaction_slot"
+                        | "custom_emoji_version"
+                        | "image_asset";
+                      id: string;
+                    } | null;
+                    reply_to?: {
+                      /** @enum {string} */
+                      kind:
+                        | "index_page"
+                        | "thread_version"
+                        | "conversation_metadata"
+                        | "thread_event"
+                        | "human_message_revision"
+                        | "thread_link"
+                        | "reaction"
+                        | "reaction_retraction"
+                        | "reaction_slot"
+                        | "custom_emoji_version"
+                        | "image_asset";
+                      id: string;
+                    } | null;
+                    body: string;
+                  }[];
+                  references: (
+                    | {
+                        thread_id: string;
+                        /** @constant */
+                        type: "thread";
+                      }
+                    | {
+                        thread_id: string;
+                        message_id: string;
+                        revision: {
+                          /** @enum {string} */
+                          kind:
+                            | "index_page"
+                            | "thread_version"
+                            | "conversation_metadata"
+                            | "thread_event"
+                            | "human_message_revision"
+                            | "thread_link"
+                            | "reaction"
+                            | "reaction_retraction"
+                            | "reaction_slot"
+                            | "custom_emoji_version"
+                            | "image_asset";
+                          id: string;
+                        };
+                        /** @constant */
+                        type: "human_message";
+                      }
+                    | {
+                        session_id: string;
+                        message_id: string;
+                        event_id: string;
+                        batch: {
+                          /** @enum {string} */
+                          kind:
+                            | "index_page"
+                            | "session_snapshot"
+                            | "turn_snapshot"
+                            | "message_snapshot"
+                            | "tool_snapshot"
+                            | "intent"
+                            | "observation_batch"
+                            | "event_batch"
+                            | "transcript_manifest"
+                            | "transcript_page"
+                            | "transcript_chunk"
+                            | "content"
+                            | "checkpoint_version"
+                            | "association"
+                            | "alias"
+                            | "relation_page"
+                            | "source_state"
+                            | "projection_catalog"
+                            | "catalog_conflict";
+                          id: string;
+                        };
+                        content: {
+                          /** @enum {string} */
+                          kind:
+                            | "index_page"
+                            | "session_snapshot"
+                            | "turn_snapshot"
+                            | "message_snapshot"
+                            | "tool_snapshot"
+                            | "intent"
+                            | "observation_batch"
+                            | "event_batch"
+                            | "transcript_manifest"
+                            | "transcript_page"
+                            | "transcript_chunk"
+                            | "content"
+                            | "checkpoint_version"
+                            | "association"
+                            | "alias"
+                            | "relation_page"
+                            | "source_state"
+                            | "projection_catalog"
+                            | "catalog_conflict";
+                          id: string;
+                        };
+                        /** @constant */
+                        type: "agent_message";
+                      }
+                    | {
+                        session_id: string;
+                        tool_id: string;
+                        snapshot: {
+                          /** @enum {string} */
+                          kind:
+                            | "index_page"
+                            | "session_snapshot"
+                            | "turn_snapshot"
+                            | "message_snapshot"
+                            | "tool_snapshot"
+                            | "intent"
+                            | "observation_batch"
+                            | "event_batch"
+                            | "transcript_manifest"
+                            | "transcript_page"
+                            | "transcript_chunk"
+                            | "content"
+                            | "checkpoint_version"
+                            | "association"
+                            | "alias"
+                            | "relation_page"
+                            | "source_state"
+                            | "projection_catalog"
+                            | "catalog_conflict";
+                          id: string;
+                        };
+                        /** @constant */
+                        type: "tool_invocation";
+                      }
+                    | {
+                        session_id: string;
+                        tool_id: string;
+                        snapshot: {
+                          /** @enum {string} */
+                          kind:
+                            | "index_page"
+                            | "session_snapshot"
+                            | "turn_snapshot"
+                            | "message_snapshot"
+                            | "tool_snapshot"
+                            | "intent"
+                            | "observation_batch"
+                            | "event_batch"
+                            | "transcript_manifest"
+                            | "transcript_page"
+                            | "transcript_chunk"
+                            | "content"
+                            | "checkpoint_version"
+                            | "association"
+                            | "alias"
+                            | "relation_page"
+                            | "source_state"
+                            | "projection_catalog"
+                            | "catalog_conflict";
+                          id: string;
+                        };
+                        content: {
+                          /** @enum {string} */
+                          kind:
+                            | "index_page"
+                            | "session_snapshot"
+                            | "turn_snapshot"
+                            | "message_snapshot"
+                            | "tool_snapshot"
+                            | "intent"
+                            | "observation_batch"
+                            | "event_batch"
+                            | "transcript_manifest"
+                            | "transcript_page"
+                            | "transcript_chunk"
+                            | "content"
+                            | "checkpoint_version"
+                            | "association"
+                            | "alias"
+                            | "relation_page"
+                            | "source_state"
+                            | "projection_catalog"
+                            | "catalog_conflict";
+                          id: string;
+                        };
+                        /** @constant */
+                        type: "tool_output";
+                      }
+                    | {
+                        thread_id: string;
+                        /** @constant */
+                        type: "review_thread";
+                      }
+                    | {
+                        thread_id: string;
+                        comment_id: string;
+                        revision: {
+                          /** @enum {string} */
+                          kind:
+                            | "index_page"
+                            | "anchor"
+                            | "comment_body"
+                            | "comment_revision"
+                            | "thread_event"
+                            | "event_page"
+                            | "thread_snapshot"
+                            | "relation_page"
+                            | "status_page";
+                          id: string;
+                        };
+                        /** @constant */
+                        type: "review_comment";
+                      }
+                    | {
+                        repository: string;
+                        thread_id: string;
+                        comment_id: string;
+                        revision: {
+                          /** @enum {string} */
+                          kind:
+                            | "index_page"
+                            | "anchor"
+                            | "comment_body"
+                            | "comment_revision"
+                            | "thread_event"
+                            | "event_page"
+                            | "thread_snapshot"
+                            | "relation_page"
+                            | "status_page";
+                          id: string;
+                        };
+                        /** @constant */
+                        type: "repository_review_comment";
+                      }
+                    | {
+                        task_id: string;
+                        comment_id: string;
+                        /** Format: uint64 */
+                        version: number;
+                        /** @constant */
+                        type: "work_comment";
+                      }
+                    | {
+                        session_id: string;
+                        checkpoint_id: string;
+                        version: {
+                          /** @enum {string} */
+                          kind:
+                            | "index_page"
+                            | "session_snapshot"
+                            | "turn_snapshot"
+                            | "message_snapshot"
+                            | "tool_snapshot"
+                            | "intent"
+                            | "observation_batch"
+                            | "event_batch"
+                            | "transcript_manifest"
+                            | "transcript_page"
+                            | "transcript_chunk"
+                            | "content"
+                            | "checkpoint_version"
+                            | "association"
+                            | "alias"
+                            | "relation_page"
+                            | "source_state"
+                            | "projection_catalog"
+                            | "catalog_conflict";
+                          id: string;
+                        };
+                        /** @constant */
+                        type: "agent_checkpoint";
+                      }
+                  )[];
+                  workspace_comments?: {
+                    id: string;
+                    source: {
+                      session: string;
+                      repository: string;
+                      workspace: string;
+                      path: string;
+                      operation: string;
+                      commit: string;
+                      content_sha256: string;
+                      current_fingerprint?: string | null;
+                      selection?: {
+                        /** @enum {string} */
+                        encoding: "utf8";
+                        start_byte: string;
+                        end_byte: string;
+                        selected_sha256: string;
+                      } | null;
+                      diff?: {
+                        before_operation: string;
+                        before_commit: string;
+                        after_operation: string;
+                        after_commit: string;
+                        /** @enum {string} */
+                        side: "before" | "after";
+                      } | null;
+                    };
+                    body: string;
+                    /** @description Existing exact revision; append to its discussion, or edit it explicitly. */
+                    previous?:
+                      | (
+                          | {
+                              thread_id: string;
+                              /** @constant */
+                              type: "thread";
+                            }
+                          | {
+                              thread_id: string;
+                              message_id: string;
+                              revision: {
+                                /** @enum {string} */
+                                kind:
+                                  | "index_page"
+                                  | "thread_version"
+                                  | "conversation_metadata"
+                                  | "thread_event"
+                                  | "human_message_revision"
+                                  | "thread_link"
+                                  | "reaction"
+                                  | "reaction_retraction"
+                                  | "reaction_slot"
+                                  | "custom_emoji_version"
+                                  | "image_asset";
+                                id: string;
+                              };
+                              /** @constant */
+                              type: "human_message";
+                            }
+                          | {
+                              session_id: string;
+                              message_id: string;
+                              event_id: string;
+                              batch: {
+                                /** @enum {string} */
+                                kind:
+                                  | "index_page"
+                                  | "session_snapshot"
+                                  | "turn_snapshot"
+                                  | "message_snapshot"
+                                  | "tool_snapshot"
+                                  | "intent"
+                                  | "observation_batch"
+                                  | "event_batch"
+                                  | "transcript_manifest"
+                                  | "transcript_page"
+                                  | "transcript_chunk"
+                                  | "content"
+                                  | "checkpoint_version"
+                                  | "association"
+                                  | "alias"
+                                  | "relation_page"
+                                  | "source_state"
+                                  | "projection_catalog"
+                                  | "catalog_conflict";
+                                id: string;
+                              };
+                              content: {
+                                /** @enum {string} */
+                                kind:
+                                  | "index_page"
+                                  | "session_snapshot"
+                                  | "turn_snapshot"
+                                  | "message_snapshot"
+                                  | "tool_snapshot"
+                                  | "intent"
+                                  | "observation_batch"
+                                  | "event_batch"
+                                  | "transcript_manifest"
+                                  | "transcript_page"
+                                  | "transcript_chunk"
+                                  | "content"
+                                  | "checkpoint_version"
+                                  | "association"
+                                  | "alias"
+                                  | "relation_page"
+                                  | "source_state"
+                                  | "projection_catalog"
+                                  | "catalog_conflict";
+                                id: string;
+                              };
+                              /** @constant */
+                              type: "agent_message";
+                            }
+                          | {
+                              session_id: string;
+                              tool_id: string;
+                              snapshot: {
+                                /** @enum {string} */
+                                kind:
+                                  | "index_page"
+                                  | "session_snapshot"
+                                  | "turn_snapshot"
+                                  | "message_snapshot"
+                                  | "tool_snapshot"
+                                  | "intent"
+                                  | "observation_batch"
+                                  | "event_batch"
+                                  | "transcript_manifest"
+                                  | "transcript_page"
+                                  | "transcript_chunk"
+                                  | "content"
+                                  | "checkpoint_version"
+                                  | "association"
+                                  | "alias"
+                                  | "relation_page"
+                                  | "source_state"
+                                  | "projection_catalog"
+                                  | "catalog_conflict";
+                                id: string;
+                              };
+                              /** @constant */
+                              type: "tool_invocation";
+                            }
+                          | {
+                              session_id: string;
+                              tool_id: string;
+                              snapshot: {
+                                /** @enum {string} */
+                                kind:
+                                  | "index_page"
+                                  | "session_snapshot"
+                                  | "turn_snapshot"
+                                  | "message_snapshot"
+                                  | "tool_snapshot"
+                                  | "intent"
+                                  | "observation_batch"
+                                  | "event_batch"
+                                  | "transcript_manifest"
+                                  | "transcript_page"
+                                  | "transcript_chunk"
+                                  | "content"
+                                  | "checkpoint_version"
+                                  | "association"
+                                  | "alias"
+                                  | "relation_page"
+                                  | "source_state"
+                                  | "projection_catalog"
+                                  | "catalog_conflict";
+                                id: string;
+                              };
+                              content: {
+                                /** @enum {string} */
+                                kind:
+                                  | "index_page"
+                                  | "session_snapshot"
+                                  | "turn_snapshot"
+                                  | "message_snapshot"
+                                  | "tool_snapshot"
+                                  | "intent"
+                                  | "observation_batch"
+                                  | "event_batch"
+                                  | "transcript_manifest"
+                                  | "transcript_page"
+                                  | "transcript_chunk"
+                                  | "content"
+                                  | "checkpoint_version"
+                                  | "association"
+                                  | "alias"
+                                  | "relation_page"
+                                  | "source_state"
+                                  | "projection_catalog"
+                                  | "catalog_conflict";
+                                id: string;
+                              };
+                              /** @constant */
+                              type: "tool_output";
+                            }
+                          | {
+                              thread_id: string;
+                              /** @constant */
+                              type: "review_thread";
+                            }
+                          | {
+                              thread_id: string;
+                              comment_id: string;
+                              revision: {
+                                /** @enum {string} */
+                                kind:
+                                  | "index_page"
+                                  | "anchor"
+                                  | "comment_body"
+                                  | "comment_revision"
+                                  | "thread_event"
+                                  | "event_page"
+                                  | "thread_snapshot"
+                                  | "relation_page"
+                                  | "status_page";
+                                id: string;
+                              };
+                              /** @constant */
+                              type: "review_comment";
+                            }
+                          | {
+                              repository: string;
+                              thread_id: string;
+                              comment_id: string;
+                              revision: {
+                                /** @enum {string} */
+                                kind:
+                                  | "index_page"
+                                  | "anchor"
+                                  | "comment_body"
+                                  | "comment_revision"
+                                  | "thread_event"
+                                  | "event_page"
+                                  | "thread_snapshot"
+                                  | "relation_page"
+                                  | "status_page";
+                                id: string;
+                              };
+                              /** @constant */
+                              type: "repository_review_comment";
+                            }
+                          | {
+                              task_id: string;
+                              comment_id: string;
+                              /** Format: uint64 */
+                              version: number;
+                              /** @constant */
+                              type: "work_comment";
+                            }
+                          | {
+                              session_id: string;
+                              checkpoint_id: string;
+                              version: {
+                                /** @enum {string} */
+                                kind:
+                                  | "index_page"
+                                  | "session_snapshot"
+                                  | "turn_snapshot"
+                                  | "message_snapshot"
+                                  | "tool_snapshot"
+                                  | "intent"
+                                  | "observation_batch"
+                                  | "event_batch"
+                                  | "transcript_manifest"
+                                  | "transcript_page"
+                                  | "transcript_chunk"
+                                  | "content"
+                                  | "checkpoint_version"
+                                  | "association"
+                                  | "alias"
+                                  | "relation_page"
+                                  | "source_state"
+                                  | "projection_catalog"
+                                  | "catalog_conflict";
+                                id: string;
+                              };
+                              /** @constant */
+                              type: "agent_checkpoint";
+                            }
+                        )
+                      | null;
+                    /** @default false */
+                    edit?: boolean;
+                  }[];
+                } | null;
+                text: string;
+                /** Format: uint64 */
+                max_duration_ms: number;
+                /** @constant */
+                action: "prompt";
+              }
+            | {
+                permission_id: string;
+                option_id?: string | null;
+                /** @constant */
+                action: "permission";
+              }
+            | {
+                target: string;
+                /** @constant */
+                action: "cancel";
+              }
+            | {
+                /** @constant */
+                action: "end";
+              }
+            | {
+                /** @constant */
+                action: "resume";
+              }
+            | {
+                /** @constant */
+                action: "continue_with_context";
+              }
+            | {
+                /** @constant */
+                action: "cleanup";
+              };
+        };
+      };
+    };
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AgentExecutionOutcome"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  agents_workspace_inspect: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody: {
+      content: {
+        "application/json": {
+          /** Format: uint32 */
+          version: number;
+          session: string;
+          repository: string;
+          query:
+            | {
+                /** @constant */
+                view: "files";
+              }
+            | {
+                /** @enum {string} */
+                range: "since_last_commit" | "last_turn" | "branch";
+                base?: string | null;
+                /** @constant */
+                view: "changes";
+              };
+          path?: string | null;
+          cursor?: string | null;
+        };
+      };
+    };
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AgentWorkspaceInspection"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description stale_work, cursor_reset, intent_conflict or work_replication_unsupported. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  agents_outcome: {
+    parameters: {
+      query: {
+        request: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AgentExecutionOutcome"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  agents_outcome_head: {
+    parameters: {
+      query: {
+        request: string;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  agents_events: {
+    parameters: {
+      query: {
+        session: string;
+        after?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AgentExecutionEventPage"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  agents_events_head: {
+    parameters: {
+      query: {
+        session: string;
+        after?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  agents_feedback: {
+    parameters: {
+      query: {
+        session: string;
+        after?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["AgentExecutionFeedback"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  agents_feedback_head: {
+    parameters: {
+      query: {
+        session: string;
+        after?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content?: never;
+      };
+    };
+  };
+  agents_stream: {
+    parameters: {
+      query: {
+        session: string;
+        after?: number;
+      };
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    requestBody?: never;
+    responses: {
+      /** @description Bounded caller-owned execution activity. Reconnect using the last delivered integer sequence in after. Admission and current repository grants are checked throughout delivery; revoked streams terminate. Publication flags report AgentStore commitment separately. No command replay. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "text/event-stream": string;
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
+  agents_stream_head: {
     parameters: {
       query: {
         session: string;

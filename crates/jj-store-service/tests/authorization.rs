@@ -438,3 +438,91 @@ async fn local_trusted_access_has_a_stable_principal_and_explicit_permission() {
         .is_err()
     );
 }
+
+struct Delegated {
+    token: BearerToken,
+    principal: PrincipalId,
+    allowed: AtomicBool,
+}
+#[async_trait::async_trait]
+impl jj_store_service::access::Delegation for Delegated {
+    fn credential(&self, repository: RepositoryId) -> jj_store_service::auth::Result<BearerToken> {
+        if repository != REPO {
+            return Err(jj_store_service::auth::Error::Denied);
+        }
+        Ok(self.token.clone())
+    }
+    async fn principal(
+        &self,
+        repo: RepositoryId,
+        required: Permission,
+    ) -> jj_store_service::auth::Result<PrincipalId> {
+        if repo != REPO
+            || !self.allowed.load(Ordering::SeqCst)
+            || !matches!(required, Permission::Read | Permission::Write)
+        {
+            return Err(jj_store_service::auth::Error::Denied);
+        }
+        Ok(self.principal)
+    }
+}
+#[tokio::test]
+async fn delegated_access_rechecks_identity_scope_revocation_and_repository_grants() {
+    let mut f = fixture().await;
+    let proof = Arc::new(Delegated {
+        token: f.writer_token.clone(),
+        principal: ACTOR,
+        allowed: AtomicBool::new(true),
+    });
+    let access =
+        RepositoryAccess::delegated(REPO, f.store.clone(), f.clock.clone(), proof.clone()).unwrap();
+    assert_eq!(
+        access
+            .authorize_current(Permission::Read)
+            .await
+            .unwrap()
+            .id(),
+        ACTOR
+    );
+    assert!(access.authorize_current(Permission::Admin).await.is_err());
+    let coordinator = Coordinator::new(
+        f.store.clone(),
+        REPO,
+        f.source.clone(),
+        Arc::new(AuthenticatedGuard::new(access, Arc::new(FixtureSemantics))),
+        Limits::default(),
+    )
+    .unwrap();
+    assert!(matches!(
+        coordinator.publish(&request(1, ACTOR)).await.unwrap(),
+        PublishOutcome::Committed(_)
+    ));
+    proof.allowed.store(false, Ordering::SeqCst);
+    assert!(matches!(
+        coordinator.status(&request(1, ACTOR)).await,
+        Err(wal::Error::Denied)
+    ));
+    assert!(matches!(
+        coordinator.publish(&request(2, ACTOR)).await,
+        Err(wal::Error::Denied)
+    ));
+    proof.allowed.store(true, Ordering::SeqCst);
+    let mismatch = Arc::new(Delegated {
+        token: f.writer_token.clone(),
+        principal: ADMIN,
+        allowed: AtomicBool::new(true),
+    });
+    let mismatch =
+        RepositoryAccess::delegated(REPO, f.store.clone(), f.clock.clone(), mismatch).unwrap();
+    assert!(mismatch.authorize_current(Permission::Read).await.is_err());
+    f.policy.revoke(f.writer_token.id());
+    let mut revoke = request(3, ADMIN);
+    revoke.transition = None;
+    revoke.settings = Some(f.policy.encode().unwrap());
+    revoke.kind = SemanticKind::SettingsChanged;
+    f.admin.publish(&revoke).await.unwrap();
+    assert!(matches!(
+        coordinator.publish(&request(4, ACTOR)).await,
+        Err(wal::Error::Denied)
+    ));
+}

@@ -14,3 +14,4 @@
 - [Interactive agent execution qualification profile](13-interactive-agent-execution.md)
 - [Local inference runtime compatibility](14-local-inference-runtime.md)
 - [Intentional Thread format compatibility](37-intentional-thread-formats.md)
+- [Remote connection compatibility](38-remote-connections.md)

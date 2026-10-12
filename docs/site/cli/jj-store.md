@@ -1639,6 +1639,54 @@ The default request limits are eight concurrent requests, 30 seconds and 32 MiB
 per native blob. Configure one serving instance per storage namespace; the local
 state lock does not provide distributed fencing.
 
+### Authenticated remote agents
+
+Remote execution is disabled unless `[remote_agents]` is present. It requires
+authenticated access, native storage and a Unix host. Configure the paired
+custom JJ and ACP executables and operator-owned agents; changes apply at
+restart. Paths resolve relative to this private configuration file.
+
+```toml
+[remote_agents]
+acp_executable = "/opt/jj-store/bin/jj-acp"
+jj_executable = "/opt/jj-store/bin/jj"
+
+[[remote_agents.agents]]
+principals = ["11111111111111111111111111111111"]
+
+[remote_agents.agents.setup]
+id = "builder"
+name = "Builder"
+avatar = "🤖"
+description = "Build and review code"
+instructions = "Work only in the admitted repositories."
+runner = "codex"
+
+[remote_agents.agents.setup.preferences]
+mode = "ask"
+
+[remote_agents.agents.setup.options]
+inherit_defaults = false
+```
+
+Use existing provider environment or OS-credential references for secrets;
+literal credential values remain forbidden. Enroll each allowed principal's
+token in the installation directory and grant that same principal repository
+Write access independently. Homes must already contain WorkStore metadata.
+Delegated native access is limited to the admitted home and attachments, with
+current token/repository checks during dispatch, streaming and publication.
+Remote callers cannot create repositories or administer agents, tokens or the
+machine. This trusted-collaborator profile is not an OS isolation boundary.
+
+Device-local connection records live under `state_dir/connections`; remote
+execution scopes and request journals live under `state_dir/remote-agents`.
+Connection tokens and session handles stay in memory. Execution journals retain
+unknown outcomes across restart without replaying prompts. Four workers and 64
+pending admissions are bounded across caller partitions. M27 records Linux and
+macOS qualification independently.
+
+### Native search configuration
+
 Native background search indexing is opt-in: add one `[[search]]` entry per
 repository with `repository` and `token_environment`, whose name starts with
 `JJ_STORE_SEARCH_TOKEN_` for authenticated access. Supply a read token for that

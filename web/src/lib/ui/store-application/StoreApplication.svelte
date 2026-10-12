@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { provideProfiles } from "../../profiles/context.svelte.js";
   import { ownRepositorySettingsGuard } from "../store-settings/repository-settings-guard.svelte.js";
   import StoreApplicationHeaderCenter from "./StoreApplicationHeaderCenter.svelte";
   import StoreApplicationAgents from "./StoreApplicationAgents.svelte";
@@ -7,11 +6,13 @@
   import StoreLazyView from "./StoreLazyView.svelte";
   import { views } from "./application-views.js";
   import { provideConversationInspection } from "../../conversations/inspection.svelte.js";
-  import { provideTerminalControls } from "../../terminal/controls.svelte.js";
-  provideTerminalControls();
   import StoreIndexPreparationNotice from "./StoreIndexPreparationNotice.svelte";
   import StoreApplicationMain from "./StoreApplicationMain.svelte";
-  import StoreHelp from "../store-help/StoreHelp.svelte";
+  import StoreConnectionFooter from "../store-connections/StoreConnectionFooter.svelte";
+  import {
+    ownConnectionNavigation,
+    connectionSettingsNavigation,
+  } from "../store-connections/navigation.svelte.js";
   import { ownApplicationNotifications } from "../../notifications/notification-context.svelte.js";
   import StoreNotificationHost from "../store-notifications/StoreNotificationHost.svelte";
   import StoreAgentExecutionNotice from "../store-agent-execution/StoreAgentExecutionNotice.svelte";
@@ -44,7 +45,6 @@
   } from "../community-navigation/model.js";
   import CommunityProfileMenu from "../community-profile-menu/CommunityProfileMenu.svelte";
   import StoreSettingsNavigation from "../store-settings/StoreSettingsNavigation.svelte";
-  import type { StoreSettingsSection } from "../store-settings/model.js";
   import StoreApplicationHeaderActions from "./StoreApplicationHeaderActions.svelte";
   import StoreWorkspaceToggle from "../store-agent-workspace/StoreWorkspaceToggle.svelte";
   import { provideDiscussionFocus } from "../store-discussion/discussion-focus.svelte.js";
@@ -64,7 +64,6 @@
     desktopChrome = untrack(isMacDesktopWindow),
     children,
   }: StoreApplicationProps = $props();
-  provideProfiles(() => controller.directory);
   import { ownApplicationAppearance as ownAppearance } from "../../appearance/runtime.svelte.js";
   const appearance = ownAppearance(
     () => controller.state.route.repository,
@@ -121,6 +120,17 @@
         controller.state.mutation.status,
       ),
   );
+  const { openSettings, selectSettings, closeSettings } =
+    connectionSettingsNavigation(
+      () => controller,
+      () => editorOpen,
+      shell,
+    );
+  const profileAction = ownConnectionNavigation(
+    () => controller,
+    () => workspaceBlocked,
+    openSettings,
+  );
   provideStoreEntityContext(
     () => controller,
     () => workspaceBlocked,
@@ -168,19 +178,6 @@
     if (editorOpen) return;
     controller.actions.navigate(delta);
   }
-  function openSettings(section?: StoreSettingsSection) {
-    if (editorOpen) return;
-    controller.actions.openGlobalSettings(section);
-    if (shell.mobile.resolvedMode === "mobile") shell.mobile.showMain();
-  }
-  function selectSettings(section: StoreSettingsSection) {
-    controller.actions.selectGlobalSettings(section);
-    if (shell.mobile.resolvedMode === "mobile") shell.mobile.showMain();
-  }
-  function closeSettings() {
-    void controller.actions.leaveGlobalSettings();
-    if (shell.mobile.resolvedMode === "mobile") shell.mobile.showMain();
-  }
   const notifications = ownApplicationNotifications(() => controller);
   provideAgentExecution(() => controller.execution);
 </script>
@@ -222,11 +219,12 @@
     edgeRevealLabel="Preview repository navigation sidebar"
   >
     {#if settingsOpen}<StoreSettingsNavigation
+        installationManagement={controller.state.accessMode === "local_trusted"}
         section={current.globalSettings?.section ?? "service"}
         {compact}
         onSelect={selectSettings}
         onClose={closeSettings}
-      />{:else}<StoreApplicationNavigation
+      /><StoreConnectionFooter {compact} />{:else}<StoreApplicationNavigation
         {controller}
         bind:sectionOpen={layout.sections}
         bind:itemOpen={layout.items}
@@ -235,15 +233,13 @@
         onSelect={select}
         onSearch={() => (searchOpen = true)}
       >
-        {#snippet footer()}<StoreHelp {compact} sidebar /><CommunityProfileMenu
+        {#snippet footer()}<StoreConnectionFooter
+            {compact}
+          /><CommunityProfileMenu
             member={controller.state.member}
             authenticated={controller.state.authenticated}
             {compact}
-            onAction={(action) => {
-              if (action === "settings") openSettings();
-              else if (action === "sign-in") controller.actions.signIn();
-              else controller.actions.signOut();
-            }}
+            onAction={profileAction}
           />{/snippet}
       </StoreApplicationNavigation>{/if}
   </AppShell.Sidebar>

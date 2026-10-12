@@ -366,6 +366,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 {
   "type": "object",
   "properties": {
+    "installation_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
     "version": {
       "type": "integer",
       "format": "uint32",
@@ -388,6 +394,7 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     }
   },
   "required": [
+    "installation_id",
     "version",
     "access_mode",
     "capabilities",
@@ -415,6 +422,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 {
   "type": "object",
   "properties": {
+    "server_connections": {
+      "type": "boolean"
+    },
+    "authenticated_agent_execution": {
+      "type": "boolean"
+    },
     "version": {
       "type": "integer",
       "format": "uint32",
@@ -561,6 +574,8 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     }
   },
   "required": [
+    "server_connections",
+    "authenticated_agent_execution",
     "version",
     "installation_directory",
     "native_profile",
@@ -23948,6 +23963,59 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "observed_at_millis",
     "payload",
     "committed"
+  ]
+}
+```
+
+## Connection
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "origin": {
+      "type": "string"
+    },
+    "installation": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "name",
+    "origin",
+    "installation"
+  ]
+}
+```
+
+## Connected
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "connection": {
+      "$ref": "#/components/schemas/Connection"
+    },
+    "handle": {
+      "type": "string"
+    },
+    "principal": {
+      "$ref": "#/components/schemas/PrincipalId"
+    }
+  },
+  "required": [
+    "connection",
+    "handle",
+    "principal"
   ]
 }
 ```

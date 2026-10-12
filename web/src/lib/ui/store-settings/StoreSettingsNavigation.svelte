@@ -14,11 +14,13 @@
   let {
     section,
     compact = false,
+    installationManagement = true,
     onSelect,
     onClose,
   }: {
     section: StoreSettingsSection;
     compact?: boolean;
+    installationManagement?: boolean;
     onSelect: (section: StoreSettingsSection) => void;
     onClose: () => void;
   } = $props();
@@ -41,6 +43,9 @@
       ],
     },
   ] as const;
+  const visibleGroups = $derived(
+    installationManagement ? groups : groups.filter((group) => group.label === "Personal"),
+  );
 </script>
 
 <nav
@@ -58,25 +63,25 @@
     <ArrowLeftIcon data-icon="inline-start" aria-hidden="true" />
     <span>Back to jj-store</span>
   </Button>
-  <div class="store-settings-navigation__groups">
-    {#each groups as group (group.label)}
-      <section aria-label={group.label}>
-        <h2>{group.label}</h2>
-        {#each group.items as item (item.id)}
-          <Button
-            variant="ghost"
-            class="store-settings-navigation__item"
-            data-active={section === item.id ? "" : undefined}
-            aria-pressed={section === item.id}
-            aria-label={item.label}
-            title={compact ? item.label : undefined}
-            onclick={() => onSelect(item.id)}
-          >
-            <item.icon data-icon="inline-start" aria-hidden="true" />
-            <span>{item.label}</span>
-          </Button>
-        {/each}
-      </section>
+ <div class="store-settings-navigation__groups">
+   {#each visibleGroups as group (group.label)}
+     <section aria-label={group.label}>
+       <h2>{group.label}</h2>
+       {#each group.items as item (item.id)}
+         <Button
+           variant="ghost"
+           class="store-settings-navigation__item"
+           data-active={section === item.id ? "" : undefined}
+           aria-pressed={section === item.id}
+           aria-label={item.label}
+           title={compact ? item.label : undefined}
+           onclick={() => onSelect(item.id)}
+         >
+           <item.icon data-icon="inline-start" aria-hidden="true" />
+           <span>{item.label}</span>
+         </Button>
+       {/each}
+     </section>
     {/each}
   </div>
   <footer

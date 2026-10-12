@@ -13,16 +13,18 @@
     displayMode = "auto",
     settingsSearch = "fresh",
     desktopChrome = false,
+    accessMode = "authenticated",
   }: {
     initialPage?: StorePage;
     initiallyCollapsed?: boolean;
     displayMode?: AppShellDisplayMode;
     settingsSearch?: CatalogSearchSettings;
     desktopChrome?: boolean;
+    accessMode?: "authenticated" | "local_trusted";
   } = $props();
 
   const controller = untrack(() =>
-    createInMemoryStoreController(initialPage, { settingsSearch }),
+    createInMemoryStoreController(initialPage, { settingsSearch, accessMode }),
   );
   const layoutStorage = untrack(createMemoryStoryStorage);
 </script>

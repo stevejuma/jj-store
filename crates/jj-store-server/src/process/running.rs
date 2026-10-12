@@ -5,8 +5,12 @@ impl PreparedServer {
         use jj_store_service::agent_execution::Manager as _;
         let publication = self.agents.as_ref().map(|a| a.start_publication());
         let agents = self.agents.clone();
+        let remote_agents = self.remote_agents.clone();
         let shutdown = async move {
             shutdown.await;
+            if let Some(remote) = remote_agents {
+                let _ = remote.shutdown().await;
+            }
             if let Some(agents) = agents {
                 let _ = agents.shutdown().await;
             }
@@ -57,6 +61,12 @@ impl PreparedServer {
                 }
             }
         };
+        if let Some(remote) = &self.remote_agents {
+            remote
+                .shutdown()
+                .await
+                .map_err(|_| Error::Service("remote agent shutdown outcome unknown"))?;
+        }
         let agents_stopped = if let Some(agents) = self.agents {
             agents
                 .shutdown()

@@ -3,6 +3,7 @@ use crate::{dto::ErrorBody, m, routes};
 use schemars::{JsonSchema, SchemaGenerator, generate::SchemaSettings};
 use serde_json::{Map, Value, json};
 mod application_websocket;
+mod remote_agents;
 
 pub(crate) enum Reply {
     Json(u16),
@@ -473,6 +474,8 @@ pub fn openapi() -> Value {
     crate::local_browser::document(&mut document);
     crate::capture_management::document(&mut document);
     crate::agent_execution::document(&mut document);
+    crate::connections::document(&mut document);
+    crate::remote_agents::document(&mut document);
     crate::server_settings::document(&mut document);
     crate::directory::document(&mut document);
     document.finish()

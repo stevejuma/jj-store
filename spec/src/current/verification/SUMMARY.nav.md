@@ -23,3 +23,4 @@
 - [UI verification (continued 3)](ui-03.md)
 - [UI verification](ui.md)
 - [WORK verification](work.md)
+- [Remote application verification](ui-04.md)

@@ -101,7 +101,7 @@
               (live) => live.agent_id === agent.id,
             )?.inference_host}
           </p>{/if}
-        {#if manager.value?.live_agents?.find((live) => live.agent_id === agent.id)?.restart_required}
+        {#if manager.localManagement() && manager.value?.live_agents?.find((live) => live.agent_id === agent.id)?.restart_required}
           <p>Configuration changed. Restart required.</p>
           <Button
             variant="outline"
@@ -115,6 +115,7 @@
         {/if}
         {#key agent.id}<CommunityAgentProfile
             {agent}
+            management={manager.localManagement()}
             status={manager.value}
             unknown={!!manager.connectionError}
             pending={manager.busy || !!manager.pending}

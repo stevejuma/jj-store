@@ -19,20 +19,7 @@ impl Supervisor {
                 .map_err(|_| Error::Stale)?;
             local.agent_feedback(&rows).await?
         } else {
-            let session = self
-                .0
-                .resources
-                .host
-                .as_ref()
-                .ok_or(Error::Unavailable)?
-                .endpoint(saved.view.repository)
-                .map_err(|_| Error::Denied)?
-                .bind_local_trusted(
-                    self.0.resources.actor,
-                    jj_store_service::auth::Permission::Admin,
-                )
-                .map_err(|_| Error::Denied)?
-                .into_session();
+            let session = self.native_request(saved.view.repository)?.into_session();
             let pin =
                 PinnedCollabRead::open(session.clone(), Arc::new(RepositoryMemberReactionActors))
                     .await
@@ -70,20 +57,7 @@ impl Supervisor {
                 .agent_prompt_context(&rows, &sessions, &excluded)
                 .await?
         } else {
-            let session = self
-                .0
-                .resources
-                .host
-                .as_ref()
-                .ok_or(Error::Unavailable)?
-                .endpoint(saved.view.repository)
-                .map_err(|_| Error::Denied)?
-                .bind_local_trusted(
-                    self.0.resources.actor,
-                    jj_store_service::auth::Permission::Admin,
-                )
-                .map_err(|_| Error::Denied)?
-                .into_session();
+            let session = self.native_request(saved.view.repository)?.into_session();
             let pin =
                 PinnedCollabRead::open(session.clone(), Arc::new(RepositoryMemberReactionActors))
                     .await

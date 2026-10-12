@@ -42,3 +42,4 @@
 - [Installation agent settings and compute](42-compute-and-agent-settings.md)
 - [Conversation metadata API](43-conversation-metadata.md)
 - [Intentional Thread workspace API](44-thread-workspaces.md)
+- [Remote application connections](45-remote-connections-and-agents.md)

@@ -1,3 +1,4 @@
+import { authenticatedAgentFetch } from "../connections/agent-transport.js";
 import { createDirectory } from "./directory.svelte.js";
 import { LocalClient } from "../api/local-client.js";
 import { AgentExecution } from "./agent-execution.svelte.js";
@@ -10,9 +11,11 @@ export function createLocalConfiguration(
   freshness?: import("./application-freshness.js").ApplicationFreshness,
   token: () => string | null = () => null,
   denied?: () => void,
+  active: () => boolean = () => true,
 ) {
   const directory = createDirectory({
     available: () =>
+      active() &&
       data.directorySupported &&
       (data.accessMode === "local_trusted" || token() !== null),
     token,
@@ -22,15 +25,22 @@ export function createLocalConfiguration(
   });
   const capture = createProductionCaptureManagement(data, fetcher, freshness);
   const execution = new AgentExecution(
-    () => data.accessMode === "local_trusted" && data.executionSupported,
-    fetcher,
+    () =>
+      active() &&
+      data.executionSupported &&
+      (data.accessMode === "local_trusted" || token() !== null),
+    (input, init) =>
+      data.accessMode === "local_trusted"
+        ? (fetcher ?? fetch)(input, init)
+        : authenticatedAgentFetch(fetcher, token)(input, init),
     (repository) =>
       data.repositories.find((r) => r.id === repository)?.principal ?? "",
     freshness,
+    () => data.accessMode === "local_trusted",
   );
   const configuration = createServerSettings({
     available: () =>
-      data.accessMode === "local_trusted" && data.settingsSupported,
+      active() && data.accessMode === "local_trusted" && data.settingsSupported,
     client: new LocalClient("", fetcher),
   });
   return {

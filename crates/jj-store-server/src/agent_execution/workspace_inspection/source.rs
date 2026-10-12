@@ -125,20 +125,7 @@ impl Supervisor {
                 }),
             }
         } else {
-            let session = self
-                .0
-                .resources
-                .host
-                .as_ref()
-                .ok_or(Error::Unavailable)?
-                .endpoint(repository)
-                .map_err(error)?
-                .bind_local_trusted(
-                    self.0.resources.actor,
-                    jj_store_service::auth::Permission::Admin,
-                )
-                .map_err(error)?
-                .into_session();
+            let session = self.native_request(repository)?.into_session();
             let OpenRead::Pinned(pin) = session
                 .open_read(Some(operation), ReadLimits::default())
                 .await

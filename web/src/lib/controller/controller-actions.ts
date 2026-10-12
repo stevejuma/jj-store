@@ -22,6 +22,7 @@ export type StoreControllerActions = {
   refreshSettings(
     section?: import("./settings-refresh.js").SettingsRefreshScope,
   ): Promise<void>;
+  setConnectionActive?(active: boolean): void;
   setRefreshPaused?(key: string, paused: boolean): void;
   setNavigationGuard?(
     key: string,

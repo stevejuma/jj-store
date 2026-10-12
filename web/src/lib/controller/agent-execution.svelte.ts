@@ -91,6 +91,7 @@ export class AgentExecution {
     fetcher?: typeof fetch,
     principal?: (repository: string) => string,
     readonly freshness?: import("./application-freshness.js").ApplicationFreshness,
+    readonly localManagement: () => boolean = () => true,
   ) {
     this.client = new LocalClient("", fetcher);
     this.stops = new AgentSessionStop(this.client, () => this.updates.status());
@@ -274,5 +275,12 @@ export class AgentExecution {
     this.#alive = false;
     this.updates.destroy();
     disposeAgentResources(this);
+  }
+  resumeActivity() {
+    if (this.open && this.selected)
+      void this.#selection.select(this.selected, true);
+  }
+  pauseActivity() {
+    this.#selection.pause();
   }
 }
