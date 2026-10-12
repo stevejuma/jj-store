@@ -18,13 +18,14 @@ existing repository migration is provided.
 ## Development
 
 Use Rust 1.98.1, Node 22 or newer, pnpm 10.32.1, and mdBook. Install tooling
-with `pnpm install --frozen-lockfile`. Run `pnpm spec:check`, `pnpm check`,
-`pnpm test`, and `pnpm build`. The pinned Rust toolchain includes rustfmt.
-`pnpm format` formats Rust, authored Markdown and tooling; `pnpm format:check`
-checks them without making changes. Use `pnpm format:rust` or
-`pnpm format:rust:check` for Rust only. Rust formatting also runs in both
-`pnpm check` and `pnpm spec:check`. Docker is required for isolated real RustFS
-conformance, not unit tests.
+with `pnpm install --frozen-lockfile`. Use the focused package and test lanes in
+the [agent guide](AGENTS.md). The root `pnpm spec:check`, `pnpm check`,
+`pnpm test`, and `pnpm build` commands are wider qualification lanes. The pinned
+Rust toolchain includes rustfmt. `pnpm format` formats Rust, authored Markdown
+and tooling; `pnpm format:check` checks them without making changes. Use
+`pnpm format:rust` or `pnpm format:rust:check` for Rust only. Rust formatting
+also runs in both `pnpm check` and `pnpm spec:check`. Docker is required for
+isolated real RustFS conformance, not unit tests.
 
 `pnpm contracts:generate` regenerates OpenAPI and browser types from the Rust
 application contracts. `pnpm contracts:check` rejects drift and verifies actual
@@ -58,6 +59,26 @@ path for every command. `JJ_STORE_DEV_SERVER` selects an existing server binary;
 the UI and backend ports can be selected with `JJ_STORE_DEV_PORT` and
 `JJ_STORE_DEV_BACKEND_PORT`. Production CSP verification uses the built UI; Vite
 has a separate loopback-only HMR document policy.
+
+Build caches are maintained by repository commands. `pnpm dev:disk` reports
+Cargo caches across registered JJ workspaces and shows protected state
+separately. `pnpm dev:clean -- --dry-run` previews cleanup; `--apply` removes
+eligible idle artifacts. Use `pnpm dev:cargo -- test -p <package> --locked` for
+focused Rust verification. The defaults are 40 GiB per target, 80 GiB across
+managed targets, and 30 GiB minimum free space. Positive GiB overrides are
+`JJ_STORE_BUILD_TARGET_GIB`, `JJ_STORE_BUILD_TOTAL_GIB` and
+`JJ_STORE_BUILD_FREE_GIB`. A compiler can exceed a threshold while running;
+unresolved pressure stops subsequent managed work with cleanup guidance.
+
+Temporary qualification targets use `.local/build-targets/NAME`. Register them
+with `pnpm dev:target:register -- --target PATH --reason TEXT`, then select that
+path with `CARGO_TARGET_DIR` or Cargo's `--target-dir`. Successful qualification
+runs `pnpm dev:target:retire -- --target PATH --apply`; intentionally retained
+outputs remain protected until `dev:target:complete`. Clean idle workspace build
+roots before retiring the workspace. Fixtures, recovery archives, staged runtime
+resources and source repositories are preserved. Direct Cargo bypasses the
+budget preflight; use managed commands and avoid concurrent manual cleanup.
+Python 3, POSIX locks and `lsof` are required for guarded cleanup.
 
 `pnpm dev:reset` replaces the demo state with the deterministic sample fixture.
 The reset publishes representative Codex, Cursor and OpenCode sessions and

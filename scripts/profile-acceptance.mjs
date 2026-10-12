@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { createServer } from "node:net";
 import { rewriteServerConfiguration } from "./dev-demo-state.mjs";
+import { cargoCommand } from "./managed-cargo.mjs";
 const root = resolve(import.meta.dirname, ".."),
   runtime = mkdtempSync(join(tmpdir(), "jj-store-profile-"));
 const binary = join(root, "target/debug/jj-store"),
@@ -16,7 +17,7 @@ await new Promise((r) => listener.close(r));
 const base = `http://127.0.0.1:${port}`,
   config = join(runtime, "local/server.toml");
 const run = (cmd, args, env = {}) =>
-  execFileSync(cmd, args, {
+  execFileSync(...(cmd === "cargo" ? cargoCommand(args) : [cmd, args]), {
     cwd: root,
     env: { ...process.env, ...env },
     stdio: "inherit",

@@ -226,6 +226,23 @@ existing repos as part of a development slice. Disposable test services must be
 isolated from existing deployments and cleaned up after use. No user credentials
 in fixtures.
 
+Use `pnpm dev:cargo -- <Cargo arguments>` for Rust build, check, clippy, test
+and run commands. Repository entry points already use its disk preflight.
+Inspect `pnpm dev:disk`; `pnpm dev:clean -- --dry-run` previews maintenance and
+`--apply` cleans eligible unused build outputs. Budget pressure that cannot be
+resolved without touching a live target stops the build. Never run raw Cargo
+concurrently with explicit cleanup. UI-only edits use `pnpm dev:ui` and need no
+Rust build.
+
+Register isolated targets with
+`pnpm dev:target:register -- --target .local/build-targets/NAME --reason TEXT`;
+use `CARGO_TARGET_DIR` or `--target-dir` only for a registered target in the
+same workspace. On successful qualification, run
+`pnpm dev:target:retire -- --target PATH --apply`. Retained targets need a
+reason and explicit completion before automatic maintenance can remove them.
+Avoid copying whole target trees. Before forgetting a workspace, clean its idle
+build roots; preserve source work, fixtures, recovery archives and evidence.
+
 Authored spec Markdown stays within 400 physical lines and 32,768 UTF-8 bytes.
 Use topic indexes and generated task histories; preserve committed evidence,
 historical IDs, gate selections and task-family mappings.

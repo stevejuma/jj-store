@@ -5,6 +5,7 @@ import { homedir } from "node:os";
 import { join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { parseArgs } from "node:util";
+import { cargoCommand } from "./managed-cargo.mjs";
 const tools = [
   ["jj-store", "jj-store"],
   ["jj", "jj-store-jj"],
@@ -46,15 +47,14 @@ if (
       const root = resolve(import.meta.dirname, "..");
       if (!values["no-build"]) {
         const built = spawnSync(
-          "cargo",
-          [
+          ...cargoCommand([
             "build",
             "-p",
             "jj-store-cli",
             "--bins",
             "--locked",
             ...(values.debug ? [] : ["--release"]),
-          ],
+          ]),
           { cwd: root, stdio: "inherit" },
         );
         if (built.error) throw built.error;

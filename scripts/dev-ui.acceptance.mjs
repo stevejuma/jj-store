@@ -46,7 +46,7 @@ let runtime;
 let phase = "startup";
 try {
   runtime = await runUiDevelopment(root, environment);
-  const { api, agentsAvailable } = developmentApi(runtime.origin);
+  const { api, agentsAvailable, headers } = developmentApi(runtime.origin);
   await agentsAvailable();
   const html = await (await fetch(runtime.origin)).text();
   assert.ok(

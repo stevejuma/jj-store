@@ -1,4 +1,5 @@
 import { execFileSync } from "node:child_process";
+import { cargoCommand } from "../managed-cargo.mjs";
 import {
   readFileSync,
   writeFileSync,
@@ -88,8 +89,7 @@ export function renderCommand(root) {
 export function expectedReferences() {
   const data = JSON.parse(
     execFileSync(
-      "cargo",
-      [
+      ...cargoCommand([
         "run",
         "--quiet",
         "--locked",
@@ -97,7 +97,7 @@ export function expectedReferences() {
         "jj-store-cli",
         "--example",
         "docs_reference",
-      ],
+      ]),
       { encoding: "utf8", maxBuffer: 16 * 1024 * 1024 },
     ),
   );

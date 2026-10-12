@@ -3,6 +3,7 @@ import { stageDesktopResources } from "./desktop-resources.mjs";
 import { spawn } from "node:child_process";
 import { resolve, join } from "node:path";
 import { parseArgs } from "node:util";
+import { cargoCommand, managedCargo } from "./managed-cargo.mjs";
 
 const root = resolve(import.meta.dirname, "..");
 const { positionals, values } = parseArgs({
@@ -20,6 +21,7 @@ const { positionals, values } = parseArgs({
 });
 const mode = positionals[0];
 function run(command, args, cwd = root) {
+  if (command === "cargo") [command, args] = cargoCommand(args);
   return new Promise((resolveRun, reject) => {
     const child = spawn(command, args, { cwd, stdio: "inherit" });
     child.once("error", reject);
@@ -112,11 +114,7 @@ else if (mode === "test")
     "--no-default-features",
   ]);
 else if (mode === "bundle") {
-  await run(
-    "pnpm",
-    ["dlx", "@tauri-apps/cli@2.11.4", "build", "--debug", "--bundles", "app"],
-    join(root, "desktop"),
-  );
+  await managedCargo(["desktop-bundle"], root);
 } else if (mode === "run") {
   if (values["state-dir"])
     process.env.JJ_STORE_DESKTOP_DATA_DIR = resolve(values["state-dir"]);

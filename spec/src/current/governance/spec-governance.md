@@ -255,3 +255,13 @@ and cold remote/built-App flows. Integration is not installed-provider, Linux
 real-storage, desktop or visual-baseline qualification. Advance main only after
 verification, then forget and remove the temporary workspace while preserving
 development data.
+
+E-BUILD-STORAGE-001 adds application-owned local build reporting, managed Cargo
+pre/postflight and explicitly registered temporary-target lifecycle. JST-CLI-004
+now governs cache budgets and guarded cleanup; JST-DESK-001 custody is
+unchanged. Tests use disposable Cargo/JJ workspaces and synthetic output, native
+locks and open-file consumers. Actual cleanup measures filesystem free space and
+never removes application state, credentials or a live target. Shared tooling
+changes require the full affected launcher, documentation and contract-helper
+tests plus isolated cold UI startup; they do not expand storage/platform/release
+gates.

@@ -5,6 +5,7 @@ import { request } from "node:http";
 import { join } from "node:path";
 import { promisify } from "node:util";
 import { stopRuntimeProcesses } from "./dev-demo-processes.mjs";
+import { cargoCommand } from "./managed-cargo.mjs";
 
 const execFileAsync = promisify(execFile);
 
@@ -13,6 +14,7 @@ export function credential() {
 }
 
 export async function execute(command, args, options = {}) {
+  if (command === "cargo") [command, args] = cargoCommand(args);
   const { stdout = "", stderr = "" } = await execFileAsync(command, args, {
     cwd: options.cwd,
     env: { ...process.env, ...options.env },
@@ -22,6 +24,7 @@ export async function execute(command, args, options = {}) {
 }
 
 export async function executeWithInput(command, args, input, options = {}) {
+  if (command === "cargo") [command, args] = cargoCommand(args);
   return new Promise((resolveExecute, rejectExecute) => {
     const child = spawn(command, args, {
       cwd: options.cwd,

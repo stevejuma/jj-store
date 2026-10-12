@@ -29,5 +29,5 @@ export function developmentApi(origin) {
     const status = await api("local/agents");
     assert.ok(Array.isArray(status.setups));
   };
-  return { api, agentsAvailable };
+  return { api, agentsAvailable, headers };
 }

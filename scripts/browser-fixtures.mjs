@@ -1,11 +1,11 @@
 import { execFileSync } from "node:child_process";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { cargoCommand } from "./managed-cargo.mjs";
 mkdirSync(".scratch", { recursive: true });
 function capture(test, environment) {
   const stdout = execFileSync(
-    "cargo",
-    [
+    ...cargoCommand([
       "test",
       "--quiet",
       "--locked",
@@ -16,7 +16,7 @@ function capture(test, environment) {
       test,
       "--",
       "--exact",
-    ],
+    ]),
     {
       encoding: "utf8",
       env: { ...process.env, ...environment },

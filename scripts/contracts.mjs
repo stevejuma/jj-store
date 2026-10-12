@@ -8,6 +8,7 @@ import openapiTS, { astToString } from "openapi-typescript";
 import SwaggerParser from "@apidevtools/swagger-parser";
 import { format, resolveConfig } from "prettier";
 import { responseValidator } from "./contracts-validation.mjs";
+import { cargoCommand } from "./managed-cargo.mjs";
 
 const root = fileURLToPath(new URL("..", import.meta.url));
 const run = promisify(execFile);
@@ -16,8 +17,15 @@ if (!["--write", "--check"].includes(mode)) {
   throw new Error("usage: node scripts/contracts.mjs --write|--check");
 }
 const { stdout } = await run(
-  "cargo",
-  ["run", "--quiet", "--locked", "-p", "jj-store-http", "--example", "openapi"],
+  ...cargoCommand([
+    "run",
+    "--quiet",
+    "--locked",
+    "-p",
+    "jj-store-http",
+    "--example",
+    "openapi",
+  ]),
   { cwd: root, maxBuffer: 16 * 1024 * 1024 },
 );
 const document = JSON.parse(stdout);
@@ -192,8 +200,7 @@ if (mode === "--check") {
     ]) {
       const capture = join(directory, `${variable}.json`);
       const { stdout } = await run(
-        "cargo",
-        [
+        ...cargoCommand([
           "test",
           "--quiet",
           "--locked",
@@ -203,7 +210,7 @@ if (mode === "--check") {
           fixture,
           "--",
           "--exact",
-        ],
+        ]),
         {
           cwd: root,
           env: { ...process.env, [variable]: capture },

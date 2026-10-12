@@ -300,3 +300,10 @@ symlinks and observes ignored/untracked obstacles as well as candidate files.
 The integration provider must separately qualify exact code baseline and ignore
 semantics before projecting Unstaged; scan data does not establish stack
 membership or publication authority.
+
+Development build maintenance lives under owned scripts, outside storage/model
+and service authority. Its version-1 device-local cache registry and POSIX
+leases coordinate disposable outputs across JJ workspaces. Managed Cargo pins
+each independent workspace target; application state and staged resources stay
+outside cleanup. E-BUILD-STORAGE-001 retains the architecture and installed-tool
+boundaries while adding bounded development-cache maintenance under JST-CLI-004.
