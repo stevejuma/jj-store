@@ -2648,6 +2648,83 @@
           "license": "Apache-2.0"
         }
       ]
+    },
+    {
+      "local": "web/src/lib/ui/community-inbox/CommunityInboxThreadHeader.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-inbox/CommunityInbox.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ],
+      "reason": "Extracted unchanged owned presentation to retain the source budget; original attribution and behavior remain intact."
+    },
+    {
+      "local": "web/src/lib/ui/community-inbox/inbox-thread.css",
+      "sources": [
+        {
+          "path": "src/components/community-inbox/CommunityInbox.css",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ],
+      "reason": "Extracted unchanged owned presentation to retain the source budget; original attribution and behavior remain intact."
+    },
+    {
+      "local": "web/src/lib/ui/community-chat-composer/composer-document-caret.ts",
+      "sources": [
+        {
+          "path": "src/components/community-chat-composer/CommunityChatComposer.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ],
+      "reason": "Extracted unchanged owned presentation to retain the source budget; original attribution and behavior remain intact."
+    },
+    {
+      "local": "web/src/lib/ui/community-inbox/inbox-preference-state.svelte.ts",
+      "sources": [
+        {
+          "path": "src/components/community-inbox/CommunityInbox.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ],
+      "reason": "Extracted unchanged owned presentation to retain the source budget; original attribution and behavior remain intact."
+    },
+    {
+      "local": "web/src/lib/ui/community-inbox/inbox-sections.ts",
+      "sources": [
+        {
+          "path": "src/components/community-inbox/CommunityInbox.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ],
+      "reason": "Extracted unchanged owned presentation to retain the source budget; original attribution and behavior remain intact."
+    },
+    {
+      "local": "web/src/lib/ui/community-chat-composer/composer-token-refresh.svelte.ts",
+      "sources": [
+        {
+          "path": "src/components/community-chat-composer/CommunityChatComposer.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ],
+      "reason": "Extracted unchanged owned presentation to retain the source budget; original attribution and behavior remain intact."
+    },
+    {
+      "local": "web/src/lib/ui/community-inbox/CommunityInboxListEmpty.svelte",
+      "sources": [
+        {
+          "path": "src/components/community-inbox/CommunityInbox.svelte",
+          "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+          "license": "Apache-2.0"
+        }
+      ],
+      "reason": "Extracted unchanged owned empty-list presentation; source attribution retained."
     }
   ],
   "owned": [
@@ -2994,6 +3071,30 @@
     {
       "local": "web/src/lib/ui/store-connections/StoreConnectionFooter.svelte",
       "reason": "Application-owned sidebar composition reuses the server selector and Help without external source dependencies."
+    },
+    {
+      "local": "web/src/lib/ui/store-collaboration/readonly-transcript.ts",
+      "reason": "Extracted application-authored presentation without changing its data, actions or lifecycle."
+    },
+    {
+      "local": "web/src/lib/ui/store-settings/settings-controls.css",
+      "reason": "Extracted application-authored presentation without changing its data, actions or lifecycle."
+    },
+    {
+      "local": "web/src/lib/ui/store-settings/StoreLocalFolderBindingActions.svelte",
+      "reason": "Extracted application-authored presentation without changing its data, actions or lifecycle."
+    },
+    {
+      "local": "web/src/lib/ui/store-threads/StoreThreadRuntimeControls.svelte",
+      "reason": "Extracted application-authored presentation without changing its data, actions or lifecycle."
+    },
+    {
+      "local": "web/src/lib/ui/store-threads/conversation-parent-scroll.ts",
+      "reason": "Extracted application-authored presentation without changing its data, actions or lifecycle."
+    },
+    {
+      "local": "web/src/lib/ui/store-collaboration/StoreRecordedMessageMenu.svelte",
+      "reason": "Extracted unchanged exact-value copy menu for captured messages and legacy transcript rows."
     }
   ],
   "desktopAppearance": {

@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { page as browser, userEvent as pointer } from "vitest/browser";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, fn, userEvent, waitFor, within } from "storybook/test";
   import Fixture from "../../fixtures/AgentPromptFixture.svelte";
@@ -92,7 +93,7 @@
       value: { writeText: write },
     });
     try {
-      await userEvent.hover(message);
+      await browser.elementLocator(message).hover();
       await waitFor(() =>
         expect(message).toHaveAttribute("data-actions-visible"),
       );
@@ -101,7 +102,7 @@
       );
       const page = within(canvasElement.ownerDocument.body);
       const copy = page.getByRole("menuitem", { name: /^Copy$/ });
-      await userEvent.click(copy);
+      await pointer.click(copy);
       const pointerMessage = await page.findByRole("menuitem", {
         name: /^Copy message$/,
       });
@@ -112,6 +113,9 @@
       // for that visible transition before reopening for the keyboard path.
       await waitFor(() =>
         expect(page.queryByRole("menuitem", { name: /^Copy$/ })).toBeNull(),
+      );
+      await waitFor(() =>
+        expect(getComputedStyle(document.body).pointerEvents).not.toBe("none"),
       );
       // Also exercise a complete keyboard path without moving the pointer out
       // of a keyboard-opened submenu during its focus transition.

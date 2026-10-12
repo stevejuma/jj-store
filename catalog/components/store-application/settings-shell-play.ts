@@ -1,4 +1,4 @@
-import { expect, userEvent, within } from "storybook/test";
+import { expect, userEvent, within, waitFor } from "storybook/test";
 
 export async function playMobileSettings({
   canvasElement,
@@ -23,20 +23,12 @@ export async function playMobileSettings({
   const navigation = canvas.getByRole("navigation", {
     name: "Settings page navigation",
   });
-  await expect(
-    within(navigation).getByRole("heading", {
-      name: "Local service",
-      level: 1,
-    }),
-  ).toBeVisible();
-  await expect(
-    navigation.querySelector("h1 svg[aria-hidden='true']"),
-  ).toBeVisible();
-  await expect(
-    Array.from(
-      navigation.querySelector(".store-application__tab-root")!.children,
-    ).find((child) => !child.hasAttribute("inert")),
-  ).toBe(within(navigation).getByRole("heading", { level: 1 }));
+  const overview = within(navigation).getByRole("tab", { name: "Overview" });
+  await expect(overview.querySelector("svg")).toBeVisible();
+  await expect(overview.closest("[data-presentation]")).toHaveAttribute(
+    "data-presentation",
+    "line",
+  );
   await expect(
     within(navigation).queryByRole("button", { name: "Back to app" }),
   ).toBeNull();
@@ -48,17 +40,15 @@ export async function playMobileSettings({
   await userEvent.click(
     canvas.getByRole("button", { name: "Open settings sidebar" }),
   );
-  await userEvent.click(canvas.getByRole("button", { name: "Search" }));
-  await userEvent.click(canvas.getByRole("tab", { name: "Health" }));
+  await userEvent.click(canvas.getByRole("button", { name: "Local service" }));
+  await userEvent.click(canvas.getByRole("tab", { name: "Launch" }));
   await expect(
-    await canvas.findByRole("heading", { name: "Search", level: 1 }),
+    await canvas.findByRole("heading", { name: "Local service", level: 1 }),
   ).toBeVisible();
-  await expect(
-    within(
-      canvas.getByRole("navigation", { name: "Settings page navigation" }),
-    ).getByRole("heading", { name: "Search", level: 1 }),
-  ).toBeVisible();
-  await expect(canvas.getByText("Fresh")).toBeVisible();
+  await expect(canvas.getByRole("tab", { name: "Launch" })).toHaveAttribute(
+    "aria-selected",
+    "true",
+  );
   await userEvent.click(
     canvas.getByRole("button", { name: "Open settings sidebar" }),
   );
@@ -68,4 +58,26 @@ export async function playMobileSettings({
   await expect(
     canvas.getByText("jj-store · Branches", { exact: true }),
   ).toBeVisible();
+}
+
+/** Follow the public More menu when a retained conversation constrains tabs. */
+export async function selectSettingsSubtab(
+  canvasElement: HTMLElement,
+  name: string,
+) {
+  const c = within(canvasElement);
+  let tab: HTMLElement | null = null;
+  let more: HTMLElement | null = null;
+  await waitFor(() => {
+    tab = c.queryByRole("tab", { name });
+    more = c.queryByRole("button", { name: /^More .*settings sections$/ });
+    expect(tab ?? more).not.toBeNull();
+  });
+  if (tab) await userEvent.click(tab);
+  else {
+    await userEvent.click(more!);
+    await userEvent.click(
+      await within(document.body).findByRole("menuitem", { name }),
+    );
+  }
 }

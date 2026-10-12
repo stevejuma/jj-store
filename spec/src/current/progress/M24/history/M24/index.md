@@ -90,7 +90,11 @@ not a completion gate selection.
 | [E-UI-VIEW-READINESS-001](../../../../../history/2026/10/10/E-UI-VIEW-READINESS-001/index.md)         | 2026-10-10 | pending         | Original outcome |
 | [E-CHAT-MARKDOWN-001](../../../../../history/2026/10/11/E-CHAT-MARKDOWN-001/index.md)                 | 2026-10-11 | pending         | Original outcome |
 | [E-CHAT-QUEUE-LAND-001](../../../../../history/2026/10/11/E-CHAT-QUEUE-LAND-001/index.md)             | 2026-10-11 | pass            | Original outcome |
+| [E-DOCUMENT-SEND-001](../../../../../history/2026/10/11/E-DOCUMENT-SEND-001/index.md)                 | 2026-10-11 | pass            | Original outcome |
+| [E-PROJECT-AGENTS-001](../../../../../history/2026/10/11/E-PROJECT-AGENTS-001/index.md)               | 2026-10-11 | pass            | Original outcome |
+| [E-UI-UNAVAILABLE-001](../../../../../history/2026/10/11/E-UI-UNAVAILABLE-001/index.md)               | 2026-10-11 | pass            | Original outcome |
 | [E-WORKSPACE-RETIRE-001](../../../../../history/2026/10/11/E-WORKSPACE-RETIRE-001/index.md)           | 2026-10-11 | pass            | Original outcome |
+| [E-REMOTE-INTEGRATION-001](../../../../../history/2026/10/12/E-REMOTE-INTEGRATION-001/index.md)       | 2026-10-12 | pass            | Original outcome |
 
 <!-- generated-navigation -->
 

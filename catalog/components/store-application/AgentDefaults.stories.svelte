@@ -28,7 +28,7 @@
         c.getByRole("navigation", { name: "Settings navigation" }),
       ).getByRole("button", { name: "Agents" }),
     );
-    await userEvent.click(c.getByRole("combobox", { name: "Model" }));
+    await userEvent.click(await c.findByRole("combobox", { name: "Model" }));
     await userEvent.click(
       await page.findByRole("option", { name: /Codex Fast/ }),
     );

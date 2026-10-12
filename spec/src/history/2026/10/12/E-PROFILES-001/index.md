@@ -252,7 +252,6 @@ verification
 - web/tests/real/profiles-emoji.spec.ts#cold local and enrolled profiles and
   emoji survive real object store restart
 <!-- /evidence-field -->
-
 <!-- generated-navigation -->
 ## Pages
 

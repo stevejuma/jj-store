@@ -20,7 +20,8 @@ uploads, owned Settings presentation and cold local/authenticated real-RustFS
 restart flow. M26, M26.1, M26.2 and M26.4 remain Partial. Visual baselines,
 wider server/release/platform lanes and inherited audit/evidence diagnostics
 remain separate. M26.3 and M15 snapshot/publication qualification are unchanged.
-
 <!-- generated-navigation -->
 
 ## Pages
+
+- [history](history/index.md)

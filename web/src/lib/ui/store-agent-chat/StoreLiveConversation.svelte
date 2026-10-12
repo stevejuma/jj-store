@@ -94,6 +94,18 @@
       .find(Boolean),
   );
   $effect(() => {
+    // Host callbacks outlive this mounted reader during retained-view navigation.
+    const currentProjection = projection;
+    const currentRows = rows;
+    const findRow = (item: ChatBodyItem) => {
+      const target = currentProjection.targets.get(item.id);
+      return currentRows.find(
+        (r) =>
+          r.key === item.id ||
+          (r.session.id === target?.sessionId &&
+            (r.sourceRowId ?? r.id) === target.rowId),
+      );
+    };
     conversation.host = {
       ...conversationNavigation(controller, conversation),
       canComment: !commentUnavailable,
@@ -102,17 +114,17 @@
       onSend,
       restoreMessage,
       displayPaths: (block) => {
-        const item = projection.items.find((i) =>
+        const item = currentProjection.items.find((i) =>
           i.blocks.some((b) => b.id === block.id),
         );
-        const row = item && rowFor(item);
+        const row = item && findRow(item);
         return row ? conversationPathLabels(row.session) : [];
       },
       resolveFileLink: (block, destination) => {
-        const item = projection.items.find((i) =>
+        const item = currentProjection.items.find((i) =>
           i.blocks.some((b) => b.id === block.id),
         );
-        const row = item && rowFor(item);
+        const row = item && findRow(item);
         const link = row && conversationFileLink(destination, row.session);
         if (
           !link ||
@@ -136,7 +148,7 @@
       },
       members: [
         user,
-        ...projection.items.flatMap((i) => (i.author ? [i.author] : [])),
+        ...currentProjection.items.flatMap((i) => (i.author ? [i.author] : [])),
       ],
       communityEmojis: rows.length
         ? manager.discussions.reader(rows[0].session.repository).emojis
@@ -146,7 +158,7 @@
         : undefined,
       onReact: (id, emoji, custom) => {
         const target = conversation.projection.targets.get(id);
-        const session = rows.find(
+        const session = currentRows.find(
           (r) => r.session.id === target?.sessionId,
         )?.session;
         const feedback =

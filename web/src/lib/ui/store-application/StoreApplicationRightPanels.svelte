@@ -22,10 +22,12 @@
     shell,
     onSelectPage,
     threadFocused = false,
+    visible = true,
   }: {
     controller: StoreController;
     stackWorkspace?: StackWorkspaceController;
     threadFocused?: boolean;
+    visible?: boolean;
     shell: AppShellController;
     onSelectPage: StoreController["actions"]["selectPage"];
   } = $props();
@@ -162,6 +164,7 @@
 
 {#if !inspection?.current && !inspection?.file && !chatOpen && current.page === "threads" && controller.threads?.detail && !threadFocused && threadPanel.kind !== "settings"}
   <AppShell.Sidebar
+    hidden={!visible}
     side="right"
     constraintPriority={0}
     constrainedPresentation="replace-main"
@@ -177,6 +180,7 @@
 {/if}
 {#if !inspection?.current && !inspection?.file && !chatOpen && stackSettingsKey && stackWorkspace}
   <AppShell.Sidebar
+    hidden={!visible}
     side="right"
     constraintPriority={0}
     constrainedPresentation="replace-main"
@@ -206,7 +210,7 @@
           ? (controller.projects?.agents.selectionError ?? "")
           : ""}
         {focused}
-        open={!!agentKey && focused === agentFocused}
+        open={visible && !!agentKey && focused === agentFocused}
         returnFocus={agentOpener}
         onClose={closeAgent}
       />{/snippet}</StoreLazyView
@@ -218,6 +222,7 @@
   )}{/if}
 {#if !inspection?.current && !inspection?.file && !chatOpen && agentKey && !agentFocused}
   <AppShell.Sidebar
+    hidden={!visible}
     side="right"
     constraintPriority={0}
     constrainedPresentation="replace-main"
@@ -232,6 +237,7 @@
 {/if}
 
 {#if !inspection?.current && !inspection?.file && chatOpen && controller.execution}<AppShell.Sidebar
+    hidden={!visible}
     side="right"
     constraintPriority={0}
     constrainedPresentation="replace-main"
@@ -253,4 +259,5 @@
   {stackWorkspace}
   {shell}
   {onSelectPage}
+  {visible}
 />

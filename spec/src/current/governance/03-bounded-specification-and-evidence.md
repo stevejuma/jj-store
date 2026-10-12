@@ -51,3 +51,31 @@ fragments under reserved SUMMARY folders. These derived pages preserve complete
 chapter coverage and remain outside default search. Generated footer markers are
 separated from evidence fields, so headings and delimiters inside recorded
 commands remain exact.
+
+## Appended metadata corrections
+
+Committed evidence payloads remain immutable. An appended, verified record may
+include `corrections`: target evidence ID, a reason and explicit field changes
+with exact `before` and `after` values. The metadata validator applies this
+projection only to malformed tests, legacy run metadata and invalid result
+vocabulary. It validates replacement values normally and rejects unknown fields,
+duplicate corrections, missing targets, correction chains and prior-value drift.
+
+Named test references remain intact. Every command, note and original run
+outcome stays exact; valid run results cannot change. An invalid overall result
+may become pending, blocked or fail, never pass. Gates, task histories and
+immutability audits use the original records, so metadata repair cannot promote
+a milestone or make an old failure successful. Record legitimately removed files
+through `removed_files`; do not recreate retired dependency overrides. Link the
+appended record through history relations with a reason.
+
+Lossless repagination may change an evidence record's page representation after
+round-trip equality is proved. Preserve the parsed payload, field/run order,
+exact commands and archived sources. Regenerate bounded history/navigation and
+qualify the resulting book; do not truncate an oversized historical record.
+
+The migration regression selects the original migration revision for its exact
+task/gate and requirement comparisons. Every read uses that selected revision.
+Later governed updates remain checked by the current ledger, specification and
+immutable archive validators; migration evidence never freezes current product
+requirements or implementation progress.

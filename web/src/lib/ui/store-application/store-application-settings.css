@@ -1,6 +1,1 @@
-.store-repository-panels {
-  display: contents;
-}
-.store-repository-panels[hidden] {
-  display: none;
-}
+/* Panels use their public hidden prop so teleported surfaces are suspended. */

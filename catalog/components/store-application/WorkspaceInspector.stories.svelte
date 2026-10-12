@@ -15,11 +15,17 @@
   name="Changed file header owns responsive presentation tabs and icon diff controls"
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
-    const toggle = await c.findByRole("button", {
-      name: "Toggle workspace files",
-    });
-    await waitFor(() => expect(toggle).toBeEnabled());
-    await userEvent.click(toggle);
+    await c.findByRole("button", { name: "Toggle workspace files" });
+    await waitFor(() =>
+      expect(
+        c.getByRole("button", {
+          name: "Toggle workspace files",
+        }),
+      ).toBeEnabled(),
+    );
+    await userEvent.click(
+      c.getByRole("button", { name: "Toggle workspace files" }),
+    );
     const rail = within(
       await c.findByRole("complementary", { name: "Workspace files" }),
     );
@@ -101,11 +107,17 @@
   args={{ rootChanges: true }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
-    const toggle = await c.findByRole("button", {
-      name: "Toggle workspace files",
-    });
-    await waitFor(() => expect(toggle).toBeEnabled());
-    await userEvent.click(toggle);
+    await c.findByRole("button", { name: "Toggle workspace files" });
+    await waitFor(() =>
+      expect(
+        c.getByRole("button", {
+          name: "Toggle workspace files",
+        }),
+      ).toBeEnabled(),
+    );
+    await userEvent.click(
+      c.getByRole("button", { name: "Toggle workspace files" }),
+    );
     const rail = within(
       await c.findByRole("complementary", { name: "Workspace files" }),
     );

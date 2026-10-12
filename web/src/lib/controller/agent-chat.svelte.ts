@@ -23,7 +23,11 @@ import {
   selectWorkspace,
   validateWorkspaces,
 } from "./agent-chat-selections.js";
-import { chatContext, sameChatOrigin } from "./agent-chat-context.js";
+import {
+  chatContext,
+  sameChatOrigin,
+  chatAudienceKey,
+} from "./agent-chat-context.js";
 const newId = () => crypto.randomUUID().replaceAll("-", "");
 /** App-lifetime scoped drafts and exact requests, independent of the selected inbox session. */
 export class AgentChat {
@@ -73,15 +77,7 @@ export class AgentChat {
   }
   // "personal" is the stable device-local alias of the lazily created personal home.
   get audienceKey() {
-    const o = this.draft?.origin;
-    return o
-      ? JSON.stringify([
-          "agent-chat",
-          o.home ?? "personal",
-          o.scope,
-          this.selected,
-        ])
-      : undefined;
+    return chatAudienceKey(this.draft?.origin, this.selected);
   }
   show(
     origin: Chat.ChatOrigin,

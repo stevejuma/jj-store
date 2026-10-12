@@ -225,7 +225,7 @@
     get state() {
       return {
         ...base.state,
-        route,
+        route: { ...route, globalSettings: base.state.route.globalSettings },
         repositories,
         accessMode: "authenticated" as const,
         installationReady: true,

@@ -110,7 +110,12 @@ test("task_histories_include_unlisted_evidence_with_historical_mapping", () => {
   );
 });
 test("migration_preserves_original_evidence_tasks_requirements_and_byte_archives", () => {
-  const result = migrationAudit();
+  // Audit the migration itself. Later governed requirement/task updates are
+  // checked by the current ledger validator, not frozen at their migration state.
+  const result = migrationAudit(
+    ".",
+    "40382d3599db56b4bdb33f23862e737bc521fe66",
+  );
   assert.equal(result.evidence, 615);
   assert.equal(result.tasks, 142);
   assert.equal(result.requirements, 173);

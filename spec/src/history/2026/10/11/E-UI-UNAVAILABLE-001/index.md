@@ -119,7 +119,6 @@ its introductory qualification reminder is shortened without changing status or
 gates to keep the edited page within 400.
 <!-- /evidence-field -->
 <!-- generated-navigation -->
-
 ## Pages
 
 - [E-UI-UNAVAILABLE-001 details 2](details-02.md)

@@ -75,9 +75,7 @@ verification
 
 []
 <!-- /evidence-field -->
-
 <!-- generated-navigation -->
-
 ## Pages
 
 - [E-SETTINGS-POLISH-001 details 2](details-02.md)

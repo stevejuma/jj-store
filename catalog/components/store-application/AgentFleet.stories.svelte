@@ -16,7 +16,11 @@
   play={async ({ canvasElement }) => {
     const c = within(canvasElement),
       page = within(document.body);
-    await userEvent.click(await c.findByRole("button", { name: "Add agent" }));
+    await c.findByText("Helper", { exact: true });
+    await waitFor(() =>
+      expect(c.getByRole("button", { name: "Add agent" })).toBeEnabled(),
+    );
+    await userEvent.click(c.getByRole("button", { name: "Add agent" }));
     const editor = within(
       await page.findByRole("dialog", { name: "Add agent" }),
     );
@@ -257,7 +261,11 @@
   play={async ({ canvasElement }) => {
     const c = within(canvasElement),
       page = within(document.body);
-    await userEvent.click(await c.findByRole("button", { name: "Add agent" }));
+    await c.findByText("Helper", { exact: true });
+    await waitFor(() =>
+      expect(c.getByRole("button", { name: "Add agent" })).toBeEnabled(),
+    );
+    await userEvent.click(c.getByRole("button", { name: "Add agent" }));
     const editor = within(
       await page.findByRole("dialog", { name: "Add agent" }),
     );
@@ -281,7 +289,11 @@
   play={async ({ canvasElement }) => {
     const c = within(canvasElement),
       page = within(document.body);
-    await userEvent.click(await c.findByRole("button", { name: "Add agent" }));
+    await c.findByText("Helper", { exact: true });
+    await waitFor(() =>
+      expect(c.getByRole("button", { name: "Add agent" })).toBeEnabled(),
+    );
+    await userEvent.click(c.getByRole("button", { name: "Add agent" }));
     const editor = within(
       await page.findByRole("dialog", { name: "Add agent" }),
     );

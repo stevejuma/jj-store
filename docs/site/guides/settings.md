@@ -35,8 +35,10 @@ General identifies Local JJ or Server Hosted repositories.
 
 Category and subtab selections are part of the repository URL. Both navigation
 rows stay visible while the content scrolls. Back returns to the view you
-entered from and restores its Details panel. Opening a shared settings link
-directly returns to Overview at the retained operation instead.
+entered from and restores its Details panel. Conversation and workspace
+inspection panels stay hidden while Settings is open; returning retains their
+selection and unsent drafts. Opening a shared settings link directly returns to
+Overview at the retained operation instead.
 
 Settings group status, editable fields and maintenance separately. Save/Cancel
 and maintenance commands sit in their respective section footers. Search shows

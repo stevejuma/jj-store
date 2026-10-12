@@ -1,20 +1,20 @@
 <script lang="ts">
+  import {
+    readOnlyTranscriptItems,
+    transcriptMessage,
+  } from "./readonly-transcript.js";
   import type { Snippet } from "svelte";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import CommunityMarkdownContent from "../community-markdown-content/CommunityMarkdownContent.svelte";
   import StoreRecordedConversation from "./StoreRecordedConversation.svelte";
   import StoreAgentChatBody from "../store-agent-chat-body/StoreAgentChatBody.svelte";
   import { ChatBodyComments } from "../store-agent-chat-body/comments.svelte.js";
-  import { promptTags } from "./prompt-element-ranges.js";
-  import { markdownBlocks } from "../store-agent-chat-body/markdown-blocks.js";
-  import { recordedConversationProjection } from "../../conversations/recorded-adapter.js";
   import { useConversationInspection } from "../../conversations/inspection.svelte.js";
   import { useAppearance } from "../../appearance/store.svelte.js";
   const appearance = useAppearance();
   import * as Chat from "@lapismd/design-core/ai/chat";
   import CommunityMessage from "../community-message/CommunityMessage.svelte";
   import type { CommunityMemberModel } from "../../community/workspace-model.js";
-  import type { CommunityMessageModel } from "../../community/workspace-model.js";
   import type { Model } from "../../api/client.js";
   import type { StoreController } from "../../controller/contracts.js";
   import StoreMessageReactions from "../store-threads/StoreMessageReactions.svelte";
@@ -26,7 +26,7 @@
     agentSentContext,
     agentMessageContent,
   } from "../../collaboration/agent-message-content.js";
-  import StoreRecordMenu from "./StoreRecordMenu.svelte";
+  import StoreRecordedMessageMenu from "./StoreRecordedMessageMenu.svelte";
   import StoreMessageActions from "./StoreMessageActions.svelte";
   import CommunityProjectsVirtualRows from "../community-projects/CommunityProjectsVirtualRows.svelte";
 
@@ -57,78 +57,15 @@
   const members = $derived([agent, member]);
   const inspection = useConversationInspection();
   const readOnlyItems = $derived(
-    activity.length
-      ? recordedConversationProjection(
-          activity,
-          sessionId,
-          integration,
-          agent,
-          member,
-        ).items.map((item) => {
-          const entry = activity.find(
-            (e) =>
-              e.type === "message" &&
-              `${sessionId}:${e.message_id}` === item.id,
-          );
-          if (
-            entry?.type === "message" &&
-            entry.content.media_type === "text" &&
-            promptTags(entry.content.content).length
-          )
-            return {
-              ...item,
-              blocks: readOnlyBlocks(
-                item.id,
-                item.blocks[0]?.revision ?? "captured",
-                item.label,
-                agentMessageContent(entry.content, integration),
-              ),
-            };
-          return item;
-        })
-      : legacy.map((chunk) => {
-          const id = `${sessionId}:legacy:${chunk.sequence}`;
-          return {
-            id,
-            kind: "message" as const,
-            role: "assistant" as const,
-            author: agent,
-            label: "Assistant message",
-            timestamp: agentMessageTimestamp(chunk.occurred_at_millis),
-            blocks: readOnlyBlocks(
-              id,
-              String(chunk.sequence),
-              "Assistant message",
-              agentMessageContent(chunk, integration),
-            ),
-          };
-        }),
+    readOnlyTranscriptItems(
+      activity,
+      sessionId,
+      integration,
+      agent,
+      member,
+      legacy,
+    ),
   );
-  function readOnlyBlocks(
-    id: string,
-    revision: string,
-    label: string,
-    text: string,
-  ) {
-    // The established inert prompt renderer needs the complete source to retain
-    // nested elements and document-wide Markdown references. No writable source
-    // is manufactured for this capability-limited reader.
-    return promptTags(text).length
-      ? [
-          {
-            id: `${id}/context`,
-            revision,
-            label,
-            text,
-            kind: "context" as const,
-            commentable: false,
-          },
-        ]
-      : markdownBlocks(id, revision, label, text).map((block) => ({
-          ...block,
-          commentable: false,
-        }));
-  }
   const readOnlyComments = new ChatBodyComments(() => ({
     items: readOnlyItems,
     canComment: false,
@@ -141,34 +78,6 @@
   const reactionDisabled = $derived(
     !canReact || !!controller.threads?.busy || !!controller.threads?.pending,
   );
-
-  function capturedMessage(id: string) {
-    return activity.find((entry) => {
-      if (entry.type !== "message") return false;
-      const capturedId = `${sessionId}:${entry.message_id}`;
-      return (
-        id === capturedId ||
-        id.startsWith(`${capturedId}/`) ||
-        id.startsWith(`${capturedId}:`)
-      );
-    });
-  }
-
-  function message(
-    entry: Extract<Model<"AgentActivity">, { type: "message" }>,
-  ): CommunityMessageModel {
-    const author =
-      entry.role === "assistant" || entry.role === "tool" ? agent : member;
-    return {
-      id: entry.message_id,
-      authorId: author.id,
-      content: agentMessageContent(entry.content, integration),
-      ...agentMessageTimestamp(entry.occurred_at_millis),
-      reactions: entry.reaction_target
-        ? controller.threads?.reactionModels(entry.reaction_target)
-        : [],
-    };
-  }
 </script>
 
 {#if controller.threads}
@@ -208,42 +117,14 @@
           onclick={() => controller.actions.loadMore("transcript")}
           >Load older messages</Button
         >{/if}{/snippet}
-    {#snippet messageActions(id)}
-      {@const entry = capturedMessage(id)}
-      {@const chunk = legacy.find(
-        (c) => `${sessionId}:legacy:${c.sequence}` === id,
-      )}
-      {#if entry?.type === "message" || chunk}<StoreRecordMenu
-          items={[
-            {
-              label: "Copy message",
-              value:
-                entry?.type === "message"
-                  ? entry.content.content
-                  : chunk?.content,
-            },
-            {
-              label: "Copy message ID",
-              value: entry?.type === "message" ? entry.message_id : undefined,
-            },
-            {
-              label: "Copy turn ID",
-              value: entry?.type === "message" ? entry.turn_id : undefined,
-            },
-            { label: "Copy session ID", value: sessionId },
-            {
-              label: "Copy transcript ID",
-              value: chunk
-                ? controller.state.agentSession?.transcripts[0]?.transcript_id
-                : undefined,
-            },
-            {
-              label: "Copy sequence",
-              value: String(entry?.sequence ?? chunk?.sequence),
-            },
-          ]}
-        />{/if}
-    {/snippet}
+    {#snippet messageActions(id)}<StoreRecordedMessageMenu
+        {id}
+        {sessionId}
+        {activity}
+        {legacy}
+        transcriptId={controller.state.agentSession?.transcripts[0]
+          ?.transcript_id}
+      />{/snippet}
     {#snippet supplement(item)}
       {@const entry = activity.find(
         (e) =>
@@ -317,7 +198,13 @@
               : member}
           <CommunityMessage
             promptElements
-            message={message(entry)}
+            message={transcriptMessage(
+              entry,
+              integration,
+              agent,
+              member,
+              controller.threads,
+            )}
             {author}
             {members}
             highlighted={entry.role === "user"}

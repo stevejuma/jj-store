@@ -1,5 +1,7 @@
 # Settings navigation and lifecycle
 
+<span id="transient-store-settings"></span>
+
 JST-UI-016 installation capture management lives in dedicated Agents settings,
 independently of a selected repository. LocalTrusted bootstrap must advertise
 `local_capture_management` before any capture request. The installation-owned
@@ -74,6 +76,13 @@ ownership follows the connected repository, independently of code-read selection
 generations. Same-repository history/return cannot discard a command reply or
 abort its exact index task; owner replacement still clears tasks and rejects
 late replies.
+
+Settings suspends teleported conversation, workspace and inspection sidebars
+through their public visibility state; hiding only their source wrapper cannot
+suspend projected content. Focused recorded responses close while Settings is
+visible, then restore the retained selection and drafts on return. Retained
+conversation hosts capture the current projection for callbacks that may outlive
+a mounted reader, without reading destroyed reactive owners.
 
 Global Settings retains its public controls and sidebar. Its fixed page heading
 and contextual Refresh sit above actual icon-and-underline subtabs; Appearance

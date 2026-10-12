@@ -162,10 +162,7 @@ verification
 - web/tests/vite/settings-freshness.test.ts#storage events read storage without
   refetching installation configuration or other sections
 <!-- /evidence-field -->
-
-
 <!-- generated-navigation -->
-
 ## Pages
 
 - [E-SETTINGS-REFRESH-001 details 2](details-02.md)

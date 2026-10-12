@@ -1,18 +1,9 @@
 import { isAbsolute } from "node:path";
 import { historicalTaskMapping } from "../progress-mapping.mjs";
 export const ledgerPath = "spec/src/milestones.md";
-export const signature = (value) =>
-  JSON.stringify(
-    Array.isArray(value)
-      ? value.map((v) => JSON.parse(signature(v)))
-      : value && typeof value === "object"
-        ? Object.fromEntries(
-            Object.keys(value)
-              .sort()
-              .map((k) => [k, JSON.parse(signature(value[k]))]),
-          )
-        : value,
-  );
+import { signature } from "./evidence-signature.mjs";
+import { correctedEvidence } from "./evidence-corrections.mjs";
+export { signature } from "./evidence-signature.mjs";
 const statuses = new Set([
   "Planned",
   "In progress",
@@ -95,7 +86,7 @@ export function validateLedger({
         errors.push(`missing evidence file: ${path}`);
     }
   };
-  for (const entry of entries) {
+  for (const entry of correctedEvidence(entries, errors)) {
     if (!/^E-[A-Z0-9-]+$/.test(entry.id ?? ""))
       errors.push("invalid evidence ID");
     if (!Array.isArray(entry.tasks) || !entry.tasks.length)

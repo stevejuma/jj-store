@@ -65,8 +65,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed the shared normalized image command and original-source receipt binding; repository command and publication semantics remain unchanged. Documented fixed-origin gateway ownership and private delegated Unix native access, with unchanged native wire/manifest authority and separate current repository grants.",
-      "fingerprint": "5c83eeb24579654648f20063cb568b714d28eaf1b7c07806e0bcb85189de5079"
+      "reason": "Reviewed current-main profile normalization and grouped Settings alongside remote gateway/authenticated agents. Integration retains authorization, published dependencies and exact data; source extractions preserve behavior.",
+      "fingerprint": "97b7ce09bc1e4ab32a3b640306e50cb9490229f8752c7ee3db3c5c13270e8945"
     }
   },
   {
@@ -96,8 +96,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Documented bounded server preparation for profile and custom emoji sources, retained asset limits, explicit selection saves and unchanged deployment files. Reviewed the final formatted authenticated remote-agent configuration, lifecycle composition, static allowlists and executable/secret references; updated configuration, transport and agent guides with separate qualification gates. Reviewed the registered remote Origin correction, unchanged admission and installation identity fence; documented actual gateway freshness and the separate real-storage deterministic-ACP acceptance harness.",
-      "fingerprint": "5691581244677b1fd482afbf0027525fa258bb3679aa9cd6588f19345f2ae3ae"
+      "reason": "Reviewed current-main profile normalization and grouped Settings alongside remote gateway/authenticated agents. Integration retains authorization, published dependencies and exact data; source extractions preserve behavior.",
+      "fingerprint": "4ea956c8723be4ed1ef0feb09f015093008d0ba35767e6410affa4e67c9346ac"
     }
   },
   {
@@ -122,8 +122,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Documented the personal binary image upload route, octet-stream admission before body consumption and existing privacy, status and origin boundaries. Reviewed authenticated agent route inventory, bearer-only admission and integer-sequence SSE contract; refreshed installation API reference.",
-      "fingerprint": "0382940d4afc0de8ab71a3b61f3a3ecb546c4748f07251b12a418efe8fdd1775"
+      "reason": "Reviewed current-main profile normalization and grouped Settings alongside remote gateway/authenticated agents. Integration retains authorization, published dependencies and exact data; source extractions preserve behavior.",
+      "fingerprint": "b3095ac863b284c687f5fff8e44b0f56a9e29959c051ef7d094f95dee178295c"
     }
   },
   {
@@ -136,8 +136,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed profile and emoji binary normalization, deferred emoji saves, grouped Settings navigation and the Compute integer GB slider with automatic allocation and larger typed limits. Reviewed remote Settings navigation filtering, device Appearance, protected server profiles, LocalTrusted-only administration and retained mobile/settings ownership through scoped helpers.",
-      "fingerprint": "370da347ba26c7ccd0d027f01377c8bb4ababbe5e5a516a46f28befd72ec726d"
+      "reason": "Reviewed browsing, editing, conversion and Settings against merged source. Public sidebar visibility and captured host projections retain selections and drafts; all controller/composer/inbox extractions preserve existing controls, routes and authorization.",
+      "fingerprint": "82500ab830002b54386979fed7ae7b20cdf2b6410b9c43fb65f773f3f8eabdcb"
     }
   },
   {
@@ -154,8 +154,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Regenerated installation and type references for the shared binary image upload route and typed normalization command; existing legacy image intent formats remain unchanged. Reviewed generated connection and authenticated agent APIs, bearer-only security, caller-owned outcomes and integer-sequence SSE schemas against route tests.",
-      "fingerprint": "788eb34ca937271bcfc35a3ec911122381386f9079a1655c75aa7d3f254c073e"
+      "reason": "Reviewed current-main profile normalization and grouped Settings alongside remote gateway/authenticated agents. Integration retains authorization, published dependencies and exact data; source extractions preserve behavior.",
+      "fingerprint": "70d1942a3ac66f3566f28c49fa43d739b62afe3a7f856ade3e7fd9f8dbbdf239"
     }
   },
   {

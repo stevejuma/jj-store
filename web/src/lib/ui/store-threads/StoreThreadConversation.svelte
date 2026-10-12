@@ -1,10 +1,10 @@
 <script lang="ts">
+  import { scrollToConversationParent } from "./conversation-parent-scroll.js";
   import StoreAgentPromptQueue from "../store-agent-chat/StoreAgentPromptQueue.svelte";
   import { useConversationReactions } from "../../conversations/reactions.svelte.js";
-  import StoreThreadAgentRepositories from "./StoreThreadAgentRepositories.svelte";
+  import StoreThreadRuntimeControls from "./StoreThreadRuntimeControls.svelte";
   import StoreThreadCodebase from "./StoreThreadCodebase.svelte";
   import StoreWorkspaceButton from "../store-agent-workspace/StoreWorkspaceButton.svelte";
-  import StoreConversationRuntime from "../store-agent-chat/StoreConversationRuntime.svelte";
   import {
     agentMentionToken,
     mentionedAgentIds,
@@ -19,7 +19,7 @@
     consumeConversationDestination,
     conversationNavigation,
   } from "../../conversations/navigation.js";
-  import { tick, untrack } from "svelte";
+  import { untrack } from "svelte";
   import { mergeConversationProjections } from "../../conversations/merge-projections.js";
   import { useConversationInspection } from "../../conversations/inspection.svelte.js";
   import StoreMessageReactions from "./StoreMessageReactions.svelte";
@@ -130,15 +130,7 @@
   ]);
   let element: HTMLDivElement;
   $effect(() => {
-    const focus = parent;
-    if (focus)
-      void tick().then(() =>
-        element
-          ?.querySelector<HTMLElement>(
-            `[data-chat-item="${CSS.escape(focus)}"]`,
-          )
-          ?.scrollIntoView({ block: "nearest" }),
-      );
+    if (parent) void scrollToConversationParent(() => element, parent);
   });
   const feedback = useConversationReactions(() => ({
     threads,
@@ -290,31 +282,21 @@
               repositories={threads.detail?.thread.value.codebase ??
                 (threads.detail ? [controller.state.route.repository] : [])}
             />{/if}{/snippet}
-        {#snippet controls()}{#if controller?.execution}<div
-              class="thread-runtime-controls"
-            >
-              {#if !parent}<StoreThreadAgentRepositories {controller} />{/if}
-              <StoreConversationRuntime
-                manager={controller.execution}
-                agentId={selectedAgent}
-                session={selectedSession}
-                {disabled}
-                onAgentChange={(id) => {
-                  conversation.comments.message = `${agentMentionToken(id)} ${conversation.comments.message}`;
-                }}
-              />
-            </div>{/if}{/snippet}
+        {#snippet controls()}{#if controller?.execution}<StoreThreadRuntimeControls
+              {controller}
+              {parent}
+              {selectedAgent}
+              {selectedSession}
+              {disabled}
+              onAgentChange={(id) => {
+                conversation.comments.message = `${agentMentionToken(id)} ${conversation.comments.message}`;
+              }}
+            />{/if}{/snippet}
       </StoreAgentMessageFooter>{/snippet}
   </StoreAgentChatBody>
 </div>
 
 <style>
-  .thread-runtime-controls {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-    min-width: 0;
-  }
   .thread-conversation {
     display: flex;
     flex-direction: column;

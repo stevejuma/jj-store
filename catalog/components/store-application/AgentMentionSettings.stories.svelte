@@ -21,6 +21,11 @@
         c.getByRole("navigation", { name: "Settings navigation" }),
       ).getByRole("button", { name: "Agents" }),
     );
+    await c.findByRole(
+      "button",
+      { name: "Save defaults" },
+      { timeout: 10_000 },
+    );
   }
 </script>
 
@@ -30,9 +35,8 @@
   play={async ({ canvasElement }) => {
     const c = within(canvasElement),
       page = within(document.body);
-    await userEvent.click(
-      await c.findByRole("button", { name: "Mention someone" }),
-    );
+    const editor = await c.findByRole("textbox", { name: "Markdown editor" });
+    await userEvent.type(editor, "@Help");
     await userEvent.click(
       await page.findByRole("switch", { name: "Automatically mention agents" }),
     );
@@ -43,13 +47,20 @@
     );
     await userEvent.keyboard("{Escape}");
     await settings(c);
-    const toggle = await c.findByRole("switch", {
-      name: "Automatically mention agents",
-    });
+    const toggle = await c.findByRole(
+      "switch",
+      {
+        name: "Automatically mention agents",
+      },
+      { timeout: 10_000 },
+    );
     await expect(toggle).toBeChecked();
     await userEvent.click(toggle);
     await waitFor(() => expect(toggle).not.toBeChecked());
     await userEvent.click(c.getByRole("button", { name: "Back to jj-store" }));
+    const retained = await c.findByRole("textbox", { name: "Markdown editor" });
+    await expect(retained).toHaveTextContent("@Help");
+    await userEvent.type(retained, " ");
     await userEvent.click(
       await c.findByRole("button", { name: "Mention someone" }),
     );
@@ -81,7 +92,7 @@
   play={async ({ canvasElement }) => {
     const c = within(canvasElement),
       page = within(document.body);
-    await c.findByText("Helper", { exact: true });
+    await c.findByText("Helper", { exact: true }, { timeout: 10_000 });
     await settings(c);
     const thinking = await c.findByLabelText("Thinking");
     await expect(thinking).toHaveAttribute("data-ui-part", "select-trigger");

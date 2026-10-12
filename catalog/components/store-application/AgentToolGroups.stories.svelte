@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { selectSettingsSubtab } from "./settings-shell-play.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, fn, userEvent, waitFor, within } from "storybook/test";
   import { agentToolDurationPlay } from "./agent-tool-duration-play.js";
@@ -235,6 +236,7 @@
       await userEvent.click(
         await c.findByRole("button", { name: "Appearance" }),
       );
+      await selectSettingsSubtab(canvasElement, "Preferences");
       // This route compiles on demand in a cold story process.
       await userEvent.click(
         await c.findByRole("radio", { name: "Focus" }, { timeout: 10_000 }),

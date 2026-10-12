@@ -1,3 +1,5 @@
+import { createProductionSessionState } from "./production-session-state.svelte.js";
+import { createProductionDisconnect } from "./production-session-reset.js";
 import {
   connectionActivity,
   connectionEvents,
@@ -26,8 +28,6 @@ import { productionControllerSurface } from "./production-store-view.js";
 import { createProductionReadServices } from "./production-read-services.js";
 import {
   createProductionSelections,
-  requireProductionSource,
-  resetConnectionView,
   authorizationReady,
   createProductionConnectionScope,
   authorizedRepositoryReader,
@@ -40,13 +40,12 @@ export function createProductionStoreController(
 ): StoreController {
   const history = createStoreRouteHistory(options.browser);
   const data = createProductionStoreState();
-  let source: StoreDataSource | null = null,
-    sessionToken = $state<string | null>(null);
+  const sessionState = createProductionSessionState();
   let session = 0;
   const connection = createProductionConnectionScope(
     data,
     options.fetcher,
-    () => sessionToken,
+    () => sessionState.token,
     () => disconnect("Access denied", true),
     options.active,
   );
@@ -57,14 +56,13 @@ export function createProductionStoreController(
     if (options.active?.() ?? true)
       automatic.follow(active, (feed = new AbortController()).signal);
   };
-  const activeSource = () => requireProductionSource(source);
   const current = (ticket: number, active: StoreDataSource) =>
-    ticket === version() && active === source;
-  const reads = { data, history, source: activeSource };
+    ticket === version() && active === sessionState.source;
+  const reads = { data, history, source: sessionState.requireSource };
   const snapshots = { ...reads, version, signal, current };
   const { reader, historyQuery, stacks } = createProductionStacksReaders({
     ...snapshots,
-    localSource: () => source,
+    localSource: () => sessionState.source,
     begin: invalidate,
     fetcher: options.fetcher,
   });
@@ -77,7 +75,7 @@ export function createProductionStoreController(
   } = createProductionProjects(
     data,
     history,
-    () => sessionToken,
+    () => sessionState.token,
     () => session,
     () => feed.abort(),
     options.fetcher,
@@ -88,7 +86,7 @@ export function createProductionStoreController(
   );
   const threadsIntegration = createThreadsIntegration({
     profiles: local.directory,
-    source: () => source,
+    source: () => sessionState.source,
     data,
     history,
     connectRepository,
@@ -98,10 +96,10 @@ export function createProductionStoreController(
   const restoreRoute = createProfileRouteRestorer({
     data,
     route: () => history.route,
-    source: () => source,
+    source: () => sessionState.source,
     projects,
     connect: connectRepository,
-    token: () => sessionToken,
+    token: () => sessionState.token,
     restoreThreads: threadsIntegration.restore,
     invalidate,
     restore: reader.restorePage,
@@ -118,8 +116,8 @@ export function createProductionStoreController(
     connectionViews({
       data,
       history,
-      token: () => sessionToken,
-      source: () => source,
+      token: () => sessionState.token,
+      source: () => sessionState.source,
       projects,
       connectRepository,
       restoreRoute,
@@ -130,51 +128,36 @@ export function createProductionStoreController(
     });
   local.execution.onNavigate = (view, id, relatedId) =>
     void openRoute(agentsRoute(view, id, relatedId));
-  function disconnect(message = "", denied = false, preserveSession = false) {
-    const repositoryStatus = data.status.repositories;
-    invalidate();
-    stacks.clear();
-    automatic.reset();
-    feed.abort();
-    stopProjectEvents();
-    discovery.abort();
-    if (!preserveSession) {
-      freshness.stop();
-      sources.clear();
-      clearProjects();
-      threadNavigation.clear();
-    }
-    threads.clear(preserveSession);
-    source?.close();
-    source = null;
-    settings.clear();
-    mutations.configure([]);
-    mutations.reset();
-    historyQuery.dispose();
-    search.clear();
-    globalSearch.clear();
-    referenceSearch.clear();
-    resetConnectionView(data, message, denied);
-    if (denied) options.authorizationLost?.();
-    if (preserveSession) data.status.repositories = repositoryStatus;
-    else if (data.accessMode === "authenticated") {
-      sessionToken = null;
-      data.repositories = [];
-    }
-  }
+  const disconnect = createProductionDisconnect(() => ({
+    ...connection,
+    data,
+    invalidate,
+    stacks,
+    automatic,
+    feed,
+    stopProjectEvents,
+    discovery,
+    clearProjects,
+    threads,
+    dropSource: sessionState.closeSource,
+    settings,
+    mutations,
+    historyQuery,
+    search,
+    globalSearch,
+    referenceSearch,
+    authorizationLost: options.authorizationLost,
+    clearToken: sessionState.clearToken,
+  }));
   async function connectRepository(repository: string, token: string | null) {
     await connectRepositorySource(
       {
         data,
         history,
-        token: () => sessionToken,
-        setToken: (value) => {
-          sessionToken = value;
-        },
-        source: () => source,
-        setSource: (value) => {
-          source = value;
-        },
+        token: () => sessionState.token,
+        setToken: sessionState.setToken,
+        source: () => sessionState.source,
+        setSource: sessionState.setSource,
         nextVersion: invalidate,
         version,
         nextSession: () => ++session,
@@ -203,7 +186,7 @@ export function createProductionStoreController(
     disconnect,
     version,
     discovery: (abort) => (discovery = abort),
-    token: (token) => (sessionToken = token),
+    token: sessionState.setToken,
     fetcher: options.fetcher,
     events: connectionEvents(freshness, options.active),
   });
@@ -222,7 +205,7 @@ export function createProductionStoreController(
   });
   const { mutations, conflictUploads } = createProductionCommandServices({
     ...reads,
-    current: (active) => active === source,
+    current: (active) => active === sessionState.source,
     refresh,
   });
   const { selectRevision, branchActions } = createProductionSelections({
@@ -253,7 +236,9 @@ export function createProductionStoreController(
     restoreRoute,
     ensureStacks: () => stacks.ensure(),
     activeRepository: () =>
-      data.status.connection === "connected" ? source?.repository : undefined,
+      data.status.connection === "connected"
+        ? sessionState.source?.repository
+        : undefined,
     invalidate,
   });
 
@@ -261,7 +246,7 @@ export function createProductionStoreController(
     {
       data,
       history,
-      source: () => source,
+      source: () => sessionState.source,
       connect,
       disconnect,
       restore: restoreRoute,
@@ -272,7 +257,8 @@ export function createProductionStoreController(
       threads,
       sources,
       active: () =>
-        (options.active?.() ?? true) && authorizationReady(data, sessionToken),
+        (options.active?.() ?? true) &&
+        authorizationReady(data, sessionState.token),
       refresh: (changes) => refresh(true, changes),
     },
     freshness,
@@ -281,8 +267,8 @@ export function createProductionStoreController(
   const controller: StoreController = productionControllerSurface(
     data,
     history,
-    () => source,
-    () => sessionToken,
+    () => sessionState.source,
+    () => sessionState.token,
     {
       historyQuery,
       stacks,
@@ -293,7 +279,7 @@ export function createProductionStoreController(
       acquireRepository: authorizedRepositoryReader(
         data,
         sources,
-        () => sessionToken,
+        () => sessionState.token,
       ),
       now: options.now,
       globalSearch,
@@ -308,11 +294,11 @@ export function createProductionStoreController(
           automatic.pause,
           () => feed,
           stopProjectEvents,
-          () => source,
+          () => sessionState.source,
           () => history.route.page !== "settings",
           follow,
           freshness,
-          () => sessionToken,
+          () => sessionState.token,
           local.execution,
         ),
       },

@@ -81,7 +81,7 @@ unknown for legacy events. It is not a provider-authored timestamp and does not
 change native AgentStore identities or authority. Refresh, status reads and
 rendering never fabricate missing times.
 
-GET /v1/local/agents/feedback?session=<execution-id> is a bounded read-only,
+`GET /v1/local/agents/feedback?session=<execution-id>` is a bounded read-only,
 LocalTrusted Admin projection of repository-selected message targets and
 ordinary ThreadStore replies. It maps request/role rows through the owned
 capture normalizer, validates exact message membership and captures Agent/Thread

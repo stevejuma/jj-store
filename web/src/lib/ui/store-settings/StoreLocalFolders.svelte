@@ -15,11 +15,10 @@
   import StoreLocalFolderDialog from "./StoreLocalFolderDialog.svelte";
   import StoreSettingsEmpty from "./StoreSettingsEmpty.svelte";
   import FolderGitIcon from "@lucide/svelte/icons/folder-git-2";
-  import GitBranchIcon from "@lucide/svelte/icons/git-branch";
+  import StoreLocalFolderBindingActions from "./StoreLocalFolderBindingActions.svelte";
   import GitBranchPlusIcon from "@lucide/svelte/icons/git-branch-plus";
   import PlusIcon from "@lucide/svelte/icons/plus";
   import RefreshCwIcon from "@lucide/svelte/icons/refresh-cw";
-  import UnlinkIcon from "@lucide/svelte/icons/unlink";
   import type { Model } from "../../api/client.js";
   import type { StoreController } from "../../controller/contracts.js";
   import { LocalFolderManager } from "../../controller/local-folder-manager.js";
@@ -172,23 +171,17 @@
 </script>
 
 {#snippet bindingActions(binding: Model<"LocalBinding">)}
-  <Button
-    variant="outline"
+  <StoreLocalFolderBindingActions
     disabled={busy || pending}
-    onclick={() => edit(binding.repository)}
-    ><GitBranchIcon aria-hidden="true" />Reconnect folder</Button
-  >
-  <Button
-    variant="outline"
-    disabled={busy || pending}
-    onclick={() =>
+    onReconnect={() => edit(binding.repository)}
+    onRemove={() =>
       run(async () => {
         await manager!.remove(binding.repository);
         if (controller.state.repository.id === binding.repository)
           controller.actions.disconnect();
         await changed();
-      })}><UnlinkIcon aria-hidden="true" />Remove registration</Button
-  >
+      })}
+  />
 {/snippet}
 
 {#if mode === "add"}

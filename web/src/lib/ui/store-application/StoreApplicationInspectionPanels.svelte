@@ -20,10 +20,12 @@
     stackWorkspace,
     shell,
     onSelectPage,
+    visible = true,
   }: {
     controller: StoreController;
     stackWorkspace?: StackWorkspaceController;
     shell: AppShellController;
+    visible?: boolean;
     onSelectPage: StoreController["actions"]["selectPage"];
   } = $props();
   const current = $derived(controller.state.route);
@@ -32,6 +34,7 @@
 </script>
 
 {#if inspection?.file}<AppShell.Sidebar
+    hidden={!visible}
     side="right"
     sidebarController={inspection.workspaceInspector}
     label="Workspace file"
@@ -48,6 +51,7 @@
   </AppShell.Sidebar>{/if}
 
 {#if inspection?.current}<AppShell.Sidebar
+    hidden={!visible}
     side="right"
     label="Read tool details"
     resizeLabel="Resize read tool details"
@@ -70,10 +74,12 @@
     active={!inspection.workspaceRail.closed}
     >{#snippet content(View)}<View
         browser={inspection.workspace!}
+        {visible}
         sidebarController={inspection.workspaceRail}
       />{/snippet}</StoreLazyView
   >
 {:else if !current.agentsHub && current.page !== "threads"}<AppShell.Sidebar
+    hidden={!visible}
     side="right"
     sidebarController={detailsRail}
     constraintPriority={100}

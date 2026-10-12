@@ -1,0 +1,76 @@
+/* Every inline banner has clearance, including notices between cards. */
+:is(.store-settings--repository, .store-settings--global) [data-slot="alert"] {
+  margin-block: 1rem;
+}
+/* Notices inside cards are also inset from edge-to-edge rows and footers. */
+:is(.store-settings--repository, .store-settings--global)
+  .store-settings-card__content
+  > [data-slot="alert"] {
+  margin: 1rem;
+  width: auto;
+}
+
+/* Right-align controls inside the shared WorkField wrapper as well as the row. */
+:is(.store-settings--repository, .store-settings--global)
+  .store-settings__option-row
+  > .store-work__control,
+.store-settings--global
+  [data-ui-part="agent-configuration-fields"]
+  .store-work__control {
+  display: flex;
+  justify-content: flex-end;
+  min-width: 0;
+}
+:is(.store-settings--repository, .store-settings--global)
+  .store-settings__option-row:has([role="switch"]) {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+.store-settings--global .store-runtime__row {
+  grid-template-columns: minmax(0, 1fr);
+}
+.store-settings--global .store-runtime__row > [data-slot="field-content"] {
+  width: 100%;
+  justify-self: stretch;
+}
+.store-settings--global .store-runtime__list {
+  gap: 0;
+}
+@media (max-width: 40rem) {
+  :is(.store-settings--repository, .store-settings--global)
+    .store-settings__option-row
+    > .store-work__control,
+  .store-settings--global
+    [data-ui-part="agent-configuration-fields"]
+    .store-work__control {
+    justify-content: flex-start;
+  }
+}
+
+.store-settings--global
+  .store-runtime__list
+  > .store-settings-footer:first-child {
+  border-block-start: 0;
+}
+.store-settings--global
+  .store-runtime__list
+  .store-settings-footer__description {
+  flex: 1 1 24rem;
+}
+.store-settings--global .store-capture-harness + .store-capture-harness {
+  border-block-start: 1px solid var(--border);
+}
+.store-settings--global .store-capture-harness__content {
+  padding-inline-start: 0;
+}
+
+/* Pickers use a bounded control width, not the entire value column. */
+:is(.store-settings--repository, .store-settings--global)
+  .store-work__control
+  > :is([data-slot="select-trigger"], [role="combobox"]),
+:is(.store-settings--repository, .store-settings--global)
+  .store-settings__option-row
+  > :is([data-slot="select-trigger"], [role="combobox"]) {
+  width: min(20rem, 100%);
+  max-width: 100%;
+  min-width: 0;
+}

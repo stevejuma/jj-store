@@ -1,6 +1,9 @@
 #!/usr/bin/env node
 
-import { spawn } from "node:child_process";
+import {
+  startDevelopmentServer,
+  stopDevelopmentServer,
+} from "./dev-demo-server.mjs";
 import { openSync } from "node:fs";
 import { chmod, mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
@@ -54,35 +57,6 @@ async function runInput(command, args, input, options = {}) {
   });
 }
 
-function startServer(serverConfig, logHandle) {
-  const server = spawn(
-    resolve(repositoryRoot, "target/debug/jj-store"),
-    ["run", "--config", serverConfig, "--format=json"],
-    {
-      cwd: repositoryRoot,
-      detached: true,
-      env: { ...process.env, ...developmentEnvironment },
-      stdio: ["ignore", logHandle, logHandle],
-    },
-  );
-  server.unref();
-  return server;
-}
-
-async function stopServer(server) {
-  if (!server.pid) return;
-  process.kill(server.pid, "SIGTERM");
-  for (let attempt = 0; attempt < 100; attempt += 1) {
-    try {
-      process.kill(server.pid, 0);
-      await new Promise((resolveWait) => setTimeout(resolveWait, 100));
-    } catch {
-      return;
-    }
-  }
-  throw new Error("temporary native server did not stop");
-}
-
 async function assertPortAvailable() {
   try {
     await fetch(`http://127.0.0.1:${serverPort}/`);
@@ -124,7 +98,12 @@ async function initializeFixture(origin, logHandle) {
   ]);
   await refreshServerConfiguration(origin);
   const started = performance.now();
-  const server = startServer(layout.serverConfig, logHandle);
+  const server = startDevelopmentServer(
+    repositoryRoot,
+    developmentEnvironment,
+    layout.serverConfig,
+    logHandle,
+  );
   let seed;
   let firstStartupMillis;
   try {
@@ -137,7 +116,7 @@ async function initializeFixture(origin, logHandle) {
       unixSocket: layout.unixSocket,
     });
   } finally {
-    await stopServer(server);
+    await stopDevelopmentServer(server);
   }
   await run(resolve(repositoryRoot, "target/debug/jj-store"), [
     "repository",
@@ -188,7 +167,12 @@ async function restart({ reset = false } = {}) {
     references = initialized.references;
   }
   const started = performance.now();
-  let server = startServer(layout.serverConfig, logHandle);
+  let server = startDevelopmentServer(
+    repositoryRoot,
+    developmentEnvironment,
+    layout.serverConfig,
+    logHandle,
+  );
   let restartStartupMillis;
   let fixturePreparationMillis = 0;
   let searchConfigured = true;
@@ -246,15 +230,20 @@ async function restart({ reset = false } = {}) {
         await repositoryPosition(origin, fixture.repositoryId),
       );
       fixturePreparationMillis = Math.round(performance.now() - started);
-      await stopServer(server);
+      await stopDevelopmentServer(server);
       const restartStarted = performance.now();
-      server = startServer(layout.serverConfig, logHandle);
+      server = startDevelopmentServer(
+        repositoryRoot,
+        developmentEnvironment,
+        layout.serverConfig,
+        logHandle,
+      );
       await waitForServer(origin);
       await waitForSearch(origin, fixture.repositoryId);
       restartStartupMillis = Math.round(performance.now() - restartStarted);
     }
   } catch (error) {
-    await stopServer(server);
+    await stopDevelopmentServer(server);
     throw error;
   }
   if (references) fixture = await writeFixture(layout, fixture);

@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { selectSettingsSubtab } from "./settings-shell-play.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import Projects from "../../fixtures/ProjectsHubFixture.svelte";
@@ -41,6 +42,7 @@
       within(document.body).getByRole("menuitem", { name: "Settings" }),
     );
     await userEvent.click(await c.findByRole("button", { name: "Appearance" }));
+    await selectSettingsSubtab(canvasElement, "Preferences");
     await userEvent.click(await c.findByRole("radio", { name: /^Classic$/ }));
     await userEvent.click(c.getByRole("button", { name: "Back to jj-store" }));
     const classic = await c.findByRole("complementary", {
@@ -114,6 +116,7 @@
     );
     await userEvent.click(portal.getByRole("menuitem", { name: "Settings" }));
     await userEvent.click(await c.findByRole("button", { name: "Appearance" }));
+    await selectSettingsSubtab(canvasElement, "Preferences");
     await userEvent.click(await c.findByRole("radio", { name: /^Split$/ }));
     await userEvent.click(c.getByRole("button", { name: "Back to jj-store" }));
     const split = await c.findByRole("complementary", {

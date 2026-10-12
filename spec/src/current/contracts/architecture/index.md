@@ -19,6 +19,7 @@ Read the owning topic and requirement before implementation.
 - [Usable capture preview scope](12-usable-capture-preview-scope.md)
 - [Bundled application documentation](13-bundled-application-documentation.md)
 - [Bounded application read ownership](14-bounded-application-read-ownership.md)
+- [Remote connection ownership](14-remote-connection-ownership.md)
 - [Retained physical installation boundary](15-retained-physical-installation-boundary.md)
 - [Retained native completion boundary](16-retained-native-completion-boundary.md)
 - [Durable checkout and combination join](17-durable-checkout-and-combination-join.md)
@@ -26,4 +27,3 @@ Read the owning topic and requirement before implementation.
 - [Ordinary local stack workspace composition](19-ordinary-local-stack-workspace-composition.md)
 - [Interactive agent execution](20-interactive-agent-execution.md)
 - [Local compute resources](21-local-compute-resources.md)
-- [Remote connection ownership](14-remote-connection-ownership.md)

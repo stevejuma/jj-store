@@ -273,18 +273,14 @@
           route={current}
         />{/snippet}</StoreLazyView
     >{/if}
-  <div
-    hidden={settingsOpen || repositorySettingsOpen}
-    class="store-repository-panels"
-  >
-    <StoreApplicationRightPanels
-      {controller}
-      {stackWorkspace}
-      {shell}
-      onSelectPage={selectPage}
-      threadFocused={threadPanel.focused}
-    />
-  </div>
+  <StoreApplicationRightPanels
+    {controller}
+    {stackWorkspace}
+    {shell}
+    onSelectPage={selectPage}
+    threadFocused={threadPanel.focused}
+    visible={!settingsOpen && !repositorySettingsOpen}
+  />
   <StoreFocusedDiscussion
     open={!settingsOpen &&
       !repositorySettingsOpen &&

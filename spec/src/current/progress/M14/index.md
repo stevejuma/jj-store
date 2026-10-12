@@ -52,15 +52,8 @@ selected-page skeletons match the refreshed layout. Exact session returns,
 owners and pending commands remain retained. Focused cold web acceptance and
 inherited diagnostics are separate from native-platform, release and visual
 gates. The enclosing Jujutsu change owns this evidence.
-
 <!-- generated-navigation -->
 
 ## Pages
 
 - [history](history/index.md)
-
-E-LOCAL-SERVICE-ICONS-001 reviews M14.2 with its Done status unchanged. Local
-service Launch and Storage inventory use label-appropriate Lucide icons
-independently of Copy eligibility. Existing values, permissions and navigation
-remain unchanged. Focused UI acceptance and inherited governance diagnostics
-remain separate; the enclosing Jujutsu change owns the evidence.

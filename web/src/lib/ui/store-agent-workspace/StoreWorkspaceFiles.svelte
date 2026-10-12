@@ -22,7 +22,9 @@
   let {
     browser,
     sidebarController,
+    visible = true,
   }: {
+    visible?: boolean;
     browser: WorkspaceBrowser;
     sidebarController: AppShellSidebarController;
   } = $props();
@@ -94,6 +96,7 @@
 >
   {#snippet child({ props })}
     <AppShell.Sidebar
+      hidden={!visible}
       {...props}
       side="right"
       data-conversation-workspace

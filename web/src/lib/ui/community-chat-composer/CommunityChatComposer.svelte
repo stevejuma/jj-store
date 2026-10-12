@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { watchComposerTokenDecorations } from "./composer-token-refresh.svelte.js";
   import "./composer.css";
   import {
     composerSubmission,
@@ -10,8 +11,7 @@
   import CommunityComposerStatusActions from "./CommunityComposerStatusActions.svelte";
   import Mira from "@lapismd/mira";
   import type { MiraHandle, MiraMarkdownActionId } from "@lapismd/mira";
-  import { defineMiraExtension } from "@lapismd/mira/extensions";
-  import { chatDraftCaret } from "../store-agent-chat-body/chat-caret.js";
+  import { documentCaret } from "./composer-document-caret.js";
   import CommunityComposerSendActions from "./CommunityComposerSendActions.svelte";
   import CommunityComposerSurface from "./CommunityComposerSurface.svelte";
   import { createComposerSelection } from "./composer-selection.js";
@@ -20,10 +20,7 @@
   import { onDestroy, untrack } from "svelte";
   import type { ComposerProps } from "./props.js";
   import { communityEmojiToken } from "./model.js";
-  import {
-    createCommunityComposerExtension,
-    refreshCommunityComposerTokenDecorations,
-  } from "./composer-extension.js";
+  import { createCommunityComposerExtension } from "./composer-extension.js";
   import type {
     CommunityComposerAutocompleteItem,
     CommunityComposerAutocompleteQuery,
@@ -40,11 +37,6 @@
   import CommunityComposerEditContext from "./CommunityComposerEditContext.svelte";
   import CommunityReplyContext from "../community-reply-context/CommunityReplyContext.svelte";
   import CommunityComposerToolbar from "./CommunityComposerToolbar.svelte";
-
-  const documentCaret = defineMiraExtension({
-    name: "conversation-document-caret",
-    codeMirror: () => chatDraftCaret,
-  });
 
   let {
     presentation = "classic",
@@ -200,16 +192,13 @@
     onEditLast: () => editLastComposerMessage(onEditLastMessage),
     onCancelEdit: () => onCancelContext?.(),
   });
-  $effect(() => {
-    members;
-    rooms;
-    communityEmojis;
-    blocked;
-    const v = view;
-    untrack(() => {
-      if (v) refreshCommunityComposerTokenDecorations(v);
-    });
-  });
+  watchComposerTokenDecorations(() => ({
+    members,
+    rooms,
+    communityEmojis,
+    blocked,
+    view,
+  }));
 </script>
 
 {#snippet actions()}

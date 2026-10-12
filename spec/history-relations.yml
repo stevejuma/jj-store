@@ -3,4 +3,13 @@ E-READ-096:
   reason: Main integration completed the previously recorded landing blockers.
 E-READ-094:
   supersedes: [E-READ-091]
-  reason: Accepted cooperative cancellation replaces the proposed hard comparison deadline; the original failed probe remains a failure.
+  reason:
+    Accepted cooperative cancellation replaces the proposed hard comparison
+    deadline; the original failed probe remains a failure.
+
+E-LEDGER-CLEANUP-001:
+  supersedes: [E-NPM-REGISTRY-001]
+  reason:
+    Corrects malformed metadata for validation only. Original partial result,
+    failed runs and remaining qualification gaps are retained; milestone gates
+    still use original evidence.

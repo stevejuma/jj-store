@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { selectSettingsSubtab } from "./settings-shell-play.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import Fixture from "../../fixtures/AgentLayoutFixture.svelte";
@@ -175,6 +176,7 @@
       await userEvent.click(
         await c.findByRole("button", { name: "Appearance" }),
       );
+      await selectSettingsSubtab(canvasElement, "Preferences");
       await userEvent.click(await c.findByRole("radio", { name: layout }));
       await userEvent.click(
         c.getByRole("button", { name: "Back to jj-store" }),

@@ -135,10 +135,7 @@ verification
 - web/tests/vite/repository-settings-restoration.test.ts#guarded repository
   changes leave the active owner and drafts intact before connection teardown
 <!-- /evidence-field -->
-
-
 <!-- generated-navigation -->
-
 ## Pages
 
 - [E-GLOBAL-SETTINGS-001 details 2](details-02.md)

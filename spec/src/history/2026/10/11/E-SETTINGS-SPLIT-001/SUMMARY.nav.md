@@ -1,4 +1,4 @@
-- [Validation](details-02.md)
-- [Validation continued](details-03.md)
-- [Outcome and reviews](details-04.md)
-- [Final checks](details-05.md)
+- [E-SETTINGS-SPLIT-001 validation](details-02.md)
+- [E-SETTINGS-SPLIT-001 validation continued](details-03.md)
+- [E-SETTINGS-SPLIT-001 outcome and reviews](details-04.md)
+- [E-SETTINGS-SPLIT-001 final checks](details-05.md)

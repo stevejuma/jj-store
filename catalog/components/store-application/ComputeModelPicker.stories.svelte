@@ -73,7 +73,9 @@
     ).toHaveTextContent("Too large");
     await userEvent.keyboard("{Escape}");
     await userEvent.click(c.getByRole("tab", { name: "Resources" }));
-    await userEvent.clear(c.getByLabelText("Maximum memory / VRAM"));
+    await userEvent.clear(
+      c.getByRole("spinbutton", { name: "Maximum memory / VRAM" }),
+    );
     await userEvent.click(c.getByRole("tab", { name: "Models" }));
     await userEvent.click(trigger);
     await expect(

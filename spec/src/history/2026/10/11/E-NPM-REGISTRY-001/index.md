@@ -230,6 +230,13 @@ reason: M25 remains In progress. Platform, real-provider and visual
 
 ```
 <!-- /evidence-field -->
+<!-- evidence-relations -->
+## Resolution and supersession
+
+The original result remains **partial**. Milestone gates select their own evidence.
+
+- [E-LEDGER-CLEANUP-001](../../12/E-LEDGER-CLEANUP-001/index.md) supersedes this entry. Corrects malformed metadata for validation only. Original partial result, failed runs and remaining qualification gaps are retained; milestone gates still use original evidence.
+<!-- /evidence-relations -->
 <!-- generated-navigation -->
 ## Pages
 

@@ -377,17 +377,9 @@ UI, source/provider and cold local conversation checks pass, including restored
 forwarding of non-prompt worker controls. M24 remains In progress; M13.3
 publication qualification and visual approval are unchanged. Existing
 architecture oversizes and ResizeObserver diagnostics remain recorded; native
-publication/GC and installed-harness gates are not closed. E-UI-MENU-001 gives
-footer menus and shared popover titles normal-weight item typography, removes
-picker-specific bold headings and keeps profile menu identity consistent.
-Focused interaction/accessibility and live computed-style checks retain existing
-menu behavior. M24 stays In progress; ResizeObserver diagnostics and independent
-workspace qualification remain open. Visual baselines remain unapproved. The
-[footer review](footer-review.md) records E-CHAT-FOOTER-001/002. The
-[metadata review](metadata-review.md) records E-CHAT-METADATA-001/002 and main
-integration. The [inbox review](inbox-freshness-review.md) records
-E-EVENT-CONNECTIONS-001. The [Threads review](intentional-threads-review.md)
-records E-THREADS-001/002.
+publication/GC and installed-harness gates are not closed. See the
+[agents presentation review](agents-presentation-review.md) for common menu
+presentation and related review links.
 <!-- generated-navigation -->
 
 ## Pages
@@ -396,5 +388,9 @@ records E-THREADS-001/002.
 - [Conversation footer review](footer-review.md)
 - [Inbox read lifecycle review](inbox-freshness-review.md)
 - [Intentional Threads review](intentional-threads-review.md)
-
-- [Next page](SUMMARY.index-index/002/index.md)
+- [Conversation metadata review](metadata-review.md)
+- [Queued agent message review](queued-messages-review.md)
+- [Bounded test repair review](test-repairs-review.md)
+- [View loading review](view-loading-review.md)
+- [Workspace inspector and historical turn review](workspace-inspector-review.md)
+- [history](history/index.md)

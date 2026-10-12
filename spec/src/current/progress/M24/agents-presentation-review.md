@@ -19,3 +19,16 @@ asset inventory includes it in built bundles without changing native asset
 admission or MIME handling. The enclosing change vpxrwszm preserves appearance,
 agent identity and API contracts. M24 stays In progress; visual baselines remain
 unapproved and native execution/ResizeObserver qualification is independent.
+
+## Common menu presentation and related reviews
+
+E-UI-MENU-001 gives footer menus and shared popover titles normal-weight item
+typography, removes picker-specific bold headings and keeps profile menu
+identity consistent. Focused interaction/accessibility and live computed-style
+checks retain existing menu behavior. M24 stays In progress; ResizeObserver
+diagnostics and independent workspace qualification remain open. Visual
+baselines remain unapproved. The [footer review](footer-review.md) records
+E-CHAT-FOOTER-001/002. The [metadata review](metadata-review.md) records
+E-CHAT-METADATA-001/002 and main integration. The
+[inbox review](inbox-freshness-review.md) records E-EVENT-CONNECTIONS-001. The
+[Threads review](intentional-threads-review.md) records E-THREADS-001/002.

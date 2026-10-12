@@ -240,3 +240,18 @@ owned Settings components. Vite image CSP admits the same in-memory blob media
 as the built UI, retaining other admission sources and API proxy boundaries.
 Community attribution remains intact; the user-supplied Buzz screenshots guide
 locally authored avatar actions, shortcode adornments and sidebar grouping.
+
+Remote-agent integration rebases the verified implementation onto the current
+main workspace, preserving profile normalization and grouped Settings. Inherited
+cleanup extracts unchanged owned UI, controller and launcher compositions,
+retains Storybook IDs and repairs obsolete navigation/readiness scenarios. New
+copy boundaries retain original provenance; dependencies remain registry-only.
+
+The authorized cleanup adds strict appended metadata correction validation and
+lossless evidence repagination under JST-GOV-004/010/011. Original historical
+payloads, results, task selections and archives remain intact. Qualify all
+direct UI/story families, launcher/governance consumers, merged HTTP contracts
+and cold remote/built-App flows. Integration is not installed-provider, Linux
+real-storage, desktop or visual-baseline qualification. Advance main only after
+verification, then forget and remove the temporary workspace while preserving
+development data.

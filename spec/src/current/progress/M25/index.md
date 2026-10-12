@@ -158,7 +158,6 @@ limits, keyboard synchronization, cross-tab validation and serving disablement.
 Focused Compute/shared-control stories and live review pass. M25 remains In
 progress; paired inference, signed macOS/WKWebView/Linux distributions and
 independent M24 gates stay open. No visual baseline is approved.
-
 <!-- generated-navigation -->
 
 ## Pages

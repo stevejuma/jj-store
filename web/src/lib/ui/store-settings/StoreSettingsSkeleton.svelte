@@ -9,6 +9,7 @@
   } from "./settings-skeleton.js";
   import "./settings-skeleton.css";
   import "./repository-settings.css";
+  import "./settings-controls.css";
   let {
     section = "general",
     tab,

@@ -94,7 +94,7 @@
   );
 </script>
 
-{#if selected && agent}
+{#each selected && agent ? [{ detail: selected, author: agent }] : [] as { detail, author } (detail.session.session_id)}
   <div class="store-agent-context" data-header={showHeader}>
     {#if showHeader}<header class="store-collaboration__detail-header">
         {#if localAssociation}<p>
@@ -105,22 +105,22 @@
         <div class="store-collaboration__detail-title-row">
           <span class="store-collaboration__detail-identity">
             <CommunityMemberAvatar
-              member={agent}
+              member={author}
               size="small"
               showPresence
               decorative
             />
             <span class="store-collaboration__detail-title"
-              >{selected.session.conversation_title ?? agent.name}</span
+              >{detail.session.conversation_title ?? author.name}</span
             >
           </span>
           <StoreAgentSessionMenu {controller} />
         </div>
         <div class="store-collaboration__detail-meta">
           <CommunityChip
-            tone={selected.session.state === "active" ? "success" : "neutral"}
+            tone={detail.session.state === "active" ? "success" : "neutral"}
           >
-            {selected.session.state}
+            {detail.session.state}
           </CommunityChip>
 
           {#if changeId || commitId}
@@ -136,20 +136,20 @@
             </a>
           {/if}
         </div>
-        {#if selected.activity_truncated || selected.code_truncated}
+        {#if detail.activity_truncated || detail.code_truncated}
           <p class="store-collaboration__coverage" role="status">
-            This bounded view omits older {selected.activity_truncated
+            This bounded view omits older {detail.activity_truncated
               ? "activity"
               : "code associations"}.
           </p>
         {/if}
       </header>{/if}
-    {#if selected.activity.length}
-      {#if showHeader && controller.execution && selected && controller.execution.metadata.details[metadataKey( { session: selected.session.session_id, repository: state.repository.id } )]}
+    {#if detail.activity.length}
+      {#if showHeader && controller.execution && detail && controller.execution.metadata.details[metadataKey( { session: detail.session.session_id, repository: state.repository.id } )]}
         <StoreConversationMetadata
           manager={controller.execution}
           query={{
-            session: selected.session.session_id,
+            session: detail.session.session_id,
             repository: state.repository.id,
           }}
         />
@@ -157,10 +157,10 @@
       <StoreAgentTranscript
         {controller}
         {afterItems}
-        activity={selected.activity}
-        sessionId={selected.session.session_id}
-        integration={selected.session.integration}
-        {agent}
+        activity={detail.activity}
+        sessionId={detail.session.session_id}
+        integration={detail.session.integration}
+        agent={author}
         member={{
           ...state.member,
           kind: state.member.kind === "agent" ? "agent" : undefined,
@@ -173,9 +173,9 @@
         {afterItems}
         activity={[]}
         legacy={state.agentTranscript}
-        sessionId={selected.session.session_id}
-        integration={selected.session.integration}
-        {agent}
+        sessionId={detail.session.session_id}
+        integration={detail.session.integration}
+        agent={author}
         member={state.member}
       />
     {:else}
@@ -203,7 +203,7 @@
       >
     </Empty.Header>
   </Empty.Root>
-{/if}
+{/each}
 
 <style>
   .store-agent-context[data-header="false"] {

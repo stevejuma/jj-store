@@ -4,6 +4,7 @@
   import StoreSettingsHeading from "./StoreSettingsHeading.svelte";
   import { settingsPresentation } from "./settings-presentation.js";
   import "./repository-settings.css";
+  import "./settings-controls.css";
   let {
     id,
     label,

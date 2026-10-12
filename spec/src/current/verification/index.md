@@ -29,6 +29,6 @@ rows record requirement coverage; milestone task status remains in Progress.
 - [SEC verification](sec.md)
 - [UI verification (continued 2)](ui-02.md)
 - [UI verification (continued 3)](ui-03.md)
+- [Remote application verification](ui-04.md)
 - [UI verification](ui.md)
 - [WORK verification](work.md)
-- [Remote application verification](ui-04.md)

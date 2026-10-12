@@ -160,3 +160,17 @@ export function sameChatOrigin(a: ChatOrigin, b: ChatOrigin) {
     originReplyParent(a) === originReplyParent(b)
   );
 }
+
+export function chatAudienceKey(
+  origin: ChatOrigin | undefined,
+  conversation: string,
+) {
+  return origin
+    ? JSON.stringify([
+        "agent-chat",
+        origin.home ?? "personal",
+        origin.scope,
+        conversation,
+      ])
+    : undefined;
+}

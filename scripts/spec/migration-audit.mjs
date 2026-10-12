@@ -1,7 +1,8 @@
+import { revisionReader } from "./revision-reader.mjs";
 import { archivedSource } from "./archive-source.mjs";
 import { readFileSync, readdirSync } from "node:fs";
 import { createHash } from "node:crypto";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import { loadLedger } from "./progress-loader.mjs";
 import { parseLedger, signature } from "./progress-validation.mjs";
 export function sourceFiles(directory) {
@@ -11,11 +12,16 @@ export function sourceFiles(directory) {
       : [join(directory, e.name)],
   );
 }
-export function migrationAudit(root = ".") {
-  const read = (p) => readFileSync(join(root, p), "utf8");
-  const files = sourceFiles(join(root, "spec/src")).map((p) =>
-    root === "." ? p : p.slice(root.length + 1),
-  );
+export function migrationAudit(root = ".", revision) {
+  const selected = revision
+    ? revisionReader(resolve(root), revision)
+    : undefined;
+  const read = selected?.read ?? ((p) => readFileSync(join(root, p), "utf8"));
+  const files = selected
+    ? selected.files.filter((path) => path.startsWith("spec/src/"))
+    : sourceFiles(join(root, "spec/src")).map((p) =>
+        root === "." ? p : p.slice(root.length + 1),
+      );
   const sources = JSON.parse(read("spec/archive/sources.json"));
   const baseline = parseLedger(
     archivedSource(sources["spec/src/milestones.md"], read),
@@ -102,6 +108,7 @@ export function migrationAudit(root = ".") {
     )
       errors.push(`oversized authored page: ${path}`);
   }
+  selected?.verify();
   if (errors.length) throw new Error(errors.join("\n"));
   return {
     evidence: baseline.entries.length,

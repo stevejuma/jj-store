@@ -6,52 +6,43 @@ id: E-PROJECT-ROWS-001
 # E-PROJECT-ROWS-001
 
 <!-- evidence-field:id markdown -->
-
 ## Id
 
 E-PROJECT-ROWS-001
 <!-- /evidence-field -->
 
 <!-- evidence-field:tasks list -->
-
 ## Tasks
 
 - M11.4
-
 <!-- /evidence-field -->
 
 <!-- evidence-field:requirements list -->
-
 ## Requirements
 
 - JST-UI-015
 - JST-API-001
-
 <!-- /evidence-field -->
 
 <!-- evidence-field:date markdown -->
-
 ## Date
 
 2026-10-11
 <!-- /evidence-field -->
 
 <!-- evidence-field:kind markdown -->
-
 ## Kind
 
 verification
 <!-- /evidence-field -->
 
 <!-- evidence-field:revision markdown -->
-
 ## Revision
 
 rwkxtvyp
 <!-- /evidence-field -->
 
 <!-- evidence-field:files list -->
-
 ## Files
 
 - catalog/components/store-work/ProjectsHomeSpacing.stories.svelte
@@ -60,29 +51,24 @@ rwkxtvyp
 - spec/src/current/contracts/ui/18-installation-projects-hub.md
 - spec/src/current/contracts/api/22-workstore-browse-summaries.md
 - spec/src/current/progress/M11/index.md
-
 <!-- /evidence-field -->
 
 <!-- evidence-field:tests list -->
-
 ## Tests
 
 []
 <!-- /evidence-field -->
 
 <!-- evidence-field:story_files list -->
-
 ## Story files
 
 - catalog/components/store-work/ProjectsHomeSpacing.stories.svelte
 - catalog/components/store-work/ProjectsDirectory.stories.svelte
 - catalog/components/store-work/ProjectsHub.stories.svelte
 - catalog/components/store-work/ProjectsFilters.stories.svelte
-
 <!-- /evidence-field -->
 
 <!-- evidence-field:scope markdown -->
-
 ## Scope
 
 UI-only main-workspace correction: adjacent project-home lists in one Mine/Other
@@ -92,7 +78,6 @@ Tasks styling is unchanged.
 <!-- /evidence-field -->
 
 <!-- evidence-field:before_state markdown -->
-
 ## Before state
 
 Live Projects page: Personal agent chats row height 44px, followed by a 31.195px
@@ -102,11 +87,9 @@ Community-derived collection CSS, not virtualization or a Design Core defect.
 <!-- /evidence-field -->
 
 <!-- evidence-field:runs runs -->
-
 ## Validation
 
 <!-- run -->
-
 ### Run 1
 
 ```yaml
@@ -114,6 +97,7 @@ result: pass
 failures: 0
 hasNote: true
 noteEncoding: markdown
+
 ```
 
 ```shell
@@ -128,7 +112,6 @@ rows/collections and Community/Design Core references. Log
 <!-- /run -->
 
 <!-- run -->
-
 ### Run 2
 
 ```yaml
@@ -136,6 +119,7 @@ result: fail
 failures: 1
 hasNote: true
 noteEncoding: markdown
+
 ```
 
 ```shell
@@ -151,7 +135,6 @@ corrected. Logs /tmp/jj-project-gap-before.log and
 <!-- /run -->
 
 <!-- run -->
-
 ### Run 3
 
 ```yaml
@@ -159,6 +142,7 @@ result: fail
 failures: 4
 hasNote: true
 noteEncoding: markdown
+
 ```
 
 ```shell
@@ -174,7 +158,6 @@ fixture errors without production changes. Log
 <!-- /run -->
 
 <!-- run -->
-
 ### Run 4
 
 ```yaml
@@ -182,6 +165,7 @@ result: fail
 failures: 1
 hasNote: true
 noteEncoding: markdown
+
 ```
 
 ```shell
@@ -196,7 +180,6 @@ ProjectRowsRemainContiguousAcrossHomeRepositories fails geometry: expected
 <!-- /run -->
 
 <!-- run -->
-
 ### Run 5
 
 ```yaml
@@ -204,6 +187,7 @@ result: pass
 failures: 0
 hasNote: true
 noteEncoding: markdown
+
 ```
 
 ```shell
@@ -219,7 +203,6 @@ functional/accessibility failure. Log /tmp/jj-project-gap-after.log.
 <!-- /run -->
 
 <!-- run -->
-
 ### Run 6
 
 ```yaml
@@ -227,6 +210,7 @@ result: pass
 failures: 0
 hasNote: true
 noteEncoding: markdown
+
 ```
 
 ```shell
@@ -241,7 +225,6 @@ paging/filter and loading cases. Log /tmp/jj-project-gap-consumers.log.
 <!-- /run -->
 
 <!-- run -->
-
 ### Run 7
 
 ```yaml
@@ -249,6 +232,7 @@ result: pass
 failures: 0
 hasNote: true
 noteEncoding: markdown
+
 ```
 
 ```shell
@@ -262,7 +246,6 @@ Zero Svelte errors/warnings; catalog boundaries pass. Log
 <!-- /run -->
 
 <!-- run -->
-
 ### Run 8
 
 ```yaml
@@ -270,6 +253,7 @@ result: pass
 failures: 0
 hasNote: true
 noteEncoding: markdown
+
 ```
 
 ```shell
@@ -283,7 +267,6 @@ external source dependency. Log /tmp/jj-project-gap-ownership.log.
 <!-- /run -->
 
 <!-- run -->
-
 ### Run 9
 
 ```yaml
@@ -291,6 +274,7 @@ result: pass
 failures: 0
 hasNote: true
 noteEncoding: markdown
+
 ```
 
 ```shell
@@ -306,21 +290,18 @@ backend rebuild/reset or fixture mutation.
 <!-- /evidence-field -->
 
 <!-- evidence-field:result markdown -->
-
 ## Result
 
 pass
 <!-- /evidence-field -->
 
 <!-- evidence-field:remaining list -->
-
 ## Remaining
 
 []
 <!-- /evidence-field -->
 
 <!-- evidence-field:versions markdown -->
-
 ## Versions
 
 Node 26.9.0; pnpm 10.32.1; JJ 0.45.1; Design Core 0.3.1; Storybook 10.5.7;
@@ -328,7 +309,6 @@ Vitest 4.1.11.
 <!-- /evidence-field -->
 
 <!-- evidence-field:formats markdown -->
-
 ## Formats
 
 Owned CSS collection layout; Svelte 5 production-based fixtures; unchanged
@@ -336,7 +316,6 @@ WorkStore API schemas; Markdown evidence schema 1.
 <!-- /evidence-field -->
 
 <!-- evidence-field:next markdown -->
-
 ## Next
 
 Retain M11.4 native/cold and visual gates. Inherited E-NPM-REGISTRY-001 evidence
@@ -345,47 +324,38 @@ pass.
 <!-- /evidence-field -->
 
 <!-- evidence-field:contract_review yaml -->
-
 ## Contract review
 
 ```yaml
 status: changed
-reason:
-  JST-UI-015 installation Projects chapter clarifies continuous visual
+reason: JST-UI-015 installation Projects chapter clarifies continuous visual
   collections across homes. JST-API-001 unchanged confirmation in browse-summary
   chapter; no request, publication, authority or source ownership change.
-```
 
+```
 <!-- /evidence-field -->
 
 <!-- evidence-field:milestone_review yaml -->
-
 ## Milestone review
 
 ```yaml
 status: unchanged
-reason:
-  M11.4 remains In progress. 20 focused interaction/accessibility stories
+reason: M11.4 remains In progress. 20 focused interaction/accessibility stories
   qualify this collection padding correction, not native/cold browser or
   shared-package release gates. Visual baselines remain unapproved.
-```
 
+```
 <!-- /evidence-field -->
 
 <!-- evidence-field:excluded_scope markdown -->
-
 ## Excluded scope
 
 Root aggregate/Rust/build/full-repository suites and baseline updates are out of
 scope under the UI-only targeted policy. Existing package-adoption governance
 failures and viewport ResizeObserver diagnostics remain separate.
 <!-- /evidence-field -->
-<!-- generated-navigation -->
-
-## Pages
 
 <!-- evidence-field:document_checks markdown -->
-
 ## Document checks
 
 Final `pnpm exec spec-validator validate --only governance,summary,fileLimits`
@@ -396,3 +366,7 @@ tsptytzx; no fresh slice coverage/chapter error remains. Logs:
 `/tmp/jj-project-gap-docs.log`, `/tmp/jj-project-gap-format.log`,
 `/tmp/jj-project-gap-progress.log`, `/tmp/jj-project-gap-spec-first.log`.
 <!-- /evidence-field -->
+<!-- generated-navigation -->
+## Pages
+
+

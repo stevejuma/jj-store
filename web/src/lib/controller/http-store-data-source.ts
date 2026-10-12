@@ -1,3 +1,4 @@
+import { readHttpSearch } from "./http-search-reads.js";
 import { createNativeBlame } from "./http-blame.js";
 import { readHttpGraph } from "./http-graph-reads.js";
 import { httpReferences } from "./http-reference-reads.js";
@@ -240,19 +241,7 @@ export class HttpStoreDataSource
     return this.writes.uploadConflict(head, commit, path, fingerprint, bytes);
   }
   search(input: SearchQuery) {
-    const query = {
-      q: input.query,
-      mode: "visible_commits",
-      at_op: fullId(input.operation),
-      page_size: input.limit ?? 50,
-      cursor: input.cursor,
-    };
-    return this.#query<Model<"SearchPage">>(
-      "search",
-      input.operation,
-      query,
-      (signal) => this.#client.request("search", query, { signal }),
-    );
+    return readHttpSearch(this.#client, this.#query, input);
   }
   agentSessions(cursor?: string) {
     return this.#collaboration.agentSessions(cursor);

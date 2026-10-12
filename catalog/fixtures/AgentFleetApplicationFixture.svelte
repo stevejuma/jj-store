@@ -41,7 +41,9 @@
     reconnect?: boolean;
   } = $props();
   const base = untrack(() =>
-    createInMemoryStoreController(directory ? "agents" : "branches"),
+    createInMemoryStoreController(directory ? "agents" : "branches", {
+      accessMode: "local_trusted",
+    }),
   );
   let requests = $state<Record<string, unknown>[]>([]);
   let catalogRequests = $state(0);
@@ -255,7 +257,9 @@
     ...base,
     execution: manager,
     get state() {
-      return directory ? { ...base.state, route: agentsRoute() } : base.state;
+      return directory && !base.state.route.globalSettings
+        ? { ...base.state, route: agentsRoute() }
+        : base.state;
     },
   };
   const storage = untrack(createMemoryStoryStorage);

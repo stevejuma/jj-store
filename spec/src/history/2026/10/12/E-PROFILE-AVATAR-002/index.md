@@ -134,4 +134,9 @@ verification
 - scripts/dev-ui.test.mjs#HMR proxy preserves the public origin and streams
   every versioned API route
 <!-- /evidence-field -->
+<!-- generated-navigation -->
+## Pages
 
+- [E-PROFILE-AVATAR-002 details 2](details-02.md)
+- [E-PROFILE-AVATAR-002 details 3](details-03.md)
+- [E-PROFILE-AVATAR-002 details 4](details-04.md)

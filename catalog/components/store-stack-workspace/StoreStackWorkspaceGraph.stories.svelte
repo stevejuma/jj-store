@@ -1,73 +1,93 @@
 <script module lang="ts">
+  import { views as applicationViews } from "../../../web/src/lib/ui/store-application/application-views.js";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, waitFor, within } from "storybook/test";
-  import Fixture from "../../fixtures/StackWorkspaceGraphFixture.svelte";
+  import StackWorkspaceApplicationFixture from "../../fixtures/StackWorkspaceApplicationFixture.svelte";
+  import {
+    messagePreview,
+    assertCompactColumnToggle,
+  } from "../../fixtures/stack-workspace/story-actions.js";
+  import { assertCanvasInsets } from "../../fixtures/stack-workspace/canvas-layout.js";
   const { Story } = defineMeta({
-    title: "JJ Store/Stacks/Graph scrolling",
-    component: Fixture,
+    title: "JJ Store/Stacks/Application",
+    component: StackWorkspaceApplicationFixture,
     tags: ["visual-pending"],
-    parameters: { layout: "fullscreen" },
+    parameters: { layout: "fullscreen", jjStoreShell: true },
+    beforeEach: async () => {
+      await Promise.all([
+        applicationViews.stacks(),
+        applicationViews.files(),
+        applicationViews.log(),
+        applicationViews.stackDetails(),
+        applicationViews.stackConflicts(),
+      ]);
+    },
   });
-  async function graphScroll(canvasElement: HTMLElement, name: string) {
-    const canvas = within(canvasElement);
-    const stack = await canvas.findByRole("region", { name: `Stack ${name}` });
-    await within(stack).findByRole("button", { name: "Graph merge" });
-    const row = (id: string) =>
-      stack.querySelector<HTMLElement>(`[data-revision-id="${id}"]`)!;
-    expect(parseFloat(getComputedStyle(row("tip")).paddingLeft)).toBe(32);
-    expect(
-      parseFloat(getComputedStyle(row("merge")).paddingLeft),
-    ).toBeGreaterThan(32);
-    const viewport = stack.querySelector<HTMLElement>(
-      '[data-ui-part="column-body"] > [data-ui-part="scroll-area"] > [data-ui-part="scroll-area-viewport"]',
-    )!;
-    expect(["auto", "scroll"]).toContain(getComputedStyle(viewport).overflowX);
-    expect(viewport.scrollWidth).toBeGreaterThan(viewport.clientWidth);
-    expect(viewport.scrollHeight).toBeGreaterThan(viewport.clientHeight);
-    const left = row("tip").getBoundingClientRect().left;
-    viewport.scrollLeft = 80;
-    viewport.dispatchEvent(new Event("scroll"));
-    await waitFor(() =>
-      expect(row("tip").getBoundingClientRect().left).toBeLessThan(left),
-    );
-    viewport.scrollLeft = 0;
-    await userEvent.click(
-      within(stack).getByRole("button", { name: "Graph tip" }),
-    );
-    expect(
-      await within(stack).findByRole("region", {
-        name: `Changed files in ${name}`,
-      }),
-    ).toBeVisible();
-    viewport.scrollTop = viewport.scrollHeight;
-    viewport.dispatchEvent(new Event("scroll"));
-    expect(
-      await within(stack).findByRole("button", { name: "Graph base" }),
-    ).toBeVisible();
-  }
 </script>
 
 <Story
-  name="Workspace graph uses row lanes and scrolls both axes"
-  play={async ({ canvasElement }) => graphScroll(canvasElement, "feature/api")}
-/>
-<Story
-  name="Branches graph uses row lanes and scrolls both axes"
-  args={{ page: "branches" }}
+  name="Whole stack files and continuous graph"
+  args={{ continuousStack: true }}
   play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const stack = await canvas.findByRole("region", {
+      name: "Stack feature/api",
+    });
     await userEvent.click(
-      await within(canvasElement).findByRole("option", { name: "feature/api" }),
+      within(stack).getByRole("button", {
+        name: "Show all changes in stack feature/api",
+      }),
     );
-    await graphScroll(canvasElement, "feature/api");
-  }}
-/>
-<Story
-  name="Target graph uses row lanes and scrolls both axes"
-  args={{ page: "branches" }}
-  play={async ({ canvasElement }) => {
+    await expect(
+      stack.querySelector(".stack-workspace__bookmark-header"),
+    ).toHaveAttribute("data-selected");
+    const files = within(stack).getByRole("region", {
+      name: "Changed files in branch feature/api",
+    });
+    await expect(
+      within(files).getByRole("button", { name: "src/model.ts" }),
+    ).toBeVisible();
     await userEvent.click(
-      await within(canvasElement).findByRole("option", { name: "main" }),
+      within(files).getByRole("button", { name: "src/api.ts" }),
     );
-    await graphScroll(canvasElement, "main");
+    await expect(
+      await canvas.findByRole("group", {
+        name: "Draggable hunk query endpoint",
+      }),
+    ).toHaveAttribute("draggable", "true");
+    await expect(
+      canvas.getByRole("button", { name: "Assign hunk query endpoint" }),
+    ).toBeEnabled();
+    await userEvent.click(
+      within(stack).getByRole("button", { name: "Expose repository API" }),
+    );
+    await expect(
+      stack.querySelector('[aria-current="true"] [data-revision-id]'),
+    ).toHaveAttribute("data-revision-id", "api2");
+    await waitFor(() => {
+      for (const row of stack.querySelectorAll<HTMLElement>(
+        "[data-revision-id]",
+      )) {
+        const svg = row.querySelector<SVGElement>(
+          ".community-revision-graph__svg",
+        )!;
+        const stem = svg.querySelector("line")!;
+        expect(stem.getAttribute("y1")).toBe("0");
+        expect(Number(stem.getAttribute("y2"))).toBeCloseTo(
+          row.parentElement!.getBoundingClientRect().height,
+          0,
+        );
+        expect(svg.getBoundingClientRect().height).toBeCloseTo(
+          row.parentElement!.getBoundingClientRect().height,
+          0,
+        );
+      }
+      const rows = [
+        ...stack.querySelectorAll<HTMLElement>("[data-revision-id]"),
+      ];
+      expect(
+        rows[0]!.querySelector("svg")!.getBoundingClientRect().bottom,
+      ).toBeCloseTo(rows[1]!.getBoundingClientRect().top, 0);
+    });
   }}
 />

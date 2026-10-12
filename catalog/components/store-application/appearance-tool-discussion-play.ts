@@ -1,3 +1,4 @@
+import { selectSettingsSubtab } from "./settings-shell-play.js";
 import { expect, userEvent, within } from "storybook/test";
 export const appearanceToolDiscussionPlay = async ({
   canvasElement,
@@ -13,6 +14,7 @@ export const appearanceToolDiscussionPlay = async ({
     );
     await userEvent.click(body.getByRole("menuitem", { name: "Settings" }));
     await userEvent.click(await c.findByRole("button", { name: "Appearance" }));
+    await selectSettingsSubtab(canvasElement, "Preferences");
     await userEvent.click(await c.findByRole("radio", { name: layout }));
     await userEvent.click(c.getByRole("radio", { name: /^Classic$/ }));
     await userEvent.click(c.getByRole("button", { name: "Back to jj-store" }));

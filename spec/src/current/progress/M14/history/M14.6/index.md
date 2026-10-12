@@ -3,38 +3,20 @@
 Generated from evidence task references and historical mappings. This history is
 not a completion gate selection.
 
-| Evidence                                                                                | Date       | Original result | Later context                                                                              |
-| --------------------------------------------------------------------------------------- | ---------- | --------------- | ------------------------------------------------------------------------------------------ |
-| [E-M14-008](../../../../../history/2026/10/01/E-M14-008/index.md)                       | 2026-10-01 | pass            | Original outcome                                                                           |
-| [E-M14-010](../../../../../history/2026/10/01/E-M14-010/index.md)                       | 2026-10-01 | pass            | Original outcome                                                                           |
-| [E-M14-011](../../../../../history/2026/10/01/E-M14-011/index.md)                       | 2026-10-01 | pass            | Original outcome                                                                           |
-| [E-M14-012](../../../../../history/2026/10/01/E-M14-012/index.md)                       | 2026-10-01 | pass            | Original outcome                                                                           |
-| [E-M14-013](../../../../../history/2026/10/03/E-M14-013/index.md)                       | 2026-10-03 | pending         | Original outcome                                                                           |
-| [E-M14-016](../../../../../history/2026/10/04/E-M14-016/index.md)                       | 2026-10-04 | pass            | Original outcome                                                                           |
-| [E-SETTINGS-SPLIT-001](../../../../../history/2026/10/11/E-SETTINGS-SPLIT-001/index.md) | 2026-10-11 | pending         | Scoped Settings acceptance passes; inherited diagnostics and visual review remain separate |
-
-[E-SETTINGS-REFRESH-001](../../../../../history/2026/10/11/E-SETTINGS-REFRESH-001/index.md)
-reviews M14.6 without changing its status. Shared repository presentation and
-action placement retain the existing behavioural contract; release and inherited
-diagnostics remain explicit.
-
-[E-NUMERIC-SETTINGS-001](../../../../../history/2026/10/11/E-NUMERIC-SETTINGS-001/index.md)
-reviews M14.6 (In progress, unchanged): all eleven bounded Sync inputs use
-shared unit entry and conditional draft-only reset. Saved/running configuration,
-WorkStore restrictions and next-startup semantics remain unchanged. Remaining
-sync integration and platform gates remain open.
-
-[E-SETTINGS-SKELETON-001](../../../../../history/2026/10/11/E-SETTINGS-SKELETON-001/index.md)
-reviews M14.6 without changing its status. Repository Settings initial loading
-now matches the selected category and subtab; existing lifecycle, pending
-commands and configuration contracts remain unchanged. Wider gates remain open.
-|
-[E-GLOBAL-SETTINGS-001](../../../../../history/2026/10/11/E-GLOBAL-SETTINGS-001/index.md)
-| 2026-10-11 | pending | Focused global presentation; inherited diagnostics
-remain separate | |
-[E-GLOBAL-SETTINGS-NAV-001](../../../../../history/2026/10/12/E-GLOBAL-SETTINGS-NAV-001/index.md)
-| 2026-10-12 | pending | Global Settings URLs, startup resume and representative
-loading; inherited diagnostics separate |
+| Evidence                                                                                          | Date       | Original result | Later context    |
+| ------------------------------------------------------------------------------------------------- | ---------- | --------------- | ---------------- |
+| [E-M14-008](../../../../../history/2026/10/01/E-M14-008/index.md)                                 | 2026-10-01 | pass            | Original outcome |
+| [E-M14-010](../../../../../history/2026/10/01/E-M14-010/index.md)                                 | 2026-10-01 | pass            | Original outcome |
+| [E-M14-011](../../../../../history/2026/10/01/E-M14-011/index.md)                                 | 2026-10-01 | pass            | Original outcome |
+| [E-M14-012](../../../../../history/2026/10/01/E-M14-012/index.md)                                 | 2026-10-01 | pass            | Original outcome |
+| [E-M14-013](../../../../../history/2026/10/03/E-M14-013/index.md)                                 | 2026-10-03 | pending         | Original outcome |
+| [E-M14-016](../../../../../history/2026/10/04/E-M14-016/index.md)                                 | 2026-10-04 | pass            | Original outcome |
+| [E-GLOBAL-SETTINGS-001](../../../../../history/2026/10/11/E-GLOBAL-SETTINGS-001/index.md)         | 2026-10-11 | pending         | Original outcome |
+| [E-NUMERIC-SETTINGS-001](../../../../../history/2026/10/11/E-NUMERIC-SETTINGS-001/index.md)       | 2026-10-11 | pending         | Original outcome |
+| [E-SETTINGS-REFRESH-001](../../../../../history/2026/10/11/E-SETTINGS-REFRESH-001/index.md)       | 2026-10-11 | pending         | Original outcome |
+| [E-SETTINGS-SKELETON-001](../../../../../history/2026/10/11/E-SETTINGS-SKELETON-001/index.md)     | 2026-10-11 | pending         | Original outcome |
+| [E-SETTINGS-SPLIT-001](../../../../../history/2026/10/11/E-SETTINGS-SPLIT-001/index.md)           | 2026-10-11 | pending         | Original outcome |
+| [E-GLOBAL-SETTINGS-NAV-001](../../../../../history/2026/10/12/E-GLOBAL-SETTINGS-NAV-001/index.md) | 2026-10-12 | pending         | Original outcome |
 
 <!-- generated-navigation -->
 
