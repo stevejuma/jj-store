@@ -1,7 +1,7 @@
 import type { ServerConnections } from "../../connections/owner.svelte.js";
 export type ServerSwitcherOwner = Pick<
   ServerConnections,
-  "supported" | "selected" | "records" | "select" | "manage" | "add"
+  "supported" | "selected" | "records" | "select" | "manage" | "add" | "dialog"
 >;
 export type ConnectionDialogOwner = Pick<
   ServerConnections,

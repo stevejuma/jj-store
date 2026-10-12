@@ -2,15 +2,22 @@
   import { DialogFrame } from "@lapismd/design-core/forms/dialog";
   import * as Dialog from "@lapismd/design-core/shadcn/dialog";
   import * as Field from "@lapismd/design-core/shadcn/field";
+  import * as Alert from "@lapismd/design-core/shadcn/alert";
   import { Input } from "@lapismd/design-core/shadcn/input";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { Spinner } from "@lapismd/design-core/shadcn/spinner";
+  import ServerIcon from "@lucide/svelte/icons/server";
+  import StoreWorkField from "../store-work/StoreWorkField.svelte";
+  import StoreSettingsCard from "../store-settings/StoreSettingsCard.svelte";
+  import StoreSettingsFooter from "../store-settings/StoreSettingsFooter.svelte";
+  import { provideSettingsPresentation } from "../store-settings/settings-presentation.js";
   import type { ConnectionDialogOwner } from "./presentation.js";
   let { owner }: { owner: ConnectionDialogOwner } = $props();
   let name = $state(""),
     origin = $state(""),
     token = $state("");
   const field = $props.id();
+  provideSettingsPresentation({ value: "global" });
   $effect(() => {
     if (owner.dialog) {
       name = owner.editing?.name ?? "";
@@ -33,45 +40,65 @@
     busy={owner.busy}
     closeLabel="Close server connection"
   >
-    <form onsubmit={submit} class="connection-dialog">
-      <Field.Group>
-        <Field.Field
-          ><Field.Label for={`${field}-name`}>Name</Field.Label><Input
+    <form onsubmit={submit} class="connection-dialog store-settings--global">
+      <StoreSettingsCard
+        id={`${field}-details`}
+        title="Connection details"
+        Icon={ServerIcon}
+        description="Choose the server and authenticate with its access token."
+      >
+        <Field.Group class="store-settings__editable-rows">
+          <StoreWorkField
+            label="Name"
             id={`${field}-name`}
-            bind:value={name}
-            required
-            maxlength={128}
+            description="A display name for this sidebar."
             disabled={owner.busy}
-          /></Field.Field
-        >
-        <Field.Field
-          ><Field.Label for={`${field}-origin`}>Server address</Field.Label
-          ><Input
+            class="store-settings__option-row"
+            ><Input
+              id={`${field}-name`}
+              bind:value={name}
+              required
+              maxlength={128}
+              disabled={owner.busy}
+            /></StoreWorkField
+          >
+          <StoreWorkField
+            label="Server address"
             id={`${field}-origin`}
-            type="url"
-            bind:value={origin}
-            required
-            placeholder="https://store.example"
+            description="The server's HTTP or HTTPS origin."
             disabled={owner.busy || !!owner.editing}
-          /></Field.Field
-        >
-        <Field.Field
-          ><Field.Label for={`${field}-token`}>Access token</Field.Label><Input
+            class="store-settings__option-row"
+            ><Input
+              id={`${field}-origin`}
+              type="url"
+              bind:value={origin}
+              required
+              placeholder="https://store.example"
+              disabled={owner.busy || !!owner.editing}
+            /></StoreWorkField
+          >
+          <StoreWorkField
+            label="Access token"
             id={`${field}-token`}
-            type="password"
-            bind:value={token}
-            autocomplete="off"
+            description="Use a token enrolled in the server's identity directory."
             disabled={owner.busy}
-          /><Field.Description
-            >Use a token enrolled in the server's identity directory.</Field.Description
-          ></Field.Field
-        >
-      </Field.Group>
-      {#if owner.error}<p role="alert">
-          {owner.error.replaceAll("_", " ")}
-        </p>{/if}
-      <div class="connection-dialog__footer">
-        {#if owner.editing}<div class="connection-dialog__management">
+            class="store-settings__option-row"
+            ><Input
+              id={`${field}-token`}
+              type="password"
+              bind:value={token}
+              autocomplete="off"
+              disabled={owner.busy}
+            /></StoreWorkField
+          >
+        </Field.Group>
+        {#if owner.error}<Alert.Root variant="destructive">
+            <Alert.Description>
+              {owner.error.replaceAll("_", " ")}
+            </Alert.Description>
+          </Alert.Root>{/if}
+        <StoreSettingsFooter>
+          {#if owner.editing}
             <Button
               type="button"
               variant="ghost"
@@ -85,8 +112,7 @@
               disabled={owner.busy}
               onclick={() => owner.remove()}>Remove</Button
             >
-          </div>{/if}
-        <div class="connection-dialog__actions">
+          {/if}
           {#if owner.editing}<Button
               type="button"
               variant="outline"
@@ -102,8 +128,8 @@
                 data-icon="inline-start"
               />{/if}Connect</Button
           >
-        </div>
-      </div>
+        </StoreSettingsFooter>
+      </StoreSettingsCard>
     </form>
   </DialogFrame>
 </Dialog.Root>
@@ -114,22 +140,15 @@
     flex-direction: column;
     gap: 1rem;
   }
-  .connection-dialog__footer {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 0.75rem;
-    flex-wrap: wrap;
-    border-block-start: 1px solid var(--border);
-    padding-block-start: 1rem;
+  .connection-dialog :global(.store-settings__section) {
+    margin-block-start: 0;
   }
-  .connection-dialog__actions,
-  .connection-dialog__management {
+  .connection-dialog :global(.store-settings__actions) {
     display: flex;
     gap: 0.5rem;
     flex-wrap: wrap;
   }
-  .connection-dialog__actions {
-    margin-inline-start: auto;
+  .connection-dialog :global(input) {
+    width: min(20rem, 100%);
   }
 </style>

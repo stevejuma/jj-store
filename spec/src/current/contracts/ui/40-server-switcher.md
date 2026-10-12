@@ -7,14 +7,25 @@
 | JST-UI-022 | The server switcher MUST scope application actions, history, drafts, media, notifications and freshness to the selected connection and principal. Inactive responses cannot mutate the selected view or redirect a pending command. |
 
 JST-UI-022 uses a bottom-aligned server list immediately above Help, including
-while Settings is open. Rounded-square initials/avatar buttons retain accessible
-names and tooltips, an accent selected marker and explicit
-offline/authentication state. Expanded navigation includes names. Add server is
-the final action.
+while Settings is open. Server buttons and Add server use the same rounded
+navigation button presentation, hover and selected colour as the sidebar's other
+destinations. Initials/icons retain accessible names and tooltips; expanded
+navigation includes names. Show at most two server entries, counting Local:
+Local stays visible and the selected remote occupies the second slot, or the
+first saved remote when Local is selected. Additional servers appear in an
+accessible horizontal-kebab More servers menu. Selecting an overflow server
+promotes it to the visible slot without changing switching guards. Retain
+management for the selected remote in expanded and compact navigation. Add
+server remains the final connection action.
 
 The application owns connection management, using maintained Community
 navigation/form compositions and released Design Core controls. Add, rename,
 sign out and remove preserve keyboard/focus behavior and existing form guidance.
+The connection dialog follows JST-UI-016: one compact section card, a tinted
+heading, full-width divided label/help-left and control-right rows, and a
+separated bottom-right action footer with Connect last. Narrow windows stack
+rows and wrap commands. Validation, busy/disabled state, immutable edited
+origins, session-only tokens and existing connection actions remain unchanged.
 Appearance and native window preferences are device-scoped. Repository, project,
 agent, profile, emoji and supported server Settings actions target selection.
 Unsupported local terminals, folder picking and machine management are hidden.

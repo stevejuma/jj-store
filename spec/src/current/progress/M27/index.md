@@ -1,8 +1,8 @@
 # M27 remote server connections and authenticated agents
 
-| ID  | Status      | Depends | Requirements                       | Gate                                                                      | Next                                                                 | Evidence                                                                           |
-| --- | ----------- | ------- | ---------------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------- | ---------------------------------------------------------------------------------- |
-| M27 | In progress | M24,M26 | JST-SEC-009,JST-API-011,JST-UI-022 | Isolated connections, delegated execution and cold Linux/macOS acceptance | Qualify installed providers, Linux real-storage and desktop delivery | E-REMOTE-AGENTS-001,E-REMOTE-AGENTS-002,E-REMOTE-INTEGRATION-001,E-REMOTE-LAND-001 |
+| ID  | Status      | Depends | Requirements                       | Gate                                                                      | Next                                                                 | Evidence                                                                                                 |
+| --- | ----------- | ------- | ---------------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| M27 | In progress | M24,M26 | JST-SEC-009,JST-API-011,JST-UI-022 | Isolated connections, delegated execution and cold Linux/macOS acceptance | Qualify installed providers, Linux real-storage and desktop delivery | E-REMOTE-AGENTS-001,E-REMOTE-AGENTS-002,E-REMOTE-INTEGRATION-001,E-REMOTE-LAND-001,E-SERVER-CONTROLS-001 |
 
 Implementation was rebased onto the current default workspace, preserving its
 directory/avatar normalization and grouped Settings work. Integration and
@@ -24,6 +24,13 @@ dialog stories, source-limit violations and malformed historical metadata first
 recorded in E-REMOTE-AGENTS-001 are repaired by the integration records.
 Original evidence payloads and outcomes remain immutable. No platform or
 provider gate is promoted by cleanup or deterministic ACP acceptance.
+
+E-SERVER-CONTROLS-001 qualifies sidebar-matched server buttons, the two-entry
+limit and horizontal-kebab overflow, and the shared Settings connection form.
+Focused interaction/Axe, owner-history/guard checks and live main responsive
+review pass. Switching, authorization, tokens, drafts and development data are
+retained. M27 stays In progress; platform/provider and visual gates are
+unchanged.
 <!-- generated-navigation -->
 
 ## Pages
