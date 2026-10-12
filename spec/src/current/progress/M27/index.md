@@ -1,8 +1,8 @@
 # M27 remote server connections and authenticated agents
 
-| ID  | Status      | Depends | Requirements                       | Gate                                                                      | Next                                                                 | Evidence                                                                                                 |
-| --- | ----------- | ------- | ---------------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| M27 | In progress | M24,M26 | JST-SEC-009,JST-API-011,JST-UI-022 | Isolated connections, delegated execution and cold Linux/macOS acceptance | Qualify installed providers, Linux real-storage and desktop delivery | E-REMOTE-AGENTS-001,E-REMOTE-AGENTS-002,E-REMOTE-INTEGRATION-001,E-REMOTE-LAND-001,E-SERVER-CONTROLS-001 |
+| ID  | Status      | Depends | Requirements                       | Gate                                                                      | Next                                                                 | Evidence                                                                                                                       |
+| --- | ----------- | ------- | ---------------------------------- | ------------------------------------------------------------------------- | -------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| M27 | In progress | M24,M26 | JST-SEC-009,JST-API-011,JST-UI-022 | Isolated connections, delegated execution and cold Linux/macOS acceptance | Qualify installed providers, Linux real-storage and desktop delivery | E-REMOTE-AGENTS-001,E-REMOTE-AGENTS-002,E-REMOTE-INTEGRATION-001,E-REMOTE-LAND-001,E-SERVER-CONTROLS-001,E-SERVER-CONTROLS-002 |
 
 Implementation was rebased onto the current default workspace, preserving its
 directory/avatar normalization and grouped Settings work. Integration and
@@ -31,6 +31,10 @@ Focused interaction/Axe, owner-history/guard checks and live main responsive
 review pass. Switching, authorization, tokens, drafts and development data are
 retained. M27 stays In progress; platform/provider and visual gates are
 unchanged.
+
+E-SERVER-CONTROLS-002 corrects compressed Add/More action sizing and moves the
+connection introduction into the card header. Focused sizing, interaction and
+accessibility acceptance passes; the existing M27 gates stay unchanged.
 <!-- generated-navigation -->
 
 ## Pages

@@ -26,6 +26,18 @@
     await expect(
       canvas.queryByRole("button", { name: "Select Research server" }),
     ).not.toBeInTheDocument();
+    const height = canvas
+      .getByRole("button", { name: "Select Local server" })
+      .getBoundingClientRect().height;
+    await expect(
+      canvas.getByRole("button", { name: "Add server" }).getBoundingClientRect()
+        .height,
+    ).toBe(height);
+    await expect(
+      canvas
+        .getByRole("button", { name: "More servers" })
+        .getBoundingClientRect().height,
+    ).toBe(height);
     await userEvent.click(
       canvas.getByRole("button", { name: "Select Build host server" }),
     );
@@ -69,6 +81,17 @@
     const canvas = within(canvasElement);
     await userEvent.click(canvas.getByRole("button", { name: "Add server" }));
     const page = within(document.body);
+    const description = page.getByText(
+      "Connect to an authenticated JJ Store server. Its token stays in this application session.",
+    );
+    await expect(description.closest('[role="region"]')).toHaveAccessibleName(
+      "Connection details",
+    );
+    await expect(
+      page
+        .getByRole("dialog", { name: "Add server" })
+        .querySelector('[data-slot="dialog-description"]'),
+    ).toBeNull();
     await expect(
       page.getByRole("button", { name: /^Connect$/ }),
     ).toBeDisabled();

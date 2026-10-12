@@ -22,16 +22,17 @@ The application owns connection management, using maintained Community
 navigation/form compositions and released Design Core controls. Add, rename,
 sign out and remove preserve keyboard/focus behavior and existing form guidance.
 The connection dialog follows JST-UI-016: one compact section card, a tinted
-heading, full-width divided label/help-left and control-right rows, and a
-separated bottom-right action footer with Connect last. Narrow windows stack
-rows and wrap commands. Validation, busy/disabled state, immutable edited
-origins, session-only tokens and existing connection actions remain unchanged.
-Appearance and native window preferences are device-scoped. Repository, project,
-agent, profile, emoji and supported server Settings actions target selection.
-Unsupported local terminals, folder picking and machine management are hidden.
-Remote Settings navigation contains Profile, Custom emoji and device Appearance;
-Local service, Agents administration and Compute remain LocalTrusted management.
-Default remote Settings entry opens Profile, preserving explicit section links.
+heading containing the connection and session-token description, full-width
+divided label/help-left and control-right rows, and a separated bottom-right
+action footer with Connect last. Narrow windows stack rows and wrap commands.
+Validation, busy/disabled state, immutable edited origins, session-only tokens
+and existing connection actions remain unchanged. Appearance and native window
+preferences are device-scoped. Repository, project, agent, profile, emoji and
+supported server Settings actions target selection. Unsupported local terminals,
+folder picking and machine management are hidden. Remote Settings navigation
+contains Profile, Custom emoji and device Appearance; Local service, Agents
+administration and Compute remain LocalTrusted management. Default remote
+Settings entry opens Profile, preserving explicit section links.
 
 The client-only server query field participates in history and restart. Existing
 unqualified links mean Local; shared links use the canonical remote origin and

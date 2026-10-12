@@ -156,6 +156,9 @@
   :global(.server-switcher__button) {
     justify-content: flex-start;
     min-width: 0;
+    flex: none;
+  }
+  .server-switcher__row :global(.server-switcher__button) {
     flex: 1;
   }
   .compact :global(.server-switcher__button) {

@@ -36,7 +36,7 @@
 <Dialog.Root bind:open={owner.dialog}>
   <DialogFrame
     title={owner.editing ? "Server connection" : "Add server"}
-    description="Connect to an authenticated JJ Store server. Its token stays in this application session."
+    aria-describedby={undefined}
     busy={owner.busy}
     closeLabel="Close server connection"
   >
@@ -45,7 +45,7 @@
         id={`${field}-details`}
         title="Connection details"
         Icon={ServerIcon}
-        description="Choose the server and authenticate with its access token."
+        description="Connect to an authenticated JJ Store server. Its token stays in this application session."
       >
         <Field.Group class="store-settings__editable-rows">
           <StoreWorkField
