@@ -136,6 +136,8 @@
         {#if value}<img
             src={value}
             alt="Selected avatar"
+            width="256"
+            height="256"
           />{:else if fallbackInitials}<span
             class="community-avatar-picker__fallback"
             data-fallback-tone={communityMemberAvatarFallbackTone(fallbackName)}

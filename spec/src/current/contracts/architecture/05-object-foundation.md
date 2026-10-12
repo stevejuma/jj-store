@@ -306,3 +306,8 @@ raster media and CAS-selected installation manifest are independent of
 repository WAL roots. The pure collaboration model accepts explicit immutable
 emoji snapshots without importing that directory, HTTP, credentials or
 presentation.
+
+Directory image decoding/resizing belongs to the server implementation. Its
+raster dependency does not enter storage, model, WAL or repository authority.
+Both avatar and emoji pickers consume the same typed bounded image preparation
+and immutable media receipt.

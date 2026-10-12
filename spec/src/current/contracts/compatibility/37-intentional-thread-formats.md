@@ -14,3 +14,8 @@ bytes. Both publication providers retain exact imported definitions and image
 closures. Installation directory format 1 and identity-journal format 1 are new
 independent formats; native manifest and local companion envelope versions do
 not change. Generated profile projections omit private email.
+
+Normalized directory image uploads add a binary HTTP route and typed command.
+Legacy upload intents retain their encoding, directory format 1 remains
+unchanged, and retained media still satisfies the existing collaboration image
+limits. No native or companion identity/format migration is introduced.

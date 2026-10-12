@@ -27,6 +27,13 @@
   const id = $props.id();
   const status = $derived(management?.value);
   const blocked = $derived(management?.busy || !!management?.pending);
+  const memoryInvalid = $derived(
+    draft?.memory_gb !== null &&
+      draft?.memory_gb !== undefined &&
+      (!Number.isSafeInteger(draft.memory_gb) ||
+        draft.memory_gb < 1 ||
+        draft.memory_gb > 1024),
+  );
   $effect(() => {
     if (management) {
       const owner = management;
@@ -48,7 +55,7 @@
       });
   });
   async function configure() {
-    return draft
+    return draft && !memoryInvalid
       ? ((await management?.command({
           action: "configure",
           settings: $state.snapshot(draft),
@@ -106,6 +113,8 @@
               description="One loaded model and two concurrent inference requests per host. Leave empty for automatic memory allocation."
               min={1}
               max={1024}
+              slider
+              sliderMax={64}
               optional
               units={countUnits("GB")}
               value={draft.memory_gb === null ? "" : String(draft.memory_gb)}
@@ -141,7 +150,7 @@
             </p>
           </div>{/snippet}
 
-        <Button disabled={blocked} onclick={configure}
+        <Button disabled={blocked || memoryInvalid} onclick={configure}
           >Save compute settings</Button
         >
       </StoreSettingsFooter>

@@ -13,15 +13,20 @@ export class DirectoryClient {
     private token: () => string | null,
     private fetcher: typeof fetch = (...args) => fetch(...args),
   ) {}
-  async fetch(path: string, body?: unknown): Promise<Response> {
+  async fetch(
+    path: string,
+    body?: unknown,
+    bytes?: Uint8Array<ArrayBuffer>,
+  ): Promise<Response> {
     const token = this.token();
     const headers: Record<string, string> = { "x-jj-store-protocol": "1" };
     if (token) headers.authorization = `Bearer ${token}`;
     if (body !== undefined) headers["content-type"] = "application/json";
+    if (bytes) headers["content-type"] = "application/octet-stream";
     const response = await this.fetcher(`/v1/directory/${path}`, {
-      method: body === undefined ? "GET" : "POST",
+      method: body === undefined && !bytes ? "GET" : "POST",
       headers,
-      body: body === undefined ? undefined : pretty(body),
+      body: bytes ?? (body === undefined ? undefined : pretty(body)),
       credentials: "omit",
       redirect: "error",
       cache: "no-store",
@@ -36,9 +41,13 @@ export class DirectoryClient {
     }
     return response;
   }
-  async request<T>(path: string, body?: unknown): Promise<T> {
+  async request<T>(
+    path: string,
+    body?: unknown,
+    bytes?: Uint8Array<ArrayBuffer>,
+  ): Promise<T> {
     const token = this.token();
-    const response = await this.fetch(path, body);
+    const response = await this.fetch(path, body, bytes);
     const value = decode(
       new TextDecoder().decode(await responseBytes(response, 16 * 1024 * 1024)),
     ) as T & { code?: string };

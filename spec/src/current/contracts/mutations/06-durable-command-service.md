@@ -45,3 +45,9 @@ caller binding, observed revisions and actor/request receipts precede mutation;
 unknown outcomes retain their exact original request and intent. Profiles cannot
 change a repository principal or grant. Portable emoji snapshots are validated
 in jj-collab and use the existing native/local collaboration receipt services.
+
+The normalized image command binds its request ID to the original source digest.
+Avatar and emoji pickers share this command and retain exact source bytes after
+an unknown outcome. Retries resolve the durable receipt before decoding again.
+The legacy upload intent encoding and repository command publication remain
+unchanged.

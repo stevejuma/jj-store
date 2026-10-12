@@ -33,6 +33,31 @@ Replacement and retirement retain prior immutable definitions and image bytes.
 An upload publishes owner-accessible draft media; selecting it in a profile or
 emoji definition is a separate explicit save.
 
+Avatar and custom emoji uploads share a binary transport at
+`POST /v1/directory/image-uploads/{request_id}`. Admission checks the personal
+identity before consuming at most 20 MiB of PNG/JPEG/GIF/WebP source bytes.
+Decoded input is bounded to 8192 pixels per side and 64 MiB of RGBA pixels. The
+server preserves exact bytes for sources already within retained-media limits;
+larger inputs are resized to fit 512 × 512, retaining aspect ratio and EXIF
+orientation, and encoded as a static PNG. Resized animations retain their first
+frame. Source files are not persisted. Retained assets and previews still meet
+the existing 2 MiB, 512 × 512, 100-frame and 64 MiB domain limits. The upload
+returns the existing owner-only media receipt; profile and emoji Save remain
+explicit. Receipts bind the original source digest and request identity, so
+retries recover the original result without re-normalizing. Legacy upload
+commands and legacy emoji receipts retain their original intent encoding.
+
+The custom emoji chooser keeps source files and previews in browser session
+memory until Save emoji. That explicit save first obtains normalized owner-only
+media, then selects it in the retained definition request. Unknown outcomes keep
+the original upload and definition intent; choosing or abandoning a file cannot
+publish installation media. The profile photo picker retains its explicit draft
+upload behavior.
+
+Profile and emoji forms use the shared modern Settings cards, icon headings,
+divided labelled rows and bottom action footers. Profile info includes the
+copyable principal identity; it has no separate identity disclosure section.
+
 Repository use retains the selected definition and complete image closure with
 the authored message/reaction. It must not depend on a future directory read.
 Repository-local libraries keep their existing meanings; source-library
@@ -48,7 +73,9 @@ migration is introduced by this feature.
 
 Browser image policy admits in-memory blob URLs for authenticated directory and
 repository media. Script, frame and connection sources retain their existing
-boundaries; private media never requires credentials in an image URL.
+boundaries; private media never requires credentials in an image URL. The Vite
+development image policy admits the same blob previews; its existing script,
+worker, origin, private-file and API proxy restrictions remain intact.
 
 Startup audits reachable selected directory records and media. Transport
 unavailability retains the existing server startup behavior; directory reads and

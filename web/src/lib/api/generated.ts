@@ -2957,6 +2957,23 @@ export interface paths {
     patch?: never;
     trace?: never;
   };
+  "/v1/directory/image-uploads/{request_id}": {
+    parameters: {
+      query?: never;
+      header?: never;
+      path?: never;
+      cookie?: never;
+    };
+    get?: never;
+    put?: never;
+    /** @description Requires an enrolled personal identity or LocalTrusted administrator before reading bytes. Normalizes large PNG/JPEG/GIF/WebP avatars to at most 512 by 512 pixels, preserving aspect ratio and EXIF orientation. Images already within retained-media limits keep their exact bytes; resized animations become static. Returns an actor-bound durable receipt; replay retains the original request ID and original source bytes. Saving the profile is a separate mutation. */
+    post: operations["directory_image_upload"];
+    delete?: never;
+    options?: never;
+    head?: never;
+    patch?: never;
+    trace?: never;
+  };
   "/v1/directory/emoji-snapshot/{id}": {
     parameters: {
       query?: never;
@@ -8526,42 +8543,6 @@ export interface components {
       effective: string;
       reason: string;
     };
-    EmojiSelection: {
-      snapshot: components["schemas"]["EmojiSnapshotV1"];
-      value: components["schemas"]["ReactionValueV1"];
-    };
-    EmojiSnapshotV1: {
-      source: string;
-      shortcode: string;
-      bytes: number[];
-    };
-    UserProfile: {
-      principal: components["schemas"]["PrincipalId"];
-      revision: string | null;
-      details: components["schemas"]["ProfileDetails"];
-    };
-    ProfileDetails: {
-      display_name: string;
-      description: string;
-      email: string | null;
-      /** @description blob:<sha256>, HTTPS URL, emoji or fixed Community emoji SVG. */
-      avatar: string | null;
-    };
-    PublicProfile: {
-      principal: components["schemas"]["PrincipalId"];
-      display_name: string;
-      description: string;
-      avatar: string | null;
-    };
-    LibraryEmoji: {
-      id: components["schemas"]["RequestId"];
-      owner: components["schemas"]["PrincipalId"];
-      revision: string;
-      shortcode: string;
-      asset: string;
-      preview: string;
-      retired: boolean;
-    };
     DirectoryReceipt: {
       request_id: components["schemas"]["RequestId"];
       result: components["schemas"]["DirectoryResult"];
@@ -8590,7 +8571,43 @@ export interface components {
           /** @constant */
           type: "identity";
         };
+    UserProfile: {
+      principal: components["schemas"]["PrincipalId"];
+      revision: string | null;
+      details: components["schemas"]["ProfileDetails"];
+    };
+    ProfileDetails: {
+      display_name: string;
+      description: string;
+      email: string | null;
+      /** @description blob:<sha256>, HTTPS URL, emoji or fixed Community emoji SVG. */
+      avatar: string | null;
+    };
+    LibraryEmoji: {
+      id: components["schemas"]["RequestId"];
+      owner: components["schemas"]["PrincipalId"];
+      revision: string;
+      shortcode: string;
+      asset: string;
+      preview: string;
+      retired: boolean;
+    };
     TokenId: string;
+    EmojiSelection: {
+      snapshot: components["schemas"]["EmojiSnapshotV1"];
+      value: components["schemas"]["ReactionValueV1"];
+    };
+    EmojiSnapshotV1: {
+      source: string;
+      shortcode: string;
+      bytes: number[];
+    };
+    PublicProfile: {
+      principal: components["schemas"]["PrincipalId"];
+      display_name: string;
+      description: string;
+      avatar: string | null;
+    };
     IdentityBinding: {
       revoked: boolean;
       token: components["schemas"]["TokenId"];
@@ -56282,6 +56299,141 @@ export interface operations {
       };
     };
   };
+  directory_image_upload: {
+    parameters: {
+      query?: never;
+      header?: never;
+      path: {
+        request_id: components["schemas"]["RequestId"];
+      };
+      cookie?: never;
+    };
+    /** @description At most 20 MiB of source bytes; at most 8192 pixels per dimension and 16 megapixels decoded. Retained output remains at most 2 MiB and 512 by 512 pixels. */
+    requestBody: {
+      content: {
+        "application/octet-stream": string;
+      };
+    };
+    responses: {
+      /** @description Authorized result at the reported snapshot. */
+      200: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["DirectoryReceipt"];
+        };
+      };
+      /** @description Invalid request, unknown query field or invalid cursor. */
+      400: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Missing repository Bearer credential. */
+      401: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Access denied, including revoked credentials or disallowed Origin. */
+      403: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Object not committed in the selected snapshot or unknown route. */
+      404: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported method. */
+      405: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Native query canceled. */
+      408: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index. */
+      409: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Index task expired or was lost on server restart. */
+      410: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response resource limit exceeded. */
+      413: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Unsupported request media type or content encoding. */
+      415: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Busy, unavailable, corrupt or incomplete history. */
+      503: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+      /** @description Request or response deadline exceeded. */
+      504: {
+        headers: {
+          [name: string]: unknown;
+        };
+        content: {
+          "application/json": components["schemas"]["ErrorBody"];
+        };
+      };
+    };
+  };
   directory_emoji_snapshot: {
     parameters: {
       query: {
@@ -57242,6 +57394,11 @@ export interface operations {
                 bytes: number[];
                 /** @constant */
                 type: "upload";
+              }
+            | {
+                bytes: number[];
+                /** @constant */
+                type: "upload_image";
               }
             | {
                 id: string;

@@ -24244,195 +24244,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 }
 ```
 
-## EmojiSelection
-
-```text
-{
-  "type": "object",
-  "additionalProperties": false,
-  "properties": {
-    "snapshot": {
-      "$ref": "#/components/schemas/EmojiSnapshotV1"
-    },
-    "value": {
-      "$ref": "#/components/schemas/ReactionValueV1"
-    }
-  },
-  "required": [
-    "snapshot",
-    "value"
-  ]
-}
-```
-
-## EmojiSnapshotV1
-
-```text
-{
-  "type": "object",
-  "additionalProperties": false,
-  "properties": {
-    "source": {
-      "type": "string"
-    },
-    "shortcode": {
-      "type": "string"
-    },
-    "bytes": {
-      "type": "array",
-      "items": {
-        "type": "integer",
-        "format": "uint8",
-        "minimum": 0,
-        "maximum": 255
-      }
-    }
-  },
-  "required": [
-    "source",
-    "shortcode",
-    "bytes"
-  ]
-}
-```
-
-## UserProfile
-
-```text
-{
-  "type": "object",
-  "additionalProperties": false,
-  "properties": {
-    "principal": {
-      "$ref": "#/components/schemas/PrincipalId"
-    },
-    "revision": {
-      "type": [
-        "string",
-        "null"
-      ]
-    },
-    "details": {
-      "$ref": "#/components/schemas/ProfileDetails"
-    }
-  },
-  "required": [
-    "principal",
-    "revision",
-    "details"
-  ]
-}
-```
-
-## ProfileDetails
-
-```text
-{
-  "type": "object",
-  "additionalProperties": false,
-  "properties": {
-    "display_name": {
-      "type": "string"
-    },
-    "description": {
-      "type": "string"
-    },
-    "email": {
-      "type": [
-        "string",
-        "null"
-      ]
-    },
-    "avatar": {
-      "type": [
-        "string",
-        "null"
-      ],
-      "description": "blob:<sha256>, HTTPS URL, emoji or fixed Community emoji SVG."
-    }
-  },
-  "required": [
-    "display_name",
-    "description",
-    "email",
-    "avatar"
-  ]
-}
-```
-
-## PublicProfile
-
-```text
-{
-  "type": "object",
-  "additionalProperties": false,
-  "properties": {
-    "principal": {
-      "$ref": "#/components/schemas/PrincipalId"
-    },
-    "display_name": {
-      "type": "string"
-    },
-    "description": {
-      "type": "string"
-    },
-    "avatar": {
-      "type": [
-        "string",
-        "null"
-      ]
-    }
-  },
-  "required": [
-    "principal",
-    "display_name",
-    "description",
-    "avatar"
-  ]
-}
-```
-
-## LibraryEmoji
-
-```text
-{
-  "type": "object",
-  "additionalProperties": false,
-  "properties": {
-    "id": {
-      "$ref": "#/components/schemas/RequestId"
-    },
-    "owner": {
-      "$ref": "#/components/schemas/PrincipalId"
-    },
-    "revision": {
-      "type": "string"
-    },
-    "shortcode": {
-      "type": "string"
-    },
-    "asset": {
-      "type": "string"
-    },
-    "preview": {
-      "type": "string"
-    },
-    "retired": {
-      "type": "boolean"
-    }
-  },
-  "required": [
-    "id",
-    "owner",
-    "revision",
-    "shortcode",
-    "asset",
-    "preview",
-    "retired"
-  ]
-}
-```
-
 ## DirectoryReceipt
 
 ```text
@@ -24543,6 +24354,111 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 }
 ```
 
+## UserProfile
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "principal": {
+      "$ref": "#/components/schemas/PrincipalId"
+    },
+    "revision": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "details": {
+      "$ref": "#/components/schemas/ProfileDetails"
+    }
+  },
+  "required": [
+    "principal",
+    "revision",
+    "details"
+  ]
+}
+```
+
+## ProfileDetails
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "display_name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "email": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "avatar": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "blob:<sha256>, HTTPS URL, emoji or fixed Community emoji SVG."
+    }
+  },
+  "required": [
+    "display_name",
+    "description",
+    "email",
+    "avatar"
+  ]
+}
+```
+
+## LibraryEmoji
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "$ref": "#/components/schemas/RequestId"
+    },
+    "owner": {
+      "$ref": "#/components/schemas/PrincipalId"
+    },
+    "revision": {
+      "type": "string"
+    },
+    "shortcode": {
+      "type": "string"
+    },
+    "asset": {
+      "type": "string"
+    },
+    "preview": {
+      "type": "string"
+    },
+    "retired": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "id",
+    "owner",
+    "revision",
+    "shortcode",
+    "asset",
+    "preview",
+    "retired"
+  ]
+}
+```
+
 ## TokenId
 
 ```text
@@ -24551,6 +24467,90 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
   "pattern": "^[0-9a-f]{32}$",
   "minLength": 32,
   "maxLength": 32
+}
+```
+
+## EmojiSelection
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "snapshot": {
+      "$ref": "#/components/schemas/EmojiSnapshotV1"
+    },
+    "value": {
+      "$ref": "#/components/schemas/ReactionValueV1"
+    }
+  },
+  "required": [
+    "snapshot",
+    "value"
+  ]
+}
+```
+
+## EmojiSnapshotV1
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "source": {
+      "type": "string"
+    },
+    "shortcode": {
+      "type": "string"
+    },
+    "bytes": {
+      "type": "array",
+      "items": {
+        "type": "integer",
+        "format": "uint8",
+        "minimum": 0,
+        "maximum": 255
+      }
+    }
+  },
+  "required": [
+    "source",
+    "shortcode",
+    "bytes"
+  ]
+}
+```
+
+## PublicProfile
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "principal": {
+      "$ref": "#/components/schemas/PrincipalId"
+    },
+    "display_name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "avatar": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "principal",
+    "display_name",
+    "description",
+    "avatar"
+  ]
 }
 ```
 

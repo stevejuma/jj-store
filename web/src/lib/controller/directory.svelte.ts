@@ -4,6 +4,7 @@ import { ApiError, type Model } from "../api/client.js";
 import {
   initialDirectoryState,
   emptyProfile as empty,
+  emptyEmojiDraft,
 } from "./directory-model.js";
 import { createDirectoryActions } from "./directory-actions.svelte.js";
 import { directoryMedia } from "./directory-media.js";
@@ -162,12 +163,10 @@ export function createDirectory(options: {
       observing = undefined;
       state.loading = false;
       state.error = state.validation = state.message = state.outcome = "";
-      state.emojiDraft = {
-        shortcode: "",
-        asset: "",
-        filename: "",
-        selected: undefined,
-      };
+      if (state.emojiDraft.preview)
+        URL.revokeObjectURL(state.emojiDraft.preview);
+      state.emojiDraft = emptyEmojiDraft();
+      state.emojiSave = null;
       state.busy = false;
       state.baseRevision = null;
       state.profile = null;

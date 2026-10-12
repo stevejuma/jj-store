@@ -8,6 +8,20 @@
   padding: 1rem 0.75rem;
   background: var(--sidebar, var(--muted));
 }
+.store-settings-navigation__groups {
+  display: grid;
+  align-content: start;
+  gap: 1.5rem;
+  min-height: 0;
+  overflow-y: auto;
+}
+.store-settings-navigation__version {
+  margin-block-start: auto;
+  padding-inline: 0.75rem;
+  color: var(--muted-foreground);
+  font-size: var(--community-text-secondary);
+  white-space: nowrap;
+}
 
 .store-settings-navigation__back[data-ui-component="button"],
 .store-settings-navigation__item[data-ui-component="button"] {
@@ -61,6 +75,10 @@
 .store-settings-navigation[data-compact] section {
   width: 100%;
   justify-items: center;
+}
+.store-settings-navigation[data-compact] .store-settings-navigation__version {
+  padding-inline: 0;
+  font-size: 0.6rem;
 }
 
 .store-settings-navigation[data-compact] h2,

@@ -11,6 +11,7 @@
   import StoreAgentSettings from "./StoreAgentSettings.svelte";
   import StoreProfileSettings from "./StoreProfileSettings.svelte";
   import StoreCustomEmojiSettings from "./StoreCustomEmojiSettings.svelte";
+  import StoreSettingsPage from "./StoreSettingsPage.svelte";
   import StoreServiceSettings from "./StoreServiceSettings.svelte";
   import type { StoreSettingsSection } from "./model.js";
 
@@ -66,9 +67,27 @@
     aria-label="Settings content"
   >
     {#if section === "profile"}
-      <StoreProfileSettings management={controller.directory} />
+      <StoreSettingsPage
+        section="profile"
+        onRefresh={async () => {
+          await controller.directory?.observe();
+        }}
+        refreshLabel="Refresh profile"
+        refreshDisabled={controller.directory?.state.busy}
+      >
+        <StoreProfileSettings management={controller.directory} />
+      </StoreSettingsPage>
     {:else if section === "custom-emoji"}
-      <StoreCustomEmojiSettings management={controller.directory} />
+      <StoreSettingsPage
+        section="custom-emoji"
+        onRefresh={async () => {
+          await controller.directory?.observe();
+        }}
+        refreshLabel="Refresh custom emoji"
+        refreshDisabled={controller.directory?.state.busy}
+      >
+        <StoreCustomEmojiSettings management={controller.directory} />
+      </StoreSettingsPage>
     {:else if section === "appearance"}
       <StoreAppearance bind:active={() => selectedTab ?? "theme", selectTab} />
     {:else if section === "service"}

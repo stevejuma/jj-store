@@ -6,6 +6,7 @@ impl Manager {
         actor: PrincipalId,
         command: DirectoryCommand,
     ) -> Result<DirectoryResult> {
+        let normalize = matches!(&command, DirectoryCommand::UploadImage { .. });
         match command {
             DirectoryCommand::SaveProfile {
                 expected,
@@ -43,12 +44,16 @@ impl Manager {
                     },
                 })
             }
-            DirectoryCommand::Upload { bytes } => {
-                let (asset, preview) =
-                    tokio::task::spawn_blocking(move || jj_collab::ImageAssetV1::ingest(&bytes))
-                        .await
-                        .map_err(|_| Error::Unavailable)?
-                        .map_err(|_| Error::Invalid)?;
+            DirectoryCommand::Upload { bytes } | DirectoryCommand::UploadImage { bytes } => {
+                let (asset, preview) = tokio::task::spawn_blocking(move || {
+                    if normalize {
+                        images::normalize(&bytes)
+                    } else {
+                        jj_collab::ImageAssetV1::ingest(&bytes).map_err(|_| Error::Invalid)
+                    }
+                })
+                .await
+                .map_err(|_| Error::Unavailable)??;
                 let digest = self.stage_media(&asset.bytes).await?;
                 let preview_digest = self.stage_media(&preview.bytes).await?;
                 for (id, media_type) in [
@@ -153,7 +158,13 @@ impl Manager {
         let _gate = self.gate.lock().await;
         let mut selection = self.selection().await?;
         let actor = self.personal(&selection.root, caller)?;
-        let intent = Self::digest(&serde_json::to_vec(&request).map_err(|_| Error::Invalid)?);
+        let intent = match &request.command {
+            DirectoryCommand::UploadImage { bytes } => Self::digest(
+                &serde_json::to_vec(&(request.request_id, "upload_image", Self::digest(bytes)))
+                    .map_err(|_| Error::Invalid)?,
+            ),
+            _ => Self::digest(&serde_json::to_vec(&request).map_err(|_| Error::Invalid)?),
+        };
         if let Some(receipt) = self
             .saved_receipt(&selection.root, actor, request.request_id, Some(&intent))
             .await?

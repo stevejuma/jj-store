@@ -251,3 +251,75 @@ async fn local_admin_uses_the_same_revision_conditional_profile_api() {
     task.abort();
     let _ = task.await;
 }
+
+#[tokio::test]
+async fn binary_avatar_upload_normalizes_large_sources_replays_and_admits_identity_first() {
+    let (_root, base, directory, _, actor, task) = start(true).await;
+    let mut image_bytes = std::io::Cursor::new(Vec::new());
+    image::DynamicImage::ImageRgb8(image::RgbImage::from_pixel(
+        2500,
+        1800,
+        image::Rgb([60, 90, 150]),
+    ))
+    .write_to(&mut image_bytes, image::ImageFormat::Jpeg)
+    .unwrap();
+    let mut bytes = image_bytes.into_inner();
+    bytes.resize(2 * 1024 * 1024 + 1, 0);
+    let client = reqwest::Client::new();
+    let path = format!(
+        "{base}/v1/directory/image-uploads/{}",
+        RequestId::new([72; 16])
+    );
+    let mut original = Value::Null;
+    for _ in 0..2 {
+        let response = client
+            .post(&path)
+            .header("x-jj-store-protocol", "1")
+            .header("content-type", "application/octet-stream")
+            .body(bytes.clone())
+            .send()
+            .await
+            .unwrap();
+        assert_eq!(response.status(), 200);
+        let receipt: Value = serde_json::from_slice(&response.bytes().await.unwrap()).unwrap();
+        if original.is_null() {
+            original = receipt;
+        } else {
+            assert_eq!(receipt, original);
+        }
+    }
+    let asset = original["result"]["asset"].as_str().unwrap();
+    let retained = directory.media(&Caller::Local(actor), asset).await.unwrap();
+    let retained = image::load_from_memory(&retained.bytes).unwrap();
+    assert_eq!((retained.width(), retained.height()), (512, 369));
+    assert_eq!(
+        client
+            .post(&path)
+            .header("x-jj-store-protocol", "1")
+            .header("content-type", "application/octet-stream")
+            .body("changed")
+            .send()
+            .await
+            .unwrap()
+            .status(),
+        400
+    );
+    directory.audit().await.unwrap();
+    task.abort();
+    let _ = task.await;
+    let (_root, base, _, _, _, task) = start(false).await;
+    let response = client
+        .post(format!(
+            "{base}/v1/directory/image-uploads/{}",
+            RequestId::new([73; 16])
+        ))
+        .header("x-jj-store-protocol", "1")
+        .header("content-type", "application/octet-stream")
+        .body("invalid image")
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(response.status(), 401);
+    task.abort();
+    let _ = task.await;
+}

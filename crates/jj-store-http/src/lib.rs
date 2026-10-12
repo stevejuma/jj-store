@@ -537,6 +537,7 @@ async fn admit(
                         .get::<axum::extract::MatchedPath>()
                         .is_some_and(|p| {
                             p.as_str() == "/v1/repos/{repo}/reaction-emojis/{emoji_id}"
+                                || p.as_str() == "/v1/directory/image-uploads/{request_id}"
                         }) {
                     "application/octet-stream"
                 } else {

@@ -97,3 +97,10 @@ grant receive an empty repository discovery page and can edit personal settings.
 Identity administration requires manage-identities operator authorization. The
 profile/library projections and media responses remain bounded, no-store and
 reauthorized; private email is absent from shared profile data.
+
+Directory avatar and custom emoji sources use the personal binary
+`POST /v1/directory/image-uploads/{request_id}` route. Admission requires
+`application/octet-stream` and an admitted identity before consuming at most 20
+MiB. The receipt selects bounded normalized media; using it in a profile or
+emoji still requires a separate conditional save. Existing browser origin,
+protocol, response and command-status boundaries are retained.

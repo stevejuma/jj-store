@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { onMount, untrack } from "svelte";
+  import StoreSettingsPage from "../../web/src/lib/ui/store-settings/StoreSettingsPage.svelte";
   import StoreProfileSettings from "../../web/src/lib/ui/store-settings/StoreProfileSettings.svelte";
   import StoreCustomEmojiSettings from "../../web/src/lib/ui/store-settings/StoreCustomEmojiSettings.svelte";
   import { createDirectory } from "../../web/src/lib/controller/directory.svelte.js";
@@ -11,21 +12,25 @@
     section = "profile",
     unknown = false,
     supported = true,
+    withAvatar = false,
   }: {
     section?: "profile" | "custom-emoji";
     unknown?: boolean;
     supported?: boolean;
+    withAvatar?: boolean;
   } = $props();
-  let profile: Profile = {
+  let profile: Profile = untrack(() => ({
     principal: "01".repeat(16),
     revision: null,
     details: {
       display_name: "Local admin",
       description: "A profile",
       email: null,
-      avatar: null,
+      avatar: withAvatar
+        ? `data:image/svg+xml,${encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256"><rect width="256" height="256" rx="128" fill="#6e56cf"/><text x="128" y="166" font-size="128" text-anchor="middle">😀</text></svg>')}`
+        : null,
     },
-  };
+  }));
   let emojis: Emoji[] = [];
   const management = createDirectory({
     available: () => supported,
@@ -99,6 +104,8 @@
   }
 </script>
 
-{#if section === "profile"}<StoreProfileSettings {management} />{:else}<button
-    onclick={preview}>Select fixture image</button
-  ><StoreCustomEmojiSettings {management} />{/if}
+<StoreSettingsPage {section}>
+  {#if section === "profile"}<StoreProfileSettings {management} />{:else}<button
+      onclick={preview}>Select fixture image</button
+    ><StoreCustomEmojiSettings {management} />{/if}
+</StoreSettingsPage>

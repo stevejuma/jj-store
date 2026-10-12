@@ -3,6 +3,19 @@ import type { DirectoryRequest } from "../api/directory-client.js";
 type Profile = Model<"UserProfile">;
 type Emoji = Model<"LibraryEmoji">;
 type Request = DirectoryRequest;
+export type EmojiDraft = {
+  shortcode: string;
+  asset: string;
+  filename: string;
+  selected?: Emoji;
+  source?: File;
+  preview?: string;
+};
+export const emptyEmojiDraft = (): EmojiDraft => ({
+  shortcode: "",
+  asset: "",
+  filename: "",
+});
 export const emptyProfile = () => ({
   display_name: "",
   description: "",
@@ -19,12 +32,8 @@ export const initialDirectoryState = () => ({
   validation: "",
   message: "",
   conflict: false,
-  emojiDraft: {
-    shortcode: "",
-    asset: "",
-    filename: "",
-    selected: undefined as Emoji | undefined,
-  },
+  emojiDraft: emptyEmojiDraft(),
+  emojiSave: null as Request | null,
   uploadTarget: "profile" as "profile" | "emoji",
   outcome: "",
   pending: null as Request | null,

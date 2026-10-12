@@ -52,6 +52,10 @@ test("HMR proxy preserves the public origin and streams every versioned API rout
     server.headers["Content-Security-Policy"],
     /unsafe-eval/u,
   );
+  assert.match(
+    server.headers["Content-Security-Policy"],
+    /img-src 'self' data: https: blob:/u,
+  );
 });
 
 test("UI development rejects invalid and overlapping ports", () => {

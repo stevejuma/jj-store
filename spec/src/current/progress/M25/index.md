@@ -1,8 +1,8 @@
 # M25 local compute, agent configuration and sent context
 
-| ID  | Status      | Depends | Requirements                                                        | Gate                                                                                                                           | Next                                                       | Evidence                                                                                                                                                                                                                                                                                                                                                                      |
-| --- | ----------- | ------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| M25 | In progress | M24     | JST-COLLAB-034,JST-COLLAB-035,JST-COLLAB-036,JST-UI-012,JST-API-001 | Defaults/environment, rich sent context, real local ACP coding tools, private paired inference, cold packaged macOS/Linux runs | Qualify signed macOS/WKWebView and Linux CPU distributions | E-COMPUTE-001,E-COMPUTE-002,E-COMPUTE-003,E-COMPUTE-004,E-COMPUTE-005,E-COMPUTE-006,E-COMPUTE-007,E-COMPUTE-008,E-CHAT-LIVE-007,E-CHAT-METADATA-002,E-CHAT-METADATA-MAIN-001,E-CHAT-METADATA-MAIN-002,E-CHAT-METADATA-MAIN-003,E-INBOX-FRESHNESS-001,E-CHATGPT-001,E-CHATGPT-REBASE-001,E-CHATGPT-LAND-001,E-NPM-REGISTRY-001,E-GLOBAL-SETTINGS-001,E-GLOBAL-SETTINGS-NAV-001 |
+| ID  | Status      | Depends | Requirements                                                        | Gate                                                                                                                           | Next                                                       | Evidence                                                                                                                                                                                                                                                                                                                                                                                           |
+| --- | ----------- | ------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| M25 | In progress | M24     | JST-COLLAB-034,JST-COLLAB-035,JST-COLLAB-036,JST-UI-012,JST-API-001 | Defaults/environment, rich sent context, real local ACP coding tools, private paired inference, cold packaged macOS/Linux runs | Qualify signed macOS/WKWebView and Linux CPU distributions | E-COMPUTE-001,E-COMPUTE-002,E-COMPUTE-003,E-COMPUTE-004,E-COMPUTE-005,E-COMPUTE-006,E-COMPUTE-007,E-COMPUTE-008,E-CHAT-LIVE-007,E-CHAT-METADATA-002,E-CHAT-METADATA-MAIN-001,E-CHAT-METADATA-MAIN-002,E-CHAT-METADATA-MAIN-003,E-INBOX-FRESHNESS-001,E-CHATGPT-001,E-CHATGPT-REBASE-001,E-CHATGPT-LAND-001,E-NPM-REGISTRY-001,E-GLOBAL-SETTINGS-001,E-GLOBAL-SETTINGS-NAV-001,E-PROFILE-AVATAR-002 |
 
 M24's independent adapter, installed live permission/cancellation and desktop
 qualification gates remain unchanged. M25 source/fixture passes do not qualify
@@ -149,6 +149,15 @@ skeletons match the refreshed layout. Exact session returns, owners and pending
 commands remain retained. Focused cold web acceptance and inherited diagnostics
 are separate from native-platform, release and visual gates. The enclosing
 Jujutsu change owns this evidence.
+
+## Compute resource control review — 2026-10-12
+
+E-PROFILE-AVATAR-002 in enclosing change `pklqtuzx` adds the shared GB integer
+control's convenience slider and verifies automatic/null retention, larger typed
+limits, keyboard synchronization, cross-tab validation and serving disablement.
+Focused Compute/shared-control stories and live review pass. M25 remains In
+progress; paired inference, signed macOS/WKWebView/Linux distributions and
+independent M24 gates stay open. No visual baseline is approved.
 
 <!-- generated-navigation -->
 

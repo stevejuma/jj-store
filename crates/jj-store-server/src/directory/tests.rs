@@ -137,6 +137,121 @@ fn png() -> Vec<u8> {
     base64::engine::general_purpose::STANDARD.decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg==").unwrap()
 }
 #[tokio::test]
+async fn avatar_upload_receipts_survive_lost_acknowledgement_and_keep_source_identity() {
+    let store = Arc::new(LostAcknowledgement {
+        inner: Default::default(),
+        lost: true.into(),
+        unreadable: false.into(),
+    });
+    let actor = PrincipalId::new([1; 16]);
+    let manager = Manager::new(store.clone(), "ab".repeat(16), Some(actor)).unwrap();
+    let command = request(71, DirectoryCommand::UploadImage { bytes: png() });
+    assert!(matches!(
+        manager
+            .execute(&Caller::Local(actor), command.clone())
+            .await,
+        Err(Error::Unknown)
+    ));
+    let restarted = Manager::new(store, "ab".repeat(16), Some(actor)).unwrap();
+    let receipt = restarted
+        .execute(&Caller::Local(actor), command)
+        .await
+        .unwrap();
+    assert_eq!(
+        receipt.result,
+        restarted
+            .receipt(&Caller::Local(actor), RequestId::new([71; 16]))
+            .await
+            .unwrap()
+            .unwrap()
+            .result
+    );
+    assert!(matches!(
+        restarted
+            .execute(
+                &Caller::Local(actor),
+                request(
+                    71,
+                    DirectoryCommand::UploadImage {
+                        bytes: b"changed source".to_vec()
+                    }
+                )
+            )
+            .await,
+        Err(Error::Invalid)
+    ));
+    let DirectoryResult::Media { asset, .. } = receipt.result else {
+        panic!()
+    };
+    assert_eq!(
+        restarted
+            .media(&Caller::Local(actor), &asset)
+            .await
+            .unwrap()
+            .bytes,
+        png()
+    );
+}
+#[tokio::test]
+async fn oversized_emoji_uploads_normalize_before_explicit_library_save_and_restart() {
+    let (store, manager, local, _) = fixture();
+    let mut bytes = std::io::Cursor::new(Vec::new());
+    image::DynamicImage::ImageRgb8(image::RgbImage::from_pixel(
+        2500,
+        1800,
+        image::Rgb([60, 90, 150]),
+    ))
+    .write_to(&mut bytes, image::ImageFormat::Jpeg)
+    .unwrap();
+    let mut bytes = bytes.into_inner();
+    bytes.resize(2 * 1024 * 1024 + 1, 0);
+    assert!(matches!(
+        manager
+            .execute(
+                &local,
+                request(
+                    74,
+                    DirectoryCommand::Upload {
+                        bytes: bytes.clone()
+                    }
+                )
+            )
+            .await,
+        Err(Error::Invalid)
+    ));
+    let receipt = manager
+        .execute(&local, request(75, DirectoryCommand::UploadImage { bytes }))
+        .await
+        .unwrap();
+    let DirectoryResult::Media { asset, .. } = receipt.result else {
+        panic!()
+    };
+    assert!(manager.emojis(&local).await.unwrap().is_empty());
+    manager
+        .execute(
+            &local,
+            request(
+                76,
+                DirectoryCommand::SaveEmoji {
+                    id: RequestId::new([77; 16]),
+                    expected: None,
+                    shortcode: "large-party".into(),
+                    asset: asset.clone(),
+                },
+            ),
+        )
+        .await
+        .unwrap();
+    let restarted = Manager::new(store, "ab".repeat(16), Some(PrincipalId::new([1; 16]))).unwrap();
+    let emojis = restarted.emojis(&local).await.unwrap();
+    assert_eq!(emojis.len(), 1);
+    assert_eq!(emojis[0].asset, asset);
+    let media = restarted.media(&local, &asset).await.unwrap();
+    let image = image::load_from_memory(&media.bytes).unwrap();
+    assert_eq!((image.width(), image.height()), (512, 369));
+    restarted.audit().await.unwrap();
+}
+#[tokio::test]
 async fn unselected_records_are_invisible_and_corruption_fails_closed() {
     let (store, manager, local, _) = fixture();
     manager

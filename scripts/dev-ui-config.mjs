@@ -54,7 +54,7 @@ export function uiDevelopmentServer(environment = process.env) {
         `script-src ${scripts}`,
         "style-src 'self' 'unsafe-inline'",
         `connect-src 'self' ws://127.0.0.1:${settings.uiPort}`,
-        "img-src 'self' data: https:",
+        "img-src 'self' data: https: blob:",
         "worker-src 'self' blob:",
         "object-src 'none'",
         "frame-ancestors 'none'",

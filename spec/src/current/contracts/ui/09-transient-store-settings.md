@@ -231,3 +231,33 @@ Descriptions use the maintained Markdown form editor; image uploads return
 owner-only draft media until explicitly selected by a save. Field validation and
 unknown-outcome recovery stay beside their controls. Email is owner-only; shared
 profile projections supply display name, description and resolved avatar.
+
+Profile and Custom emoji use the shared full-width Settings card, icon-heading,
+divided form-row and footer compositions. Profile info retains its photo picker,
+display name, Markdown description, private email and a copyable identity row.
+Opening the photo picker keeps the other form fields mounted. Edit, Save, Cancel
+and unknown-outcome recovery occupy bottom footers. Large avatar images use the
+server-owned binary normalization path, also used by Custom emoji; browser
+drafts and the exact original upload request survive an unknown outcome.
+
+The circular profile photo has a separate round action inset at its lower-right
+edge, separated from the image by the card background. It clears an explicitly
+selected avatar when present and opens the picker with an Edit icon when absent.
+The photo itself also opens the picker. Both actions retain accessible names,
+visible keyboard focus and the busy/pending guards. Clearing changes only the
+avatar draft; profile Save and Cancel remain explicit.
+
+The custom emoji shortcode input has fixed decorative colon addons around the
+editable shortcode; persisted values contain only the shortcode. Selected images
+appear beside the bordered Choose image button in the Image row. Choosing an
+emoji image creates only a session-local File and blob preview. Save emoji
+uploads/normalizes the source and then publishes the definition. Selection,
+replacement, navigation, refresh and Cancel do not upload images. Local previews
+are released on replacement, Cancel, successful save and owner/session teardown.
+Recovery retains the original definition fields and stable request identities
+across an unknown upload or definition save, resuming the admitted save only
+after its original media receipt is known. Global Settings groups Profile,
+Appearance and Custom emoji under Personal, and Local service, Agents and
+Compute under App. Its package version stays at the bottom while long navigation
+content scrolls. Compact navigation retains labelled actions and the version;
+routes, drafts and action guards are unchanged.

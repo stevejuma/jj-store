@@ -36,13 +36,8 @@
   },
   {
     "id": "capture",
-    "sources": [
-      "crates/jj-store-capture/src"
-    ],
-    "pages": [
-      "docs/site/guides/capture.md",
-      "docs/site/technical/capture.md"
-    ],
+    "sources": ["crates/jj-store-capture/src"],
+    "pages": ["docs/site/guides/capture.md", "docs/site/technical/capture.md"],
     "review": {
       "reason": "Reviewed bounded cross-chunk privacy replacement before scanning, durability and publication; documented memory-only buffering and unchanged capture authority.",
       "fingerprint": "4f693fa9f16bcb36074c8e31fd8cf1e00d7ebf63cc5e934e75172842c7dec566"
@@ -50,9 +45,7 @@
   },
   {
     "id": "local",
-    "sources": [
-      "crates/jj-store-jj/src"
-    ],
+    "sources": ["crates/jj-store-jj/src"],
     "pages": [
       "docs/site/technical/local.md",
       "docs/site/guides/git.md",
@@ -65,30 +58,21 @@
   },
   {
     "id": "services",
-    "sources": [
-      "crates/jj-store-service/src",
-      "crates/jj-store-rpc/src"
-    ],
+    "sources": ["crates/jj-store-service/src", "crates/jj-store-rpc/src"],
     "pages": [
       "docs/site/technical/architecture.md",
       "docs/site/reference/transport.md",
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed installation audit behavior: transport outage preserves existing server startup, while corrupt selected records fail closed; profile APIs and secret custody remain independent of repository grants. Reviewed final owned UI acquisition helper.",
-      "fingerprint": "784e18df1817b8fffaae032367f309e7499a6f15e223b82ecf1fe9202cdf3279"
+      "reason": "Reviewed the shared normalized image command and original-source receipt binding; repository command and publication semantics remain unchanged.",
+      "fingerprint": "5c83eeb24579654648f20063cb568b714d28eaf1b7c07806e0bcb85189de5079"
     }
   },
   {
     "id": "search",
-    "sources": [
-      "crates/jj-store-adapters/src",
-      "crates/jj-store-tantivy/src"
-    ],
-    "pages": [
-      "docs/site/technical/reads.md",
-      "docs/site/guides/search.md"
-    ],
+    "sources": ["crates/jj-store-adapters/src", "crates/jj-store-tantivy/src"],
+    "pages": ["docs/site/technical/reads.md", "docs/site/guides/search.md"],
     "review": {
       "reason": "Reviewed health-channel semantic notices and accepted search configuration/control settlement; visible consumers react to events and retain bounded explicit recovery.",
       "fingerprint": "01f48ae00bd2237715ec76baacb1fb072225bccceb7921055ba1ea77599135b9"
@@ -96,13 +80,8 @@
   },
   {
     "id": "replication",
-    "sources": [
-      "crates/jj-store-replication/src"
-    ],
-    "pages": [
-      "docs/site/technical/replication.md",
-      "docs/site/guides/sync.md"
-    ],
+    "sources": ["crates/jj-store-replication/src"],
+    "pages": ["docs/site/technical/replication.md", "docs/site/guides/sync.md"],
     "review": {
       "reason": "Reviewed sync semantic projection suppressing idle scheduler churn while preserving checkpoint, pause and fault notices; replication authority is unchanged.",
       "fingerprint": "1be4dc1693d106f6387bb8812c8b998ffae097aa5e4acdc04e88f0ccf7eb3ed2"
@@ -110,24 +89,20 @@
   },
   {
     "id": "configuration",
-    "sources": [
-      "crates/jj-store-server/src"
-    ],
+    "sources": ["crates/jj-store-server/src"],
     "pages": [
       "docs/site/reference/configuration.md",
       "docs/site/reference/environment.md",
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed installation audit behavior: transport outage preserves existing server startup, while corrupt selected records fail closed; profile APIs and secret custody remain independent of repository grants. Reviewed final owned UI acquisition helper.",
-      "fingerprint": "ef19a2f8b8352bbfadad31c6489b75193ec3b69b59bfb952a05cceabd6662fea"
+      "reason": "Documented bounded server preparation for profile and custom emoji sources, retained asset limits, explicit selection saves and unchanged deployment files.",
+      "fingerprint": "fde0665534ef453db778b0d3508229dc0de36d3af0e8c8289a6be140bae99af1"
     }
   },
   {
     "id": "cli",
-    "sources": [
-      "crates/jj-store-cli/src"
-    ],
+    "sources": ["crates/jj-store-cli/src"],
     "pages": [
       "docs/site/cli/index.md",
       "docs/site/getting-started/install.md",
@@ -140,24 +115,20 @@
   },
   {
     "id": "http",
-    "sources": [
-      "crates/jj-store-http/src"
-    ],
+    "sources": ["crates/jj-store-http/src"],
     "pages": [
       "docs/site/reference/transport.md",
       "docs/site/reference/security.md",
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed installation audit behavior: transport outage preserves existing server startup, while corrupt selected records fail closed; profile APIs and secret custody remain independent of repository grants. Reviewed final owned UI acquisition helper.",
-      "fingerprint": "e08f3ffae6658043149272e8075ea0df1af3b935423a0304bb438a04d13c8340"
+      "reason": "Documented the personal binary image upload route, octet-stream admission before body consumption and existing privacy, status and origin boundaries.",
+      "fingerprint": "0382940d4afc0de8ab71a3b61f3a3ecb546c4748f07251b12a418efe8fdd1775"
     }
   },
   {
     "id": "application",
-    "sources": [
-      "web/src"
-    ],
+    "sources": ["web/src"],
     "pages": [
       "docs/site/guides/browsing.md",
       "docs/site/guides/editing.md",
@@ -165,19 +136,14 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed owned author-profile projection extraction to preserve chat-body source budget; item identities, live profile refresh, Markdown rendering and private email boundaries remain unchanged.",
-      "fingerprint": "fd1f3e1e04dab2d15e3f277871987379aa7653dee26c8dae7f2c71168803d6a4"
+      "reason": "Reviewed profile and emoji binary normalization, deferred emoji saves, grouped Settings navigation and the Compute integer GB slider with automatic allocation and larger typed limits.",
+      "fingerprint": "370da347ba26c7ccd0d027f01377c8bb4ababbe5e5a516a46f28befd72ec726d"
     }
   },
   {
     "id": "desktop",
-    "sources": [
-      "desktop/src",
-      "desktop/crates/terminal-engine/src"
-    ],
-    "pages": [
-      "docs/site/technical/lifecycle.md"
-    ],
+    "sources": ["desktop/src", "desktop/crates/terminal-engine/src"],
+    "pages": ["docs/site/technical/lifecycle.md"],
     "review": {
       "reason": "Documented bundled helper checksum verification and bounded activity-driven sleep assertions.",
       "fingerprint": "c4fed91aae702f904d71b2e20cd08dadd279c840269b83d40bc42a42bc0c61bb"
@@ -185,17 +151,11 @@
   },
   {
     "id": "contracts",
-    "sources": [
-      "schemas/openapi.json",
-      "docs/cli"
-    ],
-    "pages": [
-      "docs/site/reference/transport.md",
-      "docs/site/cli/index.md"
-    ],
+    "sources": ["schemas/openapi.json", "docs/cli"],
+    "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Reviewed authenticated personal Settings admission for enrolled users without repository grants, corrected owned Community form styles and immutable emoji preparation; documentation reflects independent installation authority.",
-      "fingerprint": "7df53a9f4959db5c6097e39b83feaa8df2d3ebdf494767b0864b15715d55e768"
+      "reason": "Regenerated installation and type references for the shared binary image upload route and typed normalization command; existing legacy image intent formats remain unchanged.",
+      "fingerprint": "788eb34ca937271bcfc35a3ec911122381386f9079a1655c75aa7d3f254c073e"
     }
   },
   {

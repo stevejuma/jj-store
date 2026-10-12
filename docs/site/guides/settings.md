@@ -247,7 +247,10 @@ restores that default in your draft and then disappears. Search retains **Save
 settings** and **Apply saved settings**; Sync changes take effect at the next
 server startup. Global service/capture changes also require restart. Compute
 memory keeps its GB unit and accepts an empty value for automatic allocation.
-Reset is offered only where an authoritative default is available.
+Its slider covers common 1–64 GB limits in whole-GB increments; typing a larger
+limit expands the slider while preserving the supported 1–1024 GB input range.
+Changing either control edits the draft until **Save compute settings**. Reset
+is offered only where an authoritative default is available.
 
 ## Profile and custom emoji
 
@@ -260,10 +263,29 @@ unavailable images fall back to initials. Changes use an observed profile
 revision. Refresh keeps drafts; review a conflicting saved version before
 submitting them again.
 
-Custom emoji accepts PNG, JPEG, GIF and WebP uploads up to 2 MiB, 512 × 512
-pixels and 100 frames. Active shortcodes are unique across the installation.
-Everyone enrolled can use them; owners can edit or remove their own entries.
-Removal prevents new selections while retained Thread messages and reactions
-keep their original definitions and images. Unknown save outcomes retain the
-original request: use Check save status or Retry original save before another
-action. Filesystem-only installations show these settings as unavailable.
+Avatar and custom emoji images may be up to 20 MiB. The server resizes large
+images to fit 512 × 512 pixels, preserving aspect ratio and JPEG orientation.
+Resized animations use their first frame; images already within the
+retained-media limits keep their original bytes. Identity appears as a copyable
+row inside Profile info. Profile and Custom emoji use the same cards and footer
+actions as other Settings pages. The circular profile photo has a small Clear
+button on its lower-right edge; when no avatar is set, that button opens the
+picker with an Edit icon. Click the photo to choose a replacement. Clear edits
+the draft; Save profile applies it.
+
+Custom emoji accepts PNG, JPEG, GIF and WebP uploads with the same resizing as
+profile photos. Stored images remain within 2 MiB, 512 × 512 pixels and 100
+frames. The shortcode field supplies the surrounding colons; enter only the
+name. The selected image appears beside Choose image. Selection stays local;
+Save emoji uploads and resizes the image before saving its shortcode. Cancel
+discards the local preview without uploading it. Active shortcodes are unique
+across the installation. Everyone enrolled can use them; owners can edit or
+remove their own entries. Removal prevents new selections while retained Thread
+messages and reactions keep their original definitions and images. Unknown save
+outcomes retain the original request: use Check save status or Retry original
+save before another action. Filesystem-only installations show these settings as
+unavailable.
+
+Global Settings groups Profile, Appearance and Custom emoji under Personal;
+Local service, Agents and Compute appear under App. The app version is at the
+bottom of the sidebar.

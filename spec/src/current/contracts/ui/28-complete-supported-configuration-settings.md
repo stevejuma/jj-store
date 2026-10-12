@@ -50,17 +50,22 @@ canonical values, unsafe values and values outside existing bounds remain
 invalid; never silently round or clamp them. Repeating display conversions are
 marked approximate beside the exact canonical value. Labels, help, bounds,
 validation and read-only/disabled states remain accessible. Optional sliders
-operate on the existing canonical range. Optional per-field icon-only Reset
-forms the trailing segment of the input after its unit selector, with an
-accessible label and tooltip. Show Reset only while the draft differs from its
-authoritative default, including empty or invalid entries; hide it after reset
-and return focus to the input. The split control retains a complete neutral
-outer border; focus draws one ring around the whole control, without additional
-inner rings or a highlighted border. Unit selectors and Reset use subtle
-theme-based hover states; disabled controls remain subdued. Reset restores only
-the documented default in the draft; it never saves or applies. Defaults beside
-field descriptions remain distinct from saved/running state. Omit redundant
-"Using default value" and "Changed from default" labels under inputs; retain the
+operate within the existing canonical range. A narrower convenience range may
+expand to include larger valid typed values without modifying the draft. Compute
+memory uses a 1–64 GB slider in whole-GB increments, expanding to include a
+larger valid limit up to 1024 GB. Mounting or refreshing the slider never
+changes an empty automatic value. Invalid memory drafts prevent configuration
+saves, including from another tab. Optional per-field icon-only Reset forms the
+trailing segment of the input after its unit selector, with an accessible label
+and tooltip. Show Reset only while the draft differs from its authoritative
+default, including empty or invalid entries; hide it after reset and return
+focus to the input. The split control retains a complete neutral outer border;
+focus draws one ring around the whole control, without additional inner rings or
+a highlighted border. Unit selectors and Reset use subtle theme-based hover
+states; disabled controls remain subdued. Reset restores only the documented
+default in the draft; it never saves or applies. Defaults beside field
+descriptions remain distinct from saved/running state. Omit redundant "Using
+default value" and "Changed from default" labels under inputs; retain the
 exact-value helper for converted units. Compact and responsive layouts use the
 same component; property-local Reset is an input action, like Browse or Copy.
 Local service limits, Agents capture limits and Compute memory use the same

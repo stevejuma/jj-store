@@ -47432,6 +47432,184 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
 }
 ```
 
+## POST /v1/directory/image-uploads/{request_id}
+
+Requires an enrolled personal identity or LocalTrusted administrator before reading bytes. Normalizes large PNG/JPEG/GIF/WebP avatars to at most 512 by 512 pixels, preserving aspect ratio and EXIF orientation. Images already within retained-media limits keep their exact bytes; resized animations become static. Returns an actor-bound durable receipt; replay retains the original request ID and original source bytes. Saving the profile is a separate mutation.
+
+```text
+{
+  "operationId": "directory_image_upload",
+  "tags": [
+    "reads"
+  ],
+  "description": "Requires an enrolled personal identity or LocalTrusted administrator before reading bytes. Normalizes large PNG/JPEG/GIF/WebP avatars to at most 512 by 512 pixels, preserving aspect ratio and EXIF orientation. Images already within retained-media limits keep their exact bytes; resized animations become static. Returns an actor-bound durable receipt; replay retains the original request ID and original source bytes. Saving the profile is a separate mutation.",
+  "parameters": [
+    {
+      "name": "request_id",
+      "in": "path",
+      "required": true,
+      "schema": {
+        "$ref": "#/components/schemas/RequestId"
+      }
+    }
+  ],
+  "responses": {
+    "200": {
+      "description": "Authorized result at the reported snapshot.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/DirectoryReceipt"
+          }
+        }
+      }
+    },
+    "400": {
+      "description": "Invalid request, unknown query field or invalid cursor.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "401": {
+      "description": "Missing repository Bearer credential.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "403": {
+      "description": "Access denied, including revoked credentials or disallowed Origin.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "404": {
+      "description": "Object not committed in the selected snapshot or unknown route.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "405": {
+      "description": "Unsupported method.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "408": {
+      "description": "Native query canceled.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "409": {
+      "description": "Select an operation, reselect after epoch/cursor reset, or prepare the reported snapshot index.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "410": {
+      "description": "Index task expired or was lost on server restart.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "413": {
+      "description": "Request or response resource limit exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "415": {
+      "description": "Unsupported request media type or content encoding.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "503": {
+      "description": "Busy, unavailable, corrupt or incomplete history.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    },
+    "504": {
+      "description": "Request or response deadline exceeded.",
+      "content": {
+        "application/json": {
+          "schema": {
+            "$ref": "#/components/schemas/ErrorBody"
+          }
+        }
+      }
+    }
+  },
+  "x-jj-store-query-schema": {
+    "type": "object",
+    "additionalProperties": false
+  },
+  "security": [
+    {
+      "repositoryBearer": []
+    },
+    {}
+  ],
+  "requestBody": {
+    "required": true,
+    "description": "At most 20 MiB of source bytes; at most 8192 pixels per dimension and 16 megapixels decoded. Retained output remains at most 2 MiB and 512 by 512 pixels.",
+    "content": {
+      "application/octet-stream": {
+        "schema": {
+          "type": "string",
+          "format": "binary"
+        }
+      }
+    }
+  }
+}
+```
+
 ## GET /v1/directory/emoji-snapshot/{id}
 
 Requires current repository read permission. Unknown query fields are rejected. Source strings are untrusted data. Reads never reconcile or publish native operations.
@@ -48655,6 +48833,29 @@ Requires current repository read permission. Unknown query fields are rejected. 
                     "type": {
                       "type": "string",
                       "const": "upload"
+                    }
+                  },
+                  "additionalProperties": false,
+                  "required": [
+                    "type",
+                    "bytes"
+                  ]
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "bytes": {
+                      "type": "array",
+                      "items": {
+                        "type": "integer",
+                        "format": "uint8",
+                        "minimum": 0,
+                        "maximum": 255
+                      }
+                    },
+                    "type": {
+                      "type": "string",
+                      "const": "upload_image"
                     }
                   },
                   "additionalProperties": false,

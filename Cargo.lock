@@ -4376,6 +4376,7 @@ dependencies = [
  "getrandom 0.4.3",
  "hex",
  "hyper-util",
+ "image",
  "jj-agent",
  "jj-collab",
  "jj-store-adapters",

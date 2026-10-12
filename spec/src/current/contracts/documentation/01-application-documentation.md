@@ -138,3 +138,10 @@ Settings guide now covers shared global/repository form presentation, Appearance
 subtabs, grouped deployment inventory and unit-aware global fields. Application
 source review retains URL-linked global navigation, immediate device
 preferences, explicit configuration saves and unchanged configuration formats.
+
+E-PROFILE-AVATAR-002 records shared avatar/emoji normalization, original-source
+receipt recovery and the Settings presentation refinements. Settings, transport,
+architecture and lifecycle guides distinguish source limits from retained-media
+limits and explicit saves. Generated installation/type references include the
+binary image route; documentation delivery and coverage review gates remain
+unchanged.

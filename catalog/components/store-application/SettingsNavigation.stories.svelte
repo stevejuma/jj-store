@@ -3,6 +3,7 @@
   import { expect, userEvent, waitFor, within } from "storybook/test";
   import StoreApplication from "../../fixtures/StoreApplicationFixture.svelte";
   import { IDS } from "../../fixtures/repository.js";
+  import { version } from "../../../package.json";
   const { Story } = defineMeta({
     title: "JJ Store/Settings/Navigation",
     component: StoreApplication,
@@ -147,7 +148,24 @@
   play={async ({ canvasElement }) => {
     await openSettings(canvasElement);
     const c = within(canvasElement),
-      nav = within(c.getByRole("navigation", { name: "Settings navigation" }));
+      navigation = c.getByRole("navigation", { name: "Settings navigation" }),
+      nav = within(navigation);
+    const personal = within(nav.getByRole("region", { name: "Personal" }));
+    for (const name of ["Profile", "Appearance", "Custom emoji"])
+      await expect(personal.getByRole("button", { name })).toBeVisible();
+    const app = within(nav.getByRole("region", { name: "App" }));
+    for (const name of ["Local service", "Agents", "Compute"])
+      await expect(app.getByRole("button", { name })).toBeVisible();
+    const footer = nav.getByText(`v${version}`, { exact: true });
+    await expect(footer).toBeVisible();
+    await expect(footer.getBoundingClientRect().top).toBeGreaterThan(
+      app.getByRole("button", { name: "Compute" }).getBoundingClientRect()
+        .bottom,
+    );
+    await expect(
+      navigation.getBoundingClientRect().bottom -
+        footer.getBoundingClientRect().bottom,
+    ).toBeLessThanOrEqual(20);
     for (const name of ["Repository", "Search", "Storage", "Sync"])
       await expect(nav.queryByRole("button", { name })).not.toBeInTheDocument();
     await expect(

@@ -287,3 +287,14 @@ omit email and verifiers. Raster assets travel through authenticated binary
 responses and in-memory image URLs. Portable emoji snapshots are part of the
 original typed repository command and publish their closure with messages or
 reactions.
+
+## Binary directory image uploads
+
+`POST /v1/directory/image-uploads/{request_id}` accepts
+`application/octet-stream` for PNG, JPEG, GIF and WebP avatar and emoji sources
+up to 20 MiB. An enrolled user or LocalTrusted administrator is checked before
+body consumption. The server limits decoded pixels, resizes large images to fit
+512 × 512 and preserves JPEG orientation. Already bounded images retain their
+bytes; resized animations become static. Use the existing directory command
+status endpoint and original source bytes for uncertain outcomes. The JSON
+upload command and retained-media bounds keep their existing behavior.

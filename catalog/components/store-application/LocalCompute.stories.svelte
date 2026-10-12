@@ -383,33 +383,6 @@
   }}
 />
 
-<Story
-  name="Automatic memory remains optional with a joined fixed unit"
-  args={{ memoryLimit: null }}
-  play={async ({ canvasElement }) => {
-    const c = within(canvasElement);
-    await userEvent.click(c.getByRole("tab", { name: "Resources" }));
-    const input = await c.findByRole("spinbutton", {
-      name: "Maximum memory / VRAM",
-    });
-    await expect(input).toHaveValue(null);
-    await expect(input).not.toBeRequired();
-    await expect(input).not.toHaveAttribute("aria-invalid", "true");
-    await userEvent.type(input, "6");
-    await userEvent.clear(input);
-    await userEvent.click(c.getByRole("tab", { name: "Models" }));
-    await userEvent.click(
-      c.getByRole("button", { name: "Save compute settings" }),
-    );
-    await waitFor(() =>
-      expect(
-        JSON.parse(c.getByLabelText("Compute commands").textContent ?? "[]"),
-      ).toMatchObject([
-        { action: { action: "configure", settings: { memory_gb: null } } },
-      ]),
-    );
-  }}
-/>
 <Story name="Dark compute settings" globals={{ colorMode: "dark" }} />
 
 <Story

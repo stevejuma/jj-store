@@ -244,3 +244,13 @@ Restart can recover an unknown request without changing its intent or
 duplicating a Thread. Repository removal is refused while linked agent work is
 running, queued or unknown. The personal metadata home retains collaboration
 authority; attached code repositories still require independent authorization.
+
+## Directory image uploads
+
+The installation directory normalizes large profile and custom emoji images
+before immutable media publication. Source admission is bounded to 20 MiB, 8192
+pixels per side and 64 MiB of decoded RGBA pixels. Selected assets retain the
+existing 2 MiB and 512 × 512 limits. These are fixed upload bounds rather than
+configurable server settings. Decode failures and exhausted bounds publish no
+profile change; selecting an uploaded image still requires the explicit profile
+or emoji save command.

@@ -1,5 +1,6 @@
 //! Installation authority: immutable records/media, one CAS-selected directory.
 mod audit;
+mod images;
 mod mutation;
 mod persistence;
 mod reads;

@@ -6,6 +6,8 @@
   import PaletteIcon from "@lucide/svelte/icons/palette";
   import ArrowLeftIcon from "@lucide/svelte/icons/arrow-left";
   import ServerIcon from "@lucide/svelte/icons/server";
+  import CpuIcon from "@lucide/svelte/icons/cpu";
+  import { version } from "../../../../../package.json";
   import type { StoreSettingsSection } from "./model.js";
   import "./StoreSettingsNavigation.css";
 
@@ -21,13 +23,23 @@
     onClose: () => void;
   } = $props();
 
-  const sections = [
-    { id: "profile", label: "Profile", icon: UserIcon },
-    { id: "custom-emoji", label: "Custom emoji", icon: SmileIcon },
-    { id: "appearance", label: "Appearance", icon: PaletteIcon },
-    { id: "service", label: "Local service", icon: ServerIcon },
-    { id: "agents", label: "Agents", icon: BotIcon },
-    { id: "compute", label: "Compute", icon: ServerIcon },
+  const groups = [
+    {
+      label: "Personal",
+      items: [
+        { id: "profile", label: "Profile", icon: UserIcon },
+        { id: "appearance", label: "Appearance", icon: PaletteIcon },
+        { id: "custom-emoji", label: "Custom emoji", icon: SmileIcon },
+      ],
+    },
+    {
+      label: "App",
+      items: [
+        { id: "service", label: "Local service", icon: ServerIcon },
+        { id: "agents", label: "Agents", icon: BotIcon },
+        { id: "compute", label: "Compute", icon: CpuIcon },
+      ],
+    },
   ] as const;
 </script>
 
@@ -46,21 +58,32 @@
     <ArrowLeftIcon data-icon="inline-start" aria-hidden="true" />
     <span>Back to jj-store</span>
   </Button>
-  <section>
-    <h2>Store</h2>
-    {#each sections as item (item.id)}
-      <Button
-        variant="ghost"
-        class="store-settings-navigation__item"
-        data-active={section === item.id ? "" : undefined}
-        aria-pressed={section === item.id}
-        aria-label={item.label}
-        title={compact ? item.label : undefined}
-        onclick={() => onSelect(item.id)}
-      >
-        <item.icon data-icon="inline-start" aria-hidden="true" />
-        <span>{item.label}</span>
-      </Button>
+  <div class="store-settings-navigation__groups">
+    {#each groups as group (group.label)}
+      <section aria-label={group.label}>
+        <h2>{group.label}</h2>
+        {#each group.items as item (item.id)}
+          <Button
+            variant="ghost"
+            class="store-settings-navigation__item"
+            data-active={section === item.id ? "" : undefined}
+            aria-pressed={section === item.id}
+            aria-label={item.label}
+            title={compact ? item.label : undefined}
+            onclick={() => onSelect(item.id)}
+          >
+            <item.icon data-icon="inline-start" aria-hidden="true" />
+            <span>{item.label}</span>
+          </Button>
+        {/each}
+      </section>
     {/each}
-  </section>
+  </div>
+  <footer
+    class="store-settings-navigation__version"
+    aria-label={`jj-store version ${version}`}
+    title={`jj-store v${version}`}
+  >
+    v{version}
+  </footer>
 </nav>

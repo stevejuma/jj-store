@@ -47,3 +47,9 @@ admission. Request journals outside checkouts retain only public intent and
 stable request IDs, never token secrets. Directory credentials and profile state
 are selected by the installation object manifest, separately from repository
 policies.
+
+The server prepares large avatar and custom emoji sources on a bounded blocking
+worker before installation media publication. PNG/JPEG/GIF/WebP sources are
+bounded by bytes, dimensions and decoded pixels; only bounded normalized assets
+are retained. This adds no CLI command, installation policy file or repository
+publication authority.

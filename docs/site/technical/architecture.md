@@ -307,3 +307,13 @@ bindings, media and custom emoji through an installation object manifest. HTTP
 and CLI callers share typed admission and durable receipts. Repository providers
 consume portable emoji snapshots as validated data; the directory is never
 repository publication or agent authority.
+
+## Directory image preparation
+
+Installation avatar and custom emoji uploads share a binary request with a
+stable request identity. The service checks the personal actor before consuming
+source bytes, normalizes large raster photos on a bounded blocking worker, and
+publishes only bounded assets, previews and a receipt through installation
+manifest CAS. Source files are not retained. Retrying the original source
+recovers its selected receipt; saving the profile or emoji remains a separate
+conditional command.

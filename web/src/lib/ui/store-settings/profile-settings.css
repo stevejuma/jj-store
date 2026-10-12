@@ -1,112 +1,68 @@
-.community-settings {
-  width: min(100%, 52rem);
+/* Installation forms follow the shared modern Settings presentation. */
+.store-directory-settings {
+  width: 100%;
   min-width: 0;
-  overflow: auto;
-  max-height: 100%;
-  margin-inline: auto;
-  padding: clamp(1.5rem, 4vw, 3rem);
-  color: var(--foreground);
 }
-
-.community-settings:has(> .community-account-settings) {
-  width: 100%;
-  padding: 0;
-}
-
-.community-settings__heading {
-  margin-block-end: 2.25rem;
-}
-
-.community-settings__heading h1,
-.community-settings__heading p,
-.community-settings__option-section h2,
-.community-settings__option-section h3,
-.community-settings__option-section p,
-.community-settings__status {
-  margin: 0;
-}
-
-.community-settings__heading h1 {
-  font-size: var(--community-text-page);
-  line-height: 1.25;
-}
-
-.community-settings__heading p,
-.community-settings__option-section header > p,
-.community-settings__emoji-copy > p,
-.community-settings__option-row > p,
-.community-settings__identity small,
-.community-settings__identity > p,
-.community-settings__status,
-.community-settings__empty,
-.community-settings__emoji-list small {
-  color: var(--muted-foreground);
-}
-
-.community-settings__heading p {
-  margin-block-start: 0.35rem;
-}
-
-.community-settings__profile,
-.community-settings__custom-emoji {
+.store-directory-settings form {
   display: grid;
-  gap: 2.5rem;
+  min-width: 0;
+  gap: 0;
 }
-
-.community-settings__avatar-editor {
+.store-directory-settings .store-settings__editable-rows {
+  gap: 0;
+}
+.store-directory-settings .store-settings-card__content > dl,
+.store-directory-settings [data-slot="field"] + [data-slot="field"] {
+  border-block-start: 1px solid var(--border);
+}
+.store-directory-field__label {
   display: flex;
-  width: 100%;
-  flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  min-width: 0;
+  gap: 0.6rem;
 }
-
-.community-settings__emoji-upload input {
+.store-directory-field__control {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  justify-content: flex-end;
+}
+.store-directory-field__control
+  > :is(input, [data-ui-part="chat-composer"], [data-slot="input-group"]) {
+  width: 100%;
+  min-width: 0;
+}
+.store-directory-settings__avatar {
+  position: relative;
+  flex: none;
+  width: 6rem;
+  height: 6rem;
+}
+.store-directory-settings__avatar .community-avatar-picker__trigger {
+  border: 0;
+}
+.store-directory-settings__avatar-action[data-slot="button"] {
+  --ui-button-background: var(--foreground);
+  --ui-button-foreground: var(--background);
   position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip-path: inset(50%);
+  inset-block-end: -0.125rem;
+  inset-inline-end: -0.125rem;
+  box-sizing: content-box;
+  border: 0.25rem solid var(--card);
+  border-radius: 50%;
 }
-.community-settings__emoji-preview img,
-.community-settings__emoji-list li > img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+.store-directory-settings__avatar-action[data-slot="button"]:focus-visible {
+  border-color: var(--card);
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
 }
-.community-settings__avatar-actions {
-  display: flex;
-  justify-content: center;
-  gap: 0.5rem;
+.store-directory-settings__validation {
+  margin: 1rem;
+  color: var(--destructive);
+  font-size: var(--community-text-secondary);
 }
-
-.community-settings__option-section {
-  display: grid;
-  gap: 0.5rem;
-}
-
-.community-settings__option-section > header {
-  display: flex;
-  min-height: 2rem;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding-inline: 0.75rem;
-}
-
-.community-settings__option-section h2 {
-  font-size: var(--community-text-body);
-  font-weight: 500;
-}
-
-.community-settings__option-section h3 {
-  font-size: var(--community-text-body);
-}
-
-.community-settings__option-group,
-.community-settings__identity {
-  overflow: hidden;
-  border: 1px solid var(--border);
-  border-radius: calc(var(--radius) + 0.25rem);
-  background: var(--background);
+@media (max-width: 40rem) {
+  .store-directory-field__control {
+    justify-content: flex-start;
+  }
 }

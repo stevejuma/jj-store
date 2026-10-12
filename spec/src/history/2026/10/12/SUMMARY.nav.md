@@ -4,3 +4,5 @@
   {{#include E-LOCAL-SERVICE-ICONS-001/SUMMARY.nav.md}}
 - [E-PROFILES-001](E-PROFILES-001/index.md)
   {{#include E-PROFILES-001/SUMMARY.nav.md}}
+- [E-PROFILE-AVATAR-002](E-PROFILE-AVATAR-002/index.md)
+  {{#include E-PROFILE-AVATAR-002/SUMMARY.nav.md}}

@@ -4,10 +4,6 @@ import { execFileSync, spawn } from "node:child_process";
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { randomBytes } from "node:crypto";
-const png = Buffer.from(
-  "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGP4z8DwHwAFAAH/iZk9HQAAAABJRU5ErkJggg==",
-  "base64",
-);
 test("cold local and enrolled profiles and emoji survive real object store restart", async ({
   page,
   request,
@@ -25,8 +21,58 @@ test("cold local and enrolled profiles and emoji survive real object store resta
     "Sec-Fetch-Dest": "empty",
   };
   const errors: string[] = [];
+  let directoryWrites = 0;
+  page.on("request", (request) => {
+    if (request.method() === "POST" && request.url().includes("/v1/directory/"))
+      directoryWrites++;
+  });
   page.on("pageerror", (e) => errors.push(e.message));
   await page.goto("/#/settings?section=profile&tab=details");
+  await expect(
+    page.getByRole("button", { name: "Edit avatar", exact: true }),
+  ).toBeVisible();
+  const photo = Buffer.from(
+    await page.evaluate(() => {
+      const canvas = document.createElement("canvas");
+      canvas.width = 2500;
+      canvas.height = 1800;
+      const context = canvas.getContext("2d")!;
+      context.fillStyle = "#6e56cf";
+      context.fillRect(0, 0, canvas.width, canvas.height);
+      return canvas.toDataURL("image/jpeg").split(",")[1]!;
+    }),
+    "base64",
+  );
+  await page
+    .getByRole("button", { name: "Edit profile photo", exact: true })
+    .click();
+  await page.getByLabel("Upload avatar image", { exact: true }).setInputFiles({
+    name: "large-headshot.jpg",
+    mimeType: "image/jpeg",
+    buffer: photo,
+  });
+  const avatarImage = page.getByRole("img", {
+    name: "Selected avatar",
+    exact: true,
+  });
+  await expect
+    .poll(() =>
+      avatarImage.evaluate((image) => [
+        (image as HTMLImageElement).naturalWidth,
+        (image as HTMLImageElement).naturalHeight,
+      ]),
+    )
+    .toEqual([512, 369]);
+  await expect(
+    page.getByRole("button", { name: "Clear avatar", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Edit avatar", exact: true }),
+  ).toHaveCount(0);
+  await page.keyboard.press("Escape");
+  await expect(
+    page.getByRole("button", { name: /^Copy full Principal ID:/ }),
+  ).toBeVisible();
   await page.getByRole("button", { name: "Edit", exact: true }).click();
   await page
     .getByRole("textbox", { name: "Display name" })
@@ -43,10 +89,26 @@ test("cold local and enrolled profiles and emoji survive real object store resta
       headers: localHeaders,
     })
   ).json();
+  expect(profile.details.avatar).toMatch(/^blob:[0-9a-f]{64}$/);
   await page.goto("/#/settings?section=custom-emoji&tab=library");
-  await page
-    .getByLabel("Upload emoji image")
-    .setInputFiles({ name: "party.png", mimeType: "image/png", buffer: png });
+  const writesBeforeSelection = directoryWrites;
+  await page.getByLabel("Upload emoji image file").setInputFiles({
+    name: "party.jpg",
+    mimeType: "image/jpeg",
+    buffer: Buffer.concat([
+      photo,
+      Buffer.alloc(2 * 1024 * 1024 + 1 - photo.length),
+    ]),
+  });
+  const localPreview = page.getByRole("img", { name: "Preview of :party:" });
+  await expect
+    .poll(() =>
+      localPreview.evaluate(
+        (image) => (image as HTMLImageElement).naturalWidth,
+      ),
+    )
+    .toBe(2500);
+  expect(directoryWrites).toBe(writesBeforeSelection);
   await expect(page.getByRole("button", { name: "Save emoji" })).toBeEnabled();
   await page.getByRole("button", { name: "Save emoji" }).click();
   await expect(page.getByText(":party:", { exact: true })).toBeVisible();
@@ -58,7 +120,7 @@ test("cold local and enrolled profiles and emoji survive real object store resta
     .poll(() =>
       emojiImage.evaluate((image) => (image as HTMLImageElement).naturalWidth),
     )
-    .toBe(1);
+    .toBe(512);
   expect(
     (
       await new AxeBuilder({ page })
@@ -122,6 +184,14 @@ test("cold local and enrolled profiles and emoji survive real object store resta
     await expect(
       page.getByText("Persisted administrator", { exact: true }).first(),
     ).toBeVisible();
+    await expect
+      .poll(() =>
+        avatarImage.evaluate((image) => [
+          (image as HTMLImageElement).naturalWidth,
+          (image as HTMLImageElement).naturalHeight,
+        ]),
+      )
+      .toEqual([512, 369]);
     const stop = async () => {
       service.kill("SIGTERM");
       await new Promise<void>((resolve) =>

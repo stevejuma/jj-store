@@ -21,6 +21,7 @@ pub enum Error {
     Unknown,
 }
 pub type Result<T> = std::result::Result<T, Error>;
+pub const MAX_IMAGE_UPLOAD_BYTES: usize = 20 * 1024 * 1024;
 pub enum Caller {
     Local(PrincipalId),
     Token(BearerToken),
@@ -69,6 +70,9 @@ pub enum DirectoryCommand {
         details: ProfileDetails,
     },
     Upload {
+        bytes: Vec<u8>,
+    },
+    UploadImage {
         bytes: Vec<u8>,
     },
     SaveEmoji {

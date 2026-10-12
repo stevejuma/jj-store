@@ -331,10 +331,11 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
         "/v1/repos/{repo}/reaction-assets/{asset}",
         "/v1/repos/{repo}/work/activity",
         "/v1/local/repos/{repo}/work/activity",
+        "/v1/directory/image-uploads/{request_id}",
     ] {
         assert!(paths.contains_key(path), "missing integrated route: {path}");
     }
-    assert_eq!(paths.len(), 177);
+    assert_eq!(paths.len(), 178);
     assert_eq!(
         paths
             .keys()
@@ -347,7 +348,7 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
             .keys()
             .filter(|name| !name.starts_with("/v1/local/"))
             .count(),
-        94
+        95
     );
     let mut ids = std::collections::BTreeSet::new();
     for (name, path) in paths {
@@ -653,6 +654,40 @@ fn conflict_upload_contract_has_binary_body_exact_snapshot_and_write_permission(
     assert_eq!(
         doc["components"]["schemas"]["ConflictUploadId"]["pattern"],
         "^[0-9a-f]{64}$"
+    );
+}
+#[test]
+fn avatar_upload_contract_is_binary_personal_and_receipt_bound() {
+    let doc = openapi();
+    let op = &doc["paths"]["/v1/directory/image-uploads/{request_id}"]["post"];
+    assert_eq!(
+        op["requestBody"]["content"]["application/octet-stream"]["schema"]["format"],
+        "binary"
+    );
+    assert!(
+        op["description"]
+            .as_str()
+            .unwrap()
+            .contains("before reading bytes")
+    );
+    assert!(
+        op["description"]
+            .as_str()
+            .unwrap()
+            .contains("original request ID")
+    );
+    assert!(
+        op["parameters"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|p| p["name"] == "request_id" && p["required"] == true)
+    );
+    assert!(
+        op["requestBody"]["description"]
+            .as_str()
+            .unwrap()
+            .contains("20 MiB")
     );
 }
 

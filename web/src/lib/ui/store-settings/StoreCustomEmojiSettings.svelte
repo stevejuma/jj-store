@@ -1,17 +1,25 @@
 <script lang="ts">
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import { Input } from "@lapismd/design-core/shadcn/input";
+  import * as InputGroup from "@lapismd/design-core/shadcn/input-group";
   import * as Field from "@lapismd/design-core/shadcn/field";
   import TrashIcon from "@lucide/svelte/icons/trash-2";
+  import SmileIcon from "@lucide/svelte/icons/smile";
+  import ImageIcon from "@lucide/svelte/icons/image";
+  import HashIcon from "@lucide/svelte/icons/hash";
   import type { DirectoryManagement } from "../../controller/directory.svelte.js";
   import type { Model } from "../../api/client.js";
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
+  import StoreSettingsCard from "./StoreSettingsCard.svelte";
+  import StoreSettingsFooter from "./StoreSettingsFooter.svelte";
+  import StoreDirectoryField from "./StoreDirectoryField.svelte";
   import "./profile-settings.css";
   import "./emoji-settings.css";
   let { management }: { management: DirectoryManagement | undefined } =
     $props();
   let uploading = $state(false),
-    error = $state("");
+    error = $state(""),
+    imageError = $state("");
+  let imageInput = $state<HTMLInputElement>();
   const model = $derived(management?.state);
   const draft = $derived(model?.emojiDraft);
   const owned = $derived(
@@ -22,7 +30,7 @@
   async function upload(file: File | undefined) {
     if (!file || !management || uploading) return;
     uploading = true;
-    error = "";
+    imageError = "";
     try {
       if (!draft) return;
       draft.filename = file.name;
@@ -30,9 +38,10 @@
         .replace(/\.[^.]+$/u, "")
         .toLowerCase()
         .replace(/[^a-z0-9_-]+/gu, "-");
-      await management.upload(file, "emoji");
+      management.selectEmoji(file);
     } catch (cause) {
-      error = cause instanceof Error ? cause.message : "Image upload failed.";
+      imageError =
+        cause instanceof Error ? cause.message : "Image upload failed.";
     } finally {
       uploading = false;
     }
@@ -47,10 +56,11 @@
           draft.asset,
           draft.selected,
         );
-    } catch {
+    } catch (cause) {
       error =
         model?.validation ||
         model?.error ||
+        (cause instanceof Error ? cause.message : "") ||
         "Emoji save failed. Your draft is retained.";
     }
   }
@@ -63,96 +73,175 @@
   }
 </script>
 
-<section class="community-settings" aria-labelledby="emoji-settings-title">
-  <header class="community-settings__heading">
-    <h1 id="emoji-settings-title">Custom emoji</h1>
-    <p>Add your own custom emoji for everyone on this server to use.</p>
-  </header>
+<section class="store-directory-settings" aria-label="Custom emoji library">
   {#if !management?.available()}<p>
       Custom emoji storage requires an object store and an admitted user
       identity.
     </p>
   {:else if draft}
     <form
-      class="community-settings__custom-emoji"
       onsubmit={(event) => {
         event.preventDefault();
         void save();
       }}
     >
-      <section class="community-settings__option-section">
-        <header><h2>{draft.selected ? "Edit emoji" : "Add emoji"}</h2></header>
-        <div class="community-settings__emoji-builder">
-          <div class="community-settings__emoji-row">
-            <div>
-              <strong>Image</strong>
-              <p>PNG, JPEG, GIF or WebP; up to 2 MB and 512 × 512 pixels.</p>
-            </div>
-            <Input
-              type="file"
-              accept="image/png,image/jpeg,image/gif,image/webp"
-              aria-label="Upload emoji image"
-              disabled={uploading || model?.busy || !!model?.pending}
-              onchange={(event) => void upload(event.currentTarget.files?.[0])}
-            />
-          </div>
-          <div class="community-settings__emoji-row">
-            <Field.Label for="emoji-shortcode">Shortcode</Field.Label><Input
-              id="emoji-shortcode"
-              bind:value={draft.shortcode}
-              placeholder="party"
-              maxlength={64}
-              disabled={model?.busy || !!model?.pending}
-            />
-          </div>
-          <div class="community-settings__emoji-actions">
-            {#if draft.asset}<img
-                src={model?.urls[draft.asset.replace(/^blob:/, "")]}
-                alt={`Preview of :${draft.shortcode}:`}
-                width="40"
-                height="40"
-              />{/if}<span>{draft.filename}</span><Button
-              type="submit"
-              disabled={!draft.asset ||
-                !draft.shortcode ||
-                uploading ||
-                model?.busy ||
-                !!model?.pending}>Save emoji</Button
-            >{#if draft.selected}<Button
+      <StoreSettingsCard
+        id="emoji-builder"
+        title={draft.selected ? "Edit emoji" : "Add emoji"}
+        description="Choose an image and a unique shortcode."
+        Icon={SmileIcon}
+      >
+        <Field.Group class="store-settings__editable-rows">
+          <StoreDirectoryField
+            id="emoji-image"
+            label="Image"
+            Icon={ImageIcon}
+            description="PNG, JPEG, GIF or WebP, up to 20 MB. Uploaded when you save; large images are resized and resized animations use their first frame."
+          >
+            <div class="store-directory-settings__emoji-upload">
+              <span class="store-directory-settings__emoji-image">
+                {#if draft.asset || draft.source}<img
+                    src={draft.preview ||
+                      model?.urls[draft.asset.replace(/^blob:/, "")]}
+                    alt={`Preview of :${draft.shortcode}:`}
+                    width="48"
+                    height="48"
+                  />{:else}<ImageIcon aria-hidden="true" />{/if}
+              </span>
+              <input
+                bind:this={imageInput}
+                id="emoji-image"
+                name="emoji-image"
+                type="file"
+                hidden
+                accept="image/png,image/jpeg,image/gif,image/webp"
+                aria-label="Upload emoji image file"
+                disabled={uploading || model?.busy || !!model?.pending}
+                onchange={(event) => {
+                  void upload(event.currentTarget.files?.[0]);
+                  event.currentTarget.value = "";
+                }}
+              />
+              <Button
                 type="button"
                 variant="outline"
-                onclick={() => {
-                  draft.selected = undefined;
-                  draft.shortcode = draft.asset = draft.filename = "";
-                }}>Cancel edit</Button
-              >{/if}
-          </div>
-        </div>
-      </section>
+                aria-label="Choose emoji image"
+                disabled={uploading || model?.busy || !!model?.pending}
+                onclick={() => imageInput?.click()}>Choose image</Button
+              >
+            </div>
+          </StoreDirectoryField>
+          <StoreDirectoryField
+            id="emoji-shortcode"
+            label="Shortcode"
+            Icon={HashIcon}
+            description="Use lowercase letters, numbers, underscores or hyphens."
+          >
+            <InputGroup.Root>
+              <InputGroup.Addon align="inline-start" aria-hidden="true"
+                ><InputGroup.Text>:</InputGroup.Text></InputGroup.Addon
+              >
+              <InputGroup.Input
+                id="emoji-shortcode"
+                name="shortcode"
+                autocomplete="off"
+                spellcheck={false}
+                bind:value={draft.shortcode}
+                placeholder="party"
+                maxlength={64}
+                disabled={model?.busy || !!model?.pending}
+              />
+              <InputGroup.Addon align="inline-end" aria-hidden="true"
+                ><InputGroup.Text>:</InputGroup.Text></InputGroup.Addon
+              >
+            </InputGroup.Root>
+          </StoreDirectoryField>
+        </Field.Group>
+        {#if imageError}<p
+            role="alert"
+            class="store-directory-settings__validation"
+          >
+            {imageError}
+          </p>{/if}
+        <StoreSettingsFooter>
+          {#snippet description()}<div
+              class="store-directory-settings__emoji-preview"
+            >
+              <span>{draft.filename}</span>
+            </div>{/snippet}
+          {#if draft.selected || draft.source || draft.asset}<Button
+              type="button"
+              variant="outline"
+              disabled={model?.busy || !!model?.pending}
+              onclick={() => {
+                management.cancelEmoji();
+                imageError = "";
+              }}>{draft.selected ? "Cancel edit" : "Cancel"}</Button
+            >{/if}
+          <Button
+            type="submit"
+            disabled={(!draft.asset && !draft.source) ||
+              !draft.shortcode ||
+              uploading ||
+              model?.busy ||
+              !!model?.pending}>Save emoji</Button
+          >
+        </StoreSettingsFooter>
+        {#if model?.pending}<StoreSettingsFooter>
+            {#snippet description()}<p>
+                Outcome unknown. Check the original request before saving
+                another emoji.
+              </p>{/snippet}
+            <Button
+              type="button"
+              variant="outline"
+              disabled={model.busy}
+              onclick={() => void management.status()}>Check save status</Button
+            >
+            <Button
+              type="button"
+              disabled={model.busy}
+              onclick={() => void management.retry()}
+              >Retry original save</Button
+            >
+          </StoreSettingsFooter>{/if}
+      </StoreSettingsCard>
     </form>
-    <section
-      class="community-settings__option-section community-settings__emoji-list"
-      aria-label="Your custom emoji"
-    >
-      <header>
-        <h2>My emoji</h2>
-        <p>{owned.length} saved</p>
-      </header>
-      {#if !owned.length}<p>You haven't added any emoji yet.</p>{:else}<ul>
-          {#each owned as emoji (emoji.id)}<li>
-              <img src={model?.urls[emoji.preview]} alt="" /><span
-                ><strong>:{emoji.shortcode}:</strong></span
-              ><Button
+    <div class="community-settings__emoji-list">
+      <StoreSettingsCard
+        id="my-emoji"
+        title="My emoji"
+        description={`${owned.length} saved. Edit or remove the emoji you own.`}
+        Icon={SmileIcon}
+      >
+        {#if !owned.length}<p class="store-directory-settings__empty">
+            You haven't added any emoji yet.
+          </p>
+        {:else}{#each owned as emoji (emoji.id)}
+            <StoreSettingsFooter>
+              {#snippet description()}<div
+                  class="store-directory-settings__emoji-preview"
+                >
+                  <img
+                    src={model?.urls[emoji.preview]}
+                    alt=""
+                    width="40"
+                    height="40"
+                  /><strong>:{emoji.shortcode}:</strong>
+                </div>{/snippet}
+              <Button
                 type="button"
-                variant="ghost"
+                variant="outline"
                 disabled={model?.busy || !!model?.pending}
                 onclick={() => {
+                  management.cancelEmoji();
                   draft.selected = emoji;
                   draft.shortcode = emoji.shortcode;
                   draft.asset = `blob:${emoji.asset}`;
                   void management.image(draft.asset);
                 }}>Edit</Button
-              ><Button
+              >
+              <Button
                 type="button"
                 variant="ghost"
                 size="icon-sm"
@@ -161,19 +250,10 @@
                 onclick={() => void remove(emoji)}
                 ><TrashIcon aria-hidden="true" /></Button
               >
-            </li>{/each}
-        </ul>{/if}
-    </section>
-    {#if model?.pending}<p>
-        Outcome unknown. Check the original request before saving another emoji.
-      </p>
-      <Button type="button" onclick={() => void management.status()}
-        >Check save status</Button
-      ><Button
-        type="button"
-        variant="outline"
-        onclick={() => void management.retry()}>Retry original save</Button
-      >{/if}
+            </StoreSettingsFooter>
+          {/each}{/if}
+      </StoreSettingsCard>
+    </div>
   {/if}
   <StoreNotice
     noticeKey="custom-emoji-outcome"

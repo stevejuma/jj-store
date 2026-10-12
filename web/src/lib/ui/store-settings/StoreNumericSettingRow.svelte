@@ -28,6 +28,7 @@
     optional = false,
     error = "",
     slider = false,
+    sliderMax,
     density = "regular",
     onValueChange,
   }: {
@@ -46,6 +47,8 @@
     optional?: boolean;
     error?: string;
     slider?: boolean;
+    /** Convenience range; larger valid typed values expand it without edits. */
+    sliderMax?: number;
     density?: "regular" | "compact";
     onValueChange: (canonical: string) => void;
   } = $props();
@@ -75,6 +78,12 @@
     !!value.trim() && !validation && unit.id !== units[0].id,
   );
   const blocked = $derived(disabled || readonly);
+  const sliderBound = $derived(
+    Math.min(
+      max,
+      Math.max(min, sliderMax ?? max, validation ? min : Number(value)),
+    ),
+  );
   const helpId = $derived(`${id}-help`);
   const stateId = $derived(`${id}-state`);
   const errorId = $derived(`${id}-error`);
@@ -176,9 +185,9 @@
       <Slider
         type="single"
         {min}
-        {max}
+        max={sliderBound}
         step={1}
-        value={validation ? min : Number(value)}
+        value={validation || !value.trim() ? min : Number(value)}
         disabled={blocked || Boolean(validation)}
         aria-label={`${label} slider`}
         onValueChange={(next) => {
@@ -190,9 +199,12 @@
       />
       <div class="store-numeric-setting__range">
         <span>{min.toLocaleString("en-GB")}</span><span
-          >{max.toLocaleString("en-GB")} {units[0].label}</span
+          >{sliderBound.toLocaleString("en-GB")} {units[0].label}</span
         >
       </div>
+      {#if optional && !value.trim()}<p class="store-numeric-setting__state">
+          Automatic allocation. Move the slider to choose a limit.
+        </p>{/if}
     {/if}
     {#if showExact}<p id={stateId} class="store-numeric-setting__state">
         {display.approximate

@@ -286,6 +286,12 @@ impl Document {
         if path == "/repos/{repo}/reaction-emojis/{emoji_id}" {
             operation["requestBody"] = json!({"required":true, "description":"At most 2097152 encoded bytes; only bounded PNG/JPEG/GIF/WebP are admitted. Static preview is retained by the service.", "content":{"application/octet-stream":{"schema":{"type":"string","format":"binary"}}}});
         }
+        if path == "/directory/image-uploads/{request_id}" {
+            operation["description"] = json!(
+                "Requires an enrolled personal identity or LocalTrusted administrator before reading bytes. Normalizes large PNG/JPEG/GIF/WebP avatars to at most 512 by 512 pixels, preserving aspect ratio and EXIF orientation. Images already within retained-media limits keep their exact bytes; resized animations become static. Returns an actor-bound durable receipt; replay retains the original request ID and original source bytes. Saving the profile is a separate mutation."
+            );
+            operation["requestBody"] = json!({"required":true,"description":"At most 20 MiB of source bytes; at most 8192 pixels per dimension and 16 megapixels decoded. Retained output remains at most 2 MiB and 512 by 512 pixels.","content":{"application/octet-stream":{"schema":{"type":"string","format":"binary"}}}});
+        }
         if path.ends_with("/conflict-uploads") {
             operation["tags"] = json!(["mutations"]);
             operation["description"] = json!(

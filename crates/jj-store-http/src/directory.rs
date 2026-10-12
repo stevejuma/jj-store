@@ -88,6 +88,42 @@ pub(super) fn router() -> Router<Arc<State>> {
         .route("/directory/identities", get(identities).post(enroll))
         .route("/directory/identity-revoke", post(revoke))
         .layer(DefaultBodyLimit::max(10 * 1024 * 1024))
+        .route("/directory/image-uploads/{request_id}", post(image_upload))
+}
+async fn image_upload(
+    ExtractState(state): ExtractState<Arc<State>>,
+    headers: HeaderMap,
+    Path(request_id): Path<m::RequestId>,
+    args: routes::Input<routes::Empty>,
+    body: Body,
+) -> Result<Response> {
+    routes::input(args)?;
+    let directory = manager(&state)?;
+    let actor = caller(&state, &headers)?;
+    directory.principal(&actor).await.map_err(failure)?;
+    if headers
+        .get(header::CONTENT_TYPE)
+        .and_then(|h| h.to_str().ok())
+        != Some("application/octet-stream")
+    {
+        return Err(Error::invalid());
+    }
+    let bytes = axum::body::to_bytes(body, d::MAX_IMAGE_UPLOAD_BYTES)
+        .await
+        .map_err(|_| failure(d::Error::Limit))?
+        .to_vec();
+    state.json(
+        &directory
+            .execute(
+                &actor,
+                d::DirectoryRequest {
+                    request_id,
+                    command: d::DirectoryCommand::UploadImage { bytes },
+                },
+            )
+            .await
+            .map_err(failure)?,
+    )
 }
 async fn profile(
     ExtractState(state): ExtractState<Arc<State>>,
@@ -247,6 +283,12 @@ async fn revoke(
 }
 pub(super) fn document(doc: &mut contract::Document) {
     use contract::Reply;
+    doc.endpoint::<routes::Empty, d::DirectoryReceipt>(
+        "post",
+        "/directory/image-uploads/{request_id}",
+        "directory_image_upload",
+        Reply::Json(200),
+    );
     doc.endpoint::<Revision, d::EmojiSelection>(
         "get",
         "/directory/emoji-snapshot/{id}",

@@ -218,3 +218,9 @@ copies. The isolated profile harness builds the production bundle and serves an
 empty disposable real-RustFS installation in both LocalTrusted and authenticated
 modes. It uses synthetic credentials, checks restart/privacy and owns cleanup;
 it changes no existing deployment, installed binary or visual baseline.
+
+E-PROFILE-AVATAR-002 keeps image normalization in the server and presentation in
+owned Settings components. Vite image CSP admits the same in-memory blob media
+as the built UI, retaining other admission sources and API proxy boundaries.
+Community attribution remains intact; the user-supplied Buzz screenshots guide
+locally authored avatar actions, shortcode adornments and sidebar grouping.
