@@ -118,7 +118,9 @@ Configure minimal ordinary environment variables explicitly: children receive an
 empty inherited environment. Command arguments support `{workspace}`,
 `{repository}`, `{operation}` and `{commit}` substitutions. Children also
 receive `JJ_WORKFLOW_RUN`, `JJ_WORKFLOW_ATTEMPT`, the three source IDs and JSON
-`JJ_WORKFLOW_INPUTS`. They execute in a fresh pinned source directory.
+`JJ_WORKFLOW_INPUTS`. Each attempt starts in a fresh pinned source directory;
+its ordered command actions share that directory so later actions can use
+earlier outputs. A source without a code anchor starts in one empty directory.
 
 Agents use `{ "type": "agent", "agent": "SETUP_ID", "prompt": "..." }`. Admit
 that setup under `agents` and configure `agent_endpoint` with `url`, `local` and

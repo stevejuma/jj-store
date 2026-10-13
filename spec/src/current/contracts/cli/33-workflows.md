@@ -9,3 +9,9 @@ E-WORKFLOW-RUN-001 confirms unchanged CLI contracts under JST-WF-004/006/007.
 Shared native workflow help adds the browser's Settings-style source selectors,
 bounded search and original-request recovery. Regenerated parser documentation
 retains the existing arguments, request identities and execution-host admission.
+
+E-WORKFLOW-MULTISTEP-001 qualifies ordered command actions sharing one private
+attempt workspace under JST-WF-005/007. Source export occurs once; later actions
+reuse earlier outputs. Empty-source attempts create the same shared directory.
+CLI arguments, reporting receipts, source grants and unknown-attempt recovery
+remain unchanged. This qualification does not implement Forgejo ConnectRPC.

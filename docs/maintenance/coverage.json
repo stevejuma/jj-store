@@ -110,8 +110,8 @@
       "docs/site/getting-started/work.md"
     ],
     "review": {
-      "reason": "Reviewed workflow source filters, pinned definition polling, CLI reports and conversation source environment; updated workflow guide and generated help for bounded filter files.",
-      "fingerprint": "de5d4da4fa59dadafc86e719374a0fb544c0272b835cda81bc7b0b892679eba8"
+      "reason": "Workflow help now specifies one shared private workspace per attempt, reused by ordered actions; exact CLI identities, reporting, host admission and Forgejo protocol deferrals remain unchanged.",
+      "fingerprint": "24711a20fc01ce0bb538db2008125b3f86eead207611512131ff2f222933afb7"
     }
   },
   {
@@ -155,8 +155,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Full-width YAML is presentation-only under JST-WF-008; the owning API chapter explicitly confirms unchanged JST-WF-006 validation/read/command contracts, formats and authorization; M28 gates remain unchanged.",
-      "fingerprint": "8a1aa999d4c5a6b06beaeeab35cf43b8b566129c24b8c19263386aa52ed8fee9"
+      "reason": "JST-WF-005/007 now state shared attempt workspaces with pinned export once and no unknown-attempt replay; CLI syntax, native formats, report receipts, authorization and M28 Forgejo/provider/visual gaps are unchanged.",
+      "fingerprint": "975e5ca5561ba4a7c84d94ec0a03cdbc561d057e4070ca1edc8bcb983da19a1d"
     }
   },
   {

@@ -37,3 +37,7 @@ gates stay unchanged.
 E-WORKFLOW-YAML-001 documents a full-width YAML dialog body with no right
 inspector, retaining Form visibility, drafts and mode-switch validation. Native
 workflow formats, authority and M28 execution/visual gates are unchanged.
+
+E-WORKFLOW-MULTISTEP-001 documents one shared private command workspace per
+attempt and unchanged CLI reporting. Native command-host acceptance is distinct
+from a live Forgejo wrapper or unchanged remote runner protocol qualification.

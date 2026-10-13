@@ -145,7 +145,7 @@ async fn two_hosts_execute_one_pinned_run_and_preserve_history_after_restart() {
         .args(["describe", "-m", "Source revision"]);
     success(snapshot.output().unwrap());
     let definition = root.path().join("workflow.yaml");
-    fs::write(&definition,format!("name: Build\nenabled: true\nrepository: {}\ntrigger:\n  on: bookmark_changed\n  bookmark: m?in\nconditions:\n  revset: all()\n  authors: [workflow@example.invalid]\n  text:\n    operator: contains\n    value: Trigger\nactions:\n  - id: build\n    executor:\n      type: command\n      name: build\n    timeout_seconds: 30\n",repos[0])).unwrap();
+    fs::write(&definition,format!("name: Build\nenabled: true\nrepository: {}\ntrigger:\n  on: bookmark_changed\n  bookmark: m?in\nconditions:\n  revset: all()\n  authors: [workflow@example.invalid]\n  text:\n    operator: contains\n    value: Trigger\nactions:\n  - id: build\n    executor:\n      type: command\n      name: build\n    timeout_seconds: 30\n  - id: verify\n    executor:\n      type: command\n      name: verify\n    timeout_seconds: 30\n  - id: publish\n    executor:\n      type: command\n      name: publish\n    timeout_seconds: 30\n",repos[0])).unwrap();
     jj(
         root.path(),
         Some(&home),
@@ -161,7 +161,7 @@ async fn two_hosts_execute_one_pinned_run_and_preserve_history_after_restart() {
     let mut configs = Vec::new();
     for name in ["host-a", "host-b"] {
         let path = root.path().join(format!("{name}.json"));
-        fs::write(&path,serde_json::to_vec(&json!({"version":1,"host":name,"principal":actor,"home":home,"state_dir":root.path().join(name),"jj_executable":env!("CARGO_BIN_EXE_jj"),"allowed_owners":[actor],"sources":[{"repository":repos[0],"workspace":code,"target_id":null}],"commands":{"build":{"program":"/bin/sh","args":["-c","cat source.txt; printf artifact > result.txt"],"environment":{"PATH":"/usr/bin:/bin"},"artifacts":["result.txt"]}},"agent_endpoint":null})).unwrap()).unwrap();
+        fs::write(&path,serde_json::to_vec(&json!({"version":1,"host":name,"principal":actor,"home":home,"state_dir":root.path().join(name),"jj_executable":env!("CARGO_BIN_EXE_jj"),"allowed_owners":[actor],"sources":[{"repository":repos[0],"workspace":code,"target_id":null}],"commands":{"build":{"program":"/bin/sh","args":["-c","cat source.txt; printf artifact > result.txt"],"environment":{"PATH":"/usr/bin:/bin"},"artifacts":["result.txt"]},"verify":{"program":"/bin/sh","args":["-c","set -eu; test -f result.txt; printf verified >> result.txt"],"environment":{"PATH":"/usr/bin:/bin"}},"publish":{"program":"/bin/sh","args":["-c","set -eu; grep -q '^artifactverified$' result.txt; printf 'shared artifact\n'"],"environment":{"PATH":"/usr/bin:/bin"}}},"agent_endpoint":null})).unwrap()).unwrap();
         configs.push(path);
     }
     // Establish each observer's initial source cursor, then publish a new revision.
@@ -233,7 +233,30 @@ async fn two_hosts_execute_one_pinned_run_and_preserve_history_after_restart() {
         .iter()
         .filter_map(|e| e["data"]["text"].as_str())
         .collect::<String>();
-    assert_eq!(logs, "next pinned source\n");
+    assert_eq!(logs, "next pinned source\nshared artifact\n");
+    let steps: Vec<_> = detail["evidence"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|e| e["data"]["type"] == "step")
+        .map(|e| {
+            (
+                e["data"]["step"].as_str().unwrap(),
+                e["data"]["status"].as_str().unwrap(),
+            )
+        })
+        .collect();
+    assert_eq!(
+        steps,
+        vec![
+            ("build", "running"),
+            ("build", "completed"),
+            ("verify", "running"),
+            ("verify", "completed"),
+            ("publish", "running"),
+            ("publish", "completed")
+        ]
+    );
     let http = protected_http_client().no_proxy().build().unwrap();
     let response = http
         .get(format!(

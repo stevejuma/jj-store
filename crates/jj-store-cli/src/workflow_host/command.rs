@@ -124,9 +124,9 @@ impl Host {
                     .await?;
                     return Ok(w::RunStatus::Failed);
                 }
+            } else {
+                std::fs::create_dir(&workspace)?;
             }
-        } else {
-            std::fs::create_dir(&workspace)?;
         }
         let operation = run
             .source

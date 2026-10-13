@@ -22,8 +22,12 @@ coordinates all hosts; no failover or exactly-once external-effects claim
 exists.
 
 The execution host is optional and disabled without operator configuration.
-Source-event publication never waits for matching or execution. Initial triggers
-are manual, code publication, bookmark movement, new thread messages and added
+Command actions in one attempt share its private workspace. The host exports the
+pinned source once, or creates one empty workspace for a source without a code
+anchor; later actions reuse it and can consume earlier action outputs. Workspace
+reuse does not permit replay of an interrupted or unknown attempt. Source-event
+publication never waits for matching or execution. Initial triggers are manual,
+code publication, bookmark movement, new thread messages and added
 thread/message reactions; initial actions are admitted agents and named
 commands. Conditions are bounded declarative filters. Cron, webhooks, action
 DAGs and the Forgejo ConnectRPC runner protocol are deferred.
