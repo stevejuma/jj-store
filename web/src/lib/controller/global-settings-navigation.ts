@@ -4,7 +4,14 @@ export const globalSettingsTabs = {
   profile: ["details"],
   "custom-emoji": ["library"],
   appearance: ["theme", "preferences"],
-  service: ["overview", "limits", "launch", "protection", "storage"],
+  service: [
+    "overview",
+    "limits",
+    "launch",
+    "protection",
+    "storage",
+    "workflows",
+  ],
   agents: [
     "runtimes",
     "capture",

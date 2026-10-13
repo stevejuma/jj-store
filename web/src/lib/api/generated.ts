@@ -9213,6 +9213,7 @@ export interface components {
     };
     /** @enum {string} */
     RuntimeReloadDomain:
+      | "workflows"
       | "service"
       | "protection"
       | "sync"
@@ -9245,10 +9246,19 @@ export interface components {
       restart_required: boolean;
       sync_defaults: components["schemas"]["SyncLimits"];
       inventory: components["schemas"]["ConfiguredValue"][];
+      workflow_runtime:
+        components["schemas"]["WorkflowHostRuntimeStatus"] | null;
     };
     ServerConfiguration: {
       service: components["schemas"]["ServiceConfiguration"];
       protection: components["schemas"]["ProtectionConfiguration"];
+      /**
+       * @default {
+       *       "admitted": [],
+       *       "local": null
+       *     }
+       */
+      workflow: components["schemas"]["WorkflowConfiguration"];
       sync: components["schemas"]["SyncConfiguration"][];
     };
     ServiceConfiguration: {
@@ -9264,6 +9274,67 @@ export interface components {
     ProtectionConfiguration: {
       bookmarks: string[];
       commits: components["schemas"]["CommitId"][];
+    };
+    WorkflowConfiguration: {
+      admitted: components["schemas"]["PrincipalId"][];
+      local: components["schemas"]["ManagedWorkflowHost"] | null;
+    };
+    ManagedWorkflowHost: {
+      enabled: boolean;
+      configuration: components["schemas"]["WorkflowHostConfiguration"];
+    };
+    WorkflowHostConfiguration: {
+      /** Format: uint32 */
+      version: number;
+      host: string;
+      principal: components["schemas"]["PrincipalId"];
+      home: string;
+      state_dir: string;
+      jj_executable: string;
+      allowed_owners: components["schemas"]["PrincipalId"][];
+      /** @default [] */
+      labels: string[];
+      sources: components["schemas"]["WorkflowHostSource"][];
+      /** @default {} */
+      commands: {
+        [key: string]: components["schemas"]["WorkflowHostCommand"];
+      };
+      /** @default [] */
+      agents: string[];
+      agent_endpoint: components["schemas"]["WorkflowHostAgentEndpoint"] | null;
+      /**
+       * Format: uint64
+       * @default 1000
+       */
+      poll_millis: number;
+    };
+    WorkflowHostSource: {
+      repository: components["schemas"]["RepositoryId"];
+      workspace: string;
+      target_id: string | null;
+    };
+    WorkflowHostCommand: {
+      program: string;
+      /** @default [] */
+      args: string[];
+      /** @default {} */
+      environment: {
+        [key: string]: string;
+      };
+      /**
+       * @description Destination variable to operator environment reference; values are never persisted.
+       * @default {}
+       */
+      secrets: {
+        [key: string]: string;
+      };
+      /** @default [] */
+      artifacts: string[];
+    };
+    WorkflowHostAgentEndpoint: {
+      url: string;
+      local: boolean;
+      token_environment: string | null;
     };
     SyncConfiguration: {
       repository: components["schemas"]["RepositoryId"];
@@ -9303,6 +9374,12 @@ export interface components {
       saved: string;
       effective: string;
       reason: string;
+    };
+    WorkflowHostRuntimeStatus: {
+      available: boolean;
+      running: boolean;
+      busy: boolean;
+      message: string | null;
     };
     DirectoryReceipt: {
       request_id: components["schemas"]["RequestId"];
@@ -63750,6 +63827,7 @@ export interface operations {
           request_id: string;
           expected_revision: string;
           domains: (
+            | "workflows"
             | "service"
             | "protection"
             | "sync"
@@ -63999,6 +64077,7 @@ export interface operations {
           request_id: string;
           expected_revision: string;
           domains: (
+            | "workflows"
             | "service"
             | "protection"
             | "sync"
@@ -64329,6 +64408,66 @@ export interface operations {
                     timeout_seconds: number;
                   };
                 }[];
+              }
+            | {
+                /** @constant */
+                section: "workflow";
+                configuration: {
+                  admitted: string[];
+                  local?: {
+                    enabled: boolean;
+                    configuration: {
+                      /** Format: uint32 */
+                      version: number;
+                      host: string;
+                      principal: string;
+                      home: string;
+                      state_dir: string;
+                      jj_executable: string;
+                      allowed_owners: string[];
+                      /** @default [] */
+                      labels?: string[];
+                      sources: {
+                        repository: string;
+                        workspace: string;
+                        target_id?: string | null;
+                      }[];
+                      /** @default {} */
+                      commands?: {
+                        [key: string]: {
+                          program: string;
+                          /** @default [] */
+                          args?: string[];
+                          /** @default {} */
+                          environment?: {
+                            [key: string]: string;
+                          };
+                          /**
+                           * @description Destination variable to operator environment reference; values are never persisted.
+                           * @default {}
+                           */
+                          secrets?: {
+                            [key: string]: string;
+                          };
+                          /** @default [] */
+                          artifacts?: string[];
+                        };
+                      };
+                      /** @default [] */
+                      agents?: string[];
+                      agent_endpoint?: {
+                        url: string;
+                        local: boolean;
+                        token_environment?: string | null;
+                      } | null;
+                      /**
+                       * Format: uint64
+                       * @default 1000
+                       */
+                      poll_millis?: number;
+                    };
+                  } | null;
+                };
               };
         };
       };

@@ -31,12 +31,23 @@ while unsettled, and pauses hidden reads. See
 
 Open **Settings** from the profile menu for Profile, Custom emoji, Appearance,
 Local service, Agents and Compute. Local service includes installation-wide
-Protection and Storage configuration, folder registration and Add folder.
-Appearance separates Theme and Preferences into subtabs; changes still save
-immediately on this device. Link previews and Thread layout have their own cards
-under Preferences. Launch and Storage group their read-only inventory by
-purpose. Use Copy beside a configured path or endpoint to copy the complete
-value.
+Protection and Storage configuration, workflow hosts, folder registration and
+Add folder. **Local service → Workflows** configures execution-principal
+admission and an optional local event/action host. Save retains an inactive
+draft; Reload saved settings activates it without replacing listeners. Busy or
+uncertain work defers replacement and preserves its journal. Labels, owners and
+polling have form controls. Principals, native repository attachments and
+admitted agent setups use searchable Command View pickers; principals show
+server profile avatars. Use the Form/JSON toggle at the right of the local-host
+header to switch editors. Both edit one draft; JSON has syntax highlighting,
+includes named commands and environment references, and is validated by Save or
+when returning to Form. Invalid JSON stays editable and reports a toast. Secret
+mappings contain variable names. Runtime status uses bounded checks while this
+tab is visible. Appearance separates Theme and Preferences into subtabs; changes
+still save immediately on this device. Link previews and Thread layout have
+their own cards under Preferences. Launch and Storage group their read-only
+inventory by purpose. Use Copy beside a configured path or endpoint to copy the
+complete value.
 
 Global Settings links record the section and tab, for example
 `#/settings?section=agents&tab=runtimes`. Reload restores that page, and a root

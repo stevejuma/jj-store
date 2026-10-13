@@ -17,6 +17,7 @@ pub(super) async fn prepare(
     registry: Arc<Registry>,
     search_access: crate::search::SearchAccess,
     state_lock: &mut Option<File>,
+    workflow_admission: jj_store_service::workflow::HostAdmission,
 ) -> Result<Authority> {
     let authority = if matches!(config.storage, crate::config::Storage::Filesystem) {
         (
@@ -62,7 +63,7 @@ pub(super) async fn prepare(
             Access::Authenticated { .. } => PreparedRpc::Shared(
                 NativeRpc::hosted(host.clone(), rpc_limits)
                     .map_err(|_| Error::Config("RPC limits"))?
-                    .with_workflow_hosts(config.workflow_hosts.clone())
+                    .with_workflow_admission(workflow_admission.clone())
                     .with_runtime_policy(host.runtime_policy().clone())
                     .with_registry(registry.clone())
                     .with_replication_controls(replication.controls()),
@@ -98,7 +99,7 @@ pub(super) async fn prepare(
                             owner_uid,
                         )
                         .map_err(|_| Error::Config("local RPC access"))?
-                        .with_workflow_hosts(config.workflow_hosts.clone())
+                        .with_workflow_admission(workflow_admission.clone())
                         .with_runtime_policy(host.runtime_policy().clone())
                         .with_registry(registry.clone())
                         .with_replication_controls(replication.controls()),

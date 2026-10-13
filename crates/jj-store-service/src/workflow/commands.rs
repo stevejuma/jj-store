@@ -113,7 +113,7 @@ async fn reauthorize(
 
 #[derive(Clone, Debug, Default)]
 pub struct WorkflowService {
-    pub hosts: std::collections::BTreeSet<m::PrincipalId>,
+    pub hosts: super::HostAdmission,
 }
 
 impl WorkflowService {
@@ -125,9 +125,11 @@ impl WorkflowService {
         if session.snapshot().await?.manifest().work_root.is_none() {
             return Err(Error::Invalid);
         }
-        if request.command.execution_only() && !self.hosts.contains(&principal) {
-            return Err(Error::Denied);
-        }
+        let _admission = if request.command.execution_only() {
+            Some(self.hosts.authorize(principal).await?)
+        } else {
+            None
+        };
         let publication_id = publication_id(session.repository, principal, request.request_id);
         let command = WalRequest::new(
             principal,

@@ -15,6 +15,7 @@ export class RuntimeReload {
   busy = $state(false);
   error = $state("");
   open = $state(false);
+  returnFocus?: () => void;
   private epoch = 0;
   private disposed = false;
   private views = 0;

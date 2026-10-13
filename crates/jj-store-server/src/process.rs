@@ -30,6 +30,7 @@ mod reload_capture;
 mod running;
 
 pub struct PreparedServer {
+    workflow_runtime: jj_store_service::workflow_host::RuntimeSlot,
     reload: Option<Arc<reload::Owners>>,
     rpc: PreparedRpc,
     http: HttpApi,
@@ -116,6 +117,16 @@ impl PreparedServer {
             folders,
         )
         .await
+    }
+    pub fn with_workflow_runtime(
+        self,
+        runtime: Arc<dyn jj_store_service::workflow_host::Runtime>,
+    ) -> Self {
+        *self
+            .workflow_runtime
+            .write()
+            .expect("workflow runtime slot") = Some(runtime);
+        self
     }
     pub fn address(&self) -> Result<SocketAddr> {
         Ok(self.listener.local_addr()?)

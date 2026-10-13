@@ -4,7 +4,11 @@ use axum::{Extension, Json, extract::rejection::JsonRejection};
 use jj_store_service::workflow as w;
 fn service(state: &State) -> w::WorkflowService {
     w::WorkflowService {
-        hosts: state.config.workflow_hosts.clone(),
+        hosts: state
+            .config
+            .workflow_admission
+            .clone()
+            .unwrap_or_else(|| state.config.workflow_hosts.clone().into()),
     }
 }
 fn error(error: w::Error) -> Error {

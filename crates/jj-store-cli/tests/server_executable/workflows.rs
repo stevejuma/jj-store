@@ -211,7 +211,7 @@ async fn two_hosts_execute_one_pinned_run_and_preserve_history_after_restart() {
     );
     assert_eq!(runs["runs"].as_array().unwrap().len(), 1, "{runs}");
     let run = runs["runs"][0]["id"].as_str().unwrap();
-    let detail = jj(
+    let mut detail = jj(
         root.path(),
         Some(&home),
         &["workflow", "--format=json", "runs", "--run", run],
@@ -278,6 +278,220 @@ async fn two_hosts_execute_one_pinned_run_and_preserve_history_after_restart() {
     assert_eq!(
         before["upper"], after["upper"],
         "source export must not publish source operations"
+    );
+    // Save/reload the managed adapter through the same endpoints as Settings.
+    // Neither listener nor native socket is replaced. An explicit retry below
+    // also exercises busy-host deferral through a live three-action attempt.
+    let pid = running.child.id();
+    let inode = fs::metadata(&socket).unwrap().ino();
+    let mut cfg: Value = serde_json::from_slice(&fs::read(&configs[0]).unwrap()).unwrap();
+    let script = cfg["commands"]["build"]["args"][1]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    cfg["commands"]["build"]["args"][1] = json!(format!("sleep 2; {script}"));
+    let settings_url = format!("http://{address}/v1/local/settings");
+    let reload_url = format!("http://{address}/v1/configuration/reload");
+    for (index, enabled) in [false, true, false].into_iter().enumerate() {
+        if index == 2 {
+            let retry = root.path().join("retry.json");
+            fs::write(&retry, serde_json::to_vec(&json!({"type":"retry","run":run,"expected":detail["runs"][0]["attempts"][0]["id"]})).unwrap()).unwrap();
+            jj(
+                root.path(),
+                Some(&home),
+                &[
+                    "workflow",
+                    "--format=json",
+                    "command",
+                    "--request-id",
+                    &"95".repeat(16),
+                    retry.to_str().unwrap(),
+                ],
+            );
+            let mut busy = false;
+            for _ in 0..500 {
+                let current = http
+                    .get(&settings_url)
+                    .send()
+                    .await
+                    .unwrap()
+                    .json::<Value>()
+                    .await
+                    .unwrap();
+                busy = current["workflow_runtime"]["busy"] == true;
+                if busy {
+                    break;
+                }
+                tokio::time::sleep(Duration::from_millis(20)).await;
+            }
+            assert!(busy, "managed host did not claim explicit retry");
+        }
+        let first = http
+            .get(&settings_url)
+            .send()
+            .await
+            .unwrap()
+            .json::<Value>()
+            .await
+            .unwrap();
+        assert_eq!(first["workflow_runtime"]["available"], true);
+        let admitted = if index == 2 {
+            json!([])
+        } else {
+            json!([actor])
+        };
+        let desired = json!({"admitted":admitted, "local":{"enabled":enabled,"configuration":cfg}});
+        let response = http.post(&settings_url).json(&json!({"version":1,"expected_revision":first["revision"],"update":{"section":"workflow","configuration":desired}})).send().await.unwrap();
+        assert_eq!(response.status(), reqwest::StatusCode::OK);
+        let saved = response.json::<Value>().await.unwrap();
+        assert_eq!(
+            saved["effective"]["workflow"],
+            first["effective"]["workflow"]
+        );
+        let status = http
+            .get(&reload_url)
+            .send()
+            .await
+            .unwrap()
+            .json::<Value>()
+            .await
+            .unwrap();
+        let command = json!({"version":1,"request_id":format!("{:032x}",500+index),"expected_revision":status["saved_revision"],"domains":["workflows"]});
+        let response = http.post(&reload_url).json(&command).send().await.unwrap();
+        assert_eq!(response.status(), reqwest::StatusCode::OK);
+        let mut outcome = response.json::<Value>().await.unwrap();
+        for _ in 0..200 {
+            if outcome["state"] != "running" {
+                break;
+            }
+            tokio::time::sleep(Duration::from_millis(20)).await;
+            outcome = http
+                .post(format!("{reload_url}/outcome"))
+                .json(&command)
+                .send()
+                .await
+                .unwrap()
+                .json::<Value>()
+                .await
+                .unwrap();
+        }
+        if index == 2 {
+            assert_eq!(outcome["state"], "deferred", "{outcome}");
+            let retained = http
+                .get(&settings_url)
+                .send()
+                .await
+                .unwrap()
+                .json::<Value>()
+                .await
+                .unwrap();
+            assert_eq!(retained["effective"]["workflow"]["local"]["enabled"], true);
+            for _ in 0..500 {
+                let current = http
+                    .get(&settings_url)
+                    .send()
+                    .await
+                    .unwrap()
+                    .json::<Value>()
+                    .await
+                    .unwrap();
+                if current["workflow_runtime"]["busy"] == false {
+                    break;
+                }
+                tokio::time::sleep(Duration::from_millis(20)).await;
+            }
+            let mut next = command.clone();
+            next["request_id"] = json!("94".repeat(16));
+            outcome = http
+                .post(&reload_url)
+                .json(&next)
+                .send()
+                .await
+                .unwrap()
+                .json::<Value>()
+                .await
+                .unwrap();
+            for _ in 0..200 {
+                if outcome["state"] != "running" {
+                    break;
+                }
+                tokio::time::sleep(Duration::from_millis(20)).await;
+                outcome = http
+                    .post(format!("{reload_url}/outcome"))
+                    .json(&next)
+                    .send()
+                    .await
+                    .unwrap()
+                    .json::<Value>()
+                    .await
+                    .unwrap();
+            }
+        }
+        assert_eq!(outcome["state"], "applied", "{outcome}");
+        let effective = http
+            .get(&settings_url)
+            .send()
+            .await
+            .unwrap()
+            .json::<Value>()
+            .await
+            .unwrap();
+        assert_eq!(
+            effective["effective"]["workflow"],
+            saved["desired"]["workflow"]
+        );
+        assert_eq!(effective["workflow_runtime"]["running"], enabled);
+        assert_eq!(running.child.id(), pid);
+        assert_eq!(fs::metadata(&socket).unwrap().ino(), inode);
+    }
+    detail = jj(
+        root.path(),
+        Some(&home),
+        &["workflow", "--format=json", "runs", "--run", run],
+    );
+    assert_eq!(detail["runs"][0]["attempts"].as_array().unwrap().len(), 2);
+    assert_eq!(
+        detail["runs"][0]["attempts"][1]["status"], "completed",
+        "{detail}"
+    );
+    let denied = json!({"version":1,"request_id":"98".repeat(16),"command":{"type":"claim","run":run,"attempt":"97".repeat(16),"host":"host-a"}});
+    let response = http
+        .post(format!(
+            "http://{address}/v1/repos/{}/workflows/commands",
+            repos[1]
+        ))
+        .json(&denied)
+        .send()
+        .await
+        .unwrap();
+    assert_eq!(response.status(), reqwest::StatusCode::FORBIDDEN);
+    let native_body = root.path().join("denied.json");
+    fs::write(
+        &native_body,
+        serde_json::to_vec(&denied["command"]).unwrap(),
+    )
+    .unwrap();
+    let response = Command::new(env!("CARGO_BIN_EXE_jj"))
+        .current_dir(root.path())
+        .env("JJ_CONFIG", root.path().join("jj.toml"))
+        .args([
+            "--no-pager",
+            "--ignore-working-copy",
+            "-R",
+            home.to_str().unwrap(),
+            "workflow",
+            "command",
+            "--request-id",
+            &"96".repeat(16),
+            native_body.to_str().unwrap(),
+        ])
+        .output()
+        .unwrap();
+    assert!(!response.status.success());
+    assert!(
+        String::from_utf8_lossy(&response.stderr).contains("denied"),
+        "{}",
+        String::from_utf8_lossy(&response.stderr)
     );
     running.terminate();
     let mut restarted = start_local_trusted_server(root.path(), &config);

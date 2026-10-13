@@ -24,7 +24,7 @@
     repositoryName = "",
   }: {
     management?: ServerSettingsManagement;
-    section: Section;
+    section: Exclude<Section, "workflow">;
     repository?: string;
     repositoryName?: string;
   } = $props();

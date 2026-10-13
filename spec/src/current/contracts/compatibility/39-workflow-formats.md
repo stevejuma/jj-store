@@ -8,11 +8,14 @@ cannot serve a format-6 home; upgrade the paired server and custom CLI together.
 There is no automatic format downgrade or WorkflowStore origin reducer.
 
 Workflow HTTP/native RPC documents and the operator journal use version 1.
-Execution-host principal admission defaults empty and requires a server restart.
-Host journal generation participates in stable request identity. Unknown
-attempts retain their source, owner and report identity and cannot be replayed
-or taken over automatically. This does not guarantee exactly-once external
-effects.
+Execution-host principal admission defaults empty and is activated by explicit
+workflows configuration reload without restarting the server. Optional managed
+host configuration adds fields to the existing version-1 settings API; the
+standalone operator JSON remains byte-shape compatible. Upgrade paired binaries
+once to expose this capability. Busy or uncertain work defers replacement. Host
+journal generation participates in stable request identity. Unknown attempts
+retain their source, owner and report identity and cannot be replayed or taken
+over automatically. This does not guarantee exactly-once external effects.
 
 The initial executor profile is named Unix commands plus existing admitted
 AgentManager APIs. Current execution qualification is macOS ARM64 and the pinned

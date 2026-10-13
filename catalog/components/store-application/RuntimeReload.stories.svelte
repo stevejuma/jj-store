@@ -33,7 +33,7 @@
     await userEvent.click(
       dialog.getByRole("button", { name: "Reload saved settings" }),
     );
-    await waitFor(() => expect(dialog.getAllByText("Applied")).toHaveLength(5));
+    await waitFor(() => expect(dialog.getAllByText("Applied")).toHaveLength(6));
     expect(
       within(canvasElement).getByText("Submitted 1 · Checked 0"),
     ).toBeInTheDocument();

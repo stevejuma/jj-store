@@ -93,6 +93,10 @@ impl Config {
     }
 
     pub fn validate(&self) -> Result<()> {
+        if let Some(host) = &self.workflow_host {
+            host.configuration.validate().map_err(Error::Config)?;
+            policy::outside_checkout(&host.configuration.state_dir)?;
+        }
         if self.workflow_hosts.len() > 64 {
             return Err(Error::Config("workflow host admission limit"));
         }

@@ -1,3 +1,4 @@
+import { validateWorkflowConfiguration } from "./workflow-host-configuration.js";
 import { decode, pretty, type Model, type Exact } from "../api/client.js";
 import type { operations } from "../api/generated.js";
 export type ServerSettings = Model<"LocalServerSettings">;
@@ -98,6 +99,7 @@ export const syncFields = [
   { key: "timeout_seconds", label: "Sync timeout (seconds)", min: 1, max: 300 },
 ] as const;
 export function validateConfiguration(value: Configuration) {
+  if (value.workflow) validateWorkflowConfiguration(value.workflow);
   for (const field of serviceFields) number(value.service[field.key], field);
   for (const names of [value.protection.bookmarks, value.protection.commits]) {
     if (!Array.isArray(names)) throw new Error("Check the protection rules.");

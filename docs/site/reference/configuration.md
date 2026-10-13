@@ -265,7 +265,17 @@ paths remain startup-managed. Backup execution and storage migration are
 separate workflows. The existing `restart_required` API field remains compatible
 and indicates a saved/loaded mismatch for reloadable domains.
 
-The top-level `workflow_hosts` principal list defaults empty and requires
-restart. Optional `jj-store workflow-host` uses private operator JSON outside
-checkouts; executor programs and secret references are not repository
-configuration. See the [workflow guide](../cli/jj-workflow.md).
+The top-level `workflow_hosts` principal list defaults empty and activates
+through explicit workflows reload. Optional `jj-store workflow-host` uses
+private operator JSON outside checkouts; executor programs and secret references
+are not repository configuration. See the
+[workflow guide](../cli/jj-workflow.md).
+
+Workflow admission defaults empty. Settings → Local service → Workflows writes
+`workflow_hosts` and optional `workflow_host` as one conditional section.
+`workflow_host` contains `enabled` and the flat version-1 `configuration` used
+by the standalone host. Reload domain `workflows` activates saved admission and
+idle local execution settings without changing listeners or storage. An active
+poll/job or uncertain journal defers replacement; reload again after settlement.
+Only the CLI composition provides managed local execution. Secret mappings
+contain environment references; deployment credential values remain private.

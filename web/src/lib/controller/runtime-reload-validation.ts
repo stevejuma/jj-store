@@ -4,6 +4,7 @@ import type {
   ReloadStatus,
 } from "./runtime-reload.svelte.js";
 const domains = new Set([
+  "workflows",
   "service",
   "protection",
   "sync",

@@ -66,8 +66,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed common authenticated workflow service, bounded native revset matching, source-event filters and trusted admitted-host evaluation snapshots; HTTP/RPC/CLI share the typed contracts.",
-      "fingerprint": "308bec73a78c46de251ebbeb65a4c703de6c96ef535c830a4b656c8abe30557e"
+      "reason": "Reviewed optional CLI-owned workflow hosting and shared admission reload without replacing listeners, immutable storage or active jobs.",
+      "fingerprint": "4f1d046071ba51157ea9bbb91f481ca57adda25be2b55eea559bbe4e331eac02"
     }
   },
   {
@@ -97,8 +97,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed optional host configuration, empty default execution admission, private executor secrets and data-preserving backend activation; workflow operator guide records platform and live-runner gaps.",
-      "fingerprint": "366ad198b520572dcf5793ec4702661492a06a08d7dc62d81f4cd874c2892ca6"
+      "reason": "Documented conditional inactive workflow configuration saves and workflows reload at idle boundaries with separate desired and effective state.",
+      "fingerprint": "9e37cff5ce45740ce6b7530e6417b9f0d8b47917d95070a07b32859c8770c89e"
     }
   },
   {
@@ -110,8 +110,8 @@
       "docs/site/getting-started/work.md"
     ],
     "review": {
-      "reason": "Workflow help now specifies one shared private workspace per attempt, reused by ordered actions; exact CLI identities, reporting, host admission and Forgejo protocol deferrals remain unchanged.",
-      "fingerprint": "24711a20fc01ce0bb538db2008125b3f86eead207611512131ff2f222933afb7"
+      "reason": "Reviewed preserved standalone host JSON and journal with optional managed hosting, continuous polling and deferred busy reload.",
+      "fingerprint": "56ee4730431c09e9cd53f199b37291b88e0bc9e2cc8da4f7184dda47e8915f40"
     }
   },
   {
@@ -123,8 +123,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed generated workflow conditions, optional code anchors, conversation references and source query filter batches with unchanged origin/admission policy; workflows use existing authorised service.",
-      "fingerprint": "cff7562669f9b51fefb2b73e7ccb2dbc1c1b18495ebc5eaa86aa97dd8c53382b"
+      "reason": "Reviewed generated owned workflow settings and runtime status types, reload domain and LocalTrusted administrator enforcement.",
+      "fingerprint": "96a988862230df037851e7377c62a496f90c2aecc161f821d8944fc2c6de265e"
     }
   },
   {
@@ -137,8 +137,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Documented the owned Forgejo console, pinned lazy/grouped ANSI logs, settings/full screen/downloads and latest-attempt guarded Re-run all jobs; older/unknown attempts and immutable authority retain restrictions.",
-      "fingerprint": "065370cefab447592cbae77d80b567591d39cda44002e9a0bb59e530fef1b164"
+      "reason": "Documented inactive workflow Settings, retained Form/JSON drafts in header modes, principal/avatar and native attachment selectors; verified canonical set ordering prevents false unknown save outcomes.",
+      "fingerprint": "7acbaa559872eecdc8f6a44e8dc39b0a5db79ff0462951b5f8d4459837e66bb8"
     }
   },
   {
@@ -155,8 +155,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "JST-WF-005/007 now state shared attempt workspaces with pinned export once and no unknown-attempt replay; CLI syntax, native formats, report receipts, authorization and M28 Forgejo/provider/visual gaps are unchanged.",
-      "fingerprint": "975e5ca5561ba4a7c84d94ec0a03cdbc561d057e4070ca1edc8bcb983da19a1d"
+      "reason": "Reviewed workflow settings API, optional CLI adapter, admission leases and unchanged native workflow identities, receipts and manifest authority.",
+      "fingerprint": "12307bd2b23d121f6c9d617cd8e8566f23662a4df879fe18509731d5d66c2960"
     }
   },
   {

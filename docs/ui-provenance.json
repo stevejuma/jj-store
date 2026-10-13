@@ -3828,5 +3828,18 @@
       "web/src/lib/ui/store-workflows/workflow-console.css"
     ],
     "adaptations": "Recorded native actions/evidence, pinned on-demand reads, separate stdout/stderr assembly, nested group markers, current/historical attempts, public Design Core controls and contrast-compliant seconds/timestamps. ANSI conversion uses the MIT-licensed ansi_up 6.0.6 direct dependency."
+  },
+  "workflowHostSettings": {
+    "reference": "Application-owned Settings conventions",
+    "local": [
+      "web/src/lib/ui/store-settings/StoreWorkflowHostSettings.svelte",
+      "web/src/lib/ui/store-settings/StoreWorkflowHostFields.svelte",
+      "web/src/lib/ui/store-settings/WorkflowHostPrincipalPicker.svelte",
+      "web/src/lib/ui/store-settings/WorkflowHostIdentityFields.svelte",
+      "web/src/lib/ui/store-settings/WorkflowHostSources.svelte",
+      "web/src/lib/ui/store-settings/WorkflowHostConfigEditor.svelte",
+      "web/src/lib/controller/workflow-host-choices.svelte.ts"
+    ],
+    "usage": "Owned Settings rows, Command View principal/avatar and native attachment selectors, released Design Core CodeEditor and header Form/JSON tabs sharing one retained draft. No Community or Buzz code copied. Local operational configuration remains distinct from Forgejo protocol compatibility."
   }
 }

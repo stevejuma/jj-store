@@ -16,6 +16,7 @@ struct Inner {
     changes: jj_store_service::freshness::Signals,
     path: PathBuf,
     effective: Arc<std::sync::RwLock<Config>>,
+    workflow_runtime: jj_store_service::workflow_host::RuntimeSlot,
     authority: Authority,
 }
 #[derive(Clone)]
@@ -29,6 +30,10 @@ fn wire(config: &Config) -> Result<ServerConfiguration, Error> {
         service: convert(&config.limits)?,
         protection: convert(&config.protection)?,
         sync: convert(&config.replication)?,
+        workflow: jj_store_service::workflow_host::WorkflowConfiguration {
+            admitted: config.workflow_hosts.clone(),
+            local: config.workflow_host.clone(),
+        },
     })
 }
 impl Manager {
@@ -37,6 +42,7 @@ impl Manager {
             changes: Default::default(),
             path: policy::outside_checkout(path)?,
             effective: Arc::new(std::sync::RwLock::new(config.clone())),
+            workflow_runtime: Default::default(),
             authority: Authority::new(path, config, identity)
                 .map_err(|_| crate::Error::Config("local settings authority"))?,
         })))
@@ -45,6 +51,15 @@ impl Manager {
         Arc::get_mut(&mut self.0)
             .expect("unshared settings")
             .effective = effective;
+        self
+    }
+    pub(crate) fn with_workflow_runtime(
+        mut self,
+        runtime: jj_store_service::workflow_host::RuntimeSlot,
+    ) -> Self {
+        Arc::get_mut(&mut self.0)
+            .expect("unshared settings")
+            .workflow_runtime = runtime;
         self
     }
     fn admit(&self, actor: PrincipalId) -> Result<(), Error> {
@@ -79,6 +94,13 @@ impl Manager {
             desired,
             effective,
             sync_defaults: convert(&crate::config::ReplicationLimits::default())?,
+            workflow_runtime: self
+                .0
+                .workflow_runtime
+                .read()
+                .map_err(|_| Error::Unavailable)?
+                .as_ref()
+                .map(|r| r.status()),
             inventory: inventory::values(
                 &config,
                 &*self.0.effective.read().map_err(|_| Error::Unavailable)?,
@@ -107,7 +129,17 @@ impl Manager {
         if revision != command.expected_revision {
             return Err(Error::Stale);
         }
+        let mut workflow = None;
         let (key, value) = match command.update {
+            ServerSettingsUpdate::Workflow(value) => {
+                config.workflow_hosts = value.admitted;
+                config.workflow_host = value.local;
+                workflow = Some(config.workflow_host.clone());
+                (
+                    "workflow_hosts",
+                    toml::Value::try_from(&config.workflow_hosts),
+                )
+            }
             ServerSettingsUpdate::Service(value) => {
                 config.limits = convert(&value)?;
                 ("limits", toml::Value::try_from(value))
@@ -139,6 +171,17 @@ impl Manager {
         doc.as_table_mut()
             .ok_or(Error::Invalid)?
             .insert(key.into(), value.map_err(|_| Error::Invalid)?);
+        if let Some(local) = workflow {
+            let table = doc.as_table_mut().ok_or(Error::Invalid)?;
+            if let Some(local) = local {
+                table.insert(
+                    "workflow_host".into(),
+                    toml::Value::try_from(local).map_err(|_| Error::Invalid)?,
+                );
+            } else {
+                table.remove("workflow_host");
+            }
+        }
         let output = toml::to_string(&doc).map_err(|_| Error::Invalid)?;
         if output.len() > 64 * 1024 {
             return Err(Error::Invalid);

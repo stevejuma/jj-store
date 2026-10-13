@@ -80,6 +80,7 @@ impl Coordinator {
                 .collect::<Vec<_>>()
         };
         let all = available(vec![
+            Domain::Workflows,
             Domain::Service,
             Domain::Protection,
             Domain::Sync,
@@ -152,6 +153,8 @@ impl Coordinator {
         fn infrastructure(config: &Config) -> Result<serde_json::Value, Error> {
             let mut v = serde_json::to_value(config).map_err(|_| Error::Invalid)?;
             for key in [
+                "workflow_hosts",
+                "workflow_host",
                 "limits",
                 "protection",
                 "replication",
@@ -176,6 +179,10 @@ impl Coordinator {
             .iter()
             .filter(|d| match d {
                 Domain::Agents | Domain::Compute => false,
+                Domain::Workflows => {
+                    saved["workflow_hosts"] != running["workflow_hosts"]
+                        || saved["workflow_host"] != running["workflow_host"]
+                }
                 _ => saved[field(**d)] != running[field(**d)],
             })
             .copied()
@@ -262,6 +269,7 @@ impl Coordinator {
 }
 fn field(domain: Domain) -> &'static str {
     match domain {
+        Domain::Workflows => "workflow_host",
         Domain::Service => "limits",
         Domain::Protection => "protection",
         Domain::Sync => "replication",

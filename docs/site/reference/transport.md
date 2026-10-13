@@ -335,3 +335,9 @@ Native WorkflowService owns definition/run reads, source-event polling and
 receipt-backed commands shared by HTTP, native RPC and CLI. Execution
 transitions require separate configured host admission. See the
 [workflow guide](../cli/jj-workflow.md).
+
+The version-1 local settings response includes workflow admission, optional
+managed-host configuration and runtime status. Conditional section writes use
+`workflow`; explicit activation uses reload domain `workflows`. These controls
+require LocalTrusted Admin. Existing workflow commands and native RPC retain
+their formats and source authorization.

@@ -59,6 +59,8 @@ pub async fn serve_with_workflows(
         Some(std::sync::Arc::new(crate::local_browser::LocalFolders)),
     )
     .await?;
+    let workflow_runtime = crate::workflow_host::ManagedRuntime::new(config.workflow_host.clone());
+    let server = server.with_workflow_runtime(workflow_runtime.clone());
     let address = server.address()?;
     let signal = process::shutdown_signal()?;
     if format == Format::Json {
@@ -74,6 +76,7 @@ pub async fn serve_with_workflows(
         )?;
     }
     ui.stdout().flush()?;
+    let managed_task = workflow_runtime.start();
     let host = workflow_host.map(|path| {
         tokio::spawn(async move {
             if crate::workflow_host::run(crate::workflow_host::Args {
@@ -88,14 +91,20 @@ pub async fn serve_with_workflows(
             }
         })
     });
+    let shutdown_workflows = workflow_runtime.clone();
     let result = server.run(async move {
         #[cfg(unix)]
         if let Some(input) = owner {
             tokio::select! { _ = signal => {}, _ = crate::server_desktop::owner_closed(input) => {} }
+            shutdown_workflows.stop().await;
             return;
         }
         signal.await;
+        shutdown_workflows.stop().await;
     }).await;
+    workflow_runtime.stop().await;
+    managed_task.abort();
+    let _ = managed_task.await;
     if let Some(host) = host {
         host.abort();
         let _ = host.await;

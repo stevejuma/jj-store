@@ -25529,6 +25529,7 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 {
   "type": "string",
   "enum": [
+    "workflows",
     "service",
     "protection",
     "sync",
@@ -25651,6 +25652,16 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "items": {
         "$ref": "#/components/schemas/ConfiguredValue"
       }
+    },
+    "workflow_runtime": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/WorkflowHostRuntimeStatus"
+        },
+        {
+          "type": "null"
+        }
+      ]
     }
   },
   "required": [
@@ -25660,7 +25671,8 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "effective",
     "restart_required",
     "sync_defaults",
-    "inventory"
+    "inventory",
+    "workflow_runtime"
   ]
 }
 ```
@@ -25678,6 +25690,17 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "protection": {
       "$ref": "#/components/schemas/ProtectionConfiguration"
     },
+    "workflow": {
+      "default": {
+        "admitted": [],
+        "local": null
+      },
+      "allOf": [
+        {
+          "$ref": "#/components/schemas/WorkflowConfiguration"
+        }
+      ]
+    },
     "sync": {
       "type": "array",
       "items": {
@@ -25688,6 +25711,7 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
   "required": [
     "service",
     "protection",
+    "workflow",
     "sync"
   ]
 }
@@ -25755,6 +25779,263 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
   "required": [
     "bookmarks",
     "commits"
+  ]
+}
+```
+
+## WorkflowConfiguration
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "admitted": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/components/schemas/PrincipalId"
+      }
+    },
+    "local": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/ManagedWorkflowHost"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "admitted",
+    "local"
+  ]
+}
+```
+
+## ManagedWorkflowHost
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "enabled": {
+      "type": "boolean"
+    },
+    "configuration": {
+      "$ref": "#/components/schemas/WorkflowHostConfiguration"
+    }
+  },
+  "required": [
+    "enabled",
+    "configuration"
+  ]
+}
+```
+
+## WorkflowHostConfiguration
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "host": {
+      "type": "string"
+    },
+    "principal": {
+      "$ref": "#/components/schemas/PrincipalId"
+    },
+    "home": {
+      "type": "string"
+    },
+    "state_dir": {
+      "type": "string"
+    },
+    "jj_executable": {
+      "type": "string"
+    },
+    "allowed_owners": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/components/schemas/PrincipalId"
+      }
+    },
+    "labels": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/WorkflowHostSource"
+      }
+    },
+    "commands": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/components/schemas/WorkflowHostCommand"
+      },
+      "default": {}
+    },
+    "agents": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "agent_endpoint": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/WorkflowHostAgentEndpoint"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "poll_millis": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0,
+      "default": 1000
+    }
+  },
+  "required": [
+    "version",
+    "host",
+    "principal",
+    "home",
+    "state_dir",
+    "jj_executable",
+    "allowed_owners",
+    "labels",
+    "sources",
+    "commands",
+    "agents",
+    "agent_endpoint",
+    "poll_millis"
+  ]
+}
+```
+
+## WorkflowHostSource
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "repository": {
+      "$ref": "#/components/schemas/RepositoryId"
+    },
+    "workspace": {
+      "type": "string"
+    },
+    "target_id": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "repository",
+    "workspace",
+    "target_id"
+  ]
+}
+```
+
+## WorkflowHostCommand
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "program": {
+      "type": "string"
+    },
+    "args": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "default": {}
+    },
+    "secrets": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "description": "Destination variable to operator environment reference; values are never persisted.",
+      "default": {}
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    }
+  },
+  "required": [
+    "program",
+    "args",
+    "environment",
+    "secrets",
+    "artifacts"
+  ]
+}
+```
+
+## WorkflowHostAgentEndpoint
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "url": {
+      "type": "string"
+    },
+    "local": {
+      "type": "boolean"
+    },
+    "token_environment": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "url",
+    "local",
+    "token_environment"
   ]
 }
 ```
@@ -25907,6 +26188,38 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "saved",
     "effective",
     "reason"
+  ]
+}
+```
+
+## WorkflowHostRuntimeStatus
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "available": {
+      "type": "boolean"
+    },
+    "running": {
+      "type": "boolean"
+    },
+    "busy": {
+      "type": "boolean"
+    },
+    "message": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "available",
+    "running",
+    "busy",
+    "message"
   ]
 }
 ```

@@ -20,10 +20,12 @@
   }: { manager?: RuntimeReload; menu?: boolean; disabled?: boolean } = $props();
   let trigger = $state<HTMLButtonElement | null>(null);
   function open() {
+    manager!.returnFocus = () => trigger?.focus();
     manager!.open = true;
     void manager!.observe();
   }
   const names: Record<string, string> = {
+    workflows: "Workflow hosts",
     service: "Service limits",
     protection: "Protection rules",
     sync: "Sync configuration",
@@ -105,7 +107,8 @@
       aria-describedby={undefined}
       onCloseAutoFocus={(event) => {
         event.preventDefault();
-        trigger?.focus();
+        (manager.returnFocus ?? (() => trigger?.focus()))();
+        manager.returnFocus = undefined;
       }}
     >
       <div class="store-settings--global">

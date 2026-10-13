@@ -73,10 +73,30 @@ Selecting source values does not publish a revision or execute the workflow.
 
 ### Optional event/action host
 
-Set `workflow_hosts = ["PRINCIPAL_ID"]` in the server's top-level TOML and
-restart the development backend. This list defaults to empty and is not a
-live-reload setting. Ordinary repository Write or agent access does not grant
-host admission.
+Open **Settings → Local service → Workflows** as a local administrator. Save
+execution principal admission and an optional local host, then select **Reload
+saved settings**. Admission defaults empty. Ordinary repository Write or agent
+access does not grant host admission. The same admission is also available as
+`workflow_hosts = ["PRINCIPAL_ID"]` in top-level server TOML.
+
+Save is revision-conditional and does not start work. Reload's `workflows`
+domain activates admission and an optional CLI-owned host without restarting
+listeners, changing storage or resetting history. Enabled hosts poll
+continuously. A poll, active attempt or retained uncertain request defers
+replacement; reconcile the original request and reload again when idle.
+Disabling waits for this boundary. The runtime status distinguishes stopped,
+polling/running and busy state.
+
+Local settings store `workflow_host.enabled` and `workflow_host.configuration`,
+using the flat version-1 JSON fields below. Settings offers a right-aligned
+Form/JSON toggle with one retained draft. Native source and principal choices
+use searchable selectors; executors and environment references use highlighted
+JSON. Save validates the selected editor. Returning to Form validates and
+projects JSON edits; invalid text remains in JSON with a toast. Paths and
+environment references describe this host machine, not an arbitrary remote
+runner. A server without the CLI adapter can reload external-host admission but
+cannot enable local execution. Loading this new binary once requires a
+development backend restart; subsequent host setting changes use reload.
 
 Run `jj-store workflow-host --config /ABSOLUTE/host.json`; `--check` validates
 without starting and `--once` observes one poll and completes selected work.

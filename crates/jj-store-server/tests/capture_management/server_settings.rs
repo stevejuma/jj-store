@@ -257,3 +257,75 @@ async fn http_settings_contracts_are_actor_free_conditional_and_local_admin_only
     task.abort();
     let _ = task.await;
 }
+
+#[tokio::test]
+async fn workflow_settings_save_admission_and_local_config_atomically_without_execution() {
+    let f = Fixture::new(false).await;
+    let manager = manager(&f);
+    let first = manager.status(f.actor).await.unwrap();
+    let host: jj_store_service::workflow_host::HostConfiguration = serde_json::from_value(serde_json::json!({
+        "version":1,"host":"test","principal":f.actor,"home":"/tmp/home","state_dir":f.source.root.path().join("host-state"),"jj_executable":"/tmp/jj", "allowed_owners":[f.actor], "sources":[{"repository":source::A,"workspace":"/tmp/source"}],"commands":{"build":{"program":"/bin/sh","secrets":{"TOKEN":"HOST_TOKEN"}}},"agent_endpoint":null
+    })).unwrap();
+    let configuration = jj_store_service::workflow_host::WorkflowConfiguration {
+        admitted: [f.actor].into(),
+        local: Some(jj_store_service::workflow_host::ManagedHost {
+            enabled: false,
+            configuration: host,
+        }),
+    };
+    let saved = manager
+        .save(
+            f.actor,
+            s::SaveServerSettings {
+                version: 1,
+                expected_revision: first.revision,
+                update: s::ServerSettingsUpdate::Workflow(configuration.clone()),
+            },
+        )
+        .await
+        .unwrap();
+    assert_eq!(saved.desired.workflow, configuration);
+    assert_eq!(saved.effective.workflow, first.effective.workflow);
+    assert_eq!(saved.desired.service, first.desired.service);
+    assert!(
+        !configuration
+            .local
+            .as_ref()
+            .unwrap()
+            .configuration
+            .state_dir
+            .exists()
+    );
+    let loaded = Config::load(&f.source.root.path().join("server.toml")).unwrap();
+    assert_eq!(loaded.workflow_hosts, configuration.admitted);
+    assert_eq!(loaded.workflow_host, configuration.local);
+    let mut invalid = configuration;
+    invalid
+        .local
+        .as_mut()
+        .unwrap()
+        .configuration
+        .commands
+        .get_mut("build")
+        .unwrap()
+        .secrets
+        .insert("TOKEN".into(), "secret value".into());
+    assert_eq!(
+        manager
+            .save(
+                f.actor,
+                s::SaveServerSettings {
+                    version: 1,
+                    expected_revision: saved.revision.clone(),
+                    update: s::ServerSettingsUpdate::Workflow(invalid)
+                }
+            )
+            .await
+            .unwrap_err(),
+        s::Error::Invalid
+    );
+    assert_eq!(
+        manager.status(f.actor).await.unwrap().revision,
+        saved.revision
+    );
+}

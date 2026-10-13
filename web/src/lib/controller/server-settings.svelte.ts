@@ -1,3 +1,7 @@
+import {
+  parseWorkflowHost,
+  normalizeWorkflowConfiguration,
+} from "./workflow-host-configuration.js";
 import { ApiError } from "../api/client.js";
 import { LocalClient } from "../api/local-client.js";
 import {
@@ -20,6 +24,9 @@ export interface ConfigurationDraft {
   validation: string;
   error: string;
   message: string;
+  advanced: string | null;
+  advancedMode: "form" | "json";
+  advancedPending: boolean;
 }
 const empty = (): ConfigurationDraft => ({
   draft: null,
@@ -31,6 +38,9 @@ const empty = (): ConfigurationDraft => ({
   validation: "",
   error: "",
   message: "",
+  advanced: null,
+  advancedMode: "form",
+  advancedPending: false,
 });
 export function createServerSettings(options: {
   available(): boolean;
@@ -42,7 +52,12 @@ export function createServerSettings(options: {
     loading: false,
     saving: false,
     error: "",
-    drafts: { service: empty(), protection: empty(), sync: empty() },
+    drafts: {
+      service: empty(),
+      protection: empty(),
+      sync: empty(),
+      workflow: empty(),
+    },
   });
   let epoch = 0;
   let observing: Promise<void> | null = null;
@@ -52,7 +67,12 @@ export function createServerSettings(options: {
     validateSettings(value);
     state.value = value;
     state.error = "";
-    for (const section of ["service", "protection", "sync"] as const) {
+    for (const section of [
+      "service",
+      "protection",
+      "sync",
+      "workflow",
+    ] as const) {
       const edit = state.drafts[section];
       if (edit.unknown) {
         edit.unknownObserved = true;
@@ -63,9 +83,14 @@ export function createServerSettings(options: {
           edit.message = "Saved settings match the original request.";
         }
       }
-      edit.conflict = edit.dirty && edit.baseRevision !== value.revision;
-      if (!edit.dirty) {
-        edit.draft = copy(value.desired[section]);
+      edit.conflict =
+        (edit.dirty || edit.advancedPending) &&
+        edit.baseRevision !== value.revision;
+      if (!edit.dirty && !edit.advancedPending) {
+        edit.draft =
+          value.desired[section] === undefined
+            ? null
+            : copy(value.desired[section]);
         edit.baseRevision = value.revision;
       }
     }
@@ -107,18 +132,49 @@ export function createServerSettings(options: {
       baseRevision: state.value.revision,
     });
   }
+  function applyWorkflowJson() {
+    const edit = state.drafts.workflow;
+    if (!edit.advancedPending) return true;
+    const value = edit.draft as Configuration["workflow"] | null;
+    if (!value?.local || edit.unknown || state.saving) return false;
+    try {
+      const configuration = parseWorkflowHost(edit.advanced ?? "");
+      configure("workflow", {
+        ...copy(value),
+        local: { ...value.local, configuration },
+      });
+      edit.advancedPending = false;
+      edit.error = edit.validation = "";
+      return true;
+    } catch (cause) {
+      edit.validation = `${cause instanceof Error ? cause.message : "Check host configuration."} Your text is retained.`;
+      return false;
+    }
+  }
   async function save(section: Section) {
     const edit = state.drafts[section];
     if (
       !available() ||
       !state.value ||
       !edit.draft ||
-      !edit.dirty ||
+      (!edit.dirty && !edit.advancedPending) ||
       edit.conflict ||
       edit.unknown ||
       state.saving
     )
       return;
+    if (
+      section === "workflow" &&
+      edit.advancedPending &&
+      edit.advancedMode === "json" &&
+      !applyWorkflowJson()
+    )
+      return;
+    if (section === "workflow" && edit.advancedPending) {
+      edit.validation =
+        "Apply the host configuration JSON to your draft before saving.";
+      return;
+    }
     let command: SaveServerSettings;
     try {
       validateConfiguration({
@@ -128,7 +184,15 @@ export function createServerSettings(options: {
       command = {
         version: 1,
         expected_revision: edit.baseRevision,
-        update: { section, configuration: copy(edit.draft) },
+        update: {
+          section,
+          configuration:
+            section === "workflow"
+              ? normalizeWorkflowConfiguration(
+                  edit.draft as Configuration["workflow"],
+                )
+              : copy(edit.draft),
+        },
       } as SaveServerSettings;
     } catch (cause) {
       edit.validation =
@@ -145,6 +209,8 @@ export function createServerSettings(options: {
         throw new Error("Changed acknowledgement");
       if (!available()) return;
       edit.dirty = false;
+      edit.advanced = null;
+      edit.advancedPending = false;
       accept(value);
       edit.error = "";
       edit.message = "Settings saved. Reload saved settings to apply changes.";
@@ -182,6 +248,7 @@ export function createServerSettings(options: {
     configure,
     cancel,
     save,
+    applyWorkflowJson,
     destroy() {
       closed = true;
       epoch++;

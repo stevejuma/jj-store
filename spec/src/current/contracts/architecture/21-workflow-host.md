@@ -51,3 +51,12 @@ code anchor exists, and admitted agent attachments may omit code pins.
 The neutral workflow model reuses `jj-collab` identity/reference types. This
 domain-model dependency adds no UI, storage provider, controller or executor
 runtime to the model/WAL layers; the boundary check permits this specific edge.
+
+LocalTrusted Admin Settings may conditionally save workflow-host admission and
+an optional local host definition. Save does not execute work. The existing
+saved-configuration reload activates the workflows domain without replacing
+listeners or storage. An optional CLI-owned local runtime retains the original
+host journal, source pins and request identities. Changed execution settings
+wait for an idle boundary; active/uncertain attempts are never replayed.
+External hosts remain independently configured and can use the same reloadable
+admission.

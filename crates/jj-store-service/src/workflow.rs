@@ -57,3 +57,74 @@ impl From<jj_store_wal::publication::WorkflowCommandError> for Error {
         }
     }
 }
+
+/// Shared transport admission; the lease fences revocation through publication.
+#[derive(Clone, Debug, Default)]
+pub struct HostAdmission {
+    values: std::sync::Arc<
+        tokio::sync::RwLock<std::collections::BTreeSet<jj_store_model::PrincipalId>>,
+    >,
+}
+impl HostAdmission {
+    pub async fn replace(&self, value: std::collections::BTreeSet<jj_store_model::PrincipalId>) {
+        *self.values.write().await = value;
+    }
+    pub async fn replacement(
+        &self,
+    ) -> tokio::sync::OwnedRwLockWriteGuard<std::collections::BTreeSet<jj_store_model::PrincipalId>>
+    {
+        self.values.clone().write_owned().await
+    }
+    async fn authorize(
+        &self,
+        principal: jj_store_model::PrincipalId,
+    ) -> Result<
+        tokio::sync::OwnedRwLockReadGuard<std::collections::BTreeSet<jj_store_model::PrincipalId>>,
+    > {
+        let lease = self.values.clone().read_owned().await;
+        if !lease.contains(&principal) {
+            return Err(Error::Denied);
+        }
+        Ok(lease)
+    }
+}
+impl From<std::collections::BTreeSet<jj_store_model::PrincipalId>> for HostAdmission {
+    fn from(values: std::collections::BTreeSet<jj_store_model::PrincipalId>) -> Self {
+        Self {
+            values: std::sync::Arc::new(tokio::sync::RwLock::new(values)),
+        }
+    }
+}
+impl<const N: usize> From<[jj_store_model::PrincipalId; N]> for HostAdmission {
+    fn from(values: [jj_store_model::PrincipalId; N]) -> Self {
+        std::collections::BTreeSet::from(values).into()
+    }
+}
+
+#[cfg(test)]
+mod admission_tests {
+    use super::*;
+    #[tokio::test]
+    async fn replacement_fences_live_publication_and_updates_every_clone() {
+        let principal = jj_store_model::PrincipalId::new([42; 16]);
+        let admission: HostAdmission = [principal].into();
+        let other_transport = admission.clone();
+        let lease = admission.authorize(principal).await.unwrap();
+        let replace = tokio::spawn(async move {
+            other_transport.replace(Default::default()).await;
+            other_transport
+        });
+        tokio::task::yield_now().await;
+        assert!(!replace.is_finished());
+        drop(lease);
+        let other_transport = replace.await.unwrap();
+        assert!(matches!(
+            admission.authorize(principal).await,
+            Err(Error::Denied)
+        ));
+        assert!(matches!(
+            other_transport.authorize(principal).await,
+            Err(Error::Denied)
+        ));
+    }
+}

@@ -57,7 +57,14 @@
       }
       return Response.json({
         saved_revision: "aa".repeat(32),
-        supported: ["service", "protection", "capture", "sync", "agents"],
+        supported: [
+          "service",
+          "protection",
+          "capture",
+          "sync",
+          "agents",
+          "workflows",
+        ],
         pending: ["service"],
         generation: 0,
         original: null,

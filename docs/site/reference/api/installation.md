@@ -56759,6 +56759,7 @@ Requires current repository read permission. Unknown query fields are rejected. 
               "items": {
                 "type": "string",
                 "enum": [
+                  "workflows",
                   "service",
                   "protection",
                   "sync",
@@ -56968,6 +56969,7 @@ Requires current repository read permission. Unknown query fields are rejected. 
               "items": {
                 "type": "string",
                 "enum": [
+                  "workflows",
                   "service",
                   "protection",
                   "sync",
@@ -57586,6 +57588,224 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                           "limits"
                         ]
                       }
+                    }
+                  },
+                  "required": [
+                    "section",
+                    "configuration"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "section": {
+                      "type": "string",
+                      "const": "workflow"
+                    },
+                    "configuration": {
+                      "type": "object",
+                      "properties": {
+                        "admitted": {
+                          "type": "array",
+                          "uniqueItems": true,
+                          "items": {
+                            "type": "string",
+                            "pattern": "^[0-9a-f]{32}$",
+                            "minLength": 32,
+                            "maxLength": 32
+                          }
+                        },
+                        "local": {
+                          "type": [
+                            "object",
+                            "null"
+                          ],
+                          "properties": {
+                            "enabled": {
+                              "type": "boolean"
+                            },
+                            "configuration": {
+                              "type": "object",
+                              "properties": {
+                                "version": {
+                                  "type": "integer",
+                                  "format": "uint32",
+                                  "minimum": 0
+                                },
+                                "host": {
+                                  "type": "string"
+                                },
+                                "principal": {
+                                  "type": "string",
+                                  "pattern": "^[0-9a-f]{32}$",
+                                  "minLength": 32,
+                                  "maxLength": 32
+                                },
+                                "home": {
+                                  "type": "string"
+                                },
+                                "state_dir": {
+                                  "type": "string"
+                                },
+                                "jj_executable": {
+                                  "type": "string"
+                                },
+                                "allowed_owners": {
+                                  "type": "array",
+                                  "uniqueItems": true,
+                                  "items": {
+                                    "type": "string",
+                                    "pattern": "^[0-9a-f]{32}$",
+                                    "minLength": 32,
+                                    "maxLength": 32
+                                  }
+                                },
+                                "labels": {
+                                  "type": "array",
+                                  "uniqueItems": true,
+                                  "items": {
+                                    "type": "string"
+                                  },
+                                  "default": []
+                                },
+                                "sources": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "object",
+                                    "properties": {
+                                      "repository": {
+                                        "type": "string",
+                                        "pattern": "^[0-9a-f]{32}$",
+                                        "minLength": 32,
+                                        "maxLength": 32
+                                      },
+                                      "workspace": {
+                                        "type": "string"
+                                      },
+                                      "target_id": {
+                                        "type": [
+                                          "string",
+                                          "null"
+                                        ]
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": [
+                                      "repository",
+                                      "workspace"
+                                    ]
+                                  }
+                                },
+                                "commands": {
+                                  "type": "object",
+                                  "additionalProperties": {
+                                    "type": "object",
+                                    "properties": {
+                                      "program": {
+                                        "type": "string"
+                                      },
+                                      "args": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        },
+                                        "default": []
+                                      },
+                                      "environment": {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                          "type": "string"
+                                        },
+                                        "default": {}
+                                      },
+                                      "secrets": {
+                                        "description": "Destination variable to operator environment reference; values are never persisted.",
+                                        "type": "object",
+                                        "additionalProperties": {
+                                          "type": "string"
+                                        },
+                                        "default": {}
+                                      },
+                                      "artifacts": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "string"
+                                        },
+                                        "default": []
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": [
+                                      "program"
+                                    ]
+                                  },
+                                  "default": {}
+                                },
+                                "agents": {
+                                  "type": "array",
+                                  "uniqueItems": true,
+                                  "items": {
+                                    "type": "string"
+                                  },
+                                  "default": []
+                                },
+                                "agent_endpoint": {
+                                  "type": [
+                                    "object",
+                                    "null"
+                                  ],
+                                  "properties": {
+                                    "url": {
+                                      "type": "string"
+                                    },
+                                    "local": {
+                                      "type": "boolean"
+                                    },
+                                    "token_environment": {
+                                      "type": [
+                                        "string",
+                                        "null"
+                                      ]
+                                    }
+                                  },
+                                  "additionalProperties": false,
+                                  "required": [
+                                    "url",
+                                    "local"
+                                  ]
+                                },
+                                "poll_millis": {
+                                  "type": "integer",
+                                  "format": "uint64",
+                                  "minimum": 0,
+                                  "default": 1000
+                                }
+                              },
+                              "additionalProperties": false,
+                              "required": [
+                                "version",
+                                "host",
+                                "principal",
+                                "home",
+                                "state_dir",
+                                "jj_executable",
+                                "allowed_owners",
+                                "sources"
+                              ]
+                            }
+                          },
+                          "additionalProperties": false,
+                          "required": [
+                            "enabled",
+                            "configuration"
+                          ]
+                        }
+                      },
+                      "additionalProperties": false,
+                      "required": [
+                        "admitted"
+                      ]
                     }
                   },
                   "required": [

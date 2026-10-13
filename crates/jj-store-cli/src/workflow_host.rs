@@ -4,12 +4,14 @@ mod command;
 mod config;
 mod events;
 mod journal;
+mod managed;
 mod worker;
 pub use config::Config;
 use jj_store_model as m;
 use jj_store_rpc::client::NativeClient;
 use jj_store_service::workflow as w;
 use journal::{Active, Journal};
+pub use managed::ManagedRuntime;
 use std::{
     path::{Path, PathBuf},
     process::Stdio,
@@ -25,6 +27,7 @@ pub struct Host {
     config: Config,
     journal: Journal,
     client: NativeClient,
+    _lock: std::fs::File,
 }
 #[derive(Debug, clap::Args)]
 pub struct Args {
@@ -42,51 +45,7 @@ pub async fn run(args: Args) -> Result<()> {
     if args.check {
         return Ok(());
     }
-    std::fs::create_dir_all(&config.state_dir)?;
-    #[cfg(unix)]
-    {
-        use std::os::unix::fs::PermissionsExt as _;
-        std::fs::set_permissions(&config.state_dir, std::fs::Permissions::from_mode(0o700))?;
-    }
-    let _lock = jj_store_server::policy::exclusive_lock(&config.state_dir.join("host.lock"))?;
-    let connection = config::connection(&config.home)?;
-    let client = connection.connect().await?;
-    let path = config.state_dir.join("journal.json");
-    let journal = if path.exists() {
-        serde_json::from_slice::<Journal>(&jj_store_server::policy::read_regular(
-            &path,
-            8 * 1024 * 1024,
-        )?)?
-    } else {
-        Journal {
-            version: 1,
-            host: config.host.clone(),
-            principal: config.principal,
-            home: connection.repository,
-            generation: {
-                let mut bytes = [0; 16];
-                getrandom::fill(&mut bytes)?;
-                m::RequestId::new(bytes)
-            },
-            counter: 0,
-            cursors: Default::default(),
-            pending: None,
-            active: None,
-        }
-    };
-    if journal.version != 1
-        || journal.host != config.host
-        || journal.principal != config.principal
-        || journal.home != connection.repository
-    {
-        return Err("Workflow journal belongs to another host or authority".into());
-    }
-    let mut host = Host {
-        config,
-        journal,
-        client,
-    };
-    host.save()?;
+    let mut host = Host::open(config).await?;
     loop {
         let result = host.tick().await;
         if args.once {
@@ -101,6 +60,56 @@ pub async fn run(args: Args) -> Result<()> {
     }
 }
 impl Host {
+    async fn open(config: Config) -> Result<Self> {
+        std::fs::create_dir_all(&config.state_dir)?;
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt as _;
+            std::fs::set_permissions(&config.state_dir, std::fs::Permissions::from_mode(0o700))?;
+        }
+        let _lock = jj_store_server::policy::exclusive_lock(&config.state_dir.join("host.lock"))?;
+        let connection = config::connection(&config.home)?;
+        let client = connection.connect().await?;
+        let path = config.state_dir.join("journal.json");
+        let journal = if path.exists() {
+            serde_json::from_slice::<Journal>(&jj_store_server::policy::read_regular(
+                &path,
+                8 * 1024 * 1024,
+            )?)?
+        } else {
+            Journal {
+                version: 1,
+                host: config.host.clone(),
+                principal: config.principal,
+                home: connection.repository,
+                generation: {
+                    let mut bytes = [0; 16];
+                    getrandom::fill(&mut bytes)?;
+                    m::RequestId::new(bytes)
+                },
+                counter: 0,
+                cursors: Default::default(),
+                pending: None,
+                active: None,
+            }
+        };
+        if journal.version != 1
+            || journal.host != config.host
+            || journal.principal != config.principal
+            || journal.home != connection.repository
+        {
+            return Err("Workflow journal belongs to another host or authority".into());
+        }
+        let host = Host {
+            config,
+            journal,
+            client,
+            _lock,
+        };
+        host.save()?;
+        Ok(host)
+    }
+
     // The CLI is the reporting transport. A failed/unknown response is reconciled
     // against the same receipt; no process or prompt is relaunched here.
     async fn flush(&mut self) -> Result<w::Receipt> {

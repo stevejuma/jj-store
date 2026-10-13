@@ -179,3 +179,17 @@ applied, deferred and failed domains; unknown outcomes retain the original
 intent and offer Check original outcome. Refresh remains a read-only action.
 Activation guidance uses reload for operational settings and separate
 migration/lifecycle reasons for read-only infrastructure.
+
+Local service / Workflows provides host admission and optional local execution
+settings with existing Settings cards/rows, labels, bounded numeric controls and
+explicit Save/Cancel. Command View selectors discover native attachments, known
+principals with server profile avatars and admitted agent setups, retaining
+configured values that are absent from discovery. A right-aligned Form/JSON
+header toggle shows one editor; highlighted JSON shares the form draft and
+validates before mode changes or Save. Invalid text is retained with a toast.
+Saved/effective values and host availability remain separate. Reload saved
+settings applies the workflows domain while keeping the server online; busy or
+uncertain execution retains its journal/configuration and reports deferred
+activation. Read/save/validation/reload failures use shared toasts, preserving
+drafts and original requests. No generic file or credential editor is
+introduced; advanced executor settings retain the bounded host schema.

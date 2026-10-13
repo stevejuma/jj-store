@@ -18,3 +18,9 @@ Installation/storage/access/listener and bundle identities remain fixed; backup
 execution remains deferred. Reload does not install binaries or change
 credentials. Agent/compute processes retain active work; pending launch changes
 are reported separately from server configuration activation.
+
+Workflow admission and optional local host settings are operational domains. The
+native CLI composition supplies the optional event/action runtime; the core
+server owns configuration and admission, not executable dispatch. Reload keeps
+the server process and listeners. The standalone host JSON format remains valid;
+managed changes apply between settled polls/jobs, never by replaying an attempt.

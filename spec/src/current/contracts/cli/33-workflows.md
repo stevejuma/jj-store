@@ -15,3 +15,10 @@ attempt workspace under JST-WF-005/007. Source export occurs once; later actions
 reuse earlier outputs. Empty-source attempts create the same shared directory.
 CLI arguments, reporting receipts, source grants and unknown-attempt recovery
 remain unchanged. This qualification does not implement Forgejo ConnectRPC.
+
+E-WORKFLOW-SETTINGS-001 adds CLI-owned managed hosting from optional server
+workflow_host configuration. The existing standalone version-1 JSON, --check,
+--once and --workflow-host modes remain supported. Managed execution reuses
+exact source export, journals and named executor dispatch. Reload replaces idle
+settings only; shutdown drains a current poll before listeners stop. CLI
+arguments and native storage formats remain unchanged.

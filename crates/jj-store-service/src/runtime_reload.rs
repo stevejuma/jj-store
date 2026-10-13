@@ -15,6 +15,7 @@ pub enum Caller {
 #[serde(rename_all = "snake_case")]
 #[schemars(rename = "RuntimeReloadDomain")]
 pub enum Domain {
+    Workflows,
     Service,
     Protection,
     Sync,

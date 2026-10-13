@@ -247,6 +247,13 @@ impl NativeRpc {
         mut self,
         hosts: std::collections::BTreeSet<m::PrincipalId>,
     ) -> Self {
+        self.workflow.hosts = hosts.into();
+        self
+    }
+    pub fn with_workflow_admission(
+        mut self,
+        hosts: jj_store_service::workflow::HostAdmission,
+    ) -> Self {
         self.workflow.hosts = hosts;
         self
     }

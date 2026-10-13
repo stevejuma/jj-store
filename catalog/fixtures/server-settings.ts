@@ -9,6 +9,7 @@ export function serverSettingsValue(): ServerSettings {
     },
     protection: { bookmarks: ["main"], commits: [] },
     sync: [],
+    workflow: { admitted: [], local: null },
   };
   return {
     version: 1,
@@ -16,6 +17,12 @@ export function serverSettingsValue(): ServerSettings {
     desired: structuredClone(desired),
     effective: structuredClone(desired),
     restart_required: false,
+    workflow_runtime: {
+      available: true,
+      running: false,
+      busy: false,
+      message: null,
+    },
     sync_defaults: {
       max_batch_origins: 128,
       max_closure_entries: 100000,

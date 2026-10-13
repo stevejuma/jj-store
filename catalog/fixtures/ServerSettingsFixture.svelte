@@ -1,5 +1,10 @@
 <script lang="ts">
-  import { onMount } from "svelte";
+  import { createWorkflowHostChoices } from "../../web/src/lib/controller/workflow-host-choices.svelte.js";
+  import { workflowHostFixtureController } from "./workflow-host-settings.js";
+  import { RuntimeReload } from "../../web/src/lib/controller/runtime-reload.svelte.js";
+  import StoreRuntimeReload from "../../web/src/lib/ui/store-settings/StoreRuntimeReload.svelte";
+  import { untrack, onMount } from "svelte";
+  import StoreWorkflowHostSettings from "../../web/src/lib/ui/store-settings/StoreWorkflowHostSettings.svelte";
   import StoreSettingsPage from "../../web/src/lib/ui/store-settings/StoreSettingsPage.svelte";
   import StoreDeploymentConfiguration from "../../web/src/lib/ui/store-settings/StoreDeploymentConfiguration.svelte";
   import StoreConfigurationEditor from "../../web/src/lib/ui/store-settings/StoreConfigurationEditor.svelte";
@@ -17,6 +22,7 @@
     unknown = false,
     embedded = false,
     loading = false,
+    lookupFailure,
   }: {
     inventorySection?: "service" | "storage";
     section?: Section;
@@ -24,7 +30,40 @@
     unknown?: boolean;
     embedded?: boolean;
     loading?: boolean;
+    lookupFailure?: "repositories" | "profiles";
   } = $props();
+  const controller = untrack(() =>
+    workflowHostFixtureController(lookupFailure === "profiles"),
+  );
+  const choices = createWorkflowHostChoices({
+    available: () => supported,
+    client: {
+      close() {},
+      request: (async () => {
+        if (lookupFailure === "repositories") throw Error("offline");
+        return {
+          version: 1,
+          revision: 1,
+          bindings: [
+            {
+              repository: "03".repeat(16),
+              name: "Demo source",
+              path: "/private/code",
+              generation: 1,
+              availability: "ready",
+            },
+            {
+              repository: "04".repeat(16),
+              name: "Demo home",
+              path: "/private/home",
+              generation: 1,
+              availability: "ready",
+            },
+          ],
+        };
+      }) as never,
+    },
+  });
   let value = serverSettingsValue();
   let finishRead: (() => void) | undefined;
   const management = createServerSettings({
@@ -50,9 +89,40 @@
       }) as never,
     },
   });
+  const reload = new RuntimeReload(
+    () => section === "workflow" && supported,
+    () => null,
+    async (_path, init) => {
+      const body = init?.body ? JSON.parse(String(init.body)) : null;
+      if (body) {
+        value.effective.workflow = copy(value.desired.workflow);
+        return Response.json({
+          request_id: body.request_id,
+          generation: 1,
+          state: "applied",
+          results: [{ domain: "workflows", state: "applied", reason: null }],
+        });
+      }
+      return Response.json({
+        saved_revision: value.revision,
+        supported: ["workflows"],
+        pending: ["workflows"],
+        generation: 0,
+        original: null,
+        outcome: null,
+      });
+    },
+    async () => {
+      await management.observe();
+    },
+  );
   onMount(() => {
     void management.observe();
-    return () => management.destroy();
+    return () => {
+      management.destroy();
+      reload.destroy();
+      choices.destroy();
+    };
   });
 </script>
 
@@ -63,9 +133,10 @@
   >
 {/if}
 
+{#if section === "workflow"}<StoreRuntimeReload manager={reload} menu />{/if}
 <StoreSettingsPage
   {embedded}
-  section={section === "service"
+  section={section === "service" || section === "workflow"
     ? "service"
     : section === "sync"
       ? "sync"
@@ -75,6 +146,11 @@
   {#if inventorySection}<StoreDeploymentConfiguration
       {management}
       section={inventorySection}
+    />{:else if section === "workflow"}<StoreWorkflowHostSettings
+      {management}
+      {reload}
+      {controller}
+      {choices}
     />{:else}<StoreConfigurationEditor
       {management}
       {section}

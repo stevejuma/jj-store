@@ -9,6 +9,8 @@ pub struct Config {
     #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
     pub workflow_hosts: BTreeSet<m::PrincipalId>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub workflow_host: Option<jj_store_service::workflow_host::ManagedHost>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
     pub remote_agents: Option<crate::remote_agents::Configuration>,
     #[serde(
         default,

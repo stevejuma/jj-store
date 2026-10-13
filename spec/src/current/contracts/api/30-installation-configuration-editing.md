@@ -43,3 +43,12 @@ LocalTrusted Admin can reload supported installation domains. Authenticated
 `manage-configuration` operators have independent runtime configuration
 authority; `manage-agents` permits only remote-agent configuration. Neither
 permission grants repository or execution access.
+
+The workflow section includes admitted principal IDs and an optional local host
+configuration with enablement, labels, permitted owners/sources, named commands,
+agent setup IDs, poll interval and environment credential references. It uses
+the existing revision-conditional local-settings save and workflows reload
+domain. Only LocalTrusted Admin may edit or activate it; repository Write and
+agent-management permissions do not acquire execution authority. Host runtime
+status distinguishes disabled, idle, busy and unavailable configuration. Secret
+values are never accepted in the secret-reference fields or exposed in status.

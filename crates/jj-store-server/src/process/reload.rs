@@ -9,6 +9,8 @@ use jj_store_service::administration::RepositoryHost;
 use jj_store_service::runtime_reload::{self as r, Domain, State};
 pub(super) struct Owners {
     pub effective: Arc<std::sync::RwLock<Config>>,
+    pub workflow_admission: jj_store_service::workflow::HostAdmission,
+    pub workflow_runtime: jj_store_service::workflow_host::RuntimeSlot,
     pub policy: Arc<jj_store_service::runtime_policy::RuntimePolicy>,
     pub capture: Option<Arc<super::reload_capture::CaptureOwner>>,
     pub remote: Option<crate::remote_agents::Broker>,
@@ -50,6 +52,10 @@ impl Owners {
             .map_err(|_| r::Error::Invalid)?;
         let next = serde_json::to_value(config).map_err(|_| r::Error::Invalid)?;
         let key = match domain {
+            Domain::Workflows => {
+                return Ok(old["workflow_hosts"] != next["workflow_hosts"]
+                    || old["workflow_host"] != next["workflow_host"]);
+            }
             Domain::Service => "limits",
             Domain::Protection => "protection",
             Domain::Sync => "replication",
@@ -65,6 +71,7 @@ impl Owners {
 impl Activation for Owners {
     fn supported(&self, domain: Domain) -> bool {
         match domain {
+            Domain::Workflows => self.host.is_some(),
             Domain::Service => true,
             Domain::Protection => self.host.is_some(),
             Domain::Sync => self.replication.is_some(),
@@ -98,6 +105,23 @@ impl Activation for Owners {
             return Ok((State::Current, None));
         }
         match domain {
+            Domain::Workflows => {
+                let mut admission = self.workflow_admission.replacement().await;
+                let runtime = self
+                    .workflow_runtime
+                    .read()
+                    .map_err(|_| r::Error::Unavailable)?
+                    .clone();
+                if let Some(runtime) = runtime {
+                    let (state, reason) = runtime.reload(config.workflow_host.clone()).await?;
+                    if state == State::Deferred {
+                        return Ok((state, reason));
+                    }
+                } else if config.workflow_host.as_ref().is_some_and(|h| h.enabled) {
+                    return Err(r::Error::Unavailable);
+                }
+                *admission = config.workflow_hosts.clone();
+            }
             Domain::Service | Domain::Protection => {
                 let _guard = self.policy.publication.write().await;
                 let mut current = self.policy.current();
@@ -211,6 +235,10 @@ impl Activation for Owners {
         }
         let mut running = self.effective.write().map_err(|_| r::Error::Unavailable)?;
         match domain {
+            Domain::Workflows => {
+                running.workflow_hosts = config.workflow_hosts.clone();
+                running.workflow_host = config.workflow_host.clone();
+            }
             Domain::Service => running.limits = config.limits.clone(),
             Domain::Protection => running.protection = config.protection.clone(),
             Domain::Sync => running.replication = config.replication.clone(),

@@ -320,3 +320,11 @@ MIT-licensed ansi_up 6.0.6 dependency performs escaped ANSI conversion. Released
 Design Core Collapsible, Dialog, Menu and Command View are composed without core
 patches. Native formats, host authority and execution gates stay unchanged;
 approved visual baselines remain separate.
+
+E-WORKFLOW-SETTINGS-001 retains JST-GOV-002/008 local ownership. Host Settings
+compose maintained application rows and released Design Core, including chip
+entry and numeric units. Shared owned configuration replaces duplicate CLI
+schema; the CLI runtime remains optional behind a service interface. Workflow
+native objects and receipts remain unchanged. Focused cross-layer activation,
+HTTP/RPC, cold lifecycle and UI evidence do not promote live providers, Forgejo
+protocol or visual baseline gates.

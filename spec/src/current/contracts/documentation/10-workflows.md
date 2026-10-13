@@ -49,3 +49,9 @@ all jobs. Application guide and source review describe the same controls.
 Immutable native formats/authority and M28 execution gates remain unchanged;
 grouped native demo and focused UI evidence do not qualify the external Forgejo
 runner protocol.
+
+E-WORKFLOW-SETTINGS-001 documents conditional save versus runtime activation,
+shared admission, optional CLI hosting, local-machine paths and secret
+references. Standalone host JSON remains an independent startup profile. The
+one-time binary upgrade restart is distinct from ordinary configuration reload;
+ConnectRPC and external Forgejo registration remain deferred.

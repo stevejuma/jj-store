@@ -325,3 +325,9 @@ publishes only bounded assets, previews and a receipt through installation
 manifest CAS. Source files are not retained. Retrying the original source
 recovers its selected receipt; saving the profile or emoji remains a separate
 conditional command.
+
+Workflow host configuration is operator-owned data. LocalTrusted Admin can save
+admission and an optional local host through the existing settings API. Shared
+HTTP/native-RPC admission reloads at a fenced publication boundary. The CLI owns
+the optional execution loop; service and storage remain independent of it.
+Changing idle settings preserves listeners, journals and native formats.

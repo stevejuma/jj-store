@@ -53,3 +53,10 @@ the existing retry command with the latest recorded expected attempt; server
 guards and exact outcome recovery remain authoritative, including when the
 latest attempt is explicitly selected in a pinned view. Older/unknown attempt
 restrictions remain.
+
+E-WORKFLOW-SETTINGS-001 adds workflow configuration to the existing conditional
+LocalTrusted Admin settings API, plus a workflows reload domain and runtime
+status. Both native RPC and HTTP use shared live host admission. Execution
+commands retain an admission lease through publication; activation fences the
+replacement. Workflow commands, evidence, immutable objects and native formats
+are unchanged. Configuration-management tokens do not acquire host control.

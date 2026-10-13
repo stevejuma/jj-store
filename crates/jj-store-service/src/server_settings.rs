@@ -47,6 +47,8 @@ pub struct SyncConfiguration {
 pub struct ServerConfiguration {
     pub service: ServiceConfiguration,
     pub protection: ProtectionConfiguration,
+    #[serde(default)]
+    pub workflow: crate::workflow_host::WorkflowConfiguration,
     pub sync: Vec<SyncConfiguration>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
@@ -68,6 +70,7 @@ pub struct LocalServerSettings {
     pub restart_required: bool,
     pub sync_defaults: SyncLimits,
     pub inventory: Vec<ConfiguredValue>,
+    pub workflow_runtime: Option<crate::workflow_host::RuntimeStatus>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(
@@ -80,6 +83,7 @@ pub enum ServerSettingsUpdate {
     Service(ServiceConfiguration),
     Protection(ProtectionConfiguration),
     Sync(Vec<SyncConfiguration>),
+    Workflow(crate::workflow_host::WorkflowConfiguration),
 }
 #[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]

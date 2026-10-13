@@ -18,6 +18,9 @@ impl Activation for Apply {
             return Err(Error::Unavailable);
         }
         self.effective.write().unwrap().limits = config.limits.clone();
+        if domain == Domain::Workflows {
+            self.effective.write().unwrap().workflow_hosts = config.workflow_hosts.clone();
+        }
         Ok((State::Applied, None))
     }
 }
@@ -286,11 +289,23 @@ async fn independent_operator_roles_are_fresh_and_agent_management_cannot_reload
     );
     assert!(
         manager
-            .status(Caller::Token(full))
+            .status(Caller::Token(full.clone()))
             .await
             .unwrap()
             .supported
             .contains(&Domain::Service)
+    );
+    let privileged = manager.status(Caller::Token(full.clone())).await.unwrap();
+    assert!(!privileged.supported.contains(&Domain::Workflows));
+    assert_eq!(
+        manager
+            .reload(
+                Caller::Token(full),
+                command(privileged.saved_revision, 44, vec![Domain::Workflows])
+            )
+            .await
+            .unwrap_err(),
+        Error::Denied
     );
     policy.revoke(agent.id()).unwrap();
     assert_eq!(
@@ -400,4 +415,56 @@ async fn unresolved_reload_blocks_a_new_identity_until_observed() {
         .reload(caller.clone(), command(revision, 2, vec![Domain::Service]))
         .await
         .unwrap();
+}
+
+#[tokio::test]
+async fn workflow_hosts_participate_in_saved_reload() {
+    let (_root, path, config, identity) = fixture();
+    let effective = Arc::new(RwLock::new(config.clone()));
+    let activation = Arc::new(Apply {
+        calls: AtomicUsize::new(0),
+        effective: effective.clone(),
+        fail: false,
+    });
+    let manager = Coordinator::new(
+        &path,
+        &config,
+        &identity,
+        effective.clone(),
+        None,
+        activation.clone(),
+    )
+    .unwrap();
+    let caller = Caller::Local(identity.principal(b"loopback-http"));
+    let status = manager.status(caller.clone()).await.unwrap();
+    let supported = serde_json::to_value(status.supported).unwrap();
+    assert!(
+        supported
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|d| d == "workflows")
+    );
+    let mut saved = config.clone();
+    saved.workflow_hosts.insert(PrincipalId::new([42; 16]));
+    std::fs::write(&path, toml::to_string(&saved).unwrap()).unwrap();
+    let status = manager.status(caller.clone()).await.unwrap();
+    assert!(status.pending.contains(&Domain::Workflows));
+    let request = command(status.saved_revision, 42, vec![Domain::Workflows]);
+    manager
+        .reload(caller.clone(), request.clone())
+        .await
+        .unwrap();
+    assert_eq!(
+        settle(&manager, caller.clone(), request.clone())
+            .await
+            .state,
+        State::Applied
+    );
+    assert_eq!(
+        effective.read().unwrap().workflow_hosts,
+        saved.workflow_hosts
+    );
+    manager.reload(caller, request).await.unwrap();
+    assert_eq!(activation.calls.load(Ordering::SeqCst), 1);
 }

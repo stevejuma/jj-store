@@ -54,6 +54,9 @@ pub(super) async fn prepare(
         ),
     };
     let effective = Arc::new(std::sync::RwLock::new(config.clone()));
+    let workflow_admission =
+        jj_store_service::workflow::HostAdmission::from(config.workflow_hosts.clone());
+    let workflow_runtime: jj_store_service::workflow_host::RuntimeSlot = Default::default();
     let timeout = Duration::from_secs(config.limits.request_seconds);
     let (storage, host, search, indexes, replication, rpc) = authority::prepare(
         config,
@@ -62,6 +65,7 @@ pub(super) async fn prepare(
         registry.clone(),
         search_access,
         &mut state_lock,
+        workflow_admission.clone(),
     )
     .await?;
     let capture = capture::PreparedCapture::prepare_server(
@@ -323,6 +327,8 @@ pub(super) async fn prepare(
     let reload_owners = config_path.map(|path| {
         Arc::new(super::reload::Owners {
             effective: effective.clone(),
+            workflow_admission: workflow_admission.clone(),
+            workflow_runtime: workflow_runtime.clone(),
             policy: runtime_policy.clone(),
             capture: capture_owner.clone(),
             remote: remote_broker,
@@ -364,6 +370,7 @@ pub(super) async fn prepare(
         state.join("native-reads"),
         HttpConfig {
             workflow_hosts: config.workflow_hosts.clone(),
+            workflow_admission: Some(workflow_admission.clone()),
             runtime_reload,
             runtime_policy: Some(runtime_policy),
             remote_agents: remote_agents.clone(),
@@ -451,8 +458,10 @@ pub(super) async fn prepare(
             ) {
                 config_path
                     .map(|path| {
-                        crate::server_settings::Manager::new(path, config, &identity)
-                            .map(|m| m.with_effective(effective.clone()))
+                        crate::server_settings::Manager::new(path, config, &identity).map(|m| {
+                            m.with_effective(effective.clone())
+                                .with_workflow_runtime(workflow_runtime.clone())
+                        })
                     })
                     .transpose()?
                     .map(|m| {
@@ -507,6 +516,7 @@ pub(super) async fn prepare(
         .map_err(Error::Config)?;
     let listener = tokio::net::TcpListener::bind(config.bind).await?;
     Ok(PreparedServer {
+        workflow_runtime,
         reload: reload_owners,
         rpc,
         http,

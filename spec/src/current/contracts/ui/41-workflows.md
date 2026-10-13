@@ -201,3 +201,15 @@ empty-run explanations until settled; loaded content remains visible during
 refresh. History rows have an inset before their leading status icon, no box
 shadow or trailing row border. Workflow protocols, native authority and
 immutable evidence remain unchanged.
+
+LocalTrusted administrators configure host admission and optional local
+execution in Settings → Local service → Workflows. Settings-style rows expose
+name, execution principal, native attachments, recovery state, labels, allowed
+owners and polling. Principals, repository attachments and admitted agent setups
+use Command View selectors; principal choices hydrate server profiles and
+avatars. A right-aligned Form/JSON toggle in the local-host section header shows
+one editor at a time. The syntax-highlighted JSON editor supports named
+commands, agents, artifacts and credential references. Both modes share one
+retained draft: valid JSON projects into Form, while invalid JSON blocks mode
+changes and Save with a toast. Save never ignores raw edits. Save is inactive,
+reload activates at an idle boundary, and all failures use application toasts.

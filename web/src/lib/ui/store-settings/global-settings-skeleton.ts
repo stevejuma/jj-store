@@ -30,6 +30,14 @@ export function globalSettingsSkeletonCards(
           { rows: ["numeric", "numeric", "numeric", "numeric"] },
           footer(),
         ];
+      if (tab === "workflows")
+        return [
+          facts(3),
+          {
+            rows: ["input", "toggle", "input", "input", "numeric", "textarea"],
+            actions: 3,
+          },
+        ];
       if (tab === "protection")
         return [facts(1), { rows: ["textarea", "textarea"] }, footer()];
       if (tab === "launch") return [facts(5), facts(3), facts(4)];

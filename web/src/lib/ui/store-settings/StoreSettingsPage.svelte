@@ -1,4 +1,5 @@
 <script lang="ts">
+  import WorkflowIcon from "@lucide/svelte/icons/workflow";
   import UserIcon from "@lucide/svelte/icons/user";
   import SmileIcon from "@lucide/svelte/icons/smile";
   import ShieldIcon from "@lucide/svelte/icons/shield";
@@ -64,6 +65,7 @@
     },
   });
   const tabIcons: Record<string, Component> = {
+    workflows: WorkflowIcon,
     theme: PaletteIcon,
     preferences: SlidersHorizontalIcon,
     limits: GaugeIcon,

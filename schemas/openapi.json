@@ -79317,6 +79317,7 @@
                     "items": {
                       "type": "string",
                       "enum": [
+                        "workflows",
                         "service",
                         "protection",
                         "sync",
@@ -79490,6 +79491,7 @@
                     "items": {
                       "type": "string",
                       "enum": [
+                        "workflows",
                         "service",
                         "protection",
                         "sync",
@@ -79991,6 +79993,170 @@
                                 "limits"
                               ]
                             }
+                          }
+                        },
+                        "required": ["section", "configuration"],
+                        "additionalProperties": false
+                      },
+                      {
+                        "type": "object",
+                        "properties": {
+                          "section": { "type": "string", "const": "workflow" },
+                          "configuration": {
+                            "type": "object",
+                            "properties": {
+                              "admitted": {
+                                "type": "array",
+                                "uniqueItems": true,
+                                "items": {
+                                  "type": "string",
+                                  "pattern": "^[0-9a-f]{32}$",
+                                  "minLength": 32,
+                                  "maxLength": 32
+                                }
+                              },
+                              "local": {
+                                "type": ["object", "null"],
+                                "properties": {
+                                  "enabled": { "type": "boolean" },
+                                  "configuration": {
+                                    "type": "object",
+                                    "properties": {
+                                      "version": {
+                                        "type": "integer",
+                                        "format": "uint32",
+                                        "minimum": 0
+                                      },
+                                      "host": { "type": "string" },
+                                      "principal": {
+                                        "type": "string",
+                                        "pattern": "^[0-9a-f]{32}$",
+                                        "minLength": 32,
+                                        "maxLength": 32
+                                      },
+                                      "home": { "type": "string" },
+                                      "state_dir": { "type": "string" },
+                                      "jj_executable": { "type": "string" },
+                                      "allowed_owners": {
+                                        "type": "array",
+                                        "uniqueItems": true,
+                                        "items": {
+                                          "type": "string",
+                                          "pattern": "^[0-9a-f]{32}$",
+                                          "minLength": 32,
+                                          "maxLength": 32
+                                        }
+                                      },
+                                      "labels": {
+                                        "type": "array",
+                                        "uniqueItems": true,
+                                        "items": { "type": "string" },
+                                        "default": []
+                                      },
+                                      "sources": {
+                                        "type": "array",
+                                        "items": {
+                                          "type": "object",
+                                          "properties": {
+                                            "repository": {
+                                              "type": "string",
+                                              "pattern": "^[0-9a-f]{32}$",
+                                              "minLength": 32,
+                                              "maxLength": 32
+                                            },
+                                            "workspace": { "type": "string" },
+                                            "target_id": {
+                                              "type": ["string", "null"]
+                                            }
+                                          },
+                                          "additionalProperties": false,
+                                          "required": [
+                                            "repository",
+                                            "workspace"
+                                          ]
+                                        }
+                                      },
+                                      "commands": {
+                                        "type": "object",
+                                        "additionalProperties": {
+                                          "type": "object",
+                                          "properties": {
+                                            "program": { "type": "string" },
+                                            "args": {
+                                              "type": "array",
+                                              "items": { "type": "string" },
+                                              "default": []
+                                            },
+                                            "environment": {
+                                              "type": "object",
+                                              "additionalProperties": {
+                                                "type": "string"
+                                              },
+                                              "default": {}
+                                            },
+                                            "secrets": {
+                                              "description": "Destination variable to operator environment reference; values are never persisted.",
+                                              "type": "object",
+                                              "additionalProperties": {
+                                                "type": "string"
+                                              },
+                                              "default": {}
+                                            },
+                                            "artifacts": {
+                                              "type": "array",
+                                              "items": { "type": "string" },
+                                              "default": []
+                                            }
+                                          },
+                                          "additionalProperties": false,
+                                          "required": ["program"]
+                                        },
+                                        "default": {}
+                                      },
+                                      "agents": {
+                                        "type": "array",
+                                        "uniqueItems": true,
+                                        "items": { "type": "string" },
+                                        "default": []
+                                      },
+                                      "agent_endpoint": {
+                                        "type": ["object", "null"],
+                                        "properties": {
+                                          "url": { "type": "string" },
+                                          "local": { "type": "boolean" },
+                                          "token_environment": {
+                                            "type": ["string", "null"]
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": ["url", "local"]
+                                      },
+                                      "poll_millis": {
+                                        "type": "integer",
+                                        "format": "uint64",
+                                        "minimum": 0,
+                                        "default": 1000
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": [
+                                      "version",
+                                      "host",
+                                      "principal",
+                                      "home",
+                                      "state_dir",
+                                      "jj_executable",
+                                      "allowed_owners",
+                                      "sources"
+                                    ]
+                                  }
+                                },
+                                "additionalProperties": false,
+                                "required": ["enabled", "configuration"]
+                              }
+                            },
+                            "additionalProperties": false,
+                            "required": ["admitted"]
                           }
                         },
                         "required": ["section", "configuration"],
@@ -95290,6 +95456,7 @@
       "RuntimeReloadDomain": {
         "type": "string",
         "enum": [
+          "workflows",
           "service",
           "protection",
           "sync",
@@ -95350,6 +95517,12 @@
           "inventory": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/ConfiguredValue" }
+          },
+          "workflow_runtime": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/WorkflowHostRuntimeStatus" },
+              { "type": "null" }
+            ]
           }
         },
         "required": [
@@ -95359,7 +95532,8 @@
           "effective",
           "restart_required",
           "sync_defaults",
-          "inventory"
+          "inventory",
+          "workflow_runtime"
         ]
       },
       "ServerConfiguration": {
@@ -95370,12 +95544,16 @@
           "protection": {
             "$ref": "#/components/schemas/ProtectionConfiguration"
           },
+          "workflow": {
+            "default": { "admitted": [], "local": null },
+            "allOf": [{ "$ref": "#/components/schemas/WorkflowConfiguration" }]
+          },
           "sync": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/SyncConfiguration" }
           }
         },
-        "required": ["service", "protection", "sync"]
+        "required": ["service", "protection", "workflow", "sync"]
       },
       "ServiceConfiguration": {
         "type": "object",
@@ -95425,6 +95603,151 @@
           }
         },
         "required": ["bookmarks", "commits"]
+      },
+      "WorkflowConfiguration": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "admitted": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "$ref": "#/components/schemas/PrincipalId" }
+          },
+          "local": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/ManagedWorkflowHost" },
+              { "type": "null" }
+            ]
+          }
+        },
+        "required": ["admitted", "local"]
+      },
+      "ManagedWorkflowHost": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "enabled": { "type": "boolean" },
+          "configuration": {
+            "$ref": "#/components/schemas/WorkflowHostConfiguration"
+          }
+        },
+        "required": ["enabled", "configuration"]
+      },
+      "WorkflowHostConfiguration": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+          "host": { "type": "string" },
+          "principal": { "$ref": "#/components/schemas/PrincipalId" },
+          "home": { "type": "string" },
+          "state_dir": { "type": "string" },
+          "jj_executable": { "type": "string" },
+          "allowed_owners": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "$ref": "#/components/schemas/PrincipalId" }
+          },
+          "labels": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "type": "string" },
+            "default": []
+          },
+          "sources": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/WorkflowHostSource" }
+          },
+          "commands": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/WorkflowHostCommand"
+            },
+            "default": {}
+          },
+          "agents": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "type": "string" },
+            "default": []
+          },
+          "agent_endpoint": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/WorkflowHostAgentEndpoint" },
+              { "type": "null" }
+            ]
+          },
+          "poll_millis": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0,
+            "default": 1000
+          }
+        },
+        "required": [
+          "version",
+          "host",
+          "principal",
+          "home",
+          "state_dir",
+          "jj_executable",
+          "allowed_owners",
+          "labels",
+          "sources",
+          "commands",
+          "agents",
+          "agent_endpoint",
+          "poll_millis"
+        ]
+      },
+      "WorkflowHostSource": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "repository": { "$ref": "#/components/schemas/RepositoryId" },
+          "workspace": { "type": "string" },
+          "target_id": { "type": ["string", "null"] }
+        },
+        "required": ["repository", "workspace", "target_id"]
+      },
+      "WorkflowHostCommand": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "program": { "type": "string" },
+          "args": {
+            "type": "array",
+            "items": { "type": "string" },
+            "default": []
+          },
+          "environment": {
+            "type": "object",
+            "additionalProperties": { "type": "string" },
+            "default": {}
+          },
+          "secrets": {
+            "type": "object",
+            "additionalProperties": { "type": "string" },
+            "description": "Destination variable to operator environment reference; values are never persisted.",
+            "default": {}
+          },
+          "artifacts": {
+            "type": "array",
+            "items": { "type": "string" },
+            "default": []
+          }
+        },
+        "required": ["program", "args", "environment", "secrets", "artifacts"]
+      },
+      "WorkflowHostAgentEndpoint": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "url": { "type": "string" },
+          "local": { "type": "boolean" },
+          "token_environment": { "type": ["string", "null"] }
+        },
+        "required": ["url", "local", "token_environment"]
       },
       "SyncConfiguration": {
         "type": "object",
@@ -95531,6 +95854,17 @@
           "reason": { "type": "string" }
         },
         "required": ["section", "name", "saved", "effective", "reason"]
+      },
+      "WorkflowHostRuntimeStatus": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "available": { "type": "boolean" },
+          "running": { "type": "boolean" },
+          "busy": { "type": "boolean" },
+          "message": { "type": ["string", "null"] }
+        },
+        "required": ["available", "running", "busy", "message"]
       },
       "DirectoryReceipt": {
         "type": "object",
