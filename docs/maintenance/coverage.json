@@ -137,8 +137,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Verified create/edit YAML uses a single dialog column and a stretching grid for the code editor, with Form inspector visibility and drafts retained; YAML errors and exact command recovery remain unchanged.",
-      "fingerprint": "ea6863e174e46c6faa13c1b67ca0a43d76944868ba9182ddd352bdef3032db4c"
+      "reason": "Documented the owned Forgejo console, pinned lazy/grouped ANSI logs, settings/full screen/downloads and latest-attempt guarded Re-run all jobs; older/unknown attempts and immutable authority retain restrictions.",
+      "fingerprint": "065370cefab447592cbae77d80b567591d39cda44002e9a0bb59e530fef1b164"
     }
   },
   {

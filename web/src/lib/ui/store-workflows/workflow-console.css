@@ -1,0 +1,411 @@
+.workflow-console {
+  --console-bg: #1f212b;
+  --console-border: #383c47;
+  --console-fg: #eeeff2;
+  --console-subtle: #959cab;
+  --console-hover: #ffffff16;
+  --console-active: #454a57;
+  --console-number: #61616a;
+  --console-green: #15803d;
+  --console-red: #dc2626;
+  --console-yellow: #ca8a04;
+  --console-grey: #4b5563;
+  min-width: 0;
+  border: 1px solid var(--console-border);
+  border-radius: 4px;
+  background: var(--console-bg);
+  color: var(--console-subtle);
+  font-family:
+    -apple-system, "Segoe UI", system-ui, "Noto Sans", Roboto, "Helvetica Neue",
+    Arial, sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+}
+.workflow-console-step {
+  margin: 10px;
+  min-width: 0;
+}
+.workflow-console-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 12px;
+  min-height: 60px;
+  border-bottom: 1px solid var(--console-border);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: var(--console-bg);
+  border-radius: 3px 3px 0 0;
+}
+.workflow-console .workflow-console-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--console-fg);
+  margin: 0;
+}
+.workflow-console-header p {
+  margin: 0;
+  font-size: 12px;
+}
+.workflow-console-header__title {
+  min-width: 0;
+  flex: 1;
+}
+.workflow-console-header h3 {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.workflow-console-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: none;
+  max-width: 100%;
+  width: min(24rem, 60%);
+}
+.workflow-console-header__actions > [role="combobox"] {
+  width: auto;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+.workflow-console-header__actions [aria-label="Log settings"],
+.workflow-console-header__actions [aria-label="Exit full screen"] {
+  flex: none;
+}
+.workflow-console-header [role="combobox"] {
+  color: #4b4b4b;
+  background: #fff;
+}
+.workflow-console-header [aria-label="Log settings"],
+.workflow-console-header [aria-label="Exit full screen"] {
+  color: var(--console-subtle);
+}
+.workflow-console-header [aria-label="Log settings"]:hover,
+.workflow-console-header [aria-label="Exit full screen"]:hover {
+  color: var(--console-fg);
+  background: var(--console-hover);
+}
+.workflow-console-body {
+  min-width: 0;
+}
+.workflow-console-settings {
+  --popover: #1f212b;
+  --popover-foreground: #eeeff2;
+  --border: #383c47;
+  --accent: #ffffff16;
+  --accent-foreground: #eeeff2;
+  min-width: 14rem;
+}
+.workflow-console-fullscreen[data-ui-component="workflow-console"] {
+  position: fixed;
+  z-index: 50;
+  inset: 0;
+  transform: none;
+  max-width: none;
+  width: 100%;
+  height: 100dvh;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  display: flex;
+  overflow: auto;
+  background: #1f212b;
+}
+.workflow-console-fullscreen .workflow-console {
+  flex: 1;
+  border: 0;
+  border-radius: 0;
+}
+.workflow-console-step__summary[aria-expanded="true"] {
+  position: sticky;
+  top: 60px;
+}
+.workflow-console-line__seconds {
+  flex: none;
+  width: 48px;
+  padding-right: 2px;
+  color: var(--console-subtle);
+  text-align: right;
+}
+.workflow-console-line__time {
+  margin-left: 10px;
+  flex: none;
+  color: var(--console-subtle);
+  white-space: nowrap;
+}
+.workflow-console-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+.workflow-console-group svg {
+  width: 12px;
+  height: 12px;
+  flex: none;
+}
+.workflow-console-spinner {
+  animation: workflow-console-running 1s linear infinite;
+}
+@media (max-width: 36rem) {
+  .workflow-console-header {
+    flex-wrap: wrap;
+    padding-block: 10px;
+    gap: 8px;
+  }
+  .workflow-console-header__title {
+    flex-basis: 100%;
+  }
+  .workflow-console-header__actions {
+    width: 100%;
+  }
+  .workflow-console-header__actions .repository-picker {
+    min-width: 0;
+    flex: 1;
+  }
+  .workflow-console-step__summary[aria-expanded="true"] {
+    top: 98px;
+  }
+}
+.workflow-console-step__summary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 5px 10px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  font: inherit;
+  cursor: pointer;
+}
+.workflow-console-step__summary[aria-expanded="true"] {
+  background: var(--console-active);
+  color: var(--console-fg);
+}
+.workflow-console-step__summary:hover {
+  background: var(--console-hover);
+  color: var(--console-fg);
+}
+.workflow-console-step__summary:focus-visible {
+  outline: 2px solid var(--console-fg);
+  outline-offset: 2px;
+}
+.workflow-console-step__summary > svg {
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+.workflow-console-step__name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.workflow-console-step__duration {
+  margin-left: 16px;
+  flex: none;
+}
+.workflow-console .workflow-run-status[data-console] {
+  width: 16px;
+  height: 16px;
+  flex: none;
+  justify-content: center;
+}
+.workflow-console .workflow-run-status[data-status="completed"],
+.workflow-console .workflow-run-status[data-status="failed"] {
+  border-radius: 50%;
+  background: var(--console-green);
+}
+.workflow-console .workflow-run-status[data-status="failed"] {
+  background: var(--console-red);
+}
+.workflow-console .workflow-run-status[data-status="completed"] svg,
+.workflow-console .workflow-run-status[data-status="failed"] svg {
+  width: 12px;
+  height: 12px;
+  color: var(--console-bg);
+  stroke-width: 2.5;
+}
+.workflow-console
+  .workflow-run-status:is(
+    [data-status="running"],
+    [data-status="claimed"],
+    [data-status="cancel_requested"]
+  )
+  svg {
+  color: var(--console-yellow);
+  animation: workflow-console-running 1s linear infinite;
+}
+.workflow-console .workflow-run-status[data-status="cancelled"] svg {
+  color: var(--console-yellow);
+}
+.workflow-console .workflow-run-status[data-status="unknown"] svg {
+  color: var(--console-red);
+}
+.workflow-console .workflow-run-status[data-status="not_run"] svg {
+  color: var(--console-grey);
+}
+.workflow-console-logs {
+  font-family:
+    ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco, Consolas,
+    "Liberation Mono", "Courier New", monospace;
+  margin: 8px 0;
+  font-size: 12px;
+}
+.workflow-console-line {
+  display: flex;
+  line-height: 20px;
+  min-width: 0;
+}
+.workflow-console-line:hover {
+  background: var(--console-hover);
+}
+.workflow-console-line[hidden] {
+  display: none;
+}
+.workflow-console-line__number {
+  width: 48px;
+  flex: none;
+  color: var(--console-number);
+  text-align: right;
+  user-select: none;
+}
+.workflow-console-line__text {
+  flex: 1;
+  min-width: 0;
+  margin-left: 10px;
+  color: var(--console-fg);
+  white-space: break-spaces;
+  overflow-wrap: anywhere;
+  word-break: break-all;
+}
+.workflow-console-empty,
+.workflow-console-output {
+  margin: 8px 10px;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+.workflow-console-output dd {
+  white-space: pre-wrap;
+  color: var(--console-fg);
+  margin: 0;
+}
+.workflow-console .ansi-black-fg {
+  color: #1f2326;
+}
+.workflow-console .ansi-red-fg {
+  color: #cc4848;
+}
+.workflow-console .ansi-green-fg {
+  color: #87ab63;
+}
+.workflow-console .ansi-yellow-fg {
+  color: #cc9903;
+}
+.workflow-console .ansi-blue-fg {
+  color: #3a8ac6;
+}
+.workflow-console .ansi-magenta-fg {
+  color: #d22e8b;
+}
+.workflow-console .ansi-cyan-fg {
+  color: #00918a;
+}
+.workflow-console .ansi-white-fg {
+  color: #959cab;
+}
+.workflow-console .ansi-bright-black-fg {
+  color: #46494d;
+}
+.workflow-console .ansi-bright-red-fg {
+  color: #d15a5a;
+}
+.workflow-console .ansi-bright-green-fg {
+  color: #93b373;
+}
+.workflow-console .ansi-bright-yellow-fg {
+  color: #eaaf03;
+}
+.workflow-console .ansi-bright-blue-fg {
+  color: #4e96cc;
+}
+.workflow-console .ansi-bright-magenta-fg {
+  color: #d74397;
+}
+.workflow-console .ansi-bright-cyan-fg {
+  color: #00b6ad;
+}
+.workflow-console .ansi-bright-white-fg {
+  color: #eeeff2;
+}
+.workflow-console .ansi-black-bg {
+  background: #1f2326;
+}
+.workflow-console .ansi-red-bg {
+  background: #cc4848;
+}
+.workflow-console .ansi-green-bg {
+  background: #87ab63;
+}
+.workflow-console .ansi-yellow-bg {
+  background: #cc9903;
+}
+.workflow-console .ansi-blue-bg {
+  background: #3a8ac6;
+}
+.workflow-console .ansi-magenta-bg {
+  background: #d22e8b;
+}
+.workflow-console .ansi-cyan-bg {
+  background: #00918a;
+}
+.workflow-console .ansi-white-bg {
+  background: #959cab;
+}
+.workflow-console .ansi-bright-black-bg {
+  background: #46494d;
+}
+.workflow-console .ansi-bright-red-bg {
+  background: #d15a5a;
+}
+.workflow-console .ansi-bright-green-bg {
+  background: #93b373;
+}
+.workflow-console .ansi-bright-yellow-bg {
+  background: #eaaf03;
+}
+.workflow-console .ansi-bright-blue-bg {
+  background: #4e96cc;
+}
+.workflow-console .ansi-bright-magenta-bg {
+  background: #d74397;
+}
+.workflow-console .ansi-bright-cyan-bg {
+  background: #00b6ad;
+}
+.workflow-console .ansi-bright-white-bg {
+  background: #eeeff2;
+}
+@keyframes workflow-console-running {
+  to {
+    transform: rotate(-360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .workflow-console .workflow-run-status svg {
+    animation: none;
+  }
+}

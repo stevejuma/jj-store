@@ -141,25 +141,63 @@ links can inspect retained removed workflows by exact home/run identity;
 catalog-based discovery lists currently registered workflows. Read failures use
 retryable shared toasts, preserving loaded content and pending command bytes.
 
-Run details use the maintained operation-ID copy button and Git commit chip with
-full recorded identity in their accessible labels. The right side of the detail
-header contains icon-only Refresh, Pin/Follow latest and guarded Cancel/Retry
-controls with public shadcn tooltips. These actions retain their existing grants
-and exact-request semantics.
+Run details retain their metadata card, including a medium author-avatar button,
+recorded status, repository, host, definition and source. Operation-ID copy and
+Git commit chips retain full recorded identities in their accessible labels. The
+right header contains Refresh and Pin/Follow latest tooltips, icon-only Cancel
+and a labeled Re-run all jobs action. Re-run uses the existing guarded retry
+command with the latest attempt identity; older attempts and unknown outcomes
+retain their existing action restrictions and exact-request recovery.
 
-Attempts, Steps and Outputs use the task section disclosure treatment and begin
-collapsed when no saved section preference exists. Section identity includes the
-metadata home and full run ID; explicit expansion uses the existing device-local
-layout preference. Attempts lists recorded status and host, with an exact
-attempt picker. Empty Steps and Outputs use the existing shadcn Empty
-presentation. Run details have an independently scrolling body; legacy modal
-styles cannot override their metadata rows. History rows have an inset before
-their leading status icon and no box shadow or trailing row border.
+The body contains one owned Forgejo-15.0.7-style console beneath metadata,
+without outer Attempts, Steps or Outputs disclosures. The dark console remains
+in both application themes. Its header contains the workflow name and status, a
+status-icon attempt picker with parenthesized relative dates, and a settings
+icon inside the right border. An omitted attempt follows the latest one; the
+picker also offers Latest attempt and exact historical attempts. The settings
+menu controls seconds, reported timestamps and full screen, downloads complete
+selected-attempt logs, and retains artifact downloads, agent transcript links
+and evidence pagination. It replaces the former footer. Full screen uses the
+public accessible Dialog with content above its overlay; exit preserves expanded
+steps and loaded output.
+
+One initially collapsed row per action shows its latest reported status,
+disclosure chevron and duration. Order comes from the exact recorded definition;
+historical attempts never mix evidence. Public Design Core Collapsible controls
+support keyboard interaction. Disclosure identity includes
+home/run/attempt/action and survives refresh through the existing device-local
+layout preference. Expanding a step reads its pinned evidence on demand, showing
+a refresh spinner in place of the chevron on first load. Closed steps do not
+fetch logs. Failed reads and downloads publish retryable toasts, preserve loaded
+content and never render inline exceptions.
+
+Expanded rows contain continuously numbered ANSI-colored stdout/stderr lines.
+Partial chunks join within their stream; ordering uses each line's first
+contributing evidence sequence. CRLF and chunk boundaries do not add blank
+lines. HTML remains escaped; process-supplied hyperlinks are suppressed.
+Whitespace and Unicode runner icons are preserved, with wrapping for long lines.
+Forgejo markers ##[group] and ##[endgroup] produce nested, initially collapsed
+log groups with chevrons and keyboard controls. Ambiguous and legacy unscoped
+logs remain in a clearly labeled Run output disclosure. Log downloads retain the
+original text, ANSI and group markers.
+
+Durations use reported start/end timestamps; missing starts show an em dash.
+Pinned publications freeze elapsed time. Unreported actions remain pending or
+not run after confirmed failure/cancellation; missing evidence never implies
+completion. The console uses 4px corners, a #1f212b background, #383c47 border,
+#eeeff2 foreground and #959cab muted text. Step margins are 10px, row padding is
+5px/10px, labels are 14px, icons 16px and logs 12px monospace/20px with a 48px
+number gutter and 10px text offset. Visible timestamp/seconds text uses the
+muted foreground to meet contrast requirements. Forgejo source/version/path
+references are recorded in provenance; this is an independent Svelte
+implementation with no copied Vue source or runtime Forgejo dependency.
 
 Bootstrap and repository discovery show the selected view's skeleton before
 considering a metadata-home empty state. Workflows loading follows its cards;
 History follows its heading, ownership group and inset
 status/title/source/avatar rows. Run loading follows the detail header, metadata
-card and three collapsed section headings. Initial catalog reads suppress
-empty-run explanations until settled; existing content remains visible during
-subsequent refresh.
+and dark console header with three collapsed step rows. Initial reads suppress
+empty-run explanations until settled; loaded content remains visible during
+refresh. History rows have an inset before their leading status icon, no box
+shadow or trailing row border. Workflow protocols, native authority and
+immutable evidence remain unchanged.

@@ -3805,5 +3805,28 @@
       "desktop/src/features/workflows/ui/workflowConditionExpression.ts",
       "desktop/src/features/workflows/ui/WorkflowAuthorPicker.tsx"
     ]
+  },
+  "workflowRunConsole": {
+    "reference": "Forgejo Actions step and log presentation",
+    "repository": "https://codeberg.org/forgejo/forgejo",
+    "revision": "v15.0.7",
+    "sourceLicense": "GPL-3.0-or-later",
+    "usage": "Reference inspection only; independently implemented owned Svelte presentation, no copied or vendored Forgejo source.",
+    "sources": [
+      "web_src/js/components/ActionJobStep.vue",
+      "web_src/js/components/ActionJobStepList.vue",
+      "web_src/js/components/ActionRunStatus.vue",
+      "web_src/js/components/RepoActionView.vue",
+      "web_src/js/render/ansi.js",
+      "web_src/css/themes/theme-forgejo-dark.css"
+    ],
+    "local": [
+      "web/src/lib/ui/store-workflows/WorkflowRunSections.svelte",
+      "web/src/lib/ui/store-workflows/WorkflowConsoleStep.svelte",
+      "web/src/lib/ui/store-workflows/WorkflowConsoleLogs.svelte",
+      "web/src/lib/ui/store-workflows/WorkflowConsoleSettings.svelte",
+      "web/src/lib/ui/store-workflows/workflow-console.css"
+    ],
+    "adaptations": "Recorded native actions/evidence, pinned on-demand reads, separate stdout/stderr assembly, nested group markers, current/historical attempts, public Design Core controls and contrast-compliant seconds/timestamps. ANSI conversion uses the MIT-licensed ansi_up 6.0.6 direct dependency."
   }
 }

@@ -44,3 +44,12 @@ E-WORKFLOW-YAML-001 confirms unchanged JST-WF-006 contracts. Full-width YAML
 presentation changes no workflow read, validation, command or source-selection
 API. Returning to Form retains its visibility preference and existing draft
 parsing; exact pending commands and shared notification recovery are unchanged.
+
+E-WORKFLOW-CONSOLE-001 confirms unchanged JST-WF-006 and JST-API-006 wire
+contracts. The console projects recorded definition/actions and attempt
+evidence; on-demand reads reuse exact run/attempt/publication queries and
+bounded cursors. Downloads do not introduce an endpoint. Re-run all jobs submits
+the existing retry command with the latest recorded expected attempt; server
+guards and exact outcome recovery remain authoritative, including when the
+latest attempt is explicitly selected in a pinned view. Older/unknown attempt
+restrictions remain.

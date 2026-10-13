@@ -41,3 +41,11 @@ workflow formats, authority and M28 execution/visual gates are unchanged.
 E-WORKFLOW-MULTISTEP-001 documents one shared private command workspace per
 attempt and unchanged CLI reporting. Native command-host acceptance is distinct
 from a live Forgejo wrapper or unchanged remote runner protocol qualification.
+
+E-WORKFLOW-CONSOLE-001 documents retained metadata, an owned Forgejo-style step
+console, internal latest/historical attempts, pinned on-demand logs and
+spinners, ANSI/nested groups, settings/fullscreen/downloads and guarded Re-run
+all jobs. Application guide and source review describe the same controls.
+Immutable native formats/authority and M28 execution gates remain unchanged;
+grouped native demo and focused UI evidence do not qualify the external Forgejo
+runner protocol.

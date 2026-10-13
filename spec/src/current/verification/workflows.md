@@ -1,15 +1,15 @@
 # Workflows verification
 
-| ID         | Status      | Evidence                                                                                                                           |
-| ---------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| JST-WF-001 | Implemented | M28 / E-WORKFLOW-001                                                                                                               |
-| JST-WF-002 | Implemented | M28 / E-WORKFLOW-001                                                                                                               |
-| JST-WF-003 | Implemented | M28 / E-WORKFLOW-001                                                                                                               |
-| JST-WF-004 | Implemented | M28 / E-WORKFLOW-001                                                                                                               |
-| JST-WF-005 | Implemented | M28 / E-WORKFLOW-001                                                                                                               |
-| JST-WF-006 | Implemented | M28 / E-WORKFLOW-001                                                                                                               |
-| JST-WF-007 | Implemented | M28 / E-WORKFLOW-001                                                                                                               |
-| JST-WF-008 | Implemented | M28 / E-WORKFLOW-001,E-WORKFLOW-CHOICES-001,E-WORKFLOW-RUN-001,E-WORKFLOW-HISTORY-001,E-WORKFLOW-YAML-001,E-WORKFLOW-MULTISTEP-001 |
+| ID         | Status      | Evidence                                                                                                                                                  |
+| ---------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| JST-WF-001 | Implemented | M28 / E-WORKFLOW-001                                                                                                                                      |
+| JST-WF-002 | Implemented | M28 / E-WORKFLOW-001                                                                                                                                      |
+| JST-WF-003 | Implemented | M28 / E-WORKFLOW-001                                                                                                                                      |
+| JST-WF-004 | Implemented | M28 / E-WORKFLOW-001                                                                                                                                      |
+| JST-WF-005 | Implemented | M28 / E-WORKFLOW-001                                                                                                                                      |
+| JST-WF-006 | Implemented | M28 / E-WORKFLOW-001                                                                                                                                      |
+| JST-WF-007 | Implemented | M28 / E-WORKFLOW-001                                                                                                                                      |
+| JST-WF-008 | Implemented | M28 / E-WORKFLOW-001,E-WORKFLOW-CHOICES-001,E-WORKFLOW-RUN-001,E-WORKFLOW-HISTORY-001,E-WORKFLOW-YAML-001,E-WORKFLOW-MULTISTEP-001,E-WORKFLOW-CONSOLE-001 |
 
 E-WORKFLOW-001 qualifies durable native roots/receipts, one-owner command
 execution, pinned source export, source trigger scope, service grants and
@@ -53,3 +53,9 @@ artifact. Exact run/evidence history survived backend restart after restoring
 the original empty host admission; Vite, the disabled definition and the prior
 pending run were preserved. App inspection confirmed steps and outputs. No
 Forgejo runner, agent provider or visual baseline gate is promoted.
+
+E-WORKFLOW-CONSOLE-001 records the independent Forgejo-15.0.7-style step/log
+console, latest/historical attempt projection, pinned lazy reads and spinners,
+ANSI/chunk/CRLF handling, nested groups, settings/fullscreen/downloads, metadata
+and guarded Re-run all jobs. Focused browser/Axe and native grouped demo
+evidence leave M28 and external execution/visual gates unchanged.

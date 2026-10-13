@@ -5,7 +5,14 @@
   import Unknown from "@lucide/svelte/icons/circle-dot";
   import Running from "@lucide/svelte/icons/play";
   import Clock from "@lucide/svelte/icons/clock";
-  let { status, label = false }: { status: string; label?: boolean } = $props();
+  import CheckMark from "@lucide/svelte/icons/check";
+  import Cross from "@lucide/svelte/icons/x";
+  import Gauge from "@lucide/svelte/icons/gauge";
+  let {
+    status,
+    label = false,
+    console = false,
+  }: { status: string; label?: boolean; console?: boolean } = $props();
   const Icon = $derived(
     status === "completed"
       ? Check
@@ -17,16 +24,24 @@
             ? Unknown
             : ["running", "claimed", "cancel_requested"].includes(status)
               ? Running
-              : Clock,
+              : status === "not_run"
+                ? Cancelled
+                : Clock,
   );
 </script>
 
 <span
   class="workflow-run-status"
   data-status={status}
+  data-console={console || undefined}
   title={status.replaceAll("_", " ")}
 >
-  <Icon aria-hidden="true" />{#if label}<span
+  {#if console && status === "completed"}<CheckMark aria-hidden="true" />
+  {:else if console && status === "failed"}<Cross aria-hidden="true" />
+  {:else if console && ["running", "claimed", "cancel_requested"].includes(status)}<Gauge
+      aria-hidden="true"
+    />
+  {:else}<Icon aria-hidden="true" />{/if}{#if label}<span
       >{status.replaceAll("_", " ")}</span
     >{:else}<span class="sr-only">{status.replaceAll("_", " ")}</span>{/if}
 </span>

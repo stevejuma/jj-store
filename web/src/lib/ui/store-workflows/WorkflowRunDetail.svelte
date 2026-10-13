@@ -79,7 +79,9 @@
       created={Number(run.created_at)}
       pinned={selection.at !== undefined}
       {loading}
-      action={writable && !selection.attempt && attempt.status !== "unknown"
+      action={writable &&
+      attempt.id === run.attempts.at(-1)?.id &&
+      attempt.status !== "unknown"
         ? terminal
           ? "retry"
           : "cancel"
@@ -102,11 +104,15 @@
         <div>
           <dt><Bot aria-hidden="true" />Author</dt>
           <dd>
-            <CommunityMemberHoverCard
-              member={author ?? workMember(run.requester)}
-              trigger="mention"
-              triggerLabel={author?.name ?? workMember(run.requester).name}
-            />
+            <span class="workflow-run-author"
+              ><CommunityMemberHoverCard
+                member={author ?? workMember(run.requester)}
+                trigger="avatar"
+                avatarSize="medium"
+                triggerLabel={author?.name ?? workMember(run.requester).name}
+              /><span>{author?.name ?? workMember(run.requester).name}</span
+              ></span
+            >
           </dd>
         </div>
         <div>
@@ -168,6 +174,7 @@
       <WorkflowRunSections
         {run}
         {page}
+        transport={work.transport}
         {selection}
         {loading}
         {onChange}

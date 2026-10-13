@@ -134,6 +134,9 @@ importers:
       ajv:
         specifier: ^8.20.0
         version: 8.20.0
+      ansi_up:
+        specifier: 6.0.6
+        version: 6.0.6
       bits-ui:
         specifier: 2.19.4
         version: 2.19.4(@internationalized/date@3.12.4)(svelte@5.57.1)
@@ -1831,6 +1834,9 @@ packages:
   ansi-styles@6.2.3:
     resolution: {integrity: sha512-4Dj6M28JB+oAH8kFkTLUo+a2jwOFkuqb3yucU0CANcRRUbxS0cP0nZYCGjcc3BNXwRIsUVmDGgzawme7zvJHvg==}
     engines: {node: '>=12'}
+
+  ansi_up@6.0.6:
+    resolution: {integrity: sha512-yIa1x3Ecf8jWP4UWEunNjqNX6gzE4vg2gGz+xqRGY+TBSucnYp6RRdPV4brmtg6bQ1ljD48mZ5iGSEj7QEpRKA==}
 
   argparse@2.0.1:
     resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
@@ -6222,6 +6228,8 @@ snapshots:
   ansi-styles@5.2.0: {}
 
   ansi-styles@6.2.3: {}
+
+  ansi_up@6.0.6: {}
 
   argparse@2.0.1: {}
 

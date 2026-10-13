@@ -84,16 +84,19 @@
             >{#snippet child({ props })}<Button
                 {...props}
                 variant="ghost"
-                size="icon-sm"
-                aria-label={action === "retry" ? "Retry run" : "Cancel run"}
+                size={action === "retry" ? "sm" : "icon-sm"}
+                aria-label={action === "retry"
+                  ? "Re-run all jobs"
+                  : "Cancel run"}
                 {disabled}
                 onclick={onCommand}
-                >{#if action === "retry"}<Retry aria-hidden="true" />{:else}<Ban
-                    aria-hidden="true"
-                  />{/if}</Button
+                >{#if action === "retry"}<Retry aria-hidden="true" />Re-run all
+                  jobs{:else}<Ban aria-hidden="true" />{/if}</Button
               >{/snippet}</Tooltip.Trigger
           ><Tooltip.Content role="tooltip"
-            >{action === "retry" ? "Retry run" : "Cancel run"}</Tooltip.Content
+            >{action === "retry"
+              ? "Re-run all jobs"
+              : "Cancel run"}</Tooltip.Content
           ></Tooltip.Root
         >{/if}
     </Tooltip.Provider>

@@ -30,6 +30,12 @@
   overflow-wrap: anywhere;
   min-width: 0;
 }
+.workflow-run-author {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.5rem;
+}
 .workflow-run-detail h3 {
   font-weight: 600;
   margin: 1.25rem 0 0.75rem;
@@ -68,14 +74,6 @@
   align-items: center;
   gap: 0.5rem;
   flex-wrap: wrap;
-}
-.workflow-run-evidence pre {
-  width: 100%;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  background: var(--muted);
-  padding: 0.75rem;
-  border-radius: 0.5rem;
 }
 @media (max-width: 48rem) {
   .workflow-history-row {

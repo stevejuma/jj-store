@@ -311,3 +311,12 @@ ownership is extracted without changing pending-request custody; shared
 ownership groups gain only a typed runs label. Native workflow authority,
 formats and execution gates remain unchanged. Focused workflow and route checks
 are the UI impact surface.
+
+E-WORKFLOW-CONSOLE-001 retains JST-GOV-002/008 local ownership. Forgejo v15.0.7
+Vue/CSS files are inspected visual/source references only; the console is
+independently implemented Svelte under web/src/lib with exact paths/version in
+provenance. No Forgejo or Community checkout/package import is introduced. The
+MIT-licensed ansi_up 6.0.6 dependency performs escaped ANSI conversion. Released
+Design Core Collapsible, Dialog, Menu and Command View are composed without core
+patches. Native formats, host authority and execution gates stay unchanged;
+approved visual baselines remain separate.

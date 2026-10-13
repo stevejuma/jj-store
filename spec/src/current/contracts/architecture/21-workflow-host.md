@@ -2,16 +2,16 @@
 
 ## Requirements
 
-| ID         | Requirement                                                                                                                                                                                                         |
-| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| JST-WF-001 | A configured native metadata home MUST select typed immutable workflow definitions, evaluations, runs and evidence through manifest CAS and durable receipts; source repositories remain independent.               |
-| JST-WF-002 | Committed source events MUST retain canonical origin identities and exact operation/commit or immutable conversation anchors; duplicate observation MUST return the first evaluation, including no-match decisions. |
-| JST-WF-003 | A workflow run MUST have one authority-selected owner; uncertain execution MUST retain its attempt identity and MUST NOT be reassigned or replayed automatically.                                                   |
-| JST-WF-004 | Only explicitly admitted execution hosts MAY dispatch named operator-configured executors; repository contents MUST NOT choose executables or grant source, secret or agent authority.                              |
-| JST-WF-005 | Agent execution MUST use existing admitted dispatch and original receipts; command execution MUST use a bounded revision-pinned workspace and retain reporting receipts across reconnect/restart.                   |
-| JST-WF-006 | HTTP, native RPC, CLI and browser workflow commands MUST share authorization, validation and outcome recovery; reports MUST be bound to the assigned attempt.                                                       |
-| JST-WF-007 | Ordered actions MUST retain logs, step reports, artifacts and agent references; cancellation MUST remain requested until termination is confirmed and explicit retries MUST use a new attempt.                      |
-| JST-WF-008 | The Workflows page MUST reproduce Buzz overview, Form/YAML editor, sequence inspector and history presentation with repository/executor controls, preserving drafts and historical selection across live updates.   |
+| ID         | Requirement                                                                                                                                                                                                                                            |
+| ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| JST-WF-001 | A configured native metadata home MUST select typed immutable workflow definitions, evaluations, runs and evidence through manifest CAS and durable receipts; source repositories remain independent.                                                  |
+| JST-WF-002 | Committed source events MUST retain canonical origin identities and exact operation/commit or immutable conversation anchors; duplicate observation MUST return the first evaluation, including no-match decisions.                                    |
+| JST-WF-003 | A workflow run MUST have one authority-selected owner; uncertain execution MUST retain its attempt identity and MUST NOT be reassigned or replayed automatically.                                                                                      |
+| JST-WF-004 | Only explicitly admitted execution hosts MAY dispatch named operator-configured executors; repository contents MUST NOT choose executables or grant source, secret or agent authority.                                                                 |
+| JST-WF-005 | Agent execution MUST use existing admitted dispatch and original receipts; command execution MUST use a bounded revision-pinned workspace and retain reporting receipts across reconnect/restart.                                                      |
+| JST-WF-006 | HTTP, native RPC, CLI and browser workflow commands MUST share authorization, validation and outcome recovery; reports MUST be bound to the assigned attempt.                                                                                          |
+| JST-WF-007 | Ordered actions MUST retain logs, step reports, artifacts and agent references; cancellation MUST remain requested until termination is confirmed and explicit retries MUST use a new attempt.                                                         |
+| JST-WF-008 | The Workflows page MUST reproduce Buzz overview, Form/YAML editor, sequence inspector and history presentation with repository/executor controls and a Forgejo-style step/log console, preserving drafts and historical selection across live updates. |
 
 ## Execution profile
 

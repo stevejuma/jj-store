@@ -41,6 +41,22 @@ retain the original request and read-only source fields until reconciled.
 See [Native workflows](../cli/jj-workflow.md) for metadata-home access,
 execution host admission and current compatibility limits.
 
+## Inspect a workflow run
+
+Open the **History** tab and select a run. Its metadata retains the author,
+source revision and host. The dark step console follows the latest attempt; its
+header picker selects a historical attempt with its relative date. Expanding a
+step loads its pinned logs, with a spinner while the first read is pending.
+Nested log groups expand separately. Explicit expansion survives refresh, and
+historical selections retain their publication pin.
+
+Use **Log settings** beside the attempt picker for seconds, reported timestamps,
+full screen and **Download logs**. Artifact downloads and agent transcript links
+also appear there. A failed read or download offers a retry toast. **Re-run all
+jobs** in the page header creates a new guarded attempt for the same definition
+and source; older attempts and unknown outcomes keep their existing action
+restrictions.
+
 ## Choose a snapshot
 
 History follows the selected bookmark/workspace and query. Op Log describes

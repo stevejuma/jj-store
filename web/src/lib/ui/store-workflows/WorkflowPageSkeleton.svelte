@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Skeleton } from "@lapismd/design-core/shadcn/skeleton";
   import WorkflowSkeleton from "./WorkflowSkeleton.svelte";
+  import "./workflow-console.css";
   let { view = "workflows" }: { view?: "workflows" | "history" | "detail" } =
     $props();
 </script>
@@ -39,8 +40,21 @@
             />
           </div>{/each}
       </div>
-      <div class="workflow-page-skeleton__sections">
-        {#each [1, 2, 3] as key (key)}<Skeleton class="h-4 w-24" />{/each}
+      <div class="workflow-console workflow-page-skeleton__console">
+        <div class="workflow-console-header">
+          <Skeleton class="h-5 w-40" /><Skeleton class="h-8 w-44" /><Skeleton
+            class="size-8"
+          />
+        </div>
+        <div class="workflow-console-body">
+          {#each [1, 2, 3] as key (key)}<div
+              class="workflow-page-skeleton__step"
+            >
+              <Skeleton class="size-4 rounded-full" /><Skeleton
+                class="h-4 w-40"
+              /><Skeleton class="h-3 w-8" />
+            </div>{/each}
+        </div>
       </div>
     </div>
   {:else}<div class="workflow-history-loading" aria-hidden="true">
@@ -68,10 +82,15 @@
     display: grid;
     gap: 0.5rem;
   }
-  .workflow-page-skeleton__sections {
-    display: grid;
-    gap: 1.5rem;
-    padding-block: 1rem;
+  .workflow-page-skeleton__step {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 10px;
+    padding: 5px 10px;
+  }
+  .workflow-page-skeleton__step > :global(:last-child) {
+    margin-left: auto;
   }
   @media (max-width: 48rem) {
     .workflow-page-skeleton :global(.workflow-page-skeleton__time) {

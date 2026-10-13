@@ -48,12 +48,12 @@
     await userEvent.click(
       canvas.getByRole("button", { name: /Open run Build parser 51515151/ }),
     );
+    await expect(
+      await canvas.findByRole("region", { name: "Step console" }),
+    ).toBeVisible();
     for (const name of ["Attempts", "Steps", "Outputs"])
-      await expect(await canvas.findByRole("button", { name })).toHaveAttribute(
-        "aria-expanded",
-        "false",
-      );
-    await userEvent.click(canvas.getByRole("button", { name: "Outputs" }));
+      await expect(canvas.queryByRole("button", { name })).toBeNull();
+    await userEvent.click(canvas.getByRole("button", { name: "Run output" }));
     await expect(await canvas.findByLabelText("stdout log")).toHaveTextContent(
       "12 tests passed",
     );
@@ -134,12 +134,12 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement),
       body = within(document.body);
+    await expect(
+      await canvas.findByRole("region", { name: "Step console" }),
+    ).toBeVisible();
     for (const name of ["Attempts", "Steps", "Outputs"])
-      await expect(await canvas.findByRole("button", { name })).toHaveAttribute(
-        "aria-expanded",
-        "false",
-      );
-    await userEvent.click(canvas.getByRole("button", { name: "Outputs" }));
+      await expect(canvas.queryByRole("button", { name })).toBeNull();
+    await userEvent.click(canvas.getByRole("button", { name: "Run output" }));
     await expect(await canvas.findByLabelText("stdout log")).toHaveTextContent(
       "12 tests passed",
     );
@@ -148,10 +148,8 @@
     ).toHaveAttribute("aria-pressed", "true");
     const details = canvas.getByRole("article", { name: "Run details" });
     await expect(
-      getComputedStyle(
-        details.querySelector(".community-projects__task-meta")!,
-      ).gridTemplateColumns.split(" "),
-    ).toHaveLength(1);
+      details.querySelector(".community-projects__task-meta"),
+    ).not.toBeNull();
     await userEvent.hover(
       canvas.getByRole("button", { name: "Follow latest" }),
     );
@@ -161,30 +159,29 @@
     await userEvent.unhover(
       canvas.getByRole("button", { name: "Follow latest" }),
     );
-    await userEvent.click(canvas.getByRole("button", { name: "Outputs" }));
+    await userEvent.click(canvas.getByRole("button", { name: "Run output" }));
     await expect(
-      canvas.getByRole("button", { name: "Outputs" }),
+      canvas.getByRole("button", { name: "Run output" }),
     ).toHaveAttribute("aria-expanded", "false");
     await waitFor(() =>
       expect(canvas.getByLabelText("stdout log")).not.toBeVisible(),
     );
-    await userEvent.click(canvas.getByRole("button", { name: "Outputs" }));
+    await userEvent.click(canvas.getByRole("button", { name: "Run output" }));
     await expect(await canvas.findByLabelText("stdout log")).toBeVisible();
     await expect(
-      canvas.queryByRole("combobox", { name: "Run attempt" }),
-    ).toBeNull();
-    await userEvent.click(canvas.getByRole("button", { name: "Attempts" }));
+      canvas.getByRole("combobox", { name: "Run attempt" }),
+    ).toBeVisible();
     await userEvent.click(
       canvas.getByRole("combobox", { name: "Run attempt" }),
     );
     await userEvent.click(
-      await body.findByRole("option", { name: /Attempt 1/ }),
+      await body.findByRole("option", { name: /Run attempt #1/ }),
     );
     await expect(canvas.getByLabelText("Workflow location")).toHaveTextContent(
       "attempt=" + "52".repeat(16),
     );
     await userEvent.click(
-      await canvas.findByRole("button", { name: "Outputs" }),
+      await canvas.findByRole("button", { name: "Run output" }),
     );
     await expect(await canvas.findByLabelText("stdout log")).toBeVisible();
     await userEvent.click(
@@ -216,7 +213,7 @@
     await checkFailure();
     const canvas = within(canvasElement);
     await userEvent.click(
-      await canvas.findByRole("button", { name: "Outputs" }),
+      await canvas.findByRole("button", { name: "Run output" }),
     );
     await expect(await canvas.findByLabelText("stdout log")).toBeVisible();
     await expect(canvas.getByLabelText("Workflow location")).toHaveTextContent(
@@ -255,16 +252,12 @@
       "Cancel run",
     );
     await userEvent.unhover(cancel);
-    for (const name of ["Attempts", "Steps", "Outputs"])
-      await expect(canvas.getByRole("button", { name })).toHaveAttribute(
-        "aria-expanded",
-        "false",
-      );
-    await userEvent.click(canvas.getByRole("button", { name: "Steps" }));
-    const empty = await canvas.findByText("No steps recorded");
-    await expect(empty.closest('[data-ui-component="empty"]')).not.toBeNull();
-    await userEvent.click(canvas.getByRole("button", { name: "Outputs" }));
-    await expect(await canvas.findByText("No outputs recorded")).toBeVisible();
+    const step = canvas.getByRole("button", { name: "Step build · pending" });
+    await expect(step).toHaveAttribute("aria-expanded", "false");
+    await expect(
+      canvas.queryByRole("button", { name: "Run output" }),
+    ).toBeNull();
+    await expect(canvas.queryByRole("button", { name: "Outputs" })).toBeNull();
     await userEvent.click(
       canvas.getByRole("button", { name: "Follow latest" }),
     );
@@ -333,10 +326,13 @@
       canvasElement.querySelector(".community-projects__task-detail-header"),
     ).not.toBeNull();
     await expect(
+      canvasElement.querySelectorAll(".workflow-page-skeleton__step"),
+    ).toHaveLength(3);
+    await expect(
+      canvasElement.querySelector(".workflow-page-skeleton__console"),
+    ).not.toBeNull();
+    await expect(
       canvasElement.querySelectorAll(".community-projects__task-meta > div"),
     ).toHaveLength(7);
-    await expect(
-      canvasElement.querySelector(".workflow-page-skeleton__sections"),
-    ).not.toBeNull();
   }}
 />

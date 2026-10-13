@@ -14,6 +14,7 @@
   import { createDirectory } from "../../web/src/lib/controller/directory.svelte.js";
   import { AgentExecution } from "../../web/src/lib/controller/agent-execution.svelte.js";
   import { fixtureExecutionSetup } from "./agent-execution-status.js";
+  import { consoleExample, type ConsoleExample } from "./workflow-console.js";
   let {
     unknown = false,
     choiceFailures = false,
@@ -24,6 +25,10 @@
     historyFailure,
     pendingRun = false,
     discovering = false,
+    consoleMode,
+    logReadDelay = 0,
+    logReadFailure = false,
+    downloadFailure = false,
   }: {
     unknown?: boolean;
     choiceFailures?: boolean;
@@ -34,6 +39,10 @@
     historyFailure?: "list" | "detail";
     pendingRun?: boolean;
     discovering?: boolean;
+    consoleMode?: ConsoleExample;
+    logReadDelay?: number;
+    logReadFailure?: boolean;
+    downloadFailure?: boolean;
   } = $props();
   const base = untrack(() => createInMemoryStoreController("workflows"));
   let location = $state(untrack(() => initialHash));
@@ -69,7 +78,14 @@
     }),
   );
   let failed = false;
-  const source = untrack(() => workflowFixture(unknown, home, pendingRun));
+  const source = untrack(() => {
+    const base = workflowFixture(unknown, home, pendingRun);
+    return consoleMode ? consoleExample(base, consoleMode) : base;
+  });
+  let logReads = $state(0),
+    lastCommand = $state(""),
+    logFailed = false,
+    downloadFailed = false;
   const emptySource = untrack(() => workflowFixture(unknown, code));
   const projects = createProjectsHub({
     repositories: () => repositories,
@@ -88,7 +104,34 @@
         : selected === home
           ? {
               ...source,
+              async apply(request) {
+                lastCommand = JSON.stringify(request.command);
+                return source.apply(request);
+              },
               async page(query, signal) {
+                if (query.attempt && query.run) {
+                  logReads++;
+                  if (logReadDelay)
+                    await new Promise((resolve) =>
+                      setTimeout(resolve, logReadDelay),
+                    );
+                  if (
+                    logReadFailure &&
+                    !logFailed &&
+                    query.evidence_after !== undefined
+                  ) {
+                    logFailed = true;
+                    throw Error("Demo step read failed");
+                  }
+                  if (
+                    downloadFailure &&
+                    !downloadFailed &&
+                    query.evidence_after === undefined
+                  ) {
+                    downloadFailed = true;
+                    throw Error("Demo download failed");
+                  }
+                }
                 if (
                   !failed &&
                   ((historyFailure === "list" && query.workflow) ||
@@ -207,6 +250,10 @@
 <span class="sr-only" aria-label="Workflow location"
   >{storeRouteToHash(navigation.route)}</span
 >
+<span class="sr-only" aria-label="Log read count">{logReads}</span>
+{#if lastCommand}<span class="sr-only" aria-label="Last workflow command"
+    >{lastCommand}</span
+  >{/if}
 <button class="sr-only" onclick={() => navigation.navigate(-1)}
   >Fixture back</button
 >

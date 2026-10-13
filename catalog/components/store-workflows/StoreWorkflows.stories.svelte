@@ -147,18 +147,31 @@
         name: "Copy Git commit SHA " + "62".repeat(64),
       }),
     ).toBeVisible();
-    await userEvent.click(history.getByRole("button", { name: "Outputs" }));
-    await expect(history.getByLabelText("stdout log")).toHaveTextContent(
+    await userEvent.click(history.getByRole("button", { name: "Run output" }));
+    await expect(await history.findByLabelText("stdout log")).toHaveTextContent(
       "12 tests passed",
     );
+    await userEvent.click(
+      history.getByRole("button", { name: "Log settings" }),
+    );
     await expect(
-      history.getByRole("button", { name: "Download result.txt" }),
+      await within(document.body).findByRole("menuitem", {
+        name: "Download result.txt",
+      }),
     ).toBeVisible();
+    await userEvent.keyboard("{Escape}");
     await expect(
       history.getByRole("button", { name: "Follow latest" }),
     ).toHaveAttribute("aria-pressed", "true");
     await expect(canvas.getByLabelText("Workflow location")).toHaveTextContent(
       /tab=history.*home=.*run=51515151.*at=1/,
+    );
+    await waitFor(() =>
+      expect(
+        getComputedStyle(
+          history.getByRole("button", { name: "Back to history" }),
+        ).pointerEvents,
+      ).not.toBe("none"),
     );
     await userEvent.click(
       history.getByRole("button", { name: "Back to history" }),
