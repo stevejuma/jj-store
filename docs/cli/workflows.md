@@ -50,6 +50,21 @@ pins recorded history.
 appends a typed step, log, artifact or agent reference for the assigned owner.
 It requires execution-host admission as well as home Write.
 
+## Browser actions
+
+The workflow card menu offers Edit workflow, Run workflow, Duplicate and Remove
+workflow with icons. Run workflow opens a Settings-style source form. Search the
+recorded operations, then select a commit or bookmark from that exact operation.
+Choices load in bounded pages; use Load more for additional recorded values.
+Search filters the loaded choices. Changing the operation clears the commit and
+bookmark. A bookmark with one unambiguous target selects its exact commit;
+conflicted or targetless bookmarks cannot be selected.
+
+Source access is separate from metadata-home access. Lookup failures use retry
+toasts and preserve selected values. After an unknown run outcome, source fields
+stay read-only while Check original request reconciles the retained command.
+Selecting source values does not publish a revision or execute the workflow.
+
 ## Optional event/action host
 
 Set `workflow_hosts = ["PRINCIPAL_ID"]` in the server's top-level TOML and

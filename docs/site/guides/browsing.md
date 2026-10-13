@@ -27,6 +27,20 @@ appropriate. A loading view retains the shell and current controller state. If
 its download fails, use Retry in the notification; navigation and pending work
 remain available.
 
+## Select a workflow source
+
+Open **Workflows**, then use a card's **Run workflow** menu item. Its source
+form uses the same cards and icon rows as Settings. Search recorded
+**Operation**, **Commit** and optional **Bookmark** choices; Load more extends
+each bounded list. Search filters loaded choices. Commit and bookmark reads
+retain the chosen operation, and selecting a bookmark records its unique commit.
+Changing the operation clears dependent selections. Unavailable or conflicted
+bookmarks are disabled; failed reads offer retry toasts. Unknown run outcomes
+retain the original request and read-only source fields until reconciled.
+
+See [Native workflows](../cli/jj-workflow.md) for metadata-home access,
+execution host admission and current compatibility limits.
+
 ## Choose a snapshot
 
 History follows the selected bookmark/workspace and query. Op Log describes

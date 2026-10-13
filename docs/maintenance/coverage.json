@@ -137,8 +137,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Repository and project creation now use the documented Settings cards, icon rows, responsive labels and controls, with project commands in the dialog footer. Writable homes, retained drafts and original request recovery remain unchanged.",
-      "fingerprint": "d22f6cd6f32fb53af623e0256dd77724fc5b96be56d12179f65aea452b33ef31"
+      "reason": "Reviewed Settings-style workflow Run source selectors, native operation pins and bounded paging, retry toasts and exact unknown request retention; updated browsing and native workflow guidance.",
+      "fingerprint": "af83dab80fb76e22ac4808e394a5230d9c85394dfc285cdf076d572378bfbffd"
     }
   },
   {
@@ -155,8 +155,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Reviewed generated version-1 workflow conditions, conversation sources and pinned evaluation catalogs; legacy omitted fields preserve canonical encodings and unchanged record identities.",
-      "fingerprint": "c93eaa81dc5ffe5bf510f851be4d5ddc59b795a32f179cb411b601a08ef8559c"
+      "reason": "Reviewed unchanged workflow command arguments and native source lookup contracts; shared help and owning API/CLI/UI chapters document Settings-style selectors, bounded pinned reads and original request recovery.",
+      "fingerprint": "8a1aa999d4c5a6b06beaeeab35cf43b8b566129c24b8c19263386aa52ed8fee9"
     }
   },
   {

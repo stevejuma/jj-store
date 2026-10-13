@@ -1,15 +1,15 @@
 # Workflows verification
 
-| ID         | Status      | Evidence                                    |
-| ---------- | ----------- | ------------------------------------------- |
-| JST-WF-001 | Implemented | M28 / E-WORKFLOW-001                        |
-| JST-WF-002 | Implemented | M28 / E-WORKFLOW-001                        |
-| JST-WF-003 | Implemented | M28 / E-WORKFLOW-001                        |
-| JST-WF-004 | Implemented | M28 / E-WORKFLOW-001                        |
-| JST-WF-005 | Implemented | M28 / E-WORKFLOW-001                        |
-| JST-WF-006 | Implemented | M28 / E-WORKFLOW-001                        |
-| JST-WF-007 | Implemented | M28 / E-WORKFLOW-001                        |
-| JST-WF-008 | Implemented | M28 / E-WORKFLOW-001,E-WORKFLOW-CHOICES-001 |
+| ID         | Status      | Evidence                                                       |
+| ---------- | ----------- | -------------------------------------------------------------- |
+| JST-WF-001 | Implemented | M28 / E-WORKFLOW-001                                           |
+| JST-WF-002 | Implemented | M28 / E-WORKFLOW-001                                           |
+| JST-WF-003 | Implemented | M28 / E-WORKFLOW-001                                           |
+| JST-WF-004 | Implemented | M28 / E-WORKFLOW-001                                           |
+| JST-WF-005 | Implemented | M28 / E-WORKFLOW-001                                           |
+| JST-WF-006 | Implemented | M28 / E-WORKFLOW-001                                           |
+| JST-WF-007 | Implemented | M28 / E-WORKFLOW-001                                           |
+| JST-WF-008 | Implemented | M28 / E-WORKFLOW-001,E-WORKFLOW-CHOICES-001,E-WORKFLOW-RUN-001 |
 
 E-WORKFLOW-001 qualifies durable native roots/receipts, one-owner command
 execution, pinned source export, source trigger scope, service grants and
@@ -21,3 +21,9 @@ E-WORKFLOW-CHOICES-001 records cold author/profile and cross-home thread
 discovery, source-pinned revset presentation, draft retention and failure
 toasts. Agent setup identities remain unavailable author filters under the
 existing event contract. No backend or execution gate changes.
+
+E-WORKFLOW-RUN-001 records source-pinned operation/commit/bookmark Command View
+selection, dependent-value clearing, bounded pagination, stale-response guards,
+retry toasts and exact unknown-request retention. Overview actions have icons
+and non-wrapping labels. Focused desktop/mobile interaction and accessibility
+checks do not promote live execution or approved visual-baseline gates.

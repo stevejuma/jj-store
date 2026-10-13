@@ -98,3 +98,16 @@ periodic checks refresh choices without overwriting filters or saved selections.
 Revision match reuses the history revset editor, highlighting and source-pinned
 completion metadata, without executing the draft query. Choice failures use
 retryable shared toasts and stale replies cannot populate another source.
+
+The overview action menu has decorative icons and a viewport-bounded width that
+keeps its labels on one line. Run workflow uses the same Settings cards,
+icon-bearing rows and bottom footer. Operation, Commit and optional Bookmark use
+searchable Command View pickers backed by bounded native source reads.
+Operations are read from an explicit published source head; commit and bookmark
+choices are pinned to the selected operation, independently of the active code
+view. Changing operation clears the selected commit/bookmark. Selecting an
+unambiguous bookmark selects its exact commit; choosing another commit clears
+bookmark context. Conflicted bookmarks are unavailable for automatic selection.
+Paged choices retain their query/operation and ignore stale replies. Read
+failures use retryable toasts. Pending run requests retain their original bytes
+and source selection; disabled controls cannot alter them.

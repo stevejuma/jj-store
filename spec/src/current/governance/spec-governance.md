@@ -295,3 +295,10 @@ existing text row and generic picker stylesheet are extracted to meet component
 size limits, with owned declarations in provenance. No external checkout,
 backend/schema format, identity remapping or execution authority is introduced.
 M28 and visual/provider qualification gates remain unchanged.
+
+E-WORKFLOW-RUN-001 retains JST-GOV-002/008 and JST-UI-015 local ownership. The
+owned workflow source-choice helper composes existing repository reads and the
+maintained CommandView picker with Settings presentation. Released Design Core
+is unchanged; no external checkout dependency or storage format is added.
+Operation-pinned pagination, stale-reply fencing and original unknown commands
+remain independent of presentation. M28 and visual/provider gates are unchanged.

@@ -9,6 +9,10 @@
   import Terminal from "@lucide/svelte/icons/terminal";
   import ArrowRight from "@lucide/svelte/icons/arrow-right";
   import More from "@lucide/svelte/icons/ellipsis";
+  import Pencil from "@lucide/svelte/icons/pencil";
+  import Play from "@lucide/svelte/icons/play";
+  import Copy from "@lucide/svelte/icons/copy";
+  import Trash from "@lucide/svelte/icons/trash-2";
   import type { WorkflowVersion } from "../../controller/workflow-types.js";
   import { triggerLabel } from "./workflow-presentation.js";
   let {
@@ -62,16 +66,19 @@
               aria-label={`Actions for ${workflow.definition.name}`}
               ><More /></Button
             >{/snippet}</Menu.Trigger
-        ><Menu.Content
+        ><Menu.Content align="end" class="workflow-card-menu"
           ><Menu.Group
-            ><Menu.Item onclick={onOpen}>Edit workflow</Menu.Item><Menu.Item
-              disabled={!writable || busy}
-              onclick={onRun}>Run workflow</Menu.Item
+            ><Menu.Item onclick={onOpen}
+              ><Pencil aria-hidden="true" />Edit workflow</Menu.Item
+            ><Menu.Item disabled={!writable || busy} onclick={onRun}
+              ><Play aria-hidden="true" />Run workflow</Menu.Item
             ><Menu.Item disabled={!writable || busy} onclick={onDuplicate}
-              >Duplicate</Menu.Item
+              ><Copy aria-hidden="true" />Duplicate</Menu.Item
             ><Menu.Separator /><Menu.Item
               disabled={!writable || busy}
-              onclick={onRemove}>Remove workflow</Menu.Item
+              variant="destructive"
+              onclick={onRemove}
+              ><Trash aria-hidden="true" />Remove workflow</Menu.Item
             ></Menu.Group
           ></Menu.Content
         ></Menu.Root
@@ -94,3 +101,13 @@
     >
   </footer>
 </article>
+
+<style>
+  :global(.workflow-card-menu[data-slot="dropdown-menu-content"]) {
+    min-width: min(15rem, calc(100vw - 2rem));
+    max-width: calc(100vw - 2rem);
+  }
+  :global(.workflow-card-menu [data-slot="dropdown-menu-item"]) {
+    white-space: nowrap;
+  }
+</style>

@@ -4,7 +4,6 @@
   import { SvelteMap } from "svelte/reactivity";
   import { ownNotifications } from "../../notifications/notification-context.svelte.js";
   import StoreNotificationHost from "../store-notifications/StoreNotificationHost.svelte";
-  import { Button } from "@lapismd/design-core/shadcn/button";
   import WorkflowSkeleton from "./WorkflowSkeleton.svelte";
   import Plus from "@lucide/svelte/icons/plus";
   import StoreWorkEmpty from "../store-work/StoreWorkEmpty.svelte";
@@ -44,6 +43,8 @@
   const sources = $derived(
     controller.state.repositories.filter((r) => r.profile !== "git_sha1_jj045"),
   );
+  const sourceName = (id: string) =>
+    sources.find((r) => r.id === id)?.name ?? id.slice(0, 8);
   let preparing = $state(false);
   let home = $state(""),
     editor = $state(false),
@@ -196,13 +197,12 @@
     });
   }
   async function remove(version: WorkflowVersion, owner = work) {
-    return (
-      (await owner?.submit({
-        type: "remove",
-        workflow: version.id,
-        expected: version.version,
-      })) ?? false
-    );
+    const result = await owner?.submit({
+      type: "remove",
+      workflow: version.id,
+      expected: version.version,
+    });
+    return result ?? false;
   }
 </script>
 
@@ -232,9 +232,7 @@
   {:else}<div class="workflow-grid">
       {#each rows as { repository, owner, version } (`${repository}:${version.id}`)}<WorkflowCard
           workflow={version}
-          repositoryName={sources.find(
-            (r) => r.id === version.definition.repository,
-          )?.name ?? version.definition.repository.slice(0, 8)}
+          repositoryName={sourceName(version.definition.repository)}
           busy={owner.state.writing || !!owner.state.pending}
           writable={canWrite(repository)}
           onOpen={() => open(version, false, repository)}
@@ -295,6 +293,8 @@
     onClose={() => (history = null)}
   />{/if}
 {#if running && work}<WorkflowRunDialog
+    acquireRepository={controller.acquireRepository}
+    repositoryName={sourceName(running.definition.repository)}
     {work}
     workflow={running}
     onClose={() => (running = null)}

@@ -4,3 +4,5 @@
   {{#include E-WORKFLOW-001/SUMMARY.nav.md}}
 - [E-WORKFLOW-CHOICES-001](E-WORKFLOW-CHOICES-001/index.md)
   {{#include E-WORKFLOW-CHOICES-001/SUMMARY.nav.md}}
+- [E-WORKFLOW-RUN-001](E-WORKFLOW-RUN-001/index.md)
+  {{#include E-WORKFLOW-RUN-001/SUMMARY.nav.md}}

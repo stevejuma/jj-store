@@ -3181,6 +3181,10 @@
       "reason": "Application-owned workflow objects and presentation; Buzz layout reference recorded in desktopWorkflows, with released Design Core composition and no external checkout dependency."
     },
     {
+      "local": "web/src/lib/ui/store-workflows/workflow-run-source.svelte.ts",
+      "reason": "Owned bounded native operation, commit and bookmark choice reader; composes existing leased repository interfaces and exact source snapshots, with no external source dependency."
+    },
+    {
       "local": "web/src/lib/ui/store-workflows/workflow-editor.css",
       "reason": "Application-owned workflow objects and presentation; Buzz layout reference recorded in desktopWorkflows, with released Design Core composition and no external checkout dependency."
     },

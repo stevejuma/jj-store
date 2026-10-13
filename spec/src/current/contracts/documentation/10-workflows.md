@@ -19,3 +19,9 @@ hydration, canonical thread ownership, highlighted native revset suggestions and
 shared toast failures. Agents appear as unavailable author filters while the
 backend message event contract supports authenticated human principals only.
 These UI reads do not add runner protocol or agent-message execution support.
+
+E-WORKFLOW-RUN-001 documents the Settings-style manual Run form, searchable
+recorded source selectors and icon-bearing overview actions. Source lookups are
+bounded and independently authorized. Bookmark selection records its unique
+commit, operation changes clear dependent choices, and failures use shared retry
+toasts. Unknown outcomes retain the original command and read-only source.

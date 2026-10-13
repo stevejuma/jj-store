@@ -24,3 +24,10 @@ requests bypass only the client list cache; active conversation detail pins and
 credentials are retained. Cross-home selection records the actual thread owner,
 with no alias-based authority transfer or installation-wide user-list endpoint.
 Agent setup IDs remain distinct from authenticated source principals.
+
+E-WORKFLOW-RUN-001 confirms unchanged JST-WF-006 source and command contracts.
+The browser Run dialog composes existing authorized native snapshots, operation
+and commit graphs, and bookmark references. Commit and bookmark pages remain
+pinned to the selected source operation; no workflow-specific lookup endpoint,
+implicit head reconciliation or execution grant is introduced. Run submission
+retains the existing exact source IDs, definition version and durable request.
