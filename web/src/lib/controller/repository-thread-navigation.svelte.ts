@@ -48,7 +48,8 @@ export function createProductionRepositoryThreadNavigation(
         if (!repo) throw new ApiError("access_denied");
         const source = shared.acquire(repo, credential());
         return {
-          list: (cursor?: string) => source.threads!.list(cursor),
+          list: (cursor?: string, fresh?: boolean) =>
+            source.threads!.list(cursor, fresh),
           close: () => source.close(),
         };
       }
@@ -78,7 +79,7 @@ export function createRepositoryThreadNavigation(context: {
   repositories(): readonly StoreRepositorySummary[];
   credential(): string | null;
   source(repository: string): {
-    list(cursor?: string): Promise<ThreadPage>;
+    list(cursor?: string, fresh?: boolean): Promise<ThreadPage>;
     close(): void;
   };
 }) {
@@ -102,7 +103,7 @@ export function createRepositoryThreadNavigation(context: {
     visible.clear();
     entries = {};
   }
-  async function read(repository: string, more = false) {
+  async function read(repository: string, more = false, fresh = false) {
     if (!allowed(repository)) return;
     if (pending.has(repository)) return pending.get(repository);
     const ticket = generation,
@@ -130,7 +131,7 @@ export function createRepositoryThreadNavigation(context: {
         const count = more ? 0 : (retained?.threads.length ?? 0);
         let snapshot = more ? retained?.snapshot : undefined;
         for (let page = 0; page < 20; page++) {
-          const result = await source.list(cursor);
+          const result = await source.list(cursor, fresh && !cursor);
           if (!valid()) return;
           if (
             result.snapshot.repo_id !== repository ||
@@ -199,7 +200,7 @@ export function createRepositoryThreadNavigation(context: {
     await Promise.all(
       Array.from({ length: Math.min(2, repositories.length) }, async () => {
         while (ticket === generation && index < repositories.length)
-          await read(repositories[index++]!.id);
+          await read(repositories[index++]!.id, false, refresh);
       }),
     );
   }

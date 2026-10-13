@@ -3251,6 +3251,22 @@
     {
       "local": "web/src/lib/ui/store-workflows/WorkflowReactionPicker.svelte",
       "reason": "Owned reaction filter composition reusing the maintained emoji picker and repository reaction library, with native custom emoji IDs and stale-read protection."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/WorkflowRevisionMatch.svelte",
+      "reason": "Application-owned trigger discovery and revset field using existing repository reads, history syntax and released Design Core controls."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/workflow-code-options.svelte.ts",
+      "reason": "Application-owned trigger discovery and revset field using existing repository reads, history syntax and released Design Core controls."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/WorkflowTextCondition.svelte",
+      "reason": "Application-owned workflow field and picker presentation extracted from its existing owner; no contract or external source dependency added."
+    },
+    {
+      "local": "web/src/lib/ui/store-application/repository-picker.css",
+      "reason": "Application-owned workflow field and picker presentation extracted from its existing owner; no contract or external source dependency added."
     }
   ],
   "desktopAppearance": {

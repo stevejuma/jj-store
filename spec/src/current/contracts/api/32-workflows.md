@@ -16,3 +16,11 @@ automatic positive match. Evaluate may include the pinned catalog of immutable
 definition versions read by the host; legacy evaluations use the current
 catalog. Thread and reaction sources expose typed immutable conversation
 references.
+
+E-WORKFLOW-CHOICES-001 confirms unchanged JST-WF-006 wire contracts. Browser
+trigger suggestions reuse authorized repository discovery, profile lookup,
+operation-pinned history/query metadata, and paged ThreadStore reads. Fresh list
+requests bypass only the client list cache; active conversation detail pins and
+credentials are retained. Cross-home selection records the actual thread owner,
+with no alias-based authority transfer or installation-wide user-list endpoint.
+Agent setup IDs remain distinct from authenticated source principals.

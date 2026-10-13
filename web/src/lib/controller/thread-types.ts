@@ -39,7 +39,7 @@ export interface ThreadTransport {
     target?: ReactionTarget,
   ): Promise<void>;
   cancelReads?(): Promise<void>;
-  list(cursor?: string): Promise<ThreadPage>;
+  list(cursor?: string, fresh?: boolean): Promise<ThreadPage>;
   thread(id: string): Promise<ThreadDetail>;
   events(id: string, cursor?: string): Promise<ThreadPage>;
   emojis(cursor?: string): Promise<ThreadPage>;

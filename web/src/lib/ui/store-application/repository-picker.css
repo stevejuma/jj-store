@@ -1,0 +1,35 @@
+.store-repository-picker__trigger {
+  min-width: 0;
+  justify-content: flex-start;
+}
+.store-repository-picker__trigger:not(.store-repository-picker__trigger--icon) {
+  width: 100%;
+}
+.store-repository-picker__trigger--ghost {
+  border: 0;
+  color: var(--muted-foreground);
+}
+.store-repository-picker__trigger--icon {
+  flex: none;
+  justify-content: center;
+}
+.store-repository-picker__value {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: start;
+}
+.store-repository-picker__search {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+.store-repository-picker__search [data-ui-part="input-wrapper"] {
+  min-width: 0;
+  flex: 1;
+}
+.store-repository-picker__command[data-ui-part="popover-content"] {
+  --ui-command-view-list-max-height: min(18rem, 50dvh);
+  max-width: calc(100vw - 2rem);
+}

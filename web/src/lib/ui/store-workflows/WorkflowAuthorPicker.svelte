@@ -1,4 +1,8 @@
 <script lang="ts">
+  import { untrack } from "svelte";
+  import { useProfileDirectory } from "../../profiles/context.svelte.js";
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
+  import type { AgentSetup } from "../../controller/agent-execution-types.js";
   import * as Field from "@lapismd/design-core/shadcn/field";
   import StoreSettingsIcon from "../store-settings/StoreSettingsIcon.svelte";
   import StoreRepositoryPicker from "../store-application/StoreRepositoryPicker.svelte";
@@ -11,12 +15,22 @@
     id,
     definition = $bindable(),
     authors = [],
+    agents = [],
+    loading = false,
+    hasMore = false,
+    onLoadMore,
+    onOpen,
     disabled = false,
     conversational = false,
   }: {
     id: string;
     definition: WorkflowDefinition;
     authors?: readonly { id: string; name: string }[];
+    agents?: readonly Pick<AgentSetup, "id" | "name" | "avatar">[];
+    loading?: boolean;
+    hasMore?: boolean;
+    onLoadMore?(): void;
+    onOpen?(): void;
     disabled?: boolean;
     conversational?: boolean;
   } = $props();
@@ -29,21 +43,93 @@
   const selected = $derived(
     excluded ? (conditions.excluded_authors ?? []) : (conditions.authors ?? []),
   );
+  const profileContext = useProfileDirectory();
+  let profileError = $state("");
+  let profileLoading = $state(false);
+  const principalKey = $derived(
+    conversational
+      ? [...new Set([...authors.map((a) => a.id), ...selected])]
+          .filter((id) => /^[0-9a-f]{32}$/.test(id))
+          .sort()
+          .join(",")
+      : "",
+  );
+  let generation = 0;
+  async function hydrate() {
+    const directory = profileContext?.directory,
+      key = principalKey,
+      ticket = generation;
+    if (!key || !directory?.available() || profileLoading) return;
+    profileLoading = true;
+    try {
+      await directory.loadProfiles(key.split(","), true);
+      if (ticket === generation) profileError = "";
+    } catch (cause) {
+      if (ticket === generation)
+        profileError =
+          cause instanceof Error
+            ? cause.message
+            : "Could not load author profiles.";
+    } finally {
+      if (ticket === generation) profileLoading = false;
+    }
+  }
+  $effect(() => {
+    const key = principalKey,
+      directory = profileContext?.directory,
+      available = directory?.available();
+    untrack(() => {
+      generation++;
+      profileLoading = false;
+      profileError = "";
+      if (key && available) void hydrate();
+    });
+    return () => {
+      generation++;
+    };
+  });
+  const humans = $derived(
+    authors.map((a) => ({
+      ...a,
+      name: conversational
+        ? profileContext?.directory?.state.profiles[a.id]?.display_name ||
+          a.name
+        : a.name,
+    })),
+  );
   const candidates = $derived([
     ...new Map(
       [
-        ...authors.filter((a) =>
+        ...humans.filter((a) =>
           conversational ? /^[0-9a-f]{32}$/.test(a.id) : a.id.includes("@"),
         ),
         ...selected
-          .filter((id) => !authors.some((a) => a.id === id))
+          .filter((id) => !humans.some((a) => a.id === id))
           .map((id) => ({ id, name: id })),
-        ...(query.trim() &&
+        ...(!humans.some((a) => a.id === query.trim()) &&
+        query.trim() &&
         (!conversational || /^[0-9a-f]{32}$/.test(query.trim()))
           ? [{ id: query.trim(), name: query.trim() }]
           : []),
       ].map((a) => [a.id, a]),
     ).values(),
+  ]);
+  const choices = $derived([
+    ...candidates.map((a) => ({
+      ...a,
+      description: a.id,
+      kind: "human",
+      avatar: "",
+      disabled: false,
+    })),
+    ...agents.map((a) => ({
+      id: `agent:${a.id}`,
+      name: a.name,
+      description: "Agent message triggers are not supported yet",
+      kind: "agent",
+      avatar: a.avatar,
+      disabled: true,
+    })),
   ]);
   function choose(next: string[]) {
     definition.conditions = {
@@ -62,6 +148,17 @@
   }
 </script>
 
+<StoreNotice
+  noticeKey={`workflow-author-profiles-${id}`}
+  title="Author profiles could not be loaded"
+  message={profileError}
+  pending={profileLoading}
+  action={{
+    id: "retry-author-profiles",
+    label: "Retry",
+    run: () => void hydrate(),
+  }}
+/>
 <Field.Field
   orientation="horizontal"
   class="store-settings__option-row workflow-inspector-row--wide"
@@ -90,7 +187,7 @@
     <StoreRepositoryPicker
       id={`${id}-authors`}
       label="Authors"
-      repositories={candidates}
+      repositories={choices}
       bind:values={() => selected, choose}
       multiple
       keepItemIcon
@@ -100,19 +197,33 @@
       emptyLabel="Any author"
       searchLabel="Find or enter an author"
       groupLabel="Authors"
-      emptyResult="Enter an author identity."
+      emptyResult={loading
+        ? "Loading authors…"
+        : "No known authors. Enter an author identity."}
+      notice={loading ? "Loading authors…" : undefined}
+      {loading}
+      {hasMore}
+      moreLabel="authors"
+      {onLoadMore}
+      onOpen={() => {
+        onOpen?.();
+        void hydrate();
+      }}
       {disabled}
       onSearch={(value) => (query = value)}
     >
       {#snippet triggerIcon()}<User aria-hidden="true" />{/snippet}
       {#snippet itemIcon(authorId)}
-        {@const author = candidates.find((a) => a.id === authorId)!}
+        {@const author = choices.find((a) => a.id === authorId)!}
         {#if conversational}<CommunityMemberAvatar
             member={{
               id: author.id,
               name: author.name,
               handle: author.id,
               initials: author.name.slice(0, 2).toUpperCase(),
+              ...(author.kind === "agent"
+                ? { kind: "agent", avatarUrl: author.avatar }
+                : {}),
             }}
             size="inline"
             decorative

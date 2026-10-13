@@ -2,7 +2,12 @@
   import * as Field from "@lapismd/design-core/shadcn/field";
   import { Input } from "@lapismd/design-core/shadcn/input";
   import StoreSettingsIcon from "../store-settings/StoreSettingsIcon.svelte";
+  import WorkflowRevisionMatch from "./WorkflowRevisionMatch.svelte";
+  import { createWorkflowCodeOptions } from "./workflow-code-options.svelte.js";
+  import { workflowAuthors } from "./workflow-presentation.js";
+  import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import WorkflowAuthorPicker from "./WorkflowAuthorPicker.svelte";
+  import WorkflowTextCondition from "./WorkflowTextCondition.svelte";
   import WorkflowSelect from "./WorkflowSelect.svelte";
   import WorkflowThreadPicker from "./WorkflowThreadPicker.svelte";
   import WorkflowReactionPicker from "./WorkflowReactionPicker.svelte";
@@ -19,12 +24,14 @@
     definition = $bindable(),
     authors = [],
     acquireRepository,
+    controller,
     disabled = false,
   }: {
     id: string;
     definition: WorkflowDefinition;
     authors?: readonly { id: string; name: string }[];
     acquireRepository?: StoreController["acquireRepository"];
+    controller?: StoreController;
     disabled?: boolean;
   } = $props();
   const conversational = $derived(
@@ -36,7 +43,7 @@
   $effect(() => {
     const repository = definition.repository,
       acquire = acquireRepository,
-      needed = conversational;
+      needed = definition.trigger.on !== "manual";
     const reader = untrack(() => {
       try {
         return needed && repository ? acquire?.(repository) : undefined;
@@ -46,7 +53,7 @@
           key: `workflow-source-${id}`,
           title: "Source repository unavailable",
           message:
-            "Choose an accessible source repository to select threads and custom emoji. Your filters are retained.",
+            "Choose an accessible source repository to load trigger choices. Your filters are retained.",
           severity: "error",
           lifetime: "condition",
         });
@@ -59,6 +66,33 @@
       context.service.resolve(context.scope, `workflow-source-${id}`);
     };
   });
+  const code = createWorkflowCodeOptions(() =>
+    conversational ? undefined : source,
+  );
+  const knownAuthors = $derived(
+    conversational && controller
+      ? workflowAuthors(controller)
+      : source
+        ? code.authors
+        : authors,
+  );
+  $effect(() => {
+    const execution = controller?.execution,
+      needed = conversational;
+    untrack(() => {
+      if (needed && execution?.available()) void execution.updates.status();
+    });
+  });
+  $effect(() => {
+    if (conversational || definition.trigger.on === "manual") return;
+    const refresh = () => void code.refresh();
+    const timer = setInterval(refresh, 5000);
+    window.addEventListener("focus", refresh);
+    return () => {
+      clearInterval(timer);
+      window.removeEventListener("focus", refresh);
+    };
+  });
   let emojiMode = $state<string>();
   const excludedEmoji = $derived(
     emojiMode ? emojiMode === "exclude" : !!conditions.excluded_emoji,
@@ -68,18 +102,29 @@
   ) {
     definition.conditions = { ...conditions, ...fields };
   }
-  const operators = [
-    { value: "contains", label: "Contains" },
-    { value: "not_contains", label: "Does not contain" },
-    { value: "starts_with", label: "Starts with" },
-    { value: "ends_with", label: "Ends with" },
-    { value: "equals", label: "Is" },
-    { value: "not_equals", label: "Is not" },
-    { value: "is_empty", label: "Is empty" },
-    { value: "is_not_empty", label: "Is not empty" },
-  ];
 </script>
 
+<StoreNotice
+  noticeKey={`workflow-code-${id}`}
+  title="Trigger choices could not be loaded"
+  message={code.error}
+  pending={code.loading}
+  action={{
+    id: "retry-code-choices",
+    label: "Retry",
+    run: () => void code.refresh(),
+  }}
+/>
+{#if conversational && controller?.execution?.available()}<StoreNotice
+    noticeKey={`workflow-agents-${id}`}
+    title="Agents could not be loaded"
+    message={controller.execution.connectionError}
+    action={{
+      id: "retry-agent-choices",
+      label: "Retry",
+      run: () => void controller?.execution?.updates.status(),
+    }}
+  />{/if}
 {#if definition.trigger.on !== "manual"}
   {#if !conversational}
     <Field.Field orientation="horizontal" class="store-settings__option-row">
@@ -90,21 +135,27 @@
           >Optional JJ revset at the published operation.</Field.Description
         ></Field.Content
       >
-      <Input
+      <WorkflowRevisionMatch
         id={`${id}-revset`}
-        aria-label="Revision match"
-        placeholder="e.g. bookmarks(main)"
         value={conditions.revset ?? ""}
+        info={code.info}
+        symbols={code.symbols}
         {disabled}
-        oninput={(event) =>
-          update({ revset: event.currentTarget.value || undefined })}
+        onChange={(revset) => update({ revset: revset || undefined })}
       />
     </Field.Field>
   {/if}
   <WorkflowAuthorPicker
     {id}
     bind:definition
-    {authors}
+    authors={knownAuthors}
+    agents={conversational ? (controller?.execution?.value?.setups ?? []) : []}
+    loading={!conversational && code.loading}
+    hasMore={!conversational && code.hasMore}
+    onLoadMore={() => void code.more()}
+    onOpen={() => {
+      if (!conversational) void code.refresh();
+    }}
     {disabled}
     {conversational}
   />
@@ -114,15 +165,21 @@
         ><Field.Label for={`${id}-thread`}
           ><StoreSettingsIcon Icon={Message} />Thread</Field.Label
         ><Field.Description
-          >Leave empty for any thread in the source repository.</Field.Description
+          >Select an existing thread and its metadata home, or leave empty for
+          any thread in the source.</Field.Description
         ></Field.Content
       >
       <WorkflowThreadPicker
         id={`${id}-thread`}
-        {source}
+        navigation={controller?.threadNavigation}
+        repositories={controller?.state.repositories ?? []}
+        repository={definition.repository}
         value={conditions.thread ?? undefined}
         {disabled}
-        onChange={(thread) => update({ thread })}
+        onChange={(thread, repository) => {
+          if (repository) definition.repository = repository;
+          update({ thread });
+        }}
       />
     </Field.Field>
   {/if}
@@ -181,55 +238,12 @@
         />
       </div>
     </Field.Field>
-  {:else}
-    <Field.Field
-      orientation="horizontal"
-      class="store-settings__option-row workflow-inspector-row--wide"
-    >
-      <Field.Content
-        ><Field.Label for={`${id}-text`}
-          ><StoreSettingsIcon Icon={Message} />{conversational
-            ? "Message text"
-            : "Commit description"}</Field.Label
-        ><Field.Description
-          >Optional case-sensitive text condition.</Field.Description
-        ></Field.Content
-      >
-      <div class="workflow-conditions__fields">
-        <WorkflowSelect
-          id={`${id}-text-mode`}
-          label="Text match"
-          value={conditions.text?.operator ?? "any"}
-          {disabled}
-          options={[{ value: "any", label: "Any text" }, ...operators]}
-          onChange={(operator) =>
-            update({
-              text:
-                operator === "any"
-                  ? undefined
-                  : {
-                      operator: operator as NonNullable<
-                        NonNullable<WorkflowDefinition["conditions"]>["text"]
-                      >["operator"],
-                      value: conditions.text?.value ?? "",
-                    },
-            })}
-        />
-        {#if conditions.text && !["is_empty", "is_not_empty"].includes(conditions.text.operator)}<Input
-            id={`${id}-text`}
-            aria-label={conversational ? "Message text" : "Commit description"}
-            value={conditions.text.value}
-            {disabled}
-            oninput={(event) =>
-              update({
-                text: {
-                  operator: conditions.text!.operator,
-                  value: event.currentTarget.value,
-                },
-              })}
-          />{/if}
-      </div>
-    </Field.Field>
+  {:else}<WorkflowTextCondition
+      {id}
+      bind:definition
+      {disabled}
+      {conversational}
+    />
   {/if}
 {/if}
 

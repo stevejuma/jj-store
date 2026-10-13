@@ -12,3 +12,10 @@ explicit.
 The browser uses the owned Buzz-inspired view with public Design Core controls.
 Documentation distinguishes native workflow YAML from runner-owned Actions YAML;
 remote Forgejo runner registration/polling and ConnectRPC remain deferred.
+
+E-WORKFLOW-CHOICES-001 updates the owning UI chapter and application review
+under JST-DOC-002. It records cold trigger-data discovery, server profile/avatar
+hydration, canonical thread ownership, highlighted native revset suggestions and
+shared toast failures. Agents appear as unavailable author filters while the
+backend message event contract supports authenticated human principals only.
+These UI reads do not add runner protocol or agent-message execution support.

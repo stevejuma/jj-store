@@ -108,10 +108,30 @@ export function readDefinition(
 }
 
 export function workflowAuthors(controller: StoreController) {
+  const homes = controller.state.repositories.filter(
+    (r) => r.profile !== "git_sha1_jj045",
+  );
   return [
-    ...controller.state.repositories.flatMap((r) =>
+    ...homes.flatMap((r) =>
       r.principal ? [{ id: r.principal, name: r.principal }] : [],
     ),
+    ...Object.entries(controller.threadNavigation?.entries ?? {})
+      .filter(([home]) => homes.some((r) => r.id === home))
+      .flatMap(([, entry]) =>
+        entry.threads.flatMap((thread) => [
+          thread.value.actor,
+          ...(thread.directory?.participants ?? []),
+        ]),
+      )
+      .map((id) => ({ id, name: id })),
+    ...(controller.directory?.state.profile
+      ? [
+          {
+            id: controller.directory.state.profile.principal,
+            name: controller.directory.state.profile.details.display_name,
+          },
+        ]
+      : []),
     ...Object.values(controller.directory?.state.profiles ?? {}).map((p) => ({
       id: p.principal,
       name: p.display_name || p.principal,

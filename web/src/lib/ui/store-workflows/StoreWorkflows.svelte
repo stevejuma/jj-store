@@ -257,6 +257,7 @@
 </section>
 <StoreNotificationHost owner={notifications} />
 {#if editor}{#key editorEpoch}<WorkflowEditor
+      {controller}
       acquireRepository={controller.acquireRepository}
       initial={draft}
       bind:home

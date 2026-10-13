@@ -90,7 +90,7 @@ formats.
 | `^crates/jj-store-object/`                                                                                                                                                                                                                     | `object-store.md`    |
 | `^crates/jj-store-wal/`                                                                                                                                                                                                                        | `publication.md`     |
 | `^crates/jj-store-replication/`                                                                                                                                                                                                                | `replication.md`     |
-| `^crates/jj-workflow/` | `architecture.md` |
+| `^crates/jj-workflow/`                                                                                                                                                                                                                         | `architecture.md`    |
 | `^crates/jj-work/`                                                                                                                                                                                                                             | `projects.md`        |
 | `^crates/jj-(?:agent\|review\|collab)/`                                                                                                                                                                                                        | `collaboration.md`   |
 | `^crates/jj-store-capture/`                                                                                                                                                                                                                    | `collaboration.md`   |
@@ -281,3 +281,11 @@ publication fencing, retaining storage/native formats and operation pins. Its
 owned reload UI uses maintained Settings components and released dependencies.
 Isolated acceptance covers real storage and a cold built browser; inherited
 diagnostics, worker deferrals and independent platform gates remain explicit.
+
+E-WORKFLOW-CHOICES-001 retains JST-GOV-002/008 and JST-UI-015 local ownership.
+The workflow revset field and bounded source-choice reader compose existing
+History, directory and repository interfaces with released Design Core. The
+existing text row and generic picker stylesheet are extracted to meet component
+size limits, with owned declarations in provenance. No external checkout,
+backend/schema format, identity remapping or execution authority is introduced.
+M28 and visual/provider qualification gates remain unchanged.

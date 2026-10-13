@@ -81,3 +81,20 @@ unit control uses the same background as the numeric entry; its popup retains
 the application Select surface. The workflow emoji popup fits the available
 viewport height with edge clearance; its presets, search and scrollable results
 remain accessible above the sticky dialog footer.
+
+Trigger choices discover their data without relying on a previously visited
+history or conversation view. Code authors come from bounded, operation-pinned
+history pages for the selected source. Conversational authors come from admitted
+repository principals and thread directory participants; installation profiles
+hydrate their names and avatars. Agents are shown separately as unavailable
+author filters until agent message events have an owned matching contract; setup
+IDs MUST NOT be treated as authenticated principals.
+
+The thread selector lists accessible native metadata homes with owner labels.
+Selecting a thread selects its canonical source repository as well as its ID;
+linked codebase aliases do not move thread authority. Empty source repositories
+do not hide available threads in other homes. Fresh opening, focus and bounded
+periodic checks refresh choices without overwriting filters or saved selections.
+Revision match reuses the history revset editor, highlighting and source-pinned
+completion metadata, without executing the draft query. Choice failures use
+retryable shared toasts and stale replies cannot populate another source.

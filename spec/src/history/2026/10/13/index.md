@@ -5,3 +5,4 @@ Browse the child pages below.
 ## Pages
 
 - [E-WORKFLOW-001](E-WORKFLOW-001/index.md)
+- [E-WORKFLOW-CHOICES-001](E-WORKFLOW-CHOICES-001/index.md)

@@ -81,7 +81,7 @@
     await expect(Math.abs(author.top - match.top)).toBeLessThan(2);
     await expect(
       (
-        await body.findByRole("option", { name: new RegExp("22".repeat(16)) })
+        await body.findByRole("option", { name: /Server author/ })
       ).querySelector('[data-ui-component="community-member-avatar"]'),
     ).not.toBeNull();
     await userEvent.type(

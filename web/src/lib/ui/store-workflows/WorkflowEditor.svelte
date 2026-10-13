@@ -30,6 +30,7 @@
     repositories,
     authors = [],
     acquireRepository,
+    controller,
     version = null,
     busy = false,
     pending = "",
@@ -48,6 +49,7 @@
     repositories: readonly StoreRepositorySummary[];
     authors?: readonly { id: string; name: string }[];
     acquireRepository?: StoreController["acquireRepository"];
+    controller?: StoreController;
     version?: WorkflowVersion | null;
     busy?: boolean;
     pending?: string;
@@ -178,6 +180,7 @@
     {/snippet}
     {#if mode === "form"}<WorkflowForm
         {acquireRepository}
+        {controller}
         {authors}
         bind:definition
         bind:inspector

@@ -1,4 +1,5 @@
 <script lang="ts">
+  import "./repository-picker.css";
   // CommunityProjectFilesRepositoryCommand: native repository identities.
   import { Button } from "@lapismd/design-core/shadcn/button";
   import * as CommandView from "@lapismd/design-core/shadcn/command-view";
@@ -28,6 +29,7 @@
     notice,
     noticeAction,
     onSearch,
+    onOpen,
     searchLabel = "Search repositories",
     groupLabel = "Repositories",
     emptyResult = "No matching repositories.",
@@ -49,6 +51,7 @@
       name: string;
       permission?: string | null;
       description?: string;
+      disabled?: boolean;
     }[];
     value?: string;
     values?: string[];
@@ -65,6 +68,7 @@
     notice?: string;
     noticeAction?: Snippet;
     onSearch?: (query: string) => void;
+    onOpen?: () => void;
     searchLabel?: string;
     groupLabel?: string;
     emptyResult?: string;
@@ -95,7 +99,10 @@
   });
   function handleOpen(next: boolean) {
     open = next;
-    if (next) query = "";
+    if (next) {
+      query = "";
+      onOpen?.();
+    }
   }
   function choose(next: string) {
     if (disabled) return;
@@ -158,6 +165,7 @@
           <CommandView.Item
             value={repo.id}
             disabled={disabled ||
+              repo.disabled ||
               (multiple && !values.includes(repo.id) && values.length >= limit)}
             data-repository-selected={multiple
               ? values.includes(repo.id)
@@ -259,45 +267,3 @@
     </Popover.Content>
   </Popover.Root>
 {/if}
-
-<style>
-  :global(.store-repository-picker__trigger) {
-    min-width: 0;
-    justify-content: flex-start;
-  }
-  :global(
-    .store-repository-picker__trigger:not(
-      .store-repository-picker__trigger--icon
-    )
-  ) {
-    width: 100%;
-  }
-  :global(.store-repository-picker__trigger--ghost) {
-    border: 0;
-    color: var(--muted-foreground);
-  }
-  :global(.store-repository-picker__trigger--icon) {
-    flex: none;
-    justify-content: center;
-  }
-  :global(.store-repository-picker__value) {
-    flex: 1;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    text-align: start;
-  }
-  .store-repository-picker__search {
-    display: flex;
-    align-items: center;
-    gap: 0.25rem;
-  }
-  .store-repository-picker__search :global([data-ui-part="input-wrapper"]) {
-    min-width: 0;
-    flex: 1;
-  }
-  :global(.store-repository-picker__command[data-ui-part="popover-content"]) {
-    --ui-command-view-list-max-height: min(18rem, 50dvh);
-    max-width: calc(100vw - 2rem);
-  }
-</style>

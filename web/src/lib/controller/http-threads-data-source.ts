@@ -20,11 +20,12 @@ export class HttpThreadsDataSource implements ThreadTransport {
     kind: string,
     args: Record<string, string | number | undefined>,
     read: (signal: AbortSignal) => Promise<T>,
+    fresh = false,
   ) {
     if (!this.active())
       return Promise.reject<T>(new DOMException("Closed", "AbortError"));
     return readQuery(this.queryClient, {
-      staleTime: args.cursor ? 30_000 : Infinity,
+      staleTime: fresh ? 0 : args.cursor ? 30_000 : Infinity,
       queryKey: storeQueryKeys.resource(this.scope, kind, null, args),
       queryFn: async ({ signal }) => {
         const value = await read(signal);
@@ -74,10 +75,13 @@ export class HttpThreadsDataSource implements ThreadTransport {
         ),
     });
   }
-  list(cursor?: string) {
+  list(cursor?: string, fresh = false) {
     const args = { limit: 50, cursor };
-    return this.query<Model<"CollabPage">>("thread-list", args, (signal) =>
-      this.client.request("threads", args, { signal }),
+    return this.query<Model<"CollabPage">>(
+      "thread-list",
+      args,
+      (signal) => this.client.request("threads", args, { signal }),
+      fresh,
     );
   }
   thread(id: string) {

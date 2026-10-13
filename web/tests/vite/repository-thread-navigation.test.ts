@@ -194,3 +194,50 @@ test("local sidebar pages use companion pins and reject pagination across change
   ).toBe(true);
   navigation.clear();
 });
+
+test("fresh shared thread list reads bypass cached empty pages without changing detail pins", async () => {
+  const fixture = createThreadTransport();
+  const page = await fixture.transport.list();
+  if (page.items.type !== "threads") throw Error("Expected threads");
+  let visible = false;
+  const fetcher = vi.fn(
+    async () =>
+      new Response(
+        pretty({
+          ...page,
+          items: {
+            type: "threads",
+            threads: visible ? page.items.threads : [],
+          },
+        }),
+        { headers: { "content-type": "application/json" } },
+      ),
+  );
+  const { RepositorySources } =
+    await import("../../src/lib/controller/repository-sources.js");
+  const shared = new RepositorySources(fetcher);
+  const repo = {
+    id: THREAD_IDS.repo,
+    name: "Home",
+    permission: "read" as const,
+  };
+  const retained = shared.acquire(repo, null);
+  const navigation = createProductionRepositoryThreadNavigation(
+    () => [repo],
+    () => null,
+    fetcher,
+    shared,
+  );
+  await navigation.load();
+  expect(navigation.entries[repo.id]!.threads).toEqual([]);
+  visible = true;
+  await navigation.load(true);
+  expect(navigation.entries[repo.id]!.threads).toHaveLength(1);
+  expect(fetcher).toHaveBeenCalledTimes(2);
+  expect(await retained.threads!.list()).toEqual(
+    expect.objectContaining({ items: page.items }),
+  );
+  navigation.clear();
+  retained.close();
+  shared.clear();
+});

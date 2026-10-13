@@ -35,6 +35,7 @@
     repositories,
     authors = [],
     acquireRepository,
+    controller,
     hidden = false,
     disabled = false,
     invalid = $bindable(false),
@@ -51,6 +52,7 @@
     repositories: readonly StoreRepositorySummary[];
     authors?: readonly { id: string; name: string }[];
     acquireRepository?: StoreController["acquireRepository"];
+    controller?: StoreController;
     disabled?: boolean;
     invalid?: boolean;
     onInvalid?(message: string): void;
@@ -131,6 +133,7 @@
           >{/if}
         {#key definition.trigger.on}<WorkflowConditions
             {acquireRepository}
+            {controller}
             {id}
             bind:definition
             {authors}

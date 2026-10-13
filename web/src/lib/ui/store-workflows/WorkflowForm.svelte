@@ -17,6 +17,7 @@
     repositories,
     authors = [],
     acquireRepository,
+    controller,
     home = $bindable(),
     homes,
     homeDisabled = false,
@@ -34,6 +35,7 @@
     repositories: readonly StoreRepositorySummary[];
     authors?: readonly { id: string; name: string }[];
     acquireRepository?: StoreController["acquireRepository"];
+    controller?: StoreController;
     disabled?: boolean;
     invalid?: boolean;
     onInvalid?(message: string): void;
@@ -139,6 +141,7 @@
   </div>
   <WorkflowInspector
     {acquireRepository}
+    {controller}
     {authors}
     hidden={!inspector}
     {id}

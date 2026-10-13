@@ -137,8 +137,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Documented the source-scoped thread Command View, author avatars and inline matching controls, bounded workflow emoji picker and uniform timeout unit surface; existing owned controls retain their defaults.",
-      "fingerprint": "29f3477b73ae41e46346ec948a7bf7fb2bf55c29998ad4cb9d37712ba496398c"
+      "reason": "Workflow trigger choices discover source history and admitted native thread homes, hydrate server profile names and avatars, and reuse the highlighted revset editor. Local companion actors and agent setup IDs remain distinct from native authenticated-principal author filters.",
+      "fingerprint": "117ee2842c830c6e180d5942c5acedb752b431872d199528fbcc2e5fb49c04d6"
     }
   },
   {
