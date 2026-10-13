@@ -22,7 +22,7 @@ export function createProfileRouteRestorer(context: {
       return;
     }
     context.invalidate();
-    if (route.agentsHub || (route.threadsHub && !route.repository)) return;
+    if (route.page === "workflows" || route.agentsHub || (route.threadsHub && !route.repository)) return;
     if (route.page === "projects") {
       await context.projects.restore();
       return;

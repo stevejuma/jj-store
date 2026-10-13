@@ -73,7 +73,7 @@ Usage: jj store git status [OPTIONS] [ATTEMPT]
 
 | Argument or option | Meaning | Default / values |
 | --- | --- | --- |
-| `attempt` | Exact durable native Git publication attempt identity to inspect or recover. |  |
+| `attempt` | Exact recorded attempt identity in this command domain. Git recovery reuses its original prepared attempt; workflow reports select the assigned execution attempt. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
 | `-R, --repository <REPOSITORY>` | Path to repository to operate on  By default, Jujutsu searches for the closest .jj/ directory in an ancestor of the current working directory. Inherited by subcommands. |  |
 | `--ignore-working-copy <IGNORE_WORKING_COPY>` | Don't snapshot the working copy, and don't update it  By default, Jujutsu snapshots the working copy at the beginning of every command. The working copy is also updated at the end of the command, if the command modified the working-copy commit (`@`). If you want to avoid snapshotting the working copy and instead see a possibly stale working-copy commit, you can use `--ignore-working-copy`. This may be useful e.g. in a command prompt, especially if you have another process that commits the working copy.  Loading the repository at a specific operation with `--at-operation` implies `--ignore-working-copy`. Inherited by subcommands. | Default: false; Values: true, false |
@@ -98,7 +98,7 @@ Usage: jj store git recover [OPTIONS] <ATTEMPT>
 
 | Argument or option | Meaning | Default / values |
 | --- | --- | --- |
-| `attempt` | Exact durable native Git publication attempt identity to inspect or recover. Required. |  |
+| `attempt` | Exact recorded attempt identity in this command domain. Git recovery reuses its original prepared attempt; workflow reports select the assigned execution attempt. Required. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
 | `-R, --repository <REPOSITORY>` | Path to repository to operate on  By default, Jujutsu searches for the closest .jj/ directory in an ancestor of the current working directory. Inherited by subcommands. |  |
 | `--ignore-working-copy <IGNORE_WORKING_COPY>` | Don't snapshot the working copy, and don't update it  By default, Jujutsu snapshots the working copy at the beginning of every command. The working copy is also updated at the end of the command, if the command modified the working-copy commit (`@`). If you want to avoid snapshotting the working copy and instead see a possibly stale working-copy commit, you can use `--ignore-working-copy`. This may be useful e.g. in a command prompt, especially if you have another process that commits the working copy.  Loading the repository at a specific operation with `--at-operation` implies `--ignore-working-copy`. Inherited by subcommands. | Default: false; Values: true, false |

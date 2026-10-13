@@ -1,4 +1,5 @@
 import FolderRootIcon from "@lucide/svelte/icons/folder-root";
+import WorkflowIcon from "@lucide/svelte/icons/workflow";
 import GitMergeIcon from "@lucide/svelte/icons/git-merge";
 import BriefcasePlusIcon from "@lucide/svelte/icons/briefcase-plus";
 import GitBranchPlusIcon from "@lucide/svelte/icons/git-branch-plus";
@@ -32,6 +33,7 @@ export function navigationItemIcon(
   if (item.kind === "log") return GitCommitIcon;
   if (item.kind === "oplog") return HistoryIcon;
   if (item.kind === "agents") return BotIcon;
+  if (item.kind === "workflows") return WorkflowIcon;
   if (item.kind === "reviews") return MessageSquareIcon;
   return FolderGit2Icon;
 }

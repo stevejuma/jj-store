@@ -17,6 +17,7 @@
 - [Bounded browser reads](17-bounded-browser-reads.md)
 - [WorkStore service and transports](18-workstore-service-and-transports.md)
 - [Exact Git representation conversion](19-exact-git-representation-conversion.md)
+- [Workflows](19-workflow-transports.md)
 - [M15 companion envelope extension](20-m15-companion-envelope-extension.md)
 - [Filesystem browser reads](21-filesystem-browser-reads.md)
 - [Rich history query delivery](22-rich-history-query-delivery.md)

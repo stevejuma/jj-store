@@ -839,6 +839,68 @@ impl NativeClient {
             .into_inner();
         self.replication_response(reply)
     }
+
+    pub async fn workflow_page(
+        &self,
+        query: &jj_store_service::workflow::Query,
+    ) -> Result<jj_store_service::workflow::Page, Status> {
+        let reply = NativeStoreClient::new(self.channel.clone())
+            .workflow_page(
+                self.request(wire::WorkRequest {
+                    repository: self.repository.as_bytes().to_vec(),
+                    request_json: serde_json::to_vec(query)
+                        .map_err(|_| Status::invalid_argument("workflow query"))?,
+                }),
+            )
+            .await?
+            .into_inner();
+        crate::work::response(reply)
+    }
+    pub async fn workflow_source_events(
+        &self,
+        query: &jj_store_service::workflow::EventQuery,
+    ) -> Result<jj_store_service::workflow::EventPage, Status> {
+        let reply = NativeStoreClient::new(self.channel.clone())
+            .workflow_source_events(
+                self.request(wire::WorkRequest {
+                    repository: self.repository.as_bytes().to_vec(),
+                    request_json: serde_json::to_vec(query)
+                        .map_err(|_| Status::invalid_argument("workflow event query"))?,
+                }),
+            )
+            .await?
+            .into_inner();
+        crate::work::response(reply)
+    }
+    pub async fn apply_workflow_command(
+        &self,
+        command: &jj_store_service::workflow::Request,
+    ) -> Result<jj_store_service::workflow::Outcome, Status> {
+        let reply = NativeStoreClient::new(self.channel.clone())
+            .apply_workflow_command(
+                self.request(wire::WorkRequest {
+                    repository: self.repository.as_bytes().to_vec(),
+                    request_json: serde_json::to_vec(command)
+                        .map_err(|_| Status::invalid_argument("workflow command"))?,
+                }),
+            )
+            .await?
+            .into_inner();
+        crate::work::response(reply)
+    }
+    pub async fn workflow_command_status(
+        &self,
+        id: m::RequestId,
+    ) -> Result<jj_store_service::workflow::Status, Status> {
+        let reply = NativeStoreClient::new(self.channel.clone())
+            .workflow_command_status(self.request(wire::WorkCommandStatusRequest {
+                repository: self.repository.as_bytes().to_vec(),
+                request_id: id.as_bytes().to_vec(),
+            }))
+            .await?
+            .into_inner();
+        crate::work::response(reply)
+    }
     pub async fn work_page(
         &self,
         query: &jj_store_service::work::WorkQuery,

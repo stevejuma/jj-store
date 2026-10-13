@@ -23,25 +23,28 @@ Hidden-tab successful reads resolve dismissed episodes; loading or retrying
 alone never resolves them. Unsupported capabilities keep their contextual Empty
 explanation, independently from recoverable read errors.
 
-Field/query validation, content empty states, stale drafts and exact mutation
-request recovery remain contextual, except agent execution request recovery: its
-exact-request action and explanation use a scoped condition toast so the agent
-activity strip stays on one line. Dismissing that toast retains the request and
-draft; refresh and navigation do not replay the dismissed episode. Recovery
-actions verify the original request and outcome before acting, and become inert
-while dispatching or after the request changes or resolves. Reaction metadata
-retains its existing placement. General request failures and confirmations use
-toasts without duplicating inline announcements. Actions retain exact command
-identity and never change repository state merely because a toast is dismissed.
+Failed actions, exceptions and validation failures use toasts. Pages and dialogs
+do not print exception messages or error banners inline. Field constraints,
+invalid markers, content empty states, stale drafts and neutral exact-request
+recovery controls remain contextual, except agent execution request recovery:
+its exact-request action and explanation use a scoped condition toast so the
+agent activity strip stays on one line. Dismissing that toast retains the
+request and draft; refresh and navigation do not replay the dismissed episode.
+Recovery actions verify the original request and outcome before acting, and
+become inert while dispatching or after the request changes or resolves.
+Reaction metadata retains its existing placement. General request failures and
+confirmations use toasts without duplicating inline announcements. Actions
+retain exact command identity and never change repository state merely because a
+toast is dismissed.
 
 Unavailable body content uses the public Design Core shadcn Empty composition
 with a contextual icon, title and description under JST-UI-019. Missing agent
 sessions, unsupported device execution, selected Threads/reviews and workspace
 file previews share this treatment. Loading remains a skeleton, retained content
 stays visible during refresh, and existing navigation, refresh and close
-controls remain reachable. A missing Thread's read error is explained in its
-empty body without repeating the same error in a toast. Contextual field or
-operation failures alongside usable content retain their existing placement.
+controls remain reachable. Empty states explain what content is unavailable; the
+actionable failure message belongs in its toast. Interaction coverage for new
+failure handling asserts toast delivery and absence of inline duplication.
 
 The application clears protected notification state on session changes and
 teardown. New notification records are independent of transport and DOM;

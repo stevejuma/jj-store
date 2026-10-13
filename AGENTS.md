@@ -164,19 +164,30 @@ deployment topologies, shared release qualification, controller dispatch,
 backup/restore, stock-JJ filesystem mirroring, continuous Git mirroring, Nostr
 export, other harnesses and CRDT semantics remain deferred.
 
+M28 adds native WorkflowStore definitions, evaluations, runs and evidence in a
+WorkStore metadata home, plus an optional admitted event/action host and a
+Buzz-inspired workflow view. Named commands export exact native source
+revisions; agents use existing admitted dispatch. Host admission defaults empty
+and unknown attempts are never replayed automatically. The M28 ledger retains
+live provider, Forgejo-wrapper and visual approval gaps; remote Forgejo
+registration/polling and ConnectRPC remain deferred.
+
 ## Application feedback
 
-Prefer application-owned Design Core toasts for transient operational errors,
-warnings and informational outcomes. Publish through the shared notification
-service with stable identities and explicit lifetime policies. Clear resolved or
-obsolete conditions, retain acknowledgement-required notices until dismissed,
-and do not replay dismissed conditions during refresh or navigation. Keep field
-validation, unavailable-content explanations, and contextual operation or
-recovery status beside their controls. Do not duplicate feedback inline and in a
-toast. Severity must be distinguishable beyond color, and dismissal must
-preserve drafts and pending request identities. Notification state is
-session-only; OS delivery and persistent notification history remain separate
-work.
+Use application-owned Design Core toasts for operational errors, exceptions,
+failed actions, validation failures, warnings and informational outcomes. Do not
+render exception messages or error banners inline in pages or dialogs. Publish
+through the shared notification service with stable identities and explicit
+lifetime policies. Clear resolved or obsolete conditions, retain
+acknowledgement-required notices until dismissed, and do not replay dismissed
+conditions during refresh or navigation. Field constraints, invalid markers,
+unavailable-content explanations and neutral operation or recovery status may
+stay beside their controls; the failure message belongs in the toast. Do not
+duplicate feedback inline and in a toast. Include a toast assertion in
+interaction coverage for each newly handled failure path. Severity must be
+distinguishable beyond color, and dismissal must preserve drafts and pending
+request identities. Notification state is session-only; OS delivery and
+persistent notification history remain separate work.
 
 Use `StoreNotice` for feedback derived from view state and the service under
 `web/src/lib/notifications` for explicit outcomes. Choose `condition` for

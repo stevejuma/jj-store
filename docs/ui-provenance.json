@@ -3143,6 +3143,114 @@
     {
       "local": "web/src/lib/controller/runtime-reload-validation.ts",
       "reason": "Application-authored saved-configuration reload presentation and exact-intent validation; composes maintained Settings rows and released Design Core without external source imports."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/WorkflowCard.svelte",
+      "reason": "Application-owned workflow objects and presentation; Buzz layout reference recorded in desktopWorkflows, with released Design Core composition and no external checkout dependency."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/StoreWorkflows.svelte",
+      "reason": "Application-owned workflow objects and presentation; Buzz layout reference recorded in desktopWorkflows, with released Design Core composition and no external checkout dependency."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/workflow-presentation.ts",
+      "reason": "Application-owned workflow objects and presentation; Buzz layout reference recorded in desktopWorkflows, with released Design Core composition and no external checkout dependency."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/WorkflowHistory.svelte",
+      "reason": "Application-owned workflow objects and presentation; Buzz layout reference recorded in desktopWorkflows, with released Design Core composition and no external checkout dependency."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/workflows.css",
+      "reason": "Application-owned workflow objects and presentation; Buzz layout reference recorded in desktopWorkflows, with released Design Core composition and no external checkout dependency."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/WorkflowSelect.svelte",
+      "reason": "Application-owned workflow objects and presentation; Buzz layout reference recorded in desktopWorkflows, with released Design Core composition and no external checkout dependency."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/WorkflowEditor.svelte",
+      "reason": "Application-owned workflow objects and presentation; Buzz layout reference recorded in desktopWorkflows, with released Design Core composition and no external checkout dependency."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/WorkflowYaml.svelte",
+      "reason": "Application-owned workflow objects and presentation; Buzz layout reference recorded in desktopWorkflows, with released Design Core composition and no external checkout dependency."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/WorkflowRunDialog.svelte",
+      "reason": "Application-owned workflow objects and presentation; Buzz layout reference recorded in desktopWorkflows, with released Design Core composition and no external checkout dependency."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/workflow-editor.css",
+      "reason": "Application-owned workflow objects and presentation; Buzz layout reference recorded in desktopWorkflows, with released Design Core composition and no external checkout dependency."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/WorkflowForm.svelte",
+      "reason": "Application-owned workflow objects and presentation; Buzz layout reference recorded in desktopWorkflows, with released Design Core composition and no external checkout dependency."
+    },
+    {
+      "local": "web/src/lib/controller/workflow-types.ts",
+      "reason": "Application-owned workflow objects and presentation; Buzz layout reference recorded in desktopWorkflows, with released Design Core composition and no external checkout dependency."
+    },
+    {
+      "local": "web/src/lib/controller/workflows.svelte.ts",
+      "reason": "Application-owned workflow objects and presentation; Buzz layout reference recorded in desktopWorkflows, with released Design Core composition and no external checkout dependency."
+    },
+    {
+      "local": "web/src/lib/controller/http-workflows.ts",
+      "reason": "Application-owned workflow objects and presentation; Buzz layout reference recorded in desktopWorkflows, with released Design Core composition and no external checkout dependency."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/WorkflowInspector.svelte",
+      "reason": "Owned workflow editor extraction; reuses maintained Settings rows and public Design Core. Buzz reference recorded in desktopWorkflows; no external source dependency."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/WorkflowStep.svelte",
+      "reason": "Owned workflow editor extraction; reuses maintained Settings rows and public Design Core. Buzz reference recorded in desktopWorkflows; no external source dependency."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/workflow-sequence.css",
+      "reason": "Owned workflow sequence styles extracted from workflow-editor.css; oval blocks and circular action controls follow the user supplied Buzz references."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/WorkflowEditorMenu.svelte",
+      "reason": "Owned workflow menu composed from released Design Core menu items; current-draft copy and exact existing command callbacks, following user supplied Buzz reference."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/WorkflowName.svelte",
+      "reason": "Owned workflow name chip and explicit edit/accept controls, composed with public Design Core and existing icons; local dialog styling only."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/WorkflowSkeleton.svelte",
+      "reason": "Owned loading representation reusing the workflow card composition, with public Design Core skeletons and existing icons."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/WorkflowFeedback.svelte",
+      "reason": "Owned extraction of workflow outcome toasts and exact-request retry actions through the existing notification service."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/WorkflowConditions.svelte",
+      "reason": "Owned bounded trigger filters composed from maintained Settings rows and released Design Core; Buzz author, text and reaction conditions used as a reference, with native JJ and principal identities."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/WorkflowAuthorPicker.svelte",
+      "reason": "Owned author selector using maintained repository picker composition and released Design Core. Native principal and commit email identity selection; no external source import."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/workflow-home.ts",
+      "reason": "Owned metadata home validation through existing WorkStore snapshot and shared session notification service."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/WorkflowTriggerPicker.svelte",
+      "reason": "Owned icon-bearing selector for backend-supported manual, native code, bookmark, thread message and reaction triggers; uses public Design Core Select."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/WorkflowThreadPicker.svelte",
+      "reason": "Owned source-scoped searchable thread selector through the existing leased repository transport and maintained Command View composition."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/WorkflowReactionPicker.svelte",
+      "reason": "Owned reaction filter composition reusing the maintained emoji picker and repository reaction library, with native custom emoji IDs and stale-read protection."
     }
   ],
   "desktopAppearance": {
@@ -3582,5 +3690,24 @@
       "web/src/lib/ui/store-agent-execution/StoreAgentModelSelect.svelte"
     ],
     "reason": "Owned provider metadata and native catalog protocols; JJ Store shared compute uses existing trusted pairing. Presentation composes existing owned Settings rows and Design Core primitives."
+  },
+  "desktopWorkflows": {
+    "reference": "Buzz desktop workflows",
+    "repository": "https://github.com/block/buzz",
+    "revision": "ef2aa1ae38fadcc0bc22b8bf6ed96b35933146be",
+    "license": "Apache-2.0",
+    "licenseFile": "docs/licenses/buzz-Apache-2.0.txt",
+    "adaptations": [
+      {
+        "local": "web/src/lib/ui/store-workflows",
+        "source": "desktop/src/features/workflows/ui/WorkflowsView.tsx; WorkflowCard.tsx; WorkflowDialog.tsx; WorkflowFormBuilder.tsx; WorkflowDetailPanel.tsx; WorkflowRunTrace.tsx",
+        "changes": "Owned Svelte card grid, Form/YAML sequence and inspector, exact native revision dispatch and immutable run inspection. Compact Settings inspector, oval inset sequence blocks, hover/selected action controls and interactive connectors."
+      }
+    ],
+    "sources": [
+      "desktop/src/features/workflows/ui/WorkflowTriggerConditions.tsx",
+      "desktop/src/features/workflows/ui/workflowConditionExpression.ts",
+      "desktop/src/features/workflows/ui/WorkflowAuthorPicker.tsx"
+    ]
   }
 }

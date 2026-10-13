@@ -44,3 +44,8 @@ request identity.
 Native commands require the native service. Local Git-backed commands select the
 in-process companion provider. The home determines that choice, not the profile
 of a linked code repository.
+
+Native WorkStore homes can also own workflow definitions and execution history.
+The optional event/action host handles admitted commands or existing agents;
+core WorkStore publication does not execute code. See the
+[workflow guide](../cli/jj-workflow.md).

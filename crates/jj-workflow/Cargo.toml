@@ -1,0 +1,18 @@
+[package]
+name = "jj-workflow"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+jj-store-model.workspace = true
+jj-collab.workspace = true
+schemars.workspace = true
+hex = "0.4"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+serde_yaml = "0.9"
+sha2 = "0.10"
+thiserror = "2"

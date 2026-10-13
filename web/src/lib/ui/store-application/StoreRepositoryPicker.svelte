@@ -37,6 +37,10 @@
     loading = false,
     onLoadMore,
     onChange,
+    keepItemIcon = false,
+    selectionLabel = "repositories",
+    unavailableLabel = "Unavailable repository",
+    moreLabel = "branches",
   }: {
     id?: string;
     label?: string;
@@ -70,6 +74,10 @@
     loading?: boolean;
     onLoadMore?: () => void;
     onChange?: (value: string) => void;
+    keepItemIcon?: boolean;
+    selectionLabel?: string;
+    unavailableLabel?: string;
+    moreLabel?: string;
   } = $props();
   let open = $state(false),
     query = $state("");
@@ -158,7 +166,9 @@
             onSelect={() => choose(repo.id)}
           >
             <CommandView.ItemIcon
-              >{#if multiple ? values.includes(repo.id) : repo.id === value}<CheckIcon
+              >{#if keepItemIcon && itemIcon}{@render itemIcon(
+                  repo.id,
+                )}{:else if multiple ? values.includes(repo.id) : repo.id === value}<CheckIcon
                   aria-hidden="true"
                 />{:else if itemIcon}{@render itemIcon(
                   repo.id,
@@ -173,18 +183,21 @@
               >{repo.description ??
                 `${repo.id.slice(0, 8)}${repo.permission ? ` · ${repo.permission} access` : ""}`}</CommandView.ItemDescription
             >
+            {#if keepItemIcon && (multiple ? values.includes(repo.id) : repo.id === value)}<CheckIcon
+                aria-hidden="true"
+              />{/if}
           </CommandView.Item>
         {/each}
       </CommandView.Group>
-      {#if hasMore}<CommandView.Group heading="More branches"
+      {#if hasMore}<CommandView.Group heading={`More ${moreLabel}`}
           ><CommandView.Item
             value="__load_more__"
             disabled={disabled || loading}
             onSelect={() => onLoadMore?.()}
             ><CommandView.ItemLabel
               >{loading
-                ? "Loading branches…"
-                : "Load more branches"}</CommandView.ItemLabel
+                ? `Loading ${moreLabel}…`
+                : `Load more ${moreLabel}`}</CommandView.ItemLabel
             ></CommandView.Item
           ></CommandView.Group
         >{/if}
@@ -224,11 +237,11 @@
           {#if !iconOnly}<span class="store-repository-picker__value"
               >{(multiple
                 ? values.length
-                  ? `${values.length} repositories selected`
+                  ? `${values.length} ${selectionLabel} selected`
                   : emptyLabel
                 : selected?.name) ??
                 (value
-                  ? `Unavailable repository · ${value.slice(0, 8)}`
+                  ? `${unavailableLabel} · ${value.slice(0, 8)}`
                   : emptyLabel)}</span
             >
             <ChevronDownIcon aria-hidden="true" />{/if}

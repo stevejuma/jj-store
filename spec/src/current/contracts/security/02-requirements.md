@@ -16,3 +16,8 @@ macOS system-browser opener with an application-built OpenAI authorization URL
 containing no tokens. Repository data cannot select its executable or URL.
 JST-SEC-002/JST-SEC-006 retain Keychain custody and exact application admission;
 the separate loopback callback requires state, nonce and PKCE validation.
+
+For M28, JST-SEC-005 additionally admits the separately configured workflow host
+role. Only its named operator executors may start processes; ordinary storage,
+publication and replication import never execute repository hooks. Reporting
+requires host admission and exact attempt ownership (JST-WF-004/JST-WF-006).

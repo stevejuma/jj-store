@@ -15,3 +15,7 @@ storage and accepts launch-only `--desktop-bind`, `--desktop-web-root` and
 `--desktop-rustfs-executable` overrides. It leaves stored configuration
 unchanged. Overrides require supervision; an ordinary terminal is not an owner
 pipe.
+
+`--workflow-host /ABSOLUTE/host.json` starts the optional admitted event/action
+host. Its private configuration is validated before server startup; host failure
+does not interrupt repository serving. See [native workflows](workflows.md).

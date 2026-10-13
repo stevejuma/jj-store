@@ -1,0 +1,167 @@
+.workflow-sequence {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 1.5rem 1rem 3rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--background);
+}
+.workflow-step {
+  width: min(100%, 32rem);
+  flex: none;
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr) 2.5rem;
+  align-items: center;
+  gap: 0.5rem;
+}
+.workflow-node {
+  grid-column: 2;
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  min-width: 0;
+  min-height: 5.25rem;
+  padding: 0.75rem 1rem;
+  background: color-mix(in oklab, var(--muted) 65%, var(--background));
+  border: 2px solid var(--border);
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 3px var(--background);
+  text-align: left;
+  cursor: pointer;
+}
+.workflow-node[aria-pressed="true"] {
+  border-color: color-mix(in oklab, var(--border) 65%, var(--foreground));
+}
+.workflow-node:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+.workflow-node__icon {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  background: color-mix(in oklab, var(--foreground) 12%, var(--background));
+  font-size: 1rem;
+  font-weight: 600;
+}
+.workflow-node__icon svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+.workflow-node__copy {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.workflow-node__copy strong {
+  display: block;
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+}
+.workflow-node__copy > span {
+  display: block;
+  margin-top: 0.15rem;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+.workflow-step--action .workflow-node__copy strong {
+  color: var(--foreground);
+  font-size: 0.9375rem;
+  text-transform: none;
+  letter-spacing: normal;
+}
+.workflow-step--action .workflow-node__copy > span {
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+  font-weight: 400;
+}
+.workflow-step__controls {
+  opacity: 0;
+  pointer-events: none;
+}
+.workflow-step:has(:focus-visible) .workflow-step__controls {
+  opacity: 1;
+  pointer-events: auto;
+}
+.workflow-step__reorder {
+  grid-column: 1;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.125rem;
+}
+.workflow-step__delete {
+  grid-column: 3;
+  grid-row: 1;
+}
+.workflow-step__control[data-slot="button"] {
+  border-radius: 50%;
+}
+.workflow-step__control--delete[data-slot="button"]:is(
+    :hover,
+    :focus-visible
+  ):not(:disabled) {
+  color: var(--destructive);
+  background: color-mix(in oklab, var(--destructive) 12%, var(--background));
+}
+.workflow-connector[data-slot="button"] {
+  position: relative;
+  flex: none;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid transparent;
+  border-radius: 50%;
+}
+.workflow-connector[data-slot="button"]:is(:hover, :focus-visible):not(
+    :disabled
+  ) {
+  border-color: var(--border);
+  background: color-mix(in oklab, var(--muted) 65%, var(--background));
+  box-shadow: 0 1px 4px color-mix(in oklab, var(--foreground) 12%, transparent);
+}
+.workflow-connector__plus {
+  position: absolute;
+  opacity: 0;
+}
+.workflow-connector:is(:hover, :focus-visible):not(:disabled)
+  .workflow-connector__arrow {
+  opacity: 0;
+}
+.workflow-connector:is(:hover, :focus-visible):not(:disabled)
+  .workflow-connector__plus {
+  opacity: 1;
+}
+
+.workflow-connector--add[data-slot="button"] {
+  border-color: var(--border);
+  background: var(--background);
+  box-shadow: 0 1px 4px color-mix(in oklab, var(--foreground) 12%, transparent);
+}
+.workflow-connector--add .workflow-connector__arrow {
+  opacity: 0;
+}
+.workflow-connector--add .workflow-connector__plus {
+  opacity: 1;
+}
+
+@media (hover: hover) {
+  .workflow-step:hover .workflow-step__controls {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+@media (hover: none) {
+  .workflow-step[data-selected="true"] .workflow-step__controls {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}

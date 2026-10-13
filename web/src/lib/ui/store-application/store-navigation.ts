@@ -43,6 +43,7 @@ export function selectStoreNavigation(
       "oplog",
       "files",
       "agents",
+      "workflows",
       "reviews",
       "projects",
     ].includes(item.kind)
@@ -51,6 +52,7 @@ export function selectStoreNavigation(
 }
 
 export function activeStoreNavigation(route: StoreRoute) {
+  if (route.page === "workflows") return "workflows";
   if (route.agentsHub) return "agents";
   if (route.threadsHub) return "threads";
   if (route.page === "threads")

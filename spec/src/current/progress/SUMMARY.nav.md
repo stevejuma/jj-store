@@ -59,3 +59,5 @@
   {{#include M26/SUMMARY.nav.md}}
 - [M27 remote server connections and authenticated agents](M27/index.md)
   {{#include M27/SUMMARY.nav.md}}
+- [M28 lightweight workflows](M28/index.md)
+  {{#include M28/SUMMARY.nav.md}}

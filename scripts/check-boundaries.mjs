@@ -9,11 +9,13 @@ export function dependencyErrors(packages) {
   const layers = {
     "jj-store-model": [],
     "jj-work": ["jj-store-model"],
+    "jj-workflow": ["jj-store-model", "jj-collab"],
     "jj-agent": ["jj-store-model"],
     "jj-review": ["jj-agent", "jj-store-model"],
     "jj-collab": ["jj-agent", "jj-review", "jj-work", "jj-store-model"],
     "jj-store-object": ["jj-store-model"],
     "jj-store-wal": [
+      "jj-workflow",
       "jj-collab",
       "jj-work",
       "jj-agent",
@@ -30,6 +32,7 @@ export function dependencyErrors(packages) {
     ],
     "jj-store-jj": ["jj-store-model", "jj-store-object", "jj-store-wal"],
     "jj-store-service": [
+      "jj-workflow",
       "jj-collab",
       "jj-review",
       "jj-store-adapters",
@@ -48,6 +51,7 @@ export function dependencyErrors(packages) {
       "jj-store-rpc",
     ],
     "jj-store-server": [
+      "jj-workflow",
       "jj-agent",
       "jj-collab",
       "jj-store-capture",
@@ -84,9 +88,13 @@ export function dependencyErrors(packages) {
         errors.push(`${pkg.name}: excluded core dependency ${dep.name}`);
       if (
         (dep.name.startsWith("jj-store-") ||
-          ["jj-agent", "jj-review", "jj-work", "jj-collab"].includes(
-            dep.name,
-          )) &&
+          [
+            "jj-agent",
+            "jj-review",
+            "jj-work",
+            "jj-workflow",
+            "jj-collab",
+          ].includes(dep.name)) &&
         layers[pkg.name] &&
         !layers[pkg.name].includes(dep.name) &&
         dep.kind !== "dev"

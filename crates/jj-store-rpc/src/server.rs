@@ -135,6 +135,7 @@ pub struct NativeRpc {
     review_threads: Arc<ReviewThreadPager>,
     collab: Arc<jj_store_service::collab_pages::CollabPager>,
     work: Arc<jj_store_service::work::WorkPager>,
+    workflow: jj_store_service::workflow::WorkflowService,
     inventory: Arc<jj_store_service::native_inventory::Pager>,
     commands: CommandService,
     replication_controls: Option<Arc<dyn ReplicationControls>>,
@@ -238,8 +239,16 @@ impl NativeRpc {
             work: Arc::new(jj_store_service::work::WorkPager::new(Arc::new(
                 SystemClock,
             ))),
+            workflow: Default::default(),
             replication_controls: None,
         })
+    }
+    pub fn with_workflow_hosts(
+        mut self,
+        hosts: std::collections::BTreeSet<m::PrincipalId>,
+    ) -> Self {
+        self.workflow.hosts = hosts;
+        self
     }
     pub fn hosted(host: RepositoryHost, limits: Limits) -> Result<Self, Status> {
         let mut rpc = Self::new(Vec::new(), limits)?;
@@ -1190,6 +1199,84 @@ impl NativeStore for NativeRpc {
                     .status(session, id)
                     .await
                     .map_err(work::error)?,
+            )
+        })
+        .await
+    }
+
+    async fn workflow_page(
+        &self,
+        request: Request<wire::WorkRequest>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let query = work::request(&body.request_json)?;
+        let session = self.bind(&body.repository, access)?.into_session();
+        let service = self.workflow.clone();
+        self.bounded(async move {
+            work::reply(
+                &service
+                    .page(session, query)
+                    .await
+                    .map_err(work::workflow_error)?,
+            )
+        })
+        .await
+    }
+    async fn workflow_source_events(
+        &self,
+        request: Request<wire::WorkRequest>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let query = work::request(&body.request_json)?;
+        let session = self.bind(&body.repository, access)?.into_session();
+        let service = self.workflow.clone();
+        self.bounded(async move {
+            work::reply(
+                &service
+                    .source_events(session, query)
+                    .await
+                    .map_err(work::workflow_error)?,
+            )
+        })
+        .await
+    }
+    async fn apply_workflow_command(
+        &self,
+        request: Request<wire::WorkRequest>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let command = work::request(&body.request_json)?;
+        let session = self.bind(&body.repository, access)?.into_session();
+        let service = self.workflow.clone();
+        self.bounded(async move {
+            work::reply(
+                &service
+                    .apply(session, &command)
+                    .await
+                    .map_err(work::workflow_error)?,
+            )
+        })
+        .await
+    }
+    async fn workflow_command_status(
+        &self,
+        request: Request<wire::WorkCommandStatusRequest>,
+    ) -> Result<Response<wire::JsonReply>, Status> {
+        let access = self.request_access(&request)?;
+        let body = request.into_inner();
+        let id = m::RequestId::from_slice(&body.request_id)
+            .map_err(|_| Status::invalid_argument("workflow request ID"))?;
+        let session = self.bind(&body.repository, access)?.into_session();
+        let service = self.workflow.clone();
+        self.bounded(async move {
+            work::reply(
+                &service
+                    .status(session, id)
+                    .await
+                    .map_err(work::workflow_error)?,
             )
         })
         .await

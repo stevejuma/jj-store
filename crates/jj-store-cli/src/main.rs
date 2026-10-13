@@ -1,4 +1,7 @@
 fn main() -> std::process::ExitCode {
+    if let Some(code) = jj_store_cli::workflow_host::worker_entry() {
+        return code.into();
+    }
     if let Some(code) = jj_store_cli::git_bridge::transport_worker() {
         return code.into();
     }

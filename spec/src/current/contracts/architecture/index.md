@@ -2,7 +2,6 @@
 
 Read the owning topic and requirement before implementation.
 <!-- generated-navigation -->
-
 ## Pages
 
 - [Architecture](01-architecture.md)
@@ -27,3 +26,4 @@ Read the owning topic and requirement before implementation.
 - [Ordinary local stack workspace composition](19-ordinary-local-stack-workspace-composition.md)
 - [Interactive agent execution](20-interactive-agent-execution.md)
 - [Local compute resources](21-local-compute-resources.md)
+- [Lightweight workflow host (M28)](21-workflow-host.md)

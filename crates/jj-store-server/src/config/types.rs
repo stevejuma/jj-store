@@ -6,6 +6,8 @@ use std::{collections::BTreeSet, net::SocketAddr, path::PathBuf};
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Config {
+    #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
+    pub workflow_hosts: BTreeSet<m::PrincipalId>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub remote_agents: Option<crate::remote_agents::Configuration>,
     #[serde(

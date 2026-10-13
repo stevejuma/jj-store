@@ -9483,6 +9483,1231 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 }
 ```
 
+## WorkflowPage
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "repository": {
+      "$ref": "#/components/schemas/RepositoryId"
+    },
+    "epoch": {
+      "$ref": "#/components/schemas/EpochId"
+    },
+    "position": {
+      "$ref": "#/components/schemas/WalPosition"
+    },
+    "root": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/RecordDigest"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "workflows": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/WorkflowDefinitionVersion"
+      }
+    },
+    "runs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/WorkflowRun"
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/WorkflowEvidence"
+      }
+    },
+    "next": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "version",
+    "repository",
+    "epoch",
+    "position",
+    "root",
+    "workflows",
+    "runs",
+    "evidence",
+    "next"
+  ]
+}
+```
+
+## WorkflowDefinitionVersion
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "$ref": "#/components/schemas/WorkflowId"
+    },
+    "version": {
+      "$ref": "#/components/schemas/VersionId"
+    },
+    "owner": {
+      "$ref": "#/components/schemas/PrincipalId"
+    },
+    "created_at": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "definition": {
+      "$ref": "#/components/schemas/WorkflowDefinition"
+    }
+  },
+  "required": [
+    "id",
+    "version",
+    "owner",
+    "created_at",
+    "definition"
+  ]
+}
+```
+
+## WorkflowId
+
+```text
+{
+  "type": "string",
+  "pattern": "^[0-9a-f]{32}$",
+  "minLength": 32,
+  "maxLength": 32
+}
+```
+
+## VersionId
+
+```text
+{
+  "type": "string",
+  "pattern": "^[0-9a-f]{32}$",
+  "minLength": 32,
+  "maxLength": 32
+}
+```
+
+## WorkflowDefinition
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string",
+      "default": ""
+    },
+    "enabled": {
+      "type": "boolean",
+      "default": false
+    },
+    "repository": {
+      "$ref": "#/components/schemas/RepositoryId"
+    },
+    "trigger": {
+      "$ref": "#/components/schemas/WorkflowTrigger"
+    },
+    "conditions": {
+      "$ref": "#/components/schemas/WorkflowConditions"
+    },
+    "labels": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/WorkflowAction"
+      }
+    }
+  },
+  "required": [
+    "name",
+    "description",
+    "enabled",
+    "repository",
+    "trigger",
+    "labels",
+    "actions"
+  ]
+}
+```
+
+## WorkflowTrigger
+
+```text
+{
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "on": {
+          "type": "string",
+          "const": "manual"
+        }
+      },
+      "required": [
+        "on"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "on": {
+          "type": "string",
+          "const": "code_published"
+        }
+      },
+      "required": [
+        "on"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "on": {
+          "type": "string",
+          "const": "message_posted"
+        }
+      },
+      "required": [
+        "on"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "properties": {
+        "on": {
+          "type": "string",
+          "const": "reaction_added"
+        }
+      },
+      "required": [
+        "on"
+      ],
+      "additionalProperties": false
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "bookmark": {
+          "type": "string"
+        },
+        "on": {
+          "type": "string",
+          "const": "bookmark_changed"
+        }
+      },
+      "required": [
+        "on",
+        "bookmark"
+      ]
+    }
+  ]
+}
+```
+
+## WorkflowConditions
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "revset": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "authors": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "excluded_authors": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "text": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/WorkflowTextCondition"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "thread": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "message": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "emoji": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "excluded_emoji": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  }
+}
+```
+
+## WorkflowTextCondition
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "operator": {
+      "$ref": "#/components/schemas/WorkflowTextOperator"
+    },
+    "value": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "operator",
+    "value"
+  ]
+}
+```
+
+## WorkflowTextOperator
+
+```text
+{
+  "type": "string",
+  "enum": [
+    "contains",
+    "not_contains",
+    "starts_with",
+    "ends_with",
+    "equals",
+    "not_equals",
+    "is_empty",
+    "is_not_empty"
+  ]
+}
+```
+
+## WorkflowAction
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "executor": {
+      "$ref": "#/components/schemas/WorkflowExecutor"
+    },
+    "inputs": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "default": {}
+    },
+    "timeout_seconds": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0,
+      "default": 300
+    }
+  },
+  "required": [
+    "id",
+    "executor",
+    "inputs",
+    "timeout_seconds"
+  ]
+}
+```
+
+## WorkflowExecutor
+
+```text
+{
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "const": "command"
+        }
+      },
+      "required": [
+        "type",
+        "name"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "agent": {
+          "type": "string"
+        },
+        "prompt": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "const": "agent"
+        }
+      },
+      "required": [
+        "type",
+        "agent",
+        "prompt"
+      ]
+    }
+  ]
+}
+```
+
+## WorkflowRun
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "$ref": "#/components/schemas/RunId"
+    },
+    "workflow": {
+      "$ref": "#/components/schemas/WorkflowId"
+    },
+    "version": {
+      "$ref": "#/components/schemas/VersionId"
+    },
+    "event": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/SourceEventId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "source": {
+      "$ref": "#/components/schemas/WorkflowSource"
+    },
+    "requester": {
+      "$ref": "#/components/schemas/PrincipalId"
+    },
+    "created_at": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "attempts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/WorkflowAttempt"
+      }
+    }
+  },
+  "required": [
+    "id",
+    "workflow",
+    "version",
+    "event",
+    "source",
+    "requester",
+    "created_at",
+    "attempts"
+  ]
+}
+```
+
+## RunId
+
+```text
+{
+  "type": "string",
+  "pattern": "^[0-9a-f]{32}$",
+  "minLength": 32,
+  "maxLength": 32
+}
+```
+
+## SourceEventId
+
+```text
+{
+  "type": "string",
+  "pattern": "^[0-9a-f]{64}$",
+  "minLength": 64,
+  "maxLength": 64
+}
+```
+
+## WorkflowSource
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "repository": {
+      "$ref": "#/components/schemas/RepositoryId"
+    },
+    "operation": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/OperationId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "commit": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/CommitId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "bookmark": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "conversation": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/WorkflowConversationSource"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "repository",
+    "bookmark"
+  ],
+  "description": "Source anchors stay distinct from workflow and source-event identities."
+}
+```
+
+## WorkflowConversationSource
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "thread": {
+      "$ref": "#/components/schemas/ThreadId"
+    },
+    "message": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/HumanMessageId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "revision": {
+      "$ref": "#/components/schemas/CollabObjectRef"
+    },
+    "reaction": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/CollabObjectRef"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "position": {
+      "$ref": "#/components/schemas/WalPosition"
+    }
+  },
+  "required": [
+    "thread",
+    "message",
+    "revision",
+    "reaction",
+    "position"
+  ],
+  "description": "Exact conversation anchors, never a message body copied into the workflow home."
+}
+```
+
+## WorkflowAttempt
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "$ref": "#/components/schemas/ExecutionAttemptId"
+    },
+    "owner": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/PrincipalId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "host": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "status": {
+      "$ref": "#/components/schemas/WorkflowRunStatus"
+    },
+    "sequence": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "started_at": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "format": "int64"
+    },
+    "updated_at": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "completed_at": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "format": "int64"
+    },
+    "result": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "owner",
+    "host",
+    "status",
+    "sequence",
+    "started_at",
+    "updated_at",
+    "completed_at",
+    "result"
+  ]
+}
+```
+
+## ExecutionAttemptId
+
+```text
+{
+  "type": "string",
+  "pattern": "^[0-9a-f]{32}$",
+  "minLength": 32,
+  "maxLength": 32
+}
+```
+
+## WorkflowRunStatus
+
+```text
+{
+  "type": "string",
+  "enum": [
+    "pending",
+    "running",
+    "cancel_requested",
+    "completed",
+    "failed",
+    "cancelled",
+    "unknown"
+  ]
+}
+```
+
+## WorkflowEvidence
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "$ref": "#/components/schemas/EvidenceId"
+    },
+    "run": {
+      "$ref": "#/components/schemas/RunId"
+    },
+    "attempt": {
+      "$ref": "#/components/schemas/ExecutionAttemptId"
+    },
+    "sequence": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0
+    },
+    "at": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "data": {
+      "$ref": "#/components/schemas/WorkflowEvidenceData"
+    }
+  },
+  "required": [
+    "id",
+    "run",
+    "attempt",
+    "sequence",
+    "at",
+    "data"
+  ]
+}
+```
+
+## EvidenceId
+
+```text
+{
+  "type": "string",
+  "pattern": "^[0-9a-f]{32}$",
+  "minLength": 32,
+  "maxLength": 32
+}
+```
+
+## WorkflowEvidenceData
+
+```text
+{
+  "oneOf": [
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "stream": {
+          "type": "string"
+        },
+        "text": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "const": "log"
+        }
+      },
+      "required": [
+        "type",
+        "stream",
+        "text"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "step": {
+          "type": "string"
+        },
+        "status": {
+          "$ref": "#/components/schemas/WorkflowRunStatus"
+        },
+        "output": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "type": {
+          "type": "string",
+          "const": "step"
+        }
+      },
+      "required": [
+        "type",
+        "step",
+        "status",
+        "output"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "media_type": {
+          "type": "string"
+        },
+        "bytes": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "uint8",
+            "minimum": 0,
+            "maximum": 255
+          }
+        },
+        "type": {
+          "type": "string",
+          "const": "artifact"
+        }
+      },
+      "required": [
+        "type",
+        "name",
+        "media_type",
+        "bytes"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "session": {
+          "type": "string"
+        },
+        "request_id": {
+          "$ref": "#/components/schemas/RequestId"
+        },
+        "type": {
+          "type": "string",
+          "const": "agent"
+        }
+      },
+      "required": [
+        "type",
+        "session",
+        "request_id"
+      ]
+    }
+  ]
+}
+```
+
+## WorkflowEventPage
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "epoch": {
+      "$ref": "#/components/schemas/EpochId"
+    },
+    "after": {
+      "$ref": "#/components/schemas/WalPosition"
+    },
+    "upper": {
+      "$ref": "#/components/schemas/WalPosition"
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/WorkflowSourceEvent"
+      }
+    },
+    "unavailable": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "version",
+    "epoch",
+    "after",
+    "upper",
+    "events",
+    "unavailable"
+  ]
+}
+```
+
+## WorkflowSourceEvent
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "$ref": "#/components/schemas/SourceEventId"
+    },
+    "publication": {
+      "type": "string",
+      "description": "Canonical origin key/digest, or issuing repository/epoch/selected receipt."
+    },
+    "kind": {
+      "$ref": "#/components/schemas/WorkflowEventKind"
+    },
+    "source": {
+      "$ref": "#/components/schemas/WorkflowSource"
+    },
+    "filter_results": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[0-9a-f]{64}$": {
+          "type": "boolean"
+        }
+      }
+    }
+  },
+  "required": [
+    "id",
+    "publication",
+    "kind",
+    "source"
+  ]
+}
+```
+
+## WorkflowEventKind
+
+```text
+{
+  "type": "string",
+  "enum": [
+    "message_posted",
+    "reaction_added",
+    "code_published",
+    "bookmark_changed"
+  ]
+}
+```
+
+## WorkflowCommandOutcome
+
+```text
+{
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "receipt": {
+          "$ref": "#/components/schemas/WorkflowCommandReceipt"
+        },
+        "status": {
+          "type": "string",
+          "const": "committed"
+        }
+      },
+      "required": [
+        "status",
+        "receipt"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "$ref": "#/components/schemas/RequestId"
+        },
+        "status": {
+          "type": "string",
+          "const": "outcome_unknown"
+        }
+      },
+      "required": [
+        "status",
+        "request_id"
+      ]
+    }
+  ]
+}
+```
+
+## WorkflowCommandReceipt
+
+```text
+{
+  "type": "object",
+  "properties": {
+    "version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "request_id": {
+      "$ref": "#/components/schemas/RequestId"
+    },
+    "publication_id": {
+      "$ref": "#/components/schemas/PublicationId"
+    },
+    "request_digest": {
+      "$ref": "#/components/schemas/IntentDigest"
+    },
+    "accepted": {
+      "$ref": "#/components/schemas/Snapshot"
+    },
+    "result": {
+      "$ref": "#/components/schemas/WorkflowCommandResult"
+    }
+  },
+  "required": [
+    "version",
+    "request_id",
+    "publication_id",
+    "request_digest",
+    "accepted",
+    "result"
+  ]
+}
+```
+
+## WorkflowCommandResult
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "workflow": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/WorkflowId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "definition": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/WorkflowDefinitionVersion"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "evaluation": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/WorkflowEvaluation"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "runs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/WorkflowRun"
+      }
+    },
+    "evidence": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/WorkflowEvidence"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "removed": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "workflow",
+    "definition",
+    "evaluation",
+    "runs",
+    "evidence",
+    "removed"
+  ],
+  "description": "Commands return only changed records; WAL catalogs retain immutable versions."
+}
+```
+
+## WorkflowEvaluation
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "event": {
+      "$ref": "#/components/schemas/WorkflowSourceEvent"
+    },
+    "evaluated_at": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "definitions": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[0-9a-f]{32}$": {
+          "$ref": "#/components/schemas/VersionId"
+        }
+      }
+    },
+    "runs": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/RunId"
+      }
+    }
+  },
+  "required": [
+    "event",
+    "evaluated_at",
+    "definitions",
+    "runs"
+  ]
+}
+```
+
+## WorkflowCommandStatus
+
+```text
+{
+  "oneOf": [
+    {
+      "type": "object",
+      "properties": {
+        "receipt": {
+          "$ref": "#/components/schemas/WorkflowCommandReceipt"
+        },
+        "status": {
+          "type": "string",
+          "const": "committed"
+        }
+      },
+      "required": [
+        "status",
+        "receipt"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "$ref": "#/components/schemas/RequestId"
+        },
+        "status": {
+          "type": "string",
+          "const": "not_known"
+        }
+      },
+      "required": [
+        "status",
+        "request_id"
+      ]
+    },
+    {
+      "type": "object",
+      "properties": {
+        "request_id": {
+          "$ref": "#/components/schemas/RequestId"
+        },
+        "status": {
+          "type": "string",
+          "const": "outcome_unknown"
+        }
+      },
+      "required": [
+        "status",
+        "request_id"
+      ]
+    }
+  ]
+}
+```
+
 ## WorkPage
 
 ```text

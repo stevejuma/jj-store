@@ -330,3 +330,8 @@ enrolled operator configuration authority is required. Results distinguish
 Running, Applied, Current, Deferred, Failed and Unknown. Unknown acknowledgement
 retains the original identity; reload is independent of repository publication
 receipts and never grants repository or execution access.
+
+Native WorkflowService owns definition/run reads, source-event polling and
+receipt-backed commands shared by HTTP, native RPC and CLI. Execution
+transitions require separate configured host admission. See the
+[workflow guide](../cli/jj-workflow.md).

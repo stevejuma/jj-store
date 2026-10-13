@@ -2,7 +2,6 @@
 
 Read the owning topic and requirement before implementation.
 <!-- generated-navigation -->
-
 ## Pages
 
 - [Compatibility and release](01-compatibility-and-release.md)
@@ -22,3 +21,4 @@ Read the owning topic and requirement before implementation.
 - [Local inference runtime compatibility](14-local-inference-runtime.md)
 - [Intentional Thread format compatibility](37-intentional-thread-formats.md)
 - [Remote connection compatibility](38-remote-connections.md)
+- [Workflow compatibility](39-workflow-formats.md)

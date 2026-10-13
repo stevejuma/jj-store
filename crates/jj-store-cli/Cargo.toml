@@ -7,6 +7,7 @@ license.workspace = true
 publish = false
 
 [dependencies]
+jj-workflow.workspace = true
 jj-store-capture.workspace = true
 jj-collab.workspace = true
 jj-agent.workspace = true

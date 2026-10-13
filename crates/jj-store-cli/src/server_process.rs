@@ -15,6 +15,20 @@ pub async fn serve(
     local: bool,
     options: DesktopOptions,
 ) -> AuthorityResult<()> {
+    serve_with_workflows(ui, path, format, local, options, None).await
+}
+
+pub async fn serve_with_workflows(
+    ui: &Ui,
+    path: &std::path::Path,
+    format: Format,
+    local: bool,
+    options: DesktopOptions,
+    workflow_host: Option<std::path::PathBuf>,
+) -> AuthorityResult<()> {
+    if let Some(path) = &workflow_host {
+        crate::workflow_host::Config::load(path)?;
+    }
     let mut config = Config::load(path)?;
     options.apply(&mut config)?;
     #[cfg(unix)]
@@ -60,13 +74,32 @@ pub async fn serve(
         )?;
     }
     ui.stdout().flush()?;
-    server.run(async move {
+    let host = workflow_host.map(|path| {
+        tokio::spawn(async move {
+            if crate::workflow_host::run(crate::workflow_host::Args {
+                config: path,
+                once: false,
+                check: false,
+            })
+            .await
+            .is_err()
+            {
+                eprintln!("Workflow host stopped; repository service remains available");
+            }
+        })
+    });
+    let result = server.run(async move {
         #[cfg(unix)]
         if let Some(input) = owner {
             tokio::select! { _ = signal => {}, _ = crate::server_desktop::owner_closed(input) => {} }
             return;
         }
         signal.await;
-    }).await?;
+    }).await;
+    if let Some(host) = host {
+        host.abort();
+        let _ = host.await;
+    }
+    result?;
     Ok(())
 }

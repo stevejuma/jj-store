@@ -39,6 +39,24 @@ Usage: jj-store [OPTIONS] [COMMAND]
 | `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
 | `-h, --help` | Print help (see a summary with '-h') |  |
 
+## jj-store workflow-host
+
+Observe committed events and execute explicitly configured workflow actions
+
+```text
+Usage: jj-store workflow-host [OPTIONS] --config <CONFIG>
+```
+
+| Argument or option | Meaning | Default / values |
+| --- | --- | --- |
+| `--config <CONFIG>` | Path to the strict server TOML configuration for this operation. Required. |  |
+| `--once <ONCE>` | Poll once, including execution of selected pending work | Default: false; Values: true, false |
+| `--check <CHECK>` | Validate operator JSON and attachments without starting the host | Default: false; Values: true, false |
+| `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
+| `--no-pager <NO_PAGER>` | Write output directly instead of invoking the configured pager. Inherited by subcommands. | Default: false; Values: true, false |
+| `--color <COLOR>` | Control terminal color rendering independently of the output data format. Inherited by subcommands. | Default: auto; Values: auto, always, never |
+| `-h, --help` | Print help |  |
+
 ## jj-store conversation-metadata
 
 Read, generate and rename retained conversation metadata on a local service
@@ -1587,6 +1605,10 @@ storage and accepts launch-only `--desktop-bind`, `--desktop-web-root` and
 unchanged. Overrides require supervision; an ordinary terminal is not an owner
 pipe.
 
+`--workflow-host /ABSOLUTE/host.json` starts the optional admitted event/action
+host. Its private configuration is validated before server startup; host failure
+does not interrupt repository serving. See [native workflows](jj-workflow.md).
+
 
 ```text
 Usage: jj-store run [OPTIONS] --config <CONFIG>
@@ -1596,6 +1618,7 @@ Usage: jj-store run [OPTIONS] --config <CONFIG>
 | --- | --- | --- |
 | `--config <CONFIG>` | Path to the strict server TOML configuration for this operation. Required. |  |
 | `--loopback-only <LOOPBACK_ONLY>` | Require a literal loopback bind address | Default: false; Values: true, false |
+| `--workflow-host <WORKFLOW_HOST>` | Optional execution-host configuration, kept outside repository checkouts |  |
 | `--desktop-supervised <DESKTOP_SUPERVISED>` | Stop the local service when its desktop owner's stdin pipe closes | Default: false; Values: true, false |
 | `--desktop-bind <DESKTOP_BIND>` | Override the literal-loopback listener for this supervised launch only |  |
 | `--desktop-web-root <DESKTOP_WEB_ROOT>` | Use the current app bundle's production browser assets |  |

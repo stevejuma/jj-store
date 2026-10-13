@@ -106,6 +106,7 @@ impl Coordinator {
                 Some(domains) => domains,
                 None => {
                     let domains = RepositoryDomains {
+                        workflow: None,
                         work: None,
                         git: None,
                         thread: None,

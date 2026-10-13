@@ -363,6 +363,7 @@ pub(super) async fn prepare(
         host,
         state.join("native-reads"),
         HttpConfig {
+            workflow_hosts: config.workflow_hosts.clone(),
             runtime_reload,
             runtime_policy: Some(runtime_policy),
             remote_agents: remote_agents.clone(),

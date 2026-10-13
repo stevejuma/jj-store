@@ -60,6 +60,12 @@ mod review_projector;
 mod review_read_engine;
 mod review_reads;
 mod review_resolver;
+mod workflow;
+mod workflow_events;
+pub use workflow_events::WorkflowConversationEvent;
+mod workflow_commands;
+pub use workflow::{WorkflowRoot, WorkflowStoreSnapshot};
+pub use workflow_commands::{WorkflowCommandError, WorkflowCommandRequest};
 mod work;
 mod work_commands;
 pub use agent_capture_aliases::normalized_tool_native_id;
@@ -213,6 +219,10 @@ pub struct Manifest {
     pub replication_root: Option<RecordRef>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub work_root: Option<RecordRef>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub workflow_root: Option<RecordRef>,
+    #[serde(default, skip_serializing_if = "is_zero")]
+    pub workflow_state_version: u64,
     #[serde(default, skip_serializing_if = "is_zero")]
     pub work_state_version: u64,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -241,6 +251,7 @@ impl Manifest {
         let (root, version) = match domain {
             Domain::Agent => (self.agent_root, self.agent_state_version),
             Domain::Review => (self.review_root, self.review_state_version),
+            Domain::Workflow => (self.workflow_root, self.workflow_state_version),
             Domain::Work => (self.work_root, self.work_state_version),
             Domain::Git => (self.git_root, self.git_state_version),
             Domain::Thread => (self.thread_root, self.thread_state_version),
@@ -253,13 +264,14 @@ impl Manifest {
             agent: self.domain_state(Domain::Agent)?,
             review: self.domain_state(Domain::Review)?,
             work: self.domain_state(Domain::Work),
+            workflow: self.domain_state(Domain::Workflow),
             git: self.domain_state(Domain::Git),
             thread: self.domain_state(Domain::Thread),
             reaction: self.domain_state(Domain::Reaction),
         })
     }
     fn validate(&self, repository: RepositoryId) -> Result<()> {
-        if !matches!(self.format, 1..=5)
+        if !matches!(self.format, 1..=6)
             || self.repository != repository
             || self.heads.is_empty()
             || self.heads.len() > MAX_HEADS
@@ -297,6 +309,16 @@ impl Manifest {
                 return Err(Error::Corrupt("manifest domain state"));
             }
             _ => {}
+        }
+        if (self.format < 6 && self.workflow_root.is_some())
+            || (self.format == 6 && (self.workflow_root.is_none() || self.work_root.is_none()))
+            || (self.workflow_root.is_some() != (self.workflow_state_version != 0))
+            || self.workflow_state_version > self.published.0
+            || self
+                .workflow_root
+                .is_some_and(|r| r.kind != RecordKind::WorkflowRoot || r.attempt.is_some())
+        {
+            return Err(Error::Corrupt("workflow root"));
         }
         if (self.format < 3 && (self.work_root.is_some() || self.work_state_version != 0))
             || (self.format == 3 && (self.work_root.is_none() || self.work_state_version == 0))
@@ -553,6 +575,7 @@ pub enum SemanticKind {
     AgentStateChanged,
     ReviewStateChanged,
     WorkStateChanged,
+    WorkflowStateChanged,
     GitStateChanged,
     ThreadStateChanged,
     ReactionStateChanged,
@@ -884,6 +907,8 @@ impl Coordinator {
                 review_state_version: 0,
                 domain_history_start: 1,
                 replication_root,
+                workflow_root: None,
+                workflow_state_version: 0,
                 work_root: None,
                 work_state_version: 0,
                 git_root: None,
@@ -1193,7 +1218,9 @@ impl Coordinator {
                 )
                 .await?;
             let manifest = Manifest {
-                format: if after_domains.is_some_and(|d| d.thread.is_some() || d.reaction.is_some())
+                format: if after_domains.is_some_and(|d| d.workflow.is_some()) {
+                    6
+                } else if after_domains.is_some_and(|d| d.thread.is_some() || d.reaction.is_some())
                 {
                     5
                 } else if after_domains.is_some_and(|d| d.git.is_some()) {
@@ -1544,6 +1571,9 @@ impl Coordinator {
             if let Some(root) = manifest.git_root {
                 domain_native.extend(self.git_store(root).await?.native);
             }
+            if let Some(root) = manifest.workflow_root {
+                self.workflow_store(root).await?;
+            }
             if let Some(root) = manifest.work_root {
                 self.work_store(root).await?;
             }
@@ -1638,6 +1668,9 @@ impl Coordinator {
                         return Err(Error::Corrupt("manifest folded state"));
                     }
                     for domains in [tx.before_domains, tx.after_domains].into_iter().flatten() {
+                        if let Some(workflow) = domains.workflow {
+                            self.workflow_store(workflow.root).await?;
+                        }
                         if let Some(work) = domains.work {
                             self.work_store(work.root).await?;
                         }

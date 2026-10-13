@@ -2,7 +2,6 @@
 
 Read the owning topic and requirement before implementation.
 <!-- generated-navigation -->
-
 ## Pages
 
 - [Storybook presentation catalog](01-storybook-presentation-catalog.md)
@@ -45,3 +44,4 @@ Read the owning topic and requirement before implementation.
 - [Conversation details and discovery](38-conversation-metadata.md)
 - [Intentional Threads inbox and Codebase](39-intentional-thread-inbox.md)
 - [Server selection](40-server-switcher.md)
+- [Workflows](41-workflows.md)

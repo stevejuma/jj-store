@@ -87,6 +87,7 @@ nav:
       - Projects: cli/jj-project.md
       - Tasks: cli/jj-task.md
       - Agents and threads: cli/jj-agent.md
+      - Workflows: cli/jj-workflow.md
       - Reviews: cli/jj-review.md
       - Sync: cli/jj-sync.md
       - Replica inspection: cli/jj-replica.md
@@ -104,6 +105,7 @@ nav:
           - Code: reference/api/code.md
           - Collaboration: reference/api/collaboration.md
           - Projects and tasks: reference/api/work.md
+          - Workflows: reference/api/workflows.md
           - Search: reference/api/search.md
           - Administration and replication: reference/api/administration.md
           - Data types: reference/api/types.md

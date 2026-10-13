@@ -356,3 +356,11 @@ Published membership changes refresh every displayed alias without a reload.
 Removing a Thread returns to the inbox and refreshes its rows after publication.
 The conversation is hidden and read only; a repository administrator can restore
 it.
+
+Workflows shows definitions from accessible native metadata homes, with an
+Agents-style create card, Form/YAML drafts, ordered-action inspector and pinned
+run history. Trigger filters include author selection with avatars, a searchable
+picker of existing source-repository threads, and standard or custom reaction
+emoji selection. Include/exclude controls stay beside the author picker.
+Workflow failures use shared toasts. See the
+[workflow guide](../cli/jj-workflow.md).

@@ -6,6 +6,7 @@ export type StorePage =
   | "oplog"
   | "files"
   | "agents"
+  | "workflows"
   | "reviews"
   | "projects"
   | "threads";

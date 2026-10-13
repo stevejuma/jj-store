@@ -12,8 +12,8 @@
       "docs/site/concepts/snapshots.md"
     ],
     "review": {
-      "reason": "Reviewed runtime publication leases through manifest CAS; committed object and authority formats are retained.",
-      "fingerprint": "18885803010563aa630afb6c7827480db3e365b552e25ba779f3ffe5ddc8ef39"
+      "reason": "Reviewed format-6 WorkflowStore catalogs, immutable collaboration source references, no-copy source content and durable evaluation/report receipt recovery; updated owning workflow chapters.",
+      "fingerprint": "1257aef820b2ccb6694e0112f19542efd87a2127c5bccb503ba88d4adf694d8f"
     }
   },
   {
@@ -22,7 +22,8 @@
       "crates/jj-agent/src",
       "crates/jj-collab/src",
       "crates/jj-review/src",
-      "crates/jj-work/src"
+      "crates/jj-work/src",
+      "crates/jj-workflow/src"
     ],
     "pages": [
       "docs/site/guides/work.md",
@@ -30,8 +31,8 @@
       "docs/site/concepts/collaboration.md"
     ],
     "review": {
-      "reason": "Reviewed M26 object-backed profiles, independent token enrollment and immutable emoji snapshots; updated Settings, security, transport, storage and CLI documentation while preserving existing repository authorization and publication boundaries.",
-      "fingerprint": "2b2d7226d336cdda898edd66920ae81e3fa3ecb82caafc196695cc424a9bc8bc"
+      "reason": "Reviewed committed ThreadStore message/reaction trigger extraction, edit/clear exclusions, exact immutable revisions and WorkStore-home admission; documented the source scope in workflow and collaboration guides.",
+      "fingerprint": "36a4d19872ee9decfd976f81db3950a8ce955d9e799201719596a5409f0f31d2"
     }
   },
   {
@@ -65,8 +66,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed freshly enrolled independent reload authority, retained remote leases and current sharing enforcement.",
-      "fingerprint": "83911fcbf0bbade135bc414416a26b030c721c23c89fa8ca8d285adc8f8c91f2"
+      "reason": "Reviewed common authenticated workflow service, bounded native revset matching, source-event filters and trusted admitted-host evaluation snapshots; HTTP/RPC/CLI share the typed contracts.",
+      "fingerprint": "308bec73a78c46de251ebbeb65a4c703de6c96ef535c830a4b656c8abe30557e"
     }
   },
   {
@@ -96,8 +97,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed per-domain activation, retained runtime policy and precise startup-managed limits.",
-      "fingerprint": "792035e15513491e0880ae4000435f7d612d42a28f7bc75238a73f16a3a08c90"
+      "reason": "Reviewed optional host configuration, empty default execution admission, private executor secrets and data-preserving backend activation; workflow operator guide records platform and live-runner gaps.",
+      "fingerprint": "366ad198b520572dcf5793ec4702661492a06a08d7dc62d81f4cd874c2892ca6"
     }
   },
   {
@@ -109,8 +110,8 @@
       "docs/site/getting-started/work.md"
     ],
     "review": {
-      "reason": "Reviewed additive configuration operator role and reload guidance without changing persisted TOML formats.",
-      "fingerprint": "99bdec581249f2b8e3bb88e9b08376fd78fa8af3dbcdba35bb363b73a7c549cf"
+      "reason": "Reviewed workflow source filters, pinned definition polling, CLI reports and conversation source environment; updated workflow guide and generated help for bounded filter files.",
+      "fingerprint": "de5d4da4fa59dadafc86e719374a0fb544c0272b835cda81bc7b0b892679eba8"
     }
   },
   {
@@ -122,8 +123,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed receipt-bound reload endpoints, opt-in live limits, preserved default consumers and owned monitor shutdown.",
-      "fingerprint": "a3704deab744fd65ee8bc71212153183d6b77144c268ce60be0d70e7ecc5bdbe"
+      "reason": "Reviewed generated workflow conditions, optional code anchors, conversation references and source query filter batches with unchanged origin/admission policy; workflows use existing authorised service.",
+      "fingerprint": "cff7562669f9b51fefb2b73e7ccb2dbc1c1b18495ebc5eaa86aa97dd8c53382b"
     }
   },
   {
@@ -136,8 +137,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed Capture sliders and normalized selected-unit endpoint labels, unchanged canonical ranges and exact drafts, persistent responsive header menu, loading geometry and lifecycle guards.",
-      "fingerprint": "fe7baf90f85682e0f1be3ceefe46b48655a340bd67acc6b45cd7b063dac67543"
+      "reason": "Documented the source-scoped thread Command View, author avatars and inline matching controls, bounded workflow emoji picker and uniform timeout unit surface; existing owned controls retain their defaults.",
+      "fingerprint": "29f3477b73ae41e46346ec948a7bf7fb2bf55c29998ad4cb9d37712ba496398c"
     }
   },
   {
@@ -154,8 +155,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Reviewed typed reload API and exact registered-route generation with compatible saved/runtime status fields.",
-      "fingerprint": "7c4d3cf6ac4ad8d55fa7e37c916e6560a55cedb633e85719ee057a3058cdb60b"
+      "reason": "Reviewed generated version-1 workflow conditions, conversation sources and pinned evaluation catalogs; legacy omitted fields preserve canonical encodings and unchanged record identities.",
+      "fingerprint": "c93eaa81dc5ffe5bf510f851be4d5ddc59b795a32f179cb411b601a08ef8559c"
     }
   },
   {

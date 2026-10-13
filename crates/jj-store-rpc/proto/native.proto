@@ -32,6 +32,10 @@ service NativeStore {
   rpc GitBridgeState(Repository) returns (JsonReply);
   rpc AcceptGitBridge(GitBridgeRequest) returns (JsonReply);
   rpc GitBridgeStatus(GitBridgeStatusRequest) returns (JsonReply);
+  rpc WorkflowPage(WorkRequest) returns (JsonReply);
+  rpc WorkflowSourceEvents(WorkRequest) returns (JsonReply);
+  rpc ApplyWorkflowCommand(WorkRequest) returns (JsonReply);
+  rpc WorkflowCommandStatus(WorkCommandStatusRequest) returns (JsonReply);
   rpc WorkPage(WorkRequest) returns (JsonReply);
   rpc ApplyWorkCommand(WorkRequest) returns (JsonReply);
   rpc WorkCommandStatus(WorkCommandStatusRequest) returns (JsonReply);

@@ -93,6 +93,9 @@ impl Config {
     }
 
     pub fn validate(&self) -> Result<()> {
+        if self.workflow_hosts.len() > 64 {
+            return Err(Error::Config("workflow host admission limit"));
+        }
         self.validate_common()?;
         if let Some(remote) = &self.remote_agents {
             remote.validate()?;

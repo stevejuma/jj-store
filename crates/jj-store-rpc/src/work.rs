@@ -44,3 +44,17 @@ pub(crate) fn error(error: jj_store_service::work::Error) -> Status {
         }
     }
 }
+
+pub(crate) fn workflow_error(error: jj_store_service::workflow::Error) -> Status {
+    use jj_store_service::workflow::Error as E;
+    match error {
+        E::Denied => Status::permission_denied("workflow denied"),
+        E::Stale => Status::failed_precondition("workflow stale"),
+        E::IntentConflict => Status::already_exists("workflow intent conflict"),
+        E::NotFound => Status::not_found("workflow missing"),
+        E::Invalid => Status::invalid_argument("invalid workflow"),
+        E::Limit => Status::resource_exhausted("workflow limit"),
+        E::Corrupt => Status::data_loss("workflow integrity"),
+        E::Unavailable => Status::unavailable("workflow unavailable"),
+    }
+}

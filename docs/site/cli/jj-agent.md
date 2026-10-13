@@ -668,7 +668,7 @@ Usage: jj agent reaction define-emoji [OPTIONS] --request-id <REQUEST_ID> --emoj
 | --- | --- | --- |
 | `--request-id <REQUEST_ID>` | Stable mutation request identity. Preserve this ID and identical intent across retries and status recovery. Required. |  |
 | `--emoji-id <EMOJI_ID>` | Stable custom emoji identity; definitions and retirement retain its version history. Required. |  |
-| `--expected <EXPECTED>` | Exact currently selected custom emoji definition object; guards replacement or retirement against stale state. |  |
+| `--expected <EXPECTED>` | Exact currently selected entity version or attempt; guards replacement and retry against stale state. |  |
 | `--shortcode <SHORTCODE>` | Custom emoji shortcode to validate and retain in the repository library. Required. |  |
 | `--label <LABEL>` | Human-readable custom emoji label, including its accessible name. Required. |  |
 | `--asset <ASSET>` | Path to bounded raster image bytes for the custom emoji; the provider validates format and dimensions. Required. |  |
@@ -697,7 +697,7 @@ Usage: jj agent reaction retire-emoji [OPTIONS] --request-id <REQUEST_ID> --emoj
 | --- | --- | --- |
 | `--request-id <REQUEST_ID>` | Stable mutation request identity. Preserve this ID and identical intent across retries and status recovery. Required. |  |
 | `--emoji-id <EMOJI_ID>` | Stable custom emoji identity; definitions and retirement retain its version history. Required. |  |
-| `--expected <EXPECTED>` | Exact currently selected custom emoji definition object; guards replacement or retirement against stale state. Required. |  |
+| `--expected <EXPECTED>` | Exact currently selected entity version or attempt; guards replacement and retry against stale state. Required. |  |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
 | `--state-dir <STATE_DIR>` | Override device-local state; intended for isolated qualification Inherited by subcommands. |  |
 | `-R, --repository <REPOSITORY>` | Path to repository to operate on  By default, Jujutsu searches for the closest .jj/ directory in an ancestor of the current working directory. Inherited by subcommands. |  |

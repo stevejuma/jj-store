@@ -1,0 +1,18 @@
+# Workflows verification
+
+| ID         | Status      | Evidence             |
+| ---------- | ----------- | -------------------- |
+| JST-WF-001 | Implemented | M28 / E-WORKFLOW-001 |
+| JST-WF-002 | Implemented | M28 / E-WORKFLOW-001 |
+| JST-WF-003 | Implemented | M28 / E-WORKFLOW-001 |
+| JST-WF-004 | Implemented | M28 / E-WORKFLOW-001 |
+| JST-WF-005 | Implemented | M28 / E-WORKFLOW-001 |
+| JST-WF-006 | Implemented | M28 / E-WORKFLOW-001 |
+| JST-WF-007 | Implemented | M28 / E-WORKFLOW-001 |
+| JST-WF-008 | Implemented | M28 / E-WORKFLOW-001 |
+
+E-WORKFLOW-001 qualifies durable native roots/receipts, one-owner command
+execution, pinned source export, source trigger scope, service grants and
+browser interaction/accessibility. Live agent providers, an actual Forgejo
+wrapper binary, unchanged Forgejo ConnectRPC compatibility and approved visual
+baselines remain separate unqualified gates; M28 remains In progress.

@@ -8,6 +8,7 @@ Each operation retains its exact parameters, bodies, response variants and schem
 - [Code browsing and mutations](api/code.md)
 - [Agents, reviews and discussions](api/collaboration.md)
 - [Projects and tasks](api/work.md)
+- [Workflows and execution history](api/workflows.md)
 - [Search and indexing](api/search.md)
 - [Repository administration and replication](api/administration.md)
 - [Data types](api/types.md)

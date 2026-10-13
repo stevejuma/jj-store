@@ -175,6 +175,10 @@ export default defineConfig({
           ],
         },
         {
+          pattern: "^crates/jj-workflow/",
+          chapterPatterns: ["^spec/src/current/contracts/architecture/21-workflow-host\\.md$"],
+        },
+        {
           pattern: "^crates/jj-work/",
           chapterPatterns: [
             "^spec/src/current/contracts/projects/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",

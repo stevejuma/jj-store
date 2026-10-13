@@ -2,7 +2,6 @@
 
 Read the owning topic and requirement before implementation.
 <!-- generated-navigation -->
-
 ## Pages
 
 - [Read APIs and browser](01-read-apis-and-browser.md)
@@ -37,6 +36,7 @@ Read the owning topic and requirement before implementation.
 - [Installation configuration editing](30-installation-configuration-editing.md)
 - [Local capture configuration editing](31-local-capture-configuration-editing.md)
 - [Desktop terminal consumer](32-desktop-terminal-consumer.md)
+- [Workflows](32-workflows.md)
 - [Bundled application documentation](33-bundled-application-documentation.md)
 - [Application freshness ownership](34-application-freshness-ownership.md)
 - [Scoped application freshness](35-scoped-application-freshness.md)

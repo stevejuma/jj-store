@@ -2,7 +2,6 @@
 
 Read the owning topic and requirement before implementation.
 <!-- generated-navigation -->
-
 ## Pages
 
 - [CLI and server commands](01-cli-and-server-commands.md)
@@ -38,6 +37,7 @@ Read the owning topic and requirement before implementation.
 - [Private native tree completion qualification](31-private-native-tree-completion-qualification.md)
 - [Original combination acknowledgement ordering](32-original-combination-acknowledgement-ordering.md)
 - [Explicit private setup composition](33-explicit-private-setup-composition.md)
+- [Workflows](33-workflows.md)
 - [Server-free local Stacks CLI](34-server-free-local-stacks-cli.md)
 - [Interactive agent execution](35-interactive-agent-execution.md)
 - [Installation agent configuration](36-installation-agent-configuration.md)

@@ -1,4 +1,8 @@
 use super::*;
+use crate::workflow::{
+    apply as workflow_apply, events as workflow_events, page as workflow_page,
+    status as workflow_status,
+};
 mod kind_tasks;
 use crate::collab::{
     assets::{define as collab_emoji_define, image as collab_image},
@@ -349,6 +353,10 @@ macro_rules! endpoints {
             (get, "/repos/{repo}/content/search", content_search, jj_store_service::content_search::ContentQuery, jj_store_service::content_search::ContentPage, Reply::Json(200)),
             (get, "/repos/{repo}/work/browse", work_browse, jj_store_service::work::WorkBrowseQuery, jj_store_service::work::WorkBrowsePage, Reply::Json(200)),
             (get, "/repos/{repo}/work/activity", work_activity, jj_store_service::work::WorkActivityQuery, jj_store_service::work::WorkActivityPage, Reply::Json(200)),
+            (get, "/repos/{repo}/workflows", workflow_page, jj_store_service::workflow::Query, jj_store_service::workflow::Page, Reply::Json(200)),
+            (get, "/repos/{repo}/workflow-events", workflow_events, jj_store_service::workflow::EventQuery, jj_store_service::workflow::EventPage, Reply::Json(200)),
+            (post, "/repos/{repo}/workflows/commands", workflow_apply, Empty, jj_store_service::workflow::Outcome, Reply::Json(200)),
+            (get, "/repos/{repo}/workflows/commands/{request_id}", workflow_status, Empty, jj_store_service::workflow::Status, Reply::Json(200)),
             (get, "/repos/{repo}/work", work_page, jj_store_service::work::WorkQuery, jj_store_service::work::WorkPage, Reply::Json(200)),
             (post, "/repos/{repo}/work/commands", work_apply, Empty, jj_store_service::work::Outcome, Reply::Json(200)),
             (get, "/repos/{repo}/work/commands/{request_id}", work_status, Empty, jj_store_service::work::Status, Reply::Json(200)),
@@ -442,6 +450,7 @@ pub(super) fn document(doc: &mut Document) {
     doc.body::<Prepare>("/v1/repos/{repo}/code-index/tasks", "post");
     doc.body::<mutation::Request>("/v1/repos/{repo}/mutations/preview", "post");
     doc.body::<mutation::Request>("/v1/repos/{repo}/mutations", "post");
+    doc.body::<jj_store_service::workflow::Request>("/v1/repos/{repo}/workflows/commands", "post");
     doc.body::<jj_store_service::work::Request>("/v1/repos/{repo}/work/commands", "post");
     doc.body::<jj_store_service::review_mutations::Request>(
         "/v1/repos/{repo}/reviews/commands",
@@ -458,7 +467,7 @@ pub(super) fn router() -> Router<Arc<State>> {
                     crate::collab::commands::MAX_REQUEST_BYTES
                 } else if $path.contains("/mutations") {
                     crate::mutations::MAX_REQUEST_BYTES
-                } else if $path.ends_with("/work/commands") {
+                } else if $path.ends_with("/work/commands") || $path.ends_with("/workflows/commands") {
                     crate::work::MAX_REQUEST_BYTES
                 } else if $path.ends_with("/reviews/commands") {
                     crate::review_mutations::MAX_REQUEST_BYTES

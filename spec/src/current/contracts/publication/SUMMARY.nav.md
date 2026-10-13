@@ -7,6 +7,7 @@
 - [Selected AgentStore reads](07-selected-agentstore-reads.md)
 - [Native WorkStore](08-native-workstore.md)
 - [Retained Git interoperability domain](09-retained-git-interoperability-domain.md)
+- [Workflows](09-workflowstore.md)
 - [M15 additive collaboration publication](10-m15-additive-collaboration-publication.md)
 - [M18 capture publication qualification](11-m18-capture-publication-qualification.md)
 - [Manifest-selected point membership](12-manifest-selected-point-membership.md)

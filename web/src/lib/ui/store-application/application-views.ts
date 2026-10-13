@@ -1,6 +1,7 @@
 import { lazyView, viewModuleURL } from "./lazy-view.js";
 
 export const views = {
+  workflows: lazyView(() => import("../store-workflows/StoreWorkflows.svelte"),viewModuleURL("../store-workflows/StoreWorkflows.svelte")),
   projectsRepository: lazyView(
     () => import("../store-work/StoreRepositoryProjects.svelte"),
     viewModuleURL("../store-work/StoreRepositoryProjects.svelte"),

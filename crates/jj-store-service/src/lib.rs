@@ -75,3 +75,5 @@ mod conversation_discovery;
 
 pub mod runtime_policy;
 pub mod runtime_reload;
+
+pub mod workflow;

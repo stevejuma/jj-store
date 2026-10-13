@@ -10,6 +10,7 @@ import type { StoreRoute } from "./contracts.js";
 const repositoryId = /^[0-9a-f]{32}$/u;
 
 export function storeRouteToHash(route: StoreRoute): string | null {
+  if (route.page === "workflows") return "#/workflows";
   if (route.globalSettings) return globalSettingsHash(route.globalSettings);
   if (route.threadsHub && route.page === "threads")
     return threadsRouteToHash(route);

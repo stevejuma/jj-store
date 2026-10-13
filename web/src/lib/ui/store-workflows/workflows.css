@@ -1,0 +1,209 @@
+.store-workflows {
+  width: 100%;
+  max-width: 72rem;
+  margin-inline: auto;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+  overflow: auto;
+  min-height: 0;
+}
+.store-workflows__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+.store-workflows__header h1 {
+  font-size: 1.5rem;
+  font-weight: 650;
+  line-height: 1.3;
+}
+.store-workflows__header p {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  margin-top: 0.35rem;
+}
+.workflow-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem;
+}
+.workflow-card {
+  min-height: 15rem;
+  background: color-mix(in oklab, var(--muted) 55%, var(--background));
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  min-width: 0;
+}
+.workflow-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.workflow-card__tiles,
+.workflow-card__controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.workflow-card__tiles > svg {
+  width: 1rem;
+  height: 1rem;
+  color: var(--muted-foreground);
+}
+.workflow-card__tile {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.75rem;
+  background: var(--background);
+  border: 1px solid var(--border);
+  display: grid;
+  place-items: center;
+}
+.workflow-card__tile svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+.workflow-card__trigger {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+.workflow-card__open {
+  text-align: left;
+  flex: 1;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+.workflow-card__open h2 {
+  font-size: 1.125rem;
+  font-weight: 650;
+}
+.workflow-card__open p {
+  font-size: 0.8125rem;
+  color: var(--muted-foreground);
+  margin-top: 0.5rem;
+  overflow-wrap: anywhere;
+}
+.workflow-card footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+.workflow-card footer > span {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+}
+.workflow-card footer svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+.workflow-create-card {
+  height: 16.25rem;
+  width: min(100%, 13rem);
+  box-sizing: border-box;
+  min-width: 0;
+  border: 1px dashed var(--border);
+  border-radius: 1rem;
+  background: transparent;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  color: var(--muted-foreground);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 1px 3px color-mix(in oklab, var(--foreground) 5%, transparent);
+  transition:
+    background-color 150ms,
+    border-color 150ms,
+    color 150ms;
+}
+.workflow-create-card:hover {
+  border-color: color-mix(in oklab, var(--border) 70%, var(--foreground));
+  background: color-mix(in oklab, var(--muted) 70%, transparent);
+  color: var(--foreground);
+}
+.workflow-create-card:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+.workflow-create-card:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+.workflow-create-card__icon {
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 0.75rem;
+  background: var(--muted);
+}
+.workflow-create-card svg {
+  width: 2rem;
+  height: 2rem;
+}
+.workflow-card__open:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 4px;
+  border-radius: 0.5rem;
+}
+@media (min-width: 42rem) {
+  .workflow-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (min-width: 63rem) {
+  .workflow-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 58rem) {
+  .workflow-editor {
+    grid-template-columns: minmax(0, 1fr);
+    position: relative;
+  }
+  .workflow-inspector {
+    position: absolute;
+    inset: 1rem 1rem 1rem auto;
+    width: min(calc(100% - 2rem), 26rem);
+    box-shadow: -0.5rem 0 1.5rem
+      color-mix(in oklab, var(--foreground) 10%, transparent);
+  }
+  .store-workflows {
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 58rem) {
+  .workflow-editor--yaml {
+    display: flex;
+    flex-direction: column;
+    overflow: auto;
+  }
+  .workflow-editor--yaml .workflow-canvas {
+    flex: 1;
+    min-height: 24rem;
+  }
+  .workflow-editor--yaml .workflow-inspector {
+    position: static;
+    width: 100%;
+    flex: none;
+    box-shadow: none;
+  }
+}

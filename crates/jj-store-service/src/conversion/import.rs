@@ -267,5 +267,6 @@ fn domain_name(domain: Domain) -> &'static str {
         Domain::Thread => "thread",
         Domain::Reaction => "reaction",
         Domain::Git => "git",
+        Domain::Workflow => "workflow",
     }
 }

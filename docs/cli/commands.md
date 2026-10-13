@@ -17,6 +17,9 @@
 - `jj store login` and `logout`: manage one OS credential account.
 - `jj store capabilities`: inspect verified and unqualified capabilities.
 - `jj store version`: inspect build information.
+- `jj workflow`: manage native workflow definitions, pinned runs and evidence.
+- `jj-store workflow-host --config PATH`: observe admitted repository events and
+  execute configured commands or agents. See [workflows](workflows.md).
 - `jj store help -k credentials`: credential and TLS guidance.
 - `jj util completion`: upstream completions including the store command family.
 - `jj util markdown-help`: raw authored command help in Markdown.

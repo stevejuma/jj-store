@@ -39,6 +39,7 @@ export const repositoryPages = new Set<StorePage>([
   "oplog",
   "files",
   "agents",
+  "workflows",
   "reviews",
   "projects",
   "threads",

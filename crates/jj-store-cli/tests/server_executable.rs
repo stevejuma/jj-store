@@ -12,6 +12,9 @@ use std::{
 #[cfg(unix)]
 #[path = "server_executable/configured_capture.rs"]
 mod configured_capture;
+#[cfg(unix)]
+#[path = "server_executable/workflows.rs"]
+mod workflows;
 
 fn protected_http_client() -> reqwest::ClientBuilder {
     let mut headers = reqwest::header::HeaderMap::new();

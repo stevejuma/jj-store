@@ -14,6 +14,8 @@
     disabled = false,
     presets = [],
     presetsOnly = false,
+    contentClass,
+    collisionPadding = 0,
     communityEmojis = [],
     onSelect,
   }: {
@@ -23,6 +25,8 @@
     disabled?: boolean;
     presets?: readonly string[];
     presetsOnly?: boolean;
+    contentClass?: string;
+    collisionPadding?: number;
     communityEmojis?: readonly CommunityCustomEmoji[];
     onSelect: (emoji: string, custom?: CommunityCustomEmoji) => void;
   } = $props();
@@ -131,11 +135,15 @@
     {/snippet}
   </Popover.Trigger>
   <Popover.Content
+    {collisionPadding}
     align="end"
     sideOffset={6}
-    class={presetsOnly
-      ? "community-emoji-picker__content community-emoji-picker__content--presets-only"
-      : "community-emoji-picker__content"}
+    class={[
+      presetsOnly
+        ? "community-emoji-picker__content community-emoji-picker__content--presets-only"
+        : "community-emoji-picker__content",
+      contentClass,
+    ]}
   >
     <Popover.Header class="community-emoji-picker__a11y-header">
       <Popover.Title

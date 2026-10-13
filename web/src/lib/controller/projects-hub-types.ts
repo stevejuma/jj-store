@@ -14,6 +14,7 @@ export type WorkBrowseQuery = {
   limit?: number;
 };
 export interface WorkBrowseTransport extends WorkTransport {
+  readonly workflows?: import("./workflow-types.js").WorkflowTransport;
   taskActivity?(
     query: { limit?: number; cursor?: string },
     signal?: AbortSignal,

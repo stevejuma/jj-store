@@ -259,6 +259,7 @@ pub fn initialize_local(state_dir: &Path, runtime_executable: &Path) -> Result<I
 
 fn local_config(state: &Path, storage: config::Storage) -> config::Config {
     config::Config {
+        workflow_hosts: Default::default(),
         remote_agents: None,
         agent_capture: Default::default(),
         format: 2,

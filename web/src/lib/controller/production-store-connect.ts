@@ -30,7 +30,7 @@ export function createProductionConnect(context: {
     }
     if (
       !authenticating &&
-      (context.route().agentsHub ||
+      (context.route().page === "workflows" || context.route().agentsHub ||
         (context.route().threadsHub && !context.route().repository))
     ) {
       data.status.connection = "disconnected";
@@ -68,7 +68,7 @@ export function createProductionConnect(context: {
       context.token(token);
       if (
         context.route().globalSettings ||
-        context.route().agentsHub ||
+        context.route().page === "workflows" || context.route().agentsHub ||
         (context.route().threadsHub && !context.route().repository)
       ) {
         data.status.connection = "disconnected";

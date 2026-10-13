@@ -99,6 +99,7 @@
     repository={current.repository}
     profile={controller.state.repository.profile ?? "native"}
     enabled={!current.agentsHub &&
+      current.page !== "workflows" &&
       current.page !== "threads" &&
       !focusedStacks &&
       !settingsOpen &&
@@ -165,6 +166,7 @@
     {:else if repositorySettingsOpen}
       <!-- Repository settings is retained in the sibling body above. -->
     {:else if current.agentsHub}{@render agents?.()}
+    {:else if current.page === "workflows"}<AppShell.Body layout="regions" label="Workflows"><StoreLazyView load={views.workflows} label="Workflows">{#snippet loading()}<StorePageSkeleton route={current} label="Workflows" />{/snippet}{#snippet content(View)}<View {controller} />{/snippet}</StoreLazyView></AppShell.Body>
     {:else if current.page === "threads"}<StoreLazyView
         load={views.threads}
         label="Threads"

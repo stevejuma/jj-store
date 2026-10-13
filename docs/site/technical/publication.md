@@ -88,3 +88,8 @@ enablement and replication import/seed retain the read lease through manifest
 CAS, so loaded policy cannot change between validation and selection. Reload
 receipts are private installation state; manifest CAS remains the only
 repository publication authority.
+
+Workflow homes add manifest format 6 with immutable definitions, evaluations,
+runs and evidence. Native copy and recovery retain these roots; the existing
+WorkStore origin freeze remains. See the
+[workflow guide](../cli/jj-workflow.md).

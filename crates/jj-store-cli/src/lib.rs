@@ -46,3 +46,7 @@ pub mod work_commands;
 
 pub mod agent_workspace;
 pub mod workspace_management;
+
+pub mod workflow_commands;
+pub mod workflow_host;
+mod workflow_source;

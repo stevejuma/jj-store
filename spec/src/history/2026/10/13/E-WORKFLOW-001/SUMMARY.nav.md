@@ -1,0 +1,3 @@
+- [Focused validation](details-02.md)
+- [Diagnostics, limits and remaining gates](details-03.md)
+- [Workflow selector verification](details-04.md)

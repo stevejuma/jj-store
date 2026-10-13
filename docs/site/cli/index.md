@@ -17,6 +17,7 @@ including nested commands, inherited arguments, defaults and enumerated values.
 | [jj project](jj-project.md)    | Project homes and repository links                                          |
 | [jj task](jj-task.md)          | Tasks, hierarchy and comments                                               |
 | [jj agent](jj-agent.md)        | Capture, source inspection, provenance, Threads and reactions               |
+| [jj workflow](jj-workflow.md)  | Durable workflow definitions, pinned execution and evidence                 |
 | [jj review](jj-review.md)      | Exact artifact discussions, workflow and revision recovery                  |
 | [jj sync](jj-sync.md)          | Local replication controls, finite waits and reconciliation                 |
 | [jj replica](jj-replica.md)    | Issuer-bound frontier/checkpoint inspection                                 |
@@ -83,3 +84,7 @@ authorized conversation details, submits a bounded typed command file or
 inspects a retained request. It requires explicit literal-loopback selection and
 never redirects or retries an unknown outcome. See the generated `jj-store`
 reference for arguments.
+
+The [workflow guide](jj-workflow.md) explains metadata homes, operator
+admission, source export, CLI reporting and execution recovery. The small host
+profile does not implement remote Forgejo runner registration or polling.

@@ -26,6 +26,9 @@ pub enum Extension {
     /// Manage native project homes and repository links
     #[command(long_about = include_str!("../../../docs/cli/work.md"))]
     Project(crate::work_commands::ProjectArgs),
+    /// Manage native workflows and report assigned execution evidence
+    #[command(long_about = include_str!("../../../docs/cli/workflows.md"))]
+    Workflow(crate::workflow_commands::WorkflowArgs),
     /// Manage native tasks, subtasks and threaded comments
     #[command(long_about = include_str!("../../../docs/cli/work.md"))]
     Task(crate::work_commands::TaskArgs),
@@ -94,6 +97,7 @@ pub async fn run(
     command: Extension,
 ) -> Result<(), CommandError> {
     let args = match command {
+        Extension::Workflow(args) => return crate::workflow_commands::run(ui, helper, args).await,
         Extension::AgentWorkspace(args) => return crate::agent_workspace::run(helper, args).await,
         Extension::Agent(args) => return crate::agent_commands::run(ui, helper, args).await,
         Extension::Project(args) => {

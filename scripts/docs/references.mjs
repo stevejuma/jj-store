@@ -34,6 +34,7 @@ export function renderCommand(root) {
         c.about
           .replace(/^#+ /gm, "### ")
           .replaceAll("(server-config.md)", "(../reference/configuration.md)")
+          .replaceAll("(workflows.md)", "(jj-workflow.md)")
           .replaceAll("(../browser.md)", "(../guides/browsing.md)")
           .replaceAll("(../capture-preview.md)", "(../guides/capture.md)"),
         "",
@@ -119,6 +120,7 @@ export function expectedReferences() {
     code: ["Code browsing and mutations", []],
     collaboration: ["Agents, reviews and discussions", []],
     work: ["Projects and tasks", []],
+    workflows: ["Workflows and execution history", []],
     search: ["Search and indexing", []],
     administration: ["Repository administration and replication", []],
   };
@@ -128,15 +130,17 @@ export function expectedReferences() {
         ? "installation"
         : /\/(agent|reviews|threads|reactions|emojis|collab)(\/|$)/.test(path)
           ? "collaboration"
-          : /\/(projects|tasks|work)(\/|$)/.test(path)
-            ? "work"
-            : /\/(search|index)(\/|$)/.test(path)
-              ? "search"
-              : /\/(snapshot|log|commits|files|trees|operations|bookmarks|workspaces|mutations|conflicts|evolution|compare|diff)(\/|$)/.test(
-                    path,
-                  )
-                ? "code"
-                : "administration";
+          : /\/(workflows|workflow-events)(\/|$)/.test(path)
+            ? "workflows"
+            : /\/(projects|tasks|work)(\/|$)/.test(path)
+              ? "work"
+              : /\/(search|index)(\/|$)/.test(path)
+                ? "search"
+                : /\/(snapshot|log|commits|files|trees|operations|bookmarks|workspaces|mutations|conflicts|evolution|compare|diff)(\/|$)/.test(
+                      path,
+                    )
+                  ? "code"
+                  : "administration";
     for (const [verb, op] of Object.entries(methods)) {
       if (!["get", "head", "post", "put", "delete", "patch"].includes(verb))
         continue;

@@ -216,6 +216,9 @@ impl Coordinator {
         if let Some(git) = domains.git {
             records.extend(self.git_store(git.root).await?.records);
         }
+        if let Some(workflow) = domains.workflow {
+            records.extend(self.workflow_store(workflow.root).await?.records);
+        }
         if let Some(work) = domains.work {
             records.extend(self.work_store(work.root).await?.records);
         }
@@ -275,6 +278,7 @@ fn include_manifest_records(manifest: &Manifest, records: &mut BTreeSet<RecordRe
     records.extend(manifest.review_root);
     records.extend(manifest.replication_root);
     records.extend(manifest.work_root);
+    records.extend(manifest.workflow_root);
     records.extend(manifest.git_root);
     records.extend(manifest.thread_root);
     records.extend(manifest.reaction_root);

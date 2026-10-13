@@ -1,3 +1,4 @@
+import { agentsRoute } from "./agents-route-codec.js";
 import { repositorySettingsActions } from "./repository-settings-actions.js";
 import { isStacksRoute } from "./store-stacks-navigation.js";
 import { workspaceSelectedRoute } from "./store-workspaces.js";
@@ -201,6 +202,7 @@ export function createProductionStoreActions(options: {
       await options.restoreRoute();
     },
     async selectPage(page) {
+      if (page === "workflows") { options.history.push({...agentsRoute(),page:"workflows",agentsHub:false});return; }
       options.history.page(page);
       await options.restoreRoute();
     },

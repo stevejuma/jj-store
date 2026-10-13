@@ -264,3 +264,8 @@ Listener/TLS, identity/access, authority storage, executables and web bundle
 paths remain startup-managed. Backup execution and storage migration are
 separate workflows. The existing `restart_required` API field remains compatible
 and indicates a saved/loaded mismatch for reloadable domains.
+
+The top-level `workflow_hosts` principal list defaults empty and requires
+restart. Optional `jj-store workflow-host` uses private operator JSON outside
+checkouts; executor programs and secret references are not repository
+configuration. See the [workflow guide](../cli/jj-workflow.md).

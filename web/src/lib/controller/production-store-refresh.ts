@@ -41,7 +41,7 @@ export function createProductionRefresh(options: {
         await options.discover?.();
       if (
         history.route.globalSettings ||
-        history.route.agentsHub ||
+        history.route.page === "workflows" || history.route.agentsHub ||
         history.route.page === "settings"
       )
         return;

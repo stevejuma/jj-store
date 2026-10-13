@@ -38,3 +38,4 @@
 - [Conversation details and discovery](38-conversation-metadata.md)
 - [Intentional Threads inbox and Codebase](39-intentional-thread-inbox.md)
 - [Server selection](40-server-switcher.md)
+- [Workflows](41-workflows.md)

@@ -4200,6 +4200,7 @@ dependencies = [
  "jj-store-service",
  "jj-store-tantivy",
  "jj-store-wal",
+ "jj-workflow",
  "keyring",
  "rcgen",
  "reqwest",
@@ -4433,6 +4434,7 @@ dependencies = [
  "jj-store-model",
  "jj-store-object",
  "jj-store-wal",
+ "jj-workflow",
  "rustix",
  "schemars",
  "serde",
@@ -4484,6 +4486,7 @@ dependencies = [
  "jj-store-model",
  "jj-store-object",
  "jj-work",
+ "jj-workflow",
  "schemars",
  "serde",
  "serde_json",
@@ -4500,6 +4503,21 @@ dependencies = [
  "jj-store-model",
  "schemars",
  "serde",
+ "thiserror 2.0.21",
+]
+
+[[package]]
+name = "jj-workflow"
+version = "0.1.0"
+dependencies = [
+ "hex",
+ "jj-collab",
+ "jj-store-model",
+ "schemars",
+ "serde",
+ "serde_json",
+ "serde_yaml",
+ "sha2 0.10.9",
  "thiserror 2.0.21",
 ]
 

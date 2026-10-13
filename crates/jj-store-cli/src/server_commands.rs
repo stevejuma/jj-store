@@ -27,6 +27,8 @@ pub struct ServerCli {
 }
 #[derive(Debug, Subcommand)]
 pub enum ServerCommand {
+    /// Observe committed events and execute explicitly configured workflow actions.
+    WorkflowHost(crate::workflow_host::Args),
     /// Read, generate and rename retained conversation metadata on a local service
     ConversationMetadata(crate::conversation_metadata::MetadataArgs),
     /// Run local Stacks actions directly in an ordinary JJ workspace
@@ -66,6 +68,9 @@ pub enum ServerCommand {
         /// Require a literal loopback bind address
         #[arg(long)]
         loopback_only: bool,
+        /// Optional execution-host configuration, kept outside repository checkouts.
+        #[arg(long)]
+        workflow_host: Option<PathBuf>,
         #[command(flatten)]
         desktop: crate::server_desktop::DesktopOptions,
     },
@@ -327,6 +332,7 @@ async fn run(ui: &Ui, cli: ServerCli) -> AuthorityResult<()> {
         return help(ui, no_pager, &[]);
     };
     match command {
+        ServerCommand::WorkflowHost(args) => crate::workflow_host::run(args).await,
         ServerCommand::ConversationMetadata(args) => {
             crate::conversation_metadata::run(ui, args).await
         }
@@ -365,8 +371,19 @@ async fn run(ui: &Ui, cli: ServerCli) -> AuthorityResult<()> {
         ServerCommand::Run {
             config,
             loopback_only,
+            workflow_host,
             desktop,
-        } => crate::server_process::serve(ui, &config, format, loopback_only, desktop).await,
+        } => {
+            crate::server_process::serve_with_workflows(
+                ui,
+                &config,
+                format,
+                loopback_only,
+                desktop,
+                workflow_host,
+            )
+            .await
+        }
         ServerCommand::Identity(args) => {
             let (value, text) = crate::identity_commands::run(ui, args).await?;
             emit(ui, format, no_pager, value, &text)

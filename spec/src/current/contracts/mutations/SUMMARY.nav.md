@@ -17,6 +17,7 @@
 - [Physical local file saves](17-physical-local-file-saves.md)
 - [M18 shared capture service semantics](18-m18-shared-capture-service-semantics.md)
 - [Read capability membership](19-read-capability-membership.md)
+- [Workflows](19-workflow-commands.md)
 - [Scoped application freshness](20-scoped-application-freshness.md)
 - [Local stacks protocol ownership](21-local-stacks-protocol-ownership.md)
 - [Interactive agent execution](22-interactive-agent-execution.md)

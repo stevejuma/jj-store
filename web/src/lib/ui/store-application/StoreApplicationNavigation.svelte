@@ -94,6 +94,7 @@
       primaryItems: [
         ...model.primaryItems,
         { id: "agents", label: "Agents", kind: "agents" },
+        { id: "workflows", label: "Workflows", kind: "workflows" },
         { id: "threads", label: "Threads", kind: "threads" },
       ],
       sections: model.sections.map((section) => ({

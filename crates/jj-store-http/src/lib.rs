@@ -29,6 +29,7 @@ mod server_settings;
 mod storage_management;
 mod sync_management;
 mod work;
+mod workflow;
 pub use search::{SearchIndex, SearchRegistry};
 mod uploads;
 use axum::{
@@ -106,6 +107,7 @@ pub struct VerifiedRestorePoint {
 
 #[derive(Clone)]
 pub struct Config {
+    pub workflow_hosts: std::collections::BTreeSet<jj_store_model::PrincipalId>,
     pub runtime_policy: Option<Arc<jj_store_service::runtime_policy::RuntimePolicy>>,
     pub runtime_reload: Option<Arc<dyn jj_store_service::runtime_reload::Manager>>,
     pub installation_id: Option<String>,
@@ -158,6 +160,7 @@ impl Default for Config {
             registry: None,
             directory: None,
             directory_operators: None,
+            workflow_hosts: Default::default(),
             local_workspaces: None,
             local_repositories: None,
             local_storage: None,

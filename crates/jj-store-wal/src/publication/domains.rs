@@ -6,6 +6,7 @@ use super::*;
 pub enum Domain {
     Agent,
     Review,
+    Workflow,
     Work,
     Git,
     Thread,
@@ -16,6 +17,7 @@ impl Domain {
         match self {
             Self::Agent => RecordKind::AgentRoot,
             Self::Review => RecordKind::ReviewRoot,
+            Self::Workflow => RecordKind::WorkflowRoot,
             Self::Work => RecordKind::WorkRoot,
             Self::Git => RecordKind::GitRoot,
             Self::Thread => RecordKind::ThreadRoot,
@@ -26,6 +28,7 @@ impl Domain {
         match self {
             Self::Agent => SemanticKind::AgentStateChanged,
             Self::Review => SemanticKind::ReviewStateChanged,
+            Self::Workflow => SemanticKind::WorkflowStateChanged,
             Self::Work => SemanticKind::WorkStateChanged,
             Self::Git => SemanticKind::GitStateChanged,
             Self::Thread => SemanticKind::ThreadStateChanged,
@@ -48,6 +51,8 @@ pub struct RepositoryDomains {
     pub review: DomainState,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub work: Option<DomainState>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub workflow: Option<DomainState>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub git: Option<DomainState>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -145,7 +150,7 @@ impl DomainRequest {
         Ok(self)
     }
     fn validate(&self) -> Result<()> {
-        if self.additional.len() > 5
+        if self.additional.len() > 6
             || self
                 .additional
                 .windows(2)
@@ -168,7 +173,11 @@ impl DomainRequest {
             || self.facts.as_ref().is_some_and(|facts| match self.domain {
                 Domain::Agent => facts.agent.is_none() || facts.review.is_some(),
                 Domain::Review => facts.agent.is_some() || facts.review.is_none(),
-                Domain::Work | Domain::Git | Domain::Thread | Domain::Reaction => true,
+                Domain::Workflow
+                | Domain::Work
+                | Domain::Git
+                | Domain::Thread
+                | Domain::Reaction => true,
             })
         {
             return Err(Error::Corrupt("domain publication request"));
@@ -268,6 +277,12 @@ impl Coordinator {
             }
             for selection in request.selections() {
                 let mut current = base.manifest.domain_state(selection.domain);
+                if selection.domain == Domain::Workflow && current.is_none() {
+                    current = Some(DomainState {
+                        root: self.empty_workflow_store().await?.reference(),
+                        version: 0,
+                    });
+                }
                 if selection.domain == Domain::Work && current.is_none() {
                     current = Some(DomainState {
                         root: self.empty_work_store().await?.reference(),
@@ -406,6 +421,10 @@ impl Coordinator {
                         after_domains.review = selected;
                         OriginDomainV1::Review
                     }
+                    Domain::Workflow => {
+                        after_domains.workflow = Some(selected);
+                        OriginDomainV1::Repository
+                    }
                     Domain::Work => {
                         after_domains.work = Some(selected);
                         OriginDomainV1::Repository
@@ -481,7 +500,9 @@ impl Coordinator {
                 )
                 .await?;
             let manifest = Manifest {
-                format: if after_domains.thread.is_some() || after_domains.reaction.is_some() {
+                format: if after_domains.workflow.is_some() {
+                    6
+                } else if after_domains.thread.is_some() || after_domains.reaction.is_some() {
                     5
                 } else if after_domains.git.is_some() {
                     4
@@ -496,6 +517,8 @@ impl Coordinator {
                 reaction_state_version: after_domains.reaction.map_or(0, |s| s.version),
                 git_root: after_domains.git.map(|s| s.root),
                 git_state_version: after_domains.git.map_or(0, |s| s.version),
+                workflow_root: after_domains.workflow.map(|s| s.root),
+                workflow_state_version: after_domains.workflow.map_or(0, |s| s.version),
                 work_root: after_domains.work.map(|s| s.root),
                 work_state_version: after_domains.work.map_or(0, |s| s.version),
                 revision: base
@@ -559,6 +582,10 @@ impl Coordinator {
             Domain::Thread => Ok(self.native_thread_store(root).await?.native),
             Domain::Reaction => Ok(self.native_reaction_store(root).await?.native),
             Domain::Git => Ok(self.git_store(root).await?.native),
+            Domain::Workflow => {
+                self.workflow_store(root).await?;
+                Ok(BTreeSet::new())
+            }
             Domain::Work => {
                 self.work_store(root).await?;
                 Ok(BTreeSet::new())
