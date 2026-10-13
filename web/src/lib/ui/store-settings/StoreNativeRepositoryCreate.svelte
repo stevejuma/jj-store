@@ -6,6 +6,12 @@
   import { Input } from "@lapismd/design-core/shadcn/input";
   import { DialogFrame } from "@lapismd/design-core/forms/dialog";
   import StoreWorkField from "../store-work/StoreWorkField.svelte";
+  import StoreSettingsCard from "./StoreSettingsCard.svelte";
+  import { provideSettingsPresentation } from "./settings-presentation.js";
+  import GitBranchIcon from "@lucide/svelte/icons/git-branch";
+  import TagIcon from "@lucide/svelte/icons/tag";
+  import "./StoreSettings.css";
+  import "./creation-forms.css";
   import StoreSettingsNotice from "./StoreSettingsNotice.svelte";
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
   import { ApiError } from "../../api/client.js";
@@ -29,6 +35,7 @@
     fieldError = $state(""),
     progress = $state("");
   const id = $props.id();
+  provideSettingsPresentation({ value: "global" });
   const enabled = $derived(
     controller.state.accessMode === "local_trusted" &&
       controller.state.nativeRepositoryCreation === true,
@@ -111,28 +118,36 @@
     description="Store code and collaboration in this installation. A local working folder is optional."
     {busy}
   >
-    <div class="store-work__form-sections">
-      <Field.Group class="community-settings__option-group">
-        <StoreWorkField
-          id={`${id}-name`}
-          label="Name"
-          description="Choose the name shown in this installation."
-          disabled={busy || pending}
-        >
-          <Input
+    <div class="store-creation-form store-settings--global">
+      <StoreSettingsCard
+        id={`${id}-details`}
+        title="Repository details"
+        Icon={GitBranchIcon}
+      >
+        <Field.Group class="store-settings__editable-rows">
+          <StoreWorkField
+            class="store-settings__option-row"
+            Icon={TagIcon}
             id={`${id}-name`}
-            bind:value={name}
+            label="Name"
+            description="Choose the name shown in this installation."
             disabled={busy || pending}
-            aria-invalid={Boolean(fieldError)}
-            aria-describedby={fieldError ? `${id}-name-error` : undefined}
-            oninput={() => (fieldError = "")}
-            placeholder="Repository name"
-          />
-          {#if fieldError}<Field.Error id={`${id}-name-error`}
-              >{fieldError}</Field.Error
-            >{/if}
-        </StoreWorkField>
-      </Field.Group>
+          >
+            <Input
+              id={`${id}-name`}
+              bind:value={name}
+              disabled={busy || pending}
+              aria-invalid={Boolean(fieldError)}
+              aria-describedby={fieldError ? `${id}-name-error` : undefined}
+              oninput={() => (fieldError = "")}
+              placeholder="Repository name"
+            />
+            {#if fieldError}<Field.Error id={`${id}-name-error`}
+                >{fieldError}</Field.Error
+              >{/if}
+          </StoreWorkField>
+        </Field.Group>
+      </StoreSettingsCard>
       {#if progress}<StoreSettingsNotice>{progress}</StoreSettingsNotice>{/if}
     </div>
     {#snippet footer()}

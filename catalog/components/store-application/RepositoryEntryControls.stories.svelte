@@ -50,11 +50,25 @@
       expect(dialog.contains(document.activeElement)).toBe(true),
     );
     const name = within(dialog).getByRole("textbox", { name: "Name" });
-    await expect(getComputedStyle(name).borderTopWidth).toBe("1px");
+    const card = name.closest<HTMLElement>(".store-settings-card")!;
+    await expect(card).not.toBeNull();
     await expect(
-      getComputedStyle(name.closest(".community-settings__option-group")!)
-        .borderTopWidth,
-    ).toBe("1px");
+      within(card).getByRole("heading", { name: "Repository details" }),
+    ).toBeVisible();
+    const label = name
+      .closest('[data-slot="field"]')!
+      .querySelector('[data-ui-part="field-label"]')!;
+    if (matchMedia("(max-width: 40rem)").matches)
+      await expect(label.getBoundingClientRect().bottom).toBeLessThan(
+        name.getBoundingClientRect().top,
+      );
+    else
+      await expect(label.getBoundingClientRect().right).toBeLessThan(
+        name.getBoundingClientRect().left,
+      );
+    await expect(card.querySelector(".store-settings-icon svg")).not.toBeNull();
+    await expect(getComputedStyle(name).borderTopWidth).toBe("1px");
+    await expect(getComputedStyle(card).boxShadow).toContain("0px 0px 0px 1px");
     await userEvent.type(name, "Review repository");
     await expect(
       within(dialog).getByRole("button", { name: "Create repository" }),
@@ -86,24 +100,26 @@
 <Story
   name="Header spacing and bordered repository action row"
   play={async ({ canvasElement }) => {
-    const c = within(canvasElement),
-      body = within(document.body);
+    const c = within(canvasElement);
     const header = canvasElement.querySelector(
       ".community-app-shell__header-end",
     )!;
     await expect(
       parseFloat(getComputedStyle(header).columnGap),
     ).toBeGreaterThanOrEqual(4);
-    await userEvent.click(c.getByRole("button", { name: /Open profile menu/ }));
     await userEvent.click(
-      await body.findByRole("menuitem", { name: "Settings" }),
+      await c.findByRole("button", { name: "Repository settings" }),
     );
-    await userEvent.click(await c.findByRole("button", { name: "Repository" }));
     const button = await c.findByRole("button", {
       name: "Use local Git-backed JJ",
     });
     const row = button.closest(".store-settings__action-row")!;
-    await expect(getComputedStyle(row).borderTopWidth).toBe("1px");
+    const card = row.closest(".store-settings-card")!;
+    await expect(getComputedStyle(card).boxShadow).toContain("0px 0px 0px 1px");
+    await expect(
+      getComputedStyle(card.querySelector(".store-settings-card__header")!)
+        .borderBottomWidth,
+    ).toBe("1px");
     const description = row.querySelector("p")!;
     await expect(description.getBoundingClientRect().right).toBeLessThan(
       button.getBoundingClientRect().left,

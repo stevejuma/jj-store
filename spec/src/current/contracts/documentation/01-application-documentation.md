@@ -6,6 +6,10 @@ when they describe distinct workflows; keep technical limits beside the relevant
 task. Retain existing heading anchors and links when reorganizing content.
 Readability edits do not expand supported capabilities or qualification.
 
+E-CREATE-FORMS-001 documents the Settings-style repository/project creation
+dialogs, explicit writable metadata home and retained unknown-request recovery.
+This presentation does not change service/API contracts or persistence formats.
+
 E-CHAT-INSPECTOR-001 retains JST-DOC-001/002/003 delivery gates. The agent
 manual describes responsive presentation tabs in the file header, icon diff
 controls, aligned activity avatars and bounded comparison counts with unknown

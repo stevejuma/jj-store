@@ -3,6 +3,7 @@
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import { playOwnershipLayouts } from "./projects-layout-play.js";
   import ProjectsHubFixture from "../../fixtures/ProjectsHubFixture.svelte";
+  import { expectProjectCreationSettings } from "../../fixtures/project-creation-settings-play.js";
   import {
     playReadOnlyTask,
     expectCommunityDisclosures,
@@ -80,14 +81,14 @@
       expect(c.getByRole("button", { name: "New project" })).toBeVisible(),
     );
     await userEvent.click(c.getByRole("button", { name: "New project" }));
-    const dialog = within(body.getByRole("dialog", { name: "Create project" }));
+    const element = body.getByRole("dialog", { name: "Create project" }),
+      dialog = within(element);
+    await expectProjectCreationSettings(element);
     const home = dialog.getByLabelText("Home repository");
     await expect(home).toHaveTextContent("Parser repository");
     await userEvent.click(home);
     await expect(
-      dialog
-        .getByLabelText("Project title")
-        .closest(".community-settings__option-group"),
+      dialog.getByLabelText("Project title").closest(".store-settings-card"),
     ).not.toBeNull();
     await expect(
       body.queryByRole("option", { name: /UI repository/ }),

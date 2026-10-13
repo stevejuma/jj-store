@@ -161,6 +161,14 @@ Reset stay with their values. No new settings, API contracts, configuration
 formats, authorizations or controller owners are introduced by this
 presentation.
 
+Server repository creation and project creation/editing compose these same
+Settings cards, tinted headings and divided icon-bearing rows. Name and home
+controls sit to the right of their labels/help and stack on narrow screens;
+Markdown descriptions occupy a full-width row. Creation commands share one
+bottom dialog footer with the close action before the primary command. The
+presentation retains writable-home filtering, validation, drafts, exact pending
+requests and status/retry controls; it does not change creation authority.
+
 The right-aligned top-header Application menu uses an icon-only vertical kebab
 and contains **Reload saved settings**; omit this action from body headers. The
 Settings sidebar version appears below Help at the bottom. The shared reload

@@ -1,5 +1,11 @@
 # Change map
 
+E-CREATE-FORMS-001 adopts the existing JST-UI-016 Settings presentation in
+server-repository and project creation/editing. Icon rows and creation-specific
+layout remain application-owned under JST-GOV-002/008, using maintained local
+compositions and released Design Core primitives. Creation requests, authority,
+draft owners and persistence formats are unchanged.
+
 E-REMOTE-ADMIN-001 adds independent operator agent administration and explicit
 identity/repository access onboarding. Agent management uses freshly loaded
 `manage-agents` policy; saved configuration activation is now governed by

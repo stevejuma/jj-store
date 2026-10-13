@@ -3267,6 +3267,26 @@
     {
       "local": "web/src/lib/ui/store-application/repository-picker.css",
       "reason": "Application-owned workflow field and picker presentation extracted from its existing owner; no contract or external source dependency added."
+    },
+    {
+      "local": "web/src/lib/ui/store-settings/creation-forms.css",
+      "reason": "Application-owned creation form composition using maintained Settings cards, icon rows and released Design Core controls. Community inspected as a presentation reference; no external source copied or imported."
+    },
+    {
+      "local": "web/src/lib/ui/store-work/StoreWorkField.svelte",
+      "reason": "Application-owned creation form composition using maintained Settings cards, icon rows and released Design Core controls. Community inspected as a presentation reference; no external source copied or imported."
+    },
+    {
+      "local": "web/src/lib/ui/store-work/StoreWorkProjectForm.svelte",
+      "reason": "Application-owned creation form composition using maintained Settings cards, icon rows and released Design Core controls. Community inspected as a presentation reference; no external source copied or imported."
+    },
+    {
+      "local": "web/src/lib/ui/store-work/StoreWorkDialog.svelte",
+      "reason": "Application-owned creation form composition using maintained Settings cards, icon rows and released Design Core controls. Community inspected as a presentation reference; no external source copied or imported."
+    },
+    {
+      "local": "web/src/lib/ui/store-settings/StoreNativeRepositoryCreate.svelte",
+      "reason": "Application-owned creation form composition using maintained Settings cards, icon rows and released Design Core controls. Community inspected as a presentation reference; no external source copied or imported."
     }
   ],
   "desktopAppearance": {

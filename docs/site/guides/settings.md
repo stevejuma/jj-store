@@ -12,6 +12,14 @@ bounded fallback only while visible.
 
 ## Where to find settings
 
+Creation dialogs follow the same Settings form layout. **Add repository → Add
+Server Repository** opens Repository details with the name field. **Projects →
+New project** opens Metadata home and Project details; select a writable home,
+enter a title and optionally add a Markdown description. Labels and help sit
+beside controls on wide screens and stack on narrow screens. Close/Done and the
+create action share the bottom dialog footer. Unknown requests retain their
+original identity and recovery controls.
+
 For authenticated remote agent administration, select the server and use
 **Agents → Manage server access**. An enrolled `manage-agents` operator can edit
 definitions and messaging allowlists; use **Reload saved settings** to activate.

@@ -6,6 +6,13 @@ WorkStore root, repeat the query and page size, reauthorize each page, and reset
 after expiry or serving restart. The browser keeps code pins separate and
 refreshes task metadata automatically after saves and new data.
 
+E-CREATE-FORMS-001 confirms unchanged WorkStore and native creation contracts.
+Settings-style creation cards and the project dialog footer retain existing
+create/update commands, title/body fields, writable-home filtering, expected
+versions, draft owners and original unknown request IDs. Footer submission uses
+the same form/controller; no endpoint, receipt, persistence or authority change
+is introduced.
+
 WorkStore browser reads use an independent pinned root per paged collection. The
 page-header filter controls reuse the existing Projects controller filter action
 and native route values. Moving their presentation from the details rail adds no

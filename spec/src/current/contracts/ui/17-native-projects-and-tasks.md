@@ -10,6 +10,13 @@ repository connection; absent target access remains visible as a metadata link.
 Community task presentation informs the composition; Design Core provides the
 form controls. Production imports no catalog data.
 
+Project create/edit dialogs follow JST-UI-016: a metadata-home card when
+choosing a home, a Project details card with tinted heading and icon-bearing
+title/Markdown rows, and one bottom footer for close and create/save. Wide rows
+align labels/help left and controls right; narrow rows stack. Retained drafts,
+writable-home filters, version guards and original unknown requests are
+unchanged.
+
 Each paged list retains its own immutable WorkStore snapshot and validates
 continuation identity. Confirmed saves immediately reload the selected
 project/task. Live events and periodic checks reload active lists automatically,

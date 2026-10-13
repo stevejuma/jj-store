@@ -1,0 +1,24 @@
+/* Creation forms opt into the documented Settings presentation. */
+.store-creation-form {
+  display: grid;
+  min-width: 0;
+  gap: 1rem;
+}
+.store-creation-form.store-work__form {
+  margin-block: 0;
+}
+.store-creation-form .store-settings__section {
+  margin-block-start: 0;
+}
+.store-creation-form .store-work__control > input {
+  width: min(26rem, 100%);
+}
+.store-creation-form .store-work__field.store-creation-form__description {
+  grid-template-columns: minmax(0, 1fr);
+}
+.store-creation-form__description .store-work__control {
+  justify-self: stretch;
+}
+.store-creation-form__description [data-ui-part="chat-composer"] {
+  width: 100%;
+}
