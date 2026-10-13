@@ -46,3 +46,10 @@ acceptance covers three actions, shared intermediate files, logs, artifacts and
 history after restart. The running-server demo requires explicit temporary host
 admission; Forgejo wrapper/provider/ConnectRPC and approved visual gates remain
 separate. This is native command-host evidence, not Forgejo execution evidence.
+
+E-WORKFLOW-LIVE-001 records the authorized running-server native command demo:
+three completed actions, ten stdout/stderr log records and one downloadable
+artifact. Exact run/evidence history survived backend restart after restoring
+the original empty host admission; Vite, the disabled definition and the prior
+pending run were preserved. App inspection confirmed steps and outputs. No
+Forgejo runner, agent provider or visual baseline gate is promoted.

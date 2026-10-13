@@ -1,8 +1,8 @@
 # M28 lightweight workflows
 
-| Task | Status      | Depends     | Requirements                                                                                                               | Acceptance gate                                                                  | Next action                                                       | Evidence                                                                                                                     |
-| ---- | ----------- | ----------- | -------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | ----------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| M28  | In progress | M11,M23,M27 | JST-WF-001,JST-WF-002,JST-WF-003,JST-WF-004,JST-WF-005,JST-WF-006,JST-WF-007,JST-WF-008,JST-UI-019,JST-DOC-001,JST-DOC-002 | Durable two-host execution, exact recovery, real storage and cold Buzz-parity UI | Qualify live agent/Forgejo wrappers and review cold visual parity | E-WORKFLOW-001,E-WORKFLOW-CHOICES-001,E-WORKFLOW-RUN-001,E-WORKFLOW-HISTORY-001,E-WORKFLOW-YAML-001,E-WORKFLOW-MULTISTEP-001 |
+| Task | Status      | Depends     | Requirements                                                                                                               | Acceptance gate                                                                  | Next action                                                       | Evidence                                                                                                                                         |
+| ---- | ----------- | ----------- | -------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| M28  | In progress | M11,M23,M27 | JST-WF-001,JST-WF-002,JST-WF-003,JST-WF-004,JST-WF-005,JST-WF-006,JST-WF-007,JST-WF-008,JST-UI-019,JST-DOC-001,JST-DOC-002 | Durable two-host execution, exact recovery, real storage and cold Buzz-parity UI | Qualify live agent/Forgejo wrappers and review cold visual parity | E-WORKFLOW-001,E-WORKFLOW-CHOICES-001,E-WORKFLOW-RUN-001,E-WORKFLOW-HISTORY-001,E-WORKFLOW-YAML-001,E-WORKFLOW-MULTISTEP-001,E-WORKFLOW-LIVE-001 |
 
 Source foundations, executor integration, real storage, cold browser and visual
 parity are distinct gates. No gate is promoted by compilation alone.
@@ -28,6 +28,14 @@ acceptance covers three actions, shared intermediate files, logs, artifacts and
 history after restart. The running-server demo requires explicit temporary host
 admission; Forgejo wrapper/provider/ConnectRPC and approved visual gates remain
 separate. This is native command-host evidence, not Forgejo execution evidence.
+
+E-WORKFLOW-LIVE-001 reviews M28 with status unchanged. Explicit temporary host
+admission on the preserved development server qualified Prepare/Test/Summary,
+ordered reports, stdout/stderr, a downloadable artifact and app inspection.
+After restoring empty admission and restarting the backend, recorded history was
+identical and the prior pending run remained unchanged. This closes the native
+command demo gap; agent providers, Forgejo wrappers/ConnectRPC and approved
+visual baselines remain separate open gates.
 
 <!-- generated-navigation -->
 
