@@ -21,7 +21,26 @@ export function createWorkflows(transport: WorkflowTransport) {
     const ticket = ++generation;
     state.loading = true;
     try {
-      const page = await transport.page({ limit: 256 });
+      let page = await transport.page({ limit: 256 });
+      const target = state.page?.workflows.length ?? 0;
+      let workflows = page.workflows;
+      while (page.next && workflows.length < target && ticket === generation) {
+        const next = await transport.page({
+          at: page.position,
+          after: page.next,
+          limit: 256,
+        });
+        if (
+          next.epoch !== page.epoch ||
+          next.root !== page.root ||
+          next.position !== page.position ||
+          next.repository !== page.repository
+        )
+          throw Error("Workflow catalog snapshot changed.");
+        workflows = [...workflows, ...next.workflows];
+        page = next;
+      }
+      page = { ...page, workflows };
       if (ticket === generation) {
         state.page = page;
         state.readError = "";
@@ -70,6 +89,38 @@ export function createWorkflows(transport: WorkflowTransport) {
     state,
     transport,
     refresh,
+    async more() {
+      if (!state.page?.next || state.loading) return;
+      const ticket = generation,
+        previous = state.page;
+      state.loading = true;
+      try {
+        const next = await transport.page({
+          at: previous.position,
+          after: previous.next!,
+          limit: 256,
+        });
+        if (ticket !== generation) return;
+        if (
+          next.epoch !== previous.epoch ||
+          next.root !== previous.root ||
+          next.position !== previous.position ||
+          next.repository !== previous.repository
+        )
+          throw Error("Workflow catalog snapshot changed.");
+        state.page = {
+          ...next,
+          workflows: [...previous.workflows, ...next.workflows],
+        };
+        state.readError = "";
+      } catch (cause) {
+        if (ticket === generation)
+          state.readError =
+            cause instanceof Error ? cause.message : "Workflows unavailable";
+      } finally {
+        if (ticket === generation) state.loading = false;
+      }
+    },
     retry,
     async submit(command: WorkflowCommand) {
       if (state.pending) return false;

@@ -111,3 +111,52 @@ bookmark context. Conflicted bookmarks are unavailable for automatic selection.
 Paged choices retain their query/operation and ignore stale replies. Read
 failures use retryable toasts. Pending run requests retain their original bytes
 and source selection; disabled controls cannot alter them.
+
+Workflow navigation uses the same owned pill tabs, toolbar search and filter
+popover as Projects, with Workflows and History destinations. The edit dialog
+has no History button. History combines bounded per-workflow pages from the
+loaded native catalogs; catalog and run continuations stay pinned and retain
+loaded windows after refresh. Filters cover metadata home, workflow, source
+repository and run status; search filters loaded rows. Run rows follow task-list
+presentation with status, source and time. Empty/loading states match that view.
+The Workflows tab omits a redundant banner beneath navigation. History reuses
+task ownership groups: Mine matches the requester's authenticated principal in
+each metadata home, and other requests appear under Other runs. Requester
+avatars in rows and Author in details use the maintained profile hover card and
+server profile hydration, with an identity fallback when no profile is saved.
+
+Opening a run replaces the list with task-style page details and a Back control.
+Hash routes retain tab, search, filters, metadata home, full run ID, optional
+publication pin and attempt. Back, Forward and reload restore these selections;
+Back to history preserves list filters. Terminal rows open pinned history, while
+active runs follow current evidence until explicitly pinned. Historical attempt
+selection pins its publication; evidence continuations share that pin. Details
+use the exact recorded definition, source, steps, logs and artifacts. Cancel and
+retry retain existing authority, status guards and original request recovery.
+Unavailable saved runs/attempts are never replaced with another selection. Run
+links can inspect retained removed workflows by exact home/run identity;
+catalog-based discovery lists currently registered workflows. Read failures use
+retryable shared toasts, preserving loaded content and pending command bytes.
+
+Run details use the maintained operation-ID copy button and Git commit chip with
+full recorded identity in their accessible labels. The right side of the detail
+header contains icon-only Refresh, Pin/Follow latest and guarded Cancel/Retry
+controls with public shadcn tooltips. These actions retain their existing grants
+and exact-request semantics.
+
+Attempts, Steps and Outputs use the task section disclosure treatment and begin
+collapsed when no saved section preference exists. Section identity includes the
+metadata home and full run ID; explicit expansion uses the existing device-local
+layout preference. Attempts lists recorded status and host, with an exact
+attempt picker. Empty Steps and Outputs use the existing shadcn Empty
+presentation. Run details have an independently scrolling body; legacy modal
+styles cannot override their metadata rows. History rows have an inset before
+their leading status icon and no box shadow or trailing row border.
+
+Bootstrap and repository discovery show the selected view's skeleton before
+considering a metadata-home empty state. Workflows loading follows its cards;
+History follows its heading, ownership group and inset
+status/title/source/avatar rows. Run loading follows the detail header, metadata
+card and three collapsed section headings. Initial catalog reads suppress
+empty-run explanations until settled; existing content remains visible during
+subsequent refresh.

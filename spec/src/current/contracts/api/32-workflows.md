@@ -31,3 +31,11 @@ and commit graphs, and bookmark references. Commit and bookmark pages remain
 pinned to the selected source operation; no workflow-specific lookup endpoint,
 implicit head reconciliation or execution grant is introduced. Run submission
 retains the existing exact source IDs, definition version and durable request.
+
+E-WORKFLOW-HISTORY-001 confirms unchanged JST-WF-006 wire, authorization and
+persistence contracts. History composes bounded per-definition catalog pages and
+exact home/run lookups, with immutable publication and attempt continuations.
+Foreign run, attempt or snapshot replies are refused while retaining loaded
+content. Discovery covers currently registered definitions; retained removed
+workflows remain inspectable through an exact saved run link. No new endpoint,
+source authority or historical-to-current reconciliation is introduced.

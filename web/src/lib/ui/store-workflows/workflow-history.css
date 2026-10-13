@@ -1,0 +1,126 @@
+.store-workflows.community-projects {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  gap: 0;
+  height: 100%;
+}
+.workflow-navigation {
+  padding: 0;
+  min-width: 0;
+}
+.store-workflows .workflow-grid {
+  padding: 1rem 1.5rem 1.5rem;
+}
+.store-workflows .community-projects__surface-header p {
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+}
+.store-workflows[data-run-detail] {
+  overflow: hidden;
+}
+.workflow-run-detail {
+  grid-template-rows: auto minmax(0, 1fr);
+}
+.workflow-run-detail > .community-projects__task-body {
+  overflow: auto;
+  min-height: 0;
+}
+.workflow-run-detail dd {
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.workflow-run-detail h3 {
+  font-weight: 600;
+  margin: 1.25rem 0 0.75rem;
+}
+.workflow-run-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.workflow-history-row {
+  border: 0;
+  box-shadow: none;
+  padding-inline: 0.7rem;
+  grid-template-columns:
+    1rem minmax(7rem, 1.5fr) minmax(0, 1fr)
+    2.4rem 8rem 6.5rem;
+}
+.workflow-history-row strong span,
+.workflow-history-state {
+  color: var(--muted-foreground);
+  font-size: var(--community-text-secondary);
+}
+.workflow-history-loading {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem 1.5rem;
+}
+.workflow-run-evidence {
+  display: grid;
+  gap: 0.75rem;
+}
+.workflow-run-evidence__item {
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.workflow-run-evidence pre {
+  width: 100%;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  background: var(--muted);
+  padding: 0.75rem;
+  border-radius: 0.5rem;
+}
+@media (max-width: 48rem) {
+  .workflow-history-row {
+    grid-template-columns: 1rem minmax(0, 1fr) 2rem 7rem;
+  }
+  .workflow-history-row .community-projects__task-repository,
+  .workflow-history-row > time {
+    display: none;
+  }
+  .store-workflows .community-projects__surface-header {
+    flex-wrap: wrap;
+  }
+}
+
+.workflow-run-actions [data-ui-component="button"] {
+  border-radius: 999px;
+}
+.workflow-run-attempts {
+  list-style: none;
+  margin: 0.75rem 0;
+  padding: 0;
+  font-size: var(--community-text-secondary);
+}
+.workflow-run-attempts li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.65rem;
+  padding: 0.5rem;
+  border-radius: 0.4rem;
+}
+.workflow-run-attempts li[data-selected] {
+  background: var(--muted);
+}
+.workflow-run-attempts p {
+  flex-basis: 100%;
+  margin: 0;
+  color: var(--muted-foreground);
+}
+@media (max-width: 36rem) {
+  .workflow-run-detail .community-projects__task-detail-header {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+  .workflow-run-actions {
+    grid-column: 2;
+    justify-content: flex-end;
+  }
+}

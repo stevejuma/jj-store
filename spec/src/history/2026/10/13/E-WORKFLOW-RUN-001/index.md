@@ -134,4 +134,8 @@ No WorkflowStore, native identity, manifest-6, WAL, receipt, authorization or pu
 - Approved visual baselines and existing M28 live provider, Forgejo-wrapper and
   remote protocol gates remain separate.
 <!-- /evidence-field -->
+<!-- generated-navigation -->
+## Pages
 
+- [E-WORKFLOW-RUN-001 details 2](details-02.md)
+- [E-WORKFLOW-RUN-001 details 3](details-03.md)

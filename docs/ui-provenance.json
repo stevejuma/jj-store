@@ -3291,6 +3291,62 @@
     {
       "local": "web/src/lib/ui/store-settings/StoreNativeRepositoryCreate.svelte",
       "reason": "Application-owned creation form composition using maintained Settings cards, icon rows and released Design Core controls. Community inspected as a presentation reference; no external source copied or imported."
+    },
+    {
+      "local": "web/src/lib/controller/workflow-directory.svelte.ts",
+      "reason": "Owned workflow history routing, bounded reads or task-style presentation composed from existing jj-store controls and released Design Core; no external checkout dependency."
+    },
+    {
+      "local": "web/src/lib/controller/workflows-route-codec.ts",
+      "reason": "Owned workflow history routing, bounded reads or task-style presentation composed from existing jj-store controls and released Design Core; no external checkout dependency."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/WorkflowFilters.svelte",
+      "reason": "Owned workflow history routing, bounded reads or task-style presentation composed from existing jj-store controls and released Design Core; no external checkout dependency."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/WorkflowHistoryRows.svelte",
+      "reason": "Owned workflow history routing, bounded reads or task-style presentation composed from existing jj-store controls and released Design Core; no external checkout dependency."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/WorkflowNavigation.svelte",
+      "reason": "Owned workflow history routing, bounded reads or task-style presentation composed from existing jj-store controls and released Design Core; no external checkout dependency."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/WorkflowOverview.svelte",
+      "reason": "Owned workflow history routing, bounded reads or task-style presentation composed from existing jj-store controls and released Design Core; no external checkout dependency."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/WorkflowRunDetail.svelte",
+      "reason": "Owned workflow history routing, bounded reads or task-style presentation composed from existing jj-store controls and released Design Core; no external checkout dependency."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/WorkflowRunEvidence.svelte",
+      "reason": "Owned workflow history routing, bounded reads or task-style presentation composed from existing jj-store controls and released Design Core; no external checkout dependency."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/WorkflowRunHeader.svelte",
+      "reason": "Owned workflow history routing, bounded reads or task-style presentation composed from existing jj-store controls and released Design Core; no external checkout dependency."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/WorkflowRunSections.svelte",
+      "reason": "Owned workflow history routing, bounded reads or task-style presentation composed from existing jj-store controls and released Design Core; no external checkout dependency."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/WorkflowRunStatus.svelte",
+      "reason": "Owned workflow history routing, bounded reads or task-style presentation composed from existing jj-store controls and released Design Core; no external checkout dependency."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/workflow-history.css",
+      "reason": "Owned workflow history routing, bounded reads or task-style presentation composed from existing jj-store controls and released Design Core; no external checkout dependency."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/workflow-history.svelte.ts",
+      "reason": "Owned workflow history routing, bounded reads or task-style presentation composed from existing jj-store controls and released Design Core; no external checkout dependency."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/WorkflowPageSkeleton.svelte",
+      "reason": "Owned workflow history routing, bounded reads or task-style presentation composed from existing jj-store controls and released Design Core; no external checkout dependency."
     }
   ],
   "desktopAppearance": {

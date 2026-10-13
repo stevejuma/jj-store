@@ -25,3 +25,11 @@ recorded source selectors and icon-bearing overview actions. Source lookups are
 bounded and independently authorized. Bookmark selection records its unique
 commit, operation changes clear dependent choices, and failures use shared retry
 toasts. Unknown outcomes retain the original command and read-only source.
+
+E-WORKFLOW-HISTORY-001 documents Workflows/History tabs, requester ownership
+groups and profile hydration, task-style filtered history and exact URL-selected
+run details. Header action tooltips, source identity controls, initially
+collapsed sections and shared empty/toast states reuse maintained components.
+Bounded loaded-row search, registered-definition discovery, publication pins and
+removed workflow saved-link behaviour are explicit. M28 execution and visual
+gates stay unchanged.

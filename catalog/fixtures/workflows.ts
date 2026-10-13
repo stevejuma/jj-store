@@ -17,6 +17,7 @@ export const repositories = [
 export function workflowFixture(
   unknown = false,
   repository = home,
+  pendingRun = false,
 ): WorkflowTransport {
   let position = 1;
   let versions: WorkflowVersion[] = [
@@ -59,7 +60,7 @@ export function workflowFixture(
         workflow: versions[0].id,
         version: versions[0].version,
         event: null,
-        requester: actor,
+        requester: "22".repeat(16),
         created_at: 1791880000000,
         source: {
           repository: code,
@@ -72,12 +73,12 @@ export function workflowFixture(
             id: "52".repeat(16),
             owner: actor,
             host: "linux-builder",
-            status: "completed",
+            status: pendingRun ? "pending" : "completed",
             sequence: 3,
             started_at: 1791880000000,
             updated_at: 1791880000100,
             completed_at: 1791880000100,
-            result: "Tests passed",
+            result: pendingRun ? "" : "Tests passed",
           },
         ],
       }
@@ -104,6 +105,21 @@ export function workflowFixture(
           }) as WorkflowEvidence,
       )
     : [];
+  const otherRun = run
+    ? {
+        ...run,
+        id: "53".repeat(16),
+        requester: "33".repeat(16),
+        attempts: [
+          {
+            ...run.attempts[0]!,
+            id: "54".repeat(16),
+            status: "failed" as const,
+            result: "Tests failed",
+          },
+        ],
+      }
+    : null;
   const page = (): WorkflowPage => ({
     version: 1,
     repository,
@@ -138,8 +154,22 @@ export function workflowFixture(
       const value = page();
       if (query.workflow)
         value.workflows = versions.filter((v) => v.id === query.workflow);
-      if ((query.workflow || query.run) && run) value.runs = [run];
-      if (query.run) value.evidence = evidence;
+      if (run && query.workflow === run.workflow) value.runs = [run, otherRun!];
+      if (query.run)
+        value.runs = [run, otherRun].filter(
+          (row) => row?.id === query.run,
+        ) as WorkflowRun[];
+      if (query.run === run?.id) {
+        value.evidence = pendingRun
+          ? []
+          : query.attempt
+            ? evidence.filter((row) => row.attempt === query.attempt)
+            : evidence;
+        value.workflows = versions.filter(
+          (row) => row.version === run!.version,
+        );
+      }
+      if (query.at !== undefined) value.position = Number(query.at);
       return JSON.parse(JSON.stringify(value)) as WorkflowPage;
     },
     async apply(request) {

@@ -37,7 +37,6 @@
     writable = true,
     onSave,
     onClose,
-    onHistory,
     onRetry,
     onTrigger,
     onDuplicate,
@@ -56,7 +55,6 @@
     writable?: boolean;
     onSave(definition: WorkflowDefinition): Promise<boolean>;
     onClose(draft: WorkflowDraft): void;
-    onHistory?(): void;
     onRetry?(): void;
     onTrigger?(): void;
     onDuplicate?(draft: WorkflowDraft): void;
@@ -144,12 +142,6 @@
         bind:value={definition.name}
         disabled={busy || !writable || mode === "yaml"}
       />
-      {#if onHistory}<Button
-          class="workflow-editor-history"
-          variant="ghost"
-          size="sm"
-          onclick={onHistory}>History</Button
-        >{/if}
       <WorkflowEditorMenu
         enabled={definition.enabled ?? false}
         disabled={busy || !!pending || !writable}

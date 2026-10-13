@@ -12,7 +12,7 @@
   }: {
     rows: readonly T[];
     principal?: string;
-    kind: "projects" | "tasks";
+    kind: "projects" | "tasks" | "runs";
     home?: string;
     isMine?: (row: T) => boolean;
     Icon: Component;

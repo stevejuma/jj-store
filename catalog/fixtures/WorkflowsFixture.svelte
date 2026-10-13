@@ -1,5 +1,7 @@
 <script lang="ts">
   import { onDestroy, untrack } from "svelte";
+  import { createStoreRouteHistory } from "../../web/src/lib/controller/store-route-history.svelte.js";
+  import { storeRouteToHash } from "../../web/src/lib/controller/store-route-codec.js";
   import StoreWorkflows from "../../web/src/lib/ui/store-workflows/StoreWorkflows.svelte";
   import StoreRepositoryApplication from "../../web/src/lib/ui/store-application/StoreRepositoryApplication.svelte";
   import { createInMemoryStoreController } from "../controller/in-memory-store-controller.svelte.js";
@@ -18,19 +20,60 @@
     shell = false,
     noHome = false,
     loading = false,
+    initialHash = "#/workflows",
+    historyFailure,
+    pendingRun = false,
+    discovering = false,
   }: {
     unknown?: boolean;
     choiceFailures?: boolean;
     shell?: boolean;
     noHome?: boolean;
     loading?: boolean;
+    initialHash?: string;
+    historyFailure?: "list" | "detail";
+    pendingRun?: boolean;
+    discovering?: boolean;
   } = $props();
   const base = untrack(() => createInMemoryStoreController("workflows"));
-  const source = untrack(() => workflowFixture(unknown));
+  let location = $state(untrack(() => initialHash));
+  let locations = untrack(() => [location]),
+    locationIndex = 0,
+    notify = () => {};
+  const navigation = untrack(() =>
+    createStoreRouteHistory({
+      hash: () => location,
+      push: (hash) => {
+        locations = [...locations.slice(0, locationIndex + 1), hash];
+        locationIndex++;
+        location = hash;
+      },
+      replace: (hash) => {
+        locations[locationIndex] = hash;
+        location = hash;
+      },
+      listen(listener) {
+        notify = listener;
+        return () => {
+          notify = () => {};
+        };
+      },
+      go(delta) {
+        locationIndex = Math.max(
+          0,
+          Math.min(locations.length - 1, locationIndex + delta),
+        );
+        location = locations[locationIndex]!;
+        notify();
+      },
+    }),
+  );
+  let failed = false;
+  const source = untrack(() => workflowFixture(unknown, home, pendingRun));
   const emptySource = untrack(() => workflowFixture(unknown, code));
   const projects = createProjectsHub({
     repositories: () => repositories,
-    route: () => base.state.route,
+    route: () => navigation.route,
     push: () => {},
     source: (selected) => ({
       ...fixtureTransport(selected),
@@ -43,7 +86,20 @@
       workflows: loading
         ? { ...source, page: async () => new Promise(() => {}) }
         : selected === home
-          ? source
+          ? {
+              ...source,
+              async page(query, signal) {
+                if (
+                  !failed &&
+                  ((historyFailure === "list" && query.workflow) ||
+                    (historyFailure === "detail" && query.run))
+                ) {
+                  failed = true;
+                  throw Error("Workflow history lookup failed");
+                }
+                return source.page(query, signal);
+              },
+            }
           : emptySource,
     }),
     changed: () => {},
@@ -99,6 +155,7 @@
     },
   );
   onDestroy(() => {
+    navigation.destroy();
     directory.destroy();
     execution.destroy();
     threadNavigation.clear();
@@ -111,13 +168,31 @@
     directory,
     execution,
     projects,
+    actions: {
+      ...base.actions,
+      async openRoute(route) {
+        navigation.push(route);
+      },
+      async navigate(delta) {
+        navigation.navigate(delta);
+      },
+    },
     get state() {
       return {
         ...base.state,
-        repositories: repositories.map((r) => ({
-          ...r,
-          principal: "22".repeat(16),
-        })),
+        route: navigation.route,
+        canNavigateBack: navigation.canBack,
+        canNavigateForward: navigation.canForward,
+        status: {
+          ...base.state.status,
+          repositories: discovering ? ("loading" as const) : ("ready" as const),
+        },
+        repositories: discovering
+          ? []
+          : repositories.map((r) => ({
+              ...r,
+              principal: "22".repeat(16),
+            })),
         repository: repositories[0]!,
         accessMode: "local_trusted" as const,
       };
@@ -129,3 +204,12 @@
     {controller}
     initiallyCollapsed={false}
   />{:else}<StoreWorkflows {controller} />{/if}
+<span class="sr-only" aria-label="Workflow location"
+  >{storeRouteToHash(navigation.route)}</span
+>
+<button class="sr-only" onclick={() => navigation.navigate(-1)}
+  >Fixture back</button
+>
+<button class="sr-only" onclick={() => navigation.navigate(1)}
+  >Fixture forward</button
+>

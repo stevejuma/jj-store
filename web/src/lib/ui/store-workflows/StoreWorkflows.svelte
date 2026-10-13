@@ -1,17 +1,30 @@
 <script lang="ts">
   import { untrack } from "svelte";
+  import { Button } from "@lapismd/design-core/shadcn/button";
+  import "../store-work/community-work-layout.css";
+  import "../store-work/community-work-tasks.css";
+  import "../store-work/task-detail-layout.css";
+  import "./workflow-history.css";
   import { provideProfiles } from "../../profiles/context.svelte.js";
-  import { SvelteMap } from "svelte/reactivity";
   import { ownNotifications } from "../../notifications/notification-context.svelte.js";
   import StoreNotificationHost from "../store-notifications/StoreNotificationHost.svelte";
-  import WorkflowSkeleton from "./WorkflowSkeleton.svelte";
-  import Plus from "@lucide/svelte/icons/plus";
   import StoreWorkEmpty from "../store-work/StoreWorkEmpty.svelte";
-  import { validateWorkflowHome } from "./workflow-home.js";
+  import {
+    validateWorkflowHome,
+    workflowDiscoveryPending,
+    workflowCatalogLoading,
+  } from "./workflow-home.js";
   import WorkflowFeedback from "./WorkflowFeedback.svelte";
-  import WorkflowCard from "./WorkflowCard.svelte";
   import WorkflowEditor from "./WorkflowEditor.svelte";
   import WorkflowHistory from "./WorkflowHistory.svelte";
+  import WorkflowPageSkeleton from "./WorkflowPageSkeleton.svelte";
+  import WorkflowOverview from "./WorkflowOverview.svelte";
+  import WorkflowNavigation from "./WorkflowNavigation.svelte";
+  import {
+    workflowsRoute,
+    workflowsRouteToHash,
+    type WorkflowSelection,
+  } from "../../controller/workflows-route-codec.js";
   import WorkflowRunDialog from "./WorkflowRunDialog.svelte";
   import {
     workflowAuthors,
@@ -19,10 +32,8 @@
     initialDraft,
     type WorkflowDraft,
   } from "./workflow-presentation.js";
-  import {
-    createWorkflows,
-    type WorkflowController,
-  } from "../../controller/workflows.svelte.js";
+  import type { WorkflowController } from "../../controller/workflows.svelte.js";
+  import { createWorkflowDirectory } from "../../controller/workflow-directory.svelte.js";
   import { workId } from "../../controller/work-types.js";
   import type { StoreController } from "../../controller/contracts.js";
   import type {
@@ -39,7 +50,9 @@
       (r) => r.profile !== "git_sha1_jj045" && r.availability !== "unavailable",
     ),
   );
-  const authors = $derived(workflowAuthors(controller));
+  const discovering = $derived(
+    !homes.length && workflowDiscoveryPending(controller),
+  );
   const sources = $derived(
     controller.state.repositories.filter((r) => r.profile !== "git_sha1_jj045"),
   );
@@ -51,7 +64,6 @@
     editorEpoch = $state(0),
     editing = $state<WorkflowVersion | null>(null),
     draft = $state<WorkflowDraft>(initialDraft(initialDefinition())),
-    history = $state<WorkflowVersion | null>(null),
     running = $state<WorkflowVersion | null>(null);
   function canWrite(repository: string) {
     return (
@@ -62,72 +74,57 @@
     );
   }
   const writable = $derived(canWrite(home));
-  const controllers = new SvelteMap<string, WorkflowController>(),
+  const controllers = createWorkflowDirectory(
+      () => homes.map((r) => r.id),
+      (id) => controller.projects?.transport(id).workflows,
+    ),
     drafts = new Map<string, WorkflowDraft>();
   const work = $derived(controllers.get(home));
+  const catalogLoading = $derived(workflowCatalogLoading(controllers));
   const rows = $derived(
     [...controllers.entries()].flatMap(([repository, owner]) =>
       (owner.state.page?.workflows ?? []).map((version) => ({
-        repository,
-        owner,
-        version,
+        home: repository,
+        work: owner,
+        workflow: version,
       })),
     ),
   );
   $effect(() => {
     if (!home && homes.length) home = homes[0]!.id;
   });
-  $effect(() => {
-    const selected = homes.map((r) => r.id);
-    if (!controller.projects) return;
-    const owners = untrack(() => {
-      for (const [repository, owner] of controllers)
-        if (!selected.includes(repository)) {
-          owner.stop();
-          controllers.delete(repository);
-        }
-      return selected.flatMap((repository) => {
-        let owner = controllers.get(repository);
-        if (!owner) {
-          const transport =
-            controller.projects!.transport(repository).workflows;
-          if (!transport) return [];
-          owner = createWorkflows(transport);
-          controllers.set(repository, owner);
-        }
-        return [owner];
+  const selection = $derived(controller.state.route.workflow ?? {});
+  const visible = $derived(
+    rows.filter(
+      (entry) =>
+        (!selection.scope || entry.home === selection.scope) &&
+        (!selection.source ||
+          entry.workflow.definition.repository === selection.source) &&
+        `${entry.workflow.definition.name} ${sourceName(entry.workflow.definition.repository)}`
+          .toLocaleLowerCase()
+          .includes(selection.q?.trim().toLocaleLowerCase() ?? ""),
+    ),
+  );
+  function navigate(fields: WorkflowSelection) {
+    const next = workflowsRoute({ ...selection, ...fields });
+    if (!workflowsRouteToHash(next)) {
+      notifications.context.service.publish({
+        scope: notifications.context.scope,
+        key: "workflow-route",
+        title: "Workflow search unavailable",
+        message:
+          "Search is limited to 512 UTF-8 bytes without control characters.",
+        severity: "error",
+        lifetime: "dismiss",
       });
-    });
-    const abort = new AbortController();
-    const refresh = () => {
-      if (!abort.signal.aborted)
-        for (const owner of owners) void owner.refresh();
-    };
-    refresh();
-    const timer = setInterval(refresh, 5000);
-    window.addEventListener("focus", refresh);
-    window.addEventListener("online", refresh);
-    async function events(owner: WorkflowController) {
-      while (!abort.signal.aborted && owner.transport.events) {
-        try {
-          await owner.transport.events(
-            abort.signal,
-            () => void owner.refresh(),
-          );
-        } catch {}
-        if (!abort.signal.aborted)
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-      }
+      return;
     }
-    for (const owner of owners) void events(owner);
-    return () => {
-      abort.abort();
-      clearInterval(timer);
-      window.removeEventListener("focus", refresh);
-      window.removeEventListener("online", refresh);
-      for (const owner of owners) owner.stop();
-    };
-  });
+    notifications.context.service.resolve(
+      notifications.context.scope,
+      "workflow-route",
+    );
+    void controller.actions.openRoute?.(next);
+  }
   function open(
     version: WorkflowVersion | null,
     duplicate = false,
@@ -206,52 +203,62 @@
   }
 </script>
 
-<section class="store-workflows" aria-label="Workflows">
-  <header class="store-workflows__header">
-    <div>
-      <h1>Workflows</h1>
-      <p>Run commands and agents when repositories change.</p>
-    </div>
-  </header>
+<section
+  class="store-workflows community-projects"
+  aria-label="Workflows"
+  data-run-detail={selection.run ? "" : undefined}
+>
   <WorkflowFeedback owners={[...controllers.entries()]} />
-  {#if !homes.length}<StoreWorkEmpty
+  {#if !selection.run}<WorkflowNavigation
+      {selection}
+      {homes}
+      repositories={sources}
+      entries={rows}
+      onChange={navigate}
+    />{/if}
+  {#if discovering}<WorkflowPageSkeleton
+      view={selection.run ? "detail" : (selection.tab ?? "workflows")}
+    />
+  {:else if !homes.length}<StoreWorkEmpty
       kind="repositories"
       title="Choose a native metadata home"
       description="Register a native repository and create its WorkStore project before saving workflows."
     />
-  {:else if !work}<StoreWorkEmpty
-      title="Workflows unavailable"
-      description="This connection does not support native workflow metadata."
-    />
-  {:else if !work.state.page && work.state.loading && !work.state.readError}<div
-      class="workflow-grid"
-    >
-      <span class="sr-only" role="status">Loading workflows</span>
-      {#each [1, 2, 3] as key (key)}<WorkflowSkeleton />{/each}
-    </div>
-  {:else}<div class="workflow-grid">
-      {#each rows as { repository, owner, version } (`${repository}:${version.id}`)}<WorkflowCard
-          workflow={version}
-          repositoryName={sourceName(version.definition.repository)}
-          busy={owner.state.writing || !!owner.state.pending}
-          writable={canWrite(repository)}
-          onOpen={() => open(version, false, repository)}
-          onToggle={() => toggle(version, owner)}
-          onDuplicate={() => open(version, true, repository)}
-          onRemove={() => remove(version, owner)}
-          onRun={() => {
-            home = repository;
-            running = version;
-          }}
-        />{/each}{#if writable}<button
-          class="workflow-create-card"
-          disabled={!!work.state.pending}
-          onclick={() => open(null)}
-          ><span class="workflow-create-card__icon"
-            ><Plus aria-hidden="true" /></span
-          ><span>Create workflow</span></button
-        >{/if}
-    </div>{/if}
+  {:else}
+    {#if selection.tab === "history"}<WorkflowHistory
+        entries={rows}
+        owners={[...controllers.entries()]}
+        {selection}
+        {catalogLoading}
+        repositoryName={sourceName}
+        {canWrite}
+        principal={(id) => homes.find((home) => home.id === id)?.principal}
+        onChange={navigate}
+      />
+    {:else}<WorkflowOverview
+        entries={visible}
+        loading={catalogLoading}
+        available={!!work}
+        {writable}
+        pending={!!work?.state.pending}
+        repositoryName={sourceName}
+        {canWrite}
+        onOpen={(entry, duplicate) =>
+          open(entry?.workflow ?? null, duplicate, entry?.home ?? home)}
+        onToggle={(entry) => toggle(entry.workflow, entry.work)}
+        onRemove={(entry) => void remove(entry.workflow, entry.work)}
+        onRun={(entry) => {
+          home = entry.home;
+          running = entry.workflow;
+        }}
+      />{/if}
+    {#if !selection.run}{#each [...controllers.entries()].filter(([, owner]) => owner.state.page?.next) as [repository, owner] (repository)}<Button
+          variant="outline"
+          disabled={owner.state.loading}
+          onclick={() => owner.more()}
+          >More workflows in {sourceName(repository)}</Button
+        >{/each}{/if}
+  {/if}
 </section>
 <StoreNotificationHost owner={notifications} />
 {#if editor}{#key editorEpoch}<WorkflowEditor
@@ -262,7 +269,7 @@
       {homes}
       repositories={sources}
       version={editing}
-      {authors}
+      authors={workflowAuthors(controller)}
       busy={preparing || !!work?.state.writing}
       pending={work?.state.pending?.request_id ?? ""}
       onRetry={() => work?.retry()}
@@ -272,7 +279,6 @@
         drafts.set(`${home}:${editing?.id ?? "new"}`, next);
         editor = false;
       }}
-      onHistory={editing ? () => (history = editing) : undefined}
       onTrigger={editing ? () => (running = editing) : undefined}
       onDelete={editing ? () => remove(editing!) : undefined}
       onDuplicate={(current) => {
@@ -286,12 +292,6 @@
         editorEpoch++;
       }}
     />{/key}{/if}
-{#if history && work}<WorkflowHistory
-    {work}
-    workflow={history}
-    {writable}
-    onClose={() => (history = null)}
-  />{/if}
 {#if running && work}<WorkflowRunDialog
     acquireRepository={controller.acquireRepository}
     repositoryName={sourceName(running.definition.repository)}

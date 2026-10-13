@@ -120,15 +120,34 @@
       editor.getByLabelText("Name", { exact: true }),
       "Unsaved build draft",
     );
-    await userEvent.click(editor.getByRole("button", { name: "History" }));
-    const history = within(
-      await body.findByRole("dialog", { name: /Run history/ }),
+    await expect(editor.queryByRole("button", { name: "History" })).toBeNull();
+    await userEvent.click(editor.getByRole("button", { name: "Cancel" }));
+    await waitFor(() =>
+      expect(
+        getComputedStyle(canvas.getByRole("tab", { name: "History" }))
+          .pointerEvents,
+      ).not.toBe("none"),
     );
+    await userEvent.click(canvas.getByRole("tab", { name: "History" }));
     await userEvent.click(
-      await history.findByRole("button", { name: /51515151/ }),
+      await canvas.findByRole("button", {
+        name: /Open run Build parser 51515151/,
+      }),
     );
-    await expect(await history.findByText("61".repeat(64))).toBeVisible();
-    await expect(history.getByText("62".repeat(64))).toBeVisible();
+    const history = within(
+      await canvas.findByRole("article", { name: "Run details" }),
+    );
+    await expect(
+      history.getByRole("button", {
+        name: "Copy full operation ID: " + "61".repeat(64),
+      }),
+    ).toBeVisible();
+    await expect(
+      history.getByRole("button", {
+        name: "Copy Git commit SHA " + "62".repeat(64),
+      }),
+    ).toBeVisible();
+    await userEvent.click(history.getByRole("button", { name: "Outputs" }));
     await expect(history.getByLabelText("stdout log")).toHaveTextContent(
       "12 tests passed",
     );
@@ -136,15 +155,30 @@
       history.getByRole("button", { name: "Download result.txt" }),
     ).toBeVisible();
     await expect(
-      history.getByRole("button", { name: "Pin this history" }),
-    ).toBeDisabled();
-    await userEvent.click(history.getByRole("button", { name: "Close" }));
+      history.getByRole("button", { name: "Follow latest" }),
+    ).toHaveAttribute("aria-pressed", "true");
+    await expect(canvas.getByLabelText("Workflow location")).toHaveTextContent(
+      /tab=history.*home=.*run=51515151.*at=1/,
+    );
+    await userEvent.click(
+      history.getByRole("button", { name: "Back to history" }),
+    );
+    await userEvent.click(canvas.getByRole("tab", { name: "Workflows" }));
+    await userEvent.click(
+      canvas.getByRole("button", { name: /Build parser Bookmark/ }),
+    );
+    const reopened = within(
+      await body.findByRole("dialog", { name: "Edit workflow" }),
+    );
+    await userEvent.click(
+      reopened.getByRole("button", { name: "Edit workflow name" }),
+    );
     await waitFor(() =>
-      expect(editor.getByLabelText("Name", { exact: true })).toHaveValue(
+      expect(reopened.getByLabelText("Name", { exact: true })).toHaveValue(
         "Unsaved build draft",
       ),
     );
-    await userEvent.click(editor.getByRole("button", { name: "Cancel" }));
+    await userEvent.click(reopened.getByRole("button", { name: "Cancel" }));
     await waitFor(() => expect(body.queryByRole("dialog")).toBeNull());
   }}>{#snippet template()}<WorkflowsFixture />{/snippet}</Story
 >

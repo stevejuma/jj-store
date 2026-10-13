@@ -137,8 +137,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed Settings-style workflow Run source selectors, native operation pins and bounded paging, retry toasts and exact unknown request retention; updated browsing and native workflow guidance.",
-      "fingerprint": "af83dab80fb76e22ac4808e394a5230d9c85394dfc285cdf076d572378bfbffd"
+      "reason": "Reviewed workflow tabs, task-style history and profile avatars, pinned URL details, header tooltips, collapsed sections and discovery-aware skeletons; equivalent catalog helper extraction retains original command custody and native source reads.",
+      "fingerprint": "16362f769e55bdf9f5215e733ee7dab36f13012bf592678ce9a3c250f4b43d0c"
     }
   },
   {
@@ -155,7 +155,7 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Reviewed unchanged workflow command arguments and native source lookup contracts; shared help and owning API/CLI/UI chapters document Settings-style selectors, bounded pinned reads and original request recovery.",
+      "reason": "Reviewed JST-WF-008 task-style history, source identity buttons, collapsed sections and discovery skeletons, plus JST-DOC-002 guidance; native WorkflowStore wire/storage/grants and M28 execution/visual gates remain unchanged.",
       "fingerprint": "8a1aa999d4c5a6b06beaeeab35cf43b8b566129c24b8c19263386aa52ed8fee9"
     }
   },

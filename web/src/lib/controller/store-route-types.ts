@@ -1,6 +1,7 @@
 import type { StorePage } from "../ui/community-navigation/model.js";
 
 export interface StoreRoute {
+  workflow?: import("./workflows-route-codec.js").WorkflowSelection;
   globalSettings?: import("./global-settings-navigation.js").GlobalSettingsDestination;
   repositorySettingsSection?: import("./repository-settings-navigation.js").RepositorySettingsSection;
   repositorySettingsTab?: import("./repository-settings-navigation.js").RepositorySettingsTab;

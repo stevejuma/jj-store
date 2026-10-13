@@ -302,3 +302,12 @@ maintained CommandView picker with Settings presentation. Released Design Core
 is unchanged; no external checkout dependency or storage format is added.
 Operation-pinned pagination, stale-reply fencing and original unknown commands
 remain independent of presentation. M28 and visual/provider gates are unchanged.
+
+E-WORKFLOW-HISTORY-001 retains JST-GOV-002/008 and JST-UI-015 local ownership.
+Workflow navigation and details compose maintained Projects/task tabs, rows,
+ownership groups, profile hover cards, disclosure preferences and source
+identity controls, with released Design Core tooltips and Empty. Catalog
+ownership is extracted without changing pending-request custody; shared
+ownership groups gain only a typed runs label. Native workflow authority,
+formats and execution gates remain unchanged. Focused workflow and route checks
+are the UI impact surface.
