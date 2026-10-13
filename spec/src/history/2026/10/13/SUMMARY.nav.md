@@ -8,3 +8,5 @@
   {{#include E-WORKFLOW-HISTORY-001/SUMMARY.nav.md}}
 - [E-WORKFLOW-RUN-001](E-WORKFLOW-RUN-001/index.md)
   {{#include E-WORKFLOW-RUN-001/SUMMARY.nav.md}}
+- [E-WORKFLOW-YAML-001](E-WORKFLOW-YAML-001/index.md)
+  {{#include E-WORKFLOW-YAML-001/SUMMARY.nav.md}}

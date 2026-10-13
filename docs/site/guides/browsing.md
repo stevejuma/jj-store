@@ -373,21 +373,22 @@ it.
 
 Workflows shows definitions from accessible native metadata homes, with an
 Agents-style create card, Form/YAML drafts, ordered-action inspector and pinned
-run history. **Workflows** and **History** use the Projects tabs. History groups
-requesters into **Mine** and **Other runs**, with profile avatars. Search and
-filters cover loaded rows, metadata home, workflow, source and status. Selecting
-a run opens task-style details; Back preserves filters, and browser Back,
-Forward and reload restore the selected run, publication and attempt from its
-URL. Terminal runs open pinned; active runs follow latest until pinned. Header
-icon buttons have tooltips for Pin/Follow latest and authorized Cancel/Retry.
-Attempts, Steps and Outputs begin collapsed and use the shared empty
-presentation. Section preferences use the existing device-local layout settings.
-Source IDs use the operation copy button and Git commit chip. Loading uses the
-matching overview, history-row or detail skeleton and waits for repository
-discovery before showing a metadata-home prompt. History discovery covers
-registered workflows; exact saved run links can inspect retained removed
-workflows. Trigger filters include author selection with avatars, a searchable
-picker of existing source-repository threads, and standard or custom reaction
-emoji selection. Include/exclude controls stay beside the author picker.
-Workflow failures use shared toasts. See the
-[workflow guide](../cli/jj-workflow.md).
+run history. YAML fills the dialog body with the right inspector hidden.
+Returning to Form retains the inspector visibility preference. **Workflows** and
+**History** use the Projects tabs. History groups requesters into **Mine** and
+**Other runs**, with profile avatars. Search and filters cover loaded rows,
+metadata home, workflow, source and status. Selecting a run opens task-style
+details; Back preserves filters, and browser Back, Forward and reload restore
+the selected run, publication and attempt from its URL. Terminal runs open
+pinned; active runs follow latest until pinned. Header icon buttons have
+tooltips for Pin/Follow latest and authorized Cancel/Retry. Attempts, Steps and
+Outputs begin collapsed and use the shared empty presentation. Section
+preferences use the existing device-local layout settings. Source IDs use the
+operation copy button and Git commit chip. Loading uses the matching overview,
+history-row or detail skeleton and waits for repository discovery before showing
+a metadata-home prompt. History discovery covers registered workflows; exact
+saved run links can inspect retained removed workflows. Trigger filters include
+author selection with avatars, a searchable picker of existing source-repository
+threads, and standard or custom reaction emoji selection. Include/exclude
+controls stay beside the author picker. Workflow failures use shared toasts. See
+the [workflow guide](../cli/jj-workflow.md).

@@ -33,3 +33,7 @@ collapsed sections and shared empty/toast states reuse maintained components.
 Bounded loaded-row search, registered-definition discovery, publication pins and
 removed workflow saved-link behaviour are explicit. M28 execution and visual
 gates stay unchanged.
+
+E-WORKFLOW-YAML-001 documents a full-width YAML dialog body with no right
+inspector, retaining Form visibility, drafts and mode-switch validation. Native
+workflow formats, authority and M28 execution/visual gates are unchanged.

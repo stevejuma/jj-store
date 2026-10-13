@@ -1,15 +1,15 @@
 # Workflows verification
 
-| ID         | Status      | Evidence                                                                              |
-| ---------- | ----------- | ------------------------------------------------------------------------------------- |
-| JST-WF-001 | Implemented | M28 / E-WORKFLOW-001                                                                  |
-| JST-WF-002 | Implemented | M28 / E-WORKFLOW-001                                                                  |
-| JST-WF-003 | Implemented | M28 / E-WORKFLOW-001                                                                  |
-| JST-WF-004 | Implemented | M28 / E-WORKFLOW-001                                                                  |
-| JST-WF-005 | Implemented | M28 / E-WORKFLOW-001                                                                  |
-| JST-WF-006 | Implemented | M28 / E-WORKFLOW-001                                                                  |
-| JST-WF-007 | Implemented | M28 / E-WORKFLOW-001                                                                  |
-| JST-WF-008 | Implemented | M28 / E-WORKFLOW-001,E-WORKFLOW-CHOICES-001,E-WORKFLOW-RUN-001,E-WORKFLOW-HISTORY-001 |
+| ID         | Status      | Evidence                                                                                                  |
+| ---------- | ----------- | --------------------------------------------------------------------------------------------------------- |
+| JST-WF-001 | Implemented | M28 / E-WORKFLOW-001                                                                                      |
+| JST-WF-002 | Implemented | M28 / E-WORKFLOW-001                                                                                      |
+| JST-WF-003 | Implemented | M28 / E-WORKFLOW-001                                                                                      |
+| JST-WF-004 | Implemented | M28 / E-WORKFLOW-001                                                                                      |
+| JST-WF-005 | Implemented | M28 / E-WORKFLOW-001                                                                                      |
+| JST-WF-006 | Implemented | M28 / E-WORKFLOW-001                                                                                      |
+| JST-WF-007 | Implemented | M28 / E-WORKFLOW-001                                                                                      |
+| JST-WF-008 | Implemented | M28 / E-WORKFLOW-001,E-WORKFLOW-CHOICES-001,E-WORKFLOW-RUN-001,E-WORKFLOW-HISTORY-001,E-WORKFLOW-YAML-001 |
 
 E-WORKFLOW-001 qualifies durable native roots/receipts, one-owner command
 execution, pinned source export, source trigger scope, service grants and
@@ -34,3 +34,8 @@ header tooltips and collapsed sections have focused UI and route evidence.
 Pinned catalog/run continuations and unknown-command custody remain intact. Live
 providers, Forgejo-wrapper/ConnectRPC and approved visual baselines remain
 separate open gates.
+
+E-WORKFLOW-YAML-001 reviews M28 with status unchanged. Create/Edit YAML uses the
+full dialog body without an inspector; returning to Form preserves visibility
+and draft values. Focused layout/interaction evidence leaves provider,
+Forgejo-wrapper/ConnectRPC and approved visual gates open.

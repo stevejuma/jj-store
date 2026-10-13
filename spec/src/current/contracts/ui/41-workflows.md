@@ -11,6 +11,9 @@ icon tile. Metadata home selection belongs inside creation. Runner labels use
 Design Core chip entry. The dialog has equal inset spacing without a sidebar.
 Unfinished YAML can return to Form; invalid YAML retains its text and shows the
 last valid form draft with a toast explanation. Closing retains both drafts.
+YAML mode omits the right inspector and uses the whole padded dialog body for
+the editor. Returning to Form retains its inspector visibility preference;
+selecting a block reopens a hidden inspector.
 
 The footer has a top border. Validation and command failures use the shared
 notification service under JST-UI-019, without inline exception messages.

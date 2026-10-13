@@ -39,3 +39,8 @@ Foreign run, attempt or snapshot replies are refused while retaining loaded
 content. Discovery covers currently registered definitions; retained removed
 workflows remain inspectable through an exact saved run link. No new endpoint,
 source authority or historical-to-current reconciliation is introduced.
+
+E-WORKFLOW-YAML-001 confirms unchanged JST-WF-006 contracts. Full-width YAML
+presentation changes no workflow read, validation, command or source-selection
+API. Returning to Form retains its visibility preference and existing draft
+parsing; exact pending commands and shared notification recovery are unchanged.

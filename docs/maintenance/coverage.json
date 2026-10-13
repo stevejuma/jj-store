@@ -137,8 +137,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed workflow tabs, task-style history and profile avatars, pinned URL details, header tooltips, collapsed sections and discovery-aware skeletons; equivalent catalog helper extraction retains original command custody and native source reads.",
-      "fingerprint": "16362f769e55bdf9f5215e733ee7dab36f13012bf592678ce9a3c250f4b43d0c"
+      "reason": "Verified create/edit YAML uses a single dialog column and a stretching grid for the code editor, with Form inspector visibility and drafts retained; YAML errors and exact command recovery remain unchanged.",
+      "fingerprint": "ea6863e174e46c6faa13c1b67ca0a43d76944868ba9182ddd352bdef3032db4c"
     }
   },
   {
@@ -155,7 +155,7 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Reviewed JST-WF-008 task-style history, source identity buttons, collapsed sections and discovery skeletons, plus JST-DOC-002 guidance; native WorkflowStore wire/storage/grants and M28 execution/visual gates remain unchanged.",
+      "reason": "Full-width YAML is presentation-only under JST-WF-008; the owning API chapter explicitly confirms unchanged JST-WF-006 validation/read/command contracts, formats and authorization; M28 gates remain unchanged.",
       "fingerprint": "8a1aa999d4c5a6b06beaeeab35cf43b8b566129c24b8c19263386aa52ed8fee9"
     }
   },

@@ -203,14 +203,6 @@
             <WorkflowYaml bind:value={yaml} disabled={busy || !writable} />
           </div>
         </div>
-        <aside class="workflow-inspector" aria-label="Workflow settings">
-          <header class="workflow-inspector__header"><h3>Workflow</h3></header>
-          <div class="workflow-inspector__form">
-            <p class="workflow-yaml-hint">
-              Return to Form to edit workflow options.
-            </p>
-          </div>
-        </aside>
       </div>{/if}
     {#snippet footer()}<div class="workflow-editor-footer">
         <Tabs.Root value={mode} onValueChange={switchMode}

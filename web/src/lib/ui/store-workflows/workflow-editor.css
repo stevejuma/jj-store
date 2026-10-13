@@ -7,7 +7,8 @@
   padding: 1rem;
   gap: 1rem;
 }
-.workflow-editor[data-inspector-open="false"] {
+.workflow-editor[data-inspector-open="false"],
+.workflow-editor--yaml {
   grid-template-columns: minmax(0, 1fr);
 }
 .workflow-inspector {
@@ -101,7 +102,7 @@
   flex: 1;
   min-height: 0;
   overflow: auto;
-  display: flex;
+  display: grid;
   padding: 1.5rem;
 }
 .workflow-yaml textarea {
@@ -197,12 +198,6 @@
 .workflow-labels .chip-input input {
   height: 2rem;
   background: transparent;
-}
-
-.workflow-yaml-hint {
-  padding-top: 0.75rem;
-  color: var(--muted-foreground);
-  font-size: 0.8125rem;
 }
 
 @media (max-width: 40rem) {
