@@ -1,6 +1,5 @@
 <script lang="ts">
   import { untrack } from "svelte";
-  import { Button } from "@lapismd/design-core/shadcn/button";
   import "../store-work/community-work-layout.css";
   import "../store-work/community-work-tasks.css";
   import "../store-work/task-detail-layout.css";
@@ -20,11 +19,7 @@
   import WorkflowPageSkeleton from "./WorkflowPageSkeleton.svelte";
   import WorkflowOverview from "./WorkflowOverview.svelte";
   import WorkflowNavigation from "./WorkflowNavigation.svelte";
-  import {
-    workflowsRoute,
-    workflowsRouteToHash,
-    type WorkflowSelection,
-  } from "../../controller/workflows-route-codec.js";
+  import { type WorkflowSelection } from "../../controller/workflows-route-codec.js";
   import WorkflowRunDialog from "./WorkflowRunDialog.svelte";
   import {
     workflowAuthors,
@@ -32,7 +27,8 @@
     initialDraft,
     type WorkflowDraft,
   } from "./workflow-presentation.js";
-  import type { WorkflowController } from "../../controller/workflows.svelte.js";
+  import type { WorkflowEntryActions } from "./workflow-actions.js";
+  import WorkflowCatalogMore from "./WorkflowCatalogMore.svelte";
   import { createWorkflowDirectory } from "../../controller/workflow-directory.svelte.js";
   import { workId } from "../../controller/work-types.js";
   import type { StoreController } from "../../controller/contracts.js";
@@ -42,7 +38,14 @@
   } from "../../controller/workflow-types.js";
   import "./workflows.css";
   import "./workflow-editor.css";
-  let { controller }: { controller: StoreController } = $props();
+  import {
+    workflowViewSelection,
+    navigateWorkflowView,
+  } from "./workflow-navigation.js";
+  let {
+    controller,
+    sourceRepository,
+  }: { controller: StoreController; sourceRepository?: string } = $props();
   provideProfiles(() => controller.directory);
   const notifications = ownNotifications();
   const homes = $derived(
@@ -93,7 +96,9 @@
   $effect(() => {
     if (!home && homes.length) home = homes[0]!.id;
   });
-  const selection = $derived(controller.state.route.workflow ?? {});
+  const selection = $derived(
+    workflowViewSelection(controller.state.route, sourceRepository),
+  );
   const visible = $derived(
     rows.filter(
       (entry) =>
@@ -106,25 +111,15 @@
     ),
   );
   function navigate(fields: WorkflowSelection) {
-    const next = workflowsRoute({ ...selection, ...fields });
-    if (!workflowsRouteToHash(next)) {
-      notifications.context.service.publish({
-        scope: notifications.context.scope,
-        key: "workflow-route",
-        title: "Workflow search unavailable",
-        message:
-          "Search is limited to 512 UTF-8 bytes without control characters.",
-        severity: "error",
-        lifetime: "dismiss",
-      });
-      return;
-    }
-    notifications.context.service.resolve(
-      notifications.context.scope,
-      "workflow-route",
+    navigateWorkflowView(
+      controller,
+      selection,
+      fields,
+      notifications.context,
+      sourceRepository,
     );
-    void controller.actions.openRoute?.(next);
   }
+
   function open(
     version: WorkflowVersion | null,
     duplicate = false,
@@ -201,6 +196,16 @@
     });
     return result ?? false;
   }
+  const workflowActions: WorkflowEntryActions = {
+    onOpen: (entry, duplicate) =>
+      open(entry?.workflow ?? null, duplicate, entry?.home ?? home),
+    onToggle: (entry) => void toggle(entry.workflow, entry.work),
+    onRemove: (entry) => void remove(entry.workflow, entry.work),
+    onRun: (entry) => {
+      home = entry.home;
+      running = entry.workflow;
+    },
+  };
 </script>
 
 <section
@@ -217,6 +222,7 @@
       view={selection.run ? "detail" : (selection.tab ?? "workflows")}
       {selection}
       onChange={navigate}
+      {sourceRepository}
     />
   {:else if !homes.length}<StoreWorkEmpty
       kind="repositories"
@@ -231,6 +237,8 @@
         {catalogLoading}
         repositoryName={sourceName}
         {canWrite}
+        {sourceRepository}
+        {workflowActions}
         onWorkflow={(row) => open(row.workflow, false, row.home)}
         onChange={navigate}
       />
@@ -242,21 +250,12 @@
         pending={!!work?.state.pending}
         repositoryName={sourceName}
         {canWrite}
-        onOpen={(entry, duplicate) =>
-          open(entry?.workflow ?? null, duplicate, entry?.home ?? home)}
-        onToggle={(entry) => toggle(entry.workflow, entry.work)}
-        onRemove={(entry) => void remove(entry.workflow, entry.work)}
-        onRun={(entry) => {
-          home = entry.home;
-          running = entry.workflow;
-        }}
+        {workflowActions}
       />{/if}
-    {#if !selection.run && selection.tab !== "history"}{#each [...controllers.entries()].filter(([, owner]) => owner.state.page?.next) as [repository, owner] (repository)}<Button
-          variant="outline"
-          disabled={owner.state.loading}
-          onclick={() => owner.more()}
-          >More workflows in {sourceName(repository)}</Button
-        >{/each}{/if}
+    {#if !selection.run && selection.tab !== "history"}<WorkflowCatalogMore
+        owners={[...controllers.entries()]}
+        repositoryName={sourceName}
+      />{/if}
   {/if}
 </section>
 <StoreNotificationHost owner={notifications} />

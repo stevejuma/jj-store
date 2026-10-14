@@ -14,6 +14,7 @@
   import type { StoreController } from "../../controller/contracts.js";
   import StoreRepositoryDetails from "./StoreRepositoryDetails.svelte";
   import StoreRepositoryNavigation from "./StoreRepositoryNavigation.svelte";
+  import { repositoryRailSections } from "./repository-sections.js";
   import StoreRepositoryContextActions from "./StoreRepositoryContextActions.svelte";
   let {
     controller,
@@ -113,6 +114,11 @@
         <StoreRepositoryDetails {controller} />
         {#if !isStacksRoute(current)}<StoreRepositoryNavigation
             page={current.page}
+            sections={repositoryRailSections.filter(
+              (item) =>
+                item.page !== "actions" ||
+                controller.state.repository?.profile !== "git_sha1_jj045",
+            )}
             onSelect={onSelectPage}
           />
           <StoreRepositoryContextActions {controller} />{/if}

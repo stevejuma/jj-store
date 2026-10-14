@@ -7,50 +7,6 @@
   min-height: 0;
   width: 100%;
 }
-.workflow-history-tree {
-  display: grid;
-  gap: 0.25rem;
-  padding: 0.5rem;
-}
-.workflow-history-tree h2 {
-  padding: 0.5rem 0.625rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-}
-.workflow-history-tree__item[data-ui-component="button"],
-.workflow-history-tree__repository[data-ui-component="button"] {
-  width: 100%;
-  min-width: 0;
-  justify-content: flex-start;
-  --ui-button-gap: 0.65rem;
-  --ui-button-height: 2.25rem;
-  --ui-button-padding-inline: 0.625rem;
-}
-.workflow-history-tree__item span,
-.workflow-history-tree__repository span {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  text-align: start;
-  flex: 1;
-}
-.workflow-history-tree__repository {
-  background: var(--muted);
-}
-.workflow-history-tree__repository[aria-expanded="true"]
-  .workflow-history-tree__chevron {
-  rotate: 90deg;
-}
-.workflow-history-tree__item[aria-current="page"] {
-  background: var(--accent);
-  color: var(--accent-foreground);
-}
-.workflow-history-tree__children {
-  display: grid;
-  gap: 0.125rem;
-  padding: 0.125rem 0 0.25rem 1rem;
-}
 .workflow-history-heading {
   display: flex;
   align-items: center;
@@ -271,31 +227,4 @@
 .workflow-history-filters > [data-ui-component="button"]:hover:not(:disabled),
 .workflow-history-filters > [data-ui-component="button"]:focus-visible {
   background: var(--background);
-}
-.workflow-history-tree__header {
-  display: flex;
-  align-items: center;
-  gap: 0.125rem;
-  border-radius: var(--radius);
-  background: var(--muted);
-  padding-inline-end: 0.25rem;
-}
-.workflow-history-tree__header .workflow-history-tree__repository {
-  flex: 1;
-  background: transparent;
-}
-.workflow-history-tree__repository[aria-current="page"] {
-  color: var(--accent-foreground);
-  background: var(--accent);
-}
-.workflow-history-tree__toggle[aria-expanded="true"]
-  .workflow-history-tree__chevron {
-  rotate: 90deg;
-}
-.workflow-history-tree__toggle {
-  flex: none;
-}
-.workflow-history-tree__toggle:hover:not(:disabled),
-.workflow-history-tree__toggle:focus-visible {
-  background: color-mix(in srgb, var(--foreground) 12%, var(--muted));
 }

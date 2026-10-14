@@ -61,6 +61,20 @@
             {controller}
           />{/snippet}</StoreLazyView
       >
+    {:else if page === "actions"}<StoreLazyView
+        load={views.workflows}
+        label="Repository Actions"
+      >
+        {#snippet loading()}<StorePageSkeleton
+            route={state.route}
+            label="Actions"
+            {layoutStorage}
+          />{/snippet}
+        {#snippet content(View)}<View
+            {controller}
+            sourceRepository={state.route.repository}
+          />{/snippet}
+      </StoreLazyView>
     {:else if page === "projects" && controller.projects}<StoreLazyView
         load={views.projects}
         label="Projects"

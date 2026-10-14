@@ -1,16 +1,10 @@
 <script lang="ts">
-  import { Button } from "@lapismd/design-core/shadcn/button";
   import { Switch } from "@lapismd/design-core/shadcn/switch";
-  import * as Menu from "@lapismd/design-core/shadcn/dropdown-menu";
+  import WorkflowActionsMenu from "./WorkflowActionsMenu.svelte";
   import WorkflowIcon from "@lucide/svelte/icons/workflow";
   import Bot from "@lucide/svelte/icons/bot";
   import Terminal from "@lucide/svelte/icons/terminal";
   import ArrowRight from "@lucide/svelte/icons/arrow-right";
-  import More from "@lucide/svelte/icons/ellipsis";
-  import Pencil from "@lucide/svelte/icons/pencil";
-  import Play from "@lucide/svelte/icons/play";
-  import Copy from "@lucide/svelte/icons/copy";
-  import Trash from "@lucide/svelte/icons/trash-2";
   import type { WorkflowVersion } from "../../controller/workflow-types.js";
   import {
     workflowCardSummary,
@@ -69,32 +63,16 @@
         aria-label={`${workflow.definition.enabled ? "Disable" : "Enable"} ${workflow.definition.name}`}
         onCheckedChange={onToggle}
       />
-      <Menu.Root
-        ><Menu.Trigger
-          >{#snippet child({ props })}<Button
-              {...props}
-              variant="ghost"
-              size="icon-sm"
-              aria-label={`Actions for ${workflow.definition.name}`}
-              ><More /></Button
-            >{/snippet}</Menu.Trigger
-        ><Menu.Content align="end" class="workflow-card-menu"
-          ><Menu.Group
-            ><Menu.Item onclick={onOpen}
-              ><Pencil aria-hidden="true" />Edit workflow</Menu.Item
-            ><Menu.Item disabled={!writable || busy} onclick={onRun}
-              ><Play aria-hidden="true" />Run workflow</Menu.Item
-            ><Menu.Item disabled={!writable || busy} onclick={onDuplicate}
-              ><Copy aria-hidden="true" />Duplicate</Menu.Item
-            ><Menu.Separator /><Menu.Item
-              disabled={!writable || busy}
-              variant="destructive"
-              onclick={onRemove}
-              ><Trash aria-hidden="true" />Remove workflow</Menu.Item
-            ></Menu.Group
-          ></Menu.Content
-        ></Menu.Root
-      >
+      <WorkflowActionsMenu
+        {workflow}
+        {busy}
+        {writable}
+        {onOpen}
+        {onToggle}
+        {onDuplicate}
+        {onRemove}
+        {onRun}
+      />
     </div>
   </div>
   <button
@@ -117,13 +95,3 @@
     >
   </footer>
 </article>
-
-<style>
-  :global(.workflow-card-menu[data-slot="dropdown-menu-content"]) {
-    min-width: min(15rem, calc(100vw - 2rem));
-    max-width: calc(100vw - 2rem);
-  }
-  :global(.workflow-card-menu [data-slot="dropdown-menu-item"]) {
-    white-space: nowrap;
-  }
-</style>

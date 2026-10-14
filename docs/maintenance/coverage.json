@@ -137,8 +137,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed repository-scoped workflow History navigation, flat author/bookmark/status/trigger filters, aligned avatars, full-width pinned details and continuation retention; updated the browsing guide.",
-      "fingerprint": "7511222502411a63626637db3d14b22c4faee4e74e47aa7abe811fe2fd205f64"
+      "reason": "Reviewed native repository Actions scope, shared workflow sidebar action menus, Actions-only body divider, full-body pinned details and navigation guards; updated the browsing guide.",
+      "fingerprint": "26607d796bf400c6766997e7b5a209d47eb24ff16ef8dbc73dc8299d1b1e86cf"
     }
   },
   {

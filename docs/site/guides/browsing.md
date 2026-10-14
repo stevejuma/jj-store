@@ -396,6 +396,18 @@ choose **All workflows**, a repository, or one workflow. Repository chevrons
 expand their workflows independently of selection. The right header shows the
 selection and uses the same sidebar toggle as agent sessions.
 
+Each workflow's menu offers **Edit workflow**, **Run workflow**, **Duplicate**,
+**Enable/Disable workflow** and **Remove workflow**, using the same actions as
+the overview cards. Write actions require access to its metadata home and wait
+until any pending request is resolved. The menu does not change the list scope.
+
+Native repositories also have an **Actions** tab with the same two-column view.
+Its left panel contains workflows for that repository, and **All workflows**
+shows all their recorded runs. The page owns the full-width top divider. Run
+details replace the body and repository tabs; Back restores the scoped list.
+Repository Actions URLs preserve search, filters and exact run history pins.
+Local Git companion repositories do not offer this native-only tab.
+
 Runs appear in one newest-first list. Status icons precede profile avatars in
 aligned columns, followed by the workflow name, native run ID, manual/event
 origin, optional bookmark, date and duration. Search and filters cover loaded

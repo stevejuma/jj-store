@@ -2,6 +2,7 @@
   import { untrack, onDestroy } from "svelte";
   import { AppShell } from "@lapismd/design-core/shell";
   import * as ColumnCanvas from "@lapismd/design-core/shadcn/column-canvas";
+  import WorkflowPageSkeleton from "../store-workflows/WorkflowPageSkeleton.svelte";
   import { Skeleton } from "@lapismd/design-core/shadcn/skeleton";
   import type { StoreRoute } from "../../controller/contracts.js";
   import { createRepositoryLogCanvas } from "../../projects/repository-log-canvas.js";
@@ -70,7 +71,11 @@
   aria-busy="true"
   data-surface={surface}
 >
-  {#if surface === "threads" || (surface === "agents" && route.agentView && route.agentView !== "directory")}
+  {#if route.page === "actions"}<WorkflowPageSkeleton
+      view={route.workflow?.run ? "detail" : "history"}
+      sourceRepository={route.repository}
+    />
+  {:else if surface === "threads" || (surface === "agents" && route.agentView && route.agentView !== "directory")}
     <CommunityInboxSkeleton
       kind={surface === "threads" ? "thread" : "session"}
       selected={surface === "threads"

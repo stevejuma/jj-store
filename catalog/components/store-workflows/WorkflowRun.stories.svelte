@@ -158,7 +158,7 @@
     );
     const menu = body.getByRole("menu"),
       items = within(menu).getAllByRole("menuitem");
-    await expect(items).toHaveLength(4);
+    await expect(items).toHaveLength(5);
     await expect(menu.getBoundingClientRect().width).toBeGreaterThanOrEqual(
       15 * parseFloat(getComputedStyle(document.documentElement).fontSize),
     );

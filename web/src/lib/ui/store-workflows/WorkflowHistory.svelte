@@ -13,8 +13,10 @@
   import WorkflowHistoryRows from "./WorkflowHistoryRows.svelte";
   import WorkflowHistorySidebar from "./WorkflowHistorySidebar.svelte";
   import WorkflowFilters from "./WorkflowFilters.svelte";
-  import WorkflowNavigation from "./WorkflowNavigation.svelte";
-  import WorkflowRunDetail from "./WorkflowRunDetail.svelte";
+  import WorkflowSidebarHeader from "./WorkflowSidebarHeader.svelte";
+  import WorkflowCatalogMore from "./WorkflowCatalogMore.svelte";
+  import type { WorkflowEntryActions } from "./workflow-actions.js";
+  import WorkflowHistoryDetail from "./WorkflowHistoryDetail.svelte";
   import {
     matchesWorkflowRun,
     type WorkflowHistoryRow,
@@ -35,15 +37,19 @@
     canWrite,
     onChange,
     onWorkflow,
+    sourceRepository,
+    workflowActions,
   }: {
     entries: WorkflowHistoryEntry[];
     catalogLoading?: boolean;
+    sourceRepository?: string;
     owners: readonly (readonly [string, WorkflowController])[];
     selection: WorkflowSelection;
     repositoryName(id: string): string;
     canWrite(home: string): boolean;
     onChange(fields: WorkflowSelection): void;
     onWorkflow(row: WorkflowHistoryRow): void;
+    workflowActions: WorkflowEntryActions;
   } = $props();
   const shell = useAppShell();
   let sidebarOpen = $state(true);
@@ -85,6 +91,12 @@
           b.run.id.localeCompare(a.run.id),
       ),
   );
+  const pickerRows = $derived(
+    loadedRows.filter(
+      (row) =>
+        !selection.source || row.run.source.repository === selection.source,
+    ),
+  );
   const loading = $derived(
     catalogLoading || history.groups.some((group) => group.loading),
   );
@@ -95,11 +107,13 @@
             entry.home === selection.scope &&
             entry.workflow.id === selection.workflow,
         )?.workflow.definition.name ?? "Selected workflow")
-      : selection.source
-        ? `${repositoryName(selection.source)} workflows`
-        : selection.scope
-          ? `History in ${repositoryName(selection.scope)}`
-          : "All workflows",
+      : sourceRepository
+        ? "All workflows"
+        : selection.source
+          ? `${repositoryName(selection.source)} workflows`
+          : selection.scope
+            ? `History in ${repositoryName(selection.scope)}`
+            : "All workflows",
   );
   const back = () =>
     onChange({
@@ -131,27 +145,17 @@
   pending={history.detailLoading}
   action={{ id: "retry-run", label: "Retry run", run: () => history.inspect() }}
 />
-{#if selection.run}
-  {#if !owner && catalogLoading}<WorkflowPageSkeleton view="detail" />
-  {:else if !owner}<Button variant="ghost" onclick={back}
-      >Back to history</Button
-    ><StoreWorkEmpty
-      title="Metadata home unavailable"
-      description="Reconnect with access to the run's metadata home."
-    />
-  {:else if history.detail}<WorkflowRunDetail
-      page={history.detail}
-      work={owner}
-      {selection}
-      {repositoryName}
-      writable={canWrite(selection.home!)}
-      loading={history.detailLoading}
-      {onChange}
-      onClose={back}
-      onRefresh={() => void history.inspect()}
-      onMore={() => void history.inspect(true)}
-    />
-  {:else}<WorkflowPageSkeleton view="detail" />{/if}
+{#if selection.run}<WorkflowHistoryDetail
+    {history}
+    {owner}
+    {catalogLoading}
+    {selection}
+    {sourceRepository}
+    {repositoryName}
+    writable={canWrite(selection.home ?? "")}
+    {onChange}
+    onClose={back}
+  />
 {:else}
   <AppShell.Body
     bind:ref={bodyElement}
@@ -170,21 +174,22 @@
       class="workflow-history-sidebar"
       style={`--ui-shell-body-sidebar-width: ${resize.width ?? 256}px`}
     >
-      <WorkflowNavigation {selection} {onChange} />
+      <WorkflowSidebarHeader {sourceRepository} {selection} {onChange} />
       <WorkflowHistorySidebar
-        {entries}
+        entries={sourceRepository
+          ? entries.filter(
+              (entry) =>
+                entry.workflow.definition.repository === sourceRepository,
+            )
+          : entries}
         {selection}
         {repositoryName}
         onSelect={select}
+        {workflowActions}
+        {canWrite}
+        {sourceRepository}
       />
-      {#each owners.filter(([, work]) => work.state.page?.next) as [home, work] (home)}
-        <Button
-          variant="ghost"
-          disabled={work.state.loading}
-          onclick={() => work.more()}
-          >More workflows in {repositoryName(home)}</Button
-        >
-      {/each}
+      <WorkflowCatalogMore {owners} {repositoryName} />
     </AppShell.Body.Sidebar>
     {#if sidebarOpen && shell.mobile.resolvedMode !== "mobile"}<button
         type="button"
@@ -234,7 +239,7 @@
                     in the loaded history</span
                   ></span
                 >
-                <WorkflowFilters {selection} rows={loadedRows} {onChange} />
+                <WorkflowFilters {selection} rows={pickerRows} {onChange} />
               </header>
               {#each history.groups as group (`${group.home}:${group.workflow.id}`)}
                 <StoreNotice
@@ -249,7 +254,7 @@
                   }}
                 />
               {/each}
-              {#if loading && !loadedRows.length}<WorkflowPageSkeleton
+              {#if loading && !rows.length}<WorkflowPageSkeleton
                   view="history"
                   listOnly
                 />
@@ -259,7 +264,7 @@
                   {onChange}
                   {onWorkflow}
                 />
-                {#if !rows.length && !history.groups.some((group) => group.error)}<StoreWorkEmpty
+                {#if !loading && !rows.length && !history.groups.some((group) => group.error)}<StoreWorkEmpty
                     kind="activity"
                     title="No matching runs"
                     description="Change the filters, load more history or run this workflow to begin."

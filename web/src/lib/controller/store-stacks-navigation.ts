@@ -23,6 +23,10 @@ export function storePageRoute(route: StoreRoute, page: StorePage): StoreRoute {
   return {
     ...route,
     page,
+    workflow:
+      page === "actions"
+        ? { tab: "history", source: route.repository }
+        : undefined,
     globalSettings: undefined,
     repositorySettingsSection: undefined,
     repositorySettingsTab: undefined,

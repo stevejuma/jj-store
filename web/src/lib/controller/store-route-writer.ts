@@ -2,6 +2,7 @@ import { globalSettingsHash } from "./global-settings-route-codec.js";
 import { threadsRouteToHash } from "./threads-route-codec.js";
 import { agentsRouteToHash } from "./agents-route-codec.js";
 import { projectsRouteToHash } from "./projects-route-codec.js";
+import { repositoryActionsRouteToHash } from "./repository-actions-route-codec.js";
 import { workflowsRouteToHash } from "./workflows-route-codec.js";
 import { repositoryPages } from "./store-route-fields.js";
 import { historyQueryToParams } from "./history-query-route.js";
@@ -12,6 +13,7 @@ const repositoryId = /^[0-9a-f]{32}$/u;
 
 export function storeRouteToHash(route: StoreRoute): string | null {
   if (route.globalSettings) return globalSettingsHash(route.globalSettings);
+  if (route.page === "actions") return repositoryActionsRouteToHash(route);
   if (route.page === "workflows") return workflowsRouteToHash(route);
   if (route.threadsHub && route.page === "threads")
     return threadsRouteToHash(route);

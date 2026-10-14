@@ -100,8 +100,7 @@
     repository={current.repository}
     profile={controller.state.repository.profile ?? "native"}
     enabled={!current.agentsHub &&
-      current.page !== "workflows" &&
-      current.page !== "threads" &&
+      !["workflows", "actions", "threads"].includes(current.page) &&
       !focusedStacks &&
       !settingsOpen &&
       current.page !== "settings" &&
@@ -221,7 +220,7 @@
       >
         <div class="store-application__body-frame">
           {#if !(current.page === "projects" && controller.projects && !isRepositoryProjects(current)) && !focusedStacks}
-            {#if !(current.page === "reviews" && current.reviewThreadId)}<StoreRepositoryTabs
+            {#if !(current.page === "reviews" && current.reviewThreadId) && !(current.page === "actions" && current.workflow?.run)}<StoreRepositoryTabs
                 page={current.page}
                 local={controller.state.repository.profile === "git_sha1_jj045"}
                 stacks={stacksAvailable}
@@ -235,7 +234,7 @@
                     />
                   </div>{/snippet}</StoreRepositoryTabs
               >{/if}
-            {#if current.page !== "reviews"}<StoreWorkspaceSectionHeader
+            {#if !["reviews", "actions"].includes(current.page)}<StoreWorkspaceSectionHeader
                 {controller}
                 disabled={workspaceBlocked}
               />{/if}

@@ -15,6 +15,7 @@
     "Commits",
     "Op Log",
     "Agents",
+    "Actions",
     "Reviews",
     "Projects",
   ];
@@ -69,10 +70,13 @@
       await expect(item.querySelector("svg")).not.toBeNull();
       await userEvent.click(item);
       await waitFor(() => expect(item).toHaveAttribute("aria-current", "page"));
-      await expect(canvas.getByRole("tab", { name: tab })).toHaveAttribute(
-        "data-state",
-        "active",
-      );
+      const selectedTab = canvas.queryByRole("tab", { name: tab });
+      if (selectedTab)
+        await expect(selectedTab).toHaveAttribute("data-state", "active");
+      else
+        await expect(
+          canvas.getByRole("button", { name: "More repository sections" }),
+        ).toHaveAttribute("aria-current", "page");
     }
   }}
 />

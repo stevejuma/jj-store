@@ -22,13 +22,22 @@ export function createProfileRouteRestorer(context: {
       return;
     }
     context.invalidate();
-    if (route.page === "workflows" || route.agentsHub || (route.threadsHub && !route.repository)) return;
+    if (
+      route.page === "workflows" ||
+      route.agentsHub ||
+      (route.threadsHub && !route.repository)
+    )
+      return;
     if (route.page === "projects") {
       await context.projects.restore();
       return;
     }
     if (source && route.repository !== source.repository) {
       await context.connect(route.repository, context.token());
+      return;
+    }
+    if (source && route.page === "actions") {
+      context.data.status.navigation = "ready";
       return;
     }
     if (await context.restoreThreads?.()) return;

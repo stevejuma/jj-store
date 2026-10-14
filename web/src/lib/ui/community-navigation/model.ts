@@ -7,6 +7,7 @@ export type StorePage =
   | "files"
   | "agents"
   | "workflows"
+  | "actions"
   | "reviews"
   | "projects"
   | "threads";

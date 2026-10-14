@@ -119,18 +119,22 @@ Revision match reuses the history revset editor, highlighting and source-pinned
 completion metadata, without executing the draft query. Choice failures use
 retryable shared toasts and stale replies cannot populate another source.
 
-The overview action menu has decorative icons and a viewport-bounded width that
-keeps its labels on one line. Run workflow uses the same Settings cards,
-icon-bearing rows and bottom footer. Operation, Commit and optional Bookmark use
-searchable Command View pickers backed by bounded native source reads.
-Operations are read from an explicit published source head; commit and bookmark
-choices are pinned to the selected operation, independently of the active code
-view. Changing operation clears the selected commit/bookmark. Selecting an
-unambiguous bookmark selects its exact commit; choosing another commit clears
-bookmark context. Conflicted bookmarks are unavailable for automatic selection.
-Paged choices retain their query/operation and ignore stale replies. Read
-failures use retryable toasts. Pending run requests retain their original bytes
-and source selection; disabled controls cannot alter them.
+The overview and left workflow navigation share one action menu with decorative
+icons and a viewport-bounded width that keeps labels on one line. Edit, Run,
+Duplicate, Enable/Disable and Remove use the existing definition commands and
+dialogs without selecting another list item. Mutating actions respect metadata
+home write permission and pending requests; Edit retains read-only inspection.
+Run workflow uses the same Settings cards, icon-bearing rows and bottom footer.
+Operation, Commit and optional Bookmark use searchable Command View pickers
+backed by bounded native source reads. Operations are read from an explicit
+published source head; commit and bookmark choices are pinned to the selected
+operation, independently of the active code view. Changing operation clears the
+selected commit/bookmark. Selecting an unambiguous bookmark selects its exact
+commit; choosing another commit clears bookmark context. Conflicted bookmarks
+are unavailable for automatic selection. Paged choices retain their
+query/operation and ignore stale replies. Read failures use retryable toasts.
+Pending run requests retain their original bytes and source selection; disabled
+controls cannot alter them.
 
 Workflow navigation uses the same owned pill tabs and toolbar search as
 Projects, with Workflows and History destinations. The edit dialog has no
@@ -166,6 +170,21 @@ use server profile hydration with an identity fallback. Existing metadata-home
 and source URL scopes remain supported. Automatic committed events, reconnect
 and bounded fallback refresh remain; no refresh toggle is added. Discovery and
 list skeletons match repository groups, filter header and two-line run rows.
+
+Native repository tabs include Actions. It reuses the same two-column History
+view, with workflow navigation restricted to that source repository and All
+workflows meaning all its recorded runs. Its full-width top divider belongs to
+the repository Actions page, not the shared workflow or agent-session component.
+Filters, run/attempt/publication pins and Back/Forward/reload use
+`#/repos/{id}/actions`; the repository scope comes from the path and cannot be
+changed through list filters. Actions does not require code operation selection
+or trigger unrelated graph/file reads. Selected run details fill the body and
+omit repository tabs and the workflow sidebar. A run belonging to another
+repository is unavailable in this scoped view; exact foreign links never
+substitute a run or display another repository under this header.
+Author/bookmark choices come from loaded rows in the fixed scope. Local Git
+companion repositories omit this native-only tab. No backend, CLI, execution
+policy, storage or public HTTP API changes are introduced.
 
 Opening a run replaces the complete split body, including its sidebar, with
 full-width task-style details and a Back control. Hash routes retain tab,

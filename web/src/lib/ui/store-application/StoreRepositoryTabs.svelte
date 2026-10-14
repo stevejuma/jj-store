@@ -21,7 +21,7 @@
       .filter(
         (item) =>
           (item.page !== "stacks" || stacks) &&
-          (!local || item.page !== "reviews"),
+          (!local || !["reviews", "actions"].includes(item.page)),
       )
       .map((item) => ({ value: item.page, label: item.label })),
   );

@@ -3908,8 +3908,13 @@
       "web/src/lib/ui/store-workflows/WorkflowHistorySidebar.svelte",
       "web/src/lib/ui/store-workflows/WorkflowHistoryRows.svelte",
       "web/src/lib/ui/store-workflows/WorkflowFilters.svelte",
-      "web/src/lib/ui/store-workflows/workflow-history-list.css"
+      "web/src/lib/ui/store-workflows/workflow-history-list.css",
+      "web/src/lib/ui/store-workflows/WorkflowHistoryDetail.svelte",
+      "web/src/lib/ui/store-workflows/WorkflowActionsMenu.svelte",
+      "web/src/lib/ui/store-workflows/WorkflowSidebarHeader.svelte",
+      "web/src/lib/ui/store-workflows/WorkflowCatalogMore.svelte",
+      "web/src/lib/ui/store-workflows/workflow-history-tree.css"
     ],
-    "adaptations": "Selectable source repositories and workflows, All workflows, flat runs, avatar-backed author filters, bookmark/status/manual-event filters, bounded paging, full-width pinned details and accessible mobile/resize controls."
+    "adaptations": "Selectable source repositories and workflows, All workflows, flat runs, avatar-backed author filters, bookmark/status/manual-event filters, bounded paging, full-width pinned details and accessible mobile/resize controls. Repository Actions fixes scope to its source repository and provides full-body pinned details. Workflow navigation and overview cards share an owned action menu; the repository page owns the Actions-only full-width divider."
   }
 }

@@ -1,6 +1,7 @@
 import { readGlobalSettingsHash } from "./global-settings-route-codec.js";
 import { readThreadsHash } from "./threads-route-codec.js";
 import { readAgentsHash } from "./agents-route-codec.js";
+import { readRepositoryActionsHash } from "./repository-actions-route-codec.js";
 import { readWorkflowsHash } from "./workflows-route-codec.js";
 import {
   safeLabel,
@@ -34,6 +35,8 @@ export { storeRouteToHash } from "./store-route-writer.js";
 export function storeRouteFromHash(hash: string): StoreRouteHashResult {
   const settings = readGlobalSettingsHash(hash);
   if (settings) return settings;
+  const actions = readRepositoryActionsHash(hash);
+  if (actions) return actions;
   const workflows = readWorkflowsHash(hash);
   if (workflows) return workflows;
   const threads = readThreadsHash(hash);

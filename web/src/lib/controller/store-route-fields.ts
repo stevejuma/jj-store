@@ -40,6 +40,7 @@ export const repositoryPages = new Set<StorePage>([
   "files",
   "agents",
   "workflows",
+  "actions",
   "reviews",
   "projects",
   "threads",

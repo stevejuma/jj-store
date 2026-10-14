@@ -1,8 +1,8 @@
 # M28 lightweight workflows
 
-| Task | Status      | Depends     | Requirements                                                                                                               | Acceptance gate                                                                  | Next action                                                    | Evidence                                                                                                                                                                                                                                                                                                                 |
-| ---- | ----------- | ----------- | -------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| M28  | In progress | M11,M23,M27 | JST-WF-001,JST-WF-002,JST-WF-003,JST-WF-004,JST-WF-005,JST-WF-006,JST-WF-007,JST-WF-008,JST-UI-019,JST-DOC-001,JST-DOC-002 | Durable two-host execution, exact recovery, real storage and cold Buzz-parity UI | Qualify live agents, remote Forgejo protocol and visual parity | E-WORKFLOW-001,E-WORKFLOW-CHOICES-001,E-WORKFLOW-RUN-001,E-WORKFLOW-HISTORY-001,E-WORKFLOW-YAML-001,E-WORKFLOW-MULTISTEP-001,E-WORKFLOW-LIVE-001,E-WORKFLOW-CONSOLE-001,E-WORKFLOW-SETTINGS-001,E-RUNNER-ENVIRONMENT-001,E-WORKFLOW-CARDS-001,E-APPLICATION-MENU-001,E-WORKFLOW-GITHUB-001,E-WORKFLOW-HISTORY-LAYOUT-001 |
+| Task | Status      | Depends     | Requirements                                                                                                               | Acceptance gate                                                                  | Next action                                                    | Evidence                                                                                                                                                                                                                                                                                                                                          |
+| ---- | ----------- | ----------- | -------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| M28  | In progress | M11,M23,M27 | JST-WF-001,JST-WF-002,JST-WF-003,JST-WF-004,JST-WF-005,JST-WF-006,JST-WF-007,JST-WF-008,JST-UI-019,JST-DOC-001,JST-DOC-002 | Durable two-host execution, exact recovery, real storage and cold Buzz-parity UI | Qualify live agents, remote Forgejo protocol and visual parity | E-WORKFLOW-001,E-WORKFLOW-CHOICES-001,E-WORKFLOW-RUN-001,E-WORKFLOW-HISTORY-001,E-WORKFLOW-YAML-001,E-WORKFLOW-MULTISTEP-001,E-WORKFLOW-LIVE-001,E-WORKFLOW-CONSOLE-001,E-WORKFLOW-SETTINGS-001,E-RUNNER-ENVIRONMENT-001,E-WORKFLOW-CARDS-001,E-APPLICATION-MENU-001,E-WORKFLOW-GITHUB-001,E-WORKFLOW-HISTORY-LAYOUT-001,E-REPOSITORY-ACTIONS-001 |
 
 Source foundations, executor integration, real storage, cold browser and visual
 parity are distinct gates. No gate is promoted by compilation alone.
@@ -90,6 +90,14 @@ publication/attempt pins and return filters. Focused unit, workflow interaction/
 Axe and preserved live-server inspection qualify presentation and continuation
 retention; native execution, provider, remote Forgejo protocol, additional
 platform and approved visual gates remain unchanged.
+
+E-REPOSITORY-ACTIONS-001 reviews M28 with status unchanged. Native repository
+Actions reuses the scoped two-pane History view and full-body pinned details.
+Overview and workflow navigation share guarded Edit/Run/Duplicate/Enable/Remove
+menus; the repository Actions page owns its top divider. Focused route,
+interaction/Axe and preserved live-service inspection qualify this presentation
+slice. Native execution, provider, remote protocol, platform and approved visual
+baseline gates remain unchanged.
 
 <!-- generated-navigation -->
 

@@ -18,6 +18,7 @@
     if (page === "log") return "JJ Log/Changes";
     if (page === "oplog") return "Op Log/Operations";
     if (page === "files") return "Files/Repository";
+    if (page === "actions") return "Actions/Workflow runs";
     if (page === "agents") return "Agents/Sessions";
     return "Reviews/Threads";
   }

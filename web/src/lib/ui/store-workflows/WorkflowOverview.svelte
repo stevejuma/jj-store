@@ -3,6 +3,7 @@
   import WorkflowCard from "./WorkflowCard.svelte";
   import WorkflowSkeleton from "./WorkflowSkeleton.svelte";
   import StoreWorkEmpty from "../store-work/StoreWorkEmpty.svelte";
+  import type { WorkflowEntryActions } from "./workflow-actions.js";
   import type { WorkflowHistoryEntry } from "./workflow-history.svelte.js";
   let {
     entries,
@@ -12,10 +13,7 @@
     pending,
     repositoryName,
     canWrite,
-    onOpen,
-    onToggle,
-    onRemove,
-    onRun,
+    workflowActions,
   }: {
     entries: WorkflowHistoryEntry[];
     loading: boolean;
@@ -24,10 +22,7 @@
     pending: boolean;
     repositoryName(id: string): string;
     canWrite(home: string): boolean;
-    onOpen(entry: WorkflowHistoryEntry | null, duplicate?: boolean): void;
-    onToggle(entry: WorkflowHistoryEntry): void;
-    onRemove(entry: WorkflowHistoryEntry): void;
-    onRun(entry: WorkflowHistoryEntry): void;
+    workflowActions: WorkflowEntryActions;
   } = $props();
 </script>
 
@@ -43,16 +38,16 @@
           repositoryName={repositoryName(entry.workflow.definition.repository)}
           busy={entry.work.state.writing || !!entry.work.state.pending}
           writable={canWrite(entry.home)}
-          onOpen={() => onOpen(entry)}
-          onToggle={() => onToggle(entry)}
-          onDuplicate={() => onOpen(entry, true)}
-          onRemove={() => onRemove(entry)}
-          onRun={() => onRun(entry)}
+          onOpen={() => workflowActions.onOpen(entry)}
+          onToggle={() => workflowActions.onToggle(entry)}
+          onDuplicate={() => workflowActions.onOpen(entry, true)}
+          onRemove={() => workflowActions.onRemove(entry)}
+          onRun={() => workflowActions.onRun(entry)}
         />{/each}
       {#if writable}<button
           class="workflow-create-card"
           disabled={pending}
-          onclick={() => onOpen(null)}
+          onclick={() => workflowActions.onOpen(null)}
           ><span class="workflow-create-card__icon"
             ><Plus aria-hidden="true" /></span
           ><span>Create workflow</span></button

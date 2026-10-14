@@ -8,6 +8,7 @@ export const repositorySections: readonly { page: StorePage; label: string }[] =
     { page: "log", label: "Commits" },
     { page: "oplog", label: "Op Log" },
     { page: "agents", label: "Agents" },
+    { page: "actions", label: "Actions" },
     { page: "reviews", label: "Reviews" },
     { page: "projects", label: "Projects" },
   ];

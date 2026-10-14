@@ -122,7 +122,7 @@ export async function restoreProductionStoreRoute(
 ) {
   data.status.error = "";
   data.status.navigation = "loading";
-  if (desired.page === "settings") {
+  if (desired.page === "settings" || desired.page === "actions") {
     data.status.navigation = "ready";
     return;
   }

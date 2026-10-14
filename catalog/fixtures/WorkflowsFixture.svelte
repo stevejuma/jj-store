@@ -2,6 +2,7 @@
   import { onDestroy, untrack } from "svelte";
   import { AppShell, AppShellController } from "@lapismd/design-core/shell";
   import { createStoreRouteHistory } from "../../web/src/lib/controller/store-route-history.svelte.js";
+  import { storePageRoute } from "../../web/src/lib/controller/store-stacks-navigation.js";
   import { storeRouteToHash } from "../../web/src/lib/controller/store-route-codec.js";
   import StoreWorkflows from "../../web/src/lib/ui/store-workflows/StoreWorkflows.svelte";
   import StoreRepositoryApplication from "../../web/src/lib/ui/store-application/StoreRepositoryApplication.svelte";
@@ -33,6 +34,7 @@
     logReadDelay = 0,
     logReadFailure = false,
     downloadFailure = false,
+    readOnly = false,
   }: {
     unknown?: boolean;
     choiceFailures?: boolean;
@@ -50,6 +52,7 @@
     logReadDelay?: number;
     logReadFailure?: boolean;
     downloadFailure?: boolean;
+    readOnly?: boolean;
   } = $props();
   const fixtureShell = new AppShellController();
   const base = untrack(() => createInMemoryStoreController("workflows"));
@@ -227,6 +230,9 @@
     projects,
     actions: {
       ...base.actions,
+      async selectPage(page) {
+        navigation.push(storePageRoute(navigation.route, page));
+      },
       async openRoute(route) {
         navigation.push(route);
       },
@@ -234,7 +240,7 @@
         navigation.navigate(delta);
       },
     },
-    get state() {
+    get state(): StoreController["state"] {
       return {
         ...base.state,
         route: navigation.route,
@@ -248,10 +254,14 @@
           ? []
           : repositories.map((r) => ({
               ...r,
+              permission: readOnly ? ("read" as const) : r.permission,
               principal: "22".repeat(16),
             })),
-        repository: repositories[0]!,
-        accessMode: "local_trusted" as const,
+        repository:
+          repositories.find(
+            (repository) => repository.id === navigation.route.repository,
+          ) ?? repositories[0]!,
+        accessMode: readOnly ? "authenticated" : "local_trusted",
       };
     },
   };

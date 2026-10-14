@@ -70,6 +70,10 @@
   margin-top: 0.5rem;
 }
 
+.store-application__body-regions[data-page="actions"] {
+  border-top: 1px solid var(--border);
+}
+
 .store-application__body-breadcrumb {
   display: flex;
   min-height: 2.5rem;

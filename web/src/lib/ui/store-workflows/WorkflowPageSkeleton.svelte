@@ -10,10 +10,12 @@
     listOnly = false,
     selection,
     onChange = () => {},
+    sourceRepository,
   }: {
     view?: "workflows" | "history" | "detail";
     listOnly?: boolean;
     selection?: WorkflowSelection;
+    sourceRepository?: string;
     onChange?: (fields: WorkflowSelection) => void;
   } = $props();
 </script>
@@ -74,7 +76,10 @@
       data-list-only={listOnly || undefined}
     >
       {#if !listOnly}<div class="workflow-history-skeleton__sidebar">
-          {#if selection}<WorkflowNavigation {selection} {onChange} />{/if}
+          {#if selection && !sourceRepository}<WorkflowNavigation
+              {selection}
+              {onChange}
+            />{/if}
           <Skeleton class="h-5 w-24" /><Skeleton class="h-8 w-full" />
           {#each [1, 2] as group (group)}<Skeleton class="h-8 w-full" />
             <div class="workflow-history-skeleton__children">
