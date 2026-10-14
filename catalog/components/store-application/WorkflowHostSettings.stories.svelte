@@ -243,6 +243,10 @@
         name: "Advanced runner settings",
       }),
     ).toHaveAttribute("aria-expanded", "false");
+    const advanced = canvas
+      .getByRole("button", { name: "Advanced runner settings" })
+      .closest(".store-settings-disclosure")!.parentElement!;
+    await expect(getComputedStyle(advanced).borderTopWidth).toBe("1px");
     await userEvent.click(
       canvas.getByRole("combobox", { name: "Allowed agents" }),
     );

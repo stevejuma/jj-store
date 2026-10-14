@@ -19,6 +19,12 @@
 
 <Story
   name="Recorded step has a Forgejo console and collapsed inline output"
+  beforeEach={async () => {
+    if (import.meta.env.MODE !== "test") return;
+    const { vi } = await import("vitest");
+    const clock = vi.spyOn(Date, "now").mockReturnValue(1792052800000);
+    return () => clock.mockRestore();
+  }}
   args={{ initialHash: selected }}
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);

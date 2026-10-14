@@ -18,6 +18,7 @@ export function workflowFixture(
   unknown = false,
   repository = home,
   pendingRun = false,
+  multiStep = false,
 ): WorkflowTransport {
   let position = 1;
   let versions: WorkflowVersion[] = [
@@ -49,7 +50,13 @@ export function workflowFixture(
                 timeout_seconds: 300,
               },
             ]
-          : initialDefinition(code).actions,
+          : multiStep && index === 0
+            ? ["build", "test", "report"].map((name) => ({
+                ...initialDefinition(code).actions[0]!,
+                id: name,
+                executor: { type: "command" as const, name },
+              }))
+            : initialDefinition(code).actions,
     },
   }));
   const receipts = new Map<string, WorkflowRequest>();

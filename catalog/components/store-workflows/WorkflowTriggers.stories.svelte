@@ -145,7 +145,7 @@
     );
     await waitFor(() => expect(body.queryByRole("dialog")).toBeNull());
     await expect(
-      canvas.getByRole("heading", { name: "Reply to deploy" }),
+      canvas.getByText("Reply to deploy", { exact: true }),
     ).toBeVisible();
   }}>{#snippet template()}<WorkflowsFixture />{/snippet}</Story
 >

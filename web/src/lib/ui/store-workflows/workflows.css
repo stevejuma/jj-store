@@ -8,6 +8,7 @@
   gap: 1.75rem;
   overflow: auto;
   min-height: 0;
+  container: workflows / inline-size;
 }
 .store-workflows__header {
   display: flex;
@@ -29,90 +30,11 @@
 .workflow-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  gap: 1rem;
-}
-.workflow-card {
-  min-height: 15rem;
-  background: color-mix(in oklab, var(--muted) 55%, var(--background));
-  border: 1px solid var(--border);
-  border-radius: 1rem;
-  padding: 1.25rem;
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  min-width: 0;
-}
-.workflow-card__top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-}
-.workflow-card__tiles,
-.workflow-card__controls {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.workflow-card__tiles > svg {
-  width: 1rem;
-  height: 1rem;
-  color: var(--muted-foreground);
-}
-.workflow-card__tile {
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 0.75rem;
-  background: var(--background);
-  border: 1px solid var(--border);
-  display: grid;
-  place-items: center;
-}
-.workflow-card__tile svg {
-  width: 1.25rem;
-  height: 1.25rem;
-}
-.workflow-card__trigger {
-  background: var(--primary);
-  color: var(--primary-foreground);
-}
-.workflow-card__open {
-  text-align: left;
-  flex: 1;
-  border: 0;
-  background: none;
-  cursor: pointer;
-}
-.workflow-card__open h2 {
-  font-size: 1.125rem;
-  font-weight: 650;
-}
-.workflow-card__open p {
-  font-size: 0.8125rem;
-  color: var(--muted-foreground);
-  margin-top: 0.5rem;
-  overflow-wrap: anywhere;
-}
-.workflow-card footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-  font-size: 0.75rem;
-  color: var(--muted-foreground);
-}
-.workflow-card footer > span {
-  display: flex;
-  gap: 0.4rem;
-  align-items: center;
-}
-.workflow-card footer svg {
-  width: 0.875rem;
-  height: 0.875rem;
+  gap: 0.75rem;
 }
 .workflow-create-card {
-  height: 16.25rem;
-  width: min(100%, 13rem);
+  height: 15rem;
+  width: 100%;
   box-sizing: border-box;
   min-width: 0;
   border: 1px dashed var(--border);
@@ -158,17 +80,12 @@
   width: 2rem;
   height: 2rem;
 }
-.workflow-card__open:focus-visible {
-  outline: 2px solid var(--ring);
-  outline-offset: 4px;
-  border-radius: 0.5rem;
-}
-@media (min-width: 42rem) {
+@container workflows (min-width: 42rem) {
   .workflow-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
-@media (min-width: 63rem) {
+@container workflows (min-width: 63rem) {
   .workflow-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }

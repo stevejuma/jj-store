@@ -18,6 +18,7 @@
   import * as Field from "@lapismd/design-core/shadcn/field";
   import WorkflowTriggerPicker from "./WorkflowTriggerPicker.svelte";
   import WorkflowConditions from "./WorkflowConditions.svelte";
+  import WorkflowDescription from "./WorkflowDescription.svelte";
   import WorkflowSelect from "./WorkflowSelect.svelte";
   import CommunityChatComposer from "../community-chat-composer/CommunityChatComposer.svelte";
   import StoreRepositoryPicker from "../store-application/StoreRepositoryPicker.svelte";
@@ -93,6 +94,11 @@
   <div class="workflow-inspector__form">
     <Field.Group class="store-settings__editable-rows">
       {#if !action}
+        <WorkflowDescription
+          {id}
+          bind:value={definition.description}
+          {disabled}
+        />
         <Field.Field orientation="horizontal" class="store-settings__option-row"
           ><Field.Content
             ><Field.Label for={`${id}-repository`}

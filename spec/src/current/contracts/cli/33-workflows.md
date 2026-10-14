@@ -1,5 +1,9 @@
 # Workflows
 
+E-WORKFLOW-CARDS-001 adds UI guidance to command help for the action-summary
+cards and Form description. CLI commands, selectors, formats and execution
+contracts are unchanged; Form/YAML descriptions use the existing native field.
+
 The custom jj workflow command manages YAML definitions, reads runs and
 evidence, dispatches manual runs, requests cancellation and retries, and reports
 assigned attempts. The separate workflow-host mode consumes operator

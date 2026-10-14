@@ -1,5 +1,13 @@
 # Change map
 
+E-WORKFLOW-CARDS-001 retains JST-GOV-002/008 local source ownership. The card
+summary, layered icon presentation and description field are independently
+maintained Svelte/TypeScript compositions using released Design Core. Buzz
+desktop WorkflowCard, workflowDefinition and WorkflowsView at `ef2aa1ae` are
+inspected layout references with Apache-2.0 attribution; no checkout or catalog
+runtime dependency is added. Native definition, command and storage formats
+remain unchanged.
+
 E-RUNNER-ENVIRONMENT-001 retains JST-GOV-002/008 local UI ownership. The concise
 environment form, Advanced and explicit admission compositions reuse maintained
 Settings, avatar and picker components plus released Design Core. Registered

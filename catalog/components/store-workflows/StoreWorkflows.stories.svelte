@@ -26,10 +26,10 @@
     const canvas = within(canvasElement),
       body = within(document.body);
     await expect(
-      await canvas.findByRole("heading", { name: "Build parser" }),
+      await canvas.findByText("Build parser", { exact: true }),
     ).toBeVisible();
     await userEvent.click(
-      canvas.getByRole("button", { name: /Build parser Bookmark/ }),
+      canvas.getByRole("button", { name: "View Build parser" }),
     );
     const dialog = within(
       await body.findByRole("dialog", { name: "Edit workflow" }),
@@ -60,7 +60,7 @@
       expect(body.queryByRole("dialog", { name: "Edit workflow" })).toBeNull(),
     );
     await expect(
-      canvas.getByRole("heading", { name: "Build parser and tests" }),
+      canvas.getByText("Build parser and tests", { exact: true }),
     ).toBeVisible();
   }}>{#snippet template()}<WorkflowsFixture />{/snippet}</Story
 >
@@ -70,7 +70,7 @@
     const canvas = within(canvasElement),
       body = within(document.body);
     await userEvent.click(
-      await canvas.findByRole("button", { name: /Build parser Bookmark/ }),
+      await canvas.findByRole("button", { name: "View Build parser" }),
     );
     const dialog = within(
       await body.findByRole("dialog", { name: "Edit workflow" }),
@@ -106,7 +106,7 @@
     const canvas = within(canvasElement),
       body = within(document.body);
     await userEvent.click(
-      await canvas.findByRole("button", { name: /Build parser Bookmark/ }),
+      await canvas.findByRole("button", { name: "View Build parser" }),
     );
     const editor = within(
       await body.findByRole("dialog", { name: "Edit workflow" }),
@@ -178,7 +178,7 @@
     );
     await userEvent.click(canvas.getByRole("tab", { name: "Workflows" }));
     await userEvent.click(
-      canvas.getByRole("button", { name: /Build parser Bookmark/ }),
+      canvas.getByRole("button", { name: "View Build parser" }),
     );
     const reopened = within(
       await body.findByRole("dialog", { name: "Edit workflow" }),
@@ -200,7 +200,7 @@
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement),
       body = within(document.body);
-    await canvas.findByRole("heading", { name: "Build parser" });
+    await canvas.findByText("Build parser", { exact: true });
     await expect(
       canvas.getAllByRole("button", { name: "Create workflow" }),
     ).toHaveLength(1);

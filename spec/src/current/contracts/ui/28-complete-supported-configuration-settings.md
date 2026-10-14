@@ -184,7 +184,8 @@ Local service / Workflows uses the same Settings cards and divided icon-bearing
 rows for a concise runner environment form: enabled, name, labels and admitted
 executors. Connection, identity and repository/revision context are derived.
 Advanced is initially collapsed and retains path/polling defaults, optional
-owner policy and explicit admission. Known owner/admission principals use
+owner policy and explicit admission. A full-width row separator precedes the
+Advanced disclosure even while collapsed. Known owner/admission principals use
 Command View with server profile avatars; agent setup choices retain their
 avatars beside selection checkmarks. The local host card has a one-rem gap above
 it. Polling uses exact numeric entry, units and the shared bounded gauge. A

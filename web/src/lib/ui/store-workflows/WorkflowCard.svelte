@@ -2,9 +2,7 @@
   import { Button } from "@lapismd/design-core/shadcn/button";
   import { Switch } from "@lapismd/design-core/shadcn/switch";
   import * as Menu from "@lapismd/design-core/shadcn/dropdown-menu";
-  import CommunityChip from "../community-chip/CommunityChip.svelte";
   import WorkflowIcon from "@lucide/svelte/icons/workflow";
-  import GitBranch from "@lucide/svelte/icons/git-branch";
   import Bot from "@lucide/svelte/icons/bot";
   import Terminal from "@lucide/svelte/icons/terminal";
   import ArrowRight from "@lucide/svelte/icons/arrow-right";
@@ -14,7 +12,11 @@
   import Copy from "@lucide/svelte/icons/copy";
   import Trash from "@lucide/svelte/icons/trash-2";
   import type { WorkflowVersion } from "../../controller/workflow-types.js";
-  import { triggerLabel } from "./workflow-presentation.js";
+  import {
+    workflowCardSummary,
+    workflowTriggerIcons,
+  } from "./workflow-card-presentation.js";
+  import "./workflow-card.css";
   let {
     workflow,
     repositoryName,
@@ -36,19 +38,29 @@
     onRemove(): void;
     onRun(): void;
   } = $props();
+  const summary = $derived(workflowCardSummary(workflow.definition));
+  const TriggerIcon = $derived(
+    workflowTriggerIcons[workflow.definition.trigger.on],
+  );
 </script>
 
 <article class="workflow-card" aria-label={workflow.definition.name}>
   <div class="workflow-card__top">
     <div class="workflow-card__tiles" aria-hidden="true">
-      <span class="workflow-card__tile workflow-card__trigger"
-        ><GitBranch /></span
-      ><ArrowRight
-      />{#each workflow.definition.actions.slice(0, 3) as action (action.id)}<span
-          class="workflow-card__tile"
-          >{#if action.executor.type === "agent"}<Bot />{:else}<Terminal
-            />{/if}</span
-        >{/each}
+      <span
+        class="workflow-card__tile workflow-card__trigger"
+        data-trigger={workflow.definition.trigger.on}><TriggerIcon /></span
+      ><ArrowRight /><span
+        class="workflow-card__action-stack"
+        data-count={Math.min(workflow.definition.actions.length, 3)}
+        >{#each workflow.definition.actions.slice(0, 3) as action, index (action.id)}<span
+            class="workflow-card__tile"
+            data-layer={index}
+            data-executor={action.executor.type}
+            >{#if action.executor.type === "agent"}<Bot />{:else}<Terminal
+              />{/if}</span
+          >{/each}</span
+      >
     </div>
     <div class="workflow-card__controls">
       <Switch
@@ -85,19 +97,23 @@
       >
     </div>
   </div>
-  <button class="workflow-card__open" onclick={onOpen}
-    ><h2>{workflow.definition.name}</h2>
-    <p>{triggerLabel(workflow.definition.trigger)}</p>
-    {#if workflow.definition.description}<p>
-        {workflow.definition.description}
-      </p>{/if}</button
+  <button
+    class="workflow-card__open"
+    onclick={onOpen}
+    aria-label={`View ${workflow.definition.name}`}
+    title={summary}><h2>{summary}</h2></button
   >
   <footer>
-    <span><WorkflowIcon aria-hidden="true" />{repositoryName}</span
-    ><CommunityChip
-      size="compact"
-      tone={workflow.definition.enabled ? "success" : "neutral"}
-      >{workflow.definition.enabled ? "Enabled" : "Disabled"}</CommunityChip
+    <div class="workflow-card__context">
+      <span
+        ><WorkflowIcon aria-hidden="true" /><span title={repositoryName}
+          >{repositoryName}</span
+        ></span
+      >
+      <p title={workflow.definition.name}>{workflow.definition.name}</p>
+    </div>
+    <time datetime={new Date(Number(workflow.created_at)).toISOString()}
+      >{new Date(Number(workflow.created_at)).toLocaleDateString()}</time
     >
   </footer>
 </article>

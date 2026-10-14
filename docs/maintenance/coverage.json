@@ -137,8 +137,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed concise runner settings with retained JSON drafts, separate admission and collapsed Advanced; documented avatar choices, polling gauge, skeletons and toast failures.",
-      "fingerprint": "ea226d0b25ca4bd8bb52cbfbb24c854eb35355a33d317f8ebdfc2768139b4ac5"
+      "reason": "Reviewed fixed-height Buzz-inspired workflow card summaries, stacked native action icons, stored description Form/YAML editing, representative skeletons and the local Advanced separator; existing workflow commands, authority and runner configuration formats remain unchanged.",
+      "fingerprint": "d0313e5543e3ae5bb36f592acdc3c4e74f5e0ffc7acdea94d5313da6c7417bda"
     }
   },
   {
@@ -155,8 +155,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Reviewed generated managed environment union and optional derived runtime principal; native workflow commands, storage formats and runner reporting are unchanged.",
-      "fingerprint": "b1368661a0f3606d6a720d4791b4045af50af5543fd28cf2bd068c35825b3bbd"
+      "reason": "Reviewed the workflow card and Description guidance added to CLI help sources; generated CLI/API references retain the same native definition, request, schema and host configuration contracts. UI prose adds no executable examples or public API changes.",
+      "fingerprint": "9a1cc03951af1d54d6fcf029a9aeab3488584b1768ce551a93e7f9f11725f8d7"
     }
   },
   {

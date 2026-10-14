@@ -3347,6 +3347,18 @@
     {
       "local": "web/src/lib/ui/store-workflows/WorkflowPageSkeleton.svelte",
       "reason": "Owned workflow history routing, bounded reads or task-style presentation composed from existing jj-store controls and released Design Core; no external checkout dependency."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/WorkflowDescription.svelte",
+      "reason": "Owned workflow summary, stacked icon and description presentation with released Design Core; Buzz desktop references and Apache-2.0 attribution are recorded in desktopWorkflows. No external source imports."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/workflow-card-presentation.ts",
+      "reason": "Owned workflow summary, stacked icon and description presentation with released Design Core; Buzz desktop references and Apache-2.0 attribution are recorded in desktopWorkflows. No external source imports."
+    },
+    {
+      "local": "web/src/lib/ui/store-workflows/workflow-card.css",
+      "reason": "Owned workflow summary, stacked icon and description presentation with released Design Core; Buzz desktop references and Apache-2.0 attribution are recorded in desktopWorkflows. No external source imports."
     }
   ],
   "desktopAppearance": {
@@ -3797,13 +3809,15 @@
       {
         "local": "web/src/lib/ui/store-workflows",
         "source": "desktop/src/features/workflows/ui/WorkflowsView.tsx; WorkflowCard.tsx; WorkflowDialog.tsx; WorkflowFormBuilder.tsx; WorkflowDetailPanel.tsx; WorkflowRunTrace.tsx",
-        "changes": "Owned Svelte card grid, Form/YAML sequence and inspector, exact native revision dispatch and immutable run inspection. Compact Settings inspector, oval inset sequence blocks, hover/selected action controls and interactive connectors."
+        "changes": "Owned Svelte card grid, Form/YAML sequence and inspector, exact native revision dispatch and immutable run inspection. Compact Settings inspector, oval inset sequence blocks, hover/selected action controls and interactive connectors. Card summaries use recorded native trigger/first executor/remaining step count, with three layered action tiles, equal fixed-height cards, repository/name/date footer and a Settings description textarea."
       }
     ],
     "sources": [
       "desktop/src/features/workflows/ui/WorkflowTriggerConditions.tsx",
       "desktop/src/features/workflows/ui/workflowConditionExpression.ts",
-      "desktop/src/features/workflows/ui/WorkflowAuthorPicker.tsx"
+      "desktop/src/features/workflows/ui/WorkflowAuthorPicker.tsx",
+      "desktop/src/features/workflows/ui/workflowDefinition.ts",
+      "desktop/src/features/workflows/ui/WorkflowsView.tsx"
     ]
   },
   "workflowRunConsole": {

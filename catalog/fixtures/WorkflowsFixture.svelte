@@ -24,6 +24,7 @@
     initialHash = "#/workflows",
     historyFailure,
     pendingRun = false,
+    multiStep = false,
     discovering = false,
     consoleMode,
     logReadDelay = 0,
@@ -38,6 +39,7 @@
     initialHash?: string;
     historyFailure?: "list" | "detail";
     pendingRun?: boolean;
+    multiStep?: boolean;
     discovering?: boolean;
     consoleMode?: ConsoleExample;
     logReadDelay?: number;
@@ -79,7 +81,7 @@
   );
   let failed = false;
   const source = untrack(() => {
-    const base = workflowFixture(unknown, home, pendingRun);
+    const base = workflowFixture(unknown, home, pendingRun, multiStep);
     return consoleMode ? consoleExample(base, consoleMode) : base;
   });
   let logReads = $state(0),

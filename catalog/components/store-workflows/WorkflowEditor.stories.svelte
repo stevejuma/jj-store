@@ -234,7 +234,7 @@
     await userEvent.click(copy.getByRole("button", { name: "Save workflow" }));
     await waitFor(() => expect(body.queryByRole("dialog")).toBeNull());
     const savedCard = canvas.getByRole("button", {
-      name: /Draft build copy Run manually/,
+      name: "View Draft build copy",
     });
     await waitFor(() =>
       expect(getComputedStyle(savedCard).pointerEvents).not.toBe("none"),
@@ -252,10 +252,10 @@
     await userEvent.click(body.getByRole("menuitem", { name: "Delete" }));
     await waitFor(() => expect(body.queryByRole("dialog")).toBeNull());
     await expect(
-      canvas.queryByRole("heading", { name: "Draft build copy" }),
+      canvas.queryByText("Draft build copy", { exact: true }),
     ).toBeNull();
     await expect(
-      canvas.getByRole("heading", { name: "Build parser" }),
+      canvas.getByText("Build parser", { exact: true }),
     ).toBeVisible();
   }}>{#snippet template()}<WorkflowsFixture />{/snippet}</Story
 >

@@ -1,5 +1,10 @@
 # Workflows
 
+E-WORKFLOW-CARDS-001 changes presentation only. Form edits the existing typed
+definition description; card summaries project recorded definitions without
+changing requests, schemas, authorization, read pins or reporting. Native
+description validation and exact pending-command recovery remain authoritative.
+
 Workflow reads and commands use the common native service through HTTP and RPC.
 Bounded pages, pinned roots and original outcome lookup retain current grants.
 Semantic source events expose exact committed references for the optional

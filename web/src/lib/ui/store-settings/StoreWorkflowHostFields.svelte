@@ -80,12 +80,14 @@
       onChange={configure}
     />
   </Field.Group>
-  <WorkflowRunnerAdvanced
-    configuration={environment}
-    {authors}
-    disabled={busy}
-    onChange={configure}
-  />
+  <div class="workflow-host-advanced">
+    <WorkflowRunnerAdvanced
+      configuration={environment}
+      {authors}
+      disabled={busy}
+      onChange={configure}
+    />
+  </div>
 </Tabs.Content>
 <Tabs.Content value="json">
   <Field.Field class="workflow-host-json">
@@ -110,6 +112,9 @@
 </Tabs.Content>
 
 <style>
+  .workflow-host-advanced {
+    border-block-start: 1px solid var(--border);
+  }
   :global(.workflow-host-json) {
     padding: 1rem;
   }

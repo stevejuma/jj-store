@@ -60,6 +60,12 @@ Search filters the loaded choices. Changing the operation clears the commit and
 bookmark. A bookmark with one unambiguous target selects its exact commit;
 conflicted or targetless bookmarks cannot be selected.
 
+Overview cards summarize the trigger, first command or agent and remaining
+steps, with stacked action icons. All cards, including Create workflow, have the
+same fixed height. The workflow name, source repository and version date remain
+in the footer. Create/Edit Form includes an optional Description field in the
+trigger inspector; it uses the same stored description as YAML.
+
 Source access is separate from metadata-home access. Lookup failures use retry
 toasts and preserve selected values. After an unknown run outcome, source fields
 stay read-only while Check original request reconciles the retained command.

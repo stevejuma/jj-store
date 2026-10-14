@@ -6,14 +6,21 @@ attribution are recorded in provenance. Drafts, exact pending requests and
 historical run selections survive refresh. Visual parity approval remains
 distinct from interaction/Axe acceptance. See JST-WF-008.
 
-The overview has one create card, styled like the Agents listing with a muted
-icon tile. Metadata home selection belongs inside creation. Runner labels use
-Design Core chip entry. The dialog has equal inset spacing without a sidebar.
-Unfinished YAML can return to Form; invalid YAML retains its text and shows the
-last valid form draft with a toast explanation. Closing retains both drafts.
-YAML mode omits the right inspector and uses the whole padded dialog body for
-the editor. Returning to Form retains its inspector visibility preference;
-selecting a block reopens a hidden inspector.
+The overview has one create card with a muted icon tile. All grid cards share
+the same fixed 15rem height and full column width, including creation and
+loading cards. Columns follow the available content width. Existing cards use
+Buzz's rounded muted surface, colored trigger/executor tiles and up to three
+overlapping action tiles, with the first action in front. Their main heading
+describes the recorded trigger and first action, followed by a remaining-step
+count. It clamps to four lines with a full-text hover title; repository,
+workflow name and version date occupy the footer. The switch and menu remain
+independently accessible. Metadata home selection belongs inside creation.
+Runner labels use Design Core chip entry. The dialog has equal inset spacing
+without a sidebar. Unfinished YAML can return to Form; invalid YAML retains its
+text and shows the last valid form draft with a toast explanation. Closing
+retains both drafts. YAML mode omits the right inspector and uses the whole
+padded dialog body for the editor. Returning to Form retains its inspector
+visibility preference; selecting a block reopens a hidden inspector.
 
 The footer has a top border. Validation and command failures use the shared
 notification service under JST-UI-019, without inline exception messages.
@@ -24,6 +31,11 @@ control hides the inspector without deleting a trigger or action; selecting a
 block reopens it. The padded body has no dividing border. The inspector has a
 muted background, rounded corners, inset separators and independently scrolling
 content with bottom clearance above the footer.
+
+The trigger inspector includes an optional Description textarea for the workflow
+in both Create and Edit. It binds the existing definition description; Form/YAML
+switching, closing/reopening drafts and save retain it. Selecting a step
+preserves the description while presenting that step's controls.
 
 Create/Edit workflow remains visible at the header's left. Its title, centered
 compact name chip, menu and close controls align vertically; narrow headers

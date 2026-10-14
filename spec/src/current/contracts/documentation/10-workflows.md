@@ -1,5 +1,10 @@
 # Workflow documentation
 
+E-WORKFLOW-CARDS-001 documents the action-summary overview, overlapping action
+tiles, equal fixed-height creation/loading cards and the Form description field.
+These reuse existing native definition data and preserve Form/YAML drafts,
+command authority and historical source selection.
+
 JST-DOC-001 and JST-DOC-002 apply to the native workflow profile. The authored
 CLI guide is included in command help and generated parser references. API
 references derive from the actual registered WorkflowService routes and schemas.
