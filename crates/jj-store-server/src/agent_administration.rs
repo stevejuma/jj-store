@@ -83,12 +83,11 @@ impl Manager {
             return Err(Error::Stale);
         }
         let remote: Option<crate::remote_agents::Configuration> = wire(&request.configuration)?;
-        if let Some(remote) = &remote {
-            if !Path::new(&remote.acp_executable).is_absolute()
-                || !Path::new(&remote.jj_executable).is_absolute()
-            {
-                return Err(Error::Invalid);
-            }
+        if let Some(remote) = &remote
+            && (!Path::new(&remote.acp_executable).is_absolute()
+                || !Path::new(&remote.jj_executable).is_absolute())
+        {
+            return Err(Error::Invalid);
         }
         config.remote_agents = remote;
         config.validate().map_err(|_| Error::Invalid)?;

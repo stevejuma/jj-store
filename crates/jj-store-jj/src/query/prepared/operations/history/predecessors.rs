@@ -98,7 +98,7 @@ impl Lookup {
             let bytes = &mut bytes[..width];
             file.read_exact(bytes).map_err(|_| Error::Corrupt)?;
             digest.update(&*bytes);
-            if n > 0 && &previous[..width] >= &*bytes {
+            if n > 0 && previous[..width] >= *bytes {
                 return Err(Error::Corrupt);
             }
             previous[..width].copy_from_slice(bytes);

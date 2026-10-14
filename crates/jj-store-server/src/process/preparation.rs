@@ -316,8 +316,10 @@ pub(super) async fn prepare(
         .as_ref()
         .map(|h| h.runtime_policy())
         .unwrap_or_else(|| {
-            let mut limits = jj_store_service::native::SessionLimits::default();
-            limits.timeout = timeout;
+            let mut limits = jj_store_service::native::SessionLimits {
+                timeout,
+                ..Default::default()
+            };
             limits.publication.timeout = timeout;
             limits.policy.timeout = timeout;
             limits.inventory_nodes = config.limits.inventory_nodes;

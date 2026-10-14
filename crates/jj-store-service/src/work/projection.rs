@@ -4,6 +4,8 @@ use jj_store_wal::publication::WorkStateV1;
 use std::collections::BTreeMap;
 
 pub(crate) struct Projection {
+    pub(super) project_index: Option<jj_store_read_index::Index>,
+    pub(super) task_index: Option<jj_store_read_index::Index>,
     pub projects: Vec<ProjectId>,
     pub tasks: Vec<TaskId>,
     pub project_tasks: BTreeMap<ProjectId, Vec<TaskId>>,
@@ -35,6 +37,8 @@ impl Selection {
 impl Projection {
     pub fn new(state: &WorkStateV1) -> Result<Self> {
         let mut result = Self {
+            project_index: None,
+            task_index: None,
             projects: state.projects.keys().copied().collect(),
             tasks: state.tasks.keys().copied().collect(),
             project_tasks: BTreeMap::new(),
@@ -118,6 +122,9 @@ impl Projection {
     }
     pub fn select(&self, state: &WorkStateV1, query: &WorkBrowseQuery) -> Result<Selection> {
         validate(state, query)?;
+        if let Some(selection) = self.indexed(query) {
+            return selection;
+        }
         let text = query.q.trim().to_lowercase();
         let matches = |fields: &(String, String)| {
             text.is_empty() || fields.0.contains(&text) || fields.1.contains(&text)

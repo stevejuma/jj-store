@@ -61,3 +61,5 @@
   {{#include M27/SUMMARY.nav.md}}
 - [M28 lightweight workflows](M28/index.md)
   {{#include M28/SUMMARY.nav.md}}
+- [M29 custom data indexing](M29/index.md)
+  {{#include M29/SUMMARY.nav.md}}

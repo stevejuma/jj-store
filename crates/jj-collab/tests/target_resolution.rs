@@ -146,7 +146,7 @@ impl Reader {
             .unwrap();
         let reference = self
             .graph
-            .stage(CollabObjectV1::ThreadVersion(ThreadVersionV1 {
+            .stage(CollabObjectV1::ThreadVersion(Box::new(ThreadVersionV1 {
                 purpose: None,
                 codebase: None,
                 agent_message: None,
@@ -160,7 +160,7 @@ impl Reader {
                 previous: None,
                 event,
                 baseline: None,
-            }))
+            })))
             .unwrap();
         self.threads.insert(tid(), reference);
     }

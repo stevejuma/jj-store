@@ -84,10 +84,10 @@ impl ConversationSubmissionV1 {
             if size > 32768 {
                 return Err(Error::Limit);
             }
-            if let Some(old) = observations.insert(c.thread_id, (&c.source, c.expected_thread)) {
-                if old != (&c.source, c.expected_thread) {
-                    return Err(Error::Invalid("inconsistent discussion observations"));
-                }
+            if let Some(old) = observations.insert(c.thread_id, (&c.source, c.expected_thread))
+                && old != (&c.source, c.expected_thread)
+            {
+                return Err(Error::Invalid("inconsistent discussion observations"));
             }
             if let Some(r) = c.expected_thread {
                 expect(r, CollabObjectKind::ThreadVersion)?;

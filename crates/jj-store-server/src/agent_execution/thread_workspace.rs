@@ -74,18 +74,16 @@ impl Supervisor {
         if self
             .home_thread_command_not_known(home, &profile, input.request_id)
             .await?
-        {
-            if let api::Command::Codebase {
+            && let api::Command::Codebase {
                 thread,
                 repositories,
                 ..
             } = &input.command
-            {
-                let old = self.home_thread_summary(home, &profile, *thread).await?;
-                let removed = removes_repository(old.value.codebase.as_deref(), home, repositories);
-                if removed && self.thread_has_pending_work(home, *thread)? {
-                    return Err(Error::Busy);
-                }
+        {
+            let old = self.home_thread_summary(home, &profile, *thread).await?;
+            let removed = removes_repository(old.value.codebase.as_deref(), home, repositories);
+            if removed && self.thread_has_pending_work(home, *thread)? {
+                return Err(Error::Busy);
             }
         }
         self.update(|s| {
@@ -128,14 +126,13 @@ impl Supervisor {
         let selected = self
             .home_thread_summary(saved.view.repository, &saved.profile, thread)
             .await?;
-        if let Some(codebase) = selected.value.codebase {
-            if saved
+        if let Some(codebase) = selected.value.codebase
+            && saved
                 .code_workspaces
                 .keys()
                 .any(|repository| !codebase.contains(repository))
-            {
-                return Err(Error::Stale);
-            }
+        {
+            return Err(Error::Stale);
         }
         Ok(())
     }

@@ -182,17 +182,24 @@ async fn malformed_stale_and_infrastructure_reload_never_dispatch() {
             .unwrap_err(),
         Error::Stale
     );
-    let mut changed = config.clone();
-    changed.bind = "127.0.0.1:8555".parse().unwrap();
-    std::fs::write(&path, toml::to_string(&changed).unwrap()).unwrap();
-    let revision = manager.saved().unwrap().0;
-    assert_eq!(
-        manager
-            .reload(caller, command(revision, 3, vec![Domain::Service]))
-            .await
-            .unwrap_err(),
-        Error::Invalid
-    );
+    let mut listener = config.clone();
+    listener.bind = "127.0.0.1:8555".parse().unwrap();
+    let mut indexes = config.clone();
+    indexes.custom_data_index_persistence = false;
+    for (sequence, changed) in [listener, indexes].into_iter().enumerate() {
+        std::fs::write(&path, toml::to_string(&changed).unwrap()).unwrap();
+        let revision = manager.saved().unwrap().0;
+        assert_eq!(
+            manager
+                .reload(
+                    caller.clone(),
+                    command(revision, sequence as u8 + 3, vec![Domain::Service])
+                )
+                .await
+                .unwrap_err(),
+            Error::Invalid
+        );
+    }
     assert_eq!(apply.calls.load(Ordering::SeqCst), 0);
 }
 #[tokio::test]

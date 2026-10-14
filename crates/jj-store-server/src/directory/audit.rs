@@ -16,10 +16,9 @@ impl Manager {
                 .avatar
                 .as_deref()
                 .and_then(|s| s.strip_prefix("blob:"))
+                && !root.media.get(digest).is_some_and(|m| m.published)
             {
-                if !root.media.get(digest).is_some_and(|m| m.published) {
-                    return Err(Error::Corrupt);
-                }
+                return Err(Error::Corrupt);
             }
         }
         let mut names = BTreeSet::new();

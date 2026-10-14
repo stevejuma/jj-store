@@ -169,7 +169,7 @@ pub(in crate::query) async fn read(
         };
         let mut targets = Vec::with_capacity(ids.len());
         for id in ids {
-            if !hydrated.contains_key(&id) {
+            if let std::collections::btree_map::Entry::Vacant(entry) = hydrated.entry(id) {
                 let commit = context.commit_dto(id).await?;
                 let target = Target {
                     commit: id,
@@ -182,7 +182,7 @@ pub(in crate::query) async fn read(
                     workspaces: prepared.workspace_names(id)?,
                 };
                 memory.push(target_memory(&target)?);
-                hydrated.insert(id, target);
+                entry.insert(target);
             }
             memory.push(target_memory(&hydrated[&id])?);
             targets.push(hydrated[&id].clone());

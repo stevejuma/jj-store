@@ -34,7 +34,7 @@ impl MetadataStore {
             .extra_headers()
             .find(jj_lib::git_backend::JJ_TREES_COMMIT_HEADER)
             .is_some()
-            || physical.tree().to_string() != root.to_string()
+            || physical.tree() != root.to_string()
         {
             return Err(Error::Invalid(
                 "capsule tree does not match retained commit",

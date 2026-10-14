@@ -1,6 +1,6 @@
 //! Credential-free collaboration pins; every query reauthorizes its current viewer.
 mod agent_feedback;
-mod materialization;
+pub(crate) mod materialization;
 use crate::{
     auth::Permission,
     collab_mutations::{Error, Result},
@@ -187,6 +187,11 @@ impl PinnedCollabRead {
         scope: ReadScope,
         cache: Option<&Cache>,
     ) -> Result<Self> {
+        let cache = if session.read_indexes.shared {
+            Some(&session.read_indexes.cache)
+        } else {
+            cache
+        };
         query(session.limits.timeout, async {
             let viewer = session.principal(Permission::Read).await?.id();
             let pin = session.snapshot().await?;
@@ -221,7 +226,9 @@ impl PinnedCollabRead {
                 match roots[index].filter(|_| domains[index]) {
                     Some(root) => match cache {
                         Some(cache) => cache.get(session_ref, epoch, root).await.map(Some),
-                        None => materialization::load(session_ref, root).await.map(Some),
+                        None => Box::pin(materialization::load(session_ref, root))
+                            .await
+                            .map(Some),
                     },
                     None => Ok(None),
                 }
@@ -315,7 +322,7 @@ impl PinnedCollabRead {
         }
         Ok(ThreadSummaryV1 {
             reference,
-            value: value.clone(),
+            value: value.as_ref().clone(),
             directory: self.thread.directory.get(&id).cloned(),
         })
     }

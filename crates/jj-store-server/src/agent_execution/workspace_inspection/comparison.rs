@@ -1,4 +1,8 @@
 use super::*;
+pub(super) struct Selection<'a> {
+    pub range: dto::ComparisonRange,
+    pub base: Option<&'a str>,
+}
 impl Supervisor {
     pub(super) async fn workspace_comparison(
         &self,
@@ -7,9 +11,9 @@ impl Supervisor {
         selected: &Workspace,
         facts: &dto::WorkspaceRevision,
         source: &source::Source,
-        range: dto::ComparisonRange,
-        base: Option<&str>,
+        selection: Selection<'_>,
     ) -> Result<dto::Comparison> {
+        let Selection { range, base } = selection;
         let mut result = dto::Comparison {
             range,
             before_operation: Some(selected.operation),

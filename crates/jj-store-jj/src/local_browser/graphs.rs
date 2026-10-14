@@ -401,9 +401,11 @@ pub(super) async fn run(
                 let (nodes, next) = crate::query::prepared::operations::history::evolution::read(
                     repo,
                     graph,
-                    b::CommitId::from_bytes(commit.as_bytes()),
-                    after,
-                    page.limit,
+                    crate::query::prepared::operations::history::evolution::Page {
+                        start: b::CommitId::from_bytes(commit.as_bytes()),
+                        after,
+                        limit: page.limit,
+                    },
                     |amount| budget.work(amount),
                     native::map_backend,
                     async |entry| {

@@ -9,6 +9,7 @@ mod browse_models;
 mod commands;
 pub use browse_models::*;
 mod cursors;
+mod indexes;
 mod models;
 mod reads;
 pub use commands::*;

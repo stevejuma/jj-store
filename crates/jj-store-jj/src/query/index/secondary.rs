@@ -75,9 +75,11 @@ impl Secondary {
             store,
             self.access.as_ref(),
             &self.budget,
-            reservation.path(),
-            &path,
-            selected,
+            projection::Location {
+                generation: reservation.path(),
+                path: &path,
+                selected,
+            },
         )
         .await?;
         self.budget.authorize(self.access.as_ref()).await?;

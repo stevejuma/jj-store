@@ -22,6 +22,7 @@ pub trait OperatorPolicies: Send + Sync {
 }
 #[derive(Clone)]
 pub struct RepositoryHost {
+    read_indexes: Arc<crate::read_indexes::Indexes>,
     events: crate::events::Hints,
     store: Arc<dyn ObjectStore>,
     operators: Arc<dyn OperatorPolicies>,
@@ -47,6 +48,7 @@ impl RepositoryHost {
             max_blob,
         )?;
         Ok(Self {
+            read_indexes: Arc::new(crate::read_indexes::Indexes::default()),
             events: crate::events::Hints::default(),
             store,
             operators,
@@ -65,7 +67,12 @@ impl RepositoryHost {
     pub fn with_conversion_store(&self, store: Arc<dyn ObjectStore>) -> Self {
         let mut host = self.clone();
         host.store = store;
+        host.read_indexes = Arc::new(crate::read_indexes::Indexes::default());
         host
+    }
+    pub fn with_read_indexes(mut self, indexes: Arc<crate::read_indexes::Indexes>) -> Self {
+        self.read_indexes = indexes;
+        self
     }
     pub fn conversion_store(&self) -> Arc<dyn ObjectStore> {
         self.store.clone()
@@ -90,6 +97,7 @@ impl RepositoryHost {
         )?;
         endpoint.runtime = Some(self.runtime.clone());
         endpoint.events = self.events.clone();
+        endpoint.read_indexes = self.read_indexes.clone();
         Ok(endpoint)
     }
     /// Process-owned metadata monitoring only. Callers reauthorize every delivered notice.

@@ -76,7 +76,7 @@ impl Small {
 }
 
 pub(super) enum Tables {
-    Disk(Disk),
+    Disk(Box<Disk>),
     Small(Small),
 }
 impl Tables {
@@ -84,7 +84,7 @@ impl Tables {
         if small {
             Ok(Self::Small(Small::default()))
         } else {
-            Disk::new(path, space).map(Self::Disk)
+            Disk::new(path, space).map(|disk| Self::Disk(Box::new(disk)))
         }
     }
     pub fn get(&self, table: Table, key: &[u8]) -> Result<Option<Vec<u8>>> {

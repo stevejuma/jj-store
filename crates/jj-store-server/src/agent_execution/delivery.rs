@@ -192,12 +192,11 @@ pub(super) fn observe(state: &mut State, id: &str, event: &Value) -> Result<()> 
                 e.payload["type"] == "prompt" && e.payload["requestId"] == request.to_string()
             })
             .map(|e| e.payload.clone())
+            && frame["sentContext"]["version"] == 1
         {
-            if frame["sentContext"]["version"] == 1 {
-                frame["type"] = json!("context_delivery");
-                frame["sentContext"]["delivery"] = json!("sent");
-                append(state, id, frame)?;
-            }
+            frame["type"] = json!("context_delivery");
+            frame["sentContext"]["delivery"] = json!("sent");
+            append(state, id, frame)?;
         }
     } else if prompt.state == DeliveryState::Reserved
         && ((event["type"] == "record" && event["record"]["status"] == "cancelled")

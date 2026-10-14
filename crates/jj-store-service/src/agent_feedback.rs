@@ -188,7 +188,7 @@ async fn project_targets(
                 }
             }
             if let ThreadLinkTargetV1::CommentReply { reply } = &link.target {
-                answer_links.push(reply.clone());
+                answer_links.push(reply.as_ref().clone());
             }
         }
     }

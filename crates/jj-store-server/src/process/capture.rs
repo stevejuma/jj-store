@@ -156,23 +156,33 @@ fn prepare_enabled(
         config,
         identity,
         host,
-        admission,
-        storage.store(),
-        storage.capture_lifetime(),
+        RetainedStorage {
+            admission,
+            store: storage.store(),
+            lifetime: storage.capture_lifetime(),
+        },
         locations,
         initialize,
     )
+}
+pub(super) struct RetainedStorage {
+    pub admission: CaptureAdmission,
+    pub store: Arc<jj_store_object::s3::S3Store>,
+    pub lifetime: crate::storage::CaptureStorageLifetime,
 }
 pub(super) fn prepare_retained(
     config: &Config,
     identity: &Identity,
     host: &RepositoryHost,
-    admission: CaptureAdmission,
-    store: Arc<jj_store_object::s3::S3Store>,
-    lifetime: crate::storage::CaptureStorageLifetime,
+    retained: RetainedStorage,
     locations: impl FnOnce() -> Result<CaptureLocations>,
     initialize: bool,
 ) -> Result<ReadyCapture> {
+    let RetainedStorage {
+        admission,
+        store,
+        lifetime,
+    } = retained;
     config.validate()?;
     supported(config)?;
     let Access::LocalTrusted { installation, .. } = &config.access else {

@@ -56,15 +56,18 @@ pub(super) async fn selected(
     })
 }
 pub(super) async fn validate(
-    repo: &ReadonlyRepo,
-    workspace_name: &jj_lib::ref_name::WorkspaceName,
-    settings: &jj_lib::settings::UserSettings,
-    config: &Config,
-    wc: &Commit,
+    context: MutationContext<'_>,
     branch: &str,
     text: &str,
     selections: &[Selection],
 ) -> Result<Commit> {
+    let MutationContext {
+        repo,
+        workspace: workspace_name,
+        settings,
+        config,
+        wc,
+    } = context;
     message(text)?;
     let saved = config.active().ok_or(Error::Invalid)?;
     if !topology::contains(repo, saved, branch).await? || branch.contains('@') {
@@ -110,11 +113,13 @@ pub(super) async fn commit(
     selections: &[Selection],
 ) -> Result<()> {
     let head = validate(
-        repo,
-        workspace_name,
-        settings,
-        config,
-        wc,
+        MutationContext {
+            repo,
+            workspace: workspace_name,
+            settings,
+            config,
+            wc,
+        },
         branch,
         text,
         selections,

@@ -6,6 +6,9 @@ use std::collections::BTreeMap;
 
 pub(super) const MAX_BYTES: usize = 64 * 1024 * 1024;
 pub(super) struct Index {
+    secondary: Option<jj_store_read_index::Index>,
+    recent_secondary: Option<jj_store_read_index::Index>,
+    positions: BTreeMap<String, usize>,
     docs: Vec<Document>,
     recent_order: Vec<usize>,
     search_order: Vec<usize>,
@@ -38,6 +41,9 @@ fn folded_len(value: &str) -> usize {
 impl Index {
     fn new(objects: usize) -> Self {
         Self {
+            secondary: None,
+            recent_secondary: None,
+            positions: BTreeMap::new(),
             docs: vec![],
             recent_order: vec![],
             search_order: vec![],
@@ -95,11 +101,142 @@ impl Index {
             .cmp(&self.time(a, recent))
             .then(self.docs[a].hit.id.cmp(&self.docs[b].hit.id))
     }
+    pub async fn accelerate(
+        &mut self,
+        session: &NativeSession,
+        epoch: jj_store_model::EpochId,
+        root: jj_store_wal::records::RecordRef,
+    ) {
+        use jj_store_read_index::Row;
+        self.positions = self
+            .docs
+            .iter()
+            .enumerate()
+            .map(|(rank, doc)| (format!("{:?}/{}", doc.hit.kind, doc.hit.id), rank))
+            .collect();
+        let rows = |recent: bool| -> Result<Vec<Row>> {
+            self.docs
+                .iter()
+                .enumerate()
+                .filter(|(_, doc)| !recent || doc.recent.is_some())
+                .map(|(rank, doc)| {
+                    let mut order = crate::workflow::projection::newest(self.time(rank, recent));
+                    order.extend(doc.hit.id.as_bytes());
+                    order.push(match doc.hit.kind {
+                        ContentKind::Thread => 0,
+                        ContentKind::Message => 1,
+                        ContentKind::Project => 2,
+                        ContentKind::Task => 3,
+                        ContentKind::Comment => 4,
+                    });
+                    let source =
+                        crate::workflow::projection::source(&(&doc.hit, &doc.body, &doc.recent))
+                            .map_err(|_| Error::Corrupt)?;
+                    let mut row =
+                        Row::new(format!("{:?}/{}", doc.hit.kind, doc.hit.id), source, order);
+                    if let Some(thread) = doc.hit.thread {
+                        row = row.facet("thread", thread);
+                    }
+                    if let Some(project) = doc.hit.project {
+                        row = row.facet("project", project);
+                    }
+                    if let Some(task) = doc.hit.task {
+                        row = row.facet("task", task);
+                    }
+                    if !recent {
+                        match doc.field {
+                            Field::Title => row = row.text(&doc.hit.title),
+                            Field::Body => row = row.text(&doc.body),
+                            Field::Both => row = row.text(&doc.hit.title).text(&doc.body),
+                        }
+                    }
+                    Ok(row)
+                })
+                .collect()
+        };
+        let search_rows = rows(false);
+        let recent_rows = rows(true);
+        if let Ok(rows) = search_rows {
+            self.secondary = session
+                .read_indexes
+                .prepare(
+                    session.repository.to_string(),
+                    epoch.to_string(),
+                    root.digest.to_string(),
+                    "content-search-v1",
+                    rows,
+                )
+                .await
+                .ok();
+        }
+        if let Ok(rows) = recent_rows {
+            self.recent_secondary = session
+                .read_indexes
+                .prepare(
+                    session.repository.to_string(),
+                    epoch.to_string(),
+                    root.digest.to_string(),
+                    "content-recent-v1",
+                    rows,
+                )
+                .await
+                .ok();
+        }
+        let positions_bytes = self.positions.keys().map(|id| id.len() + 64).sum::<usize>();
+        let extra = self
+            .secondary
+            .as_ref()
+            .map_or(0, jj_store_read_index::Index::bytes)
+            + self
+                .recent_secondary
+                .as_ref()
+                .map_or(0, jj_store_read_index::Index::bytes)
+            + positions_bytes;
+        if self.bytes.saturating_add(extra) <= MAX_BYTES {
+            self.bytes += extra;
+        } else {
+            self.secondary = None;
+            self.recent_secondary = None;
+            self.positions.clear();
+        }
+    }
     pub fn ordered(&self, query: &ContentQuery, filter: &str) -> Vec<usize> {
         let order = if filter.is_empty() {
             &self.recent_order
         } else {
             &self.search_order
+        };
+        let secondary = if filter.is_empty() {
+            &self.recent_secondary
+        } else {
+            &self.secondary
+        };
+        let candidates;
+        let order = if let Some(secondary) = secondary {
+            let mut filters = vec![];
+            if let Some(thread) = query.thread {
+                filters.push(("thread", thread.to_string()));
+            }
+            if let Some(project) = query.project {
+                filters.push(("project", project.to_string()));
+            }
+            if let Some(task) = query.task {
+                filters.push(("task", task.to_string()));
+            }
+            candidates = secondary
+                .select(&filters, filter)
+                .ids
+                .into_iter()
+                .map(|id| {
+                    *self
+                        .positions
+                        .get(&id)
+                        .expect("source-qualified content row")
+                })
+                .collect::<Vec<_>>();
+            &candidates
+        } else {
+            order
         };
         order
             .iter()

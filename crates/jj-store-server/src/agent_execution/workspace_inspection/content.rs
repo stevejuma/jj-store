@@ -1,4 +1,10 @@
 use super::*;
+pub(super) struct FileSources<'a> {
+    pub source: &'a source::Source,
+    pub before_source: Option<&'a source::Source>,
+    pub after_exists: bool,
+    pub before_exists: bool,
+}
 use futures::{StreamExt as _, stream};
 impl Supervisor {
     pub(super) async fn workspace_content(
@@ -7,11 +13,14 @@ impl Supervisor {
         repository: RepositoryId,
         path: &str,
         comparison: Option<&dto::Comparison>,
-        source: &source::Source,
-        before_source: Option<&source::Source>,
-        after_exists: bool,
-        before_exists: bool,
+        sources: FileSources<'_>,
     ) -> Result<dto::FileContent> {
+        let FileSources {
+            source,
+            before_source,
+            after_exists,
+            before_exists,
+        } = sources;
         let mut result = dto::FileContent {
             path: path.into(),
             fingerprint: String::new(),
@@ -131,10 +140,12 @@ impl Supervisor {
                             repository,
                             &entry.path,
                             Some(comparison),
-                            source,
-                            Some(before_source),
-                            after_exists,
-                            before_exists,
+                            FileSources {
+                                source,
+                                before_source: Some(before_source),
+                                after_exists,
+                                before_exists,
+                            },
                         )
                         .await?;
                     if content.unavailable.is_some() && before_exists && after_exists {

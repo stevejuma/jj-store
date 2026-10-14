@@ -93,3 +93,8 @@ Workflow homes add manifest format 6 with immutable definitions, evaluations,
 runs and evidence. Native copy and recovery retain these roots; the existing
 WorkStore origin freeze remains. See the
 [workflow guide](../cli/jj-workflow.md).
+
+Custom-data index files are outside publication and recovery authority. The
+WorkflowStore read facade bounds complete source hydration by caller object
+limits and a 64 MiB payload budget before caching it. Derived preparation or
+file failure cannot publish state or change durable receipts.

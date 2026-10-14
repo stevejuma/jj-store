@@ -99,6 +99,7 @@ impl SemanticPolicy for NativeSemantic {
 /// No caller-authored actor and no permissive semantic-policy parameter. Trusted
 /// server construction supplies object access and configured protection rules.
 pub struct NativeSession {
+    pub(crate) read_indexes: Arc<crate::read_indexes::Indexes>,
     pub(crate) events: crate::events::Hints,
     pub(crate) repository: m::RepositoryId,
     pub(crate) inventory_scope: wal::inventory::SourceScope,
@@ -109,6 +110,10 @@ pub struct NativeSession {
     pub(crate) limits: SessionLimits,
 }
 impl NativeSession {
+    pub fn with_read_indexes(mut self, indexes: Arc<crate::read_indexes::Indexes>) -> Self {
+        self.read_indexes = indexes;
+        self
+    }
     pub(crate) fn with_runtime_policy(
         mut self,
         objects: Arc<NativeObjects>,
@@ -216,6 +221,7 @@ impl NativeSession {
             limits.publication,
         )?;
         Ok(Self {
+            read_indexes: Arc::new(crate::read_indexes::Indexes::default()),
             events: crate::events::Hints::default(),
             repository,
             inventory_scope,

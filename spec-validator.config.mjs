@@ -151,6 +151,13 @@ export default defineConfig({
           ],
         },
         {
+          pattern: "^crates/jj-store-read-index/",
+          chapterPatterns: [
+            "^spec/src/current/contracts/adapters/(?!(?:index|SUMMARY).*).+\\.md$",
+            "^spec/src/current/contracts/architecture/(?!(?:index|SUMMARY).*).+\\.md$",
+          ],
+        },
+        {
           pattern: "^crates/jj-store-model/",
           chapterPatterns: [
             "^spec/src/current/contracts/identity/(?!(?:.*/)?(?:index|SUMMARY(?:\\.nav)?)\\.md$).+\\.md$",
@@ -176,7 +183,9 @@ export default defineConfig({
         },
         {
           pattern: "^crates/jj-workflow/",
-          chapterPatterns: ["^spec/src/current/contracts/architecture/21-workflow-host\\.md$"],
+          chapterPatterns: [
+            "^spec/src/current/contracts/architecture/21-workflow-host\\.md$",
+          ],
         },
         {
           pattern: "^crates/jj-work/",

@@ -29,6 +29,11 @@ pub(super) struct Prepared {
     decorations: Arc<Decorations>,
     filter: Option<Arc<filter::Filter>>,
 }
+pub(super) struct Location<'a> {
+    pub generation: &'a Path,
+    pub path: &'a Path,
+    pub selected: m::OperationId,
+}
 impl Prepared {
     pub async fn build(
         raw: DefaultReadonlyIndex,
@@ -36,10 +41,13 @@ impl Prepared {
         store: &Arc<Store>,
         access: &dyn ReadAccess,
         budget: &Budget,
-        generation: &Path,
-        path: &Path,
-        selected: m::OperationId,
+        location: Location<'_>,
     ) -> Result<Self> {
+        let Location {
+            generation,
+            path,
+            selected,
+        } = location;
         let decorations = Decorations::build(&raw, view, store, access, budget).await?;
         let filter = filter::Filter::load(
             path,

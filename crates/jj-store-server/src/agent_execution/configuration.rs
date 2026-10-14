@@ -42,29 +42,27 @@ pub(super) fn validate(options: &RuntimeOptions) -> Result<()> {
             if !literal.is_empty() && sensitive(name) {
                 return Err(Error::Invalid);
             }
-            if let Ok(url) = url::Url::parse(literal) {
-                if !url.username().is_empty()
+            if let Ok(url) = url::Url::parse(literal)
+                && (!url.username().is_empty()
                     || url.password().is_some()
                     || url.query().is_some()
-                    || url.fragment().is_some()
-                {
-                    return Err(Error::Invalid);
-                }
-            }
-        }
-        if let EnvironmentValue::Environment(reference) = value {
-            if !env_name(reference) {
-                return Err(Error::Invalid);
-            }
-        }
-        if let EnvironmentValue::Keychain(reference) = value {
-            if !label(reference, 64)
-                || !reference
-                    .bytes()
-                    .all(|b| b.is_ascii_alphanumeric() || b == b'-')
+                    || url.fragment().is_some())
             {
                 return Err(Error::Invalid);
             }
+        }
+        if let EnvironmentValue::Environment(reference) = value
+            && !env_name(reference)
+        {
+            return Err(Error::Invalid);
+        }
+        if let EnvironmentValue::Keychain(reference) = value
+            && (!label(reference, 64)
+                || !reference
+                    .bytes()
+                    .all(|b| b.is_ascii_alphanumeric() || b == b'-'))
+        {
+            return Err(Error::Invalid);
         }
     }
     for value in [&options.provider, &options.endpoint].into_iter().flatten() {

@@ -39,10 +39,9 @@ pub(super) fn configure(
             .options
             .environment
             .contains_key(&provider.endpoint_env)
+            && let Some(endpoint) = &provider.default_endpoint
         {
-            if let Some(endpoint) = &provider.default_endpoint {
-                command.env(&provider.endpoint_env, endpoint);
-            }
+            command.env(&provider.endpoint_env, endpoint);
         }
         if provider.endpoint_required
             && !command.as_std().get_envs().any(|(name, value)| {

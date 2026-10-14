@@ -346,3 +346,9 @@ and logs through existing receipts; the browser discovers steps independently of
 log pagination and loads pinned output on expansion. A non-match is skipped, and
 retries retain original source pins. This profile needs no Forgejo server;
 remote runner registration/polling and ConnectRPC remain separate work.
+
+The isolated `jj-store-read-index` crate owns disposable redb generations and
+secondary query structures. The service supplies admitted immutable facts and
+retains authorization and native hydration. Storage, model and WAL do not depend
+on this engine. Native host sessions share the bounded source/projection owner;
+conversion to another storage source resets it.

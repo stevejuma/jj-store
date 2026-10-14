@@ -133,10 +133,10 @@ pub(super) struct WorkspaceLease {
 }
 impl Drop for WorkspaceLease {
     fn drop(&mut self) {
-        if let Ok(mut active) = self.supervisor.0.workspace_activity.lock() {
-            if active.get(&self.session) == Some(&self.request) {
-                active.remove(&self.session);
-            }
+        if let Ok(mut active) = self.supervisor.0.workspace_activity.lock()
+            && active.get(&self.session) == Some(&self.request)
+        {
+            active.remove(&self.session);
         }
     }
 }

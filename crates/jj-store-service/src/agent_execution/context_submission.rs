@@ -55,12 +55,14 @@ pub async fn collect_submission(
     else {
         return Err(Error::Invalid);
     };
-    let mut result = ContextBatch::default();
-    result.submission = Some(SubmittedBatch {
-        thread_id,
-        batch,
-        request_id,
-    });
+    let mut result = ContextBatch {
+        submission: Some(SubmittedBatch {
+            thread_id,
+            batch,
+            request_id,
+        }),
+        ..ContextBatch::default()
+    };
     let mut bytes = 0usize;
     for target in comments {
         resolve_reaction_target(reader, &target)

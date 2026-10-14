@@ -76,6 +76,7 @@ impl From<jj_store_object::Error> for Error {
 /// Trusted server configuration. Tokens are supplied separately for each RPC.
 #[derive(Clone)]
 pub struct NativeEndpoint {
+    pub(crate) read_indexes: Arc<crate::read_indexes::Indexes>,
     pub(crate) events: crate::events::Hints,
     repository: m::RepositoryId,
     store: Arc<dyn ObjectStore>,
@@ -99,6 +100,7 @@ impl NativeEndpoint {
             NativeObjects::new(store.clone(), repository, max_blob).map_err(|_| Error::Invalid)?,
         );
         Ok(Self {
+            read_indexes: Arc::new(crate::read_indexes::Indexes::default()),
             events: crate::events::Hints::default(),
             repository,
             store,
@@ -126,6 +128,7 @@ impl NativeEndpoint {
             session = session.with_runtime_policy(self.objects.clone(), runtime.clone())?;
         }
         session.events = self.events.clone();
+        session.read_indexes = self.read_indexes.clone();
         Ok(NativeRequest {
             endpoint: self.clone(),
             session,
@@ -147,6 +150,7 @@ impl NativeEndpoint {
             session = session.with_runtime_policy(self.objects.clone(), runtime.clone())?;
         }
         session.events = self.events.clone();
+        session.read_indexes = self.read_indexes.clone();
         Ok(NativeRequest {
             endpoint: self.clone(),
             session,
@@ -170,6 +174,7 @@ impl NativeEndpoint {
             session = session.with_runtime_policy(self.objects.clone(), runtime.clone())?;
         }
         session.events = self.events.clone();
+        session.read_indexes = self.read_indexes.clone();
         Ok(NativeRequest {
             endpoint: self.clone(),
             session,

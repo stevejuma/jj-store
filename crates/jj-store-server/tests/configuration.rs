@@ -16,6 +16,26 @@ fn load(root: &std::path::Path, text: &str) -> jj_store_server::Result<Config> {
 }
 
 #[test]
+fn custom_data_index_persistence_defaults_on_and_can_be_disabled_without_state_writes() {
+    let root = tempfile::tempdir().unwrap();
+    let defaults = load(root.path(), EXAMPLE).unwrap();
+    assert!(defaults.custom_data_index_persistence);
+    let disabled = load(
+        root.path(),
+        &EXAMPLE.replace(
+            "format = 2",
+            "format = 2\ncustom_data_index_persistence = false",
+        ),
+    )
+    .unwrap();
+    assert!(!disabled.custom_data_index_persistence);
+    assert!(
+        !disabled.state_dir.exists(),
+        "loading configuration cannot create index state"
+    );
+}
+
+#[test]
 fn development_browser_annotations_require_explicit_loopback_local_trusted_assets() {
     use jj_store_server::config::Access;
     let root = tempfile::tempdir().unwrap();

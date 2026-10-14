@@ -1982,7 +1982,7 @@ async fn selected_hunk_discard_retains_unselected_hunks() {
         },
     )
     .await;
-    state = run(
+    run(
         root,
         Some(&state),
         Command::Apply {

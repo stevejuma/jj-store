@@ -50,3 +50,8 @@ root-pinned reader. Their companion descriptor and receipt select the canonical
 root and complete retained record inventory in one review-domain publication.
 Local code/agent anchors remain unsupported until their external evidence and
 ownership have a qualified provider; repository threads do not qualify them.
+
+E-CUSTOM-INDEX-001 retains fresh complete native provider audits for every first
+ReviewStore request. Summary reuse follows that admission and cannot mask a
+corrupt comment revision, reduced caller limit or revoked grant. No durable
+review activity aggregate is added.

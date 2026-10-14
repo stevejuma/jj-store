@@ -319,10 +319,10 @@ impl Supervisor {
             let id = if let Some(id) = reusable {
                 id
             } else if removed {
-                if let Some(thread) = command.origin.thread {
-                    if self.thread_has_pending_work(home, thread)? {
-                        return Err(Error::Busy);
-                    }
+                if let Some(thread) = command.origin.thread
+                    && self.thread_has_pending_work(home, thread)?
+                {
+                    return Err(Error::Busy);
                 }
                 hex::encode(publication::identity(&format!(
                     "participation-scope/{base_id}/{}",
@@ -468,12 +468,11 @@ impl Supervisor {
             .comments
             .as_ref()
             .filter(|c| !c.workspace_comments.is_empty());
-        if let Some(submission) = deferred {
-            if Some(submission.thread_id)
+        if let Some(submission) = deferred
+            && Some(submission.thread_id)
                 != self.read(|s| Ok(s.conversations[&command.conversation_id].discussion_thread))?
-            {
-                return Err(Error::Invalid);
-            }
+        {
+            return Err(Error::Invalid);
         }
         let comment_context = if deferred.is_some() {
             None

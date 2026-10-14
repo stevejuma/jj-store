@@ -10,7 +10,7 @@ use std::{collections::BTreeSet, sync::Arc};
 const REPO: m::RepositoryId = m::RepositoryId::new([1; 16]);
 const ACTOR: m::PrincipalId = m::PrincipalId::new([2; 16]);
 fn session(
-    store: Arc<MemoryStore>,
+    store: Arc<dyn jj_store_object::ObjectStore>,
     actor: m::PrincipalId,
     permission: Permission,
 ) -> Arc<NativeSession> {
@@ -28,6 +28,9 @@ fn session(
         .unwrap(),
     )
 }
+
+#[path = "workflow_store/index.rs"]
+mod index;
 fn request(byte: u8, command: w::Command) -> w::Request {
     w::Request {
         version: 1,

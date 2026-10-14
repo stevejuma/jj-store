@@ -55,7 +55,7 @@ impl Context {
             self.limits
                 .max_blob_bytes
                 .min(BackendLimits::default().max_bytes as u64) as usize,
-            BackendLimits::default().max_bytes as usize,
+            BackendLimits::default().max_bytes,
             move |bytes| {
                 budget.work(1)?;
                 budget.read_bytes(bytes)

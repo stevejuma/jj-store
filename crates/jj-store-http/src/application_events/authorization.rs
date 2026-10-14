@@ -39,10 +39,10 @@ impl Authorization {
         })
     }
     pub async fn repositories(&mut self, state: &State) -> Result<Vec<(m::RepositoryId, bool)>> {
-        if let Some(directory) = &state.config.directory {
-            if let Ok(caller) = crate::directory::caller(state, &self.headers()) {
-                self.directory_viewer = directory.principal(&caller).await.ok();
-            }
+        if let Some(directory) = &state.config.directory
+            && let Ok(caller) = crate::directory::caller(state, &self.headers())
+        {
+            self.directory_viewer = directory.principal(&caller).await.ok();
         }
         let mut headers = HeaderMap::new();
         if let Some(token) = &self.token {

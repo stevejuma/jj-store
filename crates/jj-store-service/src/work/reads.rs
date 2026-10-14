@@ -162,8 +162,12 @@ impl WorkPager {
         session.principal(Permission::Read).await?;
         let current = session.snapshot().await?;
         let manifest = current.manifest();
-        let data = self
-            .cache
+        let cache = if session.read_indexes.shared {
+            &session.read_indexes.cache
+        } else {
+            &self.cache
+        };
+        let data = cache
             .work(session, manifest.epoch, manifest.work_root)
             .await?;
         Ok(Pin {

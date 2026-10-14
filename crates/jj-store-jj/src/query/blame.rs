@@ -243,10 +243,10 @@ pub(crate) async fn read(
     } else if let Some(progress) = &session.progress {
         return Ok(cached(&progress.page));
     }
-    if let Some(progress) = &session.progress {
-        if progress.page.complete {
-            return Ok(cached(&progress.page));
-        }
+    if let Some(progress) = &session.progress
+        && progress.page.complete
+    {
+        return Ok(cached(&progress.page));
     }
     // Covers the trial clone, JJ source maps, bounded comparison scratch and
     // projected summaries. The retained allocation is admitted separately.
@@ -366,11 +366,12 @@ pub(crate) async fn read(
                 .map_err(map_backend)?;
             progress.page.commits.insert(id.clone(), summary(&c));
         }
-        if let Some(last) = progress.page.ranges.last_mut() {
-            if last.end == index + 1 && last.commit_id == id {
-                last.end += 1;
-                continue;
-            }
+        if let Some(last) = progress.page.ranges.last_mut()
+            && last.end == index + 1
+            && last.commit_id == id
+        {
+            last.end += 1;
+            continue;
         }
         progress.page.ranges.push(Range {
             start: index + 1,

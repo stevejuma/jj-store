@@ -60,10 +60,12 @@ pub(super) fn window(
     };
     let search = |anchor: Option<&str>, backward, limit| {
         filter.search(
-            &needle,
-            anchor,
-            backward,
-            limit,
+            crate::query::prepared::filters::Search {
+                needle: &needle,
+                anchor,
+                backward,
+                limit,
+            },
             matches,
             |n| context.budget.work(n),
             |n| context.budget.read_bytes(n),

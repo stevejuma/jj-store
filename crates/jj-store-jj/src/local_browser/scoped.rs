@@ -142,7 +142,7 @@ impl b::Backend for Scoped {
                 return Err(error(Error::Limit));
             }
             if !commits.contains(&id_owned)
-                && commits.len() % 256 == 0
+                && commits.len().is_multiple_of(256)
                 && let Some(leases) = self.0.construction.lock().unwrap().as_mut()
             {
                 leases.push(crate::query::memory::Lease::reserve(256 * 4096).map_err(error)?);

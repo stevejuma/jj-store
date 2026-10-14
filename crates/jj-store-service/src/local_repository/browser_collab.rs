@@ -109,7 +109,7 @@ impl LocalRepository {
             snapshot: store.snapshot,
             thread: ThreadSummaryV1 {
                 reference,
-                value,
+                value: *value,
                 directory: None,
             },
         })
@@ -149,7 +149,7 @@ impl LocalRepository {
                     }
                     threads.push(ThreadSummaryV1 {
                         reference: *reference,
-                        value,
+                        value: *value,
                         directory: None,
                     });
                     if threads.len() > limit as usize {

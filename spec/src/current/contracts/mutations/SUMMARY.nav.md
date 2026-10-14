@@ -23,3 +23,5 @@
 - [Interactive agent execution](22-interactive-agent-execution.md)
 - [Installation agent configuration interfaces](23-installation-agent-configuration.md)
 - [Remote execution authority](24-remote-agent-authority.md)
+
+- [Custom data read projection boundary](25-custom-data-indexes.md)

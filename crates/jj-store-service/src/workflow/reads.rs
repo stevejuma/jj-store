@@ -57,6 +57,11 @@ pub struct Page {
 }
 impl WorkflowService {
     pub async fn page(&self, session: Arc<NativeSession>, query: Query) -> Result<Page> {
+        tokio::time::timeout(session.limits.timeout, self.page_inner(session, query))
+            .await
+            .map_err(|_| Error::Limit)?
+    }
+    async fn page_inner(&self, session: Arc<NativeSession>, query: Query) -> Result<Page> {
         let limit = query.limit.unwrap_or(50);
         if !(1..=256).contains(&limit) {
             return Err(Error::Limit);
@@ -90,15 +95,29 @@ impl WorkflowService {
                 .and_then(|d| d.workflow)
                 .map(|d| d.root)
         };
-        let state = match root {
-            Some(root) => session
-                .coordinator
-                .workflow_store(root)
-                .await?
-                .state()
-                .clone(),
-            None => jj_workflow::State::default(),
+        let data = match root {
+            Some(root) => {
+                let value = session
+                    .read_indexes
+                    .cache
+                    .get(&session, snapshot.manifest().epoch, root)
+                    .await
+                    .map_err(|e| match e {
+                        crate::collab_mutations::Error::Denied => Error::Denied,
+                        crate::collab_mutations::Error::Corrupt => Error::Corrupt,
+                        crate::collab_mutations::Error::Limit => Error::Limit,
+                        _ => Error::Unavailable,
+                    })?;
+                let crate::collab_reads::materialization::Data::Workflow(data) = value.as_ref()
+                else {
+                    return Err(Error::Corrupt);
+                };
+                Some(data.clone())
+            }
+            None => None,
         };
+        let empty = State::default();
+        let state = data.as_ref().map_or(&empty, |d| &d.state);
         let mut page = Page {
             version: 1,
             repository: session.repository,
@@ -119,17 +138,18 @@ impl WorkflowService {
                     .and_then(|id| state.evaluations.get(&id))
                     .map(|e| e.event.clone());
                 let selected_attempt = query.attempt.unwrap_or(run.current().id);
-                page.step_reports = state
-                    .evidence
-                    .values()
-                    .filter(|e| {
-                        e.run == id
-                            && e.attempt == selected_attempt
-                            && matches!(e.data, EvidenceData::Step { .. })
+                let projection = data.as_ref().ok_or(Error::Corrupt)?;
+                let step_ids = projection.evidence_ids(id, Some(selected_attempt), true);
+                page.step_reports = step_ids
+                    .iter()
+                    .map(|id| {
+                        state
+                            .evidence
+                            .get(&id.parse().map_err(|_| Error::Corrupt)?)
+                            .cloned()
+                            .ok_or(Error::Corrupt)
                     })
-                    .cloned()
-                    .collect();
-                page.step_reports.sort_by_key(|e| e.sequence);
+                    .collect::<Result<_>>()?;
                 if serde_json::to_vec(&page.step_reports)
                     .map_err(|_| Error::Corrupt)?
                     .len()
@@ -145,31 +165,34 @@ impl WorkflowService {
                         .ok_or(Error::Corrupt)?
                         .clone(),
                 );
-                page.evidence = state
-                    .evidence
-                    .values()
-                    .filter(|e| {
-                        e.run == id
-                            && query.attempt.is_none_or(|attempt| e.attempt == attempt)
-                            && query.evidence_after.is_none_or(|after| e.sequence >= after)
+                let ids = projection.evidence_ids(id, query.attempt, false);
+                let selected = ids
+                    .iter()
+                    .map(|id| {
+                        state
+                            .evidence
+                            .get(&id.parse().map_err(|_| Error::Corrupt)?)
+                            .ok_or(Error::Corrupt)
                     })
-                    .cloned()
+                    .collect::<Result<Vec<_>>>()?;
+                let selected: Vec<_> = selected
+                    .into_iter()
+                    .filter(|e| query.evidence_after.is_none_or(|after| e.sequence >= after))
                     .collect();
-                page.evidence.sort_by_key(|e| {
-                    (
-                        run.attempts.iter().position(|a| a.id == e.attempt),
-                        e.sequence,
-                    )
-                });
-                if let Some(after) = query.after.as_deref() {
-                    let index = page
-                        .evidence
-                        .iter()
-                        .position(|e| e.id.to_string() == after)
-                        .ok_or(Error::Invalid)?;
-                    page.evidence.drain(..=index);
-                }
-                (page.evidence, page.next) = bounded(page.evidence, limit, |e| e.id.to_string())?;
+                let offset = match query.after.as_deref() {
+                    Some(after) => {
+                        selected
+                            .iter()
+                            .position(|e| e.id.to_string() == after)
+                            .ok_or(Error::Invalid)?
+                            + 1
+                    }
+                    None => 0,
+                };
+                (page.evidence, page.next) =
+                    bounded(selected.into_iter().skip(offset).cloned(), limit, |e| {
+                        e.id.to_string()
+                    })?;
             }
         } else if let Some(id) = query.workflow {
             if let Some(version) = state.workflows.get(&id) {
@@ -181,34 +204,44 @@ impl WorkflowService {
                         .clone(),
                 );
             }
-            let mut runs: Vec<_> = state
-                .runs
-                .values()
-                .filter(|r| r.workflow == id)
-                .cloned()
-                .collect();
-            runs.sort_by_key(|r| std::cmp::Reverse((r.created_at, r.id)));
-            if let Some(after) = query.after.as_deref() {
-                let index = runs
-                    .iter()
-                    .position(|r| r.id.to_string() == after)
-                    .ok_or(Error::Invalid)?;
-                runs.drain(..=index);
+            if data.is_none() && query.after.is_some() {
+                return Err(Error::Invalid);
             }
-            (page.runs, page.next) = bounded(runs, limit, |r| r.id.to_string())?;
+            if let Some(projection) = &data {
+                let ids = projection.run_ids(id);
+                let offset = match query.after.as_deref() {
+                    Some(after) => {
+                        ids.iter()
+                            .position(|id| id == after)
+                            .ok_or(Error::Invalid)?
+                            + 1
+                    }
+                    None => 0,
+                };
+                let runs = ids.iter().skip(offset).map(|id| {
+                    state
+                        .runs
+                        .get(&id.parse().expect("validated run ID"))
+                        .expect("indexed source run")
+                        .clone()
+                });
+                (page.runs, page.next) = bounded(runs, limit, |r| r.id.to_string())?;
+            }
         } else if query.pending_only == Some(true) {
-            let runs = state
-                .runs
-                .values()
-                .filter(|r| {
-                    r.current().status == RunStatus::Pending
-                        && query
-                            .after
-                            .as_ref()
-                            .is_none_or(|after| r.id.to_string() > *after)
-                })
-                .cloned();
-            (page.runs, page.next) = bounded(runs, limit, |r| r.id.to_string())?;
+            if let Some(projection) = &data {
+                let ids = projection.pending_ids(true);
+                let runs = ids
+                    .iter()
+                    .filter(|id| query.after.as_ref().is_none_or(|after| *id > after))
+                    .map(|id| {
+                        state
+                            .runs
+                            .get(&id.parse().expect("validated run ID"))
+                            .expect("indexed source run")
+                            .clone()
+                    });
+                (page.runs, page.next) = bounded(runs, limit, |r| r.id.to_string())?;
+            }
         } else {
             let values = state
                 .workflows
@@ -223,18 +256,22 @@ impl WorkflowService {
                     state
                         .definitions
                         .get(version)
-                        .cloned()
-                        .ok_or(Error::Corrupt)
-                })
-                .collect::<Result<Vec<_>>>()?;
+                        .expect("validated definition selection")
+                        .clone()
+                });
             (page.workflows, page.next) = bounded(values, limit, |v| v.id.to_string())?;
             // Pending execution discovery is bounded; historical details are separate.
-            let runs = state
-                .runs
-                .values()
-                .filter(|r| !r.current().status.terminal())
-                .cloned();
-            page.runs = bounded(runs, limit, |r| r.id.to_string())?.0;
+            if let Some(projection) = &data {
+                let ids = projection.pending_ids(false);
+                let runs = ids.iter().map(|id| {
+                    state
+                        .runs
+                        .get(&id.parse().expect("validated run ID"))
+                        .expect("indexed source run")
+                        .clone()
+                });
+                page.runs = bounded(runs, limit, |r| r.id.to_string())?.0;
+            }
         }
         session.principal(Permission::Read).await?;
         if session.snapshot().await?.manifest().epoch != page.epoch {

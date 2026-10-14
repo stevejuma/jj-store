@@ -38,3 +38,5 @@
 - [Conversation metadata administration](37-conversation-metadata.md)
 - [Remote execution configuration](38-remote-agent-configuration.md)
 - [Development build storage](39-development-build-storage.md)
+
+- [Custom data index lifecycle](39-custom-data-indexes.md)

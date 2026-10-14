@@ -393,14 +393,13 @@ impl Participation {
         self.lease.revoke();
         self.stop.send_replace(true);
         self.supervisor.shutdown().await?;
-        if let Some(mut task) = self.rpc.lock().await.take() {
-            if tokio::time::timeout(std::time::Duration::from_secs(5), &mut task)
+        if let Some(mut task) = self.rpc.lock().await.take()
+            && tokio::time::timeout(std::time::Duration::from_secs(5), &mut task)
                 .await
                 .is_err()
-            {
-                task.abort();
-                let _ = task.await;
-            }
+        {
+            task.abort();
+            let _ = task.await;
         }
         Ok(())
     }

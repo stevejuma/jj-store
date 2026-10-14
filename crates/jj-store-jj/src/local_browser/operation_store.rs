@@ -103,10 +103,10 @@ impl OpStore for Guard {
         let value = self.source.read_operation(id).await?;
         let metadata = dto::Operation::try_from(&value).map_err(|_| error(Error::Corrupt))?;
         self.budget.metadata(&metadata).map_err(error)?;
-        if let Some(expected) = expected {
-            if fingerprint(&metadata, &self.budget).map_err(error)? != expected {
-                return Err(error(Error::Corrupt));
-            }
+        if let Some(expected) = expected
+            && fingerprint(&metadata, &self.budget).map_err(error)? != expected
+        {
+            return Err(error(Error::Corrupt));
         }
         if self
             .access

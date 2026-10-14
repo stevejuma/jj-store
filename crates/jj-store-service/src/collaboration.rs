@@ -246,11 +246,27 @@ impl AgentSessionPager {
                 agent_root: domain.root.digest,
                 agent_state_version: domain.version,
             },
-            store: session
-                .coordinator
-                .agent_store(domain.root)
-                .await
-                .map_err(map_wal)?,
+            store: {
+                let data = session
+                    .read_indexes
+                    .cache
+                    .get(session, manifest.epoch, domain.root)
+                    .await
+                    .map_err(|e| match e {
+                        crate::collab_mutations::Error::Denied => Error::Denied,
+                        crate::collab_mutations::Error::Corrupt => Error::Corrupt,
+                        crate::collab_mutations::Error::Limit => Error::Limit,
+                        _ => Error::Unavailable,
+                    })?;
+                let crate::collab_reads::materialization::Data::Agent(selection) = data.as_ref()
+                else {
+                    return Err(Error::Corrupt);
+                };
+                session
+                    .coordinator
+                    .selected_agent_reader(selection)
+                    .map_err(map_wal)?
+            },
         };
         self.cursors.validate_pin(&pin)?;
         Ok(pin)

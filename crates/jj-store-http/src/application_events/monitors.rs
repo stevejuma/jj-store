@@ -69,10 +69,10 @@ impl Monitors {
         if entries.len() >= 257 {
             return Err(Error::busy());
         }
-        if let Err(error) = observe(state, repository, local, false, false).await {
-            if let Some(change) = observation_failure(repository, &error) {
-                state.freshness.observe(change);
-            }
+        if let Err(error) = observe(state, repository, local, false, false).await
+            && let Some(change) = observation_failure(repository, &error)
+        {
+            state.freshness.observe(change);
         }
         let leases = Arc::new(AtomicUsize::new(1));
         let weak = Arc::downgrade(state);

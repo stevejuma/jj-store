@@ -93,16 +93,15 @@ pub(super) async fn maintain(
                     },
                     operation,
                 };
-                if state.code_indexes.needs(&key) {
-                    if let reads::OpenRead::Pinned(read) = session
+                if state.code_indexes.needs(&key)
+                    && let reads::OpenRead::Pinned(read) = session
                         .open_read(Some(operation), state.live_config().read)
                         .await?
-                    {
-                        if divergent {
-                            state.code_indexes.start_native(Arc::new(read)).await?;
-                        } else {
-                            state.code_indexes.maintain_native(Arc::new(read)).await?;
-                        }
+                {
+                    if divergent {
+                        state.code_indexes.start_native(Arc::new(read)).await?;
+                    } else {
+                        state.code_indexes.maintain_native(Arc::new(read)).await?;
                     }
                 }
             }

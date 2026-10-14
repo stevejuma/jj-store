@@ -6,6 +6,8 @@ use std::{collections::BTreeSet, net::SocketAddr, path::PathBuf};
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(deny_unknown_fields)]
 pub struct Config {
+    #[serde(default = "index_persistence", skip_serializing_if = "index_enabled")]
+    pub custom_data_index_persistence: bool,
     #[serde(default, skip_serializing_if = "BTreeSet::is_empty")]
     pub workflow_hosts: BTreeSet<m::PrincipalId>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
@@ -196,4 +198,11 @@ impl Default for Limits {
 pub struct Protected {
     pub bookmarks: BTreeSet<String>,
     pub commits: BTreeSet<m::CommitId>,
+}
+
+fn index_persistence() -> bool {
+    true
+}
+fn index_enabled(value: &bool) -> bool {
+    *value
 }

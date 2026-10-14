@@ -32,11 +32,13 @@ pub async fn preview(access: Arc<dyn Access>, root: PathBuf, request: Request) -
             selections,
         } => {
             mutations::validate(
-                &repo,
-                workspace.workspace_name(),
-                &settings,
-                &config,
-                &wc,
+                MutationContext {
+                    repo: &repo,
+                    workspace: workspace.workspace_name(),
+                    settings: &settings,
+                    config: &config,
+                    wc: &wc,
+                },
                 &branch,
                 &message,
                 &selections,

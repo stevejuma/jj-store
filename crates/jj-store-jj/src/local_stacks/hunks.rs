@@ -104,7 +104,7 @@ async fn generate(
         return Ok(None);
     };
     let lines = |bytes: &[u8]| bytes.iter().filter(|b| **b == b'\n').count() + 1;
-    if lines(&old).checked_mul(lines(&new)).unwrap_or(usize::MAX)
+    if lines(&old).saturating_mul(lines(&new))
         > crate::local_browser::Limits::default().max_diff_cells
     {
         return Ok(None);

@@ -310,10 +310,10 @@ impl Supervisor {
                 tokio::time::sleep(Duration::from_secs(2)).await;
             }
         });
-        if let Ok(mut slot) = self.0.publication_worker.lock() {
-            if let Some(previous) = slot.replace(worker.abort_handle()) {
-                previous.abort();
-            }
+        if let Ok(mut slot) = self.0.publication_worker.lock()
+            && let Some(previous) = slot.replace(worker.abort_handle())
+        {
+            previous.abort();
         }
         worker
     }
@@ -369,14 +369,13 @@ impl Supervisor {
         command: &jj_store_service::agent_execution::conversations::Send,
     ) -> Result<()> {
         self.read(|state| {
-            if let Some(old) = state.conversations.get(&command.conversation_id) {
-                if old.origin.scope != command.origin.scope
+            if let Some(old) = state.conversations.get(&command.conversation_id)
+                && (old.origin.scope != command.origin.scope
                     || old.origin.home != command.origin.home
                     || old.origin.thread != command.origin.thread
-                    || old.origin.agent_target != command.origin.agent_target
-                {
-                    return Err(Error::Stale);
-                }
+                    || old.origin.agent_target != command.origin.agent_target)
+            {
+                return Err(Error::Stale);
             }
             Ok(())
         })

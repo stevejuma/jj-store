@@ -36,14 +36,14 @@ pub(super) async fn receive(
             Html("Invalid authorization callback"),
         );
     }
-    if let Ok(mut sender) = state.sender.lock() {
-        if let Some(sender) = sender.take() {
-            let _ = sender.send(fields);
-            return (
-                axum::http::StatusCode::OK,
-                Html("Authorization received. Return to JJ Store to see the result."),
-            );
-        }
+    if let Ok(mut sender) = state.sender.lock()
+        && let Some(sender) = sender.take()
+    {
+        let _ = sender.send(fields);
+        return (
+            axum::http::StatusCode::OK,
+            Html("Authorization received. Return to JJ Store to see the result."),
+        );
     }
     (
         axum::http::StatusCode::BAD_REQUEST,

@@ -83,7 +83,7 @@ pub enum ServerSettingsUpdate {
     Service(ServiceConfiguration),
     Protection(ProtectionConfiguration),
     Sync(Vec<SyncConfiguration>),
-    Workflow(crate::workflow_host::WorkflowConfiguration),
+    Workflow(Box<crate::workflow_host::WorkflowConfiguration>),
 }
 #[derive(Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(deny_unknown_fields)]

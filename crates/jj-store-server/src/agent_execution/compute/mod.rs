@@ -55,10 +55,10 @@ impl Supervisor {
             ("unsloth/Qwen3-0.6B-GGUF:Q4_K_M", "Qwen3 0.6B"),
             ("unsloth/Qwen3.5-4B-GGUF:Q4_K_M", "Qwen3.5 4B"),
         ];
-        if let Some(model) = &settings.model {
-            if !ids.iter().any(|(id, _)| *id == model) {
-                ids.push((model, model));
-            }
+        if let Some(model) = &settings.model
+            && !ids.iter().any(|(id, _)| *id == model)
+        {
+            ids.push((model, model));
         }
         for model in &installed {
             if !ids.iter().any(|(id, _)| *id == model) {
@@ -106,15 +106,15 @@ impl Supervisor {
         if command.version != 1 || self.0.stopping.load(std::sync::atomic::Ordering::Acquire) {
             return Err(Error::Invalid);
         }
-        if let dto::Action::Import { path } = &command.action {
-            if !Path::new(path).is_absolute() || !label(path, 4096) {
-                return Err(Error::Invalid);
-            }
+        if let dto::Action::Import { path } = &command.action
+            && (!Path::new(path).is_absolute() || !label(path, 4096))
+        {
+            return Err(Error::Invalid);
         }
-        if let dto::Action::Remove { model } = &command.action {
-            if !self.read(|s| Ok(s.compute_models.contains(model)))? {
-                return Err(Error::Invalid);
-            }
+        if let dto::Action::Remove { model } = &command.action
+            && !self.read(|s| Ok(s.compute_models.contains(model)))?
+        {
+            return Err(Error::Invalid);
         }
         let digest = journal::digest(&command)?;
         let _guard = self.0.mutation.lock().await;
@@ -211,20 +211,20 @@ impl Supervisor {
                 Ok(())
             })?;
             let mut runtime = self.0.compute.lock().await;
-            if let Some(previous) = runtime.operation {
-                if previous != command.request_id {
-                    let pending = self.read(|s| {
-                        Ok(s.intents.get(&previous).is_some_and(|i| {
-                            matches!(i.outcome.state.as_str(), "configuring" | "dispatching")
-                        }))
-                    })?;
-                    if pending {
-                        self.finish(
-                            previous,
-                            "outcome_unknown",
-                            Some("compute_stopped_no_replay"),
-                        )?;
-                    }
+            if let Some(previous) = runtime.operation
+                && previous != command.request_id
+            {
+                let pending = self.read(|s| {
+                    Ok(s.intents.get(&previous).is_some_and(|i| {
+                        matches!(i.outcome.state.as_str(), "configuring" | "dispatching")
+                    }))
+                })?;
+                if pending {
+                    self.finish(
+                        previous,
+                        "outcome_unknown",
+                        Some("compute_stopped_no_replay"),
+                    )?;
                 }
             }
             runtime.state = "stopping".into();

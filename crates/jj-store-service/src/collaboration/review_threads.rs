@@ -166,6 +166,8 @@ impl ReviewThreadPager {
                 review_root: domain.root.digest,
                 review_state_version: domain.version,
             },
+            // Review provider admission must audit the complete closure on
+            // every first request, including body-free activity cache hits.
             store: session
                 .coordinator
                 .review_store(domain.root)

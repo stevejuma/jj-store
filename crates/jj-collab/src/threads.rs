@@ -216,7 +216,7 @@ impl HumanMessageRevisionV1 {
 #[serde(tag = "type", rename_all = "snake_case", deny_unknown_fields)]
 pub enum ThreadLinkTargetV1 {
     CommentReply {
-        reply: CommentReplyLinkV1,
+        reply: Box<CommentReplyLinkV1>,
     },
     CommentBatch {
         request_id: jj_store_model::RequestId,

@@ -44,8 +44,8 @@ fn decode(bytes: &[u8]) -> Result<Mask> {
     match bytes.split_first() {
         Some((0, sparse)) if sparse.len() <= BLOCK / 8 && sparse.len().is_multiple_of(2) => {
             let mut prior = None;
-            for bytes in sparse.chunks_exact(2) {
-                let bit = u16::from_le_bytes(bytes.try_into().unwrap());
+            for bytes in sparse.as_chunks::<2>().0 {
+                let bit = u16::from_le_bytes(*bytes);
                 if bit as usize >= BLOCK {
                     return Err(Error::Corrupt);
                 }
@@ -57,8 +57,8 @@ fn decode(bytes: &[u8]) -> Result<Mask> {
             }
         }
         Some((1, dense)) if dense.len() == BLOCK / 8 => {
-            for (word, bytes) in mask.iter_mut().zip(dense.chunks_exact(8)) {
-                *word = u64::from_le_bytes(bytes.try_into().unwrap());
+            for (word, bytes) in mask.iter_mut().zip(dense.as_chunks::<8>().0) {
+                *word = u64::from_le_bytes(*bytes);
             }
         }
         _ => return Err(Error::Corrupt),
@@ -305,10 +305,12 @@ mod tests {
         let mut work = 0;
         let values = reader
             .search(
-                "needle",
-                Some("change:0000000000000099"),
-                false,
-                2,
+                Search {
+                    needle: "needle",
+                    anchor: Some("change:0000000000000099"),
+                    backward: false,
+                    limit: 2,
+                },
                 |_| Ok(true),
                 |n| {
                     work += n;
@@ -325,10 +327,12 @@ mod tests {
         assert_eq!(
             reader
                 .search(
-                    "needle",
-                    Some(&values[1]),
-                    true,
-                    2,
+                    Search {
+                        needle: "needle",
+                        anchor: Some(&values[1]),
+                        backward: true,
+                        limit: 2
+                    },
                     |_| Ok(true),
                     |_| Ok(()),
                     |_| Ok(())
@@ -338,7 +342,17 @@ mod tests {
         );
         assert_eq!(
             reader
-                .search("e", None, false, 2, |_| Ok(true), |_| Ok(()), |_| Ok(()))
+                .search(
+                    Search {
+                        needle: "e",
+                        anchor: None,
+                        backward: false,
+                        limit: 2
+                    },
+                    |_| Ok(true),
+                    |_| Ok(()),
+                    |_| Ok(())
+                )
                 .unwrap(),
             ["change:0000000000000000", "change:0000000000000001"]
         );
@@ -360,10 +374,12 @@ mod tests {
         assert_eq!(
             reader
                 .search(
-                    "needle",
-                    None,
-                    false,
-                    1,
+                    Search {
+                        needle: "needle",
+                        anchor: None,
+                        backward: false,
+                        limit: 1
+                    },
                     |_| Ok(false),
                     |_| Ok(()),
                     |_| Ok(())
@@ -374,10 +390,12 @@ mod tests {
         assert_eq!(
             reader
                 .search(
-                    "needle",
-                    None,
-                    false,
-                    1,
+                    Search {
+                        needle: "needle",
+                        anchor: None,
+                        backward: false,
+                        limit: 1
+                    },
                     |_| Ok(true),
                     |_| Err(Error::Canceled),
                     |_| Ok(())
@@ -388,10 +406,12 @@ mod tests {
         assert_eq!(
             reader
                 .search(
-                    "needle",
-                    None,
-                    false,
-                    1,
+                    Search {
+                        needle: "needle",
+                        anchor: None,
+                        backward: false,
+                        limit: 1
+                    },
                     |_| Ok(true),
                     |_| Ok(()),
                     |_| Err(Error::Limit)
@@ -453,6 +473,12 @@ pub(crate) struct Reader {
     db: ReadOnlyDatabase,
     rows: u32,
     _memory: Lease,
+}
+pub(crate) struct Search<'a> {
+    pub needle: &'a str,
+    pub anchor: Option<&'a str>,
+    pub backward: bool,
+    pub limit: usize,
 }
 impl Reader {
     pub(crate) fn load(
@@ -560,14 +586,17 @@ impl Reader {
     /// Seek compressed candidate blocks in lexical rank order; no all-match set.
     pub(crate) fn search(
         &self,
-        needle: &str,
-        anchor: Option<&str>,
-        backward: bool,
-        limit: usize,
+        query: Search<'_>,
         mut matches: impl FnMut(&str) -> Result<bool>,
         mut work: impl FnMut(usize) -> Result<()>,
         mut read: impl FnMut(usize) -> Result<()>,
     ) -> Result<Vec<String>> {
+        let Search {
+            needle,
+            anchor,
+            backward,
+            limit,
+        } = query;
         if needle.is_empty() || limit == 0 {
             return Err(Error::Invalid);
         }

@@ -103,11 +103,11 @@ pub(super) async fn discover(
     let mut paths = vec![];
     let mut cache = BTreeMap::new();
     let mut work = 0;
-    for index in 0..heads.len() {
+    for (index, head) in heads.iter_mut().enumerate() {
         let mut path = vec![index];
-        let mut current = resolve(repo, &heads[index].names[0])?;
+        let mut current = resolve(repo, &head.names[0])?;
         if current.id() == target.id() {
-            heads[index].base_commit = Some(target.id().hex());
+            head.base_commit = Some(target.id().hex());
         } else {
             loop {
                 work += 1;
@@ -126,13 +126,13 @@ pub(super) async fn discover(
                     .map_err(jj)?
                 {
                     if path.len() == 1 {
-                        heads[index].base_commit = Some(parent.hex());
+                        head.base_commit = Some(parent.hex());
                     }
                     break;
                 }
                 if let Some(&lower) = positions.get(&parent.hex()) {
                     if path.len() == 1 {
-                        heads[index].base_commit = Some(parent.hex());
+                        head.base_commit = Some(parent.hex());
                     }
                     path.push(lower);
                 }

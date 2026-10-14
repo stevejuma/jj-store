@@ -12,11 +12,11 @@ pub(in crate::agent_execution) struct Entry {
 }
 enum Reader {
     Local {
-        executor: local::Executor,
+        executor: Box<local::Executor>,
         access: Arc<Access>,
     },
     Native {
-        reader: native::ContentReader,
+        reader: Box<native::ContentReader>,
         pin: Arc<CommittedRead>,
     },
 }
@@ -114,7 +114,7 @@ impl Supervisor {
                     .map_err(error)?
                     .map_err(error)?;
             Reader::Local {
-                executor: local::Executor::new(4).map_err(error)?,
+                executor: Box::new(local::Executor::new(4).map_err(error)?),
                 access: Arc::new(Access {
                     admission: manager.read_admission(repository),
                     manager,
@@ -139,7 +139,7 @@ impl Supervisor {
                 ..Default::default()
             };
             Reader::Native {
-                reader: native::ContentReader::new(limits, 4).map_err(error)?,
+                reader: Box::new(native::ContentReader::new(limits, 4).map_err(error)?),
                 pin: Arc::new(pin),
             }
         };

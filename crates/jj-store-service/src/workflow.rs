@@ -1,6 +1,7 @@
 //! Workflow home authority shared by HTTP, RPC and CLI consumers.
 mod commands;
 mod matching;
+pub(crate) mod projection;
 mod reads;
 mod source;
 pub use commands::*;

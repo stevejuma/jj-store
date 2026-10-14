@@ -57,6 +57,13 @@ pub enum Error {
     Jj(String),
 }
 type Result<T> = std::result::Result<T, Error>;
+struct MutationContext<'a> {
+    repo: &'a ReadonlyRepo,
+    workspace: &'a jj_lib::ref_name::WorkspaceName,
+    settings: &'a jj_lib::settings::UserSettings,
+    config: &'a Config,
+    wc: &'a Commit,
+}
 fn jj(error: impl std::fmt::Display) -> Error {
     Error::Jj(error.to_string())
 }
@@ -525,11 +532,13 @@ pub async fn execute(access: Arc<dyn Access>, root: PathBuf, request: Request) -
             } => {
                 conflicts::execute(
                     tx.repo_mut(),
-                    &repo,
-                    &name,
-                    &settings,
-                    &config,
-                    &wc,
+                    MutationContext {
+                        repo: &repo,
+                        workspace: &name,
+                        settings: &settings,
+                        config: &config,
+                        wc: &wc,
+                    },
                     path,
                     content,
                 )

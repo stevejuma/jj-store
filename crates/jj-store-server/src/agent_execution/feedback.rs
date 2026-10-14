@@ -74,12 +74,11 @@ impl Supervisor {
 fn recorded_rows(saved: &SavedSession) -> Result<Vec<(String, AgentSessionId, FeedbackSubject)>> {
     Ok(recorded_targets(saved)?.0)
 }
-fn recorded_targets(
-    saved: &SavedSession,
-) -> Result<(
+type RecordedTargets = (
     Vec<(String, AgentSessionId, FeedbackSubject)>,
     std::collections::BTreeSet<AgentSessionId>,
-)> {
+);
+fn recorded_targets(saved: &SavedSession) -> Result<RecordedTargets> {
     let mut rows = BTreeMap::new();
     let mut sessions = std::collections::BTreeSet::new();
     // Use the capture normalizer, never duplicate its canonical identity algorithm.

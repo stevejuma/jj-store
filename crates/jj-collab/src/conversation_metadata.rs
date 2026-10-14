@@ -13,10 +13,10 @@ pub enum ConversationMetadataTargetV1 {
 }
 impl ConversationMetadataTargetV1 {
     pub fn key(&self) -> Result<CollabCatalogKey> {
-        if let Self::Conversation { id } = self {
-            if !label(id, 128) {
-                return Err(Error::Invalid("conversation identity"));
-            }
+        if let Self::Conversation { id } = self
+            && !label(id, 128)
+        {
+            return Err(Error::Invalid("conversation identity"));
         }
         CollabCatalogKey::derive("conversation_metadata", &serde_json::to_vec(self)?)
     }

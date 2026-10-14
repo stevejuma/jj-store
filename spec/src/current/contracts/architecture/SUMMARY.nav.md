@@ -21,3 +21,5 @@
 - [Interactive agent execution](20-interactive-agent-execution.md)
 - [Local compute resources](21-local-compute-resources.md)
 - [Lightweight workflow host (M28)](21-workflow-host.md)
+
+- [Custom data index ownership](22-custom-data-indexes.md)

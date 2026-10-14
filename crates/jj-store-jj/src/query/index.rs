@@ -239,9 +239,11 @@ impl IndexStore for GuardedIndexStore {
                 store,
                 self.access.as_ref(),
                 &self.budget,
-                &self.generation,
-                &self.path,
-                selected,
+                projection::Location {
+                    generation: &self.generation,
+                    path: &self.path,
+                    selected,
+                },
             )
             .await
             .map_err(|e| IndexStoreError::Read(Box::new(self.budget.fail(e))))?;
@@ -368,16 +370,25 @@ impl IndexStore for ResidentIndexStore {
         )))
     }
 }
+pub(super) struct ResidentContext {
+    pub root: PathBuf,
+    pub cache_policy: cache::Policy,
+    pub residents: Arc<cache::resident::Residents>,
+    pub access: Arc<dyn ReadAccess>,
+}
 pub(super) fn resident_loader(
     stores: &NativeStores,
     settings: &UserSettings,
     saved: Arc<cache::resident::Saved>,
     budget: Arc<Budget>,
-    root: PathBuf,
-    cache_policy: cache::Policy,
-    residents: Arc<cache::resident::Residents>,
-    access: Arc<dyn ReadAccess>,
+    context: ResidentContext,
 ) -> Result<RepoLoader> {
+    let ResidentContext {
+        root,
+        cache_policy,
+        residents,
+        access,
+    } = context;
     let secondary = Arc::new(secondary::Secondary {
         root,
         policy: cache_policy,

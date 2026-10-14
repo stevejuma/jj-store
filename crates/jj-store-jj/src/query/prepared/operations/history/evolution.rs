@@ -225,13 +225,12 @@ async fn hydrate(
         }
         Some(operation)
     } else {
-        if let Some(id) = row.legacy {
-            if read_operation(repo.operation(), graph, id, current)
+        if let Some(id) = row.legacy
+            && read_operation(repo.operation(), graph, id, current)
                 .await?
                 .stores_commit_predecessors()
-            {
-                return Err(Error::Corrupt);
-            }
+        {
+            return Err(Error::Corrupt);
         }
         None
     };
@@ -243,16 +242,24 @@ async fn hydrate(
     Ok(CommitEvolutionEntry { commit, operation })
 }
 
+pub(crate) struct Page {
+    pub start: CommitId,
+    pub after: Option<CommitId>,
+    pub limit: usize,
+}
 pub(crate) async fn read<T>(
     repo: &ReadonlyRepo,
     graph: Arc<Graph>,
-    start: CommitId,
-    after: Option<CommitId>,
-    limit: usize,
+    page: Page,
     mut work: impl FnMut(usize) -> Result<()>,
     map_backend: impl Fn(backend::BackendError) -> Error + Copy,
     mut emit: impl AsyncFnMut(CommitEvolutionEntry) -> Result<T>,
 ) -> Result<(Vec<T>, Option<CommitId>)> {
+    let Page {
+        start,
+        after,
+        limit,
+    } = page;
     if limit == 0 {
         return Err(Error::Limit);
     }

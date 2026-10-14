@@ -63,6 +63,9 @@ pub struct WorkflowStoreSnapshot {
     pub(crate) records: BTreeSet<RecordRef>,
 }
 impl WorkflowStoreSnapshot {
+    pub fn object_count(&self) -> usize {
+        self.records.len()
+    }
     pub fn reference(&self) -> RecordRef {
         self.reference
     }
@@ -112,6 +115,17 @@ impl Coordinator {
         Ok(result)
     }
     pub async fn workflow_store(&self, reference: RecordRef) -> Result<WorkflowStoreSnapshot> {
+        self.workflow_store_bounded(reference, usize::MAX, usize::MAX)
+            .await
+    }
+    /// Read admission bounds source hydration before it can accumulate a large
+    /// state. Publication retains its existing validation and format contracts.
+    pub async fn workflow_store_bounded(
+        &self,
+        reference: RecordRef,
+        max_objects: usize,
+        max_bytes: usize,
+    ) -> Result<WorkflowStoreSnapshot> {
         let root: WorkflowRoot = self
             .records
             .get(reference, RecordKind::WorkflowRoot)
@@ -119,14 +133,27 @@ impl Coordinator {
         root.validate()?;
         let mut state = w::State::default();
         let mut records = BTreeSet::from([reference]);
+        let mut bytes = 0usize;
         for (index, catalog) in root.catalogs.iter().enumerate() {
             let closure = self.catalog.closure(*catalog, w::MAX_ENTITIES).await?;
             records.extend(closure.pages);
+            if records.len() > max_objects {
+                return Err(Error::Limit("workflow source objects"));
+            }
             for (key, reference) in closure.entries {
+                if records.len() >= max_objects {
+                    return Err(Error::Limit("workflow source objects"));
+                }
                 let object: Object = self
                     .records
                     .get(reference, RecordKind::WorkflowObject)
                     .await?;
+                bytes = bytes
+                    .checked_add(serde_json::to_vec(&object)?.len())
+                    .ok_or(Error::Limit("workflow source bytes"))?;
+                if bytes > max_bytes {
+                    return Err(Error::Limit("workflow source bytes"));
+                }
                 if reference.attempt.is_some() || object.key() != key {
                     return Err(Error::Corrupt("workflow object key"));
                 }

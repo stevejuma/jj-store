@@ -48,8 +48,10 @@ impl Supervisor {
                     &selected,
                     &facts,
                     &source,
-                    *range,
-                    base.as_deref(),
+                    comparison::Selection {
+                        range: *range,
+                        base: base.as_deref(),
+                    },
                 )
                 .await?,
             ),
@@ -114,7 +116,7 @@ impl Supervisor {
                     request.repository,
                     c,
                     entries,
-                    &after_source,
+                    after_source,
                     before_source.as_ref().ok_or(Error::Unavailable)?,
                 )
                 .await
@@ -158,10 +160,13 @@ impl Supervisor {
                     request.repository,
                     path,
                     comparison.as_ref(),
-                    &after_source,
-                    before_source.as_ref(),
-                    entry.status.as_deref() != Some("deleted"),
-                    comparison.is_some() && entry.status.as_deref() != Some("added"),
+                    content::FileSources {
+                        source: after_source,
+                        before_source: before_source.as_ref(),
+                        after_exists: entry.status.as_deref() != Some("deleted"),
+                        before_exists: comparison.is_some()
+                            && entry.status.as_deref() != Some("added"),
+                    },
                 )
                 .await?,
             )

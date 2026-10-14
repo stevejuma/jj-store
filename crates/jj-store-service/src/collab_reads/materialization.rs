@@ -1,7 +1,7 @@
 //! Process-local validated data only. Authorization and snapshots stay request-bound.
 use super::*;
 use crate::{auth::Clock, collab_pages::Limits};
-use std::sync::Mutex;
+use std::sync::{Mutex, Weak};
 use tokio::sync::OnceCell;
 use wal::records::RecordRef;
 
@@ -33,7 +33,7 @@ impl ReadScope {
         }
     }
 }
-pub(super) struct ThreadData {
+pub(crate) struct ThreadData {
     pub state: ThreadStateV1,
     pub graph: CollabGraphV1,
     pub directory: BTreeMap<ThreadId, ThreadDirectoryMetadata>,
@@ -49,7 +49,7 @@ impl ThreadData {
         }
     }
 }
-pub(super) struct ReactionData {
+pub(crate) struct ReactionData {
     pub state: ReactionStateV1,
     pub graph: CollabGraphV1,
     pub targets: BTreeMap<CollabCatalogKey, Vec<CollabObjectRef>>,
@@ -65,12 +65,13 @@ impl ReactionData {
         }
     }
 }
-pub(super) enum Data {
+pub(crate) enum Data {
     Thread(Arc<ThreadData>),
     Reaction(Arc<ReactionData>),
     Agent(Arc<wal::publication::AgentStoreSelection>),
     Review(Arc<wal::publication::ReviewStoreSelection>),
     Work(Arc<WorkData>),
+    Workflow(Arc<crate::workflow::projection::Projection>),
 }
 pub(crate) struct WorkData {
     pub state: wal::publication::WorkStateV1,
@@ -83,9 +84,56 @@ impl Data {
         match self {
             Self::Thread(d) => (d.graph.objects.len(), d.bytes),
             Self::Reaction(d) => (d.graph.objects.len(), d.bytes),
-            Self::Agent(d) => (d.object_count(), 0),
-            Self::Review(d) => (d.object_count(), 0),
+            Self::Agent(d) => (d.object_count(), d.object_count().saturating_mul(64)),
+            Self::Review(d) => (d.object_count(), d.object_count().saturating_mul(64)),
             Self::Work(d) => (d.objects, d.bytes),
+            Self::Workflow(d) => (d.objects, d.bytes),
+        }
+    }
+}
+enum Retained {
+    Thread(Weak<ThreadData>),
+    Reaction(Weak<ReactionData>),
+    Work(Weak<WorkData>),
+    Workflow(Weak<crate::workflow::projection::Projection>),
+    Agent(Weak<wal::publication::AgentStoreSelection>),
+    Review(Weak<wal::publication::ReviewStoreSelection>),
+}
+impl Retained {
+    fn of(data: &Data) -> ((u8, usize), Self) {
+        match data {
+            Data::Thread(d) => (
+                (0, Arc::as_ptr(d) as usize),
+                Self::Thread(Arc::downgrade(d)),
+            ),
+            Data::Reaction(d) => (
+                (1, Arc::as_ptr(d) as usize),
+                Self::Reaction(Arc::downgrade(d)),
+            ),
+            Data::Work(d) => ((2, Arc::as_ptr(d) as usize), Self::Work(Arc::downgrade(d))),
+            Data::Workflow(d) => (
+                (3, Arc::as_ptr(d) as usize),
+                Self::Workflow(Arc::downgrade(d)),
+            ),
+            Data::Agent(d) => ((4, Arc::as_ptr(d) as usize), Self::Agent(Arc::downgrade(d))),
+            Data::Review(d) => (
+                (5, Arc::as_ptr(d) as usize),
+                Self::Review(Arc::downgrade(d)),
+            ),
+        }
+    }
+    fn size(&self) -> Option<(usize, usize)> {
+        match self {
+            Self::Thread(d) => d.upgrade().map(|d| (d.graph.objects.len(), d.bytes)),
+            Self::Reaction(d) => d.upgrade().map(|d| (d.graph.objects.len(), d.bytes)),
+            Self::Work(d) => d.upgrade().map(|d| (d.objects, d.bytes)),
+            Self::Workflow(d) => d.upgrade().map(|d| (d.objects, d.bytes)),
+            Self::Agent(d) => d
+                .upgrade()
+                .map(|d| (d.object_count(), d.object_count().saturating_mul(64))),
+            Self::Review(d) => d
+                .upgrade()
+                .map(|d| (d.object_count(), d.object_count().saturating_mul(64))),
         }
     }
 }
@@ -95,7 +143,7 @@ fn encoded_bytes(graph: &CollabGraphV1) -> Result<usize> {
             .ok_or(Error::Limit)
     })
 }
-pub(super) async fn load(session: &NativeSession, root: RecordRef) -> Result<Arc<Data>> {
+pub(crate) async fn load(session: &NativeSession, root: RecordRef) -> Result<Arc<Data>> {
     use wal::records::RecordKind;
     let data = match root.kind {
         RecordKind::ThreadRoot => {
@@ -145,8 +193,12 @@ pub(super) async fn load(session: &NativeSession, root: RecordRef) -> Result<Arc
             let bytes = serde_json::to_vec(&(&state.projects, &state.tasks, &state.comments))
                 .map_err(|_| Error::Corrupt)?
                 .len();
-            let projection =
+            let mut projection =
                 crate::work::projection::Projection::new(state).map_err(|_| Error::Corrupt)?;
+            projection.accelerate(state, session, root).await;
+            if bytes.saturating_add(projection.bytes) > 64 * 1024 * 1024 {
+                projection.discard_indexes();
+            }
             Data::Work(Arc::new(WorkData {
                 state: state.clone(),
                 objects: store.object_count(),
@@ -154,6 +206,16 @@ pub(super) async fn load(session: &NativeSession, root: RecordRef) -> Result<Arc
                 projection,
             }))
         }
+        RecordKind::WorkflowRoot => Data::Workflow(Arc::new(
+            Box::pin(crate::workflow::projection::Projection::load(session, root))
+                .await
+                .map_err(|e| match e {
+                    crate::workflow::Error::Denied => Error::Denied,
+                    crate::workflow::Error::Corrupt => Error::Corrupt,
+                    crate::workflow::Error::Limit => Error::Limit,
+                    _ => Error::Unavailable,
+                })?,
+        )),
         _ => return Err(Error::Corrupt),
     };
     if data.size().0 > session.limits.inventory_nodes {
@@ -163,6 +225,7 @@ pub(super) async fn load(session: &NativeSession, root: RecordRef) -> Result<Arc
 }
 #[derive(Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 struct Key {
+    source: u64,
     repository: m::RepositoryId,
     epoch: m::EpochId,
     root: RecordRef,
@@ -178,6 +241,9 @@ pub(crate) struct Cache {
     limits: Limits,
     clock: Arc<dyn Clock>,
     entries: Mutex<BTreeMap<Key, Entry>>,
+    retained: Mutex<BTreeMap<(u8, usize), Retained>>,
+    construction: tokio::sync::Semaphore,
+    sources: crate::read_indexes::Sources,
 }
 impl Cache {
     pub fn new(limits: Limits, clock: Arc<dyn Clock>) -> Self {
@@ -185,6 +251,9 @@ impl Cache {
             limits,
             clock,
             entries: Mutex::default(),
+            retained: Mutex::default(),
+            construction: tokio::sync::Semaphore::new(2),
+            sources: Default::default(),
         }
     }
     pub(crate) async fn work(
@@ -226,7 +295,7 @@ impl Cache {
         }
         Ok(data)
     }
-    pub(super) async fn get(
+    pub(crate) async fn get(
         &self,
         session: &NativeSession,
         epoch: m::EpochId,
@@ -234,6 +303,10 @@ impl Cache {
     ) -> Result<Arc<Data>> {
         let now = self.clock.unix_seconds().map_err(|_| Error::Unavailable)?;
         let key = Key {
+            source: self
+                .sources
+                .identify(&session.object_store)
+                .map_err(|_| Error::Unavailable)?,
             repository: session.repository,
             epoch,
             root,
@@ -276,7 +349,16 @@ impl Cache {
         };
         // Cancellation leaves an empty bounded cell; a subsequent caller retries
         // initialization. Errors are never published as validated data.
-        let value = cell.get_or_try_init(|| load(session, root)).await;
+        let value = cell
+            .get_or_try_init(|| async {
+                let _permit = self
+                    .construction
+                    .acquire()
+                    .await
+                    .map_err(|_| Error::Unavailable)?;
+                Box::pin(load(session, root)).await
+            })
+            .await;
         let mut entries = self.entries.lock().map_err(|_| Error::Unavailable)?;
         match value {
             Err(error) => {
@@ -290,6 +372,9 @@ impl Cache {
             }
             Ok(value) => {
                 let (objects, bytes) = value.size();
+                if objects > session.limits.inventory_nodes {
+                    return Err(Error::Limit);
+                }
                 if objects > self.limits.objects || bytes > self.limits.encoded_collab_bytes {
                     if entries
                         .get(&key)
@@ -317,6 +402,35 @@ impl Cache {
                         .map(|(k, _)| *k)
                         .ok_or(Error::Limit)?;
                     entries.remove(&victim);
+                }
+                // Weak registrations follow the actual inner data owners, including
+                // cursor pins that survive cache eviction or expiry.
+                let mut retained = self.retained.lock().map_err(|_| Error::Unavailable)?;
+                retained.retain(|_, data| data.size().is_some());
+                let (identity, weak) = Retained::of(value);
+                retained.insert(identity, weak);
+                loop {
+                    retained.retain(|_, data| data.size().is_some());
+                    let (objects, bytes) = retained
+                        .values()
+                        .filter_map(Retained::size)
+                        .fold((0usize, 0usize), |(a, b), (c, d)| {
+                            (a.saturating_add(c), b.saturating_add(d))
+                        });
+                    if objects <= self.limits.objects && bytes <= self.limits.encoded_collab_bytes {
+                        break;
+                    }
+                    let victim = entries
+                        .iter()
+                        .filter(|(_, e)| e.cell.get().is_some())
+                        .min_by_key(|(_, e)| e.used)
+                        .map(|(k, _)| *k);
+                    match victim {
+                        Some(victim) => {
+                            entries.remove(&victim);
+                        }
+                        None => return Err(Error::Limit),
+                    }
                 }
                 Ok(value.clone())
             }

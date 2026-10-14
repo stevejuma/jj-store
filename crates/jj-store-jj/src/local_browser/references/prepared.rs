@@ -251,10 +251,12 @@ fn filter_window(context: &Context, view: &dto::View, request: &Request) -> Resu
     };
     let search = |anchor: Option<&str>, backward, limit| {
         filter.search(
-            &needle,
-            anchor,
-            backward,
-            limit,
+            crate::query::prepared::filters::Search {
+                needle: &needle,
+                anchor,
+                backward,
+                limit,
+            },
             matches,
             |amount| context.budget.work(amount),
             |bytes| context.budget.read_bytes(bytes),

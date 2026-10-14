@@ -110,7 +110,7 @@ impl Cursors {
         let mut mac =
             Signature::new_from_slice(self.key.as_ref()).map_err(|_| Error::Unavailable)?;
         mac.update(DOMAIN);
-        mac.update(token[..token.rfind('.').ok_or(Error::InvalidCursor)?].as_bytes());
+        mac.update(&token.as_bytes()[..token.rfind('.').ok_or(Error::InvalidCursor)?]);
         mac.verify_slice(&tag).map_err(|_| Error::InvalidCursor)?;
         let body = URL_SAFE_NO_PAD
             .decode(body)

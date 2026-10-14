@@ -59,7 +59,7 @@ pub struct CollabObjectRef {
 )]
 pub enum CollabObjectV1 {
     IndexPage(CollabIndexPageV1),
-    ThreadVersion(ThreadVersionV1),
+    ThreadVersion(Box<ThreadVersionV1>),
     ConversationMetadata(ConversationMetadataV1),
     ThreadEvent(ThreadEventV1),
     HumanMessageRevision(HumanMessageRevisionV1),

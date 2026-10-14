@@ -154,7 +154,7 @@ impl Resolver<'_> {
         if thread.status == ThreadStatusV1::Tombstoned {
             return Err(Error::TargetUnavailable);
         }
-        Ok(thread)
+        Ok(*thread)
     }
     async fn session(&mut self, id: AgentSessionId) -> Result<jj_agent::AgentSessionSnapshotV1> {
         let reference = self

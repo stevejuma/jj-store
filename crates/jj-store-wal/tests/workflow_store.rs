@@ -15,6 +15,53 @@ mod fault;
 const REPOSITORY: RepositoryId = RepositoryId::new([1; 16]);
 const ACTOR: PrincipalId = PrincipalId::new([3; 16]);
 
+#[tokio::test]
+async fn bounded_workflow_source_admission_preserves_native_state_and_never_publishes() {
+    let store = Arc::new(MemoryStore::default());
+    let c = coordinator(store);
+    c.initialize(EpochId::new([2; 16]), Vec::new())
+        .await
+        .unwrap();
+    apply(
+        &c,
+        90,
+        WorkCommandV1::CreateProject {
+            id: ProjectId::new([90; 16]),
+            title: "Bounded reads".into(),
+            body: String::new(),
+        },
+    )
+    .await;
+    c.publish_workflow_command(&workflow_request(
+        ACTOR,
+        91,
+        w::Command::Put {
+            workflow: w::WorkflowId::new([91; 16]),
+            expected: None,
+            definition: definition(),
+        },
+    ))
+    .await
+    .unwrap();
+    let before = c.read().await.unwrap();
+    let root = before.manifest().workflow_root.unwrap();
+    let original = c.workflow_store(root).await.unwrap();
+    assert!(matches!(
+        c.workflow_store_bounded(root, 1, usize::MAX).await,
+        Err(wal::Error::Limit(_))
+    ));
+    assert!(matches!(
+        c.workflow_store_bounded(root, usize::MAX, 0).await,
+        Err(wal::Error::Limit(_))
+    ));
+    let bounded = c
+        .workflow_store_bounded(root, original.object_count(), 1024 * 1024)
+        .await
+        .unwrap();
+    assert_eq!(bounded.state(), original.state());
+    assert_eq!(c.read().await.unwrap().digest(), before.digest());
+}
+
 struct Source(SourceScope);
 #[async_trait::async_trait]
 impl DependencySource for Source {
@@ -179,6 +226,7 @@ fn definition() -> w::Definition {
         enabled: true,
         repository: REPOSITORY,
         trigger: w::Trigger::CodePublished,
+        conditions: Default::default(),
         labels: BTreeSet::new(),
         actions: vec![w::Action {
             id: "build".into(),

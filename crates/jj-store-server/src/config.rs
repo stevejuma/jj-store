@@ -331,6 +331,15 @@ impl Config {
         let mut runtime = host.runtime_policy().current();
         runtime.concurrent = self.limits.concurrent_requests;
         host.runtime_policy().replace(runtime);
+        let host = if self.custom_data_index_persistence {
+            host.with_read_indexes(Arc::new(
+                jj_store_service::read_indexes::Indexes::persistent(
+                    self.state_dir.join("custom-data-index"),
+                ),
+            ))
+        } else {
+            host
+        };
         Ok(host)
     }
 }

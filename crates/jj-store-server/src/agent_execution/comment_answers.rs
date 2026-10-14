@@ -108,7 +108,9 @@ impl Supervisor {
                                     thread_id: thread,
                                     expected_thread,
                                     link_id: ThreadLinkId::new(publication::identity(&key)),
-                                    target: ThreadLinkTargetV1::CommentReply { reply },
+                                    target: ThreadLinkTargetV1::CommentReply {
+                                        reply: Box::new(reply),
+                                    },
                                     observed_primary: None,
                                 },
                             },

@@ -12,8 +12,8 @@
       "docs/site/concepts/snapshots.md"
     ],
     "review": {
-      "reason": "Reviewed format-6 WorkflowStore catalogs, immutable collaboration source references, no-copy source content and durable evaluation/report receipt recovery; updated owning workflow chapters.",
-      "fingerprint": "1257aef820b2ccb6694e0112f19542efd87a2127c5bccb503ba88d4adf694d8f"
+      "reason": "Reviewed bounded WorkflowStore hydration and equivalent metadata source guards; authoritative formats, CAS, recovery and durable receipts remain unchanged.",
+      "fingerprint": "a7efac6729bd16c4970627167da4928abd4fa7ed21b15fde7ec77342ff7125bc"
     }
   },
   {
@@ -31,8 +31,8 @@
       "docs/site/concepts/collaboration.md"
     ],
     "review": {
-      "reason": "Reviewed revision-pinned GitHub YAML filtering, additive executor/skipped/log variants and unchanged native source-event identities; documented host and storage ownership.",
-      "fingerprint": "93ec9f99cb68c710b995dce1567f0d7ee765bfbaa570bf92286932eeb204dedf"
+      "reason": "Reviewed enum indirection and equivalent validation guards; canonical native object bytes, identities and public serialized fields remain unchanged.",
+      "fingerprint": "597d91f4c819188f6432089c30654ea7c8a12531ce1f3de123b8a1b72fa58707"
     }
   },
   {
@@ -53,8 +53,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed retained query/live per-object limits separately from aggregate index preparation budgets; current jobs capture both and preserve native size ceilings.",
-      "fingerprint": "fce96ee916a358d69ed1dae0449c9431a1705d1160fb8c09c81cc3fe97aa94f0"
+      "reason": "Reviewed typed query windows, retained source context and equivalent iteration/decoding; native identities, ordering, read budgets and physical publication remain unchanged.",
+      "fingerprint": "efee3a5392073216010e0720e73db797fb1dab248bc5d766f5bb90f4e45b580e"
     }
   },
   {
@@ -66,8 +66,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed optional original-event and bounded selected/latest step reports, unchanged manifest/receipt authority and operator-owned Forgejo capability validation.",
-      "fingerprint": "16aa28b35301c4f715818504a069202abf8f3fc9fbc2779260ac3502db0edaa4"
+      "reason": "Reviewed shared custom source projections and enum indirection; admission, caller limits, read pins and public response contracts remain intact.",
+      "fingerprint": "91f50c38e57913f5f73161d06cefca993e5017f7bea5f6ed778280185248c3af"
     }
   },
   {
@@ -97,8 +97,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed version-2 managed runner validation, optional private path overrides and saved/effective reload separation; legacy host settings and explicit admission remain supported.",
-      "fingerprint": "fed5cba0b09b1933adc93b61d88df5d3a40f3fb4ee1643d4218befabb00f0b79"
+      "reason": "Reviewed bounded persistent custom-data index configuration and transparent Rust lint cleanup; removed duplicate test-only inspection context. Full qualification paused at the user's request.",
+      "fingerprint": "d73b78875703a4741c357dd987f1c8e124ce887eee1f5c787750a3eafb82a0ff"
     }
   },
   {
@@ -123,8 +123,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed generated owned workflow settings and runtime status types, reload domain and LocalTrusted administrator enforcement.",
-      "fingerprint": "96a988862230df037851e7377c62a496f90c2aecc161f821d8944fc2c6de265e"
+      "reason": "Reviewed unchanged event authorization and exact API inventory; corrected stale test counts to the existing checked-in 200 paths, retaining all methods/security/media/task assertions.",
+      "fingerprint": "513360ad7ce179b0439bce88afeb1d85adaff729c963c93765a5be8b93647728"
     }
   },
   {
@@ -178,6 +178,22 @@
     "review": {
       "reason": "Documented direct ChatGPT subscription transport, independent metadata configuration and separate live qualification.",
       "fingerprint": "63d260c5e042c0df6f6d2da0242aaf6510b44b285de645888e4cfe99f9c78530"
+    }
+  },
+  {
+    "id": "custom-data-indexes",
+    "sources": [
+      "crates/jj-store-read-index/src",
+      "crates/jj-store-read-index/Cargo.toml"
+    ],
+    "pages": [
+      "docs/site/reference/configuration.md",
+      "docs/site/technical/reads.md",
+      "docs/site/technical/architecture.md"
+    ],
+    "review": {
+      "reason": "Checked exact-root source fingerprints, posting invariants, bounded redb retention, rebuild fallback and native authority separation.",
+      "fingerprint": "6d26c1cb43985bb0fa9ec4c6b0fa017f30b0a43bfec6933ca5680b7ae59d5574"
     }
   }
 ]

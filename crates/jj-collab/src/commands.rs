@@ -404,7 +404,7 @@ impl ThreadStateV1 {
         let mut link = None;
         let mut reassigned_from = None;
         let prior = old.and_then(|r| match graph.get(r).ok()? {
-            CollabObjectV1::ThreadVersion(v) => Some(v),
+            CollabObjectV1::ThreadVersion(v) => Some(v.as_ref()),
             _ => None,
         });
         let purpose = match command {
@@ -775,7 +775,7 @@ impl ThreadStateV1 {
             prior_event,
             event_kind,
         )?;
-        let version = graph.stage(CollabObjectV1::ThreadVersion(ThreadVersionV1 {
+        let version = graph.stage(CollabObjectV1::ThreadVersion(Box::new(ThreadVersionV1 {
             schema_version: 1,
             thread_id,
             title,
@@ -789,7 +789,7 @@ impl ThreadStateV1 {
             comment_source,
             purpose,
             codebase,
-        }))?;
+        })))?;
         root.threads = graph.catalog_update(
             root.threads,
             BTreeMap::from([(entity_key("thread", thread_id.as_bytes())?, version)]),

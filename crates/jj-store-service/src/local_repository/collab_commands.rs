@@ -46,17 +46,17 @@ impl LocalRepository {
             let reviews = self.review_store_at(pin.as_ref(), repository).await?;
             let (domain, bytes, retained, result) = match &request.command {
                 LocalCollabCommand::Thread { intent: command } => {
-                    if let ThreadCommandV1::SetMetadata { value, .. } = command {
-                        if !value.source_refs().is_empty() {
-                            for source in value.source_refs() {
-                                let AgentObjectV1::SessionSnapshot(snapshot) =
-                                    agents.read_object(source.snapshot).await?
-                                else {
-                                    return Err(LocalError::NotFound);
-                                };
-                                if snapshot.session_id != source.session {
-                                    return Err(LocalError::Corrupt);
-                                }
+                    if let ThreadCommandV1::SetMetadata { value, .. } = command
+                        && !value.source_refs().is_empty()
+                    {
+                        for source in value.source_refs() {
+                            let AgentObjectV1::SessionSnapshot(snapshot) =
+                                agents.read_object(source.snapshot).await?
+                            else {
+                                return Err(LocalError::NotFound);
+                            };
+                            if snapshot.session_id != source.session {
+                                return Err(LocalError::Corrupt);
                             }
                         }
                     }

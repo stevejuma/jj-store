@@ -79,3 +79,20 @@ After a signal, the client obtains an authorized selected state. Reconnection
 cannot safely infer the contents of missed events, so it triggers a bounded
 refresh. Session-only notices report operational conditions and clear on actual
 recovery, rather than treating a retry as success.
+
+## Custom data indexes
+
+Native workflow, task and application content reads use disposable ordering,
+relationship and substring indexes keyed by the exact committed domain root.
+Workflow first pages share audited state across sessions; subsequent pages
+hydrate only the requested window. Task filters intersect project, repository,
+parent and state postings. Text queries use Unicode lowercase trigrams with
+exact substring verification; short queries retain bounded scans. Existing
+AgentStore and ReviewStore radix/relation catalogs remain the direct ID indexes.
+Thread/reaction source projections share the native host cache.
+
+Persisted generations are checked against freshly admitted source facts. Cold
+source validation remains necessary, and ReviewStore first requests retain
+complete fresh provider audits even on activity-cache hits. Current permission,
+epoch, caller limits and historical selections remain authoritative. Index
+pressure or failed persistence retains the same-source bounded fallback.

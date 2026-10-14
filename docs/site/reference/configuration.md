@@ -49,17 +49,26 @@ platform gates.
 
 ## Top-level fields
 
-| Key                                  | Meaning                                                                 |
-| ------------------------------------ | ----------------------------------------------------------------------- |
-| `format`                             | Required format number, currently `2`                                   |
-| `bind`                               | Listener socket address; LocalTrusted requires literal loopback         |
-| `public_url`                         | Advertised browser/API origin; must match the admitted listener context |
-| `insecure_loopback`                  | Explicitly permit plain HTTP for literal loopback                       |
-| `state_dir`                          | Private installation state outside checkouts                            |
-| `operator_policy`                    | Private repository-creation policy path                                 |
-| `web_root`                           | Optional built application directory, including bundled `help` assets   |
-| `development_browser_annotations`    | Explicit local-only annotation policy; false for normal strict serving  |
-| `tls.certificate`, `tls.private_key` | TLS files for supported configured listeners                            |
+| Key                                  | Meaning                                                                                    |
+| ------------------------------------ | ------------------------------------------------------------------------------------------ |
+| `format`                             | Required format number, currently `2`                                                      |
+| `bind`                               | Listener socket address; LocalTrusted requires literal loopback                            |
+| `public_url`                         | Advertised browser/API origin; must match the admitted listener context                    |
+| `insecure_loopback`                  | Explicitly permit plain HTTP for literal loopback                                          |
+| `custom_data_index_persistence`      | Persist disposable custom-data indexes; defaults to true and requires restart when changed |
+| `state_dir`                          | Private installation state outside checkouts                                               |
+| `operator_policy`                    | Private repository-creation policy path                                                    |
+| `web_root`                           | Optional built application directory, including bundled `help` assets                      |
+| `development_browser_annotations`    | Explicit local-only annotation policy; false for normal strict serving                     |
+| `tls.certificate`, `tls.private_key` | TLS files for supported configured listeners                                               |
+
+Custom-data indexes live under `state_dir/custom-data-index`. They accelerate
+workflow history, task filters and application content search, with shared
+native read projections for collaboration. Setting
+`custom_data_index_persistence = false` keeps bounded in-memory readers and
+disables disk persistence. Missing or damaged index files rebuild from the same
+authorized source. Native repository formats and model capacity limits are
+unchanged.
 
 ## Access and storage
 

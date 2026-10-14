@@ -67,7 +67,7 @@ pub(super) fn expression(
         extensions: &extensions,
         workspace: Some(RevsetWorkspaceContext {
             path_converter: &converter,
-            workspace_name: workspace_name,
+            workspace_name,
         }),
     };
     revset::parse(&mut RevsetDiagnostics::new(), text, &context)

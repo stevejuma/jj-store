@@ -9,3 +9,4 @@
 - [Configuration identity before recovery](09-configuration-identity-before-recovery.md)
 - [Optional immutable snapshot storage](10-optional-immutable-snapshot-storage.md)
 - [M18 collaboration search](11-m18-collaboration-search.md)
+- [Custom data read indexes](12-custom-data-read-indexes.md)

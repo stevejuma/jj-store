@@ -279,7 +279,7 @@ async fn workflow_settings_save_admission_and_local_config_atomically_without_ex
             s::SaveServerSettings {
                 version: 1,
                 expected_revision: first.revision,
-                update: s::ServerSettingsUpdate::Workflow(configuration.clone()),
+                update: s::ServerSettingsUpdate::Workflow(Box::new(configuration.clone())),
             },
         )
         .await
@@ -318,7 +318,7 @@ async fn workflow_settings_save_admission_and_local_config_atomically_without_ex
                 s::SaveServerSettings {
                     version: 1,
                     expected_revision: saved.revision.clone(),
-                    update: s::ServerSettingsUpdate::Workflow(invalid)
+                    update: s::ServerSettingsUpdate::Workflow(Box::new(invalid))
                 }
             )
             .await
@@ -343,7 +343,7 @@ async fn managed_runner_environment_save_needs_no_repo_mapping_or_identity_input
             s::SaveServerSettings {
                 version: 1,
                 expected_revision: first.revision,
-                update: s::ServerSettingsUpdate::Workflow(configuration.clone()),
+                update: s::ServerSettingsUpdate::Workflow(Box::new(configuration.clone())),
             },
         )
         .await

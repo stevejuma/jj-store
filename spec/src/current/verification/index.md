@@ -13,6 +13,7 @@ rows record requirement coverage; milestone task status remains in Progress.
 - [COLLAB verification (continued 3)](collab-03.md)
 - [COLLAB verification](collab.md)
 - [COMPAT verification](compat.md)
+- [Custom data indexing verification](custom-data-indexes.md)
 - [DESK verification](desk.md)
 - [DOC verification](doc.md)
 - [GIT verification](git.md)

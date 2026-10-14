@@ -99,10 +99,10 @@ impl Supervisor {
         {
             return Err(Error::Unavailable);
         }
-        if let api::Action::Rename { title } = &command.action {
-            if !label(title, 1024) {
-                return Err(Error::Invalid);
-            }
+        if let api::Action::Rename { title } = &command.action
+            && !label(title, 1024)
+        {
+            return Err(Error::Invalid);
         }
         let _guard = self.0.mutation.lock().await;
         if let Some(existing) =

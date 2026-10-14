@@ -285,18 +285,18 @@ impl Supervisor {
             Some("completed") => {
                 let action = frame["action"].as_str().unwrap_or("");
                 self.update(|s| {
-                    if action == "remove" {
-                        if let Some(model) = frame["model"].as_str() {
-                            s.compute_models.remove(model);
-                        }
+                    if action == "remove"
+                        && let Some(model) = frame["model"].as_str()
+                    {
+                        s.compute_models.remove(model);
                     }
                     if action == "prepare" {
                         s.compute_runtime_prepared = true;
                     }
-                    if action == "download" {
-                        if let Some(model) = &s.compute.model {
-                            s.compute_models.insert(model.clone());
-                        }
+                    if action == "download"
+                        && let Some(model) = &s.compute.model
+                    {
+                        s.compute_models.insert(model.clone());
                     }
                     Ok(())
                 })?;

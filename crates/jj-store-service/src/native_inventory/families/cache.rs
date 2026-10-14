@@ -55,11 +55,9 @@ pub(super) fn shared() -> &'static Cache {
         ttl: Duration::from_secs(300),
     })
 }
+type CacheEntry = (Option<Arc<Data>>, Arc<tokio::sync::Mutex<()>>);
 impl Cache {
-    pub fn entry(
-        &self,
-        key: Key,
-    ) -> query::Result<(Option<Arc<Data>>, Arc<tokio::sync::Mutex<()>>)> {
+    pub fn entry(&self, key: Key) -> query::Result<CacheEntry> {
         let now = tokio::time::Instant::now();
         let mut entries = self.entries.lock().unwrap();
         entries.retain(|entry| {

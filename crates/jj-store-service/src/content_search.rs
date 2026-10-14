@@ -2,7 +2,7 @@
 mod cursors;
 mod extract;
 mod index;
-mod materialization;
+pub(crate) mod materialization;
 mod models;
 use crate::work::{Error, Result};
 use crate::{
@@ -51,8 +51,13 @@ impl ContentPager {
         let (pin, offset) = if query.cursor.is_some() {
             self.registry.lookup(session.repository, &query)?
         } else {
+            let cache = if session.read_indexes.shared {
+                &session.read_indexes.content
+            } else {
+                &self.cache
+            };
             (
-                extract::capture(&session, &query, self.registry.deadline()?, &self.cache).await?,
+                extract::capture(&session, &query, self.registry.deadline()?, cache).await?,
                 0,
             )
         };

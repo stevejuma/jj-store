@@ -141,7 +141,8 @@ impl Graph {
         } else if first & 0x8000_0000 != 0 {
             let start = !first;
             let count = !second;
-            if count < 3 || count > 256 || start.checked_add(count).is_none_or(|n| n > self.parents)
+            if !(3..=256).contains(&count)
+                || start.checked_add(count).is_none_or(|n| n > self.parents)
             {
                 return Err(Error::Corrupt);
             }

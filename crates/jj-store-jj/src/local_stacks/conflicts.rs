@@ -126,14 +126,17 @@ pub(super) async fn validate(
 }
 pub(super) async fn execute(
     mutable: &mut jj_lib::repo::MutableRepo,
-    repo: &ReadonlyRepo,
-    workspace: &jj_lib::ref_name::WorkspaceName,
-    settings: &jj_lib::settings::UserSettings,
-    config: &Config,
-    wc: &Commit,
+    context: MutationContext<'_>,
     path: &str,
     content: &str,
 ) -> Result<()> {
+    let MutationContext {
+        repo,
+        workspace,
+        settings,
+        config,
+        wc,
+    } = context;
     validate(repo, workspace, settings, config, path, content).await?;
     let path = mutations::path(path)?;
     let value = wc.tree().path_value(&path).await.map_err(jj)?;

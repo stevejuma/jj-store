@@ -353,7 +353,7 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
     ] {
         assert!(paths.contains_key(path), "missing integrated route: {path}");
     }
-    assert_eq!(paths.len(), 196);
+    assert_eq!(paths.len(), 200);
     assert_eq!(
         paths
             .keys()
@@ -366,7 +366,7 @@ fn contract_inventory_covers_security_methods_media_and_task_bodies() {
             .keys()
             .filter(|name| !name.starts_with("/v1/local/"))
             .count(),
-        110
+        114
     );
     let mut ids = std::collections::BTreeSet::new();
     for (name, path) in paths {

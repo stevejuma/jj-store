@@ -118,9 +118,11 @@ impl CaptureOwner {
                 config,
                 &self.identity,
                 &self.host,
-                self.admission.clone(),
-                self.store.clone(),
-                lifetime,
+                capture::RetainedStorage {
+                    admission: self.admission.clone(),
+                    store: self.store.clone(),
+                    lifetime,
+                },
                 capture::CaptureLocations::environment,
                 true,
             )?))

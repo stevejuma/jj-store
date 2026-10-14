@@ -761,10 +761,12 @@ impl GraphExecutor {
                 &settings,
                 saved.clone(),
                 budget.clone(),
-                self.root.clone(),
-                self.cache_policy,
-                self.residents.clone(),
-                access.clone(),
+                index::ResidentContext {
+                    root: self.root.clone(),
+                    cache_policy: self.cache_policy,
+                    residents: self.residents.clone(),
+                    access: access.clone(),
+                },
             )?;
             let repo = stores
                 .load_at(&loader, access.operation())

@@ -35,13 +35,13 @@ fn text_parts(payload: &SanitizedPayloadV1) -> Vec<FeedbackTextPart> {
     const MAX: usize = 256 * 1024;
     let mut parts = Vec::new();
     if payload.media_type() == SanitizedMediaType::Text {
-        if payload.bytes().len() <= MAX {
-            if let Ok(text) = std::str::from_utf8(payload.bytes()) {
-                parts.push(FeedbackTextPart {
-                    part: None,
-                    text: text.into(),
-                });
-            }
+        if payload.bytes().len() <= MAX
+            && let Ok(text) = std::str::from_utf8(payload.bytes())
+        {
+            parts.push(FeedbackTextPart {
+                part: None,
+                text: text.into(),
+            });
         }
     } else if let Ok(value) = serde_json::from_slice(payload.bytes()) {
         let mut pending = vec![(String::new(), value)];

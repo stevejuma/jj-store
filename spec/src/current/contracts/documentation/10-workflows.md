@@ -64,3 +64,7 @@ ConnectRPC and external Forgejo registration remain deferred.
 Runner Settings documentation distinguishes the concise version-2 environment
 form, automatic verified attachment discovery, optional Advanced overrides and
 explicit admission from preserved version-1 standalone configuration.
+
+E-CUSTOM-INDEX-001 documents the optional disposable custom-data index cache and
+its restart-only configuration. JST-DOC-001/002 help/configuration ownership and
+existing workflow execution/receipt contracts remain unchanged.
