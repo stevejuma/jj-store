@@ -31,6 +31,14 @@ export function verifyJj(bytes, digest) {
   if (createHash("sha256").update(bytes).digest("hex") !== digest)
     throw Error("Upstream JJ archive checksum mismatch");
 }
+export function jjArchiveMember(members) {
+  const matches = members
+    .split("\n")
+    .filter((path) => /^(?:\.\/)?jj$/.test(path));
+  if (matches.length !== 1)
+    throw Error("JJ archive must contain one root executable");
+  return matches[0];
+}
 async function install() {
   if (!process.env.RUNNER_TEMP || !process.env.GITHUB_PATH)
     throw Error("CI tool installation requires runner-owned temporary paths");
@@ -45,7 +53,10 @@ async function install() {
   mkdirSync(directory, { recursive: true });
   const archive = join(directory, selected.name);
   writeFileSync(archive, bytes);
-  execFileSync("tar", ["-xzf", archive, "-C", directory, "jj"]);
+  const member = jjArchiveMember(
+    execFileSync("tar", ["-tzf", archive], { encoding: "utf8" }),
+  );
+  execFileSync("tar", ["-xzf", archive, "-C", directory, member]);
   const executable = join(directory, "jj");
   const version = execFileSync(executable, ["--version"], {
     encoding: "utf8",

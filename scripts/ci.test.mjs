@@ -6,8 +6,14 @@ import { join } from "node:path";
 import { execFileSync } from "node:child_process";
 import { revisionReader } from "./spec/revision-reader.mjs";
 import { impact } from "./ci-plan.mjs";
-import { jjArtifact, verifyJj } from "./ci-setup-jj.mjs";
+import { jjArtifact, verifyJj, jjArchiveMember } from "./ci-setup-jj.mjs";
 import { createHash } from "node:crypto";
+test("JJ extraction selects the exact safe archive member", () => {
+  assert.equal(jjArchiveMember("./\n./jj\n./README.md\n"), "./jj");
+  assert.equal(jjArchiveMember("jj\nREADME.md\n"), "jj");
+  for (const members of ["../jj\n", "/jj\n", "bin/jj\n", "jj\n./jj\n", ""])
+    assert.throws(() => jjArchiveMember(members), /one root executable/);
+});
 test("CI pins JJ for each qualified platform and rejects corrupt bytes", () => {
   for (const platform of ["linux", "darwin"])
     for (const arch of ["arm64", "x64"]) {

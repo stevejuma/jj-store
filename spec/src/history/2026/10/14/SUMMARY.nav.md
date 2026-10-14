@@ -26,3 +26,5 @@
   {{#include E-CI-BOOTSTRAP-001/SUMMARY.nav.md}}
 - [E-CI-FORMAT-001](E-CI-FORMAT-001/index.md)
   {{#include E-CI-FORMAT-001/SUMMARY.nav.md}}
+- [E-CI-TOOL-001](E-CI-TOOL-001/index.md)
+  {{#include E-CI-TOOL-001/SUMMARY.nav.md}}
