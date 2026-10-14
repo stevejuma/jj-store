@@ -2838,7 +2838,11 @@
     },
     {
       "local": "web/src/lib/ui/store-application/StoreApplicationMain.svelte",
-      "reason": "Repository-owned terminal integration using Design Core public primitives; Buzz terminal reference and license recorded in desktopTerminal."
+      "reason": "Repository-owned terminal integration and shared mobile body toolbar using public Design Core primitives. Workflows reuses the Projects navigation placement; Buzz terminal reference and license recorded in desktopTerminal."
+    },
+    {
+      "local": "web/src/lib/ui/store-application/StoreApplicationMenu.svelte",
+      "reason": "Application-owned single menu combining native command selection and saved configuration reload. Its persistent owners export a renderable trigger for desktop/mobile placement without losing drafts, original requests or focus. Reuses owned components and released Design Core; no external source copied."
     },
     {
       "local": "web/src/lib/ui/store-terminal/StoreTerminalToggle.svelte",

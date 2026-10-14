@@ -1,8 +1,8 @@
 # M28 lightweight workflows
 
-| Task | Status      | Depends     | Requirements                                                                                                               | Acceptance gate                                                                  | Next action                                                       | Evidence                                                                                                                                                                                                                                      |
-| ---- | ----------- | ----------- | -------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | ----------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| M28  | In progress | M11,M23,M27 | JST-WF-001,JST-WF-002,JST-WF-003,JST-WF-004,JST-WF-005,JST-WF-006,JST-WF-007,JST-WF-008,JST-UI-019,JST-DOC-001,JST-DOC-002 | Durable two-host execution, exact recovery, real storage and cold Buzz-parity UI | Qualify live agent/Forgejo wrappers and review cold visual parity | E-WORKFLOW-001,E-WORKFLOW-CHOICES-001,E-WORKFLOW-RUN-001,E-WORKFLOW-HISTORY-001,E-WORKFLOW-YAML-001,E-WORKFLOW-MULTISTEP-001,E-WORKFLOW-LIVE-001,E-WORKFLOW-CONSOLE-001,E-WORKFLOW-SETTINGS-001,E-RUNNER-ENVIRONMENT-001,E-WORKFLOW-CARDS-001 |
+| Task | Status      | Depends     | Requirements                                                                                                               | Acceptance gate                                                                  | Next action                                                       | Evidence                                                                                                                                                                                                                                                             |
+| ---- | ----------- | ----------- | -------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| M28  | In progress | M11,M23,M27 | JST-WF-001,JST-WF-002,JST-WF-003,JST-WF-004,JST-WF-005,JST-WF-006,JST-WF-007,JST-WF-008,JST-UI-019,JST-DOC-001,JST-DOC-002 | Durable two-host execution, exact recovery, real storage and cold Buzz-parity UI | Qualify live agent/Forgejo wrappers and review cold visual parity | E-WORKFLOW-001,E-WORKFLOW-CHOICES-001,E-WORKFLOW-RUN-001,E-WORKFLOW-HISTORY-001,E-WORKFLOW-YAML-001,E-WORKFLOW-MULTISTEP-001,E-WORKFLOW-LIVE-001,E-WORKFLOW-CONSOLE-001,E-WORKFLOW-SETTINGS-001,E-RUNNER-ENVIRONMENT-001,E-WORKFLOW-CARDS-001,E-APPLICATION-MENU-001 |
 
 Source foundations, executor integration, real storage, cold browser and visual
 parity are distinct gates. No gate is promoted by compilation alone.
@@ -66,6 +66,13 @@ Settings-style Form inspector, and Advanced runner options retain their
 separator while collapsed. Focused UI, responsive/live and interaction/Axe
 acceptance do not change native execution, public APIs or outstanding provider,
 Forgejo protocol and approved visual gates.
+
+E-APPLICATION-MENU-001 reviews M27/M28 with status unchanged. Workflows, loading
+and History use Projects' mobile body toolbar and the single shared Application
+menu. Desktop/mobile relocation retains command owners, drafts and original
+requests. Focused interaction/Axe and preserved live data inspection qualify
+navigation placement; native providers, Forgejo protocol, platforms and approved
+visual baselines remain separate.
 <!-- generated-navigation -->
 
 ## Pages

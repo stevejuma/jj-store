@@ -329,6 +329,10 @@ unavailable.
 
 Global Settings groups Profile, Appearance and Custom emoji under Personal;
 Local service, Agents and Compute appear under App. The app version is at the
-bottom of the sidebar, below Help. The top-right Application menu (vertical
-kebab) contains **Reload saved settings**. It applies saved supported server
-configuration while preserving drafts and the running server.
+bottom of the sidebar, below Help. The single Application menu (horizontal
+kebab) contains **Reload saved settings** alongside available repository
+actions. It appears in the desktop top header. On narrow browser screens, the
+top header is hidden and the menu moves into the body toolbar, including
+Workflows and History, using the same placement as Projects. Open dialogs and
+drafts survive resizing. Reload applies saved supported server configuration
+while preserving drafts, original pending requests and the running server.

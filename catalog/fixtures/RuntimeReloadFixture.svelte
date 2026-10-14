@@ -1,5 +1,9 @@
 <script lang="ts">
-  import { onDestroy } from "svelte";
+  import { onDestroy, untrack } from "svelte";
+  import StoreRepositoryApplication from "../../web/src/lib/ui/store-application/StoreRepositoryApplication.svelte";
+  import { createInMemoryStoreController } from "../controller/in-memory-store-controller.svelte.js";
+  import type { AppShellDisplayMode } from "@lapismd/design-core/shell";
+  import type { StorePage } from "../../web/src/lib/ui/community-navigation/model.js";
   import { RuntimeReload } from "../../web/src/lib/controller/runtime-reload.svelte.js";
   import StoreRuntimeReload from "../../web/src/lib/ui/store-settings/StoreRuntimeReload.svelte";
   import "../../web/src/lib/ui/store-settings/StoreSettings.css";
@@ -7,7 +11,17 @@
     lost = false,
     deferred = false,
     denied = false,
-  }: { lost?: boolean; deferred?: boolean; denied?: boolean } = $props();
+    application = false,
+    displayMode = "desktop",
+    initialPage = "workflows",
+  }: {
+    lost?: boolean;
+    deferred?: boolean;
+    denied?: boolean;
+    application?: boolean;
+    displayMode?: AppShellDisplayMode;
+    initialPage?: StorePage;
+  } = $props();
   let original: Record<string, unknown> | null = null;
   let posts = $state(0),
     checks = $state(0);
@@ -73,15 +87,31 @@
     },
   );
   onDestroy(() => manager.destroy());
+  const controller = {
+    ...untrack(() => createInMemoryStoreController(initialPage)),
+    reload: manager,
+  };
 </script>
 
-<div class="review">
-  <StoreRuntimeReload {manager} menu />
+<div class="review" class:application>
+  {#if application}<StoreRepositoryApplication
+      {controller}
+      {displayMode}
+    />{:else}<StoreRuntimeReload {manager} menu />{/if}
   <p>Submitted {posts} · Checked {checks}</p>
 </div>
 
 <style>
   .review {
     padding: 1rem;
+  }
+  .review.application {
+    height: 100vh;
+    padding: 0;
+  }
+  .application > p {
+    position: fixed;
+    bottom: 0;
+    margin: 0;
   }
 </style>

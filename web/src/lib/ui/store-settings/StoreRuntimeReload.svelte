@@ -17,7 +17,13 @@
     manager,
     menu = false,
     disabled = false,
-  }: { manager?: RuntimeReload; menu?: boolean; disabled?: boolean } = $props();
+    triggerless = false,
+  }: {
+    manager?: RuntimeReload;
+    menu?: boolean;
+    disabled?: boolean;
+    triggerless?: boolean;
+  } = $props();
   let trigger = $state<HTMLButtonElement | null>(null);
   function open() {
     manager!.returnFocus = () => trigger?.focus();
@@ -50,49 +56,51 @@
 </script>
 
 {#if manager?.value}
-  {#if menu}
-    <DropdownMenu.Root>
-      <DropdownMenu.Trigger>
-        {#snippet child({ props })}
-          <Button
-            {...props}
-            bind:ref={trigger}
-            variant="ghost"
-            size="icon-sm"
-            aria-label="Application menu"
-            title="Application menu"
-            {disabled}
-          >
-            <EllipsisVerticalIcon aria-hidden="true" />
-          </Button>
-        {/snippet}
-      </DropdownMenu.Trigger>
-      <DropdownMenu.Content
-        align="end"
-        style="min-width: 14rem; max-width: calc(100vw - 2rem)"
-        aria-label="Application actions"
-        onCloseAutoFocus={(event) => {
-          if (manager!.open) event.preventDefault();
-        }}
+  {#if !triggerless}
+    {#if menu}
+      <DropdownMenu.Root>
+        <DropdownMenu.Trigger>
+          {#snippet child({ props })}
+            <Button
+              {...props}
+              bind:ref={trigger}
+              variant="ghost"
+              size="icon-sm"
+              aria-label="Application menu"
+              title="Application menu"
+              {disabled}
+            >
+              <EllipsisVerticalIcon aria-hidden="true" />
+            </Button>
+          {/snippet}
+        </DropdownMenu.Trigger>
+        <DropdownMenu.Content
+          align="end"
+          style="min-width: 14rem; max-width: calc(100vw - 2rem)"
+          aria-label="Application actions"
+          onCloseAutoFocus={(event) => {
+            if (manager!.open) event.preventDefault();
+          }}
+        >
+          <DropdownMenu.Group>
+            <DropdownMenu.Item onSelect={open}>
+              <RotateCwIcon aria-hidden="true" />Reload saved settings
+            </DropdownMenu.Item>
+          </DropdownMenu.Group>
+        </DropdownMenu.Content>
+      </DropdownMenu.Root>
+    {:else}
+      <Button
+        bind:ref={trigger}
+        variant="outline"
+        size="sm"
+        {disabled}
+        onclick={open}
       >
-        <DropdownMenu.Group>
-          <DropdownMenu.Item onSelect={open}>
-            <RotateCwIcon aria-hidden="true" />Reload saved settings
-          </DropdownMenu.Item>
-        </DropdownMenu.Group>
-      </DropdownMenu.Content>
-    </DropdownMenu.Root>
-  {:else}
-    <Button
-      bind:ref={trigger}
-      variant="outline"
-      size="sm"
-      {disabled}
-      onclick={open}
-    >
-      <RotateCwIcon data-icon="inline-start" aria-hidden="true" />Reload saved
-      settings
-    </Button>
+        <RotateCwIcon data-icon="inline-start" aria-hidden="true" />Reload saved
+        settings
+      </Button>
+    {/if}
   {/if}
   <Dialog.Root
     open={manager.open}

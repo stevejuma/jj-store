@@ -169,15 +169,18 @@ bottom dialog footer with the close action before the primary command. The
 presentation retains writable-home filtering, validation, drafts, exact pending
 requests and status/retry controls; it does not change creation authority.
 
-The right-aligned top-header Application menu uses an icon-only vertical kebab
-and contains **Reload saved settings**; omit this action from body headers. The
-Settings sidebar version appears below Help at the bottom. The shared reload
-action applies saved values for the selected server within the caller's
-discovered authority. It preserves unsaved drafts, controller owners, active
-sessions and original pending identities. Accessible progress distinguishes
-applied, deferred and failed domains; unknown outcomes retain the original
-intent and offer Check original outcome. Refresh remains a read-only action.
-Activation guidance uses reload for operational settings and separate
+The single Application menu uses an icon-only horizontal kebab and contains
+**Reload saved settings** alongside available native repository actions. Desktop
+places it in the top header; limited browser viewports hide that header and move
+the same menu to the body toolbar, as Projects does. Workflows and its History
+views retain that toolbar. Dialog owners, drafts and original requests survive
+viewport changes. The Settings sidebar version appears below Help at the bottom.
+The shared reload action applies saved values for the selected server within the
+caller's discovered authority. It preserves unsaved drafts, controller owners,
+active sessions and original pending identities. Accessible progress
+distinguishes applied, deferred and failed domains; unknown outcomes retain the
+original intent and offer Check original outcome. Refresh remains a read-only
+action. Activation guidance uses reload for operational settings and separate
 migration/lifecycle reasons for read-only infrastructure.
 
 Local service / Workflows uses the same Settings cards and divided icon-bearing

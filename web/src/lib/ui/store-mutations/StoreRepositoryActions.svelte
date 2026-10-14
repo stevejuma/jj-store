@@ -12,7 +12,7 @@
   import GitCommitIcon from "@lucide/svelte/icons/git-commit-horizontal";
   import FileWarningIcon from "@lucide/svelte/icons/file-warning";
   import type { StoreController } from "../../controller/contracts.js";
-  import { getContext } from "svelte";
+  import { getContext, type Snippet } from "svelte";
   import {
     conflictEditorKey,
     type OpenConflictEditor,
@@ -27,12 +27,26 @@
     primaryAction = "new",
     primaryLabel = "Add change",
     disabled = false,
+    menu = $bindable(),
+    renderMenu = true,
+    menuLabel = "Repository actions",
+    extraItems,
+    showChanges = true,
+    menuTrigger = $bindable(null),
+    onCloseAutoFocus,
   }: {
     controller: StoreController;
     presentation?: "menu" | "panel" | "primary";
     primaryAction?: "new" | "bookmark-create";
     primaryLabel?: string;
     disabled?: boolean;
+    menu?: Snippet;
+    renderMenu?: boolean;
+    menuLabel?: string;
+    extraItems?: Snippet;
+    showChanges?: boolean;
+    menuTrigger?: HTMLButtonElement | null;
+    onCloseAutoFocus?(event: Event): void;
   } = $props();
   const view = $derived(controller.state);
   const selectedCommit = $derived(
@@ -87,21 +101,27 @@
     pendingAction = null;
     dialogOpen = true;
   }
+  $effect(() => {
+    menu = menuContent;
+  });
 </script>
 
-{#if presentation === "menu"}<DropdownMenu.Root
+{#snippet menuContent()}<DropdownMenu.Root
     onOpenChangeComplete={completeSelection}
   >
     <DropdownMenu.Trigger>
       {#snippet child({ props })}<Button
           {...props}
+          bind:ref={menuTrigger}
           type="button"
           variant="ghost"
           size="icon-sm"
-          aria-label="Repository actions"
+          aria-label={menuLabel}
           disabled={disabled ||
-            !view.authenticated ||
-            view.mutation.available.length === 0}
+            (!extraItems &&
+              (!showChanges ||
+                !view.authenticated ||
+                view.mutation.available.length === 0))}
           ><MoreHorizontalIcon aria-hidden="true" /></Button
         >{/snippet}
     </DropdownMenu.Trigger>
@@ -110,85 +130,97 @@
       align="end"
       sideOffset={4}
       preventScroll={false}
-      aria-label="Repository actions"
+      aria-label={menuLabel}
+      {onCloseAutoFocus}
     >
-      <DropdownMenu.Group>
-        <DropdownMenu.Label>Changes</DropdownMenu.Label>
-        <DropdownMenu.Item
-          disabled={!available("new")}
-          onSelect={() => select("new")}
-        >
-          <PlusIcon data-icon="inline-start" aria-hidden="true" />Create change
-        </DropdownMenu.Item>
-        <DropdownMenu.Item
-          disabled={!selectedCommit || !available("describe")}
-          onSelect={() => select("describe")}
-        >
-          <PencilIcon data-icon="inline-start" aria-hidden="true" />Edit
-          description
-        </DropdownMenu.Item>
-        <DropdownMenu.Item
-          disabled={!selectedCommit || !available("abandon")}
-          onSelect={() => select("abandon")}
-        >
-          <GitCommitIcon data-icon="inline-start" aria-hidden="true" />Abandon
-          change
-        </DropdownMenu.Item>
-        <DropdownMenu.Item
-          disabled={!selectedCommit ||
-            view.conflicts.length === 0 ||
-            !view.mutation.available.includes("resolve_conflicts")}
-          onSelect={() => select("resolve-conflicts")}
-        >
-          <FileWarningIcon data-icon="inline-start" aria-hidden="true" />Resolve
-          conflicts
-        </DropdownMenu.Item>
-      </DropdownMenu.Group>
-      <DropdownMenu.Separator />
-      <DropdownMenu.Group>
-        <DropdownMenu.Label>Bookmarks</DropdownMenu.Label>
-        <DropdownMenu.Item
-          disabled={!selectedCommit || !available("bookmark-create")}
-          onSelect={() => select("bookmark-create")}
-        >
-          <GitBranchPlusIcon
-            data-icon="inline-start"
-            aria-hidden="true"
-          />Create bookmark
-        </DropdownMenu.Item>
-        <DropdownMenu.Item
-          disabled={!selectedCommit ||
-            !selectedBookmark ||
-            !available("bookmark-move")}
-          onSelect={() => select("bookmark-move")}
-        >
-          <GitBranchIcon data-icon="inline-start" aria-hidden="true" />Move
-          bookmark
-        </DropdownMenu.Item>
-        <DropdownMenu.Item
-          disabled={!selectedBookmark || !available("bookmark-delete")}
-          onSelect={() => select("bookmark-delete")}
-        >
-          <TrashIcon data-icon="inline-start" aria-hidden="true" />Delete
-          bookmark
-        </DropdownMenu.Item>
-      </DropdownMenu.Group>
-      {#if view.operationHeads.length > 1}
-        <DropdownMenu.Separator />
+      {#if showChanges}
         <DropdownMenu.Group>
+          <DropdownMenu.Label>Changes</DropdownMenu.Label>
           <DropdownMenu.Item
-            disabled={!available("reconcile")}
-            onSelect={() => select("reconcile")}
+            disabled={!available("new")}
+            onSelect={() => select("new")}
           >
-            <GitMergeIcon
+            <PlusIcon data-icon="inline-start" aria-hidden="true" />Create
+            change
+          </DropdownMenu.Item>
+          <DropdownMenu.Item
+            disabled={!selectedCommit || !available("describe")}
+            onSelect={() => select("describe")}
+          >
+            <PencilIcon data-icon="inline-start" aria-hidden="true" />Edit
+            description
+          </DropdownMenu.Item>
+          <DropdownMenu.Item
+            disabled={!selectedCommit || !available("abandon")}
+            onSelect={() => select("abandon")}
+          >
+            <GitCommitIcon data-icon="inline-start" aria-hidden="true" />Abandon
+            change
+          </DropdownMenu.Item>
+          <DropdownMenu.Item
+            disabled={!selectedCommit ||
+              view.conflicts.length === 0 ||
+              !view.mutation.available.includes("resolve_conflicts")}
+            onSelect={() => select("resolve-conflicts")}
+          >
+            <FileWarningIcon
               data-icon="inline-start"
               aria-hidden="true"
-            />Reconcile operations
+            />Resolve conflicts
           </DropdownMenu.Item>
         </DropdownMenu.Group>
+        <DropdownMenu.Separator />
+        <DropdownMenu.Group>
+          <DropdownMenu.Label>Bookmarks</DropdownMenu.Label>
+          <DropdownMenu.Item
+            disabled={!selectedCommit || !available("bookmark-create")}
+            onSelect={() => select("bookmark-create")}
+          >
+            <GitBranchPlusIcon
+              data-icon="inline-start"
+              aria-hidden="true"
+            />Create bookmark
+          </DropdownMenu.Item>
+          <DropdownMenu.Item
+            disabled={!selectedCommit ||
+              !selectedBookmark ||
+              !available("bookmark-move")}
+            onSelect={() => select("bookmark-move")}
+          >
+            <GitBranchIcon data-icon="inline-start" aria-hidden="true" />Move
+            bookmark
+          </DropdownMenu.Item>
+          <DropdownMenu.Item
+            disabled={!selectedBookmark || !available("bookmark-delete")}
+            onSelect={() => select("bookmark-delete")}
+          >
+            <TrashIcon data-icon="inline-start" aria-hidden="true" />Delete
+            bookmark
+          </DropdownMenu.Item>
+        </DropdownMenu.Group>
+        {#if view.operationHeads.length > 1}
+          <DropdownMenu.Separator />
+          <DropdownMenu.Group>
+            <DropdownMenu.Item
+              disabled={!available("reconcile")}
+              onSelect={() => select("reconcile")}
+            >
+              <GitMergeIcon
+                data-icon="inline-start"
+                aria-hidden="true"
+              />Reconcile operations
+            </DropdownMenu.Item>
+          </DropdownMenu.Group>
+        {/if}
+      {/if}
+      {#if extraItems}
+        {#if showChanges}<DropdownMenu.Separator />{/if}
+        {@render extraItems()}
       {/if}
     </DropdownMenu.Content>
-  </DropdownMenu.Root>{:else if presentation === "primary"}<Button
+  </DropdownMenu.Root>{/snippet}
+
+{#if presentation === "menu"}{#if renderMenu}{@render menuContent()}{/if}{:else if presentation === "primary"}<Button
     type="button"
     variant="ghost"
     size="icon-sm"
@@ -208,7 +240,17 @@
   />{/if}
 
 <Dialog.Root bind:open={dialogOpen}>
-  <StoreMutationDialog {controller} {action} open={dialogOpen} />
+  <StoreMutationDialog
+    {controller}
+    {action}
+    open={dialogOpen}
+    onCloseAutoFocus={(event) => {
+      if (presentation === "menu" && menuTrigger?.isConnected) {
+        event.preventDefault();
+        menuTrigger.focus();
+      }
+    }}
+  />
 </Dialog.Root>
 
 <style>

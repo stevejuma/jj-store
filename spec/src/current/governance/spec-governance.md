@@ -1,5 +1,12 @@
 # Change map
 
+E-APPLICATION-MENU-001 retains JST-GOV-002/008 local presentation ownership. The
+persistent application menu composes owned native action/reload dialogs and
+released Design Core. Its snippet moves between desktop and mobile headers
+without remounting command owners; Workflows reuses Projects' body toolbar.
+Existing Community shell attribution remains. Native command/receipt, reload
+authorization, API and persistence formats are unchanged.
+
 E-WORKFLOW-CARDS-001 retains JST-GOV-002/008 local source ownership. The card
 summary, layered icon presentation and description field are independently
 maintained Svelte/TypeScript compositions using released Design Core. Buzz

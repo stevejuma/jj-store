@@ -1,5 +1,10 @@
 <script lang="ts">
   import StoreNotice from "../store-notifications/StoreNotice.svelte";
+  import StoreApplicationMenu from "./StoreApplicationMenu.svelte";
+  import StoreThreadFocus from "../store-threads/StoreThreadFocus.svelte";
+  import StoreFocusedDiscussion from "../store-discussion/StoreFocusedDiscussion.svelte";
+  import type { AppShellController } from "@lapismd/design-core/shell";
+  import type { Snippet } from "svelte";
   import StoreLazyView from "./StoreLazyView.svelte";
   import { views } from "./application-views.js";
   import type {
@@ -17,6 +22,10 @@
     conflictOpen = $bindable(false),
     searchOpen = $bindable(false),
     conflictReturnFocus,
+    shell,
+    editorOpen,
+    threadFocused,
+    menu = $bindable(),
   }: {
     controller: StoreController;
     stackWorkspace?: StackWorkspaceController;
@@ -26,9 +35,29 @@
     conflictOpen?: boolean;
     searchOpen?: boolean;
     conflictReturnFocus: HTMLElement | null;
+    shell: AppShellController;
+    editorOpen: boolean;
+    threadFocused: boolean;
+    menu?: Snippet;
   } = $props();
+  const focused = $derived(
+    !settingsOpen && current.page !== "settings" && !editorOpen,
+  );
 </script>
 
+<StoreApplicationMenu {controller} disabled={editorOpen} bind:menu />
+{#if !settingsOpen && current.agentsHub && controller.execution && !controller.execution.chat.open}<StoreLazyView
+    load={views.agentDetails}
+    label="Agent details"
+    active={Boolean(controller.execution.detailsId)}
+    >{#snippet content(View)}<View
+        manager={controller.execution!}
+        {shell}
+        route={current}
+      />{/snippet}</StoreLazyView
+  >{/if}
+<StoreFocusedDiscussion open={focused && !threadFocused} />
+<StoreThreadFocus open={focused && threadFocused} {controller} />
 <StoreLazyView
   load={views.conflicts}
   label="Conflict editor"

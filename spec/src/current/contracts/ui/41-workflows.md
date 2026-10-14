@@ -6,6 +6,11 @@ attribution are recorded in provenance. Drafts, exact pending requests and
 historical run selections survive refresh. Visual parity approval remains
 distinct from interaction/Axe acceptance. See JST-WF-008.
 
+Limited browser viewports use the same body toolbar as Projects, with sidebar
+navigation and one right-aligned Application menu. The desktop top navigation is
+hidden in that mode. Overview, initial loading, History and selected run details
+retain the toolbar; menu relocation preserves open dialogs and focus.
+
 The overview has one create card with a muted icon tile. All grid cards share
 the same fixed 15rem height and full column width, including creation and
 loading cards. Columns follow the available content width. Existing cards use

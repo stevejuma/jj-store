@@ -3,8 +3,6 @@
   import StoreApplicationHeaderCenter from "./StoreApplicationHeaderCenter.svelte";
   import StoreApplicationAgents from "./StoreApplicationAgents.svelte";
   import StoreApplicationOverlays from "./StoreApplicationOverlays.svelte";
-  import StoreLazyView from "./StoreLazyView.svelte";
-  import { views } from "./application-views.js";
   import { provideConversationInspection } from "../../conversations/inspection.svelte.js";
   import StoreIndexPreparationNotice from "./StoreIndexPreparationNotice.svelte";
   import StoreApplicationMain from "./StoreApplicationMain.svelte";
@@ -29,9 +27,8 @@
     selectStoreNavigation,
     activeStoreNavigation,
   } from "./store-navigation.js";
-  import StoreThreadFocus from "../store-threads/StoreThreadFocus.svelte";
   import { createApplicationThreadPanel as ownThreadPanel } from "../store-threads/thread-panel.svelte.js";
-  import { onDestroy, setContext, untrack } from "svelte";
+  import { onDestroy, setContext, untrack, type Snippet } from "svelte";
   import type { StoreApplicationProps } from "./application-props.js";
   import { isMacDesktopWindow } from "../../desktop-chrome.js";
   import "./store-application.css";
@@ -44,12 +41,9 @@
     CommunityNavigationItemModel,
   } from "../community-navigation/model.js";
   import CommunityProfileMenu from "../community-profile-menu/CommunityProfileMenu.svelte";
-  import StoreRuntimeReload from "../store-settings/StoreRuntimeReload.svelte";
   import StoreSettingsNavigation from "../store-settings/StoreSettingsNavigation.svelte";
   import StoreApplicationHeaderActions from "./StoreApplicationHeaderActions.svelte";
-  import StoreWorkspaceToggle from "../store-agent-workspace/StoreWorkspaceToggle.svelte";
   import { provideDiscussionFocus } from "../store-discussion/discussion-focus.svelte.js";
-  import StoreFocusedDiscussion from "../store-discussion/StoreFocusedDiscussion.svelte";
   import { conflictEditorKey } from "../store-conflicts/conflict-editor.js";
   import { resolveLayoutStorage } from "../layout-storage.js";
   import {
@@ -178,6 +172,7 @@
     controller.actions.navigate(delta);
   }
   const notifications = ownApplicationNotifications(() => controller);
+  let applicationMenu = $state<Snippet>();
   provideAgentExecution(() => controller.execution);
 </script>
 
@@ -199,18 +194,16 @@
       {editorOpen}
       hidden={settingsOpen || repositorySettingsOpen}
     />{/snippet}
-  {#snippet headerEnd()}{#if !repositorySettingsOpen && !settingsOpen && ((current.agentsHub && (current.agentView === "session" || current.agentView === "sessions")) || (current.page === "threads" && current.threadId))}<StoreWorkspaceToggle
-      />{:else if !repositorySettingsOpen && !settingsOpen && (!current.agentsHub || controller.execution?.chat.open)}<StoreApplicationHeaderActions
-        {controller}
-        disabled={editorOpen}
-        detailsOpen={!detailsRail.closed}
-        toggleDetails={() =>
-          detailsRail.closed ? detailsRail.open() : detailsRail.close()}
-      />{/if}{/snippet}
-  {#snippet headerMenu()}<StoreRuntimeReload
-      manager={controller.reload}
-      menu
+  {#snippet headerEnd()}<StoreApplicationHeaderActions
+      {controller}
+      hidden={repositorySettingsOpen || settingsOpen}
       disabled={editorOpen}
+      menu={shell.mobile.resolvedMode === "desktop"
+        ? applicationMenu
+        : undefined}
+      detailsOpen={!detailsRail.closed}
+      toggleDetails={() =>
+        detailsRail.closed ? detailsRail.open() : detailsRail.close()}
     />{/snippet}
   <AppShell.Sidebar
     side="left"
@@ -268,18 +261,9 @@
     {selectPage}
     {children}
     {agents}
+    {applicationMenu}
     linkFolder={() => settingsGuard.open("folders")}
   />
-  {#if !settingsOpen && current.agentsHub && controller.execution && !controller.execution.chat.open}<StoreLazyView
-      load={views.agentDetails}
-      label="Agent details"
-      active={Boolean(controller.execution.detailsId)}
-      >{#snippet content(View)}<View
-          manager={controller.execution!}
-          {shell}
-          route={current}
-        />{/snippet}</StoreLazyView
-    >{/if}
   <StoreApplicationRightPanels
     {controller}
     {stackWorkspace}
@@ -288,24 +272,15 @@
     threadFocused={threadPanel.focused}
     visible={!settingsOpen && !repositorySettingsOpen}
   />
-  <StoreFocusedDiscussion
-    open={!settingsOpen &&
-      !repositorySettingsOpen &&
-      !editorOpen &&
-      !threadPanel.focused}
-  />
-  <StoreThreadFocus
-    open={!settingsOpen &&
-      !repositorySettingsOpen &&
-      !editorOpen &&
-      threadPanel.focused}
-    {controller}
-  />
   <StoreApplicationOverlays
     {controller}
     {stackWorkspace}
     {current}
     {settingsOpen}
+    {shell}
+    {editorOpen}
+    threadFocused={threadPanel.focused}
+    bind:menu={applicationMenu}
     bind:conflictOpen
     bind:searchOpen
     {conflictReturnFocus}

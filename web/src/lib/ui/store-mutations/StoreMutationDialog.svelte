@@ -24,11 +24,13 @@
     action,
     open,
     capturedHead,
+    onCloseAutoFocus,
   }: {
     controller: StoreController;
     action: StoreMutationAction;
     open: boolean;
     capturedHead?: import("../../api/client.js").Head;
+    onCloseAutoFocus?(event: Event): void;
   } = $props();
   const view = $derived(controller.state);
   const mutation = $derived(view.mutation);
@@ -121,6 +123,7 @@
   size="form"
   busy={pending}
   preventScroll={false}
+  {onCloseAutoFocus}
 >
   {#if mutation.status === "idle" || (mutation.status === "failed" && !mutation.result)}
     <form

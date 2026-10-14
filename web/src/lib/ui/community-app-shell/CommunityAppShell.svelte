@@ -30,7 +30,6 @@
     onNavigateForward,
     headerCenter,
     headerEnd,
-    headerMenu,
     class: className,
     children,
     ...restProps
@@ -46,8 +45,6 @@
     onNavigateForward?: () => void;
     headerCenter?: Snippet;
     headerEnd?: Snippet;
-    /** Application-wide actions retained across responsive header layouts. */
-    headerMenu?: Snippet;
     children?: Snippet;
   } = $props();
 
@@ -104,9 +101,8 @@
   data-ui-component="community-app-shell"
   data-display-mode={controller.mobile.resolvedMode}
   data-desktop-chrome={desktopChrome ? "macos" : undefined}
-  data-has-header-menu={Boolean(headerMenu) || undefined}
 >
-  {#if !mobileMode || desktopChrome || headerMenu}
+  {#if !mobileMode || desktopChrome}
     <nav
       class="community-app-shell__header"
       aria-label="Application navigation"
@@ -174,10 +170,9 @@
           </div>
         {/if}
       {/if}
-      {#if headerEnd || headerMenu}
+      {#if headerEnd}
         <div class="community-app-shell__header-end">
           {#if !mobileMode || desktopChrome}{@render headerEnd?.()}{/if}
-          {@render headerMenu?.()}
         </div>
       {/if}
     </nav>
@@ -211,7 +206,7 @@
     background: var(--muted);
   }
 
-  .community-app-shell[data-display-mode="mobile"]:not([data-has-header-menu]) {
+  .community-app-shell[data-display-mode="mobile"] {
     grid-template-rows: minmax(0, 1fr);
   }
 

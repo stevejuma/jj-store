@@ -23,7 +23,6 @@
   import StoreTerminalWorkspace from "../store-terminal/StoreTerminalWorkspace.svelte";
   import CommunityApplicationMobileNavigation from "../community-application/CommunityApplicationMobileNavigation.svelte";
   import StoreProjectsBreadcrumb from "../store-work/StoreProjectsBreadcrumb.svelte";
-  import StoreThreadsBreadcrumb from "../store-threads/StoreThreadsBreadcrumb.svelte";
   import { isRepositoryProjects } from "../../controller/projects-view-cache.js";
   import StoreRepositoryTabs from "./StoreRepositoryTabs.svelte";
   import StoreWorkspaceSectionHeader from "./StoreWorkspaceSectionHeader.svelte";
@@ -48,6 +47,7 @@
     selectPage,
     children,
     agents,
+    applicationMenu,
   }: {
     controller: StoreController;
     stackWorkspace?: StackWorkspaceController;
@@ -67,6 +67,7 @@
     selectPage(page: StorePage): void;
     children?: Snippet<[StorePage, string]>;
     agents?: Snippet;
+    applicationMenu?: Snippet;
   } = $props();
   const repositorySettingsOpen = $derived(
     current.page === "settings" && !settingsOpen,
@@ -118,6 +119,30 @@
       void controller.actions.refresh();
     }}
   >
+    {#if shell.mobile.resolvedMode === "mobile"}
+      <AppShell.Toolbar>
+        {#if settingsOpen}
+          <AppShell.Sidebar.Toggle side="left" sidebarName="settings" />
+        {:else}
+          <CommunityApplicationMobileNavigation
+            model={{ canNavigateBack, canNavigateForward, navigate }}
+          />
+          {#if focusedStacks && stackWorkspace?.snapshot?.repository === current.repository}<StoreStackWorkspacePicker
+              controller={stackWorkspace}
+            />{:else if current.page === "projects" && controller.projects && !isRepositoryProjects(current)}<StoreProjectsBreadcrumb
+              {controller}
+            />{/if}
+        {/if}
+        <div class="store-application__details-toggle">
+          {#if !settingsOpen && !repositorySettingsOpen && !current.agentsHub && !["workflows", "threads"].includes(current.page)}<AppShell.Sidebar.Toggle
+              side="right"
+              sidebarController={detailsRail}
+              sidebarName="details"
+            />{/if}
+          {@render applicationMenu?.()}
+        </div>
+      </AppShell.Toolbar>
+    {/if}
     {#key current.repository}
       <div
         hidden={!repositorySettingsOpen}
@@ -146,11 +171,6 @@
       </div>
     {/key}
     {#if settingsOpen}
-      {#if shell.mobile.resolvedMode === "mobile"}
-        <AppShell.Toolbar>
-          <AppShell.Sidebar.Toggle side="left" sidebarName="settings" />
-        </AppShell.Toolbar>
-      {/if}
       <StoreLazyView load={views.settings} label="Settings"
         >{#snippet loading()}<StoreGlobalSettingsLoading
             section={settingsSection}
@@ -166,7 +186,18 @@
     {:else if repositorySettingsOpen}
       <!-- Repository settings is retained in the sibling body above. -->
     {:else if current.agentsHub}{@render agents?.()}
-    {:else if current.page === "workflows"}<AppShell.Body layout="regions" label="Workflows"><StoreLazyView load={views.workflows} label="Workflows">{#snippet loading()}<StorePageSkeleton route={current} label="Workflows" />{/snippet}{#snippet content(View)}<View {controller} />{/snippet}</StoreLazyView></AppShell.Body>
+    {:else if current.page === "workflows"}<AppShell.Body
+        layout="regions"
+        label="Workflows"
+        ><StoreLazyView load={views.workflows} label="Workflows"
+          >{#snippet loading()}<StorePageSkeleton
+              route={current}
+              label="Workflows"
+            />{/snippet}{#snippet content(View)}<View
+              {controller}
+            />{/snippet}</StoreLazyView
+        ></AppShell.Body
+      >
     {:else if current.page === "threads"}<StoreLazyView
         load={views.threads}
         label="Threads"
@@ -179,25 +210,6 @@
           />{/snippet}</StoreLazyView
       >
     {:else}
-      {#if shell.mobile.resolvedMode === "mobile"}
-        <AppShell.Toolbar>
-          <CommunityApplicationMobileNavigation
-            model={{ canNavigateBack, canNavigateForward, navigate }}
-          />
-          {#if focusedStacks && stackWorkspace?.snapshot?.repository === current.repository}<StoreStackWorkspacePicker
-              controller={stackWorkspace}
-            />{:else if current.page === "projects" && controller.projects && !isRepositoryProjects(current)}<StoreProjectsBreadcrumb
-              {controller}
-            />{/if}
-          <div class="store-application__details-toggle">
-            <AppShell.Sidebar.Toggle
-              side="right"
-              sidebarController={detailsRail}
-              sidebarName="details"
-            />
-          </div>
-        </AppShell.Toolbar>
-      {/if}
       <AppShell.Body
         layout="regions"
         label={current.page === "files"

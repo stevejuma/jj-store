@@ -34,3 +34,10 @@ results and recovery of the original unknown request. Agent launch and Compute
 relay changes can remain deferred until a worker/helper next starts. They do not
 require a server restart. Deployment identity/access, TLS, listener, storage and
 bundle paths remain startup-managed; backup/restore is not enabled.
+
+E-APPLICATION-MENU-001 documents one horizontal Application menu combining
+available native actions and supported reload. Desktop uses the top header;
+narrow browser screens use Projects' body-toolbar placement, including Workflows
+and History. Dialog drafts and original pending requests survive resizing. This
+presentation does not change reload authority, activation or configuration
+formats and does not qualify native providers, platforms or visual baselines.

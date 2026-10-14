@@ -1,5 +1,11 @@
 # Browsing UI execution
 
+E-APPLICATION-MENU-001 confirms unchanged JST-API-001 browser contracts. The
+shared menu and persistent dialog owners only move existing native commands and
+supported settings reload between desktop/mobile headers. Endpoints, discovery,
+authorization, read pins, stable requests, receipt recovery and workflow URLs
+retain their formats and semantics; no new API or server executor is added.
+
 E-UI-VIEW-READINESS-001 reviews JST-API-001 for the lazy-view consumers.
 Mounted-control readiness, shared file-tree styling and stable search-header
 geometry change no endpoint, admission rule, authorization, request identity,

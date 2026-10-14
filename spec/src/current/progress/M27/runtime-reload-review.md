@@ -53,3 +53,11 @@ same form guidance. Loading placeholders match all four slider rows. Final
 interaction/Axe coverage passes 55 affected stories; post-extraction Capture
 coverage passes 23. Architecture stays within existing limits without raising
 baselines. Unit-only changes leave Save/Cancel disabled in the running App.
+
+E-APPLICATION-MENU-001 reviews M27/M28 with status unchanged. One shared menu
+combines native repository actions and supported reload, using the desktop top
+header or the mobile body toolbar. Workflows now follows Projects' placement.
+Persistent dialog owners retain unsaved native drafts, original unknown reload
+intent and focus across the breakpoint. Focused interaction/Axe and a fresh
+running-app document qualify this presentation slice. Native reload activation,
+authorization, provider/platform and visual-baseline gates are unchanged.

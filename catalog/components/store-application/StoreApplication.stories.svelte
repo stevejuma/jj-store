@@ -177,7 +177,7 @@
 />
 
 <Story
-  name="Mobile details control stays at toolbar end"
+  name="Mobile header controls stay at toolbar end"
   args={{ displayMode: "mobile", initialPage: "log" }}
   play={async ({ canvasElement }) => {
     const c = within(canvasElement);
@@ -185,7 +185,11 @@
     const toolbar = toggle.closest("header")!;
     const bounds = toolbar.getBoundingClientRect(),
       button = toggle.getBoundingClientRect();
-    await expect(bounds.right - button.right).toBeLessThan(30);
+    const menu = c
+      .getByRole("button", { name: "Application menu" })
+      .getBoundingClientRect();
+    await expect(bounds.right - menu.right).toBeLessThan(30);
+    await expect(button.right).toBeLessThanOrEqual(menu.left);
     await expect(button.left).toBeGreaterThan(bounds.left + bounds.width * 0.8);
   }}
 />

@@ -137,8 +137,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed fixed-height Buzz-inspired workflow card summaries, stacked native action icons, stored description Form/YAML editing, representative skeletons and the local Advanced separator; existing workflow commands, authority and runner configuration formats remain unchanged.",
-      "fingerprint": "d0313e5543e3ae5bb36f592acdc3c4e74f5e0ffc7acdea94d5313da6c7417bda"
+      "reason": "Reviewed one shared horizontal Application menu in desktop and mobile body headers, Workflows using the Projects toolbar, persistent dialogs, retained exact requests and focus across resizing. The mobile toolbar also precedes the retained Repository Settings body. Existing APIs and reload authority are unchanged.",
+      "fingerprint": "fff9a40454401858bd237d3f45bdf6a34e0558a1c96a31606e279203fb6b158c"
     }
   },
   {
