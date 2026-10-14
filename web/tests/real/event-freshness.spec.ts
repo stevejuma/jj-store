@@ -32,7 +32,7 @@ function traffic(page: Page) {
 }
 function publishLocalOperation() {
   return execFileSync(
-    resolve(process.env.JJ_STORE_REAL_ROOT!, "target/debug/jj"),
+    resolve(process.env.JJ_STORE_REAL_ROOT!, "target/debug/jj-store-jj"),
     [
       "-R",
       runtime.repositoryProfiles.localFolder,

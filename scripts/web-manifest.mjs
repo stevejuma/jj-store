@@ -1,6 +1,14 @@
 import { readdir, readFile, writeFile } from "node:fs/promises";
 import { pathToFileURL } from "node:url";
 const assetPattern = /^assets\/[a-zA-Z0-9_.-]+\.(js|css|woff2|woff|ttf)$/;
+export function boundedBrowserManifest(files) {
+  const manifest = { version: 1, files };
+  if (files.length > 256 || Buffer.byteLength(JSON.stringify(manifest)) > 16384)
+    throw Error(
+      "Browser asset manifest exceeds the server's bounded inventory",
+    );
+  return manifest;
+}
 
 /** Traverse compiler dependencies from the application entry; unrelated emitted workers are not served. */
 export function applicationAssets(manifest, entry = "index.html") {
@@ -55,17 +63,16 @@ async function writeManifest() {
     throw new Error("Unexpected agent icon asset type");
   await writeFile(
     new URL("asset-manifest.json", root),
-    JSON.stringify({
-      version: 1,
-      files: [
+    JSON.stringify(
+      boundedBrowserManifest([
         ...files,
         ...icons
           .map((entry) => entry.name)
           .filter((name) => name.endsWith(".svg"))
           .sort()
           .map((name) => `agent-icons/${name}`),
-      ],
-    }),
+      ]),
+    ),
   );
 }
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href)

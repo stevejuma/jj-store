@@ -8,7 +8,7 @@ fn fixture() -> (tempfile::TempDir, LocalRepository) {
     let root = tempfile::tempdir().unwrap();
     let path = root.path().join("repo");
     assert!(
-        std::process::Command::new("/opt/homebrew/bin/jj")
+        std::process::Command::new("jj")
             .args(["--no-pager", "git", "init", "--colocate"])
             .arg(&path)
             .env("JJ_CONFIG", "/dev/null")

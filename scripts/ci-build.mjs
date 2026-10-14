@@ -27,4 +27,15 @@ execFileSync(process.execPath, ["scripts/ci-tests.mjs", "build", cohort], {
 cargo(["test", ...selectors, "--doc", "--locked"]);
 if (cohort === "heavy") {
   cargo(["build", "-p", "jj-store", "--bins", "--examples", "--locked"]);
+  cargo([
+    "build",
+    "-p",
+    "jj-store-http",
+    "--example",
+    "browser_preview",
+    "--locked",
+  ]);
+  execFileSync(process.execPath, ["scripts/browser-fixtures.mjs"], {
+    stdio: "inherit",
+  });
 }

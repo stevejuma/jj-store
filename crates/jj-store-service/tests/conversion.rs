@@ -279,7 +279,7 @@ async fn local_history_archive_retains_every_selected_work_version_and_exact_git
     use jj_store_service::{local_repository::LocalRepository, work};
     let tmp = tempfile::tempdir().unwrap();
     let path = tmp.path().join("source");
-    let output = std::process::Command::new("/opt/homebrew/bin/jj")
+    let output = std::process::Command::new("jj")
         .args(["--no-pager", "git", "init", "--colocate"])
         .arg(&path)
         .env("JJ_CONFIG", "/dev/null")
@@ -320,7 +320,7 @@ async fn local_history_archive_retains_every_selected_work_version_and_exact_git
             })
             .unwrap();
     }
-    let output = std::process::Command::new("/opt/homebrew/bin/jj")
+    let output = std::process::Command::new("jj")
         .current_dir(&path)
         .args([
             "--no-pager",

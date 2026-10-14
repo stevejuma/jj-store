@@ -7,7 +7,10 @@ const fixture = process.env.JJ_STORE_LOCAL_BROWSER_FIXTURE
   ? JSON.parse(readFileSync(process.env.JJ_STORE_LOCAL_BROWSER_FIXTURE, "utf8"))
   : null;
 test.skip(!fixture, "owned local browser fixture required");
-const binary = resolve(process.env.CARGO_TARGET_DIR ?? "target", "debug/jj");
+const binary = resolve(
+  process.env.CARGO_TARGET_DIR ?? "target",
+  "debug/jj-store-jj",
+);
 function state() {
   const jj = (args: string[]) =>
     execFileSync(
@@ -351,7 +354,7 @@ test("filesystem reviews create and reply with CLI parity and pinned historical 
   );
   const cli = JSON.parse(
     execFileSync(
-      `${process.env.CARGO_TARGET_DIR ?? "target"}/debug/jj`,
+      `${process.env.CARGO_TARGET_DIR ?? "target"}/debug/jj-store-jj`,
       [
         "-R",
         fixture.folder,

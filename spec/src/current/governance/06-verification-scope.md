@@ -1,5 +1,20 @@
 # Verification scope
 
+Shared CI resource preparation runs its fail-closed fixture regressions,
+governance/release/spec tooling suites and workflow validation. Browser jobs
+reuse immutable artifacts produced for the same workflow/source selection;
+explicit CI prebuilt admission validates them before process replacement. Cold
+browser acceptance still starts fresh disposable storage and server processes
+and runs the complete real-browser suite. Published ACP is pinned,
+checksum/version checked and probed without opening an agent session. Local
+interactive fixtures, normal development builds and release qualification remain
+separate. Migration audits pin the public retained migration revision, whose
+tree and original evidence/task/requirement assertions are unchanged by signing.
+The prepared-context preflight keeps the control stream open until both bounded
+probe requests receive terminal responses; premature EOF must not cancel queued
+probes and masquerade as missing capability. It still admits only the expected
+session-not-open errors and opens no session or adapter.
+
 Help presentation bundling consumes the existing application palette sources and
 released local fonts. Changes to its asset generation and theme lifecycle run
 the documentation-tool regressions and complete cold Help browser lane,

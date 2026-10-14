@@ -5,22 +5,25 @@ const pnpm = (...args) => execFileSync("pnpm", args, { stdio: "inherit" });
 if (lane === "external") pnpm("test:rustfs");
 else if (lane === "contracts") pnpm("contracts:check");
 else if (lane === "embedded") {
-  pnpm("build:embedded-rustfs");
+  const prebuilt =
+    process.env.CI === "true" && process.env.JJ_STORE_CI_PREBUILT === "1";
+  if (!prebuilt) pnpm("build:embedded-rustfs");
   process.env.JJ_STORE_RUSTFS_RUNTIME = resolve(
     "runtime/embedded-rustfs/target/debug/jj-store-rustfs",
   );
-  pnpm(
-    "dev:cargo",
-    "--",
-    "clippy",
-    "--manifest-path",
-    "runtime/embedded-rustfs/Cargo.toml",
-    "--all-targets",
-    "--locked",
-    "--",
-    "-D",
-    "warnings",
-  );
+  if (!prebuilt)
+    pnpm(
+      "dev:cargo",
+      "--",
+      "clippy",
+      "--manifest-path",
+      "runtime/embedded-rustfs/Cargo.toml",
+      "--all-targets",
+      "--locked",
+      "--",
+      "-D",
+      "warnings",
+    );
   pnpm(
     "dev:cargo",
     "--",
@@ -36,5 +39,18 @@ else if (lane === "embedded") {
     "--ignored",
     "--test-threads=1",
   );
-  pnpm("test:local-trusted");
+  pnpm(
+    "dev:cargo",
+    "--",
+    "test",
+    "-p",
+    "jj-store",
+    "--test",
+    "server_executable",
+    "--locked",
+    "--",
+    "--ignored",
+    "--exact",
+    "local_trusted_executable_bootstraps_registers_and_serves_without_tokens",
+  );
 } else throw Error("unknown storage lane");

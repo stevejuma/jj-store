@@ -11,7 +11,7 @@ mod agent_discussion;
 fn fixture() -> (tempfile::TempDir, LocalRepository) {
     let root = tempfile::tempdir().unwrap();
     let path = root.path().join("repo");
-    let result = Command::new("/opt/homebrew/bin/jj")
+    let result = Command::new("jj")
         .args(["--no-pager", "git", "init", "--colocate"])
         .arg(&path)
         .env("JJ_CONFIG", "/dev/null")

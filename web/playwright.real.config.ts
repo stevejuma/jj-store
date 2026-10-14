@@ -10,6 +10,7 @@ export default defineConfig({
   workers: 1,
   timeout: 60000,
   retries: 0,
+  reporter: process.env.CI ? "line" : "list",
   use: {
     baseURL,
     browserName: "chromium",

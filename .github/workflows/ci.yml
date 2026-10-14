@@ -1,10 +1,11 @@
 name: CI
 on:
   push:
-    branches: [main]
-  pull_request:
+    branches:
+      - main
+  pull_request: null
   schedule:
-    - cron: "21 2 * * *"
+    - cron: 21 2 * * *
   workflow_dispatch:
     inputs:
       full:
@@ -61,8 +62,28 @@ jobs:
         env:
           CI_FULL: ${{ inputs.full }}
           CI_EVENT: ${{ github.event_name }}
-  fast:
+  format:
     needs: plan
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref:
+            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
+            }}
+      - uses: ./.github/actions/setup
+        with:
+          native-dependencies: "false"
+          build-tools: "false"
+      - name: Rust and source formatting
+        run: |
+          pnpm format:rust:check
+          pnpm exec prettier --check .
+  tooling:
+    needs:
+      - plan
+      - format
     runs-on: ubuntu-22.04
     timeout-minutes: 15
     steps:
@@ -73,21 +94,42 @@ jobs:
             ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
             }}
       - uses: ./.github/actions/setup
+        with:
+          native-dependencies: "false"
+          build-tools: "false"
+      - name: Governance fixtures
+        run: pnpm test:governance
+      - name: Specification tooling
+        run: pnpm test:spec
+      - name: Release and CI tooling
+        run: pnpm release:check
+  governance:
+    needs:
+      - plan
+      - format
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+          ref:
+            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
+            }}
+      - uses: ./.github/actions/setup
+        with:
+          native-dependencies: "false"
+          build-tools: "false"
       - run: node scripts/ci-range.mjs
         env:
           CI_EVENT: ${{ github.event_name }}
           CI_BASE_SHA:
             ${{ github.event.pull_request.base.sha || github.event.before }}
-      - run: |
-          pnpm format:rust:check
-          pnpm exec prettier --check .
-          pnpm test:governance
-          pnpm test:spec
-          pnpm test:release
+      - name: Static architecture and specification checks
+        run: |
           pnpm check:architecture
           pnpm check:ui-ownership
           pnpm spec:validate --only governance,summary,fileLimits,verification
-          pnpm release:check
       - name: Progress evidence gate
         if: >-
           github.event_name == 'pull_request' && github.head_ref !=
@@ -118,15 +160,32 @@ jobs:
         with:
           tool: actionlint@1.7.12
       - run: actionlint
+  fast:
+    needs:
+      - format
+      - tooling
+      - governance
+    if: always()
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref:
+            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
+            }}
+      - run: node scripts/ci-required.mjs
+        env:
+          CI_STAGE: early
+          CI_PLAN: "{}"
+          CI_JOBS: ${{ toJSON(needs) }}
   build:
-    needs: plan
-    if: needs.plan.outputs.rust == 'true' || needs.plan.outputs.web == 'true'
+    needs:
+      - plan
+      - fast
+    if: needs.plan.outputs.rust == 'true'
     runs-on: ubuntu-22.04
     timeout-minutes: 90
-    strategy:
-      fail-fast: false
-      matrix:
-        cohort: [ordinary, heavy]
     env:
       CARGO_TARGET_DIR: target
     steps:
@@ -142,35 +201,30 @@ jobs:
           save-if:
             ${{ github.ref == 'refs/heads/main' && github.event_name == 'push'
             }}
-          key: ${{ matrix.cohort }}-1.99
-      - run: node scripts/ci-build.mjs ${{ matrix.cohort }}
+          key: ordinary-1.99
+      - run: node scripts/ci-build.mjs ordinary
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
         with:
-          name: tests-${{ matrix.cohort }}
-          path: .release/tests-${{ matrix.cohort }}.tar.zst
-          include-hidden-files: true
-          retention-days: 3
-          if-no-files-found: error
-      - if: matrix.cohort == 'heavy'
-        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
-        with:
-          name: linux-development-tools
-          path: |
-            target/debug/jj-store
-            target/debug/jj-store-jj
-            target/debug/examples/docs_reference
+          name: tests-ordinary
+          path: .release/tests-ordinary.tar.zst
           include-hidden-files: true
           retention-days: 3
           if-no-files-found: error
   rust:
-    needs: [plan, build]
+    needs:
+      - plan
+      - build
     if: needs.plan.outputs.rust == 'true'
     runs-on: ubuntu-22.04
     timeout-minutes: 30
     strategy:
-      fail-fast: false
+      fail-fast: true
       matrix:
-        shard: [1, 2, 3, 4]
+        shard:
+          - 1
+          - 2
+          - 3
+          - 4
     env:
       CARGO_TARGET_DIR: target
       CI_SHARD: ${{ matrix.shard }}
@@ -186,59 +240,10 @@ jobs:
           name: tests-ordinary
           path: .release
       - run: node scripts/ci-tests.mjs run ordinary
-  heavy:
-    needs: [plan, build]
-    if: needs.plan.outputs.heavy == 'true'
-    runs-on: ubuntu-22.04
-    timeout-minutes: 60
-    strategy:
-      fail-fast: false
-      max-parallel: 8
-      matrix:
-        shard: [1, 2, 3, 4, 5, 6, 7, 8]
-    env:
-      CARGO_TARGET_DIR: target
-      CI_SHARD: ${{ matrix.shard }}
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-        with:
-          ref:
-            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
-            }}
-      - uses: ./.github/actions/setup
-      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
-        with:
-          name: tests-heavy
-          path: .release
-      - run: node scripts/ci-tests.mjs run heavy
-  storage:
-    needs: [plan, build]
-    if: needs.plan.outputs.heavy == 'true'
-    runs-on: ubuntu-22.04
-    timeout-minutes: 90
-    strategy:
-      fail-fast: false
-      matrix:
-        lane: [embedded, contracts, external]
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-        with:
-          ref:
-            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
-            }}
-      - uses: ./.github/actions/setup
-      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
-        with:
-          workspaces: |
-            . -> target
-            runtime/embedded-rustfs -> target
-          save-if:
-            ${{ github.ref == 'refs/heads/main' && github.event_name == 'push'
-            }}
-          key: storage-${{ matrix.lane }}
-      - run: node scripts/ci-storage.mjs ${{ matrix.lane }}
   web:
-    needs: plan
+    needs:
+      - plan
+      - fast
     runs-on: ubuntu-22.04
     timeout-minutes: 20
     steps:
@@ -253,102 +258,38 @@ jobs:
           pnpm catalog:check
           pnpm web:test
           pnpm catalog:test
-  assets:
-    needs: [plan, build]
     if: needs.plan.outputs.web == 'true'
-    runs-on: ubuntu-22.04
-    timeout-minutes: 25
-    env:
-      JJ_STORE_DOC_REFERENCE:
-        ${{ github.workspace }}/.release/tools/examples/docs_reference
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-        with:
-          ref:
-            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
-            }}
-      - uses: ./.github/actions/setup
-      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
-        with:
-          name: linux-development-tools
-          path: .release/tools
-      - run: |
-          chmod +x .release/tools/jj-store .release/tools/jj-store-jj .release/tools/examples/docs_reference
-          pnpm exec playwright install --with-deps chromium
-          pnpm web:build
-          pnpm build-storybook
-      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
-        with:
-          name: web-bundle
-          path: web/dist
-          retention-days: 3
-          if-no-files-found: error
-      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
-        with:
-          name: storybook-bundle
-          path: storybook-static
-          retention-days: 3
-          if-no-files-found: error
-  browser:
-    needs: [plan, build, assets]
-    if: needs.plan.outputs.web == 'true'
-    runs-on: ubuntu-22.04
-    timeout-minutes: 60
-    strategy:
-      fail-fast: false
-      matrix:
-        lane: [storybook, browser, cold]
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-        with:
-          ref:
-            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
-            }}
-      - uses: ./.github/actions/setup
-      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
-        with:
-          key: browser-${{ matrix.lane }}
-      - run: pnpm exec playwright install --with-deps chromium
-      - run: node scripts/ci-browser.mjs ${{ matrix.lane }}
-  native:
-    needs: plan
-    if: needs.plan.outputs.full == 'true'
-    runs-on: ${{ matrix.runner }}
-    timeout-minutes: 90
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - runner: ubuntu-22.04-arm
-            target: aarch64-unknown-linux-gnu
-          - runner: macos-15
-            target: aarch64-apple-darwin
-          - runner: macos-15-intel
-            target: x86_64-apple-darwin
-    steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-        with:
-          ref:
-            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
-            }}
-      - uses: ./.github/actions/setup
-      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
-        with:
-          save-if:
-            ${{ github.ref == 'refs/heads/main' && github.event_name == 'push'
-            }}
-          key: native-${{ matrix.target }}
-      - name: Verify native compiler target
-        run: |
-          rustc -vV | grep -Fx 'host: ${{ matrix.target }}'
-      - run: pnpm dev:cargo -- build -p jj-store --bins --locked
-      - run:
-          pnpm dev:cargo -- test -p jj-store-read-index -p jj-collab -p
-          jj-store-capture --locked -- --test-threads=1
+  heavy:
+    needs:
+      - plan
+      - fast
+      - build
+      - rust
+      - web
+    if:
+      "!cancelled() && needs.fast.result == 'success' && (needs.plan.outputs.web
+      != 'true' || needs.web.result == 'success') && (needs.plan.outputs.rust !=
+      'true' || (needs.build.result == 'success' && needs.rust.result ==
+      'success')) && (needs.plan.outputs.heavy == 'true' ||
+      needs.plan.outputs.web == 'true' || needs.plan.outputs.full == 'true')"
+    uses: ./.github/workflows/ci-heavy.yml
+    with:
+      ref: ${{ inputs.ref || github.event.pull_request.head.sha || github.sha }}
+      heavy: ${{ needs.plan.outputs.heavy == 'true' }}
+      web: ${{ needs.plan.outputs.web == 'true' }}
+      full: ${{ needs.plan.outputs.full == 'true' }}
   required:
     name: required
     needs:
-      [plan, fast, build, rust, heavy, storage, web, assets, browser, native]
+      - plan
+      - format
+      - tooling
+      - governance
+      - fast
+      - build
+      - rust
+      - web
+      - heavy
     if: always()
     runs-on: ubuntu-22.04
     timeout-minutes: 5

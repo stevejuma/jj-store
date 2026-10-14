@@ -24,6 +24,7 @@ import { seedSampleWork } from "./dev-demo-work-run.mjs";
 import { seedThreads } from "./dev-demo-threads.mjs";
 import { seedWork } from "./dev-demo-work.mjs";
 import { developmentAgentEnvironment } from "./dev-agent-runtime.mjs";
+import { prebuiltBrowserResources } from "./ci-prebuilt.mjs";
 import {
   configureSearch,
   repositoryPosition,
@@ -140,7 +141,9 @@ async function initializeFixture(origin, logHandle) {
 }
 
 async function restart({ reset = false } = {}) {
-  await run("cargo", ["build", "-p", "jj-store", "--bins", "--locked"]);
+  const prebuilt = await prebuiltBrowserResources(repositoryRoot);
+  if (!prebuilt)
+    await run("cargo", ["build", "-p", "jj-store", "--bins", "--locked"]);
   Object.assign(
     developmentEnvironment,
     await developmentAgentEnvironment(repositoryRoot),
@@ -152,7 +155,7 @@ async function restart({ reset = false } = {}) {
   });
   if (reset) await rm(layout.runtimeRoot, { recursive: true, force: true });
   await assertPortAvailable();
-  await run("pnpm", ["web:build"]);
+  if (!prebuilt) await run("pnpm", ["web:build"]);
   if (!process.env.JJ_STORE_DEV_RUSTFS_RUNTIME)
     await run("pnpm", ["build:embedded-rustfs"]);
   const origin = `http://127.0.0.1:${serverPort}/`;

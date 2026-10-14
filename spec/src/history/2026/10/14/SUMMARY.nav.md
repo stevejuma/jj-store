@@ -30,3 +30,9 @@
   {{#include E-CI-TOOL-001/SUMMARY.nav.md}}
 - [E-CI-ENVIRONMENT-001](E-CI-ENVIRONMENT-001/index.md)
   {{#include E-CI-ENVIRONMENT-001/SUMMARY.nav.md}}
+- [E-CI-FIXTURE-001](E-CI-FIXTURE-001/index.md)
+  {{#include E-CI-FIXTURE-001/SUMMARY.nav.md}}
+- [E-CI-PIPELINE-001](E-CI-PIPELINE-001/index.md)
+  {{#include E-CI-PIPELINE-001/SUMMARY.nav.md}}
+- [E-CI-BUNDLE-001](E-CI-BUNDLE-001/index.md)
+  {{#include E-CI-BUNDLE-001/SUMMARY.nav.md}}

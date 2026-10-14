@@ -1,5 +1,12 @@
 # Application startup
 
+Production bundle generation retains the server's 256-file and 16-KiB manifest
+limits and fails before publication when either bound is exceeded. Released
+Design Core shared helpers form one bundle group; application views retain their
+strict separate entries and on-demand loading. All reachable fonts, scripts,
+styles and icons remain in the complete allowlist. The server's byte, path,
+symlink and CSP guards remain unchanged.
+
 The production controller completes bootstrap before rendering connection
 choices. One ready LocalTrusted catalog entry opens without a token, several
 entries render an explicit chooser, and an empty catalog explains repository

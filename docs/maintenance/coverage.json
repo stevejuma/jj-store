@@ -66,8 +66,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed portable Unix stat widening in private agent workspace listing and working-tree inventory. Existing fingerprints, bounds, inode/race checks, admission and API responses remain unchanged.",
-      "fingerprint": "61b8778b8589956ebec920422e47eff6a13b7b72c4e6f34b972bc2d8e597b2a8"
+      "reason": "Reviewed unchanged physical permission masks and PATH-resolved JJ in the test-only WorkStore cache fixture. Bounds, physical fingerprints, authorization, immutable source selection and API responses are unchanged; generated CLI reference now also includes its existing version option.",
+      "fingerprint": "8ea328815d0f2b6b42a01a0a59c9dc570532695f42d0e194ebd10941db3a6807"
     }
   },
   {

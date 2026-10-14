@@ -18,7 +18,7 @@ async fn foreground_lease_matches_stock_jj_and_preserves_dirty_checkout() {
         .unwrap();
     assert_eq!(fixture.state(), before);
     lease.validate_metadata().await.unwrap();
-    let mut child = Command::new("/opt/homebrew/bin/jj")
+    let mut child = Command::new("jj")
         .current_dir(fixture.root())
         .args([
             "--no-pager",

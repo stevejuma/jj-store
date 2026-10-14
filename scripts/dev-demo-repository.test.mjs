@@ -3,8 +3,31 @@ import { mkdtemp, readFile, realpath, rm, symlink } from "node:fs/promises";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import test from "node:test";
+import { spawn } from "node:child_process";
+import { once } from "node:events";
+import { stopDevelopmentServer } from "./dev-demo-server.mjs";
 
 import { seedLinearHistory } from "./dev-demo-repository.mjs";
+
+test("disposable server cleanup preserves an already-exited startup failure", async () => {
+  const child = spawn(process.execPath, ["-e", "process.exit(23)"], {
+    stdio: "ignore",
+  });
+  await once(child, "close");
+  await assert.doesNotReject(stopDevelopmentServer(child));
+  assert.equal(child.exitCode, 23);
+});
+
+test("disposable server cleanup terminates its owned live process", async () => {
+  const child = spawn(
+    process.execPath,
+    ["-e", "console.log('ready');setInterval(()=>{},1000)"],
+    { stdio: ["ignore", "pipe", "ignore"] },
+  );
+  await once(child.stdout, "data");
+  await stopDevelopmentServer(child);
+  assert.equal(child.signalCode, "SIGTERM");
+});
 
 test("demo repository seeds every supported landing document", async (t) => {
   const repository = await mkdtemp(join(tmpdir(), "jj-store-demo-seed-"));

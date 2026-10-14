@@ -80,7 +80,7 @@ impl local_browser::Access for Access {
     }
 }
 pub fn stock(root: &Path, args: &[&str]) -> String {
-    let output = Command::new("/opt/homebrew/bin/jj")
+    let output = Command::new("jj")
         .current_dir(root)
         .args([
             "--no-pager",

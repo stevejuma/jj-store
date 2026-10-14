@@ -7,7 +7,7 @@ const home = process.env.JJ_STORE_REAL_REPOSITORY!;
 const runtime = process.env.JJ_STORE_REAL_RUNTIME!;
 const root = process.env.JJ_STORE_REAL_ROOT!;
 function cli(args: string[]) {
-  return execFileSync(join(root, "target/debug/jj"), args, {
+  return execFileSync(join(root, "target/debug/jj-store-jj"), args, {
     encoding: "utf8",
     env: {
       ...process.env,

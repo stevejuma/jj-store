@@ -1,0 +1,343 @@
+name: Heavy qualification
+on:
+  workflow_call:
+    inputs:
+      ref:
+        type: string
+        required: false
+        default: ""
+      heavy:
+        type: boolean
+        required: true
+      web:
+        type: boolean
+        required: true
+      full:
+        type: boolean
+        required: true
+permissions:
+  contents: read
+env:
+  CARGO_BUILD_JOBS: "2"
+  CARGO_INCREMENTAL: "0"
+  JJ_STORE_BUILD_TARGET_GIB: "24"
+  JJ_STORE_BUILD_TOTAL_GIB: "36"
+  JJ_STORE_BUILD_FREE_GIB: "6"
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    timeout-minutes: 90
+    env:
+      CARGO_TARGET_DIR: target
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref:
+            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
+            }}
+      - uses: ./.github/actions/setup
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
+        with:
+          workspaces: . -> target
+          save-if:
+            ${{ github.ref == 'refs/heads/main' && github.event_name == 'push'
+            }}
+          key: heavy-1.99
+      - run: node scripts/ci-build.mjs heavy
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: tests-heavy
+          path: .release/tests-heavy.tar.zst
+          include-hidden-files: true
+          retention-days: 3
+          if-no-files-found: error
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: linux-development-tools
+          path: |
+            target/debug/jj-store
+            target/debug/jj-store-jj
+            target/debug/examples/docs_reference
+            target/debug/examples/browser_preview
+          include-hidden-files: true
+          retention-days: 3
+          if-no-files-found: error
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: native-browser-fixtures
+          path: .scratch/web-responses.json
+          include-hidden-files: true
+          retention-days: 3
+          if-no-files-found: error
+  tests:
+    needs: build
+    if: inputs.heavy
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+    strategy:
+      fail-fast: true
+      max-parallel: 8
+      matrix:
+        shard:
+          - 1
+          - 2
+          - 3
+          - 4
+          - 5
+          - 6
+          - 7
+          - 8
+    env:
+      CARGO_TARGET_DIR: target
+      CI_SHARD: ${{ matrix.shard }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref:
+            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
+            }}
+      - uses: ./.github/actions/setup
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: tests-heavy
+          path: .release
+      - run: node scripts/ci-tests.mjs run heavy
+  runtime:
+    needs:
+      - build
+      - tests
+    if:
+      "!cancelled() && needs.build.result == 'success' && (needs.tests.result ==
+      'success' || !inputs.heavy)"
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref:
+            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
+            }}
+      - uses: ./.github/actions/setup
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
+        with:
+          workspaces: runtime/embedded-rustfs -> target
+          save-if:
+            ${{ github.ref == 'refs/heads/main' && github.event_name == 'push'
+            }}
+          key: embedded-runtime-1.99
+      - run: |
+          pnpm build:embedded-rustfs
+          pnpm check:embedded-rustfs
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: linux-storage-runtime
+          path: runtime/embedded-rustfs/target/debug/jj-store-rustfs
+          retention-days: 3
+          if-no-files-found: error
+  storage:
+    needs:
+      - tests
+      - runtime
+    if: inputs.heavy
+    runs-on: ubuntu-22.04
+    timeout-minutes: 90
+    strategy:
+      fail-fast: true
+      matrix:
+        lane:
+          - embedded
+          - contracts
+          - external
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref:
+            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
+            }}
+      - uses: ./.github/actions/setup
+      - if: matrix.lane == 'embedded'
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: linux-storage-runtime
+          path: runtime/embedded-rustfs/target/debug
+      - if: matrix.lane == 'embedded'
+        run: chmod +x runtime/embedded-rustfs/target/debug/jj-store-rustfs
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
+        with:
+          workspaces: . -> target
+          save-if:
+            ${{ github.ref == 'refs/heads/main' && github.event_name == 'push'
+            }}
+          key: storage-${{ matrix.lane }}
+      - run: node scripts/ci-storage.mjs ${{ matrix.lane }}
+        env:
+          JJ_STORE_CI_PREBUILT: "1"
+          JJ_STORE_RUSTFS_RUNTIME:
+            ${{ github.workspace
+            }}/runtime/embedded-rustfs/target/debug/jj-store-rustfs
+  assets:
+    needs:
+      - build
+      - tests
+    if:
+      "!cancelled() && inputs.web && needs.build.result == 'success' &&
+      (needs.tests.result == 'success' || !inputs.heavy)"
+    runs-on: ubuntu-22.04
+    timeout-minutes: 25
+    env:
+      JJ_STORE_DOC_REFERENCE:
+        ${{ github.workspace }}/.release/tools/examples/docs_reference
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref:
+            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
+            }}
+      - uses: ./.github/actions/setup
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: linux-development-tools
+          path: .release/tools
+      - run: >
+          chmod +x .release/tools/jj-store .release/tools/jj-store-jj
+          .release/tools/examples/docs_reference
+
+          pnpm exec playwright install --with-deps chromium
+
+          pnpm web:build
+
+          pnpm build-storybook
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: web-bundle
+          path: web/dist
+          retention-days: 3
+          if-no-files-found: error
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: storybook-bundle
+          path: storybook-static
+          retention-days: 3
+          if-no-files-found: error
+  browser:
+    needs:
+      - tests
+      - assets
+      - runtime
+      - storage
+    if:
+      "!cancelled() && inputs.web && needs.assets.result == 'success' &&
+      needs.runtime.result == 'success' && (needs.storage.result == 'success' ||
+      !inputs.heavy)"
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+    strategy:
+      fail-fast: true
+      matrix:
+        lane:
+          - storybook
+          - browser
+          - cold
+    env:
+      JJ_STORE_CI_PREBUILT: "1"
+      JJ_STORE_DEV_RUSTFS_RUNTIME:
+        ${{ github.workspace
+        }}/runtime/embedded-rustfs/target/debug/jj-store-rustfs
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref:
+            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
+            }}
+      - uses: ./.github/actions/setup
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: linux-development-tools
+          path: target/debug
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: linux-storage-runtime
+          path: runtime/embedded-rustfs/target/debug
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: web-bundle
+          path: web/dist
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: storybook-bundle
+          path: storybook-static
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          name: native-browser-fixtures
+          path: .scratch
+      - run:
+          chmod +x target/debug/jj-store target/debug/jj-store-jj
+          target/debug/examples/browser_preview
+          runtime/embedded-rustfs/target/debug/jj-store-rustfs
+      - if: matrix.lane == 'cold'
+        run: node scripts/ci-setup-acp.mjs
+      - run: pnpm exec playwright install --with-deps chromium webkit
+      - run: node scripts/ci-browser.mjs ${{ matrix.lane }}
+  native:
+    needs:
+      - build
+      - tests
+    if:
+      "!cancelled() && inputs.full && needs.build.result == 'success' &&
+      (needs.tests.result == 'success' || !inputs.heavy)"
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 90
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - runner: ubuntu-22.04-arm
+            target: aarch64-unknown-linux-gnu
+          - runner: macos-15
+            target: aarch64-apple-darwin
+          - runner: macos-15-intel
+            target: x86_64-apple-darwin
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref:
+            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
+            }}
+      - uses: ./.github/actions/setup
+      - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
+        with:
+          save-if:
+            ${{ github.ref == 'refs/heads/main' && github.event_name == 'push'
+            }}
+          key: native-${{ matrix.target }}
+      - name: Verify native compiler target
+        run: |
+          rustc -vV | grep -Fx 'host: ${{ matrix.target }}'
+      - run: pnpm dev:cargo -- build -p jj-store --bins --locked
+      - run:
+          pnpm dev:cargo -- test -p jj-store-read-index -p jj-collab -p
+          jj-store-capture --locked -- --test-threads=1
+  complete:
+    name: Heavy pipeline gate
+    needs:
+      - build
+      - tests
+      - runtime
+      - storage
+      - assets
+      - browser
+      - native
+    if: always()
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref:
+            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
+            }}
+      - run: node scripts/ci-required.mjs
+        env:
+          CI_STAGE: heavy
+          CI_PLAN: ${{ toJSON(inputs) }}
+          CI_JOBS: ${{ toJSON(needs) }}

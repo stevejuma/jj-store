@@ -1,10 +1,17 @@
 name: Release toolchain
 description: Pinned tools and registry-only workspace dependencies
+inputs:
+  native-dependencies:
+    description: Install credential-store headers for native crate builds
+    default: "true"
+  build-tools:
+    description: Install archived-test and documentation build tools
+    default: "true"
 runs:
   using: composite
   steps:
     - name: Install Linux native credential-store build dependencies
-      if: runner.os == 'Linux'
+      if: runner.os == 'Linux' && inputs.native-dependencies == 'true'
       shell: bash
       run: |
         sudo apt-get update
@@ -25,6 +32,7 @@ runs:
         toolchain: "1.99.0"
         components: rustfmt,clippy
     - uses: taiki-e/install-action@1168f6810a3cb30a3514bf5756a3b7f0422c6df8
+      if: inputs.build-tools == 'true'
       with:
         tool: cargo-nextest@0.9.148,mdbook@0.5.4,uv@0.9.28
     - run: pnpm install --frozen-lockfile --ignore-pnpmfile

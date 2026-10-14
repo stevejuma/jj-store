@@ -20,7 +20,7 @@ test("Git import refreshes automatically", async ({ page }) => {
     page.getByRole("button", { name: "External Git merge", exact: true }),
   ).toHaveCount(0);
   execFileSync(
-    join(root, "target/debug/jj"),
+    join(root, "target/debug/jj-store-jj"),
     ["--no-pager", "-R", workspace, "git", "fetch"],
     { env: process.env, stdio: "pipe" },
   );

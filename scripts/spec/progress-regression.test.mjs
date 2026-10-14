@@ -114,7 +114,7 @@ test("migration_preserves_original_evidence_tasks_requirements_and_byte_archives
   // checked by the current ledger validator, not frozen at their migration state.
   const result = migrationAudit(
     ".",
-    "40382d3599db56b4bdb33f23862e737bc521fe66",
+    "8ac50d51884d5dcaa6b465e6fe9118b93768c134",
   );
   assert.equal(result.evidence, 615);
   assert.equal(result.tasks, 142);

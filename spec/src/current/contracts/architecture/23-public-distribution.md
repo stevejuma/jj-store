@@ -50,3 +50,28 @@ Native CI verifies the runner's compiler triple and builds/tests its native
 debug profile in one shared target root. This avoids a second optimized build
 and duplicate native compilation during PR checks. Release archives still
 require the separately qualified optimized build and complete publication gates.
+
+Browser CI consumes the server/client, embedded runtime and browser/Help/catalog
+artifacts from the same workflow run and selected source revision. The embedded
+runtime builds and passes strict lint on an independent runner; storage and cold
+browser acceptance reuse it. An explicit CI-only prebuilt profile validates
+regular executable files and complete browser/Help manifests before replacing
+any disposable process. Ordinary development retains its build path. Cold
+acceptance uses a fresh isolated fixture, checksum-pinned published jj-acp 0.1.0
+with control-version-3 prepared-context admission, and the collision-safe
+`jj-store-jj` client. No fixture ACP, installed CLI or interactive state may be
+substituted. Missing resources fail; existing tests and acceptance assertions
+remain required. The aggregate required check includes the runtime producer.
+
+CI first plans impact and checks formatting. Independent tooling-test and static
+governance jobs then complete before ordinary Rust builds/tests and affected web
+checks may start. Their successful or explicitly unselected outcomes admit the
+separate reusable heavy workflow. Heavy test shards remain parallel and serial
+within each runner. Runtime/native qualification and asset production wait for
+heavy tests; storage waits for the verified runtime, and browser acceptance
+waits for both storage and assets. Early failures cannot launch the later
+stages. Each stage reports its own result, and the stable protected `required`
+check validates the complete planned graph, including rejected/skipped gates.
+Shared setup omits native headers and build-only tools for early checks.
+Fail-fast applies within archived shards and to each matrix: a failing shard
+cancels its siblings, and canceled work can never satisfy a qualification gate.

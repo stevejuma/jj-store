@@ -21,8 +21,14 @@ export function startDevelopmentServer(
 }
 
 export async function stopDevelopmentServer(server) {
-  if (!server.pid) return;
-  process.kill(server.pid, "SIGTERM");
+  if (!server.pid || server.exitCode !== null || server.signalCode !== null)
+    return;
+  try {
+    process.kill(server.pid, "SIGTERM");
+  } catch (error) {
+    if (error.code === "ESRCH") return;
+    throw error;
+  }
   for (let attempt = 0; attempt < 100; attempt += 1) {
     try {
       process.kill(server.pid, 0);

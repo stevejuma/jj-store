@@ -5,15 +5,33 @@ const plan = Object.fromEntries(
   ]),
 );
 const jobs = JSON.parse(process.env.CI_JOBS);
-const conditional = {
-  build: plan.rust || plan.web,
-  rust: plan.rust,
-  heavy: plan.heavy,
-  storage: plan.heavy,
-  assets: plan.web,
-  browser: plan.web,
-  native: plan.full,
-};
+const stage = process.env.CI_STAGE || "root";
+if (!["root", "heavy", "early"].includes(stage))
+  throw Error("Unknown CI stage");
+const conditional =
+  stage === "early"
+    ? { format: true, tooling: true, governance: true }
+    : stage === "heavy"
+      ? {
+          build: true,
+          tests: plan.heavy,
+          runtime: true,
+          storage: plan.heavy,
+          assets: plan.web,
+          browser: plan.web,
+          native: plan.full,
+        }
+      : {
+          plan: true,
+          format: true,
+          tooling: true,
+          governance: true,
+          fast: true,
+          build: plan.rust,
+          rust: plan.rust,
+          web: plan.web,
+          heavy: plan.heavy || plan.web || plan.full,
+        };
 for (const [name, job] of Object.entries(jobs)) {
   const required = conditional[name] ?? true;
   if (

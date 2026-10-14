@@ -26,7 +26,7 @@ function publishFromExternalCli() {
     `# External publication\n\nPublished after the browser captured its snapshot at ${Date.now()}.\n`,
   );
   execFileSync(
-    join(root, "target", "debug", "jj"),
+    join(root, "target", "debug", "jj-store-jj"),
     [
       "-R",
       checkout,

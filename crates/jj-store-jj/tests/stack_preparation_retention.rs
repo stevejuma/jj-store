@@ -18,7 +18,7 @@ fn settings() -> UserSettings {
     UserSettings::from_config(StackedConfig::with_defaults()).unwrap()
 }
 fn stock(path: &Path, args: &[&str]) -> String {
-    let output = Command::new("/opt/homebrew/bin/jj")
+    let output = Command::new("jj")
         .current_dir(path)
         .args([
             "--no-pager",

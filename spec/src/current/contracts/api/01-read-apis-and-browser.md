@@ -1,5 +1,12 @@
 # Read APIs and browser
 
+Build-time browser manifest generation enforces the existing 256-entry and
+16,384-byte inventory bounds before artifacts are admitted. CI prebuilt reads
+retain complete same-source scripts, fonts, styles, icons and Help. Grouping
+shared helpers changes artifact layout only; public DTOs, operation-pinned
+queries, authorization, cursors and event framing are unchanged. Static server
+allowlists, byte/path/symlink rejection and CSP remain independently verified.
+
 The repository unavailable-content banner presentation does not alter API read
 contracts, unavailable/error responses, repository authorization or retry
 semantics. Its collection/surface inset is local UI state; clients do not send

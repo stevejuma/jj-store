@@ -18,6 +18,9 @@ const root = new URL("../", import.meta.url);
 const ci = parse(
   readFileSync(new URL(".github/workflows/ci.yml", root), "utf8"),
 );
+const heavyCi = parse(
+  readFileSync(new URL(".github/workflows/ci-heavy.yml", root), "utf8"),
+);
 const gates = [
   "Progress evidence gate",
   "Spec-first gate",
@@ -26,7 +29,7 @@ const gates = [
 
 test("bot PRs skip only change-specific governance", () => {
   for (const name of gates) {
-    const step = ci.jobs.fast.steps.find((step) => step.name === name);
+    const step = ci.jobs.governance.steps.find((step) => step.name === name);
     assert.ok(step, `${name} remains present`);
     const condition = new Function(
       "github",
@@ -89,8 +92,8 @@ test("bot PRs skip only change-specific governance", () => {
 });
 
 test("bot PRs retain static spec and planned test lanes", () => {
-  assert.equal(ci.jobs.fast.if, undefined);
-  const staticStep = ci.jobs.fast.steps.find((step) =>
+  assert.equal(ci.jobs.governance.if, undefined);
+  const staticStep = ci.jobs.governance.steps.find((step) =>
     step.run?.includes("pnpm spec:validate"),
   );
   assert.ok(staticStep);
@@ -98,25 +101,15 @@ test("bot PRs retain static spec and planned test lanes", () => {
   for (const command of [
     "pnpm test:governance",
     "pnpm test:spec",
-    "pnpm test:release",
     "pnpm release:check",
   ])
     assert.ok(
-      ci.jobs.fast.steps.some(
+      ci.jobs.tooling.steps.some(
         (step) => step.if === undefined && step.run?.includes(command),
       ),
       command,
     );
-  for (const name of [
-    "build",
-    "rust",
-    "heavy",
-    "storage",
-    "web",
-    "assets",
-    "browser",
-    "native",
-  ]) {
+  for (const name of ["build", "rust", "heavy", "web"]) {
     assert.ok(ci.jobs.required.needs.includes(name), name);
     assert.doesNotMatch(
       ci.jobs[name].if ?? "",
@@ -125,6 +118,31 @@ test("bot PRs retain static spec and planned test lanes", () => {
     );
   }
   assert.equal(ci.jobs.required.if, "always()");
+  for (const name of [
+    "build",
+    "tests",
+    "runtime",
+    "storage",
+    "assets",
+    "browser",
+    "native",
+  ]) {
+    assert.ok(heavyCi.jobs.complete.needs.includes(name), name);
+    assert.doesNotMatch(
+      heavyCi.jobs[name].if ?? "",
+      /dependabot|changeset-release/,
+      name,
+    );
+  }
+  const packageJson = JSON.parse(
+    readFileSync(new URL("package.json", root), "utf8"),
+  );
+  for (const test of [
+    "scripts/release.test.mjs",
+    "scripts/ci.test.mjs",
+    "scripts/automation-governance.test.mjs",
+  ])
+    assert.ok(packageJson.scripts["release:check"].includes(test), test);
 });
 
 function versionFixture() {
