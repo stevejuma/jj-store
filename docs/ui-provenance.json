@@ -1297,7 +1297,8 @@
           "revision": "d859f33a484a9238bb11f974f4ead8e9be729ec6",
           "license": "Apache-2.0"
         }
-      ]
+      ],
+      "adaptations": "Owned metadata, file-statistics and rounded viewer-frame placeholders shared by module, initial snapshot and detail loading; Markdown/source bodies and narrow layouts match the maintained file panel."
     },
     {
       "local": "web/src/lib/ui/community-projects/StoreFileDisplayControls.svelte",

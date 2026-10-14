@@ -303,6 +303,21 @@
       name: "Loading README.md",
     });
     await expect(status).toBeVisible();
+    await expect(status).toHaveAttribute("aria-busy", "true");
+    const frame = status.querySelector(
+      ".community-projects__file-content-card",
+    );
+    await expect(frame).not.toBeNull();
+    await expect(
+      status.querySelector(".community-projects__file-panel-info"),
+    ).not.toBeNull();
+    await expect(
+      status.querySelector(".community-projects__file-panel-stats"),
+    ).not.toBeNull();
+    await expect(getComputedStyle(frame!).borderTopWidth).toBe("1px");
+    await expect(
+      frame!.querySelector(".community-projects__file-content-header"),
+    ).not.toBeNull();
     await expect(
       status.querySelectorAll('[data-ui-component="skeleton"]').length,
     ).toBeGreaterThan(3);

@@ -58,7 +58,7 @@ export async function expectPersistentRepositoryLayout(
     styles.paddingLeft,
   ])
     await expect(side).toBe("0px");
-  await expect(styles.borderTopWidth).toBe("1px");
+  await expect(styles.borderTopWidth).toBe("0px");
   await expect(styles.marginTop).toBe("8px");
   const treeResize = canvas.getByRole("button", {
     name: "Resize repository file tree",

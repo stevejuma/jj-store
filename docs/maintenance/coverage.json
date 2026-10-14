@@ -137,8 +137,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed Local service Launch excluding duplicate workflow host and admission inventory rows; dedicated Workflows configuration and underlying saved/effective inventory remain unchanged.",
-      "fingerprint": "f200d082cd8151d00af2b28cedd9f11526917b46ee469a1ae4154ce7712d9e78"
+      "reason": "Reviewed borderless Overview workspace-to-body spacing, one-rem breadcrumb inset, shared metadata/statistics/viewer loading frames and matching workflow console spacing; updated browsing guidance.",
+      "fingerprint": "114dedf57c79bd35c1674540e6e5769c193e2c37876261e6035c4be79b860426"
     }
   },
   {

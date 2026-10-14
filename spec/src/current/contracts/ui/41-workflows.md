@@ -209,6 +209,7 @@ command with the latest attempt identity; older attempts and unknown outcomes
 retain their existing action restrictions and exact-request recovery.
 
 The body contains one owned Forgejo-15.0.7-style console beneath metadata,
+separated by a 1.25rem gap that its detail-loading skeleton also retains,
 without outer Attempts, Steps or Outputs disclosures. The dark console remains
 in both application themes. Its header contains the workflow name and status, a
 status-icon attempt picker with parenthesized relative dates, and a settings

@@ -66,7 +66,6 @@
 .store-application__body-regions[data-page="files"] {
   box-sizing: border-box;
   padding: 0;
-  border-top: 1px solid var(--border);
   margin-top: 0.5rem;
 }
 
@@ -81,7 +80,7 @@
   flex: none;
   align-items: center;
   padding: 0.4rem 1rem;
-  padding-inline-start: 0.5rem;
+  padding-inline-start: 1rem;
   background: var(--background);
 }
 

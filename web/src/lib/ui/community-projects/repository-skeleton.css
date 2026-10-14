@@ -15,8 +15,6 @@
 .community-projects-repository-skeleton__status,
 .community-projects-repository-skeleton__directory-summary,
 .community-projects-repository-skeleton__directory-head,
-.community-projects-repository-skeleton__source-meta,
-.community-projects-repository-skeleton__source-stats,
 .community-projects-repository-skeleton__code-head {
   display: flex;
   box-sizing: border-box;
@@ -28,7 +26,6 @@
 .community-projects-repository-skeleton__section-heading,
 .community-projects-repository-skeleton__tree-heading,
 .community-projects-repository-skeleton__directory-summary,
-.community-projects-repository-skeleton__source-meta,
 .community-projects-repository-skeleton__code-head {
   min-height: 2.5rem;
   gap: 0.5rem;
@@ -245,37 +242,14 @@
   padding: 0.75rem;
 }
 
-.community-projects-repository-skeleton__source-meta,
-.community-projects-repository-skeleton__source-stats,
 .community-projects-repository-skeleton__code-card {
   border-inline: 1px solid var(--border);
-}
-
-.community-projects-repository-skeleton__source-meta {
-  border-top: 1px solid var(--border);
-  border-radius: var(--radius) var(--radius) 0 0;
-}
-
-.community-projects-repository-skeleton__source-stats {
-  min-height: 2rem;
-  padding: 0.45rem 0.65rem;
-}
-
-.community-projects-repository-skeleton__source-stats
-  [data-ui-component="skeleton"] {
-  width: 11rem;
-  height: 0.65rem;
 }
 
 .community-projects-repository-skeleton__code-card {
   border-bottom: 1px solid var(--border);
   border-radius: var(--radius);
   overflow: hidden;
-}
-
-.community-projects-repository-skeleton__source-stats
-  + .community-projects-repository-skeleton__code-card {
-  border-radius: 0 0 var(--radius) var(--radius);
 }
 
 .community-projects-repository-skeleton__code-head {

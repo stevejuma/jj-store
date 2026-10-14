@@ -80,6 +80,11 @@ queries are bounded; an incomplete response must not be read as proof that a
 path or change does not exist. A displayed file comes from the chosen snapshot,
 not necessarily the physical working file on disk.
 
+Overview keeps space beneath the workspace header without a divider. Its
+breadcrumb lines up with the workspace header content. While a selected file
+loads, the page retains the metadata card, statistics and framed viewer with its
+header and Markdown or source placeholders, including at narrow widths.
+
 ### Trace line origins with Blame
 
 Choose **Blame** beside Source to see where a recorded text file's lines came

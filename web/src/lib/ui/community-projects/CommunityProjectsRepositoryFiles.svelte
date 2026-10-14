@@ -236,6 +236,7 @@
     />
     {#if initialLoading || directoryLoading}<CommunityProjectsRepositorySkeleton
         layout={view.route.path ? "source" : "directory"}
+        path={view.route.path ?? ""}
         label="Loading repository files"
       />{:else}
       {#if view.targets.length > 1}<StoreNotice

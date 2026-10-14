@@ -135,6 +135,14 @@
     ).toHaveAttribute("aria-pressed", "true");
     const details = canvas.getByRole("article", { name: "Run details" });
     await expect(
+      canvas
+        .getByRole("region", { name: "Step console" })
+        .getBoundingClientRect().top -
+        details
+          .querySelector(".community-projects__task-meta")!
+          .getBoundingClientRect().bottom,
+    ).toBeGreaterThanOrEqual(20);
+    await expect(
       details.querySelector(".community-projects__task-meta"),
     ).not.toBeNull();
     await userEvent.hover(
@@ -321,5 +329,13 @@
     await expect(
       canvasElement.querySelectorAll(".community-projects__task-meta > div"),
     ).toHaveLength(7);
+    await expect(
+      canvasElement
+        .querySelector(".workflow-page-skeleton__console")!
+        .getBoundingClientRect().top -
+        canvasElement
+          .querySelector(".community-projects__task-meta")!
+          .getBoundingClientRect().bottom,
+    ).toBeGreaterThanOrEqual(20);
   }}
 />

@@ -26,6 +26,10 @@
   overflow: auto;
   min-height: 0;
 }
+:is(.workflow-run-detail, .workflow-page-skeleton[data-view="detail"])
+  .community-projects__task-meta {
+  margin-bottom: 1.25rem;
+}
 .workflow-run-detail dd {
   overflow-wrap: anywhere;
   min-width: 0;

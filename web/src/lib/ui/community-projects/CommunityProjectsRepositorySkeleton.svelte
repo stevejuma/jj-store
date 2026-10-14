@@ -1,4 +1,6 @@
 <script lang="ts">
+  import RepositoryFileLoading from "./RepositoryFileLoading.svelte";
+  import { isMarkdownRepositoryPath } from "./repository-browser.js";
   import { Skeleton } from "@lapismd/design-core/shadcn/skeleton";
   import "./repository-skeleton.css";
 
@@ -7,6 +9,7 @@
     label,
     count = 6,
     showStatus = false,
+    path = "",
   }: {
     layout:
       | "bookmarks"
@@ -19,6 +22,7 @@
     label: string;
     count?: number;
     showStatus?: boolean;
+    path?: string;
   } = $props();
 
   const rows = $derived(Array.from({ length: Math.max(1, count) }));
@@ -114,19 +118,13 @@
           <Skeleton class="community-projects-repository-skeleton__updated" />
         </div>
       {/each}
+    {:else if layout === "source"}
+      <RepositoryFileLoading
+        {path}
+        isMarkdown={isMarkdownRepositoryPath(path)}
+        decorative
+      />
     {:else}
-      {#if layout === "source"}
-        <div class="community-projects-repository-skeleton__source-meta">
-          <Skeleton class="community-projects-repository-skeleton__avatar" />
-          <Skeleton
-            class="community-projects-repository-skeleton__summary-copy"
-          />
-          <Skeleton class="community-projects-repository-skeleton__id" />
-        </div>
-        <div class="community-projects-repository-skeleton__source-stats">
-          <Skeleton />
-        </div>
-      {/if}
       <div class="community-projects-repository-skeleton__code-card">
         <div class="community-projects-repository-skeleton__code-head">
           <Skeleton /><Skeleton />

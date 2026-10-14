@@ -164,12 +164,14 @@ breadcrumb is rendered in the body below these tabs only while Overview is
 active, immediately above its file content. The breadcrumb has no bottom border,
 is rooted at the current repository and retains directory and selected-file
 navigation. Branches, Commits, Op Log, Agents and Reviews do not render it.
-Overview's file-body region has no padding, a top divider and a half-rem top
-margin. This treatment belongs only to Overview and does not change other pages.
-App navigation, Settings and Projects tab strips, repository section headers,
-breadcrumbs and detail Back controls use a compact leading inset of at most
-0.5rem. Section-header outer margins use the same inset; header spacing does not
-change body padding, tab/title order or control hit areas.
+Overview's file-body region has no padding or divider beneath the workspace
+header, retaining a half-rem top margin. Its breadcrumb uses a one-rem leading
+inset, aligned with the workspace header content. This treatment belongs only to
+Overview and does not change other pages. App navigation, Settings and Projects
+tab strips, repository section headers, other breadcrumbs and detail Back
+controls use a compact leading inset of at most 0.5rem. Section-header outer
+margins use the same inset; header spacing does not change body padding,
+tab/title order or control hit areas.
 
 The repository file tree is a shell body-left sidebar with a full-height
 divider, small inner padding, keyboard-resizable width and the shared file
@@ -310,7 +312,13 @@ Branches renders bookmark-card placeholders in its initial path column; JJ Log
 and Op Log render their graph/status composition; Files renders its file-tree
 and directory table composition. Commit, operation and file-detail reads retain
 the selected context and show representative changed-file, diff or source
-placeholders. Changed-file loading preserves the real card title and view-mode
-controls while skeletonizing only the count and file rows. The states use Design
-Core's public shadcn Skeleton, expose one labelled busy status per region and
-keep decorative placeholders hidden from assistive technology.
+placeholders. Selected file loading shares one presentation across module,
+initial snapshot and detail reads: a separate commit metadata card, file
+statistics and a bordered, rounded viewer frame with filename/display-control
+header and Markdown or numbered source placeholders. The loading breadcrumb uses
+the same inset and has no bottom divider. These placeholders retain the known
+path, match the viewer's minimum height and shrink on narrow screens.
+Changed-file loading preserves the real card title and view-mode controls while
+skeletonizing only the count and file rows. The states use Design Core's public
+shadcn Skeleton, expose one labelled busy status per region and keep decorative
+placeholders hidden from assistive technology.

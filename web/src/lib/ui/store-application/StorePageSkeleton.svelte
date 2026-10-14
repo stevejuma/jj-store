@@ -66,7 +66,7 @@
 
 <div
   class="store-page-skeleton"
-  role="status"
+  role={route.page === "files" ? undefined : "status"}
   aria-label={`Loading ${label}`}
   aria-busy="true"
   data-surface={surface}
@@ -136,11 +136,12 @@
       class="community-projects__files-content"
     >
       <div class="community-projects__files-surface">
-        <div class="store-page-skeleton__file-heading" aria-hidden="true">
+        <div class="store-application__body-breadcrumb" aria-hidden="true">
           <Skeleton class="store-page-skeleton__title" />
         </div>
         <RepositorySkeleton
           layout={route.path ? "source" : "directory"}
+          path={route.path ?? ""}
           label="Loading repository files"
         />
       </div>
@@ -271,12 +272,5 @@
     display: grid;
     gap: 0.5rem;
     flex: 1;
-  }
-  .store-page-skeleton__file-heading {
-    display: flex;
-    align-items: center;
-    min-height: 2.75rem;
-    padding-inline: 0.5rem;
-    border-bottom: 1px solid var(--border);
   }
 </style>
