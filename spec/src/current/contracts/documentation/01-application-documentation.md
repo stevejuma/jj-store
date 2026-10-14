@@ -152,4 +152,7 @@ unchanged.
 
 ## Public release integration
 
-Published specification and manual use /jj-store/ and /jj-store/manual/. CI can render acknowledged checked-in references without invoking Rust; separate exact-source live reference comparison remains a required release lane. Package-owned CLI help is checked against maintained docs/cli inputs.
+Published specification and manual use /jj-store/ and /jj-store/manual/. CI can
+render acknowledged checked-in references without invoking Rust; separate
+exact-source live reference comparison remains a required release lane.
+Package-owned CLI help is checked against maintained docs/cli inputs.

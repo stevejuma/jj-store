@@ -220,4 +220,7 @@ unaffected.
 
 ## Public release integration
 
-Public native bundles target macOS/GNU Linux on ARM64/x86-64. Their separate embedded RustFS runtime preserves allocator and native identity boundaries; each platform requires native cold qualification. Windows and desktop distribution remain independent gates.
+Public native bundles target macOS/GNU Linux on ARM64/x86-64. Their separate
+embedded RustFS runtime preserves allocator and native identity boundaries; each
+platform requires native cold qualification. Windows and desktop distribution
+remain independent gates.

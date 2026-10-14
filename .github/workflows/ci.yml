@@ -338,9 +338,10 @@ jobs:
             ${{ github.ref == 'refs/heads/main' && github.event_name == 'push'
             }}
           key: native-${{ matrix.target }}
-      - run:
-          pnpm dev:cargo -- build -p jj-store --bins --locked --release --target
-          ${{ matrix.target }}
+      - name: Verify native compiler target
+        run: |
+          rustc -vV | grep -Fx 'host: ${{ matrix.target }}'
+      - run: pnpm dev:cargo -- build -p jj-store --bins --locked
       - run:
           pnpm dev:cargo -- test -p jj-store-read-index -p jj-collab -p
           jj-store-capture --locked -- --test-threads=1

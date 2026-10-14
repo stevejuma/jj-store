@@ -205,7 +205,7 @@ test("desktop staging copies the complete Help closure and rejects missing help 
     join(web, "asset-manifest.json"),
     JSON.stringify({ version: 1, files: ["index.html"] }),
   );
-  for (const name of ["jj", "jj-store"])
+  for (const name of ["jj-store-jj", "jj-store"])
     writeFileSync(join(target, name), "test binary");
   writeFileSync(runtime, "test runtime");
   await stageDesktopResources({ target, runtime, web, destination });

@@ -318,4 +318,6 @@ not initiate additional reads or broaden repository access.
 
 ## Public release integration
 
-CLI version display and Cargo package naming do not change HTTP/RPC schemas. Generated contracts and actual fixture captures remain release gates; cached build artifacts never substitute another source revision.
+CLI version display and Cargo package naming do not change HTTP/RPC schemas.
+Generated contracts and actual fixture captures remain release gates; cached
+build artifacts never substitute another source revision.

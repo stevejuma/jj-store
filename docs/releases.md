@@ -1,5 +1,11 @@
 # Releases and Changesets
 
+Submit changes through a pull request to `main`. Its `required` GitHub Actions
+check must pass against the current base, and review conversations must be
+resolved before merging. The protection applies to administrators too. Force
+pushes and branch deletion are blocked; published `v*` tags cannot be changed or
+deleted. The generated Version Packages PR follows the same merge gate.
+
 Changesets owns versions and notes through the private `@lapismd/jj-store` npm
 package. It synchronizes the 19 workspace Cargo packages, separate embedded
 RustFS package, four native bundles and Linux multi-architecture image. The npm

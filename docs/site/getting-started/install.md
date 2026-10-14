@@ -2,11 +2,12 @@
 
 ## Components
 
-A development installation has paired `jj` and `jj-store` executables, a built
-browser bundle, and an embedded RustFS helper for native storage. The custom
-`jj` retains upstream command handling and adds jj-store's command families. The
-standalone `jj-store` process owns server startup and shutdown. The optional
-macOS desktop host supervises those same services and loads the browser UI.
+A development installation has paired `jj-store-jj` and `jj-store` executables,
+a built browser bundle, and an embedded RustFS helper for native storage. The
+custom `jj-store-jj` retains upstream command handling and adds jj-store's
+command families. The standalone `jj-store` process owns server startup and
+shutdown. The optional macOS desktop host supervises those same services and
+loads the browser UI.
 
 The qualified native Git profile uses JJ 0.45.1 and Git 2.55.0 on macOS ARM64.
 Desktop packaging has additional qualification limits; see
@@ -23,7 +24,7 @@ named by the repository. The documentation toolchain also needs `uv`, Python
 pnpm install --ignore-pnpmfile --frozen-lockfile
 uv sync --locked
 pnpm exec playwright install chromium
-cargo build --locked -p jj-store-cli --bins
+pnpm dev:cargo -- build --locked -p jj-store --bins
 pnpm build:embedded-rustfs
 pnpm web:build
 ```

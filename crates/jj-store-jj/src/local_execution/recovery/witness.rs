@@ -243,7 +243,7 @@ impl RecoveryWitnessV1 {
 }
 fn identity(dir: &File, hash: &mut Sha256) -> Result<()> {
     let info = rustix::fs::fstat(dir).map_err(|_| Error::Unavailable)?;
-    hash.update((info.st_dev as u64).to_be_bytes());
+    hash.update((i128::from(info.st_dev) as u64).to_be_bytes());
     hash.update(info.st_ino.to_be_bytes());
     Ok(())
 }

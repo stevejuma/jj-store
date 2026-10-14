@@ -184,11 +184,17 @@ if (
   const stageRoot = resolve(context.root);
   const repoRoot = resolve(stageRoot, "../..");
   const tracked = new Set(
-    execFileSync(existsSync(join(repoRoot, ".jj")) ? "jj" : "git", existsSync(join(repoRoot, ".jj")) ? ["--no-pager", "file", "list", "-r", "@"] : ["ls-files"], {
-      cwd: repoRoot,
-      encoding: "utf8",
-      maxBuffer: 64 * 1024 * 1024,
-    })
+    execFileSync(
+      existsSync(join(repoRoot, ".jj")) ? "jj" : "git",
+      existsSync(join(repoRoot, ".jj"))
+        ? ["--no-pager", "file", "list", "-r", "@"]
+        : ["ls-files"],
+      {
+        cwd: repoRoot,
+        encoding: "utf8",
+        maxBuffer: 64 * 1024 * 1024,
+      },
+    )
       .trim()
       .split("\n"),
   );

@@ -13,15 +13,15 @@ fn stale<T>(_: T) -> Error {
 }
 fn stat_bytes(info: &fs::Stat) -> Vec<u8> {
     [
-        info.st_dev as u64,
+        i128::from(info.st_dev) as u64,
         info.st_ino,
         info.st_mode as u64,
-        info.st_nlink as u64,
+        i128::from(info.st_nlink) as u64,
         info.st_size as u64,
         info.st_mtime as u64,
-        info.st_mtime_nsec as u64,
+        i128::from(info.st_mtime_nsec) as u64,
         info.st_ctime as u64,
-        info.st_ctime_nsec as u64,
+        i128::from(info.st_ctime_nsec) as u64,
     ]
     .into_iter()
     .flat_map(u64::to_be_bytes)
@@ -142,7 +142,7 @@ fn walk<F: FnMut(Phase) -> Result<()>>(
                     .map_err(stale)?
                     .into();
                 let actual = child.metadata().map_err(stale)?;
-                if actual.dev() != info.st_dev as u64 || actual.ino() != info.st_ino {
+                if actual.dev() != i128::from(info.st_dev) as u64 || actual.ino() != info.st_ino {
                     return Err(Error::Stale);
                 }
                 walk(&child, &path, depth + 1, budget, entries, directories)?;

@@ -27,6 +27,6 @@ No upstream Tantivy implementation source is copied.
 
 MongoDB Kingfisher released core 1.0.3, rules 1.2.1 and scanner 1.4.0 are
 consumed unmodified from crates.io. Core/scanner retain Apache-2.0; the rules
-package records Apache-2.0 AND MIT. Published Kingfisher Vectorscan 0.1.1 retains
-Apache-2.0 OR MIT bindings and bundled Vectorscan BSD-3-Clause notices.
+package records Apache-2.0 AND MIT. Published Kingfisher Vectorscan 0.1.1
+retains Apache-2.0 OR MIT bindings and bundled Vectorscan BSD-3-Clause notices.
 Checksums and registry source versions are recorded in Cargo.lock.

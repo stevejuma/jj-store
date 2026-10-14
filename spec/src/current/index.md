@@ -4,6 +4,7 @@ Start with the owning contract and requirement, then its verification and
 milestone task. Governance explains the evidence format, limits and
 protected-change workflow.
 <!-- generated-navigation -->
+
 ## Pages
 
 - [Contract areas](contracts/index.md)

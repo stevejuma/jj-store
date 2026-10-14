@@ -20,3 +20,9 @@ or capturing native state. Service-owned typed maintenance calls use coordinator
 authority and never accept arbitrary browser manifests. Integrity has no
 mutation side effects; checkpoint publication preserves all code, settings and
 domain roots from the successful CAS base.
+
+E-CI-BOOTSTRAP-001 retains service working-tree inventory and private agent
+workspace fingerprints while normalizing Unix scalar typedef widths for public
+CI. Device/inode, link counts and timestamp bit patterns stay unchanged across
+GNU/Linux and macOS. This does not grant content reads, weaken descriptor/race
+checks, alter Save semantics or change serialized public responses.

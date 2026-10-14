@@ -36,16 +36,17 @@ pub(crate) fn child(dir: &File, name: &str) -> Result<File> {
         .map_err(|_| Error::Unavailable)
 }
 fn stamp(info: &fs::Stat) -> Vec<u8> {
+    // Unix typedef widths differ. Widen first to preserve signed bit patterns.
     [
-        info.st_dev as u64,
+        i128::from(info.st_dev) as u64,
         info.st_ino,
         info.st_mode as u64,
-        info.st_nlink as u64,
+        i128::from(info.st_nlink) as u64,
         info.st_size as u64,
         info.st_mtime as u64,
-        info.st_mtime_nsec as u64,
+        i128::from(info.st_mtime_nsec) as u64,
         info.st_ctime as u64,
-        info.st_ctime_nsec as u64,
+        i128::from(info.st_ctime_nsec) as u64,
     ]
     .into_iter()
     .flat_map(u64::to_be_bytes)

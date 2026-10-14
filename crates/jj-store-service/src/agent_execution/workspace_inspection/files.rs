@@ -128,14 +128,14 @@ impl Scan<'_> {
                 let mut hash = Sha256::new_with_prefix(b"jj-store/workspace-list-entry/v1\0");
                 hash.update(path.as_bytes());
                 for n in [
-                    info.st_dev as u64,
+                    i128::from(info.st_dev) as u64,
                     info.st_ino,
                     info.st_mode as u64,
                     info.st_size as u64,
                     info.st_mtime as u64,
-                    info.st_mtime_nsec as u64,
+                    i128::from(info.st_mtime_nsec) as u64,
                     info.st_ctime as u64,
-                    info.st_ctime_nsec as u64,
+                    i128::from(info.st_ctime_nsec) as u64,
                 ] {
                     hash.update(n.to_be_bytes());
                 }

@@ -15,3 +15,9 @@ cleared for the next scan. Exact prepared inode identities limit normalization
 during interrupted recovery; complete physical namespace and backup proofs
 remain required. This provider completion does not select combination metadata
 or acknowledge an application command.
+
+E-CI-BOOTSTRAP-001 retains the original native/local metadata stamp and lock
+identity representation while making Unix typedef widening portable. Signed
+values keep their existing u64 bit pattern; GNU/Linux and macOS retain the same
+field order, inode checks and installation/recovery guards. No upstream JJ
+object, operation, view or owned recovery format changes.

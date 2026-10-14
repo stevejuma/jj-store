@@ -20,10 +20,10 @@ and remaining platform, replication, provider and desktop gates.
 
 Download the GNU/Linux or macOS archive for ARM64 or x86-64, verify
 `SHA256SUMS`, and extract it outside a checkout. Retain the bundle layout:
-`bin/jj-store`, `bin/jj-store-jj`, `bin/jj-store-rustfs`, and `web/` with matching
-Help assets. Add its `bin` directory to PATH or use explicit executable paths.
-The existing upstream `jj` command stays available. macOS command-line bundles
-are unsigned; desktop/DMG distribution has separate qualification.
+`bin/jj-store`, `bin/jj-store-jj`, `bin/jj-store-rustfs`, and `web/` with
+matching Help assets. Add its `bin` directory to PATH or use explicit executable
+paths. The existing upstream `jj` command stays available. macOS command-line
+bundles are unsigned; desktop/DMG distribution has separate qualification.
 
 Rust **1.99** or newer supports Cargo installation:
 
@@ -53,8 +53,8 @@ Set `web_root` to the matching bundle's `web/` directory. LocalTrusted uses
 literal-loopback HTTP and an owner-only Unix socket. Follow the
 [native tutorial](docs/site/getting-started/native.md) and
 [project/task tutorial](docs/site/getting-started/work.md). Existing Git-backed
-JJ folders use the separately governed companion profile; conversion support
-has its own documented limits.
+JJ folders use the separately governed companion profile; conversion support has
+its own documented limits.
 
 ## Authenticated Docker server
 
@@ -87,11 +87,12 @@ source checkouts.
 
 ## Optional agent execution
 
-Install a matching [jj-acp release](https://github.com/stevejuma/jj-acp/releases)
-and explicitly configure paired executables and admitted agents. Provider tools
-and credentials belong to the execution host. The default image includes no
-agent runner or workflow executor. Live-provider acceptance remains distinct
-from deterministic fixtures.
+Install a matching
+[jj-acp release](https://github.com/stevejuma/jj-acp/releases) and explicitly
+configure paired executables and admitted agents. Provider tools and credentials
+belong to the execution host. The default image includes no agent runner or
+workflow executor. Live-provider acceptance remains distinct from deterministic
+fixtures.
 
 ## Develop and verify
 
@@ -115,8 +116,8 @@ parents.
 
 Initialize the private development fixture once with `pnpm dev:restart`, then
 use `pnpm dev:ui` for Vite HMR at `http://127.0.0.1:7460/`. After Rust edits run
-`pnpm dev:backend:build` and `pnpm dev:backend:restart`. `pnpm dev:stop` preserves
-state; `pnpm dev:reset` explicitly replaces the fixture.
+`pnpm dev:backend:build` and `pnpm dev:backend:restart`. `pnpm dev:stop`
+preserves state; `pnpm dev:reset` explicitly replaces the fixture.
 
 Inspect build storage with `pnpm dev:disk` and `pnpm dev:clean -- --dry-run`.
 Use managed Cargo commands; live targets, fixtures and recovery archives are

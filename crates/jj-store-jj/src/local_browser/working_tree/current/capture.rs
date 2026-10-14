@@ -18,7 +18,7 @@ impl CheckoutFiles {
             rustix::fs::FileType::Directory => (
                 root.join(".jj/repo"),
                 content_digest(
-                    &[stat.st_dev as u64, stat.st_ino]
+                    &[i128::from(stat.st_dev) as u64, stat.st_ino]
                         .into_iter()
                         .flat_map(u64::to_be_bytes)
                         .collect::<Vec<_>>(),
@@ -50,9 +50,9 @@ impl CheckoutFiles {
         let metadata_stat =
             rustix::fs::fstat(physical::directory(metadata)?).map_err(|_| Error::Unavailable)?;
         for part in [
-            wc_stat.st_dev as u64,
+            i128::from(wc_stat.st_dev) as u64,
             wc_stat.st_ino,
-            metadata_stat.st_dev as u64,
+            i128::from(metadata_stat.st_dev) as u64,
             metadata_stat.st_ino,
         ] {
             binding.update(part.to_be_bytes());

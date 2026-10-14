@@ -13,7 +13,7 @@ pub(super) struct Guard {
     name: &'static str,
 }
 fn identity(info: &fs::Stat) -> (u64, u64) {
-    (info.st_dev as u64, info.st_ino)
+    (i128::from(info.st_dev) as u64, info.st_ino)
 }
 fn current(root: &Path) -> Result<File> {
     child(&child(&directory(root)?, ".jj")?, "working_copy")

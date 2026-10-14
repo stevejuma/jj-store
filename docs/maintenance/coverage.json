@@ -12,8 +12,8 @@
       "docs/site/concepts/snapshots.md"
     ],
     "review": {
-      "reason": "Reviewed bounded WorkflowStore hydration and equivalent metadata source guards; authoritative formats, CAS, recovery and durable receipts remain unchanged.",
-      "fingerprint": "a7efac6729bd16c4970627167da4928abd4fa7ed21b15fde7ec77342ff7125bc"
+      "reason": "Reviewed equivalent atomic inventory counters under Rust 1.99. Immutable object bytes, manifest CAS, WAL candidates and receipt recovery are unchanged.",
+      "fingerprint": "e33458babba3477e7035749eac6cb85a38b2fb5ecc5d284b50110c2e447c7a4f"
     }
   },
   {
@@ -40,8 +40,8 @@
     "sources": ["crates/jj-store-capture/src"],
     "pages": ["docs/site/guides/capture.md", "docs/site/technical/capture.md"],
     "review": {
-      "reason": "Reviewed bounded cross-chunk privacy replacement before scanning, durability and publication; documented memory-only buffering and unchanged capture authority.",
-      "fingerprint": "4f693fa9f16bcb36074c8e31fd8cf1e00d7ebf63cc5e934e75172842c7dec566"
+      "reason": "Reviewed released Kingfisher scanner 1.4.0, rules 1.2.1 and core 1.0.3. Updated capture documentation for versioned policy/cache namespaces; privacy failure still withholds publication.",
+      "fingerprint": "8424db9ee354d907033154dc32e960e6bb422bacfd98d624030bc7e1fff95355"
     }
   },
   {
@@ -53,8 +53,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed typed query windows, retained source context and equivalent iteration/decoding; native identities, ordering, read budgets and physical publication remain unchanged.",
-      "fingerprint": "efee3a5392073216010e0720e73db797fb1dab248bc5d766f5bb90f4e45b580e"
+      "reason": "Reviewed portable Unix stat widening throughout current reads, source bindings, retained witnesses and tree installation. Original field order, device/inode identities, u64 bit patterns and native/local recovery guards are unchanged.",
+      "fingerprint": "991f20c6093d19d4ea1ef84f5278328d71f16f6d73a4da99dc1202f53073b305"
     }
   },
   {
@@ -66,8 +66,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed shared custom source projections and enum indirection; admission, caller limits, read pins and public response contracts remain intact.",
-      "fingerprint": "91f50c38e57913f5f73161d06cefca993e5017f7bea5f6ed778280185248c3af"
+      "reason": "Reviewed portable Unix stat widening in private agent workspace listing and working-tree inventory. Existing fingerprints, bounds, inode/race checks, admission and API responses remain unchanged.",
+      "fingerprint": "61b8778b8589956ebec920422e47eff6a13b7b72c4e6f34b972bc2d8e597b2a8"
     }
   },
   {
@@ -75,8 +75,8 @@
     "sources": ["crates/jj-store-adapters/src", "crates/jj-store-tantivy/src"],
     "pages": ["docs/site/technical/reads.md", "docs/site/guides/search.md"],
     "review": {
-      "reason": "Reviewed health-channel semantic notices and accepted search configuration/control settlement; visible consumers react to events and retain bounded explicit recovery.",
-      "fingerprint": "01f48ae00bd2237715ec76baacb1fb072225bccceb7921055ba1ea77599135b9"
+      "reason": "Reviewed equivalent native read-context iteration after release lint cleanup. Rebuildable search authority and bounded read behavior are unchanged.",
+      "fingerprint": "44511ad330c06eccd325f5abd7eeb77eadec857f6e32907ba3ba037274cf775f"
     }
   },
   {
@@ -97,8 +97,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Reviewed bounded persistent custom-data index configuration and transparent Rust lint cleanup; removed duplicate test-only inspection context. Full qualification paused at the user's request.",
-      "fingerprint": "d73b78875703a4741c357dd987f1c8e124ce887eee1f5c787750a3eafb82a0ff"
+      "reason": "Reviewed portable paired executable discovery and equivalent process/test code organization. Server configuration, native state and authorization are unchanged.",
+      "fingerprint": "cd09a8a423ba015a84fc4fa3b9d647589cd65f4a23149ce9110fb92f3d3f6f65"
     }
   },
   {
@@ -110,8 +110,8 @@
       "docs/site/getting-started/work.md"
     ],
     "review": {
-      "reason": "Reviewed Forgejo Runner 13.2.0 local execution, native source comparisons, original-source reruns, Unicode-safe secret redaction, bounded supervision and attempt-labelled Docker cleanup.",
-      "fingerprint": "aff3f131b0a6bb8869fe3f728dd4cad6cb2d746c581337c860fb62fb94cd6d91"
+      "reason": "Reviewed collision-safe jj-store/jj-store-jj public executables and package-owned help. Updated installation examples to the managed Cargo entry point and coordinated Cargo package.",
+      "fingerprint": "2d25ea318269f8b18fb556d2c0c13fbe9a6e8f673d52f41f67b2c8b716d44c50"
     }
   },
   {
@@ -123,8 +123,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed unchanged event authorization and exact API inventory; corrected stale test counts to the existing checked-in 200 paths, retaining all methods/security/media/task assertions.",
-      "fingerprint": "513360ad7ce179b0439bce88afeb1d85adaff729c963c93765a5be8b93647728"
+      "reason": "Reviewed equivalent LocalTrusted binding validation and source formatting. No routes, admission policies, wire responses or browser capabilities changed.",
+      "fingerprint": "bd9df34676d4386cfe46d06aefc97139c49a9e658057d8c90599f24396731732"
     }
   },
   {
@@ -137,8 +137,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed borderless Overview workspace-to-body spacing, one-rem breadcrumb inset, shared metadata/statistics/viewer loading frames and matching workflow console spacing; updated browsing guidance.",
-      "fingerprint": "114dedf57c79bd35c1674540e6e5769c193e2c37876261e6035c4be79b860426"
+      "reason": "Reviewed formatting-only controller/search/application-view source changes; UI behavior, source ownership, notification lifetimes and public response contracts are unchanged.",
+      "fingerprint": "0f4a53152b02748fe00ff524d8362f72b8266c2f59fbba9074d10ca96626d396"
     }
   },
   {
@@ -146,8 +146,8 @@
     "sources": ["desktop/src", "desktop/crates/terminal-engine/src"],
     "pages": ["docs/site/technical/lifecycle.md"],
     "review": {
-      "reason": "Documented bundled helper checksum verification and bounded activity-driven sleep assertions.",
-      "fingerprint": "c4fed91aae702f904d71b2e20cd08dadd279c840269b83d40bc42a42bc0c61bb"
+      "reason": "Reviewed paired jj-store-jj resource discovery. Packaging/platform gates remain separate; no installed service restart or staged resource replacement occurred.",
+      "fingerprint": "34a08f6e2e58757bf36abdebd68d1f12d3a53cdeb00867d091b588bb9cfb84e8"
     }
   },
   {
@@ -176,8 +176,8 @@
       "docs/site/reference/security.md"
     ],
     "review": {
-      "reason": "Documented direct ChatGPT subscription transport, independent metadata configuration and separate live qualification.",
-      "fingerprint": "63d260c5e042c0df6f6d2da0242aaf6510b44b285de645888e4cfe99f9c78530"
+      "reason": "Reviewed renamed staged custom client discovery; independent compute/runtime source and credential handling remain unchanged.",
+      "fingerprint": "48d3aa636f561b70462ae703ab544617e006719c78cb9cb8ea0c308b623ec0dc"
     }
   },
   {
@@ -192,8 +192,8 @@
       "docs/site/technical/architecture.md"
     ],
     "review": {
-      "reason": "Checked exact-root source fingerprints, posting invariants, bounded redb retention, rebuild fallback and native authority separation.",
-      "fingerprint": "6d26c1cb43985bb0fa9ec4c6b0fa017f30b0a43bfec6933ca5680b7ae59d5574"
+      "reason": "Reviewed Cargo distribution metadata only; read-index source, exact-root fingerprints, posting invariants, bounded retention and native authority separation remain unchanged.",
+      "fingerprint": "6269ce044ebe95a7a454a2c6e0a7f8cdb0c4b2c3b07d0368dd0b9ef8db16f784"
     }
   }
 ]

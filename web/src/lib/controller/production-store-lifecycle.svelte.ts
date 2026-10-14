@@ -87,7 +87,8 @@ export function followProductionExternalRoutes(options: {
     if (
       result.kind === "route" &&
       (result.route.globalSettings ||
-        result.route.page === "workflows" || result.route.agentsHub ||
+        result.route.page === "workflows" ||
+        result.route.agentsHub ||
         (result.route.threadsHub && !result.route.repository) ||
         (result.route.page === "projects" &&
           !isRepositoryProjects(result.route)))

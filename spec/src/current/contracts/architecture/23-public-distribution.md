@@ -38,3 +38,15 @@ qualification lanes, package-contained inputs, real-storage recovery, native
 installation, documentation and container provenance. Required checks validate
 planned skips as well as failures. Fork jobs cannot acquire publication secrets
 or populate trusted release caches. Interrupted tests never establish a pass.
+
+Canonical `main` changes go through pull requests. GitHub Actions' `required`
+check MUST pass against an up-to-date base before merge; conversation resolution
+is required and administrators cannot bypass the rule. Force pushes and branch
+deletion are disabled. Version tags cannot be rewritten or deleted. Automatic
+publication remains disabled until the initial release qualification is ready;
+CI and Pages qualification continue independently.
+
+Native CI verifies the runner's compiler triple and builds/tests its native
+debug profile in one shared target root. This avoids a second optimized build
+and duplicate native compilation during PR checks. Release archives still
+require the separately qualified optimized build and complete publication gates.

@@ -202,7 +202,14 @@ export function createProductionStoreActions(options: {
       await options.restoreRoute();
     },
     async selectPage(page) {
-      if (page === "workflows") { options.history.push({...agentsRoute(),page:"workflows",agentsHub:false});return; }
+      if (page === "workflows") {
+        options.history.push({
+          ...agentsRoute(),
+          page: "workflows",
+          agentsHub: false,
+        });
+        return;
+      }
       options.history.page(page);
       await options.restoreRoute();
     },
