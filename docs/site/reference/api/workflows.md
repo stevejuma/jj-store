@@ -1431,6 +1431,23 @@ Home-authorized native project/task metadata. Reads retain an immutable WorkStor
                                   {
                                     "type": "object",
                                     "properties": {
+                                      "path": {
+                                        "type": "string"
+                                      },
+                                      "type": {
+                                        "type": "string",
+                                        "const": "github_workflow"
+                                      }
+                                    },
+                                    "additionalProperties": false,
+                                    "required": [
+                                      "type",
+                                      "path"
+                                    ]
+                                  },
+                                  {
+                                    "type": "object",
+                                    "properties": {
                                       "agent": {
                                         "type": "string"
                                       },
@@ -1696,6 +1713,30 @@ Home-authorized native project/task metadata. Reads retain an immutable WorkStor
                               "type": "boolean"
                             }
                           }
+                        },
+                        "code_context": {
+                          "type": [
+                            "object",
+                            "null"
+                          ],
+                          "properties": {
+                            "before": {
+                              "type": [
+                                "string",
+                                "null"
+                              ],
+                              "pattern": "^[0-9a-f]{128}$",
+                              "minLength": 128,
+                              "maxLength": 128
+                            },
+                            "comparable": {
+                              "type": "boolean"
+                            }
+                          },
+                          "additionalProperties": false,
+                          "required": [
+                            "comparable"
+                          ]
                         }
                       },
                       "additionalProperties": false,
@@ -1959,6 +2000,12 @@ Home-authorized native project/task metadata. Reads retain an immutable WorkStor
                         {
                           "type": "object",
                           "properties": {
+                            "step": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
                             "stream": {
                               "type": "string"
                             },
@@ -1992,7 +2039,8 @@ Home-authorized native project/task metadata. Reads retain an immutable WorkStor
                                 "completed",
                                 "failed",
                                 "cancelled",
-                                "unknown"
+                                "unknown",
+                                "skipped"
                               ]
                             },
                             "output": {
@@ -2109,7 +2157,8 @@ Home-authorized native project/task metadata. Reads retain an immutable WorkStor
                         "completed",
                         "failed",
                         "cancelled",
-                        "unknown"
+                        "unknown",
+                        "skipped"
                       ]
                     },
                     "result": {

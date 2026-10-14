@@ -3,11 +3,10 @@
   import Failed from "@lucide/svelte/icons/circle-x";
   import Cancelled from "@lucide/svelte/icons/ban";
   import Unknown from "@lucide/svelte/icons/circle-dot";
-  import Running from "@lucide/svelte/icons/play";
+  import Running from "@lucide/svelte/icons/refresh-cw";
   import Clock from "@lucide/svelte/icons/clock";
   import CheckMark from "@lucide/svelte/icons/check";
   import Cross from "@lucide/svelte/icons/x";
-  import Gauge from "@lucide/svelte/icons/gauge";
   let {
     status,
     label = false,
@@ -24,7 +23,7 @@
             ? Unknown
             : ["running", "claimed", "cancel_requested"].includes(status)
               ? Running
-              : status === "not_run"
+              : ["not_run", "skipped"].includes(status)
                 ? Cancelled
                 : Clock,
   );
@@ -38,7 +37,8 @@
 >
   {#if console && status === "completed"}<CheckMark aria-hidden="true" />
   {:else if console && status === "failed"}<Cross aria-hidden="true" />
-  {:else if console && ["running", "claimed", "cancel_requested"].includes(status)}<Gauge
+  {:else if ["running", "claimed", "cancel_requested"].includes(status)}<Running
+      class="workflow-run-status__spinner"
       aria-hidden="true"
     />
   {:else}<Icon aria-hidden="true" />{/if}{#if label}<span
@@ -62,5 +62,18 @@
   }
   .workflow-run-status[data-status="failed"] :global(svg) {
     color: var(--destructive);
+  }
+  .workflow-run-status :global(.workflow-run-status__spinner) {
+    animation: workflow-status-spin 1s linear infinite;
+  }
+  @keyframes workflow-status-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .workflow-run-status :global(.workflow-run-status__spinner) {
+      animation: none;
+    }
   }
 </style>

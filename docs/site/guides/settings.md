@@ -336,3 +336,12 @@ top header is hidden and the menu moves into the body toolbar, including
 Workflows and History, using the same placement as Projects. Open dialogs and
 drafts survive resizing. Reload applies saved supported server configuration
 while preserving drafts, original pending requests and the running server.
+
+For GitHub YAML execution, enable **GitHub workflow executor** in Workflows
+settings. Configure the native Forgejo Runner 13.2.0 executable, Docker
+executable, Linux job image and architecture. On macOS, use the endpoint from
+your Docker context when the default socket is unavailable. Runner labels must
+admit each YAML job's `runs-on` values. The JSON editor also supports
+environment variables and secret environment-name references. Save, then reload
+saved settings; changing the running host waits for an idle boundary. Execution
+admission remains a separate explicit setting.

@@ -50,6 +50,10 @@ pub struct Page {
     pub runs: Vec<Run>,
     pub evidence: Vec<Evidence>,
     pub next: Option<String>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub event: Option<SourceEvent>,
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    pub step_reports: Vec<Evidence>,
 }
 impl WorkflowService {
     pub async fn page(&self, session: Arc<NativeSession>, query: Query) -> Result<Page> {
@@ -105,9 +109,34 @@ impl WorkflowService {
             runs: Vec::new(),
             evidence: Vec::new(),
             next: None,
+            event: None,
+            step_reports: Vec::new(),
         };
         if let Some(id) = query.run {
             if let Some(run) = state.runs.get(&id) {
+                page.event = run
+                    .event
+                    .and_then(|id| state.evaluations.get(&id))
+                    .map(|e| e.event.clone());
+                let selected_attempt = query.attempt.unwrap_or(run.current().id);
+                page.step_reports = state
+                    .evidence
+                    .values()
+                    .filter(|e| {
+                        e.run == id
+                            && e.attempt == selected_attempt
+                            && matches!(e.data, EvidenceData::Step { .. })
+                    })
+                    .cloned()
+                    .collect();
+                page.step_reports.sort_by_key(|e| e.sequence);
+                if serde_json::to_vec(&page.step_reports)
+                    .map_err(|_| Error::Corrupt)?
+                    .len()
+                    > 3 * 1024 * 1024
+                {
+                    return Err(Error::Limit);
+                }
                 page.runs.push(run.clone());
                 page.workflows.push(
                     state

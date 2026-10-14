@@ -15,6 +15,41 @@
 
 ## Execution profile
 
+### GitHub YAML executor implementation slice
+
+JST-WF-004/005/007 govern an explicitly configured `github_workflow` executor
+backed by the external Forgejo Runner local `exec` interface. App filters select
+candidates; the executor then reads `.github/workflows/*.yml` or `*.yaml` from
+the recorded source operation/commit and checks supported YAML event, branch and
+path filters before starting any process. A non-match is recorded as skipped.
+Invalid or unsupported filtering fails explicitly. The workflow file and source
+come from the same revision, including edits introduced by that revision; queued
+attempts and retries retain their original pins.
+
+Bookmark movement maps to `push` with its exact bookmark and previous target.
+Code publication maps to an unbranched `push`; branch filters cannot match an
+invented branch. Manual execution requires `workflow_dispatch`. Path filters
+compare the selected trees, or a single commit parent for code publication;
+ambiguous comparisons remain unavailable. No source event acquires execution or
+secret authority.
+
+Implementation proceeds through typed executor/context/scoped-log contracts and
+filter regressions, CLI-owned runner supervision and JSON reporting, existing
+Form/file-picker/console integration, then isolated real runner and preserved
+live-demo acceptance. The server retains native metadata and admission. Forgejo
+handles YAML jobs, dependencies and matrix execution; a new server scheduler or
+Forgejo server is not required. Unknown attempts are never replayed. Linux
+Docker execution is the initial profile; GitHub APIs/tokens, artifact/cache
+services, reusable workflows and additional environment profiles remain
+unqualified.
+
+The acceptance demo adds one YAML with three named steps to a registered native
+demo source, configures a separate app workflow, verifies YAML
+matches/nonmatches, same-revision edits, logs, rerun source retention and
+history after restart. Targeted Rust, generated-contract, web/catalog
+interaction and accessibility checks accompany fresh evidence and M28 review.
+Visual approval stays separate.
+
 WorkflowStore uses a new format-6 native home root. It requires an existing
 WorkStore home, preserves its frozen origin ledger and supports native copy and
 recovery. Source replication does not acquire execution authority. One home
@@ -28,9 +63,10 @@ anchor; later actions reuse it and can consume earlier action outputs. Workspace
 reuse does not permit replay of an interrupted or unknown attempt. Source-event
 publication never waits for matching or execution. Initial triggers are manual,
 code publication, bookmark movement, new thread messages and added
-thread/message reactions; initial actions are admitted agents and named
-commands. Conditions are bounded declarative filters. Cron, webhooks, action
-DAGs and the Forgejo ConnectRPC runner protocol are deferred.
+thread/message reactions; actions include admitted agents, named commands and
+the explicitly configured GitHub YAML executor. Conditions are bounded
+declarative filters. Cron, webhooks, action DAGs and the Forgejo ConnectRPC
+runner protocol are deferred.
 
 Trigger conditions use bounded bookmark `*`/`?` patterns, native JJ revsets,
 author identities, text comparisons and exact thread/message/emoji selectors.

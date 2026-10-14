@@ -212,6 +212,75 @@ test("nested log groups retain icons and omit control marker rows", () => {
   expect(rows[3]!.parents).toEqual([]);
 });
 
+test("local runner workflow command groups expand like normalized Forgejo groups", () => {
+  const lines = new WorkflowLogLines().read([
+    log(
+      "::group::Source checks\nchecked\n::group::Nested\ncolored\n::endgroup::\n::endgroup::\nend\n",
+      0,
+    ),
+  ]);
+  const rows = consoleLogRows(lines);
+  expect(rows.map((row) => row.html)).toEqual([
+    "Source checks",
+    "checked",
+    "Nested",
+    "colored",
+    "end",
+  ]);
+  expect(rows[3]!.parents).toEqual([rows[0]!.id, rows[2]!.id]);
+  expect(rows[4]!.parents).toEqual([]);
+});
+
+test("YAML executor envelopes retain startup output without duplicating actual steps", async () => {
+  const { run, definition } = await fixture();
+  definition.actions[0]!.executor = {
+    type: "github_workflow",
+    path: ".github/workflows/ci.yml",
+  };
+  const rows = [
+    step("build", "running", 0),
+    evidence(
+      {
+        type: "step",
+        step: "job",
+        status: "running",
+        output: { kind: "job", parent: "build", name: "demo" },
+      },
+      1,
+    ),
+    evidence(
+      { type: "log", step: "job", stream: "runner", text: "setup\n" },
+      2,
+    ),
+    evidence(
+      {
+        type: "step",
+        step: "prepare",
+        status: "completed",
+        output: { kind: "step", parent: "job", name: "Prepare" },
+      },
+      3,
+    ),
+    evidence(
+      {
+        type: "step",
+        step: "test",
+        status: "running",
+        output: { kind: "step", parent: "job", name: "Test" },
+      },
+      4,
+    ),
+  ];
+  const projection = workflowConsole(run, definition, rows);
+  expect(projection.steps.map((row) => row.id)).toEqual(["prepare", "test"]);
+  expect(projection.unscoped).toEqual([rows[2]]);
+  // Executor failures before any job reports still have a visible status row.
+  expect(
+    workflowConsole(run, definition, [step("build", "failed", 0)]).steps[0]!
+      .status,
+  ).toBe("failed");
+});
+
 test("lazy step reads and downloads use one exact paged attempt snapshot", async () => {
   const transport = consoleExample(workflowFixture(), "paged");
   const snapshot = await transport.page({ run: runId });
@@ -248,4 +317,61 @@ test("lazy reads reject a changed snapshot and a repeated continuation", async (
   await expect(readConsoleEvidence(loop, snapshot, attemptId)).rejects.toThrow(
     "Log continuation did not advance",
   );
+});
+
+test("scoped YAML step output after a terminal report remains available across pages", async () => {
+  const transport = consoleExample(workflowFixture(), "paged");
+  const snapshot = await transport.page({ run: runId });
+  snapshot.step_reports = [
+    evidence(
+      {
+        type: "step",
+        step: "prepare",
+        status: "completed",
+        output: { kind: "step" },
+      },
+      2,
+      1000,
+      "89".repeat(16),
+    ),
+  ];
+  const rows = await readConsoleEvidence(
+    transport,
+    snapshot,
+    "89".repeat(16),
+    undefined,
+    0,
+    "prepare",
+  );
+  expect(rows).toHaveLength(13);
+});
+
+test("scoped concurrent YAML logs and explicit skips remain separate", async () => {
+  const { run, definition } = await fixture();
+  const rows = [
+    step("job-a", "running", 0),
+    step("job-b", "running", 1),
+    evidence({ type: "log", step: "job-a", stream: "runner", text: "a\n" }, 2),
+    evidence({ type: "log", step: "job-b", stream: "runner", text: "b\n" }, 3),
+    evidence(
+      {
+        type: "step",
+        step: "skipped",
+        status: "skipped",
+        output: { reason: "YAML filters did not match" },
+      },
+      4,
+    ),
+  ];
+  const projection = workflowConsole(run, definition, rows);
+  expect(projection.steps.find((s) => s.id === "job-a")!.chunks).toEqual([
+    rows[2],
+  ]);
+  expect(projection.steps.find((s) => s.id === "job-b")!.chunks).toEqual([
+    rows[3],
+  ]);
+  expect(projection.steps.find((s) => s.id === "skipped")!.status).toBe(
+    "skipped",
+  );
+  expect(projection.unscoped).toEqual([]);
 });

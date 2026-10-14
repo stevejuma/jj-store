@@ -120,3 +120,10 @@ publication selects that closure with the authored use. Directory changes do not
 rewrite history, and retries retain the prepared snapshot. Source metadata is
 presentation provenance and grants no permission. Repository-local libraries
 keep separate identities and meanings.
+
+Workflow definitions and execution evidence live in a WorkStore metadata home.
+An admitted optional host observes source events and dispatches configured
+executors. The GitHub YAML executor additionally checks YAML from the exact
+recorded code revision; a newer source or YAML edit cannot replace a queued
+run's pins. Server publication retains metadata while the CLI-owned host and
+external Forgejo Runner execute jobs. See [workflow CLI](../cli/jj-workflow.md).

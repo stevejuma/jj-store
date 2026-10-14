@@ -10,6 +10,8 @@ pub struct Environment {
     pub labels: BTreeSet<String>,
     #[serde(default)]
     pub commands: BTreeMap<String, Command>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub forgejo: Option<Forgejo>,
     #[serde(default)]
     pub agents: BTreeSet<String>,
     pub agent_endpoint: Option<AgentEndpoint>,
@@ -44,6 +46,7 @@ impl Environment {
             labels: self.labels.clone(),
             sources,
             commands: self.commands.clone(),
+            forgejo: self.forgejo.clone(),
             agents: self.agents.clone(),
             agent_endpoint: self.agent_endpoint.clone(),
             poll_millis: self.poll_millis,

@@ -28,7 +28,9 @@ export const triggerLabel = (trigger: WorkflowDefinition["trigger"]) =>
 export const executorLabel = (action: WorkflowDefinition["actions"][number]) =>
   action.executor.type === "command"
     ? action.executor.name
-    : action.executor.agent;
+    : action.executor.type === "github_workflow"
+      ? action.executor.path
+      : action.executor.agent;
 export function initialDefinition(repository = ""): WorkflowDefinition {
   return {
     name: "",
@@ -90,10 +92,15 @@ export function readDefinition(
         !a.executor ||
         (a.executor.type === "command"
           ? typeof a.executor.name !== "string"
-          : a.executor.type === "agent"
-            ? typeof a.executor.agent !== "string" ||
-              typeof a.executor.prompt !== "string"
-            : true),
+          : a.executor.type === "github_workflow"
+            ? typeof a.executor.path !== "string" ||
+              !/^\.github\/workflows\/(?!.*(?:^|\/)\.\.(?:\/|$)).+\.ya?ml$/.test(
+                a.executor.path,
+              )
+            : a.executor.type === "agent"
+              ? typeof a.executor.agent !== "string" ||
+                typeof a.executor.prompt !== "string"
+              : true),
     )
   )
     throw Error(

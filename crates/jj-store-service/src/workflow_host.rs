@@ -24,6 +24,8 @@ pub struct HostConfiguration {
     pub sources: Vec<Source>,
     #[serde(default)]
     pub commands: BTreeMap<String, Command>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub forgejo: Option<Forgejo>,
     #[serde(default)]
     pub agents: BTreeSet<String>,
     pub agent_endpoint: Option<AgentEndpoint>,
@@ -55,6 +57,20 @@ pub struct Command {
     pub secrets: BTreeMap<String, String>,
     #[serde(default)]
     pub artifacts: Vec<String>,
+}
+#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, schemars::JsonSchema)]
+#[serde(deny_unknown_fields)]
+#[schemars(rename = "WorkflowForgejoEnvironment")]
+pub struct Forgejo {
+    pub program: PathBuf,
+    pub docker_program: PathBuf,
+    pub image: String,
+    #[serde(default)]
+    pub architecture: String,
+    #[serde(default)]
+    pub environment: BTreeMap<String, String>,
+    #[serde(default)]
+    pub secrets: BTreeMap<String, String>,
 }
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
@@ -146,6 +162,24 @@ impl HostConfiguration {
             || (!self.agents.is_empty() && self.agent_endpoint.is_none())
         {
             return Err("Invalid workflow source, labels or agents");
+        }
+        if let Some(f) = &self.forgejo
+            && (!path(&f.program)
+                || !path(&f.docker_program)
+                || f.image.is_empty()
+                || f.image.len() > 1024
+                || f.image.starts_with('-')
+                || f.image.chars().any(char::is_control)
+                || !matches!(f.architecture.as_str(), "" | "linux/arm64" | "linux/amd64")
+                || f.environment.len() + f.secrets.len() > 64
+                || f.environment.iter().any(|(k, v)| {
+                    !name(k) || k.starts_with("JJ_WORKFLOW_") || v.len() > 4096 || v.contains('\0')
+                })
+                || f.secrets
+                    .iter()
+                    .any(|(k, v)| !name(k) || !name(v) || k.starts_with("JJ_WORKFLOW_")))
+        {
+            return Err("Invalid Forgejo runner environment");
         }
         for (key, c) in &self.commands {
             if !name(key)

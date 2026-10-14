@@ -1,6 +1,7 @@
 //! Durable workflow data and transitions, independent of executors and storage.
 #![forbid(unsafe_code)]
 mod filters;
+pub mod github;
 mod ids;
 mod model;
 mod state;

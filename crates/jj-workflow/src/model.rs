@@ -54,6 +54,7 @@ fn timeout() -> u64 {
 #[schemars(rename = "WorkflowExecutor")]
 pub enum Executor {
     Command { name: String },
+    GithubWorkflow { path: String },
     Agent { agent: String, prompt: String },
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
@@ -91,6 +92,15 @@ pub struct SourceEvent {
     pub source: Source,
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     pub filter_results: BTreeMap<FilterId, bool>,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub code_context: Option<CodeContext>,
+}
+#[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
+#[serde(deny_unknown_fields)]
+#[schemars(rename = "WorkflowCodeContext")]
+pub struct CodeContext {
+    pub before: Option<m::CommitId>,
+    pub comparable: bool,
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "snake_case")]
@@ -132,10 +142,14 @@ pub enum RunStatus {
     Failed,
     Cancelled,
     Unknown,
+    Skipped,
 }
 impl RunStatus {
     pub fn terminal(&self) -> bool {
-        matches!(self, Self::Completed | Self::Failed | Self::Cancelled)
+        matches!(
+            self,
+            Self::Completed | Self::Failed | Self::Cancelled | Self::Skipped
+        )
     }
 }
 #[derive(Clone, Debug, PartialEq, Eq, Serialize, Deserialize, JsonSchema)]
@@ -175,6 +189,8 @@ impl Run {
 #[schemars(rename = "WorkflowEvidenceData")]
 pub enum EvidenceData {
     Log {
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        step: Option<String>,
         stream: String,
         text: String,
     },
@@ -286,6 +302,7 @@ impl Definition {
             }
             match &action.executor {
                 Executor::Command { name: command } => name(command)?,
+                Executor::GithubWorkflow { path } => crate::github::workflow_path(path)?,
                 Executor::Agent { agent, prompt } => {
                     name(agent)?;
                     text(prompt, MAX_TEXT)?;
@@ -357,6 +374,9 @@ impl SourceEvent {
     pub fn validate(&self) -> Result<()> {
         use sha2::{Digest, Sha256};
         self.source.validate()?;
+        if self.code_context.is_some() && self.kind != EventKind::BookmarkChanged {
+            return Err(Error::Invalid("code comparison context"));
+        }
         if self.filter_results.len() > MAX_ENTITIES {
             return Err(Error::Limit);
         }
@@ -409,6 +429,7 @@ impl SourceEvent {
             kind,
             source,
             filter_results: Default::default(),
+            code_context: None,
         };
         event.validate()?;
         Ok(event)
@@ -418,9 +439,13 @@ impl EvidenceData {
     pub fn validate(&self) -> Result<()> {
         match self {
             Self::Log {
+                step,
                 stream,
                 text: value,
             } => {
+                if let Some(step) = step {
+                    name(step)?;
+                }
                 name(stream)?;
                 text(value, MAX_TEXT)?;
             }

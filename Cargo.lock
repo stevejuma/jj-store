@@ -4511,6 +4511,7 @@ dependencies = [
 name = "jj-workflow"
 version = "0.1.0"
 dependencies = [
+ "globset",
  "hex",
  "jj-collab",
  "jj-store-model",

@@ -260,6 +260,30 @@ include the immutable trigger references and use the admitted source attachment.
 Thread/Reaction origin replication remains deferred with their existing frozen
 home origin profile.
 
+### GitHub YAML executor
+
+Configure an optional `forgejo` runner capability in Workflows settings, with
+absolute Forgejo Runner 13.2.0 and Docker executable paths, a job image and
+admitted labels (for example `ubuntu-latest`). On macOS, set the Docker endpoint
+from `docker context inspect --format '{{.Endpoints.docker.Host}}'`. The native
+macOS runner can be built from the pinned upstream source using Go. Saving does
+not activate the host: use the existing saved-settings reload and explicit host
+admission.
+
+Choose **GitHub workflow** for an action and select a `.github/workflows/*.yml`
+or `.yaml` path. App criteria select candidates; the YAML's supported event,
+branch and path filters must also match. The workflow body and source are read
+from the same recorded revision, including edits introduced by that revision.
+Reruns retain original pins. A YAML non-match or absent file is skipped.
+
+The runner executes Docker jobs without a Forgejo server. `push` maps to
+bookmark changes or unbranched code publication; manual runs require
+`workflow_dispatch`. Include the workflow file in `paths` if workflow-only edits
+should trigger it. Initial limits and unsupported fields are listed in the
+canonical workflow compatibility contract. GitHub-hosted tokens/APIs and
+artifact/cache services are not provided. Secret settings contain operator
+environment names only.
+
 
 ```text
 Usage: jj workflow [OPTIONS] [COMMAND]
@@ -295,6 +319,9 @@ Usage: jj workflow source [OPTIONS] --repo-id <workflow_repository> --operation 
 | `--operation <OPERATION>` | Exact native JJ operation identity selecting the code evidence to inspect. Required. |  |
 | `--commit <COMMIT>` | Exact full native JJ commit ID visible at the selected operation. Required. |  |
 | `destination` | A fresh absolute directory; no repository metadata is exported Required. |  |
+| `--changed-paths <CHANGED_PATHS>` | Optional bounded changed-path record outside the exported tree |  |
+| `--before <BEFORE>` | Compare with this exact visible native revision |  |
+| `--empty-baseline <EMPTY_BASELINE>` | Compare a newly created bookmark with an explicit empty tree | Default: false; Values: true, false |
 | `--format <FORMAT>` | Output presentation. JSON retains full identities, versions and response variants for automation. Inherited by subcommands. | Default: text; Values: text, json |
 | `-R, --repository <REPOSITORY>` | Path to repository to operate on  By default, Jujutsu searches for the closest .jj/ directory in an ancestor of the current working directory. Inherited by subcommands. |  |
 | `--ignore-working-copy <IGNORE_WORKING_COPY>` | Don't snapshot the working copy, and don't update it  By default, Jujutsu snapshots the working copy at the beginning of every command. The working copy is also updated at the end of the command, if the command modified the working-copy commit (`@`). If you want to avoid snapshotting the working copy and instead see a possibly stale working-copy commit, you can use `--ignore-working-copy`. This may be useful e.g. in a command prompt, especially if you have another process that commits the working copy.  Loading the repository at a specific operation with `--at-operation` implies `--ignore-working-copy`. Inherited by subcommands. | Default: false; Values: true, false |

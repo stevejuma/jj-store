@@ -326,3 +326,34 @@ test("managed environment has no repository wiring and retains optional override
       parseWorkflowHost(JSON.stringify({ ...environment, ...patch })),
     ).toThrow();
 });
+
+test("Forgejo configuration preserves native environment fields and rejects secrets as values", () => {
+  const forgejo = {
+    program: "/tools/forgejo-runner",
+    docker_program: "/tools/docker",
+    image: "alpine:3.23",
+    architecture: "linux/arm64",
+    environment: {},
+    secrets: { TOKEN: "OPERATOR_TOKEN" },
+  };
+  const parsed = parseWorkflowHost(
+    JSON.stringify({ version: 2, host: "builder", forgejo }),
+  );
+  expect(parsed.forgejo).toEqual(forgejo);
+  for (const patch of [
+    { program: "relative" },
+    { image: "-self-hosted" },
+    { architecture: "darwin/arm64" },
+    { secrets: { TOKEN: "raw secret" } },
+    { unsupported: true },
+  ])
+    expect(() =>
+      parseWorkflowHost(
+        JSON.stringify({
+          version: 2,
+          host: "builder",
+          forgejo: { ...forgejo, ...patch },
+        }),
+      ),
+    ).toThrow();
+});

@@ -123,6 +123,24 @@ impl WorkflowService {
                                 );
                             }
                             for change in diff.view.local_bookmarks {
+                                let before = match change
+                                    .before
+                                    .as_ref()
+                                    .map(|target| target.0.as_slice())
+                                {
+                                    Some([Some(id)]) => CodeContext {
+                                        before: Some(*id),
+                                        comparable: true,
+                                    },
+                                    None => CodeContext {
+                                        before: None,
+                                        comparable: true,
+                                    },
+                                    _ => CodeContext {
+                                        before: None,
+                                        comparable: false,
+                                    },
+                                };
                                 if let Some(target) = change.after {
                                     if let [Some(commit)] = target.0.as_slice() {
                                         page.events.push(
@@ -137,6 +155,10 @@ impl WorkflowService {
                                                     conversation: None,
                                                 },
                                             )
+                                            .map(|mut event| {
+                                                event.code_context = Some(before);
+                                                event
+                                            })
                                             .map_err(|_| Error::Corrupt)?,
                                         );
                                     } else {

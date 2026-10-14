@@ -63,7 +63,9 @@ export function workflowCardSummary(definition: WorkflowDefinition): string {
   const action =
     first.executor.type === "command"
       ? `run ${quote(first.executor.name)}`
-      : `ask agent ${quote(first.executor.agent)}`;
+      : first.executor.type === "github_workflow"
+        ? `run workflow ${quote(first.executor.path.split("/").at(-1) ?? first.executor.path)}`
+        : `ask agent ${quote(first.executor.agent)}`;
   const remaining = actions.length - 1;
   return `${when}, ${action}${remaining ? `, then ${remaining} more ${remaining === 1 ? "step" : "steps"}` : ""}`;
 }

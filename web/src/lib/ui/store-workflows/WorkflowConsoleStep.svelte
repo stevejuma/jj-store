@@ -57,10 +57,15 @@
     abort = new AbortController();
   let loadedStep = $state<ConsoleStep | null>(null);
   const display = $derived(loadedStep ?? step);
+  const name = $derived(
+    step.output.job
+      ? `${step.output.job} / ${step.output.name ?? step.id}`
+      : (step.output.name ?? step.id),
+  );
   const label = $derived(
     unscoped
       ? "Run output"
-      : `Step ${step.id} · ${display.status.replaceAll("_", " ")}`,
+      : `Step ${name} · ${display.status.replaceAll("_", " ")}`,
   );
   async function load(snapshot: WorkflowPage) {
     const key = `${snapshot.epoch}:${snapshot.position}:${identity.join(":")}:${step.id}`;
@@ -158,7 +163,7 @@
       />{:else}<ChevronRight aria-hidden="true" />{/if}
     {#if !unscoped}<WorkflowRunStatus status={display.status} console />{/if}
     <span class="workflow-console-step__name"
-      >{unscoped ? "Run output" : step.id}</span
+      >{unscoped ? "Run output" : name}</span
     >
     {#if !unscoped}<span class="workflow-console-step__duration"
         >{stepDuration(display, observed)}</span
@@ -171,7 +176,7 @@
         {timestamps}
         started={display.started}
       />{/if}
-    {#each Object.entries(display.output) as [key, value] (key)}<dl
+    {#each Object.entries(display.output).filter(([key]) => !["name", "parent", "job", "kind", "order"].includes(key)) as [key, value] (key)}<dl
         class="workflow-console-output"
       >
         <dt>{key}</dt>

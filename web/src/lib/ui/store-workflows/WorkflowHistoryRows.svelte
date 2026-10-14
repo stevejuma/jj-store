@@ -41,8 +41,9 @@
               home,
               run: run.id,
               at:
-                ["completed", "failed", "cancelled"].includes(current.status) &&
-                position !== undefined
+                ["completed", "failed", "cancelled", "skipped"].includes(
+                  current.status,
+                ) && position !== undefined
                   ? String(position)
                   : undefined,
               attempt: undefined,

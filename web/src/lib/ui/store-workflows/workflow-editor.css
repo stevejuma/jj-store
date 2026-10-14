@@ -57,6 +57,18 @@
   grid-template-columns: minmax(0, 1fr);
   gap: 0.5rem;
 }
+.workflow-inspector .workflow-inspector-row--wide > :last-child {
+  max-width: none;
+}
+.workflow-file-control,
+.workflow-file-control .store-settings__field-action {
+  width: 100%;
+  min-width: 0;
+}
+.workflow-file-control input {
+  width: 100%;
+  min-width: 0;
+}
 @container workflow-inspector (max-width: 22rem) {
   .workflow-inspector .store-settings__option-row {
     grid-template-columns: minmax(0, 1fr);

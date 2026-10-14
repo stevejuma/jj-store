@@ -5633,6 +5633,8 @@ export interface components {
       runs: components["schemas"]["WorkflowRun"][];
       evidence: components["schemas"]["WorkflowEvidence"][];
       next: string | null;
+      event?: components["schemas"]["WorkflowSourceEvent"] | null;
+      step_reports?: components["schemas"]["WorkflowEvidence"][];
     };
     WorkflowDefinitionVersion: {
       id: components["schemas"]["WorkflowId"];
@@ -5723,6 +5725,11 @@ export interface components {
           type: "command";
         }
       | {
+          path: string;
+          /** @constant */
+          type: "github_workflow";
+        }
+      | {
           agent: string;
           prompt: string;
           /** @constant */
@@ -5781,7 +5788,8 @@ export interface components {
       | "completed"
       | "failed"
       | "cancelled"
-      | "unknown";
+      | "unknown"
+      | "skipped";
     WorkflowEvidence: {
       id: components["schemas"]["EvidenceId"];
       run: components["schemas"]["RunId"];
@@ -5795,6 +5803,7 @@ export interface components {
     EvidenceId: string;
     WorkflowEvidenceData:
       | {
+          step?: string | null;
           stream: string;
           text: string;
           /** @constant */
@@ -5822,15 +5831,6 @@ export interface components {
           /** @constant */
           type: "agent";
         };
-    WorkflowEventPage: {
-      /** Format: uint32 */
-      version: number;
-      epoch: components["schemas"]["EpochId"];
-      after: components["schemas"]["WalPosition"];
-      upper: components["schemas"]["WalPosition"];
-      events: components["schemas"]["WorkflowSourceEvent"][];
-      unavailable: string[];
-    };
     WorkflowSourceEvent: {
       id: components["schemas"]["SourceEventId"];
       /** @description Canonical origin key/digest, or issuing repository/epoch/selected receipt. */
@@ -5840,6 +5840,7 @@ export interface components {
       filter_results?: {
         [key: string]: boolean;
       };
+      code_context?: components["schemas"]["WorkflowCodeContext"] | null;
     };
     /** @enum {string} */
     WorkflowEventKind:
@@ -5847,6 +5848,19 @@ export interface components {
       | "reaction_added"
       | "code_published"
       | "bookmark_changed";
+    WorkflowCodeContext: {
+      before: components["schemas"]["CommitId"] | null;
+      comparable: boolean;
+    };
+    WorkflowEventPage: {
+      /** Format: uint32 */
+      version: number;
+      epoch: components["schemas"]["EpochId"];
+      after: components["schemas"]["WalPosition"];
+      upper: components["schemas"]["WalPosition"];
+      events: components["schemas"]["WorkflowSourceEvent"][];
+      unavailable: string[];
+    };
     WorkflowCommandOutcome:
       | {
           receipt: components["schemas"]["WorkflowCommandReceipt"];
@@ -9302,6 +9316,7 @@ export interface components {
       commands: {
         [key: string]: components["schemas"]["WorkflowHostCommand"];
       };
+      forgejo?: components["schemas"]["WorkflowForgejoEnvironment"] | null;
       /** @default [] */
       agents: string[];
       agent_endpoint: components["schemas"]["WorkflowHostAgentEndpoint"] | null;
@@ -9334,6 +9349,21 @@ export interface components {
       /** @default [] */
       artifacts: string[];
     };
+    WorkflowForgejoEnvironment: {
+      program: string;
+      docker_program: string;
+      image: string;
+      /** @default  */
+      architecture: string;
+      /** @default {} */
+      environment: {
+        [key: string]: string;
+      };
+      /** @default {} */
+      secrets: {
+        [key: string]: string;
+      };
+    };
     WorkflowHostAgentEndpoint: {
       url: string;
       local: boolean;
@@ -9350,6 +9380,7 @@ export interface components {
       commands: {
         [key: string]: components["schemas"]["WorkflowHostCommand"];
       };
+      forgejo?: components["schemas"]["WorkflowForgejoEnvironment"] | null;
       /** @default [] */
       agents: string[];
       agent_endpoint: components["schemas"]["WorkflowHostAgentEndpoint"] | null;
@@ -25348,6 +25379,11 @@ export interface operations {
                           type: "command";
                         }
                       | {
+                          path: string;
+                          /** @constant */
+                          type: "github_workflow";
+                        }
+                      | {
                           agent: string;
                           prompt: string;
                           /** @constant */
@@ -25436,6 +25472,10 @@ export interface operations {
                   filter_results?: {
                     [key: string]: boolean;
                   };
+                  code_context?: {
+                    before?: string | null;
+                    comparable: boolean;
+                  } | null;
                 };
                 definitions?: {
                   [key: string]: string;
@@ -25512,6 +25552,7 @@ export interface operations {
                 sequence: number;
                 data:
                   | {
+                      step?: string | null;
                       stream: string;
                       text: string;
                       /** @constant */
@@ -25527,7 +25568,8 @@ export interface operations {
                         | "completed"
                         | "failed"
                         | "cancelled"
-                        | "unknown";
+                        | "unknown"
+                        | "skipped";
                       output: {
                         [key: string]: string;
                       };
@@ -25561,7 +25603,8 @@ export interface operations {
                   | "completed"
                   | "failed"
                   | "cancelled"
-                  | "unknown";
+                  | "unknown"
+                  | "skipped";
                 result: string;
                 /** @constant */
                 type: "finish";
@@ -64486,6 +64529,21 @@ export interface operations {
                               artifacts?: string[];
                             };
                           };
+                          forgejo?: {
+                            program: string;
+                            docker_program: string;
+                            image: string;
+                            /** @default  */
+                            architecture?: string;
+                            /** @default {} */
+                            environment?: {
+                              [key: string]: string;
+                            };
+                            /** @default {} */
+                            secrets?: {
+                              [key: string]: string;
+                            };
+                          } | null;
                           /** @default [] */
                           agents?: string[];
                           agent_endpoint?: {
@@ -64526,6 +64584,21 @@ export interface operations {
                               artifacts?: string[];
                             };
                           };
+                          forgejo?: {
+                            program: string;
+                            docker_program: string;
+                            image: string;
+                            /** @default  */
+                            architecture?: string;
+                            /** @default {} */
+                            environment?: {
+                              [key: string]: string;
+                            };
+                            /** @default {} */
+                            secrets?: {
+                              [key: string]: string;
+                            };
+                          } | null;
                           /** @default [] */
                           agents?: string[];
                           agent_endpoint?: {

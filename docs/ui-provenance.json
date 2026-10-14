@@ -3843,7 +3843,8 @@
       "web/src/lib/ui/store-workflows/WorkflowConsoleStep.svelte",
       "web/src/lib/ui/store-workflows/WorkflowConsoleLogs.svelte",
       "web/src/lib/ui/store-workflows/WorkflowConsoleSettings.svelte",
-      "web/src/lib/ui/store-workflows/workflow-console.css"
+      "web/src/lib/ui/store-workflows/workflow-console.css",
+      "web/src/lib/ui/store-workflows/workflow-console-layout.css"
     ],
     "adaptations": "Recorded native actions/evidence, pinned on-demand reads, separate stdout/stderr assembly, nested group markers, current/historical attempts, public Design Core controls and contrast-compliant seconds/timestamps. ANSI conversion uses the MIT-licensed ansi_up 6.0.6 direct dependency."
   },
@@ -3857,8 +3858,28 @@
       "web/src/lib/ui/store-settings/WorkflowRunnerEnvironmentFields.svelte",
       "web/src/lib/ui/store-settings/WorkflowRunnerAdvanced.svelte",
       "web/src/lib/ui/store-settings/WorkflowRunnerAccess.svelte",
-      "web/src/lib/controller/workflow-runner-environment.ts"
+      "web/src/lib/controller/workflow-runner-environment.ts",
+      "web/src/lib/ui/store-settings/WorkflowForgejoFields.svelte"
     ],
     "usage": "Owned concise execution environment Settings, initially collapsed Advanced overrides and explicit admission, released Design Core CodeEditor/header tabs and existing avatar/agent Command View selectors. Repository context is resolved by the CLI through existing verified installation workspace links. No Community/Buzz runtime or code was copied."
+  },
+  "githubWorkflowExecutor": {
+    "reference": "Application-owned workflow integration; Forgejo Runner local exec protocol inspection",
+    "repository": "https://code.forgejo.org/forgejo/runner",
+    "revision": "v13.2.0",
+    "sourceLicense": "MIT",
+    "sources": [
+      "internal/app/cmd/exec.go",
+      "act/runner/logger.go",
+      "act/runner/step.go",
+      "act/runner/job_executor.go"
+    ],
+    "local": [
+      "web/src/lib/ui/store-workflows/WorkflowFilePicker.svelte",
+      "web/src/lib/ui/store-workflows/workflow-files.ts",
+      "web/src/lib/ui/store-workflows/WorkflowExecutorFields.svelte",
+      "web/src/lib/controller/workflow-forgejo-configuration.ts"
+    ],
+    "usage": "Owned Svelte path/Browse control reuses the existing Settings file input, with a pinned YAML Command chooser and native reporting projection. No Forgejo source is copied or vendored into production."
   }
 }

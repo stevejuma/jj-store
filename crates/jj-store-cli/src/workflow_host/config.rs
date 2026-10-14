@@ -49,6 +49,13 @@ impl Config {
         {
             return Err("Workflow executor program is unavailable".into());
         }
+        if self
+            .forgejo
+            .as_ref()
+            .is_some_and(|f| !f.program.is_file() || !f.docker_program.is_file())
+        {
+            return Err("Forgejo runner or Docker executable unavailable".into());
+        }
         Ok(())
     }
     pub(super) fn eligible(&self, definition: &w::DefinitionVersion) -> bool {
@@ -65,6 +72,7 @@ impl Config {
                 .all(|a| match &a.executor {
                     w::Executor::Command { name } => self.commands.contains_key(name),
                     w::Executor::Agent { agent, .. } => self.agents.contains(agent),
+                    w::Executor::GithubWorkflow { .. } => self.forgejo.is_some(),
                 })
     }
 }

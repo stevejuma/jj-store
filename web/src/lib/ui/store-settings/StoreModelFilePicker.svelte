@@ -9,25 +9,29 @@
     supported = false,
     disabled = false,
     onBrowse,
+    label = "Choose GGUF model file",
+    placeholder = "/absolute/path/model.gguf",
   }: {
     id: string;
     value?: string;
     supported?: boolean;
     disabled?: boolean;
     onBrowse: () => Promise<string | null>;
+    label?: string;
+    placeholder?: string;
   } = $props();
 </script>
 
 <ButtonGroup.Root
   class="store-settings__field-action"
   style="width: 100%"
-  aria-label="Choose GGUF model file"
+  aria-label={label}
 >
   <Input
     {id}
     bind:value
     {disabled}
-    placeholder="/absolute/path/model.gguf"
+    {placeholder}
     maxlength={4096}
     autocomplete="off"
     spellcheck={false}

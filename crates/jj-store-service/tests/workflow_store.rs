@@ -84,7 +84,7 @@ async fn workflow_grants_receipts_and_pinned_history_share_one_service() {
         .await
         .unwrap();
     let service = w::WorkflowService {
-        hosts: BTreeSet::from([ACTOR]),
+        hosts: BTreeSet::from([ACTOR]).into(),
     };
     let workflow = w::WorkflowId::new([11; 16]);
     let put = request(
@@ -196,6 +196,7 @@ async fn workflow_grants_receipts_and_pinned_history_share_one_service() {
                         attempt: run.current().id,
                         sequence,
                         data: w::EvidenceData::Log {
+                            step: None,
                             stream: "stdout".into(),
                             text: format!("line {sequence}\n"),
                         },
@@ -233,7 +234,7 @@ async fn workflow_grants_receipts_and_pinned_history_share_one_service() {
     assert_eq!(more.position, detail.position);
     assert_eq!(more.evidence[0].sequence, 1);
     let unauthorized = w::WorkflowService {
-        hosts: BTreeSet::from([m::PrincipalId::new([4; 16])]),
+        hosts: BTreeSet::from([m::PrincipalId::new([4; 16])]).into(),
     };
     assert!(matches!(
         unauthorized
@@ -246,6 +247,7 @@ async fn workflow_grants_receipts_and_pinned_history_share_one_service() {
                         attempt: run.current().id,
                         sequence: 2,
                         data: w::EvidenceData::Log {
+                            step: None,
                             stream: "stdout".into(),
                             text: "forged".into()
                         }
@@ -311,6 +313,64 @@ async fn workflow_grants_receipts_and_pinned_history_share_one_service() {
         .await
         .unwrap();
     assert_eq!(artifacts.evidence.len() + remainder.evidence.len(), 10);
+    service
+        .apply(
+            writer.clone(),
+            &request(
+                40,
+                w::Command::Report {
+                    run: run.id,
+                    attempt: run.current().id,
+                    sequence: 10,
+                    data: w::EvidenceData::Step {
+                        step: "yaml-test".into(),
+                        status: w::RunStatus::Completed,
+                        output: Default::default(),
+                    },
+                },
+            ),
+        )
+        .await
+        .unwrap();
+    let summary = service
+        .page(
+            reader.clone(),
+            w::Query {
+                run: Some(run.id),
+                limit: Some(1),
+                ..Default::default()
+            },
+        )
+        .await
+        .unwrap();
+    assert_eq!(summary.evidence.len(), 1);
+    assert_eq!(summary.evidence[0].sequence, 0);
+    assert_eq!(summary.step_reports.len(), 1);
+    assert_eq!(summary.step_reports[0].sequence, 10);
+    let previous = service
+        .page(
+            reader.clone(),
+            w::Query {
+                run: Some(run.id),
+                at: Some(detail.position),
+                ..Default::default()
+            },
+        )
+        .await
+        .unwrap();
+    assert!(previous.step_reports.is_empty());
+    let other_attempt = service
+        .page(
+            reader.clone(),
+            w::Query {
+                run: Some(run.id),
+                attempt: Some(w::ExecutionAttemptId::new([99; 16])),
+                ..Default::default()
+            },
+        )
+        .await
+        .unwrap();
+    assert!(other_attempt.step_reports.is_empty());
     service.apply(writer.clone(), &interrupt).await.unwrap();
     assert!(matches!(
         service

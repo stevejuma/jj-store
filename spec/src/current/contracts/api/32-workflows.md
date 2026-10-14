@@ -70,3 +70,14 @@ Managed runner settings discover verified installation-native workspace links.
 Recorded job repository/revision anchors select the source; neither discovered
 paths nor environment settings confer source or execution authority. Workflow
 commands, reports, persisted native objects and their wire format are unchanged.
+
+The GitHub YAML executor adds `github_workflow` to the existing executor union,
+`skipped` to recorded outcomes and optional step scope to logs. Exact run pages
+include their original source event for executor filtering. Bookmark events
+carry an optional immutable previous-target comparison; absence does not imply
+an empty tree. Admission remains independent of source access and secret access.
+
+Run detail also includes bounded `step_reports` for the selected (or latest)
+attempt, independent of log pagination. This permits live step discovery/status
+without eagerly reading every log chunk. Logs remain pinned and loaded on
+demand.

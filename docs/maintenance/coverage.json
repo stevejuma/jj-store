@@ -31,8 +31,8 @@
       "docs/site/concepts/collaboration.md"
     ],
     "review": {
-      "reason": "Reviewed committed ThreadStore message/reaction trigger extraction, edit/clear exclusions, exact immutable revisions and WorkStore-home admission; documented the source scope in workflow and collaboration guides.",
-      "fingerprint": "36a4d19872ee9decfd976f81db3950a8ce955d9e799201719596a5409f0f31d2"
+      "reason": "Reviewed revision-pinned GitHub YAML filtering, additive executor/skipped/log variants and unchanged native source-event identities; documented host and storage ownership.",
+      "fingerprint": "93ec9f99cb68c710b995dce1567f0d7ee765bfbaa570bf92286932eeb204dedf"
     }
   },
   {
@@ -66,8 +66,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed additive managed runner environments, pure validation and unchanged workflow/manifest/reporting authority; service default and bounds coverage passes.",
-      "fingerprint": "bc56c35f016a611ca4bdaebe75c0dbe453a710c97558a9aa565a498e18d68f44"
+      "reason": "Reviewed optional original-event and bounded selected/latest step reports, unchanged manifest/receipt authority and operator-owned Forgejo capability validation.",
+      "fingerprint": "16aa28b35301c4f715818504a069202abf8f3fc9fbc2779260ac3502db0edaa4"
     }
   },
   {
@@ -110,8 +110,8 @@
       "docs/site/getting-started/work.md"
     ],
     "review": {
-      "reason": "Reviewed the CLI-owned registered native workspace discovery, paired executable defaults, per-home journals and cold three-step execution; documented legacy compatibility and no per-repository runner wiring.",
-      "fingerprint": "95ab35b85a2adc55075202054333cc9ab71df378a986920504bc2cffd356d478"
+      "reason": "Reviewed Forgejo Runner 13.2.0 local execution, native source comparisons, original-source reruns, Unicode-safe secret redaction, bounded supervision and attempt-labelled Docker cleanup.",
+      "fingerprint": "aff3f131b0a6bb8869fe3f728dd4cad6cb2d746c581337c860fb62fb94cd6d91"
     }
   },
   {
@@ -137,8 +137,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed one shared horizontal Application menu in desktop and mobile body headers, Workflows using the Projects toolbar, persistent dialogs, retained exact requests and focus across resizing. The mobile toolbar also precedes the retained Repository Settings body. Existing APIs and reload authority are unchanged.",
-      "fingerprint": "fff9a40454401858bd237d3f45bdf6a34e0558a1c96a31606e279203fb6b158c"
+      "reason": "Reviewed owned YAML path/Browse control and pinned file discovery with stale-source invalidation, wider executor settings, scoped actual-step console, Refresh spinners and expandable raw/normalized log groups. Feedback remains toast-based.",
+      "fingerprint": "61141af07b03ebfe9a628fdd6ebf6ea89c641200a06e1dbfa0a082f83dd74eb3"
     }
   },
   {
@@ -155,8 +155,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Reviewed the workflow card and Description guidance added to CLI help sources; generated CLI/API references retain the same native definition, request, schema and host configuration contracts. UI prose adds no executable examples or public API changes.",
-      "fingerprint": "9a1cc03951af1d54d6fcf029a9aeab3488584b1768ce551a93e7f9f11725f8d7"
+      "reason": "Reviewed generated GitHub executor, skipped status, optional event/context/log scope and bounded step report contracts plus workflow source CLI help; paired readers must upgrade.",
+      "fingerprint": "529c9859a159ca00dad6f82cae07388741599f10bea6d96d057ad027a904ffa0"
     }
   },
   {

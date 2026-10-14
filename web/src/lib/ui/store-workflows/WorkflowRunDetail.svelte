@@ -52,7 +52,8 @@
       : run?.attempts.at(-1),
   );
   const terminal = $derived(
-    !!attempt && ["completed", "failed", "cancelled"].includes(attempt.status),
+    !!attempt &&
+      ["completed", "failed", "cancelled", "skipped"].includes(attempt.status),
   );
   async function command(kind: "cancel" | "retry") {
     if (!run || !attempt) return;

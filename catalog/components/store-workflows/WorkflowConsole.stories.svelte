@@ -260,6 +260,18 @@
     await expect(
       await canvas.findByRole("button", { name: "Step test · running" }),
     ).toBeVisible();
+    const stepSpinner = canvas
+      .getByRole("button", { name: "Step test · running" })
+      .querySelector(".workflow-run-status__spinner");
+    const attemptSpinner = canvas
+      .getByRole("combobox", { name: "Run attempt" })
+      .querySelector(".workflow-run-status__spinner");
+    await expect(stepSpinner).not.toBeNull();
+    await expect(attemptSpinner).not.toBeNull();
+    await expect(getComputedStyle(stepSpinner!).animationName).not.toBe("none");
+    await expect(getComputedStyle(attemptSpinner!).animationName).not.toBe(
+      "none",
+    );
     await expect(
       canvas.getByRole("button", { name: "Step summary · pending" }),
     ).toBeVisible();

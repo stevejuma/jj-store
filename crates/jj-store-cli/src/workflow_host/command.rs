@@ -46,6 +46,27 @@ impl Redactor {
                 consumed += 1;
             }
         }
+        if !last && !output.is_empty() {
+            let trailing = output
+                .iter()
+                .rev()
+                .take_while(|byte| **byte & 0xc0 == 0x80)
+                .count();
+            if let Some(start) = output.len().checked_sub(trailing + 1) {
+                let expected = match output[start] {
+                    0xc2..=0xdf => 2,
+                    0xe0..=0xef => 3,
+                    0xf0..=0xf4 => 4,
+                    _ => 0,
+                };
+                if expected > trailing + 1 {
+                    // A pipe/read or redaction window can end inside a codepoint.
+                    // Retain its original bytes rather than publishing replacements.
+                    consumed -= trailing + 1;
+                    output.truncate(start);
+                }
+            }
+        }
         self.pending.drain(..consumed);
         String::from_utf8_lossy(&output).replace('\0', "\\0")
     }
@@ -128,6 +149,21 @@ impl Host {
                 std::fs::create_dir(&workspace)?;
             }
         }
+        self.process(run, action, executor, &workspace, None).await
+    }
+    pub(super) async fn process(
+        &mut self,
+        run: &w::Run,
+        action: &w::Action,
+        executor: &config::Command,
+        workspace: &Path,
+        mut reporter: Option<super::forgejo::Reporter>,
+    ) -> Result<w::RunStatus> {
+        let active = self
+            .journal
+            .active
+            .clone()
+            .ok_or("Workflow attempt absent")?;
         let operation = run
             .source
             .operation
@@ -156,12 +192,28 @@ impl Host {
             })
             .collect();
         let mut command = tokio::process::Command::new(&self.config.jj_executable);
+        if reporter.is_some() {
+            command
+                .arg(worker::RUNNER_MARKER)
+                .arg(action.timeout_seconds.to_string())
+                .arg(
+                    &self
+                        .config
+                        .forgejo
+                        .as_ref()
+                        .ok_or("Forgejo capability missing")?
+                        .docker_program,
+                )
+                .arg(active.attempt.to_string());
+        } else {
+            command
+                .arg(worker::MARKER)
+                .arg(action.timeout_seconds.to_string());
+        }
         command
-            .arg(worker::MARKER)
-            .arg(action.timeout_seconds.to_string())
             .arg(&executor.program)
             .args(args)
-            .current_dir(&workspace)
+            .current_dir(workspace)
             .env_clear()
             .envs(environment)
             .env("JJ_WORKFLOW_SOURCE", serde_json::to_string(&run.source)?)
@@ -205,7 +257,7 @@ impl Host {
                         bytes+=data.len();
                         if bytes>10*1024*1024 { result=w::RunStatus::Failed;lifetime.take();break; }
                         let text=redactors.get_mut(stream).expect("pipe redactor").push(&data,false);
-                        if !text.is_empty() { self.report(w::EvidenceData::Log { stream:stream.into(),text }).await?; }
+                        if !text.is_empty() { self.process_output(&mut reporter, stream, &text, false).await?; }
                     }
                     None=>{ break; }
                 },
@@ -224,25 +276,28 @@ impl Host {
         for (stream, redactor) in &mut redactors {
             let text = redactor.push(&[], true);
             if !text.is_empty() {
-                self.report(w::EvidenceData::Log {
-                    stream: (*stream).into(),
-                    text,
-                })
-                .await?;
+                self.process_output(&mut reporter, stream, &text, false)
+                    .await?;
             }
+        }
+        for stream in ["stdout", "stderr"] {
+            self.process_output(&mut reporter, stream, "", true).await?;
+        }
+        if reporter.is_some() && exit.code() == Some(2) {
+            return Err("Forgejo cleanup unconfirmed; attempt remains unknown".into());
         }
         if result == w::RunStatus::Completed && !exit.success() {
             result = w::RunStatus::Failed;
         }
         if result == w::RunStatus::Completed {
-            if std::fs::symlink_metadata(&workspace)?
+            if std::fs::symlink_metadata(workspace)?
                 .file_type()
                 .is_symlink()
             {
                 return Err("Workflow artifact workspace symlink refused".into());
             }
             for name in &executor.artifacts {
-                let mut path = workspace.clone();
+                let mut path = workspace.to_path_buf();
                 for component in name.split('/') {
                     path.push(component);
                     if std::fs::symlink_metadata(&path)?.file_type().is_symlink() {
@@ -258,12 +313,53 @@ impl Host {
                 .await?;
             }
         }
+        if let Some(reporter) = &mut reporter {
+            if result == w::RunStatus::Completed && !reporter.complete() {
+                return Err("Forgejo completion reports absent; attempt remains unknown".into());
+            }
+            for report in reporter.close(result.clone()) {
+                self.report(report).await?;
+            }
+        }
         Ok(result)
+    }
+    async fn process_output(
+        &mut self,
+        reporter: &mut Option<super::forgejo::Reporter>,
+        stream: &str,
+        text: &str,
+        last: bool,
+    ) -> Result<()> {
+        if let Some(reporter) = reporter {
+            for data in reporter.feed(stream, text, last)? {
+                self.report(data).await?;
+            }
+        } else if !text.is_empty() {
+            self.report(w::EvidenceData::Log {
+                step: None,
+                stream: stream.into(),
+                text: text.into(),
+            })
+            .await?;
+        }
+        Ok(())
     }
 }
 #[cfg(test)]
 mod tests {
     use super::*;
+    #[test]
+    fn unicode_pipe_boundaries_and_redaction_windows_preserve_text() {
+        for secrets in [vec![], vec![b"secret".to_vec()]] {
+            let mut r = Redactor::new(secrets);
+            let mut actual = String::new();
+            for byte in "⭐ héllo secret 🐳\n".as_bytes() {
+                actual += &r.push(&[*byte], false);
+            }
+            actual += &r.push(&[], true);
+            assert!(actual == "⭐ héllo secret 🐳\n" || actual == "⭐ héllo [redacted] 🐳\n");
+        }
+    }
     #[test]
     fn redacts_secret_across_pipe_boundaries() {
         let mut r = Redactor::new(vec![b"abcd1234".to_vec()]);

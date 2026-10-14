@@ -252,6 +252,11 @@ impl State {
                     if evaluation.event.publication != event.publication
                         || evaluation.event.kind != event.kind
                         || evaluation.event.source != event.source
+                        || evaluation
+                            .event
+                            .code_context
+                            .as_ref()
+                            .is_some_and(|old| event.code_context.as_ref() != Some(old))
                     {
                         return Err(Error::Invalid("event identity reuse"));
                     }

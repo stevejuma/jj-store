@@ -17,7 +17,13 @@ export type ConsoleCacheEntry = {
   chunks: WorkflowEvidence[];
   step?: ConsoleStep;
 };
-const terminal = new Set(["completed", "failed", "cancelled", "unknown"]);
+const terminal = new Set([
+  "completed",
+  "failed",
+  "cancelled",
+  "unknown",
+  "skipped",
+]);
 const ordered = (a: WorkflowEvidence, b: WorkflowEvidence) =>
   a.sequence < b.sequence ? -1 : a.sequence > b.sequence ? 1 : 0;
 
@@ -62,7 +68,8 @@ export function workflowConsole(
         active.delete(data.step);
       }
     } else if (data.type === "log") {
-      if (active.size === 1) step([...active][0]!).chunks.push(row);
+      if (data.step) step(data.step).chunks.push(row);
+      else if (active.size === 1) step([...active][0]!).chunks.push(row);
       else unscoped.push(row);
     } else outputs.push(row);
   }
@@ -75,7 +82,22 @@ export function workflowConsole(
     if (value.status === "running" && attempt?.status === "unknown")
       value.status = "unknown";
   }
-  return { attempt, steps: [...steps.values()], unscoped, outputs };
+  // YAML reports include executor/job envelopes. Show their actual steps once
+  // discovered, retaining setup/cleanup output in the run-output disclosure.
+  const envelopes = new Set<string>();
+  for (const value of steps.values())
+    if (value.output.kind === "step" && value.output.parent)
+      envelopes.add(value.output.parent);
+  for (const value of steps.values())
+    if (envelopes.has(value.id) && value.output.parent)
+      envelopes.add(value.output.parent);
+  const visible = [...steps.values()].filter((value) => {
+    if (!envelopes.has(value.id)) return true;
+    unscoped.push(...value.chunks);
+    return false;
+  });
+  unscoped.sort(ordered);
+  return { attempt, steps: visible, unscoped, outputs };
 }
 
 export function stepDuration(step: ConsoleStep, observed: number) {

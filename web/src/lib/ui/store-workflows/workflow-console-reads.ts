@@ -15,6 +15,14 @@ export async function readConsoleEvidence(
   const run = snapshot.runs[0]?.id;
   if (!run) return [];
   const evidence: WorkflowEvidence[] = [];
+  const scoped = [...snapshot.evidence, ...(snapshot.step_reports ?? [])].some(
+    (row) =>
+      row.data.type === "log"
+        ? row.data.step === step
+        : row.data.type === "step" &&
+          row.data.step === step &&
+          row.data.output.kind === "step",
+  );
   const cursors = new Set<string>();
   let after: string | undefined;
   do {
@@ -41,11 +49,12 @@ export async function readConsoleEvidence(
     evidence.push(...page.evidence);
     if (
       step &&
+      !scoped &&
       page.evidence.some(
         (row) =>
           row.data.type === "step" &&
           row.data.step === step &&
-          ["completed", "failed", "cancelled", "unknown"].includes(
+          ["completed", "failed", "cancelled", "unknown", "skipped"].includes(
             row.data.status,
           ),
       )

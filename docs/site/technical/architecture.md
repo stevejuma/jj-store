@@ -337,3 +337,12 @@ resolves verified installation-native workspace links, derives identity from the
 selected local service and uses recorded job source pins. Each workflow home
 retains an independent journal. This adapter reuses existing registry and
 workspace managers; core server publication gains no workflow executor.
+
+The CLI-owned GitHub workflow executor reads YAML and source from the same
+recorded native revision, then verifies supported YAML filters against the
+original event. The external Forgejo Runner local `exec` interface owns job,
+matrix and dependency execution in Docker. WorkflowStore retains scoped reports
+and logs through existing receipts; the browser discovers steps independently of
+log pagination and loads pinned output on expansion. A non-match is skipped, and
+retries retain original source pins. This profile needs no Forgejo server;
+remote runner registration/polling and ConnectRPC remain separate work.

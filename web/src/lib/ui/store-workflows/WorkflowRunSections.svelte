@@ -44,7 +44,14 @@
     workflowConsole(
       run,
       page.workflows[0]?.definition,
-      page.evidence,
+      [
+        ...new Map(
+          [...page.evidence, ...(page.step_reports ?? [])].map((e) => [
+            e.id,
+            e,
+          ]),
+        ).values(),
+      ],
       selection.attempt,
     ),
   );

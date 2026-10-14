@@ -23993,6 +23993,18 @@
                                         {
                                           "type": "object",
                                           "properties": {
+                                            "path": { "type": "string" },
+                                            "type": {
+                                              "type": "string",
+                                              "const": "github_workflow"
+                                            }
+                                          },
+                                          "additionalProperties": false,
+                                          "required": ["type", "path"]
+                                        },
+                                        {
+                                          "type": "object",
+                                          "properties": {
                                             "agent": { "type": "string" },
                                             "prompt": { "type": "string" },
                                             "type": {
@@ -24207,6 +24219,20 @@
                                 "patternProperties": {
                                   "^[0-9a-f]{64}$": { "type": "boolean" }
                                 }
+                              },
+                              "code_context": {
+                                "type": ["object", "null"],
+                                "properties": {
+                                  "before": {
+                                    "type": ["string", "null"],
+                                    "pattern": "^[0-9a-f]{128}$",
+                                    "minLength": 128,
+                                    "maxLength": 128
+                                  },
+                                  "comparable": { "type": "boolean" }
+                                },
+                                "additionalProperties": false,
+                                "required": ["comparable"]
                               }
                             },
                             "additionalProperties": false,
@@ -24406,6 +24432,7 @@
                               {
                                 "type": "object",
                                 "properties": {
+                                  "step": { "type": ["string", "null"] },
                                   "stream": { "type": "string" },
                                   "text": { "type": "string" },
                                   "type": { "type": "string", "const": "log" }
@@ -24426,7 +24453,8 @@
                                       "completed",
                                       "failed",
                                       "cancelled",
-                                      "unknown"
+                                      "unknown",
+                                      "skipped"
                                     ]
                                   },
                                   "output": {
@@ -24517,7 +24545,8 @@
                               "completed",
                               "failed",
                               "cancelled",
-                              "unknown"
+                              "unknown",
+                              "skipped"
                             ]
                           },
                           "result": { "type": "string" },
@@ -80117,6 +80146,40 @@
                                             },
                                             "default": {}
                                           },
+                                          "forgejo": {
+                                            "type": ["object", "null"],
+                                            "properties": {
+                                              "program": { "type": "string" },
+                                              "docker_program": {
+                                                "type": "string"
+                                              },
+                                              "image": { "type": "string" },
+                                              "architecture": {
+                                                "type": "string",
+                                                "default": ""
+                                              },
+                                              "environment": {
+                                                "type": "object",
+                                                "additionalProperties": {
+                                                  "type": "string"
+                                                },
+                                                "default": {}
+                                              },
+                                              "secrets": {
+                                                "type": "object",
+                                                "additionalProperties": {
+                                                  "type": "string"
+                                                },
+                                                "default": {}
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": [
+                                              "program",
+                                              "docker_program",
+                                              "image"
+                                            ]
+                                          },
                                           "agents": {
                                             "type": "array",
                                             "uniqueItems": true,
@@ -80206,6 +80269,40 @@
                                               "required": ["program"]
                                             },
                                             "default": {}
+                                          },
+                                          "forgejo": {
+                                            "type": ["object", "null"],
+                                            "properties": {
+                                              "program": { "type": "string" },
+                                              "docker_program": {
+                                                "type": "string"
+                                              },
+                                              "image": { "type": "string" },
+                                              "architecture": {
+                                                "type": "string",
+                                                "default": ""
+                                              },
+                                              "environment": {
+                                                "type": "object",
+                                                "additionalProperties": {
+                                                  "type": "string"
+                                                },
+                                                "default": {}
+                                              },
+                                              "secrets": {
+                                                "type": "object",
+                                                "additionalProperties": {
+                                                  "type": "string"
+                                                },
+                                                "default": {}
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": [
+                                              "program",
+                                              "docker_program",
+                                              "image"
+                                            ]
                                           },
                                           "agents": {
                                             "type": "array",
@@ -87298,7 +87395,17 @@
             "type": "array",
             "items": { "$ref": "#/components/schemas/WorkflowEvidence" }
           },
-          "next": { "type": ["string", "null"] }
+          "next": { "type": ["string", "null"] },
+          "event": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/WorkflowSourceEvent" },
+              { "type": "null" }
+            ]
+          },
+          "step_reports": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/WorkflowEvidence" }
+          }
         },
         "required": [
           "version",
@@ -87494,6 +87601,15 @@
             "type": "object",
             "additionalProperties": false,
             "properties": {
+              "path": { "type": "string" },
+              "type": { "type": "string", "const": "github_workflow" }
+            },
+            "required": ["type", "path"]
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
               "agent": { "type": "string" },
               "prompt": { "type": "string" },
               "type": { "type": "string", "const": "agent" }
@@ -87643,7 +87759,8 @@
           "completed",
           "failed",
           "cancelled",
-          "unknown"
+          "unknown",
+          "skipped"
         ]
       },
       "WorkflowEvidence": {
@@ -87671,6 +87788,7 @@
             "type": "object",
             "additionalProperties": false,
             "properties": {
+              "step": { "type": ["string", "null"] },
               "stream": { "type": "string" },
               "text": { "type": "string" },
               "type": { "type": "string", "const": "log" }
@@ -87722,6 +87840,54 @@
           }
         ]
       },
+      "WorkflowSourceEvent": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": { "$ref": "#/components/schemas/SourceEventId" },
+          "publication": {
+            "type": "string",
+            "description": "Canonical origin key/digest, or issuing repository/epoch/selected receipt."
+          },
+          "kind": { "$ref": "#/components/schemas/WorkflowEventKind" },
+          "source": { "$ref": "#/components/schemas/WorkflowSource" },
+          "filter_results": {
+            "type": "object",
+            "additionalProperties": false,
+            "patternProperties": { "^[0-9a-f]{64}$": { "type": "boolean" } }
+          },
+          "code_context": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/WorkflowCodeContext" },
+              { "type": "null" }
+            ]
+          }
+        },
+        "required": ["id", "publication", "kind", "source"]
+      },
+      "WorkflowEventKind": {
+        "type": "string",
+        "enum": [
+          "message_posted",
+          "reaction_added",
+          "code_published",
+          "bookmark_changed"
+        ]
+      },
+      "WorkflowCodeContext": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "before": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/CommitId" },
+              { "type": "null" }
+            ]
+          },
+          "comparable": { "type": "boolean" }
+        },
+        "required": ["before", "comparable"]
+      },
       "WorkflowEventPage": {
         "type": "object",
         "properties": {
@@ -87742,34 +87908,6 @@
           "upper",
           "events",
           "unavailable"
-        ]
-      },
-      "WorkflowSourceEvent": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "id": { "$ref": "#/components/schemas/SourceEventId" },
-          "publication": {
-            "type": "string",
-            "description": "Canonical origin key/digest, or issuing repository/epoch/selected receipt."
-          },
-          "kind": { "$ref": "#/components/schemas/WorkflowEventKind" },
-          "source": { "$ref": "#/components/schemas/WorkflowSource" },
-          "filter_results": {
-            "type": "object",
-            "additionalProperties": false,
-            "patternProperties": { "^[0-9a-f]{64}$": { "type": "boolean" } }
-          }
-        },
-        "required": ["id", "publication", "kind", "source"]
-      },
-      "WorkflowEventKind": {
-        "type": "string",
-        "enum": [
-          "message_posted",
-          "reaction_added",
-          "code_published",
-          "bookmark_changed"
         ]
       },
       "WorkflowCommandOutcome": {
@@ -95775,6 +95913,12 @@
             },
             "default": {}
           },
+          "forgejo": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/WorkflowForgejoEnvironment" },
+              { "type": "null" }
+            ]
+          },
           "agents": {
             "type": "array",
             "uniqueItems": true,
@@ -95849,6 +95993,34 @@
         },
         "required": ["program", "args", "environment", "secrets", "artifacts"]
       },
+      "WorkflowForgejoEnvironment": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "program": { "type": "string" },
+          "docker_program": { "type": "string" },
+          "image": { "type": "string" },
+          "architecture": { "type": "string", "default": "" },
+          "environment": {
+            "type": "object",
+            "additionalProperties": { "type": "string" },
+            "default": {}
+          },
+          "secrets": {
+            "type": "object",
+            "additionalProperties": { "type": "string" },
+            "default": {}
+          }
+        },
+        "required": [
+          "program",
+          "docker_program",
+          "image",
+          "architecture",
+          "environment",
+          "secrets"
+        ]
+      },
       "WorkflowHostAgentEndpoint": {
         "type": "object",
         "additionalProperties": false,
@@ -95877,6 +96049,12 @@
               "$ref": "#/components/schemas/WorkflowHostCommand"
             },
             "default": {}
+          },
+          "forgejo": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/WorkflowForgejoEnvironment" },
+              { "type": "null" }
+            ]
           },
           "agents": {
             "type": "array",

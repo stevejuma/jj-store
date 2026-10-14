@@ -1,5 +1,12 @@
 # Change map
 
+E-WORKFLOW-GITHUB-001 adds an owned local YAML executor adapter and typed scoped
+reporting. Forgejo Runner v13.2.0 remains an external MIT-licensed executable
+built from pinned source; no source is vendored into production. Server
+scheduling, source authority and manifest publication remain owned by the
+existing contracts. Browser components compose maintained Settings/Command
+presentation and released Design Core, with provenance recorded locally.
+
 E-APPLICATION-MENU-001 retains JST-GOV-002/008 local presentation ownership. The
 persistent application menu composes owned native action/reload dialogs and
 released Design Core. Its snippet moves between desktop and mobile headers

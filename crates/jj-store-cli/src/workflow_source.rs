@@ -27,6 +27,15 @@ pub struct Args {
     pub commit: m::CommitId,
     /// A fresh absolute directory; no repository metadata is exported.
     pub destination: PathBuf,
+    /// Optional bounded changed-path record outside the exported tree.
+    #[arg(long)]
+    pub changed_paths: Option<PathBuf>,
+    /// Compare with this exact visible native revision.
+    #[arg(long, conflicts_with = "empty_baseline")]
+    pub before: Option<m::CommitId>,
+    /// Compare a newly created bookmark with an explicit empty tree.
+    #[arg(long)]
+    pub empty_baseline: bool,
 }
 pub async fn run(helper: &CommandHelper, args: Args) -> Result<(), CommandError> {
     if !args.destination.is_absolute() || args.destination.exists() {
@@ -71,6 +80,54 @@ pub async fn run(helper: &CommandHelper, args: Args) -> Result<(), CommandError>
             return Err(user_error("Source export file limit"));
         }
     }
+    let changed = if args.changed_paths.is_some() {
+        let baseline = if args.empty_baseline {
+            None
+        } else if let Some(before) = args.before {
+            let before = CommitId::from_bytes(before.as_bytes());
+            if !repo.index().has_id(&before).await? {
+                return Err(user_error("Comparison revision is not visible"));
+            }
+            Some(repo.store().get_commit_async(&before).await?)
+        } else if let [parent] = commit.parent_ids() {
+            Some(repo.store().get_commit_async(parent).await?)
+        } else {
+            None
+        };
+        if baseline.is_none() && !args.empty_baseline {
+            None
+        } else {
+            let mut before = std::collections::BTreeMap::new();
+            if let Some(baseline) = baseline {
+                for (path, value) in baseline.tree().entries() {
+                    before.insert(path.as_internal_file_string().to_owned(), value?);
+                }
+            }
+            let mut paths = std::collections::BTreeSet::new();
+            for (path, value) in commit.tree().entries() {
+                let name = path.as_internal_file_string().to_owned();
+                if before.remove(&name).as_ref() != Some(&value?) {
+                    paths.insert(name);
+                }
+            }
+            paths.extend(before.into_keys());
+            if paths.len() > 100_000 {
+                return Err(user_error("Changed path limit"));
+            }
+            Some(paths.into_iter().collect::<Vec<_>>())
+        }
+    } else {
+        None
+    };
+    if args
+        .changed_paths
+        .as_ref()
+        .is_some_and(|p| !p.is_absolute() || p.exists() || p.starts_with(&args.destination))
+    {
+        return Err(user_error(
+            "Changed paths need a fresh absolute file outside the source",
+        ));
+    }
     fs::create_dir(&args.destination).map_err(error)?;
     #[cfg(unix)]
     {
@@ -109,6 +166,18 @@ pub async fn run(helper: &CommandHelper, args: Args) -> Result<(), CommandError>
                 )
                 .map_err(error)?;
             }
+        }
+        if let Some(path) = &args.changed_paths {
+            let data = serde_json::to_vec(&changed).map_err(error)?;
+            if data.len() > 8 * 1024 * 1024 {
+                return Err(user_error("Changed paths byte limit"));
+            }
+            let mut out = OpenOptions::new()
+                .create_new(true)
+                .write(true)
+                .open(path)
+                .map_err(error)?;
+            out.write_all(&data).map_err(error)?;
         }
         Ok(())
     }

@@ -357,3 +357,40 @@
     await userEvent.keyboard("{Escape}");
   }}
 />
+
+<Story
+  name="Forgejo environment is configurable with the existing form"
+  play={async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await userEvent.click(
+      await canvas.findByRole("button", { name: "Add local host" }),
+    );
+    await userEvent.click(
+      await canvas.findByRole("switch", { name: "GitHub workflow executor" }),
+    );
+    const program = canvas.getByRole("textbox", {
+      name: "Forgejo runner executable",
+    });
+    await userEvent.type(program, "/tools/forgejo-runner");
+    await userEvent.type(
+      canvas.getByRole("textbox", { name: "Docker executable" }),
+      "/tools/docker",
+    );
+    await userEvent.type(
+      canvas.getByRole("textbox", { name: "Docker endpoint" }),
+      "unix:///tmp/docker.sock",
+    );
+    await expect(
+      canvas.getByRole("textbox", { name: "Job image" }),
+    ).toHaveValue("node:20-bullseye");
+    await userEvent.click(
+      canvas.getByRole("button", { name: "Save workflow settings" }),
+    );
+    await expect(
+      await within(document.body).findByText(
+        "Settings saved. Reload saved settings to apply changes.",
+      ),
+    ).toBeVisible();
+    await expect(program).toHaveValue("/tools/forgejo-runner");
+  }}
+/>

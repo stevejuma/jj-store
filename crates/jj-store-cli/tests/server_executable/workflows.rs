@@ -550,3 +550,263 @@ async fn two_hosts_execute_one_pinned_run_and_preserve_history_after_restart() {
     assert_eq!(cold, detail);
     restarted.terminate();
 }
+
+#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+#[ignore = "requires real RustFS, Docker and qualified Forgejo Runner"]
+async fn github_yaml_executor_matches_pinned_source_and_retains_retry_history() {
+    use std::os::unix::fs::MetadataExt as _;
+    let root = tempfile::tempdir().unwrap();
+    let state = root.path().join("server");
+    let runtime = fs::canonicalize(std::env::var_os("JJ_STORE_RUSTFS_RUNTIME").unwrap()).unwrap();
+    let runner = fs::canonicalize(std::env::var_os("JJ_STORE_FORGEJO_RUNNER").unwrap()).unwrap();
+    let docker = fs::canonicalize(std::env::var_os("JJ_STORE_DOCKER").unwrap()).unwrap();
+    success(
+        command()
+            .args([
+                "init",
+                "--local",
+                "--state-dir",
+                state.to_str().unwrap(),
+                "--rustfs-executable",
+                runtime.to_str().unwrap(),
+            ])
+            .output()
+            .unwrap(),
+    );
+    let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+    let address = listener.local_addr().unwrap();
+    drop(listener);
+    let identity =
+        jj_store_server::installation::Identity::load(&state.join("installation.json")).unwrap();
+    let actor =
+        identity.principal(format!("unix-uid:{}", fs::metadata(&state).unwrap().uid()).as_bytes());
+    let config = state.join("server.toml");
+    let text = fs::read_to_string(&config)
+        .unwrap()
+        .replace("127.0.0.1:7443", &address.to_string());
+    fs::write(&config, format!("workflow_hosts = [\"{actor}\"]\n{text}")).unwrap();
+    fs::write(
+        root.path().join("jj.toml"),
+        "[user]\nname='YAML acceptance'\nemail='yaml@example.invalid'\n",
+    )
+    .unwrap();
+    let mut running = start_local_trusted_server(root.path(), &config);
+    let socket = state.join("native.sock");
+    let code = root.path().join("code");
+    let home = root.path().join("home");
+    let mut repos = Vec::new();
+    for (name, workspace) in [("code", &code), ("home", &home)] {
+        let result = jj(
+            root.path(),
+            None,
+            &[
+                "store",
+                "--format=json",
+                "init",
+                workspace.to_str().unwrap(),
+                "--name",
+                name,
+                "--cache",
+                root.path().join(format!("{name}-cache")).to_str().unwrap(),
+                "--state-dir",
+                root.path().join(format!("{name}-client")).to_str().unwrap(),
+                "--unix-socket",
+                socket.to_str().unwrap(),
+            ],
+        );
+        repos.push(result["repository"].as_str().unwrap().to_owned());
+    }
+    jj(
+        root.path(),
+        Some(&home),
+        &[
+            "project",
+            "--format=json",
+            "create",
+            "--request-id",
+            &"10".repeat(16),
+            "--title",
+            "YAML acceptance",
+        ],
+    );
+    fs::create_dir_all(code.join(".github/workflows")).unwrap();
+    let yaml = "name: Demo\non: [push, workflow_dispatch]\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - name: Prepare\n        uses: actions/checkout@v4\n      - name: Test\n        run: test \"$(cat source.txt)\" = pinned; echo '::group::checks'; echo checked; echo '::endgroup::'\n      - name: Summary\n        run: printf 'complete\\n'\n";
+    fs::write(code.join("source.txt"), "pinned\n").unwrap();
+    fs::write(code.join(".github/workflows/demo.yml"), yaml).unwrap();
+    let describe = |message: &str| {
+        let mut cmd = Command::new(env!("CARGO_BIN_EXE_jj"));
+        cmd.current_dir(&code)
+            .env("JJ_CONFIG", root.path().join("jj.toml"))
+            .args(["describe", "-m", message]);
+        success(cmd.output().unwrap());
+    };
+    describe("Original");
+    let definition = root.path().join("definition.yml");
+    fs::write(&definition,format!("name: YAML Demo\nenabled: true\nrepository: {}\ntrigger: {{on: code_published}}\nactions:\n  - id: ci\n    executor: {{type: github_workflow, path: .github/workflows/demo.yml}}\n    timeout_seconds: 120\n",repos[0])).unwrap();
+    jj(
+        root.path(),
+        Some(&home),
+        &[
+            "workflow",
+            "--format=json",
+            "put",
+            definition.to_str().unwrap(),
+            "--request-id",
+            &"11".repeat(16),
+        ],
+    );
+    let host_config = root.path().join("host.json");
+    let endpoint = std::env::var("JJ_STORE_DOCKER_HOST").ok();
+    let environment = endpoint
+        .map(|value| json!({"PATH":"/usr/bin:/bin","DOCKER_HOST":value}))
+        .unwrap_or(json!({"PATH":"/usr/bin:/bin"}));
+    fs::write(&host_config,serde_json::to_vec(&json!({"version":1,"host":"yaml-host","principal":actor,"home":home,"state_dir":root.path().join("host-state"),"jj_executable":env!("CARGO_BIN_EXE_jj"),"allowed_owners":[actor],"labels":["ubuntu-latest"],"sources":[{"repository":repos[0],"workspace":code,"target_id":null}],"forgejo":{"program":runner,"docker_program":docker,"image":"alpine:3.23","architecture":"linux/arm64","environment":environment},"agent_endpoint":null})).unwrap()).unwrap();
+    assert!(host(root.path(), &host_config).wait().unwrap().success());
+    describe("Trigger exact source");
+    let output = host(root.path(), &host_config).wait_with_output().unwrap();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let page = jj(
+        root.path(),
+        Some(&home),
+        &["workflow", "--format=json", "list"],
+    );
+    let workflow = page["workflows"][0]["id"].as_str().unwrap();
+    let runs = jj(
+        root.path(),
+        Some(&home),
+        &["workflow", "--format=json", "runs", "--workflow", workflow],
+    );
+    let id = runs["runs"][0]["id"].as_str().unwrap().to_owned();
+    let detail = jj(
+        root.path(),
+        Some(&home),
+        &["workflow", "--format=json", "runs", "--run", &id],
+    );
+    assert_eq!(
+        detail["runs"][0]["attempts"][0]["status"], "completed",
+        "{detail}"
+    );
+    let evidence = detail["evidence"].as_array().unwrap();
+    for name in ["Prepare", "Test", "Summary"] {
+        assert!(
+            evidence
+                .iter()
+                .any(|e| e["data"]["output"]["name"] == name && e["data"]["status"] == "completed"),
+            "{detail}"
+        );
+    }
+    assert!(evidence.iter().any(|e| {
+        e["data"]["type"] == "log"
+            && e["data"]["step"].is_string()
+            && e["data"]["text"]
+                .as_str()
+                .is_some_and(|t| t.contains("checked"))
+    }));
+    fs::write(
+        code.join("source.txt"),
+        "new revision must not affect retry\n",
+    )
+    .unwrap();
+    describe("Newer source");
+    let attempt = detail["runs"][0]["attempts"][0]["id"].as_str().unwrap();
+    let body = root.path().join("retry.json");
+    fs::write(
+        &body,
+        serde_json::to_vec(&json!({"type":"retry","run":id,"expected":attempt})).unwrap(),
+    )
+    .unwrap();
+    jj(
+        root.path(),
+        Some(&home),
+        &[
+            "workflow",
+            "--format=json",
+            "command",
+            "--request-id",
+            &"22".repeat(16),
+            body.to_str().unwrap(),
+        ],
+    );
+    let output = host(root.path(), &host_config).wait_with_output().unwrap();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let retained = jj(
+        root.path(),
+        Some(&home),
+        &["workflow", "--format=json", "runs", "--run", &id],
+    );
+    assert_eq!(
+        retained["runs"][0]["attempts"][1]["status"], "completed",
+        "{retained}"
+    );
+    assert_eq!(retained["runs"][0]["source"], detail["runs"][0]["source"]);
+    // A filter edit in the published revision must govern that very event.
+    fs::write(code.join("source.txt"), "pinned\n").unwrap();
+    fs::write(
+        code.join(".github/workflows/demo.yml"),
+        yaml.replace(
+            "on: [push, workflow_dispatch]",
+            "on: {push: {paths: ['excluded/**']}, workflow_dispatch: null}",
+        ),
+    )
+    .unwrap();
+    describe("YAML change excludes this event");
+    let output = host(root.path(), &host_config).wait_with_output().unwrap();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let skipped = jj(
+        root.path(),
+        Some(&home),
+        &["workflow", "--format=json", "runs", "--workflow", workflow],
+    );
+    assert_eq!(
+        skipped["runs"][0]["attempts"][0]["status"], "skipped",
+        "{skipped}"
+    );
+    fs::write(
+        code.join(".github/workflows/demo.yml"),
+        yaml.replace(
+            "on: [push, workflow_dispatch]",
+            "on: {push: {paths: ['.github/workflows/**']}, workflow_dispatch: null}",
+        ),
+    )
+    .unwrap();
+    describe("YAML change includes itself");
+    let output = host(root.path(), &host_config).wait_with_output().unwrap();
+    assert!(
+        output.status.success(),
+        "{}",
+        String::from_utf8_lossy(&output.stderr)
+    );
+    let matching = jj(
+        root.path(),
+        Some(&home),
+        &["workflow", "--format=json", "runs", "--workflow", workflow],
+    );
+    assert_eq!(
+        matching["runs"][0]["attempts"][0]["status"], "completed",
+        "{matching}"
+    );
+    assert_ne!(matching["runs"][0]["source"], retained["runs"][0]["source"]);
+    running.terminate();
+    let mut restarted = start_local_trusted_server(root.path(), &config);
+    let cold = jj(
+        root.path(),
+        Some(&home),
+        &["workflow", "--format=json", "runs", "--run", &id],
+    );
+    for key in ["runs", "workflows", "evidence", "event"] {
+        assert_eq!(cold[key], retained[key], "immutable {key}");
+    }
+    restarted.terminate();
+}

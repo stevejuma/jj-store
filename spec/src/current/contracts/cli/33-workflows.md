@@ -33,3 +33,13 @@ uses paired JJ and private recovery defaults, and resolves each job's source
 from its recorded repository and exact pins. Independent version-1 standalone
 host configuration remains supported. Discovery never uses arbitrary job paths
 or a connection to another server, and missing bindings fail closed.
+
+The admitted GitHub YAML executor uses the external Forgejo Runner v13.2.0 local
+exec command. `workflow source --changed-paths PATH` writes a bounded
+changed-path record beside the export; `--before COMMIT` selects a visible
+comparison target, `--empty-baseline` explicitly selects an empty tree, and a
+missing baseline uses one commit parent. Ambiguous parent comparisons are
+recorded as unavailable. This read/export creates no repository operation.
+Runner cancellation requests termination, waits a bounded grace period and
+removes only attempt-labelled Docker resources. Unconfirmed cleanup retains an
+unknown attempt.

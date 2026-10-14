@@ -57744,6 +57744,47 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                       },
                                       "default": {}
                                     },
+                                    "forgejo": {
+                                      "type": [
+                                        "object",
+                                        "null"
+                                      ],
+                                      "properties": {
+                                        "program": {
+                                          "type": "string"
+                                        },
+                                        "docker_program": {
+                                          "type": "string"
+                                        },
+                                        "image": {
+                                          "type": "string"
+                                        },
+                                        "architecture": {
+                                          "type": "string",
+                                          "default": ""
+                                        },
+                                        "environment": {
+                                          "type": "object",
+                                          "additionalProperties": {
+                                            "type": "string"
+                                          },
+                                          "default": {}
+                                        },
+                                        "secrets": {
+                                          "type": "object",
+                                          "additionalProperties": {
+                                            "type": "string"
+                                          },
+                                          "default": {}
+                                        }
+                                      },
+                                      "additionalProperties": false,
+                                      "required": [
+                                        "program",
+                                        "docker_program",
+                                        "image"
+                                      ]
+                                    },
                                     "agents": {
                                       "type": "array",
                                       "uniqueItems": true,
@@ -57860,6 +57901,47 @@ LocalTrusted loopback administration only. Exact protocol, authority, Origin and
                                         ]
                                       },
                                       "default": {}
+                                    },
+                                    "forgejo": {
+                                      "type": [
+                                        "object",
+                                        "null"
+                                      ],
+                                      "properties": {
+                                        "program": {
+                                          "type": "string"
+                                        },
+                                        "docker_program": {
+                                          "type": "string"
+                                        },
+                                        "image": {
+                                          "type": "string"
+                                        },
+                                        "architecture": {
+                                          "type": "string",
+                                          "default": ""
+                                        },
+                                        "environment": {
+                                          "type": "object",
+                                          "additionalProperties": {
+                                            "type": "string"
+                                          },
+                                          "default": {}
+                                        },
+                                        "secrets": {
+                                          "type": "object",
+                                          "additionalProperties": {
+                                            "type": "string"
+                                          },
+                                          "default": {}
+                                        }
+                                      },
+                                      "additionalProperties": false,
+                                      "required": [
+                                        "program",
+                                        "docker_program",
+                                        "image"
+                                      ]
                                     },
                                     "agents": {
                                       "type": "array",

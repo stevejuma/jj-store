@@ -109,16 +109,17 @@ export class WorkflowLogLines {
 export function consoleLogRows(lines: readonly ConsoleLine[]) {
   const groups: string[] = [];
   return lines.flatMap((line) => {
-    if (line.text.startsWith("##[endgroup]")) {
+    if (/^(?:##\[endgroup\]|::endgroup::)/.test(line.text)) {
       groups.pop();
       return [];
     }
-    const group = line.text.startsWith("##[group]");
+    const marker = /^(?:##\[group\]|::group::)/.exec(line.text)?.[0];
+    const group = !!marker;
     const row = {
       ...line,
       group,
       parents: [...groups],
-      html: group ? line.html.replace("##[group]", "") : line.html,
+      html: marker ? line.html.replace(marker, "") : line.html,
     };
     if (group) groups.push(line.id);
     return [row];

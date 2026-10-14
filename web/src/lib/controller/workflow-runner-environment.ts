@@ -8,6 +8,7 @@ export function runnerEnvironment(value: HostSettings): RunnerEnvironment {
     host: value.host,
     labels: [...(value.labels ?? [])],
     commands: value.commands ?? {},
+    forgejo: value.forgejo ?? undefined,
     agents: [...(value.agents ?? [])],
     agent_endpoint: value.agent_endpoint ?? null,
     allowed_owners: [...(value.allowed_owners ?? [])],

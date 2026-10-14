@@ -253,3 +253,27 @@ existing code runs still export the exact pinned operation/commit. Agent prompts
 include the immutable trigger references and use the admitted source attachment.
 Thread/Reaction origin replication remains deferred with their existing frozen
 home origin profile.
+
+## GitHub YAML executor
+
+Configure an optional `forgejo` runner capability in Workflows settings, with
+absolute Forgejo Runner 13.2.0 and Docker executable paths, a job image and
+admitted labels (for example `ubuntu-latest`). On macOS, set the Docker endpoint
+from `docker context inspect --format '{{.Endpoints.docker.Host}}'`. The native
+macOS runner can be built from the pinned upstream source using Go. Saving does
+not activate the host: use the existing saved-settings reload and explicit host
+admission.
+
+Choose **GitHub workflow** for an action and select a `.github/workflows/*.yml`
+or `.yaml` path. App criteria select candidates; the YAML's supported event,
+branch and path filters must also match. The workflow body and source are read
+from the same recorded revision, including edits introduced by that revision.
+Reruns retain original pins. A YAML non-match or absent file is skipped.
+
+The runner executes Docker jobs without a Forgejo server. `push` maps to
+bookmark changes or unbranched code publication; manual runs require
+`workflow_dispatch`. Include the workflow file in `paths` if workflow-only edits
+should trigger it. Initial limits and unsupported fields are listed in the
+canonical workflow compatibility contract. GitHub-hosted tokens/APIs and
+artifact/cache services are not provided. Secret settings contain operator
+environment names only.

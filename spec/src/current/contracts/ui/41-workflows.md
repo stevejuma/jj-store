@@ -236,3 +236,19 @@ Save with a toast. JSON accepts legacy attachment settings as well as the
 version-2 environment document. Legacy mappings remain saved until the next
 explicit host edit/save, which preserves environment, policy and recovery
 overrides. Save is inactive; reload activates at an idle boundary.
+
+The GitHub workflow executor uses the existing joined path/Browse control with
+an owned YAML Command chooser, backed by pinned authorized repository reads. The
+form edits a path, not a cached workflow body; execution resolves its recorded
+revision. Runner settings expose the optional Forgejo capability and Docker
+endpoint. History uses explicit scoped job/step logs, names and skipped outcomes
+in the existing console. Picker/read/action failures use shared application
+toasts. Executor and job envelopes do not duplicate actual YAML step rows; their
+setup and cleanup logs remain in Run output. Both local Actions command markers
+and normalized Forgejo log groups use the existing nested, keyboard-accessible
+disclosures. Scoped output after a terminal report remains readable across
+pagination. Optional post-action stages retain their reported status. Wide file
+and JSON controls fill the inspector; runner environment inputs provide more
+space for paths. Running steps and attempt choices use the same Refresh spinner
+icon as step-log loading, with retained accessible status and reduced-motion
+support.

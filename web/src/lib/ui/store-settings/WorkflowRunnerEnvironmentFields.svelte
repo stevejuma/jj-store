@@ -7,6 +7,7 @@
   import Tags from "@lucide/svelte/icons/tags";
   import Terminal from "@lucide/svelte/icons/terminal";
   import Bot from "@lucide/svelte/icons/bot";
+  import WorkflowForgejoFields from "./WorkflowForgejoFields.svelte";
   import StoreSettingsIcon from "./StoreSettingsIcon.svelte";
   import StoreRepositoryPicker from "../store-application/StoreRepositoryPicker.svelte";
   import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
@@ -125,6 +126,8 @@
         />{:else}<Bot aria-hidden="true" />{/if}{/snippet}
   </StoreRepositoryPicker>
 </Field.Field>
+
+<WorkflowForgejoFields {configuration} {disabled} {onChange} />
 
 <style>
   .workflow-runner-labels {

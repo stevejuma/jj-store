@@ -9536,6 +9536,22 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         "string",
         "null"
       ]
+    },
+    "event": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/WorkflowSourceEvent"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "step_reports": {
+      "type": "array",
+      "items": {
+        "$ref": "#/components/schemas/WorkflowEvidence"
+      }
     }
   },
   "required": [
@@ -9906,6 +9922,23 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "path": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "const": "github_workflow"
+        }
+      },
+      "required": [
+        "type",
+        "path"
+      ]
+    },
+    {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
         "agent": {
           "type": "string"
         },
@@ -10201,7 +10234,8 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "completed",
     "failed",
     "cancelled",
-    "unknown"
+    "unknown",
+    "skipped"
   ]
 }
 ```
@@ -10266,6 +10300,12 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "object",
       "additionalProperties": false,
       "properties": {
+        "step": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
         "stream": {
           "type": "string"
         },
@@ -10367,6 +10407,97 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 }
 ```
 
+## WorkflowSourceEvent
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "$ref": "#/components/schemas/SourceEventId"
+    },
+    "publication": {
+      "type": "string",
+      "description": "Canonical origin key/digest, or issuing repository/epoch/selected receipt."
+    },
+    "kind": {
+      "$ref": "#/components/schemas/WorkflowEventKind"
+    },
+    "source": {
+      "$ref": "#/components/schemas/WorkflowSource"
+    },
+    "filter_results": {
+      "type": "object",
+      "additionalProperties": false,
+      "patternProperties": {
+        "^[0-9a-f]{64}$": {
+          "type": "boolean"
+        }
+      }
+    },
+    "code_context": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/WorkflowCodeContext"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "id",
+    "publication",
+    "kind",
+    "source"
+  ]
+}
+```
+
+## WorkflowEventKind
+
+```text
+{
+  "type": "string",
+  "enum": [
+    "message_posted",
+    "reaction_added",
+    "code_published",
+    "bookmark_changed"
+  ]
+}
+```
+
+## WorkflowCodeContext
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "before": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/CommitId"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "comparable": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "before",
+    "comparable"
+  ]
+}
+```
+
 ## WorkflowEventPage
 
 ```text
@@ -10407,59 +10538,6 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     "upper",
     "events",
     "unavailable"
-  ]
-}
-```
-
-## WorkflowSourceEvent
-
-```text
-{
-  "type": "object",
-  "additionalProperties": false,
-  "properties": {
-    "id": {
-      "$ref": "#/components/schemas/SourceEventId"
-    },
-    "publication": {
-      "type": "string",
-      "description": "Canonical origin key/digest, or issuing repository/epoch/selected receipt."
-    },
-    "kind": {
-      "$ref": "#/components/schemas/WorkflowEventKind"
-    },
-    "source": {
-      "$ref": "#/components/schemas/WorkflowSource"
-    },
-    "filter_results": {
-      "type": "object",
-      "additionalProperties": false,
-      "patternProperties": {
-        "^[0-9a-f]{64}$": {
-          "type": "boolean"
-        }
-      }
-    }
-  },
-  "required": [
-    "id",
-    "publication",
-    "kind",
-    "source"
-  ]
-}
-```
-
-## WorkflowEventKind
-
-```text
-{
-  "type": "string",
-  "enum": [
-    "message_posted",
-    "reaction_added",
-    "code_published",
-    "bookmark_changed"
   ]
 }
 ```
@@ -25906,6 +25984,16 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       },
       "default": {}
     },
+    "forgejo": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/WorkflowForgejoEnvironment"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
     "agents": {
       "type": "array",
       "uniqueItems": true,
@@ -26027,6 +26115,52 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 }
 ```
 
+## WorkflowForgejoEnvironment
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "program": {
+      "type": "string"
+    },
+    "docker_program": {
+      "type": "string"
+    },
+    "image": {
+      "type": "string"
+    },
+    "architecture": {
+      "type": "string",
+      "default": ""
+    },
+    "environment": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "default": {}
+    },
+    "secrets": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      },
+      "default": {}
+    }
+  },
+  "required": [
+    "program",
+    "docker_program",
+    "image",
+    "architecture",
+    "environment",
+    "secrets"
+  ]
+}
+```
+
 ## WorkflowHostAgentEndpoint
 
 ```text
@@ -26084,6 +26218,16 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
         "$ref": "#/components/schemas/WorkflowHostCommand"
       },
       "default": {}
+    },
+    "forgejo": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/WorkflowForgejoEnvironment"
+        },
+        {
+          "type": "null"
+        }
+      ]
     },
     "agents": {
       "type": "array",

@@ -172,6 +172,7 @@ fn claims_reports_and_sequences_remain_bound_to_one_attempt() {
         attempt,
         sequence: 0,
         data: w::EvidenceData::Log {
+            step: None,
             stream: "stdout".into(),
             text: "first\n".into(),
         },

@@ -4,6 +4,7 @@ mod command;
 mod config;
 mod discovery;
 mod events;
+mod forgejo;
 mod journal;
 mod managed;
 mod worker;
@@ -352,7 +353,7 @@ impl Host {
         self.save()
     }
     async fn execute(&mut self, run: &w::Run, definition: &w::DefinitionVersion) -> Result<()> {
-        let mut status = w::RunStatus::Completed;
+        let mut status = w::RunStatus::Skipped;
         for action in &definition.definition.actions {
             if self.current().await?.current().status == w::RunStatus::CancelRequested {
                 status = w::RunStatus::Cancelled;
@@ -369,6 +370,9 @@ impl Host {
                     self.command(run, action, &self.config.commands[name].clone())
                         .await?
                 }
+                w::Executor::GithubWorkflow { path } => {
+                    self.github_workflow(run, action, path).await?
+                }
                 w::Executor::Agent { agent, prompt } => {
                     self.agent(run, action, agent, prompt).await?
                 }
@@ -379,7 +383,10 @@ impl Host {
                 output: Default::default(),
             })
             .await?;
-            if result != w::RunStatus::Completed {
+            if result == w::RunStatus::Completed {
+                status = w::RunStatus::Completed;
+            }
+            if !matches!(result, w::RunStatus::Completed | w::RunStatus::Skipped) {
                 status = result;
                 break;
             }

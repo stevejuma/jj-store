@@ -16,6 +16,8 @@
   import { Textarea } from "@lapismd/design-core/shadcn/textarea";
   import { ChipAutocomplete } from "@lapismd/design-core/forms";
   import * as Field from "@lapismd/design-core/shadcn/field";
+  import WorkflowExecutorFields from "./WorkflowExecutorFields.svelte";
+  import WorkflowIcon from "@lucide/svelte/icons/workflow";
   import WorkflowTriggerPicker from "./WorkflowTriggerPicker.svelte";
   import WorkflowConditions from "./WorkflowConditions.svelte";
   import WorkflowDescription from "./WorkflowDescription.svelte";
@@ -194,55 +196,31 @@
             options={[
               { value: "command", label: "Named command", Icon: Terminal },
               { value: "agent", label: "Agent", Icon: Bot },
+              {
+                value: "github_workflow",
+                label: "GitHub workflow",
+                Icon: WorkflowIcon,
+              },
             ]}
             onChange={(value) =>
               (action.executor =
-                value === "agent"
-                  ? { type: "agent", agent: "", prompt: "" }
-                  : { type: "command", name: "build" })}
+                value === "github_workflow"
+                  ? {
+                      type: "github_workflow",
+                      path: ".github/workflows/ci.yml",
+                    }
+                  : value === "agent"
+                    ? { type: "agent", agent: "", prompt: "" }
+                    : { type: "command", name: "build" })}
           /></Field.Field
         >
-        {#if action.executor.type === "command"}<Field.Field
-            orientation="horizontal"
-            class="store-settings__option-row"
-            ><Field.Content
-              ><Field.Label for={`${id}-command`}
-                ><StoreSettingsIcon Icon={Terminal} />Command name</Field.Label
-              ><Field.Description
-                >Configured on the execution host.</Field.Description
-              ></Field.Content
-            ><Input
-              id={`${id}-command`}
-              bind:value={action.executor.name}
-              {disabled}
-            /></Field.Field
-          >
-        {:else}<Field.Field
-            orientation="horizontal"
-            class="store-settings__option-row"
-            ><Field.Content
-              ><Field.Label for={`${id}-agent`}
-                ><StoreSettingsIcon Icon={Bot} />Agent</Field.Label
-              ></Field.Content
-            ><Input
-              id={`${id}-agent`}
-              bind:value={action.executor.agent}
-              {disabled}
-            /></Field.Field
-          ><Field.Field
-            orientation="horizontal"
-            class="store-settings__option-row workflow-inspector-row--wide"
-            ><Field.Content
-              ><Field.Label for={`${id}-prompt`}
-                ><StoreSettingsIcon Icon={Message} />Prompt</Field.Label
-              ></Field.Content
-            ><CommunityChatComposer
-              ariaLabel="Prompt"
-              bind:value={action.executor.prompt}
-              mode="form"
-              {disabled}
-            /></Field.Field
-          >{/if}
+        <WorkflowExecutorFields
+          {id}
+          {action}
+          repository={definition.repository}
+          {acquireRepository}
+          {disabled}
+        />
         <StoreNumericSettingRow
           id={`${id}-timeout`}
           label="Timeout"

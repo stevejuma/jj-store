@@ -1,3 +1,4 @@
+import { validateForgejoEnvironment } from "./workflow-forgejo-configuration.js";
 import {
   runnerEnvironment,
   type HostSettings,
@@ -50,6 +51,7 @@ export function validateWorkflowHost(value: unknown): asserts value is Host {
     "labels",
     "sources",
     "commands",
+    "forgejo",
     "agents",
     "agent_endpoint",
     "poll_millis",
@@ -137,6 +139,7 @@ export function validateWorkflowHost(value: unknown): asserts value is Host {
     )
       throw Error("Artifacts must use safe relative paths.");
   }
+  if (h.forgejo != null) validateForgejoEnvironment(h.forgejo);
   if (h.agent_endpoint != null) {
     const a = object(h.agent_endpoint);
     keys(a, ["url", "local", "token_environment"]);
@@ -171,6 +174,7 @@ export function parseWorkflowHost(text: string): HostSettings {
       "host",
       "labels",
       "commands",
+      "forgejo",
       "agents",
       "agent_endpoint",
       "allowed_owners",
@@ -218,6 +222,16 @@ export function parseWorkflowHost(text: string): HostSettings {
   validateWorkflowHost(value);
   return {
     ...value,
+    ...(value.forgejo
+      ? {
+          forgejo: {
+            ...value.forgejo,
+            architecture: value.forgejo.architecture ?? "",
+            environment: value.forgejo.environment ?? {},
+            secrets: value.forgejo.secrets ?? {},
+          },
+        }
+      : {}),
     allowed_owners: [...value.allowed_owners].sort(),
     labels: [...(value.labels ?? [])].sort(),
     agents: [...(value.agents ?? [])].sort(),
