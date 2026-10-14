@@ -127,7 +127,7 @@ impl Fixture {
         .unwrap()
     }
     fn cli(&self, args: &[&str]) -> Output {
-        Command::new(env!("CARGO_BIN_EXE_jj"))
+        Command::new(env!("CARGO_BIN_EXE_jj-store-jj"))
             .current_dir(self.root.path())
             .env("JJ_CONFIG", self.root.path().join("jj.toml"))
             .env("JJ_STORE_TOKEN", self.token.expose().as_str())
@@ -138,7 +138,7 @@ impl Fixture {
             .unwrap()
     }
     fn init(&self, operator: &BearerToken, extra: &[&str]) -> Output {
-        Command::new(env!("CARGO_BIN_EXE_jj"))
+        Command::new(env!("CARGO_BIN_EXE_jj-store-jj"))
             .current_dir(self.root.path())
             .env("JJ_CONFIG", self.root.path().join("jj.toml"))
             .env("JJ_STORE_TOKEN", self.token.expose().as_str())

@@ -18,6 +18,7 @@ its original request ID rather than silently retried.
 | JST-ARCH-002 | Model, object storage, and WAL MUST NOT depend on UI, Tantivy, Git transport, SQL, Nostr, or agent runtimes; upstream JJ integration MUST stay behind owned adapters.                                                                   |
 | JST-ARCH-003 | First release MUST serve new native repositories through LocalTrusted loopback HTTP and owner-only Unix RPC backed by persistent embedded RustFS, with no required authentication, Git, SQL, relay, or external object-store authority. |
 | JST-ARCH-004 | Browser and catalog source MUST enforce counted-line budgets, keep production independent of fixtures, and separate presentation from API and controller ownership.                                                                     |
+| JST-ARCH-005 | Public releases MUST coordinate Changesets, Cargo packages, native bundles and container versions; immutable source, complete qualification, package-contained inputs and least-privilege authenticated deployment MUST precede publication. |
 
 Storage harness self-tests are part of normal validation. `pnpm test:rustfs`
 executes only isolated disposable Docker probes and writes a scratch report. An

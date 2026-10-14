@@ -111,11 +111,7 @@ async fn native_remote_execution_retains_receipts_and_never_replays_after_restar
         options: Default::default(),
     };
     let acp = root.path().join("agent-control");
-    std::fs::write(
-        &acp,
-        include_str!("../../../jj-store-cli/tests/fixtures/agent_control.py"),
-    )
-    .unwrap();
+    std::fs::write(&acp, include_str!("../../tests/fixtures/agent_control.py")).unwrap();
     #[cfg(unix)]
     {
         use std::os::unix::fs::PermissionsExt;

@@ -269,7 +269,7 @@ def run_contract(image, rounds, contenders, output, rust_client=False, server=Fa
                 env = dict(os.environ, JST_TEST_ENDPOINT=s3.endpoint, JST_TEST_ACCESS_KEY=ACCESS,
                            JST_TEST_SECRET_KEY=SECRET, JST_TEST_CONTAINER=name,
                            DEVELOPER_DIR="/Library/Developer/CommandLineTools")
-                command = ["cargo", "test", "-p", "jj-store-cli", "--test", "server_executable", "--locked",
+                command = ["cargo", "test", "-p", "jj-store", "--test", "server_executable", "--locked",
                            "real_rustfs_server_cli_restart_and_revocation", "--", "--ignored", "--nocapture"]
                 result = subprocess.run(command, env=env, capture_output=True, text=True, timeout=300)
                 report["server_client"] = {"command": command, "exit_code": result.returncode,

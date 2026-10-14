@@ -5,7 +5,7 @@ use jj_store_service::local_repository::*;
 use std::{path::Path, process::Command};
 
 fn jj(path: &Path, args: &[&str]) -> String {
-    let output = Command::new(env!("CARGO_BIN_EXE_jj"))
+    let output = Command::new(env!("CARGO_BIN_EXE_jj-store-jj"))
         .current_dir(path)
         .args([
             "--no-pager",
@@ -376,7 +376,7 @@ async fn portable_review_diff_sides_and_whole_files_require_exact_capsules_paths
     let pin = repo.metadata_store().read().unwrap().unwrap().commit();
     // Supplying a physically present but wrong blob cannot authorize another path.
     if let ArtifactTargetV1::PortableCodeArtifact(v) = &mut selected.target {
-        v.object = after.object.clone();
+        v.object = after.object;
     }
     assert!(
         repo.apply_review_command(&request(

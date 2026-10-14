@@ -179,7 +179,7 @@ async fn rpc_created_repositories_attach_with_real_cli_and_survive_host_restart(
     )
     .unwrap();
     let run = |args: &[&str]| {
-        let output = Command::new(env!("CARGO_BIN_EXE_jj"))
+        let output = Command::new(env!("CARGO_BIN_EXE_jj-store-jj"))
             .current_dir(root.path())
             .env("JJ_CONFIG", &config)
             .env("JJ_STORE_TOKEN", f.admin.expose().as_str())
@@ -452,7 +452,7 @@ fn token_command(
     let mut command = Command::new(if server {
         env!("CARGO_BIN_EXE_jj-store")
     } else {
-        env!("CARGO_BIN_EXE_jj")
+        env!("CARGO_BIN_EXE_jj-store-jj")
     });
     command
         .current_dir(root)
@@ -901,7 +901,7 @@ async fn executable_token_admin_rotation_and_bounded_stdin_preserve_request_iden
 #[test]
 fn executable_token_help_is_authored_for_both_families() {
     for (binary, prefix) in [
-        (env!("CARGO_BIN_EXE_jj"), vec!["store"]),
+        (env!("CARGO_BIN_EXE_jj-store-jj"), vec!["store"]),
         (env!("CARGO_BIN_EXE_jj-store"), vec![]),
     ] {
         let run = |flag: &str| {

@@ -29,3 +29,5 @@ Read the owning topic and requirement before implementation.
 - [Lightweight workflow host (M28)](21-workflow-host.md)
 
 - [Custom data index ownership](22-custom-data-indexes.md)
+
+- [Public distribution and release orchestration](23-public-distribution.md)

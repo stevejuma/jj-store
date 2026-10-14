@@ -13,7 +13,7 @@ use kingfisher_scanner::Scanner;
 use serde_json::{Value, json};
 use sha2::{Digest as _, Sha256};
 use std::path::Path;
-pub const TRANSCRIPT_POLICY: &str = "mongodb-kingfisher@2.7.0/builtin-medium/transcript-paths/v1";
+pub const TRANSCRIPT_POLICY: &str = "kingfisher-scanner@1.4.0/builtin-medium/transcript-paths/v1";
 #[derive(Clone)]
 pub struct TranscriptSanitizer {
     scanner: std::sync::Arc<Scanner>,

@@ -567,8 +567,10 @@ async fn malformed_avatars_images_and_missing_selected_closure_fail_closed() {
         "https://user:password@example.com/a.png",
         "data:image/svg+xml,%3Csvg%20onload%3D%22alert(1)%22%3E",
     ] {
-        let mut details = ProfileDetails::default();
-        details.avatar = Some(avatar.into());
+        let details = ProfileDetails {
+            avatar: Some(avatar.into()),
+            ..Default::default()
+        };
         assert!(matches!(
             manager
                 .execute(

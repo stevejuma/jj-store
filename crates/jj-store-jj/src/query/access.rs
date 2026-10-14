@@ -88,7 +88,7 @@ impl Budget {
     fn charge(&self, counter: &AtomicU64, amount: u64, limit: u64) -> Result<()> {
         self.check()?;
         counter
-            .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |n| {
+            .try_update(Ordering::Relaxed, Ordering::Relaxed, |n| {
                 n.checked_add(amount).filter(|n| *n <= limit)
             })
             .map_err(|_| self.fail(Error::Limit))?;
@@ -112,7 +112,7 @@ impl Budget {
         self.check()?;
         let old = self
             .predicate_lines
-            .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |n| {
+            .try_update(Ordering::Relaxed, Ordering::Relaxed, |n| {
                 n.checked_add(added)
                     .filter(|n| *n <= self.limits.predicates.max_lines)
             })

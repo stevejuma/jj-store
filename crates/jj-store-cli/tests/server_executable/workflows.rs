@@ -1,7 +1,7 @@
 use super::*;
 use serde_json::{Value, json};
 fn jj(root: &Path, workspace: Option<&Path>, args: &[&str]) -> Value {
-    let mut command = Command::new(env!("CARGO_BIN_EXE_jj"));
+    let mut command = Command::new(env!("CARGO_BIN_EXE_jj-store-jj"));
     command
         .current_dir(root)
         .env("JJ_CONFIG", root.join("jj.toml"))
@@ -37,7 +37,7 @@ fn host(root: &Path, path: &Path) -> Child {
 fn executor_parent_loss_stops_the_owned_process_group() {
     let root = tempfile::tempdir().unwrap();
     let marker = root.path().join("late");
-    let mut child = Command::new(env!("CARGO_BIN_EXE_jj"))
+    let mut child = Command::new(env!("CARGO_BIN_EXE_jj-store-jj"))
         .args([
             jj_store_cli::workflow_host::worker_entry_marker(),
             "30",
@@ -138,7 +138,7 @@ async fn two_hosts_execute_one_pinned_run_and_preserve_history_after_restart() {
         ],
     );
     fs::write(code.join("source.txt"), "pinned source\n").unwrap();
-    let mut snapshot = Command::new(env!("CARGO_BIN_EXE_jj"));
+    let mut snapshot = Command::new(env!("CARGO_BIN_EXE_jj-store-jj"));
     snapshot
         .current_dir(&code)
         .env("JJ_CONFIG", root.path().join("jj.toml"))
@@ -161,7 +161,7 @@ async fn two_hosts_execute_one_pinned_run_and_preserve_history_after_restart() {
     let mut configs = Vec::new();
     for name in ["host-a", "host-b"] {
         let path = root.path().join(format!("{name}.json"));
-        fs::write(&path,serde_json::to_vec(&json!({"version":1,"host":name,"principal":actor,"home":home,"state_dir":root.path().join(name),"jj_executable":env!("CARGO_BIN_EXE_jj"),"allowed_owners":[actor],"sources":[{"repository":repos[0],"workspace":code,"target_id":null}],"commands":{"build":{"program":"/bin/sh","args":["-c","cat source.txt; printf artifact > result.txt"],"environment":{"PATH":"/usr/bin:/bin"},"artifacts":["result.txt"]},"verify":{"program":"/bin/sh","args":["-c","set -eu; test -f result.txt; printf verified >> result.txt"],"environment":{"PATH":"/usr/bin:/bin"}},"publish":{"program":"/bin/sh","args":["-c","set -eu; grep -q '^artifactverified$' result.txt; printf 'shared artifact\n'"],"environment":{"PATH":"/usr/bin:/bin"}}},"agent_endpoint":null})).unwrap()).unwrap();
+        fs::write(&path,serde_json::to_vec(&json!({"version":1,"host":name,"principal":actor,"home":home,"state_dir":root.path().join(name),"jj_executable":env!("CARGO_BIN_EXE_jj-store-jj"),"allowed_owners":[actor],"sources":[{"repository":repos[0],"workspace":code,"target_id":null}],"commands":{"build":{"program":"/bin/sh","args":["-c","cat source.txt; printf artifact > result.txt"],"environment":{"PATH":"/usr/bin:/bin"},"artifacts":["result.txt"]},"verify":{"program":"/bin/sh","args":["-c","set -eu; test -f result.txt; printf verified >> result.txt"],"environment":{"PATH":"/usr/bin:/bin"}},"publish":{"program":"/bin/sh","args":["-c","set -eu; grep -q '^artifactverified$' result.txt; printf 'shared artifact\n'"],"environment":{"PATH":"/usr/bin:/bin"}}},"agent_endpoint":null})).unwrap()).unwrap();
         configs.push(path);
     }
     // Establish each observer's initial source cursor, then publish a new revision.
@@ -169,14 +169,14 @@ async fn two_hosts_execute_one_pinned_run_and_preserve_history_after_restart() {
         assert!(host(root.path(), config).wait().unwrap().success());
     }
     fs::write(code.join("source.txt"), "next pinned source\n").unwrap();
-    let output = Command::new(env!("CARGO_BIN_EXE_jj"))
+    let output = Command::new(env!("CARGO_BIN_EXE_jj-store-jj"))
         .current_dir(&code)
         .env("JJ_CONFIG", root.path().join("jj.toml"))
         .args(["describe", "-m", "Trigger workflow"])
         .output()
         .unwrap();
     success(output);
-    let output = Command::new(env!("CARGO_BIN_EXE_jj"))
+    let output = Command::new(env!("CARGO_BIN_EXE_jj-store-jj"))
         .current_dir(&code)
         .env("JJ_CONFIG", root.path().join("jj.toml"))
         .args(["bookmark", "set", "main", "-r", "@"])
@@ -518,7 +518,7 @@ async fn two_hosts_execute_one_pinned_run_and_preserve_history_after_restart() {
         serde_json::to_vec(&denied["command"]).unwrap(),
     )
     .unwrap();
-    let response = Command::new(env!("CARGO_BIN_EXE_jj"))
+    let response = Command::new(env!("CARGO_BIN_EXE_jj-store-jj"))
         .current_dir(root.path())
         .env("JJ_CONFIG", root.path().join("jj.toml"))
         .args([
@@ -634,7 +634,7 @@ async fn github_yaml_executor_matches_pinned_source_and_retains_retry_history() 
     fs::write(code.join("source.txt"), "pinned\n").unwrap();
     fs::write(code.join(".github/workflows/demo.yml"), yaml).unwrap();
     let describe = |message: &str| {
-        let mut cmd = Command::new(env!("CARGO_BIN_EXE_jj"));
+        let mut cmd = Command::new(env!("CARGO_BIN_EXE_jj-store-jj"));
         cmd.current_dir(&code)
             .env("JJ_CONFIG", root.path().join("jj.toml"))
             .args(["describe", "-m", message]);
@@ -660,7 +660,7 @@ async fn github_yaml_executor_matches_pinned_source_and_retains_retry_history() 
     let environment = endpoint
         .map(|value| json!({"PATH":"/usr/bin:/bin","DOCKER_HOST":value}))
         .unwrap_or(json!({"PATH":"/usr/bin:/bin"}));
-    fs::write(&host_config,serde_json::to_vec(&json!({"version":1,"host":"yaml-host","principal":actor,"home":home,"state_dir":root.path().join("host-state"),"jj_executable":env!("CARGO_BIN_EXE_jj"),"allowed_owners":[actor],"labels":["ubuntu-latest"],"sources":[{"repository":repos[0],"workspace":code,"target_id":null}],"forgejo":{"program":runner,"docker_program":docker,"image":"alpine:3.23","architecture":"linux/arm64","environment":environment},"agent_endpoint":null})).unwrap()).unwrap();
+    fs::write(&host_config,serde_json::to_vec(&json!({"version":1,"host":"yaml-host","principal":actor,"home":home,"state_dir":root.path().join("host-state"),"jj_executable":env!("CARGO_BIN_EXE_jj-store-jj"),"allowed_owners":[actor],"labels":["ubuntu-latest"],"sources":[{"repository":repos[0],"workspace":code,"target_id":null}],"forgejo":{"program":runner,"docker_program":docker,"image":"alpine:3.23","architecture":"linux/arm64","environment":environment},"agent_endpoint":null})).unwrap()).unwrap();
     assert!(host(root.path(), &host_config).wait().unwrap().success());
     describe("Trigger exact source");
     let output = host(root.path(), &host_config).wait_with_output().unwrap();

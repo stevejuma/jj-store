@@ -104,25 +104,6 @@ impl PromptQueue {
         self.pending.remove(index)
     }
 }
-#[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn queued_turns_wait_for_the_exact_active_completion_and_cancel_without_dispatch() {
-        let mut queue = PromptQueue::default();
-        for request in ["a", "b", "c"] {
-            queue
-                .push(json!({"type":"prompt","sessionId":"s","requestId":request}))
-                .unwrap();
-        }
-        assert_eq!(queue.next().unwrap()["requestId"], "a");
-        queue.completed(&json!({"type":"record","sessionId":"other","requestId":"a"}));
-        assert!(queue.next().is_none());
-        assert_eq!(queue.cancel("s", "b").unwrap()["requestId"], "b");
-        queue.completed(&json!({"type":"record","sessionId":"s","requestId":"a"}));
-        assert_eq!(queue.next().unwrap()["requestId"], "c");
-    }
-}
 
 /// Covers the gap between writing a prompt and receiving its started acknowledgement.
 /// Worker teardown drops the lease, including when its future is cancelled.
@@ -169,5 +150,25 @@ impl Supervisor {
                 request,
             },
         ))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn queued_turns_wait_for_the_exact_active_completion_and_cancel_without_dispatch() {
+        let mut queue = PromptQueue::default();
+        for request in ["a", "b", "c"] {
+            queue
+                .push(json!({"type":"prompt","sessionId":"s","requestId":request}))
+                .unwrap();
+        }
+        assert_eq!(queue.next().unwrap()["requestId"], "a");
+        queue.completed(&json!({"type":"record","sessionId":"other","requestId":"a"}));
+        assert!(queue.next().is_none());
+        assert_eq!(queue.cancel("s", "b").unwrap()["requestId"], "b");
+        queue.completed(&json!({"type":"record","sessionId":"s","requestId":"a"}));
+        assert_eq!(queue.next().unwrap()["requestId"], "c");
     }
 }

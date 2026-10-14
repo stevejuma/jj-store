@@ -102,7 +102,7 @@ assert.equal(
 const diagnostic = JSON.parse(
   (
     await execute(
-      join(root, "target/debug/jj"),
+      join(root, "target/debug/jj-store-jj"),
       ["-R", profiles.localFolder, "store", "doctor", "--format=json"],
       { env: { JJ_CONFIG: join(runtimeRoot, "jj.toml") } },
     )

@@ -364,3 +364,8 @@ schema; the CLI runtime remains optional behind a service interface. Workflow
 native objects and receipts remain unchanged. Focused cross-layer activation,
 HTTP/RPC, cold lifecycle and UI evidence do not promote live providers, Forgejo
 protocol or visual baseline gates.
+
+Public distribution maps `.github/`, `.changeset/`, `.config/nextest.toml`,
+Dockerfile and `.dockerignore` to architecture/23-public-distribution.md.
+Changesets governs coordinated Cargo/native/container versions through a private
+npm package. Full release qualification and M30 evidence precede publication.

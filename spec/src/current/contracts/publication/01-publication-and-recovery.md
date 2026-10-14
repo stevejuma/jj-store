@@ -96,3 +96,7 @@ selection through authorized domain publication in private staging. The native
 manifest is installed only after all immutable destination dependencies;
 retained receipts establish completion without overwriting later destination
 edits.
+
+## Public release integration
+
+Rust 1.99 atomic update naming and equivalent test-fixture iteration preserve manifest CAS, stable request identities, receipts and recovery. Public package metadata does not alter native codec or WAL formats.

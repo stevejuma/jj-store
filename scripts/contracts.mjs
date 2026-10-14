@@ -69,7 +69,7 @@ if (mode === "--check") {
       fixture,
       variable,
       binary = "native_lifecycle",
-      packageName = "jj-store-cli",
+      packageName = "jj-store",
     ] of [
       [
         "managed_http::managed_local_http_activates_without_subscribers_resumes_and_captures_tasks",

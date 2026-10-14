@@ -36,3 +36,5 @@ spec/.generated/
 
 /runtime/local-agent/target/
 /runtime/compute/target/
+
+.release/

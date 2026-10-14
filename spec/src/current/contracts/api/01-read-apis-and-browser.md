@@ -315,3 +315,7 @@ The shared inbox navigation/filter presentation changes no JST-API-001 wire
 contracts, authorized read scopes, cache invalidation, pagination or retry
 behavior. Facets use only loaded exact identities; source/view filtering does
 not initiate additional reads or broaden repository access.
+
+## Public release integration
+
+CLI version display and Cargo package naming do not change HTTP/RPC schemas. Generated contracts and actual fixture captures remain release gates; cached build artifacts never substitute another source revision.

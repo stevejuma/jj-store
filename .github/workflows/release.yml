@@ -1,0 +1,43 @@
+name: Changesets release orchestration
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: jj-store-version-orchestration
+  cancel-in-progress: false
+jobs:
+  version:
+    if: github.repository == 'stevejuma/jj-store'
+    runs-on: ubuntu-22.04
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      pull-requests: write
+      actions: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/setup
+      - uses: changesets/action@63a615b9cd06ba9a3e6d13796c7fbcb080a60a0b
+        id: changesets
+        with:
+          version: pnpm release:version
+          publish: pnpm release:orchestrate
+          commit: Version jj-store packages
+          title: Version Packages
+          commitMode: github-api
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
+      - name: Run checks for the generated release PR
+        if: steps.changesets.outputs.pullRequestNumber != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_PR: ${{ steps.changesets.outputs.pullRequestNumber }}
+        run: |
+          branch=$(gh pr view "$RELEASE_PR" --json headRefName --jq .headRefName)
+          gh workflow run ci.yml --ref "$branch" -f full=true

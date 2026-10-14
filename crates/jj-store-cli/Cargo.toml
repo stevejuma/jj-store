@@ -1,10 +1,13 @@
 [package]
-name = "jj-store-cli"
+name = "jj-store"
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
-publish = false
+description = "Native JJ server and collision-safe command-line client"
+repository.workspace = true
+homepage.workspace = true
+readme = "README.md"
 
 [dependencies]
 jj-workflow.workspace = true
@@ -51,8 +54,11 @@ keyring = { version = "3.6", features = ["windows-native"] }
 [target.'cfg(target_os = "linux")'.dependencies]
 keyring = { version = "3.6", features = ["sync-secret-service", "crypto-rust"] }
 
+[lib]
+name = "jj_store_cli"
+
 [[bin]]
-name = "jj"
+name = "jj-store-jj"
 path = "src/main.rs"
 
 [[bin]]

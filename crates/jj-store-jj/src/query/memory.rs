@@ -41,7 +41,7 @@ impl Pool {
         }
         let admit = || {
             self.used
-                .fetch_update(Ordering::AcqRel, Ordering::Acquire, |old| {
+                .try_update(Ordering::AcqRel, Ordering::Acquire, |old| {
                     old.checked_add(bytes).filter(|n| *n <= self.limit)
                 })
                 .is_ok()

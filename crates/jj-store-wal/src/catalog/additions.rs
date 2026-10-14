@@ -7,6 +7,141 @@ enum Side {
     Leaf(BTreeMap<RecordDigest, RecordRef>),
 }
 
+impl Side {
+    async fn load(self, catalog: &Catalog, prefix: &str, budget: &mut ScanBudget) -> Result<Node> {
+        let node = match self {
+            Self::Stored(reference) => {
+                budget
+                    .get(&catalog.records, reference, RecordKind::Catalog)
+                    .await?
+            }
+            Self::Leaf(entries) => Node::Leaf {
+                prefix: prefix.to_owned(),
+                entries,
+            },
+        };
+        Catalog::validate(&node, prefix)?;
+        Ok(node)
+    }
+}
+fn side(reference: Option<RecordRef>) -> Result<Side> {
+    match reference {
+        Some(reference) if reference.kind != RecordKind::Catalog || reference.attempt.is_some() => {
+            Err(Error::Corrupt("catalog comparison reference"))
+        }
+        Some(reference) => Ok(Side::Stored(reference)),
+        None => Ok(Side::Leaf(BTreeMap::new())),
+    }
+}
+fn children(node: Node, depth: usize) -> Result<BTreeMap<String, Side>> {
+    match node {
+        Node::Branch { children, .. } => children
+            .into_iter()
+            .map(|(nibble, reference)| Ok((nibble, side(Some(reference))?)))
+            .collect(),
+        Node::Leaf { entries, .. } => {
+            if depth >= 64 {
+                return Err(Error::Corrupt("catalog comparison depth"));
+            }
+            let mut groups = BTreeMap::<String, BTreeMap<RecordDigest, RecordRef>>::new();
+            for (key, value) in entries {
+                let text = key.to_string();
+                groups
+                    .entry(text[depth..depth + 1].to_owned())
+                    .or_default()
+                    .insert(key, value);
+            }
+            Ok(groups
+                .into_iter()
+                .map(|(nibble, entries)| (nibble, Side::Leaf(entries)))
+                .collect())
+        }
+    }
+}
+impl Catalog {
+    /// Exclusive addition window. Consuming all pages from None proves exact
+    /// baseline retention; an anchored or partial page certifies only its walk.
+    pub async fn additions_page(
+        &self,
+        before: Option<RecordRef>,
+        after: Option<RecordRef>,
+        anchor: Option<RecordDigest>,
+        limit: usize,
+        budget: &mut ScanBudget,
+    ) -> Result<Page> {
+        if !(1..=256).contains(&limit) {
+            return Err(Error::Limit("catalog scan size"));
+        }
+        let anchor_text = anchor.map(|key| key.to_string());
+        let mut stack = vec![(side(before)?, side(after)?, String::new())];
+        let mut entries = BTreeMap::new();
+        while let Some((before, after, prefix)) = stack.pop() {
+            if anchor_text
+                .as_ref()
+                .is_some_and(|key| prefix.as_str() < &key[..prefix.len()])
+                || matches!((&before, &after), (Side::Stored(a), Side::Stored(b)) if a == b)
+            {
+                continue;
+            }
+            let pair = async {
+                Ok((
+                    before.load(self, &prefix, budget).await?,
+                    after.load(self, &prefix, budget).await?,
+                ))
+            }
+            .await;
+            let (before, after) = match pair {
+                Ok(pair) => pair,
+                Err(error) if ScanBudget::admission(&error) && !entries.is_empty() => {
+                    let next = entries.last_key_value().map(|(key, _)| *key);
+                    return Ok(Page { entries, next });
+                }
+                Err(error) => return Err(error),
+            };
+            match (before, after) {
+                (Node::Leaf { entries: base, .. }, Node::Leaf { entries: new, .. }) => {
+                    if base.iter().any(|(key, value)| new.get(key) != Some(value)) {
+                        return Err(Error::Corrupt("catalog base not retained"));
+                    }
+                    for (key, value) in new {
+                        if anchor.is_some_and(|anchor| key <= anchor) || base.contains_key(&key) {
+                            continue;
+                        }
+                        if entries.len() == limit {
+                            let next = entries.last_key_value().map(|(key, _)| *key);
+                            return Ok(Page { entries, next });
+                        }
+                        entries.insert(key, value);
+                    }
+                }
+                (before, after) => {
+                    let mut pairs = children(before, prefix.len())?
+                        .into_iter()
+                        .map(|(nibble, base)| (nibble, (Some(base), None)))
+                        .collect::<BTreeMap<_, _>>();
+                    for (nibble, new) in children(after, prefix.len())? {
+                        pairs.entry(nibble).or_default().1 = Some(new);
+                    }
+                    if stack.len().saturating_add(pairs.len()) > 1024 {
+                        return Err(Error::Limit("catalog comparison frontier"));
+                    }
+                    for (nibble, (base, new)) in pairs.into_iter().rev() {
+                        stack.push((
+                            base.unwrap_or_else(|| Side::Leaf(BTreeMap::new())),
+                            new.unwrap_or_else(|| Side::Leaf(BTreeMap::new())),
+                            format!("{prefix}{nibble}"),
+                        ));
+                    }
+                }
+            }
+        }
+        Ok(Page {
+            entries,
+            next: None,
+        })
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -194,139 +329,5 @@ mod tests {
                 .collect::<BTreeMap<_, _>>(),
             (1..34).map(entry).collect()
         );
-    }
-}
-impl Side {
-    async fn load(self, catalog: &Catalog, prefix: &str, budget: &mut ScanBudget) -> Result<Node> {
-        let node = match self {
-            Self::Stored(reference) => {
-                budget
-                    .get(&catalog.records, reference, RecordKind::Catalog)
-                    .await?
-            }
-            Self::Leaf(entries) => Node::Leaf {
-                prefix: prefix.to_owned(),
-                entries,
-            },
-        };
-        Catalog::validate(&node, prefix)?;
-        Ok(node)
-    }
-}
-fn side(reference: Option<RecordRef>) -> Result<Side> {
-    match reference {
-        Some(reference) if reference.kind != RecordKind::Catalog || reference.attempt.is_some() => {
-            Err(Error::Corrupt("catalog comparison reference"))
-        }
-        Some(reference) => Ok(Side::Stored(reference)),
-        None => Ok(Side::Leaf(BTreeMap::new())),
-    }
-}
-fn children(node: Node, depth: usize) -> Result<BTreeMap<String, Side>> {
-    match node {
-        Node::Branch { children, .. } => children
-            .into_iter()
-            .map(|(nibble, reference)| Ok((nibble, side(Some(reference))?)))
-            .collect(),
-        Node::Leaf { entries, .. } => {
-            if depth >= 64 {
-                return Err(Error::Corrupt("catalog comparison depth"));
-            }
-            let mut groups = BTreeMap::<String, BTreeMap<RecordDigest, RecordRef>>::new();
-            for (key, value) in entries {
-                let text = key.to_string();
-                groups
-                    .entry(text[depth..depth + 1].to_owned())
-                    .or_default()
-                    .insert(key, value);
-            }
-            Ok(groups
-                .into_iter()
-                .map(|(nibble, entries)| (nibble, Side::Leaf(entries)))
-                .collect())
-        }
-    }
-}
-impl Catalog {
-    /// Exclusive addition window. Consuming all pages from None proves exact
-    /// baseline retention; an anchored or partial page certifies only its walk.
-    pub async fn additions_page(
-        &self,
-        before: Option<RecordRef>,
-        after: Option<RecordRef>,
-        anchor: Option<RecordDigest>,
-        limit: usize,
-        budget: &mut ScanBudget,
-    ) -> Result<Page> {
-        if !(1..=256).contains(&limit) {
-            return Err(Error::Limit("catalog scan size"));
-        }
-        let anchor_text = anchor.map(|key| key.to_string());
-        let mut stack = vec![(side(before)?, side(after)?, String::new())];
-        let mut entries = BTreeMap::new();
-        while let Some((before, after, prefix)) = stack.pop() {
-            if anchor_text
-                .as_ref()
-                .is_some_and(|key| prefix.as_str() < &key[..prefix.len()])
-                || matches!((&before, &after), (Side::Stored(a), Side::Stored(b)) if a == b)
-            {
-                continue;
-            }
-            let pair = async {
-                Ok((
-                    before.load(self, &prefix, budget).await?,
-                    after.load(self, &prefix, budget).await?,
-                ))
-            }
-            .await;
-            let (before, after) = match pair {
-                Ok(pair) => pair,
-                Err(error) if ScanBudget::admission(&error) && !entries.is_empty() => {
-                    let next = entries.last_key_value().map(|(key, _)| *key);
-                    return Ok(Page { entries, next });
-                }
-                Err(error) => return Err(error),
-            };
-            match (before, after) {
-                (Node::Leaf { entries: base, .. }, Node::Leaf { entries: new, .. }) => {
-                    if base.iter().any(|(key, value)| new.get(key) != Some(value)) {
-                        return Err(Error::Corrupt("catalog base not retained"));
-                    }
-                    for (key, value) in new {
-                        if anchor.is_some_and(|anchor| key <= anchor) || base.contains_key(&key) {
-                            continue;
-                        }
-                        if entries.len() == limit {
-                            let next = entries.last_key_value().map(|(key, _)| *key);
-                            return Ok(Page { entries, next });
-                        }
-                        entries.insert(key, value);
-                    }
-                }
-                (before, after) => {
-                    let mut pairs = children(before, prefix.len())?
-                        .into_iter()
-                        .map(|(nibble, base)| (nibble, (Some(base), None)))
-                        .collect::<BTreeMap<_, _>>();
-                    for (nibble, new) in children(after, prefix.len())? {
-                        pairs.entry(nibble).or_default().1 = Some(new);
-                    }
-                    if stack.len().saturating_add(pairs.len()) > 1024 {
-                        return Err(Error::Limit("catalog comparison frontier"));
-                    }
-                    for (nibble, (base, new)) in pairs.into_iter().rev() {
-                        stack.push((
-                            base.unwrap_or_else(|| Side::Leaf(BTreeMap::new())),
-                            new.unwrap_or_else(|| Side::Leaf(BTreeMap::new())),
-                            format!("{prefix}{nibble}"),
-                        ));
-                    }
-                }
-            }
-        }
-        Ok(Page {
-            entries,
-            next: None,
-        })
     }
 }

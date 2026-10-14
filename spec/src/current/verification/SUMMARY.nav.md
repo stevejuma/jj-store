@@ -26,3 +26,5 @@
 - [UI verification](ui.md)
 - [WORK verification](work.md)
 - [Workflows verification](workflows.md)
+
+- [Public distribution verification](public-distribution.md)

@@ -17,7 +17,7 @@ impl Budget {
     }
     fn add(&self, bytes: usize) -> Option<()> {
         self.used
-            .fetch_update(Ordering::AcqRel, Ordering::Acquire, |used| {
+            .try_update(Ordering::AcqRel, Ordering::Acquire, |used| {
                 used.checked_add(bytes).filter(|next| *next <= self.limit)
             })
             .ok()?;

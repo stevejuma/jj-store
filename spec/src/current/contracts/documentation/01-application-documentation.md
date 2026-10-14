@@ -149,3 +149,7 @@ architecture and lifecycle guides distinguish source limits from retained-media
 limits and explicit saves. Generated installation/type references include the
 binary image route; documentation delivery and coverage review gates remain
 unchanged.
+
+## Public release integration
+
+Published specification and manual use /jj-store/ and /jj-store/manual/. CI can render acknowledged checked-in references without invoking Rust; separate exact-source live reference comparison remains a required release lane. Package-owned CLI help is checked against maintained docs/cli inputs.

@@ -25,7 +25,7 @@ const run = (cmd, args, env = {}) =>
   });
 let service;
 try {
-  run("cargo", ["build", "-p", "jj-store-cli", "--bins", "--locked"]);
+  run("cargo", ["build", "-p", "jj-store", "--bins", "--locked"]);
   run("pnpm", ["web:build"]);
   run(binary, [
     "init",

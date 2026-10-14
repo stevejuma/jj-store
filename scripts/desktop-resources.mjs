@@ -11,7 +11,7 @@ export async function stageDesktopResources({
 }) {
   const binaries = [
     [join(target, "jj-store"), "jj-store"],
-    [join(target, "jj"), "jj"],
+    [join(target, "jj-store-jj"), "jj-store-jj"],
     [runtime, "jj-store-rustfs"],
   ];
   if (acp) binaries.push([acp, "jj-acp"]);

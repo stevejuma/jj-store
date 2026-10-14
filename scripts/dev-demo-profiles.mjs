@@ -40,7 +40,7 @@ export async function seedRepositoryProfiles({
     });
     await rename(`${marker}.tmp`, marker);
   };
-  const binary = resolve(repositoryRoot, "target/debug/jj");
+  const binary = resolve(repositoryRoot, "target/debug/jj-store-jj");
   const env = { JJ_CONFIG: join(runtimeRoot, "jj.toml") };
   const jj = (folder, args) =>
     run(binary, ["-R", folder, "--no-pager", "--color=never", ...args], {

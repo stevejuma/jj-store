@@ -221,7 +221,7 @@ pub(super) async fn prepare(
             .or_else(|| {
                 std::env::current_exe()
                     .ok()
-                    .and_then(|p| p.parent().map(|p| p.join("jj")))
+                    .and_then(|p| p.parent().map(|p| p.join("jj-store-jj")))
             });
         jj.map(|jj| {
             crate::agent_execution::Supervisor::open(crate::agent_execution::Resources {

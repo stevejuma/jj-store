@@ -139,7 +139,7 @@ pub async fn run(cwd: &std::path::Path, base: &str, args: &[&str]) -> Output {
     run_format(cwd, base, "json", args).await
 }
 pub async fn run_format(cwd: &std::path::Path, base: &str, format: &str, args: &[&str]) -> Output {
-    let mut command = tokio::process::Command::new(env!("CARGO_BIN_EXE_jj"));
+    let mut command = tokio::process::Command::new(env!("CARGO_BIN_EXE_jj-store-jj"));
     command
         .current_dir(cwd)
         .args([

@@ -13,7 +13,7 @@ use std::{
     process::{Command, Output},
 };
 fn cli(path: &Path, state: &Path, args: &[&str]) -> Output {
-    Command::new(env!("CARGO_BIN_EXE_jj"))
+    Command::new(env!("CARGO_BIN_EXE_jj-store-jj"))
         .current_dir(path)
         .args([
             "--no-pager",

@@ -591,11 +591,11 @@ fn predecessor_lookup_seeks_ranked_repeated_occurrences_pending_branches_and_leg
             }
         }
         assert_eq!(
-            lookup.next(&[a.clone()], 0, &mut |_| Err(Error::Canceled)),
+            lookup.next(std::slice::from_ref(&a), 0, &mut |_| Err(Error::Canceled)),
             Err(Error::Canceled)
         );
         assert_eq!(
-            lookup.next(&[a.clone()], 0, &mut |_| Err(Error::Limit)),
+            lookup.next(std::slice::from_ref(&a), 0, &mut |_| Err(Error::Limit)),
             Err(Error::Limit)
         );
         assert!(!graph.unique_evolution_anchor(&a));

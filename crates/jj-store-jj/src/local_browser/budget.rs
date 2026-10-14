@@ -59,7 +59,7 @@ impl Budget {
     fn charge(&self, counter: &AtomicU64, amount: u64, limit: u64) -> Result<()> {
         self.check()?;
         counter
-            .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |n| {
+            .try_update(Ordering::Relaxed, Ordering::Relaxed, |n| {
                 n.checked_add(amount).filter(|n| *n <= limit)
             })
             .map_err(|_| Error::Limit)?;

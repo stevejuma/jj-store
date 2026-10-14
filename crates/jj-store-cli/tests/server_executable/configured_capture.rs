@@ -44,7 +44,7 @@ async fn cold_configured_codex_capture_initializes_publishes_and_preserves_pause
     );
     let workspace = root.path().join("workspace");
     let created: Value = serde_json::from_str(&success(
-        Command::new(env!("CARGO_BIN_EXE_jj"))
+        Command::new(env!("CARGO_BIN_EXE_jj-store-jj"))
             .current_dir(root.path())
             .env("JJ_CONFIG", "/dev/null")
             .args([

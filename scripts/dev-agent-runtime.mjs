@@ -21,7 +21,7 @@ export async function developmentAgentEnvironment(
   );
   const jj = resolve(
     repositoryRoot,
-    environment.JJ_STORE_AGENT_JJ_EXECUTABLE ?? join(dirname(server), "jj"),
+    environment.JJ_STORE_AGENT_JJ_EXECUTABLE ?? join(dirname(server), "jj-store-jj"),
   );
   for (const path of [executable, jj]) {
     try {

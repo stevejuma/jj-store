@@ -9,7 +9,7 @@ use serde_json::Value;
 use std::{fs, path::Path, sync::Arc};
 
 pub const MAX_HOOK_BYTES: usize = 4 * 1024 * 1024;
-pub const KINGFISHER_POLICY: &str = "mongodb-kingfisher@2.7.0/builtin-medium/v1";
+pub const KINGFISHER_POLICY: &str = "kingfisher-scanner@1.4.0/builtin-medium/v1";
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 pub enum SanitizedHookPayload {
@@ -29,8 +29,10 @@ pub fn warm_kingfisher_cache(cache: &Path) -> AuthorityResult<()> {
 }
 
 pub fn kingfisher_cache_ready(cache: &Path) -> bool {
-    fs::symlink_metadata(cache).is_ok_and(|value| value.is_dir() && !value.file_type().is_symlink())
-        && fs::read_dir(cache).is_ok_and(|entries| {
+    let cache = cache.join("kingfisher-scanner-1.4.0");
+    fs::symlink_metadata(&cache)
+        .is_ok_and(|value| value.is_dir() && !value.file_type().is_symlink())
+        && fs::read_dir(&cache).is_ok_and(|entries| {
             entries.filter_map(Result::ok).any(|entry| {
                 entry
                     .path()
@@ -81,9 +83,12 @@ pub(crate) fn scan_json(value: Value, scanner: &Scanner) -> Option<SanitizedPayl
 pub(crate) fn scanner(cache: &Path) -> AuthorityResult<Scanner> {
     fs::create_dir_all(cache).map_err(|_| "Kingfisher cache is unavailable")?;
     restrict_directory(cache).map_err(|_| "Kingfisher cache is unavailable")?;
+    let cache = cache.join("kingfisher-scanner-1.4.0");
+    fs::create_dir_all(&cache).map_err(|_| "Kingfisher cache is unavailable")?;
+    restrict_directory(&cache).map_err(|_| "Kingfisher cache is unavailable")?;
     let rules = get_builtin_rules(None).map_err(|_| "Kingfisher rules unavailable")?;
     let database =
-        RulesDatabase::from_rule_collection_with_cache(rules, &RuleCacheConfig::new(cache))
+        RulesDatabase::from_rule_collection_with_cache(rules, &RuleCacheConfig::new(&cache))
             .map_err(|_| "Kingfisher rules could not be compiled")?;
     let config = ScannerConfig {
         enable_base64_decoding: false,

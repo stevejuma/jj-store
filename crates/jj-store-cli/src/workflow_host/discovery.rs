@@ -45,7 +45,7 @@ impl Discovery {
                 browser_principal: identity.principal(b"loopback-http"),
                 socket: rpc_socket.clone(),
                 state: config.state_dir.join("workflow-hosts"),
-                jj: std::env::current_exe()?.with_file_name("jj"),
+                jj: std::env::current_exe()?.with_file_name("jj-store-jj"),
                 endpoint: jj_store_service::workflow_host::AgentEndpoint {
                     url: config.public_url.clone(),
                     local: true,

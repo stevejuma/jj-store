@@ -18,25 +18,25 @@ pub enum Extension {
     #[command(hide = true)]
     AgentWorkspace(crate::agent_workspace::Args),
     /// Capture repository-owned activity from supported coding agents
-    #[command(long_about = include_str!("../../../docs/cli/agent.md"))]
+    #[command(long_about = include_str!("../help/agent.md"))]
     Agent(crate::agent_commands::AgentArgs),
     /// Read and update repository-owned review threads
-    #[command(long_about = include_str!("../../../docs/cli/review.md"))]
+    #[command(long_about = include_str!("../help/review.md"))]
     Review(crate::review_commands::ReviewArgs),
     /// Manage native project homes and repository links
-    #[command(long_about = include_str!("../../../docs/cli/work.md"))]
+    #[command(long_about = include_str!("../help/work.md"))]
     Project(crate::work_commands::ProjectArgs),
     /// Manage native workflows and report assigned execution evidence
-    #[command(long_about = include_str!("../../../docs/cli/workflows.md"))]
+    #[command(long_about = include_str!("../help/workflows.md"))]
     Workflow(crate::workflow_commands::WorkflowArgs),
     /// Manage native tasks, subtasks and threaded comments
-    #[command(long_about = include_str!("../../../docs/cli/work.md"))]
+    #[command(long_about = include_str!("../help/work.md"))]
     Task(crate::work_commands::TaskArgs),
     /// Manage authenticated native JJ repositories
-    #[command(long_about = include_str!("../../../docs/cli/store.md"), after_long_help = "Use 'jj store help -k commands' for the native command guide.")]
+    #[command(long_about = include_str!("../help/store.md"), after_long_help = "Use 'jj store help -k commands' for the native command guide.")]
     Store(StoreArgs),
     /// Synchronize and explicitly reconcile a local native repository
-    #[command(long_about = include_str!("../../../docs/cli/sync.md"))]
+    #[command(long_about = include_str!("../help/sync.md"))]
     Sync(crate::sync_commands::SyncArgs),
     /// Inspect configured writable-replica state
     Replica(crate::sync_commands::ReplicaArgs),
@@ -347,9 +347,9 @@ pub async fn run(
         StoreCommand::Help { command, keyword } => {
             if let Some(keyword) = keyword {
                 let markdown = match keyword.as_str() {
-                    "commands" => include_str!("../../../docs/cli/commands.md"),
-                    "credentials" => include_str!("../../../docs/cli/credentials.md"),
-                    "pagination" => include_str!("../../../docs/cli/pagination.md"),
+                    "commands" => include_str!("../help/commands.md"),
+                    "credentials" => include_str!("../help/credentials.md"),
+                    "pagination" => include_str!("../help/pagination.md"),
                     _ => unreachable!("clap validates keyword"),
                 };
                 presentation::text(ui, helper, &presentation::markdown(markdown, ui.color()))

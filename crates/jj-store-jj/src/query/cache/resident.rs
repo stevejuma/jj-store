@@ -263,6 +263,14 @@ fn resident_weight(index_bytes: u64, projection: u64, files: &BTreeMap<String, F
         .saturating_add(files.keys().map(|name| name.len() as u64 * 2).sum::<u64>())
 }
 
+pub(super) struct Insertion {
+    pub index: projection::Prepared,
+    pub path: PathBuf,
+    pub files: BTreeMap<String, File>,
+    pub index_bytes: u64,
+    pub report: Report,
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -299,12 +307,4 @@ mod tests {
             "disk growth is covered by slot quota, not additional resident RAM"
         );
     }
-}
-
-pub(super) struct Insertion {
-    pub index: projection::Prepared,
-    pub path: PathBuf,
-    pub files: BTreeMap<String, File>,
-    pub index_bytes: u64,
-    pub report: Report,
 }

@@ -14,7 +14,7 @@ use serde_json::json;
 use std::{io::Write as _, path::PathBuf};
 
 #[derive(Debug, Parser)]
-#[command(name="jj-store",disable_help_subcommand=true,about="Serve persistent local native JJ repositories",long_about=include_str!("../../../docs/cli/server.md"))]
+#[command(version=env!("CARGO_PKG_VERSION"),name="jj-store",disable_help_subcommand=true,about="Serve persistent local native JJ repositories",long_about=include_str!("../help/server.md"))]
 pub struct ServerCli {
     #[arg(long,global=true,value_enum,default_value_t=Format::Text)]
     pub format: Format,
@@ -46,7 +46,7 @@ pub enum ServerCommand {
         storage: String,
     },
     /// List, grant, revoke and recover repository token requests
-    #[command(long_about=include_str!("../../../docs/cli/tokens.md"))]
+    #[command(long_about=include_str!("../help/tokens.md"))]
     Token(crate::token_commands::TokenArgs),
     /// Administer installation-owned profile identities
     Identity(crate::identity_commands::IdentityArgs),
@@ -61,7 +61,7 @@ pub enum ServerCommand {
         command: RegistryCommand,
     },
     /// Run the configured service in the foreground
-    #[command(long_about=include_str!("../../../docs/cli/server-run.md"))]
+    #[command(long_about=include_str!("../help/server-run.md"))]
     Run {
         #[arg(long)]
         config: PathBuf,
@@ -75,13 +75,13 @@ pub enum ServerCommand {
         desktop: crate::server_desktop::DesktopOptions,
     },
     /// Print or validate configuration
-    #[command(long_about=include_str!("../../../docs/cli/server-config.md"))]
+    #[command(long_about=include_str!("../help/server-config.md"))]
     Config {
         #[command(subcommand)]
         command: ConfigCommand,
     },
     /// Check current repository metadata and authorization
-    #[command(long_about=include_str!("../../../docs/cli/server-doctor.md"))]
+    #[command(long_about=include_str!("../help/server-doctor.md"))]
     Doctor {
         #[arg(long)]
         config: PathBuf,
@@ -89,7 +89,7 @@ pub enum ServerCommand {
         repo_id: RepositoryId,
     },
     /// Administer the local repository-creation policy
-    #[command(long_about=include_str!("../../../docs/cli/server-operator.md"))]
+    #[command(long_about=include_str!("../help/server-operator.md"))]
     Operator {
         #[command(subcommand)]
         command: OperatorCommand,
@@ -609,10 +609,10 @@ async fn run(ui: &Ui, cli: ServerCli) -> AuthorityResult<()> {
         ServerCommand::Help { command, keyword } => {
             if let Some(keyword) = keyword {
                 let doc = match keyword.as_str() {
-                    "commands" => include_str!("../../../docs/cli/server-commands.md"),
-                    "config" => include_str!("../../../docs/cli/server-config.md"),
-                    "credentials" => include_str!("../../../docs/cli/server-operator.md"),
-                    "pagination" => include_str!("../../../docs/cli/pagination.md"),
+                    "commands" => include_str!("../help/server-commands.md"),
+                    "config" => include_str!("../help/server-config.md"),
+                    "credentials" => include_str!("../help/server-operator.md"),
+                    "pagination" => include_str!("../help/pagination.md"),
                     _ => unreachable!(),
                 };
                 page(ui, &presentation::markdown(doc, ui.color()), no_pager)?;

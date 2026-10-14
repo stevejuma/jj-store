@@ -165,7 +165,7 @@ impl ObjectStore for Store {
         .filter(|id| id.storage_path(self.access.repository()) == key.as_str())
         .ok_or(storage::Error::Invalid("command native key"))?;
         self.bytes
-            .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |bytes| {
+            .try_update(Ordering::Relaxed, Ordering::Relaxed, |bytes| {
                 bytes
                     .checked_add(upload.len())
                     .filter(|total| *total <= self.limits.max_staged_bytes)

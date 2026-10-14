@@ -162,7 +162,7 @@ async fn repository_free_chat_reuses_isolated_bindings_and_never_replays_after_r
         .unwrap();
     let second_source = fixture._root.path().join("source-two");
     assert!(
-        Process::new(env!("CARGO_BIN_EXE_jj"))
+        Process::new(env!("CARGO_BIN_EXE_jj-store-jj"))
             .args(["git", "init"])
             .arg(&second_source)
             .status()

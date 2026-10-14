@@ -21,7 +21,7 @@ impl SourceScope {
     pub fn new(repository: RepositoryId) -> Self {
         static NEXT: AtomicU64 = AtomicU64::new(0);
         let instance = NEXT
-            .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |v| v.checked_add(1))
+            .try_update(Ordering::Relaxed, Ordering::Relaxed, |v| v.checked_add(1))
             .expect("verification source namespace exhausted");
         Self {
             repository,

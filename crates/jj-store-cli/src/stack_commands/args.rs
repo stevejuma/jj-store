@@ -2,7 +2,7 @@ use clap::{Args, Subcommand};
 use std::path::PathBuf;
 
 #[derive(Debug, Args)]
-#[command(disable_help_subcommand = true, long_about=include_str!("../../../../docs/cli/stacks.md"))]
+#[command(disable_help_subcommand = true, long_about=include_str!("../../help/stacks.md"))]
 pub struct StackArgs {
     /// Discover the JJ workspace from this directory
     #[arg(short = 'C', long, global = true, default_value = ".")]

@@ -126,3 +126,7 @@ Agent session list metrics align at the trailing end of the second row in
 transcript-count, tool-count, duration order. Tool action toolbars remain inside
 their row bounds and accessible by pointer, keyboard and touch; open menus
 retain visibility.
+
+## Public release integration
+
+Public distribution uses released Kingfisher core 1.0.3, rules 1.2.1 and scanner 1.4.0 on Rust 1.99. Sanitization policy identities distinguish this rule set; scanning remains offline, validation and Base64 decoding stay disabled, and failures withhold publication. Historical sanitized native records are retained.

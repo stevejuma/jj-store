@@ -26,7 +26,7 @@ impl RuntimePolicy {
     pub fn permit(self: &Arc<Self>, scope: usize) -> Option<Permit> {
         let limit = self.current().concurrent;
         self.active[scope]
-            .fetch_update(
+            .try_update(
                 std::sync::atomic::Ordering::AcqRel,
                 std::sync::atomic::Ordering::Acquire,
                 |n| (n < limit).then_some(n + 1),

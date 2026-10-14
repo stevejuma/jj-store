@@ -30,7 +30,7 @@ export async function seedAgentActivity({
   run,
   runInput,
 }) {
-  const executable = resolve(repositoryRoot, "target/debug/jj");
+  const executable = resolve(repositoryRoot, "target/debug/jj-store-jj");
   const state = join(runtimeRoot, "agent-state");
   const bin = join(runtimeRoot, "agent-bin");
   await mkdir(bin, { recursive: true, mode: 0o700 });

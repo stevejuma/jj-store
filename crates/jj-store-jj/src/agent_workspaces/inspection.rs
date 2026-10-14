@@ -47,27 +47,6 @@ pub fn text_change_counts(before: &str, after: &str) -> Option<(u64, u64)> {
     Some((additions, deletions))
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    #[test]
-    fn text_counts_keep_shared_lines_and_refuse_unsupported_content() {
-        assert_eq!(
-            text_change_counts("same\nold\nend\n", "same\nnew\nextra\nend\n"),
-            Some((2, 1))
-        );
-        assert_eq!(text_change_counts("", "first\nlast"), Some((2, 0)));
-        assert_eq!(text_change_counts("removed\r\n", ""), Some((0, 1)));
-        assert_eq!(text_change_counts("", ""), Some((0, 0)));
-        assert_eq!(text_change_counts("\0", "text"), None);
-        assert_eq!(text_change_counts("", &"x".repeat(256 * 1024 + 1)), None);
-        assert_eq!(
-            text_change_counts(&"old\n".repeat(2000), &"new\n".repeat(2000)),
-            None
-        );
-    }
-}
-
 /// Capture immutable code evidence from an authorized operation, without snapshotting.
 pub async fn evidence(
     metadata: &std::path::Path,
@@ -90,4 +69,25 @@ pub async fn evidence(
     })
     .await
     .map_err(crate::local_metadata::Error::other)?
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn text_counts_keep_shared_lines_and_refuse_unsupported_content() {
+        assert_eq!(
+            text_change_counts("same\nold\nend\n", "same\nnew\nextra\nend\n"),
+            Some((2, 1))
+        );
+        assert_eq!(text_change_counts("", "first\nlast"), Some((2, 0)));
+        assert_eq!(text_change_counts("removed\r\n", ""), Some((0, 1)));
+        assert_eq!(text_change_counts("", ""), Some((0, 0)));
+        assert_eq!(text_change_counts("\0", "text"), None);
+        assert_eq!(text_change_counts("", &"x".repeat(256 * 1024 + 1)), None);
+        assert_eq!(
+            text_change_counts(&"old\n".repeat(2000), &"new\n".repeat(2000)),
+            None
+        );
+    }
 }

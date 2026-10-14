@@ -17,7 +17,7 @@ async function fixture(t) {
   const root = await mkdtemp(join(tmpdir(), "jj-store-agent-startup-"));
   t.after(() => rm(root, { recursive: true, force: true }));
   const acp = join(root, "desktop/resources/jj-acp");
-  const jj = join(root, "target/debug/jj");
+  const jj = join(root, "target/debug/jj-store-jj");
   await executable(acp);
   await executable(jj);
   return { root, acp, jj };
@@ -36,7 +36,7 @@ test("explicit trusted resources override stale bundled ACP and pair an alternat
   const { root, acp } = await fixture(t);
   await executable(acp, "1|2");
   const custom = join(root, "custom/acp");
-  const jj = join(root, "custom/jj");
+  const jj = join(root, "custom/jj-store-jj");
   await executable(custom);
   await executable(jj);
   assert.deepEqual(

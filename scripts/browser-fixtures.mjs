@@ -10,7 +10,7 @@ function capture(test, environment) {
       "--quiet",
       "--locked",
       "-p",
-      "jj-store-cli",
+      "jj-store",
       "--test",
       "native_lifecycle",
       test,

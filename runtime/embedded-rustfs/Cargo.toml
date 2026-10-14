@@ -4,9 +4,12 @@
 name = "jj-store-embedded-rustfs"
 version = "0.1.0"
 edition = "2024"
-rust-version = "1.98.1"
+rust-version = "1.99"
 license = "Apache-2.0"
-publish = false
+description = "Separate managed RustFS runtime for jj-store native storage"
+repository = "https://github.com/stevejuma/jj-store"
+homepage = "https://stevejuma.github.io/jj-store/"
+readme = "README.md"
 
 [[bin]]
 name = "jj-store-rustfs"

@@ -22,7 +22,7 @@ impl Sources {
             return Ok(*id);
         }
         let id = NEXT
-            .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |v| v.checked_add(1))
+            .try_update(Ordering::Relaxed, Ordering::Relaxed, |v| v.checked_add(1))
             .map_err(|_| ())?;
         sources.push((weak, id));
         Ok(id)

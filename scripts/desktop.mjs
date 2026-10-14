@@ -76,7 +76,7 @@ async function stage() {
 }
 if (mode === "prepare") {
   await run("pnpm", ["web:build"]);
-  await run("cargo", ["build", "--locked", "-p", "jj-store-cli", "--bins"]);
+  await run("cargo", ["build", "--locked", "-p", "jj-store", "--bins"]);
   await run("cargo", [
     "build",
     "--manifest-path",

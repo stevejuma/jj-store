@@ -813,7 +813,7 @@ impl q::ReadAccess for PauseContent {
         use std::sync::atomic::Ordering;
         if self
             .remaining
-            .fetch_update(Ordering::SeqCst, Ordering::SeqCst, |n| n.checked_sub(1))
+            .try_update(Ordering::SeqCst, Ordering::SeqCst, |n| n.checked_sub(1))
             == Ok(1)
         {
             self.entered.notify_one();

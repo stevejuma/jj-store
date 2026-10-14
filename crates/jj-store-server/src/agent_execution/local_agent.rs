@@ -75,6 +75,17 @@ fn managed_defaults(command: &mut tokio::process::Command, options: &settings::R
     }
 }
 
+fn private_json(path: &Path, value: &Value) -> Result<()> {
+    use std::io::Write;
+    let mut file = tempfile::NamedTempFile::new_in(path.parent().ok_or(Error::Invalid)?)
+        .map_err(|_| Error::Unavailable)?;
+    serde_json::to_writer(file.as_file_mut(), value).map_err(|_| Error::Unavailable)?;
+    file.flush().map_err(|_| Error::Unavailable)?;
+    file.as_file().sync_all().map_err(|_| Error::Unavailable)?;
+    file.persist(path).map_err(|_| Error::Unavailable)?;
+    Ok(())
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -103,14 +114,4 @@ mod tests {
         managed_defaults(&mut command, &options);
         assert_eq!(command.as_std().get_envs().count(), 0);
     }
-}
-fn private_json(path: &Path, value: &Value) -> Result<()> {
-    use std::io::Write;
-    let mut file = tempfile::NamedTempFile::new_in(path.parent().ok_or(Error::Invalid)?)
-        .map_err(|_| Error::Unavailable)?;
-    serde_json::to_writer(file.as_file_mut(), value).map_err(|_| Error::Unavailable)?;
-    file.flush().map_err(|_| Error::Unavailable)?;
-    file.as_file().sync_all().map_err(|_| Error::Unavailable)?;
-    file.persist(path).map_err(|_| Error::Unavailable)?;
-    Ok(())
 }

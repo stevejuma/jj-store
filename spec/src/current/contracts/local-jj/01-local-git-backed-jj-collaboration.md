@@ -93,3 +93,7 @@ receipts and diagnostic evidence while withholding logical entity edits. New
 captures select the integration's common projection precondition through the
 local expected-old-value publication; original receipts and historical roots
 retain their prior interpretation.
+
+## Public release integration
+
+The released custom CLI is named jj-store-jj and preserves upstream JJ handling and the existing companion provider. Equivalent Rust 1.99 test iteration does not change native graph ordering or repository authority.

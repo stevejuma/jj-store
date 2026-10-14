@@ -30,7 +30,7 @@ impl OperatorPolicies for Policies {
 }
 
 fn command(cwd: &Path, config: &Path, token: &auth::BearerToken, args: &[&str]) -> Output {
-    Command::new(env!("CARGO_BIN_EXE_jj"))
+    Command::new(env!("CARGO_BIN_EXE_jj-store-jj"))
         .current_dir(cwd)
         .env("JJ_CONFIG", config)
         .env("JJ_STORE_TOKEN", token.expose().as_str())

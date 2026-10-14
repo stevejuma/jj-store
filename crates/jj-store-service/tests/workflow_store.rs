@@ -724,7 +724,7 @@ async fn message_and_reaction_events_are_scoped_pinned_and_exclude_edits_and_rem
             writer.clone(),
             w::EventQuery {
                 after: Some(before_reaction),
-                filters: Some(serde_json::to_string(&[conditions.clone()]).unwrap()),
+                filters: Some(serde_json::to_string(std::slice::from_ref(&conditions)).unwrap()),
                 ..Default::default()
             },
         )

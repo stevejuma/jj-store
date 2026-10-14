@@ -9,7 +9,7 @@ pub fn settings() -> UserSettings {
     UserSettings::from_config(StackedConfig::with_defaults()).unwrap()
 }
 pub fn stock(path: &Path, args: &[&str]) -> String {
-    let output = Command::new(env!("CARGO_BIN_EXE_jj"))
+    let output = Command::new(env!("CARGO_BIN_EXE_jj-store-jj"))
         .current_dir(path)
         .args([
             "--no-pager",

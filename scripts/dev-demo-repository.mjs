@@ -13,7 +13,7 @@ export async function seedRepository(options) {
     JJ_CONFIG: config,
   };
   const created = await run(
-    resolve(repositoryRoot, "target/debug/jj"),
+    resolve(repositoryRoot, "target/debug/jj-store-jj"),
     [
       "store",
       "init",
@@ -33,7 +33,7 @@ export async function seedRepository(options) {
   const repositoryId = JSON.parse(created.stdout).repository;
   const jj = (args) =>
     run(
-      resolve(repositoryRoot, "target/debug/jj"),
+      resolve(repositoryRoot, "target/debug/jj-store-jj"),
       ["-R", repository, "--no-pager", "--color=never", ...args],
       { env: nativeEnv },
     );

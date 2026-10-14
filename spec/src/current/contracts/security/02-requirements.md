@@ -21,3 +21,7 @@ For M28, JST-SEC-005 additionally admits the separately configured workflow host
 role. Only its named operator executors may start processes; ordinary storage,
 publication and replication import never execute repository hooks. Reporting
 requires host admission and exact attempt ownership (JST-WF-004/JST-WF-006).
+
+The public server container under JST-ARCH-005 qualifies authenticated TLS with
+external RustFS, non-root ownership and explicit private installation volumes.
+It cannot expose LocalTrusted authority or execute unadmitted programs.

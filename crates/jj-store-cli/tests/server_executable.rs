@@ -124,7 +124,7 @@ impl Fixture {
     }
     fn start(&self, local: bool) -> Running {
         let mut cmd = if local {
-            let mut cmd = Command::new(env!("CARGO_BIN_EXE_jj"));
+            let mut cmd = Command::new(env!("CARGO_BIN_EXE_jj-store-jj"));
             cmd.current_dir(self.root.path())
                 .args(["--no-pager", "--color=never", "store", "serve-local"])
                 .env("JJ_CONFIG", self.root.path().join("empty-jj.toml"))
@@ -472,7 +472,7 @@ async fn local_trusted_executable_bootstraps_registers_and_serves_without_tokens
     .unwrap();
     let workspace = root.path().join("workspace");
     let created: serde_json::Value = serde_json::from_str(&success(
-        Command::new(env!("CARGO_BIN_EXE_jj"))
+        Command::new(env!("CARGO_BIN_EXE_jj-store-jj"))
             .current_dir(root.path())
             .env("JJ_CONFIG", &jj_config)
             .args([
@@ -504,7 +504,7 @@ async fn local_trusted_executable_bootstraps_registers_and_serves_without_tokens
     )
     .unwrap();
     success(
-        Command::new(env!("CARGO_BIN_EXE_jj"))
+        Command::new(env!("CARGO_BIN_EXE_jj-store-jj"))
             .current_dir(root.path())
             .env("JJ_CONFIG", &jj_config)
             .args([
@@ -1100,7 +1100,7 @@ fn native_command(f: &Fixture, token: &BearerToken, args: &[&str]) -> Command {
         )
         .unwrap();
     }
-    let mut command = Command::new(env!("CARGO_BIN_EXE_jj"));
+    let mut command = Command::new(env!("CARGO_BIN_EXE_jj-store-jj"));
     command
         .current_dir(f.root.path())
         .env("JJ_CONFIG", config)

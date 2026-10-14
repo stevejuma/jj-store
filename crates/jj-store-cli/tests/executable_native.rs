@@ -166,7 +166,7 @@ impl Fixture {
     }
 }
 fn command(cwd: &Path, args: &[&str]) -> Command {
-    let mut cmd = Command::new(env!("CARGO_BIN_EXE_jj"));
+    let mut cmd = Command::new(env!("CARGO_BIN_EXE_jj-store-jj"));
     cmd.current_dir(cwd)
         .args(["--no-pager", "--color=never"])
         .args(args)
@@ -511,7 +511,7 @@ fn custom_terminal_paging_and_color_policy() {
             env!("CARGO_MANIFEST_DIR"),
             "/tests/fixtures/terminal.py"
         ))
-        .arg(env!("CARGO_BIN_EXE_jj"))
+        .arg(env!("CARGO_BIN_EXE_jj-store-jj"))
         .output()
         .unwrap();
     success(output);

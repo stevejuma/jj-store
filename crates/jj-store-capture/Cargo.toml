@@ -4,7 +4,10 @@ version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
-publish = false
+description = "jj store capture for native Jujutsu repository storage"
+repository.workspace = true
+homepage.workspace = true
+readme = "README.md"
 
 [dependencies]
 jj-collab.workspace = true
@@ -19,6 +22,6 @@ serde_json = "1"
 sha2 = "0.10"
 tempfile = "3"
 thiserror = "2"
-kingfisher-core = { git = "https://github.com/mongodb/kingfisher", rev = "63dccba231b6b01990c84319d25f92f49428a431" }
-kingfisher-rules = { git = "https://github.com/mongodb/kingfisher", rev = "63dccba231b6b01990c84319d25f92f49428a431" }
-kingfisher-scanner = { git = "https://github.com/mongodb/kingfisher", rev = "63dccba231b6b01990c84319d25f92f49428a431", default-features = false }
+kingfisher-core = { version = "=1.0.3", default-features = false }
+kingfisher-rules = { version = "=1.2.1", default-features = false }
+kingfisher-scanner = { version = "=1.4.0", default-features = false }

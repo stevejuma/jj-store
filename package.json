@@ -87,11 +87,20 @@
     "dev:target:register": "node scripts/build-storage.mjs register",
     "dev:target:complete": "node scripts/build-storage.mjs complete",
     "dev:target:retire": "node scripts/build-storage.mjs retire",
-    "test:build-storage": "node --test scripts/build-storage.test.mjs scripts/managed-cargo.test.mjs"
+    "test:build-storage": "node --test scripts/build-storage.test.mjs scripts/managed-cargo.test.mjs",
+    "changeset": "changeset",
+    "release:version": "changeset version && node scripts/release-version.mjs && pnpm install --lockfile-only --ignore-pnpmfile && prettier --write package.json CHANGELOG.md",
+    "release:check": "node --test scripts/release.test.mjs scripts/ci.test.mjs && node scripts/package-check.mjs",
+    "release:orchestrate": "node scripts/release-orchestrate.mjs",
+    "release:registry": "node scripts/release-registry.mjs",
+    "test:release": "node --test scripts/release.test.mjs scripts/ci.test.mjs",
+    "ci:plan": "node scripts/ci-plan.mjs"
   },
   "devDependencies": {
     "@apidevtools/swagger-parser": "^13.1.0",
     "@axe-core/playwright": "^4.13.0",
+    "@changesets/changelog-github": "^0.5.2",
+    "@changesets/cli": "^2.31.1",
     "@codemirror/autocomplete": "^6.20.3",
     "@codemirror/lang-cpp": "^6.0.3",
     "@codemirror/lang-css": "^6.3.1",

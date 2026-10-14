@@ -56,10 +56,10 @@ pub(crate) enum StoreCommand {
     /// Inspect or recover durable native Git publication attempts
     Git(crate::git_bridge::GitArgs),
     /// List, grant, revoke and recover repository token requests
-    #[command(long_about=include_str!("../../../docs/cli/tokens.md"))]
+    #[command(long_about=include_str!("../help/tokens.md"))]
     Token(crate::token_commands::TokenArgs),
     /// Create a new native repository and its first physical workspace
-    #[command(long_about = include_str!("../../../docs/cli/init.md"))]
+    #[command(long_about = include_str!("../help/init.md"))]
     Init {
         destination: PathBuf,
         /// Unique installation alias, for example organisation/repository
@@ -86,13 +86,13 @@ pub(crate) enum StoreCommand {
         state_dir: Option<PathBuf>,
     },
     /// Run the configured native server on a literal loopback listener
-    #[command(long_about = include_str!("../../../docs/cli/serve-local.md"))]
+    #[command(long_about = include_str!("../help/serve-local.md"))]
     ServeLocal {
         #[arg(long = "server-config")]
         server_config: PathBuf,
     },
     /// Attach a new physical workspace to a native repository
-    #[command(long_about = include_str!("../../../docs/cli/attach.md"))]
+    #[command(long_about = include_str!("../help/attach.md"))]
     Attach {
         destination: PathBuf,
         #[command(flatten)]
@@ -106,7 +106,7 @@ pub(crate) enum StoreCommand {
         state_dir: Option<PathBuf>,
     },
     /// Hydrate locally and switch an existing remote-backed workspace
-    #[command(long_about = include_str!("../../../docs/cli/migrate-local.md"))]
+    #[command(long_about = include_str!("../help/migrate-local.md"))]
     MigrateLocal {
         /// User-restricted LocalTrusted native RPC socket
         #[arg(long)]
@@ -119,16 +119,16 @@ pub(crate) enum StoreCommand {
         state_dir: Option<PathBuf>,
     },
     /// Inspect remote heads without snapshotting or reconciling
-    #[command(long_about = include_str!("../../../docs/cli/status.md"))]
+    #[command(long_about = include_str!("../help/status.md"))]
     Status,
     /// Check binding, authentication and remote access
-    #[command(long_about = include_str!("../../../docs/cli/doctor.md"))]
+    #[command(long_about = include_str!("../help/doctor.md"))]
     Doctor,
     /// Report command qualification for this repository profile
-    #[command(long_about = include_str!("../../../docs/cli/capabilities.md"))]
+    #[command(long_about = include_str!("../help/capabilities.md"))]
     Capabilities,
     /// Verify and save a token to the OS credential facility
-    #[command(long_about = include_str!("../../../docs/cli/credentials.md"))]
+    #[command(long_about = include_str!("../help/credentials.md"))]
     Login {
         #[command(flatten)]
         connection: ConnectionArgs,
@@ -136,13 +136,13 @@ pub(crate) enum StoreCommand {
         token_stdin: bool,
     },
     /// Delete one OS credential account
-    #[command(long_about = include_str!("../../../docs/cli/credentials.md"))]
+    #[command(long_about = include_str!("../help/credentials.md"))]
     Logout {
         #[command(flatten)]
         connection: ConnectionArgs,
     },
     /// Print build and upstream version information
-    #[command(long_about = include_str!("../../../docs/cli/version.md"))]
+    #[command(long_about = include_str!("../help/version.md"))]
     Version,
     /// Read native command help and keyword documents
     Help {

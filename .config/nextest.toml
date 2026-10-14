@@ -1,0 +1,17 @@
+[profile.ci]
+fail-fast = false
+test-threads = 4
+slow-timeout = { period = "120s", terminate-after = 5 }
+status-level = "fail"
+final-status-level = "fail"
+
+[profile.heavy]
+inherits = "ci"
+test-threads = 1
+slow-timeout = { period = "240s", terminate-after = 4 }
+
+[profile.ci.junit]
+path = "junit.xml"
+
+[profile.heavy.junit]
+path = "junit-heavy.xml"

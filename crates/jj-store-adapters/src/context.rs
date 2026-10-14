@@ -149,7 +149,7 @@ impl Context {
     fn charge(&self, count: &AtomicU64, n: u64, max: u64) -> Result<()> {
         self.check()?;
         count
-            .fetch_update(Ordering::Relaxed, Ordering::Relaxed, |old| {
+            .try_update(Ordering::Relaxed, Ordering::Relaxed, |old| {
                 old.checked_add(n).filter(|n| *n <= max)
             })
             .map_err(|_| Error::Limit)?;

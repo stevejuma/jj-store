@@ -8,7 +8,7 @@ import { parseArgs } from "node:util";
 import { cargoCommand } from "./managed-cargo.mjs";
 const tools = [
   ["jj-store", "jj-store"],
-  ["jj", "jj-store-jj"],
+  ["jj-store-jj", "jj-store-jj"],
 ];
 export async function installCli({ source, destination }) {
   for (const [name] of tools)
@@ -50,7 +50,7 @@ if (
           ...cargoCommand([
             "build",
             "-p",
-            "jj-store-cli",
+            "jj-store",
             "--bins",
             "--locked",
             ...(values.debug ? [] : ["--release"]),

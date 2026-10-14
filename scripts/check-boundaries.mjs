@@ -5,7 +5,7 @@ import { fileURLToPath } from "node:url";
 
 export function dependencyErrors(packages) {
   const errors = [];
-  const native = new Set(["jj-store-jj", "jj-store-cli"]);
+  const native = new Set(["jj-store-jj", "jj-store"]);
   const layers = {
     "jj-store-read-index": [],
     "jj-store-model": [],
@@ -89,7 +89,7 @@ export function dependencyErrors(packages) {
       )
         errors.push(`${pkg.name}: excluded core dependency ${dep.name}`);
       if (
-        (dep.name.startsWith("jj-store-") ||
+        ((dep.name === "jj-store" || dep.name.startsWith("jj-store-")) ||
           [
             "jj-agent",
             "jj-review",

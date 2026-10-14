@@ -3,7 +3,7 @@ use jj_store_service::auth::Permission;
 
 #[test]
 fn documented_remote_agents_require_explicit_authenticated_allowlists() {
-    let source = include_str!("../../../docs/cli/server-config.md");
+    let source = include_str!("fixtures/server-config.md");
     let snippet = source
         .split_once("## Authenticated remote agents")
         .unwrap()

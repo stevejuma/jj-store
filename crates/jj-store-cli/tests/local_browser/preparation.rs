@@ -48,10 +48,18 @@ fn prepared_index_files(
     let records = &operations[72..checksum_at];
     assert!(
         records
-            .chunks_exact(128)
+            .as_chunks::<128>()
+            .0
+            .iter()
             .any(|row| &row[..64] == selected.as_bytes())
     );
-    for pair in records.chunks_exact(128).collect::<Vec<_>>().windows(2) {
+    for pair in records
+        .as_chunks::<128>()
+        .0
+        .iter()
+        .collect::<Vec<_>>()
+        .windows(2)
+    {
         assert!(pair[0][..64] < pair[1][..64]);
     }
     let children = files
@@ -66,15 +74,25 @@ fn prepared_index_files(
         &children[checksum_at..],
         Sha256::digest(&children[..checksum_at]).as_slice()
     );
-    let identities: std::collections::BTreeSet<_> =
-        records.chunks_exact(128).map(|row| &row[..64]).collect();
+    let identities: std::collections::BTreeSet<_> = records
+        .as_chunks::<128>()
+        .0
+        .iter()
+        .map(|row| &row[..64])
+        .collect();
     let edges = &children[72..checksum_at];
-    for row in edges.chunks_exact(128) {
+    for row in edges.as_chunks::<128>().0.iter() {
         assert_ne!(&row[..64], &row[64..]);
         assert!(identities.contains(&row[..64]));
         assert!(identities.contains(&row[64..]));
     }
-    for pair in edges.chunks_exact(128).collect::<Vec<_>>().windows(2) {
+    for pair in edges
+        .as_chunks::<128>()
+        .0
+        .iter()
+        .collect::<Vec<_>>()
+        .windows(2)
+    {
         assert!(pair[0] < pair[1]);
     }
     let history = files
@@ -93,13 +111,13 @@ fn prepared_index_files(
         Sha256::digest(&history[..checksum_at]).as_slice()
     );
     let mut at = 80;
-    for expected in records.chunks_exact(128) {
+    for expected in records.as_chunks::<128>().0.iter() {
         assert_eq!(&history[at..at + 64], &expected[..64]);
         let parents = u32::from_be_bytes(history[at + 76..at + 80].try_into().unwrap()) as usize;
         assert!(parents <= 1024);
         at += 80;
-        for parent in history[at..at + parents * 64].chunks_exact(64) {
-            assert!(identities.contains(parent));
+        for parent in history[at..at + parents * 64].as_chunks::<64>().0.iter() {
+            assert!(identities.contains(parent.as_slice()));
         }
         at += parents * 64;
     }
@@ -108,7 +126,7 @@ fn prepared_index_files(
     let flags = &history[at..at + identities.len() * 5];
     let mut known = Vec::new();
     let mut positions = vec![usize::MAX; identities.len()];
-    for (node, flag) in flags.chunks_exact(5).enumerate() {
+    for (node, flag) in flags.as_chunks::<5>().0.iter().enumerate() {
         assert!(flag[0] <= 1);
         known.push(flag[0]);
         let position = u32::from_be_bytes(flag[1..].try_into().unwrap()) as usize;

@@ -33,3 +33,5 @@ rows record requirement coverage; milestone task status remains in Progress.
 - [UI verification](ui.md)
 - [WORK verification](work.md)
 - [Workflows verification](workflows.md)
+
+- [Public distribution verification](public-distribution.md)

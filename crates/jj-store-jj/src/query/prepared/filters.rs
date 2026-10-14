@@ -224,251 +224,6 @@ impl Builder {
     }
 }
 
-#[cfg(test)]
-mod tests {
-    use super::*;
-    struct SourceOnly;
-    impl Source for SourceOnly {
-        fn check(&self) -> Result<()> {
-            Ok(())
-        }
-        fn work(&self, _: usize) -> Result<()> {
-            Ok(())
-        }
-        fn max_commits(&self) -> usize {
-            10000
-        }
-        fn max_parents(&self) -> usize {
-            1
-        }
-        fn commit_len(&self) -> usize {
-            20
-        }
-        fn change_len(&self) -> usize {
-            16
-        }
-        async fn operation(&self, _: &jj_lib::op_store::OperationId) -> Result<Operation> {
-            unreachable!()
-        }
-        async fn view(&self, _: &Operation) -> Result<jj_lib::view::View> {
-            unreachable!()
-        }
-        async fn commit(&self, _: &backend::CommitId) -> Result<CommitFields> {
-            unreachable!()
-        }
-    }
-    #[test]
-    fn filter_masks_preserve_sparse_dense_and_reject_invalid_encodings() {
-        for bits in [vec![], vec![0, 7, 255], (0..BLOCK).collect()] {
-            let mut mask = [0; WORDS];
-            for bit in bits {
-                mask[bit / 64] |= 1 << (bit % 64);
-            }
-            assert_eq!(decode(&encode(mask)).unwrap(), mask);
-        }
-        for bytes in [
-            vec![],
-            vec![2],
-            vec![0, 1],
-            vec![0, 1, 0, 1, 0],
-            vec![0, 2, 0, 1, 0],
-            vec![0, 0, 16],
-            vec![1, 0],
-        ] {
-            assert_eq!(decode(&bytes).unwrap_err(), Error::Corrupt);
-        }
-    }
-    #[test]
-    fn filter_seeks_compressed_windows_and_validates_selection_checksum_and_budgets() {
-        let directory = tempfile::tempdir().unwrap();
-        let space = Space::new(32 * 1024 * 1024);
-        let selected = jj_lib::op_store::OperationId::from_bytes(&[3; 64]);
-        let mut builder = Builder::new(directory.path(), space.clone()).unwrap();
-        for n in 0u32..9000 {
-            let id = n.to_be_bytes();
-            let text = if n % 4097 == 0 {
-                "ΟΣ İSTANBUL needle"
-            } else {
-                "ordinary unrelated text"
-            };
-            builder.commit(&id, text, &SourceOnly).unwrap();
-            let rank = builder
-                .reference(&format!("change:{n:016}"), &SourceOnly)
-                .unwrap();
-            builder.target(rank, &id, &SourceOnly).unwrap();
-        }
-        builder
-            .finish(directory.path(), &selected, &SourceOnly, space)
-            .unwrap();
-        let pin = jj_store_model::OperationId::new([3; 64]);
-        let reader = Reader::load(directory.path(), pin, 9000, |_| Ok(()), |_| Ok(())).unwrap();
-        let mut work = 0;
-        let values = reader
-            .search(
-                Search {
-                    needle: "needle",
-                    anchor: Some("change:0000000000000099"),
-                    backward: false,
-                    limit: 2,
-                },
-                |_| Ok(true),
-                |n| {
-                    work += n;
-                    Ok(())
-                },
-                |_| Ok(()),
-            )
-            .unwrap();
-        assert_eq!(
-            values,
-            ["change:0000000000004097", "change:0000000000008194"]
-        );
-        assert!(work < 200, "{work}");
-        assert_eq!(
-            reader
-                .search(
-                    Search {
-                        needle: "needle",
-                        anchor: Some(&values[1]),
-                        backward: true,
-                        limit: 2
-                    },
-                    |_| Ok(true),
-                    |_| Ok(()),
-                    |_| Ok(())
-                )
-                .unwrap(),
-            ["change:0000000000004097", "change:0000000000000000"]
-        );
-        assert_eq!(
-            reader
-                .search(
-                    Search {
-                        needle: "e",
-                        anchor: None,
-                        backward: false,
-                        limit: 2
-                    },
-                    |_| Ok(true),
-                    |_| Ok(()),
-                    |_| Ok(())
-                )
-                .unwrap(),
-            ["change:0000000000000000", "change:0000000000000001"]
-        );
-        assert!(
-            reader
-                .contains(&4097u32.to_be_bytes(), "ος", |_| Ok(()), |_| Ok(()))
-                .unwrap()
-        );
-        assert!(
-            reader
-                .contains(
-                    &4097u32.to_be_bytes(),
-                    "i\u{307}stanbul",
-                    |_| Ok(()),
-                    |_| Ok(())
-                )
-                .unwrap()
-        );
-        assert_eq!(
-            reader
-                .search(
-                    Search {
-                        needle: "needle",
-                        anchor: None,
-                        backward: false,
-                        limit: 1
-                    },
-                    |_| Ok(false),
-                    |_| Ok(()),
-                    |_| Ok(())
-                )
-                .unwrap(),
-            Vec::<String>::new()
-        );
-        assert_eq!(
-            reader
-                .search(
-                    Search {
-                        needle: "needle",
-                        anchor: None,
-                        backward: false,
-                        limit: 1
-                    },
-                    |_| Ok(true),
-                    |_| Err(Error::Canceled),
-                    |_| Ok(())
-                )
-                .unwrap_err(),
-            Error::Canceled
-        );
-        assert_eq!(
-            reader
-                .search(
-                    Search {
-                        needle: "needle",
-                        anchor: None,
-                        backward: false,
-                        limit: 1
-                    },
-                    |_| Ok(true),
-                    |_| Ok(()),
-                    |_| Err(Error::Limit)
-                )
-                .unwrap_err(),
-            Error::Limit
-        );
-        assert_eq!(
-            reader
-                .contains(
-                    &4097u32.to_be_bytes(),
-                    "needle",
-                    |_| Ok(()),
-                    |_| Err(Error::Limit)
-                )
-                .unwrap_err(),
-            Error::Limit
-        );
-        drop(reader);
-        assert!(matches!(
-            Reader::load(directory.path(), pin, 10, |_| Ok(()), |_| Ok(())),
-            Err(Error::Limit)
-        ));
-        assert!(matches!(
-            Reader::load(
-                directory.path(),
-                jj_store_model::OperationId::new([4; 64]),
-                9000,
-                |_| Ok(()),
-                |_| Ok(())
-            ),
-            Err(Error::Corrupt)
-        ));
-        let mut bytes = std::fs::read(directory.path().join(NAME)).unwrap();
-        bytes[100] ^= 1;
-        std::fs::write(directory.path().join(NAME), bytes).unwrap();
-        assert!(matches!(
-            Reader::load(directory.path(), pin, 9000, |_| Ok(()), |_| Ok(())),
-            Err(Error::Corrupt)
-        ));
-    }
-    #[test]
-    fn filter_database_refuses_unreserved_growth() {
-        let directory = tempfile::tempdir().unwrap();
-        assert!(matches!(
-            Builder::new(directory.path(), Space::new(4096)),
-            Err(Error::Limit)
-        ));
-        assert!(
-            std::fs::metadata(directory.path().join(NAME))
-                .unwrap()
-                .len()
-                <= 4096
-        );
-    }
-}
-
 pub(crate) struct Reader {
     db: ReadOnlyDatabase,
     rows: u32,
@@ -734,5 +489,250 @@ impl Reader {
             }
         }
         Ok(result)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    struct SourceOnly;
+    impl Source for SourceOnly {
+        fn check(&self) -> Result<()> {
+            Ok(())
+        }
+        fn work(&self, _: usize) -> Result<()> {
+            Ok(())
+        }
+        fn max_commits(&self) -> usize {
+            10000
+        }
+        fn max_parents(&self) -> usize {
+            1
+        }
+        fn commit_len(&self) -> usize {
+            20
+        }
+        fn change_len(&self) -> usize {
+            16
+        }
+        async fn operation(&self, _: &jj_lib::op_store::OperationId) -> Result<Operation> {
+            unreachable!()
+        }
+        async fn view(&self, _: &Operation) -> Result<jj_lib::view::View> {
+            unreachable!()
+        }
+        async fn commit(&self, _: &backend::CommitId) -> Result<CommitFields> {
+            unreachable!()
+        }
+    }
+    #[test]
+    fn filter_masks_preserve_sparse_dense_and_reject_invalid_encodings() {
+        for bits in [vec![], vec![0, 7, 255], (0..BLOCK).collect()] {
+            let mut mask = [0; WORDS];
+            for bit in bits {
+                mask[bit / 64] |= 1 << (bit % 64);
+            }
+            assert_eq!(decode(&encode(mask)).unwrap(), mask);
+        }
+        for bytes in [
+            vec![],
+            vec![2],
+            vec![0, 1],
+            vec![0, 1, 0, 1, 0],
+            vec![0, 2, 0, 1, 0],
+            vec![0, 0, 16],
+            vec![1, 0],
+        ] {
+            assert_eq!(decode(&bytes).unwrap_err(), Error::Corrupt);
+        }
+    }
+    #[test]
+    fn filter_seeks_compressed_windows_and_validates_selection_checksum_and_budgets() {
+        let directory = tempfile::tempdir().unwrap();
+        let space = Space::new(32 * 1024 * 1024);
+        let selected = jj_lib::op_store::OperationId::from_bytes(&[3; 64]);
+        let mut builder = Builder::new(directory.path(), space.clone()).unwrap();
+        for n in 0u32..9000 {
+            let id = n.to_be_bytes();
+            let text = if n % 4097 == 0 {
+                "ΟΣ İSTANBUL needle"
+            } else {
+                "ordinary unrelated text"
+            };
+            builder.commit(&id, text, &SourceOnly).unwrap();
+            let rank = builder
+                .reference(&format!("change:{n:016}"), &SourceOnly)
+                .unwrap();
+            builder.target(rank, &id, &SourceOnly).unwrap();
+        }
+        builder
+            .finish(directory.path(), &selected, &SourceOnly, space)
+            .unwrap();
+        let pin = jj_store_model::OperationId::new([3; 64]);
+        let reader = Reader::load(directory.path(), pin, 9000, |_| Ok(()), |_| Ok(())).unwrap();
+        let mut work = 0;
+        let values = reader
+            .search(
+                Search {
+                    needle: "needle",
+                    anchor: Some("change:0000000000000099"),
+                    backward: false,
+                    limit: 2,
+                },
+                |_| Ok(true),
+                |n| {
+                    work += n;
+                    Ok(())
+                },
+                |_| Ok(()),
+            )
+            .unwrap();
+        assert_eq!(
+            values,
+            ["change:0000000000004097", "change:0000000000008194"]
+        );
+        assert!(work < 200, "{work}");
+        assert_eq!(
+            reader
+                .search(
+                    Search {
+                        needle: "needle",
+                        anchor: Some(&values[1]),
+                        backward: true,
+                        limit: 2
+                    },
+                    |_| Ok(true),
+                    |_| Ok(()),
+                    |_| Ok(())
+                )
+                .unwrap(),
+            ["change:0000000000004097", "change:0000000000000000"]
+        );
+        assert_eq!(
+            reader
+                .search(
+                    Search {
+                        needle: "e",
+                        anchor: None,
+                        backward: false,
+                        limit: 2
+                    },
+                    |_| Ok(true),
+                    |_| Ok(()),
+                    |_| Ok(())
+                )
+                .unwrap(),
+            ["change:0000000000000000", "change:0000000000000001"]
+        );
+        assert!(
+            reader
+                .contains(&4097u32.to_be_bytes(), "ος", |_| Ok(()), |_| Ok(()))
+                .unwrap()
+        );
+        assert!(
+            reader
+                .contains(
+                    &4097u32.to_be_bytes(),
+                    "i\u{307}stanbul",
+                    |_| Ok(()),
+                    |_| Ok(())
+                )
+                .unwrap()
+        );
+        assert_eq!(
+            reader
+                .search(
+                    Search {
+                        needle: "needle",
+                        anchor: None,
+                        backward: false,
+                        limit: 1
+                    },
+                    |_| Ok(false),
+                    |_| Ok(()),
+                    |_| Ok(())
+                )
+                .unwrap(),
+            Vec::<String>::new()
+        );
+        assert_eq!(
+            reader
+                .search(
+                    Search {
+                        needle: "needle",
+                        anchor: None,
+                        backward: false,
+                        limit: 1
+                    },
+                    |_| Ok(true),
+                    |_| Err(Error::Canceled),
+                    |_| Ok(())
+                )
+                .unwrap_err(),
+            Error::Canceled
+        );
+        assert_eq!(
+            reader
+                .search(
+                    Search {
+                        needle: "needle",
+                        anchor: None,
+                        backward: false,
+                        limit: 1
+                    },
+                    |_| Ok(true),
+                    |_| Ok(()),
+                    |_| Err(Error::Limit)
+                )
+                .unwrap_err(),
+            Error::Limit
+        );
+        assert_eq!(
+            reader
+                .contains(
+                    &4097u32.to_be_bytes(),
+                    "needle",
+                    |_| Ok(()),
+                    |_| Err(Error::Limit)
+                )
+                .unwrap_err(),
+            Error::Limit
+        );
+        drop(reader);
+        assert!(matches!(
+            Reader::load(directory.path(), pin, 10, |_| Ok(()), |_| Ok(())),
+            Err(Error::Limit)
+        ));
+        assert!(matches!(
+            Reader::load(
+                directory.path(),
+                jj_store_model::OperationId::new([4; 64]),
+                9000,
+                |_| Ok(()),
+                |_| Ok(())
+            ),
+            Err(Error::Corrupt)
+        ));
+        let mut bytes = std::fs::read(directory.path().join(NAME)).unwrap();
+        bytes[100] ^= 1;
+        std::fs::write(directory.path().join(NAME), bytes).unwrap();
+        assert!(matches!(
+            Reader::load(directory.path(), pin, 9000, |_| Ok(()), |_| Ok(())),
+            Err(Error::Corrupt)
+        ));
+    }
+    #[test]
+    fn filter_database_refuses_unreserved_growth() {
+        let directory = tempfile::tempdir().unwrap();
+        assert!(matches!(
+            Builder::new(directory.path(), Space::new(4096)),
+            Err(Error::Limit)
+        ));
+        assert!(
+            std::fs::metadata(directory.path().join(NAME))
+                .unwrap()
+                .len()
+                <= 4096
+        );
     }
 }

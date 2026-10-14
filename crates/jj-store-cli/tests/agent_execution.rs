@@ -38,7 +38,7 @@ use jj_store_service::{
 };
 use std::{fs, path::Path, process::Command as Process, sync::Arc, time::Duration};
 fn jj(root: &Path, args: &[&str]) {
-    let output = Process::new(env!("CARGO_BIN_EXE_jj"))
+    let output = Process::new(env!("CARGO_BIN_EXE_jj-store-jj"))
         .arg("--no-pager")
         .arg("-R")
         .arg(root)
@@ -61,7 +61,7 @@ impl Fixture {
     async fn new() -> Self {
         let root = tempfile::tempdir().unwrap();
         let source = root.path().join("source");
-        let output = Process::new(env!("CARGO_BIN_EXE_jj"))
+        let output = Process::new(env!("CARGO_BIN_EXE_jj-store-jj"))
             .args(["git", "init"])
             .arg(&source)
             .output()
@@ -104,9 +104,9 @@ impl Fixture {
             actor,
             root: root.path().join("execution"),
             executable,
-            jj_executable: env!("CARGO_BIN_EXE_jj").into(),
+            jj_executable: env!("CARGO_BIN_EXE_jj-store-jj").into(),
             driver: Arc::new(Driver(jj_store_jj::agent_workspaces::Provider {
-                executable: env!("CARGO_BIN_EXE_jj").into(),
+                executable: env!("CARGO_BIN_EXE_jj-store-jj").into(),
             })),
             folders: Some(folders),
             workspaces: None,

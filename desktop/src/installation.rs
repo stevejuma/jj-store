@@ -23,7 +23,7 @@ impl Resources {
     pub fn from_root(root: &Path) -> Result<Self> {
         let mut value = Self {
             server: root.join("jj-store"),
-            jj: root.join("jj"),
+            jj: root.join("jj-store-jj"),
             rustfs: root.join("jj-store-rustfs"),
             web: root.join("web"),
             helpers: Vec::new(),

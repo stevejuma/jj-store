@@ -127,16 +127,20 @@ fn provider_catalog_accepts_buzz_providers_and_preserves_legacy_compatible_endpo
         "databricks",
         "databricks_v2",
     ] {
-        let mut options = RuntimeOptions::default();
-        options.provider = Some(provider.into());
+        let options = RuntimeOptions {
+            provider: Some(provider.into()),
+            ..Default::default()
+        };
         assert!(validate(&options).is_ok(), "{provider}");
     }
 }
 
 #[test]
 fn provider_changes_do_not_inherit_foreign_models_endpoints_or_effort() {
-    let mut defaults = Settings::default();
-    defaults.runner = "local".into();
+    let mut defaults = Settings {
+        runner: "local".into(),
+        ..Default::default()
+    };
     defaults.options.provider = Some("openai".into());
     defaults.options.endpoint = Some("https://old.example/v1".into());
     defaults.preferences.model = Some("old-model".into());
@@ -152,8 +156,10 @@ fn provider_changes_do_not_inherit_foreign_models_endpoints_or_effort() {
 }
 #[test]
 fn subscription_account_changes_do_not_inherit_a_foreign_model_or_endpoint() {
-    let mut defaults = Settings::default();
-    defaults.runner = "local".into();
+    let mut defaults = Settings {
+        runner: "local".into(),
+        ..Default::default()
+    };
     defaults.options.provider = Some("chatgpt-plan".into());
     defaults.options.account = Some("account-one".into());
     defaults.preferences.model = Some("account-one-model".into());

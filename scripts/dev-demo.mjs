@@ -140,7 +140,7 @@ async function initializeFixture(origin, logHandle) {
 }
 
 async function restart({ reset = false } = {}) {
-  await run("cargo", ["build", "-p", "jj-store-cli", "--bins", "--locked"]);
+  await run("cargo", ["build", "-p", "jj-store", "--bins", "--locked"]);
   Object.assign(
     developmentEnvironment,
     await developmentAgentEnvironment(repositoryRoot),

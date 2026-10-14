@@ -8,7 +8,7 @@ use std::{
 };
 
 fn command(path: &Path, bin: &Path, args: &[&str]) -> Command {
-    let mut command = Command::new(env!("CARGO_BIN_EXE_jj"));
+    let mut command = Command::new(env!("CARGO_BIN_EXE_jj-store-jj"));
     command
         .args([
             "--no-pager",

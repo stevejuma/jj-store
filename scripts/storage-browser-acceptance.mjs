@@ -67,7 +67,7 @@ if (restartOnly) {
         "set JJ_STORE_DEV_RUSTFS_RUNTIME to the qualified embedded runtime",
       );
     await run("pnpm", ["web:build"]);
-    await run("cargo", ["build", "--locked", "-p", "jj-store-cli", "--bins"]);
+    await run("cargo", ["build", "--locked", "-p", "jj-store", "--bins"]);
     const origin = `http://127.0.0.1:${Number(process.env.JJ_STORE_DEV_PORT ?? "7570")}/`;
     await run(server, [
       "init",
@@ -93,7 +93,7 @@ if (restartOnly) {
     );
     const env = { JJ_CONFIG: jjConfig };
     const created = await run(
-      join(owner, "target/debug/jj"),
+      join(owner, "target/debug/jj-store-jj"),
       [
         "store",
         "init",
@@ -116,7 +116,7 @@ if (restartOnly) {
       "# Storage acceptance\n\nRetained native data.\n",
     );
     await run(
-      join(owner, "target/debug/jj"),
+      join(owner, "target/debug/jj-store-jj"),
       ["-R", join(root, "repository"), "describe", "-m", "Storage acceptance"],
       env,
     );

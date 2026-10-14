@@ -80,7 +80,7 @@ async fn real_rustfs_native_git_external_merge_cycle_survives_cold_restart() {
     .unwrap();
     let workspace = root.path().join("git-cycle");
     let created: serde_json::Value = serde_json::from_str(&success(
-        Command::new(env!("CARGO_BIN_EXE_jj"))
+        Command::new(env!("CARGO_BIN_EXE_jj-store-jj"))
             .current_dir(root.path())
             .env("JJ_CONFIG", &jj_config)
             .args([
@@ -109,7 +109,7 @@ async fn real_rustfs_native_git_external_merge_cycle_survives_cold_restart() {
     let device = root.path().join("git-device");
     let run = |args: &[&str]| {
         success(
-            Command::new(env!("CARGO_BIN_EXE_jj"))
+            Command::new(env!("CARGO_BIN_EXE_jj-store-jj"))
                 .current_dir(&workspace)
                 .env("JJ_CONFIG", &jj_config)
                 .env("JJ_STORE_GIT_HOME", &device)

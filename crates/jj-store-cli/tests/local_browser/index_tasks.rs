@@ -207,7 +207,7 @@ impl q::Access for Gate {
         if self.armed.load(Ordering::SeqCst)
             && self
                 .skip
-                .fetch_update(Ordering::SeqCst, Ordering::SeqCst, |n| n.checked_sub(1))
+                .try_update(Ordering::SeqCst, Ordering::SeqCst, |n| n.checked_sub(1))
                 .is_err()
             && self.armed.swap(false, Ordering::SeqCst)
         {

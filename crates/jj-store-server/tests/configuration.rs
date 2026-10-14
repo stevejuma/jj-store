@@ -598,7 +598,7 @@ timeout_seconds = 15
 
 #[test]
 fn documentation_configuration_examples_use_production_validation() {
-    let source = include_str!("../../../docs/site/reference/configuration.md");
+    let source = include_str!("fixtures/configuration.md");
     let root = tempfile::tempdir().unwrap();
     let mut count = 0;
     for example in source.split("<!-- config-example:").skip(1) {

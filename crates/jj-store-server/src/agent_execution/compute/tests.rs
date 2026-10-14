@@ -13,8 +13,10 @@ fn pairing_refuses_unusable_identity_addresses_and_credential_urls() {
 }
 #[test]
 fn model_references_and_selected_peers_are_validated_before_side_effects() {
-    let mut settings = dto::Settings::default();
-    settings.model = Some("../outside.gguf".into());
+    let mut settings = dto::Settings {
+        model: Some("../outside.gguf".into()),
+        ..Default::default()
+    };
     assert!(process::validate(&settings).is_err());
     settings.model = Some("unsloth/Qwen3-0.6B-GGUF:Q4_K_M".into());
     assert!(process::validate(&settings).is_ok());

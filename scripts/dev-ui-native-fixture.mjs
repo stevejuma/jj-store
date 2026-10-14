@@ -28,7 +28,7 @@ async function initializeFixture(repositoryRoot, environment, runtimeRoot) {
   );
   const nativeJj = resolve(
     repositoryRoot,
-    environment.JJ_STORE_UI_TEST_JJ ?? "target/debug/jj",
+    environment.JJ_STORE_UI_TEST_JJ ?? "target/debug/jj-store-jj",
   );
   const rustfs = resolve(
     repositoryRoot,

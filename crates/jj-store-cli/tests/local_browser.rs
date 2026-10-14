@@ -51,7 +51,7 @@ use jj_store_service::local_browser::FolderProvider;
 use std::{fs, process::Command};
 
 fn jj(root: &std::path::Path, args: &[&str]) -> String {
-    let output = Command::new(env!("CARGO_BIN_EXE_jj"))
+    let output = Command::new(env!("CARGO_BIN_EXE_jj-store-jj"))
         .args([
             "--no-pager",
             "--config",
@@ -1317,7 +1317,7 @@ async fn filesystem_runtime_registers_and_reads_without_native_storage() {
         .as_str()
         .unwrap()
         .to_owned();
-    let mut activity_projects = vec!["14".repeat(16), cli_project_id.clone()];
+    let mut activity_projects = ["14".repeat(16), cli_project_id.clone()];
     activity_projects.sort();
     for (request, project) in [("18", "14".repeat(16)), ("19", cli_project_id)] {
         let result: Value = post(&work_url, json!({"version":1,"request_id":request.repeat(16),

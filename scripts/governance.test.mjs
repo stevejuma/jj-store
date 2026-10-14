@@ -339,7 +339,7 @@ test("server_composition_cannot_depend_on_cli_or_native_upstream", () => {
     dependencyErrors([
       {
         name: "jj-store-server",
-        dependencies: [{ name: "jj-store-cli" }, { name: "jj-lib" }],
+        dependencies: [{ name: "jj-store" }, { name: "jj-lib" }],
       },
     ]).length,
     2,
@@ -385,7 +385,7 @@ test("capture_runtime_consumes_owned_interfaces_without_reverse_dependencies", (
       name: "jj-store-capture",
       dependencies: [
         "jj-lib",
-        "jj-store-cli",
+        "jj-store",
         "jj-store-server",
         "jj-store-jj",
       ].map((name) => ({ name })),

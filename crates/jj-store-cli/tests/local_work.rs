@@ -7,7 +7,7 @@ use std::{
 };
 
 fn run(path: &Path, args: &[&str]) -> Output {
-    Command::new(env!("CARGO_BIN_EXE_jj"))
+    Command::new(env!("CARGO_BIN_EXE_jj-store-jj"))
         .args([
             "--no-pager",
             "--config",

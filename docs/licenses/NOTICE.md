@@ -25,8 +25,8 @@ dependency with checksum in Cargo.lock. Its source license remains available at
 https://github.com/quickwit-oss/tantivy/blob/72d1ef9a6468aa68bbc69dcc80cdf60aaf64364d/LICENSE.
 No upstream Tantivy implementation source is copied.
 
-MongoDB Kingfisher v2.7.0, Apache-2.0 (MongoDB, Inc.), is consumed unmodified as
-in-process Rust library crates from source revision
-`63dccba231b6b01990c84319d25f92f49428a431`. Its matching vendored Vectorscan
-fork is selected at the same revision. No Kingfisher implementation source is
-copied into jj-store.
+MongoDB Kingfisher released core 1.0.3, rules 1.2.1 and scanner 1.4.0 are
+consumed unmodified from crates.io. Core/scanner retain Apache-2.0; the rules
+package records Apache-2.0 AND MIT. Published Kingfisher Vectorscan 0.1.1 retains
+Apache-2.0 OR MIT bindings and bundled Vectorscan BSD-3-Clause notices.
+Checksums and registry source versions are recorded in Cargo.lock.

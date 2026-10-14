@@ -30,7 +30,7 @@ impl WorkspaceVerifier for Gate {
         }
         if self
             .remaining
-            .fetch_update(Ordering::SeqCst, Ordering::SeqCst, |n| n.checked_sub(1))
+            .try_update(Ordering::SeqCst, Ordering::SeqCst, |n| n.checked_sub(1))
             == Ok(1)
         {
             self.entered

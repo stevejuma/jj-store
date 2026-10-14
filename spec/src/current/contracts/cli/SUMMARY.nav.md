@@ -40,3 +40,5 @@
 - [Development build storage](39-development-build-storage.md)
 
 - [Custom data index lifecycle](39-custom-data-indexes.md)
+
+- [Public installation commands](40-public-installation.md)

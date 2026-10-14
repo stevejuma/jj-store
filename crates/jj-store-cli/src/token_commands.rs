@@ -40,13 +40,13 @@ pub(crate) enum TokenCommand {
     /// Generate one manual token locally without storing it
     Generate,
     /// List current public grant metadata and the exact policy snapshot
-    #[command(long_about=include_str!("../../../docs/cli/tokens.md"))]
+    #[command(long_about=include_str!("../help/tokens.md"))]
     List {
         #[command(flatten)]
         connection: ConnectionArgs,
     },
     /// Grant a client-generated credential at the selected snapshot
-    #[command(long_about=include_str!("../../../docs/cli/tokens.md"))]
+    #[command(long_about=include_str!("../help/tokens.md"))]
     Grant {
         #[command(flatten)]
         connection: ConnectionArgs,
@@ -62,7 +62,7 @@ pub(crate) enum TokenCommand {
         request: PathBuf,
     },
     /// Revoke one repository credential at the selected snapshot
-    #[command(long_about=include_str!("../../../docs/cli/tokens.md"))]
+    #[command(long_about=include_str!("../help/tokens.md"))]
     Revoke {
         #[command(flatten)]
         connection: ConnectionArgs,
@@ -72,7 +72,7 @@ pub(crate) enum TokenCommand {
         request: PathBuf,
     },
     /// Read the committed receipt without publishing
-    #[command(long_about=include_str!("../../../docs/cli/tokens.md"))]
+    #[command(long_about=include_str!("../help/tokens.md"))]
     Status {
         #[command(flatten)]
         connection: ConnectionArgs,
@@ -82,7 +82,7 @@ pub(crate) enum TokenCommand {
         token_stdin: bool,
     },
     /// Reapply the exact original snapshot and intent
-    #[command(long_about=include_str!("../../../docs/cli/tokens.md"))]
+    #[command(long_about=include_str!("../help/tokens.md"))]
     Retry {
         #[command(flatten)]
         connection: ConnectionArgs,

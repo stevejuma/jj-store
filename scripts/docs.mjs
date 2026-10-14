@@ -10,8 +10,9 @@ function check() {
   references();
   review();
 }
-async function build() {
-  check();
+async function build(renderOnly = false) {
+  if (renderOnly) review();
+  else check();
   await diagrams();
   await themeAssets();
   run("uv", ["run", "--locked", "mkdocs", "build", "--strict"]);
@@ -20,6 +21,7 @@ async function build() {
 if (mode === "generate") references(true);
 else if (mode === "review") review(process.argv[3], process.argv[4]);
 else if (mode === "check") await build();
+else if (mode === "render") await build(true);
 else if (mode === "build" || mode === "serve") {
   await build();
   if (mode === "serve")

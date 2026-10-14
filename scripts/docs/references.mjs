@@ -90,15 +90,15 @@ export function renderCommand(root) {
 export function expectedReferences() {
   const data = JSON.parse(
     execFileSync(
-      ...cargoCommand([
+      ...(process.env.JJ_STORE_DOC_REFERENCE ? [process.env.JJ_STORE_DOC_REFERENCE, []] : cargoCommand([
         "run",
         "--quiet",
         "--locked",
         "-p",
-        "jj-store-cli",
+        "jj-store",
         "--example",
         "docs_reference",
-      ]),
+      ])),
       { encoding: "utf8", maxBuffer: 16 * 1024 * 1024 },
     ),
   );
