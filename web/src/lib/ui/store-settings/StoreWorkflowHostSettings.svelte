@@ -1,20 +1,15 @@
 <script lang="ts">
-  import { untrack, onMount } from "svelte";
+  import { onMount } from "svelte";
   import * as Tabs from "@lapismd/design-core/shadcn/tabs";
-  import * as Field from "@lapismd/design-core/shadcn/field";
   import StoreWorkflowHostFields from "./StoreWorkflowHostFields.svelte";
   import { globalSettingsSkeletonCards } from "./global-settings-skeleton.js";
-  import WorkflowHostPrincipalPicker from "./WorkflowHostPrincipalPicker.svelte";
+  import WorkflowRunnerAccess from "./WorkflowRunnerAccess.svelte";
+  import { newRunnerEnvironment } from "../../controller/workflow-runner-environment.js";
   import { provideProfiles } from "../../profiles/context.svelte.js";
   import { workflowAuthors } from "../store-workflows/workflow-presentation.js";
-  import {
-    createWorkflowHostChoices,
-    type WorkflowHostChoices,
-  } from "../../controller/workflow-host-choices.svelte.js";
   import type { StoreController } from "../../controller/contracts.js";
   import { Button } from "@lapismd/design-core/shadcn/button";
   import Workflow from "@lucide/svelte/icons/workflow";
-  import Shield from "@lucide/svelte/icons/shield";
   import Save from "@lucide/svelte/icons/save";
   import Plus from "@lucide/svelte/icons/plus";
   import Trash from "@lucide/svelte/icons/trash-2";
@@ -36,12 +31,10 @@
     management,
     reload,
     controller,
-    choices: suppliedChoices,
   }: {
     management?: ServerSettingsManagement;
     reload?: RuntimeReload;
     controller?: StoreController;
-    choices?: WorkflowHostChoices;
   } = $props();
   const edit = $derived(management?.state.drafts.workflow);
   const value = $derived(
@@ -57,20 +50,13 @@
       ),
   );
   provideProfiles(() => controller?.directory);
-  const choices = untrack(
-    () =>
-      suppliedChoices ??
-      createWorkflowHostChoices({ available: () => !!management?.available() }),
-  );
   const authors = $derived(controller ? workflowAuthors(controller) : []);
   let reloadTrigger = $state<HTMLButtonElement | null>(null);
   onMount(() => {
     void management?.observe();
-    void choices.refresh();
     const timer = setInterval(() => void management?.observe(), 3000);
     return () => {
       clearInterval(timer);
-      if (!suppliedChoices) choices.destroy();
     };
   });
   function update(next: NonNullable<Configuration["workflow"]>) {
@@ -82,21 +68,7 @@
   }
   function add() {
     if (!value) return;
-    const configuration = {
-      version: 1,
-      host: "local",
-      principal: "",
-      home: "",
-      state_dir: "",
-      jj_executable: "",
-      allowed_owners: [],
-      labels: [],
-      sources: [],
-      commands: {},
-      agents: [],
-      agent_endpoint: null,
-      poll_millis: 1000,
-    };
+    const configuration = newRunnerEnvironment();
     edit!.advanced = JSON.stringify(configuration, null, 2);
     update({ ...copy(value), local: { enabled: false, configuration } });
   }
@@ -113,14 +85,6 @@
       ? "Server configuration changed. Your workflow host draft is retained; cancel to load the saved settings before editing again."
       : "")}
   pending={management?.state.loading || busy}
-/>
-<StoreNotice
-  scope="installation-server-settings"
-  noticeKey="workflow-host-choices"
-  title="Repository choices unavailable"
-  message={choices.state.error}
-  pending={choices.state.loading}
-  action={{ id: "retry", label: "Retry", run: choices.refresh }}
 />
 <StoreNotice
   scope="installation-server-settings"
@@ -181,36 +145,23 @@
           value={`${management.state.value?.effective.workflow?.admitted.length ?? 0} principals`}
         />
       </dl>
-      <Field.Group class="store-settings__editable-rows">
-        <Field.Field
-          orientation="responsive"
-          class="store-settings__option-row"
-        >
-          <Field.Content
-            ><Field.Label for="workflow-admission"
-              ><StoreSettingsIcon Icon={Shield} />Admitted execution principals</Field.Label
-            ><Field.Description
-              >Select known authors or enter a full principal ID. Repository
-              access alone does not grant execution.</Field.Description
-            ></Field.Content
-          >
-          <WorkflowHostPrincipalPicker
-            id="workflow-admission"
-            label="Admitted execution principals"
-            values={value.admitted}
-            {authors}
-            disabled={busy}
-            onChange={(admitted) => update({ ...copy(value), admitted })}
-          />
-        </Field.Field>
-      </Field.Group>
+      <WorkflowRunnerAccess
+        admitted={value.admitted}
+        principal={status?.principal}
+        {authors}
+        disabled={busy}
+        onChange={(admitted) => update({ ...copy(value), admitted })}
+      />
     </StoreSettingsCard>
-    <Tabs.Root bind:value={() => edit!.advancedMode, mode}>
+    <Tabs.Root
+      class="workflow-runner-editor"
+      bind:value={() => edit!.advancedMode, mode}
+    >
       <StoreSettingsCard
         id="workflow-local-host"
         title="Local execution host"
         Icon={Workflow}
-        description="Named executors and source attachments are owned by the operator. Secret fields contain environment references only."
+        description="Configure execution capabilities. Registered attachments and job context supply the source; no per-repository wiring is needed."
       >
         {#snippet badge()}
           {#if value.local}
@@ -225,10 +176,8 @@
             {management}
             {value}
             {busy}
-            {choices}
             {authors}
             {controller}
-            repositories={controller?.state.repositories ?? []}
           />
           <StoreSettingsFooter
             ><Button
@@ -285,3 +234,9 @@
     </StoreSettingsFooter>
   </form>
 {/if}
+
+<style>
+  :global(.workflow-runner-editor) {
+    margin-block-start: 1rem;
+  }
+</style>

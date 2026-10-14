@@ -180,16 +180,14 @@ intent and offer Check original outcome. Refresh remains a read-only action.
 Activation guidance uses reload for operational settings and separate
 migration/lifecycle reasons for read-only infrastructure.
 
-Local service / Workflows provides host admission and optional local execution
-settings with existing Settings cards/rows, labels, bounded numeric controls and
-explicit Save/Cancel. Command View selectors discover native attachments, known
-principals with server profile avatars and admitted agent setups, retaining
-configured values that are absent from discovery. A right-aligned Form/JSON
-header toggle shows one editor; highlighted JSON shares the form draft and
-validates before mode changes or Save. Invalid text is retained with a toast.
-Saved/effective values and host availability remain separate. Reload saved
-settings applies the workflows domain while keeping the server online; busy or
-uncertain execution retains its journal/configuration and reports deferred
-activation. Read/save/validation/reload failures use shared toasts, preserving
-drafts and original requests. No generic file or credential editor is
-introduced; advanced executor settings retain the bounded host schema.
+Local service / Workflows uses the same Settings cards and divided icon-bearing
+rows for a concise runner environment form: enabled, name, labels and admitted
+executors. Connection, identity and repository/revision context are derived.
+Advanced is initially collapsed and retains path/polling defaults, optional
+owner policy and explicit admission. Known owner/admission principals use
+Command View with server profile avatars; agent setup choices retain their
+avatars beside selection checkmarks. The local host card has a one-rem gap above
+it. Polling uses exact numeric entry, units and the shared bounded gauge. A
+right-aligned Form/JSON header toggle shows one editor. Both retain one draft
+and validate before switching or Save. Saved/effective values stay separate,
+reload preserves active/uncertain jobs and all failures use shared toasts.

@@ -81,16 +81,47 @@ replacement; reconcile the original request and reload again when idle.
 Disabling waits for this boundary. The runtime status distinguishes stopped,
 polling/running and busy state.
 
-Local settings store `workflow_host.enabled` and `workflow_host.configuration`,
-using the flat version-1 JSON fields below. Settings offers a right-aligned
-Form/JSON toggle with one retained draft. Native source and principal choices
-use searchable selectors; executors and environment references use highlighted
-JSON. Save validates the selected editor. Returning to Form validates and
-projects JSON edits; invalid text remains in JSON with a toast. Paths and
-environment references describe this host machine, not an arbitrary remote
-runner. A server without the CLI adapter can reload external-host admission but
-cannot enable local execution. Loading this new binary once requires a
-development backend restart; subsequent host setting changes use reload.
+Local settings store `workflow_host.enabled` and `workflow_host.configuration`.
+The managed runner uses version-2 environment settings, for example:
+
+```json
+{
+  "version": 2,
+  "host": "local-builder",
+  "labels": ["linux"],
+  "commands": {
+    "build": { "program": "/usr/bin/make", "args": ["test"] }
+  }
+}
+```
+
+No principal, metadata home or source repository paths are required. The runner
+uses installation-registered native workspace links, verifies repository
+identity and the selected service's socket, then checks each job's recorded
+repository and exact operation/commit. Only homes with a WorkflowStore root are
+polled, with a separate recovery journal per home. Ready native attachments are
+bounded to 32; unavailable or changed links never substitute another source.
+Admission is still explicit: open Execution access and Admit local host, Save,
+then Reload saved settings. Discovery and enabling a host do not grant
+admission.
+
+The normal form shows enablement, name, labels, command presets and agents.
+Advanced starts collapsed. Leave `state_dir` and `jj_executable` empty for a
+private installation host directory and the paired custom JJ CLI. Polling
+normally uses 1000 ms. Empty `allowed_owners` uses this installation's native
+and browser local-service identities. Agents use the existing local dispatch
+endpoint unless `agent_endpoint` is explicitly supplied; existing agent setup
+and source-target admission still applies. Command programs, environment and
+secret references remain operator-owned and editable through highlighted JSON.
+
+Version-1 configuration below remains supported by standalone and managed hosts.
+Form edits project its execution fields into version 2 on explicit Save,
+preserving custom recovery paths, JJ path, owners, commands and agents. An
+existing matching home journal remains at its original path. Active or uncertain
+work defers replacement; state is never reset. This server's connection supplies
+identity; source access remains independently enforced. Reload applies later
+configuration changes without replacing listeners. Updating the binary itself
+requires one development backend restart.
 
 Run `jj-store workflow-host --config /ABSOLUTE/host.json`; `--check` validates
 without starting and `--once` observes one poll and completes selected work.

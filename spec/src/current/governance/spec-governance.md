@@ -1,5 +1,13 @@
 # Change map
 
+E-RUNNER-ENVIRONMENT-001 retains JST-GOV-002/008 local UI ownership. The concise
+environment form, Advanced and explicit admission compositions reuse maintained
+Settings, avatar and picker components plus released Design Core. Registered
+native workspace discovery remains CLI-owned and consumes the existing server
+directory; it adds no Community, catalog or source dependency, repository
+registry or server executor. Version-2 managed configuration and legacy recovery
+compatibility are governed by the owning workflow chapters.
+
 E-CREATE-FORMS-001 adopts the existing JST-UI-016 Settings presentation in
 server-repository and project creation/editing. Icon rows and creation-specific
 layout remain application-owned under JST-GOV-002/008, using maintained local

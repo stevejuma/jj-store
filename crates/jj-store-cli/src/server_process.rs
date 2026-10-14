@@ -59,7 +59,9 @@ pub async fn serve_with_workflows(
         Some(std::sync::Arc::new(crate::local_browser::LocalFolders)),
     )
     .await?;
-    let workflow_runtime = crate::workflow_host::ManagedRuntime::new(config.workflow_host.clone());
+    let discovery = crate::workflow_host::Discovery::local(&config, server.native_workspaces())?;
+    let workflow_runtime =
+        crate::workflow_host::ManagedRuntime::new(config.workflow_host.clone(), discovery);
     let server = server.with_workflow_runtime(workflow_runtime.clone());
     let address = server.address()?;
     let signal = process::shutdown_signal()?;

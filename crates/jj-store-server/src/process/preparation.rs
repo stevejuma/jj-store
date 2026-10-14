@@ -126,6 +126,12 @@ pub(super) async fn prepare(
             as Arc<dyn jj_store_service::local_management::WorkspaceManager>),
         _ => None,
     };
+    let native_workspaces = local_workspaces.clone().map(|links| {
+        (
+            registry.clone() as Arc<dyn jj_store_service::registry::RepositoryRegistry>,
+            links,
+        )
+    });
     let local_search = if host.is_some() {
         config_path
             .map(|path| {
@@ -516,6 +522,7 @@ pub(super) async fn prepare(
         .map_err(Error::Config)?;
     let listener = tokio::net::TcpListener::bind(config.bind).await?;
     Ok(PreparedServer {
+        native_workspaces,
         workflow_runtime,
         reload: reload_owners,
         rpc,

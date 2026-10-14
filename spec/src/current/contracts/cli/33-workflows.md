@@ -22,3 +22,10 @@ workflow_host configuration. The existing standalone version-1 JSON, --check,
 exact source export, journals and named executor dispatch. Reload replaces idle
 settings only; shutdown drains a current poll before listeners stop. CLI
 arguments and native storage formats remain unchanged.
+
+The managed local runner also supports version-2 environment settings with
+automatic registered-native attachment discovery. It derives local identity,
+uses paired JJ and private recovery defaults, and resolves each job's source
+from its recorded repository and exact pins. Independent version-1 standalone
+host configuration remains supported. Discovery never uses arbitrary job paths
+or a connection to another server, and missing bindings fail closed.

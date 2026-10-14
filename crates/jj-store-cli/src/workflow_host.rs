@@ -2,11 +2,13 @@
 mod agent;
 mod command;
 mod config;
+mod discovery;
 mod events;
 mod journal;
 mod managed;
 mod worker;
 pub use config::Config;
+pub use discovery::Discovery;
 use jj_store_model as m;
 use jj_store_rpc::client::NativeClient;
 use jj_store_service::workflow as w;
@@ -184,7 +186,7 @@ impl Host {
         self.request(command)?;
         self.flush().await
     }
-    async fn tick(&mut self) -> Result<()> {
+    async fn recover(&mut self) -> Result<()> {
         if self.journal.pending.is_some() {
             self.flush().await?;
         }
@@ -209,6 +211,10 @@ impl Host {
             self.journal.active = None;
             self.save()?;
         }
+        Ok(())
+    }
+    async fn tick(&mut self) -> Result<()> {
+        self.recover().await?;
         self.observe_sources().await?;
         let mut after = None;
         loop {

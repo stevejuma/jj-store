@@ -331,3 +331,9 @@ admission and an optional local host through the existing settings API. Shared
 HTTP/native-RPC admission reloads at a fenced publication boundary. The CLI owns
 the optional execution loop; service and storage remain independent of it.
 Changing idle settings preserves listeners, journals and native formats.
+
+Managed runner environment settings are separate from repository wiring. The CLI
+resolves verified installation-native workspace links, derives identity from the
+selected local service and uses recorded job source pins. Each workflow home
+retains an independent journal. This adapter reuses existing registry and
+workspace managers; core server publication gains no workflow executor.

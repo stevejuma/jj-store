@@ -270,7 +270,7 @@ async fn workflow_settings_save_admission_and_local_config_atomically_without_ex
         admitted: [f.actor].into(),
         local: Some(jj_store_service::workflow_host::ManagedHost {
             enabled: false,
-            configuration: host,
+            configuration: host.into(),
         }),
     };
     let saved = manager
@@ -293,19 +293,20 @@ async fn workflow_settings_save_admission_and_local_config_atomically_without_ex
             .as_ref()
             .unwrap()
             .configuration
-            .state_dir
+            .state_dir()
+            .unwrap()
             .exists()
     );
     let loaded = Config::load(&f.source.root.path().join("server.toml")).unwrap();
     assert_eq!(loaded.workflow_hosts, configuration.admitted);
     assert_eq!(loaded.workflow_host, configuration.local);
     let mut invalid = configuration;
-    invalid
-        .local
-        .as_mut()
-        .unwrap()
-        .configuration
-        .commands
+    let jj_store_service::workflow_host::HostSettings::Legacy(host) =
+        &mut invalid.local.as_mut().unwrap().configuration
+    else {
+        panic!("legacy fixture")
+    };
+    host.commands
         .get_mut("build")
         .unwrap()
         .secrets
@@ -328,4 +329,30 @@ async fn workflow_settings_save_admission_and_local_config_atomically_without_ex
         manager.status(f.actor).await.unwrap().revision,
         saved.revision
     );
+}
+
+#[tokio::test]
+async fn managed_runner_environment_save_needs_no_repo_mapping_or_identity_input() {
+    let f = Fixture::new(false).await;
+    let manager = manager(&f);
+    let first = manager.status(f.actor).await.unwrap();
+    let configuration:jj_store_service::workflow_host::WorkflowConfiguration=serde_json::from_value(serde_json::json!({"admitted":[],"local":{"enabled":false,"configuration":{"version":2,"host":"local","labels":["linux"],"commands":{"build":{"program":"/bin/sh"}}}}})).unwrap();
+    let saved = manager
+        .save(
+            f.actor,
+            s::SaveServerSettings {
+                version: 1,
+                expected_revision: first.revision,
+                update: s::ServerSettingsUpdate::Workflow(configuration.clone()),
+            },
+        )
+        .await
+        .unwrap();
+    assert_eq!(saved.desired.workflow, configuration);
+    assert!(saved.effective.workflow.local.is_none());
+    let wire = serde_json::to_value(saved.desired.workflow.local.unwrap().configuration).unwrap();
+    for key in ["principal", "home", "sources"] {
+        assert!(wire.get(key).is_none());
+    }
+    assert_eq!(wire["version"], 2);
 }

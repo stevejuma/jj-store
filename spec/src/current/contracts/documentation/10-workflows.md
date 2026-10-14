@@ -55,3 +55,7 @@ shared admission, optional CLI hosting, local-machine paths and secret
 references. Standalone host JSON remains an independent startup profile. The
 one-time binary upgrade restart is distinct from ordinary configuration reload;
 ConnectRPC and external Forgejo registration remain deferred.
+
+Runner Settings documentation distinguishes the concise version-2 environment
+form, automatic verified attachment discovery, optional Advanced overrides and
+explicit admission from preserved version-1 standalone configuration.

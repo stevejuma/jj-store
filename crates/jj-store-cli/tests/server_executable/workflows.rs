@@ -290,9 +290,48 @@ async fn two_hosts_execute_one_pinned_run_and_preserve_history_after_restart() {
         .unwrap()
         .to_owned();
     cfg["commands"]["build"]["args"][1] = json!(format!("sleep 2; {script}"));
+    // Managed runners need no per-repository mapping or manually chosen identity.
+    cfg["version"] = json!(2);
+    for key in ["principal", "home", "sources"] {
+        cfg.as_object_mut().unwrap().remove(key);
+    }
+
     let settings_url = format!("http://{address}/v1/local/settings");
     let reload_url = format!("http://{address}/v1/configuration/reload");
     for (index, enabled) in [false, true, false].into_iter().enumerate() {
+        if index == 1 {
+            // Normal installation workspace registration, independent of runner settings.
+            for (repository, path) in [(&repos[0], &code), (&repos[1], &home)] {
+                let url = format!("http://{address}/v1/repos/{repository}/local/workspaces");
+                let before = http
+                    .get(&url)
+                    .send()
+                    .await
+                    .unwrap()
+                    .json::<Value>()
+                    .await
+                    .unwrap();
+                let response = http
+                    .post(format!("{url}/link"))
+                    .json(&json!({"version":1,"expected_revision":before["revision"],"path":path}))
+                    .send()
+                    .await
+                    .unwrap();
+                assert_eq!(response.status(), reqwest::StatusCode::OK);
+                let linked = response.json::<Value>().await.unwrap();
+                assert!(
+                    linked["links"]
+                        .as_array()
+                        .unwrap()
+                        .iter()
+                        .any(
+                            |link| link["path"] == json!(std::fs::canonicalize(path).unwrap())
+                                && link["availability"] == "ready"
+                        ),
+                    "registered workspace snapshot: {linked}"
+                );
+            }
+        }
         if index == 2 {
             let retry = root.path().join("retry.json");
             fs::write(&retry, serde_json::to_vec(&json!({"type":"retry","run":run,"expected":detail["runs"][0]["attempts"][0]["id"]})).unwrap()).unwrap();
@@ -335,6 +374,7 @@ async fn two_hosts_execute_one_pinned_run_and_preserve_history_after_restart() {
             .await
             .unwrap();
         assert_eq!(first["workflow_runtime"]["available"], true);
+        assert_eq!(first["workflow_runtime"]["principal"], json!(actor));
         let admitted = if index == 2 {
             json!([])
         } else {
@@ -344,6 +384,13 @@ async fn two_hosts_execute_one_pinned_run_and_preserve_history_after_restart() {
         let response = http.post(&settings_url).json(&json!({"version":1,"expected_revision":first["revision"],"update":{"section":"workflow","configuration":desired}})).send().await.unwrap();
         assert_eq!(response.status(), reqwest::StatusCode::OK);
         let saved = response.json::<Value>().await.unwrap();
+        for key in ["principal", "home", "sources"] {
+            assert!(
+                saved["desired"]["workflow"]["local"]["configuration"]
+                    .get(key)
+                    .is_none()
+            );
+        }
         assert_eq!(
             saved["effective"]["workflow"],
             first["effective"]["workflow"]

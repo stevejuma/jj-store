@@ -34,7 +34,7 @@ export function globalSettingsSkeletonCards(
         return [
           facts(3),
           {
-            rows: ["input", "toggle", "input", "input", "numeric", "textarea"],
+            rows: ["toggle", "input", "input", "fact", "input"],
             actions: 3,
           },
         ];

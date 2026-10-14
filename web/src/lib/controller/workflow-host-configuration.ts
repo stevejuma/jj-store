@@ -1,3 +1,7 @@
+import {
+  runnerEnvironment,
+  type HostSettings,
+} from "./workflow-runner-environment.js";
 import type { Model } from "../api/client.js";
 type Host = Model<"WorkflowHostConfiguration">;
 type Workflow = Model<"WorkflowConfiguration">;
@@ -158,8 +162,59 @@ export function validateWorkflowHost(value: unknown): asserts value is Host {
   } else if ((h.agents as unknown[] | undefined)?.length)
     throw Error("Configured agents require an admitted endpoint.");
 }
-export function parseWorkflowHost(text: string): Host {
+export function parseWorkflowHost(text: string): HostSettings {
   const value: unknown = JSON.parse(text);
+  if (object(value).version === 2) {
+    const h = object(value);
+    keys(h, [
+      "version",
+      "host",
+      "labels",
+      "commands",
+      "agents",
+      "agent_endpoint",
+      "allowed_owners",
+      "state_dir",
+      "jj_executable",
+      "poll_millis",
+    ]);
+    const owners = h.allowed_owners ?? [];
+    const endpoint =
+      h.agent_endpoint ??
+      ((h.agents as unknown[] | undefined)?.length
+        ? { url: "http://127.0.0.1:1/", local: true, token_environment: null }
+        : null);
+    list(owners, 64, id);
+    const legacy = parseWorkflowHost(
+      JSON.stringify({
+        ...h,
+        agent_endpoint: endpoint,
+        version: 1,
+        principal: "01".repeat(16),
+        home: "/home",
+        state_dir: h.state_dir ?? "/state",
+        jj_executable: h.jj_executable ?? "/jj",
+        allowed_owners: (owners as unknown[]).length
+          ? owners
+          : ["01".repeat(16)],
+        sources: [
+          {
+            repository: "01".repeat(16),
+            workspace: "/source",
+            target_id: null,
+          },
+        ],
+      }),
+    );
+    return {
+      ...runnerEnvironment(legacy),
+      agent_endpoint: (h.agent_endpoint ??
+        null) as Model<"WorkflowHostAgentEndpoint"> | null,
+      allowed_owners: [...(owners as string[])].sort(),
+      state_dir: (h.state_dir as string | null) ?? null,
+      jj_executable: (h.jj_executable as string | null) ?? null,
+    };
+  }
   validateWorkflowHost(value);
   return {
     ...value,
@@ -196,7 +251,7 @@ export function validateWorkflowConfiguration(value: Workflow) {
   if (value.local != null) {
     if (typeof value.local.enabled !== "boolean")
       throw Error("Check local host enablement.");
-    validateWorkflowHost(value.local.configuration);
+    parseWorkflowHost(JSON.stringify(value.local.configuration));
   }
 }
 

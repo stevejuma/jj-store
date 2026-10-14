@@ -1,4 +1,6 @@
 //! Operator-owned host configuration shared by settings and the native CLI.
+mod environment;
+pub use environment::{Environment, HostSettings};
 use jj_store_model as m;
 use serde::{Deserialize, Serialize};
 use std::{
@@ -68,7 +70,7 @@ pub struct AgentEndpoint {
 #[schemars(rename = "ManagedWorkflowHost")]
 pub struct ManagedHost {
     pub enabled: bool,
-    pub configuration: HostConfiguration,
+    pub configuration: HostSettings,
 }
 #[derive(Clone, Debug, Default, PartialEq, Eq, Serialize, Deserialize, schemars::JsonSchema)]
 #[serde(deny_unknown_fields)]
@@ -80,6 +82,9 @@ pub struct WorkflowConfiguration {
 #[serde(deny_unknown_fields)]
 #[schemars(rename = "WorkflowHostRuntimeStatus")]
 pub struct RuntimeStatus {
+    /// Local connection identity for explicit admission, never a credential.
+    #[serde(default)]
+    pub principal: Option<m::PrincipalId>,
     pub available: bool,
     pub running: bool,
     pub busy: bool,
@@ -180,5 +185,51 @@ impl HostConfiguration {
             }
         }
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn managed_environment_requires_no_repository_fields() {
+        let host: ManagedHost = serde_json::from_value(serde_json::json!({
+            "enabled": false,
+            "configuration": {"version":2,"host":"builder","labels":["linux"],"commands":{"build":{"program":"/bin/sh"}}}
+        })).expect("environment-only host configuration");
+        assert!(!host.enabled);
+        host.configuration.validate().unwrap();
+    }
+    #[test]
+    fn managed_environment_defaults_and_bounds_preserve_authority() {
+        let environment: Environment = serde_json::from_value(
+            serde_json::json!({"version":2,"host":"builder","agents":["agent"]}),
+        )
+        .unwrap();
+        environment.validate().unwrap();
+        assert!(environment.state_dir.is_none());
+        assert!(environment.jj_executable.is_none());
+        assert!(environment.allowed_owners.is_empty());
+        assert_eq!(environment.poll_millis, 1000);
+        for patch in [
+            serde_json::json!({"version":3}),
+            serde_json::json!({"poll_millis":0}),
+            serde_json::json!({"state_dir":"relative"}),
+            serde_json::json!({"commands":{"build":{"program":"relative"}}}),
+        ] {
+            let mut value = serde_json::json!({"version":2,"host":"builder"});
+            value
+                .as_object_mut()
+                .unwrap()
+                .extend(patch.as_object().unwrap().clone());
+            assert!(
+                serde_json::from_value::<Environment>(value)
+                    .unwrap()
+                    .validate()
+                    .is_err()
+            );
+        }
+        let unknown = serde_json::json!({"version":2,"host":"builder","sources":[]});
+        assert!(serde_json::from_value::<Environment>(unknown).is_err());
     }
 }

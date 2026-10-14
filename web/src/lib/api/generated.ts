@@ -9281,8 +9281,11 @@ export interface components {
     };
     ManagedWorkflowHost: {
       enabled: boolean;
-      configuration: components["schemas"]["WorkflowHostConfiguration"];
+      configuration: components["schemas"]["ManagedWorkflowHostConfiguration"];
     };
+    ManagedWorkflowHostConfiguration:
+      | components["schemas"]["WorkflowHostConfiguration"]
+      | components["schemas"]["WorkflowRunnerEnvironment"];
     WorkflowHostConfiguration: {
       /** Format: uint32 */
       version: number;
@@ -9336,6 +9339,30 @@ export interface components {
       local: boolean;
       token_environment: string | null;
     };
+    /** @description Managed execution settings; attachment paths come from installation discovery. */
+    WorkflowRunnerEnvironment: {
+      /** Format: uint32 */
+      version: number;
+      host: string;
+      /** @default [] */
+      labels: string[];
+      /** @default {} */
+      commands: {
+        [key: string]: components["schemas"]["WorkflowHostCommand"];
+      };
+      /** @default [] */
+      agents: string[];
+      agent_endpoint: components["schemas"]["WorkflowHostAgentEndpoint"] | null;
+      /** @default [] */
+      allowed_owners: components["schemas"]["PrincipalId"][];
+      state_dir: string | null;
+      jj_executable: string | null;
+      /**
+       * Format: uint64
+       * @default 1000
+       */
+      poll_millis: number;
+    };
     SyncConfiguration: {
       repository: components["schemas"]["RepositoryId"];
       upstream: string;
@@ -9376,6 +9403,11 @@ export interface components {
       reason: string;
     };
     WorkflowHostRuntimeStatus: {
+      /**
+       * @description Local connection identity for explicit admission, never a credential.
+       * @default null
+       */
+      principal: components["schemas"]["PrincipalId"] | null;
       available: boolean;
       running: boolean;
       busy: boolean;
@@ -64416,56 +64448,101 @@ export interface operations {
                   admitted: string[];
                   local?: {
                     enabled: boolean;
-                    configuration: {
-                      /** Format: uint32 */
-                      version: number;
-                      host: string;
-                      principal: string;
-                      home: string;
-                      state_dir: string;
-                      jj_executable: string;
-                      allowed_owners: string[];
-                      /** @default [] */
-                      labels?: string[];
-                      sources: {
-                        repository: string;
-                        workspace: string;
-                        target_id?: string | null;
-                      }[];
-                      /** @default {} */
-                      commands?: {
-                        [key: string]: {
-                          program: string;
+                    configuration:
+                      | {
+                          /** Format: uint32 */
+                          version: number;
+                          host: string;
+                          principal: string;
+                          home: string;
+                          state_dir: string;
+                          jj_executable: string;
+                          allowed_owners: string[];
                           /** @default [] */
-                          args?: string[];
+                          labels?: string[];
+                          sources: {
+                            repository: string;
+                            workspace: string;
+                            target_id?: string | null;
+                          }[];
                           /** @default {} */
-                          environment?: {
-                            [key: string]: string;
-                          };
-                          /**
-                           * @description Destination variable to operator environment reference; values are never persisted.
-                           * @default {}
-                           */
-                          secrets?: {
-                            [key: string]: string;
+                          commands?: {
+                            [key: string]: {
+                              program: string;
+                              /** @default [] */
+                              args?: string[];
+                              /** @default {} */
+                              environment?: {
+                                [key: string]: string;
+                              };
+                              /**
+                               * @description Destination variable to operator environment reference; values are never persisted.
+                               * @default {}
+                               */
+                              secrets?: {
+                                [key: string]: string;
+                              };
+                              /** @default [] */
+                              artifacts?: string[];
+                            };
                           };
                           /** @default [] */
-                          artifacts?: string[];
+                          agents?: string[];
+                          agent_endpoint?: {
+                            url: string;
+                            local: boolean;
+                            token_environment?: string | null;
+                          } | null;
+                          /**
+                           * Format: uint64
+                           * @default 1000
+                           */
+                          poll_millis?: number;
+                        }
+                      | {
+                          /** Format: uint32 */
+                          version: number;
+                          host: string;
+                          /** @default [] */
+                          labels?: string[];
+                          /** @default {} */
+                          commands?: {
+                            [key: string]: {
+                              program: string;
+                              /** @default [] */
+                              args?: string[];
+                              /** @default {} */
+                              environment?: {
+                                [key: string]: string;
+                              };
+                              /**
+                               * @description Destination variable to operator environment reference; values are never persisted.
+                               * @default {}
+                               */
+                              secrets?: {
+                                [key: string]: string;
+                              };
+                              /** @default [] */
+                              artifacts?: string[];
+                            };
+                          };
+                          /** @default [] */
+                          agents?: string[];
+                          agent_endpoint?: {
+                            url: string;
+                            local: boolean;
+                            token_environment?: string | null;
+                          } | null;
+                          /** @default [] */
+                          allowed_owners?: string[];
+                          state_dir?: string | null;
+                          jj_executable?: string | null;
+                          /**
+                           * Format: uint64
+                           * @default 1000
+                           */
+                          poll_millis?: number;
                         };
-                      };
-                      /** @default [] */
-                      agents?: string[];
-                      agent_endpoint?: {
-                        url: string;
-                        local: boolean;
-                        token_environment?: string | null;
-                      } | null;
-                      /**
-                       * Format: uint64
-                       * @default 1000
-                       */
-                      poll_millis?: number;
-                    };
                   } | null;
                 };
               };

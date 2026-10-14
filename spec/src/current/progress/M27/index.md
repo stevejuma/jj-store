@@ -1,8 +1,8 @@
 # M27 remote server connections and authenticated agents
 
-| ID  | Status      | Depends | Requirements                       | Gate                                                                      | Next                                                                     | Evidence                                                                                                                                                                                   |
-| --- | ----------- | ------- | ---------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| M27 | In progress | M24,M26 | JST-SEC-009,JST-API-011,JST-UI-022 | Isolated connections, delegated execution and cold Linux/macOS acceptance | Qualify Linux real-storage, desktop delivery and other provider profiles | E-REMOTE-AGENTS-001,E-REMOTE-AGENTS-002,E-REMOTE-INTEGRATION-001,E-REMOTE-LAND-001,E-SERVER-CONTROLS-001,E-SERVER-CONTROLS-002,E-REMOTE-ADMIN-001,E-APP-RELOAD-001,E-WORKFLOW-SETTINGS-001 |
+| ID  | Status      | Depends | Requirements                       | Gate                                                                      | Next                                                                     | Evidence                                                                                                                                                                                                            |
+| --- | ----------- | ------- | ---------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| M27 | In progress | M24,M26 | JST-SEC-009,JST-API-011,JST-UI-022 | Isolated connections, delegated execution and cold Linux/macOS acceptance | Qualify Linux real-storage, desktop delivery and other provider profiles | E-REMOTE-AGENTS-001,E-REMOTE-AGENTS-002,E-REMOTE-INTEGRATION-001,E-REMOTE-LAND-001,E-SERVER-CONTROLS-001,E-SERVER-CONTROLS-002,E-REMOTE-ADMIN-001,E-APP-RELOAD-001,E-WORKFLOW-SETTINGS-001,E-RUNNER-ENVIRONMENT-001 |
 
 Implementation was rebased onto the current default workspace, preserving its
 directory/avatar normalization and grouped Settings work. Integration and
@@ -59,6 +59,14 @@ Shared native/HTTP admission and a CLI-owned optional runtime retain listeners,
 journals and original uncertain work. Focused UI, activation and cold acceptance
 qualify this configuration slice; provider, Forgejo protocol, additional
 platform and visual baseline gates remain separate.
+
+E-RUNNER-ENVIRONMENT-001 reviews M28/M27 with status unchanged. Version-2 runner
+environments derive local identity and registered native attachments in the CLI
+host; recorded jobs retain exact source selection. Explicit admission, legacy
+configurations and uncertain journals remain guarded. Three-step
+real-storage/cold-history acceptance, settings save/reload and focused
+interaction/Axe qualify this slice. Live providers, Forgejo protocol, additional
+platforms and approved visual baselines remain separate.
 <!-- generated-navigation -->
 
 ## Pages

@@ -291,3 +291,38 @@ test("workflow set ordering matches the server's canonical acknowledgement", asy
   expect(manager.state.drafts.workflow.unknown).toBeNull();
   expect(manager.state.drafts.workflow.dirty).toBe(false);
 });
+
+test("managed environment has no repository wiring and retains optional overrides", () => {
+  const environment = parseWorkflowHost(
+    JSON.stringify({
+      version: 2,
+      host: "builder",
+      labels: ["z", "a"],
+      commands: { build: { program: "/bin/sh" } },
+      agents: ["agent"],
+    }),
+  );
+  expect(environment).toMatchObject({
+    version: 2,
+    labels: ["a", "z"],
+    agents: ["agent"],
+    agent_endpoint: null,
+    allowed_owners: [],
+    state_dir: null,
+    jj_executable: null,
+    poll_millis: 1000,
+  });
+  for (const key of ["principal", "home", "sources"])
+    expect(environment).not.toHaveProperty(key);
+  for (const patch of [
+    { version: 3 },
+    { home: "/tmp/home" },
+    { state_dir: "relative" },
+    { poll_millis: 0 },
+    { principal: "01".repeat(16) },
+    { commands: { bad: { program: "relative" } } },
+  ])
+    expect(() =>
+      parseWorkflowHost(JSON.stringify({ ...environment, ...patch })),
+    ).toThrow();
+});

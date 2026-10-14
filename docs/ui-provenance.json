@@ -3835,11 +3835,12 @@
       "web/src/lib/ui/store-settings/StoreWorkflowHostSettings.svelte",
       "web/src/lib/ui/store-settings/StoreWorkflowHostFields.svelte",
       "web/src/lib/ui/store-settings/WorkflowHostPrincipalPicker.svelte",
-      "web/src/lib/ui/store-settings/WorkflowHostIdentityFields.svelte",
-      "web/src/lib/ui/store-settings/WorkflowHostSources.svelte",
       "web/src/lib/ui/store-settings/WorkflowHostConfigEditor.svelte",
-      "web/src/lib/controller/workflow-host-choices.svelte.ts"
+      "web/src/lib/ui/store-settings/WorkflowRunnerEnvironmentFields.svelte",
+      "web/src/lib/ui/store-settings/WorkflowRunnerAdvanced.svelte",
+      "web/src/lib/ui/store-settings/WorkflowRunnerAccess.svelte",
+      "web/src/lib/controller/workflow-runner-environment.ts"
     ],
-    "usage": "Owned Settings rows, Command View principal/avatar and native attachment selectors, released Design Core CodeEditor and header Form/JSON tabs sharing one retained draft. No Community or Buzz code copied. Local operational configuration remains distinct from Forgejo protocol compatibility."
+    "usage": "Owned concise execution environment Settings, initially collapsed Advanced overrides and explicit admission, released Design Core CodeEditor/header tabs and existing avatar/agent Command View selectors. Repository context is resolved by the CLI through existing verified installation workspace links. No Community/Buzz runtime or code was copied."
   }
 }

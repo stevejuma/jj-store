@@ -52,3 +52,10 @@ domain. Only LocalTrusted Admin may edit or activate it; repository Write and
 agent-management permissions do not acquire execution authority. Host runtime
 status distinguishes disabled, idle, busy and unavailable configuration. Secret
 values are never accepted in the secret-reference fields or exposed in status.
+
+Managed workflow configuration accepts the legacy version-1 attachment document
+or a version-2 execution-environment document. Version 2 omits principal, home
+and source mappings; optional path/polling/owner overrides remain bounded.
+Runtime status exposes the derived local native principal for explicit
+admission, without exposing credentials. Save remains inactive and
+revision-conditional.

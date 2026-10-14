@@ -18,6 +18,7 @@ export function serverSettingsValue(): ServerSettings {
     effective: structuredClone(desired),
     restart_required: false,
     workflow_runtime: {
+      principal: "02".repeat(16),
       available: true,
       running: false,
       busy: false,

@@ -46,7 +46,9 @@ export function workflowHostFixtureController(
       },
     },
     execution: {
-      value: { setups: [{ id: "demo-agent", name: "Demo agent" }] },
+      value: {
+        setups: [{ id: "demo-agent", name: "Demo agent", avatar: "🤖" }],
+      },
       targets: [
         {
           id: "demo-target",

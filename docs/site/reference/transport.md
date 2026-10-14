@@ -341,3 +341,8 @@ managed-host configuration and runtime status. Conditional section writes use
 `workflow`; explicit activation uses reload domain `workflows`. These controls
 require LocalTrusted Admin. Existing workflow commands and native RPC retain
 their formats and source authorization.
+
+Managed local runners derive their native identity and source attachments from
+the selected service and its verified workspace directory. Job context carries
+repository and revision IDs; it cannot choose arbitrary local paths. Native
+workflow RPC/CLI command and receipt formats remain unchanged.

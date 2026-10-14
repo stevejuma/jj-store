@@ -31,3 +31,10 @@ and exact typed ThreadStore/ReactionStore references; no code anchor is
 invented. Condition results are trusted observations from explicitly admitted
 hosts. Source message bodies and reaction content remain in their owning
 repositories.
+
+Managed runner environment settings version 2 coexist with standalone/managed
+version-1 host attachment JSON. Native WorkflowStore objects, manifest format 6,
+host journals version 1 and reporting receipts do not change. Unknown settings
+fields or versions fail validation. UI edits project legacy environment fields
+into version 2 only when saved; saved legacy mappings remain available in JSON
+and no uncertain job is replayed during conversion.

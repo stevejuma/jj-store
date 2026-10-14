@@ -66,8 +66,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed optional CLI-owned workflow hosting and shared admission reload without replacing listeners, immutable storage or active jobs.",
-      "fingerprint": "4f1d046071ba51157ea9bbb91f481ca57adda25be2b55eea559bbe4e331eac02"
+      "reason": "Reviewed additive managed runner environments, pure validation and unchanged workflow/manifest/reporting authority; service default and bounds coverage passes.",
+      "fingerprint": "bc56c35f016a611ca4bdaebe75c0dbe453a710c97558a9aa565a498e18d68f44"
     }
   },
   {
@@ -97,8 +97,8 @@
       "docs/site/technical/lifecycle.md"
     ],
     "review": {
-      "reason": "Documented conditional inactive workflow configuration saves and workflows reload at idle boundaries with separate desired and effective state.",
-      "fingerprint": "9e37cff5ce45740ce6b7530e6417b9f0d8b47917d95070a07b32859c8770c89e"
+      "reason": "Reviewed version-2 managed runner validation, optional private path overrides and saved/effective reload separation; legacy host settings and explicit admission remain supported.",
+      "fingerprint": "fed5cba0b09b1933adc93b61d88df5d3a40f3fb4ee1643d4218befabb00f0b79"
     }
   },
   {
@@ -110,8 +110,8 @@
       "docs/site/getting-started/work.md"
     ],
     "review": {
-      "reason": "Reviewed preserved standalone host JSON and journal with optional managed hosting, continuous polling and deferred busy reload.",
-      "fingerprint": "56ee4730431c09e9cd53f199b37291b88e0bc9e2cc8da4f7184dda47e8915f40"
+      "reason": "Reviewed the CLI-owned registered native workspace discovery, paired executable defaults, per-home journals and cold three-step execution; documented legacy compatibility and no per-repository runner wiring.",
+      "fingerprint": "95ab35b85a2adc55075202054333cc9ab71df378a986920504bc2cffd356d478"
     }
   },
   {
@@ -137,8 +137,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Documented inactive workflow Settings, retained Form/JSON drafts in header modes, principal/avatar and native attachment selectors; verified canonical set ordering prevents false unknown save outcomes.",
-      "fingerprint": "7acbaa559872eecdc8f6a44e8dc39b0a5db79ff0462951b5f8d4459837e66bb8"
+      "reason": "Reviewed concise runner settings with retained JSON drafts, separate admission and collapsed Advanced; documented avatar choices, polling gauge, skeletons and toast failures.",
+      "fingerprint": "ea226d0b25ca4bd8bb52cbfbb24c854eb35355a33d317f8ebdfc2768139b4ac5"
     }
   },
   {
@@ -155,8 +155,8 @@
     "sources": ["schemas/openapi.json", "docs/cli"],
     "pages": ["docs/site/reference/transport.md", "docs/site/cli/index.md"],
     "review": {
-      "reason": "Reviewed workflow settings API, optional CLI adapter, admission leases and unchanged native workflow identities, receipts and manifest authority.",
-      "fingerprint": "12307bd2b23d121f6c9d617cd8e8566f23662a4df879fe18509731d5d66c2960"
+      "reason": "Reviewed generated managed environment union and optional derived runtime principal; native workflow commands, storage formats and runner reporting are unchanged.",
+      "fingerprint": "b1368661a0f3606d6a720d4791b4045af50af5543fd28cf2bd068c35825b3bbd"
     }
   },
   {

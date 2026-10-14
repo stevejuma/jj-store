@@ -279,3 +279,11 @@ idle local execution settings without changing listeners or storage. An active
 poll/job or uncertain journal defers replacement; reload again after settlement.
 Only the CLI composition provides managed local execution. Secret mappings
 contain environment references; deployment credential values remain private.
+
+Managed `workflow_host.configuration` also accepts version-2 environment
+settings (`version = 2`, `host`, labels, command presets and agents), without
+per-repository paths or a chosen principal. Verified installation workspace
+links resolve job source IDs and exact revisions. Private host recovery, the
+paired JJ executable, 1000-ms polling and local service owner identities provide
+defaults; Advanced overrides are optional. Host admission remains explicit.
+Legacy version-1 settings and journals remain supported.

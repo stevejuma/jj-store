@@ -202,14 +202,20 @@ refresh. History rows have an inset before their leading status icon, no box
 shadow or trailing row border. Workflow protocols, native authority and
 immutable evidence remain unchanged.
 
-LocalTrusted administrators configure host admission and optional local
-execution in Settings → Local service → Workflows. Settings-style rows expose
-name, execution principal, native attachments, recovery state, labels, allowed
-owners and polling. Principals, repository attachments and admitted agent setups
-use Command View selectors; principal choices hydrate server profiles and
-avatars. A right-aligned Form/JSON toggle in the local-host section header shows
-one editor at a time. The syntax-highlighted JSON editor supports named
-commands, agents, artifacts and credential references. Both modes share one
-retained draft: valid JSON projects into Form, while invalid JSON blocks mode
-changes and Save with a toast. Save never ignores raw edits. Save is inactive,
-reload activates at an idle boundary, and all failures use application toasts.
+LocalTrusted administrators configure the managed local runner in Settings →
+Local service → Workflows. The normal Form shows enablement, name, labels,
+command capabilities and admitted agents with setup avatars retained alongside
+selection checkmarks. The local execution card has a one-rem gap above it;
+polling combines exact entry, selectable units and a bounded gauge. Connection
+and source selection are derived from this local service and recorded job
+context; there are no repo, home or execution-principal inputs. Advanced starts
+collapsed and retains optional recovery/CLI/polling overrides, owner policy and
+explicit admission. The derived identity offers an explicit Admit local host
+action; discovery and enablement never grant admission automatically.
+
+The right-aligned Form/JSON toggle shows one editor at a time. Both share one
+retained draft: valid JSON projects into Form; invalid JSON blocks switching and
+Save with a toast. JSON accepts legacy attachment settings as well as the
+version-2 environment document. Legacy mappings remain saved until the next
+explicit host edit/save, which preserves environment, policy and recovery
+overrides. Save is inactive; reload activates at an idle boundary.

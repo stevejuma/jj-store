@@ -1,8 +1,8 @@
 # M28 lightweight workflows
 
-| Task | Status      | Depends     | Requirements                                                                                                               | Acceptance gate                                                                  | Next action                                                       | Evidence                                                                                                                                                                                        |
-| ---- | ----------- | ----------- | -------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | ----------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| M28  | In progress | M11,M23,M27 | JST-WF-001,JST-WF-002,JST-WF-003,JST-WF-004,JST-WF-005,JST-WF-006,JST-WF-007,JST-WF-008,JST-UI-019,JST-DOC-001,JST-DOC-002 | Durable two-host execution, exact recovery, real storage and cold Buzz-parity UI | Qualify live agent/Forgejo wrappers and review cold visual parity | E-WORKFLOW-001,E-WORKFLOW-CHOICES-001,E-WORKFLOW-RUN-001,E-WORKFLOW-HISTORY-001,E-WORKFLOW-YAML-001,E-WORKFLOW-MULTISTEP-001,E-WORKFLOW-LIVE-001,E-WORKFLOW-CONSOLE-001,E-WORKFLOW-SETTINGS-001 |
+| Task | Status      | Depends     | Requirements                                                                                                               | Acceptance gate                                                                  | Next action                                                       | Evidence                                                                                                                                                                                                                 |
+| ---- | ----------- | ----------- | -------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| M28  | In progress | M11,M23,M27 | JST-WF-001,JST-WF-002,JST-WF-003,JST-WF-004,JST-WF-005,JST-WF-006,JST-WF-007,JST-WF-008,JST-UI-019,JST-DOC-001,JST-DOC-002 | Durable two-host execution, exact recovery, real storage and cold Buzz-parity UI | Qualify live agent/Forgejo wrappers and review cold visual parity | E-WORKFLOW-001,E-WORKFLOW-CHOICES-001,E-WORKFLOW-RUN-001,E-WORKFLOW-HISTORY-001,E-WORKFLOW-YAML-001,E-WORKFLOW-MULTISTEP-001,E-WORKFLOW-LIVE-001,E-WORKFLOW-CONSOLE-001,E-WORKFLOW-SETTINGS-001,E-RUNNER-ENVIRONMENT-001 |
 
 Source foundations, executor integration, real storage, cold browser and visual
 parity are distinct gates. No gate is promoted by compilation alone.
@@ -51,6 +51,14 @@ Shared native/HTTP admission and a CLI-owned optional runtime retain listeners,
 journals and original uncertain work. Focused UI, activation and cold acceptance
 qualify this configuration slice; provider, Forgejo protocol, additional
 platform and visual baseline gates remain separate.
+
+E-RUNNER-ENVIRONMENT-001 reviews M28/M27 with status unchanged. Version-2 runner
+environments derive local identity and registered native attachments in the CLI
+host; recorded jobs retain exact source selection. Explicit admission, legacy
+configurations and uncertain journals remain guarded. Three-step
+real-storage/cold-history acceptance, settings save/reload and focused
+interaction/Axe qualify this slice. Live providers, Forgejo protocol, additional
+platforms and approved visual baselines remain separate.
 <!-- generated-navigation -->
 
 ## Pages

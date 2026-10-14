@@ -60,3 +60,20 @@ host journal, source pins and request identities. Changed execution settings
 wait for an idle boundary; active/uncertain attempts are never replayed.
 External hosts remain independently configured and can use the same reloadable
 admission.
+
+Managed version-2 runner settings describe execution capabilities only: name,
+labels, named commands and admitted agents, with optional recovery, CLI, polling
+and owner-policy overrides. The CLI discovers native attachments through the
+existing installation repository registry and verified workspace links; no new
+repository mapping is persisted in runner settings. Only ready links bound to
+this service's native socket are eligible, with at most 32 native repositories.
+Each metadata home with a WorkflowStore root retains its own journal.
+Repository, operation/commit and conversation anchors come from the recorded
+job. Source resolution never grants access and exports those exact pins.
+Unavailable or changed links cannot supply new work; retained uncertain journals
+block replacement. Identity derives from the local native connection. Empty
+owner overrides default to this installation’s native and browser local-service
+identities. Admitted agents default to this service’s existing dispatch
+endpoint. Admission remains explicit and independent. Legacy version-1 host JSON
+and journals remain readable. Converting settings preserves an existing matching
+home journal and its state directory.

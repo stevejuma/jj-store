@@ -24,3 +24,8 @@ native CLI composition supplies the optional event/action runtime; the core
 server owns configuration and admission, not executable dispatch. Reload keeps
 the server process and listeners. The standalone host JSON format remains valid;
 managed changes apply between settled polls/jobs, never by replaying an attempt.
+
+Managed runner environment settings omit per-repository wiring. Default paired
+JJ and private recovery paths belong to the CLI process; installation workspace
+links resolve recorded source identities. Legacy settings remain readable and
+explicit admission/reload boundaries are preserved.

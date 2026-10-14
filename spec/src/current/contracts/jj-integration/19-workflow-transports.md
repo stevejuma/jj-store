@@ -10,3 +10,9 @@ reads and ordinary definition mutations retain their existing authority. Native
 bindings, source pins, request identities and version-1 workflow RPC documents
 are unchanged. The CLI supplies the optional managed runtime to server-owned
 configuration interfaces; core service/storage do not import the CLI runtime.
+
+The CLI-owned managed runner resolves version-2 environment settings through
+installation registry candidates and verified native workspace links. It checks
+repository identity and this server's socket before export, uses recorded source
+operation/commit pins and reports through the original metadata-home CLI.
+Discovery is an adapter, never repository authority.

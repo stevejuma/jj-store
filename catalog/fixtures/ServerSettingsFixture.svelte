@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { createWorkflowHostChoices } from "../../web/src/lib/controller/workflow-host-choices.svelte.js";
   import { workflowHostFixtureController } from "./workflow-host-settings.js";
   import { RuntimeReload } from "../../web/src/lib/controller/runtime-reload.svelte.js";
   import StoreRuntimeReload from "../../web/src/lib/ui/store-settings/StoreRuntimeReload.svelte";
@@ -30,40 +29,11 @@
     unknown?: boolean;
     embedded?: boolean;
     loading?: boolean;
-    lookupFailure?: "repositories" | "profiles";
+    lookupFailure?: "profiles";
   } = $props();
   const controller = untrack(() =>
     workflowHostFixtureController(lookupFailure === "profiles"),
   );
-  const choices = createWorkflowHostChoices({
-    available: () => supported,
-    client: {
-      close() {},
-      request: (async () => {
-        if (lookupFailure === "repositories") throw Error("offline");
-        return {
-          version: 1,
-          revision: 1,
-          bindings: [
-            {
-              repository: "03".repeat(16),
-              name: "Demo source",
-              path: "/private/code",
-              generation: 1,
-              availability: "ready",
-            },
-            {
-              repository: "04".repeat(16),
-              name: "Demo home",
-              path: "/private/home",
-              generation: 1,
-              availability: "ready",
-            },
-          ],
-        };
-      }) as never,
-    },
-  });
   let value = serverSettingsValue();
   let finishRead: (() => void) | undefined;
   const management = createServerSettings({
@@ -121,7 +91,6 @@
     return () => {
       management.destroy();
       reload.destroy();
-      choices.destroy();
     };
   });
 </script>
@@ -150,7 +119,6 @@
       {management}
       {reload}
       {controller}
-      {choices}
     />{:else}<StoreConfigurationEditor
       {management}
       {section}

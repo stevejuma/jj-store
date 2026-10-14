@@ -35,19 +35,22 @@ Protection and Storage configuration, workflow hosts, folder registration and
 Add folder. **Local service → Workflows** configures execution-principal
 admission and an optional local event/action host. Save retains an inactive
 draft; Reload saved settings activates it without replacing listeners. Busy or
-uncertain work defers replacement and preserves its journal. Labels, owners and
-polling have form controls. Principals, native repository attachments and
-admitted agent setups use searchable Command View pickers; principals show
-server profile avatars. Use the Form/JSON toggle at the right of the local-host
-header to switch editors. Both edit one draft; JSON has syntax highlighting,
-includes named commands and environment references, and is validated by Save or
-when returning to Form. Invalid JSON stays editable and reports a toast. Secret
-mappings contain variable names. Runtime status uses bounded checks while this
-tab is visible. Appearance separates Theme and Preferences into subtabs; changes
-still save immediately on this device. Link previews and Thread layout have
-their own cards under Preferences. Launch and Storage group their read-only
-inventory by purpose. Use Copy beside a configured path or endpoint to copy the
-complete value.
+uncertain work defers replacement and preserves its journal. The normal form
+focuses on enablement, name, labels and executors. Registered native workspace
+links and each job's recorded repository/revision provide source context.
+Advanced starts collapsed and offers optional path/polling overrides and owner
+policy; Execution access separately offers explicit admission for the derived
+local identity. No per-repo mapping or execution-principal input is needed. Use
+the Form/JSON toggle at the right of the local-host header to switch editors.
+Both retain one draft; JSON has syntax highlighting and includes named commands,
+environment variables and secret references. Invalid JSON remains editable and
+reports a toast. Legacy host documents remain accepted; Form edits convert their
+execution settings on explicit Save while retaining custom paths and recovery.
+Runtime status uses bounded checks while this tab is visible. Appearance
+separates Theme and Preferences into subtabs; changes still save immediately on
+this device. Link previews and Thread layout have their own cards under
+Preferences. Launch and Storage group their read-only inventory by purpose. Use
+Copy beside a configured path or endpoint to copy the complete value.
 
 Global Settings links record the section and tab, for example
 `#/settings?section=agents&tab=runtimes`. Reload restores that page, and a root

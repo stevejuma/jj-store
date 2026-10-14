@@ -60,3 +60,8 @@ status. Both native RPC and HTTP use shared live host admission. Execution
 commands retain an admission lease through publication; activation fences the
 replacement. Workflow commands, evidence, immutable objects and native formats
 are unchanged. Configuration-management tokens do not acquire host control.
+
+Managed runner settings discover verified installation-native workspace links.
+Recorded job repository/revision anchors select the source; neither discovered
+paths nor environment settings confer source or execution authority. Workflow
+commands, reports, persisted native objects and their wire format are unchanged.

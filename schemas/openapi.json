@@ -80020,134 +80020,238 @@
                                 "properties": {
                                   "enabled": { "type": "boolean" },
                                   "configuration": {
-                                    "type": "object",
-                                    "properties": {
-                                      "version": {
-                                        "type": "integer",
-                                        "format": "uint32",
-                                        "minimum": 0
+                                    "anyOf": [
+                                      {
+                                        "type": "object",
+                                        "properties": {
+                                          "version": {
+                                            "type": "integer",
+                                            "format": "uint32",
+                                            "minimum": 0
+                                          },
+                                          "host": { "type": "string" },
+                                          "principal": {
+                                            "type": "string",
+                                            "pattern": "^[0-9a-f]{32}$",
+                                            "minLength": 32,
+                                            "maxLength": 32
+                                          },
+                                          "home": { "type": "string" },
+                                          "state_dir": { "type": "string" },
+                                          "jj_executable": { "type": "string" },
+                                          "allowed_owners": {
+                                            "type": "array",
+                                            "uniqueItems": true,
+                                            "items": {
+                                              "type": "string",
+                                              "pattern": "^[0-9a-f]{32}$",
+                                              "minLength": 32,
+                                              "maxLength": 32
+                                            }
+                                          },
+                                          "labels": {
+                                            "type": "array",
+                                            "uniqueItems": true,
+                                            "items": { "type": "string" },
+                                            "default": []
+                                          },
+                                          "sources": {
+                                            "type": "array",
+                                            "items": {
+                                              "type": "object",
+                                              "properties": {
+                                                "repository": {
+                                                  "type": "string",
+                                                  "pattern": "^[0-9a-f]{32}$",
+                                                  "minLength": 32,
+                                                  "maxLength": 32
+                                                },
+                                                "workspace": {
+                                                  "type": "string"
+                                                },
+                                                "target_id": {
+                                                  "type": ["string", "null"]
+                                                }
+                                              },
+                                              "additionalProperties": false,
+                                              "required": [
+                                                "repository",
+                                                "workspace"
+                                              ]
+                                            }
+                                          },
+                                          "commands": {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                              "type": "object",
+                                              "properties": {
+                                                "program": { "type": "string" },
+                                                "args": {
+                                                  "type": "array",
+                                                  "items": { "type": "string" },
+                                                  "default": []
+                                                },
+                                                "environment": {
+                                                  "type": "object",
+                                                  "additionalProperties": {
+                                                    "type": "string"
+                                                  },
+                                                  "default": {}
+                                                },
+                                                "secrets": {
+                                                  "description": "Destination variable to operator environment reference; values are never persisted.",
+                                                  "type": "object",
+                                                  "additionalProperties": {
+                                                    "type": "string"
+                                                  },
+                                                  "default": {}
+                                                },
+                                                "artifacts": {
+                                                  "type": "array",
+                                                  "items": { "type": "string" },
+                                                  "default": []
+                                                }
+                                              },
+                                              "additionalProperties": false,
+                                              "required": ["program"]
+                                            },
+                                            "default": {}
+                                          },
+                                          "agents": {
+                                            "type": "array",
+                                            "uniqueItems": true,
+                                            "items": { "type": "string" },
+                                            "default": []
+                                          },
+                                          "agent_endpoint": {
+                                            "type": ["object", "null"],
+                                            "properties": {
+                                              "url": { "type": "string" },
+                                              "local": { "type": "boolean" },
+                                              "token_environment": {
+                                                "type": ["string", "null"]
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": ["url", "local"]
+                                          },
+                                          "poll_millis": {
+                                            "type": "integer",
+                                            "format": "uint64",
+                                            "minimum": 0,
+                                            "default": 1000
+                                          }
+                                        },
+                                        "additionalProperties": false,
+                                        "required": [
+                                          "version",
+                                          "host",
+                                          "principal",
+                                          "home",
+                                          "state_dir",
+                                          "jj_executable",
+                                          "allowed_owners",
+                                          "sources"
+                                        ]
                                       },
-                                      "host": { "type": "string" },
-                                      "principal": {
-                                        "type": "string",
-                                        "pattern": "^[0-9a-f]{32}$",
-                                        "minLength": 32,
-                                        "maxLength": 32
-                                      },
-                                      "home": { "type": "string" },
-                                      "state_dir": { "type": "string" },
-                                      "jj_executable": { "type": "string" },
-                                      "allowed_owners": {
-                                        "type": "array",
-                                        "uniqueItems": true,
-                                        "items": {
-                                          "type": "string",
-                                          "pattern": "^[0-9a-f]{32}$",
-                                          "minLength": 32,
-                                          "maxLength": 32
-                                        }
-                                      },
-                                      "labels": {
-                                        "type": "array",
-                                        "uniqueItems": true,
-                                        "items": { "type": "string" },
-                                        "default": []
-                                      },
-                                      "sources": {
-                                        "type": "array",
-                                        "items": {
-                                          "type": "object",
-                                          "properties": {
-                                            "repository": {
+                                      {
+                                        "description": "Managed execution settings; attachment paths come from installation discovery.",
+                                        "type": "object",
+                                        "properties": {
+                                          "version": {
+                                            "type": "integer",
+                                            "format": "uint32",
+                                            "minimum": 0
+                                          },
+                                          "host": { "type": "string" },
+                                          "labels": {
+                                            "type": "array",
+                                            "uniqueItems": true,
+                                            "items": { "type": "string" },
+                                            "default": []
+                                          },
+                                          "commands": {
+                                            "type": "object",
+                                            "additionalProperties": {
+                                              "type": "object",
+                                              "properties": {
+                                                "program": { "type": "string" },
+                                                "args": {
+                                                  "type": "array",
+                                                  "items": { "type": "string" },
+                                                  "default": []
+                                                },
+                                                "environment": {
+                                                  "type": "object",
+                                                  "additionalProperties": {
+                                                    "type": "string"
+                                                  },
+                                                  "default": {}
+                                                },
+                                                "secrets": {
+                                                  "description": "Destination variable to operator environment reference; values are never persisted.",
+                                                  "type": "object",
+                                                  "additionalProperties": {
+                                                    "type": "string"
+                                                  },
+                                                  "default": {}
+                                                },
+                                                "artifacts": {
+                                                  "type": "array",
+                                                  "items": { "type": "string" },
+                                                  "default": []
+                                                }
+                                              },
+                                              "additionalProperties": false,
+                                              "required": ["program"]
+                                            },
+                                            "default": {}
+                                          },
+                                          "agents": {
+                                            "type": "array",
+                                            "uniqueItems": true,
+                                            "items": { "type": "string" },
+                                            "default": []
+                                          },
+                                          "agent_endpoint": {
+                                            "type": ["object", "null"],
+                                            "properties": {
+                                              "url": { "type": "string" },
+                                              "local": { "type": "boolean" },
+                                              "token_environment": {
+                                                "type": ["string", "null"]
+                                              }
+                                            },
+                                            "additionalProperties": false,
+                                            "required": ["url", "local"]
+                                          },
+                                          "allowed_owners": {
+                                            "type": "array",
+                                            "uniqueItems": true,
+                                            "items": {
                                               "type": "string",
                                               "pattern": "^[0-9a-f]{32}$",
                                               "minLength": 32,
                                               "maxLength": 32
                                             },
-                                            "workspace": { "type": "string" },
-                                            "target_id": {
-                                              "type": ["string", "null"]
-                                            }
+                                            "default": []
                                           },
-                                          "additionalProperties": false,
-                                          "required": [
-                                            "repository",
-                                            "workspace"
-                                          ]
-                                        }
-                                      },
-                                      "commands": {
-                                        "type": "object",
-                                        "additionalProperties": {
-                                          "type": "object",
-                                          "properties": {
-                                            "program": { "type": "string" },
-                                            "args": {
-                                              "type": "array",
-                                              "items": { "type": "string" },
-                                              "default": []
-                                            },
-                                            "environment": {
-                                              "type": "object",
-                                              "additionalProperties": {
-                                                "type": "string"
-                                              },
-                                              "default": {}
-                                            },
-                                            "secrets": {
-                                              "description": "Destination variable to operator environment reference; values are never persisted.",
-                                              "type": "object",
-                                              "additionalProperties": {
-                                                "type": "string"
-                                              },
-                                              "default": {}
-                                            },
-                                            "artifacts": {
-                                              "type": "array",
-                                              "items": { "type": "string" },
-                                              "default": []
-                                            }
-                                          },
-                                          "additionalProperties": false,
-                                          "required": ["program"]
-                                        },
-                                        "default": {}
-                                      },
-                                      "agents": {
-                                        "type": "array",
-                                        "uniqueItems": true,
-                                        "items": { "type": "string" },
-                                        "default": []
-                                      },
-                                      "agent_endpoint": {
-                                        "type": ["object", "null"],
-                                        "properties": {
-                                          "url": { "type": "string" },
-                                          "local": { "type": "boolean" },
-                                          "token_environment": {
+                                          "state_dir": {
                                             "type": ["string", "null"]
+                                          },
+                                          "jj_executable": {
+                                            "type": ["string", "null"]
+                                          },
+                                          "poll_millis": {
+                                            "type": "integer",
+                                            "format": "uint64",
+                                            "minimum": 0,
+                                            "default": 1000
                                           }
                                         },
                                         "additionalProperties": false,
-                                        "required": ["url", "local"]
-                                      },
-                                      "poll_millis": {
-                                        "type": "integer",
-                                        "format": "uint64",
-                                        "minimum": 0,
-                                        "default": 1000
+                                        "required": ["version", "host"]
                                       }
-                                    },
-                                    "additionalProperties": false,
-                                    "required": [
-                                      "version",
-                                      "host",
-                                      "principal",
-                                      "home",
-                                      "state_dir",
-                                      "jj_executable",
-                                      "allowed_owners",
-                                      "sources"
                                     ]
                                   }
                                 },
@@ -95628,10 +95732,16 @@
         "properties": {
           "enabled": { "type": "boolean" },
           "configuration": {
-            "$ref": "#/components/schemas/WorkflowHostConfiguration"
+            "$ref": "#/components/schemas/ManagedWorkflowHostConfiguration"
           }
         },
         "required": ["enabled", "configuration"]
+      },
+      "ManagedWorkflowHostConfiguration": {
+        "anyOf": [
+          { "$ref": "#/components/schemas/WorkflowHostConfiguration" },
+          { "$ref": "#/components/schemas/WorkflowRunnerEnvironment" }
+        ]
       },
       "WorkflowHostConfiguration": {
         "type": "object",
@@ -95749,6 +95859,66 @@
         },
         "required": ["url", "local", "token_environment"]
       },
+      "WorkflowRunnerEnvironment": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "version": { "type": "integer", "format": "uint32", "minimum": 0 },
+          "host": { "type": "string" },
+          "labels": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "type": "string" },
+            "default": []
+          },
+          "commands": {
+            "type": "object",
+            "additionalProperties": {
+              "$ref": "#/components/schemas/WorkflowHostCommand"
+            },
+            "default": {}
+          },
+          "agents": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "type": "string" },
+            "default": []
+          },
+          "agent_endpoint": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/WorkflowHostAgentEndpoint" },
+              { "type": "null" }
+            ]
+          },
+          "allowed_owners": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": { "$ref": "#/components/schemas/PrincipalId" },
+            "default": []
+          },
+          "state_dir": { "type": ["string", "null"] },
+          "jj_executable": { "type": ["string", "null"] },
+          "poll_millis": {
+            "type": "integer",
+            "format": "uint64",
+            "minimum": 0,
+            "default": 1000
+          }
+        },
+        "required": [
+          "version",
+          "host",
+          "labels",
+          "commands",
+          "agents",
+          "agent_endpoint",
+          "allowed_owners",
+          "state_dir",
+          "jj_executable",
+          "poll_millis"
+        ],
+        "description": "Managed execution settings; attachment paths come from installation discovery."
+      },
       "SyncConfiguration": {
         "type": "object",
         "additionalProperties": false,
@@ -95859,12 +96029,20 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
+          "principal": {
+            "anyOf": [
+              { "$ref": "#/components/schemas/PrincipalId" },
+              { "type": "null" }
+            ],
+            "description": "Local connection identity for explicit admission, never a credential.",
+            "default": null
+          },
           "available": { "type": "boolean" },
           "running": { "type": "boolean" },
           "busy": { "type": "boolean" },
           "message": { "type": ["string", "null"] }
         },
-        "required": ["available", "running", "busy", "message"]
+        "required": ["principal", "available", "running", "busy", "message"]
       },
       "DirectoryReceipt": {
         "type": "object",

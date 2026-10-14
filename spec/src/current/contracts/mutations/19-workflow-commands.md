@@ -10,3 +10,8 @@ Publication retains its execution-host admission lease, and reload replaces the
 admitted set at a fenced boundary. Repository Write still does not imply host
 admission. No command, CAS, receipt, identity or WorkflowStore format changes
 are introduced; unknown attempts remain non-replayable.
+
+Automatic runner attachment discovery does not mutate workflow objects or grant
+source/execution access. Admission is explicitly saved and reloaded. Native job
+claims/reports retain their existing attempt and receipt fences; changed or
+unavailable workspace links cannot be substituted for a pinned source.

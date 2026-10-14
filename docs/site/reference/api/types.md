@@ -25826,12 +25826,27 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
       "type": "boolean"
     },
     "configuration": {
-      "$ref": "#/components/schemas/WorkflowHostConfiguration"
+      "$ref": "#/components/schemas/ManagedWorkflowHostConfiguration"
     }
   },
   "required": [
     "enabled",
     "configuration"
+  ]
+}
+```
+
+## ManagedWorkflowHostConfiguration
+
+```text
+{
+  "anyOf": [
+    {
+      "$ref": "#/components/schemas/WorkflowHostConfiguration"
+    },
+    {
+      "$ref": "#/components/schemas/WorkflowRunnerEnvironment"
+    }
   ]
 }
 ```
@@ -26040,6 +26055,97 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
 }
 ```
 
+## WorkflowRunnerEnvironment
+
+```text
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "version": {
+      "type": "integer",
+      "format": "uint32",
+      "minimum": 0
+    },
+    "host": {
+      "type": "string"
+    },
+    "labels": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "commands": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/components/schemas/WorkflowHostCommand"
+      },
+      "default": {}
+    },
+    "agents": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      },
+      "default": []
+    },
+    "agent_endpoint": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/WorkflowHostAgentEndpoint"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "allowed_owners": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/components/schemas/PrincipalId"
+      },
+      "default": []
+    },
+    "state_dir": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "jj_executable": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "poll_millis": {
+      "type": "integer",
+      "format": "uint64",
+      "minimum": 0,
+      "default": 1000
+    }
+  },
+  "required": [
+    "version",
+    "host",
+    "labels",
+    "commands",
+    "agents",
+    "agent_endpoint",
+    "allowed_owners",
+    "state_dir",
+    "jj_executable",
+    "poll_millis"
+  ],
+  "description": "Managed execution settings; attachment paths come from installation discovery."
+}
+```
+
 ## SyncConfiguration
 
 ```text
@@ -26199,6 +26305,18 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
   "type": "object",
   "additionalProperties": false,
   "properties": {
+    "principal": {
+      "anyOf": [
+        {
+          "$ref": "#/components/schemas/PrincipalId"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "description": "Local connection identity for explicit admission, never a credential.",
+      "default": null
+    },
     "available": {
       "type": "boolean"
     },
@@ -26216,6 +26334,7 @@ Generated from the application OpenAPI schemas. Exact identity widths, required 
     }
   },
   "required": [
+    "principal",
     "available",
     "running",
     "busy",

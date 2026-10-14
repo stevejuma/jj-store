@@ -2,14 +2,15 @@
 use super::*;
 use jj_store_service::{
     runtime_reload::{Error, State},
-    workflow_host::{ManagedHost, Runtime, RuntimeStatus},
+    workflow_host::{HostSettings, ManagedHost, Runtime, RuntimeStatus},
 };
 use std::sync::{
     Arc, RwLock,
     atomic::{AtomicBool, Ordering},
 };
 pub struct ManagedRuntime {
-    host: tokio::sync::Mutex<Option<Host>>,
+    host: tokio::sync::Mutex<Vec<Host>>,
+    discovery: Option<Discovery>,
     desired: RwLock<Option<ManagedHost>>,
     running: AtomicBool,
     busy: AtomicBool,
@@ -18,9 +19,10 @@ pub struct ManagedRuntime {
     wake: tokio::sync::Notify,
 }
 impl ManagedRuntime {
-    pub fn new(initial: Option<ManagedHost>) -> Arc<Self> {
+    pub fn new(initial: Option<ManagedHost>, discovery: Option<Discovery>) -> Arc<Self> {
         Arc::new(Self {
             host: Default::default(),
+            discovery,
             desired: RwLock::new(initial),
             running: Default::default(),
             busy: Default::default(),
@@ -45,21 +47,10 @@ impl ManagedRuntime {
                     // cannot reopen configuration that has just been disabled.
                     let desired = owner.desired.read().expect("workflow desired").clone();
                     if let Some(spec) = desired.filter(|v| v.enabled) {
-                        if host.is_none() {
-                            let config = Config(spec.configuration);
-                            if config.validate().is_ok() {
-                                *host = Host::open(config).await.ok();
-                            }
-                        }
-                        owner.running.store(host.is_some(), Ordering::SeqCst);
                         owner.busy.store(true, Ordering::SeqCst);
-                        let result = match host.as_mut() {
-                            Some(host) => host.tick().await,
-                            None => {
-                                Err("Host configuration or native attachment is unavailable".into())
-                            }
-                        };
+                        let result = owner.poll(&mut host, &spec.configuration).await;
                         owner.busy.store(false, Ordering::SeqCst);
+                        owner.running.store(!host.is_empty(), Ordering::SeqCst);
                         *owner.message.write().expect("workflow status") = result.err().map(|_| "Host polling paused; native attachment, admission and retained request may need attention.".into());
                     }
                 }
@@ -68,16 +59,65 @@ impl ManagedRuntime {
                     .read()
                     .expect("workflow desired")
                     .as_ref()
-                    .map_or(1000, |v| v.configuration.poll_millis);
+                    .map_or(1000, |v| v.configuration.poll_millis());
                 tokio::select! { _ = owner.wake.notified() => {}, _ = tokio::time::sleep(Duration::from_millis(delay)) => {} }
             }
         })
+    }
+    async fn configurations(&self, settings: &HostSettings) -> Result<Vec<Config>> {
+        match settings {
+            HostSettings::Legacy(value) => {
+                let config = Config(value.clone());
+                config.validate()?;
+                Ok(vec![config])
+            }
+            HostSettings::Registered(environment) => {
+                self.discovery
+                    .as_ref()
+                    .ok_or("Native workspace discovery is unavailable")?
+                    .configurations(environment)
+                    .await
+            }
+        }
+    }
+    async fn install(current: &mut Vec<Host>, next: Vec<Config>) -> Result<()> {
+        // Open replacements before changing existing configuration or releasing locks.
+        let same = |host: &Host, config: &Config| {
+            host.config.host == config.host
+                && host.config.principal == config.principal
+                && host.config.home == config.home
+                && host.config.state_dir == config.state_dir
+        };
+        let mut fresh = Vec::new();
+        for config in &next {
+            if !current.iter().any(|host| same(host, config)) {
+                fresh.push(Host::open(config.clone()).await?);
+            }
+        }
+        current.retain(|host| next.iter().any(|config| same(host, config)));
+        for config in next {
+            if let Some(host) = current.iter_mut().find(|host| same(host, &config)) {
+                host.config = config;
+            }
+        }
+        current.extend(fresh);
+        Ok(())
+    }
+    async fn poll(&self, hosts: &mut Vec<Host>, settings: &HostSettings) -> Result<()> {
+        for host in hosts.iter_mut() {
+            host.recover().await?;
+        }
+        Self::install(hosts, self.configurations(settings).await?).await?;
+        for host in hosts {
+            host.tick().await?;
+        }
+        Ok(())
     }
     pub async fn stop(&self) {
         self.stopping.store(true, Ordering::SeqCst);
         self.wake.notify_one();
         // Held across each tick, including execution and final reporting.
-        self.host.lock().await.take();
+        self.host.lock().await.clear();
         self.running.store(false, Ordering::SeqCst);
     }
 }
@@ -85,6 +125,7 @@ impl ManagedRuntime {
 impl Runtime for ManagedRuntime {
     fn status(&self) -> RuntimeStatus {
         RuntimeStatus {
+            principal: self.discovery.as_ref().map(|v| v.principal),
             available: true,
             running: self.running.load(Ordering::SeqCst),
             busy: self.busy.load(Ordering::SeqCst),
@@ -102,39 +143,27 @@ impl Runtime for ManagedRuntime {
             return Ok((State::Deferred, Some("The host is settling a poll or active job. Its configuration and journal are retained; reload again when idle.".into())));
         };
         if current
-            .as_ref()
-            .is_some_and(|h| h.journal.active.is_some() || h.journal.pending.is_some())
+            .iter()
+            .any(|h| h.journal.active.is_some() || h.journal.pending.is_some())
         {
             return Ok((State::Deferred, Some("The host retains an uncertain attempt or original reporting request. Reconcile it before replacing configuration.".into())));
         }
         if let Some(spec) = &next {
             spec.configuration.validate().map_err(|_| Error::Invalid)?;
-            if spec.enabled {
-                Config(spec.configuration.clone())
-                    .validate()
-                    .map_err(|_| Error::Invalid)?;
-            }
         }
-        if next.as_ref().is_some_and(|v| v.enabled) {
-            let cfg = Config(next.as_ref().expect("enabled host").configuration.clone());
-            if let Some(host) = current.as_mut() {
-                if host.config.host == cfg.host
-                    && host.config.principal == cfg.principal
-                    && host.config.home == cfg.home
-                    && host.config.state_dir == cfg.state_dir
-                {
-                    host.config = cfg;
-                } else {
-                    *current = Some(Host::open(cfg).await.map_err(|_| Error::Unavailable)?);
-                }
-            } else {
-                *current = Some(Host::open(cfg).await.map_err(|_| Error::Unavailable)?);
-            }
+        if let Some(spec) = next.as_ref().filter(|v| v.enabled) {
+            let configurations = self
+                .configurations(&spec.configuration)
+                .await
+                .map_err(|_| Error::Unavailable)?;
+            Self::install(&mut current, configurations)
+                .await
+                .map_err(|_| Error::Unavailable)?;
         } else {
-            *current = None;
+            current.clear();
         }
         *self.desired.write().map_err(|_| Error::Unavailable)? = next;
-        self.running.store(current.is_some(), Ordering::SeqCst);
+        self.running.store(!current.is_empty(), Ordering::SeqCst);
         *self.message.write().map_err(|_| Error::Unavailable)? = None;
         self.wake.notify_one();
         Ok((State::Applied, None))
@@ -146,7 +175,7 @@ mod tests {
     use super::*;
     #[tokio::test]
     async fn idle_disabled_runtime_is_reloadable_and_shutdown_drains_poll() {
-        let runtime = ManagedRuntime::new(None);
+        let runtime = ManagedRuntime::new(None, None);
         let task = runtime.start();
         let poll = runtime.host.lock().await;
         assert_eq!(runtime.reload(None).await.unwrap().0, State::Deferred);
@@ -167,9 +196,9 @@ mod tests {
     }
     #[tokio::test]
     async fn disabled_host_does_not_start_polling() {
-        let runtime = ManagedRuntime::new(None);
+        let runtime = ManagedRuntime::new(None, None);
         assert_eq!(runtime.reload(None).await.unwrap().0, State::Applied);
         assert!(!runtime.status().busy);
-        assert!(runtime.host.lock().await.is_none());
+        assert!(runtime.host.lock().await.is_empty());
     }
 }

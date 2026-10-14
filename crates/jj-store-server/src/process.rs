@@ -30,6 +30,10 @@ mod reload_capture;
 mod running;
 
 pub struct PreparedServer {
+    native_workspaces: Option<(
+        Arc<dyn jj_store_service::registry::RepositoryRegistry>,
+        Arc<dyn jj_store_service::local_management::WorkspaceManager>,
+    )>,
     workflow_runtime: jj_store_service::workflow_host::RuntimeSlot,
     reload: Option<Arc<reload::Owners>>,
     rpc: PreparedRpc,
@@ -117,6 +121,14 @@ impl PreparedServer {
             folders,
         )
         .await
+    }
+    pub fn native_workspaces(
+        &self,
+    ) -> Option<(
+        Arc<dyn jj_store_service::registry::RepositoryRegistry>,
+        Arc<dyn jj_store_service::local_management::WorkspaceManager>,
+    )> {
+        self.native_workspaces.clone()
     }
     pub fn with_workflow_runtime(
         self,

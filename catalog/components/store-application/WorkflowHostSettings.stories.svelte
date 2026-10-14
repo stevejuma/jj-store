@@ -11,6 +11,11 @@
   });
   async function admission(canvasElement: HTMLElement) {
     const canvas = within(canvasElement);
+    await userEvent.click(
+      await canvas.findByRole("button", {
+        name: "Execution access",
+      }),
+    );
     const input = await canvas.findByRole("combobox", {
       name: "Admitted execution principals",
     });
@@ -173,7 +178,7 @@
         canvas.getByRole("button", { name: "Add local host" }),
       );
       await expect(
-        canvas.getByRole("combobox", { name: "Metadata home" }),
+        canvas.getByRole("textbox", { name: "Host name" }),
       ).toBeVisible();
       await expect(document.documentElement.scrollWidth).toBeLessThanOrEqual(
         window.innerWidth,
@@ -215,53 +220,79 @@
 />
 
 <Story
-  name="Command choices include profiles and native attachments"
+  name="Environment form derives repository context"
   play={async ({ canvasElement }) => {
-    const { canvas, input } = await admission(canvasElement);
-    await userEvent.click(input);
-    const author = await within(document.body).findByRole("option", {
-      name: /Steve/,
-    });
-    await expect(
-      author.querySelector("[data-slot='avatar'], .community-member-avatar"),
-    ).not.toBeNull();
-    await userEvent.keyboard("{Escape}");
+    const canvas = within(canvasElement);
     await userEvent.click(
-      canvas.getByRole("button", { name: "Add local host" }),
-    );
-    await userEvent.click(
-      canvas.getByRole("combobox", { name: "Metadata home" }),
-    );
-    await userEvent.click(
-      await within(document.body).findByRole("option", { name: /Demo home/ }),
-    );
-    await userEvent.click(
-      canvas.getByRole("button", { name: "Add source repository" }),
-    );
-    await userEvent.click(
-      canvas.getByRole("combobox", { name: "Source 1 repository" }),
-    );
-    await userEvent.click(
-      await within(document.body).findByRole("option", { name: /Demo source/ }),
+      await canvas.findByRole("button", { name: "Add local host" }),
     );
     await expect(
-      canvas.getByRole("textbox", { name: "Source 1 native attachment path" }),
-    ).toHaveValue("/private/code");
-    await userEvent.click(
-      canvas.getByRole("combobox", { name: "Source 1 agent target" }),
-    );
-    await userEvent.click(
-      await within(document.body).findByRole("option", {
-        name: /Demo attachment/,
+      canvas.getByRole("textbox", { name: "Host name" }),
+    ).toHaveValue("local");
+    for (const name of [
+      "Metadata home",
+      "Execution principal",
+      "Source 1 repository",
+    ])
+      await expect(canvas.queryByRole("combobox", { name })).toBeNull();
+    await expect(
+      canvas.queryByRole("textbox", { name: "Recovery state directory" }),
+    ).toBeNull();
+    await expect(
+      canvas.getByRole("button", {
+        name: "Advanced runner settings",
       }),
-    );
+    ).toHaveAttribute("aria-expanded", "false");
     await userEvent.click(
       canvas.getByRole("combobox", { name: "Allowed agents" }),
     );
+    const agent = await within(document.body).findByRole("option", {
+      name: /Demo agent/,
+    });
+    await expect(agent).toBeVisible();
     await expect(
-      await within(document.body).findByRole("option", { name: /Demo agent/ }),
+      within(agent).getByRole("img", { name: /Demo agent/ }),
+    ).toHaveTextContent("🤖");
+    await userEvent.click(agent);
+    await expect(
+      within(agent).getByRole("img", { name: /Demo agent/ }),
     ).toBeVisible();
     await userEvent.keyboard("{Escape}");
+    await userEvent.click(
+      canvas.getByRole("button", {
+        name: "Advanced runner settings",
+      }),
+    );
+    await expect(
+      canvas.getByRole("textbox", { name: "Recovery state directory" }),
+    ).toHaveValue("");
+    await expect(
+      canvas.getByRole("spinbutton", { name: "Polling interval" }),
+    ).toHaveValue(1000);
+    const gauge = canvas.getByRole("slider", {
+      name: "Polling interval slider",
+    });
+    gauge.focus();
+    await userEvent.keyboard("{ArrowRight}");
+    await expect(
+      canvas.getByRole("spinbutton", { name: "Polling interval" }),
+    ).toHaveValue(1100);
+    const status = canvas
+      .getByRole("region", { name: "Workflow hosts" })
+      .getBoundingClientRect();
+    const environment = canvas
+      .getByRole("region", { name: "Local execution host" })
+      .getBoundingClientRect();
+    await expect(environment.top - status.bottom).toBeGreaterThanOrEqual(16);
+    await userEvent.click(canvas.getByRole("tab", { name: "JSON" }));
+    const json = canvas.getByRole("textbox", {
+      name: "Host configuration JSON",
+    });
+    await expect(json).toHaveTextContent('"version": 2');
+    await expect(json).toHaveTextContent('"poll_millis": 1100');
+    await expect(json).not.toHaveTextContent('"sources"');
+    await expect(json).not.toHaveTextContent('"principal"');
+    await expect(json).not.toHaveTextContent('"home"');
   }}
 />
 <Story
@@ -303,23 +334,6 @@
   }}
 />
 
-<Story
-  name="Attachment discovery failure uses a toast"
-  args={{ lookupFailure: "repositories" }}
-  play={async ({ canvasElement }) => {
-    const { canvas } = await admission(canvasElement);
-    const message = await within(document.body).findByText(
-      "Repository attachments could not be loaded. Your host configuration is retained.",
-    );
-    await expect(message.closest("[data-notification-id]")).not.toBeNull();
-    await expect(canvasElement.querySelector("form")).not.toContainElement(
-      message,
-    );
-    await expect(
-      canvas.getByRole("button", { name: "Add local host" }),
-    ).toBeVisible();
-  }}
-/>
 <Story
   name="Profile lookup failure uses a toast and retains choices"
   args={{ lookupFailure: "profiles" }}
