@@ -19,6 +19,7 @@ export function workflowFixture(
   repository = home,
   pendingRun = false,
   multiStep = false,
+  historyExamples = false,
 ): WorkflowTransport {
   let position = 1;
   let versions: WorkflowVersion[] = [
@@ -33,6 +34,7 @@ export function workflowFixture(
     definition: {
       ...initialDefinition(code),
       name,
+      repository: historyExamples && index === 2 ? home : code,
       enabled: index !== 1,
       description: index === 0 ? "Build and test the recorded revision." : "",
       trigger: { on: "bookmark_changed", bookmark: "main" },
@@ -127,6 +129,25 @@ export function workflowFixture(
         ],
       }
     : null;
+  const previewRun: WorkflowRun | null =
+    historyExamples && run && versions[2]
+      ? {
+          ...run,
+          id: "55".repeat(16),
+          workflow: versions[2].id,
+          version: versions[2].version,
+          event: "07".repeat(16),
+          created_at: Number(run.created_at) + 1000,
+          source: { ...run.source, repository: home, bookmark: "release" },
+          attempts: [
+            {
+              ...run.attempts[0]!,
+              id: "56".repeat(16),
+              completed_at: Number(run.created_at) + 90000,
+            },
+          ],
+        }
+      : null;
   const page = (): WorkflowPage => ({
     version: 1,
     repository,
@@ -161,9 +182,18 @@ export function workflowFixture(
       const value = page();
       if (query.workflow)
         value.workflows = versions.filter((v) => v.id === query.workflow);
-      if (run && query.workflow === run.workflow) value.runs = [run, otherRun!];
+      if (run && query.workflow === run.workflow) {
+        value.runs = historyExamples
+          ? query.after
+            ? [otherRun!]
+            : [run]
+          : [run, otherRun!];
+        if (historyExamples && !query.after) value.next = "more-runs";
+      }
+      if (previewRun && query.workflow === previewRun.workflow)
+        value.runs = [previewRun];
       if (query.run)
-        value.runs = [run, otherRun].filter(
+        value.runs = [run, otherRun, previewRun].filter(
           (row) => row?.id === query.run,
         ) as WorkflowRun[];
       if (query.run === run?.id) {

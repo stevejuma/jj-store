@@ -1,8 +1,8 @@
 # M28 lightweight workflows
 
-| Task | Status      | Depends     | Requirements                                                                                                               | Acceptance gate                                                                  | Next action                                                    | Evidence                                                                                                                                                                                                                                                                                   |
-| ---- | ----------- | ----------- | -------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| M28  | In progress | M11,M23,M27 | JST-WF-001,JST-WF-002,JST-WF-003,JST-WF-004,JST-WF-005,JST-WF-006,JST-WF-007,JST-WF-008,JST-UI-019,JST-DOC-001,JST-DOC-002 | Durable two-host execution, exact recovery, real storage and cold Buzz-parity UI | Qualify live agents, remote Forgejo protocol and visual parity | E-WORKFLOW-001,E-WORKFLOW-CHOICES-001,E-WORKFLOW-RUN-001,E-WORKFLOW-HISTORY-001,E-WORKFLOW-YAML-001,E-WORKFLOW-MULTISTEP-001,E-WORKFLOW-LIVE-001,E-WORKFLOW-CONSOLE-001,E-WORKFLOW-SETTINGS-001,E-RUNNER-ENVIRONMENT-001,E-WORKFLOW-CARDS-001,E-APPLICATION-MENU-001,E-WORKFLOW-GITHUB-001 |
+| Task | Status      | Depends     | Requirements                                                                                                               | Acceptance gate                                                                  | Next action                                                    | Evidence                                                                                                                                                                                                                                                                                                                 |
+| ---- | ----------- | ----------- | -------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| M28  | In progress | M11,M23,M27 | JST-WF-001,JST-WF-002,JST-WF-003,JST-WF-004,JST-WF-005,JST-WF-006,JST-WF-007,JST-WF-008,JST-UI-019,JST-DOC-001,JST-DOC-002 | Durable two-host execution, exact recovery, real storage and cold Buzz-parity UI | Qualify live agents, remote Forgejo protocol and visual parity | E-WORKFLOW-001,E-WORKFLOW-CHOICES-001,E-WORKFLOW-RUN-001,E-WORKFLOW-HISTORY-001,E-WORKFLOW-YAML-001,E-WORKFLOW-MULTISTEP-001,E-WORKFLOW-LIVE-001,E-WORKFLOW-CONSOLE-001,E-WORKFLOW-SETTINGS-001,E-RUNNER-ENVIRONMENT-001,E-WORKFLOW-CARDS-001,E-APPLICATION-MENU-001,E-WORKFLOW-GITHUB-001,E-WORKFLOW-HISTORY-LAYOUT-001 |
 
 Source foundations, executor integration, real storage, cold browser and visual
 parity are distinct gates. No gate is promoted by compilation alone.
@@ -83,6 +83,14 @@ cold real-storage history. Settings save/reload and the preserved live browser
 demo qualify local wrapper integration. Remote registration/polling/ConnectRPC,
 GitHub APIs/tokens, artifact/cache services, additional platforms, live agents
 and approved visual baselines remain separate gates.
+E-WORKFLOW-HISTORY-LAYOUT-001 reviews M28 with status unchanged. History now
+uses a white, resizable repository/workflow body panel with All workflows, a
+flat filtered list and aligned status/avatar rows. Full-width details retain
+publication/attempt pins and return filters. Focused unit, workflow interaction/
+Axe and preserved live-server inspection qualify presentation and continuation
+retention; native execution, provider, remote Forgejo protocol, additional
+platform and approved visual gates remain unchanged.
+
 <!-- generated-navigation -->
 
 ## Pages

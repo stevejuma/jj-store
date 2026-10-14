@@ -7,12 +7,16 @@ export const workflowStates = [
   "completed",
   "failed",
   "cancelled",
+  "skipped",
   "unknown",
 ] as const;
 export type WorkflowSelection = {
   tab?: "workflows" | "history";
   q?: string;
   state?: (typeof workflowStates)[number];
+  trigger?: "manual" | "event";
+  author?: string;
+  bookmark?: string;
   scope?: string;
   source?: string;
   workflow?: string;
@@ -21,8 +25,8 @@ export type WorkflowSelection = {
   at?: string;
   attempt?: string;
 };
-const ids = ["scope", "source", "workflow", "home", "run", "attempt"];
-const fields = ["tab", "q", "state", ...ids, "at"];
+const ids = ["scope", "source", "workflow", "home", "run", "attempt", "author"];
+const fields = ["tab", "q", "state", "trigger", "bookmark", ...ids, "at"];
 const id = /^[0-9a-f]{32}$/;
 export function workflowsRoute(selection: WorkflowSelection = {}): StoreRoute {
   return {
@@ -67,15 +71,36 @@ export function readWorkflowsHash(hash: string) {
     return invalid();
   if (query.has("workflow") && !query.has("scope")) return invalid();
   if (
+    query.has("trigger") &&
+    !["manual", "event"].includes(query.get("trigger")!)
+  )
+    return invalid();
+  const bookmark = query.get("bookmark");
+  if (
+    bookmark !== null &&
+    (!bookmark ||
+      new TextEncoder().encode(bookmark).length > 512 ||
+      /[\u0000-\u001f]/.test(bookmark))
+  )
+    return invalid();
+  if (
     query.has("run") !== query.has("home") ||
     ((at !== null || query.has("attempt")) && !query.has("run"))
   )
     return invalid();
   if (
     tab !== "history" &&
-    ["state", "workflow", "home", "run", "at", "attempt"].some((key) =>
-      query.has(key),
-    )
+    [
+      "state",
+      "workflow",
+      "home",
+      "run",
+      "at",
+      "attempt",
+      "trigger",
+      "author",
+      "bookmark",
+    ].some((key) => query.has(key))
   )
     return invalid();
   if (

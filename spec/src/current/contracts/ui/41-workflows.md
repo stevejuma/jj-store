@@ -132,27 +132,50 @@ Paged choices retain their query/operation and ignore stale replies. Read
 failures use retryable toasts. Pending run requests retain their original bytes
 and source selection; disabled controls cannot alter them.
 
-Workflow navigation uses the same owned pill tabs, toolbar search and filter
-popover as Projects, with Workflows and History destinations. The edit dialog
-has no History button. History combines bounded per-workflow pages from the
-loaded native catalogs; catalog and run continuations stay pinned and retain
-loaded windows after refresh. Filters cover metadata home, workflow, source
-repository and run status; search filters loaded rows. Run rows follow task-list
-presentation with status, source and time. Empty/loading states match that view.
-The Workflows tab omits a redundant banner beneath navigation. History reuses
-task ownership groups: Mine matches the requester's authenticated principal in
-each metadata home, and other requests appear under Other runs. Requester
-avatars in rows and Author in details use the maintained profile hover card and
-server profile hydration, with an identity fallback when no profile is saved.
+Workflow navigation uses the same owned pill tabs and toolbar search as
+Projects, with Workflows and History destinations. The edit dialog has no
+History button. History uses the agent-session body layout: a collapsible left
+workflow panel, grouped by source repository, with All workflows above the
+groups. Repository names scope runs to the recorded source repository; separate
+chevrons expand/collapse their workflows. The desktop divider supports bounded
+pointer and keyboard resizing and double-click reset, reusing agent-session
+resizing without changing its saved width. Selecting a workflow scopes runs by
+its metadata home and full workflow ID. The white body panel and right header
+span the whole body height. History tabs live inside the left panel. The right
+header uses the shared agent-session sidebar toggle and shows All workflows or
+the selected workflow name. Small screens use shell mobile navigation. The
+Workflows tab omits a redundant banner beneath navigation.
 
-Opening a run replaces the list with task-style page details and a Back control.
-Hash routes retain tab, search, filters, metadata home, full run ID, optional
-publication pin and attempt. Back, Forward and reload restore these selections;
-Back to history preserves list filters. Terminal rows open pinned history, while
-active runs follow current evidence until explicitly pinned. Historical attempt
-selection pins its publication; evidence continuations share that pin. Details
-use the exact recorded definition, source, steps, logs and artifacts. Cancel and
-retry retain existing authority, status guards and original request recovery.
+History combines bounded per-workflow pages from loaded native catalogs;
+catalog/run continuations remain pinned and loaded windows survive refresh and
+workflow selection. Runs form one newest-first list without Mine/Other grouping.
+A bordered list has a tinted count/filter header. Rows show status, workflow
+name, short native run ID, recorded manual/event origin, optional bookmark,
+relative date, latest attempt duration and an icon-bearing action menu. The
+status icon precedes the requester avatar, both centered beside the two-line
+summary. Avatars occupy their own column without adjacent author text. Header
+filters have a contrasting hover/focus surface. Missing start/end timestamps
+display an unknown duration; elapsed time advances only for
+running/cancel-requested attempts. Menu actions open the run or its currently
+available matching definition; no unsupported run deletion is offered.
+
+Search and URL-backed filters apply to loaded rows. Filters cover status,
+recorded manual/event origin, exact bookmark and requester principal. Event kind
+is not inferred from a subsequently edited definition. Author choices/avatars
+use server profile hydration with an identity fallback. Existing metadata-home
+and source URL scopes remain supported. Automatic committed events, reconnect
+and bounded fallback refresh remain; no refresh toggle is added. Discovery and
+list skeletons match repository groups, filter header and two-line run rows.
+
+Opening a run replaces the complete split body, including its sidebar, with
+full-width task-style details and a Back control. Hash routes retain tab,
+search, filters, metadata home, full run ID, optional publication pin and
+attempt. Back, Forward and reload restore these selections; Back to history
+preserves list filters. Terminal rows open pinned history, while active runs
+follow current evidence until explicitly pinned. Historical attempt selection
+pins its publication; evidence continuations share that pin. Details use the
+exact recorded definition, source, steps, logs and artifacts. Cancel and retry
+retain existing authority, status guards and original request recovery.
 Unavailable saved runs/attempts are never replaced with another selection. Run
 links can inspect retained removed workflows by exact home/run identity;
 catalog-based discovery lists currently registered workflows. Read failures use

@@ -137,8 +137,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed owned YAML path/Browse control and pinned file discovery with stale-source invalidation, wider executor settings, scoped actual-step console, Refresh spinners and expandable raw/normalized log groups. Feedback remains toast-based.",
-      "fingerprint": "61141af07b03ebfe9a628fdd6ebf6ea89c641200a06e1dbfa0a082f83dd74eb3"
+      "reason": "Reviewed repository-scoped workflow History navigation, flat author/bookmark/status/trigger filters, aligned avatars, full-width pinned details and continuation retention; updated the browsing guide.",
+      "fingerprint": "7511222502411a63626637db3d14b22c4faee4e74e47aa7abe811fe2fd205f64"
     }
   },
   {

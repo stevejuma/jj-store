@@ -13,6 +13,7 @@ export type WorkflowHistoryEntry = {
 };
 type Group = WorkflowHistoryEntry & {
   rows: WorkflowRun[];
+  window?: number;
   page: WorkflowPage | null;
   loading: boolean;
   error: string;
@@ -29,6 +30,7 @@ export function createWorkflowHistory(
   owners: () => readonly (readonly [string, WorkflowController])[],
   selection: () => WorkflowSelection,
 ) {
+  const cached = new Map<string, Group>();
   let groups = $state<Group[]>([]),
     generation = 0,
     abort = new AbortController();
@@ -40,9 +42,10 @@ export function createWorkflowHistory(
   async function read(group: Group, more = false) {
     const ticket = generation;
     if (group.loading || (more && !group.page?.next)) return;
+    if (more) group.window = group.rows.length + 50;
     group.loading = true;
     try {
-      const target = more ? 0 : group.rows.length;
+      const target = more ? 0 : Math.max(group.rows.length, group.window ?? 0);
       let page = await group.work.transport.page(
         {
           workflow: group.workflow.id,
@@ -82,6 +85,7 @@ export function createWorkflowHistory(
       }
       group.rows = [...new Map(rows.map((run) => [run.id, run])).values()];
       group.page = page;
+      group.window = group.rows.length;
       group.error = "";
     } catch (cause) {
       if (ticket === generation) group.error = message(cause);
@@ -179,15 +183,16 @@ export function createWorkflowHistory(
       abort.abort();
       abort = new AbortController();
       const ticket = ++generation;
+      for (const group of groups)
+        cached.set(`${group.home}:${group.workflow.id}`, group);
       groups = next.map((entry) => {
-        const previous = groups.find(
-          (group) =>
-            group.home === entry.home &&
-            group.workflow.id === entry.workflow.id,
-        );
+        const saved = cached.get(`${entry.home}:${entry.workflow.id}`);
+        const previous =
+          saved?.work.submit === entry.work.submit ? saved : undefined;
         return {
           ...entry,
           rows: previous?.rows ?? [],
+          window: previous?.window,
           page: previous?.page ?? null,
           loading: false,
           error: previous?.error ?? "",

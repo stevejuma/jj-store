@@ -1,21 +1,12 @@
 <script lang="ts">
   import StoreViewTabs from "../store-application/StoreViewTabs.svelte";
   import StoreToolbarSearch from "../StoreToolbarSearch.svelte";
-  import WorkflowFilters from "./WorkflowFilters.svelte";
-  import type { StoreRepositorySummary } from "../../controller/contracts.js";
   import type { WorkflowSelection } from "../../controller/workflows-route-codec.js";
-  import type { WorkflowHistoryEntry } from "./workflow-history.svelte.js";
   let {
     selection,
-    homes,
-    repositories,
-    entries,
     onChange,
   }: {
     selection: WorkflowSelection;
-    homes: readonly StoreRepositorySummary[];
-    repositories: readonly StoreRepositorySummary[];
-    entries: WorkflowHistoryEntry[];
     onChange(fields: WorkflowSelection): void;
   } = $props();
   let open = $state(false);
@@ -35,6 +26,9 @@
       onChange({
         tab: tab as WorkflowSelection["tab"],
         state: undefined,
+        trigger: undefined,
+        author: undefined,
+        bookmark: undefined,
         workflow: undefined,
         home: undefined,
         run: undefined,
@@ -49,12 +43,5 @@
         bind:open
         onQuery={(q) => onChange({ q: q || undefined })}
       />{/snippet}
-    {#snippet trailing()}{#if tab === "history"}<WorkflowFilters
-          {selection}
-          {homes}
-          {repositories}
-          {entries}
-          {onChange}
-        />{/if}{/snippet}
   </StoreViewTabs>
 </div>

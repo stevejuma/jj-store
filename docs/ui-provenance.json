@@ -3881,5 +3881,35 @@
       "web/src/lib/controller/workflow-forgejo-configuration.ts"
     ],
     "usage": "Owned Svelte path/Browse control reuses the existing Settings file input, with a pinned YAML Command chooser and native reporting projection. No Forgejo source is copied or vendored into production."
+  },
+  "workflowHistory": {
+    "reference": "Maintained agent-session body layout and user-provided Forgejo Actions run-list screenshots",
+    "usage": "Owned Svelte implementation; reuses local Community-derived header, avatar, relative-time and resize components plus released Design Core primitives. Forgejo reference is visual inspection only; no copied or vendored Forgejo source.",
+    "communityReference": {
+      "revision": "741b8285e2081f1c9af58afe5a9b72f538fad781",
+      "license": "Apache-2.0",
+      "sources": [
+        "src/components/community-inbox/CommunityInbox.svelte",
+        "src/components/community-inbox/CommunityInbox.css"
+      ],
+      "owned": [
+        "web/src/lib/ui/community-inbox/CommunityInboxThreadHeader.svelte",
+        "web/src/lib/ui/community-inbox/inbox-resize.svelte.ts",
+        "web/src/lib/ui/community-inbox/CommunityInboxSessions.svelte"
+      ]
+    },
+    "forgejoReference": {
+      "revision": "v15.0.7",
+      "sourceLicense": "GPL-3.0-or-later",
+      "usage": "User-provided run-list/menu screenshots; independent presentation adapted to native run identities and recorded source context."
+    },
+    "local": [
+      "web/src/lib/ui/store-workflows/WorkflowHistory.svelte",
+      "web/src/lib/ui/store-workflows/WorkflowHistorySidebar.svelte",
+      "web/src/lib/ui/store-workflows/WorkflowHistoryRows.svelte",
+      "web/src/lib/ui/store-workflows/WorkflowFilters.svelte",
+      "web/src/lib/ui/store-workflows/workflow-history-list.css"
+    ],
+    "adaptations": "Selectable source repositories and workflows, All workflows, flat runs, avatar-backed author filters, bookmark/status/manual-event filters, bounded paging, full-width pinned details and accessible mobile/resize controls."
   }
 }

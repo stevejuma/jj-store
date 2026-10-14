@@ -1,147 +1,173 @@
 <script lang="ts">
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import * as Popover from "@lapismd/design-core/shadcn/popover";
   import ListFilter from "@lucide/svelte/icons/list-filter";
+  import User from "@lucide/svelte/icons/user";
+  import Zap from "@lucide/svelte/icons/zap";
+  import GitBranch from "@lucide/svelte/icons/git-branch";
   import X from "@lucide/svelte/icons/x";
   import StoreRepositoryPicker from "../store-application/StoreRepositoryPicker.svelte";
-  import StoreWorkField from "../store-work/StoreWorkField.svelte";
+  import CommunityMemberAvatar from "../community-member-avatar/CommunityMemberAvatar.svelte";
+  import { useProfileMembers } from "../../profiles/context.svelte.js";
+  import { workMember } from "../store-work/work-presentation.js";
+  import WorkflowRunStatus from "./WorkflowRunStatus.svelte";
   import {
     workflowStates,
     type WorkflowSelection,
   } from "../../controller/workflows-route-codec.js";
-  import type { StoreRepositorySummary } from "../../controller/contracts.js";
-  import type { WorkflowHistoryEntry } from "./workflow-history.svelte.js";
+  import type { WorkflowHistoryRow } from "./workflow-history-presentation.js";
   let {
     selection,
-    homes,
-    repositories,
-    entries,
+    rows,
     onChange,
   }: {
     selection: WorkflowSelection;
-    homes: readonly StoreRepositorySummary[];
-    repositories: readonly StoreRepositorySummary[];
-    entries: WorkflowHistoryEntry[];
+    rows: readonly WorkflowHistoryRow[];
     onChange(fields: WorkflowSelection): void;
   } = $props();
-  let open = $state(false);
+  const profiles = useProfileMembers(() =>
+    [
+      ...new Set([
+        ...rows.map((row) => row.run.requester),
+        ...(selection.author ? [selection.author] : []),
+      ]),
+    ].map(workMember),
+  );
+  const bookmarks = $derived(
+    [
+      ...new Set([
+        ...rows.flatMap((row) =>
+          row.run.source.bookmark ? [row.run.source.bookmark] : [],
+        ),
+        ...(selection.bookmark ? [selection.bookmark] : []),
+      ]),
+    ].sort(),
+  );
   const filtered = $derived(
     !!(
-      selection.scope ||
-      selection.source ||
-      selection.workflow ||
-      selection.state
+      selection.trigger ||
+      selection.state ||
+      selection.bookmark ||
+      selection.author
     ),
   );
 </script>
 
-<Popover.Root bind:open>
-  <Popover.Trigger
-    >{#snippet child({ props })}<Button
-        {...props}
-        type="button"
-        variant={filtered ? "default" : "ghost"}
-        size="icon-sm"
-        aria-label="Filters for history"
-        aria-pressed={filtered}><ListFilter aria-hidden="true" /></Button
-      >{/snippet}</Popover.Trigger
+<div class="workflow-history-filters" aria-label="History filters">
+  <StoreRepositoryPicker
+    label="Run trigger filter"
+    repositories={[
+      { id: "manual", name: "Manual", description: "Manually requested runs" },
+      {
+        id: "event",
+        name: "Repository event",
+        description: "Runs requested by recorded events",
+      },
+    ]}
+    value={selection.trigger ?? ""}
+    controlled
+    allowEmpty
+    variant="ghost"
+    emptyLabel="Trigger"
+    searchLabel="Find a trigger"
+    groupLabel="Triggers"
+    unavailableLabel="Selected trigger"
+    onChange={(trigger) =>
+      onChange({
+        trigger: (trigger as WorkflowSelection["trigger"]) || undefined,
+      })}
   >
-  <Popover.Content
-    align="end"
-    role="dialog"
-    aria-label="History filters"
-    style="--ui-popover-width: min(24rem, calc(100vw - 2rem)); max-height: min(80vh, 40rem); overflow-y: auto;"
+    {#snippet triggerIcon()}<Zap aria-hidden="true" />{/snippet}
+    {#snippet itemIcon()}<Zap aria-hidden="true" />{/snippet}
+  </StoreRepositoryPicker>
+  <StoreRepositoryPicker
+    label="Run status filter"
+    repositories={workflowStates.map((id) => ({
+      id,
+      name: id.replaceAll("_", " "),
+      description: "Run status",
+    }))}
+    value={selection.state ?? ""}
+    controlled
+    allowEmpty
+    variant="ghost"
+    emptyLabel="Status"
+    searchLabel="Find a status"
+    groupLabel="Statuses"
+    unavailableLabel="Selected status"
+    keepItemIcon
+    onChange={(state) =>
+      onChange({ state: (state as WorkflowSelection["state"]) || undefined })}
   >
-    <Popover.Header
-      style="flex-direction: row; align-items: center; justify-content: space-between;"
-      ><Popover.Title>History filters</Popover.Title><Popover.Close
-        >{#snippet child({ props })}<Button
-            {...props}
-            variant="ghost"
-            size="icon-sm"
-            aria-label="Close filters"><X aria-hidden="true" /></Button
-          >{/snippet}</Popover.Close
-      ></Popover.Header
-    >
-    <div class="store-work__picker">
-      <StoreWorkField label="Metadata home" compact
-        ><StoreRepositoryPicker
-          label="Metadata home filter"
-          repositories={homes}
-          value={selection.scope ?? ""}
-          controlled
-          allowEmpty
-          emptyLabel="All accessible homes"
-          onChange={(scope) =>
-            onChange({ scope: scope || undefined, workflow: undefined })}
-        /></StoreWorkField
-      >
-      <StoreWorkField label="Workflow" compact
-        ><StoreRepositoryPicker
-          label="Workflow filter"
-          repositories={entries.map((entry) => ({
-            id: `${entry.home}:${entry.workflow.id}`,
-            name: entry.workflow.definition.name,
-            description: homes.find((home) => home.id === entry.home)?.name,
-          }))}
-          value={selection.workflow
-            ? `${selection.scope}:${selection.workflow}`
-            : ""}
-          controlled
-          allowEmpty
-          emptyLabel="All workflows"
-          searchLabel="Find a workflow"
-          groupLabel="Workflows"
-          emptyResult="No matching loaded workflows."
-          unavailableLabel="Selected workflow"
-          onChange={(value) => {
-            const [scope, workflow] = value.split(":");
-            onChange({ workflow, scope: value ? scope : selection.scope });
-          }}
-        /></StoreWorkField
-      >
-      <StoreWorkField label="Repository" compact
-        ><StoreRepositoryPicker
-          label="Source repository filter"
-          {repositories}
-          value={selection.source ?? ""}
-          controlled
-          allowEmpty
-          emptyLabel="All repositories"
-          onChange={(source) => onChange({ source: source || undefined })}
-        /></StoreWorkField
-      >
-      <StoreWorkField label="Status" compact
-        ><StoreRepositoryPicker
-          label="Run status filter"
-          repositories={workflowStates.map((id) => ({
-            id,
-            name: id.replaceAll("_", " "),
-          }))}
-          value={selection.state ?? ""}
-          controlled
-          allowEmpty
-          emptyLabel="All statuses"
-          searchLabel="Find a status"
-          groupLabel="Statuses"
-          emptyResult="No matching statuses."
-          unavailableLabel="Selected status"
-          onChange={(state) =>
-            onChange({
-              state: (state as WorkflowSelection["state"]) || undefined,
-            })}
-        /></StoreWorkField
-      >
-      {#if filtered}<Button
-          variant="ghost"
-          onclick={() =>
-            onChange({
-              scope: undefined,
-              source: undefined,
-              workflow: undefined,
-              state: undefined,
-            })}>Clear filters</Button
-        >{/if}
-    </div>
-  </Popover.Content>
-</Popover.Root>
+    {#snippet triggerIcon()}{#if selection.state}<WorkflowRunStatus
+          status={selection.state}
+        />{:else}<ListFilter aria-hidden="true" />{/if}{/snippet}
+    {#snippet itemIcon(id)}<WorkflowRunStatus status={id} />{/snippet}
+  </StoreRepositoryPicker>
+  <StoreRepositoryPicker
+    label="Run bookmark filter"
+    repositories={bookmarks.map((id) => ({
+      id,
+      name: id,
+      description: "Recorded source bookmark",
+    }))}
+    value={selection.bookmark ?? ""}
+    controlled
+    allowEmpty
+    variant="ghost"
+    emptyLabel="Bookmark"
+    searchLabel="Find a bookmark"
+    groupLabel="Bookmarks"
+    emptyResult="No bookmarks in the loaded runs."
+    unavailableLabel="Selected bookmark"
+    onChange={(bookmark) => onChange({ bookmark: bookmark || undefined })}
+  >
+    {#snippet triggerIcon()}<GitBranch aria-hidden="true" />{/snippet}
+    {#snippet itemIcon()}<GitBranch aria-hidden="true" />{/snippet}
+  </StoreRepositoryPicker>
+  <StoreRepositoryPicker
+    label="Run author filter"
+    repositories={profiles.values.map((member) => ({
+      id: member.id,
+      name: member.name,
+      description: member.id,
+    }))}
+    value={selection.author ?? ""}
+    controlled
+    allowEmpty
+    variant="ghost"
+    emptyLabel="Author"
+    searchLabel="Find an author"
+    groupLabel="Authors"
+    emptyResult="No authors in the loaded runs."
+    unavailableLabel="Selected author"
+    keepItemIcon
+    onChange={(author) => onChange({ author: author || undefined })}
+  >
+    {#snippet triggerIcon()}{#if selection.author}<CommunityMemberAvatar
+          member={profiles.values.find(
+            (member) => member.id === selection.author,
+          ) ?? workMember(selection.author)}
+          size="xsmall"
+          decorative
+        />{:else}<User aria-hidden="true" />{/if}{/snippet}
+    {#snippet itemIcon(id)}<CommunityMemberAvatar
+        member={profiles.values.find((member) => member.id === id) ??
+          workMember(id)}
+        size="xsmall"
+        decorative
+      />{/snippet}
+  </StoreRepositoryPicker>
+  {#if filtered}<Button
+      variant="ghost"
+      size="icon-sm"
+      aria-label="Clear history filters"
+      title="Clear history filters"
+      onclick={() =>
+        onChange({
+          trigger: undefined,
+          state: undefined,
+          bookmark: undefined,
+          author: undefined,
+        })}><X aria-hidden="true" /></Button
+    >{/if}
+</div>

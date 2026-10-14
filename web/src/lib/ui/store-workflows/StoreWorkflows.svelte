@@ -209,15 +209,14 @@
   data-run-detail={selection.run ? "" : undefined}
 >
   <WorkflowFeedback owners={[...controllers.entries()]} />
-  {#if !selection.run}<WorkflowNavigation
+  {#if !selection.run && selection.tab !== "history"}<WorkflowNavigation
       {selection}
-      {homes}
-      repositories={sources}
-      entries={rows}
       onChange={navigate}
     />{/if}
   {#if discovering}<WorkflowPageSkeleton
       view={selection.run ? "detail" : (selection.tab ?? "workflows")}
+      {selection}
+      onChange={navigate}
     />
   {:else if !homes.length}<StoreWorkEmpty
       kind="repositories"
@@ -232,7 +231,7 @@
         {catalogLoading}
         repositoryName={sourceName}
         {canWrite}
-        principal={(id) => homes.find((home) => home.id === id)?.principal}
+        onWorkflow={(row) => open(row.workflow, false, row.home)}
         onChange={navigate}
       />
     {:else}<WorkflowOverview
@@ -252,7 +251,7 @@
           running = entry.workflow;
         }}
       />{/if}
-    {#if !selection.run}{#each [...controllers.entries()].filter(([, owner]) => owner.state.page?.next) as [repository, owner] (repository)}<Button
+    {#if !selection.run && selection.tab !== "history"}{#each [...controllers.entries()].filter(([, owner]) => owner.state.page?.next) as [repository, owner] (repository)}<Button
           variant="outline"
           disabled={owner.state.loading}
           onclick={() => owner.more()}

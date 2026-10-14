@@ -46,24 +46,6 @@
   gap: 0.5rem;
   flex-wrap: wrap;
 }
-.workflow-history-row {
-  border: 0;
-  box-shadow: none;
-  padding-inline: 0.7rem;
-  grid-template-columns:
-    1rem minmax(7rem, 1.5fr) minmax(0, 1fr)
-    2.4rem 8rem 6.5rem;
-}
-.workflow-history-row strong span,
-.workflow-history-state {
-  color: var(--muted-foreground);
-  font-size: var(--community-text-secondary);
-}
-.workflow-history-loading {
-  display: grid;
-  gap: 0.75rem;
-  padding: 1rem 1.5rem;
-}
 .workflow-run-evidence {
   display: grid;
   gap: 0.75rem;
@@ -76,13 +58,6 @@
   flex-wrap: wrap;
 }
 @media (max-width: 48rem) {
-  .workflow-history-row {
-    grid-template-columns: 1rem minmax(0, 1fr) 2rem 7rem;
-  }
-  .workflow-history-row .community-projects__task-repository,
-  .workflow-history-row > time {
-    display: none;
-  }
   .store-workflows .community-projects__surface-header {
     flex-wrap: wrap;
   }

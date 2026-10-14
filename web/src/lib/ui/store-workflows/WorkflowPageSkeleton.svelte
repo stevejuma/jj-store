@@ -1,9 +1,21 @@
 <script lang="ts">
   import { Skeleton } from "@lapismd/design-core/shadcn/skeleton";
   import WorkflowSkeleton from "./WorkflowSkeleton.svelte";
+  import WorkflowNavigation from "./WorkflowNavigation.svelte";
+  import type { WorkflowSelection } from "../../controller/workflows-route-codec.js";
   import "./workflow-console.css";
-  let { view = "workflows" }: { view?: "workflows" | "history" | "detail" } =
-    $props();
+  import "./workflow-history-list.css";
+  let {
+    view = "workflows",
+    listOnly = false,
+    selection,
+    onChange = () => {},
+  }: {
+    view?: "workflows" | "history" | "detail";
+    listOnly?: boolean;
+    selection?: WorkflowSelection;
+    onChange?: (fields: WorkflowSelection) => void;
+  } = $props();
 </script>
 
 <div
@@ -57,20 +69,46 @@
         </div>
       </div>
     </div>
-  {:else}<div class="workflow-history-loading" aria-hidden="true">
-      <Skeleton class="h-6 w-32" /><Skeleton
-        class="h-4 w-16"
-      />{#each [1, 2, 3] as key (key)}<div
-          class="community-projects__task-row workflow-history-row"
-        >
-          <Skeleton class="size-4 rounded-full" /><Skeleton
-            class="h-4 w-3/4"
-          /><Skeleton
-            class="h-3 w-24 community-projects__task-repository"
-          /><Skeleton class="size-6 rounded-full" /><Skeleton
-            class="h-3 w-16"
-          /><Skeleton class="h-3 w-20 workflow-page-skeleton__time" />
-        </div>{/each}
+  {:else}<div
+      class="workflow-history-skeleton"
+      data-list-only={listOnly || undefined}
+    >
+      {#if !listOnly}<div class="workflow-history-skeleton__sidebar">
+          {#if selection}<WorkflowNavigation {selection} {onChange} />{/if}
+          <Skeleton class="h-5 w-24" /><Skeleton class="h-8 w-full" />
+          {#each [1, 2] as group (group)}<Skeleton class="h-8 w-full" />
+            <div class="workflow-history-skeleton__children">
+              {#each [1, 2] as item (item)}<Skeleton
+                  class="h-8 w-full"
+                />{/each}
+            </div>
+          {/each}
+        </div>{/if}
+      <div class="workflow-history-skeleton__list">
+        {#if !listOnly}<div class="workflow-history-heading">
+            <Skeleton class="size-8" /><Skeleton class="h-5 w-36" />
+          </div>
+          <div class="workflow-history-card__header">
+            <Skeleton class="h-5 w-16" /><Skeleton
+              class="h-8 w-80 max-w-full"
+            />
+          </div>{/if}
+        {#each [1, 2, 3] as key (key)}<div class="workflow-history-row">
+            <Skeleton class="size-4 rounded-full" /><Skeleton
+              class="size-7 rounded-full"
+            />
+            <div class="workflow-history-row__summary">
+              <Skeleton class="h-5 w-40 max-w-full" /><Skeleton
+                class="h-4 w-64 max-w-full"
+              />
+            </div>
+            <Skeleton class="h-5 w-16 workflow-history-row__source" />
+            <div class="workflow-history-row__time">
+              <Skeleton class="h-3 w-20" /><Skeleton class="h-3 w-12" />
+            </div>
+            <Skeleton class="size-6 workflow-history-row__menu" />
+          </div>{/each}
+      </div>
     </div>{/if}
 </div>
 
@@ -92,8 +130,37 @@
   .workflow-page-skeleton__step > :global(:last-child) {
     margin-left: auto;
   }
+  .workflow-history-skeleton {
+    display: grid;
+    grid-template-columns: 16rem minmax(0, 1fr);
+  }
+  .workflow-history-skeleton[data-list-only] {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .workflow-history-skeleton__sidebar {
+    display: grid;
+    gap: 0.5rem;
+    padding: 1rem;
+    border-right: 1px solid var(--border);
+    align-content: start;
+  }
+  .workflow-history-skeleton__children {
+    display: grid;
+    gap: 0.25rem;
+    padding-left: 1rem;
+  }
+  .workflow-history-skeleton__list {
+    min-width: 0;
+    padding: 0.5rem 1.25rem;
+  }
+  .workflow-history-skeleton[data-list-only] .workflow-history-skeleton__list {
+    padding: 0;
+  }
   @media (max-width: 48rem) {
-    .workflow-page-skeleton :global(.workflow-page-skeleton__time) {
+    .workflow-history-skeleton {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .workflow-history-skeleton__sidebar {
       display: none;
     }
   }

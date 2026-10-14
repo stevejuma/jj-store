@@ -28,10 +28,10 @@
     const canvas = within(canvasElement),
       body = within(document.body);
     await expect(
-      await canvas.findByRole("button", { name: /^Mine/ }),
+      await canvas.findByRole("button", { name: "All workflows" }),
     ).toBeVisible();
     await expect(
-      canvas.getByRole("button", { name: /^Other runs/ }),
+      canvas.getByRole("navigation", { name: "Workflows by repository" }),
     ).toBeVisible();
     await expect(
       await canvas.findByRole("button", {
@@ -64,18 +64,9 @@
       canvas.getByRole("button", { name: "Back to history" }),
     );
     await userEvent.click(
-      canvas.getByRole("button", { name: "Filters for history" }),
-    );
-    const filters = within(
-      await body.findByRole("dialog", { name: "History filters" }),
-    );
-    await userEvent.click(
-      filters.getByRole("combobox", { name: "Run status filter" }),
+      canvas.getByRole("combobox", { name: "Run status filter" }),
     );
     await userEvent.click(await body.findByRole("option", { name: /^failed/ }));
-    await userEvent.click(
-      filters.getByRole("button", { name: "Close filters" }),
-    );
     await expect(
       await canvas.findByRole("button", {
         name: /Open run Build parser 53535353/,
@@ -105,12 +96,8 @@
       canvas.queryByRole("button", { name: /Open run Build parser 51515151/ }),
     ).toBeNull();
     await userEvent.click(
-      canvas.getByRole("button", { name: "Filters for history" }),
+      canvas.getByRole("button", { name: "Clear history filters" }),
     );
-    await userEvent.click(
-      await body.findByRole("button", { name: "Clear filters" }),
-    );
-    await userEvent.click(body.getByRole("button", { name: "Close filters" }));
     await userEvent.click(
       canvas.getByRole("button", { name: "Search history" }),
     );

@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onDestroy, untrack } from "svelte";
+  import { AppShell, AppShellController } from "@lapismd/design-core/shell";
   import { createStoreRouteHistory } from "../../web/src/lib/controller/store-route-history.svelte.js";
   import { storeRouteToHash } from "../../web/src/lib/controller/store-route-codec.js";
   import StoreWorkflows from "../../web/src/lib/ui/store-workflows/StoreWorkflows.svelte";
@@ -19,12 +20,14 @@
     unknown = false,
     choiceFailures = false,
     shell = false,
+    width,
     noHome = false,
     loading = false,
     initialHash = "#/workflows",
     historyFailure,
     pendingRun = false,
     multiStep = false,
+    historyExamples = false,
     discovering = false,
     consoleMode,
     logReadDelay = 0,
@@ -34,18 +37,21 @@
     unknown?: boolean;
     choiceFailures?: boolean;
     shell?: boolean;
+    width?: number;
     noHome?: boolean;
     loading?: boolean;
     initialHash?: string;
     historyFailure?: "list" | "detail";
     pendingRun?: boolean;
     multiStep?: boolean;
+    historyExamples?: boolean;
     discovering?: boolean;
     consoleMode?: ConsoleExample;
     logReadDelay?: number;
     logReadFailure?: boolean;
     downloadFailure?: boolean;
   } = $props();
+  const fixtureShell = new AppShellController();
   const base = untrack(() => createInMemoryStoreController("workflows"));
   let location = $state(untrack(() => initialHash));
   let locations = untrack(() => [location]),
@@ -81,7 +87,13 @@
   );
   let failed = false;
   const source = untrack(() => {
-    const base = workflowFixture(unknown, home, pendingRun, multiStep);
+    const base = workflowFixture(
+      unknown,
+      home,
+      pendingRun,
+      multiStep,
+      historyExamples,
+    );
     return consoleMode ? consoleExample(base, consoleMode) : base;
   });
   let logReads = $state(0),
@@ -245,10 +257,24 @@
   };
 </script>
 
-{#if shell}<StoreRepositoryApplication
-    {controller}
-    initiallyCollapsed={false}
-  />{:else}<StoreWorkflows {controller} />{/if}
+<div
+  style:width={width ? `${width}px` : "100%"}
+  style:max-width="100%"
+  style:height="100vh"
+  data-testid="workflow-frame"
+>
+  {#if shell}<StoreRepositoryApplication
+      {controller}
+      initiallyCollapsed={false}
+    />{:else}<AppShell.Root
+      controller={fixtureShell}
+      displayMode="desktop"
+      desktopMinMainWidth={0}
+      style="--ui-shell-height: 100vh; --ui-shell-main-block-inset: 0px"
+    >
+      <AppShell.Main><StoreWorkflows {controller} /></AppShell.Main>
+    </AppShell.Root>{/if}
+</div>
 <span class="sr-only" aria-label="Workflow location"
   >{storeRouteToHash(navigation.route)}</span
 >
