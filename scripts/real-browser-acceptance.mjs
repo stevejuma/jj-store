@@ -5,6 +5,41 @@ import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { arch, platform, tmpdir } from "node:os";
 import { join } from "node:path";
 import { resolve } from "node:path";
+import { fileURLToPath } from "node:url";
+
+if (process.env.JJ_STORE_REAL_TEST === "profiles-emoji.spec.ts") {
+  execFileSync(
+    process.execPath,
+    [resolve(import.meta.dirname, "profile-acceptance.mjs")],
+    {
+      env: process.env,
+      stdio: "inherit",
+    },
+  );
+  process.exit(0);
+}
+
+// Profile persistence deliberately stops its server. Give it its own fixture,
+// also when the complete local lane is invoked without a CI shard selection.
+if (!process.env.JJ_STORE_REAL_TEST && !process.env.JJ_STORE_REAL_SHARD) {
+  for (const selection of [
+    { JJ_STORE_REAL_SHARD: "1/1" },
+    { JJ_STORE_REAL_TEST: "profiles-emoji.spec.ts" },
+  ])
+    execFileSync(process.execPath, [fileURLToPath(import.meta.url)], {
+      env: { ...process.env, ...selection },
+      stdio: "inherit",
+    });
+  process.exit(0);
+}
+
+if (
+  process.env.JJ_STORE_REAL_SHARD &&
+  (!/^[1-4]\/[1-4]$/.test(process.env.JJ_STORE_REAL_SHARD) ||
+    Number(process.env.JJ_STORE_REAL_SHARD.split("/")[0]) >
+      Number(process.env.JJ_STORE_REAL_SHARD.split("/")[1]))
+)
+  throw new Error("invalid cold browser shard");
 
 const repositoryRoot = resolve(import.meta.dirname, "..");
 const keep = process.env.JJ_STORE_REAL_KEEP === "1";
@@ -87,6 +122,9 @@ try {
       ...(process.env.JJ_STORE_REAL_TEST
         ? [process.env.JJ_STORE_REAL_TEST]
         : []),
+      ...(process.env.JJ_STORE_REAL_SHARD
+        ? [`--shard=${process.env.JJ_STORE_REAL_SHARD}`]
+        : []),
     ],
     {
       env: {
@@ -96,6 +134,10 @@ try {
         JJ_STORE_REAL_REPOSITORY: repository,
         JJ_STORE_REAL_RUNTIME: runtime,
         JJ_STORE_REAL_ROOT: repositoryRoot,
+        JJ_STORE_REAL_SKIP_PROFILE:
+          process.env.JJ_STORE_REAL_TEST === "profiles-emoji.spec.ts"
+            ? "0"
+            : "1",
       },
       stdio: "inherit",
     },

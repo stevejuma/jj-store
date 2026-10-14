@@ -175,10 +175,13 @@ export async function restoreProductionStoreRoute(
   }
   if (desired.page === "agents") {
     await Promise.all([reads.loadAgents(), reads.loadReviews()]);
+    if (history.route !== desired) return;
     if (desired.agentSessionId) await reads.loadAgent(desired.agentSessionId);
+    if (history.route !== desired) return;
     if (desired.reviewThreadId) await reads.loadReview(desired.reviewThreadId);
   } else if (desired.page === "reviews") {
     await reads.loadReviews();
+    if (history.route !== desired) return;
     if (desired.reviewThreadId) await reads.loadReview(desired.reviewThreadId);
   } else if (desired.page === "files")
     await restoreFiles(desired, data, history, reads);
@@ -200,7 +203,9 @@ export async function restoreProductionStoreRoute(
       if (workingCopy) data.targets = [workingCopy.commitId];
     }
     await reads.loadGraph();
+    if (history.route !== desired) return;
     if (desired.evolutionCommitId) await reads.loadEvolution();
+    if (history.route !== desired) return;
     const selected =
       desired.page === "oplog"
         ? desired.inspectedOperationId
@@ -211,10 +216,15 @@ export async function restoreProductionStoreRoute(
         desired.comparisonParentId ?? undefined,
       );
     else if (selected) await reads.loadCommit(selected);
+    if (history.route !== desired) return;
     if (desired.path && selected) await reads.loadPatch(desired.path);
+    if (history.route !== desired) return;
     if (desired.agentSessionId) await reads.loadAgent(desired.agentSessionId);
+    if (history.route !== desired) return;
     if (desired.reviewThreadId) await reads.loadReview(desired.reviewThreadId);
+    if (history.route !== desired) return;
   }
+  if (desired.page !== "files" && history.route !== desired) return;
   data.status.navigation = data.status.error ? "failed" : "ready";
   void reads.loadReferencePickers?.();
 }

@@ -1,5 +1,17 @@
 # Verification scope
 
+E-CI-BROWSER-001 runs the complete affected UI unit and cold-browser surfaces
+because fixture selection/sharding and shared freshness owners affect
+independent consumers. Every cold shard owns fresh storage/server state; profile
+restart acceptance cannot share it. The Git-cycle child requires its original
+real-RustFS Rust parent. Focused warm reruns establish diagnosis only. Other
+specialized fixtures retain their owning acceptance parents and qualification
+gaps. The working-copy action extraction preserves the exact capability and
+session-switch guard under JST-API-001/004; no transport or persisted format is
+changed. Browser template selectors follow current released primitives and
+maintained controls; numerical presentation retains the joined unit control,
+responsive width and accessibility bounds of JST-UI-016.
+
 Shared CI resource preparation runs its fail-closed fixture regressions,
 governance/release/spec tooling suites and workflow validation. Browser jobs
 reuse immutable artifacts produced for the same workflow/source selection;

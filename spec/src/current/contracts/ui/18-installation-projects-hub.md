@@ -45,6 +45,12 @@ responses and mismatched continuations cannot replace a newer route.
 Selected-home SSE queues automatic refresh; confirmed receipts immediately
 reload their WorkStore view.
 
+JST-UI-015 scroll capture also runs before a departing viewport is unmounted. An
+immediate Back/return cannot depend on a later browser scroll event. The
+captured route and hub own that position; another view or authorization session
+cannot receive it. E-CI-BROWSER-001 retains the exact 400px restoration and
+unsent-draft regression, without changing navigation or storage formats.
+
 Code repository navigation uses a separate authorized connection. Project
 metadata does not grant linked-code access. The main shell hides code operation
 controls in Projects and presents the project/task rail. Stories remain

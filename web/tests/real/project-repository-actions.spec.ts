@@ -84,11 +84,11 @@ for (const mobile of [false, true]) {
     const add = view.getByRole("button", { name: "Add", exact: true });
     await expect(add).toBeEnabled();
     await expect(
-      view.getByRole("button", { name: "Add local repository", exact: true }),
+      view.getByRole("button", { name: "Add Local Repository", exact: true }),
     ).toHaveCount(0);
     await add.press("Enter");
     const repository = page.getByRole("menuitem", {
-      name: "Add local repository",
+      name: "Add Local Repository",
       exact: true,
     });
     await expect(repository.locator('svg[aria-hidden="true"]')).toBeVisible();
@@ -181,7 +181,7 @@ for (const mobile of [false, true]) {
     await expect(add).toBeFocused();
     await add.click();
     await page
-      .getByRole("menuitem", { name: "Add local repository", exact: true })
+      .getByRole("menuitem", { name: "Add Local Repository", exact: true })
       .click();
     await expect(folder).toHaveValue("/mocked/jj-folder");
     await expect(

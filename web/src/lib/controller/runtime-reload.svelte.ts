@@ -18,8 +18,6 @@ export class RuntimeReload {
   returnFocus?: () => void;
   private epoch = 0;
   private disposed = false;
-  private views = 0;
-  private timer: ReturnType<typeof setInterval>;
   private client: ServerAdministrationClient;
   constructor(
     readonly available: () => boolean,
@@ -33,17 +31,10 @@ export class RuntimeReload {
       fetcher,
       true,
     );
-    this.timer = setInterval(() => {
-      if (this.views && this.value && this.available() && !this.busy)
-        void this.observe();
-    }, 5000);
   }
   watch() {
-    this.views++;
     void this.observe();
-    return () => {
-      this.views--;
-    };
+    return () => {};
   }
   async observe() {
     if (this.disposed || !this.available() || this.busy) return;
@@ -158,7 +149,6 @@ export class RuntimeReload {
   }
   destroy() {
     this.disposed = true;
-    clearInterval(this.timer);
     this.epoch++;
     this.client.close();
   }

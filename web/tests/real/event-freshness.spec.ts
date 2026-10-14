@@ -1,4 +1,4 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test, type Page, type Request } from "@playwright/test";
 import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
@@ -19,6 +19,8 @@ const headers = (baseURL: string) => ({
   "X-JJ-Store-Protocol": "1",
 });
 function traffic(page: Page) {
+  const pending = new Set<Request>();
+  let settled = Date.now();
   const data: string[] = [],
     events: string[] = [],
     errors: string[] = [];
@@ -27,8 +29,19 @@ function traffic(page: Page) {
     const path = new URL(request.url()).pathname;
     if (!path.startsWith("/v1/")) return;
     (path === "/v1/events" ? events : data).push(path);
+    if (path !== "/v1/events") pending.add(request);
   });
-  return { data, events, errors };
+  const finished = (request: Request) => {
+    if (pending.delete(request)) settled = Date.now();
+  };
+  page.on("requestfinished", finished);
+  page.on("requestfailed", finished);
+  return {
+    data,
+    events,
+    errors,
+    idle: () => pending.size === 0 && Date.now() - settled >= 500,
+  };
 }
 function publishLocalOperation() {
   return execFileSync(
@@ -75,10 +88,9 @@ test("cold native and filesystem views stay idle through real five-minute renewa
   expect(a.data).toEqual([]);
   expect(b.data).toEqual([]);
   await page
-    .getByRole("button", { name: "Open profile menu for Local" })
+    .getByRole("button", { name: "Repository settings", exact: true })
     .click();
-  await page.getByRole("menuitem", { name: "Settings", exact: true }).click();
-  await page.getByRole("button", { name: "Storage", exact: true }).click();
+  await page.getByRole("tab", { name: "Storage", exact: true }).click();
   await page.waitForTimeout(3000);
   a.data.length = 0;
   await page.waitForTimeout(240000);
@@ -145,7 +157,10 @@ test("two clients react to Work events, preserve drafts, and recover missed repl
   });
   expect(response.ok()).toBe(true);
   const directory = await response.json(),
-    project = directory.projects[0].id;
+    project = directory.projects.find(
+      (row: any) => row.title === "Native repository browser",
+    )?.id;
+  expect(project).toBeTruthy();
   const taskPage = await request.get(
     `/v1/repos/${home}/work?project=${project}&limit=256`,
     { headers: auth },
@@ -209,6 +224,8 @@ test("two clients react to Work events, preserve drafts, and recover missed repl
     other.getByRole("list", { name: "Task comments" }),
   ).toContainText(missed, { timeout: 15000 });
   await expect(draft).toHaveText("Unsent event draft");
+  // Drain the visible replay's metadata reads before testing a new hidden event.
+  await expect.poll(() => otherErrors.idle()).toBe(true);
   await observer.evaluate(() => {
     Object.defineProperty(document, "hidden", {
       configurable: true,
@@ -262,13 +279,39 @@ test("a stale server cursor resets continuity once and exact local preparation r
     operation = selection.heads[0];
   await page.goto(`/#/repos/${local}/log?at_op=${operation}`);
   await expect.poll(() => t.events.length).toBe(2);
-  const prepare = page.getByRole("button", {
-    name: "Prepare graph index",
-    exact: true,
-  });
-  await expect(prepare).toBeVisible();
-  await prepare.click();
-  await expect(prepare).toHaveCount(0, { timeout: 15000 });
+  await expect(
+    page.getByRole("list", { name: "Revision graph", exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("status").filter({ hasText: "Loading more history" }),
+  ).toHaveCount(0, { timeout: 15000 });
+  // Automatic history hides ordinary setup controls. Exercise the retained
+  // exact-operation API and prove its derived work cannot change this selection.
+  const prepared = await request.post(
+    `/v1/local/repos/${local}/code-index/tasks`,
+    {
+      headers: headers(baseURL!),
+      data: { operation },
+    },
+  );
+  expect(prepared.ok()).toBe(true);
+  const task = await prepared.json();
+  expect(task.snapshot.operation).toBe(operation);
+  await expect
+    .poll(
+      async () => {
+        const result = await request.get(
+          `/v1/local/repos/${local}/code-index/tasks/${task.id}`,
+          { headers: headers(baseURL!) },
+        );
+        expect(result.ok()).toBe(true);
+        const current = await result.json();
+        expect(current.snapshot.operation).toBe(operation);
+        return current.status;
+      },
+      { timeout: 15000 },
+    )
+    .toBe("ready");
   expect(
     new URLSearchParams(new URL(page.url()).hash.split("?")[1]).get("at_op"),
   ).toBe(operation);

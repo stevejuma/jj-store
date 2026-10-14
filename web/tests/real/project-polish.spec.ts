@@ -1,6 +1,14 @@
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
+function canonicalActivityUrl(value: string) {
+  const url = new URL(value),
+    [path, query] = url.hash.split("?");
+  const parameters = new URLSearchParams(query);
+  if (!parameters.has("state")) parameters.set("state", "active");
+  parameters.sort();
+  return `${url.origin}${url.pathname}${path}?${parameters}`;
+}
 test("repository documents linked projects and Activity filters retain native scope", async ({
   page,
 }) => {
@@ -97,14 +105,19 @@ test("repository documents linked projects and Activity filters retain native sc
   if ((await details.getAttribute("aria-expanded")) === "false")
     await details.click();
   const filter = page.getByRole("button", {
-    name: "Filter activity",
+    name: "Filters for activity",
     exact: true,
   });
   await expect(filter).toBeVisible();
   await filter.click();
   await page.getByPlaceholder("Find an activity type...").fill("Without");
   await page.getByRole("option", { name: /Without agent context/ }).click();
-  await page.getByRole("button", { name: "Close activity filter" }).click();
+  await page
+    .getByRole("button", { name: "Close filters", exact: true })
+    .click();
+  await expect(
+    page.getByRole("status", { name: "Loading project details" }),
+  ).toBeHidden({ timeout: 30000 });
   await expect(
     page.getByRole("list", { name: "Repository activity" }),
   ).toBeVisible();
@@ -117,17 +130,23 @@ test("repository documents linked projects and Activity filters retain native sc
   ).toHaveAttribute("aria-selected", "true");
   await page.getByRole("button", { name: "Back", exact: true }).click();
   await expect(filter).toHaveAttribute("aria-pressed", "true");
-  expect(page.url()).toBe(filteredPath);
+  expect(canonicalActivityUrl(page.url())).toBe(
+    canonicalActivityUrl(filteredPath),
+  );
   await page.reload();
   await expect(
     page.getByRole("list", { name: "Repository activity" }),
   ).toBeVisible();
-  expect(page.url()).toBe(filteredPath);
+  expect(canonicalActivityUrl(page.url())).toBe(
+    canonicalActivityUrl(filteredPath),
+  );
   if ((await details.getAttribute("aria-expanded")) === "false")
     await details.click();
   await filter.click();
   await page.getByRole("option", { name: /With agent context/ }).click();
-  await page.getByRole("button", { name: "Close activity filter" }).click();
+  await page
+    .getByRole("button", { name: "Close filters", exact: true })
+    .click();
   // The seed has no code associations; absence must remain an honest empty state.
   await expect(
     page.getByText("No matching activity", { exact: true }),

@@ -1,5 +1,12 @@
 # CLI and server commands
 
+E-CI-BROWSER-001 confirms JST-CLI-002/004 command and process contracts remain
+unchanged. The Git-cycle browser child still runs through the same real-RustFS
+acceptance parent; an explicit test-only browser root allows isolated current
+tools and built assets. A zero-test filter is not qualification. Native CLI
+publication tests distinguish snapshot and describe operations and wait for the
+final published operation, preserving the selected commit/change/bookmark.
+
 Progressive Blame acceptance uses the CLI package's actual native and local
 reader fixtures and registered HTTP routes. Compare genuine origins with
 upstream JJ; verify source preservation, exact operation pins, cache reuse,

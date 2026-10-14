@@ -83,7 +83,7 @@ for (const reply of [false, true]) {
     ).locator(`[data-message-id="${reply ? replyId : THREAD_IDS.message}"]`);
     await message.hover();
     await message
-      .getByRole("button", { name: "Add reaction", exact: true })
+      .getByRole("button", { name: /^Add reaction(?: to .+)?$/ })
       .click();
     await page.getByRole("button", { name: ":lapis:", exact: true }).click();
     const row = message.locator(".community-message__metadata");
@@ -131,7 +131,7 @@ for (const reply of [false, true]) {
       page.locator('.store-threads > [data-ui-component="alert"]'),
     ).toHaveCount(0);
     await expect(
-      message.locator('[data-ui-component="ai-chat-message-bubble"]'),
+      message.getByRole("textbox", { name: "Message", exact: true }),
     ).toHaveText(reply ? "A retained reply" : "Welcome to the channel");
     if (reply)
       await expect(

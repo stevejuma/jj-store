@@ -53,8 +53,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed portable Unix stat widening throughout current reads, source bindings, retained witnesses and tree installation. Original field order, device/inode identities, u64 bit patterns and native/local recovery guards are unchanged.",
-      "fingerprint": "991f20c6093d19d4ea1ef84f5278328d71f16f6d73a4da99dc1202f53073b305"
+      "reason": "Reviewed shared bounded native cache admission. Ordinary graph construction now evicts only idle managed code namespaces, with repository-scoped eviction and active locks retained. Native identities, membership, limits and durable source state remain unchanged.",
+      "fingerprint": "2df19eeefeaa1495da559225f86d2877f6ee5b730beee5998b12134e62adca03"
     }
   },
   {
@@ -137,8 +137,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed formatting-only controller/search/application-view source changes; UI behavior, source ownership, notification lifetimes and public response contracts are unchanged.",
-      "fingerprint": "0f4a53152b02748fe00ff524d8362f72b8266c2f59fbba9074d10ca96626d396"
+      "reason": "Reviewed restored conversion receipt observation: construction no longer tracks its own busy flag, so unknown outcomes keep exact intent without repeated idle requests or command replay.",
+      "fingerprint": "609282d12c64e3a201cb92e5629598b268f76b56f45c6d132b470ccf87102ef6"
     }
   },
   {

@@ -1,3 +1,7 @@
+import {
+  repositorySettings,
+  repositorySettingsLayout,
+} from "./repository-settings-navigation.js";
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { api, sample } from "./native-browser-fixture.js";
@@ -73,38 +77,9 @@ test("Search tabs preserve drafts and separate Save from Apply", async ({
       .getByRole("navigation", { name: "Settings navigation" })
       .getByRole("button", { name: "Back to jj-store" }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Search", exact: true }).click();
-  const tabs = page.getByRole("tablist", { name: "Search settings sections" });
-  const tabBounds = (await tabs.boundingBox())!;
-  const contentBounds = (await page
-    .getByRole("region", { name: "Settings content" })
-    .boundingBox())!;
-  const navigation = page.getByRole("navigation", {
-    name: "Settings page navigation",
-  });
-  const headingBounds = (await navigation
-    .getByRole("heading", { name: "Search", level: 1 })
-    .boundingBox())!;
-  expect(tabBounds.y - contentBounds.y).toBeLessThan(16);
-  expect(headingBounds.x + headingBounds.width).toBeLessThan(tabBounds.x);
-  await expect(navigation.locator("h1 svg[aria-hidden='true']")).toBeVisible();
-  const refresh = navigation.getByRole("button", {
-    name: "Refresh settings",
-    exact: true,
-  });
-  await expect(refresh).toHaveText("");
-  await refresh.hover();
-  await expect(page.locator('[data-slot="tooltip-content"]')).toHaveText(
-    "Refresh settings",
-  );
-  await expect(page.locator(".store-settings")).toHaveCSS("padding-top", "0px");
-  const picker = page.getByRole("combobox", {
-    name: "Settings repository",
-    exact: true,
-  });
-  await expect(picker).toHaveText(/Local acceptance/);
-  await expect(picker).toBeEnabled();
-  await expect(page.locator(".store-settings h1")).toHaveCount(0);
+  await repositorySettings(page, "Search");
+  const tabs = await repositorySettingsLayout(page, "Search settings sections");
+  const picker = page.getByRole("combobox", { name: "Settings repository" });
   await page.getByRole("tab", { name: "Configuration", exact: true }).focus();
   await page.keyboard.press("ArrowRight");
   await expect(
@@ -115,7 +90,7 @@ test("Search tabs preserve drafts and separate Save from Apply", async ({
   ).toHaveAttribute("aria-selected", "true");
   const prefixes = page.getByRole("textbox", { name: "Exclude path prefixes" });
   await prefixes.fill("private");
-  await expect(picker).toBeDisabled();
+  await expect(picker).toHaveCount(0);
   await page.getByRole("tab", { name: "Health", exact: true }).click();
   await expect(
     page.getByRole("heading", { name: "Text-search health" }),
@@ -125,8 +100,8 @@ test("Search tabs preserve drafts and separate Save from Apply", async ({
   ).toBeVisible();
   await page.getByRole("tab", { name: "File scopes", exact: true }).click();
   await expect(prefixes).toHaveValue("private");
-  await page.getByRole("button", { name: "Repository", exact: true }).click();
-  await page.getByRole("button", { name: "Search", exact: true }).click();
+  await repositorySettings(page, "Repository");
+  await repositorySettings(page, "Search");
   await page.getByRole("tab", { name: "File scopes", exact: true }).click();
   await expect(prefixes).toHaveValue("private");
   await page
@@ -153,15 +128,15 @@ test("Search tabs preserve drafts and separate Save from Apply", async ({
   await page.getByRole("button", { name: "Apply saved settings" }).click();
   await expect(page.getByText(/Matches saved settings/)).toBeVisible();
   expect(applies).toBe(1);
-  await expect(picker).toBeEnabled();
+  await expect(picker).toHaveCount(0);
   await page.setViewportSize({ width: 390, height: 844 });
   await expect(
     page.locator('[data-ui-component="app-shell"][data-ui-part="root"]'),
   ).toHaveAttribute("data-display-mode", "mobile");
-  await expect(picker).toBeVisible();
+  await expect(picker).toHaveCount(0);
   const mobileTabsTop = (await tabs.boundingBox())!.y;
   const scroller = page
-    .getByRole("region", { name: "Settings content" })
+    .locator(".store-repository-settings__page:visible")
     .locator('[data-ui-part="scroll-area-viewport"]')
     .first();
   await scroller.evaluate((element) => {
@@ -173,8 +148,21 @@ test("Search tabs preserve drafts and separate Save from Apply", async ({
   await expect
     .poll(async () => Math.abs((await tabs.boundingBox())!.y - mobileTabsTop))
     .toBeLessThan(1);
+  const health = page.getByRole("tab", { name: "Health", exact: true });
+  if (!(await health.isVisible())) {
+    const more = page.getByRole("button", {
+      name: "More search settings sections",
+      exact: true,
+    });
+    await more.click();
+    await page.getByRole("menuitem", { name: "Health", exact: true }).click();
+    await expect(more).toHaveAttribute("aria-current", "page");
+  } else {
+    await health.click();
+    await expect(health).toHaveAttribute("aria-selected", "true");
+  }
   await expect(
-    page.getByRole("tab", { name: "Health", exact: true }),
+    page.getByRole("heading", { name: "Text-search health", exact: true }),
   ).toBeVisible();
   expect(
     await page.evaluate(
@@ -185,6 +173,6 @@ test("Search tabs preserve drafts and separate Save from Apply", async ({
     violations: [],
   });
   await page.setViewportSize({ width: 1400, height: 1000 });
-  await page.getByRole("button", { name: "Back to jj-store" }).click();
+  await page.getByRole("button", { name: "Back to repository" }).click();
   expect(await page.evaluate(() => location.hash)).toBe(hash);
 });

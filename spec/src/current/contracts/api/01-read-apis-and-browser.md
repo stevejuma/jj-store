@@ -1,5 +1,12 @@
 # Read APIs and browser
 
+E-CI-BROWSER-001 confirms JST-API-001/004 read admission, operation pinning,
+mutation receipts and native formats remain unchanged. Browser qualification
+follows the advertised application feed, waits for the final CLI operation after
+snapshot-plus-describe publication, and exercises the current explicit menu and
+parent selection. Work comment reactions invalidate the affected home's visible
+task projection; hidden projections retain dirtiness until restored.
+
 Build-time browser manifest generation enforces the existing 256-entry and
 16,384-byte inventory bounds before artifacts are admitted. CI prebuilt reads
 retain complete same-source scripts, fonts, styles, icons and Help. Grouping

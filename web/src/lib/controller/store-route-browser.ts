@@ -8,7 +8,7 @@ export interface StoreRouteBrowser {
   push(hash: string, entryId?: string): void;
   replace(hash: string, entryId?: string): void;
   entryId?(): string | undefined;
-  go(delta: -1 | 1): void;
+  go(delta: number): void;
   listen(listener: () => void): () => void;
 }
 

@@ -102,7 +102,9 @@ export function createProductionAutomaticRefresh(options: {
                 ? ["code", "agents", "work"]
                 : tab === "repositories"
                   ? ["code", "agents", "reviews", "work"]
-                  : ["work"];
+                  : route.taskId
+                    ? ["work", "threads"]
+                    : ["work"];
         return (
           change.domain === "repository" || domains.includes(change.domain)
         );

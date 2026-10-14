@@ -5,7 +5,9 @@ export async function scrollToConversationParent(
   parent: string,
 ) {
   await tick();
-  element()
-    ?.querySelector<HTMLElement>(`[data-chat-item="${CSS.escape(parent)}"]`)
-    ?.scrollIntoView({ block: "nearest" });
+  const target = element()?.querySelector<HTMLElement>(
+    `[data-chat-item="${CSS.escape(parent)}"]`,
+  );
+  target?.scrollIntoView({ block: "nearest" });
+  target?.focus({ preventScroll: true });
 }

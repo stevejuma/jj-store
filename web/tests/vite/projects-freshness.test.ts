@@ -8,9 +8,32 @@ const a = "11".repeat(16),
   b = "22".repeat(16);
 const change = (
   repository = a,
-  domain: "agents" | "work" = "agents",
+  domain: "agents" | "work" | "threads" = "agents",
   witness = "one",
 ) => ({ repository, domain, witness });
+test("task reactions retain home-scoped dirtiness without dirtying code or other project domains", () => {
+  const dirty = new ProjectsDirtiness();
+  const route = {
+    ...initialStoreRoute(),
+    page: "projects" as const,
+    workTab: "tasks" as const,
+    repository: a,
+    projectId: "33".repeat(16),
+    taskId: "44".repeat(16),
+  };
+  dirty.record([change(a, "threads")], [a, b]);
+  expect([...dirty.capture(route).work]).toEqual([a]);
+  expect(dirty.capture({ ...route, repository: b }).work.size).toBe(0);
+  expect(
+    dirty.capture({ ...route, workTab: "activity", projectId: null }).affected
+      .size,
+  ).toBe(0);
+  const pending = dirty.capture(route);
+  pending.accept(() => false);
+  expect(dirty.capture(route).work.has(a)).toBe(true);
+  pending.accept(() => true);
+  expect(dirty.capture(route).work.size).toBe(0);
+});
 test("hidden Agents projections refresh only their dirty repository on return", async () => {
   let route: StoreRoute = {
     ...initialStoreRoute(),

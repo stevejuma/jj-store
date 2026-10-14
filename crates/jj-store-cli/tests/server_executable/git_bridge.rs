@@ -238,11 +238,16 @@ async fn real_rustfs_native_git_external_merge_cycle_survives_cold_restart() {
     assert!(git.find_reference("refs/agent/fixture").is_err());
     fs::remove_dir_all(device.join(repository).join("cache")).unwrap();
     running.terminate();
-    let repo_root = Path::new(env!("CARGO_MANIFEST_DIR"))
-        .parent()
-        .unwrap()
-        .parent()
-        .unwrap();
+    let repo_root = std::env::var_os("JJ_STORE_BROWSER_ROOT")
+        .map(std::path::PathBuf::from)
+        .unwrap_or_else(|| {
+            Path::new(env!("CARGO_MANIFEST_DIR"))
+                .parent()
+                .unwrap()
+                .parent()
+                .unwrap()
+                .to_path_buf()
+        });
     let search = format!(
         "\n[[search]]\nrepository = \"{repository}\"\npoll_millis = 10\ntimeout_seconds = 30\nsnapshot_every = 1\n\n[search.source.scopes.workspace]\nkind = \"workspace\"\nname = \"git-cycle\"\n\n[search.source.scopes.imported]\nkind = \"bookmark\"\nname = \"main\"\n"
     );
@@ -313,7 +318,7 @@ async fn real_rustfs_native_git_external_merge_cycle_survives_cold_restart() {
     // committed SSE freshness and explicit snapshot refresh on real storage.
     success(
         Command::new("pnpm")
-            .current_dir(repo_root)
+            .current_dir(&repo_root)
             .args([
                 "exec",
                 "playwright",
@@ -325,7 +330,7 @@ async fn real_rustfs_native_git_external_merge_cycle_survives_cold_restart() {
             .env("JJ_STORE_REAL_BASE_URL", &origin)
             .env("JJ_STORE_REAL_REPOSITORY", repository)
             .env("JJ_STORE_REAL_RUNTIME", root.path())
-            .env("JJ_STORE_REAL_ROOT", repo_root)
+            .env("JJ_STORE_REAL_ROOT", &repo_root)
             .env("JJ_STORE_GIT_CYCLE_WORKSPACE", &workspace)
             .env("JJ_CONFIG", &jj_config)
             .env("JJ_STORE_GIT_HOME", &device)

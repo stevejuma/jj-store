@@ -15,7 +15,7 @@ test("cold local and enrolled profiles and emoji survive real object store resta
     base = process.env.JJ_STORE_REAL_BASE_URL!;
   const localHeaders = {
     "x-jj-store-protocol": "1",
-    Origin: base,
+    Origin: new URL(base).origin,
     "Sec-Fetch-Site": "same-origin",
     "Sec-Fetch-Mode": "cors",
     "Sec-Fetch-Dest": "empty",
@@ -56,11 +56,13 @@ test("cold local and enrolled profiles and emoji survive real object store resta
     exact: true,
   });
   await expect
-    .poll(() =>
-      avatarImage.evaluate((image) => [
-        (image as HTMLImageElement).naturalWidth,
-        (image as HTMLImageElement).naturalHeight,
-      ]),
+    .poll(
+      () =>
+        avatarImage.evaluate((image) => [
+          (image as HTMLImageElement).naturalWidth,
+          (image as HTMLImageElement).naturalHeight,
+        ]),
+      { timeout: 15000 },
     )
     .toEqual([512, 369]);
   await expect(
@@ -84,11 +86,11 @@ test("cold local and enrolled profiles and emoji survive real object store resta
   await expect(
     page.getByText("Persisted administrator", { exact: true }).first(),
   ).toBeVisible();
-  const profile = await (
-    await request.get("/v1/directory/profile", {
-      headers: localHeaders,
-    })
-  ).json();
+  const profileResponse = await request.get("/v1/directory/profile", {
+    headers: localHeaders,
+  });
+  expect(profileResponse.ok()).toBe(true);
+  const profile = await profileResponse.json();
   expect(profile.details.avatar).toMatch(/^blob:[0-9a-f]{64}$/);
   await page.goto("/#/settings?section=custom-emoji&tab=library");
   const writesBeforeSelection = directoryWrites;
@@ -132,19 +134,23 @@ test("cold local and enrolled profiles and emoji survive real object store resta
     config = join(local, "server.toml"),
     binary = join(root, "target/debug/jj-store");
   if (process.env.JJ_STORE_REAL_EMPTY) {
+    await page.goto("about:blank");
     process.kill(Number(process.env.JJ_STORE_REAL_PID), "SIGTERM");
     await expect
-      .poll(async () => {
-        try {
-          return (
-            await request.get("/v1/bootstrap", {
-              headers: localHeaders,
-            })
-          ).status();
-        } catch {
-          return 0;
-        }
-      })
+      .poll(
+        async () => {
+          try {
+            return (
+              await request.get("/v1/bootstrap", {
+                headers: localHeaders,
+              })
+            ).status();
+          } catch {
+            return 0;
+          }
+        },
+        { timeout: 15000 },
+      )
       .toBe(0);
     await new Promise((resolve) => setTimeout(resolve, 1000));
   } else {
@@ -155,14 +161,22 @@ test("cold local and enrolled profiles and emoji survive real object store resta
     });
   }
   const restart = async () => {
+    let diagnostic = "";
     const process = spawn(
       binary,
       ["run", "--config", config, "--loopback-only"],
-      { cwd: root, stdio: "ignore" },
+      { cwd: root, stdio: ["ignore", "ignore", "pipe"] },
     );
+    process.stderr?.on("data", (value: Buffer) => {
+      diagnostic = (diagnostic + value.toString("utf8")).slice(-8192);
+    });
     await expect
       .poll(
         async () => {
+          if (process.exitCode !== null)
+            throw new Error(
+              `Profile fixture exited (${process.exitCode}): ${diagnostic}`,
+            );
           try {
             return (
               await request.get("/v1/bootstrap", {

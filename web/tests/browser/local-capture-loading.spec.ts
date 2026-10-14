@@ -16,6 +16,7 @@ async function openAgents(page: Page) {
     .click();
   await page.getByRole("menuitem", { name: "Settings" }).click();
   await page.getByRole("button", { name: "Agents", exact: true }).click();
+  await page.getByRole("tab", { name: "Capture", exact: true }).click();
 }
 async function bootstrap(page: Page, linked = false) {
   await api(page, { access: "local_trusted" });
@@ -140,6 +141,8 @@ test("cold grouped Codex configuration and harness-filtered source table retain 
   await page.getByRole("tab", { name: "Configuration", exact: true }).click();
   const group = page.getByRole("button", { name: "Codex configuration" });
   const roots = page.getByRole("textbox", { name: "Codex CLI folders" });
+  await group.click();
+  await expect(group).toHaveAttribute("aria-expanded", "true");
   await roots.fill("/tmp/grouped-browser/sessions");
   await group.click();
   await expect(group).toHaveAttribute("aria-expanded", "false");
@@ -180,13 +183,8 @@ test("cold grouped Codex configuration and harness-filtered source table retain 
   const tableBounds = await table.boundingBox();
   expect(filterBounds!.y + filterBounds!.height).toBeLessThan(tableBounds!.y);
   expect(
-    Math.abs(
-      filterBounds!.x +
-        filterBounds!.width -
-        tableBounds!.x -
-        tableBounds!.width,
-    ),
-  ).toBeLessThan(2);
+    tableBounds!.x + tableBounds!.width - filterBounds!.x - filterBounds!.width,
+  ).toBeCloseTo(15, 0);
   await expect(
     table.locator(
       'tbody tr:first-child td:first-child img[src="/agent-icons/codex.svg"]',

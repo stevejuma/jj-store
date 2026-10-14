@@ -117,7 +117,12 @@ export function createStoreRouteHistory(
         entryIds[index],
       );
   });
+  let returningTo: string | undefined;
   const stop = browser?.listen(() => {
+    if (returningTo) {
+      if (browser.entryId?.() === returningTo) returningTo = undefined;
+      return;
+    }
     const result = storeRouteFromHash(browser.hash());
     if (result.kind === "none") return;
     if (result.kind === "invalid") {
@@ -136,12 +141,15 @@ export function createStoreRouteHistory(
     else if (result.route.globalSettings)
       result.route = { ...route, globalSettings: result.route.globalSettings };
     if (!same(result.route, route) && blocked(result.route)) {
-      sync(route, "replace");
+      if (identified >= 0 && identified !== index) {
+        returningTo = entryIds[index];
+        browser.go(index - identified);
+      } else sync(route, "replace");
       return;
     }
-    error = "";
     if (same(result.route, route) && (identified < 0 || identified === index))
       return;
+    error = "";
     const known =
       identified >= 0
         ? identified

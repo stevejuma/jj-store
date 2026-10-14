@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import {
+  existsSync,
   mkdtempSync,
   mkdirSync,
   writeFileSync,
@@ -18,12 +19,113 @@ import { createHash } from "node:crypto";
 import { prebuiltBrowserResources } from "./ci-prebuilt.mjs";
 import { acpArtifact, verifyAcp } from "./ci-setup-acp.mjs";
 import { parse as parseYaml } from "yaml";
+function coldHarness(t) {
+  const root = mkdtempSync(join(tmpdir(), "jj-store-ci-selection-"));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  mkdirSync(join(root, "scripts"));
+  mkdirSync(join(root, "bin"));
+  const script = join(root, "scripts/real-browser-acceptance.mjs");
+  writeFileSync(script, readFileSync("scripts/real-browser-acceptance.mjs"));
+  writeFileSync(
+    join(root, "scripts/profile-acceptance.mjs"),
+    `
+import {mkdtempSync,rmSync} from 'node:fs';import {tmpdir} from 'node:os';import {join} from 'node:path';import {execFileSync} from 'node:child_process';
+const runtime=mkdtempSync(join(tmpdir(),'jj-store-ci-profile-owner-'));
+try {execFileSync('pnpm',['exec','playwright','test','profiles-emoji.spec.ts'],{env:{...process.env,JJ_STORE_DEV_ROOT:runtime,JJ_STORE_REAL_RUNTIME:runtime,JJ_STORE_REAL_SKIP_PROFILE:'0'}});} finally {rmSync(runtime,{recursive:true,force:true});}
+`,
+  );
+  const log = join(root, "calls.jsonl");
+  writeFileSync(
+    join(root, "bin/pnpm"),
+    `#!/usr/bin/env node
+const fs = require('node:fs');
+const args = process.argv.slice(2);
+fs.appendFileSync(process.env.SELECTION_LOG, JSON.stringify({args, root:process.env.JJ_STORE_DEV_ROOT, runtime:process.env.JJ_STORE_REAL_RUNTIME, skipProfile:process.env.JJ_STORE_REAL_SKIP_PROFILE})+'\\n');
+if(args[0]==='dev:reset') {
+ fs.writeFileSync(process.env.JJ_STORE_DEV_ROOT+'/runtime.json', JSON.stringify({format:2,accessMode:'local-trusted',storageMode:'embedded-rustfs',resources:{firstStartupMillis:1,restartStartupMillis:1,totalRssKiB:1,fixturePreparationMillis:1}}));
+ console.log('URL: http://127.0.0.1:7530/\\nRepository ID: '+ 'ab'.repeat(16)+'\\nRuntime: '+process.env.JJ_STORE_DEV_ROOT);
+} else if(args[0]==='exec' && process.env.SELECTION_FAIL==='1') process.exit(1);
+`,
+    { mode: 0o755 },
+  );
+  const env = {
+    ...process.env,
+    PATH: `${join(root, "bin")}:${process.env.PATH}`,
+    SELECTION_LOG: log,
+  };
+  for (const key of [
+    "JJ_STORE_REAL_TEST",
+    "JJ_STORE_REAL_SHARD",
+    "JJ_STORE_REAL_KEEP",
+    "JJ_STORE_LOCAL_RELEASE_QUALIFY",
+  ])
+    delete env[key];
+  return {
+    run: (extra = {}) =>
+      execFileSync(process.execPath, [script], {
+        env: { ...env, ...extra },
+        stdio: "pipe",
+      }),
+    calls: () => readFileSync(log, "utf8").trim().split("\n").map(JSON.parse),
+  };
+}
+test("parallel cold shards use disjoint result directories and CI stops on failure", () => {
+  const directories = ["1/4", "2/4", "3/4", "4/4"].map((shard) => {
+    const output = execFileSync(
+      process.execPath,
+      [
+        "--import",
+        "tsx",
+        "--input-type=module",
+        "-e",
+        'import config from "./web/playwright.real.config.ts"; console.log(JSON.stringify({output:config.outputDir,failures:config.maxFailures}));',
+      ],
+      {
+        encoding: "utf8",
+        env: {
+          ...process.env,
+          CI: "true",
+          JJ_STORE_REAL_BASE_URL: "http://127.0.0.1:7530",
+          JJ_STORE_REAL_SHARD: shard,
+        },
+      },
+    );
+    const config = JSON.parse(output);
+    assert.equal(config.failures, 1);
+    return config.output;
+  });
+  assert.equal(new Set(directories).size, 4);
+});
+test("the complete cold suite isolates profile shutdown and cleans both fixtures", (t) => {
+  const harness = coldHarness(t);
+  harness.run();
+  const calls = harness.calls(),
+    suites = calls.filter((call) => call.args[0] === "exec");
+  assert.equal(suites.length, 2);
+  assert.ok(suites[0].args.includes("--shard=1/1"));
+  assert.equal(suites[0].skipProfile, "1");
+  assert.ok(suites[1].args.includes("profiles-emoji.spec.ts"));
+  assert.equal(suites[1].skipProfile, "0");
+  assert.notEqual(suites[0].runtime, suites[1].runtime);
+  assert.equal(calls.filter((call) => call.args[0] === "dev:stop").length, 1);
+  for (const suite of suites) assert.equal(existsSync(suite.runtime), false);
+});
+test("cold shard failures clean their fixture and do not launch the later profile suite", (t) => {
+  const harness = coldHarness(t);
+  assert.throws(() => harness.run({ SELECTION_FAIL: "1" }));
+  const calls = harness.calls();
+  assert.equal(calls.filter((call) => call.args[0] === "dev:reset").length, 1);
+  assert.equal(calls.filter((call) => call.args[0] === "dev:stop").length, 1);
+  assert.equal(existsSync(calls[0].root), false);
+});
 test("browser and storage lanes consume same-run assets without overwriting them with caches", () => {
   const { jobs } = parseYaml(
     readFileSync(".github/workflows/ci-heavy.yml", "utf8"),
   );
-  const downloads = jobs.browser.steps.filter((step) =>
-    step.uses?.startsWith("actions/download-artifact@"),
+  const downloads = jobs.browser.steps.filter(
+    (step) =>
+      step.uses?.startsWith("actions/download-artifact@") &&
+      step.with.name !== "tests-heavy",
   );
   assert.deepEqual(downloads.map((step) => step.with.name).sort(), [
     "linux-development-tools",
@@ -44,10 +146,90 @@ test("browser and storage lanes consume same-run assets without overwriting them
   const installer = jobs.browser.steps.find(
     (step) => step.run === "node scripts/ci-setup-acp.mjs",
   );
-  assert.equal(installer.if, "matrix.lane == 'cold'");
-  assert.ok(
-    jobs.browser.steps.some((step) => step.run?.includes("chromium webkit")),
+  assert.equal(
+    installer.if,
+    "matrix.lane == 'cold' || matrix.lane == 'cold-profile'",
   );
+  const lanes = jobs.browser.strategy.matrix.include;
+  assert.deepEqual(
+    lanes.filter((lane) => lane.lane === "cold").map((lane) => lane.shard),
+    ["1/4", "2/4", "3/4", "4/4"],
+  );
+  assert.equal(lanes.filter((lane) => lane.lane === "cold-profile").length, 1);
+  assert.equal(lanes.filter((lane) => lane.lane === "git-cycle").length, 1);
+  assert.deepEqual(
+    lanes.filter((lane) => lane.lane === "storybook").map((lane) => lane.shard),
+    ["1/3", "2/3", "3/3"],
+  );
+  assert.deepEqual(
+    lanes.filter((lane) => lane.lane === "browser").map((lane) => lane.shard),
+    ["1/2", "2/2"],
+  );
+  assert.equal(lanes.filter((lane) => lane.lane === "catalog").length, 1);
+  assert.equal(lanes.filter((lane) => lane.lane === "help").length, 1);
+  const archive = jobs.browser.steps.find(
+    (step) => step.with?.name === "tests-heavy",
+  );
+  assert.equal(archive.if, "matrix.lane == 'git-cycle'");
+  assert.ok(
+    jobs.browser.steps.some((step) =>
+      step.run?.endsWith("--with-deps chromium"),
+    ),
+  );
+  const webkit = jobs.browser.steps.find((step) =>
+    step.run?.endsWith("--with-deps webkit"),
+  );
+  assert.equal(webkit.if, "matrix.lane == 'help'");
+  const setup = jobs.browser.steps.find(
+    (step) => step.uses === "./.github/actions/setup",
+  );
+  assert.equal(setup.with["native-dependencies"], "false");
+  assert.match(setup.with["build-tools"], /matrix\.lane == 'git-cycle'/);
+});
+test("browser orchestration selects one suite per lane and forwards real shard arguments", (t) => {
+  const root = mkdtempSync(join(tmpdir(), "jj-store-ci-browser-"));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  const log = join(root, "calls.jsonl");
+  writeFileSync(
+    join(root, "pnpm"),
+    `#!/usr/bin/env node
+require('node:fs').appendFileSync(process.env.BROWSER_CALL_LOG, JSON.stringify(process.argv.slice(2))+'\\n');
+`,
+    { mode: 0o755 },
+  );
+  const invoke = (lane, shard = "") => {
+    writeFileSync(log, "");
+    execFileSync(process.execPath, ["scripts/ci-browser.mjs", lane], {
+      env: {
+        ...process.env,
+        CI: "true",
+        JJ_STORE_CI_PREBUILT: "1",
+        JJ_STORE_BROWSER_SHARD: shard,
+        BROWSER_CALL_LOG: log,
+        PATH: `${root}:${process.env.PATH}`,
+      },
+    });
+    return readFileSync(log, "utf8").trim().split("\n").map(JSON.parse);
+  };
+  assert.deepEqual(invoke("storybook", "2/3"), [
+    ["test:storybook", "--shard=2/3"],
+  ]);
+  assert.deepEqual(invoke("browser", "1/2"), [
+    [
+      "exec",
+      "playwright",
+      "test",
+      "--config",
+      "web/playwright.config.ts",
+      "--shard=1/2",
+    ],
+  ]);
+  assert.deepEqual(invoke("catalog"), [
+    ["exec", "node", "--test", "scripts/catalog-browser.test.mjs"],
+  ]);
+  assert.deepEqual(invoke("help"), [
+    ["exec", "playwright", "test", "--config", "web/playwright.docs.config.ts"],
+  ]);
 });
 test("CI pins published ACP and rejects unsupported or corrupt artifacts", () => {
   for (const platform of ["linux", "darwin"])
@@ -282,7 +464,10 @@ test("docs-only impact stays light; shared and service changes select heavy lane
 test("Git revision reader pins content and all merge parents", () => {
   const root = mkdtempSync(join(tmpdir(), "jj-store-ci-git-"));
   const git = (...args) =>
-    execFileSync("git", args, { cwd: root, encoding: "utf8" }).trim();
+    execFileSync("git", ["-c", "commit.gpgsign=false", ...args], {
+      cwd: root,
+      encoding: "utf8",
+    }).trim();
   try {
     git("init", "-q");
     git("config", "user.name", "Fixture");

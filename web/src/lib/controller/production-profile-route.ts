@@ -14,7 +14,12 @@ export function createProfileRouteRestorer(context: {
   restoreThreads?(): Promise<boolean>;
   restore(): Promise<void>;
 }) {
-  return async () => {
+  return async (
+    retainedGraph?: Pick<
+      ProductionStoreState,
+      "graphAtTimeMillis" | "historyEmail"
+    >,
+  ) => {
     const route = context.route(),
       source = context.source();
     if (route.globalSettings) {
@@ -52,6 +57,7 @@ export function createProfileRouteRestorer(context: {
       return;
     }
     clearProductionStoreView(context.data);
+    if (retainedGraph) Object.assign(context.data, retainedGraph);
     await context.restore();
   };
 }

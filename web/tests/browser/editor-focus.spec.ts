@@ -46,7 +46,7 @@ test("prose composer content has no focus frame under the production asset polic
   page,
 }) => {
   await page.goto(`/#/repos/${repo}/log?at_op=${operation}&commit=${commit}`);
-  await page.getByRole("button", { name: "Repository actions" }).click();
+  await page.getByRole("button", { name: "Application menu" }).click();
   await page
     .getByRole("menuitem", { name: "Create change", exact: true })
     .click();

@@ -8,6 +8,9 @@ spec/book
 
 web/dist
 web/test-results
+web/test-results-browser-*
+web/test-results-help
+web/test-results-real*
 web/playwright-report
 
 storybook-static

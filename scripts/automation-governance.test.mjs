@@ -231,7 +231,10 @@ test("version synchronization leaves spec and evidence unchanged", () => {
 test("release intent still enforces notes on ordinary PRs", () => {
   const { directory, write } = versionFixture();
   const git = (...args) =>
-    execFileSync("git", args, { cwd: directory, encoding: "utf8" }).trim();
+    execFileSync("git", ["-c", "commit.gpgsign=false", ...args], {
+      cwd: directory,
+      encoding: "utf8",
+    }).trim();
   try {
     write("package.json", JSON.stringify({ version: "0.1.0" }));
     cpSync(
@@ -311,7 +314,10 @@ test("Changesets selects versions without writing spec evidence", () => {
       '---\n"@lapismd/jj-store": patch\n---\nCoordinate a patch release.\n',
     );
     const git = (...args) =>
-      execFileSync("git", args, { cwd: directory, stdio: "pipe" });
+      execFileSync("git", ["-c", "commit.gpgsign=false", ...args], {
+        cwd: directory,
+        stdio: "pipe",
+      });
     git("init", "-q");
     git("config", "user.name", "Fixture");
     git("config", "user.email", "fixture@example.invalid");

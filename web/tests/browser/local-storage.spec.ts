@@ -1,3 +1,4 @@
+import { repositorySettings } from "./repository-settings-navigation.js";
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { api, sample } from "./native-browser-fixture.js";
@@ -12,7 +13,7 @@ test("Storage recovers a lost response without replacing the captured target", a
     }),
   );
   const target = {
-    repository: "ab".repeat(16),
+    repository: sample("snapshot").repo_id,
     epoch: "cd".repeat(16),
     position: 7,
     revision: 9,
@@ -66,7 +67,7 @@ test("Storage recovers a lost response without replacing the captured target", a
     .getByRole("button", { name: "Open profile menu for Local" })
     .click();
   await page.getByRole("menuitem", { name: "Settings", exact: true }).click();
-  await page.getByRole("button", { name: "Storage", exact: true }).click();
+  await repositorySettings(page, "Storage");
   await expect(page.getByText("Selected manifest is readable")).toBeVisible();
   await page.getByRole("tab", { name: "Maintenance", exact: true }).click();
   await page
@@ -77,17 +78,16 @@ test("Storage recovers a lost response without replacing the captured target", a
   ).toBeVisible();
   await expect(
     page.getByRole("combobox", { name: "Settings repository" }),
-  ).toBeDisabled();
+  ).toHaveCount(0);
   target.position = 12;
   await page
-    .getByRole("navigation", { name: "Settings page navigation" })
-    .getByRole("button", { name: "Check status", exact: true })
+    .getByRole("button", { name: "Refresh settings", exact: true })
     .click();
   await expect(
     page.getByRole("button", { name: "Publish checkpoint" }),
   ).toBeEnabled();
-  await page.getByRole("button", { name: "Repository", exact: true }).click();
-  await page.getByRole("button", { name: "Storage", exact: true }).click();
+  await repositorySettings(page, "Repository");
+  await repositorySettings(page, "Storage");
   await page.getByRole("tab", { name: "Maintenance", exact: true }).click();
   await page.getByRole("button", { name: "Publish checkpoint" }).click();
   await expect(
@@ -95,6 +95,9 @@ test("Storage recovers a lost response without replacing the captured target", a
   ).toBeVisible();
   expect(operation.target.position).toBe(7);
   expect(commands).toHaveLength(2);
+  await page
+    .getByRole("button", { name: "Back to repository", exact: true })
+    .click();
   expect(new URL(page.url()).hash).toBe(hash);
   await page.setViewportSize({ width: 390, height: 844 });
   expect(
@@ -109,19 +112,17 @@ test("Storage recovers a lost response without replacing the captured target", a
         .analyze()
     ).violations,
   ).toEqual([]);
-  await page.evaluate(() => {
-    location.hash = "#/projects";
-  });
+  await page.goto("/#/projects");
   await expect(
-    page.getByText("Storage unavailable", { exact: true }),
+    page.getByRole("region", { name: "Projects and tasks" }),
   ).toBeVisible();
-  expect(new URL(page.url()).hash).toBe("#/projects");
   expect(commands).toHaveLength(2);
-  const picker = page.getByRole("combobox", { name: "Settings repository" });
-  await expect(picker).toHaveText(/Choose repository/);
-  await picker.click();
-  await page.getByRole("option", { name: /Local acceptance/ }).click();
-  await expect(picker).toHaveText(/Local acceptance/);
+  await expect(
+    page.getByRole("combobox", { name: "Settings repository" }),
+  ).toHaveCount(0);
+  await page.goto(`/#/repos/${sample("snapshot").repo_id}/files`);
+  await repositorySettings(page, "Storage");
+  await page.getByRole("tab", { name: "Maintenance", exact: true }).click();
   await expect(
     page.getByRole("heading", { name: "Storage", level: 1 }),
   ).toBeVisible();

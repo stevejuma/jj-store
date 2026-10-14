@@ -44,6 +44,25 @@ function publishFromExternalCli() {
       stdio: "pipe",
     },
   );
+  return execFileSync(
+    join(root, "target", "debug", "jj-store-jj"),
+    [
+      "-R",
+      checkout,
+      "--ignore-working-copy",
+      "op",
+      "log",
+      "--no-graph",
+      "--limit",
+      "1",
+      "-T",
+      "id",
+    ],
+    {
+      env: { ...process.env, JJ_CONFIG: join(runtime, "jj.toml") },
+      encoding: "utf8",
+    },
+  ).trim();
 }
 
 async function connect(page: import("@playwright/test").Page) {
@@ -103,8 +122,8 @@ test("demo history exposes one native divergent change", async ({ page }) => {
 test("external publication refreshes automatically and preserves selection", async ({
   page,
 }) => {
-  const eventRequest = page.waitForRequest((request) =>
-    new URL(request.url()).pathname.endsWith(`/v1/repos/${repository}/events`),
+  const eventRequest = page.waitForRequest(
+    (request) => new URL(request.url()).pathname === "/v1/events",
   );
   await connect(page);
   expect((await eventRequest).headers()["authorization"]).toBeUndefined();
@@ -119,6 +138,12 @@ test("external publication refreshes automatically and preserves selection", asy
   await expect
     .poll(() => routeQuery(page.url()).get("thread"))
     .toMatch(/^[0-9a-f]{32}$/u);
+  await expect(
+    page.getByRole("combobox", { name: "Repository workspace", exact: true }),
+  ).toBeEnabled({ timeout: 15000 });
+  await expect(
+    page.getByRole("status").filter({ hasText: "Loading more history" }),
+  ).toHaveCount(0, { timeout: 15000 });
 
   const selected = routeQuery(page.url());
   expect(selected.get("bookmark")).toBe("main");
@@ -127,10 +152,12 @@ test("external publication refreshes automatically and preserves selection", asy
   const oldOperation = selected.get("at_op");
   expect(oldOperation).toMatch(/^[0-9a-f]{128}$/u);
 
-  publishFromExternalCli();
+  const publishedOperation = publishFromExternalCli();
+  expect(publishedOperation).toMatch(/^[0-9a-f]{128}$/u);
   await expect
     .poll(() => routeQuery(page.url()).get("at_op"))
-    .not.toBe(oldOperation);
+    .toBe(publishedOperation);
+  expect(publishedOperation).not.toBe(oldOperation);
   await expect(main).toBeVisible();
   const refreshed = routeQuery(page.url());
   expect(refreshed.get("bookmark")).toBe(selected.get("bookmark"));
@@ -163,7 +190,7 @@ test("native conflict selection previews and publishes one atomic resolution", a
   await page
     .getByRole("button", { name: "Unresolved browser conflict", exact: true })
     .click();
-  await page.getByRole("button", { name: "Repository actions" }).click();
+  await page.getByRole("button", { name: "Application menu" }).click();
   await page.getByRole("menuitem", { name: "Resolve conflicts" }).click();
   const surface = page.getByRole("region", {
     name: "Resolve native conflicts",
@@ -188,7 +215,9 @@ test("native conflict selection previews and publishes one atomic resolution", a
     name: "Apply atomic conflict resolution?",
   });
   await confirmation.getByRole("button", { name: "Apply resolution" }).click();
-  await expect(surface.getByText("Conflicts resolved")).toBeVisible({
+  await expect(
+    page.getByRole("status").filter({ hasText: "Conflicts resolved" }),
+  ).toBeVisible({
     timeout: 30000,
   });
 
@@ -214,15 +243,21 @@ test("browser mutation previews and publishes one native request", async ({
       requests.push(request.postDataJSON());
   });
   await connect(page);
+  await page.getByRole("option", { name: "main", exact: true }).click();
+  await page
+    .getByRole("button", { name: "Add repository browser", exact: true })
+    .click();
   const previousOperation = routeQuery(page.url()).get("at_op");
-  await page.getByRole("button", { name: "Repository actions" }).click();
+  await page.getByRole("button", { name: "Application menu" }).click();
   await page.getByRole("menuitem", { name: "Create change" }).click();
   const dialog = page.getByRole("dialog", { name: "Create change" });
   await dialog.getByRole("textbox", { name: "Markdown editor" }).fill(message);
   await dialog.getByRole("button", { name: "Preview change" }).click();
   await expect(dialog.getByText("Preview prepared")).toBeVisible();
   await dialog.getByRole("button", { name: "Apply command" }).click();
-  await expect(dialog.getByText("Repository updated")).toBeVisible();
+  await expect(
+    page.getByRole("status").filter({ hasText: "Repository updated" }),
+  ).toBeVisible();
 
   expect(requests).toHaveLength(2);
   expect(requests[1]).toEqual(requests[0]);

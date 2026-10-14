@@ -4,7 +4,9 @@ import { createProductionStoreState } from "../../src/lib/controller/production-
 import { initialStoreRoute } from "../../src/lib/controller/store-route-history.svelte.js";
 import type { Head } from "../../src/lib/api/client.js";
 afterEach(() => vi.useRealTimers());
-function fixture() {
+function fixture(
+  input: Partial<Parameters<typeof createProductionAutomaticRefresh>[0]> = {},
+) {
   vi.useFakeTimers();
   const abort = new AbortController(),
     data = createProductionStoreState();
@@ -44,6 +46,7 @@ function fixture() {
       navigation: { load: navigation },
     },
     threads: { busy: false, status: "ready" },
+    ...input,
   } as unknown as Parameters<typeof createProductionAutomaticRefresh>[0];
   return {
     abort,
@@ -55,6 +58,43 @@ function fixture() {
     updates: createProductionAutomaticRefresh(options),
   };
 }
+test("task reaction notices schedule a visible home refresh through the shared feed", async () => {
+  let notify!: (
+    notice: import("../../src/lib/controller/application-freshness.js").FreshnessNotice,
+  ) => void;
+  const route = {
+    ...initialStoreRoute(),
+    page: "projects" as const,
+    repository: "11".repeat(16),
+    projectId: "55".repeat(16),
+    taskId: "66".repeat(16),
+    workTab: "tasks" as const,
+  };
+  const f = fixture({
+    route: () => route,
+    freshness: {
+      listen: (listener: typeof notify) => {
+        notify = listener;
+        return () => {};
+      },
+    } as never,
+  });
+  try {
+    const change = {
+      repository: route.repository,
+      domain: "threads" as const,
+      witness: "one",
+    };
+    notify({ changes: [change], reset: false, status: "live" });
+    await vi.advanceTimersByTimeAsync(150);
+    expect(f.refresh).toHaveBeenCalledWith([change]);
+    expect(route.taskId).toBe("66".repeat(16));
+    await vi.advanceTimersByTimeAsync(310000);
+    expect(f.refresh).toHaveBeenCalledTimes(1);
+  } finally {
+    f.abort.abort();
+  }
+});
 test("repository views remain idle without an event feed", async () => {
   const f = fixture();
   await vi.advanceTimersByTimeAsync(5000);

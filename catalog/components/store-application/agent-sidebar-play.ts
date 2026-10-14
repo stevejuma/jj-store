@@ -18,6 +18,9 @@ export async function agentSidebarPlay({
     await canvas.findByRole("button", { name: "Appearance" }),
   );
   await userEvent.click(
+    await canvas.findByRole("tab", { name: "Preferences" }),
+  );
+  await userEvent.click(
     await canvas.findByRole("radio", { name: /^Classic$/ }),
   );
   await userEvent.click(

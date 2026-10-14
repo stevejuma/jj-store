@@ -1,5 +1,9 @@
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import {
+  appearanceStorageKey,
+  defaultAppearance,
+} from "../../src/lib/appearance/preferences.js";
 import { api, sample, repo } from "./native-browser-fixture.js";
 import {
   fixtureSession,
@@ -55,14 +59,50 @@ async function fleet(page: Page) {
   let events: any[] = [];
   await page.route("**/v1/local/agents**", async (r) => {
     const url = new URL(r.request().url());
+    if (/\/agents\/(?:settings|chatgpt)$/.test(url.pathname))
+      return r.fallback();
     expect(r.request().headers()["authorization"]).toBeUndefined();
     if (url.pathname.endsWith("/targets")) return r.fulfill({ json: [] });
     if (url.pathname.endsWith("/feedback"))
       return r.fulfill({
         json: {
           version: 1,
-          profile: "local_jj_git",
-          messages: [],
+          profile: "native",
+          messages: events
+            .filter((e) => e.payload.toolSnapshot)
+            .map((e, i) => {
+              const tool = e.payload.toolSnapshot;
+              return {
+                row_id: `${e.payload.requestId}/tool/${tool.toolCallId}`,
+                target: {
+                  type: "tool_output",
+                  session_id: "44".repeat(16),
+                  tool_id: (i ? "78" : "77").repeat(16),
+                  snapshot: { kind: "tool_snapshot", id: "88".repeat(32) },
+                  content: { kind: "content", id: "66".repeat(32) },
+                },
+                text_parts: i
+                  ? [
+                      {
+                        part: "/content/0/oldText",
+                        text: tool.content[0].oldText,
+                      },
+                      {
+                        part: "/content/0/newText",
+                        text: tool.content[0].newText,
+                      },
+                    ]
+                  : [
+                      {
+                        part: "/rawOutput/formatted_output",
+                        text: tool.rawOutput.formatted_output,
+                      },
+                    ],
+                answers: [],
+                threads: [],
+                replies: [],
+              };
+            }),
           write_unavailable: null,
         },
       });
@@ -156,8 +196,11 @@ async function fleet(page: Page) {
             type: "prompt",
             requestId: body.request_id,
             text: body.text,
-            context:
-              "<agent_context>\n<repository_context>\n```text\nPinned repository facts\n```\n</repository_context>\n</agent_context>",
+            sentContext: {
+              delivery: "sent",
+              wireContext:
+                "<agent_context>\n<repository_context>\n```text\nPinned repository facts\n```\n</repository_context>\n</agent_context>",
+            },
           },
         },
         {
@@ -184,6 +227,7 @@ async function fleet(page: Page) {
           {
             title: "Edit captured.ts",
             kind: "edit",
+            locations: [{ path: "src/captured.ts" }],
             content: [
               {
                 type: "diff",
@@ -241,6 +285,13 @@ async function fleet(page: Page) {
 test("cold ACP tools show highlighted captured files and independent raw JSON views", async ({
   page,
 }) => {
+  await page.addInitScript(
+    ({ key, value }) => localStorage.setItem(key, JSON.stringify(value)),
+    {
+      key: appearanceStorageKey,
+      value: { ...defaultAppearance, conversationView: "classic" },
+    },
+  );
   const f = await fleet(page);
   await page.goto(`/#/repos/${repo}/files`);
   await page.getByRole("button", { name: "Open chat", exact: true }).click();
@@ -255,7 +306,7 @@ test("cold ACP tools show highlighted captured files and independent raw JSON vi
       exact: true,
     })
     .click();
-  await composer.getByRole("button", { name: "Send message" }).click();
+  await page.getByRole("button", { name: "Send message", exact: true }).click();
   await expect(
     page.getByRole("group", { name: "Session started", exact: true }),
   ).toBeVisible();
@@ -268,11 +319,11 @@ test("cold ACP tools show highlighted captured files and independent raw JSON vi
   await expect(
     page.locator('[data-ui-component="agent-sent-context"]'),
   ).toHaveCount(1);
-  await page.getByText("Prepared context", { exact: true }).focus();
+  await page.getByRole("button", { name: "Sent context", exact: true }).focus();
   await page.keyboard.press("Enter");
   await expect(
-    page.locator('[data-ui-component="agent-sent-context"]'),
-  ).toHaveAttribute("open", "");
+    page.getByRole("button", { name: "Sent context", exact: true }),
+  ).toHaveAttribute("aria-expanded", "true");
   await page
     .getByRole("button", { name: "<agent_context>", exact: true })
     .click();
@@ -288,111 +339,96 @@ test("cold ACP tools show highlighted captured files and independent raw JSON vi
     await expect(marker.locator("svg")).toHaveCount(1);
     await expect(marker).not.toContainText(label);
   }
-  const group = page.getByRole("button", {
-    name: "Expand 2 tool calls",
+  const readTrigger = page.getByRole("button", {
+    name: "Show details for Read captured.ts",
     exact: true,
   });
-  const groupWidth = await group.evaluate((element) => {
-    const root = element.closest('[data-ui-component="ai-chat-tool-calls"]')!;
+  const editTrigger = page.getByRole("button", {
+    name: "Show details for Edited file",
+    exact: true,
+  });
+  await expect(readTrigger).toBeVisible();
+  await expect(editTrigger).toBeVisible();
+  const width = await readTrigger.evaluate((element) => {
+    const root = element.closest(".chat-tool-item")!;
     const parent = root.parentElement!;
-    const style = getComputedStyle(parent);
-    return {
-      actual: root.getBoundingClientRect().width,
-      available:
-        parent.clientWidth -
-        parseFloat(style.paddingInlineStart) -
-        parseFloat(style.paddingInlineEnd),
-    };
+    return [root.getBoundingClientRect().width, parent.clientWidth];
   });
-  expect(groupWidth.actual).toBeCloseTo(groupWidth.available, 0);
-  await group.click();
-  const toolMessage = page.getByRole("article", {
-    name: "Tool call: Read captured.ts",
-    exact: true,
-  });
-  await toolMessage.hover();
-  await expect(toolMessage).toHaveAttribute(
-    "data-ui-component",
-    "agent-tool-message",
-  );
-  await expect(toolMessage.getByRole("img")).toHaveCount(0);
-  const trigger = toolMessage.locator('[data-ai-chat-part="call-trigger"]');
-  await trigger.hover();
-  const inset = await trigger.evaluate((element) => {
-    const icon = element.querySelector('[data-ui-part="call-status"]')!;
-    return {
-      leading:
-        icon.getBoundingClientRect().left -
-        element.getBoundingClientRect().left,
-      hover: getComputedStyle(element).backgroundColor,
-    };
-  });
-  const disclosure = await trigger
-    .locator('[data-ui-part="detail-chevron"]')
-    .boundingBox();
-  expect(disclosure?.width).toBe(14);
-  expect(disclosure?.height).toBe(14);
-  expect(inset.leading).toBe(8);
-  expect(inset.hover).not.toBe("rgba(0, 0, 0, 0)");
-  await expect(
-    toolMessage.getByRole("button", { name: "Reply", exact: true }),
-  ).toBeVisible();
-  await page
-    .getByRole("button", {
-      name: "Show details for Read captured.ts",
-      exact: true,
-    })
-    .click();
-  const read = toolMessage.locator('[data-ui-component="agent-tool-detail"]');
+  expect(width[0]).toBeCloseTo(width[1], 0);
+  await readTrigger.click();
+  const read = page.locator(".chat-tool-panel-content");
   await expect(read).toContainText("src/captured.ts");
-  await expect(
-    read.getByRole("group", { name: "typescript", exact: true }),
-  ).toBeVisible();
+  await expect(read.locator(".cm-content .cm-line span").first()).toBeVisible();
   await expect(read).toContainText("export const captured = 42;");
-  await read.getByRole("button", { name: "Show raw output" }).click();
-  await expect(read).toContainText("formatted_output");
-  await read.getByRole("button", { name: "Show rich output" }).click();
   await page
     .getByRole("button", {
-      name: "Show details for Edit captured.ts",
+      name: "Show raw output in read sidebar for Read captured.ts",
       exact: true,
     })
     .click();
-  await expect(
-    page.getByRole("region", { name: "Diff for src/captured.ts" }),
-  ).toBeVisible();
+  await expect(read).toContainText("formatted_output");
+  await page
+    .getByRole("button", {
+      name: "Show rich output in read sidebar for Read captured.ts",
+      exact: true,
+    })
+    .click();
+  await page
+    .getByRole("button", { name: "Close read tool details", exact: true })
+    .click();
+  await editTrigger.click();
+  const edit = page.locator('.chat-tool-detail[aria-label="Edited file"]');
+  await expect(edit).toContainText("export const captured = 41;");
+  await edit
+    .getByRole("button", {
+      name: "Show captured file src/captured.ts",
+      exact: true,
+    })
+    .click();
+  await expect(edit).toContainText("export const captured = 42;");
+  await page
+    .getByRole("button", {
+      name: "Show raw output for Edited file",
+      exact: true,
+    })
+    .click();
+  await expect(edit).toContainText("oldText");
+  await page
+    .getByRole("button", {
+      name: "Show rich output for Edited file",
+      exact: true,
+    })
+    .click();
   const findings = await new AxeBuilder({ page })
     .include('[data-ui-component="agent-chat"]')
     .analyze();
   expect(findings.violations).toEqual([]);
   await page.setViewportSize({ width: 1800, height: 1000 });
   await page.goto(`/#/agents/sessions/${"44".repeat(16)}`);
-  const inboxGroup = page.getByRole("button", {
-    name: "Expand 2 tool calls",
+  const inboxRead = page.getByRole("button", {
+    name: "Show details for Read captured.ts",
     exact: true,
   });
-  await expect(inboxGroup).toBeVisible();
-  const inboxWidth = await inboxGroup.evaluate((element) => {
-    const root = element.closest('[data-ui-component="ai-chat-tool-calls"]')!;
-    const parent = root.parentElement!;
-    const style = getComputedStyle(parent);
-    return {
-      actual: root.getBoundingClientRect().width,
-      available:
-        parent.clientWidth -
-        parseFloat(style.paddingInlineStart) -
-        parseFloat(style.paddingInlineEnd),
-    };
+  await expect(inboxRead).toBeVisible();
+  const inboxWidth = await inboxRead.evaluate((element) => {
+    const root = element.closest(".chat-tool-item")!;
+    return [
+      root.getBoundingClientRect().width,
+      root.parentElement!.clientWidth,
+    ];
   });
-  expect(inboxWidth.available).toBeGreaterThan(672);
-  expect(inboxWidth.actual).toBeCloseTo(inboxWidth.available, 0);
-  await inboxGroup.click();
+  expect(inboxWidth[1]).toBeGreaterThan(672);
+  expect(inboxWidth[0]).toBeCloseTo(inboxWidth[1], 0);
+  await inboxRead.click();
+  await expect(page.locator(".chat-tool-panel-content")).toContainText(
+    "export const captured = 42;",
+  );
   await expect(
     page.getByRole("button", {
-      name: "Show details for Read captured.ts",
+      name: "Show raw output in read sidebar for Read captured.ts",
       exact: true,
     }),
-  ).toBeVisible();
+  ).toHaveAttribute("aria-pressed", "false");
   await expect(
     page.getByRole("group", { name: "Session started", exact: true }),
   ).toBeVisible();

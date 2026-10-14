@@ -11,9 +11,19 @@ async function settled(page: Page) {
 }
 
 async function expectLayout(page: Page, mobile: boolean) {
-  for (const row of await page.locator(".store-settings__action-row").all()) {
-    const description = row.locator(":scope > div").first();
+  for (const row of await page
+    .locator(".store-settings__action-row:visible")
+    .all()) {
+    const description = row.locator(".store-settings-footer__description");
     const actions = row.locator(".store-settings__actions");
+    if (!(await description.count())) {
+      const bounds = (await row.boundingBox())!,
+        right = (await actions.boundingBox())!;
+      expect(
+        bounds.x + bounds.width - right.x - right.width,
+      ).toBeLessThanOrEqual(18);
+      continue;
+    }
     await expect(description.locator("p")).toBeVisible();
     const left = (await description.boundingBox())!;
     const right = (await actions.boundingBox())!;
@@ -68,19 +78,17 @@ test("local settings use shared rows, right controls and icon availability state
     await expect(
       folders.getByRole("button", { name: "Refresh folders" }),
     ).toBeEnabled();
-    const registrations = folders.locator(".store-settings__rows--controls");
+    const registrations = folders.getByRole("button", {
+      name: "Reconnect folder",
+    });
     if (await registrations.count()) {
+      await expect(registrations.first()).toBeVisible();
       await expect(
-        registrations.getByRole("button", { name: "Reconnect folder" }).first(),
-      ).toBeVisible();
-      await expect(
-        registrations
-          .getByRole("button", { name: "Remove registration" })
-          .first(),
+        folders.getByRole("button", { name: "Remove registration" }).first(),
       ).toBeVisible();
     } else
       await expect(
-        folders.locator('[data-ui-part="empty-media"] svg'),
+        folders.locator('[data-slot="empty-media"] svg'),
       ).toBeVisible();
     await folders
       .getByRole("button", { name: "Add folder", exact: true })
@@ -96,14 +104,9 @@ test("local settings use shared rows, right controls and icon availability state
     });
 
     async function select(name: string) {
-      if (mobile)
-        await page
-          .getByRole("button", { name: "Open settings sidebar", exact: true })
-          .click();
-      await page
-        .getByRole("navigation", { name: "Settings navigation" })
-        .getByRole("button", { name, exact: true })
-        .click();
+      await page.goto(
+        `/#/repos/${home}/settings?section=${name.toLowerCase()}`,
+      );
     }
     await select("Search");
     const enabled = page.getByRole("switch", { name: "Enable text search" });
@@ -113,15 +116,16 @@ test("local settings use shared rows, right controls and icon availability state
       .boundingBox())!;
     const enabledControl = (await enabled.boundingBox())!;
     expect(enabledLabel.x + enabledLabel.width).toBeLessThan(enabledControl.x);
-    const rows = enabled.locator(
-      'xpath=ancestor::*[contains(@class,"store-settings__rows")]',
-    );
+    const rows = page.locator(".store-settings--repository:visible");
     await expect(
       rows.getByText("Currently active", { exact: true }),
     ).toBeVisible();
-    const budget = page.getByRole("spinbutton", { name: "Index budget (MiB)" });
+    const budget = page.getByRole("spinbutton", {
+      name: "Index budget",
+      exact: true,
+    });
     await expect(
-      rows.getByRole("spinbutton", { name: "Index budget (MiB)" }),
+      rows.getByRole("spinbutton", { name: "Index budget", exact: true }),
     ).toBeVisible();
     const previous = await enabled.isChecked();
     await enabled.click();
@@ -153,14 +157,18 @@ test("local settings use shared rows, right controls and icon availability state
       await expect(
         unavailable
           .locator('xpath=ancestor::*[@data-slot="empty"]')
-          .locator('[data-ui-part="empty-media"] svg'),
+          .locator('[data-slot="empty-media"] svg'),
       ).toBeVisible();
     } else {
       await expect(
-        page.getByRole("button", { name: "Refresh sync" }),
+        page.getByRole("button", { name: "Refresh settings", exact: true }),
       ).toBeEnabled();
-      await page.getByRole("button", { name: "Refresh sync" }).click();
-      await expect(page.locator(".store-settings__rows")).toBeVisible();
+      await page
+        .getByRole("button", { name: "Refresh settings", exact: true })
+        .click();
+      await expect(
+        page.locator(".store-settings__rows:visible").first(),
+      ).toBeVisible();
       const workStore = page.getByText("WorkStore sync is not supported.", {
         exact: true,
       });
@@ -168,7 +176,7 @@ test("local settings use shared rows, right controls and icon availability state
         await expect(
           workStore
             .locator('xpath=ancestor::*[@data-slot="empty"]')
-            .locator('[data-ui-part="empty-media"] svg'),
+            .locator('[data-slot="empty-media"] svg'),
         ).toBeVisible();
         await expect(
           page.getByRole("button", { name: "Pause sync" }),

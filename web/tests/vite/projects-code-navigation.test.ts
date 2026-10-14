@@ -203,3 +203,45 @@ test("repository Projects external routes authorize their separate code connecti
   });
   expect(connected).toEqual([code]);
 });
+
+test("departing a delayed graph cannot start old commit reads or overwrite navigation status", async () => {
+  const data = createProductionStoreState();
+  const codeRoute = {
+    ...initialStoreRoute(),
+    repository: "11".repeat(16),
+    page: "log" as const,
+    commitId: "aa".repeat(64),
+    snapshotOperationId: "bb".repeat(64),
+  };
+  const history = { route: codeRoute } as Parameters<
+    typeof restoreProductionStoreRoute
+  >[2];
+  let release!: () => void;
+  const calls: string[] = [];
+  const pending = restoreProductionStoreRoute(codeRoute, data, history, {
+    prepareReferences: async () => true,
+    loadGraph: () =>
+      new Promise<void>((done) => {
+        release = done;
+      }),
+    loadCommit: async () => {
+      calls.push("obsolete commit");
+    },
+    loadReferencePickers: async () => {
+      calls.push("obsolete pickers");
+    },
+  } as Parameters<typeof restoreProductionStoreRoute>[3]);
+  await Promise.resolve();
+  history.route = {
+    ...codeRoute,
+    projectsHub: true,
+    page: "projects",
+    commitId: null,
+    snapshotOperationId: null,
+  };
+  data.status.navigation = "failed";
+  release();
+  await pending;
+  expect(calls).toEqual([]);
+  expect(data.status.navigation).toBe("failed");
+});

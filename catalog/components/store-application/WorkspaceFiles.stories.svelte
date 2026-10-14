@@ -321,7 +321,9 @@
     await expect(
       inspector.queryByText("Loading file…"),
     ).not.toBeInTheDocument();
-    await expect(inspector.getByText("src/unchanged.ts")).toBeVisible();
+    await expect(
+      inspector.getByText("src/unchanged.ts", { selector: "strong" }),
+    ).toBeVisible();
     await userEvent.click(
       c.getByRole("button", { name: "Complete workspace read" }),
     );

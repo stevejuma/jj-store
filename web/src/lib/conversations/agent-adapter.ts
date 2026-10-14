@@ -104,7 +104,7 @@ export function agentConversationProjection(
         | undefined,
       base = 0,
     ) => {
-      const blocks = markdownBlocks(id, rev, label, text);
+      const blocks = markdownBlocks(id, rev, label, text, true);
       for (const block of blocks) {
         block.commentable = !!part;
         if (part)

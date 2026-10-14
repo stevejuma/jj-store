@@ -7,6 +7,7 @@ const labels = [
   "Commits",
   "Op Log",
   "Agents",
+  "Actions",
   "Reviews",
   "Projects",
 ];
@@ -29,11 +30,11 @@ test("right rail destinations match repository tabs and preserve workspace snaps
         style.paddingBottom,
       ].map(Number.parseFloat);
     });
-  // JST-UI-015 places the inset in the file card, with a flush body divider.
+  // JST-UI-015 keeps Overview flush without a duplicate body divider.
   expect(overviewInsets).toEqual([0, 0, 0, 0]);
   await expect(page.locator(".store-application__body-regions")).toHaveCSS(
     "border-top-width",
-    "1px",
+    "0px",
   );
   await expect(page.locator(".store-application__body-regions")).toHaveCSS(
     "margin-top",

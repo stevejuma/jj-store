@@ -99,6 +99,9 @@ test("global Settings contains installation configuration and returns to reposit
   ).toBeVisible();
   const before = page.url();
   await page
+    .getByRole("button", { name: "Expand left sidebar", exact: true })
+    .click();
+  await page
     .getByRole("button", { name: "Open profile menu for Local" })
     .click();
   await page.getByRole("menuitem", { name: "Settings", exact: true }).click();

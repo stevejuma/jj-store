@@ -2,7 +2,7 @@
   import StoreSettingsFooter from "./StoreSettingsFooter.svelte";
   import DatabaseIcon from "@lucide/svelte/icons/database";
   import StoreSettingsCard from "./StoreSettingsCard.svelte";
-  import { onDestroy } from "svelte";
+  import { onDestroy, untrack } from "svelte";
   import * as Dialog from "@lapismd/design-core/shadcn/dialog";
   import * as Field from "@lapismd/design-core/shadcn/field";
   import * as Select from "@lapismd/design-core/shadcn/select";
@@ -60,17 +60,19 @@
     const freshness = controller.freshness,
       current = manager;
     if (!freshness || !current) return;
-    const watch = freshness.watch({
-      initial: Boolean(current.pending),
-      active: () => Boolean(current.pending && !busy),
-      matches: (change) =>
-        change.domain === "conversion" &&
-        change.identity === current.pending?.request_id,
-      refresh: async () => {
-        await run(true);
-        return !error;
-      },
-    });
+    const watch = untrack(() =>
+      freshness.watch({
+        initial: Boolean(current.pending),
+        active: () => Boolean(current.pending && !busy),
+        matches: (change) =>
+          change.domain === "conversion" &&
+          change.identity === current.pending?.request_id,
+        refresh: async () => {
+          await run(true);
+          return !error;
+        },
+      }),
+    );
     return watch.stop;
   });
   function edit() {

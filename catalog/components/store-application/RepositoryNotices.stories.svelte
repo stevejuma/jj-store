@@ -39,6 +39,23 @@
   }
 
   async function expectDetailBanner(canvasElement: HTMLElement, title: string) {
+    if (title === "Review unavailable") {
+      const unavailable = await within(canvasElement).findByRole("status", {
+        name: title,
+      });
+      await expect(unavailable).toBeVisible();
+      await expect(unavailable).toHaveTextContent(
+        "The collaboration snapshot could not be loaded.",
+      );
+      const bounds = unavailable.getBoundingClientRect(),
+        outer = canvasElement.getBoundingClientRect();
+      await expect(bounds.left).toBeGreaterThanOrEqual(outer.left);
+      await expect(bounds.right).toBeLessThanOrEqual(outer.right);
+      await expect(unavailable.scrollWidth).toBeLessThanOrEqual(
+        unavailable.clientWidth,
+      );
+      return;
+    }
     const banner = (await within(canvasElement).findByText(title)).closest(
       '[role="alert"]',
     )!;

@@ -43,9 +43,11 @@
     }
     await browser.viewport(1280, 800);
     await userEvent.click(c.getByRole("button", { name: /^Mine$/ }));
-    await expect(
-      c.queryByRole("button", { name: "Open project Personal project" }),
-    ).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(
+        c.queryByRole("button", { name: "Open project Personal project" }),
+      ).not.toBeInTheDocument(),
+    );
     await userEvent.click(c.getByRole("button", { name: "Mine 4" }));
     await expect(
       await c.findByRole("button", { name: "Open project Personal project" }),

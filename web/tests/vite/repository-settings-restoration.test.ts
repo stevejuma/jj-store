@@ -66,3 +66,36 @@ test("guarded repository changes leave the active owner and drafts intact before
   expect(data.workspacePath).toBe("/retained/draft");
   expect(data.status.connection).toBe("disconnected");
 });
+
+test("index recovery retains the captured graph time and identity while ordinary navigation clears them", async () => {
+  const data = createProductionStoreState();
+  const parsed = storeRouteFromHash(
+    `#/repos/${"ab".repeat(16)}/log?at_op=${"cd".repeat(64)}`,
+  );
+  if (parsed.kind !== "route") throw Error("invalid fixture");
+  const observed: unknown[] = [];
+  const restore = createProfileRouteRestorer({
+    data,
+    route: () => parsed.route,
+    source: () =>
+      ({
+        repository: parsed.route.repository,
+        profile: "native",
+      }) as StoreDataSource,
+    projects: { restore: async () => {} },
+    connect: async () => {},
+    token: () => null,
+    invalidate: () => {},
+    restore: async () => {
+      observed.push({ time: data.graphAtTimeMillis, email: data.historyEmail });
+    },
+  });
+  const retained = {
+    graphAtTimeMillis: 123456,
+    historyEmail: "retained@example.test",
+  };
+  await (restore as (query: typeof retained) => Promise<void>)(retained);
+  expect(observed).toEqual([{ time: 123456, email: "retained@example.test" }]);
+  await restore();
+  expect(observed[1]).toEqual({ time: null, email: "" });
+});

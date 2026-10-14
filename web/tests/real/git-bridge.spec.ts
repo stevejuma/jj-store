@@ -4,6 +4,10 @@ import { join } from "node:path";
 
 // The owning Rust fixture starts a fresh actual RustFS/native server and creates
 // an external Git merge before this browser starts. No synthetic controller.
+test.skip(
+  !process.env.JJ_STORE_GIT_CYCLE_WORKSPACE,
+  "Run through the owning real-RustFS Git-cycle acceptance parent",
+);
 test("Git import refreshes automatically", async ({ page }) => {
   const workspace = process.env.JJ_STORE_GIT_CYCLE_WORKSPACE!;
   const root = process.env.JJ_STORE_REAL_ROOT!;

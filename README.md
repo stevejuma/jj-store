@@ -113,9 +113,12 @@ tooling and governance gates before ordinary tests and affected web checks.
 Their success admits the separate
 [heavy workflow](.github/workflows/ci-heavy.yml) with eight parallel shards,
 then native, storage, assets and browser stages. Failures stop later stages and
-cancel matrix siblings; browser jobs reuse same-run tools and bundles. Relevant
-PRs select affected tests; nightly and release runs select all qualification
-lanes. Ignored subprocess helpers run through their acceptance parents.
+cancel matrix siblings; browser jobs reuse same-run tools and bundles. Cold
+browser checks use four isolated shards, with separate profile-restart and real
+RustFS Git-cycle jobs. Storybook runs in three shards, served-browser tests in
+two, and static catalog and Help acceptance have separate jobs. Relevant PRs
+select affected tests; nightly and release runs select all qualification lanes.
+Ignored subprocess helpers run through their acceptance parents.
 
 Initialize the private development fixture once with `pnpm dev:restart`, then
 use `pnpm dev:ui` for Vite HMR at `http://127.0.0.1:7460/`. After Rust edits run

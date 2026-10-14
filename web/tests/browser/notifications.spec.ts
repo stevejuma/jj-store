@@ -1,3 +1,4 @@
+import { repositorySettings } from "./repository-settings-navigation.js";
 import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { api, sample } from "./native-browser-fixture.js";
@@ -30,7 +31,7 @@ test("operational toasts deduplicate, retain dismissal and clear on recovery", a
     .getByRole("button", { name: "Open profile menu for Local" })
     .click();
   await page.getByRole("menuitem", { name: "Settings" }).click();
-  await page.getByRole("button", { name: "Sync", exact: true }).click();
+  await repositorySettings(page, "Sync");
   await page.getByRole("button", { name: "Pause sync", exact: true }).click();
   const toast = page.locator(
     '[data-notification-toasts] [data-severity="error"]',
@@ -38,26 +39,26 @@ test("operational toasts deduplicate, retain dismissal and clear on recovery", a
   await expect(toast).toHaveCount(1);
   await expect(toast).toContainText("Sync status unavailable");
   const id = await toast.getAttribute("data-notification-id");
-  await page.getByRole("button", { name: "Refresh sync" }).click();
+  await page.getByRole("button", { name: "Refresh settings" }).click();
   await expect(toast).toHaveCount(1);
   await expect(toast).toHaveAttribute("data-notification-id", id!);
   await page
     .getByRole("button", { name: "Dismiss Sync status unavailable" })
     .click();
-  await page.getByRole("button", { name: "Refresh sync" }).click();
+  await page.getByRole("button", { name: "Refresh settings" }).click();
   await expect(
-    page.getByRole("button", { name: "Refresh sync" }),
+    page.getByRole("button", { name: "Refresh settings" }),
   ).toBeEnabled();
   await expect(toast).toHaveCount(0);
-  await page.getByRole("button", { name: "Back to jj-store" }).click();
+  await page.getByRole("button", { name: "Back to repository" }).click();
   await page
     .getByRole("button", { name: "Open profile menu for Local" })
     .click();
   await page.getByRole("menuitem", { name: "Settings" }).click();
-  await page.getByRole("button", { name: "Sync", exact: true }).click();
+  await repositorySettings(page, "Sync");
   await expect(toast).toHaveCount(0);
   unavailable = false;
-  await page.getByRole("button", { name: "Refresh sync" }).click();
+  await page.getByRole("button", { name: "Refresh settings" }).click();
   await expect(
     page.getByRole("button", { name: "Pause sync", exact: true }),
   ).toBeEnabled();
@@ -71,7 +72,7 @@ test("operational toasts deduplicate, retain dismissal and clear on recovery", a
     violations: [],
   });
   unavailable = false;
-  await page.getByRole("button", { name: "Refresh sync" }).click();
+  await page.getByRole("button", { name: "Refresh settings" }).click();
   await expect(toast).toHaveCount(0);
   await page.reload();
   await expect(page.locator("[data-notification-id]")).toHaveCount(0);

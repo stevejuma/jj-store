@@ -278,6 +278,36 @@ export async function api(
   const requests: string[] = [];
   let edited = false;
   let editCommand: any = null;
+  let agentSettings = {
+    revision: 0,
+    metadata: null,
+    runner: "codex",
+    preferences: { model: null, effort: null, mode: null },
+    options: {
+      inherit_defaults: false,
+      provider: null,
+      endpoint: null,
+      account: null,
+      environment: {},
+    },
+    automatically_mention: false,
+    keep_awake: false,
+    keychain_supported: false,
+  };
+  await page.route("**/v1/local/agents/chatgpt", (route) =>
+    route.fulfill({ json: { supported: false, accounts: [], attempts: [] } }),
+  );
+  await page.route("**/v1/local/agents/settings", async (route) => {
+    if (route.request().method() === "POST") {
+      const command = route.request().postDataJSON();
+      expect(command.expected_revision).toBe(agentSettings.revision);
+      agentSettings = {
+        ...command.settings,
+        revision: agentSettings.revision + 1,
+      };
+    }
+    await route.fulfill({ json: agentSettings });
+  });
   await page.route("**/v1/bootstrap", async (route) => {
     const request = route.request();
     expect(request.headers()["x-jj-store-protocol"]).toBe("1");

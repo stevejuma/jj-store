@@ -1,5 +1,9 @@
 # Interactive agent execution
 
+E-CI-BROWSER-001 retains JST-API-001/006: saved-turn fixtures carry both
+repository boundaries and positive event sequences for one completed request.
+Turn-specific labels and file selection preserve pinning and command policy.
+
 Typed installation-local Agents APIs expose runners, targets, conditional saved
 setups, session preparation, prompts, permissions, cancel/end/resume, workspace
 cleanup, bounded activity pages and request status. Every endpoint requires

@@ -6,6 +6,13 @@ import { randomUUID } from "node:crypto";
 const home = process.env.JJ_STORE_REAL_REPOSITORY!;
 const runtime = process.env.JJ_STORE_REAL_RUNTIME!;
 const root = process.env.JJ_STORE_REAL_ROOT!;
+function canonicalHash(value: string) {
+  const [path, query] = value.split("?");
+  const params = new URLSearchParams(query);
+  if (!params.has("state")) params.set("state", "active");
+  params.sort();
+  return `${path}?${params}`;
+}
 function cli(args: string[]) {
   return execFileSync(join(root, "target/debug/jj-store-jj"), args, {
     encoding: "utf8",
@@ -77,6 +84,19 @@ test("native projects tasks and discussion persist on RustFS and refresh automat
       .fill(repository);
     await page.getByRole("option").click();
   }
+  async function save(scope: Page | Locator, label: string) {
+    const committed = page.waitForResponse(
+      (response) =>
+        response.url().endsWith("/work/commands") &&
+        response.request().method() === "POST",
+    );
+    await scope.getByRole("button", { name: label, exact: true }).click();
+    const response = await committed;
+    expect(response.ok()).toBe(true);
+    const outcome = await response.json();
+    expect(outcome.status).toBe("committed");
+    expect(outcome.receipt.request_id).toMatch(/^[0-9a-f]{32}$/u);
+  }
   async function createProject(name: string, repository: string) {
     await view
       .getByRole("button", { name: "New project", exact: true })
@@ -87,14 +107,8 @@ test("native projects tasks and discussion persist on RustFS and refresh automat
     await editor("Project description", dialog).fill(
       "Two repositories with **native tasks**",
     );
-    await dialog
-      .getByRole("button", { name: "Create project", exact: true })
-      .click();
-    await expect(status(dialog)).toContainText("Saved");
+    await save(dialog, "Create project");
     await dialog.getByRole("button", { name: "Done", exact: true }).click();
-    await expect(
-      view.getByRole("button", { name: `Open project ${name}`, exact: true }),
-    ).toHaveCount(0);
     await expect(
       view.getByRole("button", { name: `Open project ${name}`, exact: true }),
     ).toBeVisible();
@@ -104,6 +118,7 @@ test("native projects tasks and discussion persist on RustFS and refresh automat
     "Projects",
     "Tasks",
     "Reviews",
+    "Agents",
     "Repositories",
   ]);
   await createProject(title, home);
@@ -123,8 +138,7 @@ test("native projects tasks and discussion persist on RustFS and refresh automat
   await editor("Project description", editProject).fill(
     "Edited **native** description",
   );
-  await editProject.getByRole("button", { name: "Save project" }).click();
-  await expect(status(editProject)).toContainText("Saved");
+  await save(editProject, "Save project");
   await editProject.getByRole("button", { name: "Done", exact: true }).click();
   await view.getByRole("button", { name: "Edit project" }).click();
   await expect(editor("Project description", editProject)).toHaveText(
@@ -148,6 +162,7 @@ test("native projects tasks and discussion persist on RustFS and refresh automat
     await expect(
       links.getByRole("button", { name: "Retire link" }),
     ).toHaveCount(id === a ? 1 : 2);
+    await expect(linkDialog).toBeHidden();
   }
   const sidebar = page.getByRole("complementary", {
     name: "Repository navigation sidebar",
@@ -187,10 +202,7 @@ test("native projects tasks and discussion persist on RustFS and refresh automat
       await page
         .getByRole("option", { name: "No parent", exact: true })
         .click();
-    await dialog
-      .getByRole("button", { name: "Create task", exact: true })
-      .click();
-    await expect(status(dialog)).toContainText("Saved");
+    await save(dialog, "Create task");
     await dialog.getByRole("button", { name: "Done", exact: true }).click();
   }
   await createTask("Parent task", a);
@@ -205,23 +217,20 @@ test("native projects tasks and discussion persist on RustFS and refresh automat
   await expect(
     taskDetail.getByRole("button", { name: "Description", exact: true }),
   ).toHaveAttribute("aria-expanded", "true");
-  for (const name of ["Subtasks", "Activity"]) {
+  for (const name of ["Subtasks"]) {
     await expect(
       taskDetail.getByRole("button", { name, exact: true }),
     ).toHaveAttribute("aria-expanded", "false");
   }
-  await taskDetail
-    .getByRole("button", { name: "Activity", exact: true })
-    .click();
+  await expect(
+    taskDetail.getByRole("button", { name: "Activity", exact: true }),
+  ).toHaveAttribute("aria-expanded", "true");
   await view.getByRole("button", { name: "Edit task", exact: true }).click();
   const editTask = page.getByRole("dialog", { name: "Edit task" });
   await editTask
     .getByRole("combobox", { name: "Task state", exact: true })
     .selectOption("in_progress");
-  await editTask
-    .getByRole("button", { name: "Save task", exact: true })
-    .click();
-  await expect(status(editTask)).toContainText("Saved");
+  await save(editTask, "Save task");
   await editTask.getByRole("button", { name: "Done", exact: true }).click();
   await expect(
     view.getByRole("article", { name: "Task details" }),
@@ -341,8 +350,8 @@ test("native projects tasks and discussion persist on RustFS and refresh automat
   await page.reload();
   await view.getByRole("button", { name: "Activity", exact: true }).click();
   await expect(view.getByText("Threaded reply", { exact: true })).toBeVisible();
-  expect(new URL(page.url()).hash).toBe(path);
-  expect(path).toBe(taskPath);
+  expect(canonicalHash(new URL(page.url()).hash)).toBe(canonicalHash(path));
+  expect(canonicalHash(path)).toBe(canonicalHash(taskPath));
   // Legacy IDs restore the same native task.
   await page.goto(
     `/#/repos/${home}/projects?project=${projectId}&task=${taskId}`,
@@ -366,7 +375,9 @@ test("native projects tasks and discussion persist on RustFS and refresh automat
   await expect(
     view.getByRole("region", { name: "Linked repositories" }),
   ).toBeVisible();
-  expect(new URL(page.url()).hash).toBe(projectPath);
+  expect(canonicalHash(new URL(page.url()).hash)).toBe(
+    canonicalHash(projectPath),
+  );
   await view.getByRole("tab", { name: "Tasks", exact: true }).click();
   const detailsToggle = page.getByRole("button", {
     name: "Toggle details",
@@ -387,8 +398,13 @@ test("native projects tasks and discussion persist on RustFS and refresh automat
   await expect(
     view.getByRole("button", { name: "Open task Parent task", exact: true }),
   ).toHaveCount(0);
-  await page.getByLabel("Search tasks", { exact: true }).fill("Child");
-  await page.getByRole("button", { name: "Search", exact: true }).click();
+  await page.getByRole("button", { name: "Search tasks", exact: true }).click();
+  const searchTasks = page.getByRole("textbox", {
+    name: "Search tasks",
+    exact: true,
+  });
+  await searchTasks.fill("Child");
+  await searchTasks.press("Enter");
   await expect(
     view.getByRole("button", { name: "Open task Child task", exact: true }),
   ).toBeVisible();
@@ -397,9 +413,7 @@ test("native projects tasks and discussion persist on RustFS and refresh automat
   await page
     .getByRole("button", { name: "Filters for tasks", exact: true })
     .click();
-  await expect(page.getByLabel("Search tasks", { exact: true })).toHaveValue(
-    "Child",
-  );
+  await expect(searchTasks).toHaveValue("Child");
   expect(new URL(page.url()).hash).toBe(filtered);
   await page
     .getByRole("button", { name: "Close filters", exact: true })
@@ -439,7 +453,9 @@ test("native projects tasks and discussion persist on RustFS and refresh automat
   await expect(
     view.getByRole("tab", { name: "Reviews", exact: true }),
   ).toHaveAttribute("aria-selected", "true");
-  expect(new URL(page.url()).hash).toBe(reviewPath);
+  expect(canonicalHash(new URL(page.url()).hash)).toBe(
+    canonicalHash(reviewPath),
+  );
   expect(thread.presentation.excerpt).toBeTruthy();
   const reviewRow = view.locator("article").filter({
     has: page.getByRole("button", { name: `Open review ${thread.thread_id}` }),
@@ -466,9 +482,7 @@ test("native projects tasks and discussion persist on RustFS and refresh automat
   await page
     .getByRole("button", { name: "Filters for tasks", exact: true })
     .click();
-  await expect(page.getByLabel("Search tasks", { exact: true })).toHaveValue(
-    "Child",
-  );
+  await expect(searchTasks).toHaveValue("Child");
   await page
     .getByRole("button", { name: "Close filters", exact: true })
     .click();

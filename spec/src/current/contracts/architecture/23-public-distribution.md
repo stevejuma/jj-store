@@ -75,3 +75,25 @@ check validates the complete planned graph, including rejected/skipped gates.
 Shared setup omits native headers and build-only tools for early checks.
 Fail-fast applies within archived shards and to each matrix: a failing shard
 cancels its siblings, and canceled work can never satisfy a qualification gate.
+CI Storybook and Playwright runners likewise stop on their first failure; unrun
+tests cannot establish acceptance and the containing gate fails.
+
+Cold browser acceptance is partitioned into four complete Playwright shards,
+each with its own disposable server/storage fixture. Profile restart acceptance
+uses a separate fifth fixture because it deliberately terminates its server. The
+real-RustFS Git-cycle acceptance runs through its owning ignored Rust parent on
+another runner, consuming the existing heavy test archive and current tools and
+browser bundle. Its browser child is not an independent generic fixture. The
+required aggregate admits no missing shard or fixture lane. The complete local
+cold command likewise separates profile restart from the ordinary suite.
+
+Storybook interactions run in three disjoint file shards; served application
+acceptance runs in two Playwright shards. Static catalog and dual-engine Help
+acceptance each run on their own runner. Every shard retains the original tests
+and failure gate; splitting the lanes never turns partial execution into a pass.
+Output directories are isolated between served browser, Help and cold shards.
+Served shards exclude Help files, which run in both engines in the Help lane.
+Browser runners reuse prepared artifacts without native build headers or general
+build tools; only the archived Git parent installs the test-archive tooling.
+Every browser lane installs Chromium, while only dual-engine Help installs
+WebKit. Unused browser engines and build tools are not downloaded per shard.

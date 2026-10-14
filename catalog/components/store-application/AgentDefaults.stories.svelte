@@ -2,11 +2,15 @@
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, userEvent, within, waitFor } from "storybook/test";
   import Fixture from "../../fixtures/AgentFleetApplicationFixture.svelte";
+  import { views } from "../../../web/src/lib/ui/store-application/application-views.js";
   const { Story } = defineMeta({
     title: "JJ Store/Settings/Agent defaults",
     component: Fixture,
     tags: ["visual-pending"],
     parameters: { layout: "fullscreen" },
+    beforeEach: async () => {
+      await views.settings();
+    },
   });
   async function defaultsSessionModels({
     canvasElement,
@@ -28,6 +32,7 @@
         c.getByRole("navigation", { name: "Settings navigation" }),
       ).getByRole("button", { name: "Agents" }),
     );
+    await c.findByRole("button", { name: "Save defaults" });
     await userEvent.click(await c.findByRole("combobox", { name: "Model" }));
     await userEvent.click(
       await page.findByRole("option", { name: /Codex Fast/ }),

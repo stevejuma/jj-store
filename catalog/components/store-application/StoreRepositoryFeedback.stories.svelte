@@ -1,6 +1,6 @@
 <script module lang="ts">
   import { defineMeta } from "@storybook/addon-svelte-csf";
-  import { expect, userEvent, within } from "storybook/test";
+  import { expect, userEvent, waitFor, within } from "storybook/test";
   import Fixture from "../../fixtures/RepositoryPreparationFixture.svelte";
   const { Story } = defineMeta({
     title: "JJ Store/Repository feedback",
@@ -43,9 +43,11 @@
     await expect(
       await page.findByText("Graph index preparation completed."),
     ).toBeVisible();
-    await expect(
-      canvas.queryByRole("status", { name: "Loading JJ log" }),
-    ).not.toBeInTheDocument();
+    await waitFor(() =>
+      expect(
+        canvas.queryByRole("status", { name: "Loading JJ log" }),
+      ).not.toBeInTheDocument(),
+    );
   }}
 />
 
@@ -56,12 +58,9 @@
       page = within(canvasElement.ownerDocument.body);
     await page.findByText("Preparing the graph index…");
     await userEvent.click(
-      canvas.getByRole("button", { name: "Open profile menu for Maya Chen" }),
+      canvas.getByRole("button", { name: "Repository settings" }),
     );
-    await userEvent.click(
-      await page.findByRole("menuitem", { name: "Settings" }),
-    );
-    await canvas.findByRole("heading", { name: "Local service", level: 1 });
+    await canvas.findByRole("heading", { name: "General", level: 1 });
     await expect(page.getByText("Preparing the graph index…")).toBeVisible();
     await expect(
       canvas.queryByText("Preparing the graph index…"),
@@ -69,7 +68,6 @@
     await expect(
       page.getByRole("button", { name: "Cancel preparation" }),
     ).toBeEnabled();
-    await userEvent.click(canvas.getByRole("button", { name: "Repository" }));
     await userEvent.click(await canvas.findByRole("tab", { name: "Advanced" }));
     await expect(page.getAllByText("Preparing the graph index…")).toHaveLength(
       1,

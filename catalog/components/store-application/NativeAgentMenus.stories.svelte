@@ -1,4 +1,5 @@
 <script module lang="ts">
+  import { userEvent as pointer } from "vitest/browser";
   import { defineMeta } from "@storybook/addon-svelte-csf";
   import { expect, fn, userEvent, waitFor, within } from "storybook/test";
   import Fixture from "../../fixtures/AgentLayoutFixture.svelte";
@@ -11,7 +12,7 @@
   });
   async function openCopy() {
     const menu = within(document.body);
-    await userEvent.click(menu.getByRole("menuitem", { name: /^Copy$/ }));
+    await pointer.click(menu.getByRole("menuitem", { name: /^Copy$/ }));
     await menu.findByRole("menu", { name: /^Copy$/ });
   }
 </script>
@@ -36,30 +37,34 @@
       value: { writeText: write },
     });
     try {
-      await userEvent.click(
+      await pointer.click(
         within(card as HTMLElement).getByRole("button", {
           name: "Agent session actions",
         }),
       );
       await openCopy();
-      await userEvent.click(
+      await pointer.click(
         within(document.body).getByRole("menuitem", {
           name: "Copy session ID",
         }),
       );
-      await expect(write).toHaveBeenLastCalledWith("a1".repeat(16));
+      await waitFor(() =>
+        expect(write).toHaveBeenLastCalledWith("a1".repeat(16)),
+      );
       await expect(select).toHaveAttribute("aria-pressed", "false");
-      await userEvent.click(select);
-      await userEvent.click(
+      await pointer.click(select);
+      await pointer.click(
         await c.findByRole("button", { name: "Agent details actions" }),
       );
       await openCopy();
-      await userEvent.click(
+      await pointer.click(
         within(document.body).getByRole("menuitem", {
           name: "Copy agent root",
         }),
       );
-      await expect(write).toHaveBeenLastCalledWith("c3".repeat(32));
+      await waitFor(() =>
+        expect(write).toHaveBeenLastCalledWith("c3".repeat(32)),
+      );
       const tool = c.getByRole("group", { name: "apply_patch tool call" });
       const toolRow = within(tool).getByRole("group", { name: /tool row$/ });
       await userEvent.hover(toolRow);
@@ -78,7 +83,7 @@
           tool.getBoundingClientRect().top,
         ),
       );
-      await userEvent.click(
+      await pointer.click(
         within(tool).getByRole("button", {
           name: "More apply_patch tool actions",
         }),
@@ -90,12 +95,14 @@
         }),
       ).toHaveAttribute("data-visible");
       await openCopy();
-      await userEvent.click(
+      await pointer.click(
         within(document.body).getByRole("menuitem", {
           name: "Copy tool call ID",
         }),
       );
-      await expect(write).toHaveBeenLastCalledWith("d5".repeat(16));
+      await waitFor(() =>
+        expect(write).toHaveBeenLastCalledWith("d5".repeat(16)),
+      );
       const message = c
         .getByText("Updated the parser and verified the focused contract.")
         .closest(".community-message")! as HTMLElement;
@@ -103,18 +110,20 @@
       await waitFor(() =>
         expect(message).toHaveAttribute("data-actions-visible"),
       );
-      await userEvent.click(
+      await pointer.click(
         within(message).getByRole("button", { name: "More message actions" }),
       );
       await expect(
         within(document.body).queryByRole("menuitem", { name: "Edit comment" }),
       ).toBeNull();
       await openCopy();
-      await userEvent.click(
+      await pointer.click(
         within(document.body).getByRole("menuitem", { name: "Copy message" }),
       );
-      await expect(write).toHaveBeenLastCalledWith(
-        "Updated the parser and verified the focused contract.",
+      await waitFor(() =>
+        expect(write).toHaveBeenLastCalledWith(
+          "Updated the parser and verified the focused contract.",
+        ),
       );
     } finally {
       if (descriptor) Object.defineProperty(navigator, "clipboard", descriptor);

@@ -55,6 +55,8 @@ async function fleet(page: Page) {
   let events: any[] = [];
   await page.route("**/v1/local/agents**", async (r) => {
     const url = new URL(r.request().url());
+    if (/\/agents\/(?:settings|chatgpt)$/.test(url.pathname))
+      return r.fallback();
     expect(r.request().headers()["authorization"]).toBeUndefined();
     if (url.pathname.endsWith("/targets")) return r.fulfill({ json: [] });
     if (url.pathname.endsWith("/feedback"))
@@ -202,11 +204,14 @@ test("cold contextual chat uses exact tags, retains pins and reopens independent
   await editor.fill("@Fleet");
   await page
     .getByRole("switch", { name: "Automatically mention agents" })
-    .check();
+    .click();
+  await expect(
+    page.getByRole("switch", { name: "Automatically mention agents" }),
+  ).toBeChecked();
   await page.getByRole("option", { name: /Fleet helper/ }).click();
   await expect(editor).toContainText("Fleet helper");
   await expect(
-    composer.getByRole("button", {
+    page.getByRole("button", {
       name: "Don't automatically mention Fleet helper in this thread",
     }),
   ).toBeVisible();
@@ -218,13 +223,14 @@ test("cold contextual chat uses exact tags, retains pins and reopens independent
       exact: true,
     })
     .click();
-  await composer.getByRole("button", { name: "Send message" }).click();
+  await page.getByRole("button", { name: "Send message", exact: true }).click();
   await expect(page.getByText("Fleet reply in contextual chat.")).toBeVisible();
   expect(f.sends[0].agent_ids).toEqual(["Exact-Helper"]);
   expect(f.sends[0].attachments[0].repository).toBe(repo);
   await page.getByRole("button", { name: "Close", exact: true }).click();
+  await page.keyboard.press("Escape");
   await page.getByRole("button", { name: "Open chat", exact: true }).click();
-  await composer.getByRole("button", { name: "Mention someone" }).click();
+  await page.getByRole("button", { name: "Mention someone" }).click();
   await expect(
     page.getByRole("switch", {
       name: "Automatically mention agents",

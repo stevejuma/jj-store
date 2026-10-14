@@ -5,6 +5,56 @@
 }
 .chat-text-block[data-kind="code"],
 .chat-text-block[data-kind="patch"] {
+  --mira-code-editor-syntax-keyword: color-mix(
+    in srgb,
+    var(--mira-syntax-keyword, #7c3aed) 65%,
+    var(--foreground)
+  );
+  --mira-code-editor-syntax-string: color-mix(
+    in srgb,
+    var(--mira-syntax-string, #0f766e) 65%,
+    var(--foreground)
+  );
+  --mira-code-editor-syntax-number: color-mix(
+    in srgb,
+    var(--mira-syntax-number, #b45309) 65%,
+    var(--foreground)
+  );
+  --mira-code-editor-syntax-variable: color-mix(
+    in srgb,
+    var(--mira-syntax-variable, #0b6fcb) 65%,
+    var(--foreground)
+  );
+  --mira-code-editor-syntax-property: color-mix(
+    in srgb,
+    var(--mira-syntax-property, #9a3412) 65%,
+    var(--foreground)
+  );
+  --mira-code-editor-syntax-type: color-mix(
+    in srgb,
+    var(--mira-syntax-type, #8b3a94) 65%,
+    var(--foreground)
+  );
+  --mira-code-editor-syntax-comment: color-mix(
+    in srgb,
+    var(--mira-syntax-comment, #697386) 65%,
+    var(--foreground)
+  );
+  --mira-code-editor-syntax-operator: color-mix(
+    in srgb,
+    var(--mira-syntax-operator, #475569) 65%,
+    var(--foreground)
+  );
+  --mira-code-editor-syntax-link: color-mix(
+    in srgb,
+    var(--mira-syntax-link, #0b6fcb) 65%,
+    var(--foreground)
+  );
+  --mira-code-editor-syntax-heading: color-mix(
+    in srgb,
+    var(--mira-syntax-heading, #8b3a94) 65%,
+    var(--foreground)
+  );
   background: var(--muted);
   border-radius: var(--radius);
   overflow: visible;
@@ -232,7 +282,9 @@
   border: 0;
 }
 
-/* Exact-source highlights own contrast, including nested syntax tokens. */
-.chat-text-block[data-file-view] .chat-comment-highlight span {
+/* Tinted source ranges own contrast, including nested syntax tokens. */
+.chat-text-reader
+  :is(.chat-comment-highlight, .chat-patch-addition, .chat-patch-deletion)
+  span {
   color: inherit;
 }

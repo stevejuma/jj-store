@@ -248,7 +248,9 @@ test("cold_catalog_contract", { timeout: 60000 }, async () => {
     }
     await page.goto(url);
     await page.getByRole("button", { name: "jj-store", exact: true }).click();
-    await page.getByRole("button", { name: "README.md", exact: true }).click();
+    await page
+      .getByRole("button", { name: "Open file README.md", exact: true })
+      .click();
     const markdownPreview = page.getByRole("region", {
       name: "Markdown preview for README.md",
     });

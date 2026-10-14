@@ -217,6 +217,7 @@ export function createWorkController(context: {
     get reactions() {
       return reactions.current;
     },
+    invalidateReactions: reactions.invalidate,
     state,
     restore,
     refresh,

@@ -10,6 +10,10 @@ search health, folder registrations and configuration do not repeatedly fetch
 while unchanged. Feed recovery reconciles missed changes; unavailable feeds use
 bounded fallback only while visible.
 
+**Reload saved settings** reads the latest saved revision when opened. Keeping
+its menu mounted does not repeatedly fetch status. Unknown reload outcomes keep
+the original request; use its explicit outcome check before another reload.
+
 ## Where to find settings
 
 Creation dialogs follow the same Settings form layout. **Add repository → Add

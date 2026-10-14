@@ -69,15 +69,19 @@
     if (ready && root)
       untrack(() => root.scrollTo(0, hub.scroll.get(key) ?? 0));
   });
-  $effect(() => {
+  $effect.pre(() => {
     const root = element,
-      key = scrollKey;
+      key = scrollKey,
+      owner = hub;
     if (!root) return;
     const save = () => {
-      if (!hub.loading) hub.scroll.set(key, root.scrollTop);
+      if (!owner.loading) owner.scroll.set(key, root.scrollTop);
     };
     root.addEventListener("scroll", save);
-    return () => root.removeEventListener("scroll", save);
+    return () => {
+      if (root.isConnected) owner.scroll.set(key, root.scrollTop);
+      root.removeEventListener("scroll", save);
+    };
   });
   let dialog = $state<
       "createProject" | "editProject" | "createTask" | "editTask" | null

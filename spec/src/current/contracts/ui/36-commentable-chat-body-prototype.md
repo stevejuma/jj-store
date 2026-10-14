@@ -236,3 +236,11 @@ live catalog reads, settings writes or agent dispatch.
 Future live integration requires an explicit event-model adapter, durable
 comment authority and streaming reconciliation design. This slice introduces
 none of those contracts and is reviewable entirely through the catalog.
+
+Captured readers install the path-selected grammar independently of the editable
+file host. Built-in TypeScript, JavaScript, JSON, Python and Java modes remain
+highlighted in captured tools and numbered source, with exact source and UTF-16
+anchor coordinates unchanged. Unknown formats stay plain text. Comment ranges
+and tinted diff lines retain the theme foreground for nested syntax tokens,
+preserving text contrast on those host-owned backgrounds. Other captured source
+retains its path-selected syntax palette.

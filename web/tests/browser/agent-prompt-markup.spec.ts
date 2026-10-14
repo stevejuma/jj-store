@@ -1,5 +1,9 @@
 import { test, expect, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import {
+  appearanceStorageKey,
+  defaultAppearance,
+} from "../../src/lib/appearance/preferences.js";
 import { api, repo, operation } from "./native-browser-fixture.js";
 import { agentDetail } from "../../../catalog/fixtures/collaboration.js";
 import {
@@ -7,20 +11,32 @@ import {
   inertPromptMarkup,
 } from "../../../catalog/fixtures/agent-prompt-markup.js";
 
-async function transcript(page: Page, content: string, fallback = false) {
+async function transcript(
+  page: Page,
+  content: string,
+  fallback = false,
+  conversationView: "classic" | "document" = "classic",
+) {
   await api(page, { access: "local_trusted" });
-  await page.addInitScript(() => {
-    let copied = "";
-    Object.defineProperty(navigator, "clipboard", {
-      configurable: true,
-      value: {
-        writeText: async (value: string) => {
-          copied = value;
+  await page.addInitScript(
+    ({ key, appearance }) => {
+      localStorage.setItem(key, JSON.stringify(appearance));
+      let copied = "";
+      Object.defineProperty(navigator, "clipboard", {
+        configurable: true,
+        value: {
+          writeText: async (value: string) => {
+            copied = value;
+          },
+          readText: async () => copied,
         },
-        readText: async () => copied,
-      },
-    });
-  });
+      });
+    },
+    {
+      key: appearanceStorageKey,
+      appearance: { ...defaultAppearance, conversationView },
+    },
+  );
   const detail = structuredClone(agentDetail);
   detail.snapshot.repo_id = repo;
   detail.code = [];
@@ -90,149 +106,161 @@ async function transcript(page: Page, content: string, fallback = false) {
   return page.locator(".store-agent-context");
 }
 
-for (const fallback of [false, true]) {
-  test.describe(fallback ? "touch mobile" : "desktop", () => {
-    test.use({ isMobile: fallback, hasTouch: fallback });
-    test(`cold ${fallback ? "mobile recorded chunks" : "desktop activity"} preserve nested prompt Markdown and exact copy`, async ({
-      page,
-    }) => {
-      await page.setViewportSize(
-        fallback ? { width: 390, height: 844 } : { width: 1600, height: 1000 },
-      );
-      const context = await transcript(page, agentPromptMarkup, fallback);
-      const parent = context.getByRole("button", {
-        name: '<harness:context source="cli > desktop">',
-        exact: true,
-      });
-      await expect(parent).toHaveAttribute("aria-expanded", "false");
-      const row = parent.locator(
-        'xpath=ancestor::*[@data-ui-part="virtual-row"][1]',
-      );
-      const initialHeight = (await row.boundingBox())!.height;
-      await expect(
-        context.getByText("Between", { exact: false }),
-      ).toBeVisible();
-      await expect(context.getByText("After", { exact: false })).toBeVisible();
-      await parent.focus();
-      await page.keyboard.press("Enter");
-      await expect(parent).toHaveAttribute("aria-expanded", "true");
-      await expect(
-        context.getByRole("heading", { name: /Session notes/ }),
-      ).toBeVisible();
-      await expect(
-        context.getByRole("link", { name: "safe links" }),
-      ).toHaveAttribute("href", "https://example.com/");
-      await expect(
-        context.locator('[data-prompt-element^="<arbitrary_limits "] button'),
-      ).toHaveCount(0);
-      const leaf = context.locator(
-        '[data-prompt-element^="<arbitrary_limits "]',
-      );
-      const childTag = leaf.locator(".store-prompt-tag").first();
-      const offsets = await childTag.evaluate((element) => {
-        const parent = element.closest(
-          ".store-prompt-element__body",
-        )!.parentElement!;
-        const parentTag = parent.querySelector("button .store-prompt-tag")!;
-        const siblingTag = parent.querySelector(
-          '[data-prompt-element="<environment_context>"] button .store-prompt-tag',
-        )!;
-        return {
-          indent:
-            element.getBoundingClientRect().left -
-            parentTag.getBoundingClientRect().left,
-          siblingDifference:
-            element.getBoundingClientRect().left -
-            siblingTag.getBoundingClientRect().left,
-        };
-      });
-      expect(offsets.indent).toBeGreaterThanOrEqual(16);
-      expect(offsets.siblingDifference).toBe(0);
-      expect(
-        await leaf.evaluate(
-          (element) => getComputedStyle(element).borderTopWidth,
-        ),
-      ).toBe("0px");
-      const attribute = parent.locator('[data-xml-token="attribute"]');
-      expect(
-        await attribute.evaluate((element) => getComputedStyle(element).color),
-      ).not.toBe(
-        await parent
-          .locator('[data-xml-token="string"]')
-          .evaluate((element) => getComputedStyle(element).color),
-      );
-      await expect(
-        context.getByText("cargo test", { exact: true }),
-      ).toBeVisible();
-      await context
-        .getByRole("button", { name: "<environment_context>", exact: true })
-        .click();
-      await expect(context.locator("pre")).toHaveText(
-        "<literal><keep_this /></literal>\n",
-      );
-      await expect(
-        context.getByRole("button", { name: "<literal>", exact: true }),
-      ).toHaveCount(0);
-      await expect
-        .poll(async () => (await row.boundingBox())!.height)
-        .toBeGreaterThan(initialHeight + 100);
-      const next = context.getByText("Following message remains separate.", {
-        exact: true,
-      });
-      await expect
-        .poll(async () => {
-          const first = (await row.boundingBox())!,
-            second = (await next.boundingBox())!;
-          return second.y - (first.y + first.height);
-        })
-        .toBeGreaterThanOrEqual(-1);
-      await expect(
-        context.getByRole("button", {
-          name: "<another-tool.context>",
+for (const conversationView of ["classic", "document"] as const)
+  for (const fallback of [false, true]) {
+    test.describe(`${conversationView} ${fallback ? "touch mobile" : "desktop"}`, () => {
+      test.use({ isMobile: fallback, hasTouch: fallback });
+      test(`cold ${fallback ? "mobile recorded chunks" : "desktop activity"} preserve nested prompt Markdown and exact copy`, async ({
+        page,
+      }) => {
+        await page.setViewportSize(
+          fallback
+            ? { width: 390, height: 844 }
+            : { width: 1600, height: 1000 },
+        );
+        const context = await transcript(
+          page,
+          agentPromptMarkup,
+          fallback,
+          conversationView,
+        );
+        const parent = context.getByRole("button", {
+          name: '<harness:context source="cli > desktop">',
           exact: true,
-        }),
-      ).toHaveCount(0);
-      await expect(
-        context.getByText("Markdown", { exact: true }),
-      ).toBeVisible();
-      const message = parent.locator("xpath=ancestor::*[@data-message-id][1]");
-      await message.hover();
-      await message
-        .getByRole("button", { name: "More message actions", exact: true })
-        .click();
-      await page.getByRole("menuitem", { name: "Copy", exact: true }).click();
-      await page
-        .getByRole("menuitem", { name: "Copy message", exact: true })
-        .click();
-      expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
-        agentPromptMarkup,
-      );
-      await parent.focus();
-      await page.keyboard.press("Space");
-      await expect(parent).toHaveAttribute("aria-expanded", "false");
-      await expect(
-        context.getByText("cargo test", { exact: true }),
-      ).toBeHidden();
-      await expect(
-        context.getByText("<example />", { exact: true }),
-      ).toBeVisible();
-      expect(
-        await page.evaluate(
-          () => document.documentElement.scrollWidth <= window.innerWidth,
-        ),
-      ).toBe(true);
-      // The mobile shell replaces its main landmark with the response sidebar.
-      // Audit this change's transcript surface; document landmarks are separate.
-      expect(
-        (
-          await new AxeBuilder({ page })
-            .include(".store-agent-context")
-            .analyze()
-        ).violations,
-      ).toEqual([]);
+        });
+        await expect(parent).toHaveAttribute("aria-expanded", "false");
+        const row = parent.locator("xpath=ancestor::*[@data-message-id][1]");
+        const initialHeight = (await row.boundingBox())!.height;
+        await expect(
+          context.getByText("Between", { exact: false }),
+        ).toBeVisible();
+        await expect(
+          context.getByText("After", { exact: false }),
+        ).toBeVisible();
+        await parent.focus();
+        await page.keyboard.press("Enter");
+        await expect(parent).toHaveAttribute("aria-expanded", "true");
+        await expect(
+          context.getByRole("heading", { name: /Session notes/ }),
+        ).toBeVisible();
+        await expect(
+          context.getByRole("link", { name: "safe links" }),
+        ).toHaveAttribute("href", "https://example.com/");
+        await expect(
+          context.locator('[data-prompt-element^="<arbitrary_limits "] button'),
+        ).toHaveCount(0);
+        const leaf = context.locator(
+          '[data-prompt-element^="<arbitrary_limits "]',
+        );
+        const childTag = leaf.locator(".store-prompt-tag").first();
+        const offsets = await childTag.evaluate((element) => {
+          const parent = element.closest(
+            ".store-prompt-element__body",
+          )!.parentElement!;
+          const parentTag = parent.querySelector("button .store-prompt-tag")!;
+          const siblingTag = parent.querySelector(
+            '[data-prompt-element="<environment_context>"] button .store-prompt-tag',
+          )!;
+          return {
+            indent:
+              element.getBoundingClientRect().left -
+              parentTag.getBoundingClientRect().left,
+            siblingDifference:
+              element.getBoundingClientRect().left -
+              siblingTag.getBoundingClientRect().left,
+          };
+        });
+        expect(offsets.indent).toBeGreaterThanOrEqual(16);
+        expect(offsets.siblingDifference).toBe(0);
+        expect(
+          await leaf.evaluate(
+            (element) => getComputedStyle(element).borderTopWidth,
+          ),
+        ).toBe("0px");
+        const attribute = parent.locator('[data-xml-token="attribute"]');
+        expect(
+          await attribute.evaluate(
+            (element) => getComputedStyle(element).color,
+          ),
+        ).not.toBe(
+          await parent
+            .locator('[data-xml-token="string"]')
+            .evaluate((element) => getComputedStyle(element).color),
+        );
+        await expect(
+          context.getByText("cargo test", { exact: true }),
+        ).toBeVisible();
+        await context
+          .getByRole("button", { name: "<environment_context>", exact: true })
+          .click();
+        await expect(context.locator("pre")).toHaveText(
+          "<literal><keep_this /></literal>\n",
+        );
+        await expect(
+          context.getByRole("button", { name: "<literal>", exact: true }),
+        ).toHaveCount(0);
+        await expect
+          .poll(async () => (await row.boundingBox())!.height)
+          .toBeGreaterThan(initialHeight + 100);
+        const next = context.getByText("Following message remains separate.", {
+          exact: true,
+        });
+        await expect
+          .poll(async () => {
+            const first = (await row.boundingBox())!,
+              second = (await next.boundingBox())!;
+            return second.y - (first.y + first.height);
+          })
+          .toBeGreaterThanOrEqual(-1);
+        await expect(
+          context.getByRole("button", {
+            name: "<another-tool.context>",
+            exact: true,
+          }),
+        ).toHaveCount(0);
+        await expect(
+          context.getByText("Markdown", { exact: true }),
+        ).toBeVisible();
+        const message = parent.locator(
+          "xpath=ancestor::*[@data-message-id][1]",
+        );
+        await message.hover();
+        await message
+          .getByRole("button", { name: "More message actions", exact: true })
+          .click();
+        await page.getByRole("menuitem", { name: "Copy", exact: true }).click();
+        await page
+          .getByRole("menuitem", { name: "Copy message", exact: true })
+          .click();
+        expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(
+          agentPromptMarkup,
+        );
+        await parent.focus();
+        await page.keyboard.press("Space");
+        await expect(parent).toHaveAttribute("aria-expanded", "false");
+        await expect(
+          context.getByText("cargo test", { exact: true }),
+        ).toBeHidden();
+        await expect(
+          context.getByText("<example />", { exact: true }),
+        ).toBeVisible();
+        expect(
+          await page.evaluate(
+            () => document.documentElement.scrollWidth <= window.innerWidth,
+          ),
+        ).toBe(true);
+        // The mobile shell replaces its main landmark with the response sidebar.
+        // Audit this change's transcript surface; document landmarks are separate.
+        expect(
+          (
+            await new AxeBuilder({ page })
+              .include(".store-agent-context")
+              .analyze()
+          ).violations,
+        ).toEqual([]);
+      });
     });
-  });
-}
+  }
 
 test("cold prompt markup attributes are inert and malformed sections remain visible", async ({
   page,

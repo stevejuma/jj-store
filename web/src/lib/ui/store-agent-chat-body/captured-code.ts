@@ -13,9 +13,7 @@ import { miraClassHighlighter } from "@lapismd/mira/codemirror";
 import { repositoryEditorLanguage } from "../community-projects/repository-editor-language.js";
 
 export function capturedCodeLanguage(path?: string): Extension {
-  return path?.toLowerCase().endsWith(".swift")
-    ? StreamLanguage.define(swift)
-    : repositoryEditorLanguage(path ?? "output.txt").extension;
+  return fileCodeLanguage(path);
 }
 
 export function fileCodeLanguage(path?: string): Extension {

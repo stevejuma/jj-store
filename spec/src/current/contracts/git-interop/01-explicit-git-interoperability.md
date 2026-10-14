@@ -1,5 +1,12 @@
 # Explicit Git interoperability
 
+E-CI-BROWSER-001 retains the original real-RustFS external Git merge, private
+cache loss, cold restart and browser-refresh acceptance parent in an independent
+CI job. Its child requires that parent's exact workspace and cannot run as an
+unprovisioned generic browser test. Fixture-root selection changes only where
+current test tools/assets are read; transport, bookmark profiles, leases,
+identity mappings and native publication remain unchanged.
+
 Native jj-store remains the working repository. Git fetch and push are explicit
 CLI operations over a private disposable bare cache. The attached bridge
 proposal is reference material; these requirements own the accepted contract.
