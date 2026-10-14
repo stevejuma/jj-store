@@ -134,7 +134,10 @@
         const items =
           management?.state.value?.inventory.filter(
             (item) =>
-              item.section === section && groupFor(item.name) === group.id,
+              item.section === section &&
+              (section !== "service" ||
+                !/^workflow_hosts?(?:\.|\[|$)/.test(item.name)) &&
+              groupFor(item.name) === group.id,
           ) ?? [];
         return {
           ...group,

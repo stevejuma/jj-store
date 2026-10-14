@@ -145,9 +145,12 @@ pending identities instead of replacing them with skeletons.
 Global Appearance uses the shared Theme and Preferences cards while keeping
 previews and device-local immediate saves. Local service separates status,
 folder registrations, resource/protection editors and deployment inventory.
-Launch groups server/network, installation files, and identity/access. Storage
-groups connection, runtime/data, identity/credential references, and backup
-inventory. Common setup/migration reasons belong in headers; rows retain
+Launch groups server/network, installation files, and identity/access. It omits
+`workflow_host` and `workflow_hosts`, including nested properties and indexed
+entries. Their configuration and admission remain in Local service / Workflows;
+the underlying configuration inventory and saved/effective values are unchanged.
+Storage groups connection, runtime/data, identity/credential references, and
+backup inventory. Common setup/migration reasons belong in headers; rows retain
 saved/running differences. Configured paths and endpoints have exact Copy
 controls, while absent values and ordinary scalar properties remain plain text.
 Agents uses consistent preference, runtime, account, capture, source and

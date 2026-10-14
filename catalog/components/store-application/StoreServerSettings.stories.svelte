@@ -363,6 +363,25 @@
   }}
 />
 <Story
+  name="Launch inventory omits workflow host rows owned by Workflows"
+  args={{ inventorySection: "service" }}
+  play={async ({ canvasElement }) => {
+    const c = within(canvasElement);
+    await expect(
+      await c.findByRole("region", { name: "Server and network" }),
+    ).toBeVisible();
+    await expect(c.queryAllByText(/^Workflow hosts?(?: \/|\[|$)/)).toHaveLength(
+      0,
+    );
+    await expect(
+      c.getByRole("region", { name: "Installation files" }),
+    ).toBeVisible();
+    await expect(
+      c.getByRole("region", { name: "Identity and access" }),
+    ).toBeVisible();
+  }}
+/>
+<Story
   name="Storage inventory separates connection paths credentials and backup"
   args={{ inventorySection: "storage" }}
   play={async ({ canvasElement }) => {

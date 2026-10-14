@@ -47,6 +47,10 @@ export function serverSettingsValue(): ServerSettings {
         ],
         ["service", "access.mode", "local-trusted"],
         ["service", "tls", "Not configured"],
+        ["service", "workflow_host", "Not configured"],
+        ["service", "workflow_host.enabled", "true"],
+        ["service", "workflow_host.configuration.forgejo.image", "alpine:3.23"],
+        ["service", "workflow_hosts[0]", "workflow-test-principal"],
         ["storage", "storage.mode", "embedded-rustfs"],
         [
           "storage",

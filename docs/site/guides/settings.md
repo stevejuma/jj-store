@@ -50,7 +50,9 @@ Runtime status uses bounded checks while this tab is visible. Appearance
 separates Theme and Preferences into subtabs; changes still save immediately on
 this device. Link previews and Thread layout have their own cards under
 Preferences. Launch and Storage group their read-only inventory by purpose. Use
-Copy beside a configured path or endpoint to copy the complete value.
+Copy beside a configured path or endpoint to copy the complete value. Workflow
+host fields appear only under **Local service → Workflows**, keeping Launch
+focused on service, installation and access configuration.
 
 Global Settings links record the section and tab, for example
 `#/settings?section=agents&tab=runtimes`. Reload restores that page, and a root
