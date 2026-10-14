@@ -71,8 +71,11 @@ export default defineConfig({
       ],
       rules: [
         {
-          pattern: "^(?:\\.github/|\\.changeset/|\\.config/nextest|Dockerfile$|\\.dockerignore$)",
-          chapterPatterns: ["^spec/src/current/contracts/architecture/23-public-distribution\\.md$"],
+          pattern:
+            "^(?:\\.github/|\\.changeset/|\\.config/nextest|Dockerfile$|\\.dockerignore$|docs/releases\\.md$)",
+          chapterPatterns: [
+            "^spec/src/current/contracts/architecture/23-public-distribution\\.md$",
+          ],
         },
         {
           pattern:

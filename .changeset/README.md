@@ -10,6 +10,11 @@ Changesets changelog and synchronizes Cargo versions. Merge it after CI passes.
 The release orchestrator selects the immutable main commit and dispatches full
 qualification before publishing packages, assets and GHCR images.
 
+Generated Version Packages PRs and Dependabot-authored dependency PRs are exempt
+from change-specific spec/evidence gates and additional Changesets notes. Static
+validation and the planned test lanes still run; generated version PRs never
+edit the spec or evidence ledger.
+
 Documentation-only changes need no release note. The initial 0.1.0 source
-publication is the explicit bootstrap exception. Do not add credential values
-to release notes or repository files.
+publication is the explicit bootstrap exception. Do not add credential values to
+release notes or repository files.

@@ -1,5 +1,10 @@
 # GOV verification
 
+E-AUTOMATION-GOVERNANCE-001 verifies the JST-ARCH-005 generated PR exception to
+JST-GOV-002/003/004/011 with workflow conditions, unchanged planned test lanes,
+direct release-intent checks and Changesets versioning. Evidence is in
+[the automation record](../../history/2026/10/14/E-AUTOMATION-GOVERNANCE-001/index.md).
+
 | ID          | Status      | Evidence                                                                                                                                                             |
 | ----------- | ----------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | JST-GOV-001 | Implemented | `scripts/governance.test.mjs`; `scripts/check-progress.mjs`; `spec-validator.config.mjs`; [bootstrap evidence](../progress/index.md)                                 |

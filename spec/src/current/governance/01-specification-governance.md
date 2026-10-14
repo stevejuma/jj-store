@@ -1,5 +1,12 @@
 # Specification governance
 
+The generated release/dependency PR exception in JST-ARCH-005 applies to the
+same-change topic, evidence and milestone obligations in
+JST-GOV-002/003/004/011. It covers only `changeset-release/main` and
+Dependabot-authored `dependabot/` PRs. Static spec validation and all planned
+quality, test and release gates remain required. Ordinary PRs retain governance;
+automation MUST NOT manufacture evidence to satisfy a skipped gate.
+
 Progressive Blame integration retains both the verified Blame slices and native
 Stacks history. Resolve shared ledger and documentation fingerprints without
 discarding either parent's evidence. Both committed feature histories remain

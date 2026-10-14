@@ -10,13 +10,22 @@ package is never published.
 1. Run `pnpm changeset` for package, behavior or distribution changes. Select
    the coordination package. Documentation-only changes need no note.
 2. The Changesets workflow creates **Version Packages**. `pnpm release:version`
-   updates manifests, internal dependency versions, lockfiles, changelog and
-   evidence together. Merge after CI passes.
+   updates manifests, internal dependency versions, lockfiles and changelog.
+   Merge after CI passes.
 3. The orchestrator dispatches full qualification for the selected source and
    version. Publication stops on source mismatch, drift or failed qualification.
 
 Initial 0.1.0 publication is the explicit bootstrap exception to pending notes.
 Subsequent code changes require a Changesets note.
+
+Generated `changeset-release/main` PRs and Dependabot-authored `dependabot/` PRs
+do not need spec, milestone, evidence or additional Changesets edits. The
+Changesets exemption follows lapis-notes; jj-store extends it to Dependabot.
+Static spec validation, formatting, package checks and all impact-selected test
+lanes still run. The release workflow explicitly dispatches full CI for Version
+Packages; version automation does not generate spec evidence. Ordinary PRs
+retain the spec and evidence requirements, and publication always requires
+qualification.
 
 ## Initial Cargo bootstrap
 
@@ -41,7 +50,8 @@ explicit qualified-release workflow run. Publish only missing packages/assets.
 Different source needs a new Changesets version. Never move a version tag or
 overwrite an asset.
 
-Verify archive checksums before extraction. Verify the image digest and signature:
+Verify archive checksums before extraction. Verify the image digest and
+signature:
 
 ```sh
 cosign verify ghcr.io/stevejuma/jj-store@sha256:DIGEST \
@@ -50,5 +60,6 @@ cosign verify ghcr.io/stevejuma/jj-store@sha256:DIGEST \
 ```
 
 GHCR visibility must be public and anonymous pulls must succeed before release
-completion. `latest` advances only after publication gates pass. Record remaining
-platform, provider and desktop gates in release notes and the milestone ledger.
+completion. `latest` advances only after publication gates pass. Record
+remaining platform, provider and desktop gates in release notes and the
+milestone ledger.

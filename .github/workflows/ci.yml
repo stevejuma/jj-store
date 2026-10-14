@@ -4,7 +4,7 @@ on:
     branches: [main]
   pull_request:
   schedule:
-    - cron: '21 2 * * *'
+    - cron: "21 2 * * *"
   workflow_dispatch:
     inputs:
       full:
@@ -12,7 +12,7 @@ on:
         default: false
       ref:
         type: string
-        default: ''
+        default: ""
   workflow_call:
     inputs:
       full:
@@ -20,18 +20,18 @@ on:
         default: false
       ref:
         type: string
-        default: ''
+        default: ""
 permissions:
   contents: read
 concurrency:
   group: ci-${{ github.workflow }}-${{ inputs.ref || github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 env:
-  CARGO_BUILD_JOBS: '2'
-  CARGO_INCREMENTAL: '0'
-  JJ_STORE_BUILD_TARGET_GIB: '24'
-  JJ_STORE_BUILD_TOTAL_GIB: '36'
-  JJ_STORE_BUILD_FREE_GIB: '6'
+  CARGO_BUILD_JOBS: "2"
+  CARGO_INCREMENTAL: "0"
+  JJ_STORE_BUILD_TARGET_GIB: "24"
+  JJ_STORE_BUILD_TOTAL_GIB: "36"
+  JJ_STORE_BUILD_FREE_GIB: "6"
 jobs:
   plan:
     runs-on: ubuntu-22.04
@@ -45,14 +45,17 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           fetch-depth: 0
-          ref: ${{ inputs.ref || github.event.pull_request.head.sha || github.sha }}
+          ref:
+            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
+            }}
       - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1
         with:
           node-version: 22
       - run: node scripts/ci-range.mjs
         env:
           CI_EVENT: ${{ github.event_name }}
-          CI_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          CI_BASE_SHA:
+            ${{ github.event.pull_request.base.sha || github.event.before }}
       - id: plan
         run: node scripts/ci-plan.mjs
         env:
@@ -66,12 +69,15 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
           fetch-depth: 0
-          ref: ${{ inputs.ref || github.event.pull_request.head.sha || github.sha }}
+          ref:
+            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
+            }}
       - uses: ./.github/actions/setup
       - run: node scripts/ci-range.mjs
         env:
           CI_EVENT: ${{ github.event_name }}
-          CI_BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          CI_BASE_SHA:
+            ${{ github.event.pull_request.base.sha || github.event.before }}
       - run: |
           pnpm format:rust:check
           pnpm exec prettier --check .
@@ -80,13 +86,34 @@ jobs:
           pnpm test:release
           pnpm check:architecture
           pnpm check:ui-ownership
-          pnpm check:progress
           pnpm spec:validate --only governance,summary,fileLimits,verification
-          pnpm spec:first --base "$JJ_STORE_CHECK_BASE" --head "$JJ_STORE_CHECK_REVISION"
           pnpm release:check
-          node scripts/changeset-check.mjs
+      - name: Progress evidence gate
+        if: >-
+          github.event_name == 'pull_request' && github.head_ref !=
+          'changeset-release/main' && !(github.event.pull_request.user.login ==
+          'dependabot[bot]' &&
+            startsWith(github.head_ref, 'dependabot/'))
+        run: pnpm check:progress
+      - name: Spec-first gate
+        if: >-
+          github.event_name == 'pull_request' && github.head_ref !=
+          'changeset-release/main' && !(github.event.pull_request.user.login ==
+          'dependabot[bot]' &&
+            startsWith(github.head_ref, 'dependabot/'))
+        run:
+          pnpm spec:first --base "$JJ_STORE_CHECK_BASE" --head
+          "$JJ_STORE_CHECK_REVISION"
+      - name: Release intent gate
+        if: >-
+          github.event_name == 'pull_request' && github.head_ref !=
+          'changeset-release/main' && !(github.event.pull_request.user.login ==
+          'dependabot[bot]' &&
+            startsWith(github.head_ref, 'dependabot/'))
+        run: node scripts/changeset-check.mjs
         env:
           CI_EVENT: ${{ github.event_name }}
+          CI_PR_AUTHOR: ${{ github.event.pull_request.user.login }}
       - uses: taiki-e/install-action@1168f6810a3cb30a3514bf5756a3b7f0422c6df8
         with:
           tool: actionlint@1.7.12
@@ -105,12 +132,16 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ inputs.ref || github.event.pull_request.head.sha || github.sha }}
+          ref:
+            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
+            }}
       - uses: ./.github/actions/setup
       - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
         with:
           workspaces: . -> target
-          save-if: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
+          save-if:
+            ${{ github.ref == 'refs/heads/main' && github.event_name == 'push'
+            }}
           key: ${{ matrix.cohort }}-1.99
       - run: node scripts/ci-build.mjs ${{ matrix.cohort }}
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
@@ -146,7 +177,9 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ inputs.ref || github.event.pull_request.head.sha || github.sha }}
+          ref:
+            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
+            }}
       - uses: ./.github/actions/setup
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
         with:
@@ -169,7 +202,9 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ inputs.ref || github.event.pull_request.head.sha || github.sha }}
+          ref:
+            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
+            }}
       - uses: ./.github/actions/setup
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
         with:
@@ -188,14 +223,18 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ inputs.ref || github.event.pull_request.head.sha || github.sha }}
+          ref:
+            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
+            }}
       - uses: ./.github/actions/setup
       - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
         with:
           workspaces: |
             . -> target
             runtime/embedded-rustfs -> target
-          save-if: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
+          save-if:
+            ${{ github.ref == 'refs/heads/main' && github.event_name == 'push'
+            }}
           key: storage-${{ matrix.lane }}
       - run: node scripts/ci-storage.mjs ${{ matrix.lane }}
   web:
@@ -205,7 +244,9 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ inputs.ref || github.event.pull_request.head.sha || github.sha }}
+          ref:
+            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
+            }}
       - uses: ./.github/actions/setup
       - run: |
           pnpm web:check
@@ -218,11 +259,14 @@ jobs:
     runs-on: ubuntu-22.04
     timeout-minutes: 25
     env:
-      JJ_STORE_DOC_REFERENCE: ${{ github.workspace }}/.release/tools/examples/docs_reference
+      JJ_STORE_DOC_REFERENCE:
+        ${{ github.workspace }}/.release/tools/examples/docs_reference
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ inputs.ref || github.event.pull_request.head.sha || github.sha }}
+          ref:
+            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
+            }}
       - uses: ./.github/actions/setup
       - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
         with:
@@ -257,7 +301,9 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ inputs.ref || github.event.pull_request.head.sha || github.sha }}
+          ref:
+            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
+            }}
       - uses: ./.github/actions/setup
       - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
         with:
@@ -282,24 +328,35 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ inputs.ref || github.event.pull_request.head.sha || github.sha }}
+          ref:
+            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
+            }}
       - uses: ./.github/actions/setup
       - uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
         with:
-          save-if: ${{ github.ref == 'refs/heads/main' && github.event_name == 'push' }}
+          save-if:
+            ${{ github.ref == 'refs/heads/main' && github.event_name == 'push'
+            }}
           key: native-${{ matrix.target }}
-      - run: pnpm dev:cargo -- build -p jj-store --bins --locked --release --target ${{ matrix.target }}
-      - run: pnpm dev:cargo -- test -p jj-store-read-index -p jj-collab -p jj-store-capture --locked -- --test-threads=1
+      - run:
+          pnpm dev:cargo -- build -p jj-store --bins --locked --release --target
+          ${{ matrix.target }}
+      - run:
+          pnpm dev:cargo -- test -p jj-store-read-index -p jj-collab -p
+          jj-store-capture --locked -- --test-threads=1
   required:
     name: required
-    needs: [plan, fast, build, rust, heavy, storage, web, assets, browser, native]
+    needs:
+      [plan, fast, build, rust, heavy, storage, web, assets, browser, native]
     if: always()
     runs-on: ubuntu-22.04
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
         with:
-          ref: ${{ inputs.ref || github.event.pull_request.head.sha || github.sha }}
+          ref:
+            ${{ inputs.ref || github.event.pull_request.head.sha || github.sha
+            }}
       - run: node scripts/ci-required.mjs
         env:
           CI_PLAN: ${{ toJSON(needs.plan.outputs) }}

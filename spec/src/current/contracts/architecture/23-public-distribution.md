@@ -7,6 +7,18 @@ synchronizes every Cargo package and internal registry dependency, the embedded
 RustFS workspace and release metadata. Version tags select immutable qualified
 source. Publication never replaces an existing package, tag or digest.
 
+Generated `changeset-release/main` PRs and dependency PRs authored by
+`dependabot[bot]` on `dependabot/` branches are exempt from the
+JST-GOV-002/003/004/011 same-change topic, evidence and milestone-update gates.
+They also need no additional authored Changesets note. Version automation
+updates only release metadata and notes; it MUST NOT generate specification or
+evidence edits. Ordinary PRs, other Changesets branches and other bots retain
+the change-specific gates. Like lapis-notes, those gates run on PR events;
+post-merge, scheduled and explicitly dispatched qualification still run static
+specification validation and all impact-selected tests. Generated release PRs
+dispatched explicitly because of GitHub token event restrictions retain full
+release CI. Bot exemptions never waive package, security or publication gates.
+
 Native bundles support GNU/Linux and macOS on ARM64 and x86-64, and contain the
 server, collision-safe custom client, embedded RustFS helper, browser and Help.
 The authenticated container contains the server and browser/Help, uses external

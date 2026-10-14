@@ -369,3 +369,9 @@ Public distribution maps `.github/`, `.changeset/`, `.config/nextest.toml`,
 Dockerfile and `.dockerignore` to architecture/23-public-distribution.md.
 Changesets governs coordinated Cargo/native/container versions through a private
 npm package. Full release qualification and M30 evidence precede publication.
+
+E-AUTOMATION-GOVERNANCE-001 scopes the JST-GOV-002/003/004/011 exception to the
+generated `changeset-release/main` PR and Dependabot-authored `dependabot/`
+dependency PRs. Changeset notes and same-change spec/evidence gates are skipped;
+static validation, ordinary PR governance and publication qualification remain.
+Version automation no longer generates spec or evidence edits.
