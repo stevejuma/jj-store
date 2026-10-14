@@ -11,11 +11,11 @@ export {
   validateLedger,
   needsEvidence,
 } from "./spec/progress-validation.mjs";
-export function run(root) {
-  const current = revisionReader(
-    root,
-    process.env.JJ_STORE_CHECK_REVISION ?? "@",
-  );
+export function run(
+  root,
+  requested = process.env.JJ_STORE_CHECK_REVISION ?? "@",
+) {
+  const current = revisionReader(root, requested);
   if (!current.parents.length)
     throw new Error("checked revision has no parent");
   const ledger = loadLedger(current);

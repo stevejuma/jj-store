@@ -28,3 +28,5 @@
   {{#include E-CI-FORMAT-001/SUMMARY.nav.md}}
 - [E-CI-TOOL-001](E-CI-TOOL-001/index.md)
   {{#include E-CI-TOOL-001/SUMMARY.nav.md}}
+- [E-CI-ENVIRONMENT-001](E-CI-ENVIRONMENT-001/index.md)
+  {{#include E-CI-ENVIRONMENT-001/SUMMARY.nav.md}}

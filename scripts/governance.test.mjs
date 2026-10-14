@@ -208,9 +208,9 @@ test("progress_checks_merge_against_every_parent", () => {
     const rightId = jj("log", "-r", "@-", "--no-graph", "-T", "commit_id");
     jj("new", leftId, rightId, "-m", "merge");
     ledger([entry, left, right]);
-    assert.throws(() => run(root), /new or updated evidence/);
+    assert.throws(() => run(root, "@"), /new or updated evidence/);
     ledger([entry, left, right, { ...entry, id: "E-TEST-004" }]);
-    assert.doesNotThrow(() => run(root));
+    assert.doesNotThrow(() => run(root, "@"));
   } finally {
     rmSync(root, { recursive: true, force: true });
   }
