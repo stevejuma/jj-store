@@ -107,3 +107,23 @@ GHCR visibility must be public and anonymous pulls must succeed before release
 completion. `latest` advances only after publication gates pass. Record
 remaining platform, provider and desktop gates in release notes and the
 milestone ledger.
+
+## Bounded compilation-cache experiment
+
+The standard workflow exposes an optional branch-only `cache_trial` dispatch. It
+runs standard checks first, warms isolated source-specific dependency and
+sccache caches, then runs three matched warm builds per backend on Ubuntu 22.04.
+Measured caches are restore-only. Every sample runs strict Clippy, doctests and
+archive creation; inventories must match and both backend builds pass their
+ordinary tests. The result compares complete build-job medians, including setup,
+cache and artifact overhead. Adopt sccache only at a 10% or better improvement.
+The trial does not schedule heavy tests, publish releases or alter main caches.
+
+```sh
+gh workflow run ci.yml --ref codex/ci-portability-and-bootstrap \
+  -f all_checks=true -f cache_trial=true
+```
+
+The `cache-trial-decision` artifact and job summary retain matched timings and
+the decision; per-sample artifacts retain inventory and sccache statistics.
+Normal checks continue to use rust-cache alone until that decision is verified.

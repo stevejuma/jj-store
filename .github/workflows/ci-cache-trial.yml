@@ -1,0 +1,61 @@
+name: Bounded compilation cache comparison
+on:
+  workflow_call:
+    inputs:
+      source:
+        type: string
+        required: true
+permissions:
+  contents: read
+  actions: read
+jobs:
+  seed:
+    name: Warm isolated dependency and compiler caches
+    if:
+      github.event_name == 'workflow_dispatch' && github.ref !=
+      'refs/heads/main' && github.repository == 'stevejuma/jj-store'
+    uses: ./.github/workflows/ci-cache-build.yml
+    with:
+      source: ${{ inputs.source }}
+      sample: seed
+      backend: sccache
+      seed: true
+  samples:
+    name: ${{ matrix.backend }} warm run ${{ matrix.run }}
+    needs: seed
+    strategy:
+      fail-fast: true
+      matrix:
+        backend: [baseline, sccache]
+        run: [1, 2, 3]
+    uses: ./.github/workflows/ci-cache-build.yml
+    with:
+      source: ${{ inputs.source }}
+      sample: ${{ matrix.backend }}-${{ matrix.run }}
+      backend: ${{ matrix.backend }}
+  compare:
+    name: Compare three matched warm samples
+    needs: [seed, samples]
+    if: always()
+    runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ inputs.source }}
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333
+        with:
+          pattern: cache-trial-metrics-*
+          path: .release/cache-trial
+          merge-multiple: true
+      - run: node scripts/ci-cache-compare.mjs
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CI_SOURCE: ${{ inputs.source }}
+          CI_TRIAL_JOBS: ${{ toJSON(needs) }}
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: cache-trial-decision
+          path: .release/cache-trial/decision.json
+          retention-days: 14
+          if-no-files-found: error

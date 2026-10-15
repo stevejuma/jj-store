@@ -128,3 +128,12 @@ source verified on canonical main; arbitrary qualification refs are read-only.
 Cache identity includes platform, toolchain, profile and cohort. No cache hit
 proves a test pass. Summaries retain selection, cache and job/step timing
 evidence.
+
+The optional branch-only cache trial warms isolated caches at one immutable
+source, then compares three matched Linux builds per backend. Measured samples
+restore the same dependency cohort and cannot write either measured cache.
+Strict Clippy, doctests and archive production remain identical; inventory
+identity and passing baseline/cached-build tests are prerequisites. Adoption
+requires at least 10 percent improvement in median complete build-job duration,
+including setup, cache and artifact overhead. A failed or incomplete experiment
+cannot justify adoption. Routine PR and release checks do not run the trial.

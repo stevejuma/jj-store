@@ -13,6 +13,11 @@ on:
         type: boolean
         default: false
         description: Run all standard checks
+      cache_trial:
+        type: boolean
+        default: false
+        description:
+          Run the bounded three-pair compilation-cache comparison (branch only)
   workflow_call:
     inputs:
       ref:
@@ -301,3 +306,15 @@ jobs:
         env:
           CI_PLAN: ${{ toJSON(needs.plan.outputs) }}
           CI_JOBS: ${{ toJSON(needs) }}
+  cache_trial:
+    name: Compilation cache comparison
+    needs:
+      - plan
+      - required
+    if:
+      github.event_name == 'workflow_dispatch' && inputs.cache_trial &&
+      github.repository == 'stevejuma/jj-store' && github.ref !=
+      'refs/heads/main'
+    uses: ./.github/workflows/ci-cache-trial.yml
+    with:
+      source: ${{ needs.plan.outputs.source }}
