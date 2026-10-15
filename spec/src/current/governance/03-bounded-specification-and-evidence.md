@@ -1,5 +1,12 @@
 # Bounded specification and evidence
 
+E-UI-CI-001 moves the existing core UI acceptance inventory into affected
+standard checks under JST-ARCH-005. Local and standalone UI results retain their
+source, platform, fixture and failure scope; they do not establish complete
+qualification or resolve the recorded backend and cold-application failures.
+Generated Changesets and Dependabot governance exemptions still retain every
+planned standard check, including core UI.
+
 E-CI-SUITES-001 retains JST-GOV-003/004/011: independent suite results and
 reused build artifacts never establish a complete qualification pass. Evidence
 records source and producer run/attempt, unavailable timing fields, failed or

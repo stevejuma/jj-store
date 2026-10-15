@@ -152,3 +152,37 @@ test("graph preparation retains its read scope until terminal status", async () 
   expect(f.refresh).toHaveBeenCalledTimes(1);
   f.abort.abort();
 });
+
+for (const collection of ["workspaces", "bookmarks"] as const) {
+  test(`${collection} pagination completes before a queued automatic refresh`, async () => {
+    const f = fixture();
+    if (collection === "workspaces") f.data.workingCopiesStatus = "refreshing";
+    else f.data.status.bookmarks = "refreshing";
+    f.updates.request();
+    try {
+      await vi.advanceTimersByTimeAsync(150);
+      expect(f.refresh).not.toHaveBeenCalled();
+      if (collection === "workspaces") f.data.workingCopiesStatus = "ready";
+      else f.data.status.bookmarks = "ready";
+      await vi.advanceTimersByTimeAsync(5000);
+      expect(f.refresh).toHaveBeenCalledTimes(1);
+    } finally {
+      f.abort.abort();
+    }
+  });
+}
+
+test("leaving code views does not defer freshness for an old reference page", async () => {
+  const f = fixture({
+    route: () => ({ ...initialStoreRoute(), page: "projects" }),
+  });
+  f.data.workingCopiesStatus = "refreshing";
+  f.data.status.bookmarks = "refreshing";
+  f.updates.request();
+  try {
+    await vi.advanceTimersByTimeAsync(150);
+    expect(f.refresh).toHaveBeenCalledTimes(1);
+  } finally {
+    f.abort.abort();
+  }
+});

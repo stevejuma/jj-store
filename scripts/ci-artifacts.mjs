@@ -15,7 +15,12 @@ import { tmpdir } from "node:os";
 import { pathToFileURL } from "node:url";
 import { archiveHash, sourceSha } from "./ci-inventory.mjs";
 
-import { payloads, lanePayloads } from "./ci-artifact-layout.mjs";
+import {
+  payloads,
+  lanePayloads,
+  uiLanePayloads,
+} from "./ci-artifact-layout.mjs";
+import { verifyUiProducer } from "./ci-ui-producer.mjs";
 export { payloads, lanePayloads } from "./ci-artifact-layout.mjs";
 
 export function identity(env = process.env) {
@@ -191,7 +196,11 @@ async function main() {
     "Checkout does not match selected source",
   );
   if (mode === "pack") {
-    assert.ok(["source", "build", "runtime", "assets"].includes(selection));
+    assert.ok(
+      ["source", "build", "runtime", "assets", "ui-source", "ui"].includes(
+        selection,
+      ),
+    );
     assert.equal(expected.run, process.env.GITHUB_RUN_ID);
     assert.equal(expected.attempt, process.env.GITHUB_RUN_ATTEMPT);
     const receipt = { format: 1, ...expected, role: selection, payloads: {} };
@@ -213,13 +222,14 @@ async function main() {
       `.release/qualification/${selection}.json`,
       JSON.stringify(receipt, null, 2) + "\n",
     );
-  } else if (mode === "consume") {
-    assert.ok(
-      Object.hasOwn(lanePayloads, selection),
-      "Unknown qualification lane",
-    );
-    const names = lanePayloads[selection];
-    const roles = [...new Set(names.map((name) => payloads[name].role))];
+  } else if (mode === "consume" || mode === "consume-ui") {
+    const ui = mode === "consume-ui";
+    const lanes = ui ? uiLanePayloads : lanePayloads;
+    assert.ok(Object.hasOwn(lanes, selection), "Unknown qualification lane");
+    const names = lanes[selection];
+    const roles = ui
+      ? ["ui"]
+      : [...new Set(names.map((name) => payloads[name].role))];
     const run = await api(
       `actions/runs/${expected.run}/attempts/${expected.attempt}`,
     );
@@ -231,10 +241,11 @@ async function main() {
       jobs.push(...data.jobs);
       if (data.jobs.length < 100) break;
     }
-    verifyProducer(run, jobs, expected, roles);
+    if (ui) verifyUiProducer(run, jobs, expected);
+    else verifyProducer(run, jobs, expected, roles);
     const temp = await mkdtemp(join(tmpdir(), "jj-qualification-"));
     try {
-      for (const role of ["source", ...roles]) {
+      for (const role of ui ? roles : ["source", ...roles]) {
         const dir = join(temp, role);
         download(`qualification-${role}`, dir, expected);
         const receipt = verifyReceipt(

@@ -132,7 +132,9 @@
     ).toBeLessThanOrEqual(16);
     const content = editor.querySelector<HTMLElement>(".cm-content")!;
     await expect(
-      scroller.getBoundingClientRect().right -
+      scroller.getBoundingClientRect().left +
+        scroller.clientLeft +
+        scroller.clientWidth -
         content.getBoundingClientRect().right,
     ).toBeLessThanOrEqual(16);
     await expect(content.getBoundingClientRect().width).toBeGreaterThan(

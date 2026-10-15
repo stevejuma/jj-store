@@ -8,3 +8,8 @@ fields and profile restrictions. `GET /operations` accepts optional metadata
 queries return HTTP 400 `invalid_query` with a bounded optional `diagnostic`
 carrying kind and message; existing non-query error codes and HTTP envelopes
 remain unchanged. There is no separate validation request or query publication.
+
+E-UI-CI-001 confirms JST-API-001 is unchanged: retaining an active completion
+during graph refresh stabilizes the browser's existing editor vocabulary. It
+does not alter query requests, pinned snapshots, diagnostics or generated
+contracts. M30 remains In progress pending complete release qualification.

@@ -137,8 +137,8 @@
       "docs/site/guides/conversion.md"
     ],
     "review": {
-      "reason": "Reviewed restored conversion receipt observation: construction no longer tracks its own busy flag, so unknown outcomes keep exact intent without repeated idle requests or command replay.",
-      "fingerprint": "609282d12c64e3a201cb92e5629598b268f76b56f45c6d132b470ccf87102ef6"
+      "reason": "UI acceptance review: queued freshness now defers during explicit reference pagination; navigation away retains freshness. History completion and prompt interactions remain unchanged.",
+      "fingerprint": "7b1091ce837df022ae2113f97e0748ccaeed1fceb71eb92ad53f41aad1e4fe4b"
     }
   },
   {

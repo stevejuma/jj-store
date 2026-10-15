@@ -236,3 +236,14 @@ test("cache writes stay PR scoped or require canonical main context and source",
     );
   }
 });
+
+test("Help and preview-tool dependencies select core UI acceptance", () => {
+  const g = workspaceGraph();
+  for (const path of [
+    "docs/site/guides/browsing.md",
+    "crates/jj-store-http/examples/browser_preview.rs",
+    "crates/jj-store-cli/examples/docs_reference.rs",
+    "crates/jj-store-server/src/lib.rs",
+  ])
+    assert.equal(impact([path], false, g).web, true, path);
+});

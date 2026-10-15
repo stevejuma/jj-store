@@ -1,5 +1,17 @@
 // Payload destinations are repository-owned, never taken from a receipt.
 export const payloads = {
+  "ui-tools": {
+    role: "ui",
+    root: "target/debug/examples",
+    files: ["browser_preview", "docs_reference"],
+  },
+  "ui-fixtures": {
+    role: "ui",
+    root: ".scratch",
+    files: ["web-responses.json"],
+  },
+  "ui-web": { role: "ui", root: "web/dist" },
+  "ui-catalog": { role: "ui", root: "storybook-static" },
   "tests-heavy": {
     role: "build",
     root: ".release",
@@ -27,6 +39,12 @@ export const payloads = {
   },
   "web-bundle": { role: "assets", root: "web/dist" },
   "storybook-bundle": { role: "assets", root: "storybook-static" },
+};
+export const uiLanePayloads = {
+  storybook: [],
+  browser: ["ui-tools", "ui-fixtures", "ui-web"],
+  help: ["ui-tools", "ui-fixtures", "ui-web"],
+  catalog: ["ui-catalog"],
 };
 export const lanePayloads = {
   standard: [],

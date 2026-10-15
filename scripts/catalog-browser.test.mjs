@@ -119,7 +119,11 @@ test("cold_catalog_contract", { timeout: 60000 }, async () => {
   const unexpected = [],
     errors = [];
   try {
-    browser = await chromium.launch();
+    browser = process.env.PW_TEST_CONNECT_WS_ENDPOINT
+      ? await chromium.connect(process.env.PW_TEST_CONNECT_WS_ENDPOINT, {
+          exposeNetwork: "<loopback>",
+        })
+      : await chromium.launch();
     const context = await browser.newContext({
       viewport: { width: 1440, height: 1000 },
       reducedMotion: "reduce",

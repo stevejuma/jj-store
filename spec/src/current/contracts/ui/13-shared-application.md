@@ -38,7 +38,11 @@ column, its paging cursor, filter, keyboard focus and scroll position. It only
 loads the adjacent scoped history/detail. Reference and graph loading indicators
 are independent: an empty loading graph MUST NOT replace already loaded branch
 cards with skeletons. Actual automatic data refresh still reloads references and
-preserves the selected scope.
+preserves the selected scope. While a code view is fetching the next workspace
+or bookmark page, queued automatic refresh MUST defer until that request settles
+so it cannot cancel explicit pagination. The deferred refresh remains queued and
+retries through the existing bounded scheduler. Leaving code views MUST NOT let
+old reference paging state block Projects or Threads freshness.
 
 Working-copy cards use the same title size as bookmark cards. Working-copy,
 bookmark, JJ Log and Op Log cards share the column card surface and hover and
@@ -107,11 +111,12 @@ feedback select the active side. Either identifier may be absent; no empty
 button is rendered. A single identifier shows the expanded prefix, two dots and
 final two characters immediately, without requiring hover or focus. The default
 control uses 11px resting identifiers, 10px expanded identifiers, 9px chips and
-a roughly 121px total width at the standard 16px root scale. Each half retains
-5px inline padding, including at the trailing edge during hover and feedback.
-Graph rows wrap the ID control below metadata before bookmark chips can overlap
-it. Clipboard live announcements remain scoped to the split control; operation
-IDs retain their separately labelled legacy control.
+a roughly 121px total width, bounded by 122px for the default prefix lengths at
+the standard 16px root scale with the bundled font on Linux and macOS. Each half
+retains 5px inline padding, including at the trailing edge during hover and
+feedback. Graph rows wrap the ID control below metadata before bookmark chips
+can overlap it. Clipboard live announcements remain scoped to the split control;
+operation IDs retain their separately labelled legacy control.
 
 Operation-message text recognizes complete Git SHA-1 commit IDs (40 hexadecimal
 characters), native commit IDs (128) and change IDs (32), rendering them through

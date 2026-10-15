@@ -21,7 +21,7 @@ export const appearanceToolDiscussionPlay = async ({
   };
   await settings("Focus");
   const focused = await body.findByRole("region", { name: "Agent response" });
-  const tool = within(focused).getByRole("group", {
+  const tool = await within(focused).findByRole("group", {
     name: "apply_patch tool call",
   });
   await userEvent.hover(within(tool).getByRole("group", { name: /tool row$/ }));
@@ -39,11 +39,12 @@ export const appearanceToolDiscussionPlay = async ({
   ).toHaveLength(1);
   await settings("Split");
   const split = await c.findByRole("complementary", { name: "Agent response" });
-  const restored = within(split).getByRole("group", {
+  // The sidebar shell appears before its virtualized conversation rows.
+  const restored = await within(split).findByRole("group", {
     name: "apply_patch tool call",
   });
   await expect(
-    within(restored).getByRole("textbox", { name: "Markdown editor" }),
+    await within(restored).findByRole("textbox", { name: "Markdown editor" }),
   ).toHaveTextContent("Unsent tool discussion draft");
   await expect(
     document.querySelectorAll('[data-ui-part="surface-layer-surface"]'),

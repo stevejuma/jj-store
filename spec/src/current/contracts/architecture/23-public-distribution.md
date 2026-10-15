@@ -72,13 +72,17 @@ the runtime producer.
 Standard CI runs on pull requests, main pushes, explicit dispatch and reusable
 calls. It first plans impact and checks formatting, then runs independent
 tooling and governance jobs before standard Rust and affected web checks. The
-standard cohort excludes server, CLI and capture packages, including their unit
-tests; embedded RustFS, native-platform and browser acceptance belong to
-qualification. The stable protected `required` check validates every planned
-standard lane and rejects missing, failed, canceled or unexpectedly skipped
-prerequisites. Main pushes and `all_checks` select the complete standard cohort.
-Superseded PR runs are canceled. No automatic or scheduled standard run starts
-heavy qualification.
+standard Rust cohort excludes server, CLI and capture packages, including their
+unit tests. Core UI acceptance (Storybook, served application, static catalog
+and dual-engine Help) runs with affected web checks and is required for PRs. Its
+focused producer compiles only the preview/documentation tools and native HTTP
+fixture capture needed by these tests; it does not run backend qualification or
+build embedded RustFS. Cold application and native-platform acceptance remain
+manual qualification. The stable protected `required` check validates every
+planned standard lane and rejects missing, failed, canceled or unexpectedly
+skipped prerequisites. Main pushes and `all_checks` select the complete standard
+cohort. Superseded PR runs are canceled. No automatic or scheduled standard run
+starts heavy qualification.
 
 Manual qualification resolves its source once to an immutable commit and runs
 all standard checks before heavy work. Six manual/reusable workflows own backend
@@ -87,8 +91,10 @@ native compatibility. A shared producer definition builds backend tools/tests,
 embedded runtime and browser assets. Runtime, API, external storage and native
 checks start independently after standard checks; assets need backend tools,
 embedded tests need runtime, and browser consumers wait only for their required
-artifacts. Backend failures do not block unrelated consumers. Every producer,
-suite and shard remains mandatory for complete qualification and publication.
+artifacts. UI acceptance is already required by standard checks and is not
+repeated by the coordinator. Backend failures do not block unrelated consumers.
+Every producer, suite and shard remains mandatory for complete qualification and
+publication.
 
 Standalone suites require an exact source SHA, producer run and attempt. Reuse
 requires a successful source-resolution job, standard gate and relevant artifact
@@ -99,6 +105,17 @@ unrelated failed test does not invalidate successful producers, but artifacts
 never establish a test pass. Publication consumes the same-run browser payload
 and still waits for complete qualification. No automatic heavy scheduling or
 publication is enabled.
+
+Core UI acceptance also has an independent manual build-and-test entry point at
+an exact source SHA. It shares the same seven test jobs with qualification
+reruns. Its fresh inputs are admitted only within their own run and attempt,
+after the focused UI producer succeeds, with source and payload checksums
+verified. They cannot bypass qualification's standard gate or authorize release
+artifact reuse. PR UI work follows the preflight gate; a failed, canceled or
+missing UI shard fails `required`. Impact selection includes Help sources and
+shared contracts. Full qualification remains explicitly invoked only while
+individual suites are repaired; focused UI success never establishes release
+qualification.
 
 Heavy matrices and test runners collect independent results after failures;
 standard CI retains its early failure gates. Existing shard counts, serial Rust

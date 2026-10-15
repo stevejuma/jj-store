@@ -26,8 +26,24 @@ test("selected JJ Log change restores rail commands and clears them on navigatio
   await expect(
     actions.getByRole("button", { name: "Abandon change" }),
   ).toBeEnabled();
+  // The details rail persists its open state. Wait for that write before
+  // reloading so this checks restoration rather than racing persistence.
+  await expect
+    .poll(() =>
+      page.evaluate(() => {
+        const saved = localStorage.getItem(
+          "jj-store/connection/local/jj-store/layout/v1/shell",
+        );
+        return saved
+          ? JSON.parse(saved).panels?.["repository-details"]?.closed
+          : undefined;
+      }),
+    )
+    .toBe(false);
   await page.reload();
-  await page.getByRole("button", { name: "Toggle details" }).click();
+  await expect(
+    page.getByRole("button", { name: "Toggle details" }),
+  ).toHaveAttribute("aria-expanded", "true");
   await expect(actions).toBeVisible();
   await actions.getByRole("button", { name: "Edit description" }).click();
   const dialog = page.getByRole("dialog", { name: "Edit description" });

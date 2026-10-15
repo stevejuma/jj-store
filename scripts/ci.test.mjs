@@ -157,7 +157,7 @@ test("browser and storage suites preserve coverage and consume only their inputs
   assert.ok(heavy.cold.needs.includes("runtime"));
   assert.ok(heavy.embedded.needs.includes("runtime"));
   assert.ok(heavy.complete.needs.includes("runtime"));
-  assert.equal(heavy.ui.needs.includes("runtime"), false);
+  assert.equal(heavy.ui, undefined); // UI is mandatory in standard checks.
   const lanes = [
     ...cold.strategy.matrix.include,
     ...ui.strategy.matrix.include,
@@ -179,7 +179,10 @@ test("browser and storage suites preserve coverage and consume only their inputs
       false,
     );
     assert.ok(
-      job.steps.some((step) => step.run?.includes("ci-artifacts.mjs consume")),
+      job.steps.some(
+        (step) =>
+          step.run?.includes("ci-artifacts.mjs") && /consume/.test(step.run),
+      ),
     );
     assert.ok(
       job.steps.some((step) => step.run?.endsWith("--with-deps chromium")),

@@ -54,6 +54,7 @@
     await expect(
       body.queryByRole("menuitem", { name: "Add local repository" }),
     ).toBeNull();
+    await waitFor(() => expect(task).toHaveFocus());
     await userEvent.keyboard("{Enter}");
     const create = await body.findByRole("dialog", {
       name: "Create task",

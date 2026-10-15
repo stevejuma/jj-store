@@ -1,0 +1,110 @@
+name: UI acceptance
+run-name: UI acceptance · ${{ inputs.source }}
+on:
+  workflow_dispatch:
+    inputs:
+      source:
+        type: string
+        required: true
+        description: Exact source commit SHA to build and test
+  workflow_call:
+    inputs:
+      source:
+        type: string
+        required: true
+      cache_write:
+        type: string
+        default: "false"
+permissions:
+  contents: read
+  actions: read
+env:
+  CARGO_BUILD_JOBS: "2"
+  CARGO_INCREMENTAL: "0"
+  JJ_STORE_BUILD_TARGET_GIB: "24"
+  JJ_STORE_BUILD_TOTAL_GIB: "36"
+  JJ_STORE_BUILD_FREE_GIB: "6"
+  CI_SOURCE: ${{ inputs.source }}
+  CI_PRODUCER_RUN: ${{ github.run_id }}
+  CI_PRODUCER_ATTEMPT: ${{ github.run_attempt }}
+  JJ_STORE_CI_REPORTS: "1"
+  JJ_STORE_DOC_REFERENCE:
+    ${{ github.workspace }}/target/debug/examples/docs_reference
+jobs:
+  prepare:
+    name: UI acceptance inputs
+    runs-on: ubuntu-22.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: ${{ inputs.source }}
+          fetch-depth: 0
+      - name: Verify exact source
+        run: node scripts/ci-artifacts.mjs pack ui-source
+      - uses: ./.github/actions/setup
+      - name: Restore UI compilation dependencies
+        uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6
+        with:
+          workspaces: . -> target
+          key: ui-1.99-debug
+          save-if: ${{ inputs.cache_write == 'true' }}
+          cache-workspace-crates: "false"
+          cache-on-failure: "false"
+      - name: Compile preview tools and capture HTTP fixtures
+        run: node scripts/ci-exec.mjs ui-build -- node scripts/ci-ui-build.mjs
+      - name: Build application, Help and static catalog
+        run: |
+          pnpm exec playwright install --with-deps chromium
+          node scripts/ci-exec.mjs web-build -- pnpm web:build
+          node scripts/ci-exec.mjs catalog-build -- pnpm build-storybook
+      - name: Hash UI inputs
+        run: node scripts/ci-artifacts.mjs pack ui
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: ui-tools-${{ github.run_attempt }}
+          path: |
+            target/debug/examples/browser_preview
+            target/debug/examples/docs_reference
+          if-no-files-found: error
+          retention-days: 7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: ui-fixtures-${{ github.run_attempt }}
+          path: .scratch/web-responses.json
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: ui-web-${{ github.run_attempt }}
+          path: web/dist
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: ui-catalog-${{ github.run_attempt }}
+          path: storybook-static
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 7
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+        with:
+          name: qualification-ui-${{ github.run_attempt }}
+          path: .release/qualification/ui.json
+          include-hidden-files: true
+          if-no-files-found: error
+          retention-days: 7
+      - name: Preserve build results and timings
+        if: always()
+        uses: ./.github/actions/qualification-report
+        with:
+          name: ui-inputs
+  tests:
+    name: Core UI tests
+    needs: prepare
+    uses: ./.github/workflows/ci-heavy-ui.yml
+    with:
+      source: ${{ inputs.source }}
+      input_profile: ui

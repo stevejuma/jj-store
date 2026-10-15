@@ -72,6 +72,14 @@ feeds reconnect without periodic data polling; explicit historical selections
 stay historical. To see newly published code, return to a current selection
 deliberately.
 
+## Search history
+
+Use **Search JJ Log** or **Search Op Log** to open the query editor. Enter
+accepts the selected completion; without a completion it adds a line.
+Ctrl/Command+Enter or the Search action runs the query. Suggestions stay
+available while debounced results refresh. Invalid drafts retain the last
+successful results.
+
 ## Inspect files
 
 Files provides directory navigation, content previews and applicable source/edit

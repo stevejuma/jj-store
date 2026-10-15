@@ -93,6 +93,13 @@ responses remain errors; no POST request is retried by this read policy. Loading
 uses Settings skeleton rows, retained data survives refresh, and Capture
 controls stay visible with their existing capability/precondition guards.
 
+E-UI-CI-002 confirms JST-API-001 unchanged: after an initial inspection finds no
+receipt, browser acceptance explicitly refreshes the original import status
+through the retained inspection control. A fixture without a receipt-change
+event cannot rely on an unsolicited observation. The control remains valid if
+background recovery has already removed the unknown-outcome action. No command
+is replayed or input replaced; M30's full qualification remains incomplete.
+
 The browser may retain the time it accepts a validated source-page observation
 or continuation as session-only presentation metadata. Failed, busy, cancelled
 or rejected reads and local filtering MUST NOT advance that observation time.

@@ -13,11 +13,16 @@
   let contextOpen = $state(false);
   const query = $derived(controller.historyQuery);
   const operations = $derived(controller.state.route.page === "oplog");
+  // The production view also reads graph/loading state. Preserve the editor's
+  // completion state when that view changes without changing its vocabulary.
+  const bookmarkNames = $derived(
+    JSON.stringify(controller.state.bookmarks.map((bookmark) => bookmark.name)),
+  );
   const extensions = $derived(
     historyExtensions(
       operations ? "operations" : "revset",
       query?.info ?? null,
-      controller.state.bookmarks.map((bookmark) => bookmark.name),
+      JSON.parse(bookmarkNames) as string[],
       () => void query?.run(),
     ),
   );

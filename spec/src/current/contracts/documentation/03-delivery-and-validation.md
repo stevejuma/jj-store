@@ -1,5 +1,12 @@
 # Delivery and validation
 
+E-UI-CI-001 moves existing Chromium and WebKit Help acceptance into affected
+standard PR checks. JST-DOC-002/003 source-review, generated-reference and
+bundled-manual requirements remain unchanged. Browsing guidance records retained
+history completions, reachable prompt disclosures and compact native IDs;
+focused UI success does not establish full release qualification. M30 remains In
+progress with the prior backend and cold-application gaps retained.
+
 E-UI-VIEW-LOADING-001 documents packed local dependency substitution and demand
 loaded views. The manual distinguishes archive input, development prebundling
 and production chunk delivery. Registry-only installation keeps its independent
