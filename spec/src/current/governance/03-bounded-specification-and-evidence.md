@@ -91,3 +91,7 @@ E-CI-RUNTIME-TOOLS-001 retains JST-GOV-003/004/011 unchanged: provisioning a
 missing CI tool and preserving structured storage reports do not waive producer,
 coverage, evidence or publication gates. Hosted failures remain qualification
 gaps even when the workflow and reporting regression tests pass locally.
+
+E-UI-TAG-LIST-001 retains JST-GOV-008 ownership: released Design Core 0.5.0 owns
+TagList presentation. Existing Community-derived compositions keep their pinned
+Apache-2.0 attribution; JJ labels and state mapping remain application-owned.

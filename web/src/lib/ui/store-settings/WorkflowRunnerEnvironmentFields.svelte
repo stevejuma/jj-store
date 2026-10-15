@@ -1,7 +1,7 @@
 <script lang="ts">
   import * as Field from "@lapismd/design-core/shadcn/field";
   import { Input } from "@lapismd/design-core/shadcn/input";
-  import { Badge } from "@lapismd/design-core/shadcn/badge";
+  import { TagList } from "@lapismd/design-core/shadcn/tag-list";
   import { ChipAutocomplete } from "@lapismd/design-core/forms";
   import Workflow from "@lucide/svelte/icons/workflow";
   import Tags from "@lucide/svelte/icons/tags";
@@ -75,9 +75,16 @@
     ></Field.Content
   >
   <div class="workflow-runner-commands">
-    {#each Object.keys(configuration.commands ?? {}) as command}<Badge
-        variant="secondary">{command}</Badge
-      >{:else}<span>No command presets</span>{/each}
+    {#if Object.keys(configuration.commands ?? {}).length}
+      <TagList
+        label="Command presets"
+        tags={Object.keys(configuration.commands ?? {}).map((command) => ({
+          id: command,
+          label: command,
+          variant: "secondary",
+        }))}
+      />
+    {:else}<span>No command presets</span>{/if}
   </div>
 </Field.Field>
 <Field.Field orientation="responsive" class="store-settings__option-row">
@@ -138,8 +145,7 @@
     border: 0;
   }
   .workflow-runner-commands {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.375rem;
+    width: min(22rem, 100%);
+    min-width: 0;
   }
 </style>

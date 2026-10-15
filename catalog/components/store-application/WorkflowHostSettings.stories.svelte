@@ -223,9 +223,13 @@
   name="Environment form derives repository context"
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await userEvent.click(
-      await canvas.findByRole("button", { name: "Add local host" }),
+    const addHost = await canvas.findByRole("button", {
+      name: "Add local host",
+    });
+    await waitFor(() =>
+      expect(getComputedStyle(addHost).pointerEvents).not.toBe("none"),
     );
+    await userEvent.click(addHost);
     await expect(
       canvas.getByRole("textbox", { name: "Host name" }),
     ).toHaveValue("local");
@@ -253,7 +257,7 @@
     const agent = await within(document.body).findByRole("option", {
       name: /Demo agent/,
     });
-    await expect(agent).toBeVisible();
+    await waitFor(() => expect(agent).toBeVisible());
     await expect(
       within(agent).getByRole("img", { name: /Demo agent/ }),
     ).toHaveTextContent("🤖");
@@ -344,9 +348,11 @@
   play={async ({ canvasElement }) => {
     const { input } = await admission(canvasElement);
     await userEvent.click(input);
-    await expect(
-      await within(document.body).findByRole("option", { name: /Steve/ }),
-    ).toBeVisible();
+    await waitFor(() =>
+      expect(
+        within(document.body).getByRole("option", { name: /Steve/ }),
+      ).toBeVisible(),
+    );
     const message = await within(document.body).findByText(
       "Principal profiles could not be loaded. Your selection is retained.",
     );
@@ -362,9 +368,13 @@
   name="Forgejo environment is configurable with the existing form"
   play={async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await userEvent.click(
-      await canvas.findByRole("button", { name: "Add local host" }),
+    const addHost = await canvas.findByRole("button", {
+      name: "Add local host",
+    });
+    await waitFor(() =>
+      expect(getComputedStyle(addHost).pointerEvents).not.toBe("none"),
     );
+    await userEvent.click(addHost);
     await userEvent.click(
       await canvas.findByRole("switch", { name: "GitHub workflow executor" }),
     );

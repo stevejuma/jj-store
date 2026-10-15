@@ -34,7 +34,9 @@
     const canvas = within(canvasElement);
     const page = within(canvasElement.ownerDocument.body);
     const trigger = canvas.getByRole("combobox", { name: "Parent commit" });
-    const row = trigger.querySelector(".store-mutation-commit-target")!;
+    const row = trigger.parentElement!.querySelector(
+      ".store-mutation-commit-target",
+    )!;
     await inspectRow(row);
     await expect(
       Math.abs(
@@ -77,7 +79,7 @@
         ),
       ).toBeLessThan(1);
       for (const chip of row.querySelectorAll(
-        ".store-mutation-commit-target__bookmarks .community-chip",
+        '[data-presentation="inline"] [data-ui-part="tag"]',
       )) {
         await expect(Math.abs(center(chip) - center(time))).toBeLessThan(1);
         await expect(chip.getBoundingClientRect().left).toBeGreaterThan(
@@ -123,7 +125,7 @@
       }
     }
     await inspectMetadata(
-      trigger.querySelector(".store-mutation-commit-target")!,
+      trigger.parentElement!.querySelector(".store-mutation-commit-target")!,
     );
     await userEvent.click(trigger);
     const options = await page.findAllByRole("option");
@@ -146,9 +148,11 @@
       Math.abs(positions.get("GIT")! - positions.get("JJ")!),
     ).toBeLessThan(1);
     await userEvent.click(options[1]!);
-    await expect(trigger).toHaveTextContent("A much longer title");
+    await expect(trigger.parentElement!).toHaveTextContent(
+      "A much longer title",
+    );
     await inspectMetadata(
-      trigger.querySelector(".store-mutation-commit-target")!,
+      trigger.parentElement!.querySelector(".store-mutation-commit-target")!,
     );
   }}
 />

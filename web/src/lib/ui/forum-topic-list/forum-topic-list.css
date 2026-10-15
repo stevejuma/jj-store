@@ -196,3 +196,7 @@
     display: none;
   }
 }
+
+.forum-topic-list__tags {
+  pointer-events: auto;
+}

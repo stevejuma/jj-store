@@ -46,7 +46,11 @@
     await within(upper).findByRole("button", {
       name: "add deployment preview command",
     });
-    expect(within(upper).getAllByText("workspace/experiment")).toHaveLength(1);
+    expect(
+      within(upper)
+        .getAllByText("workspace/experiment")
+        .filter((element) => element.closest('[data-presentation="inline"]')),
+    ).toHaveLength(1);
     await canvas.findByRole("region", { name: "Stack export-json" });
     await canvas.findByRole("region", { name: "Stack query-filtering" });
     await userEvent.click(
@@ -106,7 +110,11 @@
     await within(upper).findByRole("button", {
       name: "prepare cloud deployment config",
     });
-    expect(within(upper).getAllByText("workspace/experiment")).toHaveLength(1);
+    expect(
+      within(upper)
+        .getAllByText("workspace/experiment")
+        .filter((element) => element.closest('[data-presentation="inline"]')),
+    ).toHaveLength(1);
     expect(
       within(upper).getByRole("button", {
         name: "Apply cloud-observability",
@@ -131,8 +139,20 @@
     const sibling = await canvas.findByRole("region", {
       name: "Stack export-json",
     });
-    await within(upper).findByText("Shared");
-    await within(sibling).findByText("Shared");
+    await waitFor(() =>
+      expect(
+        upper.querySelector(
+          '[data-presentation="inline"] [data-tag-id="shared"]',
+        ),
+      ).toBeVisible(),
+    );
+    await waitFor(() =>
+      expect(
+        sibling.querySelector(
+          '[data-presentation="inline"] [data-tag-id="shared"]',
+        ),
+      ).toBeVisible(),
+    );
     await within(sibling).findByRole("button", {
       name: "prepare cloud deployment config",
     });

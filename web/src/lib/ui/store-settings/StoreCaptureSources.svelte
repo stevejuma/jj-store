@@ -5,7 +5,7 @@
   import StoreCaptureLoading from "./StoreCaptureLoading.svelte";
   import DownloadIcon from "@lucide/svelte/icons/download";
   import { Button } from "@lapismd/design-core/shadcn/button";
-  import { Badge } from "@lapismd/design-core/shadcn/badge";
+  import { TagList } from "@lapismd/design-core/shadcn/tag-list";
   import * as Table from "@lapismd/design-core/shadcn/table";
   import StoreCaptureSourceIdentity from "./StoreCaptureSourceIdentity.svelte";
   import StoreCaptureSourceFilters from "./StoreCaptureSourceFilters.svelte";
@@ -116,21 +116,38 @@
               </Table.Cell>
               <Table.Cell>
                 <div class="store-capture-sources__states">
-                  <Badge variant="secondary">{source.phase}</Badge>
-                  <Badge variant="outline"
-                    >{source.observed ? "Observed" : "Unobserved"}</Badge
-                  >
-                  {#if source.awaiting_activity}<Badge variant="outline"
-                      >Awaiting activity</Badge
-                    >{/if}
-                  {#if source.caught_up}<Badge variant="outline"
-                      >Caught up</Badge
-                    >{/if}
-                  {#if source.running}<Badge variant="outline">Running</Badge
-                    >{/if}
-                  {#if source.degraded}<Badge variant="destructive"
-                      >Degraded</Badge
-                    >{/if}
+                  <TagList
+                    label={`Status for ${label}`}
+                    tags={[
+                      {
+                        id: "phase",
+                        label: source.phase,
+                        variant: "secondary",
+                      },
+                      {
+                        id: "observed",
+                        label: source.observed ? "Observed" : "Unobserved",
+                      },
+                      ...(source.awaiting_activity
+                        ? [{ id: "awaiting", label: "Awaiting activity" }]
+                        : []),
+                      ...(source.caught_up
+                        ? [{ id: "caught-up", label: "Caught up" }]
+                        : []),
+                      ...(source.running
+                        ? [{ id: "running", label: "Running" }]
+                        : []),
+                      ...(source.degraded
+                        ? [
+                            {
+                              id: "degraded",
+                              label: "Degraded",
+                              tone: "danger" as const,
+                            },
+                          ]
+                        : []),
+                    ]}
+                  />
                 </div>
                 {#if source.ingress_required_capacity_bytes !== null}
                   <p class="store-settings__row-description">
@@ -204,13 +221,8 @@
     background: var(--card, var(--background));
   }
   .store-capture-sources__states {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.35rem;
-  }
-  .store-capture-sources__states {
     max-width: 18rem;
-    min-width: 10rem;
+    width: min(18rem, 100%);
   }
   .store-capture-sources__empty {
     padding: 1rem;

@@ -1,5 +1,7 @@
 <script lang="ts">
   import type { RepositoryLogRevision } from "../../projects/repository-log.js";
+  import { TagList } from "@lapismd/design-core/shadcn/tag-list";
+  import { commitTags } from "./commit-tags.js";
   import CommunityChip from "../community-chip/CommunityChip.svelte";
   import CommunityProjectsGitAuthorAvatar from "../community-projects/CommunityProjectsGitAuthorAvatar.svelte";
   import CommunityProjectsRevisionGraphIds from "../community-projects/CommunityProjectsRevisionGraphIds.svelte";
@@ -10,6 +12,7 @@
     revision,
     now,
     copyableIds = true,
+    showTags = true,
     framed = true,
     ariaLabel = "Selected commit",
   }: {
@@ -17,36 +20,25 @@
     revision?: RepositoryLogRevision;
     now?: number;
     copyableIds?: boolean;
+    showTags?: boolean;
     framed?: boolean;
     ariaLabel?: string;
   } = $props();
 
-  const bookmarks = $derived(
-    revision?.bookmarks.filter(
-      (bookmark) => bookmark.added && !bookmark.removed,
-    ) ?? [],
-  );
-
-  function bookmarkLabel(bookmark: RepositoryLogRevision["bookmarks"][number]) {
-    return bookmark.remote
-      ? `${bookmark.name}@${bookmark.remote}`
-      : bookmark.name;
-  }
+  const tags = $derived(commitTags(revision));
 </script>
 
 {#snippet bookmarkChips()}
-  {#if bookmarks.length || revision?.workspaces.length}
-    <span class="store-mutation-commit-target__bookmarks">
-      {#each bookmarks as bookmark (`${bookmark.name}:${bookmark.remote ?? "local"}`)}
-        <CommunityChip size="compact" variant="muted"
-          >{bookmarkLabel(bookmark)}</CommunityChip
-        >
-      {/each}
-      {#each revision?.workspaces ?? [] as workspace (workspace)}
-        <CommunityChip size="compact" tone="success">{workspace}</CommunityChip>
-      {/each}
-    </span>
-  {/if}
+  {#if !showTags && tags.length}<span
+      class="store-mutation-commit-target__tag-summary"
+      title={tags.map((tag) => tag.label).join(" · ")}
+      >{tags.map((tag) => tag.label).join(" · ")}</span
+    >{/if}
+  {#if showTags}<TagList
+      {tags}
+      label="Commit tags"
+      onclick={(event) => event.stopPropagation()}
+    />{/if}
 {/snippet}
 
 <div
@@ -60,21 +52,21 @@
     email={revision?.authorEmail}
     size="small"
   />
-  <span class="store-mutation-commit-target__body">
-    <span class="store-mutation-commit-target__primary">
-      <span class="store-mutation-commit-target__summary">
+  <div class="store-mutation-commit-target__body">
+    <div class="store-mutation-commit-target__primary">
+      <div class="store-mutation-commit-target__summary">
         <span
           class="store-mutation-commit-target__message"
           title={revision?.message}
           >{revision?.message ?? "Selected commit"}</span
         >
         {#if revision && !copyableIds}
-          <span class="store-mutation-commit-target__metadata">
+          <div class="store-mutation-commit-target__metadata">
             <CommunityRelativeTime timestamp={revision.createdAt} {now} />
             {@render bookmarkChips()}
-          </span>
+          </div>
         {/if}
-      </span>
+      </div>
       {#if copyableIds}
         <CommunityProjectsRevisionGraphIds
           changeId={revision?.changeId}
@@ -110,17 +102,26 @@
             </span>{/if}
         </span>
       {/if}
-    </span>
+    </div>
     {#if revision && copyableIds}
-      <span class="store-mutation-commit-target__secondary">
+      <div class="store-mutation-commit-target__secondary">
         {@render bookmarkChips()}
         <CommunityRelativeTime timestamp={revision.createdAt} {now} />
-      </span>
+      </div>
     {/if}
-  </span>
+  </div>
 </div>
 
 <style>
+  .store-mutation-commit-target__tag-summary {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--muted-foreground);
+    font-size: var(--community-text-secondary);
+  }
+
   .store-mutation-commit-target {
     display: grid;
     width: 100%;
@@ -176,8 +177,7 @@
     gap: 0.4rem;
   }
 
-  .store-mutation-commit-target__ids > span,
-  .store-mutation-commit-target__bookmarks {
+  .store-mutation-commit-target__ids > span {
     display: flex;
     min-width: 0;
     align-items: center;
@@ -211,11 +211,6 @@
 
   .store-mutation-commit-target__ids code {
     font-size: var(--community-text-secondary);
-  }
-
-  .store-mutation-commit-target__bookmarks {
-    flex-wrap: wrap;
-    gap: 0.3rem;
   }
 
   .store-mutation-commit-target__secondary {

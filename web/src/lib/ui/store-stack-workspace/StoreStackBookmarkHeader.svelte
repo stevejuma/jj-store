@@ -5,7 +5,10 @@
   import StoreForgeButton from "../store-forge/StoreForgeButton.svelte";
   import StoreForgeBranchStatus from "../store-forge/StoreForgeBranchStatus.svelte";
   import StoreStackDropGuide from "./StoreStackDropGuide.svelte";
-  import CommunityChip from "../community-chip/CommunityChip.svelte";
+  import {
+    TagList,
+    type TagListItem,
+  } from "@lapismd/design-core/shadcn/tag-list";
   import CommunityRelativeTime from "../community-relative-time/CommunityRelativeTime.svelte";
   import CommunityProjectsGitAuthorAvatar from "../community-projects/CommunityProjectsGitAuthorAvatar.svelte";
   import { toggleStackSource } from "../../controller/stack-workspace/selection-actions.js";
@@ -46,6 +49,26 @@
     Boolean(controller.forge?.ready) &&
       (top || Boolean(controller.forge?.pr(name))),
   );
+  const tags = $derived<TagListItem[]>([
+    { id: "local", label: "Local bookmark", variant: "secondary" },
+    ...(controller.forge?.pr(name) && !statusRow
+      ? [
+          {
+            id: "checks",
+            label: controller.forge.checkSummary(name),
+            variant: "secondary" as const,
+          },
+        ]
+      : []),
+    ...(shared
+      ? [{ id: "shared", label: "Shared", variant: "secondary" as const }]
+      : []),
+    ...aliases.map((alias) => ({
+      id: `alias:${alias}`,
+      label: alias,
+      variant: "secondary" as const,
+    })),
+  ]);
 </script>
 
 <Card.Header
@@ -109,15 +132,10 @@
           timestamp={tip.createdAt}
         /></Card.Description
       >{/if}
-    <div class="stack-workspace__branch-chips">
-      <CommunityChip variant="muted">Local bookmark</CommunityChip>
-      {#if controller.forge?.pr(name) && !statusRow}<CommunityChip
-          variant="muted">{controller.forge.checkSummary(name)}</CommunityChip
-        >{/if}
-      {#if shared}<CommunityChip variant="muted">Shared</CommunityChip>{/if}
-      {#each aliases as alias}<CommunityChip variant="muted"
-          >{alias}</CommunityChip
-        >{/each}
-    </div>
+    <TagList
+      {tags}
+      label="Branch tags"
+      onclick={(event) => event.stopPropagation()}
+    />
   </div>
 </Card.Header>

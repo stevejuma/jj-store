@@ -86,3 +86,15 @@ default features, so validation and network-backed checks are unavailable. The
 workspace pins Kingfisher's matching Vectorscan fork because Cargo does not
 inherit a Git dependency's workspace patch. No JavaScript redaction package or
 temporary raw-input file participates in the capture boundary.
+
+The TagList adoption consumes published `@lapismd/design-core` `^0.5.0` through
+the registry lockfile. TagList owns chip layout, overflow measurement, native
+CSS and popup lifecycle; domain label/tone mapping remains under `web/src/lib`.
+Community-derived compositions retain their original attribution. No source
+alias, package patch or local archive participates in this acceptance.
+
+jj-store explicitly imports its own Tailwind utilities entry in the web and
+catalog stylesheets. Its existing utility-based application compositions no
+longer depend on a shared package exporting a compiler entry. Design Core
+components continue to import their own native CSS; this adds no source alias,
+upstream override or copied component style.

@@ -152,3 +152,7 @@ multi-parent file conflict and a concurrent rewrite pair with one JJ change ID
 and two commit IDs. The browser consumes the server-provided identities and
 edges for both cases; seeding them does not add an API-only ancestry or conflict
 representation.
+
+Tag collections use released TagList without changing pinned read or mutation
+contracts. The commit selector separates its native picker trigger from the
+interactive overflow list; opening tags never selects a commit or native row.

@@ -6,6 +6,8 @@
   import ChevronDownIcon from "@lucide/svelte/icons/chevron-down";
   import XIcon from "@lucide/svelte/icons/x";
   import type { RepositoryLogRevision } from "../../projects/repository-log.js";
+  import { TagList } from "@lapismd/design-core/shadcn/tag-list";
+  import { commitTags } from "./commit-tags.js";
   import StoreMutationCommitTarget from "./StoreMutationCommitTarget.svelte";
 
   let {
@@ -26,8 +28,12 @@
 
   let open = $state(false);
   let query = $state("");
+  let highlighted = $state("");
   const selected = $derived(
     revisions.find((revision) => revision.eventId === target),
+  );
+  const preview = $derived(
+    revisions.find((revision) => revision.eventId === highlighted) ?? selected,
   );
   const visible = $derived.by(() => {
     const search = query.trim().toLocaleLowerCase();
@@ -57,7 +63,10 @@
 
   function handleOpen(next: boolean) {
     open = next;
-    if (next) query = "";
+    if (next) {
+      query = "";
+      highlighted = target;
+    }
   }
 
   function choose(revision: RepositoryLogRevision) {
@@ -68,31 +77,36 @@
 </script>
 
 <Popover.Root {open} onOpenChange={handleOpen}>
-  <Popover.Trigger>
-    {#snippet child({ props })}
-      <Button
-        {...props}
-        {id}
-        variant="outline"
-        class={["store-mutation-commit-picker__trigger", props.class]}
-        role="combobox"
-        aria-label={label}
-      >
-        <StoreMutationCommitTarget
-          {target}
-          revision={selected}
-          {now}
-          copyableIds={false}
-          framed={false}
-          ariaLabel=""
-        />
-        <ChevronDownIcon
-          class="store-mutation-commit-picker__chevron"
-          aria-hidden="true"
-        />
-      </Button>
-    {/snippet}
-  </Popover.Trigger>
+  <div class="store-mutation-commit-picker__control">
+    <Popover.Trigger>
+      {#snippet child({ props })}
+        <Button
+          {...props}
+          {id}
+          variant="outline"
+          class={["store-mutation-commit-picker__trigger", props.class]}
+          role="combobox"
+          aria-label={label}
+          aria-describedby={`${id}-value`}
+        >
+          <ChevronDownIcon
+            class="store-mutation-commit-picker__chevron"
+            aria-hidden="true"
+          />
+        </Button>
+      {/snippet}
+    </Popover.Trigger>
+    <div id={`${id}-value`} class="store-mutation-commit-picker__value">
+      <StoreMutationCommitTarget
+        {target}
+        revision={selected}
+        {now}
+        copyableIds={false}
+        framed={false}
+        ariaLabel=""
+      />
+    </div>
+  </div>
   <Popover.Content
     class="store-mutation-commit-picker"
     align="start"
@@ -117,6 +131,7 @@
       </Popover.Close>
     </Popover.Header>
     <CommandView.Root
+      bind:value={highlighted}
       label={`Select ${label.toLocaleLowerCase()}`}
       shouldFilter={false}
     >
@@ -148,6 +163,7 @@
                   {revision}
                   {now}
                   copyableIds={false}
+                  showTags={false}
                   framed={false}
                   ariaLabel=""
                 />
@@ -156,6 +172,11 @@
           </CommandView.Group>
         {/if}
       </CommandView.List>
+      <CommandView.Footer>
+        <section aria-label="Commit tag preview" data-commit={preview?.eventId}>
+          <TagList tags={commitTags(preview)} label="Preview commit tags" />
+        </section>
+      </CommandView.Footer>
     </CommandView.Root>
   </Popover.Content>
 </Popover.Root>
@@ -165,17 +186,25 @@
     width: 100%;
     height: auto;
     min-height: 3.25rem;
-    justify-content: flex-start;
     padding: 0.5rem;
+    position: absolute;
+    inset: 0;
+    justify-content: flex-end;
     color: var(--foreground);
     text-align: start;
   }
 
-  :global(
-    .store-mutation-commit-picker__trigger[data-ui-component="button"]
-      > .store-mutation-commit-target
-  ) {
-    flex: 1;
+  .store-mutation-commit-picker__control {
+    position: relative;
+    min-width: 0;
+  }
+  .store-mutation-commit-picker__value {
+    position: relative;
+    padding: 0.5rem 2rem 0.5rem 0.5rem;
+    pointer-events: none;
+  }
+  .store-mutation-commit-picker__value :global([data-ui-component="tag-list"]) {
+    pointer-events: auto;
   }
 
   :global(.store-mutation-commit-picker__chevron) {

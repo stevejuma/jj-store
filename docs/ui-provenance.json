@@ -3424,6 +3424,10 @@
     {
       "local": "web/src/lib/ui/community-markdown-content/syntax-external-links.ts",
       "reason": "Application-owned inline external links and selective standalone local cards using released Mira extension points and Design Core Tooltip. Independently authored; Buzz is a read-only behavior reference."
+    },
+    {
+      "local": "web/src/lib/ui/store-mutations/commit-tags.ts",
+      "reason": "Application-owned mapping of current native bookmark and workspace labels into released TagList data; no shared domain policy."
     }
   ],
   "desktopAppearance": {
@@ -4125,5 +4129,13 @@
       }
     ],
     "usage": "Locally bundled monochrome paths; no metadata, external images or favicon services. Existing forge icons share the same registry."
+  },
+  "tagListAdoption": {
+    "package": "@lapismd/design-core",
+    "version": "0.5.0",
+    "entry": "@lapismd/design-core/shadcn/tag-list",
+    "revision": "63d3033ef9830d7c2db5286dcd010bf4c3bb1801",
+    "license": "Apache-2.0",
+    "ownership": "Released component owns chip presentation and overflow; existing copied source attributions remain intact. Application-owned mappings preserve native labels, order and tones. Editable selections, entity links and single identity/status badges retain their controls."
   }
 }

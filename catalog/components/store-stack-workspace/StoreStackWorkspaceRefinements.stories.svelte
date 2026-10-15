@@ -128,32 +128,29 @@
 />
 
 <Story
-  name="Branch chips share the available wrapping row"
+  name="Branch tags share one bounded row"
   play={async ({ canvasElement }) => {
     const canvas = workspaceCanvas(canvasElement);
     await canvas.findByRole("region", { name: "Stack feature/api" });
     const branch = header(canvasElement, "feature/api");
     await userEvent.click(branch);
-    const bookmark = within(branch).getByText("Local bookmark", {
-      exact: true,
-    });
-    const group = bookmark.parentElement!;
+    const list = within(branch).getByRole("list", { name: "Branch tags" });
+    const group = list.querySelector<HTMLElement>('[data-ui-part="row"]')!;
+    expect(getComputedStyle(group).flexWrap).toBe("nowrap");
     expect(
       Math.abs(
-        bookmark.getBoundingClientRect().left -
+        list.getBoundingClientRect().left -
           within(branch)
             .getByRole("button", { name: "Show all changes in feature/api" })
             .getBoundingClientRect().left,
       ),
     ).toBeLessThan(1);
-    expect(getComputedStyle(group).flexWrap).toBe("wrap");
+    expect(list.getBoundingClientRect().right).toBeLessThanOrEqual(
+      list.parentElement!.getBoundingClientRect().right + 1,
+    );
     expect(
-      Math.abs(
-        group.getBoundingClientRect().width -
-          group.parentElement!.getBoundingClientRect().width +
-          parseFloat(getComputedStyle(group.parentElement!).paddingRight),
-      ),
-    ).toBeLessThan(1);
+      list.querySelector('[data-presentation="inline"] [data-tag-id="local"]'),
+    ).not.toBeNull();
   }}
 />
 
@@ -355,7 +352,7 @@
       await waitFor(() => expect(target.matches(":hover")).toBe(true));
       const hover = color(target);
       const chips = target.querySelectorAll<HTMLElement>(
-        '[data-ui-part="community-chip"][data-chip-tone="neutral"]',
+        '[data-presentation="inline"] [data-ui-part="tag"][data-tone="neutral"], [data-ui-part="community-chip"][data-chip-tone="neutral"]',
       );
       expect(chips.length).toBeGreaterThan(0);
       for (const chip of chips) {
